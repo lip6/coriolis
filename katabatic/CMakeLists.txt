@@ -1,3 +1,4 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<katabatic>" -*-
 
  project(KATABATIC)
 
@@ -25,19 +26,15 @@
  find_package(KNIK REQUIRED)
  if(BUILD_DOC)
    find_package(Doxygen)
- ENDIF(BUILD_DOC)
+ endif(BUILD_DOC)
  
+ if(BUILD_DOC AND DOXYGEN_FOUND)
+   add_subdirectory(doc)
+ endif(BUILD_DOC AND DOXYGEN_FOUND)
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
- if(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
-   add_subdirectory(doc)
- endif(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
  
  if(CHECK_DATABASE)
    add_definitions(-DCHECK_DATABASE)
    message(STATUS "Checking database enabled (very slow).")
  endif(CHECK_DATABASE)
- if(CHECK_DETERMINISM)
-   add_definitions(-DCHECK_DETERMINISM)
-   message(STATUS "Checking determinism enabled.")
- endif(CHECK_DETERMINISM)

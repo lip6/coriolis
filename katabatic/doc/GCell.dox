@@ -1,179 +1,535 @@
 
- // -*- C++ -*-
 
+ // -*- C++ -*-
 
  namespace Katabatic {
 
  /*! \class        GCell
-  *  \brief        Global Routing cell (\b API).
+  * 
+  *  \brief        Routing Global Cell
+  * 
+  * 
+  *  \section      secGCellDescription  GCell Description
+  * 
+  *                Please note that there are two kind of Global Cells (or GCell for short):
+  *                  - The GCell used by the global router Knik.
+  *                  - The GCell used by the detailed router (Katabatic & Kite).
+  *                Although the information they hold is obviously related, they are two
+  *                separate kind of objects.
+  * 
+  *                The area of the design to be routed is divided in a regular grid of
+  *                rectangular area, the GCellGrid. Each rectangular area is a GCell.
+  * 
+  *                The GCell contains the following informations:
+  *                  - The AutoSegments that begins or ends in it. The list of segments
+  *                    is not avalaible directly but through the AutoContacts that are
+  *                    owned by the GCell.
+  *                  - The AutoSegments that go straight \e through it (or \e over it).
+  *                    Horizontal & Vertical segments are stored in two separeted list.
+  *                    Those two lists are sorted by layer depth (the deepest layers
+  *                    first).
+  *                  - A lot of synthetic information about the density of tracks used
+  *                    in the GCell.
+  * 
+  *                AutoContacts are affected to GCells, the area of the GCell is the
+  *                one into which the AutoContact is allowed to be placed. It is this
+  *                that way that the respect of the global routing choosen by Knik is
+  *                enforced. See the AutoContact constraint box.
+  * 
+  *                When tracks are aligned with the GCell boundaries they one exactly on
+  *                the boundary can belong to the GCell on either side of the boundary.
+  *                But we want a clear and mutually exclusive ownership of each GCell
+  *                area. So, we choose that one GCell do not own the topmost and rightmost
+  *                track. And to implement it, we shrink top and right coordinates by
+  *                the amount of GCell::getTopRightShrink(), which must be less than the
+  *                track spacing. 
+  * 
+  * 
+  * \subsection    secGCellDensity  Saturation & Density Computation
+  * 
+  *                At any depth (i.e. layer), in the preferred routing direction, a GCell
+  *                can pass a finite length of wire. For example on an horizontal preferred
+  *                layer:
+                   \f[
+                      WL_{max} = width(GCell) \times Htracks(GCell)
+                   \f]
+  *                Then the density, is the ratio between \f$WL_{max}\f$ and the actually
+  *                used wirelength:
+                   \f[
+                      Wdensity(depth) = \frac{WL_{used}(depth)}{WL_{max}(depth)}
+                   \f]
+  *                Normally, the ratio musn't exceed 1.0, but the occupied wire length computation,
+  *                for now, doesn't merge overlapping wires belonging to the same net, so
+  *                the ratio may be slightly inaccurate. Thus in some pathological cases may
+  *                be greater than 1.0 whithout truly been overloaded.
   *
-  *  \attention    This class can only be allocated through a GCellGrid thus
-  *                Constructors/Destructors are protecteds.
+  *                A Cell is considered as \e saturated if the overall density is above the
+  *                saturation ratio given by Session::getSaturateRatio().
   *
-  * \remark        As this object uses the decorator Design Pattern, almost all
-  *                functions are pure virtuals. Implementation take place in a
-  *                derived class \c GCellConcrete which is not documented,
-  *                (same specifications as GCell).
+  *                Contact density is calculated as follow:
+                   \f[
+                      Cont_{density} = \frac{|Contacts|}{Htracks \times Vtracks \times 4}
+                   \f]
+  *                It is a ratio over the number of actual contacts in the GCell and the maximal
+  *                number. The maximal number being the product of the number of tracks in
+  *                both direction and 4 stands for the hardwired number of layers (the depth).
+  * 
+  *                Should not be hardwired... \red{<em>To be corrected in future versions.</em>}
+  * 
+  * 
+  * \subsection    secGCellFeedthrough  Feedthrough Computation
   *
-  * \see           GCellDecorator class.
-  */
-
- /*! \function     GCellGrid* GCell::getGCellGrid () const;
-  *  \return       The GCellGrid to which the GCell belongs.
-  */
-
- /*! \function     unsigned int  GCell::getIndex () const;
-  *  \return       The linear index of this GCell inside the GCellGrid GCell table.
-  */
-
- /*! \function     unsigned int  GCell::getRow () const;
-  *  \return       The GCell's row inside the GCellGrid (this is a Y coordinate).
-  */
-
- /*! \function     unsigned int  GCell::getColumn () const;
-  *  \return       The GCell's row inside the GCellGrid (this is a X coordinate).
-  */
-
- /*! \function     Point  GCell::getCenter () const;
-  *  \return       The center of the GCell.
-  */
-
- /*! \function     DbU::Unit  GCell::getX () const;
-  *  \return       The X coordinate of the GCell's lower left corner (\b XMin).
-  */
-
- /*! \function     DbU::Unit  GCell::getY () const;
-  *  \return       The Y coordinate of the GCell's lower left corner (\b YMin).
-  */
-
- /*! \function     DbU::Unit  GCell::getXMax () const;
-  *  \return       The X coordinate of the GCell's upper right corner.
-  */
-
- /*! \function     DbU::Unit  GCell::getYMax () const;
-  *  \return       The Y coordinate of the GCell's lower upper right corner.
-  */
-
- /*! \function     Box  GCell::getBoundingBox () const;
-  *  \return       The GCell bounding box.
-  */
-
- /*! \function     GCell* GCell::getLeft () const;
-  *  \return       The CCell's left neighbour (may be \c NULL if first of the row).
-  */
-
- /*! \function     GCell* GCell::getRight () const;
-  *  \return       The CCell's right neighbour (may be \c NULL if last of the row).
-  */
-
- /*! \function     GCell* GCell::getUp () const;
-  *  \return       The CCell's up neighbour (may be \c NULL if top of the column).
-  */
-
- /*! \function     GCell* GCell::getDown () const;
-  *  \return       The CCell's down neighbour (may be \c NULL if bottom of the column).
-  */
-
- /*! \function     unsigned int  GCell::getDensity ( unsigned int depth ) const;
-  *  \return       The density of vertical wires going through this GCell.
-  *  \see          updateDensity()
-  */
-
- /*! \function     unsigned int  GCell::getCDensity () const;
-  *  \return       The AutoContact density.
-  *  \see          updateDensity()
-  */
-
- /*! \function     unsigned int  GCell::getDensity () const;
-  *  \return       The average of horizontal and vertical density.
-  *  \see          updateDensity()
-  */
-
- /*! \function     vector<AutoSegment*>* GCell::getVSegments ();
-  *  \return       All vertical AutoSegment, starting, ending or crossing this GCell.
-  */
-
- /*! \function     vector<AutoSegment*>* GCell::getHSegments ();
-  *  \return       All horizontal AutoSegment, starting, ending or crossing this GCell.
-  */
-
- /*! \function     vector<AutoContact*>* GCell::getContacts ();
-  *  \return       All AutoContact belonging to this GCell.
-  */
-
- /*! \function     AutoSegments GCell::getVStartSegments ();
-  *  \return       All vertical AutoSegment starting from this GCell.
-  */
-
- /*! \function     AutoSegments GCell::getHStartSegments ();
-  *  \return       All horizontal AutoSegment starting from this GCell.
-  */
-
- /*! \function     AutoSegments GCell::getVStopSegments ();
-  *  \return       All vertical AutoSegment ending in this GCell.
-  */
-
- /*! \function     AutoSegments GCell::getHStopSegments ();
-  *  \return       All horizontal AutoSegment ending in this GCell.
-  */
-
- /*! \function     AutoSegments GCell::getStartSegments ( unsigned int direction );
-  *  \param        direction  The selected direction.
-  *  \return       All AutoSegment starting from this GCell in \b direction.
-  */
-
- /*! \function     AutoSegments GCell::getStopSegments ( unsigned int direction );
-  *  \param        direction  The selected direction.
-  *  \return       All AutoSegment ending in this GCell in \b direction.
-  */
-
- /*! \function     void GCell::addVSegment ( AutoSegment* segment );
-  *  \param        segment A vertical AutoSegment.
+  *                The feedtrough value is an estimate is of how many complete tracks have been used
+  *                on a given layer of the GCell. It varies between zero and the number of track on the
+  *                GCell (complete saturation). As an estimate, it doesn't tell you the actual
+  *                number of free track, but how many you <em>may expect</em> assuming the routing is
+  *                reasonably well done.
+  * 
+  *                Computation is done as follow: 
+  *                <table class="DoxUser">
+  *                  <tr><th>Wire type<th>Estimated Cost
+  *                  <tr><td>Straight wire (feedthrough)
+  *                      <td>\b 1.0
+  *                  <tr><td>Beginning or ending global wire
+  *                      <td>\b 0.5
+  *                  <tr><td>Local wire.
+  *                      <td>\b 1/3
+  *                  <tr><td>Blockage wire
+  *                      <td>The exact percentage of the track
+  *                </table>
+  * 
+  * 
+  * \subsection    secGCellTrackComputation  Track Computation
   *
-  *                Indicate that the vertical \c segment is going straigh through this
-  *                GCell (no AutoContact).
+  *                The number of track that can go through a GCell in the horizontal
+  *                direction is computed as follow:
+                   \f[
+                      Htracks = \frac{heigth(GCell)}{Vpitch} + 1
+                   \f]
+  * 
+  *                The pitch is assumed to be the same for every layer and is hardwired
+  *                to 5.0 lambda.
+  * 
+  *                This is a bad architectural choice. The informations pertaining to
+  *                routing should be held at Kite level, not be hardwired and the pitch
+  *                should be made variable with the layer...
+  *                \red{<em>To be corrected in future versions</em>}.
+  * 
+  * 
+  *  \section      secGCellLazyEvaluation  GCell Lazy Evaluation
+  * 
+  *                To save processing time, the densities are not recomputed every time a
+  *                segment is modified (added, removed or moved). Instead a lazy evaluation
+  *                mechanism is used. Densities are recomputed each time a density is queried
+  *                \e and the lazy evaluation \e not explicitly disabled (flag NoUpdate).
+  * 
+  * 
+  *  \section      secGCellSortingKey  GCell Sorting Key
+  * 
+  *                In order to perform a lexicographical sort on the tuple \f$(density(depth),id)\f$ 
+  *                of a GCell, a specific slave object GCell::Key is introduced. It is the
+  *                density on one specific depth, not the average density.
+  * 
+  * 
+  *  \section      secGCellDesaturation  GCell Desaturation / Layer Assignment 
+  * 
+  *                In addition to it's geometrical and density functionality, the GCell
+  *                provides \e desaturation capabilities. Desaturation is the operation
+  *                of moving up feedthough AutoSegment from the bottom layers towards
+  *                the upper ones in order to balance the densities in the different
+  *                densities. Thoses operations provides building blocks for the layer
+  *                assignment stage which is provided by the Kabatic tool.
+  * 
+  *                Two strategies are avalaibles, moving one global AutoSegment at a 
+  *                time with GCell::stepDesaturate() or, when one AutoSegment is moved
+  *                up, move up the whole net trunk with GCell::stepNetDesaturate().
+  * 
+  *  \section      secGCellImplantation  GCell Implantation
+  * 
+  *                GCell derives from Hurricane::ExtensionGo to allow a graphical rendering
+  *                of the routing density.
   */
 
- /*! \function     void GCell::addHSegment ( AutoSegment* segment );
-  *  \param        segment An horizontal AutoSegment.
+ //! \function     size_t  GCell::getAllocateds ();
+ //! \sreturn      The number of allocated GCells.
+
+ //! \function     const Name& GCell::getStaticName ();
+ //! \sreturn      The name of the Go slice: \c "Katabatic::GCell".
+ //!
+ //! \see          Hurricane::ExtensionGo
+
+ //! \function     const Name& GCell::getName () const;
+ //! \sreturn      The name of the Go slice: \c "Katabatic::GCell".
+ //!
+ //! \see          Hurricane::ExtensionGo
+
+ //! \function     Box  GCell::getBoundingBox () const;
+ //! \sreturn      The bounding box of the GCell, with the top right shrink applied.
+
+ //! \function     void  GCell::translate ( const DbU::Unit&, const DbU::Unit& );
+ //!               Required to exists as a Hurricane::Go derived class. But must never
+ //!               be used...
+
+ //! \function     GCellGrid* GCell::getGCellGrid () const;
+ //! \sreturn      The Grid of which GCell is part of.
+
+ //! \function     unsigned int  GCell::getIndex () const;
+ //! \sreturn      The linear index of the GCell in the GCellGrid vector.
+ //!
+ //! \see          GCellGrid for the meaning of the index.
+
+ //! \function     unsigned int  GCell::getRow () const;
+ //! \sreturn      The row of the GCell in the GCellGrid.
+
+ //! \function     unsigned int  GCell::getColumn () const;
+ //! \sreturn      The Column of the GCell in the GCellGrid.
+
+ //! \function     GCell* GCell::getLeft () const;
+ //! \sreturn      The left neighbor of the GCell (\c NULL if it is the leftmost GCell).
+
+ //! \function     GCell* GCell::getRight () const;
+ //! \sreturn      The right neighbor of the GCell (\c NULL if it is the rightmost GCell).
+
+ //! \function     GCell* GCell::getUp () const;
+ //! \sreturn      The top neighbor of the GCell (\c NULL if it is the topmost GCell).
+
+ //! \function     GCell* GCell::getDown () const;
+ //! \sreturn      The bottom neighbor of the GCell (\c NULL if it is the bottommost GCell).
+
+ //! \function     DbU::Unit  GCell::getTopRightShrink ();
+ //! \sreturn      The amount of shrink on the top and right boundaries.
+
+ //! \function     unsigned int  GCell::getDepth () const;
+ //! \sreturn      The depth (i.e. number of routing layers) of the GCell.
+
+ //! \function     bool  GCell::isSaturated () const;
+ //! \sreturn      \true if at least one layer exceed a saturation of \c 1.0 (more wirelength
+ //!               that it can hold).
+
+ //! \function     bool  GCell::isSaturated ( unsigned int depth ) const;
+ //! \sreturn      \true if the saturation ratio of layer \c depth is over the threshold defined
+ //!               for the GCells.
+
+ //! \function     bool  GCell::isValid () const;
+ //! \sreturn      \true if all the AutoContact/AutoSegment of the GCell are valids.
+
+ //! \function     bool  GCell::isAboveDensity ( float threshold ) const;
+ //! \sreturn      \true if the overall saturation ratio greater than \c threshold.
+
+ //! \function     bool  GCell::hasFreeTrack ( size_t depth, float reserve ) const;
+ //! \sreturn      \true if there should be enough wire length to pass a wire completly
+ //!               trough this GCell.
+
+ //! \function     DbU::Unit  GCell::getX () const;
+ //! \sreturn      The lower left X coordinate of the GCell box.
+
+ //! \function     DbU::Unit  GCell::getY () const;
+ //! \sreturn      The lower left Y coordinate of the GCell box.
+
+ //! \function     DbU::Unit  GCell::getXMax () const;
+ //! \sreturn      The upper right X coordinate of the GCell box (top right shrink applied).
+
+ //! \function     DbU::Unit  GCell::getYMax () const;
+ //! \sreturn      The upper right Y coordinate of the GCell box (top right shrink applied).
+
+ //! \function     Interval  GCell::getSide ( unsigned int direction ) const;
+ //! \sreturn      The interval corresponding to the side position of the GCell box,
+ //!               in \c direction.
+
+ //! \function     float  GCell::getHCapacity () const;
+ //! \return       The number of track that can go through the GCell in the horizontal
+ //!               direction. For a detailed explanation of the computation see
+ //!               \ref secGCellTrackComputation.
+
+ //! \function     float  GCell::getVCapacity () const;
+ //! \return       The number of track that can go through the GCell in the vertical
+ //!               direction. For a detailed explanation of the computation see
+ //!               \ref secGCellTrackComputation.
+
+ //! \function     float  GCell::getDensity ( unsigned int flags=0 ) const;
+ //! \sreturn      The average density of the GCell, for all the depths.
+ //!               
+ //!               \ref secGCellDensity, \ref secGCellLazyEvaluation.
+
+ //! \function     float  GCell::getCDensity ( unsigned int flags=0 ) const;
+ //! \sreturn      The density of contacts. 
+ //!               
+ //!               \ref secGCellDensity, \ref secGCellLazyEvaluation.
+
+ //! \function     float  GCell::getWDensity ( unsigned int depth, unsigned int flags=0 ) const;
+ //! \sreturn      The density of wires at \c depth.
+ //!               
+ //!               \ref secGCellDensity, \ref secGCellLazyEvaluation.
+
+ //! \function     DbU::Unit  GCell::getBlockage ( unsigned int depth ) const;
+ //! \sreturn      The total length of blockage wire on layer at \c depth.
+
+ //! \function     float  GCell::getFragmentation ( unsigned int depth ) const;
+ //! \sreturn      The longest free fragment size on layer \c depth (in percent).
+
+ //! \function     float  GCell::getFeedthroughs ( unsigned int depth ) const;
+ //! \sreturn      The estimate number of \e occupied tracks on layer \c depth.
+ //!
+ //! \see          \ref secGCellFeedthrough
+
+ //! \function     float  GCell::getGlobalsCount ( unsigned int depth ) const;
+ //! \sreturn      The number of global wires that go completly through the GCell at layer \c depth.
+ //!               This do not includes the global wires that begins or ends in the GCell.
+
+ //! \function     const vector<AutoSegment*>& GCell::getHSegments () const;
+ //! \returns      The vector of all horizontal AutoSegments that completly goes through the GCell.
+
+ //! \function     const vector<AutoSegment*>& GCell::getVSegments () const;
+ //! \returns      The vector of all vertical AutoSegments that completly goes through the GCell.
+
+ //! \function     const vector<AutoContact*>& GCell::getContacts () const;
+ //! \returns      The vector of all AutoContacts owned by the GCell.
+
+ //! \function     AutoSegments  GCell::getHStartSegments ();
+ //! \returns      A Collection of the horizontal AutoSegments that starts from this GCell.
+
+ //! \function     AutoSegments  GCell::getVStartSegments ();
+ //! \returns      A Collection of the vertical AutoSegments that starts from this GCell.
+
+ //! \function     AutoSegments  GCell::getHStopSegments ();
+ //! \returns      A Collection of the horizontal AutoSegments that stops in this GCell.
+
+ //! \function     AutoSegments  GCell::getVStopSegments ();
+ //! \returns      A Collection of the vertical AutoSegments that stops in this GCell.
+
+ //! \function     AutoSegments  GCell::getStartSegments ( unsigned int direction );
+ //! \returns      A Collection of the horizontal or vertical AutoSegments that starts from this GCell
+ //!               according to \c direction.
+
+ //! \function     AutoSegments  GCell::getStopSegments ( unsigned int direction );
+ //! \returns      A Collection of the horizontal or vertical AutoSegments that stops in this GCell
+ //!               according to \c direction.
+
+ //! \function     size_t  GCell::getRoutingPads ( set<RoutingPad*>& rps );
+ //! \returns      The size of the RoutingPad set.
+ //!
+ //!               Fills the \c rps set with all the RoutingPads that appears in this GCell.               
+ //!               (looks at all the anchors of the owned AutoContact)
+
+ //! \function     const Key& GCell::getKey () const;
+ //! \returns      The sorting key of the GCell.
+ //!
+ //! \see          \ref secGCellSortingKey
+
+ //! \function     size_t  GCell::checkDensity () const;
+ //! \returns      \c 1 if the GCell is saturated, 0 otherwise.
+ //!
+ //!               Check, if the GCell is saturated, layer by layer. Issue a warning
+ //!               if that is the case.
+
+ //! \function     bool  GCell::checkEdgeSaturation ( float threshold ) const;
+ //! \returns      \true if the Up/Right edge is over the \c threshold.
+ //!
+ //!               Check if the number of AutoSegments crossing the Up & Right edges of the GCell 
+ //!               exceed \c threshold. The \c thresold must be expressed as a percentage of
+ //!               the full capacity of the edges. The overload is computed as a whole and not
+ //!               depth by depth.
+
+ //! \function     void  GCell::addBlockage ( unsigned int depth, DbU::Unit length );
+ //!               Adds \c length of wire blockage to layer \c depth.
+
+ //! \function     void  GCell::addHSegment ( AutoSegment* segment );
+ //!               Adds \c segment to the list of horizontal feedthroughs.
+
+ //! \function     void  GCell::addVSegment ( AutoSegment* segment );
+ //!               Adds \c segment to the list of vertical feedthroughs.
+
+ //! \function     void  GCell::addContact ( AutoContact* contact );
+ //!               Adds \c contact to the list of contacts owned by this GCell.
+
+ //! \function     void  GCell::removeHSegment ( AutoSegment* segment );
+ //!               Removes \c segment to the list of horizontal feedthroughs.
+
+ //! \function     void  GCell::removeVSegment ( AutoSegment* segment );
+ //!               Removes \c segment to the list of vertical feedthroughs.
+
+ //! \function     void  GCell::removeContact ( AutoContact* contact );
+ //!               Removes \c contact to the list of contacts owned by this GCell.
+
+ //! \function     void  GCell::updateContacts ();
+ //!               Force a geometry update on all the AutoContact of the GCell.
+
+ //! \function     size_t  GCell::updateDensity ();
+ //! \sreturn      \true if the GCell is saturated.
+ //!
+ //!               Update the various densities of the GCell. No actual computation is
+ //!               performed if the GCell is \e not invalidated.
+
+ //! \function     void  GCell::updateKey ( unsigned int depth );
+ //!               Update the GCell key with the new density at layer \c depth.
+ //!               
+ //! \see          \ref secGCellSortingKey.
+
+ //! \function     bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets, AutoSegment*& moved, unsigned int flags=0 );
+ //! \param        depth       The depth to desaturate.
+ //! \param        globalNets  The set of Nets of which at least one segment has been moved up.
+ //! \param        moved       The moved up AutoSegment.
+ //! \param        flags       If KbForceMove is set, force one AutoSegment to move up, event if
+ //!                           the GCell is not saturated in the relevant depth.
+ //!
+ //! \sreturn      \true if an AutoSegment has actually been moved up.
+ //!
+ //!               Perform the atomic desaturation, that is move up one AutoSegment from
+ //!               layer \c depth to layer <code>depth+2</code>, longuests AutoSegments are
+ //!               moved first. Only global feedthrough AutoSegments are candidates to be
+ //!               moved up. The Net owning the moved up segment is added to the \c globalNets
+ //!               set. If the GCell is not saturated on layer \c depth, nothing is
+ //!               done. If the \c forced flag is set, one global AutoSegment is moved up
+ //!               regardless of the saturation status.
+ //!
+ //! \see          \ref secGCellDesaturation
+
+ //! \function     bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, SetIndex& invalidateds );
+ //! \param        depth         The depth to desaturate.
+ //! \param        globalNets    The set of Nets of which at least one segment has been moved up.
+ //! \param        invalidateds  The set of GCell ids that have been invalidateds.
+ //!
+ //! \sreturn      \true if a Net has been moved up.
+ //!
+ //!               Perform a desaturation by whole Net trunk. Select the longest feedthrough
+ //!               AutoSegment in layer \c depth, then attempt to move up the whole Net (all
+ //!               it's global AutoSegments are moved up).
+ //!
+ //! \see          \ref secGCellDesaturation
+
+ //! \function     bool  GCell::rpDesaturate ( set<Net*>& nets );
+ //!               If the number of RoutingPad in the first routing layer exceed the
+ //!               Session::getSaturateRp() threshold, force a desaturation of layer
+ //!               \c depth 1 until it is below 0.5.
+ //!
+ //! \see          \ref secGCellDesaturation
+
+
+ /*! \class        GCell::CompareByIndex
+  * 
+  *  \brief        GCell Index Comparison Functor
   *
-  *                Indicate that the horizontal \c segment is going straigh through this
-  *                GCell (no AutoContact).
+  *                A comparison functor for GCell, compare by \c index (the linear
+  *                index in the GCellGrid vector.
   */
 
- /*! \function     void GCell::addContact ( AutoContact* contact );
-  *  \param        contact An AutoContact.
+ //! \typedef      typedef  set<GCell*,CompareByIndex>  GCell::SetIndex;
+ //!               Shorthand for a set of GCell sorted on their index.
+
+
+ /*! \class        GCell::CompareByDensity
+  * 
+  *  \brief        GCell Density Comparison Functor
   *
-  *                Indicate that the \c contact is owned by this GCell. This means that
-  *                either it's a branching point or there are terminals in the GCell.
-  *                The AutoContact is geometrically bound by the GCell bounding box.
+  *                A comparison functor for GCell, compare by density on layer \c depth.
   */
 
- /*! \function     void GCell::updateContacts ();
-  *                Force the geometrical recalculation of all AutoContact owned by
-  *                this GCell.
+ //! \function     GCell::CompareByDensity::CompareByDensity ( unsigned int depth );
+ //!               Build a density comparator for GCells on layer \c depth.
+
+
+ /*! \class        GCell::Key
+  * 
+  *  \brief        GCell Key - Density Cache
+  *
+  *                This class is used to create a GCell internal cache on density, mainly
+  *                to be used by GCellDensitySet.
   */
 
- /*! \function     void GCell::updateDensity ();
-  *                Recompute the horizontal, vertical, global and contact of
-  *                this GCell.
+ //! \function     GCell::Key::Key ( GCell* owner, unsigned int depth );
+ //! \param        owner    The GCell owning the key.
+ //! \param        depth    The layer \c depth of the density to use.
+ //!
+ //!               Key constructor, with an initial value for the cached density.
+
+ //! \function     GCell* GCell::Key::getGCell () const;
+ //! \sreturn      The owning GCell.
+
+ //! \function     float  GCell::Key::getDensity () const;
+ //! \sreturn      The value of the cached density.
+
+ //! \function     void  GCell::Key::update ( unsigned int depth );
+ //! \sreturn      Update the density
+
+
+ /*! \class        GCellDensitySet
+  * 
+  *  \brief        GCell Set, sorted by density
   *
-  *                The horizontal density is computed as follow : the sum of the length
-  *                of all horizontal wires divided by the the total length of horizontal
-  *                wires (the width of the GCell times the number of horizontal tracks).
-  *                A density equal to one means a totally saturated GCell, and greater
-  *                than one an overloaded GCell (unroutable).
+  *                A small container helper to manage a set of GCell sorted by density
+  *                on a specific layer \c depth.
   *
-  *                The vertical density is computed in a similar way to the horizontal
-  *                one.
+  *                The helper is implemented in term of a set. Once inserted in a set
+  *                an element must not have is sorting key changed. But GCell density
+  *                may change due to AutoSegment modifications during the lifetime of
+  *                the set. To circumvent this problem, the GCell provide a key attribute
+  *                to be used specifically with GCellDensitySet. This key act as a cached
+  *                copy of the GCell density which is updated \e only by a call to
+  *                GCell::updateKey() (and \e not GCell::updateDensity()). GCell which
+  *                density have changed and key has to be updated must be signaled to
+  *                set with the GCellDensityQueue::unqueue() method. When we want to
+  *                update the sorting of the set on the new densities, we call
+  *                GCellDensitySet::requeue() which, for each invalidated GCell do:
+  *                  - Remove the GCell from the set.
+  *                  - Update the key (call GCell::updateKey()).
+  *                  - Reinsert the GCell in the set (thus with the updated key).
   *
-  *                The global density is the average of horizontal and vertical
-  *                density.
+  *                Typical usage:
+\code
+  GCellDensitySet gcells ( 2, *(getGCellGrid()->getGCellVector()) );
+
+  while ( true ) {
+      bool optimized = false;
+
+      std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = gcells.getGCells().begin();
+      for ( ; igcell != gcells.getGCells().end() ; ++igcell ) {
+          if ( doSomeOptimization(*igcell) ) {
+            optimized = true;
+            gcells.unqueue( *igcell );
+          }
+      }
+
+      if (not optimized) break;
+
+      gcells.requeue();
+  }
+\endcode
   *
-  *                AutoContact density is the ratio of number of contact with length of
-  *                the diagonal of the GCell multiplied by two. This is a rough approximate.
-  *
-  *  \see          GCellGrid::updateDensity().
   */
+
+ //! \function     GCellDensitySet::GCellDensitySet ( unsigned int depth );
+ //!               Create a new empty GCellDensitySet, sorting on density of layer \c depth.
+
+ //! \function     GCellDensitySet::GCellDensitySet ( unsigned int depth, const std::vector<GCell*>& gcells );
+ //!               Create a new empty GCellDensitySet, sorting on density of layer \c depth.
+ //!               Load the queue with the GCells supplied in the \c gcells vector.
+
+ //! \function     GCellDensitySet::~GCellDensitySet ();
+ //!               Delete a GCellDensitySet, if the queue is not empty, issue a warning.
+
+ //! \function     bool  GCellDensitySet::empty () const;
+ //! \sreturn      \true if the queue is empty.
+
+ //! \function     size_t  GCellDensitySet::size () const;
+ //! \sreturn      the numbers of elements in the queue.
+
+ //! \function     const std::set<GCell*,GCell::CompareByKey>& GCellDensitySet::getGCells () const;
+ //! \sreturn      the list of GCells currently in the queue.
+
+ //! \function     size_t  GCellDensitySet::insert ( GCell* gcell );
+ //!               Insert \c gcell into the set.
+
+ //! \function     size_t  GCellDensitySet::erase ( GCell* gcell );
+ //!               Remove \c gcell from the set.
+
+ //! \function     void  GCellDensitySet::unqueue ( GCell* gcell );
+ //!               Invalidate \c gcell. The density of \c gcell may have changed and needs to be
+ //!               reinserted into the queue. It is temporarily set asides until the next
+ //!               call to GCellDensitySet::requeue().
+
+ //! \function     void  GCellDensitySet::requeue ();
+ //!               Reinsert in the queue all the GCells that have been previously
+ //!               invalidated by a call to GCellDensitySet::unqueue(). This function calls
+ //!               GCell::updateKey() before reinserting the GCell.
 
  }

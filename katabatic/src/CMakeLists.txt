@@ -1,3 +1,4 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<katabatic/src>" -*-
 
 if ( CHECK_DETERMINISM )
   add_definitions ( -DCHECK_DETERMINISM ) 
@@ -12,25 +13,35 @@ endif ( CHECK_DETERMINISM )
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
                        )
-                   set ( includes      katabatic/Configuration.h
+                   set ( includes      katabatic/Constants.h
+		                       katabatic/Observer.h
+                                       katabatic/Configuration.h
                                        katabatic/ChipTools.h
-                                       katabatic/AutoContact.h     katabatic/AutoContacts.h
-                                       katabatic/AutoSegment.h     katabatic/AutoSegments.h
+                                       katabatic/AutoContact.h
+                                       katabatic/AutoContactTerminal.h
+                                       katabatic/AutoContactTurn.h
+                                       katabatic/AutoContactHTee.h
+                                       katabatic/AutoContactVTee.h
+                                       katabatic/AutoSegment.h          katabatic/AutoSegments.h
                                        katabatic/AutoHorizontal.h
                                        katabatic/AutoVertical.h
-                                       katabatic/Grid.h            katabatic/GridCollections.h
+                                       katabatic/Grid.h                 katabatic/GridCollections.h
 				       katabatic/GridBox.h
-                                       katabatic/GCell.h           katabatic/GCells.h
+                                       katabatic/GCell.h                katabatic/GCells.h
                                        katabatic/GCellGrid.h
                                        katabatic/Session.h
                                        katabatic/KatabaticEngine.h
-                                       katabatic/GraphicKatabaticEngine.h
+                                      #katabatic/GraphicKatabaticEngine.h
                        )
-		   set ( mocIncludes   katabatic/GraphicKatabaticEngine.h )
+#	           set ( mocIncludes   katabatic/GraphicKatabaticEngine.h )
                    set ( cpps          Configuration.cpp
+                                       Observer.cpp
                                        ChipTools.cpp
                                        AutoContact.cpp
-                                       AutoContacts.cpp
+                                       AutoContactTerminal.cpp
+                                       AutoContactTurn.cpp
+                                       AutoContactHTee.cpp
+                                       AutoContactVTee.cpp
                                        AutoSegment.cpp
                                        AutoSegments.cpp
                                        AutoHorizontal.cpp
@@ -45,15 +56,16 @@ endif ( CHECK_DETERMINISM )
                                        NetConstraints.cpp
                                        NetOptimals.cpp
                                        KatabaticEngine.cpp
-                                       GraphicKatabaticEngine.cpp
+                                      #GraphicKatabaticEngine.cpp
                        )
                    set ( pyCpps        PyKatabatic.cpp )
-          qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+#         qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
-           add_library ( katabatic     ${cpps} ${mocCpps} )
- set_target_properties ( katabatic     PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( katabatic     ${KNIK_LIBRARIES}
+#          add_library ( katabatic    ${cpps} ${mocCpps} )
+           add_library ( katabatic    ${cpps} )
+ set_target_properties ( katabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
+ target_link_libraries ( katabatic    ${KNIK_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
@@ -73,7 +85,7 @@ endif ( CHECK_DETERMINISM )
                                        PREFIX        ""
                                        OUTPUT_NAME   "Katabatic"
                        )	       
- target_link_libraries ( pyKatabatic   katabatic 
+ target_link_libraries ( pyKatabatic   katabatic
                                        ${CORIOLIS_PYTHON_LIBRARIES}
                        )
 

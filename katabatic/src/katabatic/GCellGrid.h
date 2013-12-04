@@ -1,35 +1,27 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GCellGrid.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/GCellGrid.h"                       |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_GCELL_GRID__
-#define  __KATABATIC_GCELL_GRID__
+#ifndef  KATABATIC_GCELL_GRID_H
+#define  KATABATIC_GCELL_GRID_H
 
 namespace Hurricane {
   class Cell;
 }
 
+#include  "katabatic/Constants.h"
 #include  "katabatic/Grid.h"
 #include  "katabatic/GCell.h"
 
@@ -49,27 +41,27 @@ namespace Katabatic {
  
   class GCellGrid : public Grid<GCell> {
     public:
-      enum Flags { AverageHVDensity=1  // Average between all densities.
-                 , AverageHDensity =2  // Average between all H densities.
-                 , AverageVDensity =3  // Average between all V densities.
-                 , MaxHVDensity    =4  // Maximum between average H and average V.
-                 , MaxVDensity     =5  // Maximum of V densities.
-                 , MaxHDensity     =6  // Maximum of H densities.
-                 , MaxDensity      =7  // Maximum of H & V densities.
-                 };
+      enum DensityMode { AverageHVDensity=1  // Average between all densities.
+                       , AverageHDensity =2  // Average between all H densities.
+                       , AverageVDensity =3  // Average between all V densities.
+                       , MaxHVDensity    =4  // Maximum between average H and average V.
+                       , MaxVDensity     =5  // Maximum of V densities.
+                       , MaxHDensity     =6  // Maximum of H densities.
+                       , MaxDensity      =7  // Maximum of H & V densities.
+                       };
 
     public:
               Cell*            getCell             () const;
       inline  KatabaticEngine* getKatabatic        () const;
-      inline  int              getDensityMode      () const;
+      inline  unsigned int     getDensityMode      () const;
       inline  size_t           getHEdgeCapacity    () const;
       inline  size_t           getVEdgeCapacity    () const;
               Interval         getUSide            ( unsigned int ) const;
-              void             updateContacts      ( bool openSession=true );
               size_t           checkDensity        () const;
-              size_t           updateDensity       ();
               bool             checkEdgeSaturation ( float threshold ) const;
-      inline  void             setDensityMode      ( int );
+              size_t           updateDensity       ();
+              void             updateContacts      ( unsigned int flags=KbOpenSession );
+      inline  void             setDensityMode      ( unsigned int );
               void             _xmlWrite           ( ostream& );
       virtual Record*          _getRecord          () const;
       virtual string           _getString          () const;
@@ -99,10 +91,10 @@ namespace Katabatic {
 
 
   inline  KatabaticEngine* GCellGrid::getKatabatic     () const { return _katabatic; }
-  inline  int              GCellGrid::getDensityMode   () const { return _densityMode; }
+  inline  unsigned int     GCellGrid::getDensityMode   () const { return _densityMode; }
   inline  size_t           GCellGrid::getHEdgeCapacity () const { return _hEdgeCapacity; }
   inline  size_t           GCellGrid::getVEdgeCapacity () const { return _vEdgeCapacity; }
-  inline  void             GCellGrid::setDensityMode   ( int mode ) { _densityMode=mode; }
+  inline  void             GCellGrid::setDensityMode   ( unsigned int mode ) { _densityMode=mode; }
 
 
 } // End of Katabatic namespace.

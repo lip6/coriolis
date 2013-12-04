@@ -2,35 +2,26 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./KatabaticEngine.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/KatabaticEngine.h"                 |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_KATABATIC_ENGINE__
-#define  __KATABATIC_KATABATIC_ENGINE__
+#ifndef  KATABATIC_KATABATIC_ENGINE_H
+#define  KATABATIC_KATABATIC_ENGINE_H
 
 #include  <iostream>
 #include  <string>
 #include  <vector>
 #include  <set>
-
 #include  "hurricane/Timer.h"
 #include  "hurricane/DbU.h"
 #include  "hurricane/Torus.h"
@@ -50,15 +41,15 @@ namespace CRL {
   class RoutingLayerGauge;
 }
 
+#include  "katabatic/Constants.h"
 #include  "katabatic/Configuration.h"
 #include  "katabatic/GCell.h"
-#include  "katabatic/AutoContacts.h"
 #include  "katabatic/AutoSegments.h"
+#include  "katabatic/AutoContact.h"
 #include  "katabatic/ChipTools.h"
 
 
 namespace Katabatic {
-
 
   using std::ostream;
   using std::string;
@@ -80,30 +71,7 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Enumerations
-
-
-  enum LoadGRMethod { LoadGrByNet   = 1
-                    , LoadGrByGCell = 2
-                    };
-
-  enum LayerAssignMethod { LayerAssignByLength = 1
-                         , LayerAssignByTrunk  = 2
-                         , NoNetLayerAssign    = 3
-                         };
-
-  enum EngineState { StateCreation = 1
-                   , StateGlobalLoaded
-                   , StateActive
-                   , StateDriving
-                   , StatePreDestroying
-                   , StateGutted
-                   };
-
-
-// -------------------------------------------------------------------
 // Functors.
-
 
   struct NetCompareByName {
       inline bool operator() ( const Net* lhs, const Net* rhs ) const;
@@ -115,7 +83,6 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "KatabaticEngine".
- 
 
   class KatabaticEngine : public ToolEngine {
     public:
@@ -123,105 +90,101 @@ namespace Katabatic {
 
     public:
     // Constructor.
-      static  KatabaticEngine*     create                    ( Cell* );
-    // Accessors.                                            
-      static  KatabaticEngine*     get                       ( const Cell* );
-      static  const Name&          staticGetName             ();
-      inline  bool                 doDestroyBaseContact      () const;
-      inline  bool                 doDestroyBaseSegment      () const;
-      inline  bool                 doDestroyTool             () const;
-      virtual const Name&          getName                   () const;
-      inline  EngineState          getState                  () const;
-      inline  bool                 getDemoMode               ();
-      inline  bool                 getWarnGCellOverload      ();
-      inline  Configuration*       getKatabaticConfiguration ();
-      virtual Configuration*       getConfiguration          ();
-      inline  RoutingGauge*        getRoutingGauge           () const;
-      inline  RoutingLayerGauge*   getLayerGauge             ( size_t depth ) const;
-      inline  const Layer*         getRoutingLayer           ( size_t depth ) const ;
-      inline  Layer*               getContactLayer           ( size_t depth ) const ;
-      inline  GCellGrid*           getGCellGrid              () const;
-      inline  const NetSet&        getRoutingNets            () const;
-      inline  DbU::Unit            getGlobalThreshold        () const;
-      inline  float                getSaturateRatio          () const;
-      inline  size_t               getSaturateRp             () const;
-      inline  DbU::Unit            getExtensionCap           () const;
-              void                 xmlWriteGCellGrid         ( ostream& );
-              void                 xmlWriteGCellGrid         ( const string& );
-      inline  bool                 isGMetal                  ( const Layer* ) const;
-      inline  bool                 isChip                    () const;
-      inline  const ChipTools&     getChipTools              () const;
-    // Modifiers.                                            
-      inline  void                 setState                  ( EngineState state );
-      inline  void                 setDemoMode               ( bool );
-      inline  bool                 setDestroyBaseContact     ( bool );
-      inline  bool                 setDestroyBaseSegment     ( bool );
-      inline  void                 setWarnGCellOverload      ( bool );
-      inline  void                 setGlobalThreshold        ( DbU::Unit );
-      inline  void                 setSaturateRatio          ( float );
-      inline  void                 setSaturateRp             ( size_t );
-              void                 startMeasures             ();
-              void                 stopMeasures              ();
-              void                 printMeasures             ( const string& ) const;
-              void                 refresh                   ( bool openSession=true );
-              void                 makePowerRails            ();
-      virtual void                 createDetailedGrid        ();
-      virtual void                 loadGlobalRouting         ( unsigned int method, NetSet& );
-              void                 layerAssign               ( unsigned int method );
-              void                 slackenBorder             ( Box bb, Layer::Mask, unsigned int flags );
-              void                 slackenBlockIos           ( Instance* core );
-              void                 chipPrep                  ();
-    //        void                 computeNetConstraints     ();
-    //        void                 computeNetOptimals        ();
-      virtual void                 finalizeLayout            ();
-    // Internal Modifiers.                                   
-              void                 _computeNetConstraints    ( Net*, set<AutoSegment*>& faileds );
-              void                 _computeNetOptimals       ( Net* );
-              void                 _computeNetTerminals      ( Net* );
-              bool                 _check                    ( const char* message=NULL ) const;
-              void                 _check                    ( Net* ) const;
-              void                 _gutKatabatic             ();
-              void                 _link                     ( AutoContact* );
-              void                 _link                     ( AutoSegment* );
-              void                 _unlink                   ( AutoContact* );
-              void                 _unlink                   ( AutoSegment* );
-              AutoContact*         _lookup                   ( Contact* ) const;
-              AutoSegment*         _lookup                   ( Segment* ) const;
-              void                 _destroyAutoSegments      ();
-              void                 _destroyAutoContacts      ();
-              void                 _loadGrByNet              ();
-              void                 _loadNetGlobalRouting     ( Net* );
-              void                 _alignate                 ( Net* );
-              void                 _desaturate               ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
-              void                 _layerAssignByLength      ( unsigned long& total, unsigned long& global, set<Net*>& );
-              void                 _layerAssignByLength      ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );
-              void                 _layerAssignByTrunk       ( unsigned long& total, unsigned long& global, set<Net*>& );
-              void                 _layerAssignByTrunk       ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
-              bool                 _moveUpNetTrunk           ( AutoSegment*, set<Net*>& globalNets, GCell::SetId& invalidateds );
-              void                 _splitContactsOfNet       ( Net* );
-              void                 _collapseNet              ( const Name& , unsigned int depth=1 );
-              void                 _collapseNet              ( Net* , unsigned int depth=1 );
-              void                 _collapseNets             ( Nets , unsigned int depth=1 );
-              void                 _toOptimals               ( Net*, bool onlyNew=false );
-              void                 _saveNet                  ( Net* );
-              void                 _print                    () const;
-              void                 _print                    ( Net* ) const;
-      inline  AutoContactLut&      _getAutoContactLut        ();
-      inline  AutoSegmentLut&      _getAutoSegmentLut        ();
+      static  KatabaticEngine*      create                    ( Cell* );
+    // Accessors.                                             
+      static  KatabaticEngine*      get                       ( const Cell* );
+      static  const Name&           staticGetName             ();
+      inline  bool                  isGMetal                  ( const Layer* ) const;
+      inline  bool                  isGContact                ( const Layer* ) const;
+      inline  bool                  isChip                    () const;
+      inline  bool                  isInDemoMode              () const;
+      inline  bool                  doWarnOnGCellOverload     () const;
+      inline  bool                  doDestroyBaseContact      () const;
+      inline  bool                  doDestroyBaseSegment      () const;
+      inline  bool                  doDestroyTool             () const;
+      virtual const Name&           getName                   () const;
+      inline  EngineState           getState                  () const;
+      inline  unsigned int          getFlags                  ( unsigned int mask ) const;
+      inline  Configuration*        getKatabaticConfiguration ();
+      virtual Configuration*        getConfiguration          ();
+      inline  RoutingGauge*         getRoutingGauge           () const;
+      inline  RoutingLayerGauge*    getLayerGauge             ( size_t depth ) const;
+      inline  const Layer*          getRoutingLayer           ( size_t depth ) const ;
+      inline  Layer*                getContactLayer           ( size_t depth ) const ;
+      inline  GCellGrid*            getGCellGrid              () const;
+      inline  const NetSet&         getRoutingNets            () const;
+      inline  DbU::Unit             getGlobalThreshold        () const;
+      inline  float                 getSaturateRatio          () const;
+      inline  size_t                getSaturateRp             () const;
+      inline  DbU::Unit             getExtensionCap           () const;
+      inline  const ChipTools&      getChipTools              () const;
+              void                  xmlWriteGCellGrid         ( ostream& );
+              void                  xmlWriteGCellGrid         ( const string& );
+    // Modifiers.                                             
+      inline  void                  setState                  ( EngineState state );
+      inline  void                  setFlags                  ( unsigned int );
+      inline  void                  unsetFlags                ( unsigned int );
+      inline  void                  setGlobalThreshold        ( DbU::Unit );
+      inline  void                  setSaturateRatio          ( float );
+      inline  void                  setSaturateRp             ( size_t );
+              void                  startMeasures             ();
+              void                  stopMeasures              ();
+              void                  printMeasures             ( const string& ) const;
+              void                  refresh                   ( unsigned int flags=KbOpenSession );
+      virtual void                  createDetailedGrid        ();
+              void                  chipPrep                  ();
+              void                  makePowerRails            ();
+      virtual void                  loadGlobalRouting         ( unsigned int method, NetSet& );
+              void                  slackenBorder             ( Box bb, Layer::Mask, unsigned int flags );
+              void                  slackenBlockIos           ( Instance* core );
+              bool                  moveUpNetTrunk            ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
+              void                  moveULeft                 ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
+              void                  moveURight                ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
+              void                  balanceGlobalDensity      ();
+              void                  layerAssign               ( unsigned int method );
+              void                  updateNetTopology         ( Net* );
+              void                  computeNetConstraints     ( Net* );
+              void                  toOptimals                ( Net* );
+      virtual void                  finalizeLayout            ();
+    // Internal Modifiers.                                    
+              void                  _computeNetOptimals       ( Net* );
+              void                  _computeNetTerminals      ( Net* );
+              bool                  _check                    ( const char* message=NULL ) const;
+              void                  _check                    ( Net* ) const;
+              void                  _gutKatabatic             ();
+              void                  _link                     ( AutoContact* );
+              void                  _link                     ( AutoSegment* );
+              void                  _unlink                   ( AutoContact* );
+              void                  _unlink                   ( AutoSegment* );
+              AutoContact*          _lookup                   ( Contact* ) const;
+              AutoSegment*          _lookup                   ( Segment* ) const;
+              void                  _destroyAutoSegments      ();
+              void                  _destroyAutoContacts      ();
+              void                  _loadGrByNet              ();
+              void                  _loadNetGlobalRouting     ( Net* );
+              void                  _alignate                 ( Net* );
+              void                  _balanceGlobalDensity     ( unsigned int depth );
+              void                  _desaturate               ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
+              void                  _layerAssignByLength      ( unsigned long& total, unsigned long& global, set<Net*>& );
+              void                  _layerAssignByLength      ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );
+              void                  _layerAssignByTrunk       ( unsigned long& total, unsigned long& global, set<Net*>& );
+              void                  _layerAssignByTrunk       ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
+              void                  _saveNet                  ( Net* );
+              void                  _print                    () const;
+              void                  _print                    ( Net* ) const;
+      inline  const AutoContactLut& _getAutoContactLut        () const;
+      inline  const AutoSegmentLut& _getAutoSegmentLut        () const;
     // Inspector Management.                                 
-      virtual Record*              _getRecord                () const;
-      virtual string               _getString                () const;
-      virtual string               _getTypeName              () const;
+      virtual Record*               _getRecord                () const;
+      virtual string                _getString                () const;
+      virtual string                _getTypeName              () const;
 
     protected:
     // Attributes.
       static  Name            _toolName;
               Timer           _timer;
               EngineState     _state;
-              bool            _destroyBaseContact;
-              bool            _destroyBaseSegment;
-              bool            _demoMode;
-              bool            _warnGCellOverload;
+              unsigned int    _flags;
               Configuration*  _configuration;
               GCellGrid*      _gcellGrid;
               ChipTools       _chipTools;
@@ -242,20 +205,20 @@ namespace Katabatic {
 
 
 // Inline Functions.
-  inline bool                           KatabaticEngine::doDestroyBaseContact      () const { return _destroyBaseContact; }
-  inline bool                           KatabaticEngine::doDestroyBaseSegment      () const { return _destroyBaseSegment; }
-  inline bool                           KatabaticEngine::doDestroyTool             () const { return _state >= StateGutted; }
-  inline bool                           KatabaticEngine::setDestroyBaseContact     ( bool state ) { bool p=_destroyBaseContact; _destroyBaseContact = state; return p; }
-  inline bool                           KatabaticEngine::setDestroyBaseSegment     ( bool state ) { bool p=_destroyBaseSegment; _destroyBaseSegment = state; return p; }
+  inline bool                           KatabaticEngine::doDestroyBaseContact      () const { return _flags & EngineDestroyBaseContact; }
+  inline bool                           KatabaticEngine::doDestroyBaseSegment      () const { return _flags & EngineDestroyBaseSegment; }
+  inline bool                           KatabaticEngine::doDestroyTool             () const { return _state >= EngineGutted; }
+  inline bool                           KatabaticEngine::doWarnOnGCellOverload     () const { return _flags & EngineWarnOnGCellOverload; }
+  inline bool                           KatabaticEngine::isInDemoMode              () const { return _flags & EngineDemoMode; }
   inline Configuration*                 KatabaticEngine::getKatabaticConfiguration () { return _configuration; }
   inline bool                           KatabaticEngine::isGMetal                  ( const Layer* layer ) const { return _configuration->isGMetal(layer); }
-  inline void                           KatabaticEngine::setDemoMode               ( bool  mode ) { _demoMode = mode; }
-  inline void                           KatabaticEngine::setWarnGCellOverload      ( bool  mode ) { _warnGCellOverload = mode; }
+  inline bool                           KatabaticEngine::isGContact                ( const Layer* layer ) const { return _configuration->isGContact(layer); }
+  inline void                           KatabaticEngine::setFlags                  ( unsigned int flags ) { _flags |=  flags; }
+  inline void                           KatabaticEngine::unsetFlags                ( unsigned int flags ) { _flags &= ~flags; }
   inline void                           KatabaticEngine::setSaturateRatio          ( float ratio ) { _configuration->setSaturateRatio(ratio); }
   inline void                           KatabaticEngine::setSaturateRp             ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
   inline void                           KatabaticEngine::setGlobalThreshold        ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
-  inline bool                           KatabaticEngine::getDemoMode               () { return _demoMode; }
-  inline bool                           KatabaticEngine::getWarnGCellOverload      () { return _warnGCellOverload; }
+  inline unsigned int                   KatabaticEngine::getFlags                  ( unsigned int mask ) const { return _flags & mask; }
   inline EngineState                    KatabaticEngine::getState                  () const { return _state; }
   inline RoutingGauge*                  KatabaticEngine::getRoutingGauge           () const { return _configuration->getRoutingGauge(); }
   inline RoutingLayerGauge*             KatabaticEngine::getLayerGauge             ( size_t depth ) const { return _configuration->getLayerGauge(depth); }
@@ -267,8 +230,8 @@ namespace Katabatic {
   inline float                          KatabaticEngine::getSaturateRatio          () const { return _configuration->getSaturateRatio(); }
   inline size_t                         KatabaticEngine::getSaturateRp             () const { return _configuration->getSaturateRp(); }
   inline DbU::Unit                      KatabaticEngine::getExtensionCap           () const { return _configuration->getExtensionCap(); }
-  inline AutoContactLut&                KatabaticEngine::_getAutoContactLut        () { return _autoContactLut; }
-  inline AutoSegmentLut&                KatabaticEngine::_getAutoSegmentLut        () { return _autoSegmentLut; }
+  inline const AutoContactLut&          KatabaticEngine::_getAutoContactLut        () const { return _autoContactLut; }
+  inline const AutoSegmentLut&          KatabaticEngine::_getAutoSegmentLut        () const { return _autoSegmentLut; }
   inline void                           KatabaticEngine::setState                  ( EngineState state ) { _state = state; }
   inline bool                           KatabaticEngine::isChip                    () const { return _chipTools.isChip(); }
   inline const ChipTools&               KatabaticEngine::getChipTools              () const { return _chipTools; }
@@ -282,7 +245,6 @@ namespace Katabatic {
   extern const char* badMethod;
 
 
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
-
-#endif  // __KATABATIC_KATABATIC_ENGINE__
+#endif  // KATABATIC_KATABATIC_ENGINE_H

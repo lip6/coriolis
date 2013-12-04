@@ -2,41 +2,28 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AutoContact.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/AutoContact.h"                     |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_AUTOCONTACT__
-#define  __KATABATIC_AUTOCONTACT__
+#ifndef  KATABATIC_AUTOCONTACT_H
+#define  KATABATIC_AUTOCONTACT_H
 
 #include  <vector>
-
+#include  <map>
 #include  "hurricane/Contact.h"
 #include  "hurricane/ExtensionGo.h"
-
-namespace Hurricane {
-  class RoutingPad;
-}
-
+#include  "katabatic/Constants.h"
 #include  "katabatic/AutoSegment.h"
-#include  "katabatic/AutoContacts.h"
 #include  "katabatic/GCell.h"
 
 
@@ -47,96 +34,42 @@ namespace Katabatic {
   using std::endl;
   using Hurricane::tab;
   using Hurricane::inltrace;
+  using Hurricane::ltracein;
+  using Hurricane::ltraceout;
   using Hurricane::Name;
   using Hurricane::Net;
   using Hurricane::Component;
   using Hurricane::Components;
   using Hurricane::Layer;
   using Hurricane::Contact;
-  using Hurricane::RoutingPad;
   using Hurricane::ExtensionGo;
 
   class GCell;
   class KatabaticEngine;
+  class AutoHorizontal;
+  class AutoVertical;
+  class AutoContact;
 
 
-
-// -------------------------------------------------------------------
-// Class  :  "Katabatic::VirtualContacts".
-
-
-  class VirtualContacts {
-    public:
-    // Methods.
-      inline       VirtualContacts ();
-      inline Box   getBoundingBox  () const;
-             void  merge           ( const Point& , const Layer* );
-      inline void  clear           ();
-
-    public:
-    // Sub-Class.
-      class VC {
-        public:
-          inline              VC             ( const Point& , const Layer* );
-          inline const Point& getPoint       () const;
-          inline const Layer* getLayer       () const;
-                 void         merge          ( const Layer* layer );
-          friend bool         operator==     ( const VC& lhs, const VC& rhs );
-        protected:
-                 Point        _point;
-                 const Layer* _layer;
-      };
-
-    protected:
-    // Attributes.
-      Box         _boundingBox;
-      vector<VC>  _vcs;
-  };
-
-
-// Inline Functions.
-  inline              VirtualContacts::VirtualContacts () : _boundingBox(), _vcs() {}
-  inline Box          VirtualContacts::getBoundingBox  () const { return _boundingBox; }
-  inline void         VirtualContacts::clear           () { _vcs.clear(); _boundingBox.makeEmpty(); }
-  inline              VirtualContacts::VC::VC          ( const Point& p, const Layer* l ) : _point(p), _layer(l) {}
-  inline const Point& VirtualContacts::VC::getPoint    () const { return _point; }
-  inline const Layer* VirtualContacts::VC::getLayer    () const { return _layer; }
+  typedef  std::map<Contact*,AutoContact*>  AutoContactLut;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoContact".
- 
+
+  enum AutoContactFlag { CntFixed               = 0x00000001
+                       , CntTerminal            = 0x00000002
+                       , CntTurn                = 0x00000004
+                       , CntHTee                = 0x00000008
+                       , CntVTee                = 0x00000010
+                       , CntInvalidated         = 0x00000020
+                       , CntInvalidatedCache    = 0x00000040
+                       , CntInCreationStage     = 0x00000080
+                       , CntBadTopology         = 0x00000100
+                       , CntIgnoreAnchor        = 0x00000200
+                       };
 
   class AutoContact : public ExtensionGo {
-
-    public:
-      static AutoContact*      fromRp                     ( GCell*       gcell
-                                                          , RoutingPad*  routingPad
-                                                          , const Layer* layer
-                                                          , Point        point
-                                                          , DbU::Unit    width
-                                                          , DbU::Unit    height
-                                                          , bool         fixed=false
-                                                          );
-    public:
-    // Constructor & Destructor.
-      static  AutoContact*     create                     (       GCell*      gcell
-                                                          ,       Net*        net
-                                                          , const Layer*      layer
-                                                          ,       bool        hAlignate=false
-                                                          ,       bool        vAlignate=false
-                                                          );
-      static  AutoContact*     create                     (       GCell*      gcell
-                                                          ,       RoutingPad* rp
-                                                          , const Layer*      layer
-                                                          , const DbU::Unit   dx
-                                                          , const DbU::Unit   dy
-                                                          , const DbU::Unit   width
-                                                          , const DbU::Unit   height
-                                                          ,       bool        hAlignate=false
-                                                          ,       bool        vAlignate=false
-                                                          ,       bool        fixed=false
-                                                          );
     public:
     // Wrapped Contact Accessors.
       inline  Hook*            getBodyHook                ();
@@ -168,34 +101,34 @@ namespace Katabatic {
       inline  void             setDy                      ( DbU::Unit );
       inline  void             setOffset                  ( DbU::Unit dx, DbU::Unit dy );
       virtual void             translate                  ( const DbU::Unit& tx, const DbU::Unit& ty );
+    // Predicates.
+      inline  bool             isInCreationStage          () const;
+      inline  bool             isInvalidated              () const;
+      inline  bool             isInvalidatedCache         () const;
+      inline  bool             isTerminal                 () const;
+      inline  bool             isTurn                     () const;
+              bool             isTee                      ( unsigned int direction ) const;
+      inline  bool             isHTee                     () const;
+      inline  bool             isVTee                     () const;
+      inline  bool             isFixed                    () const;
+      inline  bool             hasBadTopology             () const;
+              bool             canDestroy                 ( unsigned int flags=0 ) const;
+              bool             canMoveUp                  ( const AutoSegment* moved ) const;
     // Accessors.                                        
-      static  size_t           getSegmentEndAllocateds    ();
+      inline  Contact*         base                       () const;
       static  size_t           getAllocateds              ();
       static  const Name&      getStaticName              ();
       virtual const Name&      getName                    () const;
       inline  size_t           getId                      () const;
-      inline  Contact*         base                       () const;
-      inline  Contact*         getContact                 () const;
       virtual Box              getBoundingBox             () const;
       inline  GCell*           getGCell                   () const;
+      virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
+      virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
               unsigned int     getMinDepth                () const;
               unsigned int     getMaxDepth                () const;
-              bool             canDestroy                 ( bool error=false ) const;
-      inline  bool             isInvalidated              () const;
-      inline  bool             isCorner                   () const;
-      inline  bool             isFixed                    () const;
-      inline  bool             isTerminal                 () const;
-              bool             isAlignate                 ( unsigned int direction ) const;
-      inline  bool             isHAlignate                () const;
-      inline  bool             isVAlignate                () const;
-              bool             isHExtended                ();
-              bool             isVExtended                ();
-              bool             canGoOutsideGCell          ( const AutoSegment* );
-              bool             canHDesalignate            ();
-              bool             canVDesalignate            ();
-              bool             canMoveUp                  ( AutoSegment* moved ) const;
               void             getLengths                 ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& );
-              Box              getNativeConstraintBox     () const;
+      virtual Box              getNativeConstraintBox     () const;
+              Interval         getNativeUConstraints      ( unsigned int direction ) const;
               Interval         getUConstraints            ( unsigned int direction ) const;
       inline  DbU::Unit        getCBXMin                  () const;
       inline  DbU::Unit        getCBXMax                  () const;
@@ -203,20 +136,19 @@ namespace Katabatic {
       inline  DbU::Unit        getCBYMax                  () const;
       inline  Box              getConstraintBox           () const;
               Box&             intersectConstraintBox     ( Box& box ) const;
+    // Collections.
+              AutoSegments     getAutoSegments            ();
     // Modifiers.              
-      inline  void             setInvalidated             ( bool state );
-      inline  void             setCorner                  ( bool state );
-      inline  void             setFixed                   ( bool state );
-      inline  void             setTerminal                ( bool state );
-      inline  void             setHAlignate               ( bool state );
-      inline  void             setVAlignate               ( bool state );
-              void             computeAlignate            ();
-              void             invalidate                 ();
-              void             revalidate                 ();
-              void             updateGeometry             ();
-      inline  void             setInvalidatedTopology     ( bool state );
-              void             revalidateTopology         ();
-              void             checkTopology              ();
+              void             invalidate                 ( unsigned int flags=0 );
+      virtual void             cacheDetach                ( AutoSegment* ) = 0;
+      virtual void             cacheAttach                ( AutoSegment* ) = 0;
+      virtual void             updateCache                () = 0;
+      virtual void             updateGeometry             () = 0;
+      virtual void             updateTopology             () = 0;
+              void             showTopologyError          ( const std::string& );
+      virtual void             checkTopology              ();
+      inline  void             setFlags                   ( unsigned int );
+      inline  void             unsetFlags                 ( unsigned int );
               void             setGCell                   ( GCell* );
       inline  void             setCBXMin                  ( DbU::Unit xMin );
       inline  void             setCBXMax                  ( DbU::Unit xMax );
@@ -225,52 +157,34 @@ namespace Katabatic {
               void             setConstraintBox           ( const Box& box );
               bool             restrictConstraintBox      ( DbU::Unit constraintMin
                                                           , DbU::Unit constraintMax
-                                                          , unsigned int direction
-                                                          , bool warnOnError=true );
+                                                          , unsigned int flags=KbWarnOnError );
               void             restoreNativeConstraintBox ();
-              void             breakUp                    ();
-              void             split                      ();
-              bool             hDesalignate               ();
-              bool             vDesalignate               ();
-              void             restoreHConnexity          ( DbU::Unit x, bool split=false );
-              void             restoreVConnexity          ( DbU::Unit y, bool split=false );
-    // Collections.            
-              AutoContacts     getCollapseds              ( unsigned int direction );
     // Inspector Management.
               Record*          _getRecord                 () const;
       virtual string           _getString                 () const;
-      virtual string           _getTypeName               () const { return "Katabatic::AutoContact"; };
+      virtual string           _getTypeName               () const;
                               
     private:                  
     // Internal: Attributes.
       static  size_t           _maxId;
       static  size_t           _allocateds;
       static  const Name       _goName;
+
     protected:                
               size_t           _id;
               Contact*         _contact;
               GCell*           _gcell;
-              bool             _invalid;
-              bool             _invalidTopology;
-              bool             _isTerminal;
-              bool             _fixed;
-              bool             _hAlignate;
-              bool             _vAlignate;
-              bool             _isCorner;
-              int              _dxMin        : 8;
-              int              _dxMax        : 8;
-              int              _dyMin        : 8;
-              int              _dyMax        : 8;
-              VirtualContacts  _subContacts;
+              unsigned int     _flags;
+              int              _dxMin:8;
+              int              _dxMax:8;
+              int              _dyMin:8;
+              int              _dyMax:8;
 
     protected:
     // Constructors & Destructors.
-                               AutoContact  ( GCell*   gcell
-                                            , Contact* contact
-                                            , bool     hAlignate=false
-                                            , bool     vAlignate=false
-                                            );
+                               AutoContact  ( GCell*, Contact* );
       virtual                 ~AutoContact  ();
+      static  void             _preCreate   ( GCell*, Net*, const Layer* );
       virtual void             _postCreate  ();
       virtual void             _preDestroy  ();
     private:                               
@@ -280,6 +194,8 @@ namespace Katabatic {
     protected:
       inline  int              _getDeltaMin ( DbU::Unit x, DbU::Unit xMin );
       inline  int              _getDeltaMax ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax );
+              void             _getTopology ( Component*& anchor, Horizontal**&, Vertical**&, size_t );
+      virtual void             _invalidate  ( unsigned int flags ) = 0;
   };
 
 
@@ -311,38 +227,105 @@ namespace Katabatic {
   inline void           AutoContact::setDx                 ( DbU::Unit dx ) { return _contact->setDx(dx); }
   inline void           AutoContact::setDy                 ( DbU::Unit dy ) { return _contact->setDy(dy); }
   inline void           AutoContact::setOffset             ( DbU::Unit dx, DbU::Unit dy ) { return _contact->setOffset(dx,dy); }
-// Inline Functions.                                       
+// AutoContact Inline Functions.                                       
+  inline bool          AutoContact::isInCreationStage      () const { return _flags&CntInCreationStage; }
+  inline bool          AutoContact::isInvalidated          () const { return _flags&CntInvalidated; }
+  inline bool          AutoContact::isInvalidatedCache     () const { return _flags&CntInvalidatedCache; }
+  inline bool          AutoContact::isTurn                 () const { return _flags&CntTurn; }
+  inline bool          AutoContact::isFixed                () const { return _flags&CntFixed; }
+  inline bool          AutoContact::isTerminal             () const { return _flags&CntTerminal; }
+  inline bool          AutoContact::isHTee                 () const { return _flags&CntHTee; }
+  inline bool          AutoContact::isVTee                 () const { return _flags&CntVTee; }
+  inline bool          AutoContact::hasBadTopology         () const { return _flags&CntBadTopology; }
   inline size_t        AutoContact::getId                  () const { return _id; }
   inline Contact*      AutoContact::base                   () const { return _contact; }
-  inline Contact*      AutoContact::getContact             () const { return _contact; }
   inline GCell*        AutoContact::getGCell               () const { return _gcell; }
-  inline bool          AutoContact::isInvalidated          () const { return _invalid; }
-  inline bool          AutoContact::isCorner               () const { return _isCorner; }
-  inline bool          AutoContact::isFixed                () const { return _fixed; }
-  inline bool          AutoContact::isTerminal             () const { return _isTerminal; }
-  inline bool          AutoContact::isHAlignate            () const { return _hAlignate; }
-  inline bool          AutoContact::isVAlignate            () const { return _vAlignate; }
-  inline DbU::Unit     AutoContact::getCBXMin              () const { return DbU::lambda(_dxMin) + _gcell->getX(); }
-  inline DbU::Unit     AutoContact::getCBXMax              () const { return DbU::lambda(_dxMax) + _gcell->getX(); }
-  inline DbU::Unit     AutoContact::getCBYMin              () const { return DbU::lambda(_dyMin) + _gcell->getY(); }
-  inline DbU::Unit     AutoContact::getCBYMax              () const { return DbU::lambda(_dyMax) + _gcell->getY(); }
   inline Box           AutoContact::getConstraintBox       () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }
-  inline void          AutoContact::setInvalidated         ( bool state ) { _invalid = state; }
-  inline void          AutoContact::setInvalidatedTopology ( bool state ) { _invalidTopology = state; }
-  inline void          AutoContact::setCorner              ( bool state ) { _isCorner = state; }
-  inline void          AutoContact::setFixed               ( bool state ) { _fixed = state; }
-  inline void          AutoContact::setTerminal            ( bool state ) { _isTerminal = state; }
-  inline void          AutoContact::setHAlignate           ( bool state ) { _hAlignate = state; }
-  inline void          AutoContact::setVAlignate           ( bool state ) { _vAlignate = state; }
   inline void          AutoContact::setCBXMin              ( DbU::Unit xMin ) { _dxMin = _getDeltaMin(xMin,_gcell->getX()); }
   inline void          AutoContact::setCBXMax              ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getX(),_gcell->getXMax()); }
   inline void          AutoContact::setCBYMin              ( DbU::Unit yMin ) { _dyMin = _getDeltaMin(yMin,_gcell->getY()); }
   inline void          AutoContact::setCBYMax              ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getY(),_gcell->getYMax()); }
-  inline int           AutoContact::_getDeltaMin           ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::getLambda(x-xMin); }
-  inline int           AutoContact::_getDeltaMax           ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax ) { if (x>xMax) x=xMax; return (int)DbU::getLambda(x-xMin); }
+  inline void          AutoContact::setFlags               ( unsigned int flags ) { _flags|= flags; }
+  inline void          AutoContact::unsetFlags             ( unsigned int flags ) { _flags&=~flags; }
+  inline int           AutoContact::_getDeltaMin           ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::toLambda(x-xMin); }
+  inline int           AutoContact::_getDeltaMax           ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax ) { if (x>xMax) x=xMax; return (int)DbU::toLambda(x-xMin); }
 
-//template<typename Type>inline void  Swap  ( Type& a, Type& b ) { Type swp = a; a = b; b = swp; }
-  template<typename Type>inline void  order ( Type& a, Type& b ) { if (a>b) swap(a,b); }
+  inline DbU::Unit AutoContact::getCBXMin () const
+  { return isFixed() ? _contact->getX() : DbU::fromLambda(_dxMin) + _gcell->getX(); }
+
+  inline DbU::Unit AutoContact::getCBXMax () const
+  { return isFixed() ? _contact->getX() : DbU::fromLambda(_dxMax) + _gcell->getX(); }
+
+  inline DbU::Unit AutoContact::getCBYMin () const
+  { return isFixed() ? _contact->getY() : DbU::fromLambda(_dyMin) + _gcell->getY(); }
+
+  inline DbU::Unit AutoContact::getCBYMax () const
+  { return isFixed() ? _contact->getY() : DbU::fromLambda(_dyMax) + _gcell->getY(); }
+
+// -------------------------------------------------------------------
+// Class  :  "Katabatic::LocatorHelper".
+
+  class LocatorHelper {
+    public:
+      inline                LocatorHelper ( AutoContact*, unsigned int flags=0 );
+      inline  bool          isValid       () const;
+      inline  AutoSegment*  getSegment    () const;
+      inline  void          progress      ();
+    private:
+      inline  unsigned int  _min          () const;
+      inline  unsigned int  _max          () const;
+    private:
+      unsigned int  _flags;
+      unsigned int  _index;
+      AutoContact*  _contact;
+  };
+
+
+  inline LocatorHelper::LocatorHelper ( AutoContact* contact, unsigned int flags )
+    : _flags(flags), _index(_min()), _contact(contact)
+  {
+    ltracein(80);
+    ltrace(80) << "CTOR LocatorHelper " << contact->_getString() << endl;
+    ltrace(80) << "+ _min():" << _min() << endl;
+    ltrace(80) << "+ _max():" << _max() << endl;
+    ltrace(80) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
+    if (not _contact->getSegment(_index)) progress();
+    ltraceout(80);
+  }
+
+  inline bool  LocatorHelper::isValid () const
+  { return _index < _max(); }
+
+  inline unsigned int  LocatorHelper::_min () const
+  { return (_flags & (KbHorizontal|KbWithPerpands)) ? 0 : 2; }
+
+  inline unsigned int  LocatorHelper::_max () const
+  { return ((_flags & KbHorizontal) and not (_flags & KbWithPerpands)) ? 2 : 4; }
+
+  inline AutoSegment* LocatorHelper::getSegment () const
+  {
+    ltrace(80) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
+    return (_index < _max()) ? _contact->getSegment(_index) : NULL;
+  }
+
+  inline void  LocatorHelper::progress ()
+  {
+    ltracein(80);
+    ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+    ++_index;
+    while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
+      ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+      ++_index;
+    }
+    ltraceout(80);
+  }
+
+
+// -------------------------------------------------------------------
+// Helper Functions.
+
+
+  template<typename Type>inline void  order ( Type& a, Type& b ) { if (a>b) std::swap(a,b); }
 
   inline DbU::Unit  setInBound ( DbU::Unit lower, DbU::Unit upper, DbU::Unit& value )
   {
@@ -351,12 +334,14 @@ namespace Katabatic {
 
     return value;
   }
+
+  inline size_t abssub ( size_t a, size_t b ) { return (a>b) ? a-b : b-a; }
   
 
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
 
 INSPECTOR_P_SUPPORT(Katabatic::AutoContact);
 
 
-#endif  // __KATABATIC_AUTOCONTACT__
+#endif  // KATABATIC_AUTOCONTACT_H

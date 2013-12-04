@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
-// |      K i t e  -  D e t a i l e d   R o u t e r                  |
+// |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./PyKatabatic.cpp"                             |
 // +-----------------------------------------------------------------+
@@ -35,7 +35,7 @@ namespace Katabatic {
 // x=================================================================x
 
 
-# else // End of PyHurricane Shared Library Code Part.
+# else // PyHurricane Shared Library Code Part.
 
 
 // x=================================================================x
@@ -68,16 +68,16 @@ extern "C" {
     PyObject* dictionnary = PyModule_GetDict(module);
     PyObject* constant;
 
-    LoadObjectConstant(dictionnary,LoadGrByNet        ,"LoadGrByNet"        );
-    LoadObjectConstant(dictionnary,LoadGrByGCell      ,"LoadGrByGCell"      );
-    LoadObjectConstant(dictionnary,LayerAssignByLength,"LayerAssignByLength");
-    LoadObjectConstant(dictionnary,LayerAssignByTrunk ,"LayerAssignByTrunk" );
-    LoadObjectConstant(dictionnary,NoNetLayerAssign   ,"NoNetLayerAssign"   );
+    LoadObjectConstant(dictionnary,EngineLoadGrByNet        ,"EngineLoadGrByNet"        );
+    LoadObjectConstant(dictionnary,EngineLoadGrByGCell      ,"EngineLoadGrByGCell"      );
+    LoadObjectConstant(dictionnary,EngineLayerAssignByLength,"EngineLayerAssignByLength");
+    LoadObjectConstant(dictionnary,EngineLayerAssignByTrunk ,"EngineLayerAssignByTrunk" );
+    LoadObjectConstant(dictionnary,EngineNoNetLayerAssign   ,"EngineNoNetLayerAssign"   );
   }
 
   
 } // extern "C".
 
-#endif // End of Python Module Code Part.
+#endif // Python Module Code Part.
 
 }  // Katabatic namespace.

@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./GCell.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -259,38 +259,6 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
-
-
-// -------------------------------------------------------------------
-// Class  :  "Katabatic::GCell::BlockedAxis".
-
-
-  GCell::BlockedAxis::BlockedAxis ( GCell* gcell )
-    : _gcell   (gcell)
-    , _axisSets(new set<DbU::Unit>* [_gcell->getDepth()])
-  {
-    for ( size_t i=0 ; i<_gcell->getDepth() ; ++i ) _axisSets[i] = NULL;
-  }
-
-
-  const set<DbU::Unit>& GCell::BlockedAxis::getAxisSet ( size_t depth ) const
-  {
-    static const set<DbU::Unit> _emptySet;
-
-    if ( (depth >= _gcell->getDepth()) or (not _axisSets[depth]) )
-      return _emptySet;
-
-    return *(_axisSets[depth]);
-  }
-
-
-  void  GCell::BlockedAxis::addAxis ( size_t depth, DbU::Unit axis )
-  {
-    if ( depth >= _gcell->getDepth() ) return;
-    if ( not _axisSets[depth] ) _axisSets[depth] = new set<DbU::Unit>();
-    
-    _axisSets[depth]->insert ( axis );
-  }
   
 
 
@@ -305,14 +273,14 @@ namespace Katabatic {
 
   bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
   {
-    float difference = roundfp ( lhs->getDensity(_depth) - rhs->getDensity(_depth) );
-    if ( difference != 0.0 ) return (difference > 0.0);
+  //float difference = roundfp ( lhs->getDensity(_depth) - rhs->getDensity(_depth) );
+    float difference = lhs->getDensity(_depth) - rhs->getDensity(_depth);
+    if (difference != 0.0) return (difference > 0.0);
 
   //int difference = floatCompare ( lhs->getDensity(_depth), rhs->getDensity(_depth) );
   //if ( abs(difference) > 1000 ) return difference > 0;
     
-    if ( lhs->getIndex() < rhs->getIndex() ) return true;
-    return false;
+    return lhs->getIndex() < rhs->getIndex();
   }
 
 
@@ -355,9 +323,8 @@ namespace Katabatic {
     , _globalsCount      (new float [_depth])
   //, _blockedAxis       (this)
   //, _saturateDensities (new float [_depth])
-    , _saturated         (false)
-    , _invalid           (true)
-    , _key               (0.0,_index)
+    , _flags             (GCellInvalidated)
+    , _key               (this,1)
   {
     for ( size_t i=0 ; i<_depth ; i++ ) {
       _blockages        [i] = 0;
@@ -371,6 +338,7 @@ namespace Katabatic {
         ++_pinDepth;
     }
 
+    updateKey(1);
     _allocateds++;
   }
 
@@ -388,13 +356,14 @@ namespace Katabatic {
 
   GCell* GCell::create ( GCellGrid* gcellGrid, unsigned int index, Box box )
   {
-    if ( !_topRightShrink )
+    if (_topRightShrink == 0)
       _topRightShrink = 1 /*DbU::lambda(0.0)*/;
 
-    GCell* gcell = new GCell ( gcellGrid, index, box.inflate(0
-                                                            ,0
-                                                            ,-_topRightShrink
-                                                            ,-_topRightShrink) );
+    DbU::Unit  trShrink = (  gcellGrid->isOnTopBorder  (index)
+                          or gcellGrid->isOnRightBorder(index)) ? 0 : _topRightShrink;
+
+    ltrace(90) << "Gcell::create()" << endl;
+    GCell* gcell = new GCell ( gcellGrid, index, box.inflate( 0 ,0 ,-trShrink ,-trShrink ) );
 
     gcell->_postCreate ();
 
@@ -428,7 +397,7 @@ namespace Katabatic {
 
   bool  GCell::isAboveDensity ( float threshold ) const
   {
-    if (_invalid) const_cast<GCell*>(this)->updateDensity();
+    if (not isValid()) const_cast<GCell*>(this)->updateDensity();
     float difference = roundfp ( getDensity() - threshold );
     
   //int difference = floatDifference(getDensity(),threshold,10000);
@@ -463,7 +432,7 @@ namespace Katabatic {
 
   void  GCell::getDensities ( float* densities ) const
   {
-    if (_invalid) const_cast<GCell*>(this)->updateDensity();
+    if (not isValid()) const_cast<GCell*>(this)->updateDensity();
 
     for ( unsigned int i=0 ; i<_depth ; i++ ) {
       densities[i] = _densities[i];
@@ -511,13 +480,13 @@ namespace Katabatic {
   { return getGCellGrid()->getGCellDown(this); }
 
 
-  Interval  GCell::getUSide ( unsigned int direction ) const
+  Interval  GCell::getSide ( unsigned int direction ) const
   {
     Interval side;
     switch ( direction ) {
       default:
-      case Constant::Horizontal: side = Interval(_box.getXMin(),_box.getXMax()); break;
-      case Constant::Vertical:   side = Interval(_box.getYMin(),_box.getYMax()); break;
+      case KbHorizontal: side = Interval(_box.getXMin(),_box.getXMax()); break;
+      case KbVertical:   side = Interval(_box.getYMin(),_box.getYMax()); break;
     }
     return side;
   }
@@ -525,25 +494,25 @@ namespace Katabatic {
 
   AutoSegments  GCell::getHStartSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,true,Constant::Horizontal);
+    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbBySource);
   }
 
 
   AutoSegments  GCell::getVStartSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,true,Constant::Vertical);
+    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbBySource);
   }
 
 
   AutoSegments  GCell::getHStopSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,false,Constant::Horizontal);
+    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbByTarget);
   }
 
 
   AutoSegments  GCell::getVStopSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,false,Constant::Vertical);
+    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbByTarget);
   }
 
 
@@ -571,19 +540,20 @@ namespace Katabatic {
   }
 
 
-  float  GCell::getDensity ( bool update ) const
+  float  GCell::getDensity ( unsigned int flags ) const
   {
-    if (_invalid and update) const_cast<GCell*>(this)->updateDensity();
+    if (not isValid() and not(flags & NoUpdate)) const_cast<GCell*>(this)->updateDensity();
 
     float density = 0.0;
 
-    if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageHVDensity ) {
+    if (getGCellGrid()->getDensityMode() == GCellGrid::AverageHVDensity) {
     // Average density of all layers mixeds together.
       for ( size_t i=0 ; i<_depth ; i++ )
         density += _densities[i];
 
-      density = roundfp ( density/((float)(_depth-_pinDepth)) );
-    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity ) {
+    //density = roundfp ( density/((float)(_depth-_pinDepth)) );
+      density = density/((float)(_depth-_pinDepth));
+    } else if (getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity) {
     // Maximum density between all horizontal vs. all vertical layers.
       size_t hplanes  = 0;
       size_t vplanes  = 0;
@@ -598,8 +568,9 @@ namespace Katabatic {
       if (hplanes) hdensity /= hplanes;
       if (vplanes) vdensity /= vplanes;
 
-      density = roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
-    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageHDensity ) {
+    //density = roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
+      density = (hdensity > vdensity) ? hdensity : vdensity;
+    } else if (getGCellGrid()->getDensityMode() == GCellGrid::AverageHDensity) {
     // Average density between all horizontal layers.
       size_t hplanes  = 0;
       float  hdensity = 0.0;
@@ -609,8 +580,9 @@ namespace Katabatic {
       }
       if (hplanes) hdensity /= hplanes;
 
-      density = roundfp ( hdensity );
-    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::AverageVDensity ) {
+    //density = roundfp ( hdensity );
+      density = hdensity;
+    } else if (getGCellGrid()->getDensityMode() == GCellGrid::AverageVDensity) {
     // Average density between all vertical layers.
       size_t vplanes  = 0;
       float  vdensity = 0.0;
@@ -621,30 +593,30 @@ namespace Katabatic {
 
       if (vplanes) vdensity /= vplanes;
 
-      density = roundfp ( vdensity );
+    //density = roundfp ( vdensity );
+      density = vdensity;
     } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxDensity ) {
     // Density of the most saturated layer.
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
         if ( _densities[i] > density ) density = _densities[i];
       }
       density = roundfp(density);
-    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxHDensity ) {
+    } else if (getGCellGrid()->getDensityMode() == GCellGrid::MaxHDensity) {
     // Density of the most saturated horizontal layer.
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
         if ( (i%2) and (_densities[i] > density) ) density = _densities[i];
       }
-      density = roundfp(density);
-    } else if ( getGCellGrid()->getDensityMode() == GCellGrid::MaxVDensity ) {
+    //density = roundfp(density);
+      density = density;
+    } else if (getGCellGrid()->getDensityMode() == GCellGrid::MaxVDensity) {
     // Density of the most saturated vertical layer.
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
         if ( (i%2 == 0) and (_densities[i] > density) ) density = _densities[i];
       }
-      density = roundfp(density);
+    //density = roundfp(density);
+      density = density;
     }
 
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: density " << setprecision(9) << density << endl;
-#endif
     return density;
   }
 
@@ -654,7 +626,7 @@ namespace Katabatic {
     if ( depth >= _depth ) return;
 
     _blockages[depth] += length;
-    _invalid = true;
+    _flags |= GCellInvalidated;
 
     // if ( _blockages[depth] >= 8.0 ) {
     //   cinfo << Warning("%s is under power ring.",getString(this).c_str()) << endl;
@@ -675,13 +647,6 @@ namespace Katabatic {
   }
 
 
-  // void  GCell::addBlockedAxis ( unsigned int depth, DbU::Unit axis )
-  // {
-  //   _invalid = true;
-  //   _blockedAxis.addAxis ( depth, axis );
-  // }
-
-
   void  GCell::removeContact ( AutoContact* ac )
   {
     size_t begin = 0;
@@ -696,8 +661,7 @@ namespace Katabatic {
     }
 
     if (found) {
-      ltrace(200) << "remove " << (void*)ac->base() << ":" << ac
-                  << " from " << this << endl;
+      ltrace(200) << "remove " << ac << " from " << this << endl;
       _contacts.pop_back();
     } else {
       cerr << Bug("%p:%s do not belong to %s."
@@ -726,16 +690,14 @@ namespace Katabatic {
     }
 
     if ( _hsegments.size() == end ) {
-      cerr << Bug("%p %s do not go through %s."
-                 ,(void*)segment
+      cerr << Bug("%s do not go through %s."
                  ,getString(segment).c_str()
                  ,_getString().c_str()) << endl;
       return;
     }
 
     if ( _hsegments.size() - end > 1 )
-      cerr << Bug("%p %s has multiple occurrences of %s."
-                 ,(void*)segment
+      cerr << Bug("%s has multiple occurrences of %s."
                  ,_getString().c_str()
                  ,getString(segment).c_str()) << endl;
 
@@ -755,16 +717,14 @@ namespace Katabatic {
     }
 
     if ( _vsegments.size() == end ) {
-      cerr << Bug("%p %s do not go through %s."
-                 ,(void*)segment
+      cerr << Bug("%s do not go through %s."
                  ,getString(segment).c_str()
                  ,_getString().c_str()) << endl;
       return;
     }
 
     if ( _vsegments.size() - end > 1 )
-      cerr << Bug("%p %s has multiple occurrences of %s."
-                 ,(void*)segment
+      cerr << Bug("%s has multiple occurrences of %s."
                  ,_getString().c_str()
                  ,getString(segment).c_str()) << endl;
 
@@ -782,9 +742,9 @@ namespace Katabatic {
 
   size_t  GCell::updateDensity ()
   {
-    if ( not _invalid ) return (_saturated) ? 1 : 0;
+    if (isValid()) return (isSaturated()) ? 1 : 0;
 
-    _saturated = false;
+    _flags &= ~GCellSaturated;
 
     for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
       if ( _vsegments[i] == NULL )
@@ -793,12 +753,6 @@ namespace Katabatic {
 
     sort ( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort ( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
-
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: Update density " << this << endl;
-    for ( size_t i=0 ; i<_hsegments.size() ; i++ ) cerr << "Order: " << _hsegments[i] << endl;
-    for ( size_t i=0 ; i<_vsegments.size() ; i++ ) cerr << "Order: " << _vsegments[i] << endl;
-#endif
 
     float          hcapacity    = getHCapacity ();
     float          vcapacity    = getVCapacity ();
@@ -809,7 +763,6 @@ namespace Katabatic {
     DbU::Unit      uLengths2    [ _depth ];
     float          localCounts  [ _depth ];
     UsedFragments  ufragments   [ _depth ];
-  //set<DbU::Unit> usedAxis     [ _depth ];
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
       _feedthroughs[i] = 0.0;
@@ -827,8 +780,6 @@ namespace Katabatic {
           ufragments[i].setCapacity ( (size_t)vcapacity );
           break;
       }
-      
-    //usedAxis     [i] = _blockedAxis.getAxisSet ( i );
     }
 
   // Compute wirelength associated to contacts (in DbU::Unit converted to float).
@@ -864,7 +815,6 @@ namespace Katabatic {
         }
         count++;
         _feedthroughs[depth] += 1.0;
-      //usedAxis[depth].insert ( _hsegments[i]->getAxis() );
       }
       if ( count ) {
         uLengths2[depth] += count * _box.getWidth();
@@ -889,7 +839,6 @@ namespace Katabatic {
         }
         count++;
         _feedthroughs[depth] += 1.0;
-      //usedAxis[depth].insert ( _vsegments[i]->getAxis() );
       }
       if ( count ) {
         uLengths2[depth] += count * _box.getHeight();
@@ -915,19 +864,12 @@ namespace Katabatic {
 
         ufragments[depth].merge ( (*isegment)->getAxis(), (*isegment)->getSpanU() );
         if ( (axis != (*isegment)->getAxis()) or (layer != (*isegment)->getLayer()) ) {
-        //_feedthroughs[depth] += 1;
-        //usedAxis[depth].insert ( axis );
-
           count = 0;
           axis  = (*isegment)->getAxis();
           layer = (*isegment)->getLayer();
           depth = Session::getRoutingGauge()->getLayerDepth(layer);
         }
         ++count;
-      }
-      if ( count ) {
-      //_feedthroughs[depth] += 1;
-      //usedAxis[depth].insert ( axis );
       }
     }
 
@@ -937,82 +879,51 @@ namespace Katabatic {
         case Constant::Horizontal:
           _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)_box.getWidth() );
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getWidth());
-        //_fragmentations[i]  = (hcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getWidth();
-
-          // if ( ((float)ufragments[i].getMaxFree().getSize() + (float)uLengths2[i])
-          //    > ( hcapacity * (float)_box.getWidth() ) ) {
-          //   cerr << "INCOHERENCY: " << this << "\n  "
-          //        << "on d:" << i
-          //        << " frag:" << DbU::getValueString(ufragments[i].getMaxFree().getSize())
-          //        << " ulength2:" << DbU::getValueString(uLengths2[i])
-          //        << " capacity:" << DbU::getValueString(hcapacity * _box.getWidth())
-          //        << " " << getVectorString(_fragmentations,_depth) << endl;
-            
-          // }
           break;
         case Constant::Vertical:
           _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getHeight());
-        //_fragmentations[i]  = (vcapacity - _feedthroughs[i]) / (localCounts[i] + 1.0);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getHeight();
-
-          // if ( ((float)ufragments[i].getMaxFree().getSize() + (float)uLengths2[i])
-          //    > ( vcapacity * (float)_box.getHeight() ) ) {
-          //   cerr << "INCOHERENCY: " << this << "\n  "
-          //        << " on d:" << i
-          //        << " frag:" << DbU::getValueString(ufragments[i].getMaxFree().getSize())
-          //        << " ulength2:" << DbU::getValueString(uLengths2[i])
-          //        << " capacity:" << DbU::getValueString(vcapacity * _box.getHeight())
-          //        << " " << getVectorString(_fragmentations,_depth) << endl;
-            
-          // }
           break;
       }
 
-      if ( _densities[i] >= 1.0 ) _saturated = true;
-    //if ( usedAxis[i].size() > _feedthroughs[i] ) _feedthroughs[i] = usedAxis[i].size();
+      if (_densities[i] >= 1.0)
+        _flags |= GCellSaturated;
     }
 
-    _cDensity = ( (float)_contacts.size() ) / ccapacity;
-    _invalid  = false;
+    _cDensity  = ( (float)_contacts.size() ) / ccapacity;
+    _flags    &= ~GCellInvalidated;
 
-    for ( size_t i=0 ; i<_depth ; i++ ) { _densities[i] = roundfp ( _densities[i] ); }
-    _cDensity = roundfp (_cDensity );
+  //for ( size_t i=0 ; i<_depth ; i++ ) { _densities[i] = roundfp ( _densities[i] ); }
+  //_cDensity = roundfp (_cDensity );
 
-    ltrace(190) << "updateDensity: " << this << endl;
+  //ltrace(190) << "updateDensity: " << this << endl;
 
-    checkDensity ();
+    checkDensity();
 
-#if defined(CHECK_DETERMINISM)
-    float gdensity = getDensity();
-    cerr << "Order: [" << getIndex() << "] "
-         << getVectorString(_densities,_depth)
-         << " " << setprecision(9) << gdensity << endl;
-#endif
-
-    return ( _saturated ) ? 1 : 0 ;
+    return isSaturated() ? 1 : 0 ;
   }
 
 
   size_t  GCell::checkDensity () const
   {
-    if ( _invalid ) const_cast<GCell*>(this)->updateDensity ();
+    if (not isValid()) const_cast<GCell*>(this)->updateDensity ();
 
-    if ( not Session::getDemoMode() and Session::getWarnGCellOverload() ) {
+    if ( not Session::isInDemoMode() and Session::doWarnGCellOverload() ) {
       for ( size_t i=0 ; i<_depth ; i++ ) {
         if ( _densities[i] > 1.0 ) {
-          cinfo << Warning("%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
-                          ,_getString().c_str()
-                          ,getColumn()
-                          ,getRow()
-                          ,getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
-                          ,_densities[1]  // M2
-                          ,_densities[2]  // M3
-                        //,_blockages[2]  // M4
-                          ,_densities[3]  // M5
-                          ,_densities[4]  // M6
-                          )
+          cparanoid << Warning( "%s @%dx%d overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+                              , _getString().c_str()
+                              , getColumn()
+                              , getRow()
+                              , getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
+                              , _densities[1]  // M2
+                              , _densities[2]  // M3
+                            //, _blockages[2]  // M4
+                              , _densities[3]  // M5
+                              , _densities[4]  // M6
+                              )
              << endl;
         }
       }
@@ -1037,41 +948,13 @@ namespace Katabatic {
       // }
     }
 
-    return ( _saturated ) ? 1 : 0 ;
-  }
-
-
-  void  GCell::rpDesaturate ( set<Net*>& globalNets )
-  {
-    set<RoutingPad*> rps;
-    getRoutingPads ( rps );
-
-    set<Net*> rpNets;
-    set<RoutingPad*>::iterator irp = rps.begin();
-    for ( ; irp != rps.end() ; ++irp ) {
-      if ( (*irp)->getLayer() != Session::getRoutingLayer(0) ) continue;
-      rpNets.insert ( (*irp)->getNet() );
-    }
-
-    if ( rpNets.size() < Session::getSaturateRp() ) return;
-
-    cinfo << Warning("%s has %zd terminals (h:%zd, v:%zd)"
-                    ,getString(this).c_str()
-                    ,rps.size()
-                    ,_hsegments.size()
-                    ,_vsegments.size()
-                    ) << endl;
-
-    AutoSegment* segment;
-    while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,true) ) {
-      ltrace(200) << "Moved up: " << segment << endl;
-    }
+    return isSaturated() ? 1 : 0 ;
   }
 
 
   bool  GCell::hasFreeTrack ( size_t depth, float reserve ) const
   {
-    if (_invalid) const_cast<GCell*>(this)->updateDensity();
+    if (not isValid()) const_cast<GCell*>(this)->updateDensity();
 
 #if DEPRECATED
     float  capacity;
@@ -1119,182 +1002,6 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::stepDesaturate ( unsigned int depth, set<Net*>& globalNets, AutoSegment*& moved, bool force )
-  {
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
-#endif
-
-    updateDensity ();
-  //float density = getDensity();
-    moved = NULL;
-
-  //float density   = _densities[depth];
-  //float densityUp = _densities[depth+2];
-
-    if ( not force and not isSaturated(depth) ) return false;
-
-    float capacity;
-    vector<AutoSegment*>::iterator isegment;
-    vector<AutoSegment*>::iterator iend;
-
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
-        iend     = _hsegments.end   ();
-        isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
-        break;
-      case Constant::Vertical:
-        iend     = _vsegments.end   ();
-        isegment = _vsegments.begin ();
-        capacity = getVCapacity ();
-        break;
-    }
-
-    for ( ; (isegment != iend) ; isegment++ ) {
-      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
-
-      if ( segmentDepth < depth ) continue;
-      if ( segmentDepth > depth ) break;
-
-      globalNets.insert ( (*isegment)->getNet() );
-#if defined(CHECK_DETERMINISM)
-      cerr << "Order: Move up " << (*isegment) << endl;
-#endif
-      // cerr << "Move up " << (*isegment) << endl;
-      // if ( not (*isegment)->canMoveUp(0.5/*,AutoSegment::Propagate*/) ) {
-      //   cinfo << Warning("Shear effect on: %s.",getString(*isegment).c_str()) << endl;
-      //   return false;
-      // }
-
-      (*isegment)->changeDepth ( depth+2, false, false );
-      moved = (*isegment);
-
-    //(*isegment)->shearUp ( this, moved, 0.5, AutoSegment::AllowTerminal );
-    //updateDensity ();
-
-    //cmess2 << "     - GCell [" << getIndex() << "] @" << getColumn() << "x" << getRow()
-    //       << ":" << setprecision(4) << density
-    //       << " [cap:" <<  _densities[depth]
-    //       << " M+2: " << (_densities[depth+2] + (1.0 / capacity))
-    //       << "  displaced:" << (*isegment) << "]."
-    //       << endl;
-
-      if ( moved ) {
-        // cerr << "Desaturating: " << _densities[depth] << " > " << Session::getSaturateRatio() << " "
-        //      << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << " "
-        //      << this << endl;
-        // cerr << "Moved up: " << moved << endl;
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-
-  bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, GCell::SetId& invalidateds )
-  {
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: stepDesaturate [" << getIndex() << "] depth:" << depth << endl;
-#endif
-    ltrace(200) << "stepNetDesaturate() - " << this << endl;
-
-    updateDensity ();
-
-  //if ( not force and not isSaturated(depth) ) return false;
-
-    float capacity;
-    vector<AutoSegment*>::iterator isegment;
-    vector<AutoSegment*>::iterator iend;
-
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
-        iend     = _hsegments.end   ();
-        isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
-        break;
-      case Constant::Vertical:
-        iend     = _vsegments.end   ();
-        isegment = _vsegments.begin ();
-        capacity = getVCapacity ();
-        break;
-    }
-
-    for ( ; (isegment != iend) ; isegment++ ) {
-      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
-
-      if ( segmentDepth < depth ) continue;
-      if ( segmentDepth > depth ) break;
-
-#if defined(CHECK_DETERMINISM)
-      cerr << "Order: Move up " << (*isegment) << endl;
-#endif
-
-    //cerr << "  Seed segment: " << *isegment << endl;
-      if ( getGCellGrid()->getKatabatic()->_moveUpNetTrunk(*isegment,globalNets,invalidateds) )
-        return true;
-    }
-
-    return false;
-  }
-
-
-  void  GCell::desaturate ( unsigned int depth, set<Net*>& globalNets )
-  {
-    updateDensity ();
-
-    float density   = _densities[depth];
-    float densityUp = _densities[depth+2];
-
-    if ( density < Session::getSaturateRatio() ) return;
-
-    float capacity;
-    vector<AutoSegment*>::iterator isegment;
-    vector<AutoSegment*>::iterator iend;
-
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
-        iend     = _hsegments.end   ();
-        isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
-        break;
-      default:
-      case Constant::Vertical:
-        iend     = _vsegments.end   ();
-        isegment = _vsegments.begin ();
-        capacity = getHCapacity ();
-        break;
-    }
-
-    unsigned int  overload    = (unsigned int)( ( density - Session::getSaturateRatio() ) * capacity );
-    unsigned int  displaced   = 0;
-
-    for ( ; (isegment != iend) && (displaced < overload) ; isegment++ ) {
-      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
-
-      if ( segmentDepth < depth ) continue;
-      if ( segmentDepth > depth ) break;
-
-      globalNets.insert ( (*isegment)->getNet() );
-      (*isegment)->changeDepth ( depth+2, false, false );
-
-      displaced++;
-    }
-
-    float desaturated = density - ((float)(displaced)) / capacity;
-
-    cmess2 << "     - GCell [" << getIndex() << "] @" << getColumn() << "x" << getRow()
-           << ":" << setprecision(4) << density
-           << " -> " << desaturated
-           << " [displaced:" << displaced
-           << " cap:" << capacity
-           << " M+2: " << densityUp
-           << " -> " << (densityUp + ((float)(displaced)) / capacity) << "]."
-           << endl;
-  }
-
-
   bool  GCell::checkEdgeSaturation ( float threshold ) const
   {
     unsigned int edgeUpUsage         = 0;
@@ -1318,7 +1025,6 @@ namespace Katabatic {
           edgeUpUsage++;
         }
       }
-    //edgeUpSaturation = (float)edgeUpUsage/((float)getVCapacity()*2.0);
       edgeUpSaturation = (float)edgeUpUsage/getGCellGrid()->getVEdgeCapacity();
     }
 
@@ -1338,7 +1044,6 @@ namespace Katabatic {
           edgeRightUsage++;
         }
       }
-    //edgeRightSaturation = (float)edgeRightUsage/((float)getHCapacity()*2.0);
       edgeRightSaturation = (float)edgeRightUsage/getGCellGrid()->getHEdgeCapacity();
     }
 
@@ -1346,7 +1051,7 @@ namespace Katabatic {
     if ( (edgeUpSaturation > threshold) or (edgeRightSaturation > threshold) ) {
       overload = true;
 
-      cinfo << Warning("In %s, (over %.2f) ", _getString().c_str(), threshold);
+      cparanoid << Warning("In %s, (over %.2f) ", _getString().c_str(), threshold);
 
       ostringstream message;
       message << setprecision(3);
@@ -1359,10 +1064,174 @@ namespace Katabatic {
                 << " " << edgeRightSaturation;
       }
 
-      cinfo << message.str() << "." << endl;
+      cparanoid << message.str() << "." << endl;
     }
 
     return overload;
+  }
+
+
+  void  GCell::rpDesaturate ( set<Net*>& globalNets )
+  {
+    set<RoutingPad*> rps;
+    getRoutingPads ( rps );
+
+    set<Net*> rpNets;
+    set<RoutingPad*>::iterator irp = rps.begin();
+    for ( ; irp != rps.end() ; ++irp ) {
+      if ( (*irp)->getLayer() != Session::getRoutingLayer(0) ) continue;
+      rpNets.insert ( (*irp)->getNet() );
+    }
+
+    if ( rpNets.size() < Session::getSaturateRp() ) return;
+
+    cerr << Warning("%s has %zd terminals (h:%zd, v:%zd)"
+                   ,getString(this).c_str()
+                   ,rps.size()
+                   ,_hsegments.size()
+                   ,_vsegments.size()
+                   ) << endl;
+
+    AutoSegment* segment;
+    while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,KbForceMove) ) {
+      ltrace(200) << "Moved up: " << segment << endl;
+    }
+  }
+
+
+  bool  GCell::stepDesaturate ( unsigned int  depth
+                              , set<Net*>&    globalNets
+                              , AutoSegment*& moved
+                              , unsigned int  flags
+                              )
+  {
+    ltrace(500) << "Deter| GCell::stepDesaturate() [" << getIndex() << "] depth:" << depth << endl;
+
+    updateDensity ();
+    moved = NULL;
+
+    if ( not (flags & KbForceMove) and not isSaturated(depth) ) return false;
+
+    float capacity;
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+
+    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
+      case Constant::Horizontal:
+        iend     = _hsegments.end   ();
+        isegment = _hsegments.begin ();
+        capacity = getHCapacity ();
+        break;
+      case Constant::Vertical:
+        iend     = _vsegments.end   ();
+        isegment = _vsegments.begin ();
+        capacity = getVCapacity ();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if ( segmentDepth < depth ) continue;
+      if ( segmentDepth > depth ) break;
+
+      globalNets.insert ( (*isegment)->getNet() );
+      ltrace(500) << "Deter| Move up " << (*isegment) << endl;
+
+#if THIS_IS_DISABLED
+      (*isegment)->changeDepth ( depth+2, false, false );
+#endif
+      moved = (*isegment);
+
+      if (moved) return true;
+    }
+
+    return false;
+  }
+
+
+  bool  GCell::stepBalance ( unsigned int depth, GCell::SetIndex& invalidateds )
+  {
+    ltrace(200) << "stepBalance() - " << this << endl;
+
+    updateDensity ();
+
+    float capacity;
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+    set<Net*>                      globalNets;
+
+    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
+      case Constant::Horizontal:
+        iend     = _hsegments.end   ();
+        isegment = _hsegments.begin ();
+        capacity = getHCapacity ();
+        break;
+      case Constant::Vertical:
+        iend     = _vsegments.end   ();
+        isegment = _vsegments.begin ();
+        capacity = getVCapacity ();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if ( segmentDepth < depth ) continue;
+      if ( segmentDepth > depth ) break;
+
+    // Hard-coded: reserve 3 tracks (1/20 * 3).
+      if ((*isegment)->canMoveULeft(0.05)) {
+        getGCellGrid()->getKatabatic()->moveULeft(*isegment,globalNets,invalidateds);
+        return true;
+      }
+      if ((*isegment)->canMoveURight(0.05)) {
+        getGCellGrid()->getKatabatic()->moveURight(*isegment,globalNets,invalidateds);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+
+  bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
+  {
+    ltrace(500) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
+    ltrace(500) << "Deter| " << this << endl;
+
+    updateDensity ();
+
+    float capacity;
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+
+    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
+      case Constant::Horizontal:
+        iend     = _hsegments.end   ();
+        isegment = _hsegments.begin ();
+        capacity = getHCapacity ();
+        break;
+      case Constant::Vertical:
+        iend     = _vsegments.end   ();
+        isegment = _vsegments.begin ();
+        capacity = getVCapacity ();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if ( segmentDepth < depth ) continue;
+      if ( segmentDepth > depth ) break;
+
+      ltrace(500) << "Deter| Move up " << (*isegment) << endl;
+
+      if ( getGCellGrid()->getKatabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds) )
+        return true;
+    }
+
+    return false;
   }
 
 
@@ -1374,8 +1243,8 @@ namespace Katabatic {
 
   void  GCell::translate ( const DbU::Unit&, const DbU::Unit& )
   {
-    cinfo << Warning("Calling GCell::translate() on %s is likely a bug."
-                    ,_getString().c_str()) << endl;
+    cerr << Warning("Calling GCell::translate() on %s is likely a bug."
+                   ,_getString().c_str()) << endl;
   }
 
 
@@ -1388,12 +1257,14 @@ namespace Katabatic {
       << DbU::getValueString(box.getXMin()) << ":" << DbU::getValueString(box.getYMin()) << " "
       << DbU::getValueString(box.getXMax()) << ":" << DbU::getValueString(box.getYMax()) << " "
       << setprecision(3)
-#if not defined(CHECK_DETERMINISM)
-      << getDensity(false) << " "
-#endif
+      << getDensity(NoUpdate) << " "
       << "d:" << _depth << " "
       << getVectorString(_densities   ,_depth) << " "
       << getVectorString(_feedthroughs,_depth)
+      << " "
+      << (isValid     () ? "-" : "i")
+      << (isSaturated () ? "s" : "-")
+      << (isUnderIoPad() ? "P" : "-")
       << ">";
 
     return s.str();
@@ -1410,8 +1281,7 @@ namespace Katabatic {
     record->add ( getSlot ( "_contacts"          , &_contacts           ) );
     record->add ( getSlot ( "_box"               , &_box                ) );
     record->add ( getSlot ( "_depth"             , &_depth              ) );
-    record->add ( getSlot ( "_saturated"         ,  _saturated          ) );
-    record->add ( getSlot ( "_invalid"           ,  _invalid            ) );
+    record->add ( getSlot ( "_flags"             , &_flags              ) );
 
     RoutingGauge* rg = getGCellGrid()->getKatabatic()->getRoutingGauge();
 
@@ -1459,79 +1329,58 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Kite::DyKeyQueue".
+// Class  :  "Kite::GCellDensitySet".
 
 
-  DyKeyQueue::DyKeyQueue ( unsigned int depth )
+  GCellDensitySet::GCellDensitySet ( unsigned int depth )
     : _depth   (depth)
-    , _map     ()
+    , _set     ()
     , _requests()
   { }
 
 
-  DyKeyQueue::DyKeyQueue ( unsigned int depth, const vector<GCell*>& gcells )
+  GCellDensitySet::GCellDensitySet ( unsigned int depth, const std::vector<GCell*>& gcells )
     : _depth   (depth)
-    , _map     ()
+    , _set     ()
     , _requests()
   {
     for ( size_t i=0 ; i<gcells.size() ; i++ )
-      _requests.insert ( gcells[i] );
+      _requests.insert( gcells[i] );
+    requeue();
   }
 
 
-  DyKeyQueue::~DyKeyQueue ()
+  GCellDensitySet::~GCellDensitySet ()
   {
-    if ( not _requests.empty() ) {
-      cbug << Warning("~DyKeyQueue(): Still contains %d requests (and %d elements)."
-                     ,_requests.size(),_map.size()) << endl;
+    if (not _requests.empty()) {
+      cerr << Warning("~GCellDensitySet(): Still contains %d requests (and %d elements)."
+                     ,_requests.size(),_set.size()) << endl;
     }
   }
 
 
-  const std::set<GCell*,GCell::CompareByKey>& DyKeyQueue::getGCells () const
-  { return _map; }
-
-
-  void  DyKeyQueue::invalidate ( GCell* gcell )
-  { push ( gcell ); }
-
-
-  void  DyKeyQueue::push ( GCell* gcell )
-  { _requests.insert ( gcell ); }
-
-
-  void  DyKeyQueue::revalidate ()
+  void  GCellDensitySet::requeue ()
   {
-    ltrace(190) << "DyKeyQueue::revalidate()" << endl;
+    ltrace(190) << "GCellDensitySet::requeue()" << endl;
 
     std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
-    GCell::SetId::iterator                         igcell    = _requests.begin();
+    GCell::SetIndex::iterator                      igcell    = _requests.begin();
 
   // Remove invalidateds GCell from the queue.
     for ( ; igcell != _requests.end() ; ++igcell ) {
-      iinserted = _map.find(*igcell);
-      if ( iinserted != _map.end() ) {
-        _map.erase ( iinserted );
+      iinserted = _set.find(*igcell);
+      if (iinserted != _set.end()) {
+        _set.erase( iinserted );
       }
     }
 
   // Re-insert invalidateds GCell in the queue *after* updating the key.
     for ( igcell = _requests.begin() ; igcell != _requests.end() ; ++igcell ) {
-      (*igcell)->updateKey (_depth);
-      _map.insert ( *igcell );
+      (*igcell)->updateKey( _depth );
+      _set.insert( *igcell );
     }
 
-    _requests.clear ();
-  }
-
-
-  GCell*  DyKeyQueue::pop ()
-  {
-    if ( _map.empty() ) return NULL;
-    std::set<GCell*,GCell::CompareByKey>::iterator igcell = _map.begin();
-    GCell* gcell = *igcell;
-    _map.erase ( igcell );
-    return gcell;
+    _requests.clear();
   }
 
 

@@ -2,31 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GCells.h"                               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/GCells.h"                          |
+// +-----------------------------------------------------------------+
 
 
-
-
-#ifndef  __KATABATIC_GCELLS__
-#define  __KATABATIC_GCELLS__
+#ifndef  KATABATIC_GCELLS_H
+#define  KATABATIC_GCELLS_H
 
 #include  "hurricane/Collections.h"
 
@@ -44,7 +34,6 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Forward declarations.
 
-
   class GCell;
 
 
@@ -57,7 +46,6 @@ namespace Katabatic {
   typedef GenericFilter<GCell*>     GCellFilter;
 
 
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
-
-#endif  // __KATABATIC_GCELLS__
+#endif  // KATABATIC_GCELLS_H

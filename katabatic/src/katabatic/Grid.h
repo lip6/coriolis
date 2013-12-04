@@ -2,29 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Grid.h"                                 |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/Grid.h"                            |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_GRID__
-#define  __KATABATIC_GRID__
+#ifndef  KATABATIC_GRID_H
+#define  KATABATIC_GRID_H
 
 #include  <string>
 #include  <vector>
@@ -51,45 +43,46 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::BaseGrid".
- 
 
   class BaseGrid {
 
     public:
       class  Axis;
     public:
-      inline  void          destroy        ();
+      inline  void          destroy         ();
     // Accessors.
-      inline  const Box&    getBoundingBox () const;
-      inline  unsigned int  getColumns     () const;
-      inline  unsigned int  getRows        () const;
-      inline  unsigned int  getRawSize     () const;
-      inline  unsigned int  getIndex       ( unsigned int c, unsigned int r ) const;
-      inline  unsigned int  getRow         ( unsigned int ) const;
-      inline  unsigned int  getColumn      ( unsigned int ) const;
-      inline  const Axis&   getXGrads      () const;
-      inline  const Axis&   getYGrads      () const;
-    // Inspector Managment.                
-      virtual Record*       _getRecord     () const;
-      virtual string        _getString     () const = 0;
+      inline  bool          isOnTopBorder   ( unsigned int ) const;
+      inline  bool          isOnRightBorder ( unsigned int ) const;
+      inline  const Box&    getBoundingBox  () const;
+      inline  unsigned int  getColumns      () const;
+      inline  unsigned int  getRows         () const;
+      inline  unsigned int  getRawSize      () const;
+      inline  unsigned int  getIndex        ( unsigned int c, unsigned int r ) const;
+      inline  unsigned int  getRow          ( unsigned int ) const;
+      inline  unsigned int  getColumn       ( unsigned int ) const;
+      inline  const Axis&   getXGrads       () const;
+      inline  const Axis&   getYGrads       () const;
+    // Inspector Managment.                 
+      virtual Record*       _getRecord      () const;
+      virtual string        _getString      () const = 0;
 
     public:
     // Sub-Class Grid::Axis. 
       class Axis {
         public:
         // Modifiers.
-          inline void          addGraduation       ( DbU::Unit );
-                 void          sort                ();
+          inline void             addGraduation       ( DbU::Unit );
+                 void             sort                ();
         // Accessors.
-          inline unsigned int  getSize             () const;
-                 unsigned int  getGraduationNumber ( DbU::Unit pos, bool& onGraduation ) const;
+          inline unsigned int     getSize             () const;
+                 unsigned int     getGraduationNumber ( DbU::Unit pos, bool& onGraduation ) const;
         // Operators.
-          inline DbU::Unit&    operator[]          ( unsigned int i );
+          inline const DbU::Unit& operator[]          ( unsigned int i ) const;
         // Inspector Management.
-                 Record*       _getRecord          () const;
-                 string        _getString          () const;
-          inline string        _getTypeName        () const;
-                 string        _print              () const;
+                 Record*          _getRecord          () const;
+                 string           _getString          () const;
+          inline string           _getTypeName        () const;
+                 string           _print              () const;
         protected:
         // Attributes.
           vector<DbU::Unit>  _graduations;
@@ -117,22 +110,25 @@ namespace Katabatic {
 
 
 // Inline Functions.
-  inline void          BaseGrid::Axis::addGraduation ( DbU::Unit graduation ) { _graduations.push_back(graduation); }
-  inline unsigned int  BaseGrid::Axis::getSize       () const { return _graduations.size(); }
-  inline DbU::Unit&    BaseGrid::Axis::operator[]    ( unsigned int i ) { return _graduations[i]; }
-  inline string        BaseGrid::Axis::_getTypeName  () const { return _TName("BaseGrid::Axis"); }
+  inline void             BaseGrid::Axis::addGraduation ( DbU::Unit graduation ) { _graduations.push_back(graduation); }
+  inline unsigned int     BaseGrid::Axis::getSize       () const { return _graduations.size(); }
+  inline const DbU::Unit& BaseGrid::Axis::operator[]    ( unsigned int i ) const { return _graduations[i]; }
+  inline string           BaseGrid::Axis::_getTypeName  () const { return _TName("BaseGrid::Axis"); }
 
-  inline void         BaseGrid::destroy        () { _preDestroy(); delete this; }
-  inline const Box&   BaseGrid::getBoundingBox () const { return _boundingBox; };
-  inline unsigned int BaseGrid::getColumns     () const { return _columns; };
-  inline unsigned int BaseGrid::getRows        () const { return _rows; };
-  inline unsigned int BaseGrid::getRawSize     () const { return getColumns() * getRows(); }
-  inline unsigned int BaseGrid::getIndex       ( unsigned int c, unsigned int r ) const { return c+(r*getColumns()); }
-  inline unsigned int BaseGrid::getRow         ( unsigned int i ) const { return i / getColumns(); }
-  inline unsigned int BaseGrid::getColumn      ( unsigned int i ) const { return i % getColumns(); }
+  inline void         BaseGrid::destroy         () { _preDestroy(); delete this; }
+  inline const Box&   BaseGrid::getBoundingBox  () const { return _boundingBox; };
+  inline unsigned int BaseGrid::getColumns      () const { return _columns; };
+  inline unsigned int BaseGrid::getRows         () const { return _rows; };
+  inline unsigned int BaseGrid::getRawSize      () const { return getColumns() * getRows(); }
+  inline unsigned int BaseGrid::getIndex        ( unsigned int c, unsigned int r ) const { return c+(r*getColumns()); }
+  inline unsigned int BaseGrid::getRow          ( unsigned int i ) const { return i / getColumns(); }
+  inline unsigned int BaseGrid::getColumn       ( unsigned int i ) const { return i % getColumns(); }
+  inline bool         BaseGrid::isOnTopBorder   ( unsigned int i ) const { return getRow   (i)+1 == getRows(); }
+  inline bool         BaseGrid::isOnRightBorder ( unsigned int i ) const { return getColumn(i)+1 == getColumns(); }
 
   inline const BaseGrid::Axis& BaseGrid::getXGrads () const { return _xGraduations; }
   inline const BaseGrid::Axis& BaseGrid::getYGrads () const { return _yGraduations; }
+
 
 
 // -------------------------------------------------------------------
@@ -341,4 +337,4 @@ namespace Katabatic {
 INSPECTOR_P_SUPPORT(Katabatic::BaseGrid::Axis);
 
 
-#endif  // __KATABATIC_GRID__
+#endif  // KATABATIC_GRID_H

@@ -2,31 +2,23 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GridBox.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/GridBox.h"                         |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_GRID_BOX__
-#define  __KATABATIC_GRID_BOX__
+#ifndef  KATABATIC_GRID_BOX_H
+#define  KATABATIC_GRID_BOX_H
 
-#ifndef  __KATABATIC_GRID__
+#ifndef  KATABATIC_GRID_H
 #error  "GridBox.h must be included only through Grid.h."
 #endif
 
@@ -234,7 +226,6 @@ namespace Katabatic {
   }
 
 
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
-
-#endif  // __KATABATIC_GRID_BOX__
+#endif  // KATABATIC_GRID_BOX_H

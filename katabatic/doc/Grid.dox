@@ -1,114 +1,150 @@
 
  // -*- C++ -*-
 
-
  namespace Katabatic {
 
  /*! \class        BaseGrid
-  *  \brief        Grid Common Skeleton (\b API).
   *
-  *  \attention    Provide a non-template common skeleton for the Grid class
-  *                template. Specifically manage the axis graduation, the geometric
-  *                search functions and the indexes computation (assuming a linear
-  *                storage of the grid elements).
-  *                
+  *  \brief        Abstract Base Class for Irregular Grid
   *
-  *  \section      BaseGridImplementation Grid Implementation Details
+  *                An abstract class for a 2-D matrix of objects. The grid is irregular
+  *                in the sense that the horizontal and vertical cut lines may not be
+  *                evenly spaced.
   *
-  *                The matrix of GCell is stored in a linear vector of GCell's pointer,
-  *                row by row. The Grid class provide convenient functions to
-  *                convert a linear index into row / column and the other way around.
+  *                The coordinates of cut lines in horizontal and vertical direction
+  *                are stored BaseGrid::Axis structure.
+  *
+  *                The BaseGrid contains all the non-template methods of the Grid,
+  *                that is that do not depend of the matrix element type.
+  *
+  *                The internal storage implemented in derived classes is expected to
+  *                store "row by row" (rows are put one after another in the vector).
   */
 
- /*! \function     unsigned int BaseGrid::getColumns () const;
-  *  \return       The number of columns of the GCell matrix.
+ //! \function     void  BaseGrid::destroy();
+ //!               The user-level destructor.
+
+ //! \function     BaseGrid::BaseGrid ( const Box& bb );
+ //!               Construct a new BaseGrid on area \c bb. Graduations, rows & columns are
+ //!               sets to zero.
+
+ //! \function     const Box& BaseGrid::getBoundingBox() const;
+ //! \sreturn      The grid bounding box.
+
+ //! \function     unsigned int  BaseGrid::getColumns() const;
+ //! \sreturn      The numbers of columns in the grid.
+
+ //! \function     unsigned int  BaseGrid::getRows() const;
+ //! \sreturn      The numbers of rows in the grid.
+
+ //! \function     unsigned int  BaseGrid::getRawSize() const;
+ //! \sreturn      The total number of elements in the grid (i.e. \f$ rows \times columns \f$)
+
+ //! \function     unsigned int  BaseGrid::getIndex( unsigned int c, unsigned int r ) const;
+ //!               An helper function that compute the linear index in the element
+ //!               vector from a \c (c,r) coordinate pair:
+ //!                    \f[  index = c + r \times columns \f]
+
+ //! \function     unsigned int  BaseGrid::getRow( unsigned int i ) const;
+ //!               An helper function that compute the row number from the linear index in
+ //!               the vector:
+ //!                    \f[  row = index / columns \f]
+
+ //! \function     unsigned int  BaseGrid::getColumn( unsigned int i ) const;
+ //!               An helper function that compute the column number from the linear index in
+ //!               the vector:
+ //!                    \f[  column = index \div columns \f]
+
+ //! \function     const Axis& BaseGrid::getXGrads() const;
+ //! \sreturn      The graduations on the X axis.
+
+ //! \function     const Axis& BaseGrid::getYGrads() const;
+ //! \sreturn      The graduations on the Y axis.
+
+
+
+ /*! \class        BaseGrid::Axis
+  *
+  *  \brief        Graduations on a BaseGrid Axis (H or V).
+  *
+  *                Describe the list of graduations on either X or Y axis of a
+  *                BaseGrid. Graduations correspond to cut lines and may not be
+  *                evenly spaced.
+  *
+  *                Graduations are internally stored into a vector that needs to be
+  *                sorted whenever new graduations are added (BaseGrid::Axis::sort()).
   */
 
- /*! \function     unsigned int BaseGrid::getRows () const;
-  *  \return       The number of rows of the GCell matrix.
-  */
+ //! \function     void   BaseGrid::Axis::addGraduation ( DbU::Unit pos );
+ //!               Adds a new graduation. After adding new graduations, do not forget
+ //!               to perform a sort.
 
- /*! \function     unsigned int BaseGrid::getRawSize () const;
-  *  \return       The size of the vector holding the GCell matrix.
-  */
+ //! \function     void   BaseGrid::Axis::sort ();
+ //!               Re-order the graduations after an addition.
 
- /*! \function     unsigned int BaseGrid::getIndex ( unsigned int column, unsigned int row ) const;
-  *  \param        column The GCell's column.
-  *  \param        row    The GCell's row.
-  *  \return       The linear index of the GCell at <code>(column,row)</code>.
-  */
+ //! \function     size_t   BaseGrid::Axis::getSize () const;
+ //! \sreturn      The number of graduations on the axis.
 
- /*! \function     unsigned int BaseGrid::getRow ( unsigned int index ) const;
-  *  \param        index A linear index.
-  *  \return       extract the row number from the linear index.
-  */
+ //! \function     DbU::Unit   BaseGrid::Axis::getGraduationNumber ( DbU::Unit pos, bool& onGraduation ) const;
+ //! \sreturn      The index of the graduation which is immediatly inferior or equal to \c pos.
+ //!               In case of strict equality, \c onGraduation is set to \true.
 
- /*! \function     unsigned int BaseGrid::getColumn ( unsigned int index ) const;
-  *  \param        index A linear index.
-  *  \return       extract the column number from the linear index.
-  */
+ //! \function     DbU::Unit   BaseGrid::Axis::operator[] ( unsigned int index ) const;
+ //! \sreturn      The graduation at \c index.
+
 
  /*! \class        Grid
-  *  \brief        Routing Grid (\b API).
   *
-  *  \attention    This class is can only be allocated through a Katabatic
-  *                \c ToolEngine thus Constructors/Destructors are protecteds.
+  *  \brief        Template Class for Regular Grid
   *
-  *  \section      GridImplementation Grid Implementation Details
-  *
-  *                The matrix of GCell is stored in a linear vector of GCell's pointer,
-  *                row by row. The Grid class provide convenient functions to
-  *                convert a linear index into row / column and the other way around.
+  *                Contains all general purpose methods depending on the GCell type
+  *                and geometrical computations. The internal storage is still not implemented
+  *                in this class.
   */
 
+ //! \function     Grid::Grid ( const Box& );
+ //!               Grid constructor.
 
- /*! \function     GCell* Grid::getGCell ( const Point p1, const Point p2 ) const;
-  *  \param        p1 First point.
-  *  \param        p2 Second point.
-  *  \return       Returns the GCell enclosing both points.
-  *
-  *                When we build a Net's routing wires, and the Net span more than one
-  *                GCell, we can always find the appropriate GCell through the
-  *                \c Hook, \c GCell and GCell association.
-  *
-  *                Problem arises for a Net fully contained inside one GCell, in this
-  *                case there is no SplitterContact telling us where we are. We have
-  *                to guess the GCell by only using RoutingPad's positions. And unfortunatly
-  *                \c RoutingPad can be on the edge of one GCell so we cannot tell if
-  *                it belongs to the left or the right. To solve this problem we guess
-  *                the GCell from two (different) \c RoutingPad positions.
-  *
-  *                Note that if there is only one \c RoutingPad, there is no problem at
-  *                all : we are dealing with a <em>one \c Plug</em> \c Net...
-  *
-  *                If points do not belongs to one GCell (too far appart), strange
-  *                results may occurs.
-  */
+ //! \function     CGellT* Grid::getGCell ( unsigned int index ) const;
+ //! \sreturn      The grid object at linear index \c index in the vector.
+ //!               If \c index is out of bounds, return \c NULL.
 
- /*! \function     GCell* Grid::getGCell ( unsigned int index ) const;
-  *  \param        index A linear index.
-  *  \return       The GCell at the given index.
-  *
-  *                Be aware that no check is performed if the index is out of bound,
-  *                this may leads to catastrophic results.
-  */
+ //! \function     CGellT* Grid::getGCell ( const Point p ) const;
+ //! \sreturn      The grid object which is under position \c p.
+ //!               
 
- /*! \function     vector<GCell*> Grid::getGCellVector ();
-  *  \return       The \vector holding all GCells.
-  */
+ //! \function     CGellT* Grid::getGCell ( const Point p1, const Point p2 ) const;
+ //! \sreturn      The grid object which is under position \c p1 and \c p2.
+ //!               Not very clear though.
 
- /*! \function     GCells Grid::getGCellsColumn ( unsigned int column, unsigned int rowStart, unsigned int rowStop );
-  *  \param        column   The column index.
-  *  \param        rowStart The start row index inside the column.
-  *  \param        rowStop  The stop row index inside the column.
-  *  \return       The \c Collection of a partial row.
-  */
+ //! \function     CGellT* Grid::getGCellLeft ( const GCellT* gcell ) const;
+ //! \sreturn      The left neighbor of \c gcell, \c NULL if it is the leftmost one.
+ //!               
 
- /*! \function     GCells Grid::getGCellsRow ( unsigned int row, unsigned int columnStart, unsigned int columnStop );
-  *  \param        row         The row index.
-  *  \param        columnStart The start column index inside the row.
-  *  \param        columnStop  The stop column index inside the row.
-  *  \return       The \c Collection of a partial column.
-  */
+ //! \function     CGellT* Grid::getGCellRight ( const GCellT* gcell ) const;
+ //! \sreturn      The rigth neighbor of \c gcell, \c NULL if it is the rightmost one.
+ //!               
+
+ //! \function     CGellT* Grid::getGCellUp ( const GCellT* gcell ) const;
+ //! \sreturn      The upper neighbor of \c gcell, \c NULL if it is the uppermost one.
+ //!               
+
+ //! \function     CGellT* Grid::getGCellDown ( const GCellT* gcell ) const;
+ //! \sreturn      The down neighbor of \c gcell, \c NULL if it is the downmost one.
+ //!               
+
+ //! \function     GenericCollection<CGellT*> Grid::getGCells ();
+ //! \sreturn      A GCellT Hurricane collection built upon the linear GCellT vector of
+ //!               the grid.
+
+ //! \function     GenericCollection<CGellT*> Grid::getGCellsColumn ( unsigned int column, unsigned int rowStart, unsigned int rowStop );
+ //! \sreturn      A GCellT Hurricane collection that contains the part of \c column starting
+ //!               from \c rowStart to \c rowStop inclusive.
+
+ //! \function     GenericCollection<CGellT*> Grid::getGCellsRow ( unsigned int row, unsigned int columnStart, unsigned int columnStop );
+ //! \sreturn      A GCellT Hurricane collection that contains the part of \c row starting
+ //!               from \c columnStart to \c columnStop inclusive.
 
  }
+
+

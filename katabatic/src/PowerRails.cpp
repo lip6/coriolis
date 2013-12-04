@@ -2,29 +2,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PowerRails.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :       "./PowerRails.cpp"                         |
+// +-----------------------------------------------------------------+
 
 
 #include  <algorithm>
-
 #include  "hurricane/Warning.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
@@ -41,14 +32,12 @@
 
 namespace {
 
-
   using namespace std;
   using namespace Hurricane;
 
 
 // -------------------------------------------------------------------
 // Class  :  "::RailSegment".
-
 
   class RailSegment {
     public:
@@ -88,31 +77,30 @@ namespace {
 
     switch ( direction ) {
       case Constant::Horizontal:
-        segment = Horizontal::create ( net
-                                     , layer
-                                     , _axis
-                                     , _width
-                                     , _span.getVMin()
-                                     , _span.getVMax() );
+        segment = Horizontal::create( net
+                                    , layer
+                                    , _axis
+                                    , _width
+                                    , _span.getVMin()
+                                    , _span.getVMax() );
         break;
       case Constant::Vertical:
-        segment = Vertical::create ( net
-                                   , layer
-                                   , _axis
-                                   , _width
-                                   , _span.getVMin()
-                                   , _span.getVMax() );
+        segment = Vertical::create( net
+                                  , layer
+                                  , _axis
+                                  , _width
+                                  , _span.getVMin()
+                                  , _span.getVMax() );
         break;
     }
 
-    if ( segment )
-      NetExternalComponents::setExternal ( segment );
+    if (segment)
+      NetExternalComponents::setExternal( segment );
   }
 
 
 // -------------------------------------------------------------------
 // Class  :  "::PowerRail".
-
 
   class PowerRail {
     public:
@@ -147,9 +135,9 @@ namespace {
 
   PowerRail::~PowerRail ()
   {
-    while ( !_segments.empty() ) {
-      delete _segments.front ();
-      _segments.pop_front ();
+    while (not _segments.empty()) {
+      delete _segments.front();
+      _segments.pop_front();
     }
   }
 
@@ -165,34 +153,32 @@ namespace {
 
     list<RailSegment*>::iterator isegment = _segments.begin();
     for ( ; (isegment != _segments.end()) && !inserted ; isegment++ ) {
-      if ( (*isegment)->getWidth() != width ) continue;
+      if ((*isegment)->getWidth() != width) continue;
 
-      if ( (*isegment)->getMin() > max ) {
+      if ((*isegment)->getMin() > max) {
         inserted = new RailSegment ( _axis, width );
-        inserted->merge ( min );
-        inserted->merge ( max );
-        _segments.insert ( isegment, inserted );
+        inserted->merge( min );
+        inserted->merge( max );
+        _segments.insert( isegment, inserted );
 
         break;
       }
-      if ( (*isegment)->getMax() < min ) {
-        continue;
-      }
+      if ((*isegment)->getMax() < min) continue;
 
       inserted = *isegment;
-      (*isegment)->merge ( min );
-      (*isegment)->merge ( max );
+      (*isegment)->merge( min );
+      (*isegment)->merge( max );
 
       list<RailSegment*>::iterator imerge = isegment;
-      if ( imerge != _segments.end() ) imerge++;
+      if (imerge != _segments.end()) imerge++;
 
-      while ( imerge != _segments.end() ) {
-        if ( (*imerge)->getMin() > (*isegment)->getMax() ) break;
+      while (imerge != _segments.end()) {
+        if ((*imerge)->getMin() > (*isegment)->getMax()) break;
 
-        (*isegment)->merge ( (*imerge)->getMax() );
+        (*isegment)->merge( (*imerge)->getMax() );
        
         delete *imerge;
-        _segments.erase ( imerge );
+        _segments.erase( imerge );
         imerge = isegment;
         imerge++;
       }
@@ -200,11 +186,11 @@ namespace {
       break;
     }
 
-    if ( !inserted ) {
+    if (not inserted) {
       inserted = new RailSegment ( _axis, width );
-      inserted->merge ( min );
-      inserted->merge ( max );
-      _segments.insert ( _segments.end(), inserted );
+      inserted->merge( min );
+      inserted->merge( max );
+      _segments.insert( _segments.end(), inserted );
     }
   }
 
@@ -217,7 +203,7 @@ namespace {
 
     list<RailSegment*>::const_iterator isegment = _segments.begin();
     for ( ; isegment != _segments.end() ; isegment++ )
-      (*isegment)->doLayout ( cell, railNet, _layer, _direction );
+      (*isegment)->doLayout( cell, railNet, _layer, _direction );
   }
 
 
@@ -253,29 +239,29 @@ namespace {
 
   PowerPlane::~PowerPlane ()
   {
-    while ( !_hrails.empty() ) {
+    while (not _hrails.empty()) {
       delete _hrails.back();
-      _hrails.pop_back ();
+      _hrails.pop_back();
     }
-    while ( !_vrails.empty() ) {
+    while (not _vrails.empty()) {
       delete _vrails.back();
-      _vrails.pop_back ();
+      _vrails.pop_back();
     }
   }
 
 
   size_t  PowerPlane::find ( DbU::Unit axis, Constant::Direction direction ) const
   {
-    PowerRail  bound(Net::Type::GROUND,NULL,Constant::Horizontal,axis);
+    PowerRail  bound (Net::Type::GROUND,NULL,Constant::Horizontal,axis);
 
-    if ( direction == Constant::Horizontal ) {
+    if (direction == Constant::Horizontal) {
       vector<PowerRail*>::const_iterator it
-        = lower_bound(_hrails.begin(),_hrails.end(),&bound,PowerRail::CompareByAxis());
+        = lower_bound( _hrails.begin(), _hrails.end(), &bound,PowerRail::CompareByAxis() );
       return it - _hrails.begin();
     }
 
     vector<PowerRail*>::const_iterator it
-      = lower_bound(_vrails.begin(),_vrails.end(),&bound,PowerRail::CompareByAxis());
+      = lower_bound( _vrails.begin(), _vrails.end(), &bound,PowerRail::CompareByAxis() );
     return it - _vrails.begin();
   }
 
@@ -297,18 +283,18 @@ namespace {
         rails = &_hrails; break;
     }
 
-    size_t i = find ( axis, direction );
-    if ( ( i == rails->size() ) || ( (*rails)[i]->getAxis() != axis ) ) {
+    size_t i = find( axis, direction );
+    if ( (i == rails->size()) or ((*rails)[i]->getAxis() != axis) ) {
       PowerRail* rail = new PowerRail (type,_layer,direction,axis);
-      rail->merge ( width, rmin, rmax );
-      rails->push_back ( rail );
-      sort ( rails->begin(), rails->end(), PowerRail::CompareByAxis() );
+      rail->merge( width, rmin, rmax );
+      rails->push_back( rail );
+      sort( rails->begin(), rails->end(), PowerRail::CompareByAxis() );
     } else {
-      if ( (*rails)[i]->getType() != type ) {
+      if ((*rails)[i]->getType() != type) {
         cerr << Error("Short between power rails at %d.",DbU::getValueString(axis).c_str()) << endl;
         return;
       }
-      (*rails)[i]->merge ( width, rmin, rmax );
+      (*rails)[i]->merge( width, rmin, rmax );
     }
   }
 
@@ -316,16 +302,15 @@ namespace {
   void  PowerPlane::doLayout ( Cell* cell, Net* powerNet, Net* groundNet ) const
   {
     for ( size_t i=0 ; i<_hrails.size() ; i++ )
-      _hrails[i]->doLayout ( cell, powerNet, groundNet );
+      _hrails[i]->doLayout( cell, powerNet, groundNet );
 
     for ( size_t i=0 ; i<_vrails.size() ; i++ )
-      _vrails[i]->doLayout ( cell, powerNet, groundNet );
+      _vrails[i]->doLayout( cell, powerNet, groundNet );
   }
 
 
 // -------------------------------------------------------------------
 // Class  :  "::PowerRail".
-
 
   class PowerGrid {
     public:
@@ -350,8 +335,8 @@ namespace {
     , _planes   ()
   {
     forEach ( Net*, inet, _cell->getNets() ) {
-      if ( (inet->getType() == Net::Type::POWER) ) {
-        if ( !inet->isExternal() ) {
+      if (inet->getType() == Net::Type::POWER) {
+        if (not inet->isExternal()) {
           cerr << Warning("Ignoring non-external power net %s."
                          ,getString(*inet).c_str()) << endl;
           continue;
@@ -360,12 +345,12 @@ namespace {
         break;
       }
     }
-    if ( !_powerNet )
+    if (not _powerNet)
       cerr << Error("Missing POWER net in Cell %s.",getString(_cell->getName()).c_str()) << endl;
 
     forEach ( Net*, inet, _cell->getNets() ) {
-      if ( inet->getType() == Net::Type::GROUND ) {
-        if ( !inet->isExternal() ) {
+      if (inet->getType() == Net::Type::GROUND) {
+        if (not inet->isExternal()) {
           cerr << Warning("Ignoring non-external ground net %s."
                          ,getString(*inet).c_str()) << endl;
           continue;
@@ -374,7 +359,7 @@ namespace {
         break;
       }
     }
-    if ( !_groundNet )
+    if (not _groundNet)
       cerr << Error("Missing GROUND net in Cell %s.",getString(_cell->getName()).c_str()) << endl;
   }
 
@@ -390,11 +375,11 @@ namespace {
   PowerPlane* PowerGrid::getPlane ( const Layer* layer )
   {
     map<const Layer*,PowerPlane*>::iterator iplane = _planes.find(layer);
-    if ( iplane != _planes.end() )
+    if (iplane != _planes.end())
       return iplane->second;
 
     PowerPlane* plane = new PowerPlane ( layer );
-    _planes.insert ( make_pair(layer,plane) );
+    _planes.insert( make_pair(layer,plane) );
 
     return plane;
   }
@@ -406,37 +391,37 @@ namespace {
 
     Point source = horizontal->getSourcePosition();
     Point target = horizontal->getTargetPosition();
-    transformation.applyOn ( source );
-    transformation.applyOn ( target );
+    transformation.applyOn( source );
+    transformation.applyOn( target );
 
-    if ( source.getX() > target.getX() ) swap ( source, target );
-    plane->merge ( horizontal->getNet()->getType()
-                 , Constant::Horizontal
-                 , source.getY()
-                 , horizontal->getWidth()
-                 , source.getX()
-                 , target.getX()
-                 );
+    if (source.getX() > target.getX()) swap( source, target );
+    plane->merge( horizontal->getNet()->getType()
+                , Constant::Horizontal
+                , source.getY()
+                , horizontal->getWidth()
+                , source.getX()
+                , target.getX()
+                );
   }
 
 
   void  PowerGrid::merge ( const Transformation& transformation, Vertical* vertical )
   {
-    PowerPlane* plane = getPlane ( vertical->getLayer() );
+    PowerPlane* plane = getPlane( vertical->getLayer() );
 
     Point source = vertical->getSourcePosition();
     Point target = vertical->getTargetPosition();
-    transformation.applyOn ( source );
-    transformation.applyOn ( target );
+    transformation.applyOn( source );
+    transformation.applyOn( target );
 
-    if ( source.getY() > target.getY() ) swap ( source, target );
-    plane->merge ( vertical->getNet()->getType()
-                 , Constant::Vertical
-                 , source.getX()
-                 , vertical->getWidth()
-                 , source.getY()
-                 , target.getY()
-                 );
+    if (source.getY() > target.getY()) swap( source, target );
+    plane->merge( vertical->getNet()->getType()
+                , Constant::Vertical
+                , source.getX()
+                , vertical->getWidth()
+                , source.getY()
+                , target.getY()
+                );
   }
 
 
@@ -444,7 +429,7 @@ namespace {
   {
     map<const Layer*,PowerPlane*>::const_iterator iplane = _planes.begin ();
     for ( ; iplane != _planes.end() ; iplane++ )
-      iplane->second->doLayout ( _cell, _powerNet, _groundNet );
+      iplane->second->doLayout( _cell, _powerNet, _groundNet );
   }
 
 
@@ -463,34 +448,32 @@ namespace {
       }
       
       forEach ( Component*, icomponent, inet->getComponents() ) {
-        if ( !NetExternalComponents::isExternal(*icomponent) ) continue;
+        if (not NetExternalComponents::isExternal(*icomponent)) continue;
 
         Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
-        if ( horizontal )
-          powerGrid.merge ( pathTransf, horizontal );
+        if (horizontal)
+          powerGrid.merge( pathTransf, horizontal );
         else {
           Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
-          if ( vertical )
-            powerGrid.merge ( pathTransf, vertical );
+          if (vertical)
+            powerGrid.merge( pathTransf, vertical );
         }
       }
     }
 
     forEach ( Instance*, iinstance, instanceCell->getInstances() ) {
-
       Transformation  instanceTransf = iinstance->getTransformation();
-      pathTransf.applyOn ( instanceTransf );
+      pathTransf.applyOn( instanceTransf );
 
-      copyUpPowerRails ( instanceTransf, iinstance->getMasterCell(), powerGrid );
+      copyUpPowerRails( instanceTransf, iinstance->getMasterCell(), powerGrid );
     }
   }
 
 
-} // End of local namespace.
+}  // Anonymous namespace.
 
 
 namespace Katabatic {
-
 
   using Hurricane::Point;
   using Hurricane::Horizontal;
@@ -501,13 +484,13 @@ namespace Katabatic {
 
   void  KatabaticEngine::makePowerRails ()
   {
-    PowerGrid  powerGrid ( getCell() );
+    PowerGrid  powerGrid (getCell());
 
     Transformation topTransformation; // ID.
-    copyUpPowerRails ( topTransformation, getCell(), powerGrid );
+    copyUpPowerRails( topTransformation, getCell(), powerGrid );
 
-    powerGrid.doLayout ();
+    powerGrid.doLayout();
   }
 
 
-}  // End of Katabatic namespace.
+}  // Katabatic namespace.

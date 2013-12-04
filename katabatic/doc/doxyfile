@@ -1,3 +1,4 @@
+# -*- explicit-buffer-name: "doxyfile<katabatic/doc>" -*-
 # Doxyfile 1.3.4
 
 # --------------------------------------------------------------------
@@ -7,7 +8,8 @@ PROJECT_NAME           = "Katabatic - Routing Toolbox"
 PROJECT_NUMBER         = 1.0
 OUTPUT_DIRECTORY       = .
 OUTPUT_LANGUAGE        = English
-#USE_WINDOWS_ENCODING   = NO
+#USE_WINDOWS_ENCODING  = NO
+#LAYOUT_FILE           = DoxygenLayout.xml
 BRIEF_MEMBER_DESC      = YES
 REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = NO
@@ -24,6 +26,7 @@ TAB_SIZE               = 2
 ALIASES                = "function=\fn"\
                          "important=\par Important:\n"\
                          "remark=\par Remark:\n"\
+                         "sreturn=\b Returns:"\
                          "True=\b True"\
                          "true=\b true"\
                          "False=\b False"\
@@ -57,9 +60,10 @@ ALIASES                = "function=\fn"\
                          "SplitterContact=\c SplitterContact"\
                          "SplitterContacts=\c SplitterContacts"\
                          "Hurricane=<a href='../hurricane/Index.html'>Hurricane</a>"\
-                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"
+                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"\
+                         "red{1}=<span class=\"red\">\1</span>"
 OPTIMIZE_OUTPUT_FOR_C  = NO
-OPTIMIZE_OUTPUT_JAVA   = YES
+OPTIMIZE_OUTPUT_JAVA   = NO 
 SUBGROUPING            = YES
 
 # --------------------------------------------------------------------
@@ -69,13 +73,14 @@ EXTRACT_ALL            = NO
 EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_ANON_NSPACES   = YES
 HIDE_UNDOC_MEMBERS     = YES
 HIDE_UNDOC_CLASSES     = YES
 HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
 CASE_SENSE_NAMES       = YES
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = NO
@@ -101,19 +106,26 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 
 INPUT                  = \
-    ../src/katabatic/KatabaticEngine.h      ../src/KatabaticEngine.cpp      KatabaticEngine.dox      \
-                                            ../src/LoadGrByNet.cpp          LoadGrByNet.dox          \
-                                            ../src/LayerAssign.cpp          LayerAssign.dox          \
-                                            ../src/NetConstraints.cpp       NetConstraints.dox       \
-                                            ../src/NetOptimals.cpp          NetOptimals.dox          \
+                                                                            Katabatic.dox            \
+    ../src/katabatic/Observer.h             ../src/Observer.cpp             Observer.dox             \
+    ../src/katabatic/Constants.h                                            Constants.dox            \
     ../src/katabatic/AutoContact.h          ../src/AutoContact.cpp          AutoContact.dox          \
+    ../src/katabatic/AutoContactTerminal.h  ../src/AutoContactTerminal.cpp  AutoContactTerminal.dox  \
+    ../src/katabatic/AutoContactTurn.h      ../src/AutoContactTurn.cpp      AutoContactTurn.dox      \
+    ../src/katabatic/AutoContactHTee.h      ../src/AutoContactHTee.cpp      AutoContactHTee.dox      \
+    ../src/katabatic/AutoContactVTee.h      ../src/AutoContactVTee.cpp      AutoContactVTee.dox      \
     ../src/katabatic/AutoSegment.h          ../src/AutoSegment.cpp          AutoSegment.dox          \
-    ../src/katabatic/AutoHorizontal.h       ../src/AutoHorizontal.cpp                                \
-    ../src/katabatic/AutoVertical.h         ../src/AutoVertical.cpp                                  \
-    ../src/katabatic/Grid.h                 ../src/Grid.cpp                 Grid.dox                 \
+    ../src/katabatic/AutoSegments.h                                         AutoSegments.dox         \
+    ../src/katabatic/AutoHorizontal.h       ../src/AutoHorizontal.cpp       AutoHorizontal.dox       \
+    ../src/katabatic/AutoVertical.h         ../src/AutoVertical.cpp         AutoVertical.dox         \
     ../src/katabatic/GCell.h                ../src/GCell.cpp                GCell.dox                \
+    ../src/katabatic/GCells.h                                               GCells.dox    	     \
+    ../src/katabatic/Grid.h                 ../src/Grid.cpp                 Grid.dox                 \
     ../src/katabatic/GCellGrid.h            ../src/GCellGrid.cpp            GCellGrid.dox            \
-    ../src/katabatic/Session.h              ../src/Session.cpp              Session.dox
+    ../src/katabatic/Session.h              ../src/Session.cpp              Session.dox              \
+    ../src/katabatic/ChipTools.h            ../src/ChipTools.cpp            ChipTools.dox            \
+                                             ../src/LoadGrByNet.cpp                                  \
+    ../src/katabatic/KatabaticEngine.h      ../src/KatabaticEngine.cpp      KatabaticEngine.dox
 
 FILE_PATTERNS          = *.h   \
                          *.cpp \
@@ -156,7 +168,7 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = header.html
 HTML_FOOTER            = footer.html
-HTML_STYLESHEET        = ASIM.css
+HTML_STYLESHEET        = SoC.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
@@ -240,7 +252,7 @@ SKIP_FUNCTION_MACROS   = YES
 # --------------------------------------------------------------------
 # Configuration::addtions related to external references   
 
-TAGFILES               = ../../../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane
+TAGFILES               = ../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane
 GENERATE_TAGFILE       = html/katabatic.tag
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES

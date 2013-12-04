@@ -1,30 +1,21 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Configuration.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/Configuration.h"                   |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_CONFIGURATION__
-#define  __KATABATIC_CONFIGURATION__
+#ifndef  KATABATIC_CONFIGURATION_H
+#define  KATABATIC_CONFIGURATION_H
 
 #include  <string>
 
@@ -63,6 +54,7 @@ namespace Katabatic {
       virtual Configuration*     clone              () const = 0;
     // Methods.                                     
       virtual bool               isGMetal           ( const Layer* ) const = 0;
+      virtual bool               isGContact         ( const Layer* ) const = 0;
       virtual size_t             getDepth           () const = 0;
       virtual size_t             getAllowedDepth    () const = 0;
       virtual size_t             getLayerDepth      ( const Layer* ) const = 0;
@@ -107,6 +99,7 @@ namespace Katabatic {
       virtual ConfigurationConcrete* clone                 () const;
     // Methods.
       virtual bool                   isGMetal              ( const Layer* ) const;
+      virtual bool                   isGContact            ( const Layer* ) const;
       virtual size_t                 getDepth              () const;
       virtual size_t                 getAllowedDepth       () const;
       virtual size_t                 getLayerDepth         ( const Layer* ) const;
@@ -147,11 +140,11 @@ namespace Katabatic {
   };
 
 
-}  // End of Katabatic namespace.
+} // Katabatic namespace.
 
 
 INSPECTOR_P_SUPPORT(Katabatic::Configuration);
 INSPECTOR_P_SUPPORT(Katabatic::ConfigurationConcrete);
 
 
-#endif  // __KATABATIC_CONFIGURATION__
+#endif  // KATABATIC_CONFIGURATION_H

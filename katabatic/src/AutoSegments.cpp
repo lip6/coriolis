@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./AutoSegments.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Error.h"
@@ -46,61 +38,52 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegmentStack".
 
-
   void  AutoSegmentStack::push ( AutoContact* contact, AutoSegment* segment )
   {
     ltrace(80) << "Stacking " << contact << " + " << segment << endl;
-
-    push_back(make_pair(contact,segment));
+    push_back( make_pair(contact,segment) );
   }
 
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegments_OnContact".
 
-
   AutoSegments_OnContact::Locator::Locator ( AutoSegment* master, Contact* contact )
     : AutoSegmentHL()
-    , _master(master)
-    , _element(NULL)
+    , _master      (master)
+    , _element     (NULL)
   {
     _hook = contact->getBodyHook()->getPreviousMasterHook();
-    progress ();
+    progress();
   }
 
 
   AutoSegmentHL* AutoSegments_OnContact::Locator::getClone () const
-  {
-    return new Locator(*this);
-  }
+  { return new Locator(*this); }
 
 
   AutoSegment* AutoSegments_OnContact::Locator::getElement () const
-  {
-    return _element;
-  }
+  { return _element; }
 
 
   bool  AutoSegments_OnContact::Locator::isValid () const
-  {
-    return !_hook;
-  }
+  { return !_hook; }
 
 
   void  AutoSegments_OnContact::Locator::progress ()
   {
     ltrace(80) << "AutoSegments_OnContact::Locator::progress()" << endl;
 
-    while ( _hook && !_hook->isMaster() ) {
+    while (_hook and not _hook->isMaster()) {
       _hook    = _hook->getNextHook(); 
       _element = NULL;
 
       if ( _hook->isMaster() ) { _hook = NULL; break; }
 
       Segment* segment = dynamic_cast<Segment*>( _hook->getComponent() );
-      if ( segment ) _element = Session::lookup ( segment );
+      if (segment) _element = Session::lookup( segment );
 
-      if ( !_element || (_element == _master) ) continue;
+      if (not _element or (_element == _master)) continue;
 
       break;
     }
@@ -117,15 +100,11 @@ namespace Katabatic {
 
 
   AutoSegmentHC* AutoSegments_OnContact::getClone () const
-  {
-    return new AutoSegments_OnContact(*this);
-  }
+  { return new AutoSegments_OnContact(*this); }
 
 
   AutoSegmentHL* AutoSegments_OnContact::getLocator () const
-  {
-    return new Locator(_master,_contact);
-  }
+  { return new Locator(_master,_contact); }
 
 
   string  AutoSegments_OnContact::_getString () const
@@ -138,114 +117,96 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "AutoSegments_Collapsed".
+// Class  :  "AutoSegments_Aligneds".
 
-
-  AutoSegments_Collapsed::Locator::Locator ( AutoSegment* segment, bool withPerpand )
+  AutoSegments_Aligneds::Locator::Locator ( AutoSegment* segment, unsigned int flags )
     : AutoSegmentHL()
-    , _withPerpand(withPerpand)
+    , _flags (flags)
     , _master(segment)
-    , _stack()
+    , _stack ()
   {
-    if ( not _master ) return;
+    if (not _master) return;
+    _flags |= (_master->isHorizontal()) ? KbHorizontal : KbVertical;
+
+    ltrace(80) << "AutoSegments_Aligneds::Locator::Locator() - _flags:" << _flags << endl;
 
     AutoContact* contact = segment->getAutoSource();
-    if ( contact ) _stack.push ( contact, segment );
+    if (contact) _stack.push( contact, segment );
 
     contact = segment->getAutoTarget();
-    if ( contact ) _stack.push ( contact, segment );
+    if (contact) _stack.push( contact, segment );
 
-    progress ();
+    progress();
   }
 
 
-  AutoSegmentHL* AutoSegments_Collapsed::Locator::getClone () const
+  AutoSegmentHL* AutoSegments_Aligneds::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  bool  AutoSegments_Aligneds::Locator::isValid () const
+  { return not _stack.isEmpty(); }
+
+
+  void  AutoSegments_Aligneds::Locator::progress ()
   {
-    return new Locator(*this);
-  }
+    ltrace(80) << "AutoSegments_Aligneds::Locator::progress()" << endl;
 
-
-  bool  AutoSegments_Collapsed::Locator::isValid () const
-  {
-    return !_stack.isEmpty();
-  }
-
-
-  void  AutoSegments_Collapsed::Locator::progress ()
-  {
-    ltrace(80) << "AutoSegments_Collapsed::Locator::progress()" << endl;
-
-    while ( !_stack.isEmpty() ) {
+    while (not _stack.isEmpty()) {
       AutoContact* sourceContact = _stack.getAutoContact ();
       AutoSegment* sourceSegment = _stack.getAutoSegment ();
 
       _stack.pop ();
 
-      forEach ( Component*, component, sourceContact->getSlaveComponents() ) {
-        if ( *component == sourceSegment->getSegment() ) continue;
+      LocatorHelper helper (sourceContact, _flags);
+      for ( ; helper.isValid() ; helper.progress() ) {
+        AutoSegment* currentSegment = helper.getSegment();
+        ltrace(80) << "Looking at: " << currentSegment << endl;
 
-        Segment* segment = dynamic_cast<Segment*>(*component);
-        if ( !segment ) continue;
+        if (currentSegment == sourceSegment) continue;
 
-        AutoSegment* currentSegment = Session::lookup ( segment );
-        if ( !currentSegment ) {
-          cerr << Error("Can't lookup <AutoSegment> for %s.",getString(segment).c_str()) << endl;
+        if (   (not (_flags & KbNoCheckLayer))
+           and AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
+          cerr << Error("Aligned segments not in same layer (aligneds locator)\n"
+                        "        %s\n"
+                        "        %s."
+                       ,getString(_master).c_str()
+                       ,getString(currentSegment).c_str()) << endl;
           continue;
         }
 
-        unsigned int  state = AutoSegment::getPerpandicularState ( sourceContact
-                                                                 , sourceSegment
-                                                                 , currentSegment
-                                                                 , _master
-                                                                 );
-        if ( state & (AutoSegment::PerpandicularIndirect
-                     |AutoSegment::ParallelOrExpanded
-                     |AutoSegment::ParallelAndLayerChange ) ) {
-          ltrace(98) << "Reject: " << currentSegment << endl;
-          continue;
-        }
-
-        AutoContact* targetContact = currentSegment->getOppositeAnchor ( sourceContact );
-        if ( targetContact ) _stack.push ( targetContact, currentSegment );
+        AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
+        if (targetContact) _stack.push( targetContact, currentSegment );
       }
 
-      if ( _stack.isEmpty() ) break;
-      if ( _stack.getAutoSegment() == _master ) continue;
-      if ( AutoSegment::areAligneds(_stack.getAutoSegment(),_master) || _withPerpand ) break;
+      if (_stack.getAutoSegment() == _master) continue;
+      break;
     }
   }
 
 
-  string  AutoSegments_Collapsed::Locator::_getString () const
+  string  AutoSegments_Aligneds::Locator::_getString () const
   {
-    string s = "<" + _TName("AutoSegments_Collapsed::Locator")
-      + ">";
-
+    string s = "<" + _TName("AutoSegments_Aligneds::Locator") + ">";
     return s;
   }
 
 
-  AutoSegmentHC* AutoSegments_Collapsed::getClone () const
+  AutoSegmentHC* AutoSegments_Aligneds::getClone () const
+  { return new AutoSegments_Aligneds(*this); }
+
+
+  AutoSegmentHL* AutoSegments_Aligneds::getLocator () const
+  { return new Locator(_segment,_flags); }
+
+
+  AutoSegment* AutoSegments_Aligneds::Locator::getElement () const
+  { return _stack.getAutoSegment(); }
+
+
+  string  AutoSegments_Aligneds::_getString () const
   {
-    return new AutoSegments_Collapsed(*this);
-  }
-
-
-  AutoSegmentHL* AutoSegments_Collapsed::getLocator () const
-  {
-    return new Locator(_segment,_withPerpand);
-  }
-
-
-  AutoSegment* AutoSegments_Collapsed::Locator::getElement () const
-  {
-    return _stack.getAutoSegment();
-  }
-
-
-  string  AutoSegments_Collapsed::_getString () const
-  {
-    string s = "<" + _TName("AutoSegments_Collapsed") + " "
+    string s = "<" + _TName("AutoSegments_Aligneds") + " "
                    + getString(_segment)
                    + ">";
     return s;
@@ -253,126 +214,113 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "AutoSegments_CollapsedPerpandicular".
+// Class  :  "AutoSegments_Perpandiculars".
 
-
-  AutoSegments_CollapsedPerpandicular::Locator::Locator ( AutoSegment* segment )
+  AutoSegments_Perpandiculars::Locator::Locator ( AutoSegment* master )
     : AutoSegmentHL()
-    , _master(segment)
-    , _stack()
+    , _flags         (KbWithPerpands)
+    , _master        (master)
+    , _stack         ()
     , _perpandiculars()
   {
-    ltrace(80) << "AutoSegments_CollapsedPerpandicular::Locator::Locator()" << endl;
+    ltrace(80) << "AutoSegments_Perpandiculars::Locator::Locator()" << endl;
     ltrace(80) << "  " << _master << endl;
 
-    if ( not _master ) return;
+    if (not _master) return;
+    if (_master->isHorizontal()) _flags |= KbHorizontal;
+    else                         _flags |= KbVertical;
 
-    AutoContact* contact = segment->getAutoSource();
-    if ( contact ) _stack.push ( contact, segment );
+    AutoContact* contact = _master->getAutoSource();
+    if ( contact ) _stack.push( contact, _master );
 
-    contact = segment->getAutoTarget();
-    if ( contact ) _stack.push ( contact, segment );
+    contact = _master->getAutoTarget();
+    if ( contact ) _stack.push( contact, _master );
 
-    progress ();
+    progress();
   }
 
 
-  AutoSegment* AutoSegments_CollapsedPerpandicular::Locator::getElement () const
+  AutoSegment* AutoSegments_Perpandiculars::Locator::getElement () const
   {
-    if ( _perpandiculars.empty() ) return NULL;
-    return _perpandiculars.back ();
+    if (_perpandiculars.empty()) return NULL;
+    return _perpandiculars.back();
   }
 
 
-  void  AutoSegments_CollapsedPerpandicular::Locator::progress ()
+  void  AutoSegments_Perpandiculars::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_CollapsedPerpandicular::Locator::progress()" << endl;
+    ltrace(80) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
 
-    if ( !_perpandiculars.empty() ) _perpandiculars.pop_back ();
-    if ( !_perpandiculars.empty() ) return;
+    if (not _perpandiculars.empty()) _perpandiculars.pop_back();
+    if (not _perpandiculars.empty()) return;
 
-    while ( !_stack.isEmpty() ) {
-      AutoContact* sourceContact = _stack.getAutoContact ();
-      AutoSegment* sourceSegment = _stack.getAutoSegment ();
+    while ( not _stack.isEmpty() ) {
+      AutoContact* sourceContact = _stack.getAutoContact();
+      AutoSegment* sourceSegment = _stack.getAutoSegment();
 
-      _stack.pop ();
+      _stack.pop();
 
-      forEach ( Component*, component, sourceContact->getSlaveComponents() ) {
-        if ( *component == sourceSegment->getSegment() ) continue;
+      LocatorHelper helper (sourceContact, _flags);
+      for ( ; helper.isValid() ; helper.progress() ) {
+        AutoSegment* currentSegment = helper.getSegment();
+        if (currentSegment == sourceSegment) continue;
 
-        Segment* segment = dynamic_cast<Segment*>(*component);
-        if ( !segment ) continue;
+        if (AutoSegment::areAligneds(currentSegment,_master)) {
+          AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
+          if (targetContact) {
+            if (  (_master->isHorizontal() and sourceContact->isHTee())
+               or (_master->isVertical  () and sourceContact->isVTee()) ) {
+              if (AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
+                cerr << Error("Aligned segments not in same layer (perpandicular locator)\n"
+                              "        %s\n"
+                              "        %s."
+                             ,getString(_master).c_str()
+                             ,getString(currentSegment).c_str()) << endl;
+                continue;
+              }
 
-        AutoSegment* currentSegment = Session::lookup ( segment );
-        if ( !currentSegment ) {
-          cerr << Error("Can't lookup <AutoSegment> for %s.",getString(segment).c_str()) << endl;
-          continue;
+              ltrace(80) << "Stacking target. " << endl;
+              _stack.push( targetContact, currentSegment );
+            }
+          }
+        } else {
+          _perpandiculars.push_back( currentSegment );
         }
-
-        ltrace(99) << "  Try Perpandicular: " << currentSegment << endl;
-        unsigned int state = AutoSegment::getPerpandicularState ( sourceContact
-                                                                , sourceSegment
-                                                                , currentSegment
-                                                                , _master
-                                                                );
-
-        if ( state & AutoSegment::PerpandicularAny ) {
-          _perpandiculars.push_back ( currentSegment );
-          ltrace(99) << "Stacked Perpandicular: " << currentSegment << endl;
-        }
-        if ( state & (AutoSegment::PerpandicularIndirect
-                     |AutoSegment::ParallelOrExpanded
-                     |AutoSegment::ParallelAndLayerChange ) )
-          continue;
-
-        ltrace(99) << "Stacked Opposite of: " << currentSegment << endl;
-
-        AutoContact* targetContact = currentSegment->getOppositeAnchor ( sourceContact );
-        if ( targetContact ) _stack.push ( targetContact, currentSegment );
       }
 
-      if ( _stack.isEmpty() ) break;
-      if ( _stack.getAutoSegment() == _master ) continue;
-      if ( !_perpandiculars.empty() ) break;
+      if (_stack.isEmpty()) break;
+      if (_stack.getAutoSegment() == _master) continue;
+      if (not _perpandiculars.empty()) break;
     }
   }
 
 
-  AutoSegmentHL* AutoSegments_CollapsedPerpandicular::Locator::getClone () const
+  AutoSegmentHL* AutoSegments_Perpandiculars::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  bool  AutoSegments_Perpandiculars::Locator::isValid () const
+  { return not _perpandiculars.empty(); }
+
+
+  AutoSegmentHC* AutoSegments_Perpandiculars::getClone () const
+  { return new AutoSegments_Perpandiculars(*this); }
+
+
+  AutoSegmentHL* AutoSegments_Perpandiculars::getLocator () const
+  { return new Locator(_segment); }
+
+
+  string  AutoSegments_Perpandiculars::Locator::_getString () const
   {
-    return new Locator(*this);
-  }
-
-
-  bool  AutoSegments_CollapsedPerpandicular::Locator::isValid () const
-  {
-    return !_perpandiculars.empty();
-  }
-
-
-  AutoSegmentHC* AutoSegments_CollapsedPerpandicular::getClone () const
-  {
-    return new AutoSegments_CollapsedPerpandicular(*this);
-  }
-
-
-  AutoSegmentHL* AutoSegments_CollapsedPerpandicular::getLocator () const
-  {
-    return new Locator(_segment);
-  }
-
-
-  string  AutoSegments_CollapsedPerpandicular::Locator::_getString () const
-  {
-    string s = "<" + _TName("AutoSegments_CollapsedPerpandicular::Locator")
-                   + ">";
+    string s = "<" + _TName("AutoSegments_Perpandiculars::Locator") + ">";
     return s;
   }
 
 
-  string  AutoSegments_CollapsedPerpandicular::_getString () const
+  string  AutoSegments_Perpandiculars::_getString () const
   {
-    string s = "<" + _TName("AutoSegments_CollapsedPerpandicular") + " "
+    string s = "<" + _TName("AutoSegments_Perpandiculars") + " "
                    + getString(_segment)
                    + ">";
     return s;
@@ -382,42 +330,30 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_AnchorOnGCell".
 
-
-  AutoSegments_AnchorOnGCell::Locator::Locator ( GCell* fcell, bool sourceAnchor, unsigned int direction )
+  AutoSegments_AnchorOnGCell::Locator::Locator ( GCell* fcell, unsigned int flags )
     : AutoSegmentHL()
-    , _sourceAnchor(sourceAnchor)
-    , _direction(direction)
-    , _itContact(fcell->getContacts()->begin())
-    , _itEnd(fcell->getContacts()->end())
+    , _flags      (flags)
+    , _itContact  (fcell->getContacts().begin())
+    , _itEnd      (fcell->getContacts().end())
     , _hookLocator(NULL)
-    , _element(NULL)
-  {
-    progress ();
-  }
+    , _element    (NULL)
+  { progress(); }
 
 
   AutoSegments_AnchorOnGCell::Locator::~Locator ()
-  {
-    if ( _hookLocator ) delete _hookLocator;
-  }
+  { if (_hookLocator) delete _hookLocator; }
 
 
   AutoSegment* AutoSegments_AnchorOnGCell::Locator::getElement () const
-  {
-    return _element;
-  }
+  { return _element; }
 
 
   AutoSegmentHL* AutoSegments_AnchorOnGCell::Locator::getClone () const
-  {
-    return new Locator(*this);
-  }
+  { return new Locator(*this); }
 
 
   bool  AutoSegments_AnchorOnGCell::Locator::isValid () const
-  {
-    return _element != NULL;
-  }
+  { return _element != NULL; }
 
 
   void  AutoSegments_AnchorOnGCell::Locator::progress ()
@@ -426,8 +362,8 @@ namespace Katabatic {
     ltracein(79);
 
     while ( true ) {
-      if ( _hookLocator == NULL ) {
-        if ( _itContact == _itEnd ) {
+      if (_hookLocator == NULL) {
+        if (_itContact == _itEnd) {
           ltrace(79) << "No more AutoContacts" << endl;
           ltraceout(79);
           return;
@@ -438,18 +374,22 @@ namespace Katabatic {
         _hookLocator = (*_itContact)->getBodyHook()->getSlaveHooks().getLocator();
         _itContact++;
       } else {
-        _hookLocator->progress ();
+        _hookLocator->progress();
       }
 
       while ( _hookLocator->isValid() ) {
         ltrace(79) << _hookLocator->getElement() << endl;
         Hook* hook = dynamic_cast<Segment::SourceHook*>(_hookLocator->getElement());
-        if ( hook ) {
-          _element = Session::lookup ( static_cast<Segment*>(hook->getComponent()) );
-          if ( _element->isHorizontal() ) {
-            if ( _direction & Constant::Horizontal ) { ltraceout(79); return; }
-          } else
-            if ( _direction & Constant::Vertical   ) { ltraceout(79); return; }
+        if (hook) {
+          if (  ((_flags & KbBySource) and (dynamic_cast<Segment::SourceHook*>(hook)))
+             or ((_flags & KbByTarget) and (dynamic_cast<Segment::TargetHook*>(hook))) ) {
+            _element = Session::lookup( static_cast<Segment*>(hook->getComponent()) );
+
+            if (_element->isHorizontal()) {
+              if (_flags & KbHorizontal) { ltraceout(79); return; }
+            } else
+              if (_flags & KbVertical) { ltraceout(79); return; }
+          }
         }
         _hookLocator->progress();
       }
@@ -463,22 +403,17 @@ namespace Katabatic {
 
   string  AutoSegments_AnchorOnGCell::Locator::_getString () const
   {
-    string s = "<" + _TName("AutoSegments_AnchorOnGCell::Locator")
-                   + ">";
+    string s = "<" + _TName("AutoSegments_AnchorOnGCell::Locator") + ">";
     return s;
   }
 
 
   AutoSegmentHC* AutoSegments_AnchorOnGCell::getClone () const
-  {
-    return new AutoSegments_AnchorOnGCell(*this);
-  }
+  { return new AutoSegments_AnchorOnGCell(*this); }
 
 
   AutoSegmentHL* AutoSegments_AnchorOnGCell::getLocator () const
-  {
-    return new Locator(_fcell,_sourceAnchor,_direction);
-  }
+  { return new Locator(_fcell,_flags); }
 
 
   string  AutoSegments_AnchorOnGCell::_getString () const
@@ -491,109 +426,55 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Katabatic::AutoSegments_AnchoredBySource".
+// Class  :  "Katabatic::AutoSegments_CachedOnContact".
+
+  AutoSegments_CachedOnContact::Locator::Locator ( AutoContact* sourceContact, unsigned int direction )
+    : AutoSegmentHL()
+    , _helper(new LocatorHelper(sourceContact,direction))
+  { }
 
 
-AutoSegments_AnchoredBySource::Locator::Locator ( AutoContact* sourceAnchor, unsigned int direction )
-  : AutoSegmentHL()
-  , _direction(direction)
-  , _hookLocator(NULL)
-  , _element(NULL)
-{
-  _contactLocator = sourceAnchor->getCollapseds(_direction).getLocator(); 
-  progress ();
-}
+  AutoSegments_CachedOnContact::Locator::~Locator ()
+  { delete _helper; }
 
 
-  AutoSegments_AnchoredBySource::Locator::~Locator ()
-  {
-    if ( _hookLocator    ) delete _hookLocator;
-    if ( _contactLocator ) delete _contactLocator;
-  }
+  AutoSegment* AutoSegments_CachedOnContact::Locator::getElement () const
+  { return _helper->getSegment(); }
 
 
-  AutoSegment* AutoSegments_AnchoredBySource::Locator::getElement () const
-  {
-    return _element;
-  }
-
-
-  AutoSegmentHL* AutoSegments_AnchoredBySource::Locator::getClone () const
-  {
-    return new Locator(*this);
-  }
+  AutoSegmentHL* AutoSegments_CachedOnContact::Locator::getClone () const
+  { return new Locator(*this); }
 
  
-  bool  AutoSegments_AnchoredBySource::Locator::isValid () const
+  bool  AutoSegments_CachedOnContact::Locator::isValid () const
+  { return _helper->isValid(); }
+
+
+  void  AutoSegments_CachedOnContact::Locator::progress ()
   {
-    return _element != NULL;
+    ltrace(80) << "AutoSegments_CachedOnContact::Locator::progress()" << endl;
+    _helper->progress();
   }
 
 
-  void  AutoSegments_AnchoredBySource::Locator::progress ()
+  AutoSegmentHL* AutoSegments_CachedOnContact::getLocator () const
+  { return new Locator(_sourceContact,_direction); }
+
+
+  AutoSegmentHC* AutoSegments_CachedOnContact::getClone () const
+  { return new AutoSegments_CachedOnContact(*this); }
+
+
+  string  AutoSegments_CachedOnContact::Locator::_getString () const
   {
-    ltrace(80) << "AutoSegments_AnchoredBySource::Locator::progress()" << endl;
-    ltracein(79);
-
-    while ( true ) {
-      if ( _hookLocator == NULL ) {
-        if ( !_contactLocator->isValid() ) {
-          ltrace(79) << "No more AutoContacts" << endl;
-          ltraceout(79);
-          return;
-        }
-
-        ltrace(79) << _contactLocator->getElement() << endl;
-
-        _hookLocator = _contactLocator->getElement()->getBodyHook()->getSlaveHooks().getLocator();
-        _contactLocator->progress ();
-      } else {
-        _hookLocator->progress ();
-      }
-
-      while ( _hookLocator->isValid() ) {
-        ltrace(79) << _hookLocator->getElement() << endl;
-        Hook* hook = dynamic_cast<Segment::SourceHook*>(_hookLocator->getElement());
-        if ( hook ) {
-          _element = Session::lookup ( static_cast<Segment*>(hook->getComponent()) );
-          if ( _element->isHorizontal() ) {
-            if ( _direction & Constant::Horizontal ) { ltraceout(79); return; }
-          } else
-            if ( _direction & Constant::Vertical   ) { ltraceout(79); return; }
-        }
-        _hookLocator->progress();
-      }
-      _hookLocator = NULL;
-      _element     = NULL;
-    }
-
-    ltraceout(79);
-  }
-
-
-  AutoSegmentHL* AutoSegments_AnchoredBySource::getLocator () const
-  {
-    return new Locator(_sourceContact,_direction);
-  }
-
-
-  AutoSegmentHC* AutoSegments_AnchoredBySource::getClone () const
-  {
-    return new AutoSegments_AnchoredBySource(*this);
-  }
-
-
-  string  AutoSegments_AnchoredBySource::Locator::_getString () const
-  {
-    string s = "<" + _TName("AutoSegments_AnchoredBySource::Locator")
-                   + ">";
+    string s = "<" + _TName("AutoSegments_CachedOnContact::Locator") + ">";
     return s;
   }
 
 
-  string  AutoSegments_AnchoredBySource::_getString () const
+  string  AutoSegments_CachedOnContact::_getString () const
   {
-    string s = "<" + _TName("AutoSegments_AnchoredBySource") + " "
+    string s = "<" + _TName("AutoSegments_CachedOnContact") + " "
                    + getString(_sourceContact)
                    + ">";
     return s;
@@ -603,23 +484,16 @@ AutoSegments_AnchoredBySource::Locator::Locator ( AutoContact* sourceAnchor, uns
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_IsAccountable".
 
-
   AutoSegmentHF* AutoSegments_IsAccountable::getClone   () const
-  {
-    return new AutoSegments_IsAccountable();
-  }
+  { return new AutoSegments_IsAccountable(); }
 
 
   bool  AutoSegments_IsAccountable::accept ( AutoSegment* segment ) const
-  {
-    return segment->isCanonical() && !segment->isCollapsed();
-  }
+  { return segment->isCanonical(); }
 
 
   string  AutoSegments_IsAccountable::_getString () const
-  {
-    return "<AutoSegments_IsAccountable>";
-  }
+  { return "<AutoSegments_IsAccountable>"; }
 
 
 // -------------------------------------------------------------------
@@ -627,30 +501,18 @@ AutoSegments_AnchoredBySource::Locator::Locator ( AutoContact* sourceAnchor, uns
 
 
   AutoSegmentHF* AutoSegments_InDirection::getClone () const
-  {
-    return new AutoSegments_InDirection(_direction);
-  }
+  { return new AutoSegments_InDirection(_direction); }
 
 
   bool  AutoSegments_InDirection::accept ( AutoSegment* segment ) const
   {
-    return    ( segment->isHorizontal() && (_direction & Constant::Horizontal) )
-           || ( segment->isVertical  () && (_direction & Constant::Vertical  ) );
+    return    ( segment->isHorizontal() and (_direction & KbHorizontal) )
+           or ( segment->isVertical  () and (_direction & KbVertical  ) );
   }
 
 
   string  AutoSegments_InDirection::_getString () const
-  {
-    return "<AutoSegments_InDirection>";
-  }
+  { return "<AutoSegments_InDirection>"; }
 
 
-
-
-
-// x-----------------------------------------------------------------x
-// |                    Functions Definitions                        |
-// x-----------------------------------------------------------------x
-
-
-} // End of Katabatic namespace.
+} // Katabatic namespace.

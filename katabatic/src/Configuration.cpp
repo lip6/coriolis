@@ -1,26 +1,17 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Configuration.cpp<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Configuartion.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <iostream>
@@ -28,6 +19,7 @@
 #include  <vector>
 
 #include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/Warning.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -49,6 +41,7 @@ namespace Katabatic {
   using  std::vector;
   using  Hurricane::tab;
   using  Hurricane::inltrace;
+  using  Hurricane::Warning;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
   using  CRL::AllianceFramework;
@@ -87,6 +80,10 @@ namespace Katabatic {
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");
     _gcontact = DataBase::getDB()->getTechnology()->getLayer("gcontact");
+
+    if (_gcontact == NULL) cerr << Warning("Cannot get \"gcontact\" layer from the Technology.") << endl;
+    if (_gmetalv  == NULL) cerr << Warning("Cannot get \"gmetalv\" layer from the Technology.") << endl;
+    if (_gmetalh  == NULL) cerr << Warning("Cannot get \"gmetalh\" layer from the Technology.") << endl;
 
     vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
     for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
@@ -130,13 +127,13 @@ namespace Katabatic {
 
   bool  ConfigurationConcrete::isGMetal ( const Layer* layer ) const
   {
-    if ( !layer ) return false;
-    if (    ( layer != _gmetalh  )
-         && ( layer != _gmetalv  )
-         && ( layer != _gcontact ) )
-      return false;
+    return (layer and ((layer == _gmetalh) or (layer == _gmetalv)));
+  }
 
-    return true;
+
+  bool  ConfigurationConcrete::isGContact ( const Layer* layer ) const
+  {
+    return (layer and (layer == _gcontact));
   }
 
 

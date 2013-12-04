@@ -2,29 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AutoSegments.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/AutoSegments.h"                    |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_AUTOSEGMENTS_H__
-#define  __KATABATIC_AUTOSEGMENTS_H__
+#ifndef  KATABATIC_AUTOSEGMENTS_H
+#define  KATABATIC_AUTOSEGMENTS_H
 
 #include  <string>
 #include  <list>
@@ -67,6 +59,7 @@ namespace Katabatic {
   using Hurricane::GenericLocator;
   using Hurricane::GenericCollection;
 
+  class LocatorHelper;
   class AutoContact;
   class AutoSegment;
   class GCell;
@@ -74,7 +67,6 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Collections.
-
 
   typedef Hurricane::Filter<AutoSegment*>     AutoSegmentHF;
   typedef Hurricane::Locator<AutoSegment*>    AutoSegmentHL;
@@ -87,7 +79,6 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegmentStack".
-
 
   class AutoSegmentStack : protected list<pair<AutoContact*,AutoSegment*> > {
     public:
@@ -109,7 +100,6 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoSegments_OnContact".
-
 
   class AutoSegments_OnContact : public AutoSegmentHC {
 
@@ -168,16 +158,15 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "AutoSegments_Collapsed".
+// Class  :  "AutoSegments_Aligneds".
 
-
-  class AutoSegments_Collapsed : public AutoSegmentHC {
+  class AutoSegments_Aligneds : public AutoSegmentHC {
 
     public:
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-          inline                 Locator    ( AutoSegment* segment , bool withPerpand );
+          inline                 Locator    ( AutoSegment* segment , unsigned int flags );
           inline                 Locator    ( const Locator &locator );
           virtual AutoSegment*   getElement () const;
           virtual AutoSegmentHL* getClone   () const;
@@ -185,59 +174,58 @@ namespace Katabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          bool              _withPerpand;
+          unsigned int      _flags;
           AutoSegment*      _master;
           AutoSegmentStack  _stack;
       };
 
     public:
-    // AutoSegments_Collapsed Methods.
-                             AutoSegments_Collapsed ( AutoSegment*, bool withPerpand=false );
-                             AutoSegments_Collapsed ( const AutoSegments_Collapsed& );
+    // AutoSegments_Aligneds Methods.
+                             AutoSegments_Aligneds ( AutoSegment*, unsigned int flags=KbNoFlags );
+                             AutoSegments_Aligneds ( const AutoSegments_Aligneds& );
       virtual AutoSegmentHC* getClone               () const;
 	  virtual AutoSegmentHL* getLocator             () const;
       virtual string         _getString             () const;
 
     protected:
-    // AutoSegments_Collapsed Attributes.
-      bool          _withPerpand;
+    // AutoSegments_Aligneds Attributes.
+      unsigned int  _flags;
       AutoSegment*  _segment;
   };
 
 
-  inline AutoSegments_Collapsed::Locator::Locator ( const Locator &locator )
+  inline AutoSegments_Aligneds::Locator::Locator ( const Locator &locator )
     : AutoSegmentHL()
-    , _withPerpand(locator._withPerpand)
+    , _flags (locator._flags)
     , _master(locator._master)
-    , _stack(locator._stack)
+    , _stack (locator._stack)
   { }
 
 
-  inline AutoSegments_Collapsed::AutoSegments_Collapsed ( AutoSegment* segment, bool withPerpand )
+  inline AutoSegments_Aligneds::AutoSegments_Aligneds ( AutoSegment* segment, unsigned int flags )
     : AutoSegmentHC()
-    , _withPerpand(withPerpand)
+    , _flags  (flags)
     , _segment(segment)
   { }
 
 
-  inline AutoSegments_Collapsed::AutoSegments_Collapsed ( const AutoSegments_Collapsed& autosegments )
+  inline AutoSegments_Aligneds::AutoSegments_Aligneds ( const AutoSegments_Aligneds& autosegments )
     : AutoSegmentHC()
-    , _withPerpand(autosegments._withPerpand)
+    , _flags  (autosegments._flags)
     , _segment(autosegments._segment)
   { }
 
 
 // -------------------------------------------------------------------
-// Class  :  "AutoSegments_CollapsedPerpandicular".
+// Class  :  "AutoSegments_Perpandiculars".
 
-
-  class AutoSegments_CollapsedPerpandicular : public AutoSegmentHC {
+  class AutoSegments_Perpandiculars : public AutoSegmentHC {
 
     public:
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-                                 Locator    ( AutoSegment* segment );
+                                 Locator    ( AutoSegment* master );
           inline                 Locator    ( const Locator& );
           virtual AutoSegment*   getElement () const;
           virtual AutoSegmentHL* getClone   () const;
@@ -245,42 +233,44 @@ namespace Katabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
+          unsigned int         _flags;
           AutoSegment*         _master;
           AutoSegmentStack     _stack;
           vector<AutoSegment*> _perpandiculars;
       };
 
     public:
-    // AutoSegments_CollapsedPerpandicular Methods.
-      inline                 AutoSegments_CollapsedPerpandicular ( AutoSegment* segment );
-      inline                 AutoSegments_CollapsedPerpandicular ( const AutoSegments_CollapsedPerpandicular& );
-      virtual AutoSegmentHC* getClone                            () const;
-	  virtual AutoSegmentHL* getLocator                          () const;
-      virtual string         _getString                          () const;
+    // AutoSegments_Perpandiculars Methods.
+      inline                 AutoSegments_Perpandiculars ( AutoSegment* master );
+      inline                 AutoSegments_Perpandiculars ( const AutoSegments_Perpandiculars& );
+      virtual AutoSegmentHC* getClone                    () const;
+	  virtual AutoSegmentHL* getLocator                  () const;
+      virtual string         _getString                  () const;
 
     protected:
-    // AutoSegments_CollapsedPerpandicular Attributes.
+    // AutoSegments_Perpandiculars Attributes.
       AutoSegment*  _segment;
   };
 
 
-  inline AutoSegments_CollapsedPerpandicular::Locator::Locator ( const Locator& locator )
+  inline AutoSegments_Perpandiculars::Locator::Locator ( const Locator& locator )
     : AutoSegmentHL()
-    , _master(locator._master)
-    , _stack(locator._stack)
+    , _flags         (locator._flags)
+    , _master        (locator._master)
+    , _stack         (locator._stack)
     , _perpandiculars()
   { }
 
 
-  inline AutoSegments_CollapsedPerpandicular::AutoSegments_CollapsedPerpandicular
+  inline AutoSegments_Perpandiculars::AutoSegments_Perpandiculars
   ( AutoSegment* segment )
     : AutoSegmentHC()
     , _segment(segment)
   { }
 
 
-  inline AutoSegments_CollapsedPerpandicular::AutoSegments_CollapsedPerpandicular
-  ( const AutoSegments_CollapsedPerpandicular& autosegments )
+  inline AutoSegments_Perpandiculars::AutoSegments_Perpandiculars
+  ( const AutoSegments_Perpandiculars& autosegments )
     : AutoSegmentHC()
     , _segment(autosegments._segment)
   { }
@@ -289,14 +279,13 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_AnchorOnGCell".
 
-
   class AutoSegments_AnchorOnGCell : public AutoSegmentHC {
 
     public:
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-                                 Locator    ( GCell* fcell, bool sourceAnchor, unsigned int direction );
+                                 Locator    ( GCell* fcell, unsigned int flags );
           inline                 Locator    ( const Locator& );
           virtual               ~Locator    ();
           virtual AutoSegment*   getElement () const;
@@ -305,8 +294,7 @@ namespace Katabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          bool                                  _sourceAnchor;
-          unsigned int                          _direction;
+          unsigned int                          _flags;
           vector<AutoContact*>::const_iterator  _itContact;
           vector<AutoContact*>::const_iterator  _itEnd;
           Hurricane::Locator<Hook*>*            _hookLocator;
@@ -314,38 +302,34 @@ namespace Katabatic {
       };
 
     public:
-    // AutoSegments_CollapsedPerpandicular Methods.
-      inline                 AutoSegments_AnchorOnGCell ( GCell* fcell, bool sourceAnchor, unsigned int direction );
+    // AutoSegments_Perpandiculars Methods.
+      inline                 AutoSegments_AnchorOnGCell ( GCell* fcell, unsigned int flags );
       inline                 AutoSegments_AnchorOnGCell ( const AutoSegments_AnchorOnGCell& );
       virtual AutoSegmentHC* getClone                   () const;
 	  virtual AutoSegmentHL* getLocator                 () const;
       virtual string         _getString                 () const;
 
     public:
-    // AutoSegments_CollapsedPerpandicular Attributes.
+    // AutoSegments_Perpandiculars Attributes.
       GCell*        _fcell;
-      unsigned int  _direction;
-      bool          _sourceAnchor;
+      unsigned int  _flags;
   };
 
 
   inline AutoSegments_AnchorOnGCell::Locator::Locator ( const Locator &locator )
     : AutoSegmentHL()
-    , _sourceAnchor(locator._sourceAnchor)
-    , _direction(locator._direction)
-    , _itContact(locator._itContact)
-    , _itEnd(locator._itEnd)
-    , _hookLocator(locator._hookLocator->getClone())
-    , _element(locator._element)
+    , _flags       (locator._flags)
+    , _itContact   (locator._itContact)
+    , _itEnd       (locator._itEnd)
+    , _hookLocator (locator._hookLocator->getClone())
+    , _element     (locator._element)
   { }
 
 
-  inline AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell
-  ( GCell* fcell, bool sourceAnchor, unsigned int direction )
+  inline AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell ( GCell* fcell, unsigned int flags )
     : AutoSegmentHC()
     , _fcell(fcell)
-    , _direction(direction)
-    , _sourceAnchor(sourceAnchor)
+    , _flags(flags)
   { }
 
 
@@ -353,16 +337,14 @@ namespace Katabatic {
   ( const AutoSegments_AnchorOnGCell& autosegments )
     : AutoSegmentHC()
     , _fcell(autosegments._fcell)
-    , _direction(autosegments._direction)
-    , _sourceAnchor(autosegments._sourceAnchor)
+    , _flags(autosegments._flags)
   { }
 
 
 // -------------------------------------------------------------------
-// Class  :  "AutoSegments_AnchoredBySource".
+// Class  :  "AutoSegments_CachedOnContact".
 
-
-  class AutoSegments_AnchoredBySource : public AutoSegmentHC {
+  class AutoSegments_CachedOnContact : public AutoSegmentHC {
 
     public:
     // Sub-Class: Locator.
@@ -377,57 +359,53 @@ namespace Katabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          unsigned int                      _direction;
-          Hurricane::Locator<AutoContact*>* _contactLocator;
-          Hurricane::Locator<Hook*>*        _hookLocator;
-          AutoSegment*                      _element;
+          LocatorHelper* _helper;
       };
 
     // Constructors.
     public:
-    // AutoSegments_AnchoredBySource Methods.
-      inline                 AutoSegments_AnchoredBySource ( AutoContact* sourceContact, unsigned int direction );
-      inline                 AutoSegments_AnchoredBySource ( const AutoSegments_AnchoredBySource& );
-      virtual AutoSegmentHC* getClone                      () const;
-	  virtual AutoSegmentHL* getLocator                    () const;
-      virtual string         _getString                    () const;
+    // AutoSegments_CachedOnContact Methods.
+      inline                 AutoSegments_CachedOnContact ( AutoContact* sourceContact
+                                                          , unsigned int direction=KbHorizontal|KbVertical );
+      inline                 AutoSegments_CachedOnContact ( const AutoSegments_CachedOnContact& );
+      virtual AutoSegmentHC* getClone                     () const;
+	  virtual AutoSegmentHL* getLocator                   () const;
+      virtual string         _getString                   () const;
 
     protected:
-    // AutoSegments_AnchoredBySource Attributes.
+    // AutoSegments_CachedOnContact Attributes.
       unsigned int  _direction;
       AutoContact*  _sourceContact;
 
   };
 
 
-  inline  AutoSegments_AnchoredBySource::Locator::Locator ( const Locator &locator )
+  inline  AutoSegments_CachedOnContact::Locator::Locator ( const Locator &locator )
     : AutoSegmentHL()
-    , _direction(locator._direction)
-    , _contactLocator(locator._contactLocator->getClone())
-    , _hookLocator(locator._hookLocator->getClone())
-    , _element(locator._element)
+    , _helper(locator._helper)
   { }
 
 
-  inline  AutoSegments_AnchoredBySource::AutoSegments_AnchoredBySource
+  inline  AutoSegments_CachedOnContact::AutoSegments_CachedOnContact
   ( AutoContact* sourceContact, unsigned int direction )
     : AutoSegmentHC()
-    , _direction(direction)
+    , _direction    (direction)
     , _sourceContact(sourceContact)
-  { }
+  {
+    if (_direction & KbVertical) _direction |= KbWithPerpands;
+  }
 
 
-  inline  AutoSegments_AnchoredBySource::AutoSegments_AnchoredBySource
-  ( const AutoSegments_AnchoredBySource& autosegments )
+  inline  AutoSegments_CachedOnContact::AutoSegments_CachedOnContact
+  ( const AutoSegments_CachedOnContact& autosegments )
     : AutoSegmentHC()
-    , _direction(autosegments._direction)
+    , _direction    (autosegments._direction)
     , _sourceContact(autosegments._sourceContact)
   { }
 
 
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_IsAccountable".
-
 
   class AutoSegments_IsAccountable : public AutoSegmentHF {
     public:
@@ -439,7 +417,6 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_InDirection".
-
 
   class AutoSegments_InDirection : public AutoSegmentHF {
     public:

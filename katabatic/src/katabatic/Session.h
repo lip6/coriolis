@@ -1,32 +1,21 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Session.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Session.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/Session.h"                         |
+// +-----------------------------------------------------------------+
 
 
-
-
-#ifndef  __KATABATIC_SESSION__
-#define  __KATABATIC_SESSION__
+#ifndef  KATABATIC_SESSION_H
+#define  KATABATIC_SESSION_H
 
 #include  <string>
 #include  <vector>
@@ -35,6 +24,7 @@
 #include  <boost/function.hpp>
 #include  "hurricane/Commons.h"
 #include  "hurricane/DbU.h"
+#include  "katabatic/Constants.h"
 
 namespace Hurricane {
   class Layer;
@@ -79,30 +69,23 @@ namespace Katabatic {
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::Session".
- 
 
   class Session {
-    public:
-      enum InvalidateType { NetSplitContacts = (1<<0)
-                          , NetCanonize      = (1<<1)
-                          , RestoreHCon      = (1<<2)
-                          , RestoreVCon      = (1<<3)
-                          };
-
     public:
     // Static Methods.
       static inline bool                        doDestroyBaseContact  ();
       static inline bool                        doDestroyBaseSegment  ();
       static inline bool                        doDestroyTool         ();
+      static        bool                        isInDemoMode          ();
+      static        bool                        doWarnGCellOverload   ();
       static        Session*                    get                   ( const char* message=NULL );
       static inline Technology*                 getTechnology         ();
+      static inline KatabaticEngine*            getKatabatic          ();
       static inline const Configuration*        getConfiguration      ();
       static inline RoutingGauge*               getRoutingGauge       ();
-      static inline KatabaticEngine*            getKatabatic          ();
-      static        bool                        getDemoMode           ();
+      static        unsigned int                getLayerDirection     ( const Layer* );
       static        float                       getSaturateRatio      ();
       static        size_t                      getSaturateRp         ();
-      static        bool                        getWarnGCellOverload  ();
       static        DbU::Unit                   getExtensionCap       ();
       static        const Layer*                getRoutingLayer       ( size_t );
       static        const Layer*                getContactLayer       ( size_t );
@@ -111,13 +94,13 @@ namespace Katabatic {
       static inline const vector<AutoSegment*>& getInvalidateds       (); 
       static inline const vector<AutoSegment*>& getRevalidateds       (); 
       static inline const set<AutoSegment*>&    getDestroyeds         (); 
-      static inline const vector<AutoSegment*>& getDogLegs            (); 
+      static inline const vector<AutoSegment*>& getDoglegs            (); 
       static inline const set<Net*>&            getNetsModificateds   (); 
       static        Session*                    open                  ( KatabaticEngine* );
-      static        size_t                      close                 ();
-      static        void                        setWarnGCellOverload  ( bool );
-      static inline void                        dogLeg                ( AutoSegment* );
-      static inline void                        dogLegReset           ();
+      static        void                        close                 ();
+      static        void                        setKatabaticFlags     ( unsigned int );
+      static inline void                        dogleg                ( AutoSegment* );
+      static inline void                        doglegReset           ();
       static inline void                        revalidateTopology    ();
       static inline void                        setInvalidateMask     ( unsigned int );
       static inline void                        invalidate            ( Net* );
@@ -136,16 +119,12 @@ namespace Katabatic {
                     bool                        _doDestroyBaseSegment ();
                     bool                        _doDestroyTool        ();
       virtual       Configuration*              _getConfiguration     ();
-             inline void                        _dogLeg               ( AutoSegment* );
-             inline void                        _dogLegReset          ();
-             inline void                        _setInvalidateMask    ( unsigned int );
-             inline void                        _invalidate           ( Net* );
+             inline void                        _dogleg               ( AutoSegment* );
+             inline void                        _doglegReset          ();
+                    void                        _invalidate           ( Net* );
              inline void                        _invalidate           ( AutoContact* );
              inline void                        _invalidate           ( AutoSegment* );
              inline void                        _destroyRequest       ( AutoSegment* );
-                    void                        _splitContacts        ();
-                    void                        _restoreHCon          ();
-                    void                        _restoreVCon          ();
                     void                        _canonize             ();
                     void                        _revalidateTopology   ();
                     size_t                      _revalidate           ();
@@ -159,20 +138,19 @@ namespace Katabatic {
              Technology*           _technology;
              RoutingGauge*         _routingGauge;
              vector<AutoContact*>  _autoContacts;
-             vector<AutoSegment*>  _autoSegments;
-             vector<AutoSegment*>  _revalidateds;
-             vector<AutoSegment*>  _dogLegs;
+             vector<AutoSegment*>  _doglegs;
+             vector<AutoSegment*>  _segmentInvalidateds;
+             vector<AutoSegment*>  _segmentRevalidateds;
              set<Net*>             _netInvalidateds;
              set<Net*>             _netRevalidateds;
              set<AutoSegment*>     _destroyedSegments;
-             unsigned int          _invalidateMask;
 
     // Constructors.
     protected:
                                    Session             ( KatabaticEngine* );
       virtual                     ~Session             ();
       virtual void                 _postCreate         ();
-      virtual size_t               _preDestroy         ();
+      virtual void                 _preDestroy         ();
     private:                       
                                    Session             ( const Session& );
               Session&             operator=           ( const Session& );
@@ -189,40 +167,32 @@ namespace Katabatic {
   inline KatabaticEngine*            Session::getKatabatic         () { return get("getKatabatic()")->_katabatic; }
   inline void                        Session::revalidateTopology   () { return get("revalidateTopology()")->_revalidateTopology(); }
   inline size_t                      Session::revalidate           () { return get("revalidate()")->_revalidate(); }
-  inline size_t                      Session::getSegmentStackSize  () { return get("getSegmentStackSize()")->_autoSegments.size(); }
+  inline size_t                      Session::getSegmentStackSize  () { return get("getSegmentStackSize()")->_segmentInvalidateds.size(); }
   inline size_t                      Session::getContactStackSize  () { return get("getContactStackSize()")->_autoContacts.size(); }
-  inline const vector<AutoSegment*>& Session::getInvalidateds      () { return get("getInvalidateds()")->_autoSegments; }
-  inline const vector<AutoSegment*>& Session::getRevalidateds      () { return get("getRevalidateds()")->_revalidateds; }
+  inline const vector<AutoSegment*>& Session::getInvalidateds      () { return get("getInvalidateds()")->_segmentInvalidateds; }
+  inline const vector<AutoSegment*>& Session::getRevalidateds      () { return get("getRevalidateds()")->_segmentRevalidateds; }
   inline const set<AutoSegment*>&    Session::getDestroyeds        () { return get("getDestroyeds()")->_destroyedSegments; }
-  inline const vector<AutoSegment*>& Session::getDogLegs           () { return get("getDogLegs()")->_dogLegs; }
+  inline const vector<AutoSegment*>& Session::getDoglegs           () { return get("getDoglegs()")->_doglegs; }
   inline const set<Net*>&            Session::getNetsModificateds  () { return get("getNetsModificateds()")->_netRevalidateds; }
-  inline void                        Session::dogLegReset          () { return get("dogLegReset()")->_dogLegReset (); }
-  inline void                        Session::setInvalidateMask    ( unsigned int mask ) { return get("setInvalidateMask()")->_setInvalidateMask ( mask ); }
-  inline void                        Session::invalidate           ( Net* net ) { return get("invalidate(Net*)")->_invalidate ( net ); }
-  inline void                        Session::invalidate           ( AutoContact* autoContact ) { return get("invalidate(AutoContact*)")->_invalidate ( autoContact ); }
-  inline void                        Session::invalidate           ( AutoSegment* autoSegment ) { return get("invalidate(AutoSegment*)")->_invalidate ( autoSegment ); }
-  inline void                        Session::dogLeg               ( AutoSegment* autoSegment ) { return get("dogLeg(AutoSegment*)")->_dogLeg ( autoSegment ); }
-  inline void                        Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest ( autoSegment ); }
+  inline void                        Session::doglegReset          () { return get("doglegReset()")->_doglegReset (); }
+  inline void                        Session::invalidate           ( Net* net ) { return get("invalidate(Net*)")->_invalidate(net); }
+  inline void                        Session::invalidate           ( AutoContact* autoContact ) { return get("invalidate(AutoContact*)")->_invalidate(autoContact); }
+  inline void                        Session::invalidate           ( AutoSegment* autoSegment ) { return get("invalidate(AutoSegment*)")->_invalidate(autoSegment); }
+  inline void                        Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
+  inline void                        Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
 
-  inline void                        Session::_dogLeg              ( AutoSegment* segment ) { _dogLegs.push_back(segment); }
-  inline void                        Session::_dogLegReset         () { _dogLegs.clear(); }
-  inline void                        Session::_setInvalidateMask   ( unsigned int mask ) { _invalidateMask |= mask; }
+  inline void                        Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
+  inline void                        Session::_doglegReset         () { _doglegs.clear(); }
   inline void                        Session::_invalidate          ( AutoContact* contact ) { _autoContacts.push_back(contact); }
-  inline void                        Session::_invalidate          ( AutoSegment* segment ) { _autoSegments.push_back(segment); }
+  inline void                        Session::_invalidate          ( AutoSegment* segment ) { _segmentInvalidateds.push_back(segment); }
   inline void                        Session::_destroyRequest      ( AutoSegment* segment ) { _destroyedSegments.insert(segment); }
   inline string                      Session::_getTypeName         () const { return _TName("Session"); }
 
-  inline  void  Session::_invalidate ( Net* net ) {
-    ltrace(200) << "Session::invalidate(Net*) - " << net << endl;
-    _netInvalidateds.insert(net);
-    _invalidateMask |= NetCanonize;
-  }
 
-
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
 
 INSPECTOR_P_SUPPORT(Katabatic::Session);
 
 
-#endif  // __KATABATIC_SESSION__
+#endif  // KATABATIC_SESSION_H

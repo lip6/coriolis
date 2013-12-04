@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2012, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./AutoHorizontal.cpp"                     |
 // +-----------------------------------------------------------------+
@@ -19,155 +19,13 @@
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/DebugSession.h"
+#include  "hurricane/RoutingPad.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/Configuration.h"
-#include  "katabatic/AutoContact.h"
+#include  "katabatic/AutoContactTerminal.h"
+#include  "katabatic/AutoContactTurn.h"
 #include  "katabatic/AutoHorizontal.h"
 #include  "katabatic/AutoVertical.h"
-
-
-namespace {
-
-  using namespace std;
-  using namespace Hurricane;
-  using namespace Katabatic;
-
-
-  bool  slacken ( AutoContact* contact )
-  {
-    if ( contact->getLayer() != Session::getConfiguration()->getContactLayer(0) )
-      return false;
-
-    ltrace(200) << "Session::slacken(): " << contact << endl;
-
-    vector<Hook*> hooks;
-    forEach ( Hook*, ihook, contact->getBodyHook()->getSlaveHooks() ) hooks.push_back ( *ihook );
-
-    contact->getBodyHook()->_setNextHook ( contact->getBodyHook() );
-    for ( size_t i=0 ; i<hooks.size() ; i++ ) hooks[i]->_setNextHook ( hooks[i] );
-
-    const Layer* paralLayer   = Session::getConfiguration()->getRoutingLayer(1);
-    const Layer* perpandLayer = Session::getConfiguration()->getRoutingLayer(2);
-    const Layer* contactLayer = Session::getConfiguration()->getContactLayer(1);
-    AutoContact* contact1     = AutoContact::create ( contact->getGCell(), contact->getNet(), contactLayer );
-    AutoContact* contact2     = AutoContact::create ( contact->getGCell(), contact->getNet(), contactLayer );
-
-    AutoSegment* hsegment = AutoHorizontal::create ( contact
-                                                   , contact1
-                                                   , paralLayer
-                                                   , contact->getY()
-                                                   , DbU::lambda(2.0)
-                                                   , AutoSegment::Local
-                                                   , true  // terminal
-                                                   , false // collapsed
-                                                   );
-
-    AutoSegment* vsegment = AutoVertical::create ( contact1
-                                                 , contact2
-                                                 , perpandLayer
-                                                 , contact->getX()
-                                                 , DbU::lambda(2.0)
-                                                 , AutoSegment::Local
-                                                 , false
-                                                 , false
-                                                 );
-
-    for ( size_t i=0 ; i<hooks.size() ; i++ ) hooks[i]->attach ( contact2->getBodyHook() );
-
-    contact2->setVAlignate      ( true );
-    contact2->restoreHConnexity ( contact->getX(), true );
-
-    hsegment->setSlackened    ( true );
-    vsegment->setSlackened    ( true );
-    vsegment->setSlackenStrap ( true );
-
-    ltrace(200) << "Session::slacken() new paral: " << hsegment << endl;
-    ltrace(200) << "Session::slacken() perpand:   " << vsegment << endl;
-
-    return true;
-  }
-
-
-  void  slacken ( AutoHorizontal* segment, bool fromSource )
-  {
-    AutoContact* contact = NULL;
-    Point        slackPoint;
-    if (fromSource) {
-      contact    = segment->getAutoSource();
-      slackPoint = Point ( segment->getSourceX(), segment->getSourceY() );
-    } else {
-      contact    = segment->getAutoTarget();
-      slackPoint = Point ( segment->getTargetX(), segment->getTargetY() );
-    }
-    if ( !contact ) return;
-
-    forEach ( Vertical*, ivertical, contact->getSlaveComponents().getSubSet<Vertical*>() ) {
-      AutoSegment* autoVertical = Session::lookup ( *ivertical );
-      if ( autoVertical ) {
-        autoVertical->invalidate ();
-        if ( autoVertical->isGlobal() and not contact->getAnchor() ) return;
-      }
-    }
-
-    if ( slacken(contact) ) return;
-
-    size_t       depth = Session::getRoutingGauge()->getLayerDepth   ( segment->getLayer() );
-    Layer*       contactLayer = NULL;
-    const Layer* slackLayer   = NULL;
-
-    if ( depth+1 < Session::getRoutingGauge()->getDepth() ) {
-      contactLayer = Session::getRoutingGauge()->getContactLayer ( depth );
-      slackLayer   = Session::getRoutingGauge()->getRoutingLayer ( depth + 1 );
-    } else {
-      contactLayer = Session::getRoutingGauge()->getContactLayer ( depth-1 );
-      slackLayer   = Session::getRoutingGauge()->getRoutingLayer ( depth );
-    }
-
-    if ( fromSource ) segment->getSourceHook()->detach ();
-    else              segment->getTargetHook()->detach ();
-
-    AutoContact* contact1 = AutoContact::create ( contact->getGCell(), segment->getNet(), contactLayer );
-    AutoContact* contact2 = AutoContact::create ( contact->getGCell(), segment->getNet(), contactLayer );
-
-    AutoSegment* hsegment = AutoHorizontal::create ( contact
-                                                   , contact1
-                                                   , segment->getLayer()
-                                                   , slackPoint.getY()
-                                                   , DbU::lambda(2.0)
-                                                   , AutoSegment::Local
-                                                   , false
-                                                   , false
-                                                   );
-
-    AutoSegment* vsegment = AutoVertical::create ( contact1
-                                                 , contact2
-                                                 , slackLayer
-                                                 , slackPoint.getX()
-                                                 , DbU::lambda(2.0)
-                                                 , AutoSegment::Local
-                                                 , false
-                                                 , false
-                                                 );
-
-    if ( fromSource )
-      segment->getSourceHook()->attach ( contact2->getContact()->getBodyHook() );
-    else
-      segment->getTargetHook()->attach ( contact2->getContact()->getBodyHook() );
-    contact->restoreVConnexity ( slackPoint.getY(), true );
-
-    hsegment->setSlackened    ( true );
-    vsegment->setSlackened    ( true );
-    vsegment->setSlackenStrap ( true );
-
-  //contact->setVAlignate ( true );
-
-    ltrace(200) << "Session::slacken() new paral: " << hsegment << endl;
-    ltrace(200) << "Session::slacken() perpand:   " << vsegment << endl;
-    ltrace(200) << "Session::slacken() original:  " << segment  << endl;
-  }
-
-
-} // End of local namespace.
 
 
 namespace Katabatic {
@@ -180,39 +38,48 @@ namespace Katabatic {
   using Hurricane::Error;
   using Hurricane::Bug;
   using Hurricane::DebugSession;
+  using Hurricane::RoutingPad;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoHorizontal".
 
 
-  AutoHorizontal::AutoHorizontal ( Horizontal* horizontal
-                                 , int         type
-                                 , bool        terminal
-                                 , bool        collapsed
-                                 )
-    : AutoSegment(horizontal,true,type,terminal,collapsed)
+  Segment*    AutoHorizontal::base          ()       { return _horizontal; }
+  Segment*    AutoHorizontal::base          () const { return _horizontal; }
+  Horizontal* AutoHorizontal::getHorizontal ()       { return _horizontal; }
+  DbU::Unit   AutoHorizontal::getSourceU    () const { return _horizontal->getSourceX(); }
+  DbU::Unit   AutoHorizontal::getTargetU    () const { return _horizontal->getTargetX(); }
+  DbU::Unit   AutoHorizontal::getDuSource   () const { return _horizontal->getDxSource(); }
+  DbU::Unit   AutoHorizontal::getDuTarget   () const { return _horizontal->getDxTarget(); }
+  Interval    AutoHorizontal::getSpanU      () const { return Interval(_horizontal->getSourceX(),_horizontal->getTargetX()); }
+  void        AutoHorizontal::setDuSource   ( DbU::Unit du ) { _horizontal->setDxSource(du); }
+  void        AutoHorizontal::setDuTarget   ( DbU::Unit du ) { _horizontal->setDxTarget(du); }
+  string      AutoHorizontal::_getTypeName  () const { return "AutoHorizontal"; }
+
+
+  AutoHorizontal::AutoHorizontal ( Horizontal* horizontal )
+    : AutoSegment(horizontal)
     , _horizontal(horizontal)
   {
-    ltrace(99) << "Creating (before post-create): " << this << endl;
+    ltrace(99) << "CTOR AutoHorizontal " << this << endl;
+    ltrace(99) << "               over " << horizontal << endl;
   }
 
 
   void  AutoHorizontal::_postCreate ()
   {
     AutoSegment::_postCreate ();
-    orient       ();
-    setPositions ();
 
     AutoContact* source = getAutoSource();
-    if ( source->isTerminal() ) source->setY ( _horizontal->getY() );
+    if (source->isTerminal()) source->setY( _horizontal->getY() );
 
     AutoContact* target = getAutoTarget();
-    if ( target->isTerminal() ) target->setY ( _horizontal->getY() );
+    if (target->isTerminal()) target->setY( _horizontal->getY() );
 
-    if ( source->getGCell() == target->getGCell() ) {
-      setGlobal ( false );
-    } else {
+    if (source->getGCell() != target->getGCell()) {
+      setFlags( SegGlobal );
+
       GCell* gcell;
       GCell* end;
 
@@ -235,50 +102,9 @@ namespace Katabatic {
   }
 
 
-  AutoHorizontal* AutoHorizontal::create ( Horizontal* horizontal
-                                         , int         type
-                                         , bool        terminal
-                                         , bool        collapsed
-                                         )
-  {
-    AutoSegment::_preCreate ( horizontal->getSource(), horizontal->getTarget() );
-    AutoHorizontal* autoHorizontal = new AutoHorizontal ( horizontal
-                                                        , type
-                                                        , terminal
-                                                        , collapsed
-                                                        );
-    autoHorizontal->_postCreate ();
-    return autoHorizontal;
-  }
-
-
-  AutoHorizontal* AutoHorizontal::create ( AutoContact* source
-                                         , AutoContact* target
-                                         , const Layer* layer
-                                         , DbU::Unit    y
-                                         , DbU::Unit    width
-                                         , int          type
-                                         , bool         terminal
-                                         , bool         collapsed
-                                         )
-  {
-    AutoSegment::_preCreate ( source, target );
-    AutoHorizontal* autoHorizontal
-      = new AutoHorizontal ( Horizontal::create ( source->getContact()
-                                                , target->getContact()
-                                                , layer
-                                                , y
-                                                , width ), type, terminal, collapsed );
-
-    autoHorizontal->_postCreate ();
-
-    return autoHorizontal;
-  }
-
-
   void  AutoHorizontal::_preDestroy ()
   {
-    ltrace(200) << "AutoHorizontal::_preDestroy() - <id:" << getId() << "> " << (void*)this << endl;
+    ltrace(200) << "AutoHorizontal::_preDestroy() - <id:" << getId() << "> " << endl;
     ltrace(200) << "  " << _getString() << endl;
     ltracein(90);
 
@@ -316,15 +142,15 @@ namespace Katabatic {
   AutoHorizontal::~AutoHorizontal ()
   {
     if ( Session::doDestroyBaseSegment() and not Session::doDestroyTool() ) {
-      ltrace(200) << "~AutoHorizontal() - " << (void*)_horizontal << endl;
+      ltrace(200) << "~AutoHorizontal() - " << endl;
       _horizontal->destroy ();
     }
   }
 
 
-  Interval  AutoHorizontal::getSourceConstraints ( bool native ) const
+  Interval  AutoHorizontal::getSourceConstraints ( unsigned int flags ) const
   {
-    if ( native ) {
+    if (flags & KbNativeConstraints) {
       Box nativeBox ( getAutoSource()->getNativeConstraintBox() );
       return Interval ( nativeBox.getYMin(), nativeBox.getYMax() );
     }
@@ -332,9 +158,9 @@ namespace Katabatic {
   }
 
 
-  Interval  AutoHorizontal::getTargetConstraints ( bool native ) const
+  Interval  AutoHorizontal::getTargetConstraints ( unsigned int flags ) const
   {
-    if ( native ) {
+    if (flags & KbNativeConstraints) {
       Box nativeBox ( getAutoTarget()->getNativeConstraintBox() );
       return Interval ( nativeBox.getYMin(), nativeBox.getYMax() );
     }
@@ -375,7 +201,7 @@ namespace Katabatic {
 
 
   unsigned int  AutoHorizontal::getDirection () const
-  { return Constant::Horizontal; }
+  { return KbHorizontal; }
 
 
   size_t  AutoHorizontal::getGCells ( vector<GCell*>& gcells ) const
@@ -399,88 +225,190 @@ namespace Katabatic {
 
   bool  AutoHorizontal::_canSlacken () const
   {
+    ltracein(200);
+
     Interval sourceConstraints = Interval(getAutoSource()->getCBYMin(),getAutoSource()->getCBYMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBYMin(),getAutoTarget()->getCBYMax());
 
   // Ugly: should uses topRightShrink from GCell.
-    sourceConstraints.inflate ( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-    targetConstraints.inflate ( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+    sourceConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+    targetConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
 
-    ltrace(200) << "source " << (void*)getAutoSource() << ":" << getAutoSource() << endl;
+    ltrace(200) << "source " << getAutoSource() << endl;
     ltrace(200) << "source constraints: " << sourceConstraints
                 << " " << DbU::getValueString(sourceConstraints.getSize()) << endl;
-    ltrace(200) << "target " << (void*)getAutoTarget() << ":" << getAutoTarget() << endl;
+    ltrace(200) << "target " << getAutoTarget() << endl;
     ltrace(200) << "target constraints: " << targetConstraints
                 << " " << DbU::getValueString(targetConstraints.getSize()) << endl;
 
   // Ugly: GCell's track number is hardwired.
-    if ( sourceConstraints.getSize() / DbU::lambda(5.0) < 10 ) return true;
-    if ( targetConstraints.getSize() / DbU::lambda(5.0) < 10 ) return true;
+    if (sourceConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
+    if (targetConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
 
+    ltraceout(200);
     return false;
   }
 
 
-  void  AutoHorizontal::_slacken ()
+  bool  AutoHorizontal::_slacken ( unsigned int flags )
   {
     ltrace(200) << "AutoHorizontal::_slacken() " << this << endl;
+
+    if (not isStrongTerminal()) return false;
+
+    const Configuration* configuration = Session::getConfiguration();
+    const Layer*         metal2        = configuration->getRoutingLayer( 1 );
+
+    bool         success        = false;
+    bool         isMetal2Source = false;
+    bool         isMetal2Target = false;
+    DbU::Unit    height         = 0;
+    AutoContact* source         = getAutoSource();
+    AutoContact* target         = getAutoTarget();
+    if (source->isTerminal()) {
+      height = (static_cast<RoutingPad*>(source->getAnchor()))->getBoundingBox().getHeight();
+      isMetal2Source = (source->getLayer() == metal2);
+    }
+    if (target->isTerminal()) {
+      height = std::min( height, (static_cast<RoutingPad*>(target->getAnchor()))->getBoundingBox().getHeight() );
+      isMetal2Target = (target->getLayer() == metal2);
+    }
+
+    if (height >= 4*DbU::lambda(5.0)) {
+      if (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < 5*DbU::lambda(5.0)))
+        return false;
+    }
+
     ltracein(200);
+    ltrace(200) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
+    ltrace(200) << "test:" << (getLength() < DbU::lambda(5.0)*5) << endl;
+    ltrace(200) << "length:" << DbU::getValueString(getLength()) << endl;
 
-    AutoContact* contact     = getAutoSource();
-    Interval     constraints = Interval(contact->getCBYMin(),contact->getCBYMax());
+    int          lowSlack       = (flags & KbHalfSlacken) ? 3 : 10;
+    bool         slackened      = false;
+    bool         halfSlackened  = false;
+    DbU::Unit    targetPosition = getTargetPosition();
+    AutoSegment* parallel       = this;
 
-    constraints.inflate ( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+    if (source->isTerminal()) {
+      Interval  perpandConstraints = getAutoTarget()->getUConstraints(KbHorizontal);
+      Interval  constraints        = source->getUConstraints      (KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      Interval  nativeConstraints  = source->getNativeUConstraints(KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      int       slack              = constraints.getSize()       / DbU::lambda(5.0);
+      int       nativeSlack        = nativeConstraints.getSize() / DbU::lambda(5.0);
 
-  // Ugly: GCell's track number is hardwired.
-    if ( constraints.getSize() / DbU::lambda(5.0) < 10 ) ::slacken ( this, true );
+      ltrace(200) << "Source constraint: " << constraints
+                  << " slack:"        << slack
+                  << " native slack:" << nativeSlack << endl;
+      ltrace(200) << "Perpand constraints on target: " << perpandConstraints << endl; 
+    // Ugly: GCell's track number is hardwired.
+      if ((nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
+        ltrace(200) << "Slackening from Source: " << source << endl;
+        _makeDogleg( source->getGCell(), KbNoFlags );
+        slackened = true;
+      } else if (slack < 10) {
+        halfSlackened = true;
+      }
 
-    contact     = getAutoTarget ();
-    constraints = Interval(contact->getCBYMin(),contact->getCBYMax());
-    constraints.inflate ( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      const vector<AutoSegment*>& doglegs = Session::getDoglegs();
+      if (doglegs.size() >= 2) {
+        ltrace(200) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
+        doglegs[doglegs.size()-2]->setAxis( getSourcePosition() );
+        success = true;
 
-    if ( constraints.getSize() / DbU::lambda(5.0) < 10 ) ::slacken ( this, false );
+        if (isMetal2Source) {
+          ltrace(200) << "Fixing on source terminal contact." << endl;
+          doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntFixed );
+        }
 
-    setSlackened ( true );
+        parallel = doglegs[ doglegs.size()-1 ];
+      }
+    }
 
+    if (parallel) target = parallel->getAutoTarget();
+
+    if (target->isTerminal()) {
+      Interval  constraints       = target->getUConstraints      (KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      Interval  nativeConstraints = target->getNativeUConstraints(KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      int       slack             = constraints.getSize()       / DbU::lambda(5.0);
+      int       nativeSlack       = nativeConstraints.getSize() / DbU::lambda(5.0);
+
+    // Ugly: GCell's track number is hardwired.
+      ltrace(200) << "Target constraint: " << constraints
+                  << " slack:"        << slack
+                  << " native slack:" << nativeSlack << endl;
+      if ((nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
+        ltrace(200) << "Slackening from Target: " << target << endl;
+        parallel->_makeDogleg( target->getGCell(), KbNoFlags );
+        slackened = true;
+      } else if (slack < 10) {
+        halfSlackened = true;
+      }
+
+      if (halfSlackened) {
+        setFlags( SegHalfSlackened );
+      } else if (slackened) {
+        setFlags  ( SegSlackened );
+        unsetFlags( SegHalfSlackened );
+      }
+
+      const vector<AutoSegment*>& doglegs = Session::getDoglegs();
+      if (doglegs.size() >= 2) {
+        ltrace(200) << "AutoSegment::_slaken(): Target @" << DbU::getValueString(targetPosition) << endl;
+        doglegs[doglegs.size()-2]->setAxis( targetPosition );
+        success = true;
+
+        if (isMetal2Target) {
+          ltrace(200) << "Fixing on target terminal contact." << endl;
+          doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntFixed );
+        }
+      }
+    }
     ltraceout(200);
+
+    return success;
   }
 
 
-  bool  AutoHorizontal::canDesalignate ( AutoContact* contact ) const
-  { return contact->canHDesalignate(); }
-
-
-  void  AutoHorizontal::desalignate ( AutoContact* contact )
-  { contact->hDesalignate(); }
-
-
-  void  AutoHorizontal::alignate ( DbU::Unit axis )
+  void  AutoHorizontal::_setAxis ( DbU::Unit axis )
   {
-    if ( _horizontal->getY() == axis ) return;
+    setFlags( SegAxisSet );
 
-    ltrace(80) << "alignate() " << (void*)this << " " << this << " @Y " << DbU::getLambda(axis) << endl;
+    if ((axis != getAxis()) and isFixed()) {
+      cerr << Error( "AutoHorizontal::setAxis(): Cannot move fixed segment to %s.\n"
+                     "        (on: %s)"
+                   , DbU::getValueString(axis).c_str()
+                   , _getString().c_str()
+                   ) << endl;
+    }
 
-    _horizontal->setY ( axis );
-    invalidate ();
+    if (_horizontal->getY() == axis) return;
+
+    ltrace(80) << "_setAxis() @Y " << DbU::getLambda(axis) << " " << this << endl;
+
+    _horizontal->setY( axis );
+    invalidate();
 
     AutoContact* anchor = getAutoSource();
-    anchor->invalidate ();
-    if ( anchor->isTerminal() ) anchor->setY ( axis );
+    anchor->invalidate();
+    if (anchor->isTerminal()) anchor->setY( axis );
 
     anchor = getAutoTarget();
-    anchor->invalidate ();
-    if ( anchor->isTerminal() ) anchor->setY ( axis );
+    anchor->invalidate();
+    if (anchor->isTerminal()) anchor->setY( axis );
   }
 
 
-  void  AutoHorizontal::orient ()
+  void  AutoHorizontal::updateOrient ()
   {
-    if ( _horizontal->getTargetX() < _horizontal->getSourceX() )
-      _horizontal->invert ();
+    if (_horizontal->getTargetX() < _horizontal->getSourceX()) {
+      ltrace(80) << "updateOrient() " << this << " (before S/T swap)" << endl;
+      _horizontal->invert();
+    }
   }
 
 
-  void  AutoHorizontal::setPositions ()
+  void  AutoHorizontal::updatePositions ()
   {
     _sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap();
     _targetPosition = _horizontal->getTargetX() + Session::getExtensionCap();
@@ -522,14 +450,16 @@ namespace Katabatic {
     Interval sourceConstraints = Interval(getAutoSource()->getCBYMin(),getAutoSource()->getCBYMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBYMin(),getAutoTarget()->getCBYMax());
 
-    if ( !sourceConstraints.intersect(targetConstraints) ) {
-      cerr << Error ( "%p:%s\n        Constraints incoherency: S:%p:%s, T:%p:%s"
-                    , (void*)base()
+
+    if (not sourceConstraints.intersect(targetConstraints)) {
+      cerr << Error ( "%s\n        Constraints incoherency:\n"
+                      "          S:%s %s\n"
+                      "          T:%s %s"
                     , _getString().c_str() 
-                    , getAutoSource()->getContact()
                     , getString(sourceConstraints).c_str()
-                    , getAutoTarget()->getContact()
+                    , getString(getAutoSource()).c_str()
                     , getString(targetConstraints).c_str()
+                    , getString(getAutoTarget()).c_str()
                     ) << endl;
       return false;
     }
@@ -538,261 +468,306 @@ namespace Katabatic {
   }
 
 
-  void  AutoHorizontal::_computeTerminal ()
+  bool  AutoHorizontal::canMoveULeft ( float reserve ) const
   {
-    _computeTerminal(_horizontal);
+  //cerr << "canMoveULeft() " << this << endl;
 
-    ltrace(99) << "_computeTerminal() S:" << getAutoSource()->isTerminal()
-               << " T:" << getAutoTarget()->isTerminal()
-               << " " << this << endl;
+    if (not isGlobal()) return false;
+    if (not getAutoSource()->isTurn() or not getAutoTarget()->isTurn()) return false;
+    if (not getAutoSource()->getGCell()->getDown()) return false;
+
+    AutoContact* autoSource        = getAutoSource();
+    AutoContact* autoTarget        = getAutoTarget();
+    AutoSegment* perpandiculars[2] = { autoSource->getSegment(0), autoTarget->getSegment(0) };
+
+    if (   ( (not perpandiculars[0]->isGlobal()) or (perpandiculars[0]->getAutoSource() == autoSource) )
+       and ( (not perpandiculars[1]->isGlobal()) or (perpandiculars[1]->getAutoSource() == autoTarget) ) )
+      return false;
+
+    GCell*        begin             = autoSource->getGCell();
+    GCell*        end               = autoTarget->getGCell();
+    unsigned int  depth             = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    float         currMaxDensity    = 0.0;
+    float         leftMaxDensity    = 0.0;
+
+  //cerr << "| begin:" << begin << endl;
+  //cerr << "| end:  " << end << endl;
+    for ( GCell* gcell=begin ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+    //cerr << "| gcell:" << gcell << endl;
+      if (currMaxDensity < gcell->getWDensity(depth)) currMaxDensity = gcell->getWDensity( depth );
+    }
+            
+    begin = begin->getDown();
+    end   = end  ->getDown();
+
+    for ( GCell* gcell=begin ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+      if (leftMaxDensity < gcell->getWDensity(depth)) leftMaxDensity = gcell->getWDensity( depth );
+    }
+
+    return (leftMaxDensity + reserve < currMaxDensity);
   }
 
 
-  void  AutoHorizontal::moveULeft ()
+  bool  AutoHorizontal::canMoveURight ( float reserve ) const
   {
-    if ( not getAutoSource()->isCorner() or not getAutoTarget()->isCorner() ) return;
-    if ( not getAutoSource()->getGCell()->getDown() ) return;
+  //cerr << "canMoveURight() " << this << endl;
 
-    Session::setInvalidateMask ( Session::RestoreHCon|Session::NetCanonize );
-    Session::invalidate ( getNet() );
+    if (not isGlobal()) return false;
+    if (not getAutoSource()->isTurn() or not getAutoTarget()->isTurn()) return false;
+    if (not getAutoSource()->getGCell()->getUp()) return false;
 
-    AutoContact* autoSource = getAutoSource();
-    AutoContact* autoTarget = getAutoTarget();
-    GCell*       begin      = autoSource->getGCell();
-    GCell*       end        = autoTarget->getGCell();
+    AutoContact* autoSource        = getAutoSource();
+    AutoContact* autoTarget        = getAutoTarget();
+    AutoSegment* perpandiculars[2] = { autoSource->getSegment(0), autoTarget->getSegment(0) };
 
-    forEach ( Vertical*, isegment, autoSource->getSlaveComponents().getSubSet<Vertical*>() ) {
-      AutoSegment* segment = Session::lookup ( *isegment );
-      if ( segment->isLocal() ) {
-        segment->setGlobal ( true );
-        continue;
-      }
+    if (   ( (not perpandiculars[0]->isGlobal()) or (perpandiculars[0]->getAutoTarget() == autoSource) )
+       and ( (not perpandiculars[1]->isGlobal()) or (perpandiculars[1]->getAutoTarget() == autoTarget) ) )
+      return false;
 
-      if ( segment->getAutoSource() == autoSource ) {
-        begin->addVSegment ( segment );
+    GCell*        begin             = autoSource->getGCell();
+    GCell*        end               = autoTarget->getGCell();
+    unsigned int  depth             = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    float         currMaxDensity    = 0.0;
+    float         leftMaxDensity    = 0.0;
+
+  //cerr << "| begin:" << begin << endl;
+  //cerr << "| end:  " << end << endl;
+
+    for ( GCell* gcell=begin ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+    //cerr << "| gcell: " << gcell << endl;
+      if (currMaxDensity < gcell->getWDensity(depth)) currMaxDensity = gcell->getWDensity( depth );
+    }
+            
+    begin = begin->getUp();
+    end   = end  ->getUp();
+
+    for ( GCell* gcell=begin ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+      if (leftMaxDensity < gcell->getWDensity(depth)) leftMaxDensity = gcell->getWDensity( depth );
+    }
+
+    return (leftMaxDensity + reserve < currMaxDensity);
+  }
+
+
+  bool  AutoHorizontal::moveULeft ()
+  {
+    if (not getAutoSource()->isTurn() or not getAutoTarget()->isTurn()) return false;
+    if (not getAutoSource()->getGCell()->getDown()) return false;
+
+    AutoContact* autoSource        = getAutoSource();
+    AutoContact* autoTarget        = getAutoTarget();
+    GCell*       begin             = autoSource->getGCell();
+    GCell*       end               = autoTarget->getGCell();
+    AutoSegment* perpandicular     = autoSource->getSegment(2);
+
+    if (perpandicular->isLocal()) {
+      perpandicular->setFlags( Katabatic::SegGlobal );
+    } else {
+      if (perpandicular->getAutoSource() == autoSource) {
+        begin->addVSegment( perpandicular );
       } else {
-        if ( begin->getDown() == segment->getAutoSource()->getGCell() ) {
-          segment->setGlobal ( false );
-          segment->getAutoSource()->invalidate ();
+        if (begin->getDown() == perpandicular->getAutoSource()->getGCell()) {
+          perpandicular->unsetFlags( Katabatic::SegGlobal );
         } else
-          begin->getDown()->removeVSegment ( segment );
+          begin->getDown()->removeVSegment( perpandicular );
       }
     }
 
-    forEach ( Vertical*, isegment, autoTarget->getSlaveComponents().getSubSet<Vertical*>() ) {
-      AutoSegment* segment = Session::lookup ( *isegment );
-      if ( segment->isLocal() ) {
-        segment->setGlobal ( true );
-        continue;
-      }
-
-      if ( segment->getAutoSource() == autoTarget ) {
-        begin->addVSegment ( segment );
+    perpandicular = autoTarget->getSegment(2);
+    if (perpandicular->isLocal()) {
+      perpandicular->setFlags( Katabatic::SegGlobal );
+    } else {
+      if (perpandicular->getAutoSource() == autoTarget) {
+        end->addVSegment( perpandicular );
       } else {
-        if ( end->getDown() == segment->getAutoSource()->getGCell() ) {
-          segment->setGlobal ( false );
-          segment->getAutoSource()->invalidate ();
+        if (end->getDown() == perpandicular->getAutoSource()->getGCell()) {
+          perpandicular->unsetFlags( Katabatic::SegGlobal );
         } else
-          end->getDown()->removeVSegment ( segment );
+          end->getDown()->removeVSegment( perpandicular );
       }
     }
 
-    if ( begin != end ) {
-      for ( GCell* gcell = begin->getLeft() ; gcell != end ; gcell = gcell->getLeft() )
-        gcell->removeHSegment ( this );
+    if (begin != end) {
+      for ( GCell* gcell=begin->getRight() ; gcell and gcell!=end ; gcell=gcell->getRight() )
+        gcell->removeHSegment( this );
     }
 
     begin = begin->getDown();
     end   = end  ->getDown();
 
-    autoSource->setGCell ( begin );
-    autoTarget->setGCell ( end   );
-    if ( begin != end ) {
-      for ( GCell* gcell = begin->getLeft() ; gcell != end ; gcell = gcell->getLeft() )
-        gcell->addHSegment ( this );
+    autoSource->setGCell( begin );
+    autoTarget->setGCell( end   );
+    if (begin != end) {
+      for ( GCell* gcell=begin->getRight() ; gcell and gcell!=end ; gcell=gcell->getRight() )
+        gcell->addHSegment( this );
     }
 
-    DbU::Unit y = begin->getUSide(Constant::Vertical).getVMax();
-    setAxis ( y );
+    DbU::Unit y = begin->getSide(KbVertical).getVMax();
+    setAxis( y );
 
-    Session::revalidateTopology ();
+    return true;
   }
 
 
-  void  AutoHorizontal::moveURight ()
+  bool  AutoHorizontal::moveURight ()
   {
-    if ( not getAutoSource()->isCorner() or not getAutoTarget()->isCorner() ) return;
-    if ( not getAutoSource()->getGCell()->getUp() ) return;
+  //cerr << "moveURight() " << this << endl;
 
-    Session::setInvalidateMask ( Session::RestoreVCon|Session::NetCanonize );
-    Session::invalidate ( getNet() );
+    if (not getAutoSource()->isTurn() or not getAutoTarget()->isTurn()) return false;
+    if (not getAutoSource()->getGCell()->getUp()) return false;
 
-    AutoContact* autoSource = getAutoSource();
-    AutoContact* autoTarget = getAutoTarget();
-    GCell*       begin      = autoSource->getGCell();
-    GCell*       end        = autoTarget->getGCell();
+    AutoContact* autoSource        = getAutoSource();
+    AutoContact* autoTarget        = getAutoTarget();
+    GCell*       begin             = autoSource->getGCell();
+    GCell*       end               = autoTarget->getGCell();
+    AutoSegment* perpandicular     = autoSource->getSegment(2);
 
-    forEach ( Vertical*, isegment, autoSource->getSlaveComponents().getSubSet<Vertical*>() ) {
-      AutoSegment* segment = Session::lookup ( *isegment );
-      if ( segment->isLocal() ) {
-        segment->setGlobal ( true );
-        continue;
-      }
-
-      if ( segment->getAutoTarget() == autoSource ) {
-        begin->addVSegment ( segment );
+    if (perpandicular->isLocal()) {
+      perpandicular->setFlags( Katabatic::SegGlobal );
+    } else {
+      if (perpandicular->getAutoTarget() == autoSource) {
+        begin->addVSegment( perpandicular );
       } else {
-        if ( begin->getUp() == segment->getAutoTarget()->getGCell() ) {
-          segment->setGlobal ( false );
-          segment->getAutoTarget()->invalidate ();
+        if (begin->getUp() == perpandicular->getAutoTarget()->getGCell()) {
+          perpandicular->unsetFlags( Katabatic::SegGlobal );
         } else
-          begin->getUp()->removeVSegment ( segment );
+          begin->getUp()->removeVSegment( perpandicular );
       }
     }
 
-    forEach ( Vertical*, isegment, autoTarget->getSlaveComponents().getSubSet<Vertical*>() ) {
-      AutoSegment* segment = Session::lookup ( *isegment );
-      if ( segment->isLocal() ) {
-        segment->setGlobal ( true );
-        continue;
-      }
-
-      if ( segment->getAutoTarget() == autoTarget ) {
-        begin->addVSegment ( segment );
+    perpandicular = autoTarget->getSegment(2);
+    if (perpandicular->isLocal()) {
+      perpandicular->setFlags( Katabatic::SegGlobal );
+    } else {
+      if (perpandicular->getAutoTarget() == autoTarget) {
+        end->addVSegment( perpandicular );
       } else {
-        if ( end->getUp() == segment->getAutoTarget()->getGCell() ) {
-          segment->setGlobal ( false );
-          segment->getAutoTarget()->invalidate ();
+        if (end->getUp() == perpandicular->getAutoTarget()->getGCell()) {
+          perpandicular->unsetFlags( Katabatic::SegGlobal );
         } else
-          end->getUp()->removeVSegment ( segment );
+          end->getUp()->removeVSegment( perpandicular );
       }
     }
 
-    if ( begin != end ) {
-      for ( GCell* gcell = begin->getLeft() ; gcell != end ; gcell = gcell->getLeft() )
-        gcell->removeHSegment ( this );
+  //cerr << "| begin:" << begin << endl;
+  //cerr << "| end:  " << end << endl;
+
+  //cerr << "* remove" << endl;
+    if (begin != end) {
+      for ( GCell* gcell=begin->getRight() ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+      //cerr << "| gcell:  " << end << endl;
+        gcell->removeHSegment( this );
+      }
     }
 
     begin = begin->getUp();
     end   = end  ->getUp();
 
-    autoSource->setGCell ( begin );
-    autoTarget->setGCell ( end   );
-    if ( begin != end ) {
-      for ( GCell* gcell = begin->getLeft() ; gcell != end ; gcell = gcell->getLeft() )
-        gcell->addHSegment ( this );
+    autoSource->setGCell( begin );
+    autoTarget->setGCell( end   );
+  //cerr << "* add" << endl;
+    if (begin != end) {
+      for ( GCell* gcell=begin->getRight() ; gcell and gcell!=end ; gcell=gcell->getRight() ) {
+      //cerr << "| gcell:  " << end << endl;
+        gcell->addHSegment( this );
+      }
     }
 
-    DbU::Unit y = begin->getUSide(Constant::Vertical).getVMin();
-    setAxis ( y );
+    DbU::Unit y = begin->getSide( KbVertical ).getVMin();
+    setAxis( y );
 
-    Session::revalidateTopology ();
+    return true;
   }
 
 
-  void  AutoHorizontal::_makeDogLeg ( GCell* dogLegGCell, bool upLayer )
+  unsigned int  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
   {
-    DebugSession::open ( getNet(), 110 );
+    ltrace(200) << "AutoHorizontal::_makeDogleg(GCell*)" << endl;
+
+    DebugSession::open( getNet(), 110 );
     ltracein(159);
 
-    Session::dogLegReset ();
+  //Session::doglegReset();
 
     AutoContact*  autoTarget      = getAutoTarget();
     AutoContact*  autoSource      = getAutoSource();
     GCell*        begin           = autoSource->getGCell();
     GCell*        end             = autoTarget->getGCell();
-    unsigned int  fragmentType    = AutoSegment::Global;
-    unsigned int  splittedType    = AutoSegment::Global;
 
-  //DbU::Unit dogLegAxis = (detachSource)?dogLegGCell->getXMax():dogLegGCell->getX();
-    DbU::Unit dogLegAxis = (dogLegGCell->getXMax() + dogLegGCell->getX()) / 2;
-    if ( isLocal() )
-      dogLegAxis = (getSourceX() + getTargetX()) / 2;
+    DbU::Unit doglegAxis = (doglegGCell->getXMax() + doglegGCell->getX()) / 2;
+    if (isLocal())
+      doglegAxis = (getSourceX() + getTargetX()) / 2;
 
-    ltrace(159) << "Detaching Target AutoContact "
-                << (void*)autoTarget->getContact() << ":"
-                << autoTarget->getContact() << "." << endl;
-    if ( end == dogLegGCell ) {
-      fragmentType = AutoSegment::Local;
-    }
-    if ( begin == dogLegGCell ) {
-      setGlobal ( false );
-      splittedType = AutoSegment::Local;
-    }
+    ltrace(159) << "Detaching from Target AutoContact " << autoTarget << "." << endl;
 
-    autoTarget->invalidate ();
-    autoTarget->setInvalidatedTopology ( true );
-
-    if ( dogLegGCell != end ) {
-      GCell* gcell = dogLegGCell;
+    if (doglegGCell == begin) unsetFlags( SegGlobal );
+    if (doglegGCell != end) {
+      GCell* gcell = doglegGCell;
       do {
-        if ( gcell != begin )
-          gcell->removeHSegment ( this );
-        gcell = gcell->getRight ();
-      } while ( gcell && (gcell != end) );
+        if (gcell != begin)
+          gcell->removeHSegment( this );
+        gcell = gcell->getRight();
+      } while ( gcell and (gcell != end) );
     }
 
-    Session::dogLeg ( this );
+    size_t       depth        = Session::getRoutingGauge()->getLayerDepth( _horizontal->getLayer() );
+    bool         upLayer      = (depth+1 < Session::getRoutingGauge()->getDepth());
+    Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer( depth + ((upLayer)?0:-1) );
+    const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer( depth + ((upLayer)?1:-1) );
 
-    size_t       depth        = Session::getRoutingGauge()->getLayerDepth ( _horizontal->getLayer() );
-    Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer ( depth + ((upLayer)?0:-1) );
-    const Layer* dogLegLayer  = Session::getRoutingGauge()->getRoutingLayer ( depth + ((upLayer)?1:-1) );
+    Session::dogleg( this );
+    targetDetach();
+    invalidate();
+    autoTarget->invalidate( KbTopology );
+    AutoContact* dlContact1 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );
+    AutoContact* dlContact2 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );
+    AutoSegment* segment1   = AutoSegment::create( dlContact1 , dlContact2, KbVertical );
+    segment1->setLayer( doglegLayer );
+    segment1->_setAxis( doglegAxis );
+    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
 
-    _horizontal->getTargetHook()->detach ();
+    ltrace(200) << "New " << dlContact1 << endl;
+    ltrace(200) << "New " << dlContact2 << endl;
+    Session::dogleg( segment1 );
 
-    AutoContact* dlContact1 = AutoContact::create ( dogLegGCell, _horizontal->getNet(), contactLayer );
-    AutoContact* dlContact2 = AutoContact::create ( dogLegGCell, _horizontal->getNet(), contactLayer );
-    AutoSegment* segment1   = AutoVertical::create ( dlContact1
-                                                   , dlContact2
-                                                   , dogLegLayer
-                                                   , dogLegAxis
-                                                   , DbU::lambda(2.0)
-                                                   , AutoSegment::Local
-                                                   , false
-                                                   , false
-                                                   );
-    segment1->setDogleg ( true );
+    targetAttach( dlContact1 );
+    AutoSegment* segment2 = AutoSegment::create( dlContact2 , autoTarget, KbHorizontal );
+    autoTarget->cacheAttach( segment2 );
+    segment2->setLayer( getLayer() );
+    segment2->_setAxis( getY() );
+    segment2->setFlags( (isSlackened()?SegSlackened:0) );
+    Session::dogleg( segment2 );
 
-    ltrace(200) << "New " << (void*)dlContact1->getContact() << ":" << dlContact1->getContact() << "." << endl;
-    ltrace(200) << "New " << (void*)dlContact2->getContact() << ":" << dlContact2->getContact() << "." << endl;
-    ltrace(200) << "Session::dogLeg[1] perpand:   " << segment1 << endl;
-    Session::dogLeg ( segment1 );
-
-    _horizontal->getTargetHook()->attach ( dlContact1->getContact()->getBodyHook() );
-    AutoSegment* segment2 = AutoHorizontal::create ( dlContact2
-                                                   , autoTarget
-                                                   , getLayer()
-                                                   , getY()
-                                                   , DbU::lambda(2.0)
-                                                   , fragmentType
-                                                   , false
-                                                   , false
-                                                   );
-    segment2->setAxis ( getY(), AxisSet );
-    ltrace(200) << "Session::dogLeg[2] new paral: " << segment2 << endl;
-    ltrace(200) << "Session::dogLeg[0] original:  " << this << endl;
-    Session::dogLeg ( segment2 );
-
-    setGlobal ( (splittedType == AutoSegment::Global) );
-
-    if ( (splittedType == AutoSegment::Global) or ( fragmentType == AutoSegment::Global ) ) {
-      if ( splittedType == AutoSegment::Local ) autoSource->restoreVConnexity ( getY(), true );
-      else                                      autoTarget->restoreVConnexity ( getY(), true );
+    if (isStrongTerminal()) {
+      if (autoSource->getAnchor()) {
+        segment1->setFlags( SegWeakTerminal1 );
+        segment2->setFlags( SegWeakTerminal1 );
+      } else {
+        unsetFlags( SegStrongTerminal );
+        setFlags( SegWeakTerminal1 );
+        segment1->setFlags( SegWeakTerminal1 );
+        segment2->setFlags( SegStrongTerminal );
+      }
+    } else if (isWeakTerminal()) {
+      segment1->setFlags( SegWeakTerminal1 );
+      segment2->setFlags( SegWeakTerminal1 );
     }
 
-    setTerminal ( false );
-    segment2->setTerminal ( false );
-    if ( autoSource->getAnchor() and not isGlobal() ) setTerminal ( true );
-    if ( autoTarget->getAnchor() and not segment2->isGlobal() ) segment2->setTerminal ( true );
+    ltrace(200) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
+    ltrace(200) << "Session::dogleg[x+2] new paral: " << segment2 << endl;
+    ltrace(200) << "Session::dogleg[x+0] original:  " << this << endl;
 
-    segment1->setSlackened ( true );
-    segment2->setSlackened ( isSlackened() );
+    dlContact1->updateCache();
+    dlContact2->updateCache();
+  //autoTarget->updateCache();
 
-    Session::invalidate         ( getNet() );
-    Session::revalidateTopology ();
+    segment2->canonize( flags );
+    if (not isCanonical()) canonize( flags );
 
     ltraceout(159);
-    DebugSession::close ();
+    DebugSession::close();
+
+    return (upLayer) ? KbUseAboveLayer : KbUseBelowLayer;
   }
 
 

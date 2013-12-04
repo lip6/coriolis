@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./GraphicKatabaticEngine.cpp"             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <QAction>
@@ -90,9 +82,13 @@ namespace Katabatic {
     const GCell* gcell = static_cast<const GCell*>(go);
 
     QPainter& painter = widget->getPainter();
-    painter.setBrush 
-      ( Graphics::getColorScale(ColorScale::Fire).getBrush((size_t)(gcell->getDensity()*255.0)
-                                                          ,widget->getDarkening()) );
+    if (gcell->isUnderIoPad()) {
+      ( Graphics::getColorScale(ColorScale::Fire).getBrush(128.0,widget->getDarkening()) );
+    } else {
+      painter.setBrush 
+        ( Graphics::getColorScale(ColorScale::Fire).getBrush((size_t)(gcell->getDensity()*255.0)
+                                                            ,widget->getDarkening()) );
+    }
     painter.drawRect ( widget->dbuToDisplayRect(gcell->getBoundingBox()) );
   }
 

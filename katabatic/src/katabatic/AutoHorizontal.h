@@ -1,30 +1,21 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AutoHorizontal.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/AutoHorizontal.h"                  |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_AUTOHORIZONTAL__
-#define  __KATABATIC_AUTOHORIZONTAL__
+#ifndef  KATABATIC_AUTOHORIZONTAL_H
+#define  KATABATIC_AUTOHORIZONTAL_H
 
 #include  "hurricane/Horizontal.h"
 #include  "katabatic/AutoSegment.h"
@@ -38,61 +29,46 @@ namespace Katabatic {
 
  
   class AutoHorizontal : public AutoSegment {
-      using AutoSegment::_computeTerminal;
+      friend class AutoSegment;
 
     public:
-    // Constructors.
-      static  AutoHorizontal* create               ( Horizontal* horizontal
-                                                   , int         type
-                                                   , bool        terminal=false
-                                                   , bool        collapsed=false
-                                                   );
-      static  AutoHorizontal* create               ( AutoContact* source
-                                                   , AutoContact* target
-                                                   , const Layer* layer
-                                                   , DbU::Unit    y
-                                                   , DbU::Unit    width
-                                                   , int          type
-                                                   , bool         terminal=false
-                                                   , bool         collapsed=false
-                                                   );
     // Predicates.                                 
-      virtual bool            canDesalignate       ( AutoContact* ) const;
       virtual bool            _canSlacken          () const;
+      virtual bool            canMoveULeft         ( float reserve=0.0 ) const;
+      virtual bool            canMoveURight        ( float reserve=0.0 ) const;
     // Accessors.                                  
-      virtual Segment*        base                 ()       { return _horizontal; };
-      virtual Segment*        base                 () const { return _horizontal; };
-      virtual Segment*        getSegment           ()       { return _horizontal; };
-      virtual Segment*        getSegment           () const { return _horizontal; };
-      virtual Horizontal*     getHorizontal        ()       { return _horizontal; };
-      virtual DbU::Unit       getSourceU           () const { return _horizontal->getSourceX(); };
-      virtual DbU::Unit       getTargetU           () const { return _horizontal->getTargetX(); };
-      virtual DbU::Unit       getDuSource          () const { return _horizontal->getDxSource(); };
-      virtual DbU::Unit       getDuTarget          () const { return _horizontal->getDxTarget(); };
-      virtual Interval        getSpanU             () const { return Interval(_horizontal->getSourceX(),_horizontal->getTargetX()); };
+      virtual Segment*        base                 ();
+      virtual Segment*        base                 () const;
+      virtual Horizontal*     getHorizontal        ();
+      virtual DbU::Unit       getSourceU           () const;
+      virtual DbU::Unit       getTargetU           () const;
+      virtual DbU::Unit       getDuSource          () const;
+      virtual DbU::Unit       getDuTarget          () const;
+      virtual Interval        getSpanU             () const;
       virtual bool            getConstraints       ( DbU::Unit& min , DbU::Unit& max ) const;
-      virtual Interval        getSourceConstraints ( bool native=false ) const;
-      virtual Interval        getTargetConstraints ( bool native=false ) const;
+      virtual Interval        getSourceConstraints ( unsigned int flags=0 ) const;
+      virtual Interval        getTargetConstraints ( unsigned int flags=0 ) const;
       virtual unsigned int    getDirection         () const;
       virtual size_t          getGCells            ( vector<GCell*>& ) const;
     // Modifiers.                                  
-      virtual void            setDuSource          ( DbU::Unit du ) { _horizontal->setDxSource(du); };
-      virtual void            setDuTarget          ( DbU::Unit du ) { _horizontal->setDxTarget(du); };
-      virtual void            alignate             ( DbU::Unit axis );
-      virtual void            orient               ();
-      virtual void            setPositions         ();
+      virtual void            setDuSource          ( DbU::Unit );
+      virtual void            setDuTarget          ( DbU::Unit );
+      virtual void            _setAxis             ( DbU::Unit );
+      virtual void            updateOrient         ();
+      virtual void            updatePositions      ();
       virtual bool            checkPositions       () const;
       virtual bool            checkConstraints     () const;
-      virtual void            _computeTerminal     ();
-      virtual void            moveURight           ();
-      virtual void            moveULeft            ();
-      virtual void            _makeDogLeg          ( GCell*, bool upLayer );
+      virtual unsigned int    _makeDogleg          ( GCell*, unsigned int flags );
+      virtual bool            moveULeft            ();
+      virtual bool            moveURight           ();
+      virtual bool            _slacken             ( unsigned int flags );
+#if THIS_IS_DISABLED
       virtual void            desalignate          ( AutoContact* );
-      virtual void            _slacken             ();
+#endif
     // Inspector Management.                       
       virtual Record*         _getRecord           () const;
       virtual string          _getString           () const;
-      virtual string          _getTypeName         () const { return "AutoHorizontal"; };
+      virtual string          _getTypeName         () const;
 
     // Internal: Attributes.
     protected:
@@ -100,13 +76,10 @@ namespace Katabatic {
 
     // Internal: Constructors.
     protected:
-                              AutoHorizontal         ( Horizontal* horizontal
-                                                     , int         type
-                                                     , bool        terminal
-                                                     , bool        collapsed );
+                              AutoHorizontal         ( Horizontal* );
       virtual                ~AutoHorizontal         ();
       virtual void            _postCreate            ();
-      virtual void            _preDestroy             ();
+      virtual void            _preDestroy            ();
     private:
                               AutoHorizontal         ( const AutoHorizontal& );
               AutoHorizontal& operator=              ( const AutoHorizontal& );
@@ -116,4 +89,7 @@ namespace Katabatic {
 } // End of Katabatic namespace.
 
 
-#endif  // __KATABATIC_AUTOHORIZONTAL__
+INSPECTOR_P_SUPPORT(Katabatic::AutoHorizontal);
+
+
+#endif  // KATABATIC_AUTOHORIZONTAL_H

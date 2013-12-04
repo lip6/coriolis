@@ -2,22 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./NetOptimals.cpp"                        |
 // +-----------------------------------------------------------------+
 
 
-#include  <cstdlib>
-#include  <sstream>
-
+#include <cstdlib>
+#include <sstream>
 #include "hurricane/DebugSession.h"
 #include "hurricane/Net.h"
 #include "hurricane/Segment.h"
@@ -27,7 +26,6 @@
 
 
 namespace Katabatic {
-
 
   using namespace std;
   using Hurricane::tab;
@@ -42,56 +40,46 @@ namespace Katabatic {
 
   void  KatabaticEngine::_computeNetOptimals ( Net* net )
   {
-    DebugSession::open ( net, 88 );
-
-    ltrace(100) << "Katabatic::_computeNetOptimals ( " << net << " )" << endl;
+    DebugSession::open( net, 88 );
+    ltrace(100) << "Katabatic::_computeNetOptimals( " << net << " )" << endl;
     ltracein(99);
-
-  //cmess2 << "     - " << net << endl;
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
-      AutoSegment* autoSegment = Session::lookup ( *segment );
-      if ( !autoSegment ) continue;
-      segments.push_back ( autoSegment );
+      AutoSegment* autoSegment = Session::lookup( *segment );
+      if (autoSegment) segments.push_back( autoSegment );
     }
-    sort ( segments.begin(), segments.end(), AutoSegment::CompareId() );
+    sort( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
     set<AutoSegment*> processeds;
     for ( size_t i=0 ; i<segments.size() ; i++ )
-      segments[i]->computeOptimal ( &processeds );
+      segments[i]->computeOptimal( processeds );
 
     ltraceout(99);
-
-    DebugSession::close ();
+    DebugSession::close();
   }
 
 
-  void  KatabaticEngine::_toOptimals ( Net* net, bool onlyNew )
+  void  KatabaticEngine::toOptimals ( Net* net )
   {
-    DebugSession::open ( net, 88 );
-
-    ltrace(100) << "Katabatic::_toOptimals ( " << net << " )" << endl;
+    DebugSession::open( net, 88 );
+    ltrace(100) << "Katabatic::_toOptimals( " << net << " )" << endl;
     ltracein(99);
-
-  //cmess2 << "     - " << net << endl;
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
-      AutoSegment* autoSegment = Session::lookup ( *segment );
-      if ( not autoSegment ) continue;
-      segments.push_back ( autoSegment );
+      AutoSegment* autoSegment = Session::lookup( *segment );
+      if (autoSegment) segments.push_back( autoSegment );
     }
-    sort ( segments.begin(), segments.end(), AutoSegment::CompareId() );
+    sort( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
-    set<AutoSegment*> processeds;
-    for ( size_t i=0 ; i<segments.size() ; i++ )
-      segments[i]->toOptimalAxis ( &processeds );
+    for ( size_t i=0 ; i<segments.size() ; i++ ) {
+      if (segments[i]->isCanonical()) segments[i]->toOptimalAxis();
+    }
 
     ltraceout(99);
-
-    DebugSession::close ();
+    DebugSession::close();
   }
 
 
-} // End of Katabatic namespace.
+}  // Katabatic namespace.

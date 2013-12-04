@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./GCellGrid.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Error.h"
@@ -64,7 +56,7 @@ namespace Katabatic {
 
   void  GCellGrid::_postCreate ()
   {
-    KnikEngine* knik;
+    KnikEngine::KnikEngine* knik;
     knik = KnikEngine::get ( getCell() );
     if ( !knik )
       throw Error ( missingKnikEngine, "GCellGrid::_postCreate()", getString(getCell()).c_str() );
@@ -156,14 +148,14 @@ namespace Katabatic {
   }
 
 
-  void  GCellGrid::updateContacts ( bool openSession )
+  void  GCellGrid::updateContacts ( unsigned int flags )
   {
-    if ( openSession ) Session::open ( _katabatic );
+    if (flags & KbOpenSession) Session::open( _katabatic );
 
     forEach ( GCell*, gcell, getGCells() )
-      gcell->updateContacts ();
+      gcell->updateContacts();
 
-    if ( openSession ) Session::close ();
+    if (flags & KbOpenSession) Session::close();
   }
 
 

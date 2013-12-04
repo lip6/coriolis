@@ -2,42 +2,33 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Session.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <cstdlib>
-#include  <sstream>
-
-#include  "hurricane/Error.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/UpdateSession.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "katabatic/Session.h"
-#include  "katabatic/AutoContact.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/GCellGrid.h"
-#include  "katabatic/KatabaticEngine.h"
+#include <cstdlib>
+#include <sstream>
+#include "hurricane/Error.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Cell.h"
+#include "hurricane/UpdateSession.h"
+#include "crlcore/RoutingGauge.h"
+#include "katabatic/Session.h"
+#include "katabatic/AutoContact.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/GCellGrid.h"
+#include "katabatic/KatabaticEngine.h"
 
 
 namespace {
@@ -65,6 +56,7 @@ namespace Katabatic {
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
   using Hurricane::inltrace;
+  using Hurricane::ltracelevel;
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
   using Hurricane::UpdateSession;
@@ -76,35 +68,33 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::Session".
 
-
   Session*  Session::_session = NULL;
 
 
   Session* Session::get ( const char* message )
   {
-    if ( not _session and message )
-      throw Error ( openSessionError, message );
+    if (not _session and message)
+      throw Error( openSessionError, message );
     return _session;
   }
 
 
   Session::Session ( KatabaticEngine* ktbt )
-    : _katabatic       (ktbt)
-    , _technology      (ktbt->getRoutingGauge()->getTechnology())
-    , _routingGauge    (ktbt->getRoutingGauge())
-    , _autoContacts    ()
-    , _autoSegments    ()
-    , _revalidateds    ()
-    , _dogLegs         ()
-    , _netInvalidateds ()
-    , _netRevalidateds ()
-    , _invalidateMask  (0)
+    : _katabatic          (ktbt)
+    , _technology         (ktbt->getRoutingGauge()->getTechnology())
+    , _routingGauge       (ktbt->getRoutingGauge())
+    , _autoContacts       ()
+    , _doglegs            ()
+    , _segmentInvalidateds()
+    , _segmentRevalidateds()
+    , _netInvalidateds    ()
+    , _netRevalidateds    ()
   { }
 
 
   void  Session::_postCreate ()
   {
-    UpdateSession::open ();
+    UpdateSession::open();
     _session = this;
   }
 
@@ -113,18 +103,15 @@ namespace Katabatic {
   { }
 
 
-  size_t  Session::_preDestroy ()
+  void  Session::_preDestroy ()
   {
-    size_t count = 0;
-    if ( _katabatic->getState() <= StateActive ) {
+    if (_katabatic->getState() <= EngineActive) {
       _revalidate ();
 
-      if ( _katabatic->getGCellGrid() )
-        _katabatic->getGCellGrid()->updateDensity ();
+      if (_katabatic->getGCellGrid())
+        _katabatic->getGCellGrid()->updateDensity();
     }
     UpdateSession::close();
-
-    return count;
   }
 
 
@@ -134,49 +121,10 @@ namespace Katabatic {
   Configuration* Session::_getConfiguration     () { return _katabatic->getConfiguration(); }
 
 
-  void  Session::_splitContacts ()
+  void  Session::_invalidate ( Net* net )
   {
-    ltrace(110) << "Katabatic::Session::_splitContacts()" << endl;
-    ltracein(110);
-
-    for ( size_t i=0; i<_autoContacts.size() ; i++ )
-      _autoContacts[i]->split ();
-
-    ltraceout(110);
-  }
-
-
-  void  Session::_restoreVCon ()
-  {
-    ltrace(110) << "Katabatic::Session::_restoreVCon()" << endl;
-    ltracein(110);
-
-    for ( size_t i=0; i<_autoContacts.size() ; i++ ) {
-      DbU::Unit y = DbU::Max;
-      forEach ( Horizontal*, isegment, _autoContacts[i]->getSlaveComponents().getSubSet<Horizontal*>() ) {
-        y = isegment->getY();
-      }
-      _autoContacts[i]->restoreVConnexity ( y, true );
-    }
-
-    ltraceout(110);
-  }
-
-
-  void  Session::_restoreHCon ()
-  {
-    ltrace(110) << "Katabatic::Session::_restoreHCon()" << endl;
-    ltracein(110);
-
-    for ( size_t i=0; i<_autoContacts.size() ; i++ ) {
-      DbU::Unit x = DbU::Max;
-      forEach ( Vertical*, isegment, _autoContacts[i]->getSlaveComponents().getSubSet<Vertical*>() ) {
-        x = isegment->getX();
-      }
-      _autoContacts[i]->restoreHConnexity ( x, true );
-    }
-
-    ltraceout(110);
+    ltrace(200) << "Session::invalidate(Net*) - " << net << endl;
+    _netInvalidateds.insert(net);
   }
 
 
@@ -185,56 +133,64 @@ namespace Katabatic {
     ltrace(110) << "Katabatic::Session::_canonize()" << endl;
     ltracein(110);
 
+    if (_segmentInvalidateds.empty()) {
+      ltrace(110) << "Invalidated AutoSegment collection <_segmentInvalidateds> is empty." << endl;
+      ltraceout(110);
+      return;
+    }
+
     set<Segment*>        exploredSegments;
     vector<AutoSegment*> aligneds;
 
-    sort ( _autoSegments.begin(), _autoSegments.end(), AutoSegment::CompareId() );
+  // Should no longer be necessary to ensure determinism.
+  //sort( _segmentInvalidateds.begin(), _segmentInvalidateds.end(), AutoSegment::CompareId() );
 
-    for ( size_t i=0 ; i<_autoSegments.size() ; i++ ) {
-      AutoSegment* seedSegment = _autoSegments[i];
+    for ( size_t i=0 ; i<_segmentInvalidateds.size() ; i++ ) {
+      AutoSegment* seedSegment = _segmentInvalidateds[i];
+      AutoSegment* canonical   = seedSegment;
 
-      if ( exploredSegments.find(seedSegment->getSegment()) == exploredSegments.end() ) {
+      if (exploredSegments.find(seedSegment->base()) == exploredSegments.end()) {
         ltrace(110) << "New chunk from: " << seedSegment << endl;
-        aligneds.push_back ( seedSegment );
+        aligneds.push_back( seedSegment );
 
-        bool isCanonicalLocal = seedSegment->isLocal();
-        forEach ( AutoSegment*, collapsed, seedSegment->getCollapseds() ) {
-          ltrace(110) << "Aligned: " << *collapsed << endl;
-          aligneds.push_back ( *collapsed );
-          exploredSegments.insert ( collapsed->getSegment() );
+        bool isWeakGlobal = seedSegment->isGlobal();
+        if (not seedSegment->isNotAligned()) {
+          forEach ( AutoSegment*, aligned, seedSegment->getAligneds() ) {
+            ltrace(110) << "Aligned: " << *aligned << endl;
+            aligneds.push_back ( *aligned );
+            exploredSegments.insert ( aligned->base() );
 
-          if ( collapsed->isGlobal() ) isCanonicalLocal = false;
-        }
-
-        ltracein(110);
-        sort ( aligneds.begin(), aligneds.end(), AutoSegment::CompareId() );
-
-        if ( aligneds.size() > 1 ) {
-          if ( not AutoSegment::CompareId() ( aligneds[0], aligneds[1] ) ) {
-            cerr << "Ambiguous canonization: " << aligneds[0]->base() << endl;
-            cerr << "Ambiguous canonization: " << aligneds[1]->base() << endl;
+            isWeakGlobal = isWeakGlobal or aligned->isGlobal();
+            if (AutoSegment::CompareId()( *aligned, canonical ))
+              canonical = *aligned;
           }
         }
 
-        aligneds[0]->setCanonical      ( true );
-        aligneds[0]->setCanonicalLocal ( isCanonicalLocal );
-        ltrace(110) << "Canonical: " << aligneds[0] << endl;
+        ltracein(110);
 
-        for ( size_t j=1 ; j<aligneds.size() ; j++ ) {
-          if ( aligneds[j]->isCanonical() ) {
+        canonical->setFlags( SegCanonical );
+        ltrace(110) << "Canonical: " << canonical << endl;
+
+        for ( size_t j=0 ; j<aligneds.size() ; j++ ) {
+          if (isWeakGlobal) aligneds[j]->setFlags  ( SegWeakGlobal );
+          else              aligneds[j]->unsetFlags( SegWeakGlobal );
+
+          if (aligneds[j] == canonical) continue;
+          if (aligneds[j]->isCanonical()) {
             cerr << Error("Session::_canonize(): On %s\n"
                           "        Segment is no longer the canonical one, this must not happens."
                          ,getString(aligneds[j]).c_str()) << endl;
           }
-          aligneds[j]->setCanonical ( false );
+          aligneds[j]->unsetFlags( SegCanonical );
           ltrace(110) << "Secondary: " << aligneds[j] << endl;
         }
+        if (aligneds.empty()) canonical->setFlags( SegNotAligned );
 
-        ltrace(159) << "Align @" << DbU::getLambda(aligneds[0]->getAxis())
-                    << " on " << aligneds[0] << endl;
+        ltrace(159) << "Align @" << DbU::getLambda(canonical->getAxis())
+                    << " on " << canonical << endl;
 
-        aligneds[0]->setAxis ( aligneds[0]->getAxis(), Realignate );
-        aligneds.clear ();
+        canonical->setAxis( canonical->getAxis(), KbRealignate );
+        aligneds.clear();
         ltraceout(110);
       }
     }
@@ -248,44 +204,26 @@ namespace Katabatic {
     ltrace(110) << "Katabatic::Session::_revalidateTopology()" << endl;
     ltracein(110);
 
-    set<AutoSegment*> faileds;
+    set<Net*>::iterator inet = _netInvalidateds.begin();
 
-    if ( not _netInvalidateds.empty() ) {
-      set<Net*>::iterator inet = _netInvalidateds.begin();
+    for ( ; inet != _netInvalidateds.end() ; inet++ ) {
+      ltrace(110) << "Katabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
+      _katabatic->updateNetTopology    ( *inet );
+      _katabatic->computeNetConstraints( *inet );
+      _katabatic->_computeNetOptimals  ( *inet );
+      _katabatic->_computeNetTerminals ( *inet );
+    }
+    _canonize ();
 
-      if ( _invalidateMask & NetSplitContacts ) {
-        _splitContacts ();
-        _invalidateMask &= ~NetSplitContacts;
-      }
-
-      if ( _invalidateMask & RestoreVCon ) {
-        _restoreVCon ();
-        _invalidateMask &= ~RestoreVCon;
-      }
-
-      if ( _invalidateMask & RestoreHCon ) {
-        _restoreVCon ();
-        _invalidateMask &= ~RestoreHCon;
-      }
-
-      if ( _invalidateMask & NetCanonize ) {
-        for ( ; inet != _netInvalidateds.end() ; inet++ ) {
-          ltrace(110) << "Katabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
-          _katabatic->_computeNetConstraints ( *inet, faileds );
-          _katabatic->_computeNetOptimals    ( *inet );
-          _katabatic->_computeNetTerminals   ( *inet );
-        }
-        _canonize ();
-
-        for ( size_t i=0 ; i<_autoSegments.size() ; ++i ) {
-          if (   _autoSegments[i]->isUnsetAxis()
-             and _autoSegments[i]->isCanonical() ) {
-            _autoSegments[i]->toOptimalAxis ();
-          }
-        }
-        _invalidateMask &= ~NetCanonize;
+    for ( size_t i=0 ; i<_segmentInvalidateds.size() ; ++i ) {
+      if (_segmentInvalidateds[i]->isCanonical()) {
+        if (_segmentInvalidateds[i]->isUnsetAxis()) _segmentInvalidateds[i]->toOptimalAxis();
+        else                                        _segmentInvalidateds[i]->toConstraintAxis();
       }
     }
+    
+    _netRevalidateds.clear();
+    _netRevalidateds.swap( _netInvalidateds );
 
     ltraceout(110);
   }
@@ -296,45 +234,45 @@ namespace Katabatic {
     ltrace(110) << "Katabatic::Session::revalidate()" << endl;
     ltracein(110);
 
+    ltrace(110) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
+    ltrace(110) << "_autoContacts.size(): " << _autoContacts.size() << endl;
+
     size_t count = 0;
 
-    _revalidateTopology ();
-    _netRevalidateds.clear ();
-    _netRevalidateds.swap ( _netInvalidateds );
+    if (not _netInvalidateds.empty()) _revalidateTopology();
 
-    ltrace(110) << "AutoContacts Revalidate (after canonize)." << endl;
+    ltrace(110) << "AutoContacts Revalidate (after _revalidateTopology())." << endl;
     for ( size_t i=0 ; i < _autoContacts.size() ; i++, count++ )
-      _autoContacts[i]->revalidate ();
-    _autoContacts.clear ();
+      _autoContacts[i]->updateGeometry();
+    _autoContacts.clear();
 
-    ltrace(110) << "AutoSegments Revalidate (after canonize)." << endl;
+    ltrace(110) << "AutoSegments Revalidate (after AutoContact::updateGeometry())." << endl;
+    ltrace(110) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
 
-    _dogLegs.clear ();
-    _revalidateds.clear ();
-    for ( size_t i=0 ; i < _autoSegments.size() ; i++, count++ ) {
-      _autoSegments[i]->revalidate ();
+    _segmentRevalidateds.clear();
+    for ( size_t i=0 ; i < _segmentInvalidateds.size() ; ++i, ++count ) {
+      _segmentInvalidateds[i]->revalidate();
       if ( not _destroyedSegments.empty()
-         and (_destroyedSegments.find(_autoSegments[i]) != _destroyedSegments.end()) )
+         and (_destroyedSegments.find(_segmentInvalidateds[i]) != _destroyedSegments.end()) )
         continue;
 
-      _revalidateds.push_back ( _autoSegments[i] );
+      _segmentRevalidateds.push_back( _segmentInvalidateds[i] );
     }
-    _autoSegments.clear ();
+    _segmentInvalidateds.clear();
 
     ltrace(110) << "AutoSegments/AutoContacts queued deletion." << endl;
-    bool destroySegment = _katabatic->setDestroyBaseSegment ( true );
-    bool destroyContact = _katabatic->setDestroyBaseContact ( true );
+    unsigned int flags = _katabatic->getFlags( EngineDestroyMask );
+    _katabatic->setFlags( EngineDestroyMask );
     set<AutoSegment*>::iterator  isegment = _destroyedSegments.begin();
     for ( ; isegment != _destroyedSegments.end() ; isegment++ ) {
       AutoContact* source = (*isegment)->getAutoSource();
       AutoContact* target = (*isegment)->getAutoTarget();
-      (*isegment)->destroy ();
-      if (source and source->canDestroy(true)) source->destroy ();
-      if (target and target->canDestroy(true)) target->destroy ();
+      (*isegment)->destroy();
+      if (source and source->canDestroy(true)) source->destroy();
+      if (target and target->canDestroy(true)) target->destroy();
     }
-    _katabatic->setDestroyBaseSegment ( destroySegment );
-    _katabatic->setDestroyBaseContact ( destroyContact );
-    set<AutoSegment*>().swap ( _destroyedSegments );
+    _katabatic->setFlags( flags );
+    set<AutoSegment*>().swap( _destroyedSegments );
 
     ltraceout(110);
 
@@ -346,40 +284,49 @@ namespace Katabatic {
   {
     ltrace(110) << "Session::open()" << endl;
 
-    if ( _session ) {
-      if ( _session->_katabatic != ktbt )
-        throw Error ( reopenSession, getString(_session->getKatabatic()).c_str() );
+    if (_session) {
+      if (_session->_katabatic != ktbt)
+        throw Error( reopenSession, getString(_session->getKatabatic()).c_str() );
 
       return _session;
     }
 
     Session* session = new Session ( ktbt );
-    session->_postCreate ();
+    session->_postCreate();
 
     return session;
   }
 
 
-  size_t  Session::close ()
+  void  Session::close ()
   {
     ltrace(110) << "Session::close()" << endl;
     ltracein(110);
 
-    if ( !_session ) throw Error ( openSessionError, "Session::Close()" );
+    if (not _session) throw Error( openSessionError, "Session::Close()" );
 
-    size_t count = _session->_preDestroy ();
+    _session->_preDestroy();
 
     delete _session;
     _session = NULL;
 
     ltraceout(110);
-
-    return count;
   }
 
 
-  bool  Session::getDemoMode ()
-  { return get("getDemoMode()")->_katabatic->getDemoMode(); }
+  unsigned int  Session::getLayerDirection ( const Layer* layer )
+  {
+    RoutingGauge* rg = get("getDirection()")->_routingGauge;
+    switch ( rg->getLayerDirection(layer) ) {
+      case Constant::Horizontal: return KbHorizontal;
+      case Constant::Vertical:   return KbVertical;
+    }
+    return 0;
+  }
+
+
+  bool  Session::isInDemoMode ()
+  { return get("isInDemoMode()")->_katabatic->isInDemoMode(); }
 
 
   float  Session::getSaturateRatio ()
@@ -390,12 +337,12 @@ namespace Katabatic {
   { return get("getSaturateRp()")->_katabatic->getSaturateRp(); }
 
 
-  bool  Session::getWarnGCellOverload ()
-  { return get("getWarnGCellOverload()")->_katabatic->getWarnGCellOverload(); }
+  bool  Session::doWarnGCellOverload ()
+  { return get("doWarnGCellOverload()")->_katabatic->doWarnOnGCellOverload(); }
 
 
-  void  Session::setWarnGCellOverload ( bool state )
-  { get("getWarnGCellOverload()")->_katabatic->setWarnGCellOverload(state); }
+  void  Session::setKatabaticFlags ( unsigned int flags )
+  { get("setKabaticFlags()")->_katabatic->setFlags(flags); }
 
 
   DbU::Unit  Session::getExtensionCap ()
@@ -411,27 +358,27 @@ namespace Katabatic {
 
 
   void  Session::link ( AutoContact* autoContact )
-  { return get("link(AutoContact*)")->_katabatic->_link ( autoContact ); }
+  { return get("link(AutoContact*)")->_katabatic->_link( autoContact ); }
 
 
   void  Session::link ( AutoSegment* autoSegment )
-  { return get("link(AutoSegment*)")->_katabatic->_link ( autoSegment ); }
+  { return get("link(AutoSegment*)")->_katabatic->_link( autoSegment ); }
 
 
   void  Session::unlink ( AutoContact* autoContact )
-  { return get("unlink(AutoContact*)")->_katabatic->_unlink ( autoContact ); }
+  { return get("unlink(AutoContact*)")->_katabatic->_unlink( autoContact ); }
 
 
   void  Session::unlink ( AutoSegment* autoSegment )
-  { return get("unlink(AutoSegment*)")->_katabatic->_unlink ( autoSegment ); }
+  { return get("unlink(AutoSegment*)")->_katabatic->_unlink( autoSegment ); }
 
 
   AutoContact* Session::lookup ( Contact* contact )
-  { return get("lookup(Contact*)")->_katabatic->_lookup ( contact ); }
+  { return get("lookup(Contact*)")->_katabatic->_lookup( contact ); }
 
 
   AutoSegment* Session::lookup ( Segment* segment )
-  { return get("lookup(Segment*)")->_katabatic->_lookup ( segment ); }
+  { return get("lookup(Segment*)")->_katabatic->_lookup( segment ); }
 
 
   string  Session::_getString () const
@@ -447,7 +394,7 @@ namespace Katabatic {
     Record* record = new Record ( _getString() );
     record->add ( getSlot ( "_katabatic"   , _katabatic     ) );
     record->add ( getSlot ( "_autoContacts", &_autoContacts ) );
-    record->add ( getSlot ( "_autoSegments", &_autoSegments ) );
+  //record->add ( getSlot ( "_autoSegments", &_autoSegments ) );
     return record;
   }
 

@@ -2,34 +2,25 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./katabatic/ChipTools.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/ChipTools.h"                       |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_CHIP_TOOLS__
-#define  __KATABATIC_CHIP_TOOLS__
+#ifndef  KATABATIC_CHIP_TOOLS_H
+#define  KATABATIC_CHIP_TOOLS_H
 
-#include  <string>
-
-#include  "hurricane/DbU.h"
-#include  "hurricane/Torus.h"
+#include <string>
+#include "hurricane/DbU.h"
+#include "hurricane/Torus.h"
 namespace Hurricane {
   class Cell;
   class Instance;
@@ -96,8 +87,8 @@ namespace Katabatic {
   { return _topPadsBb.intersect(box) or _bottomPadsBb.intersect(box); }
 
 
-} // End of Katabatic namespace.
+} // Katabatic namespace.
 
 INSPECTOR_PV_SUPPORT(Katabatic::ChipTools);
 
-#endif  // __KATABATIC_CHIP_TOOLS__
+#endif  // KATABATIC_CHIP_TOOLS_H

@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ChipTools.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <string>
@@ -80,42 +72,46 @@ namespace {
     for ( GCell* gcell=begin ; gcell != NULL ; ) {
       ltrace(200) << "Pre-break in " << gcell << endl;
 
-      if ( (flags & Constant::Horizontal) and (flags & GlobalSegments) ) {
-        vector<AutoSegment*>* hsegments = gcell->getHSegments();
-        for ( size_t i=0 ; i<(*hsegments).size() ; ++i ) {
-          if ( not ((*hsegments)[i]->getLayer()->getMask() & mask) ) continue;
+      if ( (flags & KbHorizontal) and (flags & KbGlobalSegment) ) {
+        const vector<AutoSegment*>& hsegments = gcell->getHSegments();
+        for ( size_t i=0 ; i<hsegments.size() ; ++i ) {
+          if ( not (hsegments[i]->getLayer()->getMask() & mask) ) continue;
           
-          ltrace(200) << "Pre-break: " << (*hsegments)[i] << " @" << gcell << endl;
-          (*hsegments)[i]->makeDogLeg ( gcell, true );
+          ltrace(200) << "Pre-break: " << hsegments[i] << " @" << gcell << endl;
+#ifdef THIS_IS_DISABLED
+          hsegments[i]->makeDogLeg ( gcell, true );
+#endif
         }
         
         if ( gcell == end ) break;
         gcell = gcell->getUp();
       }
 
-      if ( (flags & Constant::Vertical) and (flags & GlobalSegments) ) {
-        vector<AutoSegment*>* vsegments = gcell->getVSegments();
-        for ( size_t i=0 ; i<(*vsegments).size() ; ++i ) {
-          if ( not ((*vsegments)[i]->getLayer()->getMask() & mask) ) continue;
+      if ( (flags & KbVertical) and (flags & KbGlobalSegment) ) {
+        const vector<AutoSegment*>& vsegments = gcell->getVSegments();
+        for ( size_t i=0 ; i<vsegments.size() ; ++i ) {
+          if ( not (vsegments[i]->getLayer()->getMask() & mask) ) continue;
           
-          ltrace(200) << "Pre-break: " << (*vsegments)[i] << " @" << gcell << endl;
-          (*vsegments)[i]->makeDogLeg ( gcell, true );
+          ltrace(200) << "Pre-break: " << vsegments[i] << " @" << gcell << endl;
+#if THIS_IS_DISABLED
+          vsegments[i]->makeDogLeg ( gcell, true );
+#endif
         }
         
         if ( gcell == end ) break;
         gcell = gcell->getUp();
       }
 
-      if ( flags & GlobalSegments ) {
-        vector<AutoContact*>* contacts = gcell->getContacts();
-        vector<AutoSegment*>  segments;
-        for ( size_t i=0 ; i<contacts->size() ; i++ ) {
-          forEach ( Component*, component, (*contacts)[i]->getSlaveComponents() ) {
+      if (flags & KbGlobalSegment) {
+        const vector<AutoContact*>& contacts = gcell->getContacts();
+        vector<AutoSegment*>        segments;
+        for ( size_t i=0 ; i<contacts.size() ; i++ ) {
+          forEach ( Component*, component, contacts[i]->getSlaveComponents() ) {
             Segment*     segment      = dynamic_cast<Segment*>(*component);
-            AutoSegment* autoSegment  = Session::lookup ( segment );
+            AutoSegment* autoSegment  = Session::lookup( segment );
 
             if ( autoSegment and (autoSegment->getDirection() & flags) )
-              segments.push_back ( autoSegment );
+              segments.push_back( autoSegment );
           }
         }
 
@@ -123,7 +119,9 @@ namespace {
           ltrace(200) << "Pre-break: "
                       << segments[i]->getDirection() << "&" << flags
                       << " " << segments[i] << endl;
-          segments[i]->makeDogLeg ( gcell, true );
+#if THIS_IS_DISABLED
+          segments[i]->makeDogLeg( gcell, true );
+#endif
         }
       }
     }
@@ -161,8 +159,8 @@ namespace Katabatic {
 
   void  KatabaticEngine::slackenBorder ( Box bb, Layer::Mask mask, unsigned int flags )
   {
-    GCell*      begin = getGCellGrid()->getGCell ( Point(bb.getXMin(),bb.getYMin()) );
-    GCell*      end   = getGCellGrid()->getGCell ( Point(bb.getXMin(),bb.getYMax()) );
+    GCell* begin = getGCellGrid()->getGCell ( Point(bb.getXMin(),bb.getYMin()) );
+    GCell* end   = getGCellGrid()->getGCell ( Point(bb.getXMin(),bb.getYMax()) );
 
     breakSegments ( begin, end, mask, flags );
 
@@ -230,7 +228,7 @@ namespace Katabatic {
       _bottomPadsBb = Box   ( _chipBb.getXMin()                  , _chipBb.getYMin(), _chipBb.getXMax(), _chipCorona.getOuterBox().getYMin() );
       _topPadsBb    = Box   ( _chipBb.getXMin(), _chipCorona.getOuterBox().getYMax(), _chipBb.getXMax(),                   _chipBb.getYMax() );
 
-      cmess1 << "  o  Design is a full chip." << endl;
+      cmess1 << "  o  Design is a complete chip." << endl;
       cmess1 << "     - Core: <" << _core->getName() << ">/<"
              << _core->getMasterCell()->getName() << ">." << endl;
       cmess1 << "     - Corona: " << _chipCorona << "." << endl;

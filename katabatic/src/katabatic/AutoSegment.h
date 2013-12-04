@@ -1,30 +1,21 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AutoSegment.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./katabatic/AutoSegment.h"                     |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KATABATIC_AUTOSEGMENT__
-#define  __KATABATIC_AUTOSEGMENT__
+#ifndef  KATABATIC_AUTOSEGMENT_H
+#define  KATABATIC_AUTOSEGMENT_H
 
 #include  <set>
 #include  <iostream>
@@ -42,6 +33,8 @@ namespace Hurricane {
   class Cell;
 }
 
+#include  "katabatic/Constants.h"
+#include  "katabatic/Observer.h"
 #include  "katabatic/GCell.h"
 #include  "katabatic/AutoSegments.h"
 #include  "katabatic/Session.h"
@@ -63,36 +56,258 @@ namespace Katabatic {
   using Hurricane::Vertical;
   using Hurricane::Cell;
 
-
-  enum AutoSegmentFlags { Realignate=0x1, AxisSet=0x2 };
-
+  class AutoHorizontal;
+  class AutoVertical;
 
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
+
+  enum AutoSegmentFlag { SegHorizontal       = 0x00000001
+                       , SegFixed            = 0x00000002
+                       , SegGlobal           = 0x00000004
+                       , SegWeakGlobal       = 0x00000008
+                       , SegCanonical        = 0x00000010
+                       , SegBipoint          = 0x00000020
+                       , SegDogleg           = 0x00000040
+                       , SegStrap            = 0x00000080
+                       , SegLayerChange      = 0x00000100
+                       , SegStrongTerminal   = 0x00000200  // Replace Terminal.
+                       , SegWeakTerminal1    = 0x00000400  // Replace TopologicalEnd.
+                       , SegWeakTerminal2    = 0x00000800  // Replace TopologicalEnd.
+                       , SegNotSourceAligned = 0x00001000
+                       , SegNotTargetAligned = 0x00002000
+                       , SegUnbound          = 0x00010000
+                       , SegHalfSlackened    = 0x00020000
+                       , SegSlackened        = 0x00040000
+                       , SegAxisSet          = 0x00080000
+                       , SegInvalidated      = 0x00100000
+                       , SegInvalidatedLayer = 0x00200000
+                       , SegCreated          = 0x00400000
+                       // Masks.     
+                       , SegWeakTerminal     = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
+                       , SegNotAligned       = SegNotSourceAligned|SegNotTargetAligned
+                       };
  
 
   class AutoSegment {
+      friend class AutoHorizontal;
+      friend class AutoVertical;
 
     public:
-    // Types.
+      enum ObserverFlag { Create     = 0x000000001
+                        , Destroy    = 0x000000002
+                        , Invalidate = 0x000000003
+                        , Revalidate = 0x000000004
+                        };
+    public:
       typedef  std::tr1::function< void(AutoSegment*) >  RevalidateCb_t;
-    // Enumerations.
-      enum Type               { Global = 1
-                              , Local  = 2
-                              , Guess  = 3
-                              };
-      enum PerpandicularState { PerpandicularAny       = (1<<0)
-                              , PerpandicularIndirect  = (1<<1)
-                              , ParallelOrExpanded     = (1<<2)
-                              , ParallelAndLayerChange = (1<<3)
-                              };
-      enum Flags              { Propagate         = (1<<0)
-                              , AllowLocal        = (1<<1)
-                              , AllowTerminal     = (1<<2)
-                              , IgnoreContact     = (1<<3)
-                              , PerpandicularFrag = (1<<4)
-                              };
-
+    public:
+      static  void                setDestroyMode             ( bool );
+      static  AutoSegment*        create                     ( AutoContact*  source
+                                                             , AutoContact*  target
+                                                             , Segment*      hurricaneSegment
+                                                             );
+      static  AutoSegment*        create                     ( AutoContact*  source
+                                                             , AutoContact*  target
+                                                             , unsigned int  dir
+                                                             );
+              void                destroy                    ();
+    // Wrapped Segment Functions.                            
+      virtual Segment*            base                       () const = 0;
+      virtual Segment*            base                       () = 0;
+      virtual Horizontal*         getHorizontal              () { return NULL; };
+      virtual Vertical*           getVertical                () { return NULL; };
+      inline  Cell*               getCell                    () const;
+      inline  Net*                getNet                     () const;
+      inline  const Layer*        getLayer                   () const;
+      inline  Box                 getBoundingBox             () const;
+      inline  Hook*               getSourceHook              ();
+      inline  Hook*               getTargetHook              ();
+      inline  Contact*            getSource                  () const;
+      inline  Contact*            getTarget                  () const;
+      inline  Component*          getOppositeAnchor          ( Component* ) const;
+      inline  Components          getAnchors                 () const;
+      virtual DbU::Unit           getX                       () const;
+      virtual DbU::Unit           getY                       () const;
+      inline  DbU::Unit           getWidth                   () const;
+      inline  DbU::Unit           getLength                  () const;
+      inline  DbU::Unit           getSourcePosition          () const;
+      inline  DbU::Unit           getTargetPosition          () const;
+      inline  DbU::Unit           getSourceX                 () const;
+      inline  DbU::Unit           getSourceY                 () const;
+      inline  DbU::Unit           getTargetX                 () const;
+      inline  DbU::Unit           getTargetY                 () const;
+      inline  void                invert                     ();
+      inline  void                setLayer                   ( const Layer* );
+    // Predicates.                                           
+      inline  bool                isHorizontal               () const;
+      inline  bool                isVertical                 () const;
+      inline  bool                isGlobal                   () const;
+      inline  bool                isWeakGlobal               () const;
+      inline  bool                isLocal                    () const;
+      inline  bool                isFixed                    () const;
+      inline  bool                isBipoint                  () const;
+      inline  bool                isWeakTerminal             () const;
+      inline  bool                isWeakTerminal1            () const;
+      inline  bool                isWeakTerminal2            () const;
+      inline  bool                isTerminal                 () const;
+      inline  bool                isNotSourceAligned         () const;
+      inline  bool                isNotTargetAligned         () const;
+      inline  bool                isNotAligned               () const;
+              bool                isStrongTerminal           ( unsigned int flags=0 ) const;
+      inline  bool                isLayerChange              () const;
+      inline  bool                isStrap                    () const;
+      inline  bool                isDogleg                   () const;
+      inline  bool                isUnbound                  () const;
+      inline  bool                isInvalidated              () const;
+      inline  bool                isInvalidatedLayer         () const;
+      inline  bool                isCreated                  () const;
+      inline  bool                isCanonical                () const;
+      inline  bool                isUnsetAxis                () const;
+      inline  bool                isSlackened                () const;
+      virtual bool                _canSlacken                () const = 0;
+              unsigned int        canDogleg                  ( Interval );
+      virtual bool                canMoveULeft               ( float reserve=0.0 ) const = 0;
+      virtual bool                canMoveURight              ( float reserve=0.0 ) const = 0;
+              bool                canMoveUp                  ( float reserve=0.0, unsigned int flags=0 ) const;
+              bool                canPivotUp                 ( float reserve=0.0, unsigned int flags=0 ) const;
+              bool                canPivotDown               ( float reserve=0.0, unsigned int flags=0 ) const;
+              bool                canSlacken                 ( unsigned int flags=0 ) const;
+      virtual bool                checkPositions             () const = 0;
+      virtual bool                checkConstraints           () const = 0;
+    // Accessors.                                            
+      template< typename T >
+      inline  T*                  getObserver                ();
+      inline  unsigned long       getId                      () const;
+      inline  unsigned int        getFlags                   () const;
+      virtual unsigned int        getDirection               () const = 0;
+      inline  GCell*              getGCell                   () const;
+      virtual size_t              getGCells                  ( vector<GCell*>& ) const = 0;
+      inline  AutoContact*        getAutoSource              () const;
+      inline  AutoContact*        getAutoTarget              () const;
+              AutoContact*        getOppositeAnchor          ( AutoContact* ) const;
+              size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
+      inline  AutoSegment*        getParent                  () const;
+      inline  DbU::Unit           getAxis                    () const;
+      virtual DbU::Unit           getSourceU                 () const = 0;
+      virtual DbU::Unit           getTargetU                 () const = 0;
+      virtual DbU::Unit           getDuSource                () const = 0;
+      virtual DbU::Unit           getDuTarget                () const = 0;
+      inline  DbU::Unit           getOrigin                  () const;
+      inline  DbU::Unit           getExtremity               () const;
+      virtual Interval            getSpanU                   () const = 0;
+              Interval            getMinSpanU                () const;
+      virtual Interval            getSourceConstraints       ( unsigned int flags=0 ) const = 0;
+      virtual Interval            getTargetConstraints       ( unsigned int flags=0 ) const = 0;
+      virtual bool                getConstraints             ( DbU::Unit& min, DbU::Unit& max ) const = 0;
+      inline  bool                getConstraints             ( Interval& i ) const;
+      inline  const Interval&     getUserConstraints         () const;
+      virtual DbU::Unit           getSlack                   () const;
+      inline  DbU::Unit           getOptimalMin              () const;
+      inline  DbU::Unit           getOptimalMax              () const;
+              Interval&           getOptimal                 ( Interval& i ) const;
+      virtual DbU::Unit           getCost                    ( DbU::Unit axis ) const;
+      virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max );
+      inline  AutoSegment*        getCanonical               ( Interval& i );
+              float               getMaxUnderDensity         ( unsigned int flags );
+    // Modifiers.                                            
+      inline  void                addObserver                ( BaseObserver* );
+      inline  void                removeObserver             ( BaseObserver* );
+      inline  void                unsetFlags                 ( unsigned int );
+      inline  void                setFlags                   ( unsigned int );
+              void                setFlagsOnAligneds         ( unsigned int );
+      virtual void                setDuSource                ( DbU::Unit du ) = 0;
+      virtual void                setDuTarget                ( DbU::Unit du ) = 0;
+              void                computeTerminal            ();
+      virtual void                updateOrient               () = 0;
+      virtual void                updatePositions            () = 0;
+              void                sourceDetach               ();
+              void                targetDetach               ();
+              void                sourceAttach               ( AutoContact* );
+              void                targetAttach               ( AutoContact* );
+    //inline  void                mergeUserConstraints       ( const Interval& );
+              void                mergeUserConstraints       ( const Interval& );
+      inline  void                resetUserConstraints       ();
+      inline  void                setOptimalMin              ( DbU::Unit min );
+      inline  void                setOptimalMax              ( DbU::Unit max );
+              bool                checkNotInvalidated        () const;
+      inline  void                setParent                  ( AutoSegment* );
+              void                revalidate                 ();
+              AutoSegment*        makeDogleg                 ( AutoContact* );
+              unsigned int        makeDogleg                 ( Interval, unsigned int flags=KbNoFlags );
+              unsigned int        makeDogleg                 ( GCell*, unsigned int flags=KbNoFlags );
+      virtual unsigned int        _makeDogleg                ( GCell*, unsigned int flags ) = 0;
+      virtual bool                moveULeft                  () = 0;
+      virtual bool                moveURight                 () = 0;
+              bool                slacken                    ( unsigned int flags );
+      virtual bool                _slacken                   ( unsigned int flags ) = 0;
+              void                _changeDepth               ( unsigned int depth, unsigned int flags );
+              void                changeDepth                ( unsigned int depth, unsigned int flags );
+              bool                moveUp                     ( unsigned int flags=KbNoFlags );
+              bool                moveDown                   ( unsigned int flags=KbNoFlags );
+    // Canonical Modifiers.                                            
+              AutoSegment*        canonize                   ( unsigned int flags=KbNoFlags );
+      virtual void                invalidate                 ( unsigned int flags=KbPropagate );
+              void                computeOptimal             ( set<AutoSegment*>& processeds );
+              void                setAxis                    ( DbU::Unit, unsigned int flags=KbNoFlags );
+              bool                toConstraintAxis           ();
+              bool                toOptimalAxis              ();
+    // Collections & Filters.                                
+              AutoSegments        getOnSourceContact         ( unsigned int direction );
+              AutoSegments        getOnTargetContact         ( unsigned int direction );
+              AutoSegments        getCachedOnSourceContact   ( unsigned int direction );
+              AutoSegments        getCachedOnTargetContact   ( unsigned int direction );
+              AutoSegments        getAligneds                ( unsigned int flags=KbNoFlags );
+              AutoSegments        getPerpandiculars          ();
+              size_t              getAlignedContacts         ( map<AutoContact*,int>& ) const ;
+    // Inspector Management.                                 
+      virtual Record*             _getRecord                 () const = 0;
+      virtual string              _getString                 () const = 0;
+      virtual string              _getTypeName               () const = 0;
+    // Non-reviewed atomic modifiers.
+              bool                _check                     () const;
+#if THIS_IS_DISABLED
+      virtual void                desalignate                ( AutoContact* ) = 0;
+              bool                shearUp                    ( GCell*
+                                                             , AutoSegment*& movedUp
+                                                             , float         reserve
+                                                             , unsigned int  flags );
+#endif
+                                  
+    protected:                    
+    // Internal: Static Attributes.
+      static size_t               _allocateds;
+      static size_t               _globalsCount;
+      static bool                 _destroyBase;
+      static bool                 _destroyTool;
+      static unsigned long        _maxId;
+    // Internal: Attributes.      
+             GCell*               _gcell;
+      const  unsigned long        _id;
+             unsigned int         _flags;
+             unsigned int         _optimalMin : 8;
+             unsigned int         _optimalMax : 8;
+             DbU::Unit            _sourcePosition;
+             DbU::Unit            _targetPosition;
+             Interval             _userConstraints;
+             AutoSegment*         _parent;
+             Observable           _observers;
+                                  
+    // Internal: Constructors & Destructors.
+    protected:                    
+                                  AutoSegment     ( Segment* segment );
+      virtual                    ~AutoSegment     ();
+      static  void                _preCreate      ( AutoContact* source, AutoContact* target );
+      virtual void                _postCreate     ();
+      virtual void                _preDestroy     ();
+    private:                                      
+                                  AutoSegment     ( const AutoSegment& );
+              AutoSegment&        operator=       ( const AutoSegment& );
+    protected:                                    
+              void                _invalidate     ();
+      inline  unsigned int        _getFlags       () const;
+              std::string         _getStringFlags () const;
+      virtual void                _setAxis        ( DbU::Unit ) = 0;
 
     public:
       struct CompareId : public binary_function<AutoSegment*,AutoSegment*,bool> {
@@ -109,12 +324,10 @@ namespace Katabatic {
     public:
       typedef std::set<AutoSegment*,CompareByDepthLength>  DepthLengthSet;
 
+    // Static Utilities.
     public:
-    // Utilities.
-      static        bool          isTopologicalBound         ( AutoSegment*  seed
-                                                             , bool          superior
-                                                             , bool          isHorizontal
-                                                             );
+      static inline bool          areAlignedsAndDiffLayer    ( AutoSegment*, AutoSegment* );
+      static        bool          isTopologicalBound         ( AutoSegment*  seed, unsigned int flags );
       static inline bool          arePerpandiculars          ( AutoSegment* a, AutoSegment* b );
       static inline bool          arePerpandiculars          ( bool isHorizontalA, AutoSegment* b );
       static inline bool          areAligneds                ( AutoSegment* a, AutoSegment* b );
@@ -142,315 +355,77 @@ namespace Katabatic {
       static inline size_t        getGlobalsCount            ();
       static inline size_t        getAllocateds              ();
       static inline unsigned long getMaxId                   ();
-    // Constructors & Destructor.                            
-      static  AutoSegment*        create                     ( AutoContact*  source
-                                                             , AutoContact*  target
-                                                             , Segment*      hurricaneSegment
-                                                             );
-      static  AutoSegment*        create                     ( AutoContact*  source
-                                                             , AutoContact*  target
-                                                             , unsigned int  dir
-                                                             , int           type
-                                                             , bool          terminal=false
-                                                             , bool          collapsed=false
-                                                             );
-              void                destroy                    ();
-    // Wrapped Segment Functions.                            
-      virtual Segment*            base                       () = 0;
-      virtual Segment*            base                       () const = 0;
-      virtual Segment*            getSegment                 () = 0;
-      virtual Segment*            getSegment                 () const = 0;
-      virtual Horizontal*         getHorizontal              () { return NULL; };
-      virtual Vertical*           getVertical                () { return NULL; };
-      inline  Cell*               getCell                    () const;
-      inline  Net*                getNet                     () const;
-      inline  const Layer*        getLayer                   () const;
-      inline  Box                 getBoundingBox             () const;
-      inline  Hook*               getSourceHook              ();
-      inline  Hook*               getTargetHook              ();
-      inline  Contact*            getSource                  () const;
-      inline  Contact*            getTarget                  () const;
-      inline  Component*          getOppositeAnchor          ( Component* ) const;
-      inline  Components          getAnchors                 () const;
-      virtual DbU::Unit           getX                       () const;
-      virtual DbU::Unit           getY                       () const;
-      inline  DbU::Unit           getWidth                   () const;
-      inline  DbU::Unit           getLength                  () const;
-      inline  DbU::Unit           getSourcePosition          () const;
-      inline  DbU::Unit           getTargetPosition          () const;
-      inline  DbU::Unit           getSourceX                 () const;
-      inline  DbU::Unit           getSourceY                 () const;
-      inline  DbU::Unit           getTargetX                 () const;
-      inline  DbU::Unit           getTargetY                 () const;
-      inline  void                invert                     ();
-    // Predicates.                                           
-      inline  bool                isHorizontal               () const;
-      inline  bool                isVertical                 () const;
-      inline  bool                isBipoint                  () const;
-      inline  bool                isTopologicEnd             () const;
-      inline  bool                isInvalidated              () const;
-      inline  bool                isGlobal                   () const;
-      inline  bool                isLocal                    () const;
-      inline  bool                isCanonicalLocal           () const;
-      inline  bool                isTerminal                 () const;
-      inline  bool                isDogleg                   () const;
-      inline  bool                isCollapsed                () const;
-      inline  bool                isCanonical                () const;
-      inline  bool                isFixed                    () const;
-      inline  bool                isStrap                    () const;
-              bool                isCanonicalStrap           () const;
-      inline  bool                isLayerChange              () const;
-      inline  bool                isAccountable              () const;
-      inline  bool                isUnsetAxis                () const;
-      inline  bool                isSlackened                () const;
-      inline  bool                isSlackenStrap             () const;
-      inline  bool                allowOutsideGCell          () const;
-              bool                canDesalignate             ();
-      virtual bool                canDesalignate             ( AutoContact* ) const = 0;
-              bool                canMoveUp                  ( float reserve=0.0, unsigned int flags=0 );
-            //bool                canPivotUp                 ( bool propagate=false, float reserve=0.0 );
-              bool                canPivotUp                 ( float reserve=0.0, unsigned int flags=0 );
-              bool                canPivotDown               ( bool propagate=false, float reserve=0.0 );
-              bool                canSlacken                 ( bool propagate=false );
-      virtual bool                _canSlacken                () const = 0;
-              bool                canGoOutsideGCell          () const;
-              float               getMaxUnderDensity         ( unsigned int flags );
-    // Accessors.                                            
-      inline  unsigned long       getId                      () const;
-      virtual unsigned int        getDirection               () const = 0;
-      inline  GCell*              getGCell                   () const;
-      virtual size_t              getGCells                  ( vector<GCell*>& ) const = 0;
-      inline  AutoContact*        getAutoSource              () const;
-      inline  AutoContact*        getAutoTarget              () const;
-              AutoContact*        getOppositeAnchor          ( AutoContact* ) const;
-              size_t              getAlignedContacts         ( map<AutoContact*,int>& );
-              size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
-      inline  AutoSegment*        getParent                  () const;
-      inline  DbU::Unit           getAxis                    () const;
-      virtual DbU::Unit           getSourceU                 () const = 0;
-      virtual DbU::Unit           getTargetU                 () const = 0;
-      virtual DbU::Unit           getDuSource                () const = 0;
-      virtual DbU::Unit           getDuTarget                () const = 0;
-      inline  DbU::Unit           getOrigin                  () const;
-      inline  DbU::Unit           getExtremity               () const;
-      virtual Interval            getSpanU                   () const = 0;
-              Interval            getMinSpanU                ();
-      virtual Interval            getSourceConstraints       ( bool native=false ) const = 0;
-      virtual Interval            getTargetConstraints       ( bool native=false ) const = 0;
-      virtual bool                getConstraints             ( DbU::Unit& min, DbU::Unit& max ) const = 0;
-      inline  bool                getConstraints             ( Interval& i ) const;
-      inline  const Interval&     getUserConstraints         () const;
-      virtual DbU::Unit           getSlack                   () const;
-      inline  DbU::Unit           getOptimalMin              () const;
-      inline  DbU::Unit           getOptimalMax              () const;
-              Interval&           getOptimal                 ( Interval& i ) const;
-      virtual DbU::Unit           getCost                    ( DbU::Unit axis ) const;
-      virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max );
-      inline  AutoSegment*        getCanonical               ( Interval& i );
-    // Collections & Filters.                                
-              AutoSegments        getOnSourceContact         ( unsigned int direction );
-              AutoSegments        getOnTargetContact         ( unsigned int direction );
-              AutoSegments        getCollapseds              ( bool withPerpand=false );
-              AutoSegments        getCollapsedPerpandiculars ();
-      static  AutoSegmentFilter   getIsAccountable           () { return new AutoSegments_IsAccountable(); };
-    // Static Modifiers.                                     
-      static  void                setDestroyMode             ( bool );
-    // Modifiers.                                            
-      inline  void                setBipoint                 ( bool );
-      inline  void                setTopologicEnd            ( bool );
-      inline  void                setGlobal                  ( bool );
-      inline  void                setCanonicalLocal          ( bool );
-      inline  void                setCanonical               ( bool );
-      inline  void                setTerminal                ( bool );
-      inline  void                setDogleg                  ( bool );
-      inline  void                setFixed                   ( bool );
-      inline  void                setStrap                   ( bool );
-      inline  void                setLayerChange             ( bool );
-      inline  void                setSlackened               ( bool );
-      inline  void                setSlackenStrap            ( bool );
-              void                setAllowOutsideGCell       ( bool state, bool propagate=false );
-              void                _setAllowOutsideGCell      ( bool );
-      inline  void                setLayer                   ( const Layer* layer );
-              void                setAxis                    ( DbU::Unit          axis
-                                                             , unsigned int       flags=AxisSet 
-                                                             , set<AutoSegment*>* processeds=NULL );
-      virtual void                setDuSource                ( DbU::Unit du ) = 0;
-      virtual void                setDuTarget                ( DbU::Unit du ) = 0;
-      virtual void                orient                     () = 0;
-      virtual void                setPositions               () = 0;
-      virtual bool                checkPositions             () const = 0;
-      virtual bool                checkConstraints           () const = 0;
-      inline  void                mergeUserConstraints       ( const Interval& );
-      inline  void                resetUserConstraints       ();
-      virtual void                invalidate                 ();
-              void                revalidate                 ();
-              bool                collapse                   ();
-              bool                expand                     ();
-              bool                toConstraintAxis           ( set<AutoSegment*>* processeds=NULL );
-              bool                toOptimalAxis              ( set<AutoSegment*>* processeds=NULL );
-      virtual void                alignate                   ( DbU::Unit axis ) = 0;
-      inline  void                setOptimalMin              ( DbU::Unit min );
-      inline  void                setOptimalMax              ( DbU::Unit max );
-              void                computeOptimal             ( set<AutoSegment*>* processeds=NULL );
-              void                _computeTerminal           ( Segment* );
-      virtual void                _computeTerminal           () = 0;
-      virtual bool                checkInvalidated           () const;
-      inline  void                setParent                  ( AutoSegment* );
-              AutoSegment*        canonize                   ();
-              void                changeDepth                ( unsigned int depth
-                                                             , bool         propagate =false
-                                                             , bool         standAlone=true
-                                                             );
-              void                _changeDepth               ( unsigned int depth, bool withNeighbors );
-              bool                moveUp                     ( unsigned int flags=0 );
-              bool                moveDown                   ( unsigned int flags=0 );
-      virtual void                moveULeft                  () = 0;
-      virtual void                moveURight                 () = 0;
-              void                slacken                    ( bool propagate=false );
-      virtual void                _slacken                   () = 0;
-              bool                canDogLeg                  ( Interval );
-              void                makeDogLeg                 ( Interval, bool upLayer, bool& leftDogleg );
-              void                makeDogLeg                 ( GCell*, bool upLayer );
-      virtual void                _makeDogLeg                ( GCell*, bool upLayer ) = 0;
-      virtual void                desalignate                ( AutoContact* ) = 0;
-              void                desalignate                ();
-              bool                shearUp                    ( GCell*
-                                                             , AutoSegment*& movedUp
-                                                             , float         reserve
-                                                             , unsigned int  flags );
-              bool                _check                     () const;
-    // Inspector Management.                                 
-      virtual Record*             _getRecord                 () const = 0;
-      virtual string              _getString                 () const = 0;
-      virtual string              _getTypeName               () const = 0;
-                                  
-    protected:                    
-    // Internal: Static Attributes.
-      static size_t               _allocateds;
-      static size_t               _globalsCount;
-      static bool                 _destroyBase;
-      static bool                 _destroyTool;
-      static unsigned long        _maxId;
-    // Internal: Attributes.      
-             GCell*               _gcell;
-             bool                 _isUnsetAxis;
-             bool                 _invalidated;
-             bool                 _isHorizontal;
-             bool                 _isBipoint;
-             bool                 _isTopologicEnd;
-             bool                 _isGlobal;
-             bool                 _isCanonicalLocal;
-             bool                 _isTerminal;
-             bool                 _isDogleg;
-             bool                 _isCollapsed;
-             bool                 _isCanonical;
-             bool                 _isFixed;
-             bool                 _strap;
-             bool                 _layerChange;
-             bool                 _slackened;
-             bool                 _slackenStrap;
-             bool                 _allowOutsideGCell;
-      const  unsigned long        _id;
-             unsigned int         _optimalMin : 8;
-             unsigned int         _optimalMax : 8;
-             DbU::Unit            _sourcePosition;
-             DbU::Unit            _targetPosition;
-             Interval             _userConstraints;
-             AutoSegment*         _parent;
-                                  
-    // Internal: Constructors & Destructors.
-    protected:                    
-                                  AutoSegment        ( Segment* segment
-                                                     , bool     isHorizontal
-                                                     , int      type
-                                                     , bool     terminal
-                                                     , bool     collapsed
-                                                     );
-      virtual                    ~AutoSegment        ();
-      static  void                _preCreate         ( Component*   source, Component*   target );
-      static  void                _preCreate         ( AutoContact* source, AutoContact* target );
-      virtual void                _postCreate        ();
-      virtual void                _preDestroy        ();
-    private:                                         
-                                  AutoSegment        ( const AutoSegment& );
-              AutoSegment&        operator=          ( const AutoSegment& );
-    private:
-      inline  void                setInvalidated     ( bool state );
-              void                _invalidate        ();
-
   };
 
 
 // Inline Functions.
+  inline  void            AutoSegment::addObserver          ( BaseObserver* observer ) { _observers.addObserver(observer); }
+  inline  void            AutoSegment::removeObserver       ( BaseObserver* observer ) { _observers.removeObserver(observer); }
   inline  unsigned long   AutoSegment::getId                () const { return _id; }
-  inline  Cell*           AutoSegment::getCell              () const { return getSegment()->getCell(); }
-  inline  Net*            AutoSegment::getNet               () const { return getSegment()->getNet(); }
-  inline  const Layer*    AutoSegment::getLayer             () const { return getSegment()->getLayer(); }
-  inline  Box             AutoSegment::getBoundingBox       () const { return getSegment()->getBoundingBox(); }
-  inline  Hook*           AutoSegment::getSourceHook        () { return getSegment()->getSourceHook(); }
-  inline  Hook*           AutoSegment::getTargetHook        () { return getSegment()->getTargetHook(); }
-  inline  Contact*        AutoSegment::getSource            () const { return static_cast<Contact*>(getSegment()->getSource()); }
-  inline  Contact*        AutoSegment::getTarget            () const { return static_cast<Contact*>(getSegment()->getTarget()); }
-  inline  Component*      AutoSegment::getOppositeAnchor    ( Component* anchor ) const { return getSegment()->getOppositeAnchor(anchor); };
+  inline  Cell*           AutoSegment::getCell              () const { return base()->getCell(); }
+  inline  Net*            AutoSegment::getNet               () const { return base()->getNet(); }
+  inline  const Layer*    AutoSegment::getLayer             () const { return base()->getLayer(); }
+  inline  Box             AutoSegment::getBoundingBox       () const { return base()->getBoundingBox(); }
+  inline  Hook*           AutoSegment::getSourceHook        () { return base()->getSourceHook(); }
+  inline  Hook*           AutoSegment::getTargetHook        () { return base()->getTargetHook(); }
+  inline  Contact*        AutoSegment::getSource            () const { return static_cast<Contact*>(base()->getSource()); }
+  inline  Contact*        AutoSegment::getTarget            () const { return static_cast<Contact*>(base()->getTarget()); }
+  inline  Component*      AutoSegment::getOppositeAnchor    ( Component* anchor ) const { return base()->getOppositeAnchor(anchor); };
   inline  AutoSegment*    AutoSegment::getParent            () const { return _parent; }
   inline  DbU::Unit       AutoSegment::getSourcePosition    () const { return _sourcePosition; }
   inline  DbU::Unit       AutoSegment::getTargetPosition    () const { return _targetPosition; }
-  inline  DbU::Unit       AutoSegment::getSourceX           () const { return getSegment()->getSourceX(); }
-  inline  DbU::Unit       AutoSegment::getSourceY           () const { return getSegment()->getSourceY(); }
-  inline  DbU::Unit       AutoSegment::getTargetX           () const { return getSegment()->getTargetX(); }
-  inline  DbU::Unit       AutoSegment::getTargetY           () const { return getSegment()->getTargetY(); }
-  inline  DbU::Unit       AutoSegment::getWidth             () const { return getSegment()->getWidth(); }
-  inline  DbU::Unit       AutoSegment::getLength            () const { return getSegment()->getLength(); }
-  inline  void            AutoSegment::invert               () { getSegment()->invert(); }
+  inline  DbU::Unit       AutoSegment::getSourceX           () const { return base()->getSourceX(); }
+  inline  DbU::Unit       AutoSegment::getSourceY           () const { return base()->getSourceY(); }
+  inline  DbU::Unit       AutoSegment::getTargetX           () const { return base()->getTargetX(); }
+  inline  DbU::Unit       AutoSegment::getTargetY           () const { return base()->getTargetY(); }
+  inline  DbU::Unit       AutoSegment::getWidth             () const { return base()->getWidth(); }
+  inline  DbU::Unit       AutoSegment::getLength            () const { return base()->getLength(); }
+  inline  void            AutoSegment::invert               () { base()->invert(); }
   inline  GCell*          AutoSegment::getGCell             () const { return _gcell; }
   inline  AutoContact*    AutoSegment::getAutoSource        () const { return Session::lookup(getSource()); }
   inline  AutoContact*    AutoSegment::getAutoTarget        () const { return Session::lookup(getTarget()); }
   inline  bool            AutoSegment::getConstraints       ( Interval& i ) const { return getConstraints(i.getVMin(),i.getVMax()); }
   inline  AutoSegment*    AutoSegment::getCanonical         ( Interval& i ) { return getCanonical(i.getVMin(),i.getVMax()); }
-  inline  DbU::Unit       AutoSegment::getAxis              () const { return _isHorizontal?getSegment()->getY():getSegment()->getX(); }
-  inline  DbU::Unit       AutoSegment::getOrigin            () const { return _isHorizontal?_gcell->getY():_gcell->getX(); }
-  inline  DbU::Unit       AutoSegment::getExtremity         () const { return _isHorizontal?_gcell->getYMax():_gcell->getXMax(); }
+  inline  DbU::Unit       AutoSegment::getAxis              () const { return isHorizontal()?base()->getY():base()->getX(); }
+  inline  DbU::Unit       AutoSegment::getOrigin            () const { return isHorizontal()?_gcell->getY():_gcell->getX(); }
+  inline  DbU::Unit       AutoSegment::getExtremity         () const { return isHorizontal()?_gcell->getYMax():_gcell->getXMax(); }
   inline  DbU::Unit       AutoSegment::getOptimalMin        () const { return DbU::lambda(_optimalMin) + getOrigin(); }
   inline  DbU::Unit       AutoSegment::getOptimalMax        () const { return DbU::lambda(_optimalMax) + getOrigin(); }
   inline  const Interval& AutoSegment::getUserConstraints   () const { return _userConstraints; }
                                                            
-  inline  bool            AutoSegment::isInvalidated        () const { return  _invalidated; }
-  inline  bool            AutoSegment::isHorizontal         () const { return  _isHorizontal; }
-  inline  bool            AutoSegment::isBipoint            () const { return  _isBipoint; }
-  inline  bool            AutoSegment::isTopologicEnd       () const { return  _isTopologicEnd; }
-  inline  bool            AutoSegment::isVertical           () const { return !_isHorizontal; }
-  inline  bool            AutoSegment::isGlobal             () const { return  _isGlobal; }
-  inline  bool            AutoSegment::isCanonicalLocal     () const { return  _isCanonicalLocal; }
-  inline  bool            AutoSegment::isLocal              () const { return !_isGlobal; }
-  inline  bool            AutoSegment::isTerminal           () const { return  _isTerminal; }
-  inline  bool            AutoSegment::isDogleg             () const { return  _isDogleg  ; }
-  inline  bool            AutoSegment::isCollapsed          () const { return  _isCollapsed; }
-  inline  bool            AutoSegment::isCanonical          () const { return  _isCanonical; }
-  inline  bool            AutoSegment::isFixed              () const { return  _isFixed; }
-  inline  bool            AutoSegment::isStrap              () const { return  _strap; }
-  inline  bool            AutoSegment::isLayerChange        () const { return  _layerChange; }
-  inline  bool            AutoSegment::isAccountable        () const { return  _isCanonical && !_isCollapsed; }
-  inline  bool            AutoSegment::isUnsetAxis          () const { return  _isUnsetAxis; }
-  inline  bool            AutoSegment::isSlackened          () const { return  _slackened; }
-  inline  bool            AutoSegment::isSlackenStrap       () const { return  _slackenStrap; }
-  inline  bool            AutoSegment::allowOutsideGCell    () const { return  _allowOutsideGCell; }
+  inline  bool            AutoSegment::isHorizontal         () const { return _flags & SegHorizontal; }
+  inline  bool            AutoSegment::isVertical           () const { return not (_flags & SegHorizontal); }
+  inline  bool            AutoSegment::isFixed              () const { return _flags & SegFixed; }
+  inline  bool            AutoSegment::isGlobal             () const { return _flags & SegGlobal; }
+  inline  bool            AutoSegment::isWeakGlobal         () const { return _flags & SegWeakGlobal; }
+  inline  bool            AutoSegment::isLocal              () const { return not (_flags & SegGlobal); }
+  inline  bool            AutoSegment::isBipoint            () const { return _flags & SegBipoint; }
+  inline  bool            AutoSegment::isWeakTerminal       () const { return _flags & SegWeakTerminal; }
+  inline  bool            AutoSegment::isWeakTerminal1      () const { return _flags & SegWeakTerminal1; }
+  inline  bool            AutoSegment::isWeakTerminal2      () const { return _flags & SegWeakTerminal2; }
+  inline  bool            AutoSegment::isTerminal           () const { return _flags & SegStrongTerminal; }
+  inline  bool            AutoSegment::isNotSourceAligned   () const { return _flags & SegNotSourceAligned; }
+  inline  bool            AutoSegment::isNotTargetAligned   () const { return _flags & SegNotTargetAligned; }
+  inline  bool            AutoSegment::isNotAligned         () const { return (_flags & SegNotAligned) == SegNotAligned; }
+  inline  bool            AutoSegment::isDogleg             () const { return _flags & SegDogleg  ; }
+  inline  bool            AutoSegment::isUnbound            () const { return _flags & SegUnbound  ; }
+  inline  bool            AutoSegment::isStrap              () const { return _flags & SegStrap; }
+  inline  bool            AutoSegment::isLayerChange        () const { return _flags & SegLayerChange; }
+  inline  bool            AutoSegment::isSlackened          () const { return _flags & SegSlackened; }
+  inline  bool            AutoSegment::isCanonical          () const { return _flags & SegCanonical; }
+  inline  bool            AutoSegment::isUnsetAxis          () const { return not (_flags & SegAxisSet); }
+  inline  bool            AutoSegment::isInvalidated        () const { return _flags & SegInvalidated; }
+  inline  bool            AutoSegment::isInvalidatedLayer   () const { return _flags & SegInvalidatedLayer; }
+  inline  bool            AutoSegment::isCreated            () const { return _flags & SegCreated; }
+  inline  void            AutoSegment::setFlags             ( unsigned int flags ) { _flags |=  flags; }
+  inline  void            AutoSegment::unsetFlags           ( unsigned int flags ) { _flags &= ~flags; }
                                                             
-  inline  void            AutoSegment::setLayer             ( const Layer* layer ) { invalidate(); getSegment()->setLayer(layer); }
-  inline  void            AutoSegment::setInvalidated       ( bool state ) { _invalidated = state; }
-  inline  void            AutoSegment::setBipoint           ( bool state ) { _isBipoint = state; }
-  inline  void            AutoSegment::setTopologicEnd      ( bool state ) { _isTopologicEnd = state; }
-  inline  void            AutoSegment::setGlobal            ( bool state ) { _isGlobal = state; }
-  inline  void            AutoSegment::setCanonicalLocal    ( bool state ) { _isCanonicalLocal = state; }
-  inline  void            AutoSegment::setTerminal          ( bool state ) { _isTerminal = state; }
-  inline  void            AutoSegment::setDogleg            ( bool state ) { _isDogleg = state; }
-  inline  void            AutoSegment::setFixed             ( bool state ) { _isFixed = state; }
-  inline  void            AutoSegment::setStrap             ( bool state ) { _strap = state; }
-  inline  void            AutoSegment::setLayerChange       ( bool state ) { _layerChange = state; }
-  inline  void            AutoSegment::setSlackened         ( bool state ) { _slackened = state; }
-  inline  void            AutoSegment::setSlackenStrap      ( bool state ) { _slackenStrap = state; }
+  inline  unsigned int    AutoSegment::getFlags             () const { return _flags; }
+  inline  unsigned int    AutoSegment::_getFlags            () const { return _flags; }
+  inline  void            AutoSegment::setLayer             ( const Layer* layer ) { base()->setLayer(layer); }
   inline  void            AutoSegment::setOptimalMin        ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }
   inline  void            AutoSegment::setOptimalMax        ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
-  inline  void            AutoSegment::mergeUserConstraints ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
+//inline  void            AutoSegment::mergeUserConstraints ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints () { _userConstraints = Interval(false); }
 
   inline  void  AutoSegment::setParent ( AutoSegment* parent )
@@ -461,29 +436,29 @@ namespace Katabatic {
     _parent = parent;
   }
 
+  template< typename T >
+  inline  T* AutoSegment::getObserver () { return _observers.getObserver<T>(); }
+
 
   inline bool  AutoSegment::CompareId::operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const
   { return lhs->getId() < rhs->getId(); }
-
-  inline  void  AutoSegment::setCanonical ( bool state )
-  {
-    if ( _isCanonical != state ) {
-    //ltrace(159) << "canonical:" << state << " " << (void*)this << " " << _getString() << endl;
-      _isCanonical = state;
-    }
-  }
   
   inline unsigned long AutoSegment::getMaxId ()
   { return _maxId; }
 
+  inline bool  AutoSegment::areAlignedsAndDiffLayer ( AutoSegment* s1, AutoSegment* s2 )
+  { return s1 and s2
+      and  (s1->isHorizontal() == s2->isHorizontal())
+      and  (s1->getLayer() != s2->getLayer()); }
+
   inline bool  AutoSegment::arePerpandiculars ( AutoSegment* a, AutoSegment* b )
-  { return a->isHorizontal() != b->isHorizontal(); }
+  { return a and b and (a->isHorizontal() != b->isHorizontal()); }
 
   inline bool  AutoSegment::arePerpandiculars ( bool isHorizontalA, AutoSegment* b )
-  { return isHorizontalA != b->isHorizontal(); }
+  { return b and (isHorizontalA != b->isHorizontal()); }
 
   inline bool  AutoSegment::areAligneds ( AutoSegment* a, AutoSegment* b )
-  { return a->isHorizontal() == b->isHorizontal(); }
+  { return a and b and (a->isHorizontal() == b->isHorizontal()); }
 
   inline unsigned int  AutoSegment::getPerpandicularState ( AutoContact* contact
                                                           , AutoSegment* source
@@ -524,4 +499,4 @@ namespace Katabatic {
 INSPECTOR_P_SUPPORT(Katabatic::AutoSegment);
 
 
-# endif  // __KATABATIC_AUTOSEGMENT__
+# endif  // KATABATIC_AUTOSEGMENT_H

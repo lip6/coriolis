@@ -2,34 +2,33 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |        K a t a b a t i c  -  Routing Toolbox                    |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./AutoSegment.cpp"                        |
 // +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Warning.h"
-#include  "hurricane/Bug.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "crlcore/RoutingGauge.h"
-
-#include  "katabatic/Session.h"
-#include  "katabatic/AutoContact.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/AutoHorizontal.h"
-#include  "katabatic/AutoVertical.h"
-#include  "katabatic/GCell.h"
-#include  "katabatic/KatabaticEngine.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Bug.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "crlcore/RoutingGauge.h"
+#include "katabatic/Session.h"
+#include "katabatic/AutoContact.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/AutoHorizontal.h"
+#include "katabatic/AutoVertical.h"
+#include "katabatic/GCell.h"
+#include "katabatic/KatabaticEngine.h"
 
 
 namespace {
@@ -131,13 +130,13 @@ namespace {
         AutoSegment* segment      = NULL;
         size_t       segmentCount = 0;
         forEach ( Component*, icomponent, terminalContact->getSlaveComponents() ) {
-          if ( *icomponent == autoSegment->getSegment() ) continue;
+          if ( *icomponent == autoSegment->base() ) continue;
 
           Segment* connex = dynamic_cast<Segment*>(*icomponent);
           if ( !connex ) continue;
 
           segment = Session::lookup ( connex );
-          if ( !segment || !segment->isTerminal() ) continue;
+          if ( not segment or not segment->isWeakTerminal() ) continue;
 
           segmentCount++;
         }
@@ -310,22 +309,90 @@ namespace Katabatic {
   unsigned long  AutoSegment::_maxId        = 0;
 
 
-  DbU::Unit  AutoSegment::getX () const
+  AutoSegment::AutoSegment ( Segment* segment )
+    : _id             (segment->getId())
+    , _flags          (SegCreated)
+    , _optimalMin     (0)
+    , _sourcePosition (0)
+    , _targetPosition (0)
+    , _userConstraints(false)
+    , _parent         (NULL)
+    , _observers      ()
   {
-    return getSegment()->getX();
+    AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
+    AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
+
+    _allocateds++;
+
+    if (dynamic_cast<Horizontal*>(segment))           setFlags( SegHorizontal );
+    if (source->isTerminal() or target->isTerminal()) setFlags( SegStrongTerminal );
+
+    _gcell = source->getGCell();
+    setOptimalMax ( isHorizontal() ? _gcell->getBoundingBox().getYMax()
+                                   : _gcell->getBoundingBox().getXMax() );
+
+    _globalsCount += isGlobal() ? 1 : 0;
+
+    source->invalidate( KbTopology );
   }
+
+
+  void  AutoSegment::_preCreate ( AutoContact* source, AutoContact* target )
+  {
+    if ( (source == NULL) or (target == NULL) )
+      throw Error( badAutoSegmentAnchor
+                 , ((source)?getString(source).c_str():"NULL")
+                 , ((target)?getString(target).c_str():"NULL")
+                 );
+
+    if (source == target)
+      throw Error( dupAutoSegmentAnchor, getString(source).c_str() );
+  }
+
+
+  void  AutoSegment::_postCreate ()
+  {
+    Session::invalidate( getNet() );
+    Session::link( this );
+    updateOrient();
+    updatePositions();
+    invalidate( KbNoFlags );
+  //sourceAttach( getAutoSource() );
+  //targetAttach( getAutoTarget() );
+
+    _observers.notify( Create );
+  }
+
+
+  void  AutoSegment::_preDestroy ()
+  {
+    ltrace(200) << "AutoSegment::_preDestroy() - " << (void*)this << endl;
+    ltracein(90);
+
+    _observers.notify( Destroy );
+
+    Session::unlink( this );
+    ltraceout(90);
+  }
+
+
+  AutoSegment::~AutoSegment ()
+  {
+    _allocateds--;
+    if ( isGlobal() and (_globalsCount > 0) ) _globalsCount--;
+  }
+
+
+  DbU::Unit  AutoSegment::getX () const
+  { return base()->getX(); }
 
 
   DbU::Unit  AutoSegment::getY () const
-  {
-    return getSegment()->getY();
-  }
+  { return base()->getY(); }
 
 
   AutoContact* AutoSegment::getOppositeAnchor ( AutoContact* anchor ) const
-  {
-    return Session::lookup(static_cast<Contact*>(getOppositeAnchor(anchor->getContact())));
-  }
+  { return Session::lookup(static_cast<Contact*>(getOppositeAnchor(anchor->base()))); }
 
 
   Interval& AutoSegment::getOptimal ( Interval& i ) const
@@ -336,45 +403,71 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::checkInvalidated () const
+  bool  AutoSegment::checkNotInvalidated () const
   {
-    if ( isInvalidated() )
+    if (isInvalidated())
       cerr << Error("%s is invalidated.",getString(this).c_str()) << endl;
 
-    return !isInvalidated();
+    return not isInvalidated();
   }
 
 
-  void  AutoSegment::invalidate ()
+  void  AutoSegment::invalidate ( unsigned int flags )
   {
-    if ( Session::doDestroyTool() ) return;
+    if (Session::doDestroyTool()) return;
+    if (isInvalidated()) return;
 
-    _invalidate ();
-    forEach ( AutoSegment*, isegment, getCollapseds() )
-      isegment->_invalidate ();
+    ltrace(200) << "AutoSegment::invalidate() " << flags << " " << this << endl;
+    ltracein(200);
+
+    _invalidate();
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach( AutoSegment*, isegment, getAligneds() )
+        isegment->_invalidate();
+    }
+    ltraceout(200);
   }
 
 
   void  AutoSegment::_invalidate ()
   {
-    if ( !isInvalidated() ) {
-      ltrace(110) << "AutoSegment::_invalidate() " << this << endl;
+    if (isInvalidated()) return;
+    ltrace(110) << "AutoSegment::_invalidate() " << this << endl;
 
-      setInvalidated ( true );
-      Session::invalidate ( this );
-    }
+    setFlags( SegInvalidated );
+    Session::invalidate( this );
+
+    _observers.notify( Invalidate );
   }
 
 
   void  AutoSegment::revalidate ()
   {
     ltrace(110) << "AutoSegment::revalidate() " << this << endl;
+    if (not isInvalidated()) return;
+
     ltracein(110);
 
-    setPositions ();
-    setInvalidated ( false );
+    updateOrient();
+    updatePositions();
+    unsetFlags( SegInvalidated|SegInvalidatedLayer|SegCreated );
+
+    _observers.notify( Revalidate );
 
     ltraceout(110);
+  }
+
+
+  bool  AutoSegment::isStrongTerminal ( unsigned int flags ) const
+  {
+    if (_flags & SegStrongTerminal) return true;
+
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if (isegment->_flags & SegStrongTerminal) return true;
+      }
+    }
+    return false;
   }
 
 
@@ -383,7 +476,7 @@ namespace Katabatic {
     DbU::Unit  constraintMin;
     DbU::Unit  constraintMax;
 
-    getConstraints ( constraintMin, constraintMax );
+    getConstraints( constraintMin, constraintMax );
 
     return constraintMax - constraintMin;
   }
@@ -392,12 +485,10 @@ namespace Katabatic {
   DbU::Unit  AutoSegment::getCost ( DbU::Unit axis ) const
   {
     DbU::Unit  optimal = getOptimalMin();
-    if ( axis < optimal )
-      return optimal - axis;
+    if (axis < optimal) return optimal - axis;
 
     optimal = getOptimalMax();
-    if ( axis > optimal )
-      return axis - optimal;
+    if (axis > optimal) return axis - optimal;
 
     return 0;
   }
@@ -405,10 +496,14 @@ namespace Katabatic {
 
   AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max )
   {
+    ltrace(89) << "AutoSegment::getCanonical() - " << this << endl;
+
     min = getSourcePosition ();
     max = getTargetPosition ();
 
-    if ( max < min ) swap ( min, max );
+    if (max < min) swap( min, max );
+
+  //ltrace(89) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
 
     AutoSegment* canonical    = this;
     size_t       canonicals   = isCanonical();
@@ -416,30 +511,34 @@ namespace Katabatic {
     DbU::Unit    collapsedMin;
     DbU::Unit    collapsedMax;
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( isegment->isCanonical() ) {
-        canonical = *isegment;
-        canonicals++;
+    if (not isNotAligned()) {
+      forEach( AutoSegment*, isegment, getAligneds() ) {
+        if (isegment->isCanonical()) {
+          canonical = *isegment;
+          canonicals++;
+        }
+
+        collapsedMin = isegment->getSourcePosition();
+        collapsedMax = isegment->getTargetPosition();
+        if (collapsedMax < collapsedMin) swap( collapsedMin, collapsedMax );
+        if (collapsedMin < min) min = collapsedMin;
+        if (collapsedMax > max) max = collapsedMax;
+        
+        aligneds++;
       }
+    //ltrace(89) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
+      ltrace(89) << "Canonical: " << canonical << endl;
 
-      collapsedMin = isegment->getSourcePosition();
-      collapsedMax = isegment->getTargetPosition();
-      if ( collapsedMax < collapsedMin ) swap ( collapsedMin, collapsedMax );
-      if ( collapsedMin < min ) min = collapsedMin;
-      if ( collapsedMax > max ) max = collapsedMax;
+      if ( (canonicals > 1) or ( not canonicals and (aligneds > 2) ) ) {
+        cerr << Bug("AutoSegment::getCanonical(): %p:%s"
+                    "\n      Bad canonization: %d canonicals out of %d collapseds."
+                   , base(), _getString().c_str(), canonicals, aligneds ) << endl;
 
-      aligneds++;
-    }
-
-    if ( (canonicals > 1) || ( !canonicals && (aligneds > 2) ) ) {
-      cerr << Bug("AutoSegment::getCanonical(): %p:%s"
-                  "\n      Bad canonization: %d canonicals out of %d collapseds."
-                 , base(), _getString().c_str(), canonicals, aligneds ) << endl;
-
-      int count = 0;
-      cerr << "      " << count++ << ": " << this << endl;
-      forEach ( AutoSegment*, isegment, getCollapseds() )
-        cerr << "      " << count++ << ": " << *isegment << endl;
+        int count = 0;
+        cerr << "      " << count++ << ": " << this << endl;
+        forEach( AutoSegment*, isegment, getAligneds() )
+          cerr << "      " << count++ << ": " << *isegment << endl;
+      }
     }
 
     return canonical;
@@ -449,224 +548,235 @@ namespace Katabatic {
   AutoSegments  AutoSegment::getOnSourceContact ( unsigned int direction )
   {
     return AutoSegments_OnContact
-      ( this, getSource() ).getSubSet ( AutoSegments_InDirection(direction) );
+      ( this, getSource() ).getSubSet( AutoSegments_InDirection(direction) );
   }
 
 
   AutoSegments  AutoSegment::getOnTargetContact ( unsigned int direction )
   {
     return AutoSegments_OnContact
-      ( this, getTarget() ).getSubSet ( AutoSegments_InDirection(direction) );
+      ( this, getTarget() ).getSubSet( AutoSegments_InDirection(direction) );
   }
 
 
-  AutoSegments  AutoSegment::getCollapseds ( bool withPerpand )
+  AutoSegments  AutoSegment::getCachedOnSourceContact ( unsigned int direction )
+  { return AutoSegments_CachedOnContact( getAutoSource(), direction ); }
+
+
+  AutoSegments  AutoSegment::getCachedOnTargetContact ( unsigned int direction )
+  { return AutoSegments_CachedOnContact( getAutoTarget(), direction ); }
+
+
+  AutoSegments  AutoSegment::getAligneds ( unsigned int flags )
   {
-    return AutoSegments_Collapsed ( this, withPerpand );
+    ltrace(89) << "AutoSegment::getAligneds() - flags:" << flags << endl;
+    return AutoSegments_Aligneds( this, flags );
   }
 
 
-  AutoSegments  AutoSegment::getCollapsedPerpandiculars ()
+  AutoSegments  AutoSegment::getPerpandiculars ()
+  { return AutoSegments_Perpandiculars( this ); }
+
+
+  void  AutoSegment::setFlagsOnAligneds ( unsigned int flags )
   {
-    return AutoSegments_CollapsedPerpandicular ( this );
+    setFlags( flags );
+    if (not isNotAligned()) {
+      forEach( AutoSegment*, isegment, getAligneds() )
+        isegment->setFlags( flags );
+    }
   }
 
 
-  bool  AutoSegment::isCanonicalStrap () const
+  void  AutoSegment::sourceDetach ()
   {
-    if ( not isStrap() ) return false;
-    forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getCollapseds() ) {
-      if ( not isegment->isStrap() ) return false;
+    AutoContact* source = getAutoSource();
+    if (source) {
+      base()->getSourceHook()->detach();
+      source->cacheDetach( this );
+      unsetFlags( SegNotSourceAligned );
     }
-    return true;
   }
 
 
-  bool  AutoSegment::collapse ()
+  void  AutoSegment::targetDetach ()
   {
-    if ( _isGlobal ) {
-      cerr << Error("Global %s cannot be collapsed.",getString(this).c_str()) << endl;
-      return false;
+    AutoContact* target = getAutoTarget();
+    if (target) {
+      base()->getTargetHook()->detach();
+      target->cacheDetach( this );
+      unsetFlags( SegNotTargetAligned );
     }
-    if ( _isCollapsed ) return true;
-
-    _isCollapsed = true;
-
-    unsigned int direction = (_isHorizontal) ? Constant::Vertical : Constant::Horizontal;
-    forEach ( AutoSegment*, isegment, AutoSegments_AnchoredBySource(getAutoSource(),direction) ) {
-      isegment->setCanonical ( false );
-    }
-    forEach ( AutoSegment*, isegment, AutoSegments_AnchoredBySource(getAutoTarget(),direction) ) {
-      isegment->setCanonical ( false );
-    }
-
-    return true;
   }
 
 
-  bool  AutoSegment::expand ()
+  void  AutoSegment::sourceAttach ( AutoContact* source )
   {
-    if ( _isGlobal ) {
-      cerr << Warning("Global %s already uncollapsed.",getString(this).c_str()) << endl;
-      return false;
-    }
-    if ( !_isCollapsed ) {
-      cerr << Warning("Local %s already uncollapsed.",getString(this).c_str()) << endl;
-      return true;
-    }
+    if (source) {
+      if (not base()->getSourceHook()->isAttached())
+        base()->getSourceHook()->attach( source->base()->getBodyHook() );
+      source->cacheAttach( this );
 
-    _isCollapsed = false;
-
-    canonize ();
-
-    unsigned int direction = (_isHorizontal) ? Constant::Vertical : Constant::Horizontal;
-    forEach ( AutoSegment*, segment, getOnSourceContact(direction) ) {
-      segment->canonize ();
+      // if      (source->isHTee() and isHorizontal()) return;
+      // else if (source->isVTee() and isVertical  ()) return;
+      // setFlags( SegNotSourceAligned );
     }
-    forEach ( AutoSegment*, segment, getOnTargetContact(direction) ) {
-      segment->canonize ();
-    }
-
-    return true;
   }
 
 
-  bool  AutoSegment::toConstraintAxis ( set<AutoSegment*>* processeds )
+  void  AutoSegment::targetAttach ( AutoContact* target )
   {
-    if ( processeds && (processeds->find(this) != processeds->end()) ) return false;
+    if (target) {
+      if (not base()->getTargetHook()->isAttached())
+        base()->getTargetHook()->attach( target->base()->getBodyHook() );
+      target->cacheAttach( this );
+
+      // if      (target->isHTee() and isHorizontal()) return;
+      // else if (target->isVTee() and isVertical  ()) return;
+      // setFlags( SegNotTargetAligned );
+    }
+  }
+
+
+  void  AutoSegment::mergeUserConstraints ( const Interval& constraints )
+  {
+    ltrace(200) << "mergeUserConstraints() " << this << endl;
+    ltrace(200) << "| " << constraints << " merged with " << _userConstraints << endl;
+    _userConstraints.intersection(constraints);
+  }
+
+
+  bool  AutoSegment::toConstraintAxis ()
+  {
+    ltrace(200) << "toConstraintAxis() " << this << endl;
+    ltracein(200);
+
+    if (not isCanonical()) { ltraceout(200); return false; }
 
     DbU::Unit constraintMin;
     DbU::Unit constraintMax;
 
-    getConstraints ( constraintMin, constraintMax );
+    getConstraints( constraintMin, constraintMax );
 
   // Empty constraint interval: ignore.
-    if ( constraintMin > constraintMax ) return false;
+    if (constraintMin > constraintMax) { ltraceout(200); return false; }
 
-    if ( isDogleg() ) {
+    if (isDogleg()) {
     // Ugly: hard-wired value of the track spacing.
       constraintMin -= DbU::lambda(25.0);
       constraintMax += DbU::lambda(25.0);
     }
 
-    if ( getAxis() < constraintMin ) {
-      setAxis ( constraintMin, Realignate, processeds );
+    if (getAxis() < constraintMin) {
+      setAxis( constraintMin );
+      ltraceout(200);
       return true;
     }
 
-    if ( getAxis() > constraintMax ) {
-      setAxis ( constraintMax, Realignate, processeds );
+    if (getAxis() > constraintMax) {
+      setAxis( constraintMax );
+      ltraceout(200);
       return true;
     }
 
+    ltraceout(200);
     return false;
   }
 
 
-  bool  AutoSegment::toOptimalAxis ( set<AutoSegment*>* processeds )
+  bool  AutoSegment::toOptimalAxis ()
   {
-    if ( processeds && (processeds->find(this) != processeds->end()) ) return false;
+    ltrace(200) << "toOptimalAxis() " << this << endl;
+    ltracein(200);
+
+    if (not isCanonical()) { ltraceout(200); return false; }
 
     DbU::Unit constraintMin;
     DbU::Unit constraintMax;
 
-    getConstraints ( constraintMin, constraintMax );
+    getConstraints( constraintMin, constraintMax );
 
-    DbU::Unit optimalMin = max ( min(getOptimalMin(),constraintMax), constraintMin );
-    DbU::Unit optimalMax = min ( max(getOptimalMax(),constraintMin), constraintMax );
+    DbU::Unit optimalMin = max( min(getOptimalMin(),constraintMax), constraintMin );
+    DbU::Unit optimalMax = min( max(getOptimalMax(),constraintMin), constraintMax );
 
-    if ( getAxis() < optimalMin ) {
-#if defined(CHECK_DETERMINISM)
-      cerr << "Order: toOptimalMin "
-           << DbU::getValueString(optimalMin) << " ["
-           << DbU::getValueString(optimalMin) << ":"
-           << DbU::getValueString(optimalMax) << "] ["
-           << DbU::getValueString(constraintMin) << ":"
-           << DbU::getValueString(constraintMax) << "] "
-           << this << endl;
-#endif
-      setAxis ( optimalMin, Realignate|AxisSet, processeds );
+    if (getAxis() < optimalMin) {
+      setAxis( optimalMin );
+      ltraceout(200);
       return true;
     }
 
-    if ( getAxis() > optimalMax ) {
-#if defined(CHECK_DETERMINISM)
-      cerr << "Order: toOptimalMax "
-           << DbU::getValueString(optimalMin) << " ["
-           << DbU::getValueString(optimalMin) << ":"
-           << DbU::getValueString(optimalMax) << "] ["
-           << DbU::getValueString(constraintMin) << ":"
-           << DbU::getValueString(constraintMax) << "] "
-           << this << endl;
-#endif
-      setAxis ( optimalMax, Realignate|AxisSet, processeds );
+    if (getAxis() > optimalMax) {
+      setAxis( optimalMax );
+      ltraceout(200);
       return true;
     }
 
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: in optimal position  "
-         << DbU::getValueString(optimalMin) << " ["
-         << DbU::getValueString(optimalMin) << ":"
-         << DbU::getValueString(optimalMax) << "] ["
-         << DbU::getValueString(constraintMin) << ":"
-         << DbU::getValueString(constraintMax) << "] "
-         << this << endl;
-#endif
-
+    ltraceout(200);
     return false;
   }
 
 
-  void  AutoSegment::setAxis ( DbU::Unit axis, unsigned int flags, set<AutoSegment*>* processeds )
+  void  AutoSegment::setAxis ( DbU::Unit axis, unsigned int flags )
   {
-    if ( processeds and (processeds->find(this) != processeds->end()) ) return;
+    if (not isCanonical()) return;
 
-    if ( ( axis != getAxis() ) and isFixed() ) {
-      cerr << Error("AutoSegment::setAxis(): Cannot move fixed segment to %s.\n"
-                    "        (on: %s)"
-                   ,DbU::getValueString(axis).c_str()
-                   ,_getString().c_str()
-                   ) << endl;
-    }
-
-    if ( _isUnsetAxis and (flags & AxisSet) ) {
-      ltrace(200) << "setAxis() - AxisSet flag raised " << this << endl;
-      _isUnsetAxis = false;
-    }
-    if ( ( axis == getAxis() ) and not (flags & Realignate) ) return;
+    if ( (axis == getAxis()) and not (flags & KbRealignate) ) return;
 
     ltrace(200) << "setAxis() @"
-                << ((_isHorizontal)?"Y ":"X ") << DbU::getLambda(getAxis())
+                << ((isHorizontal())?"Y ":"X ") << DbU::getLambda(getAxis())
                 << " to " << DbU::getLambda(axis) << " on " << this << endl;
     ltracein(80);
 
-    alignate ( axis );
-    if ( processeds ) processeds->insert ( this );
+    _setAxis( axis );
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      isegment->alignate ( getAxis() );
-      if ( flags & AxisSet ) isegment->_isUnsetAxis = false;
-      if ( processeds ) processeds->insert ( *isegment );
+    if (not isNotAligned()) {
+      forEach( AutoSegment*, isegment, getAligneds() ) {
+        isegment->_setAxis( getAxis() );
+      }
+    } else {
+      ltrace(200) << "No need to process parallels." << endl;
     }
 
     ltraceout(80);
   }
 
 
-  void  AutoSegment::computeOptimal ( set<AutoSegment*>* processeds )
+  void  AutoSegment::computeTerminal ()
+  {
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    ltrace(99) << "computeTerminal() S:" << source->isTerminal()
+               << " T:" << target->isTerminal()
+               << " " << this << endl;
+
+    if (source->isTerminal() or target->isTerminal()) {
+      unsetFlags( SegWeakTerminal );
+      setFlags  ( SegStrongTerminal );
+    } else {
+      unsigned int terminalFlag = 0;
+      switch ( _getFlags() & SegWeakTerminal ) {
+        case 0: break;
+        case SegStrongTerminal: terminalFlag = SegWeakTerminal1; break;
+        case SegWeakTerminal1:  terminalFlag = SegWeakTerminal1; break;
+        case SegWeakTerminal2:  terminalFlag = SegWeakTerminal2; break;
+        default:
+          cerr << Warning("%s has multiple terminal flag sets: %x."
+                         ,getString(this).c_str()
+                         ,_flags
+                         ) << endl;
+          terminalFlag = SegWeakTerminal2; break;
+      }
+      unsetFlags( SegWeakTerminal );
+      setFlags  ( terminalFlag );
+    }
+  }
+
+
+  void  AutoSegment::computeOptimal ( set<AutoSegment*>& processeds )
   {
     ltrace(89) << "computeOptimal() - " << this << endl;
     ltracein(89);
-
-    if ( processeds && (processeds->find(this) != processeds->end()) ) { ltraceout(89); return; }
-
-    if ( _isCollapsed ) {
-      _optimalMin = 0;
-      setOptimalMax ( (_isHorizontal) ? _gcell->getBoundingBox().getYMax()
-                    : _gcell->getBoundingBox().getXMax() );
-      ltraceout(89);
-      return;
-    }
 
     DbU::Unit      minGCell    = getOrigin();
     DbU::Unit      maxGCell    = getExtremity();
@@ -675,64 +785,64 @@ namespace Katabatic {
     AttractorsMap  attractors;
 
     AutoContact* anchor = getAutoSource();
-    if ( anchor->isTerminal() ) {
+    if (anchor->isTerminal()) {
       Box constraintBox = anchor->getConstraintBox();
       if ( isHorizontal() ) {
-        terminalMin = constraintBox.getYMin ();
-        terminalMax = constraintBox.getYMax ();
+        terminalMin = constraintBox.getYMin();
+        terminalMax = constraintBox.getYMax();
       } else {
-        terminalMin = constraintBox.getXMin ();
-        terminalMax = constraintBox.getXMax ();
+        terminalMin = constraintBox.getXMin();
+        terminalMax = constraintBox.getXMax();
       }
 
-      attractors.addAttractor ( terminalMin );
-      if ( terminalMin != terminalMax )
-        attractors.addAttractor ( terminalMax );
+      attractors.addAttractor( terminalMin );
+      if (terminalMin != terminalMax)
+        attractors.addAttractor( terminalMax );
     }
 
     anchor = getAutoTarget();
-    if ( anchor->isTerminal() ) {
+    if (anchor->isTerminal()) {
       Box constraintBox = anchor->getConstraintBox();
-      if ( isHorizontal() ) {
-        terminalMin = constraintBox.getYMin ();
-        terminalMax = constraintBox.getYMax ();
+      if (isHorizontal()) {
+        terminalMin = constraintBox.getYMin();
+        terminalMax = constraintBox.getYMax();
       } else {
-        terminalMin = constraintBox.getXMin ();
-        terminalMax = constraintBox.getXMax ();
+        terminalMin = constraintBox.getXMin();
+        terminalMax = constraintBox.getXMax();
       }
 
-      attractors.addAttractor ( terminalMin );
-      if ( terminalMin != terminalMax )
-        attractors.addAttractor ( terminalMax );
+      attractors.addAttractor( terminalMin );
+      if (terminalMin != terminalMax)
+        attractors.addAttractor( terminalMax );
     }
 
-    forEach ( AutoSegment*, autoSegment, getCollapsedPerpandiculars() ) {
+    forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
       ltrace(89) << "Perpandicular " << *autoSegment << endl;
       ltracein(89);
-      if ( autoSegment->isLocal() ) {
-        if ( !autoSegment->isTerminal() ) { ltraceout(89); continue; }
+      if (autoSegment->isLocal()) {
+        if (not autoSegment->isStrongTerminal()) { ltraceout(89); continue; }
 
         DbU::Unit  terminalMin;
         DbU::Unit  terminalMax;
 
-        if ( getTerminalInterval ( *autoSegment
-                                 , NULL
-                                 , isHorizontal()
-                                 , terminalMin
-                                 , terminalMax ) ) {
-          attractors.addAttractor ( terminalMin );
-          if ( terminalMin != terminalMax )
-            attractors.addAttractor ( terminalMax );
+        if (getTerminalInterval( *autoSegment
+                               , NULL
+                               , isHorizontal()
+                               , terminalMin
+                               , terminalMax )) {
+          attractors.addAttractor( terminalMin );
+          if (terminalMin != terminalMax)
+            attractors.addAttractor( terminalMax );
         }
       } else {
         bool isMin = true;
-        if (      isHorizontal()
-             && ( autoSegment->getAutoSource()->getGCell()->getRow() == _gcell->getRow() ) )
+        if (    isHorizontal()
+           and (autoSegment->getAutoSource()->getGCell()->getRow() == _gcell->getRow()) )
           isMin = false;
-        if (      isVertical()
-             && ( autoSegment->getAutoSource()->getGCell()->getColumn() == _gcell->getColumn() ) )
+        if (    isVertical()
+           and (autoSegment->getAutoSource()->getGCell()->getColumn() == _gcell->getColumn()) )
           isMin = false;
-        attractors.addAttractor ( (isMin) ? minGCell : maxGCell );
+        attractors.addAttractor( (isMin) ? minGCell : maxGCell );
       }
       ltraceout(89);
     }
@@ -741,9 +851,9 @@ namespace Katabatic {
     DbU::Unit  optimalMax;
     DbU::Unit  constraintMin;
     DbU::Unit  constraintMax;
-    getConstraints ( constraintMin, constraintMax );
+    getConstraints( constraintMin, constraintMax );
 
-    if ( attractors.getAttractorsCount() ) {
+    if (attractors.getAttractorsCount()) {
       ltrace(89) << "Lower Median " << DbU::getLambda(attractors.getLowerMedian()) << endl;
       ltrace(89) << "Upper Median " << DbU::getLambda(attractors.getUpperMedian()) << endl;
 
@@ -751,213 +861,137 @@ namespace Katabatic {
       optimalMax = attractors.getUpperMedian();
     } else {
       optimalMin = 0;
-      optimalMax = (_isHorizontal) ? _gcell->getBoundingBox().getYMax()
-                                   : _gcell->getBoundingBox().getXMax();
+      optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
+                                    : _gcell->getBoundingBox().getXMax();
     }
 
-    setInBound ( constraintMin, constraintMax, optimalMin );
-    setInBound ( constraintMin, constraintMax, optimalMax );
+    setInBound( constraintMin, constraintMax, optimalMin );
+    setInBound( constraintMin, constraintMax, optimalMax );
 
-    if ( processeds ) processeds->insert ( this );
-    setOptimalMin ( optimalMin );
-    setOptimalMax ( optimalMax );
-    forEach ( AutoSegment*, autoSegment, getCollapseds() ) {
-      if ( processeds ) processeds->insert ( *autoSegment );
-      autoSegment->setOptimalMin ( optimalMin );
-      autoSegment->setOptimalMax ( optimalMax );
+    ltrace(89) << "Applying constraint on: " << this << endl;
+    setOptimalMin( optimalMin );
+    setOptimalMax( optimalMax );
+    processeds.insert( this );
+    if (not isNotAligned()) {
+      forEach ( AutoSegment*, autoSegment, getAligneds() ) {
+        ltrace(89) << "Applying constraint on: " << *autoSegment << endl;
+        autoSegment->setOptimalMin( optimalMin );
+        autoSegment->setOptimalMax( optimalMax );
+        processeds.insert( (*autoSegment) );
+      }
     }
 
     ltraceout(89);
   }
 
 
-  AutoSegment* AutoSegment::canonize ()
+  AutoSegment* AutoSegment::canonize ( unsigned int flags )
   {
     ltrace(159) << "canonize() - " << this << endl;
 
-    if ( isCanonical() ) {
-      ltrace(159) << "* " << this << " canonical" << endl;
-      return this;
-    }
+    // if (isCanonical() and isGlobal()) {
+    //   ltrace(159) << "* " << this << " canonical" << endl;
+    //   return this;
+    // }
 
-    AutoSegment* canonical        = this;
-    bool         hasCanonical     = false;
-    bool         isCanonicalLocal = true;
+    vector<AutoSegment*>  segments;
+    AutoSegment*          canonical    = this;
+    bool                  hasCanonical = isCanonical();
+    bool                  hasGlobal    = isGlobal();
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( isegment->isGlobal() ) isCanonicalLocal = false;
+    if (not isNotAligned()) {
+      forEach( AutoSegment*, isegment, getAligneds(flags) ) {
+        if (isegment->isFixed()) continue;
 
-      if ( isegment->isCanonical() ) {
-        ltrace(159) << "* " << *isegment << " canonical" << endl;
-      //return *isegment;
-        canonical    = *isegment;
-        hasCanonical = true;
-        break;
+        hasGlobal = hasGlobal or isegment->isGlobal();
+        segments.push_back( *isegment );
+
+        if (not hasCanonical) {
+          if (isegment->isCanonical()) {
+            ltrace(159) << "* " << *isegment << " canonical already set" << endl;
+            canonical    = *isegment;
+            hasCanonical = true;
+          }
+
+          if (CompareId()(*isegment,canonical)) canonical = *isegment;
+        }
       }
 
-      if ( not hasCanonical ) {
-        if ( CompareId()(*isegment,canonical) )
-          canonical = *isegment;
+      canonical->setFlags( SegCanonical );
+      if (hasGlobal) {
+        for ( size_t i=0 ; i<segments.size() ; ++i )
+          segments[i]->setFlags( SegWeakGlobal );
+      } else {
+        for ( size_t i=0 ; i<segments.size() ; ++i )
+          segments[i]->unsetFlags( SegWeakGlobal );
       }
-    }
+      if (segments.empty()) setFlags( SegNotAligned );
 
-    canonical->setCanonical      ( true );
-    canonical->setCanonicalLocal ( isCanonicalLocal );
-
-  // ltrace: 159
-    if ( isCanonical() ) cerr << "* " << this << " canonical" << endl;
-    else                 cerr << "* " << this << endl;
-
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( isegment->isCanonical() ) cerr << "| " << *isegment << " canonical" << endl;
-      else                           cerr << "| " << *isegment << endl;
+      if (isCanonical()) { ltrace(159) << "* " << this << " canonical" << endl; }
+      else {
+        ltrace(159) << "* " << this << " not canonical" << endl;
+        ltrace(159) << "* " << canonical << " *is* the canonical" << endl;
+      }
+    } else {
+      setFlags  ( SegCanonical  );
+      unsetFlags( SegWeakGlobal );
     }
 
     return canonical;
   }
 
 
-  AutoSegment::AutoSegment ( Segment* segment
-                           , bool     isHorizontal
-                           , int      type
-                           , bool     terminal
-                           , bool     collapsed
-                           )
-    : _isUnsetAxis      (true)
-    , _invalidated      (false)
-    , _isHorizontal     (isHorizontal)
-    , _isTopologicEnd   (false)
-    , _isTerminal       (terminal)
-    , _isDogleg         (false)
-    , _isCollapsed      (collapsed)
-    , _isCanonical      (false)
-    , _isFixed          (false)
-    , _strap            (false)
-    , _layerChange      (false)
-    , _slackened        (false)
-    , _slackenStrap     (false)
-    , _allowOutsideGCell(false)
-    , _id               (_maxId++)
-    , _optimalMin       (0)
-    , _userConstraints  (false)
-    , _parent           (NULL)
-  {
-  //cerr << "AutoSegment::AutoSegment() - <id:" << _id << ">" << endl;
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: AutoSegment::AutoSegment() - <id:" << _id << ">" << endl;
-#endif
-    AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
-    AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
-
-    _allocateds++;
-
-    _gcell = source->getGCell();
-    setOptimalMax ( (_isHorizontal) ? _gcell->getBoundingBox().getYMax()
-                  : _gcell->getBoundingBox().getXMax() );
-
-    switch ( type ) {
-      case AutoSegment::Global: _isGlobal = true;  break;
-      case AutoSegment::Local : _isGlobal = false; break;
-      case AutoSegment::Guess :
-        _isGlobal = ( source->getGCell() != target->getGCell() );
-        break;
-    }
-    _globalsCount   += (_isGlobal) ? 1 : 0;
-    _isCanonicalLocal = not _isGlobal;
-
-    _computeTerminal ( segment );
-  //if ( source->isTerminal() or target->isTerminal() ) _isTerminal = true;
-
-  //if (   source->isTerminal()
-  //   and target->isTerminal()
-  //   /*and (segment->getLength() < DbU::lambda(25.0))*/
-  //   and (source->getGCell() == target->getGCell()) ) {
-  //  _strap = true;
-  //}
-
-    source->setInvalidatedTopology ( true );
-  }
-
-
-  void  AutoSegment::_preCreate ( Component* source, Component* target )
-  {
-    AutoContact* acSource = Session::lookup(dynamic_cast<Contact*>(source));
-    AutoContact* acTarget = Session::lookup(dynamic_cast<Contact*>(target));
-
-    _preCreate ( acSource, acTarget );
-  }
-
-
-  void  AutoSegment::_preCreate ( AutoContact* source, AutoContact* target )
-  {
-    if ( !source || !target )
-      throw Error ( badAutoSegmentAnchor
-                  , ((source)?getString(source).c_str():"NULL")
-                  , ((target)?getString(target).c_str():"NULL")
-                  );
-
-    if ( source == target )
-      throw Error ( dupAutoSegmentAnchor, getString(source).c_str() );
-  }
-
-
-  void  AutoSegment::_postCreate ()
-  {
-    Session::invalidate ( getNet() );
-    Session::link ( this );
-    invalidate ();
-  }
-
-
-  void  AutoSegment::_preDestroy ()
-  {
-    ltrace(200) << "AutoSegment::_preDestroy() - " << (void*)this << endl;
-    ltracein(90);
-
-    Session::unlink ( this );
-    ltraceout(90);
-  }
-
-
-  AutoSegment::~AutoSegment ()
-  {
-    _allocateds--;
-    if ( _isGlobal and (_globalsCount > 0) ) _globalsCount--;
-  }
-
-
-  void  AutoSegment::_computeTerminal ( Segment* segment )
-  {
-    AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
-    AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
-
-    _isTerminal = source->isTerminal() or target->isTerminal();
-  }
-
-
-  size_t  AutoSegment::getAlignedContacts ( map<AutoContact*,int>& innerContacts )
+  size_t  AutoSegment::getAlignedContacts ( map<AutoContact*,int>& innerContacts ) const
   {
     map<AutoContact*,int>::iterator icontact;
 
-    innerContacts.clear  ();
-    innerContacts.insert ( make_pair(getAutoSource(),0x1) );
-    innerContacts.insert ( make_pair(getAutoTarget(),0x4) );
+    innerContacts.clear();
+    innerContacts.insert( make_pair(getAutoSource(),0x1) );
+    innerContacts.insert( make_pair(getAutoTarget(),0x4) );
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( (icontact = innerContacts.find(isegment->getAutoSource())) != innerContacts.end() ) {
-        if ( icontact->second & 0x1 ) icontact->second |= 0x2;
-        else                          icontact->second |= 0x1;
-      } else
-        innerContacts.insert ( make_pair(getAutoSource(),0x1) );
-
-      if ( (icontact = innerContacts.find(isegment->getAutoTarget())) != innerContacts.end() ) {
-        if ( icontact->second & 0x4 ) icontact->second |= 0x8;
-        else                          icontact->second |= 0x4;
-      } else
-        innerContacts.insert ( make_pair(getAutoTarget(),0x4) );
+    if (not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if ( (icontact = innerContacts.find(isegment->getAutoSource())) != innerContacts.end() ) {
+          if (icontact->second & 0x1) icontact->second |= 0x2;
+          else                        icontact->second |= 0x1;
+        } else
+          innerContacts.insert( make_pair(getAutoSource(),0x1) );
+        
+        if ( (icontact = innerContacts.find(isegment->getAutoTarget())) != innerContacts.end() ) {
+          if (icontact->second & 0x4) icontact->second |= 0x8;
+          else                        icontact->second |= 0x4;
+        } else
+          innerContacts.insert( make_pair(getAutoTarget(),0x4) );
+      }
     }
 
     return innerContacts.size();
+  }
+
+
+  Interval  AutoSegment::getMinSpanU () const
+  {
+    map<AutoContact*,int>           contacts;
+    map<AutoContact*,int>::iterator icontact;
+
+    getAlignedContacts( contacts );
+
+    DbU::Unit    spanMin   = DbU::Min;
+    DbU::Unit    spanMax   = DbU::Max;
+    Interval     constraints;
+    unsigned int direction = getDirection();
+
+    for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
+      constraints = icontact->first->getUConstraints( direction );
+      if (icontact->second == 0x1) {
+        spanMin = max( spanMin, constraints.getVMax() );
+      }
+      if (icontact->second == 0x4) {
+        spanMax = min( spanMax, constraints.getVMin() );
+      }
+    }
+
+    return Interval(spanMin,spanMax);
   }
 
 
@@ -966,16 +1000,16 @@ namespace Katabatic {
     map<AutoContact*,int>           contacts;
     map<AutoContact*,int>::iterator icontact;
 
-    getAlignedContacts ( contacts );
+    getAlignedContacts( contacts );
 
     for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
       if ( (icontact->second == 0x1) or (icontact->second == 0x4) ) {
         forEach ( Segment*, isegment, icontact->first->getSlaveComponents().getSubSet<Segment*>() ) {
           AutoSegment* autoSegment = Session::lookup ( *isegment );
-          if ( !autoSegment ) continue;
-          if ( autoSegment->getDirection() == getDirection() ) continue;
+          if (not autoSegment) continue;
+          if (autoSegment->getDirection() == getDirection()) continue;
 
-          bounds.insert ( autoSegment );
+          bounds.insert( autoSegment );
         }
       }
     }
@@ -984,253 +1018,86 @@ namespace Katabatic {
   }
 
 
-  Interval  AutoSegment::getMinSpanU ()
+  void  AutoSegment::changeDepth ( unsigned int depth, unsigned int flags )
   {
-    map<AutoContact*,int>           contacts;
-    map<AutoContact*,int>::iterator icontact;
-
-    getAlignedContacts ( contacts );
-
-    DbU::Unit    spanMin   = DbU::Min;
-    DbU::Unit    spanMax   = DbU::Max;
-    Interval     constraints;
-    unsigned int direction = Constant::perpandicular(getDirection());
-
-    for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
-      constraints = icontact->first->getUConstraints ( direction );
-      if ( icontact->second == 0x1 ) {
-        spanMin = max ( spanMin, constraints.getVMax() );
-      }
-      if ( icontact->second == 0x4 ) {
-        spanMax = min ( spanMax, constraints.getVMin() );
-      }
-    }
-
-    return Interval(spanMin,spanMax);
-  }
-
-
-  void  AutoSegment::setAllowOutsideGCell ( bool state, bool propagate )
-  {
-    if ( allowOutsideGCell() ) return;
-
-    _setAllowOutsideGCell ( state );
-
-    if ( propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        isegment->_setAllowOutsideGCell ( state );
-      }
-    }
-  }
-
-
-  void  AutoSegment::_setAllowOutsideGCell ( bool state )
-  {
-    ltrace(200) << "_setAllowOutsideGCell() - " << this << endl;
-    _allowOutsideGCell = state;
-  }
-
-
-  bool  AutoSegment::canGoOutsideGCell () const
-  {
+    ltrace(200) << "changeDepth() " << depth << " - " << this << endl;
     ltracein(200);
+    Session::invalidate( getNet() );
 
-    bool goOutsideGCell = getAutoSource()->canGoOutsideGCell(this);
-    goOutsideGCell = goOutsideGCell and getAutoTarget()->canGoOutsideGCell(this);
+    _changeDepth( depth, flags & ~KbPropagate );
 
-    if ( !goOutsideGCell ) {
-      ltraceout(200);
-      return false;
-    }
-
-    GCell*    sourceGCell = getAutoSource()->getGCell();
-    GCell*    leftGCell   = NULL;
-    GCell*    rightGCell  = NULL;
-    Interval  uside;
-    bool      goLeft      = false;
-    bool      goRight     = false;
-
-    if ( isHorizontal() ) {
-      uside      = sourceGCell->getUSide ( Constant::Vertical );
-      leftGCell  = sourceGCell->getDown();
-      rightGCell = sourceGCell->getUp  ();
-    } else {
-      uside      = sourceGCell->getUSide ( Constant::Horizontal );
-      leftGCell  = sourceGCell->getLeft ();
-      rightGCell = sourceGCell->getRight();
-    }
-
-    DbU::Unit constraintMin;
-    DbU::Unit constraintMax;
-    getConstraints ( constraintMin, constraintMax );
-
-    if ( leftGCell && (uside.getVMin() >= constraintMin) ) {
-      ltrace(200) << "Can go Left." << endl;
-      goLeft = true;
-    }
-  // Ugly: Must use the right compensator for VMax.
-    if ( rightGCell && (uside.getVMax() <= constraintMax)+DbU::lambda(1.0) ) {
-      ltrace(200) << "Can go Right." << endl;
-      goRight = true;
-    }
-
-    goOutsideGCell = goOutsideGCell and (goRight or goLeft);
-
-  // Override.
-  //goOutsideGCell = !isGlobal() && !isTerminal();
-
-    ltrace(200) << "AutoSegment::canGoOutsideGCell() - " << goOutsideGCell << endl;
-    ltraceout(200);
-
-    return goOutsideGCell;
-  }
-
-
-  bool  AutoSegment::canDesalignate ()
-  {
-    ltrace(200) << "AutoSegment::canDesalignate()" << endl;
-
-    map<AutoContact*,int>           innerContacts;
-    map<AutoContact*,int>::iterator icontact;
-
-    getAlignedContacts ( innerContacts );
-
-    for ( icontact=innerContacts.begin() ; icontact != innerContacts.end() ; icontact++ ) {
-      ltrace(200) << "| " << "flags:" << icontact->second
-                  << " " << (void*)icontact->first->base() << ":" << icontact->first << endl;
-      if ( (icontact->second & 0x5 ) && canDesalignate(icontact->first) ) return true;
-    //if ( (icontact->second & 0x3 ) && canDesalignate(icontact->first) ) return true;
-    //if ( (icontact->second & 0x12) && canDesalignate(icontact->first) ) return true;
-    }
-    ltrace(200) << "No AutoContact suitable for desalignment." << endl;
-
-    return false;
-  }
-
-
-  void  AutoSegment::desalignate ()
-  {
-    map<AutoContact*,int>           innerContacts;
-    map<AutoContact*,int>::iterator icontact;
-    vector<AutoSegment*>            segments;
-
-  // Ugly. Must fusion with the inner contact loop.
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      segments.push_back ( *isegment );
-    }
-
-    invalidate ();
-    getAlignedContacts ( innerContacts );
-
-    for ( icontact=innerContacts.begin() ; icontact != innerContacts.end() ; icontact++ ) {
-      desalignate ( icontact->first );
-    //if ( icontact->second & 0x3 ) desalignate ( icontact->first );
-    //if ( icontact->second & 0x3 ) desalignate ( icontact->first );
-    //if ( icontact->second & 0x12) desalignate ( icontact->first );
-    }
-
-    // for ( size_t i=0 ; i<segments.size() ; ++i ) {
-    //   segments[i]->_computeTerminal ( segments[i]->base() );
-    //   ltrace(99) << "_computeTerminals() - " << segments[i] << endl;
-    // }
-
-    Session::invalidate         ( getNet() );
-    Session::revalidateTopology ();
-  }
-
-
-  void  AutoSegment::changeDepth ( unsigned int depth, bool propagate, bool standAlone )
-  {
-    invalidate ();
-    Session::invalidate        ( getNet() );
-    Session::setInvalidateMask ( Session::NetSplitContacts );
-
-    _changeDepth ( depth, true );
-
-    if ( propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        isegment->_changeDepth ( depth, true );
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, getAligneds(KbNoCheckLayer) ) {
+        (*isegment)->_changeDepth( depth, flags & ~KbPropagate );
       }
     }
 
-    if ( standAlone ) Session::revalidateTopology();
+    ltraceout(200);
   }
 
 
-  void  AutoSegment::_changeDepth ( unsigned int depth, bool withNeighbors )
+  void  AutoSegment::_changeDepth ( unsigned int depth, unsigned int flags )
   {
     ltrace(200) << "_changeDepth() - " << this << endl;
     ltracein(200);
 
-    const Layer* layer0 = Session::getRoutingGauge()->getRoutingLayer(depth);
-    if ( getLayer() != layer0 ) {
-      setLayer ( layer0 );
+    invalidate( KbNoFlags );
+    setFlags( SegInvalidatedLayer );
 
-      getAutoSource()->invalidate();
-      getAutoTarget()->invalidate();
+    const Layer* newLayer = Session::getRoutingGauge()->getRoutingLayer(depth);
+    if (getLayer() != newLayer) {
+      setLayer( newLayer );
+
+      getAutoSource()->invalidate( KbTopology|KbNoCheckLayer );
+      getAutoTarget()->invalidate( KbTopology|KbNoCheckLayer );
     }
 
-    if ( !withNeighbors ) {
+    if (not (flags & KbWithNeighbors)) {
       ltraceout(200);
       return;
     }
 
-    forEach ( Component*, icomponent, getAutoSource()->getSlaveComponents() ) {
-      if ( *icomponent == base() ) continue;
+    forEach ( AutoSegment*, isegment, getCachedOnSourceContact(KbDirectionMask) ) {
+      if ((*isegment) == this) continue;
+      if ((*isegment)->isGlobal  ()) continue;
+      if ((*isegment)->isTerminal()) continue;
 
-      Segment* segment = dynamic_cast<Segment*>(*icomponent);
-      if ( !segment ) continue;
-
-      AutoSegment* autoSegment = Session::lookup ( segment );
-      if ( !autoSegment ) continue;
-      if ( autoSegment->isGlobal  () ) continue;
-      if ( autoSegment->isTerminal() ) continue;
-
-      if ( !( autoSegment->isHorizontal() xor isHorizontal() ) ) {
-        autoSegment->_changeDepth ( depth, false );
-      } else {
-        autoSegment->_changeDepth ( depth-1, false );
-      }
+      if (not ((*isegment)->isHorizontal() xor isHorizontal()))
+        (*isegment)->_changeDepth( depth  , KbNoFlags );
+      else
+        (*isegment)->_changeDepth( depth-1, KbNoFlags );
     }
 
-    forEach ( Component*, icomponent, getAutoTarget()->getSlaveComponents() ) {
-      if ( *icomponent == base() ) continue;
+    forEach ( AutoSegment*, isegment, getCachedOnTargetContact(KbDirectionMask) ) {
+      if ((*isegment) == this) continue;
+      if ((*isegment)->isGlobal  ()) continue;
+      if ((*isegment)->isTerminal()) continue;
 
-      Segment* segment = dynamic_cast<Segment*>(*icomponent);
-      if ( !segment ) continue;
-
-      AutoSegment* autoSegment = Session::lookup ( segment );
-      if ( !autoSegment ) continue;
-      if ( autoSegment->isGlobal  () ) continue;
-      if ( autoSegment->isTerminal() ) continue;
-
-      if ( !( autoSegment->isHorizontal() xor isHorizontal() ) ) {
-        autoSegment->_changeDepth ( depth, false );
-      } else {
-        autoSegment->_changeDepth ( depth-1, false );
-      }
+      if (not ((*isegment)->isHorizontal() xor isHorizontal()))
+        (*isegment)->_changeDepth( depth  , KbNoFlags );
+      else
+        (*isegment)->_changeDepth( depth-1, KbNoFlags );
     }
 
     vector<GCell*> gcells;
-    getGCells ( gcells );
-    for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      gcells[i]->invalidate ();
-    }
+    getGCells( gcells );
+    for ( size_t i=0 ; i<gcells.size() ; ++i )
+      gcells[i]->invalidate();
 
     ltraceout(200);
   }
 
 
-  bool  AutoSegment::canSlacken ( bool propagate )
+  bool  AutoSegment::canSlacken ( unsigned int flags ) const
   {
     ltrace(200) << "AutoSegment::canSlacken()" << endl;
 
-    if ( !isGlobal() && !propagate ) return false;
+    if (not isGlobal() and not (flags & KbPropagate)) return false;
 
-    if ( _canSlacken() ) return true;
-    if ( propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        if ( isegment->_canSlacken() ) return true;
+    if (_canSlacken()) return true;
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if (isegment->_canSlacken()) return true;
       }
     }
 
@@ -1238,24 +1105,19 @@ namespace Katabatic {
   }
 
 
-  void  AutoSegment::slacken ( bool propagate )
+  bool  AutoSegment::slacken ( unsigned int flags )
   {
-    invalidate ();
+    bool success = false;
 
-    set<AutoSegment*,AutoSegment::CompareId> collapseds;
-    collapseds.insert ( this );
+    success = success or _slacken( flags );
 
-    if ( propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() )
-        collapseds.insert ( *isegment );
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, getAligneds() ) {
+        success = success or (*isegment)->_slacken( flags );
+      }
     }
 
-    set<AutoSegment*>::iterator isegment = collapseds.begin();
-    for ( ; isegment != collapseds.end() ; isegment++ )
-      (*isegment)->_slacken ();
-
-    Session::invalidate         ( getNet() );
-    Session::revalidateTopology ();
+    return success;
   }
 
 
@@ -1269,24 +1131,24 @@ namespace Katabatic {
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
 
     vector<GCell*> gcells;
-    getGCells ( gcells );
+    getGCells( gcells );
     begin = *gcells.begin ();
     end   = *gcells.rbegin();
 
     float maxDensity = 0.0;
 
-    for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      maxDensity = std::max ( maxDensity, gcells[i]->getFeedthroughs(depth) );
+    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+      maxDensity = std::max( maxDensity, gcells[i]->getFeedthroughs(depth) );
     }
 
-    if ( flags & Propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        isegment->getGCells ( gcells );
-        if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 
-        if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, getAligneds() ) {
+        isegment->getGCells( gcells );
+        if ((*gcells.begin ())->getIndex() < begin->getIndex()) begin = *gcells.begin (); 
+        if ((*gcells.rbegin())->getIndex() > end  ->getIndex()) end   = *gcells.rbegin(); 
 
-        for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          maxDensity = std::max ( maxDensity, gcells[i]->getFeedthroughs(depth) );
+        for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+          maxDensity = std::max( maxDensity, gcells[i]->getFeedthroughs(depth) );
         }
       }
     }
@@ -1295,44 +1157,42 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags )
+  bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags ) const
   {
     ltrace(200) << "AutoSegment::canPivotUp() - " << flags
                 << " (reserve:" << reserve << ")" << endl;
 
-    if ( isLayerChange() or isFixed() ) return false;
-    if ( isTerminal   () or isLocal() ) return false;
+    if ( isLayerChange()    or isFixed() ) return false;
+    if ( isStrongTerminal() or isLocal() ) return false;
 
-  //if ( isTerminal() ) return false;
-
-    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
-    if ( depth+2 >= Session::getRoutingGauge()->getDepth() ) return false;
+    size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    if (depth+2 >= Session::getRoutingGauge()->getDepth()) return false;
 
     vector<GCell*> gcells;
-    getGCells ( gcells );
+    getGCells( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( not gcells[i]->hasFreeTrack(depth+2,reserve) ) return false;
+      if (not gcells[i]->hasFreeTrack(depth+2,reserve)) return false;
     }
 
-    if ( not (flags&IgnoreContact) ) {
+    if ( not (flags&KbIgnoreContacts) ) {
       ltrace(200) << getAutoSource() << endl;
       ltrace(200) << getAutoTarget() << endl;
       ltrace(200) << "min depths, Segment:" << depth
                   <<            " S:" << getAutoSource()->getMinDepth()
                   <<            " T:" << getAutoTarget()->getMinDepth() << endl;
 
-      if ( getAutoSource()->getMinDepth() < depth ) return false;
-      if ( getAutoTarget()->getMinDepth() < depth ) return false;
+      if (getAutoSource()->getMinDepth() < depth) return false;
+      if (getAutoTarget()->getMinDepth() < depth) return false;
     }
 
-    if ( flags & Propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        isegment->getGCells ( gcells );
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
+        isegment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( not gcells[i]->hasFreeTrack(depth+2,reserve) ) return false;
+          if (not gcells[i]->hasFreeTrack(depth+2,reserve)) return false;
         }
-        if ( isegment->getAutoSource()->getMinDepth() < depth ) return false;
-        if ( isegment->getAutoTarget()->getMinDepth() < depth ) return false;
+        if (isegment->getAutoSource()->getMinDepth() < depth) return false;
+        if (isegment->getAutoTarget()->getMinDepth() < depth) return false;
       }
     } else {
       ltrace(200) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
@@ -1345,22 +1205,21 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canPivotDown ( bool propagate, float reserve )
+  bool  AutoSegment::canPivotDown ( float reserve, unsigned int flags ) const
   {
     ltrace(200) << "AutoSegment::canPivotDown()"
                 << " (reserve:" << reserve << ")" << endl;
 
-    if ( isLayerChange() or isFixed() ) return false;
-    if ( isTerminal   () or isLocal() ) return false;
-  //if ( isTerminal   () ) return false;
+    if ( isLayerChange()    or isFixed() ) return false;
+    if ( isStrongTerminal() or isLocal() ) return false;
 
-    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
-    if ( depth < 3 ) return false;
+    size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    if (depth < 3) return false;
 
     vector<GCell*> gcells;
-    getGCells ( gcells );
+    getGCells( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( not gcells[i]->hasFreeTrack(depth-2,reserve) ) return false;
+      if (not gcells[i]->hasFreeTrack(depth-2,reserve)) return false;
     }
 
     ltrace(200) << getAutoSource() << endl;
@@ -1369,21 +1228,21 @@ namespace Katabatic {
                 <<            " S:" << getAutoSource()->getMaxDepth()
                 <<            " T:" << getAutoTarget()->getMaxDepth() << endl;
 
-    if ( getAutoSource()->getMaxDepth() > depth ) return false;
-    if ( getAutoTarget()->getMaxDepth() > depth ) return false;
-    if ( not propagate ) {
+    if (getAutoSource()->getMaxDepth() > depth) return false;
+    if (getAutoTarget()->getMaxDepth() > depth) return false;
+    if (not (flags & KbPropagate)) {
       ltrace(200) << "AutoSegment::canPivotDown() - true [no propagate]" << endl;
       return true;
     }
 
-    if ( propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        isegment->getGCells ( gcells );
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
+        isegment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( not gcells[i]->hasFreeTrack(depth-2,reserve) ) return false;
+          if (not gcells[i]->hasFreeTrack(depth-2,reserve)) return false;
         }
-        if ( isegment->getAutoSource()->getMaxDepth() < depth ) return false;
-        if ( isegment->getAutoTarget()->getMaxDepth() < depth ) return false;
+        if (isegment->getAutoSource()->getMaxDepth() < depth) return false;
+        if (isegment->getAutoTarget()->getMaxDepth() < depth) return false;
       }
     }
 
@@ -1393,7 +1252,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags )
+  bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags ) const
   {
     ltrace(200) << "AutoSegment::canMoveUp() " << flags
                 << " (reserve:" << reserve << ")" << endl;
@@ -1402,19 +1261,19 @@ namespace Katabatic {
     GCell* end   = NULL;
 
     if ( isLayerChange() or isFixed() ) return false;
-    if ( isTerminal() and (not (flags & AllowTerminal)) ) return false;
-    if ( isLocal()    and (not (flags & AllowLocal   )) ) return false;
+    if ( isStrongTerminal() and (not (flags & KbAllowTerminal)) ) return false;
+    if ( isLocal()          and (not (flags & KbAllowLocal   )) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
-    if ( depth >= Session::getConfiguration()->getAllowedDepth() ) return false;
+    if (depth >= Session::getConfiguration()->getAllowedDepth()) return false;
 
     vector<GCell*> gcells;
-    getGCells ( gcells );
+    getGCells( gcells );
     begin = *gcells.begin ();
     end   = *gcells.rbegin();
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
+      if (not gcells[i]->hasFreeTrack(depth,reserve)) {
         ltrace(200) << "Not enough free track in " << gcells[i] << endl;
         return false;
       }
@@ -1422,24 +1281,24 @@ namespace Katabatic {
 
     ltrace(200) << "Enough free track under canonical segment." << endl;
 
-    if ( isLocal() and not (flags & Propagate) ) {
-      if ( not getAutoSource()->canMoveUp(this) ) return false;
-      if ( not getAutoTarget()->canMoveUp(this) ) return false;
+    if ( isLocal() and not (flags & KbPropagate) ) {
+      if (not getAutoSource()->canMoveUp(this)) return false;
+      if (not getAutoTarget()->canMoveUp(this)) return false;
       return true;
     }
 
     bool hasGlobalSegment = false;
-    if ( flags & Propagate ) {
-      forEach ( AutoSegment*, isegment, getCollapseds() ) {
-        if ( isegment->isFixed () ) return false;
-        if ( isegment->isGlobal() ) hasGlobalSegment = true;
+    if ((flags & KbPropagate) and not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
+        if (isegment->isFixed ()) return false;
+        if (isegment->isGlobal()) hasGlobalSegment = true;
 
-        isegment->getGCells ( gcells );
+        isegment->getGCells( gcells );
         if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 
         if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( not gcells[i]->hasFreeTrack(depth,reserve) ) {
+          if (not gcells[i]->hasFreeTrack(depth,reserve)) {
             ltrace(200) << "Not enough free track in " << gcells[i] << endl;
             return false;
           }
@@ -1447,21 +1306,21 @@ namespace Katabatic {
       }
     }
 
-    if ( (depth >= 4) and (flags & PerpandicularFrag) ) {
-      float fragmentation = begin->getFragmentation(depth-1);
+    if ( (depth >= 4) and (flags & KbWithPerpands) ) {
+      float fragmentation = begin->getFragmentation( depth-1 );
       ltrace(200) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
 
-      if ( fragmentation < 0.5 ) {
+      if (fragmentation < 0.5) {
         ltrace(200) << "Not enough free track for perpandicular in begin GCell "
                     << "(frag:" << fragmentation << ")."
                     << endl;
         return false;
       }
 
-      fragmentation = end->getFragmentation(depth-1);
+      fragmentation = end->getFragmentation( depth-1 );
       ltrace(200) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
 
-      if ( fragmentation < 0.5 ) {
+      if (fragmentation < 0.5) {
         ltrace(200) << "Not enough free track for perpandicular in end GCell "
                     << "(frag:" << fragmentation << ")."
                     << endl;
@@ -1476,7 +1335,7 @@ namespace Katabatic {
   bool  AutoSegment::moveUp ( unsigned int flags )
   {
   //if ( not canMoveUp(0.0,flags) ) return false;
-    changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Propagate );
+    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&KbPropagate );
 
     return true;
   }
@@ -1485,10 +1344,13 @@ namespace Katabatic {
   bool  AutoSegment::moveDown ( unsigned int flags )
   {
   //if ( not canPivotDown(0.0,flags) ) return false;
-    changeDepth ( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&Propagate );
+    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&KbPropagate );
 
     return true;
   }
+
+
+#if THIS_IS_DISABLED
 
 
   bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, unsigned int flags )
@@ -1538,17 +1400,17 @@ namespace Katabatic {
     }
 
     AutoSegment* before = this;
-    const vector<AutoSegment*>& doglegs = Session::getDogLegs();
+    const vector<AutoSegment*>& doglegs = Session::getDoglegs();
 
     if ( leftShear  ) {
-      makeDogLeg ( leftShear, true );
+      makeDogleg ( leftShear, true );
       movedUp = doglegs[2];
     } else {
       before  = NULL;
       movedUp = this;
     }
 
-    if ( rightShear ) makeDogLeg(rightShear,true);
+    if ( rightShear ) makeDogleg(rightShear,true);
 
     if ( movedUp->moveUp(flags) ) {
       if ( rightShear or leftShear )
@@ -1559,129 +1421,232 @@ namespace Katabatic {
     movedUp = NULL;
     return false;
   }
+#endif
 
 
-  bool  AutoSegment::canDogLeg ( Interval interval )
+  unsigned int  AutoSegment::canDogleg ( Interval interval )
   {
-    ltrace(200) << "AutoSegment::canDogLeg(Interval) " << interval << endl;
+    ltrace(200) << "AutoSegment::canDogleg(Interval) " << interval << endl;
 
     size_t  leftDogleg  = 0;
     size_t  rightDogleg = 0;
-    if ( getSpanU().contains(interval.getVMin()) ) leftDogleg++;
-    if ( getSpanU().contains(interval.getVMax()) ) rightDogleg++;
+    if (getSpanU().contains(interval.getVMin())) leftDogleg++;
+    if (getSpanU().contains(interval.getVMax())) rightDogleg++;
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( isegment->getSpanU().contains(interval.getVMin()) ) {
-        if ( isegment->isFixed() ) return false;
-        leftDogleg++;
-      }
-      if ( isegment->getSpanU().contains(interval.getVMax()) ) {
-        if ( isegment->isFixed() ) return false;
-        rightDogleg++;
+    if (not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, getAligneds() ) {
+        if (isegment->getSpanU().contains(interval.getVMin())) {
+          if (isegment->isFixed()) return false;
+          leftDogleg++;
+        }
+        if (isegment->getSpanU().contains(interval.getVMax())) {
+          if (isegment->isFixed()) return 0;
+          rightDogleg++;
+        }
       }
     }
 
-    if ( (leftDogleg == 1) and (rightDogleg <= 1) ) return true;
-    if ( (leftDogleg <= 1) and (rightDogleg == 1) ) return true;
+    if ( (leftDogleg == 1) and (rightDogleg <= 1) ) return KbDoglegOnLeft;
+    if ( (leftDogleg <= 1) and (rightDogleg == 1) ) return KbDoglegOnRight;
 
     ltrace(200) << "leftCount:" << leftDogleg << " rightCount:" << rightDogleg << endl;
 
-    return false;
+    return 0;
   }
 
 
-  void  AutoSegment::makeDogLeg ( Interval interval, bool upLayer, bool& leftDogleg )
+  AutoSegment* AutoSegment::makeDogleg ( AutoContact* from )
   {
-    ltrace(200) << "AutoSegment::makeDogLeg(Interval)" << endl;
+    ltrace(200) << "AutoSegment::makeDogleg(AutoContact*) " << from << endl;
+    ltracein(200);
+    ltrace(200) << this << endl;
 
+    RoutingGauge*               rg           = Session::getRoutingGauge();
+    size_t                      segmentDepth = rg->getLayerDepth( getLayer() );
+    const vector<AutoSegment*>& doglegs      = Session::getDoglegs();
+    size_t                      index        = doglegs.size();
+    bool                        isSource     = (getAutoSource() == from);
+
+    ltrace(200) << "isSource:" << isSource << endl;
+
+    makeDogleg( from->getGCell(), KbNoCheckLayer );
+    if (doglegs.size() == index) {
+      ltraceout(200);
+      return NULL;
+    }
+    doglegs[ index+1 ]->setAxis( isHorizontal() ? from->getX() : from->getY() );
+
+    if (not from->getLayer()->contains(getLayer())) {
+      ltrace(200) << "Contact layer do not contains Segment layer, adjust layers" << endl;
+
+      if (getLayer()->above(from->getLayer())) {
+        ltrace(200) << "Go Down from depth " << segmentDepth << endl;
+
+        doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth-1) );
+        ltrace(200) << "doglegs[i+1]: " << doglegs[index+1] << endl;
+
+        if (isSource) {
+          doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
+          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-2) );
+          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-1) );
+          ltrace(200) << "doglegs[i+0]: " << doglegs[index+0] << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+        } else {
+          doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
+          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-2) );
+          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-1) );
+          ltrace(200) << "doglegs[i+2]: " << doglegs[index+2] << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+        }
+      } else {
+        ltrace(200) << "Go Up from depth " << segmentDepth << endl;
+
+        doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth+1) );
+        ltrace(200) << "doglegs[i+1]: " << doglegs[index+1] << endl;
+
+        if (isSource) {
+          doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
+          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth+1) );
+          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth  ) );
+          ltrace(200) << "doglegs[i+0]: " << doglegs[index+0] << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+        } else {
+          doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
+          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth+1) );
+          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth  ) );
+          ltrace(200) << "doglegs[i+2]: " << doglegs[index+2] << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+        }
+      }
+    }
+
+    ltraceout(200);
+    return doglegs[ index + (isSource?0:2) ];
+  }
+
+
+  unsigned int  AutoSegment::makeDogleg ( Interval interval, unsigned int flags )
+  {
+    ltrace(200) << "AutoSegment::makeDogleg(Interval) - " << interval << endl;
+    ltracein(200);
+
+    bool         leftDogleg       = true;
+    unsigned int rflags           = 0;
     size_t       leftDoglegCount  = 0;
     size_t       rightDoglegCount = 0;
     AutoSegment* leftCandidate    = NULL;
     AutoSegment* rightCandidate   = NULL;
 
-    if ( getSpanU().contains(interval.getVMin()) ) { leftCandidate  = this; leftDoglegCount++; }
-    if ( getSpanU().contains(interval.getVMax()) ) { rightCandidate = this; rightDoglegCount++; }
+    if (getSpanU().contains(interval.getVMin())) { leftCandidate  = this; leftDoglegCount++; }
+    if (getSpanU().contains(interval.getVMax())) { rightCandidate = this; rightDoglegCount++; }
 
-    forEach ( AutoSegment*, isegment, getCollapseds() ) {
-      if ( isegment->getSpanU().contains(interval.getVMin()) ) { leftCandidate  = *isegment; leftDoglegCount++; }
-      if ( isegment->getSpanU().contains(interval.getVMax()) ) { rightCandidate = *isegment; rightDoglegCount++; }
+    if (not isNotAligned()) {
+      forEach ( AutoSegment*, isegment, getAligneds(flags) ) {
+        if (isegment->getSpanU().contains(interval.getVMin())) { leftCandidate  = *isegment; leftDoglegCount++; }
+        if (isegment->getSpanU().contains(interval.getVMax())) { rightCandidate = *isegment; rightDoglegCount++; }
+      }
     }
 
-    leftDogleg = true;
-    if ( (leftDoglegCount != 1) and (rightDoglegCount != 1) )  return;
-    if ( !leftDoglegCount ) {
+    if ( (leftDoglegCount != 1) and (rightDoglegCount != 1) )  { ltraceout(200); return 0; }
+    if (not leftDoglegCount) {
       leftDogleg     = false;
       leftCandidate  = rightCandidate;
       rightCandidate = NULL;
     }
     
-    if ( leftCandidate && rightCandidate ) {
-      ltrace(200) << "Left  Constraint: " << leftCandidate->getSourceConstraints(true) << endl;
-      ltrace(200) << "Right Constraint: " << rightCandidate->getTargetConstraints(true) << endl;
+    if (leftCandidate and rightCandidate) {
+      ltrace(200) << "Left  Constraint: " << leftCandidate->getSourceConstraints(KbNativeConstraints) << endl;
+      ltrace(200) << "Right Constraint: " << rightCandidate->getTargetConstraints(KbNativeConstraints) << endl;
 
-      if ( leftCandidate ->getTargetConstraints(true).getSize()
-         < rightCandidate->getSourceConstraints(true).getSize() ) {
+      if ( leftCandidate ->getTargetConstraints(KbNativeConstraints).getSize()
+         < rightCandidate->getSourceConstraints(KbNativeConstraints).getSize() ) {
         leftCandidate = rightCandidate;
         leftDogleg    = false;
       }
     } else {
-      if ( !leftCandidate ) {
+      if (not leftCandidate) {
         leftCandidate = rightCandidate;
         leftDogleg    = false;
       }
     }
 
-    if ( leftCandidate ) {
-      leftCandidate->_makeDogLeg ( getAutoSource()->getGCell(), upLayer );
+    if (leftCandidate) {
+      DbU::Unit axis;
+    // Ugly: Hard-wired track spacing.
+      if (leftDogleg) axis = interval.getVMin() - DbU::lambda(5.0);
+      else            axis = interval.getVMax() + DbU::lambda(5.0);
 
-      const vector<AutoSegment*>& dogLegs = Session::getDogLegs();
-      if ( dogLegs.size() >= 2 ) {
-        DbU::Unit axis;
-        if ( leftDogleg )
-          axis = interval.getVMin() - DbU::lambda(5.0); // Ugly: Hard-wired track spacing.
-        else
-          axis = interval.getVMax() + DbU::lambda(5.0); // Ugly: Hard-wired track spacing.
+      ltrace(200) << "Break @" << DbU::getValueString(axis) << " " << leftCandidate << endl;
 
-        ltrace(200) << "AutoSegment::makeDogLeg(): @" << DbU::getValueString(axis) << endl;
-        dogLegs[1]->setAxis ( axis );
+      unsigned int direction = getDirection();
+      GCell*       gcell     = leftCandidate->getAutoSource()->getGCell();
+      GCell*       end       = leftCandidate->getAutoTarget()->getGCell();
+      while ( gcell != end ) {
+        if (gcell->getSide(direction).contains(axis)) break; 
+        gcell = (direction == KbHorizontal) ? gcell->getRight() : gcell->getUp();
+      }
+
+      ltrace(200) << "In " << gcell << endl;
+      rflags = leftCandidate->_makeDogleg( gcell, flags );
+
+      const vector<AutoSegment*>& doglegs = Session::getDoglegs();
+      if (doglegs.size() >= 2) {
+        ltrace(200) << "AutoSegment::makeDogleg(): @" << DbU::getValueString(axis) << endl;
+        doglegs[1]->setAxis( axis );
       }
     }
+
+    ltraceout(200);
+    return rflags | (leftDogleg ? KbDoglegOnLeft : KbDoglegOnRight);
   }
 
 
-  void  AutoSegment::makeDogLeg ( GCell* dogLegGCell, bool upLayer )
+  unsigned int  AutoSegment::makeDogleg ( GCell* doglegGCell, unsigned int flags )
   {
-    ltrace(160) << "AutoSegment::makeDogLeg(GCell*)" << endl;
+    ltrace(500) << "Deter| AutoSegment::makeDogleg(GCell*) " << doglegGCell << endl;
+    ltrace(500) << "Deter| in " << this << endl;
     ltracein(160);
 
-    if ( isFixed() ) {
-      cerr << Error("AutoSegment::makeDogLeg(): Cannot make a dog leg on a fixed segment.\n"
-                   "        (on: %s)",_getString().c_str()) << endl;
-      return;
+    unsigned int  rflags = 0;
+
+    if (doglegGCell->isUnderIoPad()) {
+      cerr << Bug( "Attempt to make a dogleg in a GCell under a Pad\n"
+                   "      %s"
+                 , getString(doglegGCell).c_str() ) << endl;
     }
 
-    invalidate ();
+    if (isFixed()) {
+      cerr << Error( "AutoSegment::makeDogleg(): Cannot make a dog leg on a fixed segment.\n"
+                     "        (on: %s)", _getString().c_str() ) << endl;
+      return 0;
+    }
 
-    if ( dogLegGCell->getUSide(getDirection()).intersect(getSpanU()) ) {
+    if (doglegGCell->getSide(getDirection()).intersect(getSpanU())) {
       ltrace(159) << "Dogleg in " << this << endl;
-      _makeDogLeg ( dogLegGCell, upLayer );
-    //Session::revalidate ( getNet() );
+      rflags = _makeDogleg( doglegGCell, flags );
     } else {
       ltrace(159) << "Looking in aligneds." << endl;
-      forEach ( AutoSegment*, aligned, getCollapseds() ) {
-        ltrace(159) << "| Try in " << *aligned << endl;
-        if ( dogLegGCell->getUSide(getDirection()).intersect(aligned->getSpanU()) ) {
-          ltrace(159) << "Dogleg in " << *aligned << endl;
-          aligned->_makeDogLeg ( dogLegGCell, upLayer );
-        //Session::revalidate ( getNet() );
-          ltraceout(160);
-          return;
+      if (not isNotAligned()) {
+        forEach ( AutoSegment*, aligned, getAligneds(flags) ) {
+          ltrace(159) << "| Try in " << *aligned << endl;
+          if (doglegGCell->getSide(getDirection()).intersect(aligned->getSpanU())) {
+            ltrace(159) << "Dogleg in " << *aligned << endl;
+            rflags = aligned->_makeDogleg( doglegGCell, flags );
+            ltraceout(160);
+            return 0;
+          }
         }
       }
       cerr << Bug("Cannot make a dogleg in %s at %s"
-                 ,_getString().c_str(), getString(dogLegGCell).c_str()) << endl;
+                 ,_getString().c_str(), getString(doglegGCell).c_str()) << endl;
     }
     ltraceout(160);
+
+    return rflags;
   }
 
 
@@ -1689,7 +1654,7 @@ namespace Katabatic {
   {
     bool coherency = true;
 
-    coherency = coherency && checkInvalidated();
+    coherency = coherency && checkNotInvalidated();
     coherency = coherency && checkPositions();
     coherency = coherency && checkConstraints();
 
@@ -1697,40 +1662,45 @@ namespace Katabatic {
   }
 
 
+  string  AutoSegment::_getStringFlags () const
+  {
+    string state;
+    state += isFixed         () ?" F":" -";
+    state += isUnsetAxis     () ? "u": "-";
+    state += isStrap         () ? "S": "-";
+    state += isCanonical     () ? "C": "-";
+    state += isGlobal        () ? "G": "-";
+    state += isWeakGlobal    () ? "g": "-";
+    state += isStrongTerminal() ? "T": "-";
+    state += isWeakTerminal1 () ? "W": "-";
+    state += isWeakTerminal2 () ? "w": "-";
+    state += isNotAligned    () ? "A": "-";
+    state += isSlackened     () ? "S": "-";
+    state += isInvalidated   () ? "i": "-";
+    return state;
+  }
+
+
   string  AutoSegment::_getString () const
   {
-    string  s = getSegment()->_getString();
-    s.insert ( 1, "id: " );
-    s.insert ( 4, getString(_id) );
-    s.insert ( s.size()-1, (_isFixed       )?" F":" -" );
-    s.insert ( s.size()-1, (_strap         )? "S": "-" );
-    s.insert ( s.size()-1, (_isCanonical   )? "C": "-" );
-    s.insert ( s.size()-1, (_isCollapsed   )? "c": "-" );
-    s.insert ( s.size()-1, (_isGlobal      )? "g": "-" );
-    s.insert ( s.size()-1, (_isTopologicEnd)? "e": "-" );
-    s.insert ( s.size()-1, (_isTerminal    )? "t": "-" );
-    s.insert ( s.size()-1, (_slackened     )? "S": "-" );
-    s.insert ( s.size()-1, (_invalidated   )? "i": "-" );
+    string  s = base()->_getString();
+  //s.insert ( 1, "id: " );
+  //s.insert ( 4, getString(_id) );
+    s.insert ( s.size()-1, _getStringFlags() );
     return s;
   }
 
 
   Record* AutoSegment::_getRecord () const
   {
-    Record* record = getSegment()->_getRecord ();
-    record->add ( getSlot ( "_gcell"         ,  _gcell          ) );
-    record->add ( getSlot ( "_isHorizontal"  , &_isHorizontal   ) );
-    record->add ( getSlot ( "_isFixed"       , &_isFixed        ) );
-    record->add ( getSlot ( "_strap"         , &_strap          ) );
-    record->add ( getSlot ( "_layerChange"   , &_layerChange    ) );
-    record->add ( getSlot ( "_isCanonical"   , &_isCanonical    ) );
-    record->add ( getSlot ( "_isCollapsed"   , &_isCollapsed    ) );
-    record->add ( getSlot ( "_isGlobal"      , &_isGlobal       ) );
-    record->add ( getSlot ( "_isTerminal"    , &_isTerminal     ) );
-    record->add ( getSlot ( "_slackened"     , &_slackened      ) );
-    record->add ( getSlot ( "_invalidated"   , &_invalidated    ) );
-    record->add ( getSlot ( "_sourcePosition", &_sourcePosition ) );
-    record->add ( getSlot ( "_targetPosition", &_targetPosition ) );
+    Record* record = base()->_getRecord ();
+    record->add ( getSlot ( "_gcell"         ,  _gcell           ) );
+    record->add ( getSlot ( "_id"            , &_id              ) );
+    record->add ( getSlot ( "_flags"         , &_flags           ) );
+    record->add ( getSlot ( "_userContraints", &_userConstraints ) );
+    record->add ( getSlot ( "_sourcePosition", &_sourcePosition  ) );
+    record->add ( getSlot ( "_targetPosition", &_targetPosition  ) );
+    record->add ( getSlot ( "_parent"        ,  _parent          ) );
     return record;
   }
 
@@ -1740,74 +1710,102 @@ namespace Katabatic {
                                    , Segment*      hurricaneSegment
                                    )
   {
-    static Layer* verticalLayer    = DataBase::getDB()->getTechnology()->getLayer ( "METAL3"  );
-    static Layer* horizontalLayer  = DataBase::getDB()->getTechnology()->getLayer ( "METAL2"  );
+    static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
+    static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
 
+    bool         reattachSource = false;
+    bool         reattachTarget = false;
     AutoSegment* segment;
-    Horizontal*  horizontal;
-    Vertical*    vertical;
+    Horizontal*  horizontal = dynamic_cast<Horizontal*>( hurricaneSegment );
+    Vertical*    vertical   = dynamic_cast<Vertical*  >( hurricaneSegment );
+    AutoContact* reference = source;
 
-    Contact*     contact     = dynamic_cast<Contact*>(hurricaneSegment->getSource());
-    AutoContact* autoContact = Session::lookup(contact);
-    if ( contact == NULL ) {
-      throw Error ( badSegmentSource, getString(hurricaneSegment).c_str() );
-      if ( autoContact and ( autoContact != source ) )
-        throw Error ( mismatchSegmentSource
-                    , getString(hurricaneSegment).c_str()
-                    , getString(contact).c_str() );
+    ltrace(159) << "Source:" << source << endl;
+    ltrace(159) << "Target:" << target << endl;
+
+    if (target->isFixed()) {
+      if (source->isFixed()) {
+        if ( (horizontal) and (source->getY() != target->getY()))
+          cerr << Warning( "Straight AutoHorizontal connecting misaligned contacts:\n"
+                           "          %s\n"
+                           "          %s"
+                         , getString(source).c_str()
+                         , getString(target).c_str()
+                         ) << endl;
+        if ( (vertical) and (source->getX() != target->getX()))
+          cerr << Warning( "Straight AutoVertical connecting misaligned contacts:\n"
+                           "          %s\n"
+                           "          %s"
+                         , getString(source).c_str()
+                         , getString(target).c_str()
+                         ) << endl;
+      } else
+        reference = target;
     }
 
-    contact     = dynamic_cast<Contact*>(hurricaneSegment->getTarget());
-    autoContact = Session::lookup(contact);
-    if ( contact == NULL ) {
-      throw Error ( badSegmentTarget, getString(hurricaneSegment).c_str() );
-      if ( autoContact and ( autoContact != target ) )
+    Contact*     contact     = dynamic_cast<Contact*>( hurricaneSegment->getSource() );
+    AutoContact* autoContact = Session::lookup( contact );
+    if (contact == NULL) {
+      throw Error( badSegmentSource, getString(hurricaneSegment).c_str() );
+      if ( autoContact and (autoContact != source) )
+        throw Error( mismatchSegmentSource
+                   , getString(hurricaneSegment).c_str()
+                   , getString(contact).c_str() );
+    } else {
+      if (autoContact != source) reattachSource = true;
+    }
+
+    contact     = dynamic_cast<Contact*>( hurricaneSegment->getTarget() );
+    autoContact = Session::lookup( contact );
+    if (contact == NULL) {
+      throw Error( badSegmentTarget, getString(hurricaneSegment).c_str() );
+      if ( autoContact and (autoContact != target) )
         throw Error ( mismatchSegmentTarget
                     , getString(hurricaneSegment).c_str()
                     , getString(contact).c_str() );
+    } else {
+      if (autoContact != source) reattachTarget = true;
     }
 
-    Hook* hook = hurricaneSegment->getSourceHook();
-    hook->detach ();
-    hook->attach ( source->getBodyHook() );
+    if (reattachSource) {
+      Hook* hook = hurricaneSegment->getSourceHook();
+      hook->detach ();
+      hook->attach ( source->getBodyHook() );
+    }
 
-    hook = hurricaneSegment->getTargetHook();
-    hook->detach ();
-    hook->attach ( target->getBodyHook() );
+    if (reattachTarget) {
+      Hook* hook = hurricaneSegment->getTargetHook();
+      hook->detach ();
+      hook->attach ( target->getBodyHook() );
+    }
 
-    if ( (horizontal = dynamic_cast<Horizontal*>(hurricaneSegment) ) ) {
-      if ( horizontal->getLayer() != horizontalLayer ) {
-        if ( !Session::getKatabatic()->isGMetal(horizontal->getLayer()) )
+    if (horizontal) {
+      if (horizontal->getLayer() != horizontalLayer) {
+        if ( not Session::getKatabatic()->isGMetal(horizontal->getLayer()) )
           cerr << Warning("Segment %s forced to %s."
                          ,getString(horizontal).c_str()
                          ,getString(horizontalLayer).c_str()) << endl;
-        horizontal->setLayer ( horizontalLayer );
+        horizontal->setLayer( horizontalLayer );
       }
 
-      segment = AutoHorizontal::create ( horizontal
-                                       , AutoSegment::Global
-                                       , false
-                                       , false
-                                       );
-    } else if ( (vertical = dynamic_cast<Vertical*>(hurricaneSegment)) ) {
-      if ( vertical->getLayer() != verticalLayer ) {
-        if ( !Session::getKatabatic()->isGMetal(vertical->getLayer()) )
+      horizontal->setY( reference->getY() );
+      segment = new AutoHorizontal ( horizontal );
+      segment->_postCreate();
+    } else if (vertical) {
+      if (vertical->getLayer() != verticalLayer) {
+        if ( not Session::getKatabatic()->isGMetal(vertical->getLayer()) )
           cerr << Warning("Segment %s forced to %s."
                          ,getString(vertical).c_str()
                          ,getString(verticalLayer).c_str()) << endl;
-        vertical->setLayer ( verticalLayer );
+        vertical->setLayer( verticalLayer );
       }
 
-      segment = AutoVertical::create ( vertical
-                                     , AutoSegment::Global
-                                     , false
-                                     , false
-                                     );
+      vertical->setX( reference->getX() );
+      segment = new AutoVertical ( vertical );
+      segment->_postCreate();
     } else {
-      throw Error ( badSegment, getString(source).c_str(), getString(target).c_str() );
+      throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
     }
-
-    ltrace(99) << "Creating " << segment << endl;
 
     return segment;
   }
@@ -1816,77 +1814,56 @@ namespace Katabatic {
   AutoSegment* AutoSegment::create ( AutoContact*  source
                                    , AutoContact*  target
                                    , unsigned int  dir
-                                   , int           type
-                                   , bool          terminal
-                                   , bool          collapsed
                                    )
   {
-  //static Layer* verticalLayer   = DataBase::getDB()->getTechnology()->getLayer ( "METAL3" );
-  //static Layer* horizontalLayer = DataBase::getDB()->getTechnology()->getLayer ( "METAL2" );
+    static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
+    static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
 
-    static const Layer* horizontalLayer = Session::getRoutingLayer ( 1 );
-    static const Layer* verticalLayer   = Session::getRoutingLayer ( 2 );
-
-    GCell*       gcell;
-    GCell*       end;
     AutoSegment* segment;
+    AutoContact* reference = source;
 
-    if ( dir & Constant::Horizontal ) {
-      segment = AutoHorizontal::create ( source
-                                       , target
-                                       , horizontalLayer
-                                       , source->getY()
-                                       , DbU::lambda(2.0)
-                                       , type
-                                       , terminal
-                                       , collapsed
-                                       );
-      if ( type == AutoSegment::Global ) {
-        if ( source->getGCell()->getX() < target->getGCell()->getX() ) {
-          gcell = source->getGCell()->getRight();
-          end   = target->getGCell();
-        } else {
-          gcell = target->getGCell()->getRight();
-          end   = source->getGCell();
-        }
-        for ( ; gcell != end ; gcell = gcell->getRight() ) {
-          if ( !gcell ) {
-            cerr << Error("AutoSegment::create() : NULL GCell.") << endl;
-            break;
-          }
-          gcell->addHSegment ( segment );
-        }
-      }
-    } else if ( dir & Constant::Vertical ) {
-      segment = AutoVertical::create ( source
-                                     , target
-                                     , verticalLayer
-                                     , source->getX()
-                                     , DbU::lambda(2.0)
-                                     , type
-                                     , terminal
-                                     , collapsed
-                                     );
-      if ( type == AutoSegment::Global ) {
-        if ( source->getGCell()->getY() < target->getGCell()->getY() ) {
-          gcell = source->getGCell()->getUp();
-          end   = target->getGCell();
-        } else {
-          gcell = target->getGCell()->getUp();
-          end   = source->getGCell();
-        }
-        for ( ; gcell != end ; gcell = gcell->getUp() ) {
-          if ( !gcell ) {
-            cerr << Error("AutoSegment::create() : NULL GCell.") << endl;
-            break;
-          }
-          gcell->addVSegment ( segment );
-        }
-      }
+    ltrace(159) << "Source:" << source << endl;
+    ltrace(159) << "Target:" << target << endl;
+
+    if (target->isFixed()) {
+      if (source->isFixed()) {
+        if ( (dir == KbHorizontal) and (source->getY() != target->getY()))
+          cerr << Warning( "Straight AutoHorizontal connecting misaligned contacts:\n"
+                           "          %s\n"
+                           "          %s"
+                         , getString(source).c_str()
+                         , getString(target).c_str()
+                         ) << endl;
+        if ( (dir == KbVertical) and (source->getX() != target->getX()))
+          cerr << Warning( "Straight AutoVertical connecting misaligned contacts:\n"
+                           "          %s\n"
+                           "          %s"
+                         , getString(source).c_str()
+                         , getString(target).c_str()
+                         ) << endl;
+      } else
+        reference = target;
+    }
+
+    if (dir & KbHorizontal) {
+      segment = create( source
+                      , target
+                      , Horizontal::create( source->base()
+                                          , target->base()
+                                          , horizontalLayer
+                                          , reference->getY()
+                                          , DbU::lambda(2.0) ) );
+    } else if (dir & KbVertical) {
+      segment = create( source
+                      , target
+                      , Vertical::create( source->base()
+                                        , target->base()
+                                        , verticalLayer
+                                        , reference->getX()
+                                        , DbU::lambda(2.0)
+                                        ) );
     } else
-      throw Error ( badSegment, getString(source).c_str(), getString(target).c_str() );
-
-    ltrace(99) << "create() " << segment << endl;
+      throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
 
     return segment;
   }
@@ -1899,9 +1876,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::isTopologicalBound ( AutoSegment*  seed
-                                        , bool          superior
-                                        , bool          isHorizontal )
+  bool  AutoSegment::isTopologicalBound ( AutoSegment* seed, unsigned int flags )
   {
     ltrace(80) << "isTopologicalBound() - " << seed << endl;
     ltracein(80);
@@ -1910,64 +1885,63 @@ namespace Katabatic {
     vector<AutoContact*>  stack;
     DbU::Unit             axis;
 
-    if ( superior ) axis = seed->getTargetU();
-    else            axis = seed->getSourceU();
+    if (flags & KbSuperior) axis = seed->getTargetU();
+    else                    axis = seed->getSourceU();
 
     ltrace(80) << "check for bound " << DbU::getValueString(axis) << endl;
 
-    exploreds.insert ( seed->getAutoSource() );
-    exploreds.insert ( seed->getAutoTarget() );
+    exploreds.insert( seed->getAutoSource() );
+    exploreds.insert( seed->getAutoTarget() );
 
-    if ( seed->getLength() ) {
-      if ( superior ) stack.push_back ( seed->getAutoTarget() );
-      else            stack.push_back ( seed->getAutoSource() );
+    if (seed->getLength()) {
+      if (flags & KbSuperior) stack.push_back( seed->getAutoTarget() );
+      else                    stack.push_back( seed->getAutoSource() );
     } else {
-      stack.push_back ( seed->getAutoTarget() );
-      stack.push_back ( seed->getAutoSource() );
+      stack.push_back( seed->getAutoTarget() );
+      stack.push_back( seed->getAutoSource() );
     }
 
-    while ( !stack.empty() ) {
+    while ( not stack.empty() ) {
       AutoContact* currentContact = stack.back();
-      stack.pop_back ();
+      stack.pop_back();
 
-      ltrace(80) << "Exploring: " << (void*)currentContact
-                 << " " << currentContact << endl;
+      ltrace(80) << "Exploring: " << (void*)currentContact << " " << currentContact << endl;
 
-      exploreds.insert ( currentContact );
+      exploreds.insert( currentContact );
 
-      if ( currentContact->getAnchor() ) { ltraceout(80); return true; }
+      if (currentContact->getAnchor()) { ltraceout(80); return true; }
 
       forEach ( Component*, component, currentContact->getSlaveComponents() ) {
-        Segment* segment = dynamic_cast<Segment*>(*component);
-        if ( !segment ) continue;
+        Segment* segment = dynamic_cast<Segment*>( *component );
+        if (not segment) continue;
 
-        AutoSegment* autoSegment = Session::lookup ( segment );
-        if ( !autoSegment ) continue;
+        AutoSegment* autoSegment = Session::lookup( segment );
+        if (not autoSegment) continue;
 
-        if ( !autoSegment->getLength() ) {
+        if (not autoSegment->getLength()) {
           AutoContact* contact = autoSegment->getAutoSource();
-          if ( contact && ( contact != currentContact ) ) {
-            if ( exploreds.find(contact) == exploreds.end() )
-              stack.push_back ( contact );
+          if (contact and (contact != currentContact)) {
+            if (exploreds.find(contact) == exploreds.end())
+              stack.push_back( contact );
           }
 
           contact = autoSegment->getAutoTarget();
-          if ( contact && ( contact != currentContact ) ) {
-            if ( exploreds.find(contact) == exploreds.end() )
-              stack.push_back ( contact );
+          if (contact and (contact != currentContact)) {
+            if (exploreds.find(contact) == exploreds.end())
+              stack.push_back( contact );
           }
 
           continue;
         }
 
-        if ( autoSegment->isHorizontal() != isHorizontal ) continue;
+        if (autoSegment->isHorizontal() xor (flags & KbHorizontal)) continue;
 
         ltrace(80) << "| " << autoSegment << endl;
 
-        if ( superior ) {
-          if ( autoSegment->getTargetU() > axis ) { ltraceout(80); return true; }
+        if (flags & KbSuperior) {
+          if (autoSegment->getTargetU() > axis) { ltraceout(80); return true; }
         } else {
-          if ( autoSegment->getSourceU() < axis ) { ltraceout(80); return true; }
+          if (autoSegment->getSourceU() < axis) { ltraceout(80); return true; }
         }
       }
     }
@@ -1977,6 +1951,7 @@ namespace Katabatic {
   }
 
 
+#if THIS_IS_DISABLED
   unsigned int  AutoSegment::getPerpandicularState ( AutoContact* contact
                                                    , AutoSegment* source
                                                    , AutoSegment* current
@@ -2011,76 +1986,79 @@ namespace Katabatic {
 
     return state;
   }
+#endif
 
 
   void  AutoSegment::getTopologicalInfos ( AutoSegment*          seed
-                                         , vector<AutoSegment*>& collapseds
+                                         , vector<AutoSegment*>& aligneds
                                          , vector<AutoSegment*>& perpandiculars
                                          , DbU::Unit&            leftBound
                                          , DbU::Unit&            rightBound
                                          )
   {
     ltrace(80) << "getTopologicalInfos() - " << seed << endl;
+    ltracein(80);
 
     leftBound  = DbU::Max;
     rightBound = DbU::Min;
 
     AutoSegmentStack stack;
 
-    stack.push ( seed->getAutoSource(), seed );
-    stack.push ( seed->getAutoTarget(), seed );
+    stack.push( seed->getAutoSource(), seed );
+    stack.push( seed->getAutoTarget(), seed );
 
     while ( not stack.isEmpty() ) {
-      AutoContact* sourceContact = stack.getAutoContact ();
-      AutoSegment* sourceSegment = stack.getAutoSegment ();
+      AutoContact* sourceContact = stack.getAutoContact();
+      AutoSegment* sourceSegment = stack.getAutoSegment();
 
-      stack.pop ();
+      stack.pop();
 
-      DbU::Unit  constraint;
+      DbU::Unit constraint;
 
-      if ( seed->isHorizontal() ) constraint = sourceContact->getCBXMax();
-      else                        constraint = sourceContact->getCBYMax();
-      if ( constraint < leftBound ) leftBound = constraint;
+      if (seed->isHorizontal()) constraint = sourceContact->getCBXMax();
+      else                      constraint = sourceContact->getCBYMax();
+      if (constraint < leftBound) leftBound = constraint;
 
-      if ( seed->isHorizontal() ) constraint = sourceContact->getCBXMin();
-      else                        constraint = sourceContact->getCBYMin();
-      if ( constraint > rightBound ) rightBound = constraint;
+      if (seed->isHorizontal()) constraint = sourceContact->getCBXMin();
+      else                      constraint = sourceContact->getCBYMin();
+      if (constraint > rightBound) rightBound = constraint;
 
-      forEach ( Component*, component, sourceContact->getSlaveComponents() ) {
-        Segment* segment = dynamic_cast<Segment*>(*component);
-        if ( ( not segment ) || ( segment == sourceSegment->getSegment() ) ) continue;
+      ltrace(200) << "Segments of: " << sourceContact << endl;
+      LocatorHelper helper (sourceContact, KbHorizontal|KbWithPerpands);
+      for ( ; helper.isValid() ; helper.progress() ) {
+        AutoSegment* currentSegment = helper.getSegment();
+        ltrace(200) << "Looking for: " << currentSegment << endl;
+        if (currentSegment == sourceSegment) continue;
 
-        AutoSegment* currentSegment = Session::lookup ( segment );
-        if ( not currentSegment ) {
-          cerr << Error("Can't lookup <AutoSegment> for %s.",getString(segment).c_str()) << endl;
+        if (AutoSegment::areAlignedsAndDiffLayer(currentSegment,seed)) {
+          cerr << Error("Aligned segments not in same layer\n"
+                        "        %s\n"
+                        "        %s."
+                       ,getString(seed).c_str()
+                       ,getString(currentSegment).c_str()) << endl;
           continue;
         }
 
-        unsigned int  state = getPerpandicularState ( sourceContact
-                                                    , sourceSegment
-                                                    , currentSegment
-                                                    , seed           );
-        if ( state & PerpandicularAny ) {
-          ltrace(79) << "Perpandicular: " << currentSegment << endl;
-          perpandiculars.push_back ( currentSegment );
-        }
-        if ( state & (PerpandicularIndirect
-                     |ParallelOrExpanded
-                     |ParallelAndLayerChange ) ) {
-          ltrace(79) << "Reject: " << currentSegment << endl;
-          continue;
-        }
+        if (AutoSegment::areAligneds(currentSegment,seed)) {
+          aligneds.push_back( currentSegment );
 
-        if ( not areAligneds(currentSegment,seed) ) {
-          collapseds.push_back ( currentSegment );
-          ltrace(79) << "collapsed: " << currentSegment << endl;
+          AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
+          ltrace(200) << "Target: " << targetContact << endl;
+          if (targetContact) {
+            if (  (seed->isHorizontal() and sourceContact->isHTee())
+               or (seed->isVertical  () and sourceContact->isVTee()) ) {
+              ltrace(200) << "Stacking target. " << endl;
+              stack.push( targetContact, currentSegment );
+            }
+          }
+        } else {
+          ltrace(200) << "| perpandicular " << currentSegment << endl; 
+          perpandiculars.push_back( currentSegment );
         }
-
-        Component*   opposite      = segment->getOppositeAnchor ( sourceContact->getContact() );
-        AutoContact* targetContact = Session::lookup(static_cast<Contact*>(opposite));
-        if ( targetContact ) stack.push ( targetContact, currentSegment );
       }
     }
+
+    ltraceout(80);
   }
 
 
@@ -2090,11 +2068,11 @@ namespace Katabatic {
 
     int  count = 0;
     for ( size_t i=0 ; i < collapseds.size() ; i++ ) {
-      if ( collapseds[i]->isTerminal() )
+      if (collapseds[i]->isStrongTerminal())
         count++;
     }
-    if ( seed->getAutoSource()->isTerminal() ) count++;
-    if ( seed->getAutoTarget()->isTerminal() ) count++;
+    if (seed->getAutoSource()->isTerminal()) count++;
+    if (seed->getAutoTarget()->isTerminal()) count++;
 
     return count;
   }
