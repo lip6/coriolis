@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,34 +12,27 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TrackMarker.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-#include  <iomanip>
-#include  <sstream>
-
-#include  "hurricane/Bug.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/RoutingPad.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Name.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "katabatic/GCell.h"
-#include  "kite/TrackMarker.h"
-#include  "kite/Track.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/Session.h"
-#include  "kite/RoutingEvent.h"
-#include  "kite/KiteEngine.h"
+#include <iomanip>
+#include <sstream>
+#include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
+#include "hurricane/RoutingPad.h"
+#include "hurricane/Net.h"
+#include "hurricane/Name.h"
+#include "crlcore/RoutingGauge.h"
+#include "katabatic/GCell.h"
+#include "kite/TrackMarker.h"
+#include "kite/Track.h"
+#include "kite/RoutingPlane.h"
+#include "kite/Session.h"
+#include "kite/RoutingEvent.h"
+#include "kite/KiteEngine.h"
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -101,7 +89,7 @@ namespace Kite {
     Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );
     while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
       Session::addInsertEvent ( this, track );
-      track = track->getNext ();
+      track = track->getNextTrack();
       _refcount++;
     }
   }
@@ -139,7 +127,6 @@ namespace Kite {
 
     return record;
   }
-  
 
 
-}  // End of Kite namespace.
+} // Kite namespace.

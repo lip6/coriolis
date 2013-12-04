@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -11,12 +11,12 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./NegociateWindow.h"                      |
+// |  C++ Header  :  "./kite/NegociateWindow.h"                      |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_NEGOCIATE_WINDOW__
-#define  __KITE_NEGOCIATE_WINDOW__
+#ifndef  KITE_NEGOCIATE_WINDOW_H
+#define  KITE_NEGOCIATE_WINDOW_H
 
 #include <set>
 #include <queue>
@@ -40,7 +40,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Statistics".
-
 
   class Statistics {
     public:
@@ -90,39 +89,38 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Kite::NegociateWindow".
- 
 
   class NegociateWindow {
 
     public:
       enum Stage { Negociation = 1
-                 , Packing
+                 , Packing     = 2
                  };
     public:
-      static NegociateWindow*              create            ( KiteEngine* );
-             void                          destroy           ();
-      inline bool                          isInterrupted     () const;
-      inline KiteEngine*                   getKiteEngine     () const;
-             Hurricane::Cell*              getCell           () const;
-      inline const Katabatic::GCellVector& getGCells         () const;
-      inline RoutingEventQueue&            getEventQueue     ();
-      inline RoutingEventHistory&          getEventHistory   ();
-      inline RoutingEventLoop&             getEventLoop      ();
-      inline Stage                         getStage          () const;
-             void                          setGCells         ( const Katabatic::GCellVector& );
-      inline void                          setInterrupt      ( bool );
-      inline void                          setStage          ( Stage );
-             double                        computeWirelength ();
-             TrackElement*                 addTrackSegment   ( AutoSegment*, bool loading );
-             void                          addInsertEvent    ( TrackElement*, unsigned int level );
-      inline void                          rescheduleEvent   ( RoutingEvent*, unsigned int level );
-             void                          run               ( int slowMotion=0 );
-             void                          printStatistics   () const;
-             void                          _createRouting    ( Katabatic::GCell* );
-             size_t                        _negociate        ();
-             Hurricane::Record*            _getRecord        () const;
-             std::string                   _getString        () const;
-      inline std::string                   _getTypeName      () const;
+      static NegociateWindow*              create             ( KiteEngine* );
+             void                          destroy            ();
+      inline bool                          isInterrupted      () const;
+      inline KiteEngine*                   getKiteEngine      () const;
+             Hurricane::Cell*              getCell            () const;
+      inline const Katabatic::GCellVector& getGCells          () const;
+      inline RoutingEventQueue&            getEventQueue      ();
+      inline RoutingEventHistory&          getEventHistory    ();
+      inline RoutingEventLoop&             getEventLoop       ();
+      inline Stage                         getStage           () const;
+             void                          setGCells          ( const Katabatic::GCellVector& );
+      inline void                          setInterrupt       ( bool );
+      inline void                          setStage           ( Stage );
+             double                        computeWirelength  ();
+             TrackElement*                 createTrackSegment ( AutoSegment*, unsigned int flags );
+             void                          addRoutingEvent    ( TrackElement*, unsigned int level );
+      inline void                          rescheduleEvent    ( RoutingEvent*, unsigned int level );
+             void                          run                ( int slowMotion=0 );
+             void                          printStatistics    () const;
+             void                          _createRouting     ( Katabatic::GCell* );
+             size_t                        _negociate         ();
+             Hurricane::Record*            _getRecord         () const;
+             std::string                   _getString         () const;
+      inline std::string                   _getTypeName       () const;
 
     private:
     // Attributes.
@@ -157,7 +155,7 @@ namespace Kite {
   inline std::string                   NegociateWindow::_getTypeName    () const { return "NegociateWindow"; }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
-#endif  // __KITE_NEGOCIATE_WINDOW__
+#endif  // KITE_NEGOCIATE_WINDOW_H

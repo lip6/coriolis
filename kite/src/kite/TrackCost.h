@@ -2,41 +2,30 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
-// |                                                                 |
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./TrackCost.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Header  :  "./kite/TrackCost.h"                            |
 // +-----------------------------------------------------------------+
 
 
+#ifndef  KITE_TRACK_COST_H
+#define  KITE_TRACK_COST_H
 
-
-#ifndef  __KITE_TRACK_COST__
-#define  __KITE_TRACK_COST__
-
-#include  <string>
-#include  "hurricane/Interval.h"
+#include <string>
+#include "hurricane/Interval.h"
 namespace Hurricane {
   class Net;
 }
 
 
 namespace Kite {
-
 
   using std::string;
   using Hurricane::Record;
@@ -80,6 +69,7 @@ namespace Kite {
                                                     ,       unsigned int  flags
                                                     );
                                 ~TrackCost          ();
+      inline       bool          isForGlobal        () const;
       inline       bool          isBlockage         () const;
       inline       bool          isFixed            () const;
       inline       bool          isInfinite         () const;
@@ -102,6 +92,7 @@ namespace Kite {
       inline       long          getAxisWeight      () const;
       inline       int           getRipupCount      () const;
       inline       unsigned int  getDataState       () const;
+      inline       void          setForGlobal       ();
       inline       void          setBlockage        ();
       inline       void          setFixed           ();
       inline       void          setInfinite        ();
@@ -132,6 +123,7 @@ namespace Kite {
       size_t        _begin;
       size_t        _end;
       Interval      _interval;
+      bool          _forGlobal;
       bool          _blockage;
       bool          _fixed;
       bool          _infinite;
@@ -155,6 +147,7 @@ namespace Kite {
 
 
 // Inline Functions.
+  inline       bool          TrackCost::isForGlobal        () const { return _forGlobal; }
   inline       bool          TrackCost::isBlockage         () const { return _blockage; }
   inline       bool          TrackCost::isFixed            () const { return _fixed; }
   inline       bool          TrackCost::isInfinite         () const { return _infinite; }
@@ -175,6 +168,7 @@ namespace Kite {
   inline       long          TrackCost::getAxisWeight      () const { return _axisWeight; }
   inline       int           TrackCost::getRipupCount      () const { return _ripupCount; }
   inline       unsigned int  TrackCost::getDataState       () const { return _dataState; }
+  inline       void          TrackCost::setForGlobal       () { _forGlobal = true; }
   inline       void          TrackCost::setBlockage        () { _blockage = true; }
   inline       void          TrackCost::setFixed           () { _fixed = true; }
   inline       void          TrackCost::setInfinite        () { _infinite = true; }
@@ -197,10 +191,10 @@ namespace Kite {
   inline  TrackCost::Compare::Compare ( unsigned int flags ) : _flags(flags) { }
 
 
-} // End of Kite namespace.
+} // Kite namespace.
 
 
 INSPECTOR_V_SUPPORT(Kite::TrackCost);
 
 
-#endif  // __KITE_TRACK_COST__
+#endif  // KITE_TRACK_COST_H

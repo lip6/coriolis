@@ -2,35 +2,26 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./TrackElements.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/TrackElements.h"                        |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_TRACKELEMENTS_H__
-#define  __KITE_TRACKELEMENTS_H__
+#ifndef  KITE_TRACKELEMENTS_H
+#define  KITE_TRACKELEMENTS_H
 
 #include  "katabatic/AutoSegments.h"
 
 
 namespace Kite {
-
 
   using std::string;
   using std::set;
@@ -50,14 +41,13 @@ namespace Kite {
   using Hurricane::GenericLocator;
   using Hurricane::GenericCollection;
 
-  using Katabatic::AutoSegments_CollapsedPerpandicular;
+  using Katabatic::AutoSegments_Perpandiculars;
 
   class TrackElement;
 
 
 // -------------------------------------------------------------------
 // Collections.
-
 
   typedef Hurricane::Filter<TrackElement*>     TrackElementHF;
   typedef Hurricane::Locator<TrackElement*>    TrackElementHL;
@@ -68,10 +58,9 @@ namespace Kite {
 
 
 // -------------------------------------------------------------------
-// Class  :  "TrackElements_CollapsedPerpandicular".
+// Class  :  "TrackElements_Perpandiculars".
 
-
-  class TrackElements_CollapsedPerpandicular : public TrackElementHC {
+  class TrackElements_Perpandiculars : public TrackElementHC {
 
     public:
     // Sub-Class: Locator.
@@ -85,40 +74,38 @@ namespace Kite {
           virtual void            progress   ();
           virtual string          _getString () const;
         protected:
-          AutoSegments_CollapsedPerpandicular::Locator  _locator;
-          TrackElement*                                 _element;
+          AutoSegments_Perpandiculars::Locator  _locator;
+          TrackElement*                         _element;
       };
 
     public:
-    // TrackElements_CollapsedPerpandicular Methods.
-      inline                  TrackElements_CollapsedPerpandicular ( TrackElement* segment );
-      inline                  TrackElements_CollapsedPerpandicular ( const TrackElements_CollapsedPerpandicular& );
-      virtual TrackElementHC* getClone                            () const;
-	  virtual TrackElementHL* getLocator                          () const;
-      virtual string         _getString                           () const;
+    // TrackElements_Perpandiculars Methods.
+      inline                  TrackElements_Perpandiculars ( TrackElement* segment );
+      inline                  TrackElements_Perpandiculars ( const TrackElements_Perpandiculars& );
+      virtual TrackElementHC* getClone                     () const;
+	  virtual TrackElementHL* getLocator                   () const;
+      virtual string         _getString                    () const;
 
     protected:
-    // TrackElements_CollapsedPerpandicular Attributes.
+    // TrackElements_Perpandiculars Attributes.
       TrackElement*  _segment;
   };
 
 
-  inline TrackElements_CollapsedPerpandicular::Locator::Locator ( const Locator& locator )
+  inline TrackElements_Perpandiculars::Locator::Locator ( const Locator& locator )
     : TrackElementHL()
     , _locator      (locator._locator)
     , _element      (NULL)
   { }
 
 
-  inline TrackElements_CollapsedPerpandicular::TrackElements_CollapsedPerpandicular
-  ( TrackElement* segment )
+  inline TrackElements_Perpandiculars::TrackElements_Perpandiculars ( TrackElement* segment )
     : TrackElementHC()
     , _segment      (segment)
   { }
 
 
-  inline TrackElements_CollapsedPerpandicular::TrackElements_CollapsedPerpandicular
-  ( const TrackElements_CollapsedPerpandicular& tracksegments )
+  inline TrackElements_Perpandiculars::TrackElements_Perpandiculars ( const TrackElements_Perpandiculars& tracksegments )
     : TrackElementHC()
     , _segment      (tracksegments._segment)
   { }
@@ -126,7 +113,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "TrackElements_UniqCanonical".
-
 
   class TrackElements_UniqCanonical : public TrackElementHF {
     public:
@@ -152,7 +138,7 @@ namespace Kite {
   {}
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
-#endif  // __KITE_TRACKELEMENTS__
+#endif  // KITE_TRACKELEMENTS_H

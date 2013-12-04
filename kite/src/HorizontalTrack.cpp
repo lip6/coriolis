@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,13 +12,10 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./HorizontalTrack.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "kite/HorizontalTrack.h"
+#include "kite/HorizontalTrack.h"
 
 
 namespace Kite {
@@ -61,7 +53,7 @@ namespace Kite {
 
   bool          HorizontalTrack::isHorizontal () const { return true; }
   bool          HorizontalTrack::isVertical   () const { return false; }
-  unsigned int  HorizontalTrack::getDirection () const { return Constant::Horizontal; }
+  unsigned int  HorizontalTrack::getDirection () const { return KbHorizontal; }
 
 
   Point  HorizontalTrack::getPosition ( DbU::Unit coordinate ) const
@@ -81,4 +73,4 @@ namespace Kite {
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

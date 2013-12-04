@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,39 +12,35 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PreProcess.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-#include  <sstream>
-
-#include  "hurricane/Bug.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/RoutingPad.h"
-#include  "katabatic/AutoContact.h"
-#include  "kite/DataNegociate.h"
-#include  "kite/TrackElement.h"
-#include  "kite/Track.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/NegociateWindow.h"
-#include  "kite/Session.h"
-#include  "kite/KiteEngine.h"
-
+#include <sstream>
+#include "hurricane/DebugSession.h"
+#include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Net.h"
+#include "hurricane/Name.h"
+#include "hurricane/RoutingPad.h"
+#include "hurricane/Horizontal.h"
+#include "katabatic/AutoContactTerminal.h"
+#include "kite/DataNegociate.h"
+#include "kite/TrackElement.h"
+#include "kite/Track.h"
+#include "kite/RoutingPlane.h"
+#include "kite/NegociateWindow.h"
+#include "kite/Session.h"
+#include "kite/KiteEngine.h"
 
 
 namespace {
-
 
   using namespace std;
   using namespace Hurricane;
   using namespace CRL;
   using namespace Kite;
+  using Katabatic::perpandicularTo;
+  using Katabatic::AutoContactTerminal;
 
 
   void  getPerpandiculars ( TrackElement*           segment
@@ -58,9 +49,6 @@ namespace {
                           , vector<TrackElement*>&  perpandiculars
                           )
   {
-  //AutoContact* to = segment->base()->getAutoSource();
-  //to = (to != from) ? to : segment->base()->getAutoTarget();
-
     TrackElement* perpandicular;
     forEach ( Segment*, isegment, segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
       perpandicular = Session::lookup ( *isegment );
@@ -108,21 +96,22 @@ namespace {
 
   void  propagateCagedConstraints ( TrackElement* segment, set<TrackElement*>& faileds )
   {
-    if ( not segment->isFixed() ) return;
+    if (not segment->isFixed()) return;
 
     ltrace(200) << "Propagate caging: " << segment << endl;
 
     Track*                  track         = segment->getTrack();
-    unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
+  //unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
+    unsigned int            direction     = segment->getDirection();
     Katabatic::AutoContact* source        = segment->base()->getAutoSource();
     RoutingPad*             rp            = NULL;
-    Interval                uside         = source->getGCell()->getUSide(direction);
+    Interval                uside         = source->getGCell()->getSide(direction);
     DbU::Unit               minConstraint = DbU::Min;
     DbU::Unit               maxConstraint = DbU::Max;
     vector<TrackElement*>   perpandiculars;
 
     if ( not track ) {
-      cerr << Bug("%s is not inserted in a <Track>",getString(segment).c_str()) << endl;
+      cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
       return;
     }
 
@@ -130,30 +119,30 @@ namespace {
     TrackElement* parallel;
     size_t i = segment->getIndex();
     while ( i > 0 ) {
-      parallel = track->getSegment(--i);
-      if ( not parallel ) continue;
-      if ( parallel->getTargetU() < uside.getVMin() ) break;
-      if ( parallel->getNet() == segment->getNet() ) continue;
-      if ( not parallel->isFixed() ) continue;
+      parallel = track->getSegment( --i );
+      if (not parallel) continue;
+      if (parallel->getTargetU() < uside.getVMin()) break;
+      if (parallel->getNet() == segment->getNet()) continue;
+      if (not parallel->isFixed()) continue;
 
       ltrace(200) << "Min Constraint from: " << parallel << endl;
-      minConstraint = max ( minConstraint, parallel->getTargetU() );
+      minConstraint = max( minConstraint, parallel->getTargetU() );
     }
 
     i = segment->getIndex();
     while ( i < track->getSize()-1 ) {
-      parallel = track->getSegment(++i);
-      if ( not parallel ) continue;
-      if ( parallel->getSourceU() > uside.getVMax() ) break;
-      if ( parallel->getNet() == segment->getNet() ) continue;
-      if ( not parallel->isFixed() ) continue;
+      parallel = track->getSegment( ++i );
+      if (not parallel) continue;
+      if (parallel->getSourceU() > uside.getVMax()) break;
+      if (parallel->getNet() == segment->getNet()) continue;
+      if (not parallel->isFixed()) continue;
 
       ltrace(200) << "Max Constraint from: " << parallel << endl;
-      maxConstraint = min ( maxConstraint, parallel->getSourceU() );
+      maxConstraint = min( maxConstraint, parallel->getSourceU() );
     }
 
-    if ( minConstraint > maxConstraint ) {
-      cerr << Bug("%s have too tight caging constraints.",getString(segment).c_str()) << endl;
+    if (minConstraint > maxConstraint) {
+      cerr << Bug( "%s have too tight caging constraints.", getString(segment).c_str() ) << endl;
       return;
     }
     if ( (minConstraint <= uside.getVMin()) and (maxConstraint >= uside.getVMax()) ) {
@@ -164,29 +153,29 @@ namespace {
     }
 
   // Finding perpandiculars, by way of the source & target RoutingPad.
-    if ( source->getAnchor() ) {
+    if (source->getAnchor()) {
       rp = dynamic_cast<RoutingPad*>(source->getAnchor());
-      if ( rp ) {
+      if (rp) {
         TrackElement* parallel;
         forEach ( Segment*, isegment, rp->getSlaveComponents().getSubSet<Segment*>() ) {
-          parallel = Session::lookup ( *isegment );
+          parallel = Session::lookup( *isegment );
           ltrace(200) << "* " << parallel << endl;
 
-          if ( parallel->isFixed () ) continue;
-          if ( parallel->isGlobal() ) continue;
-          getPerpandiculars ( parallel, source, direction, perpandiculars );
-          getPerpandiculars ( parallel, segment->base()->getAutoTarget(), direction, perpandiculars );
+          if (parallel->isFixed ()) continue;
+          if (parallel->isGlobal()) continue;
+          getPerpandiculars( parallel, source, direction, perpandiculars );
+          getPerpandiculars( parallel, segment->base()->getAutoTarget(), direction, perpandiculars );
         }
       } else {
-        cerr << Bug("%s is not anchored on a <RoutingPad>\n       (%s)"
-                   ,getString(source).c_str()
-                   ,getString(source->getAnchor()).c_str()) << endl;
+        cerr << Bug( "%s is not anchored on a <RoutingPad>\n       (%s)"
+                   , getString(source).c_str()
+                   , getString(source->getAnchor()).c_str() ) << endl;
       }
     }
 
   // Apply caging constraints to perpandiculars.
     ltracein(200);
-    if ( perpandiculars.size() == 0 ) {
+    if (perpandiculars.size() == 0) {
       ltrace(200) << "No perpandiculars to " << segment << endl;
       ltraceout(200);
       return;
@@ -195,10 +184,10 @@ namespace {
     Interval constraints ( minConstraint, maxConstraint );
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       ltrace(200) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
-      perpandiculars[iperpand]->base()->mergeUserConstraints ( constraints );
-      if ( perpandiculars[iperpand]->base()->getUserConstraints().isEmpty() ) {
+      perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
+      if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
         ltrace(200) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
-        findFailedPerpandiculars ( rp, direction, faileds );
+        findFailedPerpandiculars( rp, direction, faileds );
       }
     }
 
@@ -206,81 +195,108 @@ namespace {
   }
 
 
+  void  moveUpCaged ( TrackElement* segment )
+  {
+    DebugSession::open( segment->getNet(), 150 );
+    ltrace(150) << "::moveUpCaged() " << segment << endl;
+    ltracein(150);
+
+  //Configuration* configuration = Session::getConfiguration();
+  //const Layer*   metal2        = configuration->getRoutingLayer( 1 );
+  //const Layer*   metal3        = configuration->getRoutingLayer( 2 );
+
+    Katabatic::AutoContact* support = segment->base()->getAutoSource();
+    RoutingPad*             rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
+
+    forEach( Component*, icomponent, rp->getSlaveComponents() ) {
+      Horizontal*   baseSegment   = dynamic_cast<Horizontal*>( *icomponent );
+      TrackElement* accessSegment = Session::lookup( baseSegment );
+
+      if (accessSegment and not accessSegment->isFixed()) {
+        accessSegment->moveUp( Katabatic::KbNoFlags );
+      }
+    }
+
+    ltraceout(150);
+    DebugSession::close();
+  }
+
+
   void  protectCagedTerminals ( Track* track )
   {
-    Configuration* configuration = Session::getConfiguration ();
-    const Layer*   metal2        = configuration->getRoutingLayer ( 1 );
-    const Layer*   metal3        = configuration->getRoutingLayer ( 2 );
+    ltrace(150) << "protectCagedTerminals() " << track << endl;
+    ltracein(150);
 
-    for ( size_t i=0 ; i<track->getSize() ; i++ ) {
-      TrackElement* segment = track->getSegment ( i );
+    DbU::Unit     lastMovedUp = track->getMin();
+    unsigned int  moveUpCount = 0;
+
+    Configuration* configuration = Session::getConfiguration();
+    const Layer*   metal2        = configuration->getRoutingLayer( 1 );
+    const Layer*   metal3        = configuration->getRoutingLayer( 2 );
+    Net*           neighborNet   = NULL;
+
+    if (track->getLayer() != metal2) {
+      ltraceout(150);
+      return;
+    }
+
+    for ( size_t i=0 ; i<track->getSize() ; ++i ) {
+      TrackElement* segment = track->getSegment(i);
       if ( segment and segment->isFixed() and segment->isTerminal() ) {
-        Interval freeInterval = track->getFreeInterval ( segment->getSourceU(), segment->getNet() );
+        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
 
-        if ( freeInterval.getSize() < DbU::lambda(30.0) ) {
+      //if (freeInterval.getSize() < DbU::lambda(5.0)*6) {
+        if (  (segment->getSourceU() - freeInterval.getVMin() < DbU::lambda(5.0)*3)
+           or (freeInterval.getVMax() - segment->getTargetU() < DbU::lambda(5.0)*3) ) {
           cinfo << "Caged terminal: " << segment << endl;
-          if ( segment->getLayer() != metal2 ) continue;
-          if ( segment->getLength() >= DbU::lambda(5.0) ) continue;
+          if (  (segment->getLayer() != metal2)
+             or (segment->getLength() >= DbU::lambda(5.0))
+             or (segment->getNet() == neighborNet) ) {
+            neighborNet = segment->getNet();
+            continue;
+          }
+
+          if (segment->getSourceU() - lastMovedUp < DbU::lambda(5.0)*4) {
+            ++moveUpCount;
+            if (moveUpCount % 2 == 0) {
+              moveUpCaged( segment );
+            }
+          } else {
+            moveUpCount = 0;
+          }
+          lastMovedUp = segment->getSourceU();
 
           Katabatic::AutoContact* support = segment->base()->getAutoSource();
           RoutingPad*             rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
-
+          
           Katabatic::AutoContact* source
-            = Katabatic::AutoContact::fromRp ( support->getGCell()
-                                             , rp
-                                             , metal3
-                                             , rp->getSourcePosition()
-                                             , DbU::lambda(1.0), DbU::lambda(1.0)
-                                             , true
-                                             );
-
+            = Katabatic::AutoContactTerminal::create( support->getGCell()
+                                                    , rp
+                                                    , metal3
+                                                    , rp->getSourcePosition()
+                                                    , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                    );
+          source->setFlags( Katabatic::CntIgnoreAnchor );
+    
           Katabatic::AutoContact* target =
-            Katabatic::AutoContact::fromRp ( support->getGCell()
-                                           , rp
-                                           , metal3
-                                           , rp->getSourcePosition()
-                                           , DbU::lambda(1.0), DbU::lambda(1.0)
-                                           , true
-                                           );
-
-          AutoSegment* segment = AutoSegment::create ( source
-                                                     , target
-                                                     , Constant::Vertical
-                                                     , AutoSegment::Local
-                                                     , true
-                                                     , false
-                                                     );
-          segment->setFixed ( true );
-          Session::getNegociateWindow()->addTrackSegment ( segment, true );
-
-#if DISABLED
-        // Force slackening.
-          bool breakFlag = false;
-          forEach ( Contact*, icontact, rp->getSlaveComponents().getSubSet<Contact*>() ) {
-            forEach ( Segment*, isegment, icontact->getSlaveComponents().getSubSet<Segment*>() ) {
-              TrackElement* trackSegment = Session::lookup(*isegment);
-              if ( not trackSegment or trackSegment->isFixed() ) continue;
-
-              if ( trackSegment->isHorizontal() ) {
-                ltrace(200) << "M2 to slacken for " << rp << endl;
-                breakFlag = true;
-
-                const vector<AutoSegment*>& dogLegs = Session::getDogLegs();
-
-                trackSegment->base()->makeDogLeg ( gcell->base(), true );
-                GCell::addTrackSegment ( gcell, dogLegs[1], true );
-                GCell::addTrackSegment ( gcell, dogLegs[2], true );
-                Session::revalidate ();
-              } 
-
-              if ( breakFlag ) break;
-            }
-            if ( breakFlag ) break;
-          }
-#endif
+            Katabatic::AutoContactTerminal::create( support->getGCell()
+                                                  , rp
+                                                  , metal3
+                                                  , rp->getSourcePosition()
+                                                  , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                  );
+          target->setFlags( Katabatic::CntIgnoreAnchor );
+          
+          AutoSegment* fixedSegment = AutoSegment::create( source, target, Katabatic::KbVertical );
+          fixedSegment->setFlags( Katabatic::SegFixed );
+          Session::getNegociateWindow()->createTrackSegment( fixedSegment, KtLoadingStage );
         }
+
+        neighborNet = segment->getNet();
       }
     }
+
+    ltraceout(150);
   }
 
 
@@ -293,17 +309,18 @@ namespace Kite {
   using Hurricane::Bug;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Katabatic::AutoSegmentLut;
 
 
   void  KiteEngine::preProcess ()
   {
-    for ( size_t i=0 ; i<_routingPlanes.size() ; i++ ) {
+    for ( size_t i=0 ; i<_routingPlanes.size() ; ++i ) {
       RoutingPlane* plane = _routingPlanes[i];
 
-      Track* track = plane->getTrackByIndex ( 0 );
+      Track* track = plane->getTrackByIndex( 0 );
       while ( track ) {
-        protectCagedTerminals ( track );
-        track = track->getNext ();
+        protectCagedTerminals( track );
+        track = track->getNextTrack();
       }
     }
     Session::revalidate ();
@@ -314,32 +331,17 @@ namespace Kite {
   {
     set<TrackElement*> faileds;
 
-    TrackElementLut::iterator isegment = _trackSegmentLut.begin();
-    for ( ; isegment != _trackSegmentLut.end() ; isegment++ ) {
-      if ( not isegment->second->isFixed() ) continue;
-      propagateCagedConstraints ( isegment->second, faileds );
+    TrackElement*                  segment  = NULL;
+    AutoSegmentLut::const_iterator isegment = _getAutoSegmentLut().begin();
+    for ( ; isegment != _getAutoSegmentLut().end() ; isegment++ ) {
+      segment = _lookup( isegment->second );
+      if (not segment or not segment->isFixed()) continue;
+
+      DebugSession::open( segment->getNet() );
+      propagateCagedConstraints( segment, faileds );
+      DebugSession::close();
     }
   }
 
 
-  void  KiteEngine::_computeCagedConstraints ( Net* net, set<TrackElement*>& faileds )
-  {
-    TrackElement* segment = NULL;
-
-    forEach ( Segment*, isegment, net->getComponents().getSubSet<Segment*>() ) {
-      segment = Session::lookup ( *isegment );
-      if ( not segment ) continue;
-
-      segment->base()->resetUserConstraints();
-    }
-
-    forEach ( Segment*, isegment, net->getComponents().getSubSet<Segment*>() ) {
-      segment = Session::lookup ( *isegment );
-      if ( not segment ) continue;
-
-      propagateCagedConstraints ( segment, faileds );
-    }
-  }
-
-
-} // End of Kite namespace.
+} // Kite namespace.

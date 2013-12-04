@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,21 +12,16 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Tracks.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-
-#include  "kite/Track.h"
-#include  "kite/Tracks.h"
-#include  "kite/RoutingPlane.h"
+#include <iostream>
+#include "kite/Track.h"
+#include "kite/Tracks.h"
+#include "kite/RoutingPlane.h"
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -56,8 +46,8 @@ namespace Kite {
 
     _track = routingPlane->getTrackByPosition ( _constraints.getVMin() );
 
-    if ( _track && (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNext();
-    if ( _track && (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
+    if ( _track and (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNextTrack();
+    if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
 
     ltrace(147) << "_track: " << _track << endl;;
   }
@@ -87,8 +77,8 @@ namespace Kite {
   {
     if ( !_track ) return;
 
-    _track = _track->getNext ();
-    if ( _track && (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
+    _track = _track->getNextTrack();
+    if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
   }
 
 
@@ -170,12 +160,12 @@ namespace Kite {
     if ( _maxTrack->getAxis() > _constraints.getVMax() ) _maxTrack = NULL;
 
     if ( _minTrack && !_maxTrack ) {
-      _minTrack = _minTrack->getPrevious ();
-      if ( _minTrack->getAxis() < _constraints.getVMin() ) _minTrack = NULL;
+      _minTrack = _minTrack->getPreviousTrack();
+      if (_minTrack->getAxis() < _constraints.getVMin()) _minTrack = NULL;
     }
 
     if ( _maxTrack && !_minTrack ) {
-      _maxTrack = _maxTrack->getNext ();
+      _maxTrack = _maxTrack->getNextTrack();
       if ( _maxTrack->getAxis() > _constraints.getVMax() ) _maxTrack = NULL;
     }
 
@@ -237,7 +227,7 @@ namespace Kite {
     if ( _onMin ) {
       _onMin = (_maxTrack == NULL);
       if ( _minTrack ) {
-        _minTrack = _minTrack->getPrevious();
+        _minTrack = _minTrack->getPreviousTrack();
 
         if ( _minTrack ) {
           if ( _minTrack->getAxis() <     _optimal.getVMin() ) _inMinOptimal = false;
@@ -248,7 +238,7 @@ namespace Kite {
     } else {
       _onMin = (_minTrack != NULL);
       if ( _maxTrack ) {
-        _maxTrack = _maxTrack->getNext();
+        _maxTrack = _maxTrack->getNextTrack();
 
         if ( _maxTrack ) {
           if ( _maxTrack->getAxis() >     _optimal.getVMax() ) _inMaxOptimal = false;
@@ -326,4 +316,4 @@ namespace Kite {
   }
 
 
-} // End of Katabatic namespace.
+} // Kite namespace.

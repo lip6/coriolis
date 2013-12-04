@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -11,23 +10,21 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./DataNegociate.h"                        |
+// |  C++ Header  :   "./kite/DataNegociate.h"                       |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_DATA_NEGOCIATE__
-#define  __KITE_DATA_NEGOCIATE__
+#ifndef  KITE_DATA_NEGOCIATE_H
+#define  KITE_DATA_NEGOCIATE_H
 
-#include  <string>
-#include  <iostream>
+#include <string>
+#include <iostream>
 
 namespace Hurricane {
   class Record;
 }
 
-#include  "kite/TrackSegmentCost.h"
 #include  "kite/TrackElement.h"
-#include  "kite/RoutingEvent.h"
 namespace Katabatic {
   class AutoSegment;
 }
@@ -51,58 +48,66 @@ namespace Kite {
  
 
   class DataNegociate {
-
     public:
-      enum SlackState { RipupPerpandiculars= 1
-                      , Desalignate        = 2
-                      , Minimize           = 3
-                      , DogLeg             = 4
-                      , Slacken            = 5
-                      , ConflictSolve1     = 6
-                      , ConflictSolve2     = 7
-                      , LocalVsGlobal      = 8
-                      , MoveUp             = 9
-                      , MaximumSlack       =10
-                      , Unimplemented      =11
-                      , Repair             =12
+      enum SlackState { RipupPerpandiculars    = 1
+                      , Minimize               = 2
+                      , Dogleg                 = 3
+                      , Slacken                = 4
+                      , ConflictSolveByHistory = 5
+                      , ConflictSolveByPlaceds = 6
+                      , LocalVsGlobal          = 7
+                      , MoveUp                 = 8
+                      , MaximumSlack           = 9
+                      , Unimplemented          =10
+                      , Repair                 =11
                       };
-
     public:
-                               DataNegociate         ( TrackElement* );
-                              ~DataNegociate         ();
-      inline bool              hasRoutingEvent       () const;
-      inline RoutingEvent*     getRoutingEvent       () const;
-      inline TrackElement*     getTrackSegment       () const;
-      inline Track*            getTrack              () const;
-      inline TrackSegmentCost& getCost               ();
-    //inline unsigned int      getZ                  () const;
-      inline unsigned int      getState              () const;
-      inline unsigned int      getStateCount         () const;
-      inline unsigned int      getRipupCount         () const;
-      inline unsigned int      getStateAndRipupCount () const;
-      inline void              setState              ( unsigned int, bool reset=false );
-      inline void              setRoutingEvent       ( RoutingEvent* );
-      inline void              setRipupCount         ( unsigned int );
-      inline void              incRipupCount         ();
-      inline void              decRipupCount         ();
-      inline void              resetRipupCount       ();
-      inline void              resetStateCount       ();
-      inline void              invalidate            ( bool withPerpandiculars=false, bool withConstraints=false );
-             void              update                ();
-      static string            getStateString        ( DataNegociate* );
-             Record*           _getRecord            () const;
-             string            _getString            () const;
-      inline string            _getTypeName          () const;
-
+                                          DataNegociate         ( TrackElement* );
+                                         ~DataNegociate         ();
+      inline bool                         hasRoutingEvent       () const;
+      inline RoutingEvent*                getRoutingEvent       () const;
+      inline TrackElement*                getTrackSegment       () const;
+      inline TrackElement*                getChildSegment       () const;
+      inline Track*                       getTrack              () const;
+      inline DbU::Unit                    getLeftMinExtend      () const;
+      inline DbU::Unit                    getRightMinExtend     () const;
+      inline unsigned int                 getTerminals          () const;
+      inline Net*                         getNet                () const;
+      inline unsigned int                 getState              () const;
+      inline unsigned int                 getStateCount         () const;
+      inline unsigned int                 getRipupCount         () const;
+      inline unsigned int                 getStateAndRipupCount () const;
+             DbU::Unit                    getWiringDelta        ( DbU::Unit axis ) const;
+      inline const vector<TrackElement*>& getPerpandiculars     () const;
+      inline const Interval&              getPerpandicularFree  () const;
+      inline void                         setState              ( unsigned int, unsigned int flags=0 );
+      inline void                         setRoutingEvent       ( RoutingEvent* );
+      inline void                         setChildSegment       ( TrackElement* );
+      inline void                         setRipupCount         ( unsigned int );
+      inline void                         incRipupCount         ();
+      inline void                         decRipupCount         ();
+      inline void                         resetRipupCount       ();
+      inline void                         resetStateCount       ();
+             void                         update                ();
+      static string                       getStateString        ( DataNegociate* );
+             Record*                      _getRecord            () const;
+             string                       _getString            () const;
+      inline string                       _getTypeName          () const;
     protected:
     // Attributes.
-      RoutingEvent*     _routingEvent;
-      TrackElement*     _trackSegment;
-      TrackSegmentCost  _cost;
-      unsigned int      _state     :5;
-      unsigned int      _stateCount:5;
-    //unsigned int      _z : 5;
-
+      TrackElement*         _trackSegment;
+      TrackElement*         _childSegment;
+      RoutingEvent*         _routingEvent;
+      Net*                  _net;
+      unsigned int          _state      :  5;
+      unsigned int          _stateCount :  5;
+      unsigned int          _terminals  :  5;
+      unsigned int          _ripupCount : 16;
+      DbU::Unit             _leftMinExtend;
+      DbU::Unit             _rightMinExtend;
+      vector<DbU::Unit>     _attractors;
+      vector<TrackElement*> _perpandiculars;
+      Interval              _perpandicularFree;
     private:
                              DataNegociate     ( const DataNegociate& );
               DataNegociate& operator=         ( const DataNegociate& );
@@ -110,29 +115,32 @@ namespace Kite {
 
 
 // Inline Functions.
-  inline bool              DataNegociate::hasRoutingEvent   () const { return _routingEvent != NULL; }
-  inline RoutingEvent*     DataNegociate::getRoutingEvent   () const { return _routingEvent; }
-  inline TrackElement*     DataNegociate::getTrackSegment   () const { return _trackSegment; }
-  inline Track*            DataNegociate::getTrack          () const { return _trackSegment->getTrack(); }
-  inline TrackSegmentCost& DataNegociate::getCost           ()       { return _cost; }
-  inline unsigned int      DataNegociate::getState          () const { return _state; }
-  inline unsigned int      DataNegociate::getStateCount     () const { return _stateCount; }
-//inline unsigned int      DataNegociate::getZ              () const { return _z; }
-  inline unsigned int      DataNegociate::getRipupCount     () const { return _cost.getRipupCount(); }
-  inline void              DataNegociate::setRoutingEvent   ( RoutingEvent* event ) { _routingEvent = event; }
-  inline void              DataNegociate::setRipupCount     ( unsigned int count ) { _cost.setRipupCount(count); }
-  inline void              DataNegociate::incRipupCount     () { _cost.incRipupCount(); }
-  inline void              DataNegociate::decRipupCount     () { _cost.decRipupCount(); }
-  inline void              DataNegociate::resetRipupCount   () { _cost.resetRipupCount(); }
-  inline void              DataNegociate::resetStateCount   () { _stateCount=0; }
-  inline string            DataNegociate::_getTypeName      () const { return "DataNegociate"; }
+  inline bool                         DataNegociate::hasRoutingEvent      () const { return _routingEvent != NULL; }
+  inline RoutingEvent*                DataNegociate::getRoutingEvent      () const { return _routingEvent; }
+  inline TrackElement*                DataNegociate::getTrackSegment      () const { return _trackSegment; }
+  inline TrackElement*                DataNegociate::getChildSegment      () const { return _childSegment; }
+  inline Track*                       DataNegociate::getTrack             () const { return _trackSegment->getTrack(); }
+  inline unsigned int                 DataNegociate::getState             () const { return _state; }
+  inline unsigned int                 DataNegociate::getTerminals         () const { return _terminals; }
+  inline unsigned int                 DataNegociate::getRipupCount        () const { return _ripupCount; }
+  inline DbU::Unit                    DataNegociate::getLeftMinExtend     () const { return _leftMinExtend; }
+  inline DbU::Unit                    DataNegociate::getRightMinExtend    () const { return _rightMinExtend; }
+  inline Net*                         DataNegociate::getNet               () const { return _net; }
+  inline const vector<TrackElement*>& DataNegociate::getPerpandiculars    () const { return _perpandiculars; }
+  inline const Interval&              DataNegociate::getPerpandicularFree () const { return _perpandicularFree; }
+  inline unsigned int                 DataNegociate::getStateCount        () const { return _stateCount; }
+  inline void                         DataNegociate::resetStateCount      () { _stateCount=0; }
+  inline void                         DataNegociate::setRoutingEvent      ( RoutingEvent* event ) { _routingEvent = event; }
+  inline void                         DataNegociate::setChildSegment      ( TrackElement* child ) { _childSegment = child; }
+  inline void                         DataNegociate::setRipupCount        ( unsigned int count ) { _ripupCount = count; }
+  inline void                         DataNegociate::incRipupCount        () { _ripupCount++; }
+  inline void                         DataNegociate::decRipupCount        () { if (_ripupCount) _ripupCount--; }
+  inline void                         DataNegociate::resetRipupCount      () { _ripupCount = 0; }
+  inline string                       DataNegociate::_getTypeName         () const { return "DataNegociate"; }
 
-  inline void  DataNegociate::invalidate ( bool withPerpandiculars, bool withConstraints )
-  { if (_routingEvent) _routingEvent->invalidate(withPerpandiculars,withConstraints); }
-
-  inline void  DataNegociate::setState ( unsigned int state, bool reset )
+  inline void  DataNegociate::setState ( unsigned int state, unsigned int flags )
   {
-    if ( (_state != state) or reset ) {
+    if ( (_state != state) or (flags & KtResetCount) ) {
     //std::cerr << "Changing state to:" << state << std::endl;
       _state      = state;
       _stateCount = 1;
@@ -141,10 +149,9 @@ namespace Kite {
   }
 
   inline unsigned int  DataNegociate::getStateAndRipupCount () const
-  { return (_state << 4) + getRipupCount(); }
+  { return (_state << 4) + _ripupCount; }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
-
-#endif  // __KITE_DATA_NEGOCIATE__
+#endif  // KITE_DATA_NEGOCIATE_H

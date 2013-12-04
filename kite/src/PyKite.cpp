@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -68,30 +68,30 @@ extern "C" {
   DL_EXPORT(void) initKite () {
     trace << "initKite()" << endl;
 
-    PyKiteEngine_LinkPyType ();
-    PyGraphicKiteEngine_LinkPyType ();
+    PyKiteEngine_LinkPyType();
+    PyGraphicKiteEngine_LinkPyType();
 
-    PYTYPE_READY_SUB ( KiteEngine       , ToolEngine  );
-    PYTYPE_READY_SUB ( GraphicKiteEngine, GraphicTool );
+    PYTYPE_READY_SUB( KiteEngine       , ToolEngine  );
+    PYTYPE_READY_SUB( GraphicKiteEngine, GraphicTool );
 
 
-    PyObject* module = Py_InitModule ( "Kite", PyKite_Methods );
-    if ( module == NULL ) {
+    PyObject* module = Py_InitModule( "Kite", PyKite_Methods );
+    if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Kite module." << endl;
       return;
     }
 
-    Py_INCREF ( &PyTypeKiteEngine );
-    PyModule_AddObject ( module, "KiteEngine", (PyObject*)&PyTypeKiteEngine );
-    Py_INCREF ( &PyTypeGraphicKiteEngine );
-    PyModule_AddObject ( module, "GraphicKiteEngine", (PyObject*)&PyTypeGraphicKiteEngine );
+    Py_INCREF( &PyTypeKiteEngine );
+    PyModule_AddObject( module, "KiteEngine", (PyObject*)&PyTypeKiteEngine );
+    Py_INCREF( &PyTypeGraphicKiteEngine );
+    PyModule_AddObject( module, "GraphicKiteEngine", (PyObject*)&PyTypeGraphicKiteEngine );
 
-    PyObject* dictionnary = PyModule_GetDict(module);
+    PyObject* dictionnary = PyModule_GetDict( module );
     PyObject* constant;
 
-    LoadObjectConstant(dictionnary,BuildGlobalSolution,"BuildGlobalSolution");
-    LoadObjectConstant(dictionnary,LoadGlobalSolution ,"LoadGlobalSolution" );
+    LoadObjectConstant( dictionnary, KtBuildGlobalRouting, "KtBuildGlobalRouting" );
+    LoadObjectConstant( dictionnary, KtLoadGlobalRouting , "KtLoadGlobalRouting"  );
   }
 
   

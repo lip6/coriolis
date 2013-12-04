@@ -2,32 +2,24 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GraphicKiteEngine.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/GraphicKiteEngine.h"                    |
+// +-----------------------------------------------------------------+
 
 
 
-#ifndef  __KITE_GRAPHIC_KITE_ENGINE__
-#define  __KITE_GRAPHIC_KITE_ENGINE__
+#ifndef  KITE_GRAPHIC_KITE_ENGINE_H
+#define  KITE_GRAPHIC_KITE_ENGINE_H
 
-#include  <QObject>
+#include <QObject>
 
 namespace Hurricane {
   class Go;
@@ -37,9 +29,8 @@ namespace Hurricane {
   class CellViewer;
 }
 
-#include  "crlcore/GraphicToolEngine.h"
-
-#include  "kite/KiteEngine.h"
+#include "crlcore/GraphicToolEngine.h"
+#include "kite/KiteEngine.h"
 
 
 namespace Kite {
@@ -55,7 +46,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Kite::GraphicKiteEngine".
-
 
   class GraphicKiteEngine : public GraphicTool {
       Q_OBJECT;
@@ -103,7 +93,7 @@ namespace Kite {
   };
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
-#endif  // __KITE_GRAPHIC_KITE_ENGINE__
+#endif  // KITE_GRAPHIC_KITE_ENGINE_H

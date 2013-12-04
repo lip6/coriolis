@@ -2,39 +2,28 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Tracks.h"                               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/Tracks.h"                               |
+// +-----------------------------------------------------------------+
 
 
+#ifndef  KITE_TRACKS_H
+#define  KITE_TRACKS_H
 
-
-#ifndef  __KITE_TRACKS__
-#define  __KITE_TRACKS__
-
-#include  <string>
-#include  "hurricane/Collection.h"
-#include  "hurricane/Interval.h"
+#include <string>
+#include "hurricane/Collection.h"
+#include "hurricane/Interval.h"
 
 
 namespace Kite {
-
 
   using  std::string;
   using  Hurricane::_TName;
@@ -55,7 +44,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Tracks_Range".
-
 
   class Tracks_Range: public Collection<Track*> {
 
@@ -97,7 +85,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Tracks_Spiral".
-
 
   class Tracks_Spiral : public Collection<Track*> {
 
@@ -147,7 +134,7 @@ namespace Kite {
   };
 
 
-} // End of Katabatic namespace.
+}  // Katabatic namespace.
 
 
-#endif  // __KITE_TRACKS__
+#endif  // KITE_TRACKS_H

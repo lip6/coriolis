@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,27 +12,18 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TrackCost.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-#include  <cstdlib>
-#include  <sstream>
-#include  <iostream>
-
-#include  "kite/Track.h"
-#include  "kite/TrackCost.h"
-#include  "kite/Session.h"
-
-
+#include <cstdlib>
+#include <sstream>
+#include <iostream>
+#include "kite/Track.h"
+#include "kite/TrackCost.h"
+#include "kite/Session.h"
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -45,7 +31,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "TrackCost".
-
 
   TrackCost::TrackCost (       Track*        track
                        , const Interval&     interval
@@ -79,7 +64,7 @@ namespace Kite {
     , _ripupCount     (0)
   {
     TrackElement* neighbor;
-    if ( _begin != Track::NPOS ) {
+    if ( _begin != Track::npos ) {
       neighbor = _track->getSegment(_begin);
       if ( neighbor and (neighbor->getNet() != net) ) {
         DbU::Unit distance = interval.getVMin() - neighbor->getTargetU();
@@ -91,7 +76,7 @@ namespace Kite {
       //   _distanceToFixed += interval.getVMin() - neighbor->getTargetU();
       // }
     }
-    if ( _end != Track::NPOS ) {
+    if ( _end != Track::npos ) {
       neighbor = _track->getSegment(_end);
       if ( neighbor and (neighbor->getNet() != net) ) {
         DbU::Unit distance = neighbor->getSourceU() - interval.getVMax();
@@ -190,6 +175,7 @@ namespace Kite {
     s += "+" + getString(_ripupCount);
     s += ":" + getString((_dataState<<2)+_ripupCount);
     s += " " + string ( (_blockage      )?"b":"-" );
+    s +=       string ( (_blockage      )?"f":"-" );
     s +=       string ( (_hardOverlap   )?"h":"-" );
     s +=       string ( (_overlap       )?"o":"-" );
     s +=       string ( (_overlapGlobal )?"g":"-" );
@@ -210,17 +196,22 @@ namespace Kite {
   Record* TrackCost::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot ( "_track"    ,  _track     ) );
-    record->add ( getSlot ( "_begin"    , &_begin     ) );
-    record->add ( getSlot ( "_end"      , &_end       ) );
-    record->add ( getSlot ( "_interval" , &_interval  ) );
-    record->add ( getSlot ( "_infinite" ,  _infinite  ) );
-    record->add ( getSlot ( "_overlap"  ,  _overlap   ) );
-    record->add ( getSlot ( "_terminals",  _terminals ) );
-    record->add ( getSlot ( "_delta"    , &_delta     ) );
+    record->add( getSlot          ( "_track"          ,  _track           ) );
+    record->add( getSlot          ( "_begin"          , &_begin           ) );
+    record->add( getSlot          ( "_end"            , &_end             ) );
+    record->add( getSlot          ( "_interval"       , &_interval        ) );
+    record->add( getSlot          ( "_infinite"       ,  _infinite        ) );
+    record->add( getSlot          ( "_overlap"        ,  _overlap         ) );
+    record->add( getSlot          ( "_terminals"      ,  _terminals       ) );
+    record->add( DbU::getValueSlot( "_delta"          , &_delta           ) );
+    record->add( DbU::getValueSlot( "_deltaShared"    , &_deltaShared     ) );
+    record->add( DbU::getValueSlot( "_deltaPerpand"   , &_deltaPerpand    ) );
+    record->add( DbU::getValueSlot( "_axisWeight"     , &_axisWeight      ) );
+    record->add( DbU::getValueSlot( "_distanceToFixed", &_distanceToFixed ) );
+    record->add( DbU::getValueSlot( "_longuestOverlap", &_longuestOverlap ) );
                                      
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

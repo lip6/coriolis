@@ -1,47 +1,36 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./RoutingPlane.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/RoutingPlane.h"                         |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_ROUTING_PLANE__
-#define  __KITE_ROUTING_PLANE__
+#ifndef  KITE_ROUTING_PLANE_H
+#define  KITE_ROUTING_PLANE_H
 
-
-#include  "crlcore/RoutingLayerGauge.h"
-#include  "kite/Track.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "kite/Track.h"
 
 
 namespace Kite {
 
-
   using CRL::RoutingLayerGauge;
+  using Katabatic::KbDirectionMask;
   class KiteEngine;
 
 
 // -------------------------------------------------------------------
 // Class  :  "RoutingPlane".
  
-
   class RoutingPlane {
 
     public:
@@ -65,7 +54,7 @@ namespace Kite {
       inline size_t              computeTracksSize  () const;
       inline DbU::Unit           getTrackPosition   ( size_t index ) const;
              Track*              getTrackByIndex    ( size_t index ) const;
-             Track*              getTrackByPosition ( DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
+             Track*              getTrackByPosition ( DbU::Unit axis, unsigned int mode=KtNearest ) const;
              bool                _check             ( unsigned int& overlaps ) const;
              Record*             _getRecord         () const;
              string              _getString         () const;
@@ -82,6 +71,7 @@ namespace Kite {
       KiteEngine*        _kite;
       RoutingLayerGauge* _layerGauge;
       size_t             _depth;
+      unsigned int       _flags;
       DbU::Unit          _axisMin;
       DbU::Unit          _axisMax;
       DbU::Unit          _trackMin;
@@ -104,7 +94,7 @@ namespace Kite {
 
   inline KiteEngine*        RoutingPlane::getKiteEngine    () const { return _kite; }
   inline RoutingLayerGauge* RoutingPlane::getLayerGauge    () const { return _layerGauge; }
-  inline unsigned int       RoutingPlane::getDirection     () const { return _layerGauge->getDirection(); }
+  inline unsigned int       RoutingPlane::getDirection     () const { return _flags & KbDirectionMask; }
   inline size_t             RoutingPlane::getDepth         () const { return _depth; }
   inline DbU::Unit          RoutingPlane::getAxisMin       () const { return _axisMin; }
   inline DbU::Unit          RoutingPlane::getAxisMax       () const { return _axisMax; }
@@ -122,16 +112,16 @@ namespace Kite {
   { return _layerGauge->getTrackPosition(_axisMin,index); }
 
   inline bool  RoutingPlane::isHorizontal () const
-  { return (getDirection() == Constant::Horizontal); }
+  { return (getDirection() & KbHorizontal); }
 
   inline bool  RoutingPlane::isVertical () const
-  { return (getDirection() == Constant::Vertical); }
+  { return (getDirection() & KbVertical); }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::RoutingPlane);
 
 
-#endif  // __KITE_ROUTING_PLANE__
+#endif  // KITE_ROUTING_PLANE_H

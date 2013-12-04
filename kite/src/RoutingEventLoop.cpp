@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,16 +11,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingEventLoop.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-#include  <algorithm>
-#include  "kite/RoutingEvent.h"
-#include  "kite/RoutingEventLoop.h"
+#include <iostream>
+#include <algorithm>
+#include "kite/RoutingEvent.h"
+#include "kite/RoutingEventLoop.h"
 
 
 namespace Kite {
@@ -91,4 +82,4 @@ namespace Kite {
   }
 
 
-}  // End of Kite namespace.
+}  // Kite namespace.

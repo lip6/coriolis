@@ -2,29 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./VerticalTrack.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/VerticalTrack.h"                        |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_VERTICAL_TRACK__
-#define  __KITE_VERTICAL_TRACK__
+#ifndef  KITE_VERTICAL_TRACK_H
+#define  KITE_VERTICAL_TRACK_H
 
 #include  "kite/Track.h"
 
@@ -34,7 +26,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "VerticalTrack".
- 
 
   class VerticalTrack : public Track {
 
@@ -59,7 +50,7 @@ namespace Kite {
   };
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
-#endif  // __KITE_VERTICAL_TRACK__
+#endif  // KITE_VERTICAL_TRACK_H

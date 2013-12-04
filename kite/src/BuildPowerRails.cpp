@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,27 +14,26 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <map>
-#include  <list>
-
-#include  "hurricane/Error.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/RegularLayer.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/NetExternalComponents.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/Plug.h"
-#include  "hurricane/Path.h"
-#include  "hurricane/Query.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/TrackFixedSegment.h"
-#include  "kite/Track.h"
-#include  "kite/KiteEngine.h"
+#include <map>
+#include <list>
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/NetExternalComponents.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Path.h"
+#include "hurricane/Query.h"
+#include "crlcore/AllianceFramework.h"
+#include "kite/RoutingPlane.h"
+#include "kite/TrackFixedSegment.h"
+#include "kite/Track.h"
+#include "kite/KiteEngine.h"
 
 
 namespace {
@@ -43,6 +41,8 @@ namespace {
   using namespace std;
   using Hurricane::tab;
   using Hurricane::inltrace;
+  using Hurricane::ltracein;
+  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
   using Hurricane::Error;
@@ -71,7 +71,6 @@ namespace {
 
 // -------------------------------------------------------------------
 // Class  :  "::GlobalNetTable".
-
 
   class GlobalNetTable {
     public:
@@ -208,7 +207,7 @@ namespace {
 
     if ( _vddi == NULL ) cerr << Error("Missing <vddi>/<vdd> net at top level." ) << endl;
     if ( _vssi == NULL ) cerr << Error("Missing <vssi>/<vss> net at top level." ) << endl;
-    if ( _ckc  == NULL ) cerr << Warning("No <ck> net at top level." ) << endl;
+    if ( _ckc  == NULL ) cparanoid << Warning("No <ck> net at top level." ) << endl;
   }
 
 
@@ -257,23 +256,23 @@ namespace {
 // -------------------------------------------------------------------
 // Class  :  "::PowerRailsPlanes".
 
-
   class PowerRailsPlanes {
-    private:
+    public:
       class Rails;
       class Plane;
 
       class Rail {
         public:
-                                      Rail            ( Rails*, DbU::Unit axis, DbU::Unit width );
-          inline DbU::Unit            getAxis         () const;
-          inline DbU::Unit            getWidth        () const;
-          inline Rails*               getRails        () const;
-          inline RoutingPlane*        getRoutingPlane () const;
-          inline Constant::Direction  getDirection    () const;
-          inline Net*                 getNet          () const;
-                 void                 merge           ( DbU::Unit source, DbU::Unit target );
-                 void                 doLayout        ( const Layer* );
+                               Rail              ( Rails*, DbU::Unit axis, DbU::Unit width );
+          inline DbU::Unit     getAxis           () const;
+          inline DbU::Unit     getWidth          () const;
+          inline Rails*        getRails          () const;
+          inline RoutingPlane* getRoutingPlane   () const;
+          inline unsigned int  getDirection      () const;
+          inline Net*          getNet            () const;
+                 void          merge             ( DbU::Unit source, DbU::Unit target );
+                 void          doLayout          ( const Layer* );
+                 string        _getString        () const;
         private:
           Rails*         _rails;
           DbU::Unit      _axis;
@@ -297,41 +296,47 @@ namespace {
           DbU::Unit  _width;
       };
 
-    private:
+    public:
       class Rails {
         public:
-                                      Rails           ( Plane*, Constant::Direction, Net* );
-                                     ~Rails           ();
-          inline Plane*               getPlane        ();
-          inline RoutingPlane*        getRoutingPlane ();
-          inline Constant::Direction  getDirection    () const;
-          inline Net*                 getNet          () const;
-                 void                 merge           ( const Box& );
-                 void                 doLayout        ( const Layer* );
+                               Rails             ( Plane*, unsigned int direction, Net* );
+                              ~Rails             ();
+          inline Plane*        getPlane          ();
+          inline RoutingPlane* getRoutingPlane   ();
+          inline unsigned int  getDirection      () const;
+          inline Net*          getNet            () const;
+                 void          merge             ( const Box& );
+                 void          doLayout          ( const Layer* );
         private:
-          Plane*               _plane;
-          Constant::Direction  _direction;
-          Net*                 _net;
-          vector<Rail*>        _rails;
+          Plane*         _plane;
+          unsigned int   _direction;
+          Net*           _net;
+          vector<Rail*>  _rails;
       };
 
-    private:
+    public:
       class Plane {
         public:
-                                      Plane           ( const Layer*, RoutingPlane* );
-                                     ~Plane           ();
-          inline const Layer*         getLayer        () const;
-          inline RoutingPlane*        getRoutingPlane ();
-          inline Constant::Direction  getDirection    () const;
-                 void                 merge           ( const Box&, Net* );
-                 void                 doLayout        ();
+          typedef  map<Net*,Rails*,Net::CompareById>  RailsMap;
+        public:
+                               Plane             ( const Layer*, RoutingPlane* );
+                              ~Plane             ();
+          inline const Layer*  getLayer          () const;
+          inline RoutingPlane* getRoutingPlane   ();
+          inline unsigned int  getDirection      () const;
+          inline unsigned int  getPowerDirection () const;
+                 void          merge             ( const Box&, Net* );
+                 void          doLayout          ();
         private:
           const Layer*         _layer;
           RoutingPlane*        _routingPlane;
-          map<Net*,Rails*>     _horizontalRails;
-          map<Net*,Rails*>     _verticalRails;
+          RailsMap             _horizontalRails;
+          RailsMap             _verticalRails;
+          unsigned int         _powerDirection;
       };
 
+    public:
+      typedef  map<const BasicLayer*,Plane*,BasicLayer::CompareByMask>  PlanesMap;
     public:
                     PowerRailsPlanes    ( KiteEngine* );
                    ~PowerRailsPlanes    ();
@@ -342,11 +347,17 @@ namespace {
              void   merge               ( const Box&, Net* );
              void   doLayout            ();
     private:
-      KiteEngine*                    _kite;
-      GlobalNetTable                 _globalNets;
-      map<const BasicLayer*,Plane*>  _planes;
-      Plane*                         _activePlane;
+      KiteEngine*     _kite;
+      GlobalNetTable  _globalNets;
+      PlanesMap       _planes;
+      Plane*          _activePlane;
   };
+
+
+} // Anonymous namespace.
+
+
+namespace {
 
 
   PowerRailsPlanes::Rail::Rail ( Rails* rails, DbU::Unit axis, DbU::Unit width )
@@ -355,60 +366,85 @@ namespace {
     , _width (width)
     , _chunks()
   {
-    ltrace(300) << "    new Rail " << (void*)this
+    ltrace(300) << "    new Rail "
                 << " @" << DbU::getValueString(axis)
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << getRails()->getNet()
-                << " " << getString(getDirection()) << endl;
+                << " " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")<< endl;
   }
 
-  inline DbU::Unit                PowerRailsPlanes::Rail::getAxis         () const { return _axis; }
-  inline DbU::Unit                PowerRailsPlanes::Rail::getWidth        () const { return _width; }
-  inline PowerRailsPlanes::Rails* PowerRailsPlanes::Rail::getRails        () const { return _rails; }
-  inline RoutingPlane*            PowerRailsPlanes::Rail::getRoutingPlane () const { return _rails->getRoutingPlane(); }
-  inline Constant::Direction      PowerRailsPlanes::Rail::getDirection    () const { return _rails->getDirection(); }
-  inline Net*                     PowerRailsPlanes::Rail::getNet          () const { return _rails->getNet(); }
+  inline DbU::Unit                PowerRailsPlanes::Rail::getAxis           () const { return _axis; }
+  inline DbU::Unit                PowerRailsPlanes::Rail::getWidth          () const { return _width; }
+  inline PowerRailsPlanes::Rails* PowerRailsPlanes::Rail::getRails          () const { return _rails; }
+  inline RoutingPlane*            PowerRailsPlanes::Rail::getRoutingPlane   () const { return _rails->getRoutingPlane(); }
+  inline unsigned int             PowerRailsPlanes::Rail::getDirection      () const { return _rails->getDirection(); }
+  inline Net*                     PowerRailsPlanes::Rail::getNet            () const { return _rails->getNet(); }
 
 
   void  PowerRailsPlanes::Rail::merge ( DbU::Unit source, DbU::Unit target )
   {
-    Interval chunkMerge ( source, target );
-    ltrace(300) << "    Rail::merge() " << chunkMerge << endl;
+    Interval chunkToMerge ( source, target );
+    ltrace(300) << "    Rail::merge() "
+                << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
+                << " " << chunkToMerge << endl;
+    ltrace(300) << "    | " << _getString() << endl;
 
     list<Interval>::iterator imerge = _chunks.end();
     list<Interval>::iterator ichunk = _chunks.begin();
 
     while ( ichunk != _chunks.end() ) {
-      if ( chunkMerge.getVMax() < (*ichunk).getVMin() ) {
-        _chunks.insert ( ichunk, chunkMerge );
-        break;
+      if (imerge == _chunks.end()) {
+        if (chunkToMerge.getVMax() < (*ichunk).getVMin()) {
+          ltrace(300) << "    | Insert before " << *ichunk << endl;
+          imerge = _chunks.insert( ichunk, chunkToMerge );
+          break;
+        }
+
+        if (chunkToMerge.intersect(*ichunk)) {
+          ltrace(300) << "    | Merge with " << *ichunk << endl;
+          imerge = ichunk;
+          (*imerge).merge( chunkToMerge );
+        }
+      } else {
+        if (chunkToMerge.getVMax() >= (*ichunk).getVMin()) {
+          (*imerge).merge( *ichunk );
+          ltrace(300) << "    | Absorb (erase) " << *ichunk << endl;
+          ichunk = _chunks.erase( ichunk );
+          continue;
+        } else
+          break;
       }
 
-      if ( chunkMerge.intersect(*ichunk) ) {
-        if ( imerge == _chunks.end() ) {
-          imerge = ichunk;
-          (*imerge).merge ( chunkMerge );
-        } else {
-          (*imerge).merge ( *ichunk );
-          ichunk = _chunks.erase ( ichunk );
-          continue;
-        }
-      }
-      ichunk++;
+      // if (chunkToMerge.intersect(*ichunk)) {
+      //   if (imerge == _chunks.end()) {
+      //     ltrace(300) << "    | Merge with " << *ichunk << endl;
+      //     imerge = ichunk;
+      //     (*imerge).merge( chunkToMerge );
+      //   } else {
+      //     (*imerge).merge( *ichunk );
+      //     ltrace(300) << "    | Absorb (erase) " << *ichunk << endl;
+      //     ichunk = _chunks.erase( ichunk );
+      //     continue;
+      //   }
+      // }
+      ++ichunk;
     }
 
-    if ( imerge == _chunks.end() ) {
-      _chunks.insert ( ichunk, chunkMerge );
-      ltrace(300) << "    | Add on " << DbU::getValueString(_axis) << " " << chunkMerge << endl;
+    if (imerge == _chunks.end()) {
+      _chunks.insert( ichunk, chunkToMerge );
+      ltrace(300) << "    | Insert at end " << DbU::getValueString(_axis) << " " << chunkToMerge << endl;
+      ltrace(300) << "    | " << _getString() << endl;
     }
   }
 
 
   void  PowerRailsPlanes::Rail::doLayout ( const Layer* layer )
   {
-    ltrace(300) << "Doing layout of rail: " << (void*)this
+    ltrace(300) << "Doing layout of rail: "
                 << " " << layer->getName()
-                << " " << getString(getDirection()) << " @" << DbU::getValueString(_axis) << endl;
+                << " " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
+                << " @" << DbU::getValueString(_axis) << endl;
+    ltrace(300) << _getString() << endl;
 
     Net*          net       = getNet();
     RoutingPlane* plane     = getRoutingPlane();
@@ -418,18 +454,33 @@ namespace {
                               - DbU::lambda(0.1);
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
-    unsigned int  type      = plane->getLayerGauge()->getType();
+  //unsigned int  type      = plane->getLayerGauge()->getType();
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
-    if ( type == Constant::PinOnly ) {
-      ltrace(300) << "  Layer is PinOnly." << endl;
-      return;
-    }
+    // if ( type == Constant::PinOnly ) {
+    //   ltrace(300) << "  Layer is PinOnly." << endl;
+    //   return;
+    // }
 
-    if ( getDirection() == Constant::Horizontal ) {
-      list<Interval>::iterator ichunk = _chunks.begin();
-      for ( ; ichunk != _chunks.end() ; ichunk++ ) {
+    if ( getDirection() == KbHorizontal ) {
+      list<Interval>::iterator ichunk     = _chunks.begin();
+      list<Interval>::iterator ichunknext = ichunk;
+      ++ichunknext;
+
+      for ( ; ichunk != _chunks.end() ; ++ichunk, ++ichunknext ) {
+
+        if (ichunknext != _chunks.end()) {
+          if ((*ichunk).intersect(*ichunknext))
+            cerr << Error( "Overlaping consecutive chunks in %s %s Rail @%s:\n"
+                           "  %s"
+                         , getString(layer->getName()).c_str()
+                         , ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
+                         , DbU::getValueString(_axis).c_str()
+                         , _getString().c_str()
+                         ) << endl;
+        }
+        
         ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
@@ -447,7 +498,7 @@ namespace {
         axisMax = _axis + _width/2 + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
+        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           ltrace(300) << "  Insert in " << track << "+" << element << endl;
         }
@@ -472,12 +523,29 @@ namespace {
         axisMax = _axis + _width/2 + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
+        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          ltrace(300) << "  Insert in " << track << "+" << (void*)element << ":" << element << endl;
+          ltrace(300) << "  Insert in " << track << "+" << element << endl;
         }
       }
     }
+  }
+
+
+  string   PowerRailsPlanes::Rail::_getString () const
+  {
+    ostringstream os;
+
+    os << "<Rail " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
+       << " @" << DbU::getValueString(_axis) << " ";
+    list<Interval>::const_iterator ichunk = _chunks.begin();
+    for ( ; ichunk != _chunks.end() ; ++ichunk ) {
+      if (ichunk != _chunks.begin()) os << " ";
+      os << "[" << DbU::getValueString((*ichunk).getVMin())
+         << " " << DbU::getValueString((*ichunk).getVMax()) << "]";
+    }
+    os << ">";
+    return os.str();
   }
 
 
@@ -499,16 +567,16 @@ namespace {
   { return (rail->getAxis() == _axis) and (rail->getWidth() == _width); }
 
 
-  PowerRailsPlanes::Rails::Rails ( PowerRailsPlanes::Plane* plane, Constant::Direction direction, Net* net )
-    : _plane    (plane)
-    , _direction(direction)
-    , _net      (net)
-    , _rails    ()
+  PowerRailsPlanes::Rails::Rails ( PowerRailsPlanes::Plane* plane , unsigned int direction , Net* net )
+    : _plane         (plane)
+    , _direction     (direction)
+    , _net           (net)
+    , _rails         ()
   {
     ltrace(300) << "  new Rails @"
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << net
-                << " " << getString(getDirection()) << endl;
+                << " " << ((getDirection()==KbHorizontal) ? "Horizontal": "Vertical") << endl;
   }
 
 
@@ -521,10 +589,10 @@ namespace {
   }
 
 
-  inline PowerRailsPlanes::Plane* PowerRailsPlanes::Rails::getPlane        () { return _plane; }
-  inline RoutingPlane*            PowerRailsPlanes::Rails::getRoutingPlane () { return getPlane()->getRoutingPlane(); }
-  inline Constant::Direction      PowerRailsPlanes::Rails::getDirection    () const { return _direction; }
-  inline Net*                     PowerRailsPlanes::Rails::getNet          () const { return _net; }
+  inline PowerRailsPlanes::Plane* PowerRailsPlanes::Rails::getPlane          () { return _plane; }
+  inline RoutingPlane*            PowerRailsPlanes::Rails::getRoutingPlane   () { return getPlane()->getRoutingPlane(); }
+  inline unsigned int             PowerRailsPlanes::Rails::getDirection      () const { return _direction; }
+  inline Net*                     PowerRailsPlanes::Rails::getNet            () const { return _net; }
 
 
   void   PowerRailsPlanes::Rails::merge ( const Box& bb )
@@ -534,7 +602,7 @@ namespace {
     DbU::Unit  sourceU;
     DbU::Unit  targetU;
 
-    if ( getDirection() == Constant::Horizontal ) {
+    if (getDirection() == KbHorizontal) {
       axis    = bb.getYCenter();
       width   = bb.getHeight();
       sourceU = bb.getXMin();
@@ -564,7 +632,7 @@ namespace {
   void  PowerRailsPlanes::Rails::doLayout ( const Layer* layer )
   {
     ltrace(300) << "Doing layout of rails: " << layer->getName()
-                << " " << getString(_direction)
+                << " " << ((_direction==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " " << _net->getName() << endl;
 
     for ( size_t irail=0 ; irail<_rails.size() ; irail++ )
@@ -577,14 +645,18 @@ namespace {
     , _routingPlane         (routingPlane)
     , _horizontalRails      ()
     , _verticalRails        ()
+    , _powerDirection       (routingPlane->getDirection())
   {
     ltrace(300) << "New Plane " << _layer->getName() << " " << _routingPlane << endl;
+
+  // Hard-coded SxLib gauge.
+    if (_routingPlane->getDepth() == 0) _powerDirection = KbHorizontal;
   }
 
 
   PowerRailsPlanes::Plane::~Plane ()
   {
-    map<Net*,Rails*>::iterator irail = _horizontalRails.begin();
+    RailsMap::iterator irail = _horizontalRails.begin();
     for ( ; irail != _horizontalRails.end() ; ++irail ) {
       delete (*irail).second;
     }
@@ -595,30 +667,35 @@ namespace {
   }
 
 
-  inline const Layer*         PowerRailsPlanes::Plane::getLayer        () const { return _layer; }
-  inline RoutingPlane*        PowerRailsPlanes::Plane::getRoutingPlane () { return _routingPlane; }
-  inline Constant::Direction  PowerRailsPlanes::Plane::getDirection    () const { return (Constant::Direction)_routingPlane->getDirection(); }
+  inline const Layer*  PowerRailsPlanes::Plane::getLayer          () const { return _layer; }
+  inline RoutingPlane* PowerRailsPlanes::Plane::getRoutingPlane   () { return _routingPlane; }
+  inline unsigned int  PowerRailsPlanes::Plane::getDirection      () const { return _routingPlane->getDirection(); }
+  inline unsigned int  PowerRailsPlanes::Plane::getPowerDirection () const { return _powerDirection; }
 
 
   void  PowerRailsPlanes::Plane::merge ( const Box& bb, Net* net )
   {
     Rails* rails = NULL;
 
-    ltrace(300) << "    Plane::merge() " << net->getName() << " " << (void*)net << endl;
+    ltrace(300) << "    Plane::merge() " << net->getName() << " " << bb << endl;
 
-    if ( getDirection() == Constant::Horizontal ) {
-      map<Net*,Rails*>::iterator irails = _horizontalRails.find(net);
+    unsigned int direction = getDirection();
+    if ( (net->getType() == Net::Type::POWER) or (net->getType() == Net::Type::GROUND) )
+      direction = getPowerDirection();
+
+    if (direction == KbHorizontal) {
+      RailsMap::iterator irails = _horizontalRails.find(net);
       if ( irails == _horizontalRails.end() ) {
-        rails = new Rails(this,Constant::Horizontal,net);
+        rails = new Rails(this,KbHorizontal,net);
         _horizontalRails.insert ( make_pair(net,rails) );
       } else
         rails = (*irails).second;
 
       rails->merge ( bb );
     } else {
-      map<Net*,Rails*>::iterator irails = _verticalRails.find(net);
+      RailsMap::iterator irails = _verticalRails.find(net);
       if ( irails == _verticalRails.end() ) {
-        rails = new Rails(this,Constant::Vertical,net);
+        rails = new Rails(this,KbVertical,net);
         _verticalRails.insert ( make_pair(net,rails) );
       } else
         rails = (*irails).second;
@@ -633,7 +710,7 @@ namespace {
   {
     ltrace(300) << "Doing layout of plane: " << _layer->getName() << endl;
 
-    map<Net*,Rails*>::iterator irails = _horizontalRails.begin();
+    RailsMap::iterator irails = _horizontalRails.begin();
     for ( ; irails != _horizontalRails.end() ; ++irails ) {
       (*irails).second->doLayout(_layer);
     }
@@ -650,7 +727,7 @@ namespace {
     , _planes     ()
     , _activePlane(NULL)
   {
-    _globalNets.setBlockage ( kite->getBlockageNet() );
+    _globalNets.setBlockage( kite->getBlockageNet() );
 
     Technology*   technology = DataBase::getDB()->getTechnology();
     RoutingGauge* rg         = _kite->getConfiguration()->getRoutingGauge();
@@ -668,14 +745,12 @@ namespace {
       RoutingPlane* rp = _kite->getRoutingPlaneByIndex(lg->getDepth());
       ltrace(300) << "Plane:"  << rp << endl;
 
-      _planes.insert ( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
+      _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
 
       const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
-      if ( not blockageLayer ) continue;
+      if (not blockageLayer) continue;
 
-      _planes.insert ( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
-
-      ltrace(300) << "OK" << endl;
+      _planes.insert( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
     }
   }
 
@@ -699,7 +774,7 @@ namespace {
 
   bool  PowerRailsPlanes::setActivePlane ( const BasicLayer* layer )
   {
-    map<const BasicLayer*,Plane*>::iterator iplane = _planes.find(layer);
+    PlanesMap::iterator iplane = _planes.find(layer);
     if ( iplane == _planes.end() ) return false;
 
     _activePlane = iplane->second;
@@ -727,7 +802,7 @@ namespace {
 
   void  PowerRailsPlanes::doLayout ()
   {
-    map<const BasicLayer*,Plane*>::iterator iplane = _planes.begin();
+    PlanesMap::iterator iplane = _planes.begin();
     for ( ; iplane != _planes.end() ; iplane++ )
       iplane->second->doLayout ();
   }
@@ -736,7 +811,6 @@ namespace {
 
 // -------------------------------------------------------------------
 // Class  :  "::QueryPowerRails".
-
 
   class QueryPowerRails : public Query {
     public:
@@ -811,8 +885,16 @@ namespace {
 
   void  QueryPowerRails::doQuery ()
   {
-    if ( not _powerRailsPlanes.getActivePlane() ) return;
-    Query::doQuery ();
+    PowerRailsPlanes::Plane* activePlane = _powerRailsPlanes.getActivePlane();
+
+    if (not activePlane) return;
+    // if (activePlane->getRoutingPlane()->getLayerGauge()->getType() == Constant::PinOnly) {
+    //   cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " - Skipped (PinOnly layer)." << endl;
+    //   return;
+    // }
+
+    cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " ..." << endl;
+    Query::doQuery();
 
   }
 
@@ -827,6 +909,8 @@ namespace {
 
   void  QueryPowerRails::goCallback ( Go* go )
   {
+  //ltrace(80) << "QueryPowerRails::goCallback() " << go->getId() << ":" << go
+  //           << " " << getPath().getName() << endl;
     addToPowerRail ( go, getBasicLayer(), getArea(), getTransformation() );
   }
 
@@ -961,10 +1045,10 @@ namespace Kite {
   {
     cmess1 << "  o  Building power rails." << endl;
 
-    if ( not _blockageNet ) {
+    if (not _blockageNet) {
       _blockageNet = getCell()->getNet("blockagenet");
-      if ( not _blockageNet )
-        _blockageNet = Net::create ( getCell(), "blockagenet" );
+      if (not _blockageNet)
+        _blockageNet = Net::create( getCell(), "blockagenet" );
     }
 
     QueryPowerRails query ( this );
@@ -974,21 +1058,18 @@ namespace Kite {
       if (   (iLayer->getMaterial() != BasicLayer::Material::metal)
          and (iLayer->getMaterial() != BasicLayer::Material::blockage) )
         continue;
-      if ( _configuration->isGMetal(*iLayer) ) continue;
+      if (_configuration->isGMetal(*iLayer)) continue;
+      if (not query.hasBasicLayer(*iLayer)) continue;
 
-      cmess1 << "     - PowerRails in " << iLayer->getName() << " ..." << endl;
-
-      if ( not query.hasBasicLayer(*iLayer) ) continue;
-
-      query.setBasicLayer ( *iLayer );
-      query.doQuery       ();
+      query.setBasicLayer( *iLayer );
+      query.doQuery      ();
     }
-    query.ringAddToPowerRails ();
-    query.doLayout ();
+    query.ringAddToPowerRails();
+    query.doLayout();
     cmess1 << "     - " << query.getGoMatchCount() << " power rails elements found." << endl;
 
     Session::revalidate ();
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

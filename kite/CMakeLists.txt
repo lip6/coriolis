@@ -1,3 +1,4 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<kite>" -*-
 
  project(KITE)
 
@@ -40,6 +41,6 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
- if(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
+ if(BUILD_DOC AND DOXYGEN_FOUND)
    add_subdirectory(doc)
- endif(BUILD_DOC AND DOXYGEN_FOUND AND IS_DIRECTORY doc)
+ endif(BUILD_DOC AND DOXYGEN_FOUND)

@@ -2,31 +2,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Track.h"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/Track.h"                                |
+// +-----------------------------------------------------------------+
 
 
-
-
-#ifndef  __KITE_TRACK__
-#define  __KITE_TRACK__
+#ifndef  KITE_TRACK_H
+#define  KITE_TRACK_H
 
 #include  "hurricane/Point.h"
 namespace Hurricane {
@@ -39,7 +29,6 @@ namespace Hurricane {
 
 namespace Kite {
 
-
   using Hurricane::Point;
   using Hurricane::Layer;
 
@@ -50,43 +39,37 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Track".
- 
 
   class Track {
 
     public:
-      enum IndexState { MinTrackMin        = (1<<0)
-                      , MinSegmentMin      = (1<<1)
-                      , MinSegmentMax      = (1<<2)
-                      , MaxTrackMax        = (1<<3)
-                      , MaxSegmentMin      = (1<<4)
-                      , MaxNextSegmentMin  = (1<<5)
-                      , MaxSegmentMax      = (1<<6)
-                      , BeforeFirst        = MinTrackMin        | MaxSegmentMin
-                      , Inside             = MinSegmentMin      | MaxSegmentMax
-                      , Outside            = MinSegmentMax      | MaxNextSegmentMin
-                      , AfterLast          = MinSegmentMax      | MaxTrackMax
-                      , EmptyTrack         = MinTrackMin        | MaxTrackMax
-                      , MinMask            = MinTrackMin
-                                           | MinSegmentMin
-                                           | MinSegmentMax
-                      , MaxMask            = MaxTrackMax
-                                           | MaxSegmentMin
-                                           | MaxNextSegmentMin
-                                           | MaxSegmentMax
+      enum IndexState { BeginIsTrackMin     = 0x00000001
+                      , BeginIsSegmentMin   = 0x00000002
+                      , BeginIsSegmentMax   = 0x00000004
+                      , EndIsTrackMax       = 0x00000008
+                      , EndIsSegmentMin     = 0x00000010
+                      , EndIsNextSegmentMin = 0x00000020
+                      , EndIsSegmentMax     = 0x00000040
+                      , BeforeFirstElement  = BeginIsTrackMin  |EndIsSegmentMin
+                      , InsideElement       = BeginIsSegmentMin|EndIsSegmentMax
+                      , OutsideElement      = BeginIsSegmentMax|EndIsNextSegmentMin
+                      , AfterLastElement    = BeginIsSegmentMax|EndIsTrackMax
+                      , EmptyTrack          = BeginIsTrackMin  |EndIsTrackMax
+                      , BeginMask           = BeginIsTrackMin  |BeginIsSegmentMin|BeginIsSegmentMax
+                      , EndMask             = EndIsTrackMax    |EndIsSegmentMin  |EndIsNextSegmentMin|EndIsSegmentMax
                       };
 
     public:
     // Static Attributes.
-      static const size_t  NPOS;
+      static const size_t  npos;
 
     public:
               void           destroy             ();
-      inline  RoutingPlane*  getRoutingPlane     () const;
-              KiteEngine*    getKiteEngine       () const;
       virtual bool           isHorizontal        () const = 0;
       virtual bool           isVertical          () const = 0;
       inline  bool           isLocalAssigned     () const;
+      inline  RoutingPlane*  getRoutingPlane     () const;
+              KiteEngine*    getKiteEngine       () const;
       virtual unsigned int   getDirection        () const = 0;
       inline  size_t         getIndex            () const;
               unsigned int   getDepth            () const;
@@ -95,38 +78,38 @@ namespace Kite {
       inline  DbU::Unit      getAxis             () const;
       inline  DbU::Unit      getMin              () const;
       inline  DbU::Unit      getMax              () const;
-              Track*         getNext             () const;
-              Track*         getPrevious         () const;
+              Track*         getNextTrack        () const;
+              Track*         getPreviousTrack    () const;
       inline  size_t         getSize             () const;
+      virtual Point          getPosition         ( DbU::Unit coordinate ) const = 0;
+              TrackElement*  getSegment          ( size_t  index ) const;
+              TrackElement*  getSegment          ( DbU::Unit position ) const;
               TrackElement*  getNext             ( size_t& index, Net* ) const;
               TrackElement*  getPrevious         ( size_t& index, Net* ) const;
               TrackElement*  getNextFixed        ( size_t& index ) const;
-              TrackElement*  getSegment          ( size_t  index ) const;
-              TrackElement*  getSegment          ( DbU::Unit position ) const;
-              void           getIBounds          ( DbU::Unit position, size_t& begin, size_t& end, unsigned int& state ) const;
+              size_t         find                ( const TrackElement* ) const;
+              DbU::Unit      getSourcePosition   ( vector<TrackElement*>::iterator ) const;
+              DbU::Unit      getMinimalPosition  ( size_t index, unsigned int state ) const;
+              DbU::Unit      getMaximalPosition  ( size_t index, unsigned int state ) const;
+              Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
+              Interval       getOccupiedInterval ( size_t& begin ) const;
+              Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net* ) const;
+              void           getBeginIndex       ( DbU::Unit position, size_t& begin, unsigned int& state ) const;
               void           getOverlapBounds    ( Interval, size_t& begin, size_t& end ) const;
               TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end, unsigned int flags ) const;
               TrackCost      getOverlapCost      ( Interval, Net*, unsigned int flags ) const;
               TrackCost      getOverlapCost      ( TrackElement*, unsigned int flags ) const;
               void           getTerminalWeight   ( Interval, Net*, size_t& count, unsigned int& weight ) const;
               DbU::Unit      getSourcePosition   ( size_t index ) const;
-              DbU::Unit      getSourcePosition   ( vector<TrackElement*>::iterator ) const;
-              DbU::Unit      getMinimalPosition  ( size_t index, unsigned int state ) const;
-              DbU::Unit      getMaximalPosition  ( size_t index, unsigned int state ) const;
-      virtual Point          getPosition         ( DbU::Unit coordinate ) const = 0;
-              size_t         find                ( const TrackElement* ) const;
-              Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
-              Interval       expandUsedInterval  ( size_t& begin, size_t& end ) const;
-              Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net* ) const;
+              bool           check               ( unsigned int& overlaps, const char* message=NULL ) const;
               unsigned int   checkOverlap        ( unsigned int& overlaps ) const;
      inline   void           setLocalAssigned    ( bool );
-              void           forceSort           ();
+              void           invalidate          ();
               void           insert              ( TrackElement* );
               void           insert              ( TrackMarker* );
               void           setSegment          ( TrackElement*, size_t );
-              size_t         pack                ();
-              void           sort                ();
-              bool           _check              ( unsigned int& overlaps, const char* message=NULL ) const;
+              size_t         doRemoval           ();
+              void           doReorder           ();
       virtual Record*        _getRecord          () const;
       virtual string         _getString          () const;
       virtual string         _getTypeName        () const = 0;
@@ -193,11 +176,11 @@ namespace Kite {
 
   inline bool Track::SegmentCompare::operator() ( const TrackElement* lhs, const TrackElement* rhs )
   {
-    if ( lhs->getSourceU() < rhs->getSourceU() )
+    if (lhs->getSourceU() < rhs->getSourceU())
       return true;
     else {
-      if (    ( lhs->getSourceU() == rhs->getSourceU() )
-           && ( lhs->getTargetU() >  rhs->getTargetU() ) )
+      if (   (lhs->getSourceU() == rhs->getSourceU())
+         and (lhs->getTargetU() >  rhs->getTargetU()) )
         return true;
     }
     return false;
@@ -215,23 +198,22 @@ namespace Kite {
 
   inline unsigned int  Track::setMinimalFlags ( unsigned int& state, unsigned int flags ) const
   {
-    state &=         ~MinMask;
-    state |= (flags & MinMask);
+    state &=         ~BeginMask;
+    state |= (flags & BeginMask);
     return state;
   }
 
   inline unsigned int  Track::setMaximalFlags ( unsigned int& state, unsigned int flags ) const
   {
-    state &=         ~MaxMask;
-    state |= (flags & MaxMask);
+    state &=         ~EndMask;
+    state |= (flags & EndMask);
     return state;
   }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::Track);
 
-
-#endif  // __KITE_TRACK__
+#endif  // KITE_TRACK_H

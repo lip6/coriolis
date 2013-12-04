@@ -1,42 +1,31 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./RoutingEvent.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :       "./RoutingEventQueue.cpp"                  |
+// +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-#include  <iomanip>
-#include  <functional>
-#include  <algorithm>
-
-#include  "hurricane/Bug.h"
-#include  "kite/DataNegociate.h"
-#include  "kite/TrackElement.h"
-#include  "kite/RoutingEventQueue.h"
-#include  "kite/Session.h"
+#include <iostream>
+#include <iomanip>
+#include <functional>
+#include <algorithm>
+#include "hurricane/Bug.h"
+#include "kite/DataNegociate.h"
+#include "kite/TrackSegment.h"
+#include "kite/RoutingEventQueue.h"
+#include "kite/Session.h"
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -72,37 +61,33 @@ namespace Kite {
   void  RoutingEventQueue::load ( const vector<TrackElement*>& segments )
   {
     for ( size_t i=0 ; i<segments.size() ; i++ ) {
-      if ( segments[i]->getDataNegociate()->getRoutingEvent() ) {
+      if (segments[i]->getDataNegociate()->getRoutingEvent()) {
         cinfo << "[INFO] Already have a RoutingEvent - " << segments[i] << endl;
         continue;
       }
-      if ( segments[i]->getTrack() ) {
+      if (segments[i]->getTrack()) {
         cinfo << "[INFO] Already in Track - " << segments[i] << endl;
         continue;
       }
       RoutingEvent* event = RoutingEvent::create(segments[i]);
-      event->updateKey ();
-      _events.insert ( event );
+      event->updateKey();
+      _events.insert( event );
     }
   }
 
 
   void  RoutingEventQueue::add ( TrackElement* segment, unsigned int level )
   {
-    if ( segment->getTrack() ) {
+    if (segment->getTrack()) {
       cinfo << "[INFO] Already in Track " << (void*)segment->base()->base()
             << ":" << segment << endl;
       return;
     }
 
     RoutingEvent* event = RoutingEvent::create(segment);
-    event->setEventLevel ( level );
-    push ( event );
+    event->setEventLevel( level );
+    push( event );
   }
-
-
-  void  RoutingEventQueue::push ( RoutingEvent* event )
-  { _pushRequests.insert ( event ); }
 
 
   void  RoutingEventQueue::commit ()
@@ -113,30 +98,24 @@ namespace Kite {
     size_t addeds = _pushRequests.size();
     size_t before = _events.size();
 
-    set<RoutingEvent*>::iterator ipushEvent = _pushRequests.begin();
+    RoutingEventSet::iterator ipushEvent = _pushRequests.begin();
     for ( ; ipushEvent != _pushRequests.end() ; ipushEvent++ ) {
-      (*ipushEvent)->updateKey ();
+      (*ipushEvent)->updateKey();
 
-      _topEventLevel = max ( _topEventLevel, (*ipushEvent)->getEventLevel() );
-      _events.insert ( (*ipushEvent) );
+      _topEventLevel = max( _topEventLevel, (*ipushEvent)->getEventLevel() );
+      _events.insert( (*ipushEvent) );
 
       ltrace(200) << "| " << (*ipushEvent) << endl;
     }
-    _pushRequests.clear ();
+    _pushRequests.clear();
 #if defined(CHECK_ROUTINGEVENT_QUEUE)
-    _keyCheck ();
+    _keyCheck();
 #endif
     size_t after = _events.size();
-    if ( after-before != addeds ) {
-      cerr << Bug("RoutingEventQueue::commit(): less than %d events pusheds (%d)."
-                 ,addeds,(after-before)) << endl;
+    if (after-before != addeds) {
+      cerr << Bug( "RoutingEventQueue::commit(): less than %d events pusheds (%d)."
+                 , addeds,(after-before) ) << endl;
     }
-
-    // if (   (RoutingEvent::getProcesseds() > 61246)
-    //    and (RoutingEvent::getProcesseds() < 61256) ) {
-    //   cerr << "RoutingEventQueue::commit()" << endl;
-    //   dump ();
-    // }
 
     ltraceout(200);
   }
@@ -151,33 +130,20 @@ namespace Kite {
     _keyCheck ();
 #endif
 
-    if ( !_events.empty() ) {
+    if (not _events.empty()) {
       size_t beforeSize = _events.size();
 
       ievent = _events.end();
       ievent--;
       event  = (*ievent);
-      _events.erase ( ievent );
-
-      // if (   (RoutingEvent::getProcesseds() > 61246)
-      //    and (RoutingEvent::getProcesseds() < 61256) ) {
-      //   cerr << "Popped: " << event << endl;
-      //   dump ();
-      // }
+      _events.erase( ievent );
 
       size_t afterSize = _events.size();
 
-      if ( afterSize+1 != beforeSize ) {
-        cerr << Bug("RoutingEventQueue::pop(): more than one event popped: %d."
-                   ,(beforeSize-afterSize)) << endl;
+      if (afterSize+1 != beforeSize) {
+        cerr << Bug( "RoutingEventQueue::pop(): more than one event popped: %d."
+                   , (beforeSize-afterSize) ) << endl;
       }
-//       size_t erased = _events.erase ( event );
-//       if ( erased != 1 ) {
-//         cerr << Bug("RoutingEventQueue::pop(): %d events matches key %p.",erased,event) << endl;
-// #if defined(CHECK_ROUTINGEVENT_QUEUE)
-//         _keyCheck ();
-// #endif
-//       }
     }
 
     return event;
@@ -192,65 +158,59 @@ namespace Kite {
 
     multiset<RoutingEvent*,RoutingEvent::Compare>::iterator ievent = _events.find(event);
     size_t count = _events.count(event);
-    if ( count > 1 ) {
+    if (count > 1) {
       cerr << Bug("RoutingEventQueue::repush(): %d events matches key %p.",count,event) << endl;
 #if defined(CHECK_ROUTINGEVENT_QUEUE)
       _keyCheck ();
 #endif
     }
 
-    if ( ievent != _events.end() ) {
-      // if (   (RoutingEvent::getProcesseds() > 61246)
-      //    and (RoutingEvent::getProcesseds() < 61256) ) {
-      //   cerr << "Erasing: " << *ievent << endl;
-      // }
-      _events.erase ( ievent );
+    if (ievent != _events.end()) {
+      _events.erase( ievent );
     }
     push ( event );
-
-    // if (   (RoutingEvent::getProcesseds() > 61246)
-    //    and (RoutingEvent::getProcesseds() < 61256) ) {
-    //   cerr << "After repush: " << event << endl;
-    //   dump();
-    // }
   }
 
 
   void  RoutingEventQueue::repushInvalidateds ()
   {
     const vector<AutoSegment*>& invalidateds0 = Session::getInvalidateds();
-    set<TrackElement*>          invalidateds1;
+    TrackSegmentSet             invalidateds1;
     for ( size_t i=0 ; i<invalidateds0.size() ; i++ ) {
-      TrackElement* segment = Session::lookup ( invalidateds0[i] );
-      if ( segment )
-        invalidateds1.insert ( segment );
+      TrackSegment* segment = dynamic_cast<TrackSegment*>( Session::lookup(invalidateds0[i]) );
+      if (segment)
+        invalidateds1.insert( segment );
     }
 
-    set<TrackElement*>::iterator isegment = invalidateds1.begin();
+    TrackSegmentSet::iterator isegment = invalidateds1.begin();
     for ( ; isegment != invalidateds1.end() ; isegment++ ) {
       RoutingEvent* event = (*isegment)->getDataNegociate()->getRoutingEvent();
       if ( event
          and not event->isUnimplemented()
          and not event->isDisabled     ()
          and not event->isProcessed    () ) {
-        repush ( event );
-      } else {
-        // if (   (RoutingEvent::getProcesseds() > 61246)
-        //    and (RoutingEvent::getProcesseds() < 61256) ) {
-        //   cerr << "NOT repushed: " << event << endl;
-        // }
+        repush( event );
       }
+    }
+  }
+
+
+  void  RoutingEventQueue::prepareRepair ()
+  {
+    multiset<RoutingEvent*,RoutingEvent::Compare>::const_iterator ievent = _events.begin ();
+    for ( ; ievent != _events.end(); ++ievent ) {
+      (*ievent)->getSegment()->base()->toOptimalAxis();
     }
   }
 
 
   void  RoutingEventQueue::clear ()
   {
-    if ( not _events.empty() ) {
+    if (not _events.empty()) {
       cerr << Bug("RoutingEvent queue is not empty, %d events remains."
                  ,_events.size()) << endl;
     }
-    _events.clear ();
+    _events.clear();
   }
 
 
@@ -316,4 +276,4 @@ namespace Kite {
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

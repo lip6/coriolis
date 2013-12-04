@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,22 +12,17 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingPlane.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Error.h"
-#include  "hurricane/Box.h"
-#include  "hurricane/Cell.h"
-
-#include  "crlcore/RoutingLayerGauge.h"
-
-#include  "kite/HorizontalTrack.h"
-#include  "kite/VerticalTrack.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/KiteEngine.h"
+#include "hurricane/Error.h"
+#include "hurricane/Box.h"
+#include "hurricane/Cell.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "kite/HorizontalTrack.h"
+#include "kite/VerticalTrack.h"
+#include "kite/RoutingPlane.h"
+#include "kite/KiteEngine.h"
 
 
 namespace {
@@ -47,7 +37,6 @@ namespace {
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -68,8 +57,21 @@ namespace Kite {
     : _kite      (kite)
     , _layerGauge(kite->getLayerGauge(depth))
     , _depth     (depth)
+    , _flags     (0)
+    , _axisMin   (0)
+    , _axisMax   (0)
+    , _trackMin  (0)
+    , _trackMax  (0)
     , _tracks    ()
-  { }
+  {
+    switch ( _layerGauge->getDirection() ) {
+      case Constant::Horizontal: _flags |= KbHorizontal; break;
+      case Constant::Vertical:   _flags |= KbVertical; break;
+      default:
+        cerr << Error( "RoutingPlane::RoutingPlane() - Unknown plane direction from LayerGauge: %u"
+                     , _layerGauge->getDirection() ) << endl;
+    }
+  }
 
 
   RoutingPlane::~RoutingPlane ()
@@ -82,8 +84,8 @@ namespace Kite {
                << (void*)this << " " << this << endl;
     ltracein(90);
 
-    for ( size_t index = 0 ; index < _tracks.size() ; index++ )
-      _tracks[index]->destroy ();
+    for ( size_t index=0 ; index<_tracks.size() ; ++index )
+      _tracks[index]->destroy();
 
     delete this;
 
@@ -95,40 +97,41 @@ namespace Kite {
   {
     RoutingPlane* plane = new RoutingPlane ( kite, depth );
 
-    if ( !plane->_layerGauge )
-      throw Error ( badLayerGauge, depth, getString(kite->getRoutingGauge()).c_str() );
+    if (not plane->_layerGauge)
+      throw Error( badLayerGauge, depth, getString(kite->getRoutingGauge()).c_str() );
 
     size_t  trackNumber;
     Box     abutmentBox = kite->getCell()->getAbutmentBox();
-    if ( plane->getLayerGauge()->getDirection() & Constant::Horizontal ) {
-      plane->_trackMin = abutmentBox.getXMin () - DbU::lambda (2.0);
-      plane->_trackMax = abutmentBox.getXMax () + DbU::lambda (2.0);
-      plane->_axisMin  = abutmentBox.getYMin ();
-      plane->_axisMax  = abutmentBox.getYMax ();
-      trackNumber      = plane->computeTracksSize ();
+  // HARD CODED.
+    if (plane->getDirection() == KbHorizontal) {
+      plane->_trackMin = abutmentBox.getXMin() - DbU::lambda(2.0);
+      plane->_trackMax = abutmentBox.getXMax() + DbU::lambda(2.0);
+      plane->_axisMin  = abutmentBox.getYMin();
+      plane->_axisMax  = abutmentBox.getYMax();
+      trackNumber      = plane->computeTracksSize();
     } else {
-      plane->_trackMin = abutmentBox.getYMin () - DbU::lambda (2.0);
-      plane->_trackMax = abutmentBox.getYMax () + DbU::lambda (2.0);
-      plane->_axisMin  = abutmentBox.getXMin ();
-      plane->_axisMax  = abutmentBox.getXMax ();
-      trackNumber      = plane->computeTracksSize ();
+      plane->_trackMin = abutmentBox.getYMin() - DbU::lambda(2.0);
+      plane->_trackMax = abutmentBox.getYMax() + DbU::lambda(2.0);
+      plane->_axisMin  = abutmentBox.getXMin();
+      plane->_axisMax  = abutmentBox.getXMax();
+      trackNumber      = plane->computeTracksSize();
     }
 
-    plane->_tracks.reserve ( trackNumber );
-    for ( size_t index = 0 ; index < trackNumber ; index++ ) {
-      if ( plane->getLayerGauge()->getDirection() & Constant::Horizontal ) {
-        plane->_tracks.push_back ( HorizontalTrack::create ( plane, index ) );
+    plane->_tracks.reserve( trackNumber );
+    for ( size_t index=0 ; index<trackNumber ; ++index ) {
+      if (plane->getDirection() == KbHorizontal) {
+        plane->_tracks.push_back( HorizontalTrack::create( plane, index ) );
       // Ugly: Direct uses of CellGauge (middle tracks 4 & 5 for local use).
-        if ( depth == 1 ) {
-          switch ( index % 10 ) {
+        if (depth == 1) {
+          switch ( index%10 ) {
             case 4:
             case 5:
-              plane->_tracks.back()->setLocalAssigned ( true );
+              plane->_tracks.back()->setLocalAssigned( true );
               break;
           }
         }
       } else {
-        plane->_tracks.push_back ( VerticalTrack::create ( plane, index ) );
+        plane->_tracks.push_back( VerticalTrack::create( plane, index ) );
       }
     }
 
@@ -137,30 +140,30 @@ namespace Kite {
 
 
   RoutingPlane* RoutingPlane::getTop () const
-  { return getKiteEngine()->getRoutingPlaneByIndex ( getDepth()+1 ); }
+  { return getKiteEngine()->getRoutingPlaneByIndex( getDepth()+1 ); }
 
 
   RoutingPlane* RoutingPlane::getBottom () const
   {
-    if ( !getDepth() ) return NULL;
-    return getKiteEngine()->getRoutingPlaneByIndex ( getDepth()-1 );
+    if (not getDepth()) return NULL;
+    return getKiteEngine()->getRoutingPlaneByIndex( getDepth()-1 );
   }
 
 
   Track* RoutingPlane::getTrackByIndex ( size_t index ) const
   {
-    if ( index >= getTracksSize() ) return NULL;
+    if (index >= getTracksSize()) return NULL;
     return _tracks[index];
   }
 
 
   Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, unsigned int mode ) const
   {
-    return getTrackByIndex ( getLayerGauge()->getTrackIndex ( getAxisMin()
-                                                            , getAxisMax()
-                                                            , axis
-                                                            , mode
-                                                            ) );
+    return getTrackByIndex( getLayerGauge()->getTrackIndex( getAxisMin()
+                                                          , getAxisMax()
+                                                          , axis
+                                                          , mode
+                                                          ) );
   }
 
 
@@ -168,8 +171,8 @@ namespace Kite {
   {
     bool coherency = true;
 
-    for ( size_t i=0 ; i<_tracks.size() ; i++ ) {
-      coherency = _tracks[i]->_check(overlaps) and coherency;
+    for ( size_t i=0 ; i<_tracks.size() ; ++i ) {
+      coherency = _tracks[i]->check(overlaps) and coherency;
     }
 
     return coherency;
@@ -179,7 +182,9 @@ namespace Kite {
   string  RoutingPlane::_getString () const
   {
     return "<" + _getTypeName() + " @"
-               + getString(_depth) + " ["
+               + getString(_depth) + " "
+               + getString(getLayer()) + " [ "
+               + ((getDirection() == KbHorizontal) ? " horizontal [" : " vertical [")
                + getString(_tracks.size()) + "/"
                + getString(_tracks.capacity())
                + "]>";
@@ -189,17 +194,17 @@ namespace Kite {
   Record* RoutingPlane::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add ( getSlot ( "_kite"         ,  _kite          ) );
-    record->add ( getSlot ( "_layerGauge"   ,  _layerGauge    ) );
-    record->add ( getSlot ( "_depth"        , &_depth         ) );
-    record->add ( DbU::getValueSlot ( "_axisMin"      , &_axisMin       ) );
-    record->add ( DbU::getValueSlot ( "_axisMax"      , &_axisMax       ) );
-    record->add ( DbU::getValueSlot ( "_trackMin"     , &_trackMin      ) );
-    record->add ( DbU::getValueSlot ( "_trackMax"     , &_trackMax      ) );
-    record->add ( getSlot ( "_tracks"       , &_tracks        ) );
+    record->add( getSlot          ( "_kite"         ,  _kite       ) );
+    record->add( getSlot          ( "_layerGauge"   ,  _layerGauge ) );
+    record->add( getSlot          ( "_depth"        , &_depth      ) );
+    record->add( DbU::getValueSlot( "_axisMin"      , &_axisMin    ) );
+    record->add( DbU::getValueSlot( "_axisMax"      , &_axisMax    ) );
+    record->add( DbU::getValueSlot( "_trackMin"     , &_trackMin   ) );
+    record->add( DbU::getValueSlot( "_trackMax"     , &_trackMax   ) );
+    record->add( getSlot          ( "_tracks"       , &_tracks     ) );
                                      
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

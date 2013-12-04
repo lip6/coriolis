@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,31 +14,31 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <memory>
+#include <memory>
 using namespace std;
 
-#include  <boost/program_options.hpp>
+#include <boost/program_options.hpp>
 namespace bopts = boost::program_options;
 
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/DebugSession.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/UpdateSession.h"
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Warning.h"
+#include "hurricane/UpdateSession.h"
 using namespace Hurricane;
 
-#include  "crlcore/Utilities.h"
-#include  "crlcore/Banner.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/Hierarchy.h"
-#include  "crlcore/ToolBox.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/Banner.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/Hierarchy.h"
+#include "crlcore/ToolBox.h"
 using namespace CRL;
 
-#include  "knik/KnikEngine.h"
+#include "knik/KnikEngine.h"
 using namespace Knik;
 
-#include  "kite/KiteEngine.h"
+#include "kite/KiteEngine.h"
 using namespace Kite;
 
 
@@ -145,8 +144,8 @@ int main ( int argc, char *argv[] )
     }
 
     KatabaticEngine::NetSet routingNets;
-    unsigned int globalFlags = (loadGlobal) ? Kite::LoadGlobalSolution
-                                            : Kite::BuildGlobalSolution;
+    unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
+                                            : Kite::KtBuildGlobalRouting;
 
     KiteEngine* kite = KiteEngine::create( cell );
     if (showConf) kite->printConfiguration();
@@ -154,9 +153,10 @@ int main ( int argc, char *argv[] )
     kite->runGlobalRouter( globalFlags );
     if (saveGlobal) kite->saveGlobalSolution ();
 
-    kite->loadGlobalRouting( Katabatic::LoadGrByNet, routingNets );
-    kite->layerAssign      ( Katabatic::NoNetLayerAssign );
-    kite->runNegociate     ();
+    kite->loadGlobalRouting   ( Katabatic::EngineLoadGrByNet, routingNets );
+    kite->balanceGlobalDensity();
+    kite->layerAssign         ( Katabatic::EngineNoNetLayerAssign );
+    kite->runNegociate        ();
     kiteSuccess = kite->getToolSuccess();
     kite->finalizeLayout   ();
 

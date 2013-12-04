@@ -1,15 +1,9 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Session.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,13 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Session.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Bug.h"
+#include  "hurricane/Point.h"
 #include  "hurricane/Error.h"
 #include  "katabatic/GCellGrid.h"
 #include  "kite/Session.h"
@@ -34,7 +26,6 @@
 
 namespace {
 
-
   using namespace Kite;
 
 
@@ -43,11 +34,10 @@ namespace {
     "    Session already open for %s (internal error).";
 
 
-} // End of local namespace.
+} // Anonymous namespace.
 
 
 namespace Kite {
-
 
   using std::cerr;
   using std::endl;
@@ -57,39 +47,32 @@ namespace Kite {
   using Hurricane::ltraceout;
   using Hurricane::Error;
   using Hurricane::Bug;
+  using Hurricane::Point;
 
 
 // -------------------------------------------------------------------
 // Class  :  "Session".
-
 
   Session::Session ( KiteEngine* kite )
     : Katabatic::Session(kite)
     , _insertEvents()
     , _removeEvents()
     , _sortEvents  ()
-  {
-  //_addCanonizeCb ( _computeCagedConstraints );
-  }
+  { }
 
 
   void  Session::_postCreate ()
-  {
-    Katabatic::Session::_postCreate ();
-  }
+  { Katabatic::Session::_postCreate(); }
 
 
   Session::~Session ()
   { }
 
 
-  size_t  Session::_preDestroy ()
+  void  Session::_preDestroy ()
   {
-    _isEmpty ();
-
-    size_t count = Katabatic::Session::_preDestroy ();
-
-    return count;
+    _isEmpty();
+    Katabatic::Session::_preDestroy();
   }
 
 
@@ -97,16 +80,16 @@ namespace Kite {
   {
     ltrace(110) << "Kite::Session::open()" << endl;
 
-    Session* session = Session::get ();
-    if ( session ) {
-      if ( session->_getKiteEngine() != kite )
-        throw Error ( reopenSession, getString(session->getKiteEngine()).c_str() );
+    Session* session = Session::get();
+    if (session) {
+      if (session->_getKiteEngine() != kite)
+        throw Error( reopenSession, getString(session->getKiteEngine()).c_str() );
 
       return session;
     }
 
     session = new Session ( kite );
-    session->_postCreate ();
+    session->_postCreate();
 
     return session;
   }
@@ -120,24 +103,12 @@ namespace Kite {
   { return Session::getKiteEngine()->getConfiguration(); }
 
 
-  void  Session::link ( TrackElement* trackSegment )
-  { Session::get("link(TrackElement*)")->_getKiteEngine()->_link(trackSegment); }
-
-
-  void  Session::unlink ( TrackElement* trackSegment )
-  { Session::get("unlink(TrackElement*)")->_getKiteEngine()->_unlink(trackSegment); }
-
-
   TrackElement* Session::lookup ( Segment* segment )
   { return Session::get("Session::lookup(Segment*)")->_getKiteEngine()->_lookup(segment); }
 
 
   TrackElement* Session::lookup ( AutoSegment* segment )
   { return Session::get("lookup(AutoSegment*)")->_getKiteEngine()->_lookup ( segment ); }
-
-
-  Katabatic::GCell* Session::lookup ( Katabatic::GCell* gcell )
-  { return Session::get("lookup(Katabatic::GCell*)")->_getKiteEngine()->getGCellGrid()->getGCell(gcell->getIndex()); }
 
 
   void  Session::setInterrupt ( bool state )
@@ -166,115 +137,102 @@ namespace Kite {
 
   size_t  Session::_revalidate ()
   {
+    ltrace(90) << "Kite::Session::_revalidate()" << endl;
+    ltracein(90);
+
     set<Track*> packTracks;
 
-    for ( size_t i=0 ; i < _removeEvents.size() ; i++ ) {
-      if ( !_removeEvents[i]._segment->getTrack() ) continue;
+    for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
+      if (not _removeEvents[i]._segment->getTrack()) continue;
 
-      packTracks.insert ( _removeEvents[i]._segment->getTrack() );
-      _removeEvents[i]._segment->detach ();
+      packTracks.insert( _removeEvents[i]._segment->getTrack() );
+      _removeEvents[i]._segment->detach();
     }
-    _removeEvents.clear ();
+    _removeEvents.clear();
 
-    for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; it++ )
-      (*it)->pack ();
+    for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
+      (*it)->doRemoval();
 
-    for ( size_t i=0 ; i < _insertEvents.size() ; i++ ) {
-      if ( _insertEvents[i]._segment ) {
-        _insertEvents[i]._track->insert ( _insertEvents[i]._segment );
+    for ( size_t i=0 ; i<_insertEvents.size() ; ++i ) {
+      if (_insertEvents[i]._segment) {
+        _insertEvents[i]._track->insert( _insertEvents[i]._segment );
       }
-      if ( _insertEvents[i]._marker  ) _insertEvents[i]._track->insert ( _insertEvents[i]._marker  );
+      if (_insertEvents[i]._marker) _insertEvents[i]._track->insert( _insertEvents[i]._marker );
     }
-    _insertEvents.clear ();
+    _insertEvents.clear();
 
   // Check if to be destroyeds are not associateds with TrackSegments.
     const set<AutoSegment*>&          destroyeds = getDestroyeds();
     set<AutoSegment*>::const_iterator idestroyed = destroyeds.begin();
-    for ( ; idestroyed != destroyeds.end() ; idestroyed++ ) {
-      if ( lookup(*idestroyed) ) {
-        throw Error("Destroyed AutoSegment is associated with a TrackSegment\n"
-                    "        (%s)"
-                   ,getString(*idestroyed).c_str());
+    for ( ; idestroyed != destroyeds.end() ; ++idestroyed ) {
+      if (lookup(*idestroyed)) {
+        ltraceout(90);
+        throw Error( "Destroyed AutoSegment is associated with a TrackSegment\n"
+                     "        (%s)"
+                   , getString(*idestroyed).c_str());
       }
     }
     
-    size_t count = Katabatic::Session::_revalidate ();
+    size_t count = Katabatic::Session::_revalidate();
 
     Interval                    span;
-    vector<TrackElement*>       processeds;
-    const vector<AutoSegment*>& revalidateds     = getRevalidateds ();
-    const set<Net*>&            netsModificateds = getNetsModificateds ();
+    const vector<AutoSegment*>& revalidateds     = getRevalidateds();
+  //const set<Net*>&            netsModificateds = getNetsModificateds();
 
-    for ( size_t i=0 ; i<revalidateds.size() ; i++ ) {
-      Net*          currentNet   = NULL;
-      bool          invalidEvent = false;
-      TrackElement* trackSegment = lookup ( revalidateds[i]->base() );
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      if (not revalidateds[i]->isCanonical()) continue;
+      
+    //Net*          currentNet   = NULL;
+      TrackElement* trackSegment = lookup( revalidateds[i] );
 
-      if ( trackSegment && !trackSegment->isRevalidated() ) {
-        if ( trackSegment->getNet() != currentNet ) {
-          currentNet   = trackSegment->getNet();
-          invalidEvent = (netsModificateds.find(currentNet) != netsModificateds.end());
-        }
-        trackSegment->revalidate ( invalidEvent );
-        processeds.push_back ( trackSegment );
-
-        Track* track = trackSegment->getTrack();
-        if ( track ) {
-          track->forceSort ();
-          _sortEvents.insert ( track );
-        }
+      if (trackSegment and trackSegment->isInvalidated()) {
+        trackSegment->revalidate();
       }
     }
-    for ( size_t i=0 ; i<processeds.size() ; i++ )
-      processeds[i]->setRevalidated ( false );
+    _doglegReset();
 
 # if defined(CHECK_DATABASE)
     unsigned int overlaps = 0;
 # endif
-    for ( set<Track*>::iterator it=_sortEvents.begin()
-            ; it != _sortEvents.end()
-            ; it++
-        ) {
-      (*it)->sort ();
+    for ( set<Track*>::iterator it=_sortEvents.begin() ; it!=_sortEvents.end() ; ++it ) {
+      (*it)->doReorder();
 # if defined(CHECK_DATABASE)
-      (*it)->_check ( overlaps, "Session::_revalidate() - track sorting." );
+      (*it)->check( overlaps, "Session::_revalidate() - track sorting." );
 # endif
     }
 
-    set<TrackElement*> faileds;
-    for ( set<Net*>::iterator inet=netsModificateds.begin() ; inet != netsModificateds.end() ; inet++ ) {
-      _getKiteEngine()->_computeCagedConstraints ( *inet, faileds );
-    }
-
 # if defined(CHECK_DATABASE)
-    for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; it++ )
-      (*it)->_check ( overlaps, "Session::_revalidate() - on packed track." );
+    for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
+      (*it)->check( overlaps, "Session::_revalidate() - on packed track." );
 
   //_getKiteEngine()->_showOverlap ();
 # endif
 
-    _sortEvents.clear ();
+    _sortEvents.clear();
 
-    if ( not faileds.empty() ) {
+#if THIS_IS_DISABLED
+    if (not faileds.empty()) {
       set<TrackElement*>::iterator ifailed = faileds.begin();
       Katabatic::GCellVector gcells;
       for ( ; ifailed != faileds.end() ; ++ifailed ) {
         (*ifailed)->getGCells ( gcells );
-        (*ifailed)->makeDogLeg ( gcells[0] );
+        (*ifailed)->makeDogLeg( gcells[0] );
       }
 
-      count += _revalidate ();
+      count += _revalidate();
     }
+#endif
 
+    ltraceout(90);
     return count;
   }
 
 
   bool  Session::_isEmpty () const
   {
-    if ( !_insertEvents.empty() || !_removeEvents.empty() || !_sortEvents.empty() ) {
-      cerr << Bug(" Session::checkEmpty() failed :\n"
-                  "        %u inserts, %u removes and %u sort events remains."
+    if ( not _insertEvents.empty() or not _removeEvents.empty() or not _sortEvents.empty() ) {
+      cerr << Bug( " Session::checkEmpty() failed :\n"
+                   "        %u inserts, %u removes and %u sort events remains."
                  , _insertEvents.size()
                  , _removeEvents.size()
                  , _sortEvents  .size() ) << endl;
@@ -287,17 +245,13 @@ namespace Kite {
 
   void  Session::_addInsertEvent ( TrackMarker* marker, Track* track )
   {
-    _insertEvents.push_back ( Event(marker,track) );
-    _addSortEvent ( track, true );
+    _insertEvents.push_back( Event(marker,track) );
+    _addSortEvent( track, true );
   }
 
 
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track )
   {
-#if defined(CHECK_DETERMINISM)
-    cerr << "Order: Insert in @" << DbU::getValueString(track->getAxis()) 
-         << " " << segment << endl;
-#endif
     ltrace(200) <<  "addInsertEvent() " << segment
                 << "\n               @" << track << endl;
 
@@ -311,46 +265,46 @@ namespace Kite {
       return;
     }
 
-    _insertEvents.push_back ( Event(segment,track) );
-    _addSortEvent ( track, true );
+    _insertEvents.push_back( Event(segment,track) );
+    _addSortEvent( track, true );
   }
 
 
   void  Session::_addRemoveEvent ( TrackElement* segment )
   {
-    if ( not segment->getTrack() ) {
-      cerr << Bug(" Kite::Session::addRemoveEvent() : %s is not in any Track."
-                 ,getString(segment).c_str()) << endl;
+    if (not segment->getTrack()) {
+      cerr << Bug( " Kite::Session::addRemoveEvent() : %s is not in any Track."
+                 , getString(segment).c_str() ) << endl;
       return;
     }
 
     ltrace(200) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
-    _removeEvents.push_back ( Event(segment,segment->getTrack()) );
-    _addSortEvent ( segment->getTrack(), true );
+    _removeEvents.push_back( Event(segment,segment->getTrack()) );
+    _addSortEvent( segment->getTrack(), true );
   }
 
 
   void  Session::_addMoveEvent ( TrackElement* segment, Track* track )
   {
-    if ( !segment->getTrack() ) {
-      cerr << Bug(" Kite::Session::addMoveEvent() : %s has no target Track."
-                 ,getString(segment).c_str()) << endl;
+    if (not segment->getTrack()) {
+      cerr << Bug( " Kite::Session::addMoveEvent() : %s has no target Track."
+                 , getString(segment).c_str() ) << endl;
       return;
     }
 
-    _addRemoveEvent ( segment );
-    _addInsertEvent ( segment, track );
+    _addRemoveEvent( segment );
+    _addInsertEvent( segment, track );
   }
 
 
   void  Session::_addSortEvent ( Track* track, bool forced )
   {
-    if ( !track ) {
-      cerr << Bug(" Kite::Session::addSortEvent() : no Track to sort.") << endl;
+    if (not track ) {
+      cerr << Bug( " Kite::Session::addSortEvent() : no Track to sort." ) << endl;
       return;
     }
-    if ( forced ) track->forceSort ();
-    _sortEvents.insert ( track );
+    if (forced) track->invalidate();
+    _sortEvents.insert( track );
   }
 
 
@@ -361,10 +315,10 @@ namespace Kite {
   Record* Session::_getRecord () const
   {
     Record* record = Session::_getRecord ();
-    record->add ( getSlot ( "_sortEvents"  , &_sortEvents   ) );
+    record->add( getSlot( "_sortEvents"  , &_sortEvents ) );
                                      
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

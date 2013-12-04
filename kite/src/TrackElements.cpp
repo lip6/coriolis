@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TrackElements.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Bug.h"
@@ -30,7 +22,6 @@
 
 
 namespace Kite {
-
 
   using namespace std;
   using Hurricane::tab;
@@ -43,20 +34,20 @@ namespace Kite {
 
 
 // -------------------------------------------------------------------
-// Class  :  "TrackElements_CollapsedPerpandicular".
+// Class  :  "TrackElements_Perpandiculars".
 
 
-  TrackElements_CollapsedPerpandicular::Locator::Locator ( TrackElement* segment )
+  TrackElements_Perpandiculars::Locator::Locator ( TrackElement* segment )
     : TrackElementHL ()
     , _locator       (segment->base())
     , _element       (NULL)
   {
-    ltrace(80) << "TrackElements_CollapsedPerpandicular::Locator::Locator()" << endl;
+    ltrace(80) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
     ltrace(80) << "  " << segment << endl;
 
     Interval bounds;
     if ( _locator.isValid() ) {
-      _element = Session::lookup ( _locator.getElement()->getCanonical(bounds)->base() );
+      _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
       if ( !_element ) {
         cerr << Bug("Canonical segment without TrackElement.") << endl;
         progress ();
@@ -65,20 +56,20 @@ namespace Kite {
   }
 
 
-  TrackElement* TrackElements_CollapsedPerpandicular::Locator::getElement () const
+  TrackElement* TrackElements_Perpandiculars::Locator::getElement () const
   { return _element; }
 
 
-  void  TrackElements_CollapsedPerpandicular::Locator::progress ()
+  void  TrackElements_Perpandiculars::Locator::progress ()
   {
-    ltrace(80) << "TrackElements_CollapsedPerpandicular::Locator::progress()" << endl;
+    ltrace(80) << "TrackElements_Perpandiculars::Locator::progress()" << endl;
 
     Interval bounds;
     while ( _locator.isValid() ) {
       _locator.progress ();
 
       if ( _locator.isValid() ) {
-        _element = Session::lookup ( _locator.getElement()->getCanonical(bounds)->base() );
+        _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
         if ( !_element ) {
           cerr << Bug("Canonical segment whithout TrackElement.") << endl;
           continue;
@@ -90,32 +81,32 @@ namespace Kite {
   }
 
 
-  TrackElementHL* TrackElements_CollapsedPerpandicular::Locator::getClone () const
+  TrackElementHL* TrackElements_Perpandiculars::Locator::getClone () const
   { return new Locator(*this); }
 
 
-  bool  TrackElements_CollapsedPerpandicular::Locator::isValid () const
+  bool  TrackElements_Perpandiculars::Locator::isValid () const
   { return _locator.isValid(); }
 
 
-  TrackElementHC* TrackElements_CollapsedPerpandicular::getClone () const
-  { return new TrackElements_CollapsedPerpandicular(*this); }
+  TrackElementHC* TrackElements_Perpandiculars::getClone () const
+  { return new TrackElements_Perpandiculars(*this); }
 
 
-  TrackElementHL* TrackElements_CollapsedPerpandicular::getLocator () const
+  TrackElementHL* TrackElements_Perpandiculars::getLocator () const
   { return new Locator(_segment); }
 
 
-  string  TrackElements_CollapsedPerpandicular::Locator::_getString () const
+  string  TrackElements_Perpandiculars::Locator::_getString () const
   {
-    string s = "<TrackElements_CollapsedPerpandicular::Locator>";
+    string s = "<TrackElements_Perpandiculars::Locator>";
     return s;
   }
 
 
-  string  TrackElements_CollapsedPerpandicular::_getString () const
+  string  TrackElements_Perpandiculars::_getString () const
   {
-    string s = "<TrackElements_CollapsedPerpandicular "
+    string s = "<TrackElements_Perpandiculars "
              + getString(_segment)
              + ">";
     return s;
@@ -132,8 +123,8 @@ namespace Kite {
 
   bool  TrackElements_UniqCanonical::accept ( TrackElement* segment ) const
   {
-    if ( _canonicals.find(segment) == _canonicals.end() ) {
-      _canonicals.insert ( segment );
+    if (_canonicals.find(segment) == _canonicals.end()) {
+      _canonicals.insert( segment );
       return true;
     }
 
@@ -145,4 +136,4 @@ namespace Kite {
   { return "<TrackElements_UniqCanonical>"; }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

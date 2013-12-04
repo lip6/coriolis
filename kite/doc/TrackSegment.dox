@@ -1,17 +1,12 @@
-
  // -*- C++ -*-
 
 
  namespace Kite {
 
- /*! \typedef      SegmentOverlapCostCB
-  *                Prototype of overlap cost callback functions.
-  *
-  *                \see TrackSegment::setOverlapCostCB(), TrackSegment::getOverlapCost().
-  */
-
  /*! \class        TrackSegment
   *  \brief        Derived Katabatic::AutoSegment for the router.
+  *
+  *                \image html  TrackSegment-10.png "Fig 1: TrackSegment Context"
   *
   *                We create one TrackSegment per aligned Katabatic::AutoSegment set,
   *                the TrackSegment is associated to the canonical one of the set.
@@ -21,150 +16,114 @@
   *                The drawback beeing that whenever one segment from the aligned
   *                set has it's extention modified, the full extention must be
   *                recomputed.
-  */
-
-
- /*! \name         Constructors & Destructors
-  */
- // \{
-
- /*! \function     static TrackSegment* TrackSegment::create ( AutoSegment* segment, Track* track, bool& created );
-  *  \param        segment  The Katabatic AutoSegment to decorate.
-  *  \param        track    A Track into which insert the TrackSegment (may be \NULL).
-  *  \param        created  This flag is sets is a new TrackSegment has be created.
-  *  \return       A TrackSegment wrapped around an AutoSegment.
   *
-  *                Constructor mainly used at loading time to decorate the Katabatic
-  *                data-base with the router attributes.
-  */
-
- // \}
-
-
- /*! \name         Predicates
-  */
- // \{
-
- /*! \function     bool  TrackSegment::isLocked () const;
-  *  \Return       \True if the TrackSegment is locked (cannot be deleted from the
-  *                Track).
-  */
-
- // \}
-
-
- /*! \name         Callback modifier
-  */
- // \{
-
- /*! \function     SegmentOverlapCostCB*  TrackSegment::setOverlapCostCB ( SegmentOverlapCostCB* cb );
-  *  \param        cb  the new overlap cost callback.
-  *  \return       the previous overlap cost callback.
   *
-  *                sets the overlap callback.
-  */
-
- // \}
-
-
- /*! \name         Accessors
-  */
- // \{
-
- /*! \function     Track* TrackSegment::getTrack () const;
-  *  \Return       The Track in which this TrackSegment is inserted (can be \NULL).
-  */
-
- /*! \function     size_t  TrackSegment::getIndex () const;
-  *  \Return       Index of the TrackSegment inside the Track's vector. set to
-  *                Track::NPOS if not inserted in any Track.
-  */
-
- /*! \function     unsigned long  TrackSegment::getArea () const;
-  *  \Return       The priority value used for TrackSegment sorting. Currently,
-  *                the slack of the AutoSegment.
-  */
-
- /*! \function     TrackSegment* TrackSegment::getNext () const;
-  *  \Return       The next TrackSegment in the Track (can be \NULL).
+  * \section       secTSLazyRevalidate  Lazy Revalidate
   *
-  *  \see          Track::getNext().
-  */
-
- /*! \function     TrackSegment* TrackSegment::getPrevious () const;
-  *  \Return       The previous TrackSegment in the Track (can be \NULL).
+  *                When the TrackSegment::revalidate() method is called, it only update
+  *                the cached size of the segment (from the AutoSegment set of aligneds)
+  *                and the track into which it may be inserted.
   *
-  *  \see          Track::getPrevious().
-  */
-
- /*! \function     Interval  TrackSegment::getFreeInterval () const;
-  *  \Return       The free interval around this TrackSegment in the Track.
-  */
-
- /*! \function     DbU::Unit  TrackSegment::getSourceCanonical () const;
-  *  \Return       The leftmost position of the associated aligned segment set.
-  */
-
- /*! \function     DbU::Unit  TrackSegment::getTargetCanonical () const;
-  *  \Return       The rightmost position of the associated aligned segment set.
-  */
-
- /*! \function     DbU::Unit  TrackSegment::getCanonicalInterval () const;
-  *  \Return       The canonical interval of the associated aligned segment set.
-  */
-
- /*  \function     DbU::Unit  TrackSegment::getOverlapCost ( Interval interval, Net* net ) const;
-  *  \param        interval  the overlaping interval.
-  *  \param        net       the \Net owning the overlaping interval.
-  *  \return       The cost of overlaping the TrackSegment with \e interval from \Net \e net.
-  */
-
- // \}
-
-
- /*! \name         Modifiers
-  */
- // \{
-
- /*! \function     void  TrackSegment::setLock ( bool state );
-  *  \param        state  set the Track locking state.
-  */
-
- /*! \function     void  TrackSegment::setTrack ( Track* track );
-  *  \param        track  The Track the TrackSegment is assigned to.
-  */
-
- /*! \function     void  TrackSegment::setIndex ( size_t  index );
-  *  \param        index  The index of TrackSegment in the Track's vector.
-  */
-
- /*! \function     void  TrackSegment::setArea ();
-  *                compute the the sorting criterion used as priority, for
-  *                now it's simply the AutoSegment's slack.
-  */
-
- /*! \function     void  TrackSegment::detach ();
-  *                remove the TrackSegment from the Track.
+  *                The associated DataNegociate and RoutingEvent are \b not updated.
+  *                  - The RoutingEvent will be updated when it's key is updated,
+  *                    typically during a requeueing operation \b and in the
+  *                    SegmentFsm constructor. This should be optimzed in the future.
+  *                  - The DataNegociate is updated \e only in the SegmentFsm
+  *                    constructor. This is the most costly of the two updates as
+  *                    it perform a perpandicular & parallel connexity exploration.
   *
-  *  \important    This function <em>do not</em> update the Track itself. The
-  *                program must take care of it under penalty of introducing
-  *                incoherencies.
   *
-  *  \see          Track::detach().
+  * \section       secDogleg  Dogleg Management
+  *
+  *                The basic AutoSegment::canDogleg() method is declined in three more
+  *                dedicated methods in this class:
+  *                  - TrackSegment::canDogleg(), for locals only, check if a break
+  *                    is possible, never break a segment more than once (to avoid
+  *                    fragmentation).
+  *                  - TrackSegment::canDogleg(Katabatic::GCell*,unsigned int flags)
+  *                    for globals, check that the segment is breakable in the desired
+  *                    GCell. Never break twice in the first/last GCell (fragmentation
+  *                    limitation), but may \e reuse an already existing dogleg.
+  *                  - TrackSegment::canDogleg(Interval), for locals only, direct proxy
+  *                    for the AutoSegment method. Never allow more than one break.
+  *
+  *                <b>Relationship between AutoSegment and TrackSegment</b>
+  *
+  *                Figure 2 below, shows an example of dogleg creation:
+  *                  - At the Katabatic level, AutoSegment \c id:12 is broken. Thus
+  *                    the creation of AutoSegments \c id:20 and \c id:21. As per
+  *                    specification, the orignal segment \c id:10 remains on the
+  *                    left side (source) of the break.
+  *                  - But, because the canonical of the former aligned AutoSegment
+  *                    set \c (10,11,12,13,14) was on the \e right side of the break,
+  *                    the new parallel TrackSegment will be created on the \c left
+  *                    side, associated to the newly promoted canonical AutoSegment
+  *                    \c id:12.
+  *
+  *                \image html  _makeDogleg-10.png "Fig 2: Dogleg Management"
+  *
+  *                The TrackSegment::_postDoglegs() method called by all flavors of
+  *                TrackSegment::makeDogleg() methods is responsible for creating new
+  *                TrackSegments for the new doglegs (there may be more than one), it
+  *                also update the dogleg level and source/target dogleg flags.
+  *
+  *                \redB{This section is not finished.} I need to review the parent and
+  *                doglevel numbering management. There seems to be a risk of infinite
+  *                fragmentation as the numbering of the original segment is not
+  *                increased, we should create a \e break counter separate from
+  *                deepness.
+  *
+  *
+  * \section       secWeakGlobal  Global, Weak Global and Local Segments
+  *
+  *                There's a slight semantic change between Katabatic and Kite about
+  *                what is local and what is local. This is due to how we consider the
+  *                intermediate status of \e WeakGlobal.
+  *
+  *                A \c WeakGlobal segment is a local segment which is aligned with a
+  *                global (though a VTee or an HTee contact).
+  *
+  *                In Katabatic a local segment is one that is not \c Global, a local segment
+  *                can be both \c Local and \c WeakGlobal.
+  *
+  *                In Kite a local segment is one that is neither \c Global or \c WeakGlobal.
+  *                The \c WeakGlobal sides with \c Global unlike in Katabatic.
+  *
   */
 
- /*  \function     void  TrackSegment::autoInvalidate ();
-  *                add \e this TrackSegment to the Kite level update Session.
-  *                Something maybe buggy here, or at least not very clean.
-  */
+ //! \function     static TrackSegment* TrackSegment::create ( AutoSegment* segment, Track* track, bool& created );
+ //! \param        segment  The Katabatic AutoSegment to decorate.
+ //! \param        track    A Track into which insert the TrackSegment (may be \NULL).
+ //! \param        created  This flag is sets is a new TrackSegment has be created.
+ //! \return       A TrackSegment wrapped around an AutoSegment.
+ //!
+ //!               Constructor mainly used at loading time to decorate the Katabatic
+ //!               data-base with the router attributes.
 
- /*  \function     void  TrackSegment::refreshCanonical ();
-  *                Recompute the letfmost & rightmost position of the collapsed set.
-  *                Must be done after each modification of the TrackSegment.
-  *                Dealt by the TrackSession mechanism.
-  *                
-  */
+ //! \function     unsigned long  TrackElement::getFreedomDegree() const;
+ //! \sreturn      The degree of freedom of the element. It is used as a priority value
+ //!               when sorting TrackElement (in RoutingEvent).
+ //!
+ //!               Currently, it is the \e slack of the Katabatic::AutoSegment.
 
- // \}
+ //! \function    void  TrackSegment::revalidate ();
+ //!              Actualize the TrackSegment characteristics from the supporting
+ //!              elements (set of AutoSegment).
+ //!
+ //!              This method do not update the DataNegociate or the RoutingEvent.
+ //!              This is a lazy update delayed until the constructor of SegmentFsm is called.
+ //!              (see \ref secTSLazyRevalidate "Lazy Revalidate").
+
+ //! \function    TrackSegment* TrackSegment::_postDoglegs ( TrackElement*& perpandicular, TrackElement*& parallel );
+ //!              Post-process to be called inside the various dogleg creation or slacken
+ //!              methods. Iterate through the newly created AutoSegments to create, for
+ //!              the <em>perpandicular</em> and the <em>new parallel</em> associateds
+ //!              TrackSegments. Also sets the dogleg levels and flags of the newly
+ //!              created elements.
+ //!
+ //!              The session dogleg reset is called at the end of this method. The \c perpandicular
+ //!              and \c parallel references to pointers contains the newly created segments
+ //!              for the \b last dogleg. If more than one was created, you cannot access them
+ //!              (the need has not arised yet).
 
  }

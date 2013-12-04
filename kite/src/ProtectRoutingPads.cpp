@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,36 +12,32 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ProtectRoutingPads.cpp"                 |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <map>
-#include  <list>
-
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/RegularLayer.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/RoutingPad.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/NetExternalComponents.h"
-#include  "crlcore/Catalog.h"
-#include  "katabatic/AutoContact.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/GCell.h"
-#include  "katabatic/GCellGrid.h"
-#include  "katabatic/KatabaticEngine.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/TrackSegment.h"
-#include  "kite/TrackFixedSegment.h"
-#include  "kite/Track.h"
-#include  "kite/KiteEngine.h"
+#include <map>
+#include <list>
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/RoutingPad.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/Cell.h"
+#include "hurricane/NetExternalComponents.h"
+#include "crlcore/Catalog.h"
+#include "katabatic/AutoContact.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/GCell.h"
+#include "katabatic/GCellGrid.h"
+#include "katabatic/KatabaticEngine.h"
+#include "kite/RoutingPlane.h"
+#include "kite/TrackSegment.h"
+#include "kite/TrackFixedSegment.h"
+#include "kite/Track.h"
+#include "kite/KiteEngine.h"
 
 
 namespace {
@@ -114,12 +105,12 @@ namespace {
       transformation.applyOn ( bb );
     //cinfo << "bb: " << bb << endl;
 
-      if ( direction == Constant::Horizontal ) {
+      if ( direction == KbHorizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
         DbU::Unit axisMax = bb.getYMax() + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
+        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           Horizontal* segment = Horizontal::create ( rp->getNet()
                                                    , segments[i]->getLayer()
                                                    , track->getAxis()
@@ -134,7 +125,7 @@ namespace {
         DbU::Unit axisMax = bb.getXMax() + delta;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
-        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNext() ) {
+        for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           Vertical* segment = Vertical::create ( rp->getNet()
                                                , segments[i]->getLayer()
                                                , track->getAxis()
@@ -167,9 +158,6 @@ namespace Kite {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
     forEach ( Net*, inet, getCell()->getNets() ) {
-      // cerr << *inet << " isSupply():" << (*inet)->isSupply()
-      //      << " " << (*inet)->getType()
-      //      << endl;
       if ( (*inet)->isSupply() ) continue;
 
       vector<RoutingPad*> rps;
@@ -185,4 +173,4 @@ namespace Kite {
   }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.

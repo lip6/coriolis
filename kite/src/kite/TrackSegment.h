@@ -1,43 +1,34 @@
 
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./TrackSegment.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/TrackSegment.h"                         |
+// +-----------------------------------------------------------------+
 
 
+#ifndef  KITE_TRACK_SEGMENT_H
+#define  KITE_TRACK_SEGMENT_H
 
-
-#ifndef  __KITE_TRACK_SEGMENT__
-#define  __KITE_TRACK_SEGMENT__
-
-
-#include  "kite/TrackElement.h"
+#include <set>
+#include <functional>
+#include "kite/TrackElement.h"
 
 
 namespace Kite {
 
-
   using std::string;
   using std::map;
+  using std::set;
+  using std::binary_function;
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;
@@ -52,109 +43,91 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "TrackSegment".
- 
 
   class TrackSegment : public TrackElement {
     public:
-      static  TrackElement*         create                     ( AutoSegment*, Track*, bool& created );
-    public:                                                    
-      virtual AutoSegment*          base                       () const;
-      virtual bool                  isBipoint                  () const;
-      virtual bool                  isCreated                  () const;
-      virtual bool                  isFixed                    () const;
-      virtual bool                  isStrap                    () const;
-      virtual bool                  isSlackenStrap             () const;
-      virtual bool                  isLocal                    () const;
-      virtual bool                  isGlobal                   () const;
-      virtual bool                  isLocked                   () const;
-      virtual bool                  isTerminal                 () const;
-      virtual bool                  isDogleg                   () const;
-      virtual bool                  isRevalidated              () const;
-      virtual bool                  isSlackened                () const;
-      virtual bool                  isSlackenDogLeg            () const;
-      virtual bool                  isHorizontal               () const;
-      virtual bool                  isVertical                 () const;
-      virtual bool                  isRouted                   () const;
-      virtual bool                  allowOutsideGCell          () const;
-      virtual bool                  canDesalignate             () const;
-      virtual bool                  canGoOutsideGCell          () const;
-      virtual bool                  canSlacken                 () const;
-      virtual bool                  canPivotUp                 ( float reserve ) const;
-      virtual bool                  canPivotDown               ( float reserve ) const;
-      virtual bool                  canMoveUp                  ( float reserve, unsigned int flags ) const;
-      virtual float                 getMaxUnderDensity         ( unsigned int flags ) const;
-      virtual bool                  canRipple                  () const;
-      virtual bool                  hasSourceDogLeg            () const;
-      virtual bool                  hasTargetDogLeg            () const;
-      virtual bool                  canDogLeg                  ();
-      virtual bool                  canDogLeg                  ( Interval );
-      virtual bool                  canDogLegAt                ( Katabatic::GCell*, unsigned int flags );
-      virtual unsigned long         getId                      () const;
-      virtual unsigned int          getDirection               () const;
-      virtual Net*                  getNet                     () const;
-      virtual const Layer*          getLayer                   () const;
-      virtual unsigned long         getArea                    () const;
-      virtual unsigned int          getDogLegLevel             () const;
-      virtual TrackElement*         getNext                    () const;
-      virtual TrackElement*         getPrevious                () const;
-      virtual TrackElement*         getParent                  () const;
-      virtual DbU::Unit             getAxis                    () const;
-      virtual Interval              getFreeInterval            () const;
-      virtual Interval              getSourceConstraints       () const;
-      virtual Interval              getTargetConstraints       () const;
-      virtual DataNegociate*        getDataNegociate           ( unsigned int flags ) const;
-      virtual TrackElement*         getCanonical               ( Interval& );
-      virtual size_t                getGCells                  ( vector<Katabatic::GCell*>& ) const;
-      virtual TrackElement*         getSourceDogLeg            ();
-      virtual TrackElement*         getTargetDogLeg            ();
-      virtual TrackElements         getCollapsedPerpandiculars ();
-      virtual size_t                getPerpandicularsBound     ( set<TrackElement*>& );
-      virtual void                  dataInvalidate             ();
-      virtual void                  eventInvalidate            ();
-      virtual void                  setAllowOutsideGCell       ( bool );
-      virtual void                  setRevalidated             ( bool );
-      virtual void                  setCanRipple               ( bool );
-      virtual void                  setSourceDogLeg            ( bool );
-      virtual void                  setTargetDogLeg            ( bool );
-      virtual void                  setLock                    ( bool );
-      virtual void                  setRouted                  ( bool );
-      virtual void                  setTrack                   ( Track* );
-      virtual void                  setArea                    ();
-      virtual void                  setDogLegLevel             ( unsigned int );
-      virtual void                  swapTrack                  ( TrackElement* );
-      virtual void                  reschedule                 ( unsigned int level );
-      virtual void                  detach                     ();
-      virtual void                  revalidate                 ( bool invalidEvent );
-      virtual void                  invalidate                 ();
-      virtual void                  setAxis                    ( DbU::Unit, unsigned int flags );
-      virtual void                  slacken                    ();
-      virtual bool                  moveUp                     ( unsigned int flags );
-      virtual bool                  moveDown                   ( unsigned int flags );
-      virtual bool                  moveAside                  ( bool onLeft );
-      virtual TrackElement*         makeDogLeg                 ();
-      virtual TrackElement*         makeDogLeg                 ( Interval, bool& leftDogleg );
-      virtual TrackElement*         makeDogLeg                 ( Katabatic::GCell* );
-      virtual TrackElement*         _postDogLeg                ();
-      virtual void                  _postModify                ();
-      virtual void                  desalignate                ();
-      virtual bool                  _check                     () const;
-      virtual Record*               _getRecord                 () const;
-      virtual string                _getString                 () const;
-      virtual string                _getTypeName               () const;
+      class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
+        public:
+          inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs );
+      };
+
+    public:
+      static  TrackElement*         create                 ( AutoSegment*, Track*, bool& created );
+    public:                                                
+    // Wrapped AutoSegment Functions (when applicable).
+      virtual AutoSegment*          base                   () const;
+      virtual bool                  isFixed                () const;
+      virtual bool                  isHorizontal           () const;
+      virtual bool                  isVertical             () const;
+      virtual bool                  isLocal                () const;
+      virtual bool                  isGlobal               () const;
+      virtual bool                  isBipoint              () const;
+      virtual bool                  isTerminal             () const;
+      virtual bool                  isStrongTerminal       ( unsigned int flags=0 ) const;
+      virtual bool                  isStrap                () const;
+      virtual bool                  isSlackened            () const;
+      virtual bool                  isDogleg               () const;
+    // Predicates.
+      virtual bool                  canDogleg              ();
+      virtual bool                  canDogleg              ( Interval );
+      virtual bool                  canDogleg              ( Katabatic::GCell*, unsigned int flags=0 );
+      virtual bool                  canPivotUp             ( float reserve ) const;
+      virtual bool                  canPivotDown           ( float reserve ) const;
+      virtual bool                  canMoveUp              ( float reserve, unsigned int flags ) const;
+      virtual bool                  canSlacken             () const;
+      virtual float                 getMaxUnderDensity     ( unsigned int flags ) const;
+      virtual unsigned long         getId                  () const;
+      virtual unsigned int          getDirection           () const;
+      virtual Net*                  getNet                 () const;
+      virtual const Layer*          getLayer               () const;
+      virtual unsigned long         getFreedomDegree       () const;
+      virtual unsigned int          getDoglegLevel         () const;
+      virtual TrackElement*         getNext                () const;
+      virtual TrackElement*         getPrevious            () const;
+      virtual TrackElement*         getParent              () const;
+      virtual DbU::Unit             getAxis                () const;
+      virtual Interval              getFreeInterval        () const;
+      virtual Interval              getSourceConstraints   () const;
+      virtual Interval              getTargetConstraints   () const;
+      virtual DataNegociate*        getDataNegociate       ( unsigned int flags=KtDataSelf ) const;
+      virtual TrackElement*         getCanonical           ( Interval& );
+      virtual size_t                getGCells              ( Katabatic::GCellVector& ) const;
+      virtual TrackElement*         getSourceDogleg        ();
+      virtual TrackElement*         getTargetDogleg        ();
+      virtual TrackElements         getPerpandiculars      ();
+      virtual size_t                getPerpandicularsBound ( set<TrackElement*>& );
+    // Mutators.
+      virtual void                  setTrack               ( Track* );
+      virtual void                  updateFreedomDegree    ();
+      virtual void                  setDoglegLevel         ( unsigned int );
+      virtual void                  swapTrack              ( TrackElement* );
+      virtual void                  reschedule             ( unsigned int level );
+      virtual void                  detach                 ();
+      virtual void                  revalidate             ();
+      virtual void                  invalidate             ();
+      virtual void                  setAxis                ( DbU::Unit, unsigned int flags );
+      virtual TrackElement*         makeDogleg             ();
+      virtual TrackElement*         makeDogleg             ( Katabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
+      virtual TrackElement*         makeDogleg             ( Interval, unsigned int& flags );
+      virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
+      virtual bool                  moveAside              ( unsigned int flags );
+      virtual bool                  slacken                ( unsigned int flags=KbNoFlags );
+      virtual bool                  moveUp                 ( unsigned int flags );
+      virtual bool                  moveDown               ( unsigned int flags );
+#if THIS_IS_DISABLED
+      virtual void                  desalignate            ();
+#endif
+      virtual bool                  _check                 () const;
+      virtual Record*               _getRecord             () const;
+      virtual string                _getString             () const;
+      virtual string                _getTypeName           () const;
 
     protected:
     // Attributes.
-             AutoSegment*          _base;
-             bool                  _created;
-             bool                  _lock;
-             bool                  _revalidated;
-             bool                  _sourceDogLeg;
-             bool                  _targetDogLeg;
-             bool                  _canRipple;
-             bool                  _routed;
-             unsigned long         _area;
-             DataNegociate*        _data;
-             unsigned int          _dogLegLevel:4;
+      AutoSegment*   _base;
+      unsigned long  _freedomDegree;
+      DataNegociate* _data;
+      unsigned int   _dogLegLevel:4;
 
     protected:
     // Constructors & Destructors.
@@ -169,10 +142,16 @@ namespace Kite {
   };
 
 
-} // End of Kite namespace.
+  inline bool  TrackSegment::CompareById::operator() ( const TrackSegment* lhs, const TrackSegment* rhs )
+  { return lhs->getId() < rhs->getId(); }
+
+
+  typedef  set<TrackSegment*,TrackSegment::CompareById>  TrackSegmentSet;
+
+
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::TrackSegment);
 
-
-# endif
+#endif  // KITE_TRACK_SEGMENT_H

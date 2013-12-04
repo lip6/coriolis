@@ -1,34 +1,25 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Session.h<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Session.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/Session.h"                              |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_SESSION__
-#define  __KITE_SESSION__
+#ifndef  KITE_SESSION_H
+#define  KITE_SESSION_H
 
-#include  <set>
-#include  <vector>
-#include  <string>
+#include <set>
+#include <vector>
+#include <string>
 
 namespace Hurricane {
   class Record;
@@ -36,7 +27,7 @@ namespace Hurricane {
   class Segment;
 }
 
-#include  "katabatic/Session.h"
+#include "katabatic/Session.h"
 namespace Katabatic {
   class GCell;
   class AutoSegment;
@@ -64,7 +55,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Session".
- 
 
   class Session : public Katabatic::Session {
 
@@ -72,39 +62,35 @@ namespace Kite {
              static Session*            open                ( KiteEngine* );
              static Session*            get                 ( const char* message=NULL );
       inline static Katabatic::Session* base                ();
+      inline static bool                isEmpty             ();
       inline static KiteEngine*         getKiteEngine       ();
              static Configuration*      getConfiguration    ();
       inline static Net*                getBlockageNet      ();
       inline static NegociateWindow*    getNegociateWindow  ();
       inline static unsigned int        getRipupCost        ();
       inline static Katabatic::GCell*   getGCellUnder       ( DbU::Unit, DbU::Unit );
+             static void                setInterrupt        ( bool );
       inline static void                addInsertEvent      ( TrackMarker*  , Track* );
       inline static void                addInsertEvent      ( TrackElement* , Track* );
       inline static void                addRemoveEvent      ( TrackElement* );
       inline static void                addMoveEvent        ( TrackElement* , Track* );
       inline static void                addSortEvent        ( Track*, bool forced=false );
       inline static size_t              revalidate          ();
-      inline static bool                isEmpty             ();
-             static void                setInterrupt        ( bool );
-             static void                link                ( TrackElement* );
-             static void                unlink              ( TrackElement* );
              static TrackElement*       lookup              ( Segment* );
              static TrackElement*       lookup              ( AutoSegment* );
-             static Katabatic::GCell*   lookup              ( Katabatic::GCell* );
     private:                                                
                     KiteEngine*         _getKiteEngine      ();
                     Net*                _getBlockageNet     ();
-                    NegociateWindow*    _getNegociateWindow ();
                     unsigned int        _getRipupCost       ();
                     Katabatic::GCell*   _getGCellUnder      ( DbU::Unit, DbU::Unit );
-                    Katabatic::GCell*   _lookup             ( Katabatic::GCell* );
+      virtual       size_t              _revalidate         ();
+                    bool                _isEmpty            () const;
+                    NegociateWindow*    _getNegociateWindow ();
                     void                _addInsertEvent     ( TrackMarker*  , Track* );
                     void                _addInsertEvent     ( TrackElement* , Track* );
                     void                _addRemoveEvent     ( TrackElement* );
                     void                _addMoveEvent       ( TrackElement* , Track* );
                     void                _addSortEvent       ( Track*, bool forced );
-      virtual       size_t              _revalidate         ();
-                    bool                _isEmpty            () const;
       virtual       Record*             _getRecord          () const;
       virtual       string              _getTypeName        () const;
 
@@ -131,7 +117,7 @@ namespace Kite {
                        Session     ( KiteEngine* );
       virtual         ~Session     ();
       virtual void     _postCreate ();
-      virtual size_t   _preDestroy ();
+      virtual void     _preDestroy ();
     private:
                        Session     ( const Session& );
               Session& operator=   ( const Session& );
@@ -193,7 +179,6 @@ namespace Kite {
   { return get("isEmpty()")->_isEmpty(); }
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
-
-#endif  // __KITE_SESSION__
+#endif  // KITE_SESSION_H

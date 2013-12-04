@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,8 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __PY_KITE_ENGINE__
-#define __PY_KITE_ENGINE__
+#ifndef PY_KITE_ENGINE_H
+#define PY_KITE_ENGINE_H
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/PyToolEngine.h"
@@ -55,4 +55,4 @@ extern "C" {
 
 }  // Kite namespace.
 
-#endif  // __PY_KITE_ENGINE__
+#endif  // PY_KITE_ENGINE_H

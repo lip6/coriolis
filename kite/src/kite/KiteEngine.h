@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -11,35 +11,35 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./KiteEngine.h"                           |
+// |  C++ Header  :  "./kite/KiteEngine.h"                           |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_KITE_ENGINE__
-#define  __KITE_KITE_ENGINE__
+#ifndef  KITE_KITE_ENGINE_H
+#define  KITE_KITE_ENGINE_H
 
-#include  <iostream>
+#include <iostream>
 
-#include  "hurricane/Name.h"
+#include "hurricane/Name.h"
 namespace Hurricane {
   class Layer;
   class Net;
   class Cell;
 }
 
-#include  "crlcore/RoutingGauge.h"
-#include  "katabatic/KatabaticEngine.h"
+#include "crlcore/RoutingGauge.h"
+#include "katabatic/KatabaticEngine.h"
 
 namespace Knik {
   class KnikEngine;
 }
 
-#include  "kite/TrackElement.h"
-#include  "kite/Configuration.h"
+#include "kite/Constants.h"
+#include "kite/TrackElement.h"
+#include "kite/Configuration.h"
 
 
 namespace Kite {
-
 
   using Hurricane::Name;
   using Hurricane::Layer;
@@ -54,18 +54,9 @@ namespace Kite {
 
 
 // -------------------------------------------------------------------
-// Enumerations
-
-
-  enum GlobalFlags { BuildGlobalSolution=1, LoadGlobalSolution };
-
-// -------------------------------------------------------------------
 // Class  :  "Kite::KiteEngine".
- 
 
   class KiteEngine : public KatabaticEngine {
-    public:
-      enum LookupFlags { OnAllCollapseds=1 };
 
     public:
       static  const Name&      staticGetName              ();
@@ -74,8 +65,8 @@ namespace Kite {
     public:                                               
       inline  KatabaticEngine* base                       ();
       inline  Configuration*   getKiteConfiguration       ();
-      inline  Net*             getBlockageNet             ();
       virtual Configuration*   getConfiguration           ();
+      inline  Net*             getBlockageNet             ();
       inline  bool             getToolSuccess             () const;
       inline  unsigned long    getEventsLimit             () const;
       inline  unsigned int     getRipupLimit              ( unsigned int type ) const;
@@ -104,29 +95,25 @@ namespace Kite {
       inline  void             setExpandStep              ( float );
       inline  void             setEdgeCapacityPercent     ( float );
       inline  void             setGlobalMinBreak          ( unsigned int depth, DbU::Unit );
-              void             preProcess                 ();
-              void             buildBlockages             ();
               void             buildPowerRails            ();
               void             protectRoutingPads         ();
+              void             preProcess                 ();
+              void             setInterrupt               ( bool );
+              void             buildBlockages             ();
               void             createGlobalGraph          ( unsigned int mode );
       virtual void             createDetailedGrid         ();
               void             saveGlobalSolution         ();
               void             annotateGlobalGraph        ();
+              void             runNegociate               ( unsigned int slowMotion=0 );
               void             runGlobalRouter            ( unsigned int mode );
       virtual void             loadGlobalRouting          ( unsigned int method, KatabaticEngine::NetSet& );
-              void             runNegociate               ( unsigned int slowMotion=0 );
-              void             setInterrupt               ( bool );
       virtual void             finalizeLayout             ();
               void             _gutKite                   ();
-      inline  TrackElementLut& _getTrackElementLut        ();
-              void             _link                      ( TrackElement* );
-              void             _unlink                    ( TrackElement* );        
+              void             _computeCagedConstraints   ();
               TrackElement*    _lookup                    ( Segment* ) const;
       inline  TrackElement*    _lookup                    ( AutoSegment* ) const;
               bool             _check                     ( unsigned int& overlap, const char* message=NULL ) const;
               void             _check                     ( Net* ) const;
-              void             _computeCagedConstraints   ();
-              void             _computeCagedConstraints   ( Net*, set<TrackElement*>& );
       virtual Record*          _getRecord                 () const;
       virtual string           _getString                 () const;
       virtual string           _getTypeName               () const;
@@ -140,7 +127,6 @@ namespace Kite {
              Configuration*         _configuration;
              vector<RoutingPlane*>  _routingPlanes;
              NegociateWindow*       _negociateWindow;
-             TrackElementLut        _trackSegmentLut;
              double                 _minimumWL;
              mutable bool           _toolSuccess;
 
@@ -179,18 +165,17 @@ namespace Kite {
   inline  void                          KiteEngine::setMinimumWL           ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KiteEngine::printConfiguration     () const { _configuration->print(getCell()); }
-  inline  TrackElementLut&              KiteEngine::_getTrackElementLut    () { return _trackSegmentLut; }
-  inline  TrackElement*                 KiteEngine::_lookup                ( AutoSegment* as ) const { return _lookup(as->base()); }
+  inline  TrackElement*                 KiteEngine::_lookup                ( AutoSegment* segment ) const { return segment->getObserver<TrackElement>(); }
 
 
 // Variables.
   extern const char* missingRW;
 
 
-} // End of Kite namespace.
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::KiteEngine);
 
 
-#endif  // __KITE_KITE_ENGINE__
+#endif  // KITE_KITE_ENGINE_H

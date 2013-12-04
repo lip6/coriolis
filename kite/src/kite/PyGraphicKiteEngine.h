@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,8 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __KITE_PY_GRAPHIC_KITE_ENGINE__
-#define __KITE_PY_GRAPHIC_KITE_ENGINE__
+#ifndef KITE_PY_GRAPHIC_KITE_ENGINE_H
+#define KITE_PY_GRAPHIC_KITE_ENGINE_H
 
 #include "crlcore/PyGraphicToolEngine.h"
 #include "kite/GraphicKiteEngine.h"
@@ -49,8 +49,8 @@ extern "C" {
 #define PY_GRAPHIC_KITE_ENGINE_O(v) ( PY_GRAPHIC_KITE_ENGINE(v)->_baseObject._object )
 
 
-}  // End of extern "C".
+}  // extern "C".
 
 }  // Kite namespace.
 
-#endif // __KITE_PYGRAPHICKITEENGINE__
+#endif  // KITE_PY_GRAPHIC_KITE_ENGINE_H

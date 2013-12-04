@@ -1,34 +1,24 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Configuration.h<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :   "./kite/Configuration.h"                       |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KITE_CONFIGURATION__
-#define  __KITE_CONFIGURATION__
+#ifndef  KITE_CONFIGURATION_H
+#define  KITE_CONFIGURATION_H
 
-#include  <boost/function.hpp>
-
-#include  "katabatic/Configuration.h"
+#include <boost/function.hpp>
+#include "katabatic/Configuration.h"
 
 
 namespace Kite {
@@ -46,7 +36,6 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "Kite::Configuration".
-
 
   class Configuration : public Katabatic::Configuration {
     public:
@@ -68,6 +57,7 @@ namespace Kite {
                                         ~Configuration          ();
     // Decorateds.                                              
       virtual bool                       isGMetal               ( const Layer* ) const;
+      virtual bool                       isGContact             ( const Layer* ) const;
       virtual size_t                     getDepth               () const;
       virtual size_t                     getAllowedDepth        () const;
       virtual size_t                     getLayerDepth          ( const Layer* ) const;
@@ -137,10 +127,10 @@ namespace Kite {
 
 
 
-}  // End of Kite namespace.
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::Configuration);
 
 
-#endif  // __KITE_CONFIGURATION__
+#endif  // KITE_CONFIGURATION_H

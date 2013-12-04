@@ -2,33 +2,25 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./TrackMarker.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./kite/TrackMarker.h"                          |
+// +-----------------------------------------------------------------+
 
 
 
 
-#ifndef  __KITE_TRACK_MARKER__
-#define  __KITE_TRACK_MARKER__
+#ifndef  KITE_TRACK_MARKER_H
+#define  KITE_TRACK_MARKER_H
 
-#include  "hurricane/DbU.h"
+#include "hurricane/DbU.h"
 namespace Hurricane {
   class RoutingPad;
   class Net;
@@ -47,7 +39,6 @@ namespace Kite {
   
 // -------------------------------------------------------------------
 // Class  :  "TrackMarker".
- 
 
   class TrackMarker {
 
@@ -113,10 +104,10 @@ namespace Kite {
   { return ( lhsU < rhsU ); }
 
 
-}  // End of Kite namespace.
+}  // Kite namespace.
 
 
 INSPECTOR_P_SUPPORT(Kite::TrackMarker);
 
 
-#endif  // __KITE_TRACK_MARKER__
+#endif  // KITE_TRACK_MARKER_H

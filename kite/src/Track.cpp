@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,31 +12,24 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Track.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-#include  <cstdlib>
-#include  <sstream>
-#include  <memory>
-#include  <algorithm>
-
-#include  "hurricane/Warning.h"
-#include  "hurricane/Bug.h"
-#include  "hurricane/Layer.h"
-#include  "hurricane/Net.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/Track.h"
-#include  "kite/TrackMarker.h"
-#include  "kite/DataNegociate.h"
+#include <cstdlib>
+#include <sstream>
+#include <memory>
+#include <algorithm>
+#include "hurricane/Warning.h"
+#include "hurricane/Bug.h"
+#include "hurricane/Layer.h"
+#include "hurricane/Net.h"
+#include "kite/RoutingPlane.h"
+#include "kite/Track.h"
+#include "kite/TrackMarker.h"
+#include "kite/DataNegociate.h"
 
 
 namespace {
-
 
   using namespace std;
   using namespace CRL;
@@ -49,7 +37,7 @@ namespace {
 
 
   struct isDetachedSegment {
-      bool operator() ( const TrackElement* s ) { return !s->getTrack(); };
+      bool operator() ( const TrackElement* s ) { return not s->getTrack(); };
   };
 
 
@@ -57,11 +45,10 @@ namespace {
   { return (*(v.begin()+i))->getSourceU(); }
 
 
-} // End of local namespace.
+} // Anonymous namespace.
 
 
 namespace Kite {
-
 
   using std::lower_bound;
   using std::remove_if;
@@ -81,7 +68,7 @@ namespace Kite {
 // Class  :  "Track".
 
 
-  const size_t  Track::NPOS = (size_t)-1;
+  const size_t  Track::npos = (size_t)-1;
 
 
   Track::Track ( RoutingPlane* routingPlane, unsigned int index )
@@ -103,9 +90,7 @@ namespace Kite {
 
 
   Track::~Track ()
-  {
-    ltrace(90) << "Track::~Track() - " << (void*)this << endl;
-  }
+  { ltrace(90) << "Track::~Track() - " << (void*)this << endl; }
 
 
   void  Track::_preDestroy ()
@@ -114,10 +99,10 @@ namespace Kite {
     ltracein(90);
 
     for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if ( _segments[i] ) _segments[i]->detach();
+      if (_segments[i]) _segments[i]->detach();
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
-      if ( _markers[i] ) _markers[i]->destroy();
+      if (_markers[i]) _markers[i]->destroy();
 
     ltraceout(90);
   }
@@ -127,7 +112,7 @@ namespace Kite {
   {
     ltrace(90) << "Track::destroy() - " << (void*)this << " " << this << endl;
 
-    Track::_preDestroy ();
+    Track::_preDestroy();
     delete this;
   }
 
@@ -148,9 +133,20 @@ namespace Kite {
   { return _routingPlane->getBlockageLayer(); }
 
 
+  Track* Track::getNextTrack () const
+  { return getRoutingPlane()->getTrackByIndex( getIndex()+1 ); }
+
+
+  Track* Track::getPreviousTrack () const
+  {
+    if (not getIndex()) return NULL;
+    return getRoutingPlane()->getTrackByIndex( getIndex()-1 );
+  }
+
+
   TrackElement* Track::getSegment ( size_t index ) const
   {
-    if ( (index == NPOS) || (index >= getSize()) ) return NULL;
+    if ( (index == npos) or (index >= getSize()) ) return NULL;
     return _segments[index];
   }
 
@@ -159,12 +155,9 @@ namespace Kite {
   {
     unsigned int  state;
     size_t        begin;
-    size_t        end;
 
-    getIBounds ( position, begin, end, state );
-
-    if ( state & (MinTrackMin|MaxTrackMax) ) return NULL;
-
+    getBeginIndex( position, begin, state );
+    if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
     return getSegment(begin);
   }
 
@@ -172,10 +165,10 @@ namespace Kite {
   TrackElement* Track::getNext ( size_t& index, Net* net ) const
   {
     for ( index++ ; index < _segments.size() ; index++ ) {
-      if ( _segments[index]->getNet() == net ) continue;
+      if (_segments[index]->getNet() == net) continue;
       return _segments[index];
     }
-    index = NPOS;
+    index = npos;
 
     return NULL;
   }
@@ -183,15 +176,15 @@ namespace Kite {
 
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
-    for ( index-- ; index != NPOS ; index-- ) {
-      if ( inltrace(148) ) {
+    for ( index-- ; index != npos ; index-- ) {
+      if (inltrace(148)) {
         cerr << tab << index << ":"; cerr.flush();
         cerr << _segments[index] << endl;
       }
-      if ( _segments[index]->getNet() == net ) continue;
+      if (_segments[index]->getNet() == net) continue;
       return _segments[index];
     }
-    index = NPOS;
+    index = npos;
 
     return NULL;
   }
@@ -208,56 +201,59 @@ namespace Kite {
   }
 
 
-  void  Track::getIBounds ( DbU::Unit position, size_t& begin, size_t& end, unsigned int& state ) const
+  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, unsigned int& state ) const
   {
-    if ( _segments.empty() ) {
+    if (_segments.empty()) {
       state = EmptyTrack;
-      begin = end = 0;
+      begin = 0;
       return;
     }
 
-    if ( position < _min ) {
-      cerr << Warning ( " Position %s inferior to the lower bound of %s. Returning NPOS."
-                      , DbU::getValueString(position).c_str()
-                      , getString(this).c_str() ) << endl;
-      state = BeforeFirst;
-      begin = end = 0;
+    if (position < _min) {
+      cerr << Warning( " Position %s inferior to the lower bound of %s. Returning npos."
+                     , DbU::getValueString(position).c_str()
+                     , getString(this).c_str() ) << endl;
+      state = BeforeFirstElement;
+      begin = 0;
       return;
     }
 
-    if ( position > _max ) {
-      cerr << Warning ( " Position %s superior to the upper bound of %s. Returning NPOS."
-                      , DbU::getValueString(position).c_str()
-                      , getString(this).c_str() ) << endl;
-      state = AfterLast;
-      begin = end =  _segments.size() - 1;
+    if (position > _max) {
+      cerr << Warning( " Position %s superior to the upper bound of %s. Returning npos."
+                     , DbU::getValueString(position).c_str()
+                     , getString(this).c_str() ) << endl;
+      state = AfterLastElement;
+      begin = _segments.size()-1;
       return;
     }
 
     vector<TrackElement*>::const_iterator  lowerBound
-      = lower_bound ( _segments.begin(), _segments.end(), position, SourceCompare() );
-    begin = end = lowerBound - _segments.begin();
+      = lower_bound( _segments.begin(), _segments.end(), position, SourceCompare() );
+    begin = lowerBound - _segments.begin();
 
-    if ( begin < _segments.size() )
-      for ( ; (begin > 0) && (_segments[begin-1]->getNet() == _segments[begin]->getNet()) ; --begin );
+  // This is suspicious.
+  // I guess this has been written for the case of overlapping segments from the same
+  // net, we find the first one of the overlapped sets. But what if they are not overlapping
+  // but still from the same net?
+    if (begin < _segments.size())
+      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet()) ; --begin );
 
     state = 0;
-    if ( (begin == 0) && (position < _segments[0]->getSourceU()) ) {
-      state = BeforeFirst;
+    if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
+      state = BeforeFirstElement;
     } else {
-      if ( begin ) end = begin -= 1;
+      if (begin) begin -= 1;
 
       size_t   usedBegin    = begin;
-      size_t   usedEnd      = begin;
-      Interval usedInterval = expandUsedInterval ( usedBegin, usedEnd );
+      Interval usedInterval = getOccupiedInterval( usedBegin );
 
-      if ( position < usedInterval.getVMax() )
-        state = Inside;
+      if (position < usedInterval.getVMax())
+        state = InsideElement;
       else
-        if ( begin+1 == _segments.size() )
-          state = AfterLast;
+        if (begin+1 == _segments.size())
+          state = AfterLastElement;
         else
-          state = Outside;
+          state = OutsideElement;
     }
   }
 
@@ -265,22 +261,20 @@ namespace Kite {
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {
     unsigned int  iState;
-    size_t        iBegin;
-    size_t        iEnd;
 
-    if (     _segments.empty()
-         || (interval.getVMax() <= _min)
-         || (interval.getVMin() >= _max)) {
-      begin = end = NPOS;
+    if (  _segments.empty()
+       or (interval.getVMax() <= _min)
+       or (interval.getVMin() >= _max)) {
+      begin = end = npos;
       return;
     }
 
-    getIBounds ( interval.getVMin(), begin, iEnd, iState );
-    expandUsedInterval ( begin, iEnd );
+    getBeginIndex      ( interval.getVMin(), begin, iState );
+    getOccupiedInterval( begin );
 
-    getIBounds ( interval.getVMax(), iBegin, end, iState );
+    getBeginIndex( interval.getVMax(), end, iState );
     while ( end < _segments.size() ) {
-      if ( _segments[end++]->getSourceU() >= interval.getVMax() ) break;
+      if (_segments[end++]->getSourceU() >= interval.getVMax()) break;
     }
   }
 
@@ -302,34 +296,32 @@ namespace Kite {
     ltracein(148);
 
     vector<TrackMarker*>::const_iterator lowerBound
-      = lower_bound ( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarker::Compare() );
+      = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarker::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
-    for ( ;    (mbegin < _markers.size())
-            && (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
+    for ( ;     (mbegin < _markers.size())
+            and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       ltrace(148) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
       if ( _markers[mbegin]->getNet() != net ) {
         ltrace(148) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
-        cost.incTerminals ( _markers[mbegin]->getWeight(this) );
+        cost.incTerminals( _markers[mbegin]->getWeight(this) );
       }
     }
 
-    if ( begin == NPOS ) {
-      ltrace(148) << "  begin == NPOS (after last TrackElement)." << endl;
+    if (begin == npos) {
+      ltrace(148) << "  begin == npos (after last TrackElement)." << endl;
       ltraceout(148);
       return cost;
     }
 
     for ( ; begin < end ; begin++ ) {
-      Interval overlap = interval.getIntersection ( _segments[begin]->getCanonicalInterval() );
-    //if ( not overlap.isEmpty() ) {
-        if ( _segments[begin]->getNet() == net ) {
-          cost.incDeltaShared ( overlap.getSize() );
-        }
-        ltrace(190) << "| overlap: " << _segments[begin] << endl;
-        _segments[begin]->incOverlapCost ( net, cost );
-        if ( cost.isInfinite() ) break;
-    //}
+      Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
+      if ( _segments[begin]->getNet() == net ) {
+        cost.incDeltaShared ( overlap.getSize() );
+      }
+      ltrace(190) << "| overlap: " << _segments[begin] << endl;
+      _segments[begin]->incOverlapCost( net, cost );
+      if (cost.isInfinite()) break;
     }
 
     ltraceout(148);
@@ -343,16 +335,14 @@ namespace Kite {
     size_t begin;
     size_t end;
 
-    getOverlapBounds ( interval, begin, end );
+    getOverlapBounds( interval, begin, end );
 
-    return getOverlapCost ( interval, net, begin, end, flags );
+    return getOverlapCost( interval, net, begin, end, flags );
   }
 
 
   TrackCost  Track::getOverlapCost ( TrackElement* segment, unsigned int flags ) const
-  {
-    return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags );
-  }
+  { return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags ); }
 
 
   void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const
@@ -381,39 +371,25 @@ namespace Kite {
   }
 
 
-  Track* Track::getNext () const
-  {
-    return getRoutingPlane()->getTrackByIndex ( getIndex()+1 );
-  }
-
-
-  Track* Track::getPrevious () const
-  {
-    if ( !getIndex() ) return NULL;
-
-    return getRoutingPlane()->getTrackByIndex ( getIndex()-1 );
-  }
-
-
   size_t  Track::find ( const TrackElement* segment ) const
   {
-    if ( !_segments.size() ) return NPOS;
+    if (_segments.empty()) return npos;
 
     vector<TrackElement*>::const_iterator  lowerBound
-      = lower_bound ( _segments.begin()
-                    , _segments.end()
-                    , segment
-                    , SegmentCompare()
-                    );
+      = lower_bound( _segments.begin()
+                   , _segments.end()
+                   , segment
+                   , SegmentCompare()
+                   );
 
-    if ( lowerBound != _segments.end() ) {
+    if (lowerBound != _segments.end()) {
       while ( segment->getSourceU() == (*lowerBound)->getSourceU() ) {
-        if ( *lowerBound == segment ) return (size_t)(lowerBound-_segments.begin());
+        if (*lowerBound == segment) return (size_t)(lowerBound-_segments.begin());
         lowerBound++;
       }
     }
 
-    return NPOS;
+    return npos;
   }
 
 
@@ -423,13 +399,14 @@ namespace Kite {
     size_t        begin;
     size_t        end;
 
-    if ( !_segments.size() ) return Interval(_min,_max);
+    if (_segments.empty()) return Interval(_min,_max);
 
-    getIBounds ( position, begin, end, state );
-    if ( (state == Inside) && (_segments[begin]->getNet() != net) )
+    getBeginIndex( position, begin, state );
+    if ( (state == InsideElement) and (_segments[begin]->getNet() != net) )
       return Interval();
 
-    return expandFreeInterval ( begin, end, state, net );
+    end = begin;
+    return expandFreeInterval( begin, end, state, net );
   }
 
 
@@ -437,37 +414,34 @@ namespace Kite {
   {
     DbU::Unit minFree = _min;
 
-    if ( !(state & MinTrackMin) ) {
-      if ( _segments[begin]->getNet() == net )
-        getPrevious ( begin, net );
+    if (not (state & BeginIsTrackMin) ) {
+      if (_segments[begin]->getNet() == net)
+        getPrevious( begin, net );
 
-      if ( begin != NPOS ) {
-        size_t usedEnd;
-        minFree = expandUsedInterval ( begin, usedEnd ).getVMax();
+      if (begin != npos) {
+        minFree = getOccupiedInterval(begin).getVMax();
       }
     }
 
-    if ( !(state & MaxTrackMax) ) {
-      if ( _segments[end]->getNet() == net ) {
-        getNext ( end, net );
+    if (not (state & EndIsTrackMax) ) {
+      if (_segments[end]->getNet() == net) {
+        getNext( end, net );
 
-        if ( end == NPOS ) {
+        if (end == npos) {
           end  = _segments.size() - 1;
-          setMaximalFlags ( state, MaxTrackMax );
+          setMaximalFlags( state, EndIsTrackMax );
         } else {
-          setMaximalFlags ( state, MaxSegmentMin );
+          setMaximalFlags( state, EndIsSegmentMin );
         }
       }
     }
 
-    return Interval ( minFree, getMaximalPosition(end,state) );
+    return Interval( minFree, getMaximalPosition(end,state) );
   }
 
 
-  void  Track::forceSort ()
-  {
-    _segmentsValid = false;
-  }
+  void  Track::invalidate ()
+  { _segmentsValid = false; }
 
 
   void  Track::insert ( TrackMarker* marker )
@@ -499,54 +473,53 @@ namespace Kite {
   void  Track::setSegment ( TrackElement* segment, size_t index )
   {
     if ( index >= _segments.size() ) return;
-    
     _segments[index] = segment;
   }
 
 
-  bool  Track::_check ( unsigned int& overlaps, const char* message ) const
+  bool  Track::check ( unsigned int& overlaps, const char* message ) const
   {
     bool coherency = true;
     bool holes     = false;
 
-    if ( message ) cerr << "     o  Checking Track - " << message << endl;
-    ltrace(90) << "[CHECK] " << (void*)this << ":" << this << endl;
+    if (message) cerr << "     o  Checking Track - " << message << endl;
+    ltrace(90) << (void*)this << ":" << this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
-      if ( _segments[i] ) {
-        if ( i ) {
-          if ( _segments[i-1] == _segments[i] ) {
+      if (_segments[i]) {
+        if (i) {
+          if (_segments[i-1] == _segments[i]) {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " is duplicated. " << endl;
             coherency = false;
           }
         }
-        if ( !_segments[i]->getTrack() ) {
+        if (not _segments[i]->getTrack()) {
           cerr << "[CHECK] incoherency at " << i << " "
                << _segments[i] << " is detached." << endl;
           coherency = false;
         } else { 
-          if ( _segments[i]->getTrack() != this ) {
+          if (_segments[i]->getTrack() != this) {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " is in track "
                  << _segments[i]->getTrack() << endl;
             coherency = false;
           }
-          if ( _segments[i]->getIndex() != i ) {
+          if (_segments[i]->getIndex() != i) {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " has bad index "
                  << _segments[i]->getIndex() << endl;
             coherency = false;
           }
         }
-        if ( _segments[i]->getAxis() != getAxis() ) {
+        if (_segments[i]->getAxis() != getAxis()) {
           cerr << "[CHECK] incoherency at " << i << " "
                << _segments[i] << " is not on Track axis "
                << DbU::getValueString(getAxis()) << "." << endl;
           coherency = false;
         } 
         
-        coherency = _segments[i]->_check () and coherency;
+        coherency = _segments[i]->_check() and coherency;
       } else {
         cerr << "[CHECK] Hole at position " << i << "." << endl;
         holes     = true;
@@ -554,7 +527,7 @@ namespace Kite {
       }
     }
 
-    if ( !holes )
+    if (not holes)
       coherency = (checkOverlap(overlaps) == 0) and coherency;
 
     return coherency;
@@ -563,7 +536,7 @@ namespace Kite {
 
   DbU::Unit  Track::getSourcePosition ( size_t  i ) const
   {
-    if ( i == NPOS) return 0;
+    if ( i == npos) return 0;
 
     return _segments[i]->getSourceU();
   }
@@ -581,14 +554,14 @@ namespace Kite {
   {
     Interval  canonical;
 
-    switch ( state & MinMask ) {
-      case MinTrackMin:   return _min;
-      case MinSegmentMin: return _segments[index]->getSourceU ();
-      case MinSegmentMax: return _segments[index]->getTargetU ();
+    switch ( state & BeginMask ) {
+      case BeginIsTrackMin:   return _min;
+      case BeginIsSegmentMin: return _segments[index]->getSourceU ();
+      case BeginIsSegmentMax: return _segments[index]->getTargetU ();
     }
 
-    cerr << Bug ( " Track::getMinimalPosition(size_t,unsigned int) :"
-                  " invalid state value %ud.", state ) << endl;
+    cerr << Bug( " Track::getMinimalPosition(size_t,unsigned int) :"
+                 " invalid state value %ud.", state ) << endl;
 
     return _min;
   }
@@ -598,104 +571,79 @@ namespace Kite {
   {
     Interval  canonical;
 
-    switch ( state & MaxMask ) {
-      case MaxTrackMax:       return _max;
-      case MaxSegmentMin:     return _segments[index  ]->getSourceU ();
-      case MaxNextSegmentMin: if ( index+1 >= getSize() ) return _max;
-                              return _segments[index+1]->getSourceU ();
-      case MaxSegmentMax:     return _segments[index  ]->getTargetU ();
+    switch ( state & EndMask ) {
+      case EndIsTrackMax:       return _max;
+      case EndIsSegmentMin:     return _segments[index  ]->getSourceU ();
+      case EndIsNextSegmentMin: if (index+1 >= getSize()) return _max;
+                                     return _segments[index+1]->getSourceU ();
+      case EndIsSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 
-    cerr << Bug ( " Track::getMaximalPosition(size_t,unsigned int) :"
-                  " invalid state value %ud.", state ) << endl;
+    cerr << Bug( " Track::getMaximalPosition(size_t,unsigned int) :"
+                 " invalid state value %ud.", state ) << endl;
 
     return _min;
   }
 
 
-  Interval  Track::expandUsedInterval ( size_t& begin, size_t& end ) const
+  Interval  Track::getOccupiedInterval ( size_t& begin ) const
   {
-    if ( begin == NPOS ) return Interval();
+    if (begin == npos) return Interval();
 
     size_t  seed  = begin;
     Net*    owner = _segments[seed]->getNet();
 
-    Interval  expandInterval;
-    Interval  ownerInterval;
-    _segments[seed]->getCanonical ( ownerInterval );
+    Interval  segmentInterval;
+    Interval  mergedInterval;
+    _segments[seed]->getCanonical( mergedInterval );
 
     size_t i = seed;
-    while ( --i != NPOS ) {
-      if ( _segments[i]->getNet() != owner ) break;
+    while ( --i != npos ) {
+      if (_segments[i]->getNet() != owner) break;
 
-      _segments[i]->getCanonical ( expandInterval );
-      if ( expandInterval.getVMax() >= ownerInterval.getVMin() ) {
-        ownerInterval.merge ( expandInterval );
+      _segments[i]->getCanonical ( segmentInterval );
+      if (segmentInterval.getVMax() >= mergedInterval.getVMin()) {
+        mergedInterval.merge( segmentInterval );
         begin = i;
       }
     }
 
-    end = i = seed;
+    i = seed;
     while ( ++i < _segments.size() ) {
-      if ( _segments[i]->getNet() != owner ) break;
+      if (_segments[i]->getNet() != owner) break;
 
-      _segments[i]->getCanonical ( expandInterval );
-      if ( expandInterval.getVMin() > ownerInterval.getVMax() ) break;
-      if ( expandInterval.getVMax() > ownerInterval.getVMax() ) end = i;
+      _segments[i]->getCanonical( segmentInterval );
+      if (segmentInterval.getVMin() > mergedInterval.getVMax()) break;
 
-      ownerInterval.merge ( expandInterval );
+      mergedInterval.merge( segmentInterval );
     }
 
-    return ownerInterval;
+    return mergedInterval;
   }
 
 
-  size_t  Track::pack ()
+  size_t  Track::doRemoval ()
   {
-    ltrace(148) << "Track::pack() - " << this << endl;
+    ltrace(148) << "Track::doRemoval() - " << this << endl;
     ltracein(148);
 
     size_t  size = _segments.size();
 
     vector<TrackElement*>::iterator  beginRemove
-      = remove_if ( _segments.begin(), _segments.end(), isDetachedSegment() );
+      = remove_if( _segments.begin(), _segments.end(), isDetachedSegment() );
 
-    _segments.erase ( beginRemove, _segments.end() );
+    _segments.erase( beginRemove, _segments.end() );
 
-# if 0
-    size_t  first    = 0;
-    size_t  last     = 0;
-    bool    erase    = false;
-
-    while ( last < _segments.size() ) {
-      if ( _segments[last] ) {
-        if ( erase ) {
-          _segments.erase ( _segments.begin()+first, _segments.begin()+last );
-
-          erase = false;
-          last  = first;
-        } else {
-          first = last;
-        }
-      } else {
-        erase = true;
-      }
-    }
-
-    if ( erase )
-      _segments.erase ( _segments.begin()+first, _segments.end() );
-# endif
-
-    ltrace(148) << "After packing " << this << endl;
+    ltrace(148) << "After doRemoval " << this << endl;
     ltraceout(148);
 
     return size - _segments.size();
   }
 
 
-  void  Track::sort ()
+  void  Track::doReorder ()
   {
-    if ( !_segmentsValid ) {
+    if (not _segmentsValid ) {
       std::sort ( _segments.begin(), _segments.end(), SegmentCompare() );
       for ( size_t i=0 ; i < _segments.size() ; i++ ) {
         _segments[i]->setIndex ( i );
@@ -703,7 +651,7 @@ namespace Kite {
       _segmentsValid = true;
     }
 
-    if ( !_markersValid ) {
+    if (not _markersValid ) {
       std::sort ( _markers.begin(), _markers.end(), TrackMarker::Compare() );
       _markersValid = true;
     }
@@ -719,10 +667,10 @@ namespace Kite {
       if ( _segments[i]->getNet() == _segments[i+1]->getNet() ) {
         if ( _segments[i]->getSourceU() == _segments[i+1]->getSourceU() ) {
           if ( _segments[i]->getTargetU() < _segments[i+1]->getTargetU() ) {
-            cerr << Warning(" Invalid sorting length order in %s:\n%s  \n%s  "
-                           ,getString(this).c_str()
-                           ,getString(_segments[i  ]).c_str()
-                           ,getString(_segments[i+1]).c_str()) << endl;
+            cerr << Error(" Invalid sorting length order in %s:\n%s  \n%s  "
+                         ,getString(this).c_str()
+                         ,getString(_segments[i  ]).c_str()
+                         ,getString(_segments[i+1]).c_str()) << endl;
           }
         }
         for ( j=i+1 ; (j<_segments.size()) && (_segments[i]->getNet() == _segments[j]->getNet()) ; j++ );
@@ -732,10 +680,10 @@ namespace Kite {
 
       if (   (j<_segments.size())
           && (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
-        cerr << Warning("Overlap in %s between:\n  %s\n  %s"
-                       ,getString(this).c_str()
-                       ,getString(_segments[i]).c_str()
-                       ,getString(_segments[j]).c_str()) << endl;
+        cerr << Error("Overlap in %s between:\n  %s\n  %s"
+                     ,getString(this).c_str()
+                     ,getString(_segments[i]).c_str()
+                     ,getString(_segments[j]).c_str()) << endl;
         overlaps++;
       }
     }
@@ -760,13 +708,13 @@ namespace Kite {
   Record* Track::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot ( "_routingPlane",  _routingPlane ) );
-    record->add ( getSlot ( "_index"       , &_index        ) );
+    record->add ( getSlot           ( "_routingPlane",  _routingPlane ) );
+    record->add ( getSlot           ( "_index"       , &_index        ) );
     record->add ( DbU::getValueSlot ( "_axis"        , &_axis         ) );
-    record->add ( getSlot ( "_segments"    , &_segments     ) );
+    record->add ( getSlot           ( "_segments"    , &_segments     ) );
                                      
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

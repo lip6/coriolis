@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,49 +14,49 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <sstream>
-#include  <fstream>
-#include  <iomanip>
-
-#include  "hurricane/DebugSession.h"
-#include  "hurricane/Bug.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Breakpoint.h"
-#include  "hurricane/Layer.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Pad.h"
-#include  "hurricane/Plug.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
-#include  "crlcore/Measures.h"
-#include  "knik/Vertex.h"
-#include  "knik/Edge.h"
-#include  "knik/Graph.h"
-#include  "knik/KnikEngine.h"
-#include  "katabatic/AutoContact.h"
-#include  "katabatic/GCellGrid.h"
-#include  "kite/DataNegociate.h"
-#include  "kite/RoutingPlane.h"
-#include  "kite/Session.h"
-#include  "kite/NegociateWindow.h"
-#include  "kite/KiteEngine.h"
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+#include "hurricane/DebugSession.h"
+#include "hurricane/Bug.h"
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Breakpoint.h"
+#include "hurricane/Layer.h"
+#include "hurricane/Net.h"
+#include "hurricane/Pad.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/UpdateSession.h"
+#include "crlcore/Measures.h"
+#include "knik/Vertex.h"
+#include "knik/Edge.h"
+#include "knik/Graph.h"
+#include "knik/KnikEngine.h"
+#include "katabatic/AutoContact.h"
+#include "katabatic/GCellGrid.h"
+#include "kite/DataNegociate.h"
+#include "kite/RoutingPlane.h"
+#include "kite/Session.h"
+#include "kite/NegociateWindow.h"
+#include "kite/KiteEngine.h"
 
 
 namespace Kite {
-
 
   using std::cout;
   using std::cerr;
   using std::endl;
   using std::setw;
   using std::left;
+  using std::ostream;
   using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
+  using std::vector;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -68,6 +67,7 @@ namespace Kite {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
+  using Hurricane::Box;
   using Hurricane::Torus;
   using Hurricane::Layer;
   using Hurricane::Cell;
@@ -76,6 +76,7 @@ namespace Kite {
   using CRL::MeasuresSet;
   using Knik::KnikEngine;
   using Katabatic::AutoContact;
+  using Katabatic::AutoSegmentLut;
   using Katabatic::ChipTools;
 
 
@@ -87,7 +88,6 @@ namespace Kite {
 // -------------------------------------------------------------------
 // Class  :  "Kite::KiteEngine".
 
-
   Name  KiteEngine::_toolName = "Kite";
 
 
@@ -96,24 +96,19 @@ namespace Kite {
 
 
   KiteEngine* KiteEngine::get ( const Cell* cell )
-  {
-    return static_cast<KiteEngine*>(ToolEngine::get(cell,staticGetName()));
-  }
+  { return static_cast<KiteEngine*>(ToolEngine::get(cell,staticGetName())); }
 
 
   KiteEngine::KiteEngine ( Cell* cell )
-    : KatabaticEngine  (cell)
-    , _knik            (NULL)
-    , _blockageNet     (NULL)
-    , _configuration   (new Configuration(getKatabaticConfiguration()))
-    , _routingPlanes   ()
-    , _negociateWindow (NULL)
-    , _trackSegmentLut ()
-    , _minimumWL       (0.0)
-    , _toolSuccess     (false)
-  {
-  //_configuration->setAllowedDepth ( 3 );
-  }
+    : KatabaticEngine (cell)
+    , _knik           (NULL)
+    , _blockageNet    (NULL)
+    , _configuration  (new Configuration(getKatabaticConfiguration()))
+    , _routingPlanes  ()
+    , _negociateWindow(NULL)
+    , _minimumWL      (0.0)
+    , _toolSuccess    (false)
+  { }
 
 
   void  KiteEngine::_postCreate ()
@@ -123,9 +118,9 @@ namespace Kite {
 #ifdef KNIK_NOT_EMBEDDED
     size_t maxDepth = getRoutingGauge()->getDepth();
 
-    _routingPlanes.reserve ( maxDepth );
+    _routingPlanes.reserve( maxDepth );
     for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
-      _routingPlanes.push_back ( RoutingPlane::create ( this, depth ) );
+      _routingPlanes.push_back( RoutingPlane::create( this, depth ) );
     }
 #endif
   }
@@ -135,37 +130,45 @@ namespace Kite {
   {
     KiteEngine* kite = new KiteEngine ( cell );
 
-    kite->_postCreate ();
+    kite->_postCreate();
     return kite;
   }
 
 
   void  KiteEngine::_preDestroy ()
   {
-    ltrace(90) << "KiteEngine::_preDestroy ()" << endl;
+    ltrace(90) << "KiteEngine::_preDestroy()" << endl;
     ltracein(90);
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
 
-    if ( getState() < Katabatic::StateGutted )
-      setState ( Katabatic::StatePreDestroying );
+    if (getState() < Katabatic::EngineGutted)
+      setState( Katabatic::EnginePreDestroying );
 
-    _gutKite ();
-    KatabaticEngine::_preDestroy ();
+    _gutKite();
+    KatabaticEngine::_preDestroy();
 
     cmess2 << "     - RoutingEvents := " << RoutingEvent::getAllocateds() << endl;
 
-    _knik->destroy ();
+    if (not ToolEngine::inDestroyAll()) {
+      KnikEngine* attachedKnik = KnikEngine::get( getCell() );
+
+      if (_knik != attachedKnik) {
+        cerr << Error("Knik attribute differs from the Cell attached one (must be the same)\n"
+                      "        On: <%s>."
+                     ,getString(getCell()->getName()).c_str()) << endl;
+        _knik = attachedKnik;
+      }
+      _knik->destroy();
+    }
 
     ltraceout(90);
   }
 
 
   KiteEngine::~KiteEngine ()
-  {
-    delete _configuration;
-  }
+  { delete _configuration; }
 
 
   const Name& KiteEngine::getName () const
@@ -178,24 +181,23 @@ namespace Kite {
 
   unsigned int  KiteEngine::getRipupLimit ( const TrackElement* segment ) const
   {
-    if ( segment->isBlockage() ) return 0;
+    if (segment->isBlockage()) return 0;
 
-    if ( segment->isStrap () ) return _configuration->getRipupLimit(Configuration::StrapRipupLimit);
-    if ( segment->isGlobal() ) {
+    if (segment->isStrap ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isGlobal()) {
       Katabatic::GCellVector gcells;
-      segment->getGCells(gcells);
-      if ( gcells.size() > 2 )
-        return _configuration->getRipupLimit(Configuration::LongGlobalRipupLimit);
-      return _configuration->getRipupLimit(Configuration::GlobalRipupLimit);
+      segment->getGCells( gcells );
+      if (gcells.size() > 2)
+        return _configuration->getRipupLimit( Configuration::LongGlobalRipupLimit );
+      return _configuration->getRipupLimit( Configuration::GlobalRipupLimit );
     }
-    return _configuration->getRipupLimit(Configuration::LocalRipupLimit);
+    return _configuration->getRipupLimit( Configuration::LocalRipupLimit );
   }
 
 
   RoutingPlane* KiteEngine::getRoutingPlaneByIndex ( size_t index ) const
   {
-    if ( index >= getRoutingPlanesSize() ) return NULL;
-
+    if (index >= getRoutingPlanesSize() ) return NULL;
     return _routingPlanes[index];
   }
 
@@ -203,7 +205,7 @@ namespace Kite {
   RoutingPlane* KiteEngine::getRoutingPlaneByLayer ( const Layer* layer ) const
   {
     for ( size_t index=0 ; index < getRoutingPlanesSize() ; index++ ) {
-      if ( _routingPlanes[index]->getLayer() == layer )
+      if (_routingPlanes[index]->getLayer() == layer)
         return _routingPlanes[index];
     }
     return NULL;
@@ -212,17 +214,17 @@ namespace Kite {
 
   Track* KiteEngine::getTrackByPosition ( const Layer* layer, DbU::Unit axis, unsigned int mode ) const
   {
-    RoutingPlane* plane = getRoutingPlaneByLayer ( layer );
-    if ( !plane ) return NULL;
+    RoutingPlane* plane = getRoutingPlaneByLayer( layer );
+    if (not plane) return NULL;
 
-    return plane->getTrackByPosition ( axis, mode );
+    return plane->getTrackByPosition( axis, mode );
   }
 
 
   void  KiteEngine::setInterrupt ( bool state )
   {
-    if ( _negociateWindow ) {
-      _negociateWindow->setInterrupt ( state ); 
+    if (_negociateWindow) {
+      _negociateWindow->setInterrupt( state ); 
       cerr << "Interrupt [CRTL+C] of " << this << endl;
     }
   }
@@ -232,67 +234,62 @@ namespace Kite {
   {
     Cell* cell   = getCell();
     Box   cellBb = cell->getBoundingBox();
-    if ( not _knik ) {
-    //if ( cell->getRubbers().getFirst() == NULL )
-      cell->flattenNets ( (mode==BuildGlobalSolution) );
-      
-    //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>createGlobalGraph()</b>&nbsp;"
-    //                      "after net virtual flattening." );
-
-      KatabaticEngine::chipPrep ();
-
-      KnikEngine::setEdgeCapacityPercent ( 1.0 );
-      _knik = KnikEngine::create ( cell
-                                 , 1     // _congestion
-                                 , 2     // _preCongestion
-                                 , false // _benchMode
-                                 , true  // _useSegments
-                                 , 2.5   // _edgeCost
-                                 );
-    //if ( mode == LoadGlobalSolution )
-      _knik->createRoutingGraph ();
-      KnikEngine::setEdgeCapacityPercent ( getEdgeCapacityPercent() );
-
+    if (not _knik) {
+      cell->flattenNets( mode & KtBuildGlobalRouting );
+  
+      KatabaticEngine::chipPrep();
+  
+      KnikEngine::setEdgeCapacityPercent( 1.0 );
+      _knik = KnikEngine::create( cell
+                                , 1     // _congestion
+                                , 2     // _preCongestion
+                                , false // _benchMode
+                                , true  // _useSegments
+                                , 2.5   // _edgeCost
+                                );
+      _knik->createRoutingGraph();
+      KnikEngine::setEdgeCapacityPercent( getEdgeCapacityPercent() );
+  
     // Decrease the edge's capacity only under the core area.
       const ChipTools& chipTools     = getChipTools();
       float            corePercent   = getEdgeCapacityPercent();
       float            coronaPercent = 0.80;
-
+  
       forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
           Knik::Edge* edge    = NULL;
           bool        isVEdge = false;
-
-          if ( i==0 ) {
+  
+          if (i==0) {
             edge = ivertex->getHEdgeOut();
-            if ( not edge ) continue;
-
-            if ( chipTools.intersectHPads(edge->getBoundingBox()) ) {
-              edge->setCapacity ( 0 );
+            if (not edge) continue;
+  
+            if (chipTools.intersectHPads(edge->getBoundingBox())) {
+              edge->setCapacity( 0 );
               continue;
             }
             isVEdge = false;
           } else {
             edge = ivertex->getVEdgeOut();
-            if ( not edge ) continue;
-
-            if ( chipTools.intersectVPads(edge->getBoundingBox()) ) {
-              edge->setCapacity ( 0 );
+            if (not edge) continue;
+  
+            if (chipTools.intersectVPads(edge->getBoundingBox())) {
+              edge->setCapacity( 0 );
               continue;
             }
             isVEdge = true;
           }
-
+  
           float edgePercent = 1.00;
-          if ( chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox()) ) {
+          if (chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox())) {
             edgePercent = corePercent;
-          } else if ( chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox()) ) {
+          } else if (chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox())) {
             edgePercent = coronaPercent;
             isVEdge = false;
           }
-
+  
           unsigned int capacity = (unsigned int)(edge->getCapacity() * edgePercent ) - ((isVEdge) ? 1 : 0);
-          edge->setCapacity ( capacity );
+          edge->setCapacity( capacity );
         }
       }
     }
@@ -301,26 +298,26 @@ namespace Kite {
 
   void  KiteEngine::createDetailedGrid ()
   {
-    KatabaticEngine::createDetailedGrid ();
+    KatabaticEngine::createDetailedGrid();
 
     size_t maxDepth = getRoutingGauge()->getDepth();
 
-    _routingPlanes.reserve ( maxDepth );
+    _routingPlanes.reserve( maxDepth );
     for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
-      _routingPlanes.push_back ( RoutingPlane::create ( this, depth ) );
+      _routingPlanes.push_back( RoutingPlane::create ( this, depth ) );
     }
   }
 
 
   void  KiteEngine::saveGlobalSolution ()
   {
-    if ( getState() < Katabatic::StateGlobalLoaded )
-      throw Error ("KiteEngine::saveGlobalSolution() : global routing not present yet.");
+    if (getState() < Katabatic::EngineGlobalLoaded)
+      throw Error ("KiteEngine::saveGlobalSolution(): Global routing not present yet.");
 
-    if ( getState() > Katabatic::StateGlobalLoaded )
-      throw Error ("KiteEngine::saveGlobalSolution() : cannot save after detailed routing.");
+    if (getState() > Katabatic::EngineGlobalLoaded)
+      throw Error ("KiteEngine::saveGlobalSolution(): Cannot save after detailed routing.");
 
-    _knik->saveSolution ();
+    _knik->saveSolution();
   }
 
 
@@ -334,28 +331,27 @@ namespace Kite {
     int vEdgeCapacity = 0;
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
-      if ( rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
+      if (rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
 
-      if ( rp->getDirection() == Constant::Horizontal ) ++hEdgeCapacity;
+      if (rp->getDirection() == KbHorizontal) ++hEdgeCapacity;
       else ++vEdgeCapacity;
     }
 
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
-      if ( rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
+      if (rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
 
       size_t tracksSize = rp->getTracksSize();
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
         Track*        track   = rp->getTrackByIndex ( itrack );
-      //Knik::Edge*   edge    = NULL;
 
         ltrace(300) << "Capacity from: " << track << endl;
 
-        if ( track->getDirection() == Constant::Horizontal ) {
+        if (track->getDirection() == KbHorizontal) {
           for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
-            TrackElement* element = track->getSegment ( ielement );
-            
-            if ( element->getNet() == NULL ) {
+            TrackElement* element = track->getSegment( ielement );
+         
+            if (element->getNet() == NULL) {
               ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
               continue;
             }
@@ -370,35 +366,30 @@ namespace Kite {
             ltrace(300) << "Capacity from: " << (void*)element << ":" << element
                         << ":" << elementCapacity << endl;
 
-            Katabatic::GCell* gcell = getGCellGrid()->getGCell ( Point(element->getSourceU(),track->getAxis()) );
-            Katabatic::GCell* end   = getGCellGrid()->getGCell ( Point(element->getTargetU(),track->getAxis()) );
+            Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(element->getSourceU(),track->getAxis()) );
+            Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(element->getTargetU(),track->getAxis()) );
             Katabatic::GCell* right = NULL;
-            if ( not gcell ) {
+            if (not gcell) {
               cerr << Warning("annotageGlobalGraph(): TrackElement outside GCell grid.") << endl;
               continue;
             }
 
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
-              if ( right == NULL ) break;
-              _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                          , gcell->getRow()
-                                          , right->getColumn()
-                                          , right->getRow()
-                                          , elementCapacity );
-            // edge = _knik->getEdge ( gcell->getColumn()
-            //                       , gcell->getRow()
-            //                       , right->getColumn()
-            //                       , right->getRow()
-            //                       );
+              if (right == NULL) break;
+              _knik->increaseEdgeCapacity( gcell->getColumn()
+                                         , gcell->getRow()
+                                         , right->getColumn()
+                                         , right->getRow()
+                                         , elementCapacity );
               gcell = right;
             }
           }
         } else {
           for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
-            TrackElement* element = track->getSegment ( ielement );
+            TrackElement* element = track->getSegment( ielement );
 
-            if ( element->getNet() == NULL ) {
+            if (element->getNet() == NULL) {
               ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
               continue;
             }
@@ -413,26 +404,21 @@ namespace Kite {
             ltrace(300) << "Capacity from: " << (void*)element << ":" << element
                         << ":" << elementCapacity << endl;
 
-            Katabatic::GCell* gcell = getGCellGrid()->getGCell ( Point(track->getAxis(),element->getSourceU()) );
-            Katabatic::GCell* end   = getGCellGrid()->getGCell ( Point(track->getAxis(),element->getTargetU()) );
+            Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(track->getAxis(),element->getSourceU()) );
+            Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(track->getAxis(),element->getTargetU()) );
             Katabatic::GCell* up    = NULL;
-            if ( not gcell ) {
+            if (not gcell) {
               cerr << Warning("annotageGlobalGraph(): TrackElement outside GCell grid.") << endl;
               continue;
             }
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
-              if ( up == NULL ) break;
-              _knik->increaseEdgeCapacity ( gcell->getColumn()
-                                          , gcell->getRow()
-                                          , up->getColumn()
-                                          , up->getRow()
-                                          , elementCapacity );
-            // edge = _knik->getEdge ( gcell->getColumn()
-            //                       , gcell->getRow()
-            //                       , up->getColumn()
-            //                       , up->getRow()
-            //                       );
+              if (up == NULL) break;
+              _knik->increaseEdgeCapacity( gcell->getColumn()
+                                         , gcell->getRow()
+                                         , up->getColumn()
+                                         , up->getRow()
+                                         , elementCapacity );
               gcell = up;
             }
           }
@@ -444,167 +430,142 @@ namespace Kite {
 
   void  KiteEngine::runGlobalRouter ( unsigned int mode )
   {
-    if ( getState() >= Katabatic::StateGlobalLoaded )
-      throw Error ("KiteEngine::runGlobalRouter() : global routing already done or loaded.");
+    if (getState() >= Katabatic::EngineGlobalLoaded)
+      throw Error ("KiteEngine::runGlobalRouter(): Global routing already done or loaded.");
 
-    Session::open ( this );
+    Session::open( this );
 
-    createGlobalGraph ( mode );
+    createGlobalGraph( mode );
 
-  //DebugSession::addToTrace ( getCell(), "nb(0)" );
-  //DebugSession::addToTrace ( getCell(), "ram_adri(0)" );
-  //DebugSession::addToTrace ( getCell(), "rsdnbr_sd(9)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(21)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_soper_se(20)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_re(20)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_gi_1_29" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instaddbracry_sd.gi_1_29" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.pi_2_18" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_0_18" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_2_18" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.instseqadr_sd.gi_1_17" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_dp_res_se(28)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.etat32_otheri_sd_2.enx" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.yoper_se(31)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(5)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_rd(24)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.soper_se(20)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.shift32_rshift_se.muxoutput(67)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.shift32_rshift_se.muxoutput(71)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.imdsgn_sd0" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(12)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_re(20)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.nextpc_rd(21)" );
-  //DebugSession::addToTrace ( getCell(), "addr_i(1)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.otheri_sd(29)" );
-  //DebugSession::addToTrace ( getCell(), "d_in_i(22)" );
-  //DebugSession::addToTrace ( getCell(), "ng_i" );
-  //DebugSession::addToTrace ( getCell(), "d_out_i(14)" );
-  //DebugSession::addToTrace ( getCell(), "d_out_i(19)" );
-  //DebugSession::addToTrace ( getCell(), "dout_e_i(1)" );
-  //DebugSession::addToTrace ( getCell(), "dout_e_i(2)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux78" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.nxr2_x1_2_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.na4_x1_23_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.ao22_x2_38_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.ao22_x2_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.rsdnbr_sd(25)" );
-  //DebugSession::addToTrace ( getCell(), "d_out_i(28)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_1m_ct_mbk_buf_opcod_sd_0" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.break_re" );
-  //DebugSession::addToTrace ( getCell(), "d_atype_i(0)" );
-  //DebugSession::addToTrace ( getCell(), "addr_i(7)" );
-  //DebugSession::addToTrace ( getCell(), "addr_i(8)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.break_re" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_sd_2" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_sd_1" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_rd(1)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_write_sm" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_i_ri(29)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_rd(0)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_sd_3" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.opcod_sd_5" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.no4_x1_7_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.on12_x1_15_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.na3_x1_46_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.o2_x2_11_sig" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.nextsr_rx(27)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_wsr_sm" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(5)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux144" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux143" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_aux61" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.aux4" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_hold_si" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_i_ri(30)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.data_rm(0)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.toper_se(0)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.res_se(17)" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_2_22" );
-  //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_2_23" );
-  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_4_24" );
-  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.pi_4_28" );
-  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_1_25" );
-  // //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_2_23" );
-  // //DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_0_28" );
-  // // NO MOVE UP FOR IT...
-  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_23" );
-  //   DebugSession::addToTrace ( getCell(), "mips_r3000_core.mips_r3000_1m_dp.addsub32_carith_se.gi_3_28" );
-  //DebugSession::addToTrace ( getCell(), "cout_to_pads" );
-  //DebugSession::addToTrace ( getCell(), "mux_5.sel0" );
-  //DebugSession::addToTrace ( getCell(), "wm_rf.nandr0" );
-  //DebugSession::addToTrace ( getCell(), "adder_sub.gi_2_18" );
-  //DebugSession::addToTrace ( getCell(), "adder_sub.pi_3_20" );
-  //DebugSession::addToTrace ( getCell(), "core.iram.na4_x1_2_sig" );
-  //DebugSession::addToTrace ( getCell(), "core.ialu.mx3_x2_4_sig" );
+  // Test signals from <addaccu>.
+  //DebugSession::addToTrace( getCell(), "auxsc37" );
+  // Test signals from <amd2901_core_flat>.
+  //DebugSession::addToTrace( getCell(), "acc_reg_ckx" );
+  //DebugSession::addToTrace( getCell(), "acc_reg_nckx" );
+  //DebugSession::addToTrace( getCell(), "i(0)" );
+  //DebugSession::addToTrace( getCell(), "ram_adrb_14" );
+  //DebugSession::addToTrace( getCell(), "ram_adrb_9" );
+  //DebugSession::addToTrace( getCell(), "ram_adra(11)" );
+  //DebugSession::addToTrace( getCell(), "ram_adra(7)" );
+  //DebugSession::addToTrace( getCell(), "ram_adrb(8)" );
+  //DebugSession::addToTrace( getCell(), "alu_carry(1)" );
+  //DebugSession::addToTrace( getCell(), "alu_np(0)" );
+  //DebugSession::addToTrace( getCell(), "ram_d(3)" );
+  //DebugSession::addToTrace( getCell(), "ram_q1(0)" );
+  //DebugSession::addToTrace( getCell(), "ram_i_up" );
+  // Test signals from <amd2901> (M1-VLSI).
+  //DebugSession::addToTrace( getCell(), "zero_to_pads" );
+  //DebugSession::addToTrace( getCell(), "shift_r" );
+  // Test signals from <MIPS> (R3000,micro-programmed).
+  //DebugSession::addToTrace( getCell(), "scout" );
+  //DebugSession::addToTrace( getCell(), "adr_1_n" );
+  //DebugSession::addToTrace( getCell(), "codop_18" );
+  //DebugSession::addToTrace( getCell(), "frz_ctl(10)" );
+  //DebugSession::addToTrace( getCell(), "ctl_seq_mbk_not_ep_80" );
+  //DebugSession::addToTrace( getCell(), "ctl_sts_mbk_not_ctlrw_in_2" );
+  //DebugSession::addToTrace( getCell(), "dpt_wm_rf_adr4x" );
+  //DebugSession::addToTrace( getCell(), "crsrin_1" );
+  //DebugSession::addToTrace( getCell(), "ctl_seq_oa2ao222_x2_2" );
+  //DebugSession::addToTrace( getCell(), "dpt_ishifter_muxoutput_81" );
+  //DebugSession::addToTrace( getCell(), "ctl_seq_mbk_not_ep_7" );
+  //DebugSession::addToTrace( getCell(), "ctl_sts_mbk_not_adel_r" );
+  //DebugSession::addToTrace( getCell(), "ctl_seq_no2_x1_88" );
+  //DebugSession::addToTrace( getCell(), "ctl_seq_ep_31" );
+  //DebugSession::addToTrace( getCell(), "dpt_opyir16ins_mxn1" );
+  //DebugSession::addToTrace( getCell(), "dpt_ishifter_muxoutput_132" );
+  // Test signals from <MIPS> (R3000,pipeline).
+  //DebugSession::addToTrace( getCell(), "nb(0)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_data_e_sm_sel0" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_lo_rw(16)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_hi_rw(27)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_data_e_sm(25)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_nul_s_eq_z_sd_nul_3" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_shift32_rshift_se_muxoutput(143)" );
+  //DebugSession::addToTrace( getCell(), "rsdnbr_sd(19)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_res_se(14)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_res_re(0)" );
+  //DebugSession::addToTrace( getCell(), "wreg_sw(1)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_shift32_rshift_se_msb" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_mx2_x2_2_sig" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_s_mw_se_sel0" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_badr_sd_sel1" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_21" );
+  //Test signals from <MIPS> (R3000,pipeline+chip).
+  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.banc.reada0" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(29)" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_re(4)" );
+  //DebugSession::addToTrace( getCell(), "d_out_i(10)" );
+  //DebugSession::addToTrace( getCell(), "dout_e_i(0)" );
+  //DebugSession::addToTrace( getCell(), "dout_e_i(1)" );
+  //DebugSession::addToTrace( getCell(), "dout_e_i(2)" );
+  //DebugSession::addToTrace( getCell(), "i_ack_i" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.data_rm(7)" );
 
-    createDetailedGrid ();
-    buildPowerRails ();
-    protectRoutingPads ();
+    createDetailedGrid();
+    buildPowerRails();
+    protectRoutingPads();
 
-    Session::revalidate ();
+    Session::revalidate();
 
-    if ( mode == LoadGlobalSolution ) {
-      _knik->loadSolution ();
+    if (mode & KtLoadGlobalRouting) {
+      _knik->loadSolution();
     } else {
-      annotateGlobalGraph ();
-      _knik->run ();
+      annotateGlobalGraph();
+      _knik->run();
     }
 
-    setState ( Katabatic::StateGlobalLoaded );
+    setState( Katabatic::EngineGlobalLoaded );
 
-    Session::close ();
+    Session::close();
   }
 
-  
+
   void  KiteEngine::loadGlobalRouting ( unsigned int method, KatabaticEngine::NetSet& nets )
   {
-    KatabaticEngine::loadGlobalRouting ( method, nets );
+    KatabaticEngine::loadGlobalRouting( method, nets );
 
-    Session::open ( this );
-  //KatabaticEngine::chipPrep ();
-    getGCellGrid()->checkEdgeSaturation ( getEdgeCapacityPercent() );
-    Session::close ();
+    Session::open( this );
+    getGCellGrid()->checkEdgeSaturation( getEdgeCapacityPercent() );
+    Session::close();
   }
 
 
   void  KiteEngine::runNegociate ( unsigned int slowMotion )
   {
-    if ( _negociateWindow ) return;
+    if (_negociateWindow) return;
 
-    startMeasures ();
+    startMeasures();
 
-    Session::open ( this );
+    Session::open( this );
 
-    _negociateWindow = NegociateWindow::create ( this );
-    _negociateWindow->setGCells ( *(getGCellGrid()->getGCellVector()) );
-    preProcess ();
-    _computeCagedConstraints ();
-    _negociateWindow->run ( slowMotion );
-    _negociateWindow->printStatistics ();
-    _negociateWindow->destroy ();
+    _negociateWindow = NegociateWindow::create( this );
+    _negociateWindow->setGCells( *(getGCellGrid()->getGCellVector()) );
+    _computeCagedConstraints();
+    _negociateWindow->run( slowMotion );
+    _negociateWindow->printStatistics();
+    _negociateWindow->destroy();
     _negociateWindow = NULL;
 
-    Session::close ();
+    Session::close();
   //if ( _editor ) _editor->refresh ();
 
-    stopMeasures ();
-    printMeasures ( "algo" );
-    printCompletion ();
+    stopMeasures();
+    printMeasures( "algo" );
 
-    Session::open ( this );
+    Session::open( this );
     unsigned int overlaps     = 0;
     float        edgeCapacity = 1.0;
-    KnikEngine*  knik         = KnikEngine::get ( getCell() );
+    KnikEngine*  knik         = KnikEngine::get( getCell() );
 
-    if ( knik )
-      edgeCapacity = knik->getEdgeCapacityPercent();
+    if (knik) edgeCapacity = knik->getEdgeCapacityPercent();
 
-    cmess2 << "  o  Post-checking Knik capacity overload " << (edgeCapacity*100.0) << "%." << endl;
+    if (cparanoid.enabled()) {
+      cparanoid << "  o  Post-checking Knik capacity overload " << (edgeCapacity*100.0) << "%." << endl;
+      getGCellGrid()->checkEdgeSaturation( edgeCapacity );
+    }
 
-    getGCellGrid()->checkEdgeSaturation ( edgeCapacity );
-    _check ( overlaps );
-    Session::close ();
+    _check( overlaps );
+    Session::close();
 
     _toolSuccess = _toolSuccess and (overlaps == 0);
   }
@@ -612,94 +573,106 @@ namespace Kite {
 
   void  KiteEngine::printCompletion () const
   {
-    cmess1 << "  o  Computing Completion ratios." << endl;
-    cmess1 << "     - Unrouted segments :" << endl;
+    size_t                 routeds          = 0;
+    unsigned long long     totalWireLength  = 0;
+    unsigned long long     routedWireLength = 0;
+    vector<TrackElement*>  unrouteds;
+    ostringstream          result;
 
-    size_t             routeds          = 0;
-    size_t             unrouteds        = 0;
-    unsigned long long totalWireLength  = 0;
-    unsigned long long routedWireLength = 0;
+    AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
+    for ( ; ilut != _getAutoSegmentLut().end() ; ilut++ ) {
+      TrackElement* segment = _lookup( ilut->second );
+      if (segment == NULL) continue;
 
-    TrackElementLut::const_iterator ilut = _trackSegmentLut.begin();
-    for ( ; ilut != _trackSegmentLut.end() ; ilut++ ) {
-      unsigned long long wl = (unsigned long long)DbU::getLambda(ilut->second->getLength());
-      if ( wl > 100000 ) {
+      unsigned long long wl = (unsigned long long)DbU::getLambda( segment->getLength() );
+      if (wl > 100000) {
         cerr << Error("KiteEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
-                     ,wl,ilut->first,getString(ilut->second).c_str()) << endl;
+                     ,wl,ilut->first,getString(segment).c_str()) << endl;
         continue;
       }
+
+      if (segment->isFixed() or segment->isBlockage()) continue;
+
       totalWireLength += wl;
-      if ( ilut->second->getTrack() != NULL ) {
+      if (segment->getTrack() != NULL) {
         routeds++;
         routedWireLength += wl;
       } else {
-        cout << "   " << setw(4) << ++unrouteds << "| " << ilut->second << endl;
+        unrouteds.push_back( segment );
       }
     }
 
-    float segmentRatio    = (float)(routeds) / (float)(_trackSegmentLut.size())  * 100.0;
-    float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength) * 100.0;
+    float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
+    float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
 
-    cmess1 << "     - Track Segment Completion Ratio := "
-           << setprecision(4) << segmentRatio
-           << "% [" << routeds << "/" << _trackSegmentLut.size() << "] "
-           << (_trackSegmentLut.size() - routeds) << " remains." << endl;
-    cmess1 << "     - Wire Length Completion Ratio   := "
-           << setprecision(4) << wireLengthRatio
-           << "% [" << totalWireLength << "] "
-           << (totalWireLength - routedWireLength) << " remains." << endl;
+    result << setprecision(4) << segmentRatio
+           << "% [" << routeds << "+" << unrouteds.size() << "]";
+    cmess1 << Dots::asString( "     - Track Segment Completion Ratio", result.str() ) << endl;
+
+    result.str("");
+    result << setprecision(4) << wireLengthRatio
+            << "% [" << totalWireLength << "+"
+            << (totalWireLength - routedWireLength) << "]";
+    cmess1 << Dots::asString( "     - Wire Length Completion Ratio", result.str() ) << endl;
 
     float expandRatio = 1.0;
-    if ( _minimumWL != 0.0 ) {
+    if (_minimumWL != 0.0) {
       expandRatio = ((totalWireLength-_minimumWL) / _minimumWL) * 100.0;
-      cmess1 << "     - Wire Length Expand Ratio       := "
-             << setprecision(3) << expandRatio
-             << "% [min:" << setprecision(9) << _minimumWL << "] "
-             << endl;
+
+      result.str("");
+      result << setprecision(3) << expandRatio << "% [min:" << setprecision(9) << _minimumWL << "]";
+      cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
-    _toolSuccess = (unrouteds == 0);
+    _toolSuccess = (unrouteds.empty());
 
-    addMeasure<size_t>             ( getCell(), "Segs"   , routeds+unrouteds );
-    addMeasure<unsigned long long> ( getCell(), "DWL(l)" , totalWireLength                  , 12 );
-    addMeasure<unsigned long long> ( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12);
-    addMeasure<double>             ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
-  }
+    if (not unrouteds.empty()) {
+      cerr << "  o  Routing did not complete, unrouted segments:" << endl;
+      for ( size_t i=0; i<unrouteds.size() ; ++i ) {
+        cerr << "   " << setw(4) << (i+1) << "| " << unrouteds[i] << endl;
+      }
+    }
+
+    addMeasure<size_t>            ( getCell(), "Segs"   , routeds+unrouteds.size() );
+    addMeasure<unsigned long long>( getCell(), "DWL(l)" , totalWireLength                  , 12 );
+    addMeasure<unsigned long long>( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12 );
+    addMeasure<double>            ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
+}
 
 
   void  KiteEngine::dumpMeasures ( ostream& out ) const
   {
     vector<Name> measuresLabels;
-    measuresLabels.push_back ( "Gates"   );
-    measuresLabels.push_back ( "GCells"  );
-    measuresLabels.push_back ( "knikT"   );
-    measuresLabels.push_back ( "knikS"   );
-    measuresLabels.push_back ( "GWL(l)"  );
-    measuresLabels.push_back ( "Area(l2)");
-    measuresLabels.push_back ( "Sat."    );
-    measuresLabels.push_back ( "loadT"   );
-    measuresLabels.push_back ( "loadS"   );
-    measuresLabels.push_back ( "Globals" );
-    measuresLabels.push_back ( "Edges"   );
-    measuresLabels.push_back ( "assignT" );
-    measuresLabels.push_back ( "algoT"   );
-    measuresLabels.push_back ( "algoS"   );
-    measuresLabels.push_back ( "finT"    );
-    measuresLabels.push_back ( "Segs"    );
-    measuresLabels.push_back ( "DWL(l)"  );
-    measuresLabels.push_back ( "fWL(l)"  );
-    measuresLabels.push_back ( "WLER(%)" );
-    measuresLabels.push_back ( "Events"  );
-    measuresLabels.push_back ( "UEvents" );
+    measuresLabels.push_back( "Gates"   );
+    measuresLabels.push_back( "GCells"  );
+    measuresLabels.push_back( "knikT"   );
+    measuresLabels.push_back( "knikS"   );
+    measuresLabels.push_back( "GWL(l)"  );
+    measuresLabels.push_back( "Area(l2)");
+    measuresLabels.push_back( "Sat."    );
+    measuresLabels.push_back( "loadT"   );
+    measuresLabels.push_back( "loadS"   );
+    measuresLabels.push_back( "Globals" );
+    measuresLabels.push_back( "Edges"   );
+    measuresLabels.push_back( "assignT" );
+    measuresLabels.push_back( "algoT"   );
+    measuresLabels.push_back( "algoS"   );
+    measuresLabels.push_back( "finT"    );
+    measuresLabels.push_back( "Segs"    );
+    measuresLabels.push_back( "DWL(l)"  );
+    measuresLabels.push_back( "fWL(l)"  );
+    measuresLabels.push_back( "WLER(%)" );
+    measuresLabels.push_back( "Events"  );
+    measuresLabels.push_back( "UEvents" );
 
-    const MeasuresSet* measures = Measures::get(getCell());
+    const MeasuresSet* measures = Measures::get( getCell() );
 
     out << "#" << endl;
     out << "# " << getCell()->getName() << endl;
     out << measures->toStringHeaders(measuresLabels) << endl;
     out << measures->toStringDatas  (measuresLabels) << endl;
 
-    measures->toGnuplot ( "GCells Density Histogram", getString(getCell()->getName()) );
+    measures->toGnuplot( "GCells Density Histogram", getString(getCell()->getName()) );
   }
 
 
@@ -709,8 +682,8 @@ namespace Kite {
     path << getCell()->getName() << ".knik-kite.dat";
 
     ofstream sfile ( path.str().c_str() );
-    dumpMeasures ( sfile );
-    sfile.close ();
+    dumpMeasures( sfile );
+    sfile.close();
   }
 
 
@@ -719,32 +692,27 @@ namespace Kite {
     cmess1 << "  o  Checking Kite Database coherency." << endl;
 
     bool coherency = true;
-    coherency = coherency && KatabaticEngine::_check ( message );
+    coherency = coherency and KatabaticEngine::_check( message );
     for ( size_t i=0 ; i<_routingPlanes.size() ; i++ )
       coherency = _routingPlanes[i]->_check(overlap) and coherency;
 
     Katabatic::Session* ktbtSession = Session::base ();
     forEach ( Net*, inet, getCell()->getNets() ) {
       forEach ( Segment*, isegment, inet->getComponents().getSubSet<Segment*>() ) {
-        AutoSegment* autoSegment = ktbtSession->lookup ( *isegment );
-        if ( not autoSegment ) continue;
-        if ( not autoSegment->isCanonical() ) continue;
+        AutoSegment* autoSegment = ktbtSession->lookup( *isegment );
+        if (not autoSegment) continue;
+        if (not autoSegment->isCanonical()) continue;
 
-        TrackElement* trackSegment = Session::lookup ( *isegment );
-        if ( not trackSegment ) {
+        TrackElement* trackSegment = Session::lookup( *isegment );
+        if (not trackSegment) {
           coherency = false;
-          cerr << Bug("%p %s without Track Segment"
-                     ,autoSegment
-                     ,getString(autoSegment).c_str()
-                     ) << endl;
+          cerr << Bug( "%p %s without Track Segment"
+                     , autoSegment
+                     , getString(autoSegment).c_str() ) << endl;
         } else
-          trackSegment->_check ();
+          trackSegment->_check();
       }
     }
-
-#if defined(CHECK_DATABASE)
-  //Session::getKiteEngine()->setInterrupt ( not coherency );
-#endif
 
     return coherency;
   }
@@ -753,14 +721,14 @@ namespace Kite {
   void  KiteEngine::finalizeLayout ()
   {
     ltrace(90) << "KiteEngine::finalizeLayout()" << endl;
-    if ( getState() > Katabatic::StateDriving ) return;
+    if (getState() > Katabatic::EngineDriving) return;
 
     ltracein(90);
 
-    setState ( Katabatic::StateDriving );
-    _gutKite ();
+    setState( Katabatic::EngineDriving );
+    _gutKite();
 
-    KatabaticEngine::finalizeLayout ();
+    KatabaticEngine::finalizeLayout();
     ltrace(90) << "State: " << getState() << endl;
 
     ltraceout(90);
@@ -773,15 +741,15 @@ namespace Kite {
     ltracein(90);
     ltrace(90) << "State: " << getState() << endl;
 
-    if ( getState() < Katabatic::StateGutted ) {
-      Session::open ( this );
+    if (getState() < Katabatic::EngineGutted) {
+      Session::open( this );
 
       size_t maxDepth = getRoutingGauge()->getDepth();
       for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
-        _routingPlanes[depth]->destroy ();
+        _routingPlanes[depth]->destroy();
       }
 
-      Session::close ();
+      Session::close();
     }
 
     ltraceout(90);
@@ -790,52 +758,10 @@ namespace Kite {
 
   TrackElement* KiteEngine::_lookup ( Segment* segment ) const
   {
-    TrackElementLut::const_iterator it = _trackSegmentLut.find ( segment );
-    if ( it == _trackSegmentLut.end() ) {
-      AutoSegment* autoSegment = KatabaticEngine::_lookup ( segment );
-      if ( not autoSegment or autoSegment->isCanonical() ) return NULL;
+    AutoSegment* autoSegment = KatabaticEngine::_lookup( segment );
+    if (not autoSegment or not autoSegment->isCanonical()) return NULL;
 
-      Interval dummy;
-      autoSegment = autoSegment->getCanonical ( dummy );
-      it = _trackSegmentLut.find ( autoSegment->base() );
-      
-      if ( it == _trackSegmentLut.end() ) return NULL;
-    }
-    return (*it).second;
-  }
-
-
-  void  KiteEngine::_link ( TrackElement* trackSegment )
-  {
-    if ( getState() > Katabatic::StateActive ) return;
-
-    if ( !trackSegment ) {
-      cerr << Bug("KiteEngine::_link(): Rejecting NULL TrackElement.") << endl;
-      return;
-    }
-
-    _trackSegmentLut [ trackSegment->base()->base() ] = trackSegment;
-  // Not needed: Canonical search is done before lookup.
-//     forEach ( AutoSegment*, isegment, trackSegment->base()->getCollapseds() ) {
-//       _trackSegmentLut [ isegment->base() ] = trackSegment;
-//     }
-  }
-
-
-  void  KiteEngine::_unlink ( TrackElement* trackSegment )
-  {
-    if ( getState() > Katabatic::StateActive ) return;
-
-    TrackElementLut::iterator it = _trackSegmentLut.find ( trackSegment->base()->base() );
-    if ( it != _trackSegmentLut.end() )
-      _trackSegmentLut.erase ( it );
-
-  // Not needed: Canonical search is done before lookup.
-//     forEach ( AutoSegment*, isegment, trackSegment->base()->getCollapseds() ) {
-//       TrackElementLut::iterator it = _trackSegmentLut.find ( isegment->base() );
-//       if ( it != _trackSegmentLut.end() )
-//         _trackSegmentLut.erase ( it );
-//     }
+    return _lookup( autoSegment );
   }
 
 
@@ -844,15 +770,15 @@ namespace Kite {
     cerr << "     o  Checking " << net << endl;
 
     forEach ( Segment*, isegment, net->getComponents().getSubSet<Segment*>() ) {
-      TrackElement* trackSegment = _lookup ( *isegment );
-      if ( trackSegment ) {
-        trackSegment->_check ();
+      TrackElement* trackSegment = _lookup( *isegment );
+      if (trackSegment) {
+        trackSegment->_check();
 
         AutoContact* autoContact = trackSegment->base()->getAutoSource();
-        if ( autoContact ) autoContact->checkTopology ();
+        if (autoContact) autoContact->checkTopology ();
 
         autoContact = trackSegment->base()->getAutoTarget();
-        if ( autoContact ) autoContact->checkTopology ();
+        if (autoContact) autoContact->checkTopology ();
       }
     }
   }
@@ -865,12 +791,7 @@ namespace Kite {
   string  KiteEngine::_getString () const
   {
     ostringstream  os;
-
-    os << "<" << "KiteEngine "
-       << _cell->getName () << " "
-    // << getString(_rg->getName())
-       << ">";
-
+    os << "<" << "KiteEngine " << _cell->getName () << ">";
     return os.str();
   }
 
@@ -879,12 +800,12 @@ namespace Kite {
   {
     Record* record = KatabaticEngine::_getRecord ();
                                      
-    if ( record ) {
-      record->add ( getSlot ( "_routingPlanes", &_routingPlanes ) );
-      record->add ( getSlot ( "_configuration",  _configuration ) );
+    if (record) {
+      record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
+      record->add( getSlot( "_configuration",  _configuration ) );
     }
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

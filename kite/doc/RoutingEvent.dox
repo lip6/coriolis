@@ -1,597 +1,246 @@
-
  // -*- C++ -*-
 
 
  namespace Kite {
 
+ /*! \class        RoutingEvent::Key
+  *  \brief        RoutingEvent cached key for maps
+  *
+  *                The key is used as a cache in RoutingEvent, that is, the RoutingEvent
+  *                attributes could be modificated without the key changing. It is
+  *                important for the key to remain stable as it used in the various
+  *                event queue as the sorting attribute. The key should be updated
+  *                only when the RoutingEvent is temporarily whidrawn from the queue.
+  *
+  *                Cached attributes: (used in that lexicographical order for sorting)
+  *                  - \b 1 -- \c eventLevel.
+  *                  - \b 2 -- \c canRipple.
+  *                  - \b 3 -- \c priority.
+  *                  - \b 4 -- \c length.
+  *                  - \b 5 -- \c isHorizontal.
+  *                  - \b 6 -- \c axis.
+  *                  - \b 7 -- \c sourceU.
+  *                  - \b 8 -- \c net (name).
+  *                  - \b 9 -- \c id.
+  *                  - \b X -- \c slackenStrap \b unused.
+  *                  - \b X -- \c tracksNb \b unused.
+  *
+  *                It is internally managed by RoutingEvent and the queue.
+  */
+
+ //! \function     RoutingEvent::Key::update ( const RoutingEvent* event );
+ //!               Cache the value of the key from \c event.
+
  /*! \class        RoutingEvent
-  *  \brief        Manage TrackSegment routing requests.
+  *  \brief        Atomic Placement Request for a TrackSegment
   *
-  *                The \RoutingEvent is the workhorse of Kite. A \RoutingEvent is
-  *                associated to one \TrackSegment. One \TrackSegment could be
-  *                associated to many \RoutingEvent in the queue, but only one
-  *                of those is active (marked as unprocessed).
+  *                \red{The trackFrees attribute has to be reviewed not sure it's still useful.}
   *
-  *  \see          ClassManipulator.
-  *
-  *  \section      secProcessAlgorithm  Description of the process() method
-  *
-\code
-void  RoutingEvent::process ()
-{
-  if ( isProcessed() ) return;
-  setProcessed  ();
-  incRipupCount ();
-
-  if ( getRipupCount() > MAX_RIPUP_COUNT ) {
-    // We are *not* in ripup mode.
-    // The event's segment has to be topologically modified.
-    modifyTopology ( _segment );
-  } else {
-    // We are in ripup mode.
-    // Other overlaping segments are to be removeds/pusheds. It can result in
-    // segment breaking *if* other segment came from an already routed GCell.
-
-    // optimal, constraint, perpandicular.
-    computeAllIntervals ();
-
-    // Find & order all candidates Tracks.
-    candidates = computeCostOnCandidateTracks ();
-    sort ( candidates );
-
-    if ( candidates[0].isFree() ) {
-      // Case -A.1- "Free Track".
-      candidate[0].insert ( _segment );
-    } else if (    candidates[0].isSoftOverlap()
-                || candidates[0].isHardOverlap() ) {
-      // Case -A.2- "Soft Overlap".
-      // Case -A.3- "Hard Overlap".
-      for ( size_t i=0 ; i<candidates.size() ; i++ ) {
-        if ( candidates[0].insertInTrack ( _segment ) ) {
-          break;
-        }
-      }
-    } else {
-      // Case -B- "Infinite Cost".
-      // Attention: meaning's changed, *infinite* only in case of
-      // conflict with a *fixed* other segment.
-      modifyTopology ( _segment );
-    }
-  }
-
-  // Restore Track coherency before processing any other event.
-  Session::revalidate ();
-}
-\endcode
-  *  \section      secRoutingIntervalToDo  ToDo
-  *
-  *                <ul>
-  *                  <li>New \c isLocal() method on \TrackSegment. Tells if the \TrackSegment
-  *                      is associated only to local AutoSegment.
-  *                  <li>Increase the overlap cost of a \TrackSegment from an already routed
-  *                      GCell routing set.
-  *                </ul>
-  *
-  *
-  *  \section      secRoutingEventInterval  The various intervals of a RoutingEvent
-  *
-  *                The three Intervals controlling a RoutingEvent : all those intervals
-  *                defines the track range in which the \TrackSegment could be inserted.
-  *                <ul>
-  *                  <li>The <i>optimal</i> interval : where the \Net wirelength will be
-  *                      minimal (comes from \c Katabatic::AutoSegment).
-  *                  <li>The <i>constraint</i> interval : the interval outside of which
-  *                      the \Net connexity would be broken. This is the bigger interval
-  *                      but it must be strictly respected (also comes from
-  *                      \c Katabatic::AutoSegment).
-  *                  <li>The <i>perpandicular</i> interval : for each perpandicular
-  *                      \TrackSegment connected, the intersection of the free interval
-  *                      around them in their track.
-  *
-  *                      It is important to note that the \TrackSegment overlaping in the
-  *                      target track is not removed from the track. It is it's perpandiculars
-  *                      which are, along with a modification of theirs left axis weight and/or
-  *                      right axis weight.
-  *
-  *                      Second remark: no overlap will be created (due to the non-removal of
-  *                      overlaping \TrackSegments) because the insertion is delayed in case
-  *                      of overlap.
-  *                </ul>
-  *                The perpandicular interval comes from perpandicular constraints on \TrackSegment
-  *                of the <i>same</i> \c Net. The left/right axis weights comes from requests of
-  *                <i>other</i> \c Nets.
-  *
-  *                \image html  RoutingEvent-1.png "RoutingEvent Intervals"
-  *                \image latex RoutingEvent-1.pdf "RoutingEvent Intervals"   width=0.6\textwidth
-  *
-  *                Example of perpandicular interval computation :
-  *
-  *                \image html  RoutingEvent-2.png "Perpandicular Interval"
-  *                \image latex RoutingEvent-2.pdf "Perpandicular Interval"
-  *
-  *
-  *  \section      secRoutingEventRules  Rules governing RoutingEvents
-  *
-  *                \RoutingEvent respect the following rules:
-  *                <ul>
-  *                  <li>A \TrackSegment can only be displaced by it's associated \RoutingEvent.
-  *                  <li>Corollary: the only \TrackSegment displaced while processing a
-  *                      \RoutingEvent is the one associated to the event.
-  *                  <li>Conflicts occurs between the \RoutingEvent \TrackSegment and already
-  *                      placed others \TrackSegment.
-  *
-  *                        The conflict can be solved by displacing/modifying <i>others</i>
-  *                      \TrackSegment or by modifying the to be inserted one. In the later
-  *                      case, the newly created or modified \TrackSegment are (re)scheduleds
-  *                      <i>before</i> the would be inserted. 
-  *                  <li>Conflicting \TrackSegments are only removed from their \Track
-  *                      but their axis remains unchanged. Movement requests are passed
-  *                      through increase of the left/right axis weights, if needed.
-  *                  <li>\TrackSegment are inserted only, and only if there is enough free space.
-  *                      That is, if any kind of overlap occurs, it is <i>not</i> inserted
-  *                      but <i>rescheduled</i>. The blocking \TrackSegments are then
-  *                      rescheduled <i>after</i> the current one.
-  *                  <li>Each \RoutingEvent processing takes place inside a one atomic
-  *                      Session. That is, the coherency of the data-base is restored
-  *                      immediatly afterward (both Kite &amp; Katabatic).
-  *                </ul>
-  *
-  *  \remark       Be very careful to distinguish between Session commands, which affects
-  *                \Track and \TrackSegment insertion/update/removal and schedule/re-schedule
-  *                events, which relates to the negociation algorithm.
-  *
-  *                Re-ordering rules:
-  *                <ol>
-  *                  <li>In normal mode, that is, no maximum ripup has been reached, the
-  *                      blocking <i>other</i> \TrackSegment are removed and the current
-  *                      is rescheduled <i>before</i> them.
-  *                  <li>In maximum ripup mode, some \TrackSegment has to give way.
-  *                  <ul>
-  *                    <li>If the current one is modified, it must be rescheduled <i>after</i>
-  *                        it's modified bits are rescheduleds.
-  *                    <li>If <i>others</i> are modifieds they must be rescheduled <i>after</i>
-  *                        the current one (so it will grabs the place).
-  *                  </ul>
-  *                </ol>
-  *
-  *
-  *  \section      secRoutingEventCycle  RoutingEvent life cycle
-  *
-  *                As an active \RoutingEvent is associated with one and only one \TrackSegment
-  *                we can talk indeferently of \RoutingEvent lifecycle or \TrackSegment
-  *                lifecycle.
-  *
-  *                Below is the ordered list of states that a \RoutingEvent could be in.
-  *                The order correspond to increasing level of slackening/freedom.
-  *                Transition between states occurs each time a maximum ripup is reached.
-  *
-  *                <table>
-  *                  <tr>
-  *                    <td align="center">&nbsp;\b Id&nbsp;</td>
-  *                    <td align="center">\b Type</td>
-  *                    <td align="center">&nbsp;\b Local&nbsp;</td>
-  *                    <td align="center">&nbsp;\b Global&nbsp;</td>
-  *                    <td align="center">\b Action</td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 1</td>
-  *                    <td align="center">\c Minimize</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td align="center">\e no</td>
-  *                    <td>try to fit into a hole</td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 2</td>
-  *                    <td align="center">\c DogLeg</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td align="center">\e no</td>
-  *                    <td>Dogleg : analyse overlap and try to solve it by breaking (self)</td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 3</td>
-  *                    <td align="center">\c Desalignate</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>on a set of alignated \TrackSegment, suppress the
-  *                        alignment constraints, thus making then independants
-  *                    </td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 4</td>
-  *                    <td align="center">\c Slacken</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>if the target/source constraint is less than the
-  *                        GCell, adds perpandicular straps to free the \TrackSegment.
-  *                        This occurs to free from terminal constraints
-  *                    </td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 5</td>
-  *                    <td align="center">\c ConflictSolve1</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>try to find in the history a reccurent dislodger,
-  *                        and break (self) to accomodate it
-  *                    </td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 6</td>
-  *                    <td align="center">\c ConflictSolve2</td>
-  *                    <td align="center">\e no</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>try to find a Track on which we can dislodge
-  *                        an other \TrackSegment
-  *                    </td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 7</td>
-  *                    <td align="center">\c MoveUp</td>
-  *                    <td align="center">\e no</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>try to go on upper layer.
-  *                    </td>
-  *                  </tr>
-  *                  <tr>
-  *                    <td align="center">\e 8</td>
-  *                    <td align="center">\c Unimplemented</td>
-  *                    <td align="center">\e no</td>
-  *                    <td align="center">\e yes</td>
-  *                    <td>we failed to place this \TrackSegment
-  *                    </td>
-  *                  </tr>
-  *                </table>
-  *
-  *
-  *  \section      secManageMaximumRipup  Managing the maximum ripup case
-  *
-\code
-bool  State::manageMaximumRipup ()
-{
-  bool success = false;
-
-  if ( !_segment->isGlobal() ) {
-    // Candidates Tracks (ignore optimal & perpandiculars).
-    candidates = computeAllIntervals ();
-    overlap    = _segment->getInterval();
-
-    for ( size_t i=0 ; i<candidates.size() ; i++ ) {
-      others = otherSegmentsConflicts(candidates[i]);
-
-      // Select Track with only one conflicting other.
-      if ( others.size() == 1 ) {
-        // Local vs. Local    => reject.
-        // Local vs. Terminal => reject.
-        if ( others[0]->isLocal() || others[0]->isTerminal() ) continue;
-
-        // Local vs. Global (not routed yet).
-        if ( others[i]->getOrder() >= _segment->getOrder() ) {
-          success = modifyTopology(others[0]);
-          break;
-        }
-
-        // Local vs. Global (already routed).
-        success = relax(_others[0],overlap);
-        if ( success ) break;
-      }
-    }
-  }
-
-  if ( !success ) {
-    // Global vs. Local.
-    // Failed Local vs. Any.
-    success = modifyTopology(_segment);    
-  }
-  return success;
-}
-\endcode
-  *
-  *
-  *  \section      secModifyTopology  Description of the modifyTopology() method
-  *
-\code
-bool  Manipulator::modifyTopology ( TrackSegment* segment )
-{
-  bool success = false;
-
-  if ( segment->isLocal() ) {
-    if ( segment->canMinimize() {
-      segment->minimize();
-      success = true;
-    }
-    if ( segment->canDogLeg() ) {
-      // Case -C.4- "Self Relax".
-      segment->makeDogLeg();
-      success = true;
-    }    
-  } else if ( segment->canDesalignate() ) {
-    // Case -C.5- "Desalignate".
-    segment->desalignate();
-    success = true;
-  } else if ( segment->canSlacken() ) {
-    // Case -C.6- "Slacken".
-    segment->slacken();
-    success = true;
-  } else {
-    RipupHistory* history      = RipupHistory(segment);
-    GCell*        dogLegGCell  = history.getDogLegGCell();
-  
-    if ( dogLegGCell ) {
-      if ( segment->canDogLegAt(dogLegGCell) ) {
-        segment->makeDogLeg(dogLegGCell)
-        success = true;
-      }
-    } else {
-      // Dislodgers seems to far in ripup history.
-      // Recheck the Track, maybe they have vanish.
-      Track* track = getTrack(segment);
-      if ( track->getFreeInterval(segment) ) {
-        track.insert ( segment );
-        success = true;
-      }
-    }
-  }
-  
-  if ( segment->canMoveUp() ) {
-    segment->moveUp ();
-    success = true;
-  }
-
-  if ( success ) {
-    resetRipupCount(segment);
-  } else {
-    cerr << "[UNIMPLEMENTED] " << segment << endl;
-  }
-
-  return success;
-}
-\endcode
-  *
-  *
-  *  \section      secHardSoftOverlap  Hard and soft overlap
-  *
-  *                Schematic execution of a \RoutingEvent leading to a set aside.
-  *                <ol>
-  *                  <li>The scheduler try to place the \TrackSegment on top of the
-  *                      event queue, calling process().
-  *                  <li>There is a soft overlap on the best candidate track, a set
-  *                      aside is issued.
-  *                  <li>Each \TrackSegment in conflict in the candidate track has the
-  *                      \RoutingEvent bounds of it's perpandicular \TrackSegment modificated
-  *                      according to the free space requested through setLeftBound() or setRightBound().
-  *                  <li>If a perpandicular is already in a \Track is removed from it and scheduled for
-  *                      immediate re-routing (it's event level is increased so it pops
-  *                      out immediately from the queue).
-  *                  <li>If the perpandicular is not routed yet, we are done.
-  *
-  *                      Note that this technique of modificating a \RoutingEvent yet to come is
-  *                      kind a like seeing the future...
-  *                </ol>
-  *
-  *                \image html  RoutingEvent-3.png "Set aside schematic"
-  *                \image latex RoutingEvent-3.pdf "Set aside schematic"
-  *
-  *
-  *  \section      setDetructionStrategy  Destruction Strategy
-  *
-  *                \RoutingEvent are not destroyed as soon as they have been processed by
-  *                the scheduler. Instead, they are stored in the historical queue.
-  *                They are two reasons for that behavior :
-  *                <ul>
-  *                  <li>\RoutingEvent are used to store algorithmic informations that
-  *                      must persist until the negociation algorithm have fully
-  *                      completed (<i>bound</i> interval in particular).
-  *                  <li>When ripup phases takes place and maximum ripup count is
-  *                      reached, the history can be used to find the whole set of
-  *                      \TrackSegment in conflict an made an educated guess about
-  *                      which one must be relaxed.
-  *                </ul>
-  *
-  *  \important    This is the history queue which is responsible for freeing all the
-  *                \RoutingEvent in his destructor.
-  *
-  *
-  *  \section      secRoutingEventCase  Routing Event actions
-  *
-  *                <ul>
-  *            <li><b>Free Track Case</b>
-  *
-  *                There is a sufficent free space in the candidate \Track to insert the
-  *                \TrackSegment. The \TrackSegment is inserted.
-  *
-  *  \important    This is the only way for a \TrackSegment to be inserted into a \Track.
-  *
-  *                \image html  RoutingEvent-10.png
-  *                \image latex RoutingEvent-10.pdf
-  *
-  *
-  *            <li><b>Soft Overlap Case</b>
-  *
-  *                Already inserted \TrackSegment <b>a</b> &amp; <b>b</b> could be shrunk
-  *                to make place for \TrackSegment <b>c</b>. Parallel overlaping \TrackSegment
-  *                are not removed, their perpandiculars are with updated left/right axis weight.
-  *
-  *                The <b>a</b> perpandicular belongs the same GCell routing set so it
-  *                is removed from is \Track to be displaced.
-  *
-  *                The <b>b</b> perdandicular belongs to a more prioritary GCell routing
-  *                set, which has therefore be placed earlier so it can't be removed.
-  *                Instead it is broken.
-  *
-  *                \image html  RoutingEvent-11.png
-  *                \image latex RoutingEvent-11.pdf
-  *
-  *
-  *            <li><b>Hard Overlap Case</b>
-  *
-  *                No way to shrunk overlaping \TrackSegment to make place for <b>c</b>.
-  *                All parallel overlaping \TrackSegments must be removeds to be displaced
-  *                on other \Tracks.
-  *
-  *                The <b>a</b> parallel belongs to a more prioritary GCell routing set
-  *                so it can be removed, it is therefore broken.
-  *
-  *                The <b>b</b> parallel belongs the same GCell routing set so it can be
-  *                removed to be displaced.
-  *
-  *                \image html  RoutingEvent-12.png
-  *                \image latex RoutingEvent-12.pdf
-  *
-  *
-  *            <li><b>Self Relax</b>
-  *
-  *                Instead of trying to displace overlaping \TrackSegments we break the
-  *                current one.
-  *
-  *                \image html  RoutingEvent-13.png
-  *                \image latex RoutingEvent-13.pdf
-  *
-  *
-  *            <li><b>Self Desalignate</b>
-  *
-  *                Instead of trying to displace overlaping \TrackSegments we desalignate
-  *                it's components (by supressing alignement constraints on it's
-  *                AutoContacts). We do not create new Katabatic components but new
-  *                \TrackSegments will appears.
-  *
-  *                \image html  RoutingEvent-14.png
-  *                \image latex RoutingEvent-14.pdf
-  *
-  *
-  *            <li><b>Self Slacken</b>
-  *
-  *                Instead of trying to displace overlaping \TrackSegments we slacken
-  *                the current one. This is different than desalignate because we create
-  *                new Katabatic component to relax any AutoContact transmitted constraints.
-  *                This operation is most likely to be applied on \TrackSegments that are
-  *                directly connecteds to terminals.
-  *
-  *                \image html  RoutingEvent-15.png
-  *                \image latex RoutingEvent-15.pdf
-  *
-  *                </ul>
+  *                Cached key for stable sorting, see RoutingEvent::Key.
   */
 
- /*! \function     bool  RoutingEvent::isProcessed () const;
-  *  \return       \true if this event has already been processed.
-  *
-  *  \remark       Note that inside a _setAside() a \RoutingEvent can be re-posted for
-  *                a given \TrackSegment which has been processed yet. This can lead
-  *                to two or more \RoutingEvent in the queue (as we cannot easily remove
-  *                a \RoutingEvent already in the queue). We need this new \RoutingEvent
-  *                because we want to reschedule with a new priority/slack.
-  *                As we cannot remove the previous \RoutingEvent, we mark it as
-  *                processed for it to be ignored by the scheduler.
+ //! \enum         RoutingEvent::Mode
+ //!               The working mode of the router, affect how events are to
+ //!               be handled.
+
+ //! \var          RoutingEvent::Negociate
+ //!               This is the normal mode of operation, topological modifications
+ //!               and ripup are enableds.
+
+ //! \var          RoutingEvent::Pack
+ //!               First post-processing step. For each segment, tries to find a
+ //!               more compact position for a segment, but without riping any others.
+
+ //! \var          RoutingEvent::Repair
+ //!               Second post-processing step, try to find a suitable location for
+ //!               a segment more aggressively.
+
+ //! \function     unsigned int  RoutingEvent::getStage ();
+ //! \sreturn      The stage the router is in (see RoutingEvent::Mode).
+
+ //! \function     size_t  RoutingEvent::getAllocateds ();
+ //! \sreturn      The number of RoutingEvent currently allocateds.
+
+ //! \function     size_t  RoutingEvent::getProcesseds ();
+ //! \sreturn      The number of RoutingEvent that have been processeds since
+ //!               the last call to RoutingEvent::resetProcesseds().
+
+ //! \function     void  RoutingEvent::resetProcesseds ();
+ //! \sreturn      Reset the number of processeds events.
+
+ //! \function     unsigned int  RoutingEvent::setStage ( unsigned int mode );
+ //!               Sets the router's stage (see RoutingEvent::Mode).
+
+ //! \function     RoutingEvent* RoutingEvent::create ( TrackElement* element, unsigned int mode );
+ //! \param        element   The element for which to create the event.
+ //! \param        mode      The mode into which this event will be valid.
+ //!
+ //!               RoutingEvent constructor.
+
+ //! \function     RoutingEvent* RoutingEvent::clone () const;
+ //! \return       A clone of the event.
+ //!
+ //!               Cloning an event is slightly different from copying it (which is forbidden).
+ //!               There can be multiple events for one \c element but only one must be
+ //!               active at a time. This is a cheap way of implementing the rescheduling
+ //!               mechanism. The original event remains the active one, but it's cloned
+ //!               flag is raised. The cloned event is created inactive and with a null
+ //!               \e eventLevel.
+
+ //! \function     void  RoutingEvent::destroy ();
+ //!               The destructor.
+
+ //! \function     bool  RoutingEvent::isCloned () const;
+ //! \sreturn      \true if this event has been cloned at least once.
+
+ //! \function     bool  RoutingEvent::isValid () const;
+ //! \sreturn      \true if the cached informations from the \e element are valid
+ //!               (i.e. the element has not been changed).
+
+ //! \function     bool  RoutingEvent::isUnimplemented () const;
+ //! \sreturn      \true if the event has tried to use an unimplemented feature.
+
+ //! \function     bool  RoutingEvent::isProcessed () const;
+ //! \sreturn      \true if the event has been processed.
+
+ //! \function     bool  RoutingEvent::isDisabled () const;
+ //! \sreturn      \true if the event is \b not the active one. It should be discarted
+ //!               by the algorithm.
+
+ //! \function     bool  RoutingEvent::isForcedToHint () const;
+ //! \sreturn      \true the \e element must be placed exacltly on the given axis hint.
+
+ //! \function     bool  RoutingEvent::isRipedByLocal () const;
+ //! \sreturn      \true the \e element (global) has been riped up to place a local one.
+
+ //! \function     bool  RoutingEvent::canMinimize () const;
+ //! \sreturn      \true the \e element could still be minimized.
+
+ //! \function     unsigned int  RoutingEvent::getMode () const;
+ //! \sreturn      the mode the event must be taken into account to.
+
+ //! \function     unsigned int  RoutingEvent::getState () const;
+ //! \sreturn      the mode the router is currently in.
+
+ //! \function     const Key& RoutingEvent::getKey () const;
+ //! \sreturn      The \e key to use in map & queue for this event.
+
+ //! \function     TrackElement* RoutingEvent::getSegment () const;
+ //! \sreturn      The associated segment.
+
+ //! \function     const vector<TrackElement*>& RoutingEvent::getPerpandiculars () const;
+ //! \sreturn      A vector of cached perpandiculars to the associated segment.
+
+ //! \function     DbU::Unit  RoutingEvent::getAxisHint () const;
+ //! \sreturn      The preferred position for the segment axis.
+
+ //! \function     DbU::Unit  RoutingEvent::getAxisHistory () const;
+ //! \sreturn      The previous position of the segment axis (before it's current position).
+
+ //! \function     DbU::Unit  RoutingEvent::getAxisWeight ( DbU::Unit axis ) const;
+ //! \sreturn      The distance between \c axis and the preferred position.
+
+ //! \function     const Interval& RoutingEvent::getOptimal () const;
+ //! \sreturn      The range of positions for the optimal axis (cached).
+
+ //! \function     const Interval& RoutingEvent::getConstraints () const;
+ //! \sreturn      The range of legal positions for the axis.
+
+ /*! \function     unsigned int  RoutingEvent::getPriority () const;
+  *  \sreturn      The priority of the event, it quantify the degree of freedom of the
+  *                segment. Currently it's computed from the length of the segment
+  *                and it's slack:
+                   \f[
+                      priority = (slack(segment)+1.0) \times (length(segment)+1.0)
+                   \f]
+  *                A high priority means that the segment will be harder to place
+  *                thus it will be scheduled first. With this function, longer
+  *                segments will be placed first.
   */
 
- /*! \function     TrackSegment* RoutingEvent::getSegment () const;
-  *  \Return       The associated and unique \TrackSegment.
-  */
+ //! \function     unsigned int  RoutingEvent::getEventLevel () const;
+ //! \sreturn      The event level of the event, used to tweak the order inside the event
+ //!               queue. It differs from the priority in the sense that it isn't a
+ //!               topologicaly based value, but manipulated by the algorithm.
 
- /*! \function     unsigned long  RoutingEvent::getPriority () const;
-  *  \Return       The second criterion used to sort \RoutingEvents in the negociation queue.
-  *                Currently, it is the <i>area</i> of the associated \TrackSegment, which in
-  *                turn return the <i>slack</i> (not a very fortunate choice of name...).
-  */
+ //! \function     unsigned int  RoutingEvent::getTracksNb () const;
+ //! \sreturn      The number of tracks avalaibles for the segment to be placed.
 
- /*! \function     unsigned int  RoutingEvent::getEventLevel () const;
-  *  \Return       The first criterion used to sort \RoutingEvents in the negociation queue.
-  *                It is used to re-schedule a \RoutingEvent and make the new event be
-  *                processed <i>before</i> the original one, which is marked as
-  *                <i>processed</i> to be ignored.
-  *
-  *  \see          setEventLevel().
-  */
+ //! \function     unsigned int  RoutingEvent::getInsertState () const;
+ //! \return       The kind of track insertion that will be intended. It's a counter
+ //!               whose values have the following meaning:
+ //!                 - \b 1 : normal insert.
+ //!                 - \b 2 : shrink the segment to it's minimum before inserting.
+ //!                 - \b 3 : attempt to ripup conflicting others before inserting.
 
- /*! \function     RoutingEvent* RoutingEvent::getClone () const;
-  *  \Return       An exact copy of the current \RoutingEvent.
-  */
+ //! \function     void  RoutingEvent::revalidate ();
+ //!               Perform an event revalidation.
 
- /*! \function     RoutingEvent* RoutingEvent::reschedule ( RoutingEventQueue& queue );
-  *  \param        queue  The \RoutingEvent queue.
-  *  \return       The rescheduled \RoutingEvent. May be \NULL if it cannot be rescheduled.
-  */
+ //! \function     void  RoutingEvent::updateKey ();
+ //!               Update the key with the new values from the event, the key \e must
+ //!               not be inserted in the queue when this method is called.
 
- /*! \function     void  RoutingEvent::setProcessed ( bool state=true );
-  *  \param        state  The state into which the event is to be put.
-  *
-  *                Mark the event as processed. This arises in two cases :
-  *                <ul>
-  *                  <li>The event has really been processed by the process() member
-  *                      function.
-  *                  <li>There has been a fork from this event and it has been
-  *                      superseded by a newly rescheduled one, so we have to
-  *                      invalidate this one.
-  *                </ul>
-  */
+ //! \function     void  RoutingEvent::process ( RoutingEventQueue& queue, RoutingEventHistory& history, RoutingEventLoop& loop );
+ //! \param        queue    The main event queue.
+ //! \param        history  The event's history list.
+ //! \param        loop     The loop detector.
+ //!
+ //!               Process the event, that is:
+ //!                 - First, check if there is no looping, if any, do not process the
+ //!                   event but dicard it (marked as unimplemented).
+ //!                 - Second, attempt to place the associated segment. Pass it to the relevant
+ //!                   function, according to the router's mode (\c _processNegociate(),
+ //!                   \c processPack() or \c _processRepair() ).
+ //!               Once processed, the event is added to both \c history (for the record)
+ //!               and \c loop to check if we are not looping.
 
- /*! \function     void  RoutingEvent::setEventLevel ( unsigned int level );
-  *  \param        level  The new event level.
-  *
-  *  \see          getEventLevel().
-  */
+ //! \function     void  RoutingEvent::setSegment ( TrackElement* element );
+ //!               Change the associated \c segment. \red{Used only by TrackSegment::swapTrack().}
 
- /*! \function     void     RoutingEvent::process ( RoutingEventQueue& queue, RoutingEventHistory& history );
-  *  \param        queue    The event queue from the negociate algorithm.
-  *  \param        history  The event history.
-  *
-  *                Perform all the operations shared by all \RoutingEvent classes then
-  *                calls the virtual _subProcess() functions.
-  *
-  *                Shared operations are :
-  *                <ol>
-  *                  <li>Invalidating all perpandicular \TrackSegments.
-  *                  <li>Computing the free interval allowed by the free intervals
-  *                      in perpandicular \Tracks holding the perpandicular \TrackSegments.
-  *                  <li>Merging in the various constraints intervals : from the
-  *                      \TrackSegment itself, from the free intervals in the
-  *                      perpandicular \Tracks and from the \RoutingEvent bound
-  *                      constraints.
-  *                  <li>Finding the candidate \Tracks for the \RoutingEvent,
-  *                      using \c Track_Spiral \Collection.
-  *                </ol>
-  *                The results of the shared operation are passed to derived classes
-  *                trough the \c State internal structure.
-  */
+ //! \function     RoutingEvent* RoutingEvent::reschedule ( RoutingEventQueue& queue, unsigned int eventLevel);
+ //! \return       The newly reinserted event. Depending on the cases it could be itself.
+ //!
+ //!               Insert or reinsert an event in the scheduler. The \c eventLevel parameter only
+ //!               allows to increase the level (if it is less than the current level of the
+ //!               event, it will be ignored).
+ //!
+ //!               <b>Cloning Management.</b> As an event could be cloned, if we try to re-insert
+ //!               a disabled original, we must first lookup the currently cloned active event.
+ //!               This is done through the associated \c segment which must always be associated
+ //!               with the active event (if any).
+ //!
+ //!               <b>Unimplemented Protection.</b> If the unimplemented flag is set the reschedule
+ //!               is cancelled (\c NULL is returned).
+ //!
+ //!               <b>Unprocessed Event.</b> The event is still in queue, waiting to be
+ //!               processed, then just repush it in the queue with it's new level.
+ //!
+ //!               <b>Processed Event.</b> Clone the already processed one, activate it
+ //!               and push it on the queue.
+ //!
+ //!               <b>Router's Mode.</b> The mode is also updated.
 
- /*  \function     bool  RoutingEvent::_setAside ( Track* track, size_t begin, size_t end, Net* net, Interval interval, RoutingEventQueue& queue );
-  *  \param        track    The track in wich to make free space.
-  *  \param        begin    The index of the first overlaping TrackSegment.
-  *  \param        end      The index of the last overlaping TrackSegment.
-  *  \param        net      The net for which we want to insert a TrackSegment.
-  *  \param        interval The interval which must be made empty.
-  *  \param        queue    The queue of RoutingEvent.
-  *
-  *                Manage the case of <i>soft overlap</i>. Create or enlarge a free space
-  *                in \c track so it can contain the requested \interval. <code>[begin:end]</code> defines
-  *                the range of indexes of overlaping \TrackSegment in \c track.
-  *                Displace TrackSegment that are <b>perpandicular</b> to those overlaping,
-  *                remove them from their \c Track if needed and issue an associated \RoutingEvent
-  *                with an updated bound constraint. Note that the overlaping \TrackSegment
-  *                themselves are <em>not</em> removed from the \c track.
-  *
-  *                A note on implementation :
-  *                <ul>
-  *                  <li>\c data1 : the DataNegociate of the to be inserted \TrackSegment.
-  *                  <li>\c segment2 : the current overlaping \TrackSegment (from \c begin
-  *                      to \c end).
-  *                  <li>\c data2 : the DataNegociate of the overlaping \TrackSegment.
-  *                  <li>\c segment3 : a \TrackSegment perpandicular to \c segment2.
-  *                </ul>
-  */
+ //! \function     void  RoutingEvent::setMode ( unsigned int mode );
+ //!               Set the mode in which the event must be processed (see RoutingEvent::Mode).
 
- /*  \function     void  RoutingEvent::_ripup ( Track* track, Net* net, Interval interval, size_t begin, size_t end, RoutingEventQueue& queue );
-  *  \param        track    The track in wich to make free space.
-  *  \param        net      The net for which we want to insert a TrackSegment.
-  *  \param        interval The interval which must be made empty.
-  *  \param        begin    The index of the first overlaping TrackSegment.
-  *  \param        end      The index of the last overlaping TrackSegment.
-  *  \param        queue    The queue of RoutingEvent.
-  *
-  *                Manage the case of <i>hard overlap</i>, that is bluntly remove
-  *                any \TrackSegment overlaping \interval. Issue both a remove event
-  *                (to \c Session) and a \RoutingEvent to re-process the dislodged
-  *                \TrackSegment.
-  */
+ //! \function     void  RoutingEvent::setState ( unsigned int state );
+ //!               Proxy mutator for DataNegociate::setState().
 
- }  // End of Kite namespace. 
+ //! \function     void  RoutingEvent::setAxisHintFromParent ();
+ //!               Sets the axis hint from it's parent segment. The parentage is found
+ //!               through the TrackSegment parentage.
+
+ //! \function     void  RoutingEvent::incInsertState ();
+ //!               Increment the insertion state.
+ //!
+ //! \sa           RoutingEvent::getInsertState().
+
+ //! \function     void  RoutingEvent::resetInsertState ();
+ //!               Reset the insertion state.
+ //!
+ //! \sa           RoutingEvent::getInsertState().
+
+ //! \function     void  RoutingEvent::setEventLevel ( unsigned int level );
+ //!               Set the event level (user-controlled re-ordering).
+
+ }

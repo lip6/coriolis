@@ -1,15 +1,9 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Configuration.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,24 +11,18 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Configuration.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <string>
-
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/Cell.h"
-#include  "crlcore/Utilities.h"
-#include  "kite/Configuration.h"
-#include  "kite/KiteEngine.h"
-
+#include <string>
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/Cell.h"
+#include "crlcore/Utilities.h"
+#include "kite/Configuration.h"
+#include "kite/KiteEngine.h"
 
 
 namespace Kite {
-
 
   using std::cout;
   using std::cerr;
@@ -121,6 +109,10 @@ namespace Kite {
 
   bool  Configuration::isGMetal ( const Layer* layer ) const
   { return _base->isGMetal(layer); }
+
+
+  bool  Configuration::isGContact ( const Layer* layer ) const
+  { return _base->isGContact(layer); }
 
 
   size_t  Configuration::getDepth () const
@@ -281,4 +273,4 @@ namespace Kite {
 
 
 
-}  // End of Kite namespace.
+}  // Kite namespace.

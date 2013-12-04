@@ -7,391 +7,481 @@
  /*! \class        Track
   *  \brief        Structure managing one routing track.
   *
+  *  \section      secTrackPurpose  Track Purpose
+  *
+  *                We use an array of <em>regularly spaced</em> Track as a geometrical
+  *                fast access structure. It allows to know whether an area is used or
+  *                not. The whole area may be seen as a set of adjoining tiles of fixed
+  *                \e width but variable \e length.
+  *
+  *                The figure <b>(1.b)</b> show, for an horizontal, track the relation
+  *                between <code>y,min,max</code> and the occupied area of the plane.
+  *                \c min and \c max must take into account segment extensions (\c e) and
+  *                the minimal distance between two rectangles (\c MD) of the same layer.
+  *                We assume that the width of the segment, augmented of all it's
+  *                contraints is no greater than \c TS (in fact it's how \c TS must be
+  *                calculated).
+  *
+  *                For the whole track array, see RoutingPlane.
+  *
+  *                \image html  Track-0.png "Fig 1: Track Area"
+  *
+  *
   *  \section      secTrackImplementation  Track Implementation
   *
-  *                Basically a Track is a sorted vector of TrackSegment, TrackSegment
-  *                beeing a decoration of the Katabatic::AutoSegment. Managment rules :
-  *                <ul>
-  *                  <li><b>Rule 1 :</b> the vector of TrackSegment is sorted by
-  *                      increasing source positions.
-  *                  <li><b>Rule 2 :</b> two consecutives segments TrackSegment do
-  *                      not overlap, except in case of <b>rule 3</b>.
-  *                  <li><b>Rule 3 :</b> if they belongs to the same \Net, two
-  *                      consecutive segments can overlap, see Track::getNetUsedInterval().
-  *                </ul>
+  *                A Track is implemented with a sorted vector of TrackElement.
+  *                TrackElements from differents nets must not overlap.
+  *                The sorting order is defined as follow:
+  *                  - TrackElements are sorted by increasing source (\e min)
+  *                    positions.
+  *                  - In case of overlap (i.e. belongs to the same net), if
+  *                    they share the same source position, then they are sorted
+  *                    by \e decreasing length. This way, the longest one will be
+  *                    the first encountered when walking through the Track in
+  *                    increasing index order.
   *
-  *                \image html  Track-1.png "Track Structure"
+  *                Figure <b>2.b</b> shows the details of the Track <b>[1]</b> of
+  *                figure <b>1.a</b>. Net \b \<d\> show an exemple of overlapping. 
+  *
+  *                \image html  Track-1.png "Fig 2: Track Structure"
   *                \image latex Track-1.pdf "Track Structure" width=0.7\textwidth
   *
+  *                In addition to the TrackSegments, the Track also manage additionnal
+  *                informations through a second vector of TrackMarkers. TrackMarker
+  *                are currently used only to hints at how strongly a terminal is
+  *                dependant on that portion of Track to be accessed.
   *
-  *                <b>updates procedures</b>
   *
-  *                Kite extend the Katabatic::Session mechanism to manage Track
-  *                modifications.
-  *
-  *                <b>Indexes vs. Iterators</b>
+  * \subsection    ssecTrackIndexes  Indexes vs. Iterators
   *
   *                Numerical indexes have been prefered over iterators because they can
   *                be used more easily by objects other the Track itself for referencing.
   *                So internal managment follow the same rule, handling indexes or
   *                reference to indexes.
   *
-  *                <b>Looking up free/used zones</b>
   *
-  *                The most important operation performed on a Track is to locate
-  *                free or used zones at a given point. We uses the \STL \lower_bound
-  *                function to find the index in the vector from a position.
-  *                It relies heavily on the hypothesis that consecutives TrackSegment
-  *                do not overlap, however, as segments from a same net can overlap
-  *                the \c max() function is more complex than the \c min(). In fact
-  *                it has to aggregate all the overlaping TrackSegment from the
-  *                same \Net (getUsedNetInterval()).
+  * \subsection    ssecTrackUpdate  Update Mechanism
   *
-  *                \image html  Track-2.png "Track Zones - First Approach"
-  *                \image latex Track-2.pdf "Track Zones - First Approach" width=0.7\textwidth
+  *                When a TrackElement is normaly inserted in a Track, a two way link
+  *                is established. The Track has an entry in it's vector refering to
+  *                TrackElement, and conversely, the TrackElement has it's \c track
+  *                field pointing to it's owning Track.
   *
-  *                As can be seen on the previous figure it is slightly more
-  *                efficient to work on \c lower_bound-1 instead of \c lower_bound.
+  *                <b>TrackElement Removal</b>
   *
-  *                \image html  Track-3.png "Track Zones - Optimized"
-  *                \image latex Track-3.pdf "Track Zones - Optimized" width=0.7\textwidth
-  */
-
- /*! \enum         Track::IndexState
-  *                Indicates how to compute the bounds of the interval enclosing
-  *                a given position.
+  *                To remove a TrackElement from a Track, we break one of those two links:
+  *                the TrackElement cease to refer to the owning Track, marking him for
+  *                removal which will occurs at the next track revalidation (Track::doRemoval()).
+  *                In figure <b>3</b>, the TrackElement belonging to net \b \<b\> is
+  *                marked for removal.
   *
-  *  \note         According to \e position, the interval can be a free interval
-  *                or a used interval.
-  */
-
- /*! \var          Track::MinTrackMin
-  *                Minimum/Source : uses the Track minimum.
-  */
-
- /*! \var          Track::MinSegmentMin
-  *                Minimum/Source : uses the begin segment minimum (source).
-  */
-
- /*! \var          Track::MinSegmentMax
-  *                Minimum/Source : uses the begin segment maximum (target).
-  */
-
- /*! \var          Track::MaxTrackMax
-  *                Maximum/Target : uses the Track maximum.
-  */
-
- /*! \var          Track::MaxSegmentMin
-  *                Maximum/Target : uses the end segment minimum (source).
-  */
-
- /*! \var          Track::MaxNextSegmentMin
-  *                Maximum/Target : uses the next to end segment minimum (source).
-  */
-
- /*! \var          Track::MaxSegmentMax
-  *                Maximum/Target : uses the end segment maximum (target).
-  */
-
- /*! \var          Track::BeforeFirst
-  *                Interval type : free, before the first interval [case (1)].
-  */
-
- /*! \var          Track::Inside
-  *                Interval type : used, in the Track [case (2)].
-  */
-
- /*! \var          Track::Outside
-  *                Interval type : free, between two used TrackSegment [case (3)].
-  */
-
- /*! \var          Track::AfterLast
-  *                Interval type : free, after the last used TrackSegment [case (4)].
-  */
-
- /*! \var          Track::EmptyTrack
-  *                Interval type : free, and the Track is empty [case (5)].
-  */
-
- /*! \var          Track::MinMask
-  *                Mask value : used to reset all the minimal values.
-  */
-
- /*! \var          Track::MaxMask
-  *                Mask value : used to reset all the maximal values.
-  */
-
- /*! \var          Track::NPOS;
-  *                A special index value (greatest integer) meaning that
-  *                an index is invalid.
-  */
-
-
- /*! \name         Accessors
-  */
- // \{
-
- /*! \function     RoutingPlane* Track::getRoutingPlane () const;
-  *  \Return       The RoutingPlane owning this Track.
-  */
-
- /*! \function     KiteEngine* Track::getKiteEngine () const;
-  *  \Return       The KiteEngine owning this Track.
-  */
-
- /*! \function     RoutingPlane* Track::getIndex () const;
-  *  \Return       The index of this Track in the RoutingPlane Track vector.
-  */
-
- /*! \function     Layer* Track::getLayer () const;
-  *  \Return       The \Layer of the Track.
-  */
-
- /*! \function     DbU::Unit  Track::getAxis () const;
-  *  \Return       The Axis of the Track.
-  */
-
- /*! \function     DbU::Unit  Track::getMin () const;
-  *  \Return       The minimal allowed coordinate of the Track.
-  */
-
- /*! \function     DbU::Unit  Track::getMax () const;
-  *  \Return       The maximal allowed coordinate of the Track.
-  */
-
- /*! \function     Track* Track::getNext () const;
-  *  \Return       The next Ttrack in the \RoutingPlane vector. That is the
-  *                one with the axis immediatly superior.
-  */
-
- /*! \function     Track* Track::getPrevious () const;
-  *  \Return       The previous Track in the \RoutingPlane vector. That is the
-  *                one with the axis immediatly inferior.
-  */
-
- /*! \function     size_t  Track::getSize () const;
-  *  \Return       The total number of TrackSegment in the Track.
-  */
-
- /*! \function     Point  Track::getPosition ( DbU::Unit position ) const;
-  *  \Return       the point at \c (position,getAxis()) for horizontal Track
-  *                at or \c (getAxis(),position) for vertical Track.
-  */
-
- // \}
-
-
- /*! \name         TrackSegment Accessors
-  */
- // \{
-
- /*! \function     TrackSegment* Track::getNext ( size_t& index, Net* net ) const;
-  *  \param        index  Index of the starting TrackSegment.
-  *  \param        net    A \Net to ignore.
-  *  \return       The next TrackSegment (\NULL if not found).
+  *                \image html  Track-2.png "Fig 3: TrackElement Removal"
   *
-  *                find, starting from TrackSegment at \e index the next TrackSegment
-  *                ignoring TrackSegment from \e net. \e index is modified to point
-  *                on the returned TrackSegment. If there's no next TrackSegment (\NULL)
-  *                then index is set to Track::NPOS.
-  */
-
- /*! \function     TrackSegment* Track::getPrevious ( size_t& index, Net* net ) const;
-  *  \param        index  Index of the starting TrackSegment.
-  *  \param        net    A \Net to ignore.
-  *  \return       The previous TrackSegment (\NULL if not found).
+  *                <b>TrackElement Insertion</b>
   *
-  *                find, starting from TrackSegment at \e index the previous TrackSegment
-  *                ignoring TrackSegment from \e net. \e index is modified to point
-  *                on the returned TrackSegment. If there's no previous TrackSegment (\NULL)
-  *                then index is set to Track::NPOS.
-  */
-
- /*! \function     TrackSegment* Track::getNextFixed ( size_t& index ) const;
-  *  \param        index  Index of the starting TrackSegment.
-  *  \return       The first previous \e Fixed TrackSegment.
+  *                When a TrackElement is inserted into a Track, the two way link is
+  *                immediatly created (but the TrackElement is not yet at it's final
+  *                place in the Track's vector). Before inserting a TrackElement we
+  *                check that it's been already detached (\c track field to \c NULL).
   *
-  *                find, starting from TrackSegment at \e index the first previous
-  *                with a \e Fixed attribute set. \e index is modified to point on the
-  *                returned TrackSegment. If there's no previous TrackSegment (\NULL)
-  *                then index is set to Track::NPOS.
-  */
-
- /*! \function     TrackSegment* Track::getSegment ( size_t index ) const;
-  *  \param        index  The index of the TrackSegment.
-  *  \return       The TrackSegment at \e index. The result will be \NULL in the
-  *                follwing cases :
-  *                <ul>
-  *                  <li>\e index is outside the sorted zone.
-  *                  <li>\e index points to a hole in the Track.
-  *                  <li>\e index is equal to Track::NPOS.
-  *                </ul>
-  */
-
- /*! \function     TrackSegment* Track::getSegment ( DbU::Unit position ) const;
-  *  \param        position  The position where to search.
-  *  \return       The TrackSegment whose starting point is immediatly inferior to \e position.
-  */
-
- /*! \function     size_t  Track::find ( const TrackSegment* segment ) const;
-  *  \Return       the \e index of \e segment inside the Track. If the \e segment do
-  *                not belongs to the Track, return Track::NPOS.
-  */
-
- /*! \function     void  Track::getIBounds ( DbU::Unit position, size_t& begin, size_t& end, unsigned int& state ) const;
-  *  \param        position  The position where to search.
-  *  \param        begin     Index of the starting bound.
-  *  \param        end       Index of the ending bound.
-  *  \param        state     how to use the returned \e indexes.
-  *  \return       The TrackSegment index around \e position.
+  *                It is at that step that the TrackElement axis is actually updated
+  *                through a call to TrackElement::setAxis().
+  *                
+  *                <b>Revalidation Sequence</b>
   *
-  *                The relation between the returned \e index and the position is
-  *                given through the \e state parameter.
+  *                After a Track has been modificated either the Track element vector or
+  *                the MarkerElement vector (or both) has been invalidateds. Revalidation
+  *                take place in three steps:
+  *                  - Track::doRemoval(), remove all TrackElement marked for removal.
+  *                  - Track::insert(), insert the TrackElement into their new Track.
+  *                  - Track::doReorder(), sort the TrackElement of the vector, that is, put the
+  *                    newly inserted elements at their right place.
   *
-  *  \note         It uses the \lower_bound \STL function.
-  */
-
- /*! \function     DbU::Unit  Track::getSourcePosition ( size_t index ) const;
-  *  \Return       The canonical source position of TrackSegment at index \e index.
-  *                If \e index is equal to Track::NPOS, returns zero.
-  */
-
- /*! \function     DbU::Unit  Track::getSourcePosition ( vector<TrackSegment*>::iterator it ) const;
-  *  \Return       The canonical source position of TrackSegment pointed by iterator \e it.
-  *                If \e it is equal to \c end() , returns zero.
-  */
-
- /*! \function     DbU::Unit  Track::getMinimalPosition ( size_t index, unsigned int state ) const;
-  *  \Return       The minmal position (lower bound) of an interval, starting near index \e index
-  *                with state \e state.
+  *                Each step must be done <em>for all Tracks</em> before proceeding to the
+  *                next. This way a TrackElement \c track field doesn't get set \e before
+  *                it has been actually removed from it's previous Track.
+  *                
+  *                
   *
-  *                \see Track::IndexState.
-  */
-
- /*! \function     DbU::Unit  Track::getMaximalPosition ( size_t index, unsigned int state ) const;
-  *  \Return       The maximal position (upper bound) of an interval, ending near index \e index
-  *                with state \e state.
+  * \subsection    ssecTrackOperations  Main Operations on Tracks
   *
-  *                \see Track::IndexState.
-  */
-
- /*! \function     Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const;
-  *  \param        position  where fo find a free interval.
-  *  \param        net       for which net to find the free interval.
-  *  \return       The longuest free interval enclosing \e position (may be empty).
-  */
-
- /*! \function     Interval  Track::expandUsedInterval ( size_t& begin, size_t& end ) const;
-  *  \param        begin  index on any of the overlaping TrackSegment. This value
-  *                       is then modified to point on the lower TrackSegment of the set.
-  *  \param        end    initial value is ignored. sets to the index of the rightmost
-  *                       extended TrackSegment of the set (i.e. the one setting the
-  *                       upper bound).
-  *  \return       the whole interval used by a set of overlaping TrackSegment.
+  *                <b>Helper Function:</b> Track::getBeginIndex()
   *
-  *                \image html  Track-4.png "Overlap - Example 1"
-  *                \image html  Track-5.png "Overlap - Example 2"
-  *                \image latex Track-4.pdf "Overlap - Example 1" width=0.7\textwidth
-  *                \image latex Track-5.pdf "Overlap - Example 2" width=0.7\textwidth
-  */
-
- /*! \function     Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const;
-  *  \param        begin  the lowest used TrackSegment.
-  *  \param        end    the highest used TrackSegment.
-  *  \param        state  the enclosing characterics.
-  *  \param        net    the for wich we seek place.
-  *  \Return       The longuest free interval between \c ]begin,end[ .
+  *                Return in \c begin the index of the TrackElement whose minimum is immediately
+  *                below the requested \c position on the Track axis. The second returned
+  *                parameter \c state is a set of flags to tell how the \c begin index
+  *                has to be interpreted.
   *
-  *  \note         \c ]begin,end[ must define a free interval between two TrackSegment.
-  */
-
- /*! \function     void  Track::_check ( const char* message=NULL ) const;
-  *  \param        message  An iformative message, only printed if an error occurs.
-  *  \return       \true if the Track contains no incoherencies.
+  *                <b>Helper Function:</b> Track::getOccupiedInterval()
   *
-  *                Perform a complete Track check. Looks for the following incoherencies :
-  *                <ul>
-  *                  <li>TrackSegment do not refers this Track.
-  *                  <li>TrackSegment is detached (TrackSegment::getTrack() is \NULL).
-  *                  <li>TrackSegment is hollow, this one is very unlikely as hollow
-  *                      TrackSegment are only created for the \lower_bound.
-  *                  <li>\NULL pointers (should never occurs, nevertheless...)
-  *                  <li>And finally, call checkOverlap().
-  *                </ul>
+  *                Returns the complete interval of a set of overlapping TrackElement from
+  *                the same net.
   */
 
- /*! \function     void  Track::checkOverlap () const;
-  *  \return       the number of overlaping TrackSegment.
-  *
-  *                Perform the following checks :
-  *                <ul>
-  *                  <li>Two consecutive TrackSegment from different \Net must not
-  *                      overlap.
-  *                  <li>For TrackSegment starting from the same position, the
-  *                      longuest must be first.
-  *                </ul>
-  */
+ //! \enum         Track::IndexState
+ //!               Indicates how to compute the bounds of the interval enclosing
+ //!               a given \c position on track axis.
+ //!
+ //! \note         According to \e position, the interval can be a free interval
+ //!               or a used interval.
 
- /*! \function     void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const;
-  *  \param        interval  the overlaping interval.
-  *  \param        begin     where to store the starting bound.
-  *  \param        end       where to store the ending bound.
-  *
-  *                find the range of TrackSegment intersecting \e interval.
-  *                Note that when the \e interval lower bound crosses a set of
-  *                overlaping intervals from the same \Net, the interval at
-  *                \e begin will crosses the lower bound but some following
-  *                of the same \Net may not.
-  */
+ //! \var          Track::BeginIsTrackMin
+ //!               (implies \c begin=0) there is no TrackElement \e before \c position
 
- /*! \function     DbU::Unit  Track::getOverlapCost ( Interval interval, Net* net, size_t begin, size_t end ) const;
-  *  \param        interval  the overlaping interval.
-  *  \param        net       a Net to ignore (null cost).
-  *  \param        begin     the starting bound.
-  *  \param        end       the ending bound.
-  *  \return       The cost of the overlap.
-  *
-  *                compute the cost of the overlap of \e interval with the range
-  *                \c [begin,end] of TrackSegment. Any TrackSegment belonging to
-  *                \e net will be ignored.
-  */
+ //! \var          Track::BeginIsSegmentMin
+ //!               The \c begin segment starts \e before \c position and ends \e after.
 
- /*! \function     DbU::Unit  Track::getOverlapCost ( Interval interval, Net* net ) const;
-  *  \param        interval  the overlaping interval.
-  *  \param        net       a Net to ignore (null cost).
-  *
-  *                compute the overlap of \e interval with TrackSegment from
-  *                the current Track, ignoring thoses belonging to \e net.
-  */
+ //! \var          Track::BeginIsSegmentMax
+ //!               The \c begin segment starts and ends \e before \c position.
 
- // \}
+ //! \var          Track::EndIsTrackMax
+ //!               There is no TrackElement \e after \c position.
 
+ //! \var          Track::EndIsSegmentMin
+ //!               The \c begin segment starts \e before \c position.
 
- /*! \name         Updators
-  */
- // \{
+ //! \var          Track::EndIsNextSegmentMin
+ //!               The \c begin segment starts and ends \e before \c position. So the maximum
+ //!               is given by the \c minimum of the \e next TrackElement.
 
- /*! \function     void  Track::insert ( TrackSegment* segment );
-  *                adds \e segment to the Track. Must only be used inside a
-  *                TrackSession.
-  *
-  *  \see          TrackSession.
-  */
+ //! \var          Track::EndIsSegmentMax
+ //!               The \c begin segment starts \e before \c position and ends \e after.
 
- /*! \function     size_t  Track::pack ();
-  *  \Return       The number of removeds TrackSegment.
-  *
-  *                Suppress all the TrackSegment that have been withdraw from the
-  *                Track. TrackSegment must be withdraw trough the TrackSegment::detach()
-  *                method which sets their owning Track to \NULL (the removal criterion).
-  */
+ //! \var          Track::BeforeFirstElement
+ //!               the \c position is before the first TrackElement.
 
- /*! \function     void  Track::sort ();
-  *
-  *                sort the the vector. Must be called \e after the Pack() method,
-  *                so no detached TrackSegment are presents.
-  */
+ //! \var          Track::InsideElement
+ //!               the \c position is inside a TrackElement.
 
- // \}
+ //! \var          Track::OutsideElement
+ //!               the \c position is in free zone between two TrackElements.
+
+ //! \var          Track::AfterLastElement
+ //!               the position is after the end of the last element.
+
+ //! \var          Track::EmptyTrack
+ //!               the track is still empty.
+
+ //! \var          Track::BeginMask
+ //!               To extract the \e begin part from a combination of flags.
+
+ //! \var          Track::EndMask
+ //!               To extract the \e end part from a combination of flags.
+
+ //! \var          Track::npos;
+ //!               A special index value (greatest integer) meaning that
+ //!               an index is invalid.
+
+ //! \function     bool  Track::isHorizontal () const;
+ //! \sreturn      \true if the Track in horizontal direction.
+
+ //! \function     bool  Track::isVertical () const;
+ //! \sreturn      \true if the Track in vertical direction.
+
+ //! \function     bool  Track::isLocalAssigned () const;
+ //! \sreturn      \true is the Track should be preferentially used for local routing.
+
+ //! \function     RoutingPlane* Track::getRoutingPlane () const;
+ //! \sreturn      The RoutingPlane owning this Track.
+
+ //! \function     KiteEngine* Track::getKiteEngine () const;
+ //! \sreturn      The KiteEngine owning this Track.
+
+ //! \function     unsigned int  Track::getDirection () const;
+ //! \sreturn      The direction of the Track, either Katabatic::KbHorizontal or
+ //!               Katabatic::KbVertical.
+
+ //! \function     RoutingPlane* Track::getIndex () const;
+ //! \sreturn      The index of this Track in the RoutingPlane Track vector.
+
+ //! \function     unsigned int  Track::getDepth () const;
+ //! \sreturn      The depth (as given by the RoutingGauge) of the Track's layer.
+
+ //! \function     Layer* Track::getLayer () const;
+ //! \sreturn      The \Layer of the Track.
+
+ //! \function     Layer* Track::getBlockageLayer () const;
+ //! \sreturn      The associated blockage \Layer to the Track's layer.
+
+ //! \function     DbU::Unit  Track::getAxis () const;
+ //! \sreturn      The Axis of the Track.
+
+ //! \function     DbU::Unit  Track::getMin () const;
+ //! \sreturn      The minimal allowed coordinate of the Track.
+
+ //! \function     DbU::Unit  Track::getMax () const;
+ //! \sreturn      The maximal allowed coordinate of the Track.
+
+ //! \function     Track* Track::getNextTrack () const;
+ //! \sreturn      The next Track in the \RoutingPlane vector. That is the
+ //!               one with the axis immediatly superior.
+
+ //! \function     Track* Track::getPreviousTrack () const;
+ //! \sreturn      The previous Track in the \RoutingPlane vector. That is the
+ //!               one with the axis immediatly inferior.
+
+ //! \function     size_t  Track::getSize () const;
+ //! \sreturn      The total number of TrackSegment in the Track.
+
+ //! \function     Point  Track::getPosition ( DbU::Unit position ) const;
+ //! \sreturn      the point at \c (position,getAxis()) for horizontal Track
+ //!               at or \c (getAxis(),position) for vertical Track.
+
+ //! \function     TrackSegment* Track::getSegment ( size_t index ) const;
+ //! \param        index  The index of the TrackSegment.
+ //! \return       The TrackSegment at \e index. The result will be \NULL in the
+ //!               follwing cases :
+ //!                 - \e index is outside the sorted zone.
+ //!                 - \e index points to a hole in the Track.
+ //!                 - \e index is equal to Track::npos.
+
+ //! \function     TrackSegment* Track::getSegment ( DbU::Unit position ) const;
+ //! \param        position  The position where to search.
+ //! \return       The TrackSegment whose starting point is immediatly inferior to \e position.
+
+ //! \function     TrackSegment* Track::getNext ( size_t& index, Net* net ) const;
+ //! \param        index  Index of the starting TrackSegment.
+ //! \param        net    A \Net to ignore.
+ //! \return       The next TrackSegment (\NULL if not found).
+ //!
+ //!               Find, starting from TrackSegment at \e index the next TrackSegment
+ //!               ignoring TrackSegment from \e net. \e index is modified to point
+ //!               on the returned TrackSegment. If there's no next TrackSegment (\NULL)
+ //!               then index is set to Track::npos.
+
+ //! \function     TrackSegment* Track::getPrevious ( size_t& index, Net* net ) const;
+ //! \param        index  Index of the starting TrackSegment.
+ //! \param        net    A \Net to ignore.
+ //! \return       The previous TrackSegment (\NULL if not found).
+ //!
+ //!               find, starting from TrackSegment at \e index the previous TrackSegment
+ //!               ignoring TrackSegment from \e net. \e index is modified to point
+ //!               on the returned TrackSegment. If there's no previous TrackSegment (\NULL)
+ //!               then index is set to Track::npos.
+
+ //! \function     TrackSegment* Track::getNextFixed ( size_t& index ) const;
+ //! \param        index  Index of the starting TrackSegment.
+ //! \return       The first previous \e Fixed TrackSegment.
+ //!
+ //!               find, starting from TrackSegment at \e index the first previous
+ //!               with a \e Fixed attribute set. \e index is modified to point on the
+ //!               returned TrackSegment. If there's no previous TrackSegment (\NULL)
+ //!               then index is set to Track::npos.
+
+ //! \function     size_t  Track::find ( const TrackElement* element ) const;
+ //! \sreturn      the \e index of \e element inside the Track. If the \e element do
+ //!               not belongs to the Track, return Track::npos.
+
+ //! \function     DbU::Unit  Track::getSourcePosition ( size_t index ) const;
+ //! \sreturn      The source position of TrackSegment at index \e index.
+ //!               If \e index is equal to Track::npos, returns zero.
+
+ //! \function     DbU::Unit  Track::getSourcePosition ( vector<TrackElement*>::iterator it ) const;
+ //! \sreturn      The source position of TrackSegment pointed by iterator \e it.
+ //!               If \e it is equal to \c end() , returns zero.
+
+ //! \function     DbU::Unit  Track::getMinimalPosition ( size_t index, unsigned int state ) const;
+ //! \sreturn      Extract the minimal position from the interval at \c index in accordance
+ //!               to \c state hinting.
+ //!
+ //! \sa           Track::IndexState.
+
+ //! \function     DbU::Unit  Track::getMaximalPosition ( size_t index, unsigned int state ) const;
+ //! \sreturn      Extract the maximal position from the interval at \c index in accordance
+ //!               to \c state hinting.
+ //!
+ //! \sa           Track::IndexState.
+
+ //! \function     Interval  Track::getFreeInterval ( DbU::Unit position, Net* net=NULL ) const;
+ //! \param        position  where fo find a free interval.
+ //! \param        net       for which net to find the free interval.
+ //! \sreturn      The longuest free interval enclosing \e position (may be empty).
+
+ //! \function     Interval  Track::getOccupiedInterval ( size_t& begin ) const;
+ //! \param        begin  index of one of the TrackElement set. May be modificated.
+ //! \sreturn      the whole interval used by a set of overlaping TrackSegment.
+ //!
+ //!               As TrackElement from a same net can overlap, the interval of one of
+ //!               them do not give the full extend of the Track occupation at this point.
+ //!               This function looks for all overlaping segments and returns the
+ //!               merged interval. Additionnaly it sets \c begin to the index of the
+ //!               lowest TrackElement of the set.
+ //!               
+ //!               \image html  TrackOccupiedInterval-1.png "Fig 4: Track::getOccuppiedInterval()"
+
+ //! \function     Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const;
+ //! \param        begin  the lowest used TrackSegment.
+ //! \param        end    the highest used TrackSegment.
+ //! \param        state  tells how to interpret the \c begin & \c end indexes.
+ //! \param        net    the for wich we seek place.
+ //! \sreturn      The longuest free interval between \c ]begin,end[ .
+ //!
+ //!               Starting from the initial <code>[begin,end]</code> interval, expand the
+ //!               interval to encompass all free space or segments belonging to \c net.
+ //!               \c state may be used to compute the interval bounds from \c begin
+ //!               and \c end instead of directly using the returned \c interval.
+ //!
+ //! \note         \c ]begin,end[ must define a free interval between two TrackSegment.
+
+ //! \function     void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, unsigned int& state ) const;
+ //! \param        position  The position where to search.
+ //! \param        begin     Index of the immediatly inferior TrackElement.
+ //! \param        state     how to interpret the returned \c begin.
+ //!
+ //!               Return in \c begin the index of the TrackElement whose minimum is immediately
+ //!               below the requested \c position on the Track axis. The second returned
+ //!               parameter \c state is a set of flags to tell how the \c begin index
+ //!               has to be interpreted.
+ //!
+ //!               Flags for the \c state are:
+ //!                 - Track::BeginIsTrackMin : (implies \c begin=0) there is no TrackElement
+ //!                   \e before \c position.
+ //!                 - Track::EndIsSegmentMin : The \c begin segment starts \e before \c position.
+ //!                 - Track::BeginIsSegmentMin : The \c begin segment starts \e before \c position
+ //!                   and ends \e after.
+ //!                 - Track::EndIsSegmentMax : The \c begin segment starts \e before \c position
+ //!                   and ends \e after.
+ //!                 - Track::BeginIsSegmentMax : The \c begin segment starts and ends \e before
+ //!                   \c position.
+ //!                 - Track::EndIsNextSegmentMin : The \c begin segment starts and ends \e before
+ //!                   \c position. So the maximum is given by the \c minimum of the \e next
+ //!                   TrackElement.
+ //!                 - Track::EndIsTrackMax : There is no TrackElement \e after \c position.
+ //!
+ //!               Based on the previous flags, we build the \c state parameter:
+ //!                 - Track::BeforeFirstElement : the \c position is before the first TrackElement.
+ //!                 - Track::InsideElement : the \c position is inside a TrackElement.
+ //!                 - Track::OutsideElement : the \c position is in free zone between two
+ //!                   TrackElements.
+ //!                 - Track::AfterLastElement : the position is after the end of the last
+ //!                   element.
+ //!                 - Track::EmptyTrack : the track is still empty.
+ //!
+ //!               To separate flags relevant to \e begin and \e end informations, two masks
+ //!               are provideds:
+ //!                 - Track::BeginMask
+ //!                 - Track::EndMask
+ //!               
+ //!               \image html  TrackBeginIndex-1.png "Fig 3: Track::getBeginIndex()"
+ //!
+ //!               <b>Reminder for myself:</b>
+ //!               The Track::getBeginIndex() function relies on the \STL \lower_bound
+ //!               function. \c lower_bound() finds the TrackElement immediately \e superior
+ //!               to \c position (shown on Figure <b>3</b> by the \c LB label in white on black).
+ //!
+ //!               The relation between the returned \c begin index and the position is
+ //!               given through the \c state parameter.
+
+ //! \function     void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const;
+ //! \param        interval  the overlaping interval.
+ //! \param        begin     where to store the starting bound.
+ //! \param        end       where to store the ending bound.
+ //!
+ //!               find the range of TrackSegment intersecting \e interval.
+ //!               Note that when the \e interval lower bound crosses a set of
+ //!               overlaping intervals from the same \Net, the interval at
+ //!               \e begin will crosses the lower bound but some following
+ //!               of the same \Net may not.
+
+ //! \function     TrackCost  Track::getOverlapCost ( Interval interval, Net* net, size_t begin, size_t end, unsigned int flags ) const;
+ //! \param        interval  the overlaping interval.
+ //! \param        net       a Net to ignore (null cost).
+ //! \param        begin     the starting bound.
+ //! \param        end       the ending bound.
+ //! \param        flags     passed to the overlap cost function.
+ //! \return       The cost of the overlap.
+ //!
+ //!               Compute the cost of the overlap of \e interval with the range
+ //!               \c [begin,end] of TrackSegment. Any TrackSegment belonging to
+ //!               \e net will be ignored.
+
+ //! \function     TrackCost  Track::getOverlapCost ( Interval interval, Net* net, unsigned int flags ) const;
+ //! \param        interval  the overlaping interval.
+ //! \param        net       a Net to ignore (null cost).
+ //! \param        flags     passed to the overlap cost function.
+ //!
+ //!               Compute the overlap cost of \e interval with TrackSegment from
+ //!               the current Track, ignoring thoses belonging to \e net.
+
+ //! \function     TrackCost  Track::getOverlapCost ( TrackElement* segment, unsigned int flags ) const;
+ //! \param        segment   under which to compute overlap cost.
+ //! \param        flags     passed to the overlap cost function.
+ //!
+ //!               Compute the overlap cost of \c segment with TrackSegment from
+ //!               the current Track (interval and net are deduced from \c segment).
+
+ //! \function     void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const;
+ //! \param        interval   under which to compute terminal weight.
+ //! \param        net        a net to be ignored.
+ //! \param        count      incremented of the number of track markers under the
+ //!                          \c interval.
+ //! \param        weight     incremented of the sum of the weight of the track markers
+ //!                          under the \c interval.
+ //!
+ //!               Compute and return the sum of the weight of the track markers (see TrackMarker)
+ //!               under \c interval ignoring \c net (that is, \e for \c net).
+ //!
+ //! \remark       The referenced variables \c count and \c weight are <b>not</b> reset to
+ //!               zero by this function. It is of the caller's responsability.
+
+ //! \function     bool  Track::check ( unsigned int& overlaps, const char* message=NULL ) const;
+ //! \param        overlaps  The number of overlaping segments.
+ //! \param        message   An iformative message, only printed if an error occurs.
+ //! \return       \true if the Track contains no incoherencies.
+ //!
+ //!               Perform a complete Track check. Looks for the following incoherencies :
+ //!                 - TrackSegment do not refers this Track.
+ //!                 - TrackSegment is detached (TrackSegment::getTrack() is \NULL).
+ //!                 - TrackSegment is hollow, this one is very unlikely as hollow
+ //!                   TrackSegment are only created for the \lower_bound.
+ //!                 - \NULL pointers (should never occurs, nevertheless...)
+ //!                 - Two consecutive TrackSegment from different \Net must not
+ //!                   overlap.
+ //!                 - For TrackSegment starting from the same position, the
+ //!                   longuest must be first.
+
+ //! \function     void  Track::invalidate ();
+ //!               Inconditionnaly invalidate the Track, regardless if it has been
+ //!               modificated. The Track will be forced to be revalidated on closure
+ //!               of the current session.
+
+ //! \function     void  Track::insert ( TrackElement* segment );
+ //!               Adds \e segment to the Track. Must only be used inside a
+ //!               Session. They must appears \e after Track::doRemoval()
+ //!               and \e before Track::doReorder().
+ //!
+ //! \sa           Kite::Session.
+
+ //! \function     void  Track::insert ( TrackMarker* marker );
+ //!               Adds \e marker to the Track. Must only be used inside a
+ //!               Session.
+ //!
+ //! \sa           Kite::Session.
+
+ //! \function     void  Track::setSegment ( TrackElement* element, size_t index );
+ //!               Directly affect the Track entry at position \c index to
+ //!               \c element (use with great care).
+ //!
+ //! \sa           Kite::Session.
+
+ //! \function     size_t  Track::doRemoval ();
+ //! \sreturn      The number of removeds TrackSegment.
+ //!
+ //!               Suppress all the TrackSegment that have been withdraw from the
+ //!               Track. TrackSegment must be withdraw trough the TrackSegment::detach()
+ //!               method which sets their owning Track to \NULL (the removal criterion).
+ //!               It uses the \STL \e remove_if algorithm that put all the to be removed
+ //!               elements at the end of the vector.
+ //!
+ //! \sa           Kite::Session.
+
+ //! \function     void  Track::doReorder ();
+ //!
+ //!               (Re)sort the TrackElement of the vector. Must be called \e after:
+ //!                 - Track::doRemoval() so no detached TrackSegment are presents.
+ //!                 - All calls to Track::insert(), as the newly inserted elements
+ //!                   are put at the back of the vector.
+ //!
+ //! \sa           Kite::Session.
 
  }

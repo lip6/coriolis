@@ -1,3 +1,5 @@
+# -*- explicit-buffer-name: "doxyfile<kite/doc>" -*-
+
 # Doxyfile 1.3.4
 
 # --------------------------------------------------------------------
@@ -24,7 +26,8 @@ TAB_SIZE               = 2
 ALIASES                = "function=\fn"\
                          "important=\par Important:\n"\
                          "remark=\par Remark:\n"\
-                         "Return=<b>Returns:</b>"\
+                         "sreturn=\b Returns:"\
+                         "sa=<b>See also:</b>&nbsp;"\
                          "True=\b True"\
                          "true=\b true"\
                          "False=\b False"\
@@ -33,7 +36,7 @@ ALIASES                = "function=\fn"\
                          "HORIZONTAL=\b HORIZONTAL"\
                          "NULL=\c NULL"\
                          "vector=\c vector"\
-                         "lower_bound=\c lower_bound"\
+                         "lower_bound=\c lower_bound()"\
                          "Collection=\c Collection"\
                          "Collections=\c Collections"\
                          "Interval=\c Interval"\
@@ -72,7 +75,9 @@ ALIASES                = "function=\fn"\
                          "Session=\c Session"\
                          "Sessions=\c Sessions"\
                          "Hurricane=<a href='../hurricane/Index.html'>Hurricane</a>"\
-                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"
+                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"\
+                         "red{1}=<span class=\"red\">\1</span>" \
+                         "redB{1}=<b><span class=\"red\">\1</span></b>"
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 SUBGROUPING            = YES
@@ -91,7 +96,7 @@ HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
 CASE_SENSE_NAMES       = YES
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = NO
@@ -117,13 +122,30 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 
 INPUT                  = \
-    ../src/kite/TrackSegment.h         ../src/TrackSegment.cpp         TrackSegment.dox      \
-    ../src/kite/TrackSegmentCost.h     ../src/TrackSegmentCost.cpp     TrackSegmentCost.dox  \
-    ../src/kite/Track.h                ../src/Track.cpp                Track.dox             \
-    ../src/kite/TrackCost.h            ../src/TrackCost.cpp            TrackCost.dox         \
-    ../src/kite/RoutingEvent.h         ../src/RoutingEvent.cpp         RoutingEvent.dox      \
-    ../src/kite/Session.h                                              Session.dox           \
-                                                                       Kite.dox
+    ../src/kite/Constants.h                                           Constants.dox           \
+    ../src/kite/KiteEngine.h                                          KiteEngine.dox          \
+    ../src/kite/DataNegociate.h       ../src/DataNegociate.cpp        DataNegociate.dox       \
+    ../src/kite/TrackMarker.h         ../src/TrackMarker.cpp          TrackMarker.dox         \
+    ../src/kite/TrackElement.h        ../src/TrackElement.cpp         TrackElement.dox        \
+    ../src/kite/TrackSegment.h        ../src/TrackSegment.cpp         TrackSegment.dox        \
+    ../src/kite/TrackFixedSegment.h   ../src/TrackFixedSegment.cpp    TrackFixedSegment.dox   \
+    ../src/kite/Track.h               ../src/Track.cpp                Track.dox               \
+    ../src/kite/HorizontalTrack.h     ../src/HorizontalTrack.cpp      HorizontalTrack.dox     \
+    ../src/kite/VerticalTrack.h       ../src/VerticalTrack.cpp        VerticalTrack.dox       \
+    ../src/kite/RoutingPlane.h        ../src/RoutingPlane.cpp         RoutingPlane.dox        \
+    ../src/kite/Manipulator.h         ../src/Manipulator.cpp          Manipulator.dox         \
+    ../src/kite/SegmentFsm.h          ../src/SegmentFsm.cpp           SegmentFsm.dox          \
+    ../src/kite/RoutingEvent.h        ../src/RoutingEvent.cpp         RoutingEvent.dox        \
+    ../src/kite/RoutingEventQueue.h   ../src/RoutingEventQueue.cpp    RoutingEventQueue.dox   \
+    ../src/kite/RoutingEventLoop.h    ../src/RoutingEventLoop.cpp     RoutingEventLoop.dox    \
+    ../src/kite/RoutingEventHistory.h ../src/RoutingEventHistory.cpp  RoutingEventHistory.dox \
+    ../src/kite/NegociateWindow.h     ../src/NegociateWindow.cpp      NegociateWindow.dox     \
+    ../src/kite/Session.h                                             Session.dox             \
+                                                                       Kite.dox                \
+                                                                       notes.dox
+
+#   ../src/kite/TrackSegmentCost.h     ../src/TrackSegmentCost.cpp     TrackSegmentCost.dox  \
+#   ../src/kite/TrackCost.h            ../src/TrackCost.cpp            TrackCost.dox         \
 
 FILE_PATTERNS          = *.h   \
                          *.cpp \
@@ -166,7 +188,7 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = header.html
 HTML_FOOTER            = footer.html
-HTML_STYLESHEET        = ASIM.css
+HTML_STYLESHEET        = SoC.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
@@ -250,7 +272,7 @@ SKIP_FUNCTION_MACROS   = YES
 # --------------------------------------------------------------------
 # Configuration options related to external references   
 
-TAGFILES               = ../../../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane \
+TAGFILES               = ../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane \
                          ../../katabatic/doc/html/katabatic.tag=../katabatic
 GENERATE_TAGFILE       = html/kite.tag
 ALLEXTERNALS           = NO

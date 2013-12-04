@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,40 +12,33 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TrackFixedSegment.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-#include  <sstream>
-
-#include  "hurricane/Bug.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/RegularLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "katabatic/AutoContact.h"
-#include  "katabatic/GCellGrid.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "kite/DataNegociate.h"
-#include  "kite/TrackFixedSegment.h"
-#include  "kite/TrackCost.h"
-#include  "kite/Track.h"
-#include  "kite/Session.h"
-#include  "kite/RoutingEvent.h"
-#include  "kite/NegociateWindow.h"
-#include  "kite/KiteEngine.h"
+#include <sstream>
+#include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Net.h"
+#include "hurricane/Name.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "katabatic/AutoContact.h"
+#include "katabatic/GCellGrid.h"
+#include "crlcore/RoutingGauge.h"
+#include "kite/DataNegociate.h"
+#include "kite/TrackFixedSegment.h"
+#include "kite/TrackCost.h"
+#include "kite/Track.h"
+#include "kite/Session.h"
+#include "kite/RoutingEvent.h"
+#include "kite/NegociateWindow.h"
+#include "kite/KiteEngine.h"
 
 
 namespace Kite {
-
 
   using namespace std;
   using Hurricane::inltrace;
@@ -80,79 +68,81 @@ namespace Kite {
   TrackFixedSegment::TrackFixedSegment ( Track* track, Segment* segment )
     : TrackElement  (NULL)
     , _segment      (segment)
-    , _isBlockage   (segment->getNet() == _blockageNet)
   {
     Box boundingBox = segment->getBoundingBox();
 
-    if ( track ) {
+    unsigned int flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
+    setFlags( flags );
+
+    if (track) {
       unsigned int  depth      = track->getDepth();
       Technology*   technology = DataBase::getDB()->getTechnology();
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
       if ( layer2 ) {
       //DbU::Unit extention = layer2->getExtentionCap();
-        if ( track->getDirection() == Constant::Horizontal ) {
-          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Horizontal );
+        if (track->getDirection() == KbHorizontal) {
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide( KbHorizontal );
 
-          _sourceU = max ( boundingBox.getXMin(), uside.getVMin());
-          _targetU = min ( boundingBox.getXMax(), uside.getVMax());
+          _sourceU = max( boundingBox.getXMin(), uside.getVMin());
+          _targetU = min( boundingBox.getXMax(), uside.getVMax());
 
-          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_sourceU,track->getAxis()) );
-          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(_targetU,track->getAxis()) );
+          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell( Point(_sourceU,track->getAxis()) );
+          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(_targetU,track->getAxis()) );
           Katabatic::GCell* right   = NULL;
-          Interval          guside  = gcell->getUSide ( Constant::Horizontal /*, true*/ );
+          Interval          guside  = gcell->getSide( KbHorizontal );
           Interval          segside ( boundingBox.getXMin(), boundingBox.getXMax() );
 
-          if ( gcell ) {
+          if (gcell) {
             while ( gcell and (gcell != end) ) {
               right = gcell->getRight();
-              if ( right == NULL ) break;
+              if (right == NULL) break;
 
-              guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
-              Interval usedLength = guside.getIntersection ( segside );
+              guside = gcell->getSide( KbHorizontal );
+              Interval usedLength = guside.getIntersection( segside );
 
-              gcell->addBlockage    ( depth, usedLength.getSize() );
-            //gcell->addBlockedAxis ( depth, track->getAxis() );
+              gcell->addBlockage   ( depth, usedLength.getSize() );
+            //gcell->addBlockedAxis( depth, track->getAxis() );
               gcell = right;
             }
-            if ( end ) {
-              guside = gcell->getUSide ( Constant::Horizontal /*, true*/ );
-              Interval usedLength = guside.getIntersection ( segside );
+            if (end) {
+              guside = gcell->getSide( KbHorizontal );
+              Interval usedLength = guside.getIntersection( segside );
 
-              end->addBlockage    ( depth, usedLength.getSize() );
-            //end->addBlockedAxis ( depth, track->getAxis() );
+              end->addBlockage   ( depth, usedLength.getSize() );
+            //end->addBlockedAxis( depth, track->getAxis() );
             }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
         } else {
-          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide ( Constant::Vertical );
+          Interval uside = track->getKiteEngine()->getGCellGrid()->getUSide( KbVertical );
 
-          _sourceU = max ( boundingBox.getYMin(), uside.getVMin());
-          _targetU = min ( boundingBox.getYMax(), uside.getVMax());
+          _sourceU = max( boundingBox.getYMin(), uside.getVMin());
+          _targetU = min( boundingBox.getYMax(), uside.getVMax());
 
-          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_sourceU) );
-          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell ( Point(track->getAxis(),_targetU) );
+          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_sourceU) );
+          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_targetU) );
           Katabatic::GCell* up      = NULL;
-          Interval          guside  = gcell->getUSide ( Constant::Vertical /*, true*/ );
+          Interval          guside  = gcell->getSide( KbVertical );
           Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
-          if ( gcell ) {
+          if (gcell) {
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
-              if ( up == NULL ) break;
+              if (up == NULL) break;
 
-              guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
-              Interval usedLength = guside.getIntersection ( segside );
+              guside = gcell->getSide( KbVertical );
+              Interval usedLength = guside.getIntersection( segside );
 
-              gcell->addBlockage    ( depth, usedLength.getSize() );
-            //gcell->addBlockedAxis ( depth, track->getAxis() );
+              gcell->addBlockage   ( depth, usedLength.getSize() );
+            //gcell->addBlockedAxis( depth, track->getAxis() );
               gcell = up;
             }
             if ( end ) {
-              guside = gcell->getUSide ( Constant::Vertical /*, true*/ );
-              Interval usedLength = guside.getIntersection ( segside );
+              guside = gcell->getSide( KbVertical /*, true*/ );
+              Interval usedLength = guside.getIntersection( segside );
 
-              end->addBlockage    ( depth, usedLength.getSize() );
-            //end->addBlockedAxis ( depth, track->getAxis() );
+              end->addBlockage   ( depth, usedLength.getSize() );
+            //end->addBlockedAxis( depth, track->getAxis() );
             }
           } else
             cerr << Warning("TrackFixedSegment(): TrackFixedElement outside GCell grid.") << endl;
@@ -163,7 +153,7 @@ namespace Kite {
 
 
   void  TrackFixedSegment::_postCreate ()
-  { TrackElement::_postCreate (); }
+  { TrackElement::_postCreate(); }
 
 
   TrackFixedSegment::~TrackFixedSegment ()
@@ -173,7 +163,7 @@ namespace Kite {
   void  TrackFixedSegment::_preDestroy ()
   {
     ltrace(90) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
-    TrackElement::_preDestroy ();
+    TrackElement::_preDestroy();
   }
 
 
@@ -182,27 +172,28 @@ namespace Kite {
     if ( not _blockageNet ) _blockageNet = Session::getBlockageNet();
 
     TrackFixedSegment* trackFixedSegment = NULL;
-    if ( track ) { 
+    if (track) { 
       trackFixedSegment = new TrackFixedSegment ( track, segment );
-      trackFixedSegment->_postCreate ();
-      Session::addInsertEvent ( trackFixedSegment, track );
+      trackFixedSegment->_postCreate();
 
       ltrace(190) << "Adding: " << segment << " on " << track << endl;
       ltrace(200) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
+
+      Session::addInsertEvent( trackFixedSegment, track );
+
     }
     return trackFixedSegment;
   }
 
 
   AutoSegment*   TrackFixedSegment::base            () const { return NULL; }
-  bool           TrackFixedSegment::isFixed         () const { return true; }
-  bool           TrackFixedSegment::isBlockage      () const { return _isBlockage; }
   DbU::Unit      TrackFixedSegment::getAxis         () const { return getTrack()->getAxis(); }
   bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
   bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }
+  bool           TrackFixedSegment::isFixed         () const { return true; }
   unsigned int   TrackFixedSegment::getDirection    () const { return getTrack()->getDirection(); }
   const Layer*   TrackFixedSegment::getLayer        () const { return _segment->getLayer(); }
-  Interval       TrackFixedSegment::getFreeInterval ( bool useOrder ) const { return Interval(); }
+  Interval       TrackFixedSegment::getFreeInterval () const { return Interval(); }
 
 
   unsigned long  TrackFixedSegment::getId () const
@@ -215,7 +206,7 @@ namespace Kite {
   Net* TrackFixedSegment::getNet () const
   {
     Net* realNet = _segment->getNet();
-    if ( realNet->isSupply() or realNet->isClock() )
+    if (realNet->isSupply() or realNet->isClock())
       return _blockageNet;
     return realNet;
   }
@@ -224,14 +215,14 @@ namespace Kite {
   TrackElement* TrackFixedSegment::getNext () const
   {
     size_t dummy = _index;
-    return _track->getNext ( dummy, getNet() );
+    return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackFixedSegment::getPrevious () const
   {
     size_t dummy = _index;
-    return _track->getPrevious ( dummy, getNet() );
+    return _track->getPrevious( dummy, getNet() );
   }
 
 
@@ -247,7 +238,7 @@ namespace Kite {
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + "F"
-              + ((_isBlockage) ? "B" : "-");
+              + ((isBlockage()) ? "B" : "-");
     s1.insert ( s1.size()-1, s2 );
 
     return s1;
@@ -256,11 +247,10 @@ namespace Kite {
 
   Record* TrackFixedSegment::_getRecord () const
   {
-    Record* record = TrackElement::_getRecord ();
-    record->add ( getSlot ( "_segment", _segment ) );
-
+    Record* record = TrackElement::_getRecord();
+    record->add( getSlot( "_segment", _segment ) );
     return record;
   }
 
 
-} // End of Kite namespace.
+} // Kite namespace.

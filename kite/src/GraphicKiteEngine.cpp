@@ -2,14 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
@@ -17,45 +12,40 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./GraphicKiteEngine.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <functional>
-#include  <boost/bind.hpp>
-
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-#include  <QApplication>
-#include  <hurricane/Warning.h>
-#include  <hurricane/Error.h>
-#include  <hurricane/Breakpoint.h>
-#include  <hurricane/DebugSession.h>
-#include  <hurricane/Go.h>
-#include  <hurricane/Net.h>
-#include  <hurricane/Cell.h>
-#include  <hurricane/UpdateSession.h>
-#include  <hurricane/viewer/Graphics.h>
-#include  <hurricane/viewer/CellWidget.h>
-#include  <hurricane/viewer/CellViewer.h>
-#include  <hurricane/viewer/ControllerWidget.h>
-#include  <crlcore/Utilities.h>
-#include  <crlcore/AllianceFramework.h>
-#include  <katabatic/GCell.h>
-#include  <katabatic/GCellGrid.h>
-#include  <knik/Edge.h>
-#include  <knik/Vertex.h>
-#include  <knik/KnikEngine.h>
-#include  <knik/GraphicKnikEngine.h>
-#include  <kite/GraphicKiteEngine.h>
-//#include  <kite/ConfigurationWidget.h>
+#include <functional>
+#include <boost/bind.hpp>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QApplication>
+#include <hurricane/Warning.h>
+#include <hurricane/Error.h>
+#include <hurricane/Breakpoint.h>
+#include <hurricane/DebugSession.h>
+#include <hurricane/Go.h>
+#include <hurricane/Net.h>
+#include <hurricane/Cell.h>
+#include <hurricane/UpdateSession.h>
+#include <hurricane/viewer/Graphics.h>
+#include <hurricane/viewer/CellWidget.h>
+#include <hurricane/viewer/CellViewer.h>
+#include <hurricane/viewer/ControllerWidget.h>
+#include <crlcore/Utilities.h>
+#include <crlcore/AllianceFramework.h>
+#include <katabatic/GCell.h>
+#include <katabatic/GCellGrid.h>
+#include <knik/Edge.h>
+#include <knik/Vertex.h>
+#include <knik/KnikEngine.h>
+#include <knik/GraphicKnikEngine.h>
+#include <kite/GraphicKiteEngine.h>
+//#include <kite/ConfigurationWidget.h>
 
 
 namespace Kite {
-
 
   using namespace std;
   using Hurricane::Error;
@@ -79,9 +69,7 @@ namespace Kite {
 
 
   void  GraphicKiteEngine::initKatabaticAc ( CellWidget* widget )
-  {
-  //cerr << "GraphicKatabaticEngine::initKatabaticGo()" << endl;
-  }
+  { }
 
 
   void  GraphicKiteEngine::drawKatabaticAc ( CellWidget*           widget
@@ -95,11 +83,11 @@ namespace Kite {
 
   void  GraphicKiteEngine::initKatabaticGCell ( CellWidget* widget )
   {
-    widget->getDrawingPlanes().setPen ( Qt::NoPen );
+    widget->getDrawingPlanes().setPen( Qt::NoPen );
 
-    KiteEngine* kite = KiteEngine::get ( widget->getCell() );
+    KiteEngine* kite = KiteEngine::get( widget->getCell() );
     if ( kite ) {
-      kite->getGCellGrid()->setDensityMode ( Katabatic::GCellGrid::MaxDensity );
+      kite->getGCellGrid()->setDensityMode( Katabatic::GCellGrid::MaxDensity );
     }
   }
 
@@ -115,7 +103,7 @@ namespace Kite {
 
     QPainter& painter = widget->getPainter();
     size_t    density = (size_t)( gcell->getDensity() * 255.0 );
-    if ( density > 255 ) density = 255;
+    if (density > 255) density = 255;
 
     painter.setBrush
       ( Graphics::getColorScale(ColorScale::Fire).getBrush(density,widget->getDarkening()) );
@@ -131,12 +119,12 @@ namespace Kite {
   {
     Cell* cell = getCell ();
 
-    KiteEngine* kite = KiteEngine::get ( cell );
-    if ( not kite ) {
-      kite = KiteEngine::create ( cell );
-      kite->setPostEventCb ( boost::bind(&GraphicKiteEngine::postEvent,this) );
+    KiteEngine* kite = KiteEngine::get( cell );
+    if (not kite) {
+      kite = KiteEngine::create( cell );
+      kite->setPostEventCb( boost::bind(&GraphicKiteEngine::postEvent,this) );
     } else
-      cerr << Warning("%s already has a Kite engine.",getString(cell).c_str()) << endl;
+      cerr << Warning( "%s already has a Kite engine.", getString(cell).c_str() ) << endl;
 
     return kite;
   }
@@ -146,13 +134,13 @@ namespace Kite {
   {
   // Currently, only one framework is avalaible: Alliance.
 
-    KiteEngine* kite = KiteEngine::get ( getCell() );
-    if ( kite ) return kite;
+    KiteEngine* kite = KiteEngine::get( getCell() );
+    if (kite) return kite;
 
-    kite = createEngine ();
+    kite = createEngine();
     
-    if ( not kite ) 
-      throw Error("Failed to create Kite engine on %s.",getString(getCell()).c_str());
+    if (not kite) 
+      throw Error( "Failed to create Kite engine on %s.", getString(getCell()).c_str() );
 
     return kite;
   }
@@ -160,28 +148,28 @@ namespace Kite {
 
   void  GraphicKiteEngine::saveGlobalSolution ()
   {
-    KiteEngine* kite = KiteEngine::get ( getCell() );
-    if ( kite ) kite->saveGlobalSolution ();
+    KiteEngine* kite = KiteEngine::get( getCell() );
+    if (kite) kite->saveGlobalSolution ();
   }
 
 
   void  GraphicKiteEngine::loadGlobalSolution ()
   {
-    KiteEngine* kite = getForFramework ();
+    KiteEngine* kite = getForFramework();
 
-    emit cellPreModificated ();
-    kite->runGlobalRouter ( LoadGlobalSolution );
-    emit cellPostModificated ();
+    emit cellPreModificated();
+    kite->runGlobalRouter( KtLoadGlobalRouting );
+    emit cellPostModificated();
   }
 
 
   void  GraphicKiteEngine::globalRoute ()
   {
-    KiteEngine* kite = getForFramework ();
+    KiteEngine* kite = getForFramework();
 
-    emit cellPreModificated ();
-    kite->runGlobalRouter ( BuildGlobalSolution );
-    emit cellPostModificated ();
+    emit cellPreModificated();
+    kite->runGlobalRouter( KtBuildGlobalRouting );
+    emit cellPostModificated();
   }
 
 
@@ -189,73 +177,61 @@ namespace Kite {
   {
     static KatabaticEngine::NetSet routingNets;
 
-    KiteEngine* kite = KiteEngine::get ( getCell() );
-    if ( not kite ) {
-      throw Error("KiteEngine not created yet, run the global router first.");
+    KiteEngine* kite = KiteEngine::get( getCell() );
+    if (not kite) {
+      throw Error( "KiteEngine not created yet, run the global router first." );
     } 
-    if ( cmess1.enabled() )
-      kite->printConfiguration ();
+    if (cmess1.enabled()) kite->printConfiguration();
 
+    emit cellPreModificated();
+    _viewer->clearToolInterrupt();
+    kite->loadGlobalRouting( Katabatic::EngineLoadGrByNet, routingNets );
+    emit cellPostModificated();
     emit cellPreModificated ();
-
-    _viewer->clearToolInterrupt ();
-
-    kite->loadGlobalRouting ( Katabatic::LoadGrByNet, routingNets );
-    emit cellPostModificated ();
-
-  //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>LayerAssingByTrunk()</b><br>"
-  //                      "Assignment des layers, methode globale." );
-    emit cellPreModificated ();
-    kite->layerAssign ( Katabatic::NoNetLayerAssign );
-    emit cellPostModificated ();
-
-  //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>runNegociate()</b><br>"
-  //                      "Routage par Negociation." );
-     emit cellPreModificated ();
-     kite->runNegociate ();
-     emit cellPostModificated ();
+    kite->balanceGlobalDensity ();
+    kite->layerAssign ( Katabatic::EngineNoNetLayerAssign );
+    emit cellPostModificated();
+    emit cellPreModificated();
+    kite->runNegociate();
+    emit cellPostModificated();
   }
 
 
   void  GraphicKiteEngine::finalize ()
   {
-    emit cellPreModificated ();
-    KiteEngine* kite = KiteEngine::get ( getCell() );
-    if ( kite ) {
-      kite->finalizeLayout ();
-    //kite->dumpMeasures ();
-      kite->destroy ();
+    emit cellPreModificated();
+    KiteEngine* kite = KiteEngine::get( getCell() );
+    if (kite) {
+      kite->finalizeLayout();
+      kite->destroy();
     }
-    emit cellPostModificated ();
+    emit cellPostModificated();
   }
 
 
   void  GraphicKiteEngine::save ()
   {
-  //KiteEngine* kite = KiteEngine::get ( getCell() );
-  //if ( kite ) {
-      Cell*              cell = getCell();
-      AllianceFramework* af   = AllianceFramework::get ();
+    Cell*              cell = getCell();
+    AllianceFramework* af   = AllianceFramework::get();
 
-      string name = getString(cell->getName()) + "_kite";
-      cell->setName ( name );
-      af->saveCell ( cell, Catalog::State::Physical );
-  //}
+    string name = getString(cell->getName()) + "_kite";
+    cell->setName( name );
+    af->saveCell( cell, Catalog::State::Physical );
   }
 
 
   void  GraphicKiteEngine::route ()
   {
-    globalRoute ();
-    detailRoute ();
-    finalize    ();
+    globalRoute();
+    detailRoute();
+    finalize   ();
   }
 
 
   void  GraphicKiteEngine::dumpMeasures ()
   {
-    KiteEngine* kite = getForFramework ();
-    if ( kite ) kite->dumpMeasures ();
+    KiteEngine* kite = getForFramework();
+    if (kite) kite->dumpMeasures();
   }
 
 
@@ -263,19 +239,13 @@ namespace Kite {
   {
     static unsigned int count = 0;
 
-    if ( not (count++ % 500) ) {
-    //UpdateSession::close ();
+    if (not (count++ % 500)) {
+      QApplication::processEvents();
 
-    //_viewer->getCellWidget()->refresh ();
-      QApplication::processEvents ();
-
-    //UpdateSession::open ();
-
-      if ( _viewer->isToolInterrupted() ) {
-        KiteEngine* kite = KiteEngine::get ( getCell() );
-        if ( kite ) kite->setInterrupt ( true );
-        
-        _viewer->clearToolInterrupt ();
+      if (_viewer->isToolInterrupted()) {
+        KiteEngine* kite = KiteEngine::get( getCell() );
+        if (kite) kite->setInterrupt( true );
+        _viewer->clearToolInterrupt();
       }
     }
   }
@@ -283,122 +253,109 @@ namespace Kite {
 
   void  GraphicKiteEngine::addToMenu ( CellViewer* viewer )
   {
-    assert ( _viewer == NULL );
+    assert( _viewer == NULL );
 
     _viewer = viewer;
 
     QMenu* prMenu   = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute");
     QMenu* stepMenu = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute.stepByStep");
-    if ( !prMenu ) {
+    if (prMenu == NULL) {
       QMenuBar* menuBar = _viewer->findChild<QMenuBar*>("viewer.menuBar");
-      if ( !menuBar ) {
-        cerr << Warning("GraphicKiteEngine::addToMenu() - No MenuBar in parent widget.") << endl;
+      if (menuBar == NULL) {
+        cerr << Warning( "GraphicKiteEngine::addToMenu() - No MenuBar in parent widget." ) << endl;
         return;
       }
-      prMenu = menuBar->addMenu ( tr("P&&R") );
-      prMenu->setObjectName ( "viewer.menuBar.placeAndRoute" );
+      prMenu = menuBar->addMenu( tr("P&&R") );
+      prMenu->setObjectName( "viewer.menuBar.placeAndRoute" );
 
-      stepMenu = prMenu->addMenu ( tr("&Step by Step") );
-      stepMenu->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep" );
+      stepMenu = prMenu->addMenu( tr("&Step by Step") );
+      stepMenu->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep" );
 
-      prMenu->addSeparator ();
+      prMenu->addSeparator();
     }
 
     QAction* dRouteAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.detailedRoute");
-    if ( dRouteAction )
-      cerr << Warning("GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in.") << endl;
+    if (dRouteAction)
+      cerr << Warning( "GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in." ) << endl;
     else {
-      stepMenu->addSeparator ();
+      stepMenu->addSeparator();
 
-      QAction* gRouteAction = new QAction  ( tr("Kite - &Global Route"), _viewer );
-      gRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.globalRoute" );
-      gRouteAction->setStatusTip  ( tr("Run the <b>Knik</b> global router") );
-      gRouteAction->setVisible    ( true );
-      stepMenu->addAction ( gRouteAction );
+      QAction* gRouteAction = new QAction ( tr("Kite - &Global Route"), _viewer );
+      gRouteAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.globalRoute" );
+      gRouteAction->setStatusTip ( tr("Run the <b>Knik</b> global router") );
+      gRouteAction->setVisible   ( true );
+      stepMenu->addAction( gRouteAction );
 
-      QAction* gLoadSolutionAction = new QAction  ( tr("Kite - &Load Global Routing"), _viewer );
-      gLoadSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.loadGlobalRouting" );
-      gLoadSolutionAction->setStatusTip  ( tr("Load a solution for the global routing (.kgr)") );
-      gLoadSolutionAction->setVisible    ( true );
-      stepMenu->addAction ( gLoadSolutionAction );
+      QAction* gLoadSolutionAction = new QAction ( tr("Kite - &Load Global Routing"), _viewer );
+      gLoadSolutionAction->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep.loadGlobalRouting" );
+      gLoadSolutionAction->setStatusTip ( tr("Load a solution for the global routing (.kgr)") );
+      gLoadSolutionAction->setVisible   ( true );
+      stepMenu->addAction( gLoadSolutionAction );
 
-      QAction* gSaveSolutionAction = new QAction  ( tr("Kite - &Save Global Routing"), _viewer );
-      gSaveSolutionAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep.saveGlobalRouting" );
-      gSaveSolutionAction->setStatusTip  ( tr("Save a global router solution (.kgr)") );
-      gSaveSolutionAction->setVisible    ( true );
-      stepMenu->addAction ( gSaveSolutionAction );
+      QAction* gSaveSolutionAction = new QAction ( tr("Kite - &Save Global Routing"), _viewer );
+      gSaveSolutionAction->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep.saveGlobalRouting" );
+      gSaveSolutionAction->setStatusTip ( tr("Save a global router solution (.kgr)") );
+      gSaveSolutionAction->setVisible   ( true );
+      stepMenu->addAction( gSaveSolutionAction );
 
-      dRouteAction = new QAction  ( tr("Kite - &Detailed Route"), _viewer );
-      dRouteAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.detailedRoute" );
-      dRouteAction->setStatusTip  ( tr("Run the <b>Kite</b> detailed router") );
-      dRouteAction->setVisible    ( true );
-      stepMenu->addAction ( dRouteAction );
+      dRouteAction = new QAction ( tr("Kite - &Detailed Route"), _viewer );
+      dRouteAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.detailedRoute" );
+      dRouteAction->setStatusTip ( tr("Run the <b>Kite</b> detailed router") );
+      dRouteAction->setVisible   ( true );
+      stepMenu->addAction( dRouteAction );
 
-      QAction* dFinalizeAction = new QAction ( tr("Kite - &Finalize Routing"), _viewer );
-      dFinalizeAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.finalize" );
-      dFinalizeAction->setStatusTip  ( tr("Closing Routing") );
-      dFinalizeAction->setVisible    ( true );
-      stepMenu->addAction ( dFinalizeAction );
+      QAction* dFinalizeAction = new QAction( tr("Kite - &Finalize Routing"), _viewer );
+      dFinalizeAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.finalize" );
+      dFinalizeAction->setStatusTip ( tr("Closing Routing") );
+      dFinalizeAction->setVisible   ( true );
+      stepMenu->addAction( dFinalizeAction );
 
       QAction* dDumpMeasuresAction = new QAction ( tr("Kite - Dump &Measures"), _viewer );
-      dDumpMeasuresAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.dumpMeasures" );
-      dDumpMeasuresAction->setStatusTip  ( tr("Dumping Measurements on the disk") );
-      dDumpMeasuresAction->setVisible    ( true );
-      stepMenu->addAction ( dDumpMeasuresAction );
+      dDumpMeasuresAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.dumpMeasures" );
+      dDumpMeasuresAction->setStatusTip ( tr("Dumping Measurements on the disk") );
+      dDumpMeasuresAction->setVisible   ( true );
+      stepMenu->addAction( dDumpMeasuresAction );
 
       QAction* dSaveAction = new QAction ( tr("Kite - &Save Design"), _viewer );
-      dSaveAction->setObjectName ( "viewer.menuBar.placeAndRoute.stepBystep.save" );
-      dSaveAction->setStatusTip  ( tr("Save routed design (temporary hack)") );
-      dSaveAction->setVisible    ( true );
-      stepMenu->addAction ( dSaveAction );
+      dSaveAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.save" );
+      dSaveAction->setStatusTip ( tr("Save routed design (temporary hack)") );
+      dSaveAction->setVisible   ( true );
+      stepMenu->addAction( dSaveAction );
 
-      QAction* routeAction = new QAction  ( tr("Kite - &Route"), _viewer );
-      routeAction->setObjectName ( "viewer.menuBar.placeAndRoute.route" );
-      routeAction->setStatusTip  ( tr("Route the design (global & detailed)") );
-      routeAction->setVisible    ( true );
-      prMenu->addAction ( routeAction );
+      QAction* routeAction = new QAction ( tr("Kite - &Route"), _viewer );
+      routeAction->setObjectName( "viewer.menuBar.placeAndRoute.route" );
+      routeAction->setStatusTip ( tr("Route the design (global & detailed)") );
+      routeAction->setVisible   ( true );
+      prMenu->addAction( routeAction );
 
-      connect ( gLoadSolutionAction, SIGNAL(triggered()), this, SLOT(loadGlobalSolution()) );
-      connect ( gSaveSolutionAction, SIGNAL(triggered()), this, SLOT(saveGlobalSolution()) );
-      connect ( gRouteAction       , SIGNAL(triggered()), this, SLOT(globalRoute       ()) );
-      connect ( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
-      connect ( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
-      connect ( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );
-      connect ( dDumpMeasuresAction, SIGNAL(triggered()), this, SLOT(dumpMeasures      ()) );
-      connect ( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
+      connect( gLoadSolutionAction, SIGNAL(triggered()), this, SLOT(loadGlobalSolution()) );
+      connect( gSaveSolutionAction, SIGNAL(triggered()), this, SLOT(saveGlobalSolution()) );
+      connect( gRouteAction       , SIGNAL(triggered()), this, SLOT(globalRoute       ()) );
+      connect( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
+      connect( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
+      connect( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );
+      connect( dDumpMeasuresAction, SIGNAL(triggered()), this, SLOT(dumpMeasures      ()) );
+      connect( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
     }
 
-    connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
-    connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
-
-    // ControllerWidget* controller = _viewer->getControllerWidget();
-    // ConfigurationWidget* setting = controller->getSettings()
-    //   ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.kite");
-
-    // if ( setting == NULL ) {
-    //   setting = new ConfigurationWidget ();
-    //   setting->setObjectName    ( "controller.tabSettings.setting.kite" );
-    //   setting->setConfiguration ( Configuration::getDefault() );
-    //   controller->addSetting ( setting, "Kite" );
-    // }
+    connect( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
+    connect( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
   }
 
 
   const Name& GraphicKiteEngine::getName () const
-  {
-    return KiteEngine::staticGetName ();
-  }
+  { return KiteEngine::staticGetName(); }
 
 
   Cell* GraphicKiteEngine::getCell ()
   {
-    if ( !_viewer ) {
-      throw Error ( "<b>Kite:</b> GraphicKiteEngine not bound to any Viewer." );
+    if (_viewer == NULL) {
+      throw Error( "<b>Kite:</b> GraphicKiteEngine not bound to any Viewer." );
       return NULL;
     }
 
-    if ( !_viewer->getCell() ) {
-      throw Error ( "<b>Kite:</b> No Cell is loaded into the Viewer." );
+    if (_viewer->getCell() == NULL) {
+      throw Error( "<b>Kite:</b> No Cell is loaded into the Viewer." );
       return NULL;
     }
 
@@ -408,7 +365,7 @@ namespace Kite {
 
   GraphicKiteEngine* GraphicKiteEngine::grab ()
   {
-    if ( !_references ) {
+    if (not _references) {
       _singleton = new GraphicKiteEngine ();
     }
     _references++;
@@ -419,8 +376,8 @@ namespace Kite {
 
   size_t  GraphicKiteEngine::release ()
   {
-    _references--;
-    if ( !_references ) {
+    --_references;
+    if (not _references) {
       delete _singleton;
       _singleton = NULL;
     }
@@ -430,12 +387,12 @@ namespace Kite {
 
   GraphicKiteEngine::GraphicKiteEngine ()
     : GraphicTool()
-    , _viewer(NULL)
+    , _viewer    (NULL)
   {
-    addDrawGo ( "Knik::Edge"      , GraphicKnikEngine::initKnikEdges , GraphicKnikEngine::drawKnikEdges  );
-    addDrawGo ( "Knik::Vertex"    , GraphicKnikEngine::initKnikVertex, GraphicKnikEngine::drawKnikVertex );
-    addDrawGo ( "Katabatic::Ac"   , initKatabaticAc   , drawKatabaticAc    );
-    addDrawGo ( "Katabatic::GCell", initKatabaticGCell, drawKatabaticGCell );
+    addDrawGo( "Knik::Edge"      , GraphicKnikEngine::initKnikEdges , GraphicKnikEngine::drawKnikEdges  );
+    addDrawGo( "Knik::Vertex"    , GraphicKnikEngine::initKnikVertex, GraphicKnikEngine::drawKnikVertex );
+    addDrawGo( "Katabatic::Ac"   , initKatabaticAc   , drawKatabaticAc    );
+    addDrawGo( "Katabatic::GCell", initKatabaticGCell, drawKatabaticGCell );
   }
 
 
@@ -443,4 +400,4 @@ namespace Kite {
   { }
 
 
-}  // End of Kite namespace.
+}  // Kite namespace.
