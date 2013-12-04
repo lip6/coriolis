@@ -1,0 +1,36 @@
+ // -*- mode: C++; explicit-buffer-name: "Constants.h<kite/doc>" -*-
+
+ namespace Kite {
+
+ //! \enum        FunctionFlag
+ //!              A set of flags to that can be passed to functions/methods througout
+ //!              all Kite.
+
+ //! \var         KtLoadGlobalRouting
+ //!              Reload the global routing from a preciously saved run (\c .kgr file).
+
+ //! \var         KtBuildGlobalRouting
+ //!              Run the global router Knik.
+
+ //! \var         KtAllowDoglegReuse
+ //!              Allow sharing of dogleg.
+
+ //! \var         KtDataSelf
+ //!              \red{To be documented.}
+
+ //! \var         KtNearest
+ //!              Round the position to the nearest track axis.
+
+ //! \var         KtForce
+ //!              Force to perform an action ignoring the "up to date" state.
+
+ //! \var         KtResetCount
+ //!              Tells to reset a counter.
+
+ //! \var         KtWithPerpands
+ //!              Ripup perpandiculars alongside the current segment.
+
+ //! \var         KtWithConstraints
+ //!              Force constraints recomputation.
+
+ }

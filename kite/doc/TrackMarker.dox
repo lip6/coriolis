@@ -1,0 +1,48 @@
+
+ // -*- C++ -*-
+
+ namespace Kite {
+
+ /*! \class        TrackMarker
+  *  \brief        Tag part of Track with a weight
+  *
+  *                TrackMarkers are used to assign a cost on a span of Track
+  *                telling how strongly a terminal is dependant on that Track
+  *                to be accessed. The more Track a terminal crosses, the less
+  *                the weight is.
+  *
+  *                The weight is expressed in hundreth (can also be understood as
+  *                percentage) of dependency over the Track. As example, if a
+  *                terminal can only be accessed trough one Track is weight on
+  *                it will be \c 100.
+  */
+
+ //! \function     TrackMarker::create ( RoutingPad* rp, size_t depth );
+ //! \param        rp     The RoutingPad to be accessed.
+ //! \param        depth  Select the layer depth by which we want to access
+ //!                      the RoutingPad.
+ //! \return       The newly created TrackMarker.
+ //!
+ //!               This constructor automatically take care of inserting the
+ //!               TrackMarker in the relevant Tracks, so it must be called
+ //!               during a Session.
+
+ //! \function     Net* TrackMarker::getNet () const;
+ //! \sreturn      The net of the RoutingPad.
+
+ //! \function     DbU::Unit  TrackMarker::getSourceU () const;
+ //! \sreturn      The span minimum bound.
+
+ //! \function     DbU::Unit  TrackMarker::getTargetU () const;
+ //! \sreturn      The span maximum bound.
+
+ //! \function     Track* TrackMarker::getTrack () const;
+ //! \sreturn      The Track into which the marker is inserted.
+
+ //! \function     unsigned int  TrackMarker::getWeight ( const Track* ) const;
+ //! \sreturn      The associated weight, for now the Track argument is ignored.
+
+ //! \function     void  TrackMarker::setTrack ( Track* track );
+ //!               Sets the owning Track.
+
+ }

@@ -1,0 +1,106 @@
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \class        RoutingEventQueue
+  *  \brief        The priority Queue of RoutingEvent.
+  *
+  *  \section      secImplRoutingEventQueue  Implementation Details
+  *
+  *                The RoutingEventQueue is build upon a STL multiset<> and is sorted
+  *                according to the RoutingEvent::Key attribute of the event. The key
+  *                attribute has been designed specifically to be used with this queue.
+  *                It provides the features:
+  *                  - Sort the RoutingEvent according to their priority. Higher priority
+  *                    mainly means more constrained segment, which must be routed first.
+  *                  - The attributes of RoutingEvent may change while inserted in the
+  *                    queue. The key provide a cached value of those attributes ensuring
+  *                    a stable sorting order.
+  *
+  *                For more details about the sorting order, refer to RoutingEvent::Key.
+  *
+  *                <b>Insertion, Reinsertion & Commit</b>
+  *
+  *                When pushing a new event into the queue, the actual insertion into the
+  *                multimap is delayed until the next call to \c RoutingEvent::commit().
+  *                The to be inserted events are stored into a request set which is
+  *                processed when commit is called. At commit time, the RoutingEvent::Key
+  *                cache is updated just before inserting the element.
+  *
+  *                When repushing an event, the event is immediatly withdrawn from the
+  *                queue and put into the request set.
+  *
+  *                <b>Mutiple Event for one Segment</b>
+  *
+  *                As RoutingEvent can be cloned, there may be more than one event pointing
+  *                to a segment. But there must be <em>only one active event</em>, the one
+  *                which is pointed to by the segment. As a result, there maybe multiple
+  *                events for an unique segment in the queue, but <em>only one active event</em>,
+  *                the one that will be processed.
+  */
+
+ //! \function     RoutingEventQueue::RoutingEventQueue ();
+ //!               Contructor, create an empty queue.
+
+ //! \function     RoutingEventQueue::~RoutingEventQueue ();
+ //!               Destructor.
+ //!
+ //! \remark       The destruction of the queue do not delete the
+ //!               RoutingEvent that may still be in it (they shouldn't an
+ //!               a warning is issued).
+
+ //! \function     bool  RoutingEventQueue::empty () const;
+ //! \sreturn      \true if there is the queue is empty.
+
+ //! \function     size_t  RoutingEventQueue::size () const;
+ //! \sreturn      The number of events in the queue.
+
+ //! \function     unsigned int  RoutingEventQueue::getTopEventLevel () const;
+ //! \sreturn      The greatest event level the queue has ever reached (always increasing,
+ //!               starting from zero).
+
+ //! \function     void  RoutingEventQueue::load ( const vector<TrackElement*>& );
+ //!               Load a whole vector of TrackElement into the queue, for each
+ //!               element:
+ //!                 - Create a RoutingEvent linked to the element.
+ //!                   \red{To be reviewed: replace any previous event.}
+ //!                 - Insert the new RoutingEvent into the queue.
+ //!
+ //!               <em>No commit is needed after this operation.</em>
+
+ //! \function     void  RoutingEventQueue::add ( TrackElement* element, unsigned int level );
+ //!               Create a new RoutingEvent in the queue with \c level, associated to \c element.
+ //!               A commit is needed afterwards.
+ //!
+ //!               \red{To be reviewed: replace any previous event on element.}
+
+ //! \function     void  RoutingEventQueue::push ( RoutingEvent* event );
+ //!               Push a RoutingEvent in the queue. Effective only after the next commit.
+
+ //! \function     RoutingEvent* RoutingEventQueue::pop ();
+ //!               Remove the top element of the queue (i.e. the one with the highest
+ //!               priority) and return it. If the queue is empty, \c NULL is returned.
+
+ //! \function     void  RoutingEventQueue::repush ( RoutingEvent* event );
+ //!               Force a complete queue re-insertion for \c event. The event is immediatly
+ //!               withdrawn from the queue and put into the insertion request set.
+ //!
+ //!               If the \c event is not already in the queue, works like
+ //!               RoutingEventQueue::push().
+
+ //! \function     void  RoutingEventQueue::repushInvalidateds ();
+ //!               Using the list of invalidated segments from the Session, repush
+ //!               them if:
+ //!                  - They have an associated event.
+ //!                  - The event is not \e unimplemented, \e disabled or \e processed.
+
+ //! \function     void  RoutingEventQueue::commit ();
+ //!               Process the insertion request set and actually insert it's elements
+ //!               into the queue. Perform a RoutingEvent::key update prior to insertion.               
+
+ //! \function     void  RoutingEventQueue::clear ();
+ //!               Empty the queue. Issue a warning if the queue is not empty (i.e. some
+ //!               events remains to be processeds).
+
+ }

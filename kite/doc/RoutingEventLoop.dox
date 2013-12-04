@@ -1,0 +1,60 @@
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \class        RoutingEventLoop
+  *  \brief        Simple loop dectector for RoutingEvent.
+  *
+  *                The RoutingEventLoop can be roughly understood as a truncated histogram
+  *                of the \c depth last (in the time meaning) greatest riped up elements.
+  *
+  *                The loop detector keep track of the \c depth TrackElement with the
+  *                greatest processing count. TrackElement are just identified through
+  *                the \c id of their associated AutoSegment. Each entry in the loop
+  *                table contains:
+  *                  - The \c id of the associated TrackSegment (Katabatic::AutoSegment).
+  *                  - The \c count of times it has been processed
+  *                  - The \c timestamp of the latest time it has been updated.
+  *
+  *                The table (implemented as \c vector<>) it kept sorted on the timestamp
+  *                (decreasing). Whenever there is more than \c depth elements in the
+  *                table, the oldest one are discarted (regardless of their count).
+  *                Obviously, there are pathological cases into which a loop cannot
+  *                be detected, but so far it has not happened so a more robust
+  *                approach seems not necessary at this time.
+  *
+  *                Whenever the count of an element reaches \c countLimit, the looping
+  *                flag is set. It will remains set unless the faulty element is
+  *                manually removed.
+  */
+
+ //! \function     RoutingEventLoop::RoutingEventLoop ( size_t depth, int countLimit );
+ //!               Construct a loop detector that handle \c depth differents segments
+ //!               and has a looping threshold of \c countLimit.
+
+ //! \function     bool  RoutingEventLoop::isLooping () const;
+ //! \sreturn      \true if the loop threshold has been reached for at least one
+ //!               element.
+
+ //! \function     int  RoutingEventLoop::getMaxCount () const;
+ //!               The maximal count an element as reached so far.
+
+ //! \function     const std::vector<Element>&  RoutingEventLoop::getElements () const;
+ //!               The complete table elements.
+
+ //! \function     void  RoutingEventLoop::update ( size_t id ) ;
+ //!               Update the loop, telling that element \c id has appreared one more
+ //!               time.
+
+ //! \function     void  RoutingEventLoop::erase ( size_t id ) ;
+ //!               Remove the entry related to element \c id in the table. The state of
+ //!               the table is fully recomputed after the removal (looping flag &
+ //!               maximum count).
+ //!
+ //!               This method is used when a loop has been encountered, presumably on
+ //!               element \c id, and we want to continue. To avoid the loop detector
+ //!               yelling at each check, the associated TrackElement should be invalidated 
+ //!               and it's reference removed from the table. 
+
+ }

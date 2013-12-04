@@ -1,0 +1,51 @@
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \class        RoutingEventHistory
+  *  \brief        History of RoutingEvent.
+  *
+  *                An history of all the routing events. We can afford to keep an
+  *                history because while one event is a relatively big object, there
+  *                is not that much of them (their number is roughly proportional
+  *                to the number of TrackSegments).
+  *
+  *                One event is likely to appear more than one time in the history,
+  *                in fact it will apprears each time it is ripped up.
+  *
+  *                Lastly, it is a way to keep track of all the allocated RoutingEvents.
+  *                When history is deleted it will deleted all the events that it
+  *                knows of.
+  */
+
+ //! \function     RoutingEventHistory::RoutingEventHistory ();
+ //!               Construct an empty RoutingEventHistory.
+
+ //! \function     RoutingEventHistory::~RoutingEventHistory ();
+ //!               Delete a RoutingEventHistory.
+ //!
+ //! \remark       The deletion of this object triggers the deletion of
+ //!               all the RoutingEvent that are referenced in it.
+
+ //! \function     bool  RoutingEventHistory::empty () const;
+ //! \sreturn      \true if the history is empty.
+
+ //! \function     size_t  RoutingEventHistory::size () const;
+ //! \sreturn      the number of events in the history.
+
+ //! \function     RoutingEvent* RoutingEventHistory::getNth ( size_t pos ) const;
+ //! \sreturn      The event at index \c pos from the beginning of the history
+ //!               (\c NULL if \c pos exeed the size).
+
+ //! \function     RoutingEvent* RoutingEventHistory::getRNth ( size_t pos ) const;
+ //! \sreturn      The event at index \c pos from the end of the history
+ //!               (\c NULL if \c pos exeed the size).
+
+ //! \function     void  RoutingEventHistory::push ( RoutingEvent* event );
+ //!               Push a new RoutingEvent in the history.
+
+ //! \function     void  RoutingEventHistory::clear ();
+ //!               Clear the history, also remove the RoutingEvent that are pointed to.
+ 
+ }

@@ -1,0 +1,217 @@
+ // -*- C++ -*-
+
+
+ namespace Kite {
+
+ /*! \class        DataNegociate
+  *  \brief        Algorimthmic datas associated the TrackSegment
+  *
+  *                The DataNegociate object contains all the informations the negociation
+  *                algorithm needs to know about a TrackSegment. Those informations
+  *                mostly describe the slackening and ripup state of that segment.
+  *
+  *                <b>State related datas:</b>
+  *                  - The ripup count in the current state. The count is reset
+  *                    to zero at each state transition.
+  *                  - The slackening state (see DataNegociate::SlackState). The state
+  *                    indicate the \b next topological modification to be applied on
+  *                    the segment should the ripup count reach it's maximal value.
+  *                  - The associated RoutingEvent. If no RoutingEvent is present, it
+  *                    means the segment has been either successufully placed or the
+  *                    algorithm has given up trying to. If present, it is a \e pending
+  *                    request for placement.
+  *
+  *                <b>Topological related datas:</b>
+  *                  - \c leftMinExtend, the potential minimal position of the segment
+  *                    left extension. May not be reachable due to other topological
+  *                    constraints.
+  *                  - \c rightMinExtend, the potential minimal position of the segment
+  *                    right extension.
+  *                  - \c terminals, the number of terminals attached to this segment.
+  *                  - \c attractors, a table of coordinates of the end points of the
+  *                    perpandiculars to this segment. Used to compute the wiring delta
+  *                    if we move the axis of the segment.
+  *                  - \c perpandiculars, a \c vector of the perpandicular TrackElement.
+  *                    This is a fast-access cache. It must be updated each time the
+  *                    topology of the net is modificated. 
+  *                  - \c perpandicularFree, the free interval defined by the perpandiculars,
+  *                    that is for the sgement axis.
+  *
+  *
+  * \section       secAttractorsComputation  Perpandiculars, Free, Attractors & Wiring Delta
+  *
+  *                All those informations are computed and updated by the
+  *                DataNegociate::update() method, which relies on:
+  *                  - AutoSegment::getTopologicalInfos()
+  *                  - AutoSegment::getTerminalCount()
+  *
+  *                \red{They must be reviewed as they do not take advantage of the new}
+  *                \red{AutoSegment structuration.}
+  *
+  *                For every perpandicular set of AutoSegment to the TrackSegment
+  *                we want to place, get the coordinates of the extremity not connected
+  *                to the segment and put that coordinate into a table associated with
+  *                it's \e spin. The \e spin tells if the extremity is attracting the
+  *                segment \e up or \e down (for an horizontal segment). The \e spin
+  *                is incremented for up and decremented for down. After all the
+  *                extremities have been processeds, we took into account only the
+  *                coordinates with a non-zero spin, which means they truly attract
+  *                the segment (whatever the direction).
+  *
+  *                \image html  DataNegociate-1.png "Fig 1: Attractors Computation"
+  *
+  *                The <em>wiring delta</em> is the total wire length needed to connect
+  *                from the attractors to the segment, should it be placed on \c axis.
+  *
+  *                \image html  DataNegociate-2.png "Fig 2: Wiring Delta"
+  *
+  *
+  * \section       secDataNegociateModifications  Modifications History
+  *
+  *                Main changes in DataNegociate class design:
+  *                  - Merge in the separate class \c Cost.
+  *                  - Suppress the \c SlackState::Desalignate, due to the simplificated
+  *                    structure of the AutoSegment/AutoContacts (no more collapseds, or
+  *                    forced alignements).
+  */
+
+ //! \enum         DataNegociate::SlackState
+ //!               Describe the various stages of a TrackSegment slackening.
+ //!               The numerical values are choosen so we can increment them
+ //!               as a counter.
+
+ //! \var          DataNegociate::RipupPerpandiculars
+ //!               Force perpandiculars to be riped up as well as the TrackSegment,
+ //!               then schedule the placement of the TrackSegment \e before it's perpandiculars. 
+
+ //  \var          DataNegociate::Desalignate
+ //!               If the TrackSegment is made of multiple TrackSegments with a forced
+ //!               alignement, suppress the alignement constraint.
+ //!
+ //!               \red{This should be deprecated now}.
+
+ //! \var          DataNegociate::Minimize
+ //!               Try to displace the perpandiculars so the TrackSegment is
+ //!               reduced to it's minimal length.
+
+ //! \var          DataNegociate::Dogleg
+ //!               Break the segment into two smaller ones.
+
+ //! \var          DataNegociate::Slacken
+ //!               Create additional wiring so threre is no more contraints transmitted
+ //!               by the perpandiculars or the terminal contacts.
+
+ //! \var          DataNegociate::ConflictSolveByHistory
+ //!               Try to solve a conflict between a set of global segments by
+ //!               analysing the event/ripup history. See SegmentFsm::conflictSolveByHistory().
+
+ //! \var          DataNegociate::ConflictSolveByPlaceds
+ //!               Try to solve a conflict between a set of global segments by
+ //!               analysing the current track context. See SegmentFsm::conflictSolveByPlaceds().
+
+ //! \var          DataNegociate::LocalVsGlobal
+ //!               \red{To be reviewed}.
+
+ //! \var          DataNegociate::MoveUp
+ //!               The segment is to be moved up (if possible).
+
+ //! \var          DataNegociate::MaximumSlack
+ //!               The final state, topological modifications are exhausteds, if it
+ //!               cannot place at this point, it never will.
+
+ //! \var          DataNegociate::Unimplemented
+ //!               Used only during the development stage, telling that the state is
+ //!               not available yet.
+
+ //! \var          DataNegociate::Repair
+ //!               The router is in repair mode.
+
+ //! \function     bool  DataNegociate::hasRoutingEvent () const;
+ //! \sreturn      \true if there is a pending RoutingEvent for this TrackSegment.
+
+ //! \function     RoutingEvent* DataNegociate::getRoutingEvent () const;
+ //! \sreturn      The pending RoutingEvent. \c NULL will be returned if there is no
+ //!               pending event, meaning that the segment has been placed.
+
+ //! \function     TrackSegment* DataNegociate::getTrackSegment () const;
+ //! \sreturn      The associated TrackSegment.
+
+ //! \function     Track* DataNegociate::getTrack () const;
+ //! \sreturn      A proxy accessor for the segment's track.
+
+ //! \function     DbU::Unit  DataNegociate::getLeftMinExtend () const;
+ //! \sreturn      The minimum extend possible of the segment's source (left) ending.
+ //!               Computed by DataNegociate::update().
+
+ //! \function     DbU::Unit  DataNegociate::getRightMinExtend () const;
+ //! \sreturn      The minimum extend possible of the segment's target (right) ending.
+ //!               Computed by DataNegociate::update().
+
+ //! \function     unsigned int  DataNegociate::getTerminals () const;
+ //! \sreturn      The number of terminal to which this segment is connected
+ //!               Computed by DataNegociate::update().
+ //!
+ //!               \red{Must be refined: direct or indirect?}.
+
+ //! \function     Net* DataNegociate::getNet () const;
+ //! \sreturn      A cached accessor to the segment's net (for faster access).
+
+ //! \function     unsigned int  DataNegociate::getState () const;
+ //! \sreturn      The current state (see DataNegociate::SlackState).
+
+ //! \function     unsigned int  DataNegociate::getStateCount () const;
+ //! \sreturn      The number of times we have reached the ripup limit while in
+ //!               this stage.
+
+ //! \function     unsigned int  DataNegociate::getRipupCount () const;
+ //! \sreturn      The number of times the segment has been riped up in this stage.
+
+ //! \function     unsigned int  DataNegociate::getStateAndRipupCount () const;
+ //! \return       A composite number combining the state and the ripup count:
+ //!               <code>(state<<4)+ripup</code>.
+
+ //! \function     DbU::Unit  DataNegociate::getWiringDelta ( DbU::Unit axis ) const;
+ //! \sreturn      The wiring length needed to connect to the attractors if the segment
+ //!               is put on \c axis. The lower, the better...
+
+ //! \function     const Interval& DataNegociate::getPerpandicularFree () const;
+ //! \sreturn      The range of legal positions generated only by the perpandiculars.
+
+ //! \function     void  DataNegociate::setState ( unsigned int state, unsigned int flags=0 );
+ //!               Set or reset the slacking state (see SlackState). If the \c state is the
+ //!               same as the current one, the state count is incremented. If the new state
+ //!               changes or \c flags contain KtReset, the state count is reset to one.
+
+ //! \function     void  DataNegociate::setRoutingEvent ( RoutingEvent* event );
+ //!               Associate \c event to this TrackSegment.
+
+ //! \function     void  DataNegociate::setRipupCount ( unsigned int count );
+ //!               Directly sets the ripup count to \c count.
+
+ //! \function     void  DataNegociate::incRipupCount ();
+ //!               Increment the ripup count. No check is performed for bound limit.
+
+ //! \function     void  DataNegociate::decRipupCount ();
+ //!               Decrement the ripup count (will never go below zero).
+
+ //! \function     void  DataNegociate::resetRipupCount ();
+ //!               Reset the ripup count to zero.
+
+ //! \function     void  DataNegociate::resetStateCount ();
+ //!               Reset the state count to zero.
+
+ //  \function     void  DataNegociate::invalidate ( unsigned int flags=0 );
+ //                Invalidate the associated RoutingEvent.
+ // 
+ //                Possible values for \c flags :
+ //                  - Kite::KtWithPerpands
+ //                  - Kite::KtWithConstraints
+
+ //! \function     void  DataNegociate::update ();
+ //!               Recompute \c leftMinExtend, \c righMinExtend, number of terminals and
+ //!               attractors positions.
+ //!
+ //! \remark       The constructor do not calls it. It is to the algorithm responsability
+ //!               to call it before using the computed datas.
+
+ }

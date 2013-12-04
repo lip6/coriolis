@@ -1,0 +1,308 @@
+ // -*- C++ -*-
+
+ namespace Kite {
+
+ //! \typedef      SegmentOverlapCostCB
+ //!               Prototype of overlap cost callback functions.
+ //!
+ //! \sa           TrackSegment::setOverlapCostCB(), TrackSegment::getOverlapCost().
+
+ /*! \class       TrackElement
+  *
+  *  \brief       Abstract Class for all Elements inserted inside a Track.
+  *
+  *
+  *  \section     secTrackElementAbstract  TrackElement Abstract
+  *
+  *               The TrackElement class is abstract and is used as base class for
+  *               any element that can be inserted in a Track. It represent the
+  *               footprint of that element inside the Track (an interval).
+  *               Additionnaly it keep a pointer to the Track and it's index inside
+  *               it (Track is implemented with a \c vector<>).
+  *
+  *               To avoid some explicit dynamic cast later, it provides a default
+  *               implementation for almost all the methods that will be present
+  *               in all the derived classes. All default methods return \c false,
+  *               \c NULL or  \c 0 (\e zero) or whatever is appropriated to tell
+  *               it is not meaningful.
+  *
+  *               <b>Design Note</b>
+  *
+  *               TrackElement has been designed to serve as a base class for TrackSegment
+  *               and TrackMarker. But, in the end, those two classes have been put in
+  *               separated vectors inside the Track, thus rendering this design choice
+  *               less pertinent. We keep it for now because we may introduce other
+  *               object than TrackSegment inside a Track. If the need do not arise,
+  *               we may merge back TrackElement and TrackSegment. 
+  */
+
+ //! \function    bool  TrackElement::isFixed() const;
+ //! \sa          Katabatic::AutoSegment::isFixed().
+
+ //! \function    bool  TrackElement::isHorizontal() const;
+ //! \sa          Katabatic::AutoSegment::isHorizontal().
+
+ //! \function    bool  TrackElement::isVertical() const;
+ //! \sa          Katabatic::AutoSegment::isVertical().
+
+ //! \function    bool  TrackElement::isLocal() const;
+ //! \sa          Katabatic::isLocal().
+
+ //! \function    bool  TrackElement::isGlobal() const;
+ //! \sa          Katabatic::AutoSegment::isGlobal().
+
+ //! \function    bool  TrackElement::isBipoint() const;
+ //! \sa          Katabatic::AutoSegment::isBipoint().
+
+ //! \function    bool  TrackElement::isTerminal() const;
+ //! \sa          Katabatic::AutoSegment::isTerminal().
+
+ //! \function    bool  TrackElement::isStrap() const;
+ //! \sa          Katabatic::AutoSegment::isStrap().
+
+ //! \function    bool  TrackElement::isSlackened() const;
+ //! \sa          Katabatic::AutoSegment::isSlackened().
+
+ //! \function    bool  TrackElement::isDogleg() const;
+ //! \sa          Katabatic::isDogleg().
+
+ //! \function    bool  TrackElement::isInvalidated() const;
+ //! \sreturn     \true if the segment is invalidated (may be different from
+ //!              the supporting AutoSegment status).
+
+ //! \function    bool  TrackElement::isCreated() const;
+ //! \sa          Katabatic::AutoSegment::isCreated().
+
+ //! \function    bool  TrackElement::isBlockage() const;
+ //!              \true if the element is a blockage (obstacle).
+
+ //! \function    bool  TrackElement::isLocked() const;
+ //!              \true if the element is part of a net, but must not be
+ //!              moved by the router, whatever the reason.
+
+ //! \function    bool  TrackElement::isRouted() const;
+ //!              \true if the router has placed it.
+
+ //! \function    bool  TrackElement::hasSourceDogleg() const;
+ //!              \red{This method purpose has not been reviewed yet}.
+
+ //! \function    bool  TrackElement::hasTargetDogleg() const;
+ //!              \red{This method purpose has not been reviewed yet}.
+
+ //! \function    bool  TrackElement::canRipple() const;
+ //!              \red{This method purpose has not been reviewed yet}.
+
+ //! \function    bool  TrackElement::canDogleg();
+ //!              \sa AutoSegment::canDogleg(). At Kite level, this variant of the method
+ //!              will apply only on local segments and the segment must not already have
+ //!              a source or target dogleg.
+
+ //! \function    bool  TrackElement::canDogleg( Interval );
+ //!              \sa AutoSegment::canDogleg(). At Kite level, this variant of the method
+ //!              will apply only on local segments and the segment must not already have
+ //!              a source or target dogleg.
+
+ //! \function    bool  TrackElement::canDogleg( Katabatic::GCell* doglegGCell, unsigned int flags );
+ //!              \sa AutoSegment::canDogleg(). At kite level, this variant of the method
+ //!              is mainly targeted to global segment. For local segment it behave like
+ //!              TrackElement::canDogleg(Interval). For global segment, make the break in
+ //!              the requested GCell \c doglegGCell. If it's in the first or last GCell
+ //!              and there is already a dogleg, allow to reuse it if \c flags contains
+ //!              Kite::KtAllowDoglegReuse.
+
+ //! \function    unsigned long  TrackElement::getId() const;
+ //! \return      The \c Id of the supporting AutoSegment, if there is any.
+ //!              \e Zero otherwise.
+
+ //! \function    unsigned int  TrackElement::getDirection() const;
+ //! \return      The direction of the supporting element (should match the
+ //!              preferred direction of the Track).
+
+ //! \function    Net* TrackElement::getNet() const;
+ //! \sreturn     The Net associated to the element (may be \c NULL).
+
+ //! \function    const Layer* TrackElement::getLayer() const;
+ //! \sreturn     The Layer of the element (should match the one of the Track).
+
+ //! \function    Track* TrackElement::getTrack() const;
+ //! \sreturn     The Track into which the element is inserted (may be \c NULL).
+
+ //! \function    size_t  TrackElement::getIndex() const;
+ //! \sreturn     The index of the element inside the Track's vector.
+ //!
+ //! \remark      If the element is not inserted in a Track, it is set to
+ //!              Track::npos, and obviously must not be used.
+
+ //! \function    unsigned long  TrackElement::getFreedomDegree() const;
+ //! \sreturn     The degree of freedom of the element. It is used as a priority value
+ //!              when sorting TrackElement (in RoutingEvent).
+
+ //! \function    float  TrackElement::getMaxUnderDensity ( unsigned int flags=0 ) const;
+ //! \sreturn     The maximum density of all the GCells under this element.
+
+ //! \function    Box  TrackElement::getBoundingBox() const;
+ //! \sreturn     The box that this element uses in the Track.
+
+ //! \function    TrackElement* TrackElement::getPrevious() const;
+ //! \sreturn     The previous TrackElement, on the same track and of a \e different net.
+ //! \sa          Track::getPrevious().
+
+ //! \function    TrackElement* TrackElement::getNext() const;
+ //! \sreturn     The next TrackElement, on the same track and of a \e different net.
+ //! \sa          Track::getNext().
+
+ //! \function    DbU::Unit  TrackElement::getAxis() const;
+ //! \sreturn     The axis position of the element (must be the same as the Track).
+
+ //! \function    DbU::Unit  TrackElement::getSourceU() const;
+ //! \sreturn     The minimun of the interval used by the element (cached in an
+ //!              attribute).
+
+ //! \function    DbU::Unit  TrackElement::getTargetU() const;
+ //! \sreturn     The maximum of the interval used by the element (cached in an
+ //!              attribute).
+
+ //! \function    DbU::Unit  TrackElement::getLength() const;
+ //! \sreturn     The length of the interval used by the element.
+
+ //! \function    Interval  TrackElement::getCanonicalInterval() const;
+ //! \sreturn     The interval span used by the element inside the Track.
+
+ //! \function    Interval  TrackElement::getFreeInterval() const;
+ //! \sreturn     The greatest free interval enclosing this element.
+
+ //! \function    Interval  TrackElement::getSourceConstraints() const;
+ //! \sa          Katabatic::AutoSegment::getSourceConstraints().
+
+ //! \function    Interval  TrackElement::getTargetConstraints() const;
+ //! \sa          Katabatic::AutoSegment::getTargetConstraints().
+
+ //! \function    DataNegociate* TrackElement::getDataNegociate ( unsigned int flags=KtDataSelf ) const;
+ //! \sreturn     The additional data-structure supplied by the routing algorithm.
+
+ //! \function    TrackElement* TrackElement::getCanonical ( Interval& i );
+ //!              \red{Inner working still unclear to myself.}
+
+ //! \function    size_t  TrackElement::getGCells ( Katabatic::GCellVector& gcells ) const;
+ //! \sreturn     The table of Katabatic::GCell underneath the element whole span.
+
+ //! \function    unsigned int  TrackElement::getDoglegLevel() const;
+ //! \sreturn     The deepness of the dogleg.
+
+ //! \function    TrackElement* TrackElement::getParent() const;
+ //! \sreturn     The TrackElement from which the dogleg has been created, if any.
+
+ //! \function    TrackElement* TrackElement::getSourceDogleg ();
+ //! \sreturn     The source part of the segment from which the dogleg has been created.
+
+ //! \function    TrackElement* TrackElement::getTargetDogleg ();
+ //! \sreturn     The target part of the segment from which the dogleg has been created.
+
+ //! \function    TrackElements  TrackElement::getPerpandiculars ();
+ //! \sreturn     The collection of all element perpandiculars to this one.
+
+ //! \function    void  TrackElement::setFlags ( unsigned int flags );
+ //!              Set to \true \c flags in the element state array.
+
+ //! \function    void  TrackElement::unsetFlags ( unsigned int flags );
+ //!              Reset to \false \c flags in the element state array.
+
+ //! \function    void  TrackElement::setTrack ( Track* track );
+ //!              Insert the element into \c track, also used as an insertion marker.
+
+ //! \function    void  TrackElement::setIndex ( size_t index );
+ //!              Cache the element's index in the Track internal vector.
+
+ //! \function    void  TrackElement::updateFreedomDegree ();
+ //!              Update, from the element characteristics, it's degree of freedom.
+
+ //! \function    void  TrackElement::setDoglegLevel ( unsigned int level );
+ //!              Sets the level of dogleg of the element.
+
+ //! \function    void  TrackElement::swapTrack ( TrackElement* other );
+ //!              Swap the tracks of \c this and \c other.
+
+ //! \function    void  TrackElement::reschedule ( unsigned int level );
+ //!              If the TrackElement has already an event scheduled, change the
+ //!              level of this event, otherwise create a new event.
+ //!
+ //! \sa          NegotiateWindow::rescheduleEvent().
+
+ //! \function    void  TrackElement::detach ();
+ //!              Remove the link from the TrackElement to it's owning Track, marking
+ //!              it for removal. The removal from the Track's vector is managed by
+ //!              the Track itself during the Session revalidation stage.
+
+ //! \function    void  TrackElement::revalidate ();
+ //!              Actualize the TrackElement characteristics from the supporting
+ //!              elements (set of AutoSegment).
+ //!
+ //!              \red{Must be completed with the event management}
+
+ //! \function    void  TrackElement::invalidate ();
+ //! \sa          AutoSegment::invalidate().
+
+ //! \function    void  TrackElement::incOverlapCost ( Net* net, TrackCost& cost ) const;
+ //! \sa          Compute the cost of overlap between this segment and the interval
+ //!              specified in \c cost. Mainly calls the relevant callback.
+
+ //  \function    void  TrackElement::dataInvalidate ();
+ //               Invalidate the algorithm datas.
+
+ //  \function    void  TrackElement::eventInvalidate ();
+ //               Invalidate the associated RoutingEvent (if any).
+
+ //! \function    void  TrackElement::setAxis ( DbU::Unit, unsigned int flags=Katabatic::SegAxisSet );
+ //!              Sets the axis of the TrackElement.
+
+ //! \function    TrackElement* TrackElement::makeDogleg ();
+ //!              Create a dogleg on the source end of the TrackSegment. Put the dogleg
+ //!              axis on the source \redB{To be further reviewed}.
+ //!
+ //! \sa          \ref secDogleg "Dogleg management".
+ //!
+ //!              Post-processing done by TrackSegment::_postDoglegs().
+
+ //! \function    TrackElement* TrackElement::makeDogleg ( Katabatic::GCell* gcell );
+ //! \sa          AutoSegment::makeDogleg(), \ref secDogleg "Dogleg management".
+ //!
+ //!              Post-processing done by TrackSegment::_postDoglegs().
+
+ //! \function    TrackElement* TrackElement::makeDogleg ( Interval interval, unsigned int& flags );
+ //! \sa          AutoSegment::makeDogleg(), \ref secDogleg "Dogleg management", the return flags
+ //!              from this method are returned through the \c flags variable.
+ //!
+ //!              Post-processing done by TrackSegment::_postDoglegs().
+
+ //! \function    bool  TrackElement::_check () const;
+ //!              Check the coherency of the element. For a TrackSegment:
+ //!                - The supporting AutoSegment the canonical one of the set.
+ //!                - The cached \c min & \c max values are identical to the computed
+ //!                  ones.
+ //!
+ //! \sreturn    \true on success.
+
+ //! \function   SegmentOverlapCostCB*  TrackElement::setOverlapCostCB ( SegmentOverlapCostCB* cb );
+ //! \param      cb  the new overlap cost callback.
+ //! \return     the previous overlap cost callback.
+ //!
+ //!             sets the overlap callback.
+
+ /*! \class      SegmentObserver
+  *
+  *  \brief      Observer on the base AutoSegment
+  *
+  *              The observer that will be hooked into the observable in the associated
+  *              canonical AutoSegment. Used to propagate the invalidation/revalidation
+  *              events from AutoSegment toward TrackSegment.
+  *
+  *              As a secondary function, it is used by the Session::lookup() method
+  *              to quicly retrieve TrackSegment from Katabatic::AutoSegment.
+  */
+
+ //! \function   void  SegmentObserver::notify ( unsigned int flags );
+ //!             Implement the asymmetric invalidate/revalidate policy described in
+ //!             Kite::Session. The invalidate is immediatly passed on while the
+ //!             revalidate is ignored.
+   
+ }

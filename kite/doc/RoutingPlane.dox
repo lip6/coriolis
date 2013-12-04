@@ -1,0 +1,95 @@
+
+ // -*- C++ -*-
+
+ namespace Kite {
+
+ /*! \class        RoutingPlane
+  *  \brief        Array of Tracks in one Layer
+  *
+  *                A RoutingPlane is an array of Track covering a rectangular area.
+  *                For now the area is the abutment box of the to be routed Cell.
+  *                Tracks are spaced evenly and according to the configuration
+  *                of the relevant RoutingLayerGauge.
+  *
+  *                \image html  RoutingPlane-1.png "Fig 1: Horizontal RoutingPlane"
+  */
+
+ //! \function     RoutingPlane* RoutingPlane::create ( KiteEngine* engine, size_t depth );
+ //! \param        engine    The associated engine.
+ //! \param        depth     The Layer depth of the plane.
+ //! \return       The newly created RoutingPlane.
+ //!
+ //!               The RoutingPlane public constructor. The \c depth is in the sense of
+ //!               the RoutingGauge.
+
+ //! \function     bool  RoutingPlane::isHorizontal () const;
+ //! \sreturn      \true if the preferred routing direction is horizontal (the actual
+ //!               direction of the tracks).
+
+ //! \function     bool  RoutingPlane::isVertical () const;
+ //! \sreturn      \true if the preferred routing direction is vertical (the actual
+ //!               direction of the tracks).
+
+ //! \function     KiteEngine* RoutingPlane::getKiteEngine () const;
+ //! \sreturn      The associated KiteEngine.
+
+ //! \function     RoutingLayerGauge* RoutingPlane::getLayerGauge () const;
+ //! \sreturn      The RoutingLayerGauge of the plane.
+
+ //! \function     unsigned int  RoutingPlane::getDirection () const;
+ //! \sreturn      The preferred routing direction (Katabatic::KbHorizontal or Katabatic::KbVertical).
+
+ //! \function     size_t  RoutingPlane::getDepth () const;
+ //! \sreturn      The depth of the associated layer (as defined by the RoutingLayerGauge).
+
+ //! \function     size_t  RoutingPlane::getAxisMin () const;
+ //! \sreturn      The axis coordinate of the first/lowest track.
+
+ //! \function     size_t  RoutingPlane::getAxisMax () const;
+ //! \sreturn      The axis coordinate of the last/highest track.
+
+ //! \function     size_t  RoutingPlane::getTrackMin () const;
+ //! \sreturn      The minimum bound of all track.
+
+ //! \function     size_t  RoutingPlane::getTrackMax () const;
+ //! \sreturn      The maximum bound of all track.
+
+ //! \function     RoutingPlane* RoutingPlane::getTop () const;
+ //! \sreturn      The RoutingPlane immediatly above this one.
+
+ //! \function     RoutingPlane* RoutingPlane::getBottom () const;
+ //! \sreturn      The RoutingPlane immediatly below this one.
+
+ //! \function     const Layer* RoutingPlane::getLayer () const;
+ //! \sreturn      The associated routing layer.
+
+ //! \function     const Layer* RoutingPlane::getBlockageLayer () const;
+ //! \sreturn      The blockage layer associated to the routing layer.
+
+ //! \function     size_t  RoutingPlane::getTracksSize () const;
+ //! \sreturn      The number of tracks in the array.
+
+ //! \function     size_t  RoutingPlane::computeTracksSize () const;
+ //! \sreturn      The number of tracks <em>to create</em> in the array.
+ //!
+ //!               Helper method that compute the number of tracks in the array
+ //!               from the area of the Cell to be routed and the RoutingLayerGauge
+ //!               characteristics (the Cell is accessible through the KiteEngine).
+
+ //! \function     DbU::Unit  RoutingPlane::getTrackPosition ( size_t index ) const;
+ //! \sreturn      The axis of the track at \c index in the array.
+
+ //! \function     Track* RoutingPlane::getTrackByIndex ( size_t index ) const;
+ //! \sreturn      The track at \c index in the array.
+
+ //! \function     Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, unsigned int mode=KtNearest ) const;
+ //! \sreturn      The track which position is nearest from \c axis. The meaning of
+ //!               \e nearest is defined by \c mode (classic rouding options).
+
+ //! \function     bool  RoutingPlane::_check ( unsigned int& overlaps ) const;
+ //! \sreturn      \true if no errors have been found (i.e. the database is coherent).
+ //!
+ //!               Perform a coherency check on all tracks part of the array.
+
+
+ }

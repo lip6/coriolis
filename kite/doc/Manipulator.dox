@@ -1,0 +1,266 @@
+
+ // -*- C++ -*-
+
+ namespace Kite {
+
+ /*! \class        Manipulator
+  *  \brief        Handle TrackElement ripup & topological modifications.
+  *
+  *  \section      secManipStruct  Manipulator Structure
+  *
+  *                A Manipulator basically binds together a TrackElement, it's
+  *                DataNegociate and RoutingEvent (cached for fast access), and
+  *                \b a SegmentFsm.
+  *
+  *                <em>The TrackElement may differs from the one of the SegmentFsm.</em>
+  *                This can occurs when manipulating perpandiculars or segments from
+  *                other nets in conflict. For example: Manipulator::isCaged().
+  *
+  *                In the following documentation, the segment <em>which is associated
+  *                to the SegmentFsm</em> will be called the <em>reference segment</em>.
+  *
+  *  \section      secManipDelayed  Delayed Modifications
+  *
+  *                It is important to note that when a Manipulator is called to
+  *                modificate a TrackElement, nothing is actually done by the
+  *                Manipulator itself. Instead, the Manipulator create the
+  *                relevant SegmentAction (s) that are stored in the SegmentFsm. 
+  *                The action themselves are done at the end of the SegmentFsm
+  *                lifecycle (wrapped inside a Session).
+  *
+  *                \red{This is not true!} When dogleg are created, the topology is
+  *                immediatly modificated. That way of doing must be clarified.
+  */
+
+ //! \enum         Manipulator::FunctionFlag
+ //!               The various flags that can be passed to the Manipulator methods.
+
+ //! \var          Manipulator::ToRipupLimit
+ //!               The ripup limit must be immediatly to it's limit for the current
+ //!               state.
+
+ //! \var          Manipulator::AllowExpand
+ //!               Allow break points for dogleg not to be exactly on the requested
+ //!               position. Meaning that they are moved to the least congested
+ //!               GCell.
+
+ //! \var          Manipulator::NoExpand
+ //!               Breakpoints for dogleg are kept right where they are requested.
+
+ //! \var          Manipulator::PerpandicularsFirst
+ //!               Reorder the events so that perpandiculars segments are re-processed
+ //!               before their reference segment. By default this is the other way
+ //!               around.
+
+ //! \var          Manipulator::ToMoveUp
+ //!               Try to move up ripped up segments.
+
+ //! \var          Manipulator::AllowLocalMoveUp
+ //!               Allow local segments to be moved up (forbidden by default).
+
+ //! \var          Manipulator::AllowTerminalMoveUp
+ //!               Allow terminal segments to be moved up (forbidden by default).
+
+ //! \var          Manipulator::AllowShortPivotUp
+ //!               Allow short segment yo be pivoted up.
+
+ //! \var          Manipulator::NoDoglegReuse
+ //!               When creating a dogleg, the default behavior is \e not to create a
+ //!               new one if there's already one in the same GCell. If this flag is
+ //!               set, a second dogleg will be created.
+
+ //! \var          Manipulator::RightAxisHint
+ //!               An explicit right axis hint has been supplied as argument.
+
+ //! \var          Manipulator::LeftAxisHint
+ //!               An explicit left axis hint has been supplied as argument.
+
+ //! \var          Manipulator::NotOnLastRipup
+ //!               The reference segment has still more than one ripup to go for
+ //!               the given state.
+ 
+ //! \function     Manipulator::Manipulator ( TrackElement* segment, SegmentFsm& fsm );
+ //! \param        segment  The TrackElement to manipulate.
+ //! \param        fsm      The associated SegmentFsm.
+ //!
+ //!               Construct a new Manipulator on \c segment.
+ 
+ //! \function     TrackElement* Manipulator::getSegment () const;
+ //! \sreturn      The working TrackElement.
+ 
+ //! \function     DataNegociate* Manipulator::getData () const;
+ //! \sreturn      The DataNegociate of the TrackElement (act as a cache).
+ 
+ //! \function     RoutingEvent* Manipulator::getEvent () const;
+ //! \sreturn      The RoutingEvent associated to the TrackElement (act as a cache).
+ 
+ //! \function     bool  Manipulator::canRipup ( unsigned int flags ) const;
+ //! \sreturn      \true if the maximum ripup, for the given SegmentFsm::State has not
+ //!               been reached. If \c flags contains Manipulator::HasNextRipup, return
+ //!               \true \b only if it still have at least one ripup to go.
+ 
+ //! \function     bool  Manipulator::isCaged ( DbU::Unit axis ) const;
+ //! \sreturn      \true if the segment is enclosed (in it's Track) by two fixed or
+ //!               blockage segments which at least one is closer than 10 lambdas from
+ //!               \c axis. Mostly used to know if a perpandicular is actually restricting
+ //!               the axis span of a reference segment.
+ 
+ //! \function     bool  Manipulator::ripup ( unsigned int type, DbU::Unit axisHint=0 );
+ //! \param        type       The type of ripup action.
+ //! \param        axisHint   An indication as where to move the riped up segment.
+ //! \return       \true if the operation has succedeed.
+ //!
+ //!               If the TrackElement can be ripped up, schedule a ripup action, possibly
+ //!               with a hint for the preferred axis position.
+ 
+ //! \function     bool  Manipulator::ripupPerpandiculars ( unsigned int flags );
+ //!               Schedule a ripup of all the perpandiculars of the reference segment.
+ //!               \c flags that modificate the behavior:
+ //!                 - Manipulator::PerpandicularsFirst : the queue will be reordered so
+ //!                   that all the perpandiculars are re-processed (placed) before the
+ //!                   reference segment.
+ //!                 - Manipulator::ToRipupLimit : the ripup count of the reference segment
+ //!                   is set to the limit (i.e. only one more attempt before a slackening
+ //!                   occurs).
+ //!
+ //!               The method will fails (return \false) if at least one perpandicular can't
+ //!               be changed of track (i.e. ripped up) \b and none of it's neighbors could
+ //!               be ripped up either. Meaning that the free span on that track cannot be
+ //!               changed.
+ 
+ //! \function     void  Manipulator::repackPerpandiculars ();
+ //!               Ripup all the perpandiculars of the reference segment, except fixed or
+ //!               globals. The reference segment is rescheduled first (before it's
+ //!               perpandicular).
+ //!
+ //!               This function may be used to find a better placement, maximizing the
+ //!               overlap of the various perpandiculars.
+ 
+ //! \function     bool  Manipulator::ripple ();
+ //! \sreturn      true if the reference segment is local.
+ //!
+ //!               Applies only on reference segments that are of local type.
+ //!               Tries to make room for the reference segment by ripping up it's neigbors
+ //!               on the parallels tracks. On a vertical plane, left neigbors are shifted
+ //!               one track left (trough axis hint) and right ones, one track right.
+ //!               Note that they are ripped up and the shift is just a hint, there's no
+ //!               guarantee that the router can honor it.
+ 
+ //! \function     bool  Manipulator::minimize ();
+ //! \sreturn      true if the reference segment can be mimized in a suitable track hole.
+ //!
+ //!               Compute the miminal span of the reference segment, summing up contraints
+ //!               from source anchor and target anchors (if any) and perpandiculars.
+ //!               Then find holes in the avalaible tracks, and check if one is suitable
+ //!               for the miminized segment (try first the biggest hole).
+ //!
+ //!               This operation can only be called once on a segment (a flag is set in the
+ //!               event).
+ 
+ //! \function     bool  Manipulator::slacken ( unsigned int flags=KbNoFlags );
+ //!               Simple proxy towards TrackElement::slacken().
+ //!
+ //!               \red{To be reviewed.}
+ 
+ //! \function     bool  Manipulator::pivotUp ();
+ //!               Tries to move up the reference segment. The segment will be moved
+ //!               up only if a half track is free (for a local) or a full track is
+ //!               free (for a global).
+ //!
+ //!               This function do not modifies/create perpandiculars.
+ 
+ //! \function     bool  Manipulator::pivotDown ();
+ //!               Tries to move down the reference segment. The segment will be moved
+ //!               up only if \e two track are free (whether global or local). Is is more
+ //!               restrictive than Manipulator::pivotUp().
+ //!
+ //!               This function do not modifies/create perpandiculars.
+ 
+ //! \function     bool  Manipulator::moveUp ( unsigned int flags );
+ //!               Tries to move up a segment, if there is enough space in the RoutingPlane
+ //!               above and in the same direction.
+ //!
+ //!               This function may modificate perpandiculars in order to maintain
+ //!               connexity.
+ //!
+ //!               \red{To be reviewed.}
+ 
+ //! \function     bool  Manipulator::makeDogleg ();
+ //! \sreturn      \false if the segment is \e not local or the dogleg cannot be done.
+ //!
+ //!               For \e local reference segment only, look in the first track candidate
+ //!               for other segment overlapping and break the reference accordingly. 
+ 
+ //! \function     bool  Manipulator::makeDogleg ( Interval overlap );
+ //!               Create a dogleg to avoid the obstructed interval \c overlap.
+ 
+ //! \function     bool  Manipulator::makeDogleg ( DbU::Unit position );
+ //!               Create a dogleg in the GCell under \c position.
+
+ //! \function     bool  Manipulator::relax ( Interval overlap, unsigned int flags=AllowExpand );
+ //!               Break the reference segment so it can detour around the interval
+ //!               \c overlap. If \c overlap is completly enclosed inside the span of
+ //!               the reference segment two dogleg will be created. If the overlap occurs
+ //!               only on one side of the reference segment, only one dogleg will be
+ //!               created.
+ //!
+ //!               If \c flags contains Manipulator::AllowExpand, the dogleg are not created
+ //!               exactly at the edges of the overlap but on the lowest density GCell
+ //!               (outside the overlap interval).
+ //!
+ //!               The axis of the created dogleg are sets so that the broken part of the
+ //!               segment completly enclose \c overlap. That is, the orignal segment no
+ //!               longer intersect with \c overlap. So the min dogleg is pushed to the
+ //!               left and the max to the right if they are in the same GCell as the
+ //!               min/max of \c overlap. Otherwise (they have been expanded), they are
+ //!               put in the center of the GCell.
+ //!
+ //!               We do not allow to dogleg twice in the same GCell, so if min or max
+ //!               is in respectively the first or last GCell, it is not done. Moreover
+ //!               if there is only one dogleg \e and it is in the first or last GCell,
+ //!               the relax method is cancelled (and returns \false). It means that
+ //!               this is the segment which is likely to be enclosed inside \c overlap.
+ //!
+ //!               \redB{Important:} The doglegs are created immediatly and not in a delayed
+ //!               fashion like the SegmentAction.
+ //!
+ //!               \image html  ManipulatorRelax-1.png "Two Doglegs (min & max), no expansion"
+ //!               \image html  ManipulatorRelax-2.png "Two Doglegs (min & max), with expansion"
+ //!               \image html  ManipulatorRelax-3.png "One Dogleg (min)"
+ //!               \image html  ManipulatorRelax-4.png "One Dogleg (max)"
+ 
+ //! \function     bool  Manipulator::insertInTrack ( size_t i );
+ //!               Try to insert the reference segment in the track at index \c i (in the cost
+ //!               table from SegmentFsm). The insertion is done by ripping up overlapping
+ //!               segment or shrinking them to left/right if possible.
+ //!
+ //!               \red{This operation ripup the processed segment neighbors (and their perpandiculars).}
+ 
+ //! \function     bool  Manipulator::forceToTrack ( size_t i );
+ //!               Try to insert the reference segment in the track at index \c i  (in the cost
+ //!               table from SegmentFsm). The insertion is done by \e forcibly ripping up the
+ //!               overlapping segments \b and their perpandiculars.
+ //!
+ //!               \red{This operation ripup the processed segment neighbors (and their perpandiculars).}
+ 
+ //! \function     bool  Manipulator::shrinkToTrack ( size_t i, unsigned int flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint );
+ //!               Attempt to minimize the reference segment to fit into the track.
+ //!               For this operation to succeed, the minimal span of the segment must
+ //!               not overlap any other segment already in the track. To reach the
+ //!               minimal span the perpandiculars are ripped up with an axis hint
+ //!               which is the center of the minimal span or the explicit value given
+ //!               as arguments \c leftAxisHint and \c rightAxisHint if \c flags contains
+ //!               respectively Manipulator::LeftAxisHint or Manipulator::RightAxisHint.
+ //!
+ //!               \red{This operation ripup the processed segment itself and its perpandiculars.}
+ 
+ //! \function     bool  Manipulator::forceOverLocals ();
+ //!               Loop over all the candidate tracks and, insert in the first which
+ //!               all conflicting segments are locals (rip them up).
+ 
+ //! \function     bool  Manipulator::repackPerpandiculars ();
+ //!               Ripup all perpandiculars and the reference segment itself for a complete
+ //!               re-placement. The reference segment will be reprocessed \e before it's
+ //!               perpandiculars.
+
+ }
