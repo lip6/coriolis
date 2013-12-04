@@ -71,10 +71,10 @@
 #
 # Adds -Wall to the C/C++ flags.
 #
- set(CMAKE_C_FLAGS_DEBUG     "-g -Wall"           CACHE STRING "Debug options."   FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   "-g -Wall"           CACHE STRING "Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE   "-O2 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
- set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -Wall" CACHE STRING "Release options." FORCE)
+ set(CMAKE_C_FLAGS_DEBUG                "-Wall -g"           CACHE STRING "C Compiler Debug options."   FORCE)
+ set(CMAKE_C_FLAGS_RELEASE              "-Wall -O2 -DNDEBUG" CACHE STRING "C Compiler Release options." FORCE)
+ set(CMAKE_CXX_FLAGS_DEBUG   "-std=c++0x -Wall -g"           CACHE STRING "C++ Compiler Debug options."   FORCE)
+ set(CMAKE_CXX_FLAGS_RELEASE "-std=c++0x -Wall -O2 -DNDEBUG" CACHE STRING "C++ Compiler Release options." FORCE)
 
 
 #

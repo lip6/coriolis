@@ -105,6 +105,7 @@ if __name__ == "__main__":
   parser.add_option ( "--devel"    , action="store_true" ,                dest="devel"    )
   parser.add_option ( "--static"   , action="store_true" ,                dest="static"   )
   parser.add_option ( "--shared"   , action="store_true" ,                dest="shared"   )
+  parser.add_option ( "--chams"    , action="store_true" ,                dest="chams"    )
   parser.add_option ( "--no-python", action="store_true" ,                dest="nopython" )
   parser.add_option ( "--root"     , action="store"      , type="string", dest="rootDir"  )
   ( options, args ) = parser.parse_args ()
