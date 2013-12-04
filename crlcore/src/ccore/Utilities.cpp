@@ -41,44 +41,51 @@ namespace {
 
   void  verboseLevel1Changed ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::VerboseLevel1 );
-    else               mstream::disable ( mstream::VerboseLevel1 );
+    if (p->asBool()) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
+    else             mstream::disable( mstream::Verbose1|mstream::Verbose2 );
 
-  //cerr << "Verbose Level 1: " << boolalpha << p->asBool() << endl;
+  //cerr << "Verbose Level 1: " << boolalpha << p->asBool() << " mask:" << mstream::getActiveMask() << endl;
   }
 
 
   void  verboseLevel2Changed ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::VerboseLevel2 );
-    else               mstream::disable ( mstream::VerboseLevel2 );
+    if (p->asBool()) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 );
+    else             mstream::disable( mstream::Verbose2 );
+
+  //cerr << "Verbose Level 2: " << boolalpha << p->asBool() << " mask:" << mstream::getActiveMask() << endl;
   }
 
 
   void  infoChanged ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::Info );
-    else               mstream::disable ( mstream::Info );
+    if (p->asBool()) mstream::enable ( mstream::Info );
+    else             mstream::disable( mstream::Info );
+  }
+
+
+  void  paranoidChanged ( Cfg::Parameter* p )
+  {
+    if (p->asBool()) mstream::enable ( mstream::Paranoid );
+    else             mstream::disable( mstream::Paranoid );
   }
 
 
   void  bugChanged ( Cfg::Parameter* p )
   {
-    if ( p->asBool() ) mstream::enable  ( mstream::Bug );
-    else               mstream::disable ( mstream::Bug );
+    if ( p->asBool() ) mstream::enable ( mstream::Bug );
+    else               mstream::disable( mstream::Bug );
   }
 
 
   void  catchCoreChanged ( Cfg::Parameter* p )
-  {
-    System::setCatchCore ( p->asBool() );
-  }
+  { System::setCatchCore( p->asBool() ); }
 
 
   void  logModeChanged ( Cfg::Parameter* p )
   {
-    if ( not p->asBool() ) tty::enable  ();
-    else                   tty::disable ();
+    if (not p->asBool()) tty::enable  ();
+    else                 tty::disable ();
   }
 
 
@@ -114,11 +121,12 @@ int           tty::_width          = 80;
 bool          tty::_enabled        = true;
 unsigned int  mstream::_activeMask = mstream::Verbose0;
 
-mstream  cmess0 ( mstream::Verbose0, std::cout );
-mstream  cmess1 ( mstream::Verbose1, std::cout );
-mstream  cmess2 ( mstream::Verbose2, std::cout );
-mstream  cinfo  ( mstream::Info    , std::cout );
-mstream  cbug   ( mstream::Bug     , std::cout );
+mstream  cmess0    ( mstream::Verbose0, std::cout );
+mstream  cmess1    ( mstream::Verbose1, std::cout );
+mstream  cmess2    ( mstream::Verbose2, std::cout );
+mstream  cinfo     ( mstream::Info    , std::cout );
+mstream  cparanoid ( mstream::Paranoid, std::cout );
+mstream  cbug      ( mstream::Bug     , std::cout );
 
 
 // -------------------------------------------------------------------
@@ -315,6 +323,7 @@ namespace CRL {
     Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
     Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( verboseLevel2Changed );
     Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( infoChanged );
+    Cfg::getParamBool  ("misc.paranoid"       ,false)->registerCb ( paranoidChanged );
     Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( bugChanged );
     Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( logModeChanged );
     Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( traceLevelChanged );
@@ -325,6 +334,7 @@ namespace CRL {
     verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
     verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
     infoChanged          ( Cfg::getParamBool("misc.info"         ) );
+    paranoidChanged      ( Cfg::getParamBool("misc.paranoid"     ) );
     bugChanged           ( Cfg::getParamBool("misc.bug"          ) );
     logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
     traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );

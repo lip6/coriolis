@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |        C a d e n c e   D E F   E x p o r t e r                  |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./crlcore/DefExport.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <memory>
@@ -58,6 +49,20 @@ namespace {
   using namespace CRL;
 
 
+  string  toLower ( const string& s )
+  {
+    string lowered;
+
+    for ( size_t i=0 ; i<s.size() ; ++i ) {
+      if ( (s[i] < 'A') or (s[i] > 'Z') )
+        lowered.push_back( s[i] );
+      else
+        lowered.push_back( s[i] + (int)'a'-(int)'A' );
+    }
+    return lowered;
+  }
+
+
 #define  CHECK_STATUS_CBK(status)         if ((status) != 0) return driver->checkStatus(status);
 #define  CHECK_STATUS_DRV(status)         if ((status) != 0) return checkStatus(status);
 #define  RETURN_CHECK_STATUS_CBK(status)  return driver->checkStatus(status);
@@ -66,44 +71,46 @@ namespace {
 
   class DefDriver {
     public:
-      static void          drive          ( Cell* cell, unsigned int flags );
-      static int           getUnits       ();
-      static int           toDefUnits     ( DbU::Unit );
-      static DbU::Unit     getSliceHeight ();
-      static DbU::Unit     getPitchWidth  ();
-                          ~DefDriver      ();
-             int           write          ();
+      static void          drive            ( Cell* cell, unsigned int flags );
+      static int           getUnits         ();
+      static int           toDefUnits       ( DbU::Unit );
+      static int           toDefOrient      ( Transformation::Orientation );
+      static void          toDefCoordinates ( Instance*, int& statusX, int& statusY, int& statusOrient );
+      static DbU::Unit     getSliceHeight   ();
+      static DbU::Unit     getPitchWidth    ();
+                          ~DefDriver        ();
+             int           write            ();
+    private:                                
+                           DefDriver        ( Cell*, const string& designName, FILE*, unsigned int flags );
+      inline Cell*         getCell          ();
+      inline const string& getDesignName    () const;
+      inline unsigned int  getFlags         () const;
+      inline int           getStatus        () const;
+             int           checkStatus      ( int status );
     private:               
-                           DefDriver      ( Cell*, const string& designName, FILE*, unsigned int flags );
-      inline Cell*         getCell        ();
-      inline const string& getDesignName  () const;
-      inline unsigned int  getFlags       () const;
-      inline int           getStatus      () const;
-             int           checkStatus    ( int status );
-    private:               
-      static int           _designCbk     ( defwCallbackType_e, defiUserData );
-      static int           _designEndCbk  ( defwCallbackType_e, defiUserData );
-      static int           _historyCbk    ( defwCallbackType_e, defiUserData );
-      static int           _versionCbk    ( defwCallbackType_e, defiUserData );
-      static int           _dividerCbk    ( defwCallbackType_e, defiUserData );
-      static int           _busBitCbk     ( defwCallbackType_e, defiUserData );
-      static int           _unitsCbk      ( defwCallbackType_e, defiUserData );
-      static int           _technologyCbk ( defwCallbackType_e, defiUserData );
-      static int           _dieAreaCbk    ( defwCallbackType_e, defiUserData );
-      static int           _gcellGridCbk  ( defwCallbackType_e, defiUserData );
-      static int           _rowCbk        ( defwCallbackType_e, defiUserData );
-      static int           _trackCbk      ( defwCallbackType_e, defiUserData );
-      static int           _viaCbk        ( defwCallbackType_e, defiUserData );
-      static int           _pinCbk        ( defwCallbackType_e, defiUserData );
-      static int           _pinPropCbk    ( defwCallbackType_e, defiUserData );
-      static int           _componentCbk  ( defwCallbackType_e, defiUserData );
-      static int           _netCbk        ( defwCallbackType_e, defiUserData );
-      static int           _snetCbk       ( defwCallbackType_e, defiUserData );
-      static int           _extensionCbk  ( defwCallbackType_e, defiUserData );
-      static int           _groupCbk      ( defwCallbackType_e, defiUserData );
-      static int           _propDefCbk    ( defwCallbackType_e, defiUserData );
-      static int           _regionCbk     ( defwCallbackType_e, defiUserData );
-      static int           _scanchainCbk  ( defwCallbackType_e, defiUserData );
+      static int           _designCbk       ( defwCallbackType_e, defiUserData );
+      static int           _designEndCbk    ( defwCallbackType_e, defiUserData );
+      static int           _historyCbk      ( defwCallbackType_e, defiUserData );
+      static int           _versionCbk      ( defwCallbackType_e, defiUserData );
+      static int           _dividerCbk      ( defwCallbackType_e, defiUserData );
+      static int           _busBitCbk       ( defwCallbackType_e, defiUserData );
+      static int           _unitsCbk        ( defwCallbackType_e, defiUserData );
+      static int           _technologyCbk   ( defwCallbackType_e, defiUserData );
+      static int           _dieAreaCbk      ( defwCallbackType_e, defiUserData );
+      static int           _gcellGridCbk    ( defwCallbackType_e, defiUserData );
+      static int           _rowCbk          ( defwCallbackType_e, defiUserData );
+      static int           _trackCbk        ( defwCallbackType_e, defiUserData );
+      static int           _viaCbk          ( defwCallbackType_e, defiUserData );
+      static int           _pinCbk          ( defwCallbackType_e, defiUserData );
+      static int           _pinPropCbk      ( defwCallbackType_e, defiUserData );
+      static int           _componentCbk    ( defwCallbackType_e, defiUserData );
+      static int           _netCbk          ( defwCallbackType_e, defiUserData );
+      static int           _snetCbk         ( defwCallbackType_e, defiUserData );
+      static int           _extensionCbk    ( defwCallbackType_e, defiUserData );
+      static int           _groupCbk        ( defwCallbackType_e, defiUserData );
+      static int           _propDefCbk      ( defwCallbackType_e, defiUserData );
+      static int           _regionCbk       ( defwCallbackType_e, defiUserData );
+      static int           _scanchainCbk    ( defwCallbackType_e, defiUserData );
     private:
       static int           _units;
       static DbU::Unit     _sliceHeight;
@@ -116,7 +123,9 @@ namespace {
   };
 
 
-  int  DefDriver::_units = 100;
+  int        DefDriver::_units       = 100;
+  DbU::Unit  DefDriver::_sliceHeight = 0;
+  DbU::Unit  DefDriver::_pitchWidth  = 0;
 
 
          int           DefDriver::getUnits       () { return _units; }
@@ -127,6 +136,53 @@ namespace {
   inline unsigned int  DefDriver::getFlags       () const { return _flags; }
   inline int           DefDriver::getStatus      () const { return _status; }
   inline const string& DefDriver::getDesignName  () const { return _designName; }
+
+
+  int  DefDriver::toDefOrient ( Transformation::Orientation orient )
+  {
+    switch ( orient ) {
+      case Transformation::Orientation::ID: return 0; // N.
+      case Transformation::Orientation::R1: return 1; // W.
+      case Transformation::Orientation::R2: return 2; // S.
+      case Transformation::Orientation::R3: return 3; // E.
+      case Transformation::Orientation::MX: return 4; // FN.
+      case Transformation::Orientation::XR: return 5; // FE.
+      case Transformation::Orientation::MY: return 6; // FS.
+      case Transformation::Orientation::YR: return 7; // FW.
+    }
+
+    return 0; // N
+  }
+
+
+  void  DefDriver::toDefCoordinates ( Instance* instance, int& statusX, int& statusY, int& statusOrient )
+  {
+    const Transformation& transf = instance->getTransformation();
+    statusX      = toDefUnits ( transf.getTx() );
+    statusY      = toDefUnits ( transf.getTy() );
+    statusOrient = toDefOrient( transf.getOrientation() );
+
+    switch ( transf.getOrientation() ) {
+      case Transformation::Orientation::ID: break;
+      case Transformation::Orientation::R1: break;
+      case Transformation::Orientation::R2:
+        statusX -= toDefUnits( instance->getMasterCell()->getAbutmentBox().getWidth() );
+        statusY -= toDefUnits( instance->getMasterCell()->getAbutmentBox().getHeight() );
+        break;
+      case Transformation::Orientation::R3: break;
+      case Transformation::Orientation::MX:
+        statusX -= toDefUnits( instance->getMasterCell()->getAbutmentBox().getWidth() );
+        break;
+      case Transformation::Orientation::XR:
+        break;
+      case Transformation::Orientation::MY:
+        statusY -= toDefUnits( instance->getMasterCell()->getAbutmentBox().getHeight() );
+        break;
+      case Transformation::Orientation::YR:
+        break;
+    }
+
+  }
 
 
   DefDriver::DefDriver ( Cell* cell, const string& designName, FILE* defStream, unsigned int flags )
@@ -435,26 +491,41 @@ namespace {
     CHECK_STATUS_CBK(status);
 
     forEach ( Instance*, iinstance, cell->getInstances() ) {
-      status = defwComponent ( getString((*iinstance)->getName()).c_str()
+      string      insname      = getString((*iinstance)->getName());
+      const char* source       = NULL;
+      const char* statusS      = "UNPLACED";
+      int         statusX      = 0;
+      int         statusY      = 0;
+      int         statusOrient = 0;
+
+      if (CatalogExtension::isFeed((*iinstance)->getMasterCell())) source = "DIST";
+
+      if ((*iinstance)->getPlacementStatus() == Instance::PlacementStatus::PLACED) statusS = "PLACED";
+      if ((*iinstance)->getPlacementStatus() == Instance::PlacementStatus::FIXED ) statusS = "FIXED";
+      if (statusS[0] != 'U') {
+        toDefCoordinates( *iinstance, statusX, statusY, statusOrient );
+      }
+
+      status = defwComponent ( insname.c_str()
                              , getString((*iinstance)->getMasterCell()->getName()).c_str()
-                             , 0           // numNetNames (disabled).
-                             , NULL        // netNames (disabled).
-                             , NULL        // eeq (electrical equivalence).
-                             , NULL        // genName.
-                             , NULL        // genParameters.
-                             , NULL        // source (who has created it).
-                             , 0           // numForeigns.
-                             , NULL        // foreigns.
-                             , NULL        // foreignsX[].
-                             , NULL        // foreignsY[].
-                             , NULL        // foreignsOrient[].
-                             , "UNPLACED"  // status (placement status).
-                             , 0           // status X (disabled).
-                             , 0           // status Y (disabled).
-                             , 0           // status orientation (disabled).
-                             , 0.0         // weight (disabled).
-                             , NULL        // region (disabled).
-                             , 0, 0, 0, 0  // region coordinates.
+                             , 0             // numNetNames (disabled).
+                             , NULL          // netNames (disabled).
+                             , NULL          // eeq (electrical equivalence).
+                             , NULL          // genName.
+                             , NULL          // genParameters.
+                             , source        // source (who has created it).
+                             , 0             // numForeigns.
+                             , NULL          // foreigns.
+                             , NULL          // foreignsX[].
+                             , NULL          // foreignsY[].
+                             , NULL          // foreignsOrient[].
+                             , statusS       // status (placement status).
+                             , statusX       // status X (disabled).
+                             , statusY       // status Y (disabled).
+                             , statusOrient  // status orientation (disabled).
+                             , 0.0           // weight (disabled).
+                             , NULL          // region (disabled).
+                             , 0, 0, 0, 0    // region coordinates.
                              );
       if ( status != 0 ) return driver->checkStatus(status);
     }
@@ -481,7 +552,8 @@ namespace {
     forEach ( Net*, inet, cell->getNets() ) {
       if ( (*inet)->isSupply() or (*inet)->isClock() ) continue;
 
-      status = defwNet ( getString((*inet)->getName()).c_str() );
+      string netName = getString((*inet)->getName()) + "_net";
+      status = defwNet ( netName.c_str() );
       if ( status != 0 ) return driver->checkStatus(status);
 
       forEach ( Plug*, iplug, (*inet)->getPlugs() ) {

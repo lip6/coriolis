@@ -445,8 +445,8 @@ namespace {
   void  ApParser::_parseConnector ()
   {
     static DbU::Unit             XCON, YCON, WIDTH;
-    static unsigned int          index;
-    static char                  pinName[1024];
+    static int                   index;
+           string                pinName;
     static Net*                  net;
     static Pin*                  pin;
     static LayerInformation*     layerInfo;
@@ -457,53 +457,58 @@ namespace {
     static Name                  EAST  = "EAST";
     static Name                  WEST  = "WEST";
 
-    vector<char*>  fields = _splitString ( _rawLine+2, ',' );
-    if ( fields.size() < 7 )
+    vector<char*>  fields = _splitString( _rawLine+2, ',' );
+    if (fields.size() < 7)
       _printError ( false, "Malformed Connector line." );
     else {
-      XCON        = _getUnit ( fields[0] );
-      YCON        = _getUnit ( fields[1] );
-      WIDTH       = _getUnit ( fields[2] );
-      index       = atoi(fields[4]);
+      XCON        = _getUnit( fields[0] );
+      YCON        = _getUnit( fields[1] );
+      WIDTH       = _getUnit( fields[2] );
       orientation = fields[5];
 
-      size_t length = strlen ( fields[3] );
-      if ( length > 1000 ) {
+      index       = -1;
+      if (fields[4] != '\0') index = atoi( fields[4] );
+
+      size_t length = strlen( fields[3] );
+      if (length > 1000) {
         _printError ( false, "Connector name too long (exceed 1000 characters)." );
         return;
       }
 
-      strncpy ( pinName, fields[3], 1023 );
-      if ( index > 0 ) {
-        pinName [ length ] = '.';
-        strncpy ( pinName+length+1, fields[4], 1022-length );
+      pinName = fields[3];
+      size_t bindex = pinName.find(' ');
+      if (bindex != string::npos) {
+        pinName[ bindex ] = '(';
+        pinName += ')';
+      }
+      if (index >= 0) {
+        pinName += '.' + string(fields[4]);
       }
 
-      net       = _getNet              ( fields[3] );
-      layerInfo = _getLayerInformation ( fields[6] );
+      net       = _getNet             ( fields[3] );
+      layerInfo = _getLayerInformation( fields[6] );
 
-      if      ( orientation == NORTH ) accessDirection = Pin::AccessDirection::NORTH;
-      else if ( orientation == WEST  ) accessDirection = Pin::AccessDirection::WEST;
-      else if ( orientation == SOUTH ) accessDirection = Pin::AccessDirection::SOUTH;
-      else if ( orientation == EAST  ) accessDirection = Pin::AccessDirection::EAST;
+      if      (orientation == NORTH) accessDirection = Pin::AccessDirection::NORTH;
+      else if (orientation == SOUTH) accessDirection = Pin::AccessDirection::SOUTH;
+      else if (orientation == WEST ) accessDirection = Pin::AccessDirection::WEST;
+      else if (orientation == EAST ) accessDirection = Pin::AccessDirection::EAST;
       else accessDirection = Pin::AccessDirection::UNDEFINED;
 
-      if ( layerInfo && net ) {
-        net->setExternal ( true );
-        pin = Pin::create ( net
-                          , pinName
-                          , accessDirection
-                          , Pin::PlacementStatus::PLACED
-                          , layerInfo->getLayer()
-                          , XCON
-                          , YCON
-                          , WIDTH
-                          , WIDTH
-                          );
-      //setExternal ( pin );
+      if (layerInfo and net) {
+        net->setExternal( true );
+        pin = Pin::create( net
+                         , pinName
+                         , accessDirection
+                         , Pin::PlacementStatus::PLACED
+                         , layerInfo->getLayer()
+                         , XCON
+                         , YCON
+                         , WIDTH
+                         , WIDTH
+                         );
       }
-      if ( !net )       _printError ( false, "Unknown net name %s."  , fields[5] );
-      if ( !layerInfo ) _printError ( false, "Unknown layer name %s.", fields[6] );
+      if (not net )       _printError( false, "Unknown net name %s."  , fields[5] );
+      if (not layerInfo ) _printError( false, "Unknown layer name %s.", fields[6] );
     }
   }
 

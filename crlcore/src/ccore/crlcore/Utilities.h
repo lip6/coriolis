@@ -257,14 +257,12 @@ inline std::string  tty::bgcolor ( unsigned int mask )
 
   class mstream : public std::ostream {
     public:
-      enum StreamMasks { Verbose0      = (1<<0)
-                       , Verbose1      = (1<<1)
-                       , Verbose2      = (1<<2)
-                       , Info          = (1<<3)
-                       , Bug           = (1<<4)
-                       , VerboseLevel0 = Verbose0
-                       , VerboseLevel1 = Verbose0|Verbose1
-                       , VerboseLevel2 = Verbose0|Verbose1|Verbose2
+      enum StreamMasks { Verbose0      = 0x00000001
+                       , Verbose1      = 0x00000002
+                       , Verbose2      = 0x00000004
+                       , Info          = 0x00000008
+                       , Paranoid      = 0x00000010
+                       , Bug           = 0x00000020
                        };
     public:
       static        void          enable       ( unsigned int mask );
@@ -340,6 +338,7 @@ extern mstream  cmess0;
 extern mstream  cmess1;
 extern mstream  cmess2;
 extern mstream  cinfo;
+extern mstream  cparanoid;
 extern mstream  cbug;
 
 

@@ -127,8 +127,8 @@ int main ( int argc, char *argv[] )
     }
 
     System::get()->setCatchCore ( not coreDump ); 
-    if ( verbose1 ) mstream::enable ( mstream::VerboseLevel1 );
-    if ( verbose2 ) mstream::enable ( mstream::VerboseLevel2 ); 
+    if (verbose1) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
+    if (verbose2) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 ); 
 
     dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
 

@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) LIP6 2010-2013, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |        C a d e n c e   D E F   E x p o r t e r                  |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./crlcore/LefExport.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <memory>
@@ -57,6 +48,20 @@ namespace {
   using namespace std;
   using namespace Hurricane;
   using namespace CRL;
+
+
+  string  toLower ( const string& s )
+  {
+    string lowered;
+
+    for ( size_t i=0 ; i<s.size() ; ++i ) {
+      if ( (s[i] < 'A') or (s[i] > 'Z') )
+        lowered.push_back( s[i] );
+      else
+        lowered.push_back( s[i] + (int)'a'-(int)'A' );
+    }
+    return lowered;
+  }
 
 
 #define  CHECK_STATUS(status)         if ((status) != 0) return checkStatus(status);
@@ -121,8 +126,10 @@ namespace {
   };
 
 
-  int                LefDriver::_units     = 100;
-  AllianceFramework* LefDriver::_framework = NULL;
+  int                LefDriver::_units       = 100;
+  AllianceFramework* LefDriver::_framework   = NULL;
+  DbU::Unit          LefDriver::_sliceHeight = 0;
+  DbU::Unit          LefDriver::_pitchWidth  = 0;
 
 
          int                LefDriver::getUnits       () { return _units; }
@@ -198,7 +205,9 @@ namespace {
   {
     if ( lg == NULL ) return 0;
 
-    _status = lefwStartLayerRouting ( getString(lg->getLayer()->getName()).c_str() );
+    string layerName = getString(lg->getLayer()->getName());
+
+    _status = lefwStartLayerRouting ( layerName.c_str() );
     if ( _status != 0 ) return _status;
 
     _status = lefwLayerRouting ( (lg->getDirection() == Constant::Horizontal) ? "HORIZONTAL" : "VERTICAL"
@@ -215,7 +224,7 @@ namespace {
     _status = lefwLayerRoutingSpacing ( toLefUnits(lg->getPitch()-lg->getWireWidth()-DbU::lambda(1.0)) );
     if ( _status != 0 ) return _status;
  
-    return _status = lefwEndLayerRouting ( getString(lg->getLayer()->getName()).c_str() );
+    return _status = lefwEndLayerRouting ( layerName.c_str() );
   }
 
 
@@ -567,7 +576,7 @@ namespace {
 
   int  LefDriver::_manufacturingGridCbk ( lefwCallbackType_e, lefiUserData udata )
   {
-#if 0
+#if 1
   // The driver puts it before UNITS, which seems to displease Cadence Encounter.
   // So, as long as it doesn't prevent Encounter to works, disable it. 
     LefDriver* driver = (LefDriver*)udata;

@@ -102,6 +102,9 @@
  /*! \function     SearchPath& Environment::getLIBRARIES();
   *  \Return       The ordered list of libraries, under the form of a serch path.
   */
+ /*! \function     string  Environment::getLIBRARYPath(size_t i);
+  *  \Return       The path of library at index \c i in the search path.
+  */
  /*! \function     std::string  Environment::getPrint() const;
   *  \Return       A nicely formatted string to resume the current environements
   *                settings. Mainly for verbose outputs on ttys.

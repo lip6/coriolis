@@ -110,6 +110,16 @@
  /*! \function     void  AllianceFramework::addCellGauge(CellGauge* gauge);
   *  \Return       Add a new CellGauge. The last added becomes the default one.
   */
+
+ //! \function     Cell*  AllianceFramework::createCell( const string& name, AllianceLibrary* library=NULL );
+ //! \param        name     the name of the cell.
+ //! \param        library  an Alliance library.
+ //! \Return       the newly created Cell.
+ //!
+ //!               Create a new Cell named \c name in the AllianceLibrary \c library. If \c library is
+ //!               \c NULL, uses the working library. Checks are performed to ensure that
+ //!               in a given library no two cells have the same name.
+
  /*! \function     Cell*  AllianceFramework::getCell(const string& name, unsigned int mode, unsigned int depth=(unsigned int)-1);
   *  \param        name     the name of the Cell.
   *  \param        mode     control the loader behavior.
