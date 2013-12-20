@@ -486,7 +486,7 @@ namespace Katabatic {
     Session::revalidate();
 
     if (getConfiguration()->getAllowedDepth() > 2) {
-      for ( int i=0 ; i < 3 ; i++ ) {
+    //for ( int i=0 ; i < 3 ; i++ ) {
         for ( size_t depth=1 ; depth < getConfiguration()->getAllowedDepth()-2; ++depth ) {
           _desaturate( depth, globalNets, total, global );
           if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
@@ -494,8 +494,8 @@ namespace Katabatic {
 
         globalNets.clear ();
 
-        if (not _gcellGrid->updateDensity()) break;
-      }
+    //  if (not _gcellGrid->updateDensity()) break;
+    //}
       Session::revalidate();
     }
 

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2012, All Rights Reserved
+// Copyright (c) UPMC 2012-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -194,8 +193,11 @@ namespace Katabatic {
     else if (verticals  [0] == NULL) message = "HTee is missing mandatory vertical segment.";
     else if (verticals  [1] != NULL) message = "HTee has more than one vertical segment.";
     else if (   (not _horizontal1->isCreated() and not _horizontal2->isCreated())
-            and (_horizontal1->getY() != _horizontal2->getY()) )
+            and (_horizontal1->getY() != _horizontal2->getY()) ) {
       message = "HTee has misaligned horizontal segments";
+      message += " h1:" + getString(_horizontal1->getY());
+      message += " h2:" + getString(_horizontal2->getY());
+    }
     if (not message.empty()) {
       showTopologyError( message );
       setFlags( CntBadTopology );

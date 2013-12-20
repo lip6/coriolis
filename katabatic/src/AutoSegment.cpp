@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -646,7 +645,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::toConstraintAxis ()
+  bool  AutoSegment::toConstraintAxis ( unsigned int flags )
   {
     ltrace(200) << "toConstraintAxis() " << this << endl;
     ltracein(200);
@@ -668,13 +667,13 @@ namespace Katabatic {
     }
 
     if (getAxis() < constraintMin) {
-      setAxis( constraintMin );
+      setAxis( constraintMin, flags );
       ltraceout(200);
       return true;
     }
 
     if (getAxis() > constraintMax) {
-      setAxis( constraintMax );
+      setAxis( constraintMax, flags );
       ltraceout(200);
       return true;
     }
@@ -684,7 +683,7 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::toOptimalAxis ()
+  bool  AutoSegment::toOptimalAxis ( unsigned int flags )
   {
     ltrace(200) << "toOptimalAxis() " << this << endl;
     ltracein(200);
@@ -700,16 +699,18 @@ namespace Katabatic {
     DbU::Unit optimalMax = min( max(getOptimalMax(),constraintMin), constraintMax );
 
     if (getAxis() < optimalMin) {
-      setAxis( optimalMin );
+      setAxis( optimalMin, flags );
       ltraceout(200);
       return true;
     }
 
     if (getAxis() > optimalMax) {
-      setAxis( optimalMax );
+      setAxis( optimalMax, flags );
       ltraceout(200);
       return true;
     }
+
+    if (flags & KbRealignate) setAxis( getAxis(), flags );
 
     ltraceout(200);
     return false;

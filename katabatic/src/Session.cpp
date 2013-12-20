@@ -1,5 +1,4 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Session.cpp<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2008-2013, All Rights Reserved
@@ -189,7 +188,9 @@ namespace Katabatic {
         ltrace(159) << "Align @" << DbU::getLambda(canonical->getAxis())
                     << " on " << canonical << endl;
 
-        canonical->setAxis( canonical->getAxis(), KbRealignate );
+      //canonical->setAxis( canonical->getAxis(), KbRealignate );
+        if (canonical->isUnsetAxis()) canonical->toOptimalAxis( KbRealignate|KbPropagate );
+        else                          canonical->setAxis( canonical->getAxis(), KbRealignate|KbPropagate );
         aligneds.clear();
         ltraceout(110);
       }

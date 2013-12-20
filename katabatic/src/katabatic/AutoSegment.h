@@ -250,8 +250,8 @@ namespace Katabatic {
       virtual void                invalidate                 ( unsigned int flags=KbPropagate );
               void                computeOptimal             ( set<AutoSegment*>& processeds );
               void                setAxis                    ( DbU::Unit, unsigned int flags=KbNoFlags );
-              bool                toConstraintAxis           ();
-              bool                toOptimalAxis              ();
+              bool                toConstraintAxis           ( unsigned int flags=KbRealignate );
+              bool                toOptimalAxis              ( unsigned int flags=KbRealignate );
     // Collections & Filters.                                
               AutoSegments        getOnSourceContact         ( unsigned int direction );
               AutoSegments        getOnTargetContact         ( unsigned int direction );
