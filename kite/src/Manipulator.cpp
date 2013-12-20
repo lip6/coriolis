@@ -649,12 +649,19 @@ namespace Kite {
       ltrace(200) << "* Looking // " << segment2 << endl;
 
       if ( segment2->getNet() == ownerNet  ) continue;
-      if ( not toFree.intersect(segment2->getCanonicalInterval()) ) continue;
+      if ( not toFree.intersect(segment2->getCanonicalInterval()) ) {
+        ltrace(200) << "No intersection with: " << segment2->getCanonicalInterval() << endl;
+        continue;
+      }
       if ( segment2->isBlockage() or segment2->isFixed() ) {
+        ltrace(200) << "Ovelap is blockage or fixed." << endl;
         success = false;
         continue;
       }
-      if ( segment2->getId() >= maxId ) continue;
+      // if ( segment2->getId() >= maxId ) {
+      //   ltrace(200) << "Ovelap has an Id superior to AutoSegment::maxId:" << maxId << "." << endl;
+      //   continue;
+      // }
       ripupNet = segment2->getNet();
 
       DataNegociate* data2 = segment2->getDataNegociate();

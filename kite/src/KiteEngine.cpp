@@ -352,19 +352,18 @@ namespace Kite {
             TrackElement* element = track->getSegment( ielement );
          
             if (element->getNet() == NULL) {
-              ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (not Net): " << element << endl;
               continue;
             }
             if ( (not element->isFixed()) and (not element->isBlockage()) ) {
-              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
               continue;
             }
 
             Box elementBb       = element->getBoundingBox();
             int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
 
-            ltrace(300) << "Capacity from: " << (void*)element << ":" << element
-                        << ":" << elementCapacity << endl;
+            ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
             Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(element->getSourceU(),track->getAxis()) );
             Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(element->getTargetU(),track->getAxis()) );
@@ -390,19 +389,18 @@ namespace Kite {
             TrackElement* element = track->getSegment( ielement );
 
             if (element->getNet() == NULL) {
-              ltrace(300) << "Reject capacity from (not Net): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (not Net): " << element << endl;
               continue;
             }
             if ( (not element->isFixed()) and not (element->isBlockage()) ) {
-              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << (void*)element << ":" << element << endl;
+              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
               continue;
             }
 
             Box elementBb       = element->getBoundingBox();
             int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
 
-            ltrace(300) << "Capacity from: " << (void*)element << ":" << element
-                        << ":" << elementCapacity << endl;
+            ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
             Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(track->getAxis(),element->getSourceU()) );
             Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(track->getAxis(),element->getTargetU()) );
@@ -440,6 +438,7 @@ namespace Kite {
   // Test signals from <addaccu>.
   //DebugSession::addToTrace( getCell(), "auxsc37" );
   // Test signals from <amd2901_core_flat>.
+  //DebugSession::addToTrace( getCell(), "cout" );
   //DebugSession::addToTrace( getCell(), "acc_reg_ckx" );
   //DebugSession::addToTrace( getCell(), "acc_reg_nckx" );
   //DebugSession::addToTrace( getCell(), "i(0)" );
@@ -456,6 +455,7 @@ namespace Kite {
   // Test signals from <amd2901> (M1-VLSI).
   //DebugSession::addToTrace( getCell(), "zero_to_pads" );
   //DebugSession::addToTrace( getCell(), "shift_r" );
+  //DebugSession::addToTrace( getCell(), "cin_from_pads" );
   // Test signals from <MIPS> (R3000,micro-programmed).
   //DebugSession::addToTrace( getCell(), "scout" );
   //DebugSession::addToTrace( getCell(), "adr_1_n" );
@@ -490,6 +490,7 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_s_mw_se_sel0" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_badr_sd_sel1" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_21" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_cause_rx(1)" );
   //Test signals from <MIPS> (R3000,pipeline+chip).
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.banc.reada0" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(29)" );
