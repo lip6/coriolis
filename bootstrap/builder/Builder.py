@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -75,23 +75,24 @@ class Builder:
         return self.__dict__[attribute]
 
 
-    def _guessSvnTag ( self, project ):
-        revisionPattern = re.compile ( r"^Revision:\s*(?P<revision>\d+)" )
-        projectSvnDir   = os.path.join ( self.svnMethod+project.getRepository() )
-
-        command = [ "svn", "info", projectSvnDir ]
-        svnInfo = subprocess.Popen ( command, stdout=subprocess.PIPE )
-
-        for line in svnInfo.stdout.readlines():
-            m = revisionPattern.match ( line )
-            if m:
-                self.svnTag = m.group("revision")
-                print "Latest revision of project %s is %s." % (project.getName(),self.svnTag)
-                return
-
-        print "[WARNING] Cannot guess revision for project \"%s\"." % project.getName() 
-        print "          (using: \"x\")"
-        return
+   #def _guessGitHash ( self, project ):
+   #    revisionPattern = re.compile ( r"^Revision:\s*(?P<revision>\d+)" )
+   #    projectSvnDir   = os.path.join ( self.svnMethod+project.getRepository() )
+   #
+   #    os.chdir(  )
+   #    command = [ 'git', 'log', '--pretty="%h"', '-n', '1']
+   #    svnInfo = subprocess.Popen ( command, stdout=subprocess.PIPE )
+   #
+   #    for line in svnInfo.stdout.readlines():
+   #        m = revisionPattern.match ( line )
+   #        if m:
+   #            self.gitHash = m.group("revision")
+   #            print "Latest revision of project %s is %s." % (project.getName(),self.gitHash)
+   #            return
+   #
+   #    print "[WARNING] Cannot guess revision for project \"%s\"." % project.getName() 
+   #    print "          (using: \"x\")"
+   #    return
 
 
     def _configure ( self, fileIn, file ):
@@ -103,7 +104,7 @@ class Builder:
             substituted0 = line
 
             while not stable:
-                substituted1 = re.sub ( r"@svntag@"     , self.svnTag, substituted0 )
+                substituted1 = re.sub ( r"@svntag@"     , self.gitHash, substituted0 )
                 substituted1 = re.sub ( r"@coriolisTop@", "/opt/coriolis2" , substituted1 )
                 if substituted0 == substituted1: stable = True
                 else: substituted0 = substituted1
@@ -141,8 +142,8 @@ class Builder:
 
 
     def _build ( self, tool ):
-        toolSourceDir = os.path.join ( self.sourceDir, tool )
-        toolBuildDir  = os.path.join ( self.buildDir , tool )
+        toolSourceDir = os.path.join ( self.sourceDir, tool.getToolDir() )
+        toolBuildDir  = os.path.join ( self.buildDir , tool.name )
        # Supplied directly in the CMakeLists.txt.
        #cmakeModules  = os.path.join ( self.installDir, "share", "cmake", "Modules" )
 
@@ -188,8 +189,8 @@ class Builder:
             command  = [ "make" ]
            #command += [ "DESTDIR=%s" % self.installDir ]
             if self._enableDoc == "ON":
-               #if tool == "crlcore" or tool == "stratus1":
-                if tool == "stratus1":
+               #if tool.name == "crlcore" or tool.name == "stratus1":
+                if tool.name == "stratus1":
                     command += [ "dvi", "safepdf", "html" ]
             command += self._makeArguments
             print "Make command:", command
@@ -198,108 +199,108 @@ class Builder:
         return
 
 
-    def _svnStatus ( self, tool ):
-        toolSourceDir = os.path.join ( self.sourceDir , tool )
-        if not os.path.isdir(toolSourceDir):
-            if not self._quiet:
-                print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
-            return
-        os.chdir ( toolSourceDir )
-
-        print "Checking SVN status of tool: ", tool
-        command = [ "svn", "status", "-u", "-q" ]
-        self._execute ( command, "svn status -u -q" )
-        print
-        return
-
-
-    def _svnDiff ( self, tool ):
-        toolSourceDir = os.path.join ( self.sourceDir , tool )
-        if not os.path.isdir(toolSourceDir):
-            if not self._quiet:
-                print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
-            return
-        os.chdir ( toolSourceDir )
-
-        print "Doing a SVN diff of tool: ", tool
-        command = [ "svn", "diff" ]
-        if self.svnTag != "x":
-            command += [ "--revision", self.svnTag ]
-        self._execute ( command, "svn diff %s" % tool )
-        print
-        return
-
-
-    def _svnUpdate ( self, tool ):
-        toolSourceDir = os.path.join ( self.sourceDir , tool )
-        if not os.path.isdir(toolSourceDir):
-            if not self._quiet:
-                print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir)
-            return
-        os.chdir ( toolSourceDir )
-
-        print "Doing a SVN update of tool: ", tool
-        command = [ "svn", "update" ]
-        self._execute ( command, "svn update" )
-        print
-        return
-
-
-    def _svnCheckout ( self, tool ):
-        project = self._conf.getToolProject ( tool )
-        if not project:
-            print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
-                                 ,"Cannot guess the SVN repository." )
-            return
-        if not project.getRepository ():
-            print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
-            return
-
-        if not os.path.isdir(self.sourceDir):
-            print ErrorMessage( 0, "Source directory <%s> doesn't exists. Creating."%self.sourceDir )
-            os.makedirs( self.sourceDir )
-        
-        toolSvnTrunkDir = os.path.join ( self.svnMethod+project.getRepository(), tool, "trunk" )
-        os.chdir ( self.sourceDir )
-
-        print "Doing a SVN checkout of tool: ", tool
-        command = [ "svn", "co", toolSvnTrunkDir, tool ]
-        if self.svnTag != "x":
-            command += [ "--revision", self.svnTag ]
-        self._execute ( command, "svn checkout %s" % tool )
-        print
-        return
-
-
-    def _svnExport ( self, tool ):
-        project = self._conf.getToolProject ( tool )
-        if not project:
-            print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
-                                 , "Cannot guess the SVN repository.")
-            return
-        if not project.getRepository ():
-            print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
-            return
-        
-        toolSvnTrunkDir = os.path.join ( self.svnMethod+project.getRepository(), tool, "trunk" )
-
-        if not os.path.isdir ( self.archiveDir ):
-            os.mkdir ( self.archiveDir )
-        os.chdir ( self.archiveDir )
-
-        toolExportDir = os.path.join ( self.archiveDir, tool )
-        if os.path.isdir ( toolExportDir ):
-            print "Removing tool export (tarball) directory: \"%s\"." % toolExportDir
-            command = [ "/bin/rm", "-r", toolExportDir ]
-            self._execute ( command, "Removing tool export (tarball) directory" )
-
-        print "Doing a SVN export of tool: ", tool
-        command = [ "svn", "export", toolSvnTrunkDir, toolExportDir ]
-        if self.svnTag != "x":
-            command += [ "--revision", self.svnTag ]
-        self._execute ( command, "svn export %s" % toolExportDir )
-        print
-        return
+   #def _svnStatus ( self, tool ):
+   #    toolSourceDir = os.path.join ( self.sourceDir , tool )
+   #    if not os.path.isdir(toolSourceDir):
+   #        if not self._quiet:
+   #            print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
+   #        return
+   #    os.chdir ( toolSourceDir )
+   #
+   #    print "Checking SVN status of tool: ", tool
+   #    command = [ "svn", "status", "-u", "-q" ]
+   #    self._execute ( command, "svn status -u -q" )
+   #    print
+   #    return
+   #
+   #
+   #def _svnDiff ( self, tool ):
+   #    toolSourceDir = os.path.join ( self.sourceDir , tool )
+   #    if not os.path.isdir(toolSourceDir):
+   #        if not self._quiet:
+   #            print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
+   #        return
+   #    os.chdir ( toolSourceDir )
+   #
+   #    print "Doing a SVN diff of tool: ", tool
+   #    command = [ "svn", "diff" ]
+   #    if self.gitHash != "x":
+   #        command += [ "--revision", self.gitHash ]
+   #    self._execute ( command, "svn diff %s" % tool )
+   #    print
+   #    return
+   #
+   #
+   #def _svnUpdate ( self, tool ):
+   #    toolSourceDir = os.path.join ( self.sourceDir , tool )
+   #    if not os.path.isdir(toolSourceDir):
+   #        if not self._quiet:
+   #            print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir)
+   #        return
+   #    os.chdir ( toolSourceDir )
+   #
+   #    print "Doing a SVN update of tool: ", tool
+   #    command = [ "svn", "update" ]
+   #    self._execute ( command, "svn update" )
+   #    print
+   #    return
+   #
+   #
+   #def _svnCheckout ( self, tool ):
+   #    project = self._conf.getToolProject ( tool )
+   #    if not project:
+   #        print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
+   #                             ,"Cannot guess the SVN repository." )
+   #        return
+   #    if not project.getRepository ():
+   #        print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
+   #        return
+   #
+   #    if not os.path.isdir(self.sourceDir):
+   #        print ErrorMessage( 0, "Source directory <%s> doesn't exists. Creating."%self.sourceDir )
+   #        os.makedirs( self.sourceDir )
+   #    
+   #    toolSvnTrunkDir = os.path.join ( self.svnMethod+project.getRepository(), tool, "trunk" )
+   #    os.chdir ( self.sourceDir )
+   #
+   #    print "Doing a SVN checkout of tool: ", tool
+   #    command = [ "svn", "co", toolSvnTrunkDir, tool ]
+   #    if self.gitHash != "x":
+   #        command += [ "--revision", self.gitHash ]
+   #    self._execute ( command, "svn checkout %s" % tool )
+   #    print
+   #    return
+   #
+   #
+   #def _svnExport ( self, tool ):
+   #    project = self._conf.getToolProject ( tool )
+   #    if not project:
+   #        print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
+   #                             , "Cannot guess the SVN repository.")
+   #        return
+   #    if not project.getRepository ():
+   #        print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
+   #        return
+   #    
+   #    toolSvnTrunkDir = os.path.join ( self.svnMethod+project.getRepository(), tool, "trunk" )
+   #
+   #    if not os.path.isdir ( self.archiveDir ):
+   #        os.mkdir ( self.archiveDir )
+   #    os.chdir ( self.archiveDir )
+   #
+   #    toolExportDir = os.path.join ( self.archiveDir, tool )
+   #    if os.path.isdir ( toolExportDir ):
+   #        print "Removing tool export (tarball) directory: \"%s\"." % toolExportDir
+   #        command = [ "/bin/rm", "-r", toolExportDir ]
+   #        self._execute ( command, "Removing tool export (tarball) directory" )
+   #
+   #    print "Doing a SVN export of tool: ", tool
+   #    command = [ "svn", "export", toolSvnTrunkDir, toolExportDir ]
+   #    if self.gitHash != "x":
+   #        command += [ "--revision", self.gitHash ]
+   #    self._execute ( command, "svn export %s" % toolExportDir )
+   #    print
+   #    return
 
 
     def _setEnvironment ( self, systemVariable, userVariable ):
@@ -347,12 +348,8 @@ class Builder:
 
         for project in self.projects:
             for tool in project.getActives():
-                print "\nProcessing tool: \"%s\"." % tool
+                print "\nProcessing tool: \"%s\"." % tool.name
                 getattr(self,command) ( tool )
-
-        for tool in self.standalones:
-            print "\nProcessing tool: \"%s\"." % tool
-            getattr(self,command) ( tool )
         return
 
 
@@ -373,81 +370,81 @@ class Builder:
         return
 
 
-    def svnStatus ( self, tools, projects ):
-        self._commandTemplate ( tools, projects, "_svnStatus" )
-        return
-
-
-    def svnUpdate ( self, tools, projects ):
-        self._commandTemplate ( tools, projects, "_svnUpdate" )
-        return
-
-
-    def svnCheckout ( self, tools, projects ):
-        self._commandTemplate ( tools, projects, "_svnCheckout" )
-        return
-
-
-    def svnDiff ( self, tools, projects ):
-        self._commandTemplate ( tools, projects, "_svnDiff" )
-        return
-
-
-    def svnExport ( self, tools, projects ):
-        self._commandTemplate ( tools, projects, "_svnExport" )
-        return
-
-
-    def svnTarball ( self, tools, projects ):
-        if self.svnTag == "x":
-            self._guessSvnTag ( self.getProject(projects[0]) )
-
-        self._doSpec ()
-        self._doDebChangelog ()
-        
-        if os.path.isdir(self.tarballDir):
-            print "Removing previous tarball directory: \"%s\"." % self.tarballDir
-            command = [ "/bin/rm", "-rf", self.tarballDir ]
-            self._execute ( command, "Removing top export (tarball) directory" )
- 
-        print "Creating tarball directory: \"%s\"." % self.tarballDir
-        os.makedirs ( self.tarballDir )
-        self.svnExport ( tools, projects )
-
-       # Remove unpublisheds (yet) tools/files.
-        for item in self.packageExcludes:
-            command = [ "/bin/rm", "-rf", os.path.join(self.archiveDir,item) ]
-            self._execute ( command, "rm of %s failed" % item)
-
-       # Adds files neededs only for packaging purpose.
-        command = [ "/bin/cp", "-r", os.path.join(self.sourceDir ,"bootstrap","Makefile.package")
-                                   , os.path.join(self.archiveDir,"Makefile") ]
-        self._execute ( command, "copy of %s failed" % "boostrap/Makefile.package")
-
-        command = [ "/bin/cp", self.specFile, self.archiveDir ]
-        self._execute ( command, "Copying RPM spec file" )
-
-        command = [ "/bin/cp", "-r", self.debianDir, self.archiveDir ]
-        self._execute ( command, "Copying Debian/Ubuntu package control files" )
- 
-        os.chdir ( self.archiveDir )
-       #command = [ "/usr/bin/patch", "--remove-empty-files"
-       #                            , "--no-backup-if-mismatch"
-       #                            , "-p0", "-i", self.distribPatch ]
-       #self._execute ( command, "patch for distribution command failed" )
-
-        os.chdir ( self.tarballDir )
-        command = [ "/bin/tar"
-                  , "--exclude-backups"
-                  , "--exclude-vcs"
-                  , "-jcvf", self.sourceTarBz2, os.path.basename(self.archiveDir) ]
-        self._execute ( command, "tar command failed" )
- 
-        print "Cleanup SVN export tarball archive directory: \"%s\"." % self.archiveDir
-        command = [ "/bin/rm", "-rf", self.archiveDir ]
-        self._execute ( command, "Removing archive export (tarball) directory" )
-
-        return
+   #def svnStatus ( self, tools, projects ):
+   #    self._commandTemplate ( tools, projects, "_svnStatus" )
+   #    return
+   #
+   #
+   #def svnUpdate ( self, tools, projects ):
+   #    self._commandTemplate ( tools, projects, "_svnUpdate" )
+   #    return
+   #
+   #
+   #def svnCheckout ( self, tools, projects ):
+   #    self._commandTemplate ( tools, projects, "_svnCheckout" )
+   #    return
+   #
+   #
+   #def svnDiff ( self, tools, projects ):
+   #    self._commandTemplate ( tools, projects, "_svnDiff" )
+   #    return
+   #
+   #
+   #def svnExport ( self, tools, projects ):
+   #    self._commandTemplate ( tools, projects, "_svnExport" )
+   #    return
+   #
+   #
+   #def svnTarball ( self, tools, projects ):
+   #    if self.gitHash == "x":
+   #        self._guessGitHash ( self.getProject(projects[0]) )
+   #
+   #    self._doSpec ()
+   #    self._doDebChangelog ()
+   #    
+   #    if os.path.isdir(self.tarballDir):
+   #        print "Removing previous tarball directory: \"%s\"." % self.tarballDir
+   #        command = [ "/bin/rm", "-rf", self.tarballDir ]
+   #        self._execute ( command, "Removing top export (tarball) directory" )
+   #
+   #    print "Creating tarball directory: \"%s\"." % self.tarballDir
+   #    os.makedirs ( self.tarballDir )
+   #    self.svnExport ( tools, projects )
+   #
+   #   # Remove unpublisheds (yet) tools/files.
+   #    for item in self.packageExcludes:
+   #        command = [ "/bin/rm", "-rf", os.path.join(self.archiveDir,item) ]
+   #        self._execute ( command, "rm of %s failed" % item)
+   #
+   #   # Adds files neededs only for packaging purpose.
+   #    command = [ "/bin/cp", "-r", os.path.join(self.sourceDir ,"bootstrap","Makefile.package")
+   #                               , os.path.join(self.archiveDir,"Makefile") ]
+   #    self._execute ( command, "copy of %s failed" % "boostrap/Makefile.package")
+   #
+   #    command = [ "/bin/cp", self.specFile, self.archiveDir ]
+   #    self._execute ( command, "Copying RPM spec file" )
+   #
+   #    command = [ "/bin/cp", "-r", self.debianDir, self.archiveDir ]
+   #    self._execute ( command, "Copying Debian/Ubuntu package control files" )
+   #
+   #    os.chdir ( self.archiveDir )
+   #   #command = [ "/usr/bin/patch", "--remove-empty-files"
+   #   #                            , "--no-backup-if-mismatch"
+   #   #                            , "-p0", "-i", self.distribPatch ]
+   #   #self._execute ( command, "patch for distribution command failed" )
+   #
+   #    os.chdir ( self.tarballDir )
+   #    command = [ "/bin/tar"
+   #              , "--exclude-backups"
+   #              , "--exclude-vcs"
+   #              , "-jcvf", self.sourceTarBz2, os.path.basename(self.archiveDir) ]
+   #    self._execute ( command, "tar command failed" )
+   #
+   #    print "Cleanup SVN export tarball archive directory: \"%s\"." % self.archiveDir
+   #    command = [ "/bin/rm", "-rf", self.archiveDir ]
+   #    self._execute ( command, "Removing archive export (tarball) directory" )
+   #
+   #    return
 
 
     def userTarball ( self, tools, projects ):
@@ -516,7 +513,7 @@ class Builder:
 
         os.chdir ( self.debbuildDir )
         sourceFile  = os.path.join ( self.tarballDir , self.sourceTarBz2 )
-        debOrigFile = os.path.join ( self.debbuildDir, "coriolis2_1.0.%s.orig.tar.bz2" % self.svnTag )
+        debOrigFile = os.path.join ( self.debbuildDir, "coriolis2_1.0.%s.orig.tar.bz2" % self.gitHash )
         if not os.path.islink(debOrigFile):
           os.link ( sourceFile, debOrigFile )
 
@@ -526,7 +523,7 @@ class Builder:
        #command = [ "/bin/cp", "-r", self.debianDir, "." ]
        #self._execute ( command, "Copying Debian/Ubuntu package control files" )
 
-        packageDir = os.path.join ( self.debbuildDir, "coriolis2-1.0.%s" % self.svnTag )
+        packageDir = os.path.join ( self.debbuildDir, "coriolis2-1.0.%s" % self.gitHash )
         os.chdir ( packageDir )
 
         self._environment["CFLAGS"  ] = "-O2"

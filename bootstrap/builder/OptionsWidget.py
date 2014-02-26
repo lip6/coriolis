@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -48,20 +48,21 @@ class OptionsWidget ( QWidget ):
         self._projects += [ ProjectWidgets(project) ]
     
     gLayout = QGridLayout()
-    for column in range(len(self._projects)):
-      self._projects[column].addToLayout( column, gLayout )
+    column  = 0
+    for iproject in range(len(self._projects)):
+      column += self._projects[iproject].addToLayout( column, gLayout )
     toolsGroup = QGroupBox( 'Projects && Tools' )
     toolsGroup.setLayout( gLayout )
 
     scrollToolsGroup = QScrollArea()
-    scrollToolsGroup.setMinimumHeight( 400 )
+    scrollToolsGroup.setMinimumHeight( 350 )
    #scrollToolsGroup.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOn )
     scrollToolsGroup.setWidget( toolsGroup )
 
     self._buildMode = QComboBox()
     self._buildMode.addItems( ('Release', 'Debug') )
-    self._svnUpdate = QCheckBox( 'SVN Update' )
-    self._svnStatus = QCheckBox( 'SVN Status' )
+   #self._svnUpdate = QCheckBox( 'SVN Update' )
+   #self._svnStatus = QCheckBox( 'SVN Status' )
     self._make      = QCheckBox( 'Build' )
     self._enableDoc = QCheckBox( 'Build Documentation' )
     self._noCache   = QCheckBox( 'Remove previous CMake cache' )
@@ -73,13 +74,13 @@ class OptionsWidget ( QWidget ):
 
     self._commandGroup = QButtonGroup()
     self._commandGroup.setExclusive( True )
-    self._commandGroup.addButton( self._svnUpdate )
-    self._commandGroup.addButton( self._svnStatus )
+   #self._commandGroup.addButton( self._svnUpdate )
+   #self._commandGroup.addButton( self._svnStatus )
     self._commandGroup.addButton( self._make )
 
     vLayout = QVBoxLayout()
-    vLayout.addWidget( self._svnUpdate )
-    vLayout.addWidget( self._svnStatus )
+   #vLayout.addWidget( self._svnUpdate )
+   #vLayout.addWidget( self._svnStatus )
     vLayout.addWidget( self._make )
     vLayout.addStretch()
     commandGroup = QGroupBox( 'Command' )
@@ -121,8 +122,8 @@ class OptionsWidget ( QWidget ):
   def _getProjects  ( self ): return self._projects
   def _getBuildMode ( self ): return self._buildMode.currentText()
   def _getThreads   ( self ): return self._threads.currentText()
-  def _getSvnUpdate ( self ): return self._svnUpdate.isChecked()
-  def _getSvnStatus ( self ): return self._svnStatus.isChecked()
+ #def _getSvnUpdate ( self ): return self._svnUpdate.isChecked()
+ #def _getSvnStatus ( self ): return self._svnStatus.isChecked()
   def _getMake      ( self ): return self._make.isChecked()
   def _getEnableDoc ( self ): return self._enableDoc.isChecked()
   def _getNoCache   ( self ): return self._noCache.isChecked()
@@ -132,8 +133,8 @@ class OptionsWidget ( QWidget ):
   projects  = property( _getProjects )
   buildMode = property( _getBuildMode )
   threads   = property( _getThreads )
-  svnUpdate = property( _getSvnUpdate )
-  svnStatus = property( _getSvnStatus )
+ #svnUpdate = property( _getSvnUpdate )
+ #svnStatus = property( _getSvnStatus )
   make      = property( _getMake )
   enableDoc = property( _getEnableDoc )
   noCache   = property( _getNoCache )
@@ -143,8 +144,8 @@ class OptionsWidget ( QWidget ):
 
   def readSettings ( self ):
     settings = QSettings()
-    self._svnUpdate.setChecked( settings.value('builder/svnUpdate').toBool() )
-    self._svnStatus.setChecked( settings.value('builder/svnStatus').toBool() )
+   #self._svnUpdate.setChecked( settings.value('builder/svnUpdate').toBool() )
+   #self._svnStatus.setChecked( settings.value('builder/svnStatus').toBool() )
     self._make     .setChecked( settings.value('builder/make'     ).toBool() )
     self._enableDoc.setChecked( settings.value('builder/enableDoc').toBool() )
     self._noCache  .setChecked( settings.value('builder/noCache'  ).toBool() )
@@ -165,8 +166,8 @@ class OptionsWidget ( QWidget ):
 
   def saveSettings ( self ):
     settings = QSettings()
-    settings.setValue('builder/svnUpdate', self._svnUpdate.isChecked() )
-    settings.setValue('builder/svnStatus', self._svnStatus.isChecked() )
+   #settings.setValue('builder/svnUpdate', self._svnUpdate.isChecked() )
+   #settings.setValue('builder/svnStatus', self._svnStatus.isChecked() )
     settings.setValue('builder/make'     , self._make     .isChecked() )
     settings.setValue('builder/enableDoc', self._enableDoc.isChecked() )
     settings.setValue('builder/buildMode', self._buildMode.currentText() )

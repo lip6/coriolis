@@ -1,0 +1,62 @@
+ // -*- mode: C++; explicit-buffer-name: "Constants.dox<katabatic>" -*-
+
+ namespace Katabatic {
+
+ //! \enum        FunctionFlag
+ //!              A set of flags to that can be passed to functions/methods througout
+ //!              all Katabatic.
+
+ //! \var         KbOpenSession
+ //!              Tells the function to open it's own Session, otherwise use
+ //!              the one that should already have been opened.
+
+ //! \var         KbRealignate
+ //!              On AutoSegment axis manipulation, force the realignment of all
+ //!              the segment on an aligned set, even is the axis of the canonical
+ //!              is already at the right coordinate.
+
+ //! \var         KbNativeConstraints
+ //!              Ignore user-defined constraints or terminal induced ones (for AutoContacts
+ //!              anchored on terminals) and return the owning GCell alone.
+
+ //! \var         KbForceMove
+ //!              Tells the function to force move, even if it is not needed.
+
+ //! \var         KbHorizontal
+ //!              Request some action to be done in the horizontal direction.
+
+ //! \var         KbVertical
+ //!              Request some action to be done in the vertical direction.
+
+ //! \var         KbWithPerpands
+ //!              Request that AutoSegments in perpandicular direction should be includeds.
+
+ //! \var         KbBySource
+ //!              Request AutoSegments anchored by their source anchor.
+
+ //! \var         KbByTarget
+ //!              Request AutoSegments anchored by their target anchor.
+
+ //! \var         KbWarnOnError
+ //!              Display a warning if something has gone wrong.
+
+ //! \var         KbPropagate
+ //!              The action will affect all the segments on an aligned set.
+
+ //! \var         KbUseAboveLayer
+ //!              Request/tell the a above layer has been used.
+
+ //! \var         KbUseBelowLayer
+ //!              Request/tell the a below layer has been used.
+
+ //! \var         KbDoglegOnLeft
+ //!              The dogleg has occured on the left <em>of something</em>
+
+ //! \var         KbDoglegOnRight
+ //!              The dogleg has occured on the right <em>of something</em>
+
+ //! \var         KbHalfSlacken
+ //!              For AutoSegment::slacken(), change the overconstrained limit
+ //!              from 10 tracks down to 3 (hard-wired).
+
+ }

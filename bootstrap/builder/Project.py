@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -15,37 +15,58 @@
 # +-----------------------------------------------------------------+
 
 
+class Tool ( object ):
+
+    def __init__ ( self, project, name ):
+        self.project = project
+        self.name    = name
+        self.active  = False
+        return
+
+    def getToolDir ( self ): return self.project.getName()+'/'+self.name
+
+
 class Project ( object ):
 
-    def __init__ ( self, name, tools, repository ):
+    def __init__ ( self, name, toolNames, repository ):
         self._name       = name
-        self._tools      = tools
+        self._tools      = []
         self._repository = repository
-        self._actives    = []
+
+        for toolName in toolNames:
+            self._tools.append( Tool(self,toolName) )
         return
 
     def getName       ( self ): return self._name
     def getTools      ( self ): return self._tools
     def getRepository ( self ): return self._repository
-    def getActives    ( self ): return self._actives
-    def hasTool       ( self, tool ): return tool in self._tools
+
+    def hasTool ( self, toolName ):
+        for tool in self._tools:
+            if tool.name == toolName: return True
+        return False
+
+    def getActives ( self ):
+        actives = []
+        for tool in self._tools:
+            if tool.active: actives.append( tool )
+        return actives
 
     def desactivate ( self ):
         self._active = []
         return
 
     def activateAll ( self ):
-        self._actives = self._tools
+        for tool in self._tools:
+            tool.active = True
         return
     
-    def activate ( self, tools ):
-       # Build the ordered list.
-        for tool in self._tools:
-            if (tool in tools) and not (tool in self._actives):
-                self._actives += [ tool ]
-       # Find the tools not part of the project.
+    def activate ( self, toolNames ):
         rejecteds = []
-        for tool in tools:
-            if not (tool in self._tools) and (not tool in rejecteds):
-                rejecteds += [ tool ]
+        for tool in self._tools:
+            if tool.name in toolNames:
+                tool.active = True
+            else:
+                if tool.name in toolNames:
+                    rejecteds.append( tool.name )
         return rejecteds

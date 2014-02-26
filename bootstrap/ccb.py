@@ -3,7 +3,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2008-2013, All Rights Reserved
+# Copyright (c) UPMC 2008-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -116,11 +116,11 @@ def autoLocate ():
     
     builderDir = None
     locations  = [ os.path.abspath(os.path.dirname(sys.argv[0]))
-                 , os.environ['HOME']+'/coriolis-2.x/src/bootstrap'
-                 , os.environ['HOME']+'/coriolis/src/bootstrap'
-                 , os.environ['HOME']+'/chams-1.x/src/bootstrap'
-                 , os.environ['HOME']+'/chams/src/bootstrap'
-                 , '/users/outil/coriolis/coriolis-2.x/src/bootstrap'
+                 , os.environ['HOME']+'/coriolis-2.x/src/coriolis/bootstrap'
+                 , os.environ['HOME']+'/coriolis/src/coriolis/bootstrap'
+                 , os.environ['HOME']+'/chams-1.x/src/coriolis/bootstrap'
+                 , os.environ['HOME']+'/chams/src/coriolis/bootstrap'
+                 , '/users/outil/coriolis/coriolis-2.x/src/coriolis/bootstrap'
                  , os.environ['HOME']+'/coriolis-2.x/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
                  , os.environ['HOME']+'/chams-1.x/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
                  , os.environ['HOME']+'/chams/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
@@ -173,12 +173,13 @@ parser.add_option (       "--make"       , action="store"      , type="string", 
 parser.add_option (       "--project"    , action="append"     , type="string", dest="projects"   , help="The name of a project to build (may appears any number of time)." )
 parser.add_option ( "-t", "--tool"       , action="append"     , type="string", dest="tools"      , help="The name of a tool to build (may appears any number of time)." )
 # SVN repository relateds.
-parser.add_option ( "--svn-tag"          , action="store"      , type="string", dest="svnTag"     , help="Explicitly select a SVN tag (for SVN related commands)." )
-parser.add_option ( "--svn-method"       , action="store"      , type="string", dest="svnMethod"  , help="Allows to sets the svn checkout method (svn+ssh://coriolis.soc.lip6.fr)." )
-parser.add_option ( "--svn-status"       , action="store_true"                , dest="svnStatus"  , help="Check status against the SVN repository." )
-parser.add_option ( "--svn-diff"         , action="store_true"                , dest="svnDiff"    , help="Perform a diff against the SVN repository." )
-parser.add_option ( "--svn-update"       , action="store_true"                , dest="svnUpdate"  , help="Update to the latest SVN version *or* the one given by svn-tag." )
-parser.add_option ( "--svn-checkout"     , action="store_true"                , dest="svnCheckout", help="Checkout the latest SVN version *or* the one given by svn-tag." )
+# Have to be ported to Git.
+#parser.add_option ( "--svn-tag"          , action="store"      , type="string", dest="svnTag"     , help="Explicitly select a SVN tag (for SVN related commands)." )
+#parser.add_option ( "--svn-method"       , action="store"      , type="string", dest="svnMethod"  , help="Allows to sets the svn checkout method (svn+ssh://coriolis.soc.lip6.fr)." )
+#parser.add_option ( "--svn-status"       , action="store_true"                , dest="svnStatus"  , help="Check status against the SVN repository." )
+#parser.add_option ( "--svn-diff"         , action="store_true"                , dest="svnDiff"    , help="Perform a diff against the SVN repository." )
+#parser.add_option ( "--svn-update"       , action="store_true"                , dest="svnUpdate"  , help="Update to the latest SVN version *or* the one given by svn-tag." )
+#parser.add_option ( "--svn-checkout"     , action="store_true"                , dest="svnCheckout", help="Checkout the latest SVN version *or* the one given by svn-tag." )
 # Miscellaneous.                                                
 parser.add_option ( "--user-tarball"     , action="store_true"                , dest="userTarball", help="Regenerate a tarball from checked out sources (in <root>/tarball/." )
 parser.add_option ( "--tarball"          , action="store_true"                , dest="tarball"    , help="Regenerate a tarball (in <root>/tarball/." )
@@ -239,14 +240,14 @@ else:
     if options.noCache:          builder.noCache           = True
     if options.rmBuild:          builder.rmBuild           = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
-    if options.svnMethod:        builder.svnMethod         = options.svnMethod
-    if options.svnTag:           builder.svnTag            = options.svnTag
+   #if options.svnMethod:        builder.svnMethod         = options.svnMethod
+   #if options.svnTag:           builder.svnTag            = options.svnTag
     
-    if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
-    elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
-    elif options.svnDiff:     builder.svnDiff     ( tools=options.tools, projects=options.projects )
-    elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
-    elif options.userTarball: builder.userTarball ( tools=options.tools, projects=options.projects )
+   #if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
+   #elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )
+   #elif options.svnDiff:     builder.svnDiff     ( tools=options.tools, projects=options.projects )
+   #elif options.svnCheckout: builder.svnCheckout ( tools=options.tools, projects=options.projects )
+    if   options.userTarball: builder.userTarball ( tools=options.tools, projects=options.projects )
     elif options.tarball:     builder.svnTarball  ( tools=options.tools, projects=options.projects )
     elif options.doRpm:       builder.doRpm       ()
     elif options.doDeb:       builder.doDeb       ()

@@ -1,0 +1,197 @@
+
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ //! \enum        FunctionFlag
+
+ //! \typedef     typedef  Hurricane::Filter<AutoSegment*>  AutoSegmentHF;
+ //!              Shorthand for AutoSegment Hurricane Filter.
+
+ //! \typedef     typedef  Hurricane::Locator<AutoSegment*>  AutoSegmentHL;
+ //!              Shorthand for AutoSegment Hurricane Locator.
+
+ //! \typedef     typedef  Hurricane::Collection<AutoSegment*>  AutoSegmentHC;
+ //!              Shorthand for AutoSegment Hurricane Collection.
+
+ //! \typedef     typedef  GenericFilter<AutoSegment*>  AutoSegmentFilter;
+ //!              Shorthand for AutoSegment Hurricane Generic Filter
+ //!              (filter with \c auto_ptr<> like support).
+
+ //! \typedef     typedef  GenericLocator<AutoSegment*>  AutoSegmentLocator;
+ //!              Shorthand for AutoSegment Hurricane Generic Locator
+ //!              (locator with \c auto_ptr<> like support).
+
+ //! \typedef     typedef  GenericCollection<AutoSegment*>  AutoSegments;
+ //!              Shorthand for AutoSegment Hurricane Generic Collection
+ //!              (collection with \c auto_ptr<> like support).
+
+ /*! \class       AutoSegments_OnContact
+  *  \brief       All AutoSegment anchored on a Contact
+  *
+  *               A Collection to iterate over all the AutoSegment anchored on
+  *               \c contact. If supplied, the AutoSegment \c master will be
+  *               excluded from the list.
+  *
+  *  \remark      If a Hurricane::Segment is anchored on the \c contact, but is not
+  *               associated to an AutoSegment, it will be silently skipped.
+  */
+
+ //! \function    AutoSegments_OnContact::AutoSegments_OnContact ( AutoSegment* master, Contact* contact );
+ //! \param       master   Exclude this AutoSegment from the Collection.
+ //! \param       contact  The Hurricane Contact over which to iterate.
+ //!
+ //!              Construct a Collection of all the AutoSegment anchored on \c contact.
+
+ //! \function    AutoSegments_OnContact::AutoSegments_OnContact ( AutoSegment* master, Contact* contact );
+ //!              Create the collection of all AutoSegments direcly anchored on \c contact,
+ //!              with exclusion of \c master.
+
+ //! \function    AutoSegments_OnContact::AutoSegments_OnContact ( const AutoSegments_OnContact& );
+ //!              Copy constructor.
+
+ //! \function    AutoSegmentHC* AutoSegments_OnContact::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ //! \function    AutoSegmentHC* AutoSegments_OnContact::getLocator () const;
+ //! \sreturn     A deep copy of the Collection Locator.
+
+
+ /*! \class       AutoSegments_Aligneds
+  *  \brief       All aligned AutoSegment of a set.
+  *
+  *               A Collection to iterate over all the AutoSegment aligned with \c master.
+  *               The \c master itself will not be included in the walkthrough.
+  *               If the Katabatic::KbWithPerpands flag is passed as argument, the collection
+  *               will also includes the AutoSegments directly perpandicular to the aligned
+  *               set.
+  *
+  *  \remark      AutoSegments are forced to be aligneds only when connected through
+  *               AutoContactHTee or AutoContactVTee.
+  *               
+  */
+
+ //! \function    AutoSegments_Aligneds::AutoSegments_Aligneds ( AutoSegment* master, unsigned int flags );
+ //!              Create a collection of all the AutoSegment aligned on \c master
+ //!              (master itself is excluded from the Collection). If the flag Katabatic::KbWithPerpands
+ //!              is given the directly perpandicular AutoSegment will also be includeds.
+
+ //! \function    AutoSegments_Aligneds::AutoSegments_Aligneds ( const AutoSegments_Aligneds& );
+ //!              Copy constructor.
+
+ //! \function    AutoSegmentHC* AutoSegments_Aligneds::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ //! \function    AutoSegmentHC* AutoSegments_Aligneds::getLocator () const;
+ //! \sreturn     A deep copy of the Collection Locator.
+
+
+ /*! \class       AutoSegments_Perpandiculars
+  *  \brief       All perpandicular AutoSegment to a set of aligneds.
+  *
+  *               A Collection to iterate over all the AutoSegment perpandicular to
+  *               the set of aligned AutoSegment of \c master.
+  *
+  *  \remark      This Collection is canonical aware (work on the aligned set).
+  *               
+  */
+
+ //! \function    AutoSegments_Perpandiculars::AutoSegments_Perpandiculars ( AutoSegment* master );
+ //!              Create a collection of all the AutoSegment perpandicular to the aligned
+ //!              set of \c master.
+
+ //! \function    AutoSegments_Perpandiculars::AutoSegments_Perpandiculars ( const AutoSegments_Perpandiculars& );
+ //!              Copy constructor.
+
+ //! \function    AutoSegmentHC* AutoSegments_Perpandiculars::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ //! \function    AutoSegmentHC* AutoSegments_Perpandiculars::getLocator () const;
+ //! \sreturn     A deep copy of the Collection Locator.
+
+
+ /*! \class       AutoSegments_AnchorOnGCell
+  *  \brief       All AutoSegment Beginning and/or Stopping in a GCell
+  *
+  *               A Collection to iterate over all the AutoSegment that begin from and/or
+  *               end in a GCell.
+  *               
+  */
+
+ //! \function    AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell ( GCell* fcell, unsigned int flags );
+ //!              Create a collection of all the AutoSegment beginning from and/or
+ //!              ending in \c fcell. The set returned by the Collection is selected
+ //!              through \c flags :
+ //!                - Katabatic::KbBySource : include AutoSegment starting from \c fcell.
+ //!                - Katabatic::KbByTarget : include AutoSegment ending in \c fcell.
+ //!                - Katabatic::KbHorizontal : include horizontal AutoSegment.
+ //!                - Katabatic::KbVertical : include vertical AutoSegment.
+
+ //! \function    AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell ( const AutoSegments_AnchorOnGCell& );
+ //!              Copy constructor.
+
+ //! \function    AutoSegmentHC* AutoSegments_AnchorOnGCell::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ //! \function    AutoSegmentHC* AutoSegments_AnchorOnGCell::getLocator () const;
+ //! \sreturn     A deep copy of the Collection Locator.
+
+
+ /*! \class       AutoSegments_OnContact
+  *  \brief       All AutoSegment Beginning from an AutoContact
+  *
+  *               A Collection to iterate over all the AutoSegment that begin from
+  *               AutoContact. As AutoSegments are kept orienteds (source anchor must
+  *               be lower than target), selecting source anchored AutoSegments
+  *               implies that they are starting from this AutoContact.
+  */
+
+ //! \function    AutoSegments_CachedOnContact::AutoSegments_CachedOnContact ( AutoContact* source, unsigned int direction=KbHorizontal|KbVertical );
+ //!              Create a collection of all the AutoSegment anchored on \c source.
+ //!              Use \c direction to select the kind of AutoSegments:
+ //!                - KbHorizontal : include horizontal AutoSegment.
+ //!                - KbVertical : include vertical AutoSegment.
+
+ //! \function    AutoSegments_CachedOnContact::AutoSegments_CachedOnContact ( const AutoSegments_CachedOnContact& );
+ //!              Copy constructor.
+
+ //! \function    AutoSegmentHC* AutoSegments_CachedOnContact::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ //! \function    AutoSegmentHC* AutoSegments_CachedOnContact::getLocator () const;
+ //! \sreturn     A deep copy of the Collection Locator.
+
+
+ /*! \class       AutoSegments_IsAccountable
+  *  \brief       Filter to select accoutable AutoSegment.
+  *
+  *               A Filter to select accoutable AutoSegment. An AutoSegment is said
+  *               to be accountable if it is canonical (in the sense of an aligned set).
+  */
+
+ //! \function    bool  AutoSegments_IsAccountable::accept ( AutoSegment* segment ) const;
+ //! \sreturn     \true if the \c segment is accountable (i.e. canonical).
+
+ //! \function    AutoSegmentHF* AutoSegments_IsAccountable::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+
+ /*! \class       AutoSegments_InDirection
+  *  \brief       Filter to select AutoSegment in a given direction.
+  *
+  *               A Filter to select AutoSegment in a specific direction.
+  */
+
+ //! \function    AutoSegments_InDirection::AutoSegments_InDirection ( unsigned int direction );
+ //!              Create a filter for AutoSegment in \c direction (Katabatic::KbHorizontal
+ //!              or Katabatic::KbVertical).
+
+ //! \function    bool  AutoSegments_InDirection::accept ( AutoSegment* segment ) const;
+ //! \sreturn     \true if the \c segment is in the correct direction.
+
+ //! \function    AutoSegmentHF* AutoSegments_InDirection::getClone () const;
+ //! \sreturn     A deep copy of the Collection.
+
+ }
+

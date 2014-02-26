@@ -1,0 +1,66 @@
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ /*! \class        AutoContactTerminal
+  *
+  *  \brief        AutoContact Terminal (S/T is a Terminal)
+  *
+  *                AutoContact that are directly attached by either source or target
+  *                or both to a terminal.
+  */
+
+ //! \function    AutoContactTerminal* AutoContactTerminal::create ( GCell* gcell, Component* rp, const Layer* layer, const DbU::Unit x, const DbU::Unit y, const DbU::Unit width, const DbU::Unit height );
+ //! \param       gcell  The GCell into which create the AutoContact.
+ //! \param       rp     The Component on which to anchor the AutoContact.
+ //! \param       layer  The Layer of the AutoContact.
+ //! \param       x      The absolute X position.
+ //! \param       y      The absolute Y position.
+ //! \param       width  The width of the AutoContact.
+ //! \param       height The height of the AutoContact.
+ //! \return      The created AutoContact.
+ //!
+ //!              Create a new AutoContactTerminal anchored on \c rp. <code>(x,y)</code> gives
+ //!              the \e absolute position.
+ //!
+ //!              The anchor component \c rp is most often a Hurricane::RoutingPad (occurrencing
+ //!              a Hurricane::Segment) or directly a Hurricane::Segment, in case of RoutingPad
+ //!              layer promotion.
+
+ //! \function    AutoContactTerminal* AutoContactTerminal::create ( GCell* gcell, Component* rp, const Layer* layer, Point point, const DbU::Unit width, const DbU::Unit height );
+ //! \param       gcell  The GCell into which create the AutoContact.
+ //! \param       rp     The RoutingPad on which to anchor the AutoContact.
+ //! \param       layer  The Layer of the AutoContact.
+ //! \param       point  The absolute position.
+ //! \param       width  The width of the AutoContact.
+ //! \param       height The height of the AutoContact.
+ //! \return      The created AutoContact.
+ //!
+ //!              Create a new AutoContactTerminal anchored on \c rp. \c point gives
+ //!              the \e absolute position.
+
+ //! \function    void  AutoContactTerminal::updateTopology ();
+ //!              Restore the topology (i.e. connexity) of the contact after the incident
+ //!              segment has changed layer.
+ //!
+ //!              Based on the layer depth delta between the terminal and the segment
+ //!              three case can occurs:
+ //!                - The delta is \b zero, then just sets the layer of the contact
+ //!                  to the common metal layer.
+ //!                - The delta is \b one, then sets the contact layer to VIA connecting
+ //!                  the two layers.
+ //!                - The delta is \b two, then create a dogleg to restore the connexity.
+ //!                  Depending on whether the terminal was attached to the source or
+ //!                  target, sets the layer of the segments.
+ //!                - A delta of more than \b two is an error, and must never occurs.
+ //!
+ //!              As, by default, the perpandicular is set in the layer above the
+ //!              parallel, it may be necessary to adjust his layer as well (to the
+ //!              one below).
+ //!
+ //!              \image html  updateTopologyTerminal.png  "Update Terminal Topology"
+
+ }
+
+

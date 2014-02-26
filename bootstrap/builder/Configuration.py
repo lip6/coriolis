@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -29,7 +29,7 @@ class Configuration ( object ):
 
     PrimaryNames = \
         [ 'confFile', 'projects', 'standalones'
-        , 'svnTag', 'svnMethod'
+        , 'gitHash', 'gitMethod'
         , 'projectDir', 'rootDir'
         , 'packageName', 'packageVersion', 'packageExcludes', 'packageProject'
         , 'osType', 'libSuffix', 'buildMode', 'libMode', 'enableShared'
@@ -37,7 +37,7 @@ class Configuration ( object ):
     SecondaryNames = \
         [ 'rpmbuildDir' , 'debbuildDir'   , 'tmppathDir'  , 'tarballDir'
         , 'archiveDir'  , 'sourceDir'     , 'osDir'       , 'buildDir'
-        , 'installDir'  , 'specFileIn'  , 'specFile'
+        , 'installDir'  , 'bootstrapDir'  , 'specFileIn'    , 'specFile'
         , 'debianDir'   , 'debChangelogIn', 'debChangelog', 'sourceTarBz2'
         , 'binaryTarBz2', 'distribPatch'
         ]
@@ -46,8 +46,8 @@ class Configuration ( object ):
         self._confFile         = None
         self._projects         = []
         self._standalones      = []
-        self._svnTag           = "x"
-        self._svnMethod        = None
+        self._gitHash          = "x"
+        self._gitMethod        = None
         self._projectDir       = 'coriolis-2.x'
         self._rootDir          = os.path.join ( os.environ["HOME"], self._projectDir )
         self._packageName      = None
@@ -92,28 +92,29 @@ class Configuration ( object ):
         if self._enableShared == "ON": self._libMode = "Shared"
         else:                          self._libMode = "Static"
 
-       #self._rootDir     = os.path.join ( os.environ["HOME"], self._projectDir )
-        self._rpmbuildDir = os.path.join ( self._rootDir    , "rpmbuild" )
-        self._debbuildDir = os.path.join ( self._rootDir    , "debbuild" )
-        self._tmppathDir  = os.path.join ( self._rpmbuildDir, "tmp" )
-        self._tarballDir  = os.path.join ( self._rootDir    , "tarball" )
-        self._archiveDir  = os.path.join ( self._tarballDir , "%s-%s.%s" % (self._packageName
-                                                                           ,self._packageVersion
-                                                                           ,self._svnTag) )
-        self._sourceDir   = os.path.join ( self._rootDir    , "src" )
-        self._osDir       = os.path.join ( self._rootDir
-                                         , self._osType
-                                         , "%s.%s" % (self._buildMode,self._libMode) )
-        self._buildDir    = os.path.join ( self._osDir, "build" )
-        self._installDir  = os.path.join ( self._osDir, "install" )
+       #self._rootDir      = os.path.join ( os.environ["HOME"], self._projectDir )
+        self._rpmbuildDir  = os.path.join ( self._rootDir    , "rpmbuild" )
+        self._debbuildDir  = os.path.join ( self._rootDir    , "debbuild" )
+        self._tmppathDir   = os.path.join ( self._rpmbuildDir, "tmp" )
+        self._tarballDir   = os.path.join ( self._rootDir    , "tarball" )
+        self._archiveDir   = os.path.join ( self._tarballDir , "%s-%s.%s" % (self._packageName
+                                                                            ,self._packageVersion
+                                                                            ,self._gitHash) )
+        self._sourceDir    = os.path.join ( self._rootDir    , "src" )
+        self._bootstrapDir = os.path.join ( self._sourceDir  , "coriolis/bootstrap" )
+        self._osDir        = os.path.join ( self._rootDir
+                                          , self._osType
+                                          , "%s.%s" % (self._buildMode,self._libMode) )
+        self._buildDir     = os.path.join ( self._osDir, "build" )
+        self._installDir   = os.path.join ( self._osDir, "install" )
 
-        self._specFileIn     = os.path.join ( self._sourceDir, "bootstrap", "%s.spec.in"%self._packageName )
-        self._specFile       = os.path.join ( self._sourceDir, "bootstrap", "%s.spec"   %self._packageName )
-        self._debianDir      = os.path.join ( self._sourceDir, "bootstrap", "debian" )
-        self._debChangelogIn = os.path.join ( self._debianDir, "changelog.in" )
-        self._debChangelog   = os.path.join ( self._debianDir, "changelog" )
-        self._sourceTarBz2   = "%s-%s.%s.tar.bz2"                 % (self._packageName,self._packageVersion,self._svnTag)
-        self._binaryTarBz2   = "%s-binary-%s.%s-1.slsoc6.tar.bz2" % (self._packageName,self._packageVersion,self._svnTag)
+        self._specFileIn     = os.path.join ( self._bootstrapDir, "%s.spec.in"%self._packageName )
+        self._specFile       = os.path.join ( self._bootstrapDir, "%s.spec"   %self._packageName )
+        self._debianDir      = os.path.join ( self._bootstrapDir, "debian" )
+        self._debChangelogIn = os.path.join ( self._debianDir   , "changelog.in" )
+        self._debChangelog   = os.path.join ( self._debianDir   , "changelog" )
+        self._sourceTarBz2   = "%s-%s.%s.tar.bz2"                 % (self._packageName,self._packageVersion,self._gitHash)
+        self._binaryTarBz2   = "%s-binary-%s.%s-1.slsoc6.tar.bz2" % (self._packageName,self._packageVersion,self._gitHash)
         self._distribPatch   = os.path.join ( self._sourceDir, "bootstrap", "%s-for-distribution.patch"%self._packageName )
         return
 
@@ -198,12 +199,12 @@ class Configuration ( object ):
         if not confFile:
             print 'Making an educated guess to locate the configuration file:'
             locations = [ os.path.abspath(os.path.dirname(sys.argv[0]))
-                        , os.environ['HOME']+'/coriolis-2.x/src/bootstrap'
-                        , os.environ['HOME']+'/coriolis/src/bootstrap'
-                        , os.environ['HOME']+'/chams-2.x/src/bootstrap'
-                        , os.environ['HOME']+'/chams/src/bootstrap'
-                        , '/users/outil/coriolis/coriolis-2.x/src/bootstrap'
-                        , self._rootDir+'/src/bootstrap'
+                        , os.environ['HOME']+'/coriolis-2.x/src/coriolis/bootstrap'
+                        , os.environ['HOME']+'/coriolis/src/coriolis/bootstrap'
+                        , os.environ['HOME']+'/chams-2.x/src/coriolis/bootstrap'
+                        , os.environ['HOME']+'/chams/src/coriolis/bootstrap'
+                        , '/users/outil/coriolis/coriolis-2.x/src/coriolis/bootstrap'
+                        , self._rootDir+'/src/coriolis/bootstrap'
                         ]
 
             for location in locations:
@@ -278,10 +279,10 @@ class Configuration ( object ):
 
     def show ( self ):
         print 'CCB Configuration:'
-        if self._svnMethod:
-            print '  SVN Method: <%s>' % self._svnMethod
+        if self._gitMethod:
+            print '  Git Method: <%s>' % self._gitMethod
         else:
-            print '  SVN Method not defined, will not be able to checkout/commit.'
+            print '  Git Method not defined, will not be able to push/pull.'
 
         for project in self._projects:
             print '  project:%-15s repository:<%s>' % ( ('<%s>'%project.getName()), project.getRepository() )

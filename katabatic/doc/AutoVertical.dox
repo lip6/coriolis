@@ -1,0 +1,20 @@
+
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ //! \class        AutoVertical
+ //!
+ //! \brief        Concrete Vertical AutoSegment
+
+ //! \function     void  AutoVertical::_postCreate ();
+ //!
+ //!               In addition to AutoSegment::_postCreate(), detect whether the
+ //!               segment is global or local and register it in the relevant GCells
+ //!               (if needed).
+ //!
+ //!               If the segment is anchored directly on a terminal, adjust the
+ //!               axis so it's connected.
+
+ }

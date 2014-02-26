@@ -1,0 +1,15 @@
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ //! \typedef     typedef  GenericCollection<GCell*>  GCells;
+ //!              GCell Collection with auto-pointer like support.
+
+ //! \typedef     typedef  GenericLocator<GCell*>  GCellLocator;
+ //!              GCell Locator with auto-pointer like support.
+
+ //! \typedef     typedef  GenericFilter<GCell*>  GCellFilter;
+ //!              GCell Filter with auto-pointer like support.
+
+ }

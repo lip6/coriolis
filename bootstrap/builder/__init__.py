@@ -1,5 +1,18 @@
 
 # -*- mode:Python -*-
+#
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
+#
+# +-----------------------------------------------------------------+ 
+# |                   C O R I O L I S                               |
+# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |                                                                 |
+# |  Author      :                       Damien Dupuis              |
+# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# | =============================================================== |
+# |  Python      :   "./builder/__init__.py"                        |
+# +-----------------------------------------------------------------+
 
 import sys
 

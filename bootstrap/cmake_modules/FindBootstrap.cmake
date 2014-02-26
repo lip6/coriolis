@@ -220,21 +220,34 @@
 # Setup the <PROJECT>_SEARCH_PATH.
 #   Where to find includes & libraries.
 #
- MACRO(SETUP_SEARCH_DIR project)
-   IF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
-     MESSAGE("-- ${project}_TOP is set to $ENV{${project}_TOP}")
-     LIST(INSERT ${project}_DIR_SEARCH 0 "${DESTDIR}$ENV{${project}_TOP}")
-   ENDIF( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+ macro(setup_search_dir project)
+   if( NOT("$ENV{${project}_TOP}" STREQUAL "") )
+     message("-- ${project}_TOP is set to $ENV{${project}_TOP}")
+     list(INSERT ${project}_DIR_SEARCH 0 "${DESTDIR}$ENV{${project}_TOP}")
+   endif( NOT("$ENV{${project}_TOP}" STREQUAL "") )
 
-   IF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
-     MESSAGE("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
-     LIST(INSERT ${project}_DIR_SEARCH 0 "${DESTDIR}$ENV{${project}_USER_TOP}")
-   ENDIF( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+   if( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
+     message("-- ${project}_USER_TOP is set to $ENV{${project}_USER_TOP}")
+     list(INSERT ${project}_DIR_SEARCH 0 "${DESTDIR}$ENV{${project}_USER_TOP}")
+   endif( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
 
    LIST(REMOVE_DUPLICATES ${project}_DIR_SEARCH)
   
-   MESSAGE("-- Components of ${project}_DIR_SEARCH:")
-   FOREACH(PATH ${${project}_DIR_SEARCH})
-     MESSAGE("--   ${PATH}")
-   ENDFOREACH(PATH)
- ENDMACRO(SETUP_SEARCH_DIR project)
+   message("-- Components of ${project}_DIR_SEARCH:")
+   foreach(PATH ${${project}_DIR_SEARCH})
+     message("--   ${PATH}")
+   endforeach(PATH)
+ endmacro(setup_search_dir project)
+
+
+#
+# Setup the <PROJECT>_FOUND.
+#   Set to TRUE if both includes & libraries have been found.
+#
+ macro(set_found project)
+   if(${project}_INCLUDE_DIR AND ${project}_LIBRARY)
+     set(${project}_FOUND TRUE)
+   else(${project}_INCLUDE_DIR AND ${project}_LIBRARY)
+     set(${project}_FOUND FALSE)
+   endif(${project}_INCLUDE_DIR AND ${project}_LIBRARY)
+ endmacro(set_found project)

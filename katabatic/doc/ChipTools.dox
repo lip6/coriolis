@@ -1,0 +1,62 @@
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ /*! \class        ChipTools
+  *
+  *  \brief        Utilities for Chip Level Design
+  *
+  *                The ChipTools class provides a small set of utilities to ease
+  *                the managment of a complete chip following the Alliance top
+  *                hierarchical structure.
+  */
+
+ //! \function     ChipTools::ChipTools ( Cell* cell );
+ //!               Create a ChipTool for \c cell.
+
+ //! \function     bool  ChipTools::isChip () const;
+ //! \sreturn      \true if the Cell is truly a top level design. If not, this
+ //!               object is useless and does nothing.
+
+ //! \function     Cell* ChipTools::getCell () const;
+ //! \sreturn      The top-level design.
+
+ //! \function     Instance* ChipTools::getCore () const;
+ //! \sreturn      The instance of the core, that is, the only instance that is
+ //!               \e not a pad...
+
+ //! \function     const Box& ChipTools::getChipBb () const;
+ //! \sreturn      The chip complete bounding box, this *is* simply the Cell bounding box.
+
+ //! \function     const Box& ChipTools::getLeftPadsBb () const;
+ //! \sreturn      The bounding box enclosing all the pads on the left side of the chip.
+ //!
+ //! \remark       This box is computed from the chip bounding box and the pad height.
+
+ //! \function     const Box& ChipTools::getRightPadsBb () const;
+ //! \sreturn      The bounding box enclosing all the pads on the right side of the chip.
+ //!
+ //! \remark       This box is computed from the chip bounding box and the pad height.
+
+ //! \function     const Box& ChipTools::getTopPadsBb () const;
+ //! \sreturn      The bounding box enclosing all the pads on the top side of the chip.
+ //!
+ //! \remark       This box is computed from the chip bounding box and the pad height.
+
+ //! \function     const Box& ChipTools::getBottomPadsBb () const;
+ //! \sreturn      The bounding box enclosing all the pads on the bottom side of the chip.
+ //!
+ //! \remark       This box is computed from the chip bounding box and the pad height.
+
+ //! \function     const Torus& ChipTools::getCorona () const;
+ //! \sreturn      The torus (in term of manhanttan distance) enclosed between the pad area
+ //!               and the core area.
+
+ //! \function     bool  ChipTools::intersectVPads ( const Box& ) const;
+ //! \sreturn      \true if \c box intersect either the left or right pad box.
+
+ //! \function     bool  ChipTools::intersectHPads ( const Box& ) const;
+ //! \sreturn      \true if \c box intersect either the top or bottom pad box.
+
+ }

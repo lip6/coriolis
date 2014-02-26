@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -15,23 +15,29 @@
 # +-----------------------------------------------------------------+
 
 
+import string
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QObject
 from PyQt4.QtCore import QSettings
+from PyQt4.QtGui  import QSizePolicy
+from PyQt4.QtGui  import QFrame
 from PyQt4.QtGui  import QPushButton
 from PyQt4.QtGui  import QCheckBox
+from PyQt4.QtGui  import QLabel
 
 
 class ProjectWidgets ( QObject ):
 
   def __init__ ( self, project ):
     self._project       = project
-    self._projectButton = QPushButton( self._project.getName() )
+    self._projectButton = QLabel( string.capwords(self._project.getName()) )
     self._projectButton.setStyleSheet( 'font-weight: bold;' )
+    self._projectButton.setFrameShape( QFrame.Box )
+    self._projectButton.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Preferred )
 
     self._toolsCheckBoxes = []
     for tool in self._project.getTools():
-        self._toolsCheckBoxes += [ QCheckBox( tool ) ]
+        self._toolsCheckBoxes += [ QCheckBox( tool.name ) ]
 
    #self._projectButton.clicked.connect( self.toggleToolsVisibility )
     return
@@ -50,10 +56,22 @@ class ProjectWidgets ( QObject ):
   actives         = property( _getActives )
 
   def addToLayout( self, column, layout ):
-    layout.addWidget( self._projectButton, 0, column, Qt.AlignLeft )
-    for row in range(len(self._toolsCheckBoxes)):
+    toolsNb = len(self._toolsCheckBoxes)
+    if toolsNb <= 10:
+      layout.addWidget( self._projectButton, 0, column, Qt.AlignLeft )
+      for row in range(toolsNb):
         layout.addWidget( self._toolsCheckBoxes[row], row+1, column, Qt.AlignTop )
-    return
+      return 1
+
+    columnSpan = toolsNb / 10
+    if toolsNb % 10: columnSpan += 1
+
+    layout.addWidget( self._projectButton, 0, column, 1, columnSpan, Qt.AlignJustify )
+    for row in range(toolsNb):
+      if row and row % 10 == 0: column += 1
+      layout.addWidget( self._toolsCheckBoxes[row], row%10+1, column, Qt.AlignTop )
+
+    return columnSpan
 
  #def toggleToolsVisibility ( self ):
  #  self._visibleTools = not self._visibleTools

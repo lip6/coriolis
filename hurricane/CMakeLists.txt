@@ -1,3 +1,4 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<hurricane>" -*-
 
  project(HURRICANE)
 
@@ -5,10 +6,9 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{BOOTSTRAP_TOP}/share/cmake/Modules")
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{CORIOLIS_TOP}/share/cmake/Modules")
  find_package(Bootstrap REQUIRED)
- setup_project_paths(BOOTSTRAP)
- setup_project_paths(VLSISAPD)
+ setup_project_paths(CORIOLIS)
  list(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
  set_cmake_policies()
@@ -30,10 +30,10 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
- add_subdirectory(tests)
+#add_subdirectory(tests)
  if(BUILD_DOC AND DOXYGEN_FOUND)
    add_subdirectory(doc)
  endif(BUILD_DOC AND DOXYGEN_FOUND)
  
- enable_testing()
- add_test(HurricaneTest ${PROJECT_BINARY_DIR}/tests/htest)
+#enable_testing()
+#add_test(HurricaneTest ${PROJECT_BINARY_DIR}/tests/htest)

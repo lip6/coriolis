@@ -1,3 +1,4 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<bootstrap>" -*-
 
  project(Bootstrap)
 

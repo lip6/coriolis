@@ -1,0 +1,11 @@
+*~
+*.swp
+*.pyc
+*.log
+man/
+rtf/
+html/
+latex/
+
+crlcore/doc/UsersGuide/UsersGuide.tex
+crlcore/doc/UsersGuide/UsersGuide.html

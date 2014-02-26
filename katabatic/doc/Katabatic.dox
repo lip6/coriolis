@@ -1,0 +1,11 @@
+
+ // -*- C++ -*-
+
+
+ namespace Katabatic {
+
+ /*! \namespace    Katabatic
+  *  \brief        The namespace dedicated to Katabatic.
+  */
+
+ }

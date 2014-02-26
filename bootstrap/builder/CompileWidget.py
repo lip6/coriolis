@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -131,7 +131,7 @@ class CompileWidget ( QWidget ):
 
 
   def shellCommand ( self ):
-    command = [ 'buildCoriolis.py' ]
+    command = [ self.conf.bootstrapDir+'/ccb.py' ]
     for project in self.options.projects:
       for tool in project.actives:
         command += [ '--tool='+tool ]
@@ -139,8 +139,8 @@ class CompileWidget ( QWidget ):
 
     if self.conf.rootDir: command += [ '--root=%s'%self.conf.rootDir ]
 
-    if self.options.svnUpdate: command += [ '--svn-update' ]
-    if self.options.svnStatus: command += [ '--svn-update' ]
+   #if self.options.svnUpdate: command += [ '--svn-update' ]
+   #if self.options.svnStatus: command += [ '--svn-update' ]
     if self.options.enableDoc: command += [ '--doc' ]
     if self.options.noCache:   command += [ '--no-cache' ]
     if self.options.rmBuild:   command += [ '--rm-build' ]

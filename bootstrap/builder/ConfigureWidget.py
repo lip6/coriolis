@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -165,11 +165,13 @@ class ConfigureWidget ( QWidget ):
     gLayout.addWidget( ConfSettingsWidget(self._conf), 1, 0, 1, 1 )
 
 
-  def _getRootDir ( self ): return self._rootDir
-  def _getConf    ( self ): return self._conf
+  def _getConf         ( self ): return self._conf
+  def _getRootDir      ( self ): return self._rootDir
+  def _getBootstrapDir ( self ): return self._getConf().bootstrapDir
 
-  rootDir = property( _getRootDir )
-  conf    = property( _getConf )
+  conf         = property( _getConf )
+  rootDir      = property( _getRootDir )
+  bootstrapDir = property( _getBootstrapDir )
 
 
   def rootDirChanged ( self, rootDir ):

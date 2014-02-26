@@ -1,3 +1,0 @@
-ADD_SUBDIRECTORY(technology)
-ADD_SUBDIRECTORY(analogic)
-ADD_SUBDIRECTORY(tests)

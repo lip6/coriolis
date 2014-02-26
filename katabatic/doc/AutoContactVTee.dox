@@ -1,0 +1,30 @@
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ /*! \class        AutoContactVTee
+  *
+  *  \brief        AutoContact V-Tee (one H, two V)
+  *
+  *                AutoContact to build a vertical tee (two V, one H).
+  */
+
+ //! \function    AutoContactVTee* AutoContactVTee::create ( GCell* gcell, Net* net, const Layer* layer );
+ //! \param       gcell  The GCell into which create the AutoContact.
+ //! \param       net    The Net to which this AutoContact belongs.
+ //! \param       layer  The Layer of the AutoContact.
+ //! \return      The created AutoContactVTee.
+ //!
+ //!              Create a new AutoContactVTee.
+
+ //! \function    void  AutoContactVTee::updateTopology ();
+ //!              Restore the topology (i.e. connexity) of the contact after any number
+ //!              of connected segments has changed layer (at least one, up to three).
+ //!
+ //!              For a detailed explanation, see AutoContactHTee::updateTopology() and
+ //!              sawp horizontal & vertical...
+
+ }
+
+

@@ -1,11 +1,13 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<vlsisapd>" -*-
 
  project(VLSISAPD)
 
  cmake_minimum_required(VERSION 2.4.0)
 
- list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{BOOTSTRAP_TOP}/share/cmake/Modules/")
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  list(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules/")
+ print_cmake_module_path()
 
  set_cmake_policies()
  setup_boost(program_options python regex)

@@ -1,0 +1,41 @@
+
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ /*! \class        AutoContactHTee
+  *
+  *  \brief        AutoContact H-Tee (two H, one V)
+  *
+  *                AutoContact to build an horizontal tee (two H, one V).
+  */
+
+ //! \function    AutoContactHTee* AutoContactHTee::create ( GCell* gcell, Net* net, const Layer* layer );
+ //! \param       gcell  The GCell into which create the AutoContact.
+ //! \param       net    The Net to which this AutoContact belongs.
+ //! \param       layer  The Layer of the AutoContact.
+ //! \return      The created AutoContactHTee.
+ //!
+ //!              Create a new AutoContactHTee.
+
+ //! \function    void  AutoContactHTee::updateTopology ();
+ //!              Restore the topology (i.e. connexity) of the contact after any number
+ //!              of connected segments has changed layer (at least one, up to three).
+ //!
+ //!              For any configuration, the connexity can be restored by making only
+ //!              one dogleg.
+ //!
+ //!              We distinguish two kind of layer changes:
+ //!                -# The two horizontals (\c h1 and \c h2) are still on the same layer
+ //!                   (either they both moved or the vertical only has moved, see figures
+ //!                   2 & 4).
+ //!                   In that case, the dogleg is made on the vertical.                   
+ //!                -# The two horizontals no longer are on the same layer (figures 1 & 3).
+ //!                   In that case, the dogleg is made on the horizontal which is at the
+ //!                   greater distance (in a layer sense) from the vertical.
+ //!
+ //!              \image html  updateTopologyHTee.png  "Update H-Tee Topology"
+
+ }
+
+

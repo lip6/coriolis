@@ -1,0 +1,86 @@
+ // -*- C++ -*-
+
+ namespace Katabatic {
+
+ /*! \class       Observable
+  *
+  *  \brief       Observer Design Pattern, Subject part.
+  *
+  *
+  *               Observable is the implementation of the \e subject part of the
+  *               Observer design pattern. For the time beeing it's a simplificated
+  *               version that allows only one Observer to watch the subject.
+  *
+  *               Observable is designed to be an attribute of the subject, not one
+  *               of it's base class.
+  *
+  *               This implantation is completly generic and has nothing specific
+  *               to Katabatic. It may be moved sometimes in Hurricane at Property
+  *               level in Hurricane::DBo.
+  *
+  *               <b>Note to Myself:</b> Observer pattern is the one behind signal/slots.
+  */
+
+ //! \function    Observable::Observable ();
+ //!              Default and only constructor. The copy constructor is disabled
+ //!              (made private and unimplemented).
+
+ //! \function    T* Observable::getObserver ();
+ //! \sreturn     The (only) observer, \c NULL if there is none. It is the object
+ //!              of which the Observer is an attribute, that is, it's \e owner, and not
+ //!              the Observer itself which is returned.
+
+ //! \function    void  Observable::addObserver ( BaseObserver* observer );
+ //!              Adds an observer. If more than one is added, throw an error.
+
+ //! \function    void  Observable::removeObserver ( BaseObserver* observer );
+ //!              Removes an observer. If the observer do not belong to this observable,
+ //!              throw an exception.
+
+ //! \function    void  Observable::notify ( unsigned int flags );
+ //!              Used by the subject to signal a change in it's state to the observers.
+ //!              The \c flags parameter can be used to indicates what kind of change
+ //!              is occuring. Values for \c flags are defined between the subject and
+ //!              the observers.
+
+
+ /*! \class       BaseObserver
+  *
+  *  \brief       Observer Design Pattern, Observer part.
+  *
+  *               This class is used as a non-template base class for the templatized
+  *               Observer one. It is used to avoid propagating template to the whole
+  *               Observable class. It only contains the Observer::notify() virtual
+  *               method.
+  */
+
+ //! \function    void  BaseObserver::notify ( unsigned int flags );
+ //!              The method which will be called whenever a change occurs on the Observable.
+
+
+ /*! \class       Observer
+  *
+  *  \brief       Observer Design Pattern, Observer part.
+  *
+  *               <b>First, a warning about names:</b> although this class is named
+  *               Observer, it is intended to be an attribute nested inside the
+  *               whole object which is indeed, the true Observer. This nesting object
+  *               is called, most of the time the \b owner in the following. But
+  *               sometimes, for simplification it may also be called the Observer.
+  *
+  *  \section     secImplObserver  Observer Implementation Notes
+  *
+  *               To retrieve the \e owner from the Observer attribute, we uses the
+  *               offset from the attribute in the \e owner. This offset is computed
+  *               once and for all the first time the template constructor is called.
+  */
+
+ //! \function    Observer::Observer ( const T* owner );
+ //!              The owner of the oberver is needed to compute, on the first creation
+ //!              only, the offset of the Observer attribute inside the \c owner complete
+ //!              object.
+
+ //! \function    T* Observer::getOwner () const;
+ //! \sreturn     The owner of the observer.
+
+ }
