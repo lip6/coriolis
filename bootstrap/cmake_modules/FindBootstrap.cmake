@@ -47,6 +47,7 @@
    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/svn.h.in ${CMAKE_CURRENT_SOURCE_DIR}/${includedir}/svn.h)
  endmacro(SETUP_SVNH)
 
+
 #
 # Specific Apple OSX setup
 #
@@ -147,7 +148,10 @@
    if(${ARGV0}_FOUND)
      if(NOT ${ARGV0}_FIND_QUIETLY)
        if(${ARGV0}_FOUND)
-         message(STATUS "Found ${ARGV0} : ${${ARGV0}_LIBRARIES}")
+         message(STATUS "Found ${ARGV0}:")
+         foreach(library ${${ARGV0}_LIBRARIES})
+           message(STATUS "  ${library}")
+         endforeach(library)
        endif(${ARGV0}_FOUND)
      endif(NOT ${ARGV0}_FIND_QUIETLY)
    else(${ARGV0}_FOUND)

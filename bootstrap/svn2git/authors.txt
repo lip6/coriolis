@@ -16,6 +16,7 @@ hcl = Hugo Clement <alliance-users@asim.lip6.fr>
 javid = Farakh Javid <alliance-users@asim.lip6.fr>
 karim = Karim Dioury <alliance-users@asim.lip6.fr>
 labiadh = Forgotten Author (labiadh) <alliance-users@asim.lip6.fr>
+liyao = Yao Li <alliance-users@asim.lip6.fr>
 ludo = Ludovic Jacomme <alliance-users@asim.lip6.fr>
 masson = Christian Masson <alliance-users@asim.lip6.fr>
 mitri = Forgotten Author (mitri) <alliance-users@asim.lip6.fr>

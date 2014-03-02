@@ -62,11 +62,12 @@ class Project ( object ):
         return
     
     def activate ( self, toolNames ):
-        rejecteds = []
         for tool in self._tools:
             if tool.name in toolNames:
                 tool.active = True
-            else:
-                if tool.name in toolNames:
-                    rejecteds.append( tool.name )
+
+        rejecteds = []
+        for tool in toolNames:
+            if not self.hasTool(tool):
+                rejecteds.append( tool )
         return rejecteds
