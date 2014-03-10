@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.h<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -81,13 +81,11 @@ namespace Kite {
       inline  PostEventCb_t&             getPostEventCb         ();
       inline  unsigned long              getEventsLimit         () const;
       inline  float                      getExpandStep          () const;
-      inline  DbU::Unit                  getGlobalMinBreak      ( unsigned int depth ) const;
       inline  unsigned int               getRipupCost           () const;
               unsigned int               getRipupLimit          ( unsigned int type ) const;
       inline  float                      getEdgeCapacityPercent () const;
       inline  void                       setEventsLimit         ( unsigned long );
       inline  void                       setExpandStep          ( float );
-      inline  void                       setGlobalMinBreak      ( unsigned int depth, DbU::Unit );
       inline  void                       setRipupCost           ( unsigned int );
               void                       setRipupLimit          ( unsigned int limit, unsigned int type );
       inline  void                       setPostEventCb         ( PostEventCb_t );
@@ -101,7 +99,6 @@ namespace Kite {
              PostEventCb_t               _postEventCb;
              float                       _edgeCapacityPercent;
              float                       _expandStep;
-             DbU::Unit                   _globalMinBreaks[MaxMetalDepth];
              unsigned int                _ripupLimits    [RipupLimitsTableSize];
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
@@ -118,12 +115,10 @@ namespace Kite {
   inline unsigned int                  Configuration::getRipupCost           () const { return _ripupCost; }
   inline float                         Configuration::getExpandStep          () const { return _expandStep; }
   inline float                         Configuration::getEdgeCapacityPercent () const { return _edgeCapacityPercent; }
-  inline DbU::Unit                     Configuration::getGlobalMinBreak      ( unsigned int depth ) const { return  _globalMinBreaks[ (depth>=MaxMetalDepth) ? MaxMetalDepth-1 : depth ]; }
   inline void                          Configuration::setRipupCost           ( unsigned int cost ) { _ripupCost = cost; }
   inline void                          Configuration::setExpandStep          ( float step ) { _expandStep = step; }
   inline void                          Configuration::setPostEventCb         ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit         ( unsigned long limit ) { _eventsLimit = limit; }
-  inline void                          Configuration::setGlobalMinBreak      ( unsigned int depth, DbU::Unit threshold ) { _globalMinBreaks[ (depth>=MaxMetalDepth) ? MaxMetalDepth-1 : depth ] = threshold; }
 
 
 

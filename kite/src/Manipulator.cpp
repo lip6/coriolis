@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -639,7 +639,6 @@ namespace Kite {
     bool                leftIntrication  = false;
     bool                rightIntrication = false;
     bool                success          = true;
-    unsigned long       maxId            = AutoSegment::getMaxId();
 
     ltrace(200) << "Manipulator::insertInTrack() - " << toFree << endl;
 

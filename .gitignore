@@ -2,10 +2,17 @@
 *.swp
 *.pyc
 *.log
+*.bak
 man/
 rtf/
 html/
 latex/
 
-crlcore/doc/UsersGuide/UsersGuide.tex
-crlcore/doc/UsersGuide/UsersGuide.html
+documentation/UsersGuide/UsersGuide-raw.tex
+documentation/UsersGuide/UsersGuide.tex
+documentation/UsersGuide/UsersGuide.aux
+documentation/UsersGuide/UsersGuide.log
+documentation/UsersGuide/UsersGuide.pdf
+documentation/UsersGuide/UsersGuide.out
+documentation/UsersGuide/UsersGuide.toc
+documentation/UsersGuide/UsersGuide.html

@@ -1,0 +1,226 @@
+entity muxs is
+   port (
+      alu_out : in      bit_vector(3 downto 0);
+      i       : in      bit_vector(2 downto 0);
+      noe     : in      bit;
+      oe      : out     bit;
+      ra      : in      bit_vector(3 downto 0);
+      shift_l : out     bit;
+      shift_r : out     bit;
+      vdd     : in      bit;
+      vss     : in      bit;
+      y       : out     mux_vector(3 downto 0) bus
+ );
+end muxs;
+
+architecture structural of muxs is
+Component o3_x2
+   port (
+      i0  : in      bit;
+      i1  : in      bit;
+      i2  : in      bit;
+      q   : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component inv_x2
+   port (
+      i   : in      bit;
+      nq  : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component an12_x1
+   port (
+      i0  : in      bit;
+      i1  : in      bit;
+      q   : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component a2_x2
+   port (
+      i0  : in      bit;
+      i1  : in      bit;
+      q   : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component buf_x2
+   port (
+      i   : in      bit;
+      q   : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component nmx2_x1
+   port (
+      cmd : in      bit;
+      i0  : in      bit;
+      i1  : in      bit;
+      nq  : out     bit;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+Component nts_x1
+   port (
+      cmd : in      bit;
+      i   : in      bit;
+      nq  : out     mux_bit bus;
+      vdd : in      bit;
+      vss : in      bit
+ );
+end component;
+
+signal not_noe       : bit;
+signal not_aux1      : bit;
+signal nmx2_x1_sig   : bit;
+signal nmx2_x1_4_sig : bit;
+signal nmx2_x1_3_sig : bit;
+signal nmx2_x1_2_sig : bit;
+signal inv_x2_sig    : bit;
+
+begin
+
+inv_x2_ins : inv_x2
+   port map (
+      i   => i(1),
+      nq  => inv_x2_sig,
+      vdd => vdd,
+      vss => vss
+   );
+
+not_aux1_ins : o3_x2
+   port map (
+      i0  => i(0),
+      i1  => i(2),
+      i2  => inv_x2_sig,
+      q   => not_aux1,
+      vdd => vdd,
+      vss => vss
+   );
+
+not_noe_ins : inv_x2
+   port map (
+      i   => noe,
+      nq  => not_noe,
+      vdd => vdd,
+      vss => vss
+   );
+
+shift_r_ins : an12_x1
+   port map (
+      i0  => i(1),
+      i1  => i(2),
+      q   => shift_r,
+      vdd => vdd,
+      vss => vss
+   );
+
+shift_l_ins : a2_x2
+   port map (
+      i0  => i(2),
+      i1  => i(1),
+      q   => shift_l,
+      vdd => vdd,
+      vss => vss
+   );
+
+oe_ins : buf_x2
+   port map (
+      i   => not_noe,
+      q   => oe,
+      vdd => vdd,
+      vss => vss
+   );
+
+nmx2_x1_ins : nmx2_x1
+   port map (
+      cmd => not_aux1,
+      i0  => ra(0),
+      i1  => alu_out(0),
+      nq  => nmx2_x1_sig,
+      vdd => vdd,
+      vss => vss
+   );
+
+y_0_ins : nts_x1
+   port map (
+      cmd => not_noe,
+      i   => nmx2_x1_sig,
+      nq  => y(0),
+      vdd => vdd,
+      vss => vss
+   );
+
+nmx2_x1_2_ins : nmx2_x1
+   port map (
+      cmd => not_aux1,
+      i0  => ra(1),
+      i1  => alu_out(1),
+      nq  => nmx2_x1_2_sig,
+      vdd => vdd,
+      vss => vss
+   );
+
+y_1_ins : nts_x1
+   port map (
+      cmd => not_noe,
+      i   => nmx2_x1_2_sig,
+      nq  => y(1),
+      vdd => vdd,
+      vss => vss
+   );
+
+nmx2_x1_3_ins : nmx2_x1
+   port map (
+      cmd => not_aux1,
+      i0  => ra(2),
+      i1  => alu_out(2),
+      nq  => nmx2_x1_3_sig,
+      vdd => vdd,
+      vss => vss
+   );
+
+y_2_ins : nts_x1
+   port map (
+      cmd => not_noe,
+      i   => nmx2_x1_3_sig,
+      nq  => y(2),
+      vdd => vdd,
+      vss => vss
+   );
+
+nmx2_x1_4_ins : nmx2_x1
+   port map (
+      cmd => not_aux1,
+      i0  => ra(3),
+      i1  => alu_out(3),
+      nq  => nmx2_x1_4_sig,
+      vdd => vdd,
+      vss => vss
+   );
+
+y_3_ins : nts_x1
+   port map (
+      cmd => not_noe,
+      i   => nmx2_x1_4_sig,
+      nq  => y(3),
+      vdd => vdd,
+      vss => vss
+   );
+
+
+end structural;

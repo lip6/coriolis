@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -54,24 +54,24 @@ namespace Kite {
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("kite.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("kite.longGlobalRipupLimit" , 5)->asInt();
 
-    for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
-      ostringstream paramName;
-      paramName << "kite.metal" << (i+1) << "MinBreak";
+    // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
+    //   ostringstream paramName;
+    //   paramName << "kite.metal" << (i+1) << "MinBreak";
 
-      int threshold = 29*50;
-      switch ( i ) {
-        case 0:
-        case 1:
-          threshold = 2*50;
-          break;
-        default:
-          threshold = 30*50;
-          break;
-      }
+    //   int threshold = 29*50;
+    //   switch ( i ) {
+    //     case 0:
+    //     case 1:
+    //       threshold = 2*50;
+    //       break;
+    //     default:
+    //       threshold = 30*50;
+    //       break;
+    //   }
 
-      Cfg::getParamDouble(paramName.str())->setDouble(threshold);
-      _globalMinBreaks[i] = DbU::lambda (Cfg::getParamDouble(paramName.str())->asDouble());
-    }
+    //   Cfg::getParamDouble(paramName.str())->setDouble(threshold);
+    //   _globalMinBreaks[i] = DbU::lambda (Cfg::getParamDouble(paramName.str())->asDouble());
+    // }
   }
 
 
@@ -260,12 +260,12 @@ namespace Kite {
       record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"    ,_ripupLimits[GlobalRipupLimit]    ) );
       record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]",_ripupLimits[LongGlobalRipupLimit]) );
 
-      for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
-        ostringstream paramName;
-        paramName << "metal" << (i+1) << "MinBreak";
+      // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
+      //   ostringstream paramName;
+      //   paramName << "metal" << (i+1) << "MinBreak";
 
-        record->add ( DbU::getValueSlot(paramName.str(),&_globalMinBreaks[i]) );
-      }
+      //   record->add ( DbU::getValueSlot(paramName.str(),&_globalMinBreaks[i]) );
+      // }
     }
                                      
     return record;

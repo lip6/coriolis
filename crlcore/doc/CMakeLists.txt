@@ -20,9 +20,9 @@
 #                              ${output_dir}/README.pdf
 #                              DESTINATION ${latexInstallDir} )
 #              install ( DIRECTORY ${output_dir}/README DESTINATION ${htmlInstallDir} )
-               install ( FILES general-index.html DESTINATION ${htmlInstallDir} RENAME index.html )
+#              install ( FILES general-index.html DESTINATION ${htmlInstallDir} RENAME index.html )
 
 IF(DOXYGEN_FOUND)
   add_subdirectory(crlcore)
 ENDIF(DOXYGEN_FOUND)
-add_subdirectory(UsersGuide)
+#add_subdirectory(UsersGuide)

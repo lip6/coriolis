@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -74,7 +73,6 @@ namespace Kite {
       inline  unsigned int     getRipupCost               () const;
       inline  float            getExpandStep              () const;
       inline  float            getEdgeCapacityPercent     () const;
-      inline  DbU::Unit        getGlobalMinBreak          ( unsigned int depth ) const;
       virtual const Name&      getName                    () const;
       inline  Configuration::PostEventCb_t&
                                getPostEventCb             ();
@@ -94,7 +92,6 @@ namespace Kite {
       inline  void             setRipupCost               ( unsigned int );
       inline  void             setExpandStep              ( float );
       inline  void             setEdgeCapacityPercent     ( float );
-      inline  void             setGlobalMinBreak          ( unsigned int depth, DbU::Unit );
               void             buildPowerRails            ();
               void             protectRoutingPads         ();
               void             preProcess                 ();
@@ -152,7 +149,6 @@ namespace Kite {
   inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration->getRipupCost(); }
   inline  float                         KiteEngine::getExpandStep          () const { return _configuration->getExpandStep(); }
   inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration->getEdgeCapacityPercent(); }
-  inline  DbU::Unit                     KiteEngine::getGlobalMinBreak      ( unsigned int depth ) const { return _configuration->getGlobalMinBreak(depth); }
   inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
@@ -161,7 +157,6 @@ namespace Kite {
   inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration->setRipupCost(cost); }
   inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration->setExpandStep(step); }
   inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration->setEdgeCapacityPercent(percent); }
-  inline  void                          KiteEngine::setGlobalMinBreak      ( unsigned int depth, DbU::Unit threshold ) { _configuration->setGlobalMinBreak(depth,threshold); }
   inline  void                          KiteEngine::setMinimumWL           ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KiteEngine::printConfiguration     () const { _configuration->print(getCell()); }

@@ -3,16 +3,14 @@
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
          tools = bootstrap vlsisapd hurricane crlcore nimbus metis mauka knik katabatic kite \
-                 equinox solstice cumulus stratus1 unicorn
+                 equinox solstice cumulus stratus1 unicorn documentation
         prefix = /usr
        DESTDIR =
  BUILD_DESTDIR = $(shell pwd)/install.dir
  BOOTSTRAP_TOP = $(prefix)
-  VLSISAPD_TOP = $(prefix)
   CORIOLIS_TOP = $(prefix)
 
    environment = BOOTSTRAP_TOP=$(BOOTSTRAP_TOP); export BOOTSTRAP_TOP; \
-                  VLSISAPD_TOP=$(VLSISAPD_TOP);  export  VLSISAPD_TOP; \
                   CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
 
 .PHONY: build install FORCE
