@@ -254,7 +254,7 @@ Release `2049` is Alpha.
 #. The |cgt| main has been rewritten in Python. 
 
 
-Release **v2.0.0**
+Release **v2.0.1**
 ~~~~~~~~~~~~~~~~~~
 
 #. Migrated the repository from |svn| to |git|, and release complete sources.
