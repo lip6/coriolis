@@ -1134,8 +1134,8 @@ namespace {
 
     viaLayer = Session::getContactLayer(1);
 
-    AutoContact* subContact1 = AutoContactTurn::create( gcell, rp1->getNet(), Session::getContactLayer(1) );
-    AutoContact* subContact2 = AutoContactTurn::create( gcell, rp1->getNet(), Session::getContactLayer(1) );
+    AutoContact* subContact1 = AutoContactTurn::create( gcell, rp1->getNet(), viaLayer );
+    AutoContact* subContact2 = AutoContactTurn::create( gcell, rp1->getNet(), viaLayer );
 
     AutoSegment::create( rp1ContactTarget, subContact1     , KbHorizontal );
     AutoSegment::create( subContact1     , subContact2     , KbVertical   );
@@ -1168,8 +1168,8 @@ namespace {
 
     viaLayer = Session::getContactLayer(1);
 
-    AutoContact* subContact1 = AutoContactTurn::create( gcell, rp1->getNet(), Session::getContactLayer(1) );
-    AutoContact* subContact2 = AutoContactTurn::create( gcell, rp1->getNet(), Session::getContactLayer(1) );
+    AutoContact* subContact1 = AutoContactTurn::create( gcell, rp1->getNet(), viaLayer );
+    AutoContact* subContact2 = AutoContactTurn::create( gcell, rp1->getNet(), viaLayer );
 
     AutoSegment::create( rp1ContactTarget, subContact1     , KbVertical   );
     AutoSegment::create( subContact1     , subContact2     , KbHorizontal );
@@ -1318,11 +1318,10 @@ namespace {
     ltracein(99);
 
     unsigned int  flags      = NoFlags;
-    Hook*         globalHook = NULL;
-    if      (_east ) { globalHook = _east;  flags |= HAccess; }
-    else if (_west ) { globalHook = _west;  flags |= HAccess; }
-    else if (_north) { globalHook = _north; flags |= VSmall; }
-    else if (_south) { globalHook = _south; flags |= VSmall; }
+    if      (_east ) { flags |= HAccess; }
+    else if (_west ) { flags |= HAccess; }
+    else if (_north) { flags |= VSmall; }
+    else if (_south) { flags |= VSmall; }
 
     _southWestContact = _northEastContact = doRp_Access( _gcell, _routingPads[0], flags );
 

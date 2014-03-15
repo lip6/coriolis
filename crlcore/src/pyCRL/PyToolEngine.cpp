@@ -49,8 +49,8 @@ extern "C" {
     trace << "PyToolEngine_get()" << endl;
     
     HTRY
-    PyObject* pyCell = NULL;
-    char*     name   = NULL;
+    PyObject*   pyCell = NULL;
+    char* name   = NULL;
 
     static char* keywords[] = { "cell", "name", NULL };
 

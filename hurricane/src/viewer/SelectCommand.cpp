@@ -227,7 +227,8 @@ namespace Hurricane {
   {
     if ( event->key() == Qt::Key_N ) {
       event->accept();
-      _selectMode = (++_selectMode) % 3;
+      _selectMode++;
+      _selectMode = _selectMode % 3;
     }
   }
 

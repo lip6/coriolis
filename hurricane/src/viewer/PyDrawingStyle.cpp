@@ -37,11 +37,11 @@ extern "C" {
 
 
 // #undef  GENERIC_METHOD_HEAD
-// #define GENERIC_METHOD_HEAD(SELF_TYPE,SELF_OBJECT,function)                \
-//   if ( self->ACCESS_OBJECT.get() == NULL ) {                               \
-//       PyErr_SetString ( ProxyError, "Attempt to call " function " on an unbound hurricane object" ); \
-//       return NULL;                                                         \
-//     }                                                                      \
+// #define GENERIC_METHOD_HEAD(SELF_TYPE,SELF_OBJECT,function)                
+//   if ( self->ACCESS_OBJECT.get() == NULL ) {                               
+//       PyErr_SetString ( ProxyError, "Attempt to call " function " on an unbound hurricane object" ); 
+//       return NULL;                                                         
+//     }                                                                      
 //     SELF_TYPE SELF_OBJECT = self->ACCESS_OBJECT;
 //
 // #define METHOD_HEAD(function)  GENERIC_METHOD_HEAD(DrawingStyle,ds,function)

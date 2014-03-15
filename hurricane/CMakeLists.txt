@@ -6,7 +6,7 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{CORIOLIS_TOP}/share/cmake/Modules")
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(CORIOLIS)
  list(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")

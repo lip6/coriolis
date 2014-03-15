@@ -432,7 +432,7 @@ namespace Katabatic {
 
   inline  AutoSegments_InDirection::AutoSegments_InDirection ( unsigned int direction )
     : AutoSegmentHF()
-    , _direction(_direction)
+    , _direction(direction)
   {}
 
 

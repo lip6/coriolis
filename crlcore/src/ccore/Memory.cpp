@@ -133,7 +133,6 @@ double getMemoryUsageEstimate()
         return -1;
 #endif
         static int prevMem=0;
-        static int extra;
         static int fail=0;
 
         if (fail) return -1;
@@ -187,7 +186,6 @@ double getMemoryUsageEstimate()
         // FIFO destruction
         for (int i=0; i!=numAllocs; ++i) free(ptr[i]);
 
-        extra=memused()-last;
 // handle extra correctly:
 // in some cases we need to add its prev value to current,
 // in some just store the new value

@@ -142,7 +142,7 @@ namespace Isobar {
 
     _finalize();
 
-    return true;
+    return returnCode;
   }
 
 

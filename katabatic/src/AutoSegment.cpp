@@ -1288,11 +1288,11 @@ namespace Katabatic {
       return true;
     }
 
-    bool hasGlobalSegment = false;
+  //bool hasGlobalSegment = false;
     if ((flags & KbPropagate) and not isNotAligned()) {
       forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
         if (isegment->isFixed ()) return false;
-        if (isegment->isGlobal()) hasGlobalSegment = true;
+      //if (isegment->isGlobal()) hasGlobalSegment = true;
 
         isegment->getGCells( gcells );
         if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 

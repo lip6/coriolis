@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -165,17 +165,17 @@ namespace Cfg {
     VectorWrapper< std::vector<std::string>          >::wrap ( "StringVector" );
     VectorWrapper< std::vector<Parameter::EnumValue> >::wrap ( "EnumValueVector" );
 
-    typedef  void (Parameter::* VoidIntPrioritySign    )(int   ,Parameter::Priority)  ;
-    typedef  void (Parameter::* VoidDoublePrioritySign )(double,Parameter::Priority)  ;
-    typedef  void (Parameter::* VoidIntSign            )(int   );
-    typedef  void (Parameter::* VoidDoubleSign         )(double);
+  //typedef  void (Parameter::* VoidIntPrioritySign    )(int   ,Parameter::Priority);
+  //typedef  void (Parameter::* VoidDoublePrioritySign )(double,Parameter::Priority);
+  //typedef  void (Parameter::* VoidIntSign            )(int   );
+  //typedef  void (Parameter::* VoidDoubleSign         )(double);
     typedef  bool (Parameter::* BoolIntConstSign       )(int   ) const;
     typedef  bool (Parameter::* BoolDoubleConstSign    )(double) const;
-    typedef  bool (Parameter::* BoolBoolSign           )(bool  );
-    typedef  bool (Parameter::* BoolIntSign            )(int   );
-    typedef  bool (Parameter::* BoolDoubleSign         )(double);
-    typedef  bool (Parameter::* BoolStringSign         )(std::string);
-    typedef  bool (Parameter::* BoolStringFlagsSign    )(std::string,unsigned int);
+  //typedef  bool (Parameter::* BoolBoolSign           )(bool  );
+  //typedef  bool (Parameter::* BoolIntSign            )(int   );
+  //typedef  bool (Parameter::* BoolDoubleSign         )(double);
+  //typedef  bool (Parameter::* BoolStringSign         )(std::string);
+  //typedef  bool (Parameter::* BoolStringFlagsSign    )(std::string,unsigned int);
 
   // Parameter overloaded function members.
     BoolIntConstSign     paramCheckValueInt    = (BoolIntConstSign)   &Parameter::checkValue;

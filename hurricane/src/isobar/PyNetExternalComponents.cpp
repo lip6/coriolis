@@ -66,8 +66,6 @@ extern "C" {
   {
     trace << "PyNetExternalComponents_setExternal()" << endl;
 
-    bool isExternal = false;
-
     HTRY
     PyObject* pyComponent;
     if (PyArg_ParseTuple( args, "O", &pyComponent )) {

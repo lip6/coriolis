@@ -56,7 +56,7 @@ namespace Katabatic {
 
   void  GCellGrid::_postCreate ()
   {
-    KnikEngine::KnikEngine* knik;
+    KnikEngine* knik;
     knik = KnikEngine::get ( getCell() );
     if ( !knik )
       throw Error ( missingKnikEngine, "GCellGrid::_postCreate()", getString(getCell()).c_str() );

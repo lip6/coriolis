@@ -108,7 +108,7 @@ namespace Bookshelf {
                 << _maxPinId << " founds." << std::endl;
       success = false;
     }
-    return false;
+    return success;
   }
 
 

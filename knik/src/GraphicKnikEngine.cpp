@@ -94,8 +94,8 @@ namespace Knik {
         painter.setFont(font);
       //QString text = QString("%1%2%3").arg(edge->getConnexID()).arg(",").arg(edge->getConstCost());
         QString text = QString("%1").arg(edge->getConnexID());
-        Point fromPos = edge->getFrom()->getPosition();
-        Point   toPos = edge->getTo()->getPosition();
+      //Point fromPos = edge->getFrom()->getPosition();
+      //Point   toPos = edge->getTo()->getPosition();
       //painter.drawText ( widget->dbuToDisplayPoint ( (fromPos.getX()+toPos.getX())/2+DbU::lambda(0.5), (fromPos.getY()+toPos.getY())/2+DbU::lambda(0.5) ), text );
 
         if ( edge->isVertical() ) {
@@ -146,7 +146,7 @@ namespace Knik {
         painter.setFont(font);
       //QString text = QString("%1%2%3").arg(edge->getConnexID()).arg(",").arg(edge->getConstCost());
         QString text = QString("%1 / %2").arg(vertex->getConnexID()).arg(vertex->getDistance());
-        Point center = vertex->getPosition();
+      //Point center = vertex->getPosition();
         Box textBox = Box(vertex->getXMin(), vertex->getYMin(), vertex->getXMax(), vertex->getYMax());
         painter.drawText ( widget->dbuToDisplayRect ( textBox,false ), text, QTextOption (Qt::AlignCenter) );
         painter.setPen(Qt::NoPen);

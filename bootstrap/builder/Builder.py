@@ -34,6 +34,7 @@ class Builder:
         self._rmBuild          = False
         self._doBuild          = True
         self._noCache          = False
+        self._devtoolset2      = False
         self._enableShared     = "ON"
         self._enableDoc        = "OFF"
         self._checkDatabase    = "OFF"
@@ -55,6 +56,7 @@ class Builder:
         elif attribute == "rmBuild":          self._rmBuild          = value
         elif attribute == "doBuild":          self._doBuild          = value
         elif attribute == "noCache":          self._noCache          = value
+        elif attribute == "devtoolset2":      self._devtoolset2      = value
         elif attribute == "enableDoc":        self._enableDoc        = value
         elif attribute == "enableShared":     self._enableShared     = value
         elif attribute == "checkDatabase":    self._checkDatabase    = value
@@ -127,6 +129,13 @@ class Builder:
 
 
     def _execute ( self, command, error ):
+        if self._devtoolset2 == True:
+            commandAsString = ''
+            for i in range(len(command)):
+                if i: commandAsString += ' '
+                commandAsString += command[i]
+            command = [ 'scl', 'enable', 'devtoolset-2', commandAsString ]
+
         sys.stdout.flush ()
         sys.stderr.flush ()
         child = subprocess.Popen ( command, env=self._environment, stdout=None )
@@ -151,6 +160,10 @@ class Builder:
             print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
             return
 
+        boostNoSystemPaths = 'FALSE'
+        if self._devtoolset2 == True:
+            boostNoSystemPaths = 'TRUE'
+
         if self._rmBuild:
             print "Removing tool build directory: \"%s\"." % toolBuildDir
             command = [ "/bin/rm", "-rf", toolBuildDir ]
@@ -161,9 +174,10 @@ class Builder:
             os.makedirs ( toolBuildDir )
             os.chdir    ( toolBuildDir )
 
-            command = ["cmake", "-D", "CMAKE_BUILD_TYPE:STRING=%s"  % self.buildMode
-                              , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self.enableShared
-                             #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
+            command = ["cmake", "-D", "Boost_NO_SYSTEM_PATHS:STRING=%s" % boostNoSystemPaths
+                              , "-D", "CMAKE_BUILD_TYPE:STRING=%s"      % self.buildMode
+                              , "-D", "BUILD_SHARED_LIBS:STRING=%s"     % self.enableShared
+                             #, "-D", "CMAKE_MODULE_PATH:STRING=%s"     % cmakeModules
                                     , toolSourceDir ]
             self._execute ( command, "First CMake failed" )
 
@@ -172,7 +186,8 @@ class Builder:
             cmakeCache = os.path.join(toolBuildDir,"CMakeCache.txt")
             if os.path.isfile ( cmakeCache ): os.unlink ( cmakeCache )
 
-        command = ["cmake", "-D", "CMAKE_BUILD_TYPE:STRING=%s"       % self.buildMode
+        command = ["cmake", "-D", "Boost_NO_SYSTEM_PATHS:STRING=%s"  % boostNoSystemPaths
+                          , "-D", "CMAKE_BUILD_TYPE:STRING=%s"       % self.buildMode
                           , "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self.enableShared
                           , "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
                           , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
@@ -183,6 +198,7 @@ class Builder:
         if self.libSuffix:
             command += [ "-D", "LIB_SUFFIX:STRING=%s" % self.libSuffix ]
         command += [ toolSourceDir ]
+
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
@@ -321,6 +337,10 @@ class Builder:
 
 
     def _commandTemplate ( self, tools, projects, command ):
+        if self._devtoolset2:
+            self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-2/root/usr/include'
+            self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-2/root/usr/lib'
+
        # Set or guess the various projects TOP environment variables.
         for project in self.projects:
             topVariable     = "%s_TOP"      % project.getName().upper()

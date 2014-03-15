@@ -4,11 +4,12 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}/$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  list(INSERT CMAKE_MODULE_PATH 0 "${VLSISAPD_SOURCE_DIR}/cmake_modules/")
  print_cmake_module_path()
 
+ message(STATUS "Boost_NO_SYSTEM_PATHS: ${Boost_NO_SYSTEM_PATHS}")
  set_cmake_policies()
  setup_boost(program_options python regex)
 

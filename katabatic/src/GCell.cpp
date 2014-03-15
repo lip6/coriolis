@@ -1111,7 +1111,7 @@ namespace Katabatic {
 
     if ( not (flags & KbForceMove) and not isSaturated(depth) ) return false;
 
-    float capacity;
+  //float capacity;
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
@@ -1119,12 +1119,12 @@ namespace Katabatic {
       case Constant::Horizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
+      //capacity = getHCapacity ();
         break;
       case Constant::Vertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
-        capacity = getVCapacity ();
+      //capacity = getVCapacity ();
         break;
     }
 
@@ -1155,7 +1155,7 @@ namespace Katabatic {
 
     updateDensity ();
 
-    float capacity;
+  //float capacity;
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
     set<Net*>                      globalNets;
@@ -1164,12 +1164,12 @@ namespace Katabatic {
       case Constant::Horizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
+      //capacity = getHCapacity ();
         break;
       case Constant::Vertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
-        capacity = getVCapacity ();
+      //capacity = getVCapacity ();
         break;
     }
 
@@ -1201,7 +1201,7 @@ namespace Katabatic {
 
     updateDensity ();
 
-    float capacity;
+  //float capacity;
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
@@ -1209,12 +1209,12 @@ namespace Katabatic {
       case Constant::Horizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
-        capacity = getHCapacity ();
+      //capacity = getHCapacity ();
         break;
       case Constant::Vertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
-        capacity = getVCapacity ();
+      //capacity = getVCapacity ();
         break;
     }
 

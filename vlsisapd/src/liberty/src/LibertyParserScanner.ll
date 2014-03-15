@@ -1,4 +1,6 @@
 
+%option nounput
+
 %{
 
 #include  <iostream>
@@ -147,7 +149,6 @@ cell_footprint                  { return CELL_FOOTPRINT; }
 dont_use                        { return DONT_USE; }
 pin                             { return PIN; }
 direction                       { return DIRECTION; }
-capacitance                     { return CAPACITANCE; }
 fanout_load                     { return FANOUT_LOAD; }
 max_fanout                      { return MAX_FANOUT; }
 function                        { return FUNCTION; }

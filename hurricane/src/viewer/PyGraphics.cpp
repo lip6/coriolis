@@ -135,7 +135,7 @@ extern "C" {
   {
     trace << "PyGraphics_getGroup()" << endl;
 
-    const char* group;
+    const char* group = "NoGroup";
 
     HTRY
     Graphics* graphics = Graphics::getGraphics ();

@@ -1,5 +1,7 @@
-%{
 
+%option nounput
+
+%{
 
 // This file is part of the Coriolis Project.
 // Copyright (C) Laboratoire LIP6 - Departement ASIM

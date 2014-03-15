@@ -35,6 +35,7 @@ HFence* HFence::create (Grid* grid, GCell* gcup, GCell* gcdown) {
     if ( (!gcup) && (!gcdown) )
         throw Error("cannot create a flying fence");
             
+#if THIS_IS_DISABLED
     unsigned step;
     if (gcup) {
         step = gcup->getStep();
@@ -43,6 +44,7 @@ HFence* HFence::create (Grid* grid, GCell* gcup, GCell* gcdown) {
     } else {
         step = 0;
     }
+#endif
 
     HFence* hfence = new HFence (grid, gcup, gcdown);
 

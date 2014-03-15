@@ -233,7 +233,7 @@ namespace Kite {
   void  KiteEngine::createGlobalGraph ( unsigned int mode )
   {
     Cell* cell   = getCell();
-    Box   cellBb = cell->getBoundingBox();
+  //Box   cellBb = cell->getBoundingBox();
     if (not _knik) {
       cell->flattenNets( mode & KtBuildGlobalRouting );
   

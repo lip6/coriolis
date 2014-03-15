@@ -448,7 +448,7 @@ namespace {
     static int                   index;
            string                pinName;
     static Net*                  net;
-    static Pin*                  pin;
+  //static Pin*                  pin;
     static LayerInformation*     layerInfo;
     static Pin::AccessDirection  accessDirection;
     static Name                  orientation;
@@ -496,16 +496,16 @@ namespace {
 
       if (layerInfo and net) {
         net->setExternal( true );
-        pin = Pin::create( net
-                         , pinName
-                         , accessDirection
-                         , Pin::PlacementStatus::PLACED
-                         , layerInfo->getLayer()
-                         , XCON
-                         , YCON
-                         , WIDTH
-                         , WIDTH
-                         );
+        /*pin =*/ Pin::create( net
+                             , pinName
+                             , accessDirection
+                             , Pin::PlacementStatus::PLACED
+                             , layerInfo->getLayer()
+                             , XCON
+                             , YCON
+                             , WIDTH
+                             , WIDTH
+                             );
       }
       if (not net )       _printError( false, "Unknown net name %s."  , fields[5] );
       if (not layerInfo ) _printError( false, "Unknown layer name %s.", fields[6] );

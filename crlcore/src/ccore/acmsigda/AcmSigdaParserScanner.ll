@@ -1,4 +1,6 @@
 
+%option nounput
+
 %{
 
 #include  <iostream>

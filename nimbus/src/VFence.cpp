@@ -34,6 +34,7 @@ VFence* VFence::create (Grid* grid, GCell* gcleft, GCell* gcright) {
     if ( (!gcleft) && (!gcright) )
         throw Error("cannot create a flying fence");
 
+#if THIS_IS_DISABLED
     unsigned step;
     if (gcleft) {
         step = gcleft->getStep();
@@ -42,6 +43,7 @@ VFence* VFence::create (Grid* grid, GCell* gcleft, GCell* gcright) {
     } else {
         step = 0;
     }
+#endif
 
     VFence* vfence = new VFence (grid, gcleft, gcright);
 

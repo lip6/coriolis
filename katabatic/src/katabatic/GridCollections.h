@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -172,7 +172,7 @@ namespace Katabatic {
       _stop  = 0;
     } else {
       _start = grid->getIndex ( column, rowStart );
-      _stop  = grid->getIndex ( column, min(rowStop,grid->getRows()) );
+      _stop  = grid->getIndex ( column, std::min(rowStop,grid->getRows()) );
     }
   }
 
@@ -344,7 +344,7 @@ namespace Katabatic {
       _stop  = 0;
     } else {
       _start = grid->getIndex ( columnStart, row );
-      _stop  = grid->getIndex ( min(columnStop,grid->getColumns()), row );
+      _stop  = grid->getIndex ( std::min(columnStop,grid->getColumns()), row );
     }
   }
 

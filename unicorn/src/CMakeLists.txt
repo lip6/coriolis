@@ -61,6 +61,7 @@
                                        ${BOOKSHELF_LIBRARY}
                                        ${AGDS_LIBRARY}
                                        ${CIF_LIBRARY}
+                                       ${UTILITIES_LIBRARY}
                                        ${CONFIGURATION_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}

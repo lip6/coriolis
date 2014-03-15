@@ -72,8 +72,8 @@
 #
 # Adds -Wall to the C/C++ flags.
 #
- set(CMAKE_C_FLAGS_DEBUG                "-Wall -g"           CACHE STRING "C Compiler Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE              "-Wall -O2 -DNDEBUG" CACHE STRING "C Compiler Release options." FORCE)
+ set(CMAKE_C_FLAGS_DEBUG     "-std=c++0x -Wall -g"           CACHE STRING "C Compiler Debug options."   FORCE)
+ set(CMAKE_C_FLAGS_RELEASE   "-std=c++0x -Wall -O2 -DNDEBUG" CACHE STRING "C Compiler Release options." FORCE)
  set(CMAKE_CXX_FLAGS_DEBUG   "-std=c++0x -Wall -g"           CACHE STRING "C++ Compiler Debug options."   FORCE)
  set(CMAKE_CXX_FLAGS_RELEASE "-std=c++0x -Wall -O2 -DNDEBUG" CACHE STRING "C++ Compiler Release options." FORCE)
 
@@ -193,7 +193,8 @@
        find_package(Boost 1.33.1 COMPONENTS ${ARGV} REQUIRED)
      endif(NOT Boost_FOUND)
    endif(ARGC LESS 1)
-   message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
+   message(STATUS "Found Boost includes ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
+   message(STATUS "Found Boost libraries ${Boost_LIB_VERSION} in ${Boost_LIBRARY_DIRS}")
    foreach(LIBRARY ${Boost_LIBRARIES})
      message(STATUS "  ${LIBRARY}")
    endforeach(LIBRARY)

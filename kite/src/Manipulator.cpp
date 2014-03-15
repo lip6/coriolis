@@ -632,7 +632,7 @@ namespace Kite {
     size_t              end              = _fsm.getEnd  (itrack);
     Net*                ownerNet         = _segment->getNet();
     Interval            toFree            (_segment->getCanonicalInterval());
-    Net*                ripupNet         = NULL;
+  //Net*                ripupNet         = NULL;
     set<TrackElement*>  canonicals;
     DbU::Unit           rightAxisHint    = 0;
     DbU::Unit           leftAxisHint     = 0;
@@ -661,7 +661,7 @@ namespace Kite {
       //   ltrace(200) << "Ovelap has an Id superior to AutoSegment::maxId:" << maxId << "." << endl;
       //   continue;
       // }
-      ripupNet = segment2->getNet();
+      // ripupNet = segment2->getNet();
 
       DataNegociate* data2 = segment2->getDataNegociate();
       if ( !data2 ) {
@@ -803,7 +803,7 @@ namespace Kite {
     size_t              end        = _fsm.getEnd  (itrack);
     Net*                ownerNet   = _segment->getNet();
     Interval            toFree      (_segment->getCanonicalInterval());
-    Net*                ripupNet   = NULL;
+  //Net*                ripupNet   = NULL;
     set<TrackElement*>  canonicals;
     bool                success    = true;
 
@@ -820,7 +820,7 @@ namespace Kite {
         success = false;
         continue;
       }
-      ripupNet = segment2->getNet();
+    //ripupNet = segment2->getNet();
 
       DataNegociate* data2 = segment2->getDataNegociate();
       if (not data2 ) {

@@ -609,13 +609,15 @@ void Graph::initConnexComp ( Vertex* vertex, Edge* arrivalEdge, int newConnexID 
     if ( newConnexID != -1 ) {
         vertex->setConnexID ( newConnexID );
     }
-    if ( VTuple* vtuple = vertex->getVTuple() ) {
+
+    VTuple* vtuple = vertex->getVTuple();
+    if ( vtuple ) {
         //cerr << "    Vertex " << vertex << " already has a vtuple : " << vtuple << endl;
         assert ( vtuple->getVertex() == vertex );
         increaseVTuplePriority ( vtuple, 0 );
     }
     else {
-        VTuple* vtuple = VTuple::create ( vertex, 0 );
+        vtuple = VTuple::create ( vertex, 0 );
         //cerr << "    Vertex " << vertex << " has now a new vtuple : " << vtuple << endl;
         addVTupleToPriorityQueue ( vtuple );
     }
@@ -672,11 +674,12 @@ void Graph::UpdateConnexComp ( VertexList reachedVertexes, Vertex* firstVertex )
         currentVertex->setDistance(0);
         currentVertex->setConnexID(firstConnexID);
 
-        if ( VTuple* vtuple = currentVertex->getVTuple() ) {
+        VTuple* vtuple = currentVertex->getVTuple();
+        if ( vtuple  ) {
             increaseVTuplePriority ( vtuple, 0);
         }
         else {
-            VTuple* vtuple = VTuple::create ( currentVertex, 0 );
+            vtuple = VTuple::create ( currentVertex, 0 );
             addVTupleToPriorityQueue ( vtuple );
         }
     }
