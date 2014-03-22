@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ImportCellDialog.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <iostream>
@@ -93,6 +84,7 @@ namespace Unicorn {
 
     _formatComboBox->addItem ( tr("ACM/SIGDA (aka MCNC, .bench)"), AcmSigda    );
     _formatComboBox->addItem ( tr("ISPD'04 (Bookshelf)")         , Ispd04      );
+    _formatComboBox->addItem ( tr("ISPD'05 (Bookshelf)")         , Ispd05      );
     _formatComboBox->addItem ( tr("ICCAD'04 (LEF/DEF)")          , Iccad04     );
     _formatComboBox->addItem ( tr("Alliance compliant DEF")      , AllianceDef );
     hLayout2->addWidget ( _formatComboBox );

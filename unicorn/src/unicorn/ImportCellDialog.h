@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./ImportCellDialog.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __UNICORN_IMPORT_CELL_DIALOG_H__
-#define  __UNICORN_IMPORT_CELL_DIALOG_H__
+#ifndef  UNICORN_IMPORT_CELL_DIALOG_H
+#define  UNICORN_IMPORT_CELL_DIALOG_H
 
 #include  <QDialog>
 
@@ -40,7 +31,7 @@ namespace Unicorn {
       Q_OBJECT;
 
     public:
-      enum Formats { AcmSigda=1, Ispd04, Iccad04, AllianceDef };
+      enum Formats { AcmSigda=1, Ispd04, Ispd05, Iccad04, AllianceDef };
     public:
                      ImportCellDialog ( QWidget* parent=NULL );
       bool           runDialog        ( QString& name, int& format, bool& newViewerRequest );
@@ -57,4 +48,4 @@ namespace Unicorn {
 } // End of Unicorn namespace.
 
 
-#endif
+#endif // UNICORN_IMPORT_CELL_DIALOG_H

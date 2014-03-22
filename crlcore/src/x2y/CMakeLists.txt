@@ -1,5 +1,5 @@
-   
-               include ( ${QT_USE_FILE} )
+# -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/x2y> -*-
+  
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}

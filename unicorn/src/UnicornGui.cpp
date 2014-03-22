@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -26,6 +25,7 @@
 #include  "crlcore/GraphicToolEngine.h"
 #include  "crlcore/AcmSigda.h"
 #include  "crlcore/Ispd04Bookshelf.h"
+#include  "crlcore/Ispd05Bookshelf.h"
 #include  "crlcore/Iccad04Lefdef.h"
 #include  "crlcore/DefImport.h"
 #include  "crlcore/DefExport.h"
@@ -45,6 +45,7 @@ namespace Unicorn {
   using CRL::AllianceFramework;
   using CRL::AcmSigda;
   using CRL::Ispd04;
+  using CRL::Ispd05;
   using CRL::Iccad04Lefdef;
   using CRL::DefImport;
   using CRL::DefExport;
@@ -195,6 +196,10 @@ namespace Unicorn {
         case ImportCellDialog::Ispd04:
           cell = Ispd04::load ( cellName.toStdString() );
           break;
+        case ImportCellDialog::Ispd05:
+          cell = Ispd05::load ( cellName.toStdString() );
+          cerr << "Cell " << " successfully loaded." << endl;
+          break;
         case ImportCellDialog::Iccad04:
           cell = Iccad04Lefdef::load ( cellName.toStdString() , 0 );
           break;
@@ -209,6 +214,7 @@ namespace Unicorn {
           viewer = UnicornGui::create ();
           viewer->show ();
         }
+        cerr << "Loading " << cell->getName() << " into the viewer." << endl;
         viewer->setCell ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;

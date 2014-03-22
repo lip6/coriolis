@@ -2,7 +2,7 @@
 
  project(VLSISAPD)
 
- cmake_minimum_required(VERSION 2.4.0)
+ cmake_minimum_required(VERSION 2.8.9)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)

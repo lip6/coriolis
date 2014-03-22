@@ -1,10 +1,11 @@
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${SOLSTICE_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                        )
 
@@ -36,9 +37,9 @@
   
                        )
 
-          qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
 
-           add_library ( solstice       ${cpps} ${mocCpps} )
+           add_library ( solstice       ${cpps} )
  set_target_properties ( solstice       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( solstice       ${EQUINOX_LIBRARIES}
                                         ${CORIOLIS_LIBRARIES}
@@ -50,7 +51,7 @@
                                         ${AGDS_LIBRARY}
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
-                                        ${QT_LIBRARIES}
+                                        ${QtX_LIBRARIES}
                                         ${Boost_LIBRARIES}
                                         ${LIBXML2_LIBRARIES}
                                         ${PYTHON_LIBRARIES} -lutil

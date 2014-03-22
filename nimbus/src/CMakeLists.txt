@@ -1,5 +1,5 @@
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${NIMBUS_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR} 
@@ -54,7 +54,7 @@
                                    ${AGDS_LIBRARY}
                                    ${LEFDEF_LIBRARIES}
                                    ${OA_LIBRARIES}
-                                   ${QT_LIBRARIES}
+                                   ${QtX_LIBRARIES}
                                    ${Boost_LIBRARIES}
                                    ${LIBXML2_LIBRARIES}
                                    ${PYTHON_LIBRARIES} -lutil

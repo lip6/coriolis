@@ -203,6 +203,31 @@
 
 
 #
+# Find Qt, the union of all the modules we need for the whole project.
+#
+ macro(setup_qt)
+  # For Qt4.
+  #set(QT_USE_QTXML "true")
+  #find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
+
+  # For Qt5
+   find_package(Qt5Core            REQUIRED)
+   find_package(Qt5Gui             REQUIRED)
+   find_package(Qt5Widgets         REQUIRED)
+   find_package(Qt5PrintSupport    REQUIRED)
+   set(CMAKE_AUTOMOC ON)
+   set(QtX_INCLUDE_DIR ${Qt5PrintSupport_INCLUDE_DIR}
+                       ${Qt5Widgets_INCLUDE_DIR}
+                       ${Qt5Gui_INCLUDE_DIR}
+                       ${Qt5Core_INCLUDE_DIR} )
+   set(QtX_LIBRARIES   ${Qt5PrintSupport_LIBRARIES}
+                       ${Qt5Widgets_LIBRARIES}
+                       ${Qt5Gui_LIBRARIES}
+                       ${Qt5Core_LIBRARIES} )
+ endmacro()
+
+
+#
 # Guess the value of SYS_CONF_DIR according to INSTALLDIR.
 # if INSTALLDIR is either /usr or /opt, we uses the system-wide /etc,
 # otherwise we install under the tool INSTALLDIR/etc.

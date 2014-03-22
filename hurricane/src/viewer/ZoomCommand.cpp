@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -77,29 +77,29 @@ namespace Hurricane {
 
   void  ZoomCommand::mousePressEvent ( QMouseEvent* event )
   {
-    if ( isActive() ) return;
+    if (isActive()) return;
     if ( _cellWidget->getActiveCommand() and (_cellWidget->getActiveCommand() != this) )
       return;
 
-    if ( ( event->button() == Qt::LeftButton ) && !event->modifiers() ) {
-      setActive         ( true );
-      setStartPoint     ( event->pos() );
-      setDrawingEnabled ( true );
+    if ( (event->button() == Qt::LeftButton) and not event->modifiers() ) {
+      setActive        ( true );
+      setStartPoint    ( event->pos() );
+      setDrawingEnabled( true );
     }
   }
 
 
   void  ZoomCommand::mouseReleaseEvent ( QMouseEvent* event )
   {
-    if ( !isActive() ) return;
+    if (not isActive()) return;
 
-    setActive         ( false );
-    setDrawingEnabled ( false );
+    setActive        ( false );
+    setDrawingEnabled( false );
 
-    QRect zoomArea = QRect ( _startPoint, _stopPoint );
+    QRect zoomArea = QRect( _startPoint, _stopPoint );
     if (   ( abs(zoomArea.width ()) > getDrawingThreshold() )
-         && ( abs(zoomArea.height()) > getDrawingThreshold() ) ) {
-      _cellWidget->reframe ( _cellWidget->screenToDbuBox(zoomArea) ); 
+       and ( abs(zoomArea.height()) > getDrawingThreshold() ) ) {
+      _cellWidget->reframe( _cellWidget->screenToDbuBox(zoomArea) ); 
       return;
     }
   //else {

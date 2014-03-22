@@ -1,11 +1,12 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<kite/src>" -*-
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${KITE_SOURCE_DIR}/src
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
+                         ${WtX_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
                        )
@@ -69,7 +70,7 @@
                                        PyGraphicKiteEngine.cpp
                        )
                    set ( kitecpps      KiteMain.cpp )
-          qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
            add_library ( kite         ${cpps} ${mocCpps} ${pyCpps} )
@@ -87,7 +88,7 @@
                                       ${AGDS_LIBRARY}
                                       ${LEFDEF_LIBRARIES}
                                       ${OA_LIBRARIES}
-                                      ${QT_LIBRARIES}
+                                      ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
                                       ${LIBXML2_LIBRARIES}
                                       ${PYTHON_LIBRARIES} -lutil

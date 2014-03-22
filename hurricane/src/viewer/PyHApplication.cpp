@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -18,7 +17,9 @@
 #include "hurricane/viewer/PyHApplication.h"
 #include <cstring>
 #include <QtGui>
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
@@ -97,7 +98,9 @@ extern "C" {
       argv[i] = vargv[i];
 
     ha = new HApplication(argc,argv);
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
     ha->setStyle ( new QGtkStyle() );
 #endif
 

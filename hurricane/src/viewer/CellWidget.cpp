@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -340,22 +340,22 @@ namespace Hurricane {
 
 
   CellWidget::DrawingPlanes::DrawingPlanes ( const QSize& size, CellWidget* cw )
-    : _cellWidget(cw)
-    , _printer(NULL)
-    , _image(NULL)
-    , _normalPen()
-    , _linePen()
+    : _cellWidget  (cw)
+    , _printer     (NULL)
+    , _image       (NULL)
+    , _normalPen   ()
+    , _linePen     ()
     , _workingPlane(0)
-    , _lineMode(false)
+    , _lineMode    (false)
   {
-    for ( size_t i=0 ; i<2 ; i++ )
+    for ( size_t i=0 ; i<3 ; i++ )
       _planes[i] = new QPixmap ( size );
   }
 
 
   CellWidget::DrawingPlanes::~DrawingPlanes ()
   {
-    for ( size_t i=0 ; i<2 ; i++ ) {
+    for ( size_t i=0 ; i<3 ; i++ ) {
       if ( _painters[i].isActive() ) _painters[i].end();
       delete _planes[i];
     }
@@ -406,7 +406,7 @@ namespace Hurricane {
 
   void  CellWidget::DrawingPlanes::resize ( const QSize& size )
   {
-    for ( size_t i=0 ; i<2 ; i++ ) {
+    for ( size_t i=0 ; i<3 ; i++ ) {
       bool activePainter = _painters[i].isActive();
 
       if ( activePainter ) _painters[i].end();
@@ -421,8 +421,11 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftLeft ( int dx )
   {
     buffersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( dx, 0, *_planes[PlaneId::Normal   ], 0, 0, width()-dx, height() );
-    _painters[PlaneId::Selection].drawPixmap ( dx, 0, *_planes[PlaneId::Selection], 0, 0, width()-dx, height() );
+    _painters[PlaneId::AutoCopy ].drawPixmap( dx, 0, *_planes[PlaneId::Normal   ], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Normal   ].drawPixmap(  0, 0, *_planes[PlaneId::AutoCopy ], 0, 0, width()   , height() );
+
+    _painters[PlaneId::AutoCopy ].drawPixmap( dx, 0, *_planes[PlaneId::Selection], 0, 0, width()-dx, height() );
+    _painters[PlaneId::Selection].drawPixmap(  0, 0, *_planes[PlaneId::AutoCopy ], 0, 0, width()   , height() );
     buffersEnd ();
   }
 
@@ -439,8 +442,11 @@ namespace Hurricane {
   void  CellWidget::DrawingPlanes::shiftUp ( int dy )
   {
     buffersBegin ();
-    _painters[PlaneId::Normal   ].drawPixmap ( 0, dy, *_planes[PlaneId::Normal   ], 0, 0, width(), height()-dy );
-    _painters[PlaneId::Selection].drawPixmap ( 0, dy, *_planes[PlaneId::Selection], 0, 0, width(), height()-dy );
+    _painters[PlaneId::AutoCopy ].drawPixmap ( 0, dy, *_planes[PlaneId::Normal   ], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Normal   ].drawPixmap ( 0,  0, *_planes[PlaneId::AutoCopy ], 0, 0, width(), height()    );
+
+    _painters[PlaneId::AutoCopy ].drawPixmap ( 0, dy, *_planes[PlaneId::Selection], 0, 0, width(), height()-dy );
+    _painters[PlaneId::Selection].drawPixmap ( 0,  0, *_planes[PlaneId::AutoCopy ], 0, 0, width(), height()    );
     buffersEnd ();
   }
 
@@ -1040,7 +1046,7 @@ namespace Hurricane {
   //setAutoFillBackground ( false );
     setAttribute     ( Qt::WA_OpaquePaintEvent );
     setAttribute     ( Qt::WA_NoSystemBackground );
-    setAttribute     ( Qt::WA_PaintOnScreen );
+  //setAttribute     ( Qt::WA_PaintOnScreen );
     setAttribute     ( Qt::WA_StaticContents );
     setSizePolicy    ( QSizePolicy::Expanding, QSizePolicy::Expanding );
     setFocusPolicy   ( Qt::StrongFocus );
@@ -2138,6 +2144,8 @@ namespace Hurricane {
 
   void  CellWidget::_goLeft ( int dx )
   {
+  //cerr << "CellWidget::_goLeft() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
+
     _visibleArea.translate ( - (DbU::Unit)( dx / getScale() ) , 0 );
 
     if ( _offsetVA.rx() - dx >= 0 ) {
@@ -2151,9 +2159,9 @@ namespace Hurricane {
     _displayArea.translate ( - (DbU::Unit)( shift / getScale() ) , 0 );
     _offsetVA.rx() -= dx - shift;
 
-    if ( shift >= _drawingPlanes.width() )
+    if ( shift >= _drawingPlanes.width() ) {
       _redrawManager.refresh ();
-    else {
+    } else {
       _drawingPlanes.shiftLeft ( shift );
       _redraw ( QRect ( QPoint(0,0), QSize(shift,_drawingPlanes.height()) ) );
     }
@@ -2164,7 +2172,7 @@ namespace Hurricane {
 
   void  CellWidget::_goRight ( int dx )
   {
-  //cerr << "CellWidget::goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
+  //cerr << "CellWidget::_goRight() - dx: " << dx << " (offset: " << _offsetVA.rx() << ")" << endl;
 
     _visibleArea.translate ( (DbU::Unit)( dx / getScale() ) , 0 );
 
@@ -2193,7 +2201,7 @@ namespace Hurricane {
 
   void  CellWidget::_goUp ( int dy )
   {
-  //cerr << "CellWidget::shiftUp() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
+  //cerr << "CellWidget::_goUp() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
     _visibleArea.translate ( 0, (DbU::Unit)( dy / getScale() ) );
 
@@ -2221,7 +2229,7 @@ namespace Hurricane {
 
   void  CellWidget::_goDown ( int dy )
   {
-  //cerr << "CellWidget::shiftDown() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
+  //cerr << "CellWidget::_goDown() - " << dy << " (offset: " << _offsetVA.ry() << ")" << endl;
 
     _visibleArea.translate ( 0, - (DbU::Unit)( dy / getScale() ) );
 

@@ -41,17 +41,17 @@ namespace Cfg {
     , _type          (type)
     , _filter        (filter)
   {
-	QPixmap pixmap(":/images/choose.png");
+    QPixmap pixmap(":/images/choose.png");
 
-	_chooseButton->setIcon      (QIcon(pixmap));
-	_chooseButton->setIconSize  (pixmap.size());
-	_chooseButton->setCursor    (Qt::ArrowCursor);
-	_chooseButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
-	_chooseButton->setToolTip   (tr( (type&FileName)?"Choose file ...":"Choose directory ..." ));
+    _chooseButton->setIcon      (QIcon(pixmap));
+    _chooseButton->setIconSize  (pixmap.size());
+    _chooseButton->setCursor    (Qt::ArrowCursor);
+    _chooseButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
+    _chooseButton->setToolTip   (tr( (type&FileName)?"Choose file ...":"Choose directory ..." ));
 
-	connect ( _chooseButton, SIGNAL(clicked()), this, SLOT(updateLineEdit()) );
+    connect ( _chooseButton, SIGNAL(clicked()), this, SLOT(updateLineEdit()) );
 
-	setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(_chooseButton->sizeHint().width() + 1));
+    setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(_chooseButton->sizeHint().width() + 1));
   }
 
 

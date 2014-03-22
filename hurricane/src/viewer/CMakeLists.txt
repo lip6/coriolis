@@ -1,10 +1,12 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<hurricane/src/viewer>" -*-
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/isobar
                          ${HURRICANE_SOURCE_DIR}/src/viewer
                          ${CONFIGURATION_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
                        )
@@ -123,8 +125,8 @@
                    set ( sources2   Script.cpp )
                    set ( includes2  hurricane/viewer/Script.h )
 
-          qt4_wrap_cpp ( MOC_SRCS    ${mocincludes} )
-     qt4_add_resources ( RCC_SRCS    CellViewer.qrc )
+          qt5_wrap_cpp ( MOC_SRCS    ${mocincludes} )
+     qt5_add_resources ( RCC_SRCS    CellViewer.qrc )
 
            add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${sources2} ${pycpps} )
  set_target_properties ( viewer      PROPERTIES VERSION 1.0 SOVERSION 1 )
@@ -134,7 +136,8 @@
                                      ${CONFIGURATION_LIBRARY}
                                      ${LIBXML2_LIBRARIES}
                                      ${Boost_LIBRARIES}
-                                     ${QT_LIBRARIES} )
+                                     ${QtX_LIBRARIES}
+                       )
            add_library ( pyViewer    MODULE ${pycpps} )
  target_link_libraries ( pyViewer    viewer )
  set_target_properties ( pyViewer    PROPERTIES

@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./AreaCommand.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include <QMouseEvent>
@@ -54,23 +45,23 @@ namespace Hurricane {
 
   void  AreaCommand::mouseMoveEvent ( QMouseEvent* event )
   {
-    if ( !_drawingEnabled ) return;
+    if (not _drawingEnabled) return;
 
-    setStopPoint ( event->pos() );
-    _cellWidget->update ();
+    setStopPoint( event->pos() );
+    _cellWidget->update();
   }
 
 
   void  AreaCommand::draw ()
   {
-    if ( !_drawingEnabled ) return;
+    if (not _drawingEnabled) return;
 
-    if (    ( abs(_stopPoint.x()-_startPoint.x()) > _drawingThreshold )
-         && ( abs(_stopPoint.y()-_startPoint.y()) > _drawingThreshold ) ) {
-      _cellWidget->setPen ( Graphics::getPen("grid"), 2 );
-      _cellWidget->drawScreenRect ( _startPoint, _stopPoint, 2 );
-      drawCorner ( true  );
-      drawCorner ( false );
+    if (   (abs(_stopPoint.x()-_startPoint.x()) > _drawingThreshold)
+       and (abs(_stopPoint.y()-_startPoint.y()) > _drawingThreshold) ) {
+      _cellWidget->setPen        ( Graphics::getPen("grid"), CellWidget::PlaneId::Widget );
+      _cellWidget->drawScreenRect( _startPoint, _stopPoint,  CellWidget::PlaneId::Widget );
+      drawCorner( true  );
+      drawCorner( false );
     }
   }
 
@@ -80,8 +71,8 @@ namespace Hurricane {
     QRect  zoomRect = QRect(_startPoint,_stopPoint).normalized();
     QPoint base     = (bottomLeft) ? zoomRect.bottomLeft() : zoomRect.topRight();
 
-    if ( bottomLeft ) base.rx() += 2;
-    else              base.ry() += 2;
+    if (bottomLeft) base.rx() += 2;
+    else            base.ry() += 2;
 
     _cornerPoints[0] = base;
     _cornerPoints[1] = base;
@@ -90,8 +81,8 @@ namespace Hurricane {
     _cornerPoints[0].ry() += (bottomLeft) ? -10 :  10;
     _cornerPoints[2].rx() += (bottomLeft) ?  10 : -10;
 
-    _cellWidget->drawScreenPolyline ( _cornerPoints, 3, 4, 2 );
+    _cellWidget->drawScreenPolyline( _cornerPoints, 3, 4, CellWidget::PlaneId::Widget );
   }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.

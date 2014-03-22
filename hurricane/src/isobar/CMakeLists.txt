@@ -1,5 +1,6 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<hurricane/src/isobar>" -*-
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/viewer

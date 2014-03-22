@@ -2,7 +2,7 @@
 
  project(CRLCORE)
 
- cmake_minimum_required(VERSION 2.4.0)
+ cmake_minimum_required(VERSION 2.8.9)
 
  OPTION(BUILD_DOC "Build the documentation (latex+doxygen)" OFF)
 
@@ -17,32 +17,25 @@
  set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options python regex wave)
- message(STATUS "${Boost_LIBRARIES}")
+ setup_qt()
 
- find_package(LibXml2 REQUIRED)
- find_package(PythonLibs REQUIRED)
+ find_package(LibXml2            REQUIRED)
+ find_package(PythonLibs         REQUIRED)
  find_package(PythonSitePackages REQUIRED)
- set(QT_USE_QTXML "true")
- find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
- find_package(BISON REQUIRED)
- find_package(FLEX REQUIRED)
+ find_package(BISON              REQUIRED)
+ find_package(FLEX               REQUIRED)
  find_package(LEFDEF)
  find_package(OPENACCESS)
- find_package(VLSISAPD REQUIRED)
- find_package(HURRICANE REQUIRED)
- find_package(Libexecinfo REQUIRED)
-#if(BUILD_DOC)
-#  include(UseLATEX)
-#endif(BUILD_DOC)
+ find_package(VLSISAPD           REQUIRED)
+ find_package(HURRICANE          REQUIRED)
+ find_package(Libexecinfo        REQUIRED)
  
  add_subdirectory(src)
  add_subdirectory(etc)
  add_subdirectory(cmake_modules)
 
  if(BUILD_DOC)
-  FIND_PACKAGE(Doxygen)
- endif(BUILD_DOC)
-
- if(BUILD_DOC)
+#  include(UseLATEX)
+   find_package(Doxygen)
    add_subdirectory(doc)
- endif(BUILD_DOC)
+ endif()

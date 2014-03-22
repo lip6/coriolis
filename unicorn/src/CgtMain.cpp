@@ -34,7 +34,9 @@ namespace bopts = boost::program_options;
 #include "hurricane/viewer/Script.h"
 
 #include <QtGui>
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
@@ -313,7 +315,9 @@ int main ( int argc, char *argv[] )
 
     if ( not textMode ) {
       auto_ptr<QApplication> qa ( new HApplication(argc,argv) );
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
       qa->setStyle ( new QGtkStyle() );
 #endif
       Graphics::enable ();

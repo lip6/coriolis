@@ -1,5 +1,5 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/pyCRL>" -*-
 
-                   include ( ${QT_USE_FILE} )
        include_directories ( ${CRLCORE_SOURCE_DIR}/src/fonts
                              ${CRLCORE_SOURCE_DIR}/src/ccore
                              ${CRLCORE_SOURCE_DIR}/src/ccore/properties

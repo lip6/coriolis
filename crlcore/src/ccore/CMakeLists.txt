@@ -1,3 +1,4 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/ccore>" -*-
 
 # Try to find a reasonable CORIOLIS_TOP value.
  if( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
@@ -9,7 +10,7 @@
  endif( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
 
 
-                   include ( ${QT_USE_FILE} )
+#                  include ( ${QT_USE_FILE} )
 
        include_directories ( ${CRLCORE_SOURCE_DIR}/src/fonts
                              ${CRLCORE_SOURCE_DIR}/src/ccore
@@ -17,6 +18,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/bookshelf
                              ${CRLCORE_SOURCE_DIR}/src/ccore/acmsigda
                              ${CRLCORE_SOURCE_DIR}/src/ccore/ispd04
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/ispd05
                              ${CRLCORE_SOURCE_DIR}/src/ccore/iccad04
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
@@ -32,6 +34,7 @@
                              ${CONFIGURATION_INCLUDE_DIR}
                              ${PYTHON_INCLUDE_PATH}
                              ${Boost_INCLUDE_DIR}
+                             ${QtX_INCLUDE_DIR}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
@@ -61,6 +64,7 @@
                                                crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
                                                crlcore/Ispd04Bookshelf.h
+                                               crlcore/Ispd05Bookshelf.h
                                                crlcore/Ioc.h
                                                crlcore/NetExtension.h
                                                crlcore/Measures.h
@@ -146,6 +150,7 @@
                            )
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
                        set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
+                       set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
  if ( LEFDEF_FOUND )
        include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
@@ -272,7 +277,7 @@
  set_source_files_properties ( ${AcmSigdaParserGrammarCpp} GENERATED )
 
 
-                qt4_wrap_cpp ( moc_cpps ${mocincludes} )
+                qt5_wrap_cpp ( moc_cpps ${mocincludes} )
 
                  add_library ( crlcore  ${ccore_cpps}
                                         ${moc_cpps}
@@ -290,6 +295,7 @@
                                         ${acmsigda_parser_cpps}
                                         ${iccad04_cpps}
                                         ${ispd04_cpps}
+                                        ${ispd05_cpps}
                                         ${spice_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
@@ -304,7 +310,7 @@
                                         ${AGDS_LIBRARY}
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
-                                        ${QT_LIBRARIES}
+                                        ${QtX_LIBRARIES}
                                         ${Boost_LIBRARIES}
                                         ${LIBXML2_LIBRARIES}
                                         ${PYTHON_LIBRARIES} -lutil

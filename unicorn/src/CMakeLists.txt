@@ -1,12 +1,12 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<unicorn/src>" -*-
 
-
-
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
    include_directories ( ${UNICORN_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                          ${BOOKSHELF_INCLUDE_DIR}
                          ${CONFIGURATION_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIRS}
                          ${LEFDEF_INCLUDE_DIR}
                          ${PYTHON_INCLUDE_PATH}
@@ -32,8 +32,8 @@
                        )
                    set ( cgtcpp        CgtMain.cpp )
  
-          qt4_wrap_cpp ( MOCcpps       ${mocincludes} )
-     qt4_add_resources ( RCC_SRCS      Unicorn.qrc )
+          qt5_wrap_cpp ( MOCcpps       ${mocincludes} )
+     qt5_add_resources ( RCC_SRCS      Unicorn.qrc )
 
            add_library ( unicorn       ${cpps} ${MOCcpps} ${pyCpps} )
  set_target_properties ( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
@@ -63,9 +63,10 @@
                                        ${CIF_LIBRARY}
                                        ${UTILITIES_LIBRARY}
                                        ${CONFIGURATION_LIBRARY}
+                                       ${COLOQUINTE_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
-                                       ${QT_LIBRARIES}
+                                       ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${PYTHON_LIBRARIES}
                                        -lutil

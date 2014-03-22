@@ -1,10 +1,11 @@
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${MAUKA_SOURCE_DIR}/src
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
+                         ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
                        )
@@ -44,7 +45,7 @@
                                        PyMaukaEngine.cpp
                                        PyGraphicMaukaEngine.cpp
                        )
-          qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
            add_library ( mauka         ${cpps} ${mocCpps} ${pyCpps} )
@@ -60,7 +61,7 @@
                                        ${AGDS_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
-                                       ${QT_LIBRARIES}
+                                       ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
                                        ${PYTHON_LIBRARIES} -lutil

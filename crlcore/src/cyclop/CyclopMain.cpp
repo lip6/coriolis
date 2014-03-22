@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -24,7 +23,9 @@ using namespace std;
 namespace boptions = boost::program_options;
 
 #include  <QtGui>
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
 #  include  <QGtkStyle>
 #endif
 
@@ -196,7 +197,9 @@ int main ( int argc, char *argv[] )
 
     if ( not textMode ) {
       auto_ptr<QApplication> qa ( new HApplication(argc,argv) );
-#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and not defined (__APPLE__)
+#if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
+    (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
+    not defined (__APPLE__)
       qa->setStyle ( new QGtkStyle() );
 #endif
       Graphics::enable ();

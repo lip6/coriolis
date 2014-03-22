@@ -1,9 +1,10 @@
+# -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<metis/src>" -*-
 
 if ( HMETIS_FOUND )
   add_definitions ( -DHAVE_HMETIS_LIB )
 endif ( HMETIS_FOUND )
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${METIS_SOURCE_DIR}/src
                          ${CORIOLIS_INCLUDE_DIR} 
@@ -27,7 +28,7 @@ endif ( HMETIS_FOUND )
                                        PyMetisEngine.cpp
                        )
 
-           add_library ( metis         ${cpps} ${mocCpps} ${pyCpps} )
+           add_library ( metis         ${cpps} ${pyCpps} )
  set_target_properties ( metis         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( metis         ${HMETIS_LIBRARIES}
                                        ${NIMBUS_LIBRARIES}
@@ -58,5 +59,4 @@ endif ( HMETIS_FOUND )
                install ( TARGETS       metis           DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       pyMetis         DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( FILES         ${includes}
-                                       ${mocIncludes} 
                                        ${pyIncludes}   DESTINATION include/coriolis2/metis ) 

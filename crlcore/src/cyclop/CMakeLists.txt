@@ -1,8 +1,10 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/ccore/cyclop>" -*-
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIR}
                          ${Boost_INCLUDE_DIR}
                        )
 
@@ -15,11 +17,11 @@
                                        CyclopMain.cpp
                        )
  
-          qt4_wrap_cpp ( MOCcpps       ${mocincludes} )
+          qt5_wrap_cpp ( MOCcpps       ${mocincludes} )
 
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
 
-        add_executable ( cyclop        ${cpps} ${MOCcpps} )
+        add_executable ( cyclop        ${cpps} )
  target_link_libraries ( cyclop        crlcore
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
@@ -31,7 +33,7 @@
                                        ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
-                                       ${QT_LIBRARIES}
+                                       ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${PYTHON_LIBRARIES}
                                        -lutil

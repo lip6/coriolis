@@ -270,7 +270,7 @@ namespace Mauka {
       prMenu->addSeparator ();
     }
 
-    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.place");
+    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.maukaPlace");
     if ( placeAction != NULL )
       cerr << Warning("GraphicMaukaEngine::addToMenu() - Mauka placer already hooked in.") << endl;
     else {

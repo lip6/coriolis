@@ -11,6 +11,7 @@ try:
   import Nimbus
   import Metis
   import Mauka
+  import Etesian
   import Katabatic
   import Kite
   import Unicorn
@@ -158,6 +159,7 @@ if __name__ == '__main__':
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
           unicorn.registerTool        (Mauka.GraphicMaukaEngine.grab())
+          unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
          #unicorn.setAnonNetSelectable(False)
           unicorn.setLayerVisible     ("grid"          , False);

@@ -1,3 +1,4 @@
-FIND_PACKAGE(Qt4 REQUIRED)
 
-ADD_SUBDIRECTORY(src)
+setup_qt()
+
+add_subdirectory(src)

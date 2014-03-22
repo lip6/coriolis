@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,17 +11,12 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SelectionModel.cpp"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <algorithm>
-
 #include  <QFont>
 #include  <QFontMetrics>
-
 #include  "hurricane/Path.h"
 #include  "hurricane/Entity.h"
 #include  "hurricane/Occurrence.h"
@@ -60,14 +49,15 @@ namespace Hurricane {
 
   void  SelectionModel::clear ()
   {
-    _selection.clear ();
-    reset ();
+    beginResetModel();
+    _selection.clear();
+    endResetModel();
   }
 
 
   void  SelectionModel::setSelection ( const SelectorSet& selection )
   {
-    bool modificated = true;
+    beginResetModel();
     if ( not isCumulative() ) _selection.clear ();
 
     SelectorSet::const_iterator       iselector = selection.begin();
@@ -80,11 +70,10 @@ namespace Hurricane {
           continue;
         }
       }
-      modificated = true;
       _selection.push_back ( OccurrenceItem((*iselector)->getOccurrence()) );
     }
 
-    if ( modificated ) reset ();
+    endResetModel();
   }
 
 
@@ -100,11 +89,12 @@ namespace Hurricane {
 
     if ( i >= _selection.size() ) {
       modificated = true;
+      beginResetModel ();
       _selection.push_back ( OccurrenceItem(occurrence) );
     }
     else _selection[i].setFlags ( OccurrenceItem::Selected );
     
-    if ( modificated ) reset ();
+    if ( modificated ) endResetModel ();
   }
 
 

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -46,9 +45,9 @@ namespace Hurricane {
   { }
 
 
-  HApplication::HApplication ( int& argc, char** argv, Type type )
-    : QApplication ( argc, argv, type )
-  { }
+// HApplication::HApplication ( int& argc, char** argv, Type type )
+//   : QApplication ( argc, argv, type )
+// { }
 
 
 #if defined(Q_WS_X11)
@@ -66,22 +65,23 @@ namespace Hurricane {
   bool  HApplication::notify ( QObject* object, QEvent* event )
   {
     try {
-      return QApplication::notify ( object, event );
+      return QApplication::notify( object, event );
     }
     catch ( Error& e ) {
-      ExceptionWidget::run ( e );
+      ExceptionWidget::run( e );
     }
     catch ( Exception& e ) {
-      ExceptionWidget::run ( e );
+      ExceptionWidget::run( e );
     }
     catch ( exception& e ) {
+      ExceptionWidget::run( e );
     }
     catch ( ... ) {
       static const char* message =
         "&nbsp;&nbsp;Unmanaged exception, neither a <b>Hurricane::Error</b><br>"
         "nor a <b>std::exception</b>."; 
 
-      ExceptionWidget::run ( message );
+      ExceptionWidget::run( message );
     }
     return true;
   }

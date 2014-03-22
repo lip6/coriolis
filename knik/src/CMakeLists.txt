@@ -1,11 +1,12 @@
 
-               include ( ${QT_USE_FILE} )
+#              include ( ${QT_USE_FILE} )
 
    include_directories ( ${KNIK_SOURCE_DIR}/src
                          ${KNIK_SOURCE_DIR}/src/flute-2.4/src
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${UTILITIES_INCLUDE_DIR} 
+                         ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
                        )
                    set ( includes      knik/Configuration.h
@@ -40,7 +41,7 @@
                        )
                    set ( fluteIncludes flute-2.4/src/knik/flute.h )
                    set ( fluteCpps     flute-2.4/src/flute.cpp )
-          qt4_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
            add_library ( flute         ${fluteCpps} )
@@ -60,7 +61,7 @@
                                        ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
-                                       ${QT_LIBRARIES}
+                                       ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
                                        ${PYTHON_LIBRARIES} -lutil

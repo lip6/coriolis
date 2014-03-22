@@ -2,9 +2,9 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -12,27 +12,21 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./crlcore/CellGauge.h"                         |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_CELL_GAUGE_H__
-#define  __CRL_CELL_GAUGE_H__
+#ifndef  CRL_CELL_GAUGE_H
+#define  CRL_CELL_GAUGE_H
 
-#include  <string>
-#include  <map>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/DbU.h"
-#include  "hurricane/Name.h"
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/XmlParser.h"
-
-
+#include <string>
+#include <map>
+#include "hurricane/Commons.h"
+#include "hurricane/DbU.h"
+#include "hurricane/Name.h"
+#include "crlcore/Utilities.h"
 
 
 namespace CRL {
-
 
   using std::string;
   using std::map;
@@ -103,7 +97,6 @@ namespace CRL {
   inline  const DbU::Unit  CellGauge::getSliceStep    () const { return _sliceStep; }
 
 
-}  // End of namespace CRL.
+}  // namespace CRL.
 
-
-#endif  // __CRL_CELL_GAUGE_H__
+#endif  // CRL_CELL_GAUGE_H

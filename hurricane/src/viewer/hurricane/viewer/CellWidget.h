@@ -236,7 +236,6 @@ namespace Hurricane {
               void                      popCursor                  ();
       virtual QSize                     minimumSizeHint            () const;
       virtual void                      showEvent                  ( QShowEvent* );
-      virtual void                      paintEvent                 ( QPaintEvent* );
       virtual void                      resizeEvent                ( QResizeEvent* );
       virtual void                      wheelEvent                 ( QWheelEvent* );
       virtual void                      keyPressEvent              ( QKeyEvent* );
@@ -258,6 +257,8 @@ namespace Hurricane {
               void                      selectionChanged           ( const SelectorSet& );
               void                      selectionToggled           ( Occurrence );
               void                      showBoundariesToggled      ( bool );
+    protected:
+      virtual void                      paintEvent                 ( QPaintEvent* );
     public slots:                                                
     // Qt QWidget Slots Overload & CellWidget Specifics.         
               void                      setState                   ( shared_ptr<CellWidget::State>& );
@@ -380,10 +381,11 @@ namespace Hurricane {
         public:
           enum Ids { Normal    = 0  // _planes[0]
                    , Selection = 1  // _planes[1]
-                   , Widget    = 2
-                   , Printer   = 3
-                   , Image     = 4
-                   , Working   = 5
+                   , AutoCopy  = 2  // _plabes[2]
+                   , Widget    = 3
+                   , Printer   = 4
+                   , Image     = 5
+                   , Working   = 6
                    };
       };
 
@@ -431,7 +433,7 @@ namespace Hurricane {
                  CellWidget*    _cellWidget;
                  QPrinter*      _printer;
                  QImage*        _image;
-                 QPixmap*       _planes[2];
+                 QPixmap*       _planes[3];
                  QPainter       _painters[PlaneId::Working];
                  QPen           _normalPen;
                  QPen           _linePen;
@@ -814,12 +816,13 @@ namespace Hurricane {
     size_t wp = (i>=PlaneId::Working) ? _workingPlane : i;
     switch ( wp ) {
       case PlaneId::Normal:
-      case PlaneId::Selection: _painters[wp].begin ( _planes[wp]  ); break;
-      case PlaneId::Widget:    _painters[ 2].begin ( _cellWidget ); break;
-      case PlaneId::Printer:   _painters[ 3].begin ( _printer    ); break;
-      case PlaneId::Image:     _painters[ 4].begin ( _image      ); break;
+      case PlaneId::Selection:
+      case PlaneId::AutoCopy:  _painters[wp              ].begin( _planes[wp] ); break;
+      case PlaneId::Widget:    _painters[PlaneId::Widget ].begin( _cellWidget ); break;
+      case PlaneId::Printer:   _painters[PlaneId::Printer].begin( _printer    ); break;
+      case PlaneId::Image:     _painters[PlaneId::Image  ].begin( _image      ); break;
       default:
-        cerr << "[BUG] Bad plane selection." << endl;
+        std::cerr << "[BUG] Bad plane selection." << std::endl;
     }
   }
 
@@ -830,15 +833,17 @@ namespace Hurricane {
 
   inline void  CellWidget::DrawingPlanes::buffersBegin ()
   {
-    begin ( PlaneId::Normal );
-    begin ( PlaneId::Selection );
+    begin( PlaneId::Normal    );
+    begin( PlaneId::Selection );
+    begin( PlaneId::AutoCopy  );
   }
 
 
   inline void  CellWidget::DrawingPlanes::buffersEnd ()
   {
-    end ( PlaneId::Normal );
-    end ( PlaneId::Selection  );
+    end( PlaneId::Normal    );
+    end( PlaneId::Selection );
+    end( PlaneId::AutoCopy  );
   }
 
 
