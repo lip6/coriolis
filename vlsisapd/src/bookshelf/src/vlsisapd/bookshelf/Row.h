@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
-// This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// This file is part of the VLSI Stand-Alone Software.
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./bookshelf/Row.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __VLSISAPD_BOOKSHELF_ROW__
-#define  __VLSISAPD_BOOKSHELF_ROW__
+#ifndef  VLSISAPD_BOOKSHELF_ROW_H
+#define  VLSISAPD_BOOKSHELF_ROW_H
 
 #include  <string>
 #include  <iostream>

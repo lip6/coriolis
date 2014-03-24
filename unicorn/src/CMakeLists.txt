@@ -47,6 +47,8 @@
                                        ${KATABATIC_LIBRARIES}
                                        ${KNIK_GRAPHICAL_LIBRARIES}
                                        ${KNIK_LIBRARIES}
+                                       ${ETESIAN_GRAPHICAL_LIBRARIES}
+                                       ${ETESIAN_LIBRARIES}
                                        ${MAUKA_GRAPHICAL_LIBRARIES}
                                        ${MAUKA_LIBRARIES}
                                        ${METIS_LIBRARIES}

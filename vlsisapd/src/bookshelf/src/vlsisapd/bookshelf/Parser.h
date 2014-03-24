@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
-// This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// This file is part of the VLSI Stand-Alone Software.
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -27,18 +26,28 @@
 
 namespace Bookshelf {
 
+  class Row;
 
   class Parser {
     public:
-      enum Flag { Comment=0x1, ExtraDatas=0x2 };
+      enum Flag { NoFlags      = 0x0000
+                , Comment      = 0x0001
+                , ExtraDatas   = 0x0002
+                , StrictSyntax = 0x0004
+                };
     public:
                                  Parser                ();
-             Circuit*            parse                 ( std::string designName, unsigned int flags );
+             Circuit*            parse                 ( std::string  designName
+                                                       , unsigned int slots
+                                                       , unsigned int flags );
+      inline void                setFlags              ( unsigned int flags );
+      inline void                unsetFlags            ( unsigned int flags );
     private:                                           
              bool                _openStream           ( const Utilities::Path& );
              void                _closeStream          ();
              char*               _readLine             ();
              void                _tokenize             ();
+             int                 _keywordCompare       ( const std::string&, const std::string& ) const;
              void                _checkExtraDatas      ( size_t maxtoken, std::vector<char*>& );
              void                _parseFormatRevision  ( const std::string& slotName );
              size_t              _parseNum             ( const std::string& slotName, const std::string& token );
@@ -73,6 +82,8 @@ namespace Bookshelf {
   };
 
 
+  inline void  Parser::setFlags       ( unsigned int flags ) { _flags |=  flags; }
+  inline void  Parser::unsetFlags     ( unsigned int flags ) { _flags &= ~flags; }
   inline bool  Parser::_isComment     () const { return _flags&Comment; }
   inline bool  Parser::_hasExtraDatas () const { return _flags&ExtraDatas; }
 

@@ -14,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ISPD05_BOOKSHELF
-#define  CRL_ISPD05_BOOKSHELF
+#ifndef  CRL_ISPD05_BOOKSHELF_H
+#define  CRL_ISPD05_BOOKSHELF_H
 
 #include  <string>
 

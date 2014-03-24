@@ -216,7 +216,7 @@ void Cell::flattenNets(bool buildRings)
       }
 
       forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea|RoutingPad::ShowWarning );
+        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea/*|RoutingPad::ShowWarning*/ );
         currentRP->materialize ();
         if ( buildRings ) {
           if ( previousRP ) {

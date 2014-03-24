@@ -65,6 +65,7 @@ namespace Etesian {
     EtesianEngine* etesian = EtesianEngine::get( cell );
     if (not etesian) {
       etesian = EtesianEngine::create( cell );
+      etesian->setCellWidget( _viewer->getCellWidget() );
     } else
       cerr << Warning( "%s already has a Etesian engine.", getString(cell).c_str() ) << endl;
 
@@ -99,6 +100,10 @@ namespace Etesian {
 
     emit cellPreModificated();
     _viewer->clearToolInterrupt();
+    etesian->resetPlacement();
+    emit cellPostModificated();
+
+    emit cellPostModificated();
     etesian->place();
     emit cellPostModificated();
   }

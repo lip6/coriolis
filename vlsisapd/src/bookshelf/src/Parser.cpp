@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -15,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include  <cctype>
 #include  <sstream>
 #include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/bookshelf/Node.h"
@@ -71,7 +71,7 @@ namespace Bookshelf {
     , _stream ()
     , _buffer ()
     , _tokens ()
-    , _flags  (0)
+    , _flags  (StrictSyntax)
     , _state  (0)
     , _net    (NULL)
     , _row    (NULL)
@@ -151,11 +151,25 @@ namespace Bookshelf {
   }
 
 
+  int  Parser::_keywordCompare ( const string& a, const string& b ) const
+  {
+    if (_flags & StrictSyntax) return a.compare(b);
+
+    string lowerA = a;
+    string lowerB = b;
+
+    for ( size_t i=0 ; i<lowerA.size() ; ++i ) lowerA[i] = tolower( lowerA[i] );
+    for ( size_t i=0 ; i<lowerB.size() ; ++i ) lowerB[i] = tolower( lowerB[i] );
+
+    return lowerA.compare(lowerB);
+  }
+
+
   void  Parser::_parseFormatRevision ( const std::string& slotName )
   {
     std::string formatHeader = "UCLA " + slotName + " 1.0";
 
-    if ( formatHeader.compare(_buffer) != 0 )
+    if ( _keywordCompare(formatHeader,_buffer) != 0 )
       throw Exception("Bookshelf::Parse(): Invalid format revision for <.%s> slot.",slotName.c_str());
   }
 
@@ -165,9 +179,9 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 3 )
-       or (                  token.compare(_tokens[0]) != 0)
-       or (std::string(":"       ).compare(_tokens[1]) != 0) )
-      throw Exception("Bookshelf::Parse(): @%d, Invalid %s in <.%s>.",_lineno, token.c_str(),slotName.c_str());
+       or (_keywordCompare(token,_tokens[0]) != 0)
+       or (_keywordCompare(":"  ,_tokens[1]) != 0) )
+      throw Exception("Bookshelf::Parse(): @%d, Invalid %s in XX <.%s>.",_lineno, token.c_str(),slotName.c_str());
 
   //std::cerr << _tokens.size() << ":" << _tokens[2] << ":" << _circuit->getNumNodes() << std::endl;
 
@@ -193,13 +207,13 @@ namespace Bookshelf {
     for ( size_t itoken=1 ; itoken<_tokens.size() ; ++itoken ) {
     //std::cerr << "F:" << _tokens[itoken] << " ";
       if ( symmetryTokens ) {
-        if ( std::string("X"  ).compare(_tokens[itoken]) == 0 ) { symmetry |= Symmetry::X; continue; }
-        if ( std::string("Y"  ).compare(_tokens[itoken]) == 0 ) { symmetry |= Symmetry::Y; continue; }
-        if ( std::string("R90").compare(_tokens[itoken]) == 0 ) { symmetry |= Symmetry::R90; continue; }
+        if ( _keywordCompare("X"  ,_tokens[itoken]) == 0 ) { symmetry |= Symmetry::X; continue; }
+        if ( _keywordCompare("Y"  ,_tokens[itoken]) == 0 ) { symmetry |= Symmetry::Y; continue; }
+        if ( _keywordCompare("R90",_tokens[itoken]) == 0 ) { symmetry |= Symmetry::R90; continue; }
         symmetryTokens = false;
       }
-      if ( std::string("terminal").compare(_tokens[itoken]) == 0 ) { terminal = true; continue; }
-      if ( std::string(":").compare(_tokens[itoken]) == 0 ) { symmetryTokens = true; continue; }
+      if ( _keywordCompare("terminal",_tokens[itoken]) == 0 ) { terminal = true; continue; }
+      if ( _keywordCompare(":"       ,_tokens[itoken]) == 0 ) { symmetryTokens = true; continue; }
 
     //std::cerr << " <X Y>" << std::endl;
 
@@ -261,8 +275,8 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 3 )
-       or (std::string("NetDegree").compare(_tokens[0]) != 0)
-       or (std::string(":"        ).compare(_tokens[1]) != 0) )
+       or (_keywordCompare("NetDegree",_tokens[0]) != 0)
+       or (_keywordCompare(":"        ,_tokens[1]) != 0) )
       throw Exception("Bookshelf::Parse(): @%d, Invalid NetDegree in <.nets>.",_lineno);
 
     std::string name;
@@ -286,16 +300,16 @@ namespace Bookshelf {
     for ( size_t itoken=1 ; itoken<_tokens.size() ; ++itoken ) {
     //std::cerr << "F:" << _tokens[itoken] << " ";
       if ( tokenDirection ) {
-        if ( std::string("I").compare(_tokens[itoken]) == 0 ) { direction |= Direction::Input; }
-        if ( std::string("O").compare(_tokens[itoken]) == 0 ) { direction |= Direction::Output; }
-        if ( std::string("B").compare(_tokens[itoken]) == 0 ) { direction |= Direction::Bidirectional; }
+        if ( _keywordCompare("I",_tokens[itoken]) == 0 ) { direction |= Direction::Input; }
+        if ( _keywordCompare("O",_tokens[itoken]) == 0 ) { direction |= Direction::Output; }
+        if ( _keywordCompare("B",_tokens[itoken]) == 0 ) { direction |= Direction::Bidirectional; }
         if ( direction != Direction::Disabled ) {
           tokenDirection = false;
           continue;
         }
       }
 
-      if ( std::string(":").compare(_tokens[itoken]) == 0 ) {
+      if ( _keywordCompare(":",_tokens[itoken]) == 0 ) {
         tokenDirection = false;
 
         if ( ++itoken == _tokens.size() )
@@ -382,8 +396,8 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 2)
-       or (std::string("CoreRow"   ).compare(_tokens[0]) != 0)
-       or (std::string("Horizontal").compare(_tokens[1]) != 0) )
+       or (_keywordCompare("CoreRow"   ,_tokens[0]) != 0)
+       or (_keywordCompare("Horizontal",_tokens[1]) != 0) )
       throw Exception("Bookshelf::Parse(): @%d, Invalid CoreRow line in <.scl>.",_lineno);
 
     _row = new Row ();
@@ -396,20 +410,22 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 3)
-       or (std::string("Siteorient").compare(_tokens[0]) != 0)
-       or (std::string(":"         ).compare(_tokens[1]) != 0) )
-      throw Exception("Bookshelf::Parse(): @%d, Invalid Row siteorient line in <.scl>.",_lineno);
+       or (_keywordCompare("Siteorient",_tokens[0]) != 0)
+       or (_keywordCompare(":"         ,_tokens[1]) != 0) )
+      throw Exception("Bookshelf::Parse(): @%d, Invalid Row XX siteorient line in <.scl>.",_lineno);
 
-    if      ( std::string("N" ).compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::N); }
-    else if ( std::string("E" ).compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::E); }
-    else if ( std::string("S" ).compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::S); }
-    else if ( std::string("W" ).compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::W); }
-    else if ( std::string("FN").compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FN); }
-    else if ( std::string("FE").compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FE); }
-    else if ( std::string("FS").compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FS); }
-    else if ( std::string("FW").compare(_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FW); }
-    else
-      throw Exception("Bookshelf::Parse(): @%d, Invalid Row siteorient line in <.scl>.",_lineno);
+    if      ( _keywordCompare("N" ,_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::N); }
+    else if ( _keywordCompare("E" ,_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::E); }
+    else if ( _keywordCompare("S" ,_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::S); }
+    else if ( _keywordCompare("W" ,_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::W); }
+    else if ( _keywordCompare("FN",_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FN); }
+    else if ( _keywordCompare("FE",_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FE); }
+    else if ( _keywordCompare("FS",_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FS); }
+    else if ( _keywordCompare("FW",_tokens[2]) == 0 ) { _row->setSiteorient(Orientation::FW); }
+    else {
+    //throw Exception("Bookshelf::Parse(): @%d, Invalid Row siteorient line in <.scl>.",_lineno);
+      _row->setSiteorient(Orientation::N);
+    }
   }
 
 
@@ -418,15 +434,17 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 3)
-       or (std::string("Sitesymmetry").compare(_tokens[0]) != 0)
-       or (std::string(":"           ).compare(_tokens[1]) != 0) )
+       or (_keywordCompare("Sitesymmetry",_tokens[0]) != 0)
+       or (_keywordCompare(":"           ,_tokens[1]) != 0) )
       throw Exception("Bookshelf::Parse(): @%d, Invalid Row sitesymmetry line in <.scl>.",_lineno);
 
-    if      ( std::string("X"  ).compare(_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::X); }
-    else if ( std::string("Y"  ).compare(_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::Y); }
-    else if ( std::string("R90").compare(_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::R90); }
-    else
-      throw Exception("Bookshelf::Parse(): @%d, Invalid Row sitesymmetry line in <.scl>.",_lineno);
+    if      ( _keywordCompare("X"  ,_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::X); }
+    else if ( _keywordCompare("Y"  ,_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::Y); }
+    else if ( _keywordCompare("R90",_tokens[2]) == 0 ) { _row->setSitesymmetry(Symmetry::R90); }
+    else {
+      _row->setSitesymmetry(Symmetry::X);
+    //throw Exception("Bookshelf::Parse(): @%d, Invalid Row sitesymmetry line in <.scl>.",_lineno);
+    }
   }
 
 
@@ -435,10 +453,10 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 6)
-       or (std::string("SubrowOrigin").compare(_tokens[0]) != 0)
-       or (std::string(":"           ).compare(_tokens[1]) != 0)
-       or (std::string("Numsites"    ).compare(_tokens[3]) != 0)
-       or (std::string(":"           ).compare(_tokens[4]) != 0) )
+       or (_keywordCompare("SubrowOrigin",_tokens[0]) != 0)
+       or (_keywordCompare(":"           ,_tokens[1]) != 0)
+       or (_keywordCompare("Numsites"    ,_tokens[3]) != 0)
+       or (_keywordCompare(":"           ,_tokens[4]) != 0) )
       throw Exception("Bookshelf::Parse(): @%d, Invalid Row SubrowOrigin line in <.scl>.",_lineno);
 
     _row->setSubrowOrigin ( toDouble(_tokens[2]) );
@@ -451,7 +469,7 @@ namespace Bookshelf {
     _tokenize ();
 
     if (  (_tokens.size() < 1)
-       or (std::string("End").compare(_tokens[0]) != 0) )
+       or (_keywordCompare("End",_tokens[0]) != 0) )
       throw Exception("Bookshelf::Parse(): @%d, Invalid CoreRow end line in <.scl>.",_lineno);
 
     _row = NULL;
@@ -526,17 +544,17 @@ namespace Bookshelf {
     for ( size_t itoken=1 ; itoken<_tokens.size() ; ++itoken ) {
     //std::cerr << "F:" << _tokens[itoken] << " ";
       if ( orientationToken ) {
-        if ( std::string("N" ).compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::N; continue; }
-        if ( std::string("E" ).compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::E; continue; }
-        if ( std::string("S" ).compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::S; continue; }
-        if ( std::string("W" ).compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::W; continue; }
-        if ( std::string("FN").compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::FN; continue; }
-        if ( std::string("FE").compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::FE; continue; }
-        if ( std::string("FS").compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::FS; continue; }
-        if ( std::string("FW").compare(_tokens[itoken]) == 0 ) { orientation |= Orientation::FW; continue; }
+        if ( _keywordCompare("N" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::N; continue; }
+        if ( _keywordCompare("E" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::E; continue; }
+        if ( _keywordCompare("S" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::S; continue; }
+        if ( _keywordCompare("W" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::W; continue; }
+        if ( _keywordCompare("FN",_tokens[itoken]) == 0 ) { orientation |= Orientation::FN; continue; }
+        if ( _keywordCompare("FE",_tokens[itoken]) == 0 ) { orientation |= Orientation::FE; continue; }
+        if ( _keywordCompare("FS",_tokens[itoken]) == 0 ) { orientation |= Orientation::FS; continue; }
+        if ( _keywordCompare("FW",_tokens[itoken]) == 0 ) { orientation |= Orientation::FW; continue; }
         break;
       }
-      if ( std::string(":").compare(_tokens[itoken]) == 0 ) { orientationToken = true; continue; }
+      if ( _keywordCompare(":",_tokens[itoken]) == 0 ) { orientationToken = true; continue; }
 
     //std::cerr << " <X Y>" << std::endl;
 
@@ -580,8 +598,10 @@ namespace Bookshelf {
   }
 
 
-  Circuit* Parser::parse ( std::string designName, unsigned int flags )
+  Circuit* Parser::parse ( std::string designName, unsigned int slots, unsigned int flags )
   {
+    _flags = flags;
+
     Utilities::Path auxPath ( designName+".aux" );
     if ( not auxPath.exists() ) {
       throw Exception ( "%s .aux file not found.", auxPath.string().c_str() );
@@ -597,7 +617,7 @@ namespace Bookshelf {
     _closeStream ();
 
     _tokenize ();
-    if ( std::string(":").compare(_tokens[1]) == 0 ) {
+    if ( _keywordCompare(":",_tokens[1]) == 0 ) {
     // Re-ordering files: .nodes, .nets, .wts, .scl, .pl.
       std::string ordereds [5];
 
@@ -608,23 +628,23 @@ namespace Bookshelf {
 
           switch ( extension ) {
             case 0:
-              if ( (file.compare(iext,6,".nodes") == 0) and (flags & Circuit::Nodes) )
+              if ( (file.compare(iext,6,".nodes") == 0) and (slots & Circuit::Nodes) )
                 ordereds[0] = _tokens[i];
               break;
             case 1:
-              if ( (file.compare(iext,5,".nets") == 0) and (flags & Circuit::Nets) )
+              if ( (file.compare(iext,5,".nets") == 0) and (slots & Circuit::Nets) )
                 ordereds[1] = _tokens[i];
               break;
             case 2:
-              if ( (file.compare(iext,4,".wts") == 0) and (flags & Circuit::Wts) )
+              if ( (file.compare(iext,4,".wts") == 0) and (slots & Circuit::Wts) )
                 ordereds[2] = _tokens[i];
               break;
             case 3:
-              if ( (file.compare(iext,4,".scl") == 0) and (flags & Circuit::Scl) )
+              if ( (file.compare(iext,4,".scl") == 0) and (slots & Circuit::Scl) )
                 ordereds[3] = _tokens[i];
               break;
             case 4:
-              if ( (file.compare(iext,3,".pl") == 0) and (flags & Circuit::Pl) )
+              if ( (file.compare(iext,3,".pl") == 0) and (slots & Circuit::Pl) )
                 ordereds[4] = _tokens[i];
               break;
           }
@@ -643,7 +663,7 @@ namespace Bookshelf {
 
         Utilities::Path slotPath ( ordereds[iext] );
         if ( slotPath.exists() ) {
-          std::cout << "     o  Reading <" << slotPath.string() << ">" << std::endl;
+          std::cout << "     - Reading <" << slotPath.string() << ">" << std::endl;
 
           switch ( iext ) {
             case 0: _parseNodes ( slotPath ); break;

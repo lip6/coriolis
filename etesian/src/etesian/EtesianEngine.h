@@ -30,6 +30,7 @@ namespace Hurricane {
   class Layer;
   class Net;
   class Cell;
+  class CellWidget;
 }
 
 #include "crlcore/ToolEngine.h"
@@ -49,7 +50,8 @@ namespace Etesian {
 // Class  :  "Etesian::EtesianEngine".
 
   class EtesianEngine : public CRL::ToolEngine {
-
+    public:
+      enum Flag { NoPlacement=0x0001, FlatDesign=0x0002 };
     public:
       static  const Name&      staticGetName    ();
       static  EtesianEngine*   create           ( Cell* );
@@ -57,8 +59,10 @@ namespace Etesian {
     public:                                     
       virtual Configuration*   getConfiguration ();
       virtual const Name&      getName          () const;
+      inline  void             setCellWidget    ( Hurricane::CellWidget* );
+              void             resetPlacement   ();
               void             place            ( unsigned int slowMotion=0 );
-              void             _updatePlacement ();
+              void             _updatePlacement ( unsigned int placementId );
       virtual Record*          _getRecord       () const;
       virtual std::string      _getString       () const;
       virtual std::string      _getTypeName     () const;
@@ -68,8 +72,10 @@ namespace Etesian {
       static Name                                     _toolName;
     protected:
              Configuration*                           _configuration;
+             unsigned int                             _flags;
              Coloquinte::circuit*                     _circuit;
              std::unordered_map<string,unsigned int>  _cellsToIds;
+             Hurricane::CellWidget*                   _cellWidget;
 
     protected:
     // Constructors & Destructors.
@@ -84,6 +90,7 @@ namespace Etesian {
 
 
 // Inline Functions.
+  inline  void  EtesianEngine::setCellWidget ( Hurricane::CellWidget* cw ) { _cellWidget = cw; }
 
 
 // Variables.

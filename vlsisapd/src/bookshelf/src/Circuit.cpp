@@ -86,10 +86,10 @@ namespace Bookshelf {
   { _rows.push_back ( row ); }
 
 
-  Circuit* Circuit::parse ( std::string auxFile, unsigned int flags )
+  Circuit* Circuit::parse ( std::string auxFile, unsigned int slots, unsigned int flags )
   {
     Parser  parser;
-    return parser.parse ( auxFile, flags );
+    return parser.parse ( auxFile, slots, flags );
   }
 
 
@@ -214,14 +214,14 @@ namespace Bookshelf {
   }
 
 
-  void  Circuit::drive ( std::string directory, unsigned int flags )
+  void  Circuit::drive ( std::string directory, unsigned int slots )
   {
     Utilities::Path  rootDirectory ( directory );
     if ( not rootDirectory.exists() ) {
       rootDirectory.mkdir();
     }
 
-    if ( flags & Nodes ) {
+    if ( slots & Nodes ) {
       Utilities::Path nodesPath ( rootDirectory );
       if ( getNodesName().empty() )
         nodesPath /= getDesignName() + ".nodes";
@@ -233,7 +233,7 @@ namespace Bookshelf {
       ofnodes.close ();
     }
 
-    if ( flags & Nets ) {
+    if ( slots & Nets ) {
       Utilities::Path netsPath ( rootDirectory );
       if ( getNetsName().empty() )
         netsPath /= getDesignName() + ".nets";
@@ -245,7 +245,7 @@ namespace Bookshelf {
       ofnets.close ();
     }
 
-    if ( (flags & Scl) and (hasScl()) ) {
+    if ( (slots & Scl) and (hasScl()) ) {
       Utilities::Path sclPath ( rootDirectory );
       if ( getSclName().empty() )
         sclPath /= getDesignName() + ".scl";
@@ -257,7 +257,7 @@ namespace Bookshelf {
       ofscl.close ();
     }
 
-    if ( (flags & Pl) and (hasPl()) ) {
+    if ( (slots & Pl) and (hasPl()) ) {
       Utilities::Path plPath ( rootDirectory );
       if ( getPlName().empty() )
         plPath /= getDesignName() + ".pl";

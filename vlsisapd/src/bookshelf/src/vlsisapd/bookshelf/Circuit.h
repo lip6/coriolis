@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
-// This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// This file is part of the VLSI Stand-Alone Software.
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./bookshelf/Circuit.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __VLSISAPD_BOOKSHELF_CIRCUIT__
-#define  __VLSISAPD_BOOKSHELF_CIRCUIT__
+#ifndef  VLSISAPD_BOOKSHELF_CIRCUIT_H
+#define  VLSISAPD_BOOKSHELF_CIRCUIT_H
 
 #include  <iostream>
 #include  <string>
@@ -44,10 +35,11 @@ namespace Bookshelf {
       enum Slot { Nets=0x1, Nodes=0x2, Wts=0x4, Scl=0x8, Pl=0x10, AllSlots=Nodes|Nets|Wts|Scl|Pl };
     public:
       static Circuit*                     parse              ( std::string  design
-                                                             , unsigned int flags =AllSlots
+                                                             , unsigned int slots =AllSlots
+                                                             , unsigned int flags =0
                                                              );
              void                         drive              ( std::string  directory
-                                                             , unsigned int flags    =AllSlots
+                                                             , unsigned int slots    =AllSlots
                                                              );
     public:                               
                                           Circuit            ();
@@ -154,5 +146,4 @@ namespace Bookshelf {
 
 } // End of Bookshelf namespace.
 
-
-#endif  // __VLSISAPD_BOOKSHELF_CIRCUIT__
+#endif  // VLSISAPD_BOOKSHELF_CIRCUIT_H

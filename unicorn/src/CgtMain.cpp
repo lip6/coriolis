@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -64,6 +64,9 @@ using namespace Metis;
 
 #include "mauka/GraphicMaukaEngine.h"
 using namespace Mauka;
+
+#include "etesian/GraphicEtesianEngine.h"
+using namespace Etesian;
 
 #include "knik/GraphicKnikEngine.h"
 using namespace Knik;
@@ -326,6 +329,7 @@ int main ( int argc, char *argv[] )
       unicorn->setApplicationName ( QObject::tr("cgt") );
 
       unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
+      unicorn->registerTool ( Etesian::GraphicEtesianEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
     //unicorn->setEnableRedrawInterrupt ( true );

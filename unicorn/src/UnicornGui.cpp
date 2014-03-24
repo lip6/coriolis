@@ -198,7 +198,6 @@ namespace Unicorn {
           break;
         case ImportCellDialog::Ispd05:
           cell = Ispd05::load ( cellName.toStdString() );
-          cerr << "Cell " << " successfully loaded." << endl;
           break;
         case ImportCellDialog::Iccad04:
           cell = Iccad04Lefdef::load ( cellName.toStdString() , 0 );
@@ -214,7 +213,6 @@ namespace Unicorn {
           viewer = UnicornGui::create ();
           viewer->show ();
         }
-        cerr << "Loading " << cell->getName() << " into the viewer." << endl;
         viewer->setCell ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;

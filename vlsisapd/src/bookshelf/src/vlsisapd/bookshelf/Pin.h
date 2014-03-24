@@ -1,30 +1,21 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |           B o o k s h e l f   P a r s e r                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./bookshelf/Pin.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./vlsisapd/bookshelf/Pin.h"               |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __VLSISAPD_BOOKSHELF_PIN__
-#define  __VLSISAPD_BOOKSHELF_PIN__
+#ifndef  VLSISAPD_BOOKSHELF_PIN_H
+#define  VLSISAPD_BOOKSHELF_PIN_H
 
 #include  <string>
 #include  <iostream>
@@ -78,7 +69,6 @@ namespace Bookshelf {
   inline Node*         Pin::getNode      () const { return _node; }
 
 
-} // End of Bookshelf namespace.
+} // Bookshelf namespace.
 
-
-#endif  // __VLSISAPD_BOOKSHELF_PIN__
+#endif  // VLSISAPD_BOOKSHELF_PIN_H

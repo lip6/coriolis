@@ -17,8 +17,8 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
-#include <iomanip>
 #include "coloquinte/circuit_graph.hxx"
+#include "vlsisapd/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
@@ -35,6 +35,7 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/viewer/CellWidget.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
@@ -146,6 +147,7 @@ namespace Etesian {
   using std::pair;
   using std::make_pair;
   using std::unordered_map;
+  using Utilities::Dots;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -163,11 +165,13 @@ namespace Etesian {
   using Hurricane::RoutingPad;
   using Hurricane::Net;
   using Hurricane::Occurrence;
+  using Hurricane::CellWidget;
   using CRL::ToolEngine;
   using CRL::AllianceFramework;
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
+  using CRL::CatalogExtension;
 
 
   const char* missingEtesian =
@@ -190,9 +194,12 @@ namespace Etesian {
 
 
   EtesianEngine::EtesianEngine ( Cell* cell )
-    : ToolEngine (cell)
-    , _circuit   (NULL)
-    , _cellsToIds()
+    : ToolEngine    (cell)
+    , _configuration(NULL)
+    , _flags        (0)
+    , _circuit      (NULL)
+    , _cellsToIds   ()
+    , _cellWidget   (NULL)
   { }
 
 
@@ -236,16 +243,71 @@ namespace Etesian {
   { return _configuration; }
 
 
+  void  EtesianEngine::resetPlacement ()
+  {
+  //cerr << "EtesianEngine::resetPlacement()" << endl;
+
+    if (_flags & NoPlacement) return;
+    _flags |= FlatDesign;
+
+  //getCell()->flattenNets( true );
+
+    Dots  dots ( cmess2, "     ", 80, 1000 );
+
+    cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
+
+    UpdateSession::open();
+    vector<Occurrence>  feedOccurrences;
+    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    {
+      dots.dot();
+
+      if ((_flags & FlatDesign) and not (*ioccurrence).getPath().getTailPath().isEmpty())
+        _flags &= ~FlatDesign;
+
+      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+      string    instanceName = (*ioccurrence).getCompactString();
+
+      if (CatalogExtension::isFeed(masterCell)) {
+        feedOccurrences.push_back( *ioccurrence );
+      }
+    }
+
+    for ( auto ioccurrence : feedOccurrences ) {
+      cerr << "  Destroy: " << ioccurrence.getCompactString() << endl;
+      Instance* instance     = static_cast<Instance*>(ioccurrence.getEntity());
+      instance->destroy();
+    }
+    UpdateSession::close();
+
+    dots.finish( Dots::Reset );
+
+    if (_cellWidget) _cellWidget->refresh();
+
+    _flags |= NoPlacement;
+  }
+
+
   void  EtesianEngine::place ( unsigned int slowMotion )
   {
-    AllianceFramework* af = AllianceFramework::get();
+    cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
 
+    resetPlacement();
+
+    Dots               dots ( cmess2, "       ", 80, 1000 );
+    AllianceFramework* af   = AllianceFramework::get();
+
+    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
     getCell()->flattenNets( true );
 
   // Coloquinte circuit description data-structures.
     _circuit = new Coloquinte::circuit();
     _circuit->cells    .resize( getCell()->getLeafInstanceOccurrences().getSize() );
     _circuit->hypernets.resize( getCell()->getNets().getSize() );
+
+    cmess1 << "     - Converting Instances (Bookshelf nodes)" << endl;
+    cout.flush();
 
     Coloquinte::cell_id  cellId = 0;
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
@@ -257,11 +319,15 @@ namespace Etesian {
       instanceName.erase( 0, 1 );
       instanceName.erase( instanceName.size()-1 );
 
-      cerr << instanceName << " " << (int)instance->getPlacementStatus().getCode() << endl;
+      if (CatalogExtension::isFeed(masterCell)) continue;
 
-      Coloquinte::circuit_coordinate  cellSize ( DbU::toLambda( masterCell->getAbutmentBox().getWidth () )
-                                               , DbU::toLambda( masterCell->getAbutmentBox().getHeight() ));
+      Coloquinte::circuit_coordinate  cellSize ( masterCell->getAbutmentBox().getWidth () / DbU::fromLambda(5.0)
+                                               , masterCell->getAbutmentBox().getHeight() / DbU::fromLambda(5.0) );
       _cellsToIds.insert( make_pair(instanceName,cellId) );
+
+      dots.dot();
+    //cerr << instanceName << " " << (int)instance->getPlacementStatus().getCode()
+    //     << " area:" << cellSize.cast<Coloquinte::cell_area>().prod() << endl;
 
       _circuit->cells[cellId].name    = instanceName;
       _circuit->cells[cellId].sizes   = cellSize;
@@ -271,6 +337,9 @@ namespace Etesian {
 
       cellId++;
     }
+    dots.finish( Dots::Reset|Dots::FirstDot );
+
+    cmess1 << "     - Converting Nets (Bookshelf nets)" << endl;
 
     unsigned int netId = 0;
     forEach ( Net*, inet, getCell()->getNets() )
@@ -286,14 +355,16 @@ namespace Etesian {
       }
       if (af->isBLOCKAGE((*inet)->getName())) continue;
 
-      cerr << (*inet)->getName() << endl;
+      dots.dot();
+    //cerr << (*inet)->getName() << endl;
+
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
-        cerr << "    " << (*irp)->getOccurrence().getCompactString() << endl;
+      //cerr << "    " << (*irp)->getOccurrence().getCompactString() << endl;
         string insName = extractInstanceName( *irp );
         Point  offset  = extractRpOffset    ( *irp );
 
-        cerr << "    Master Cell: " << (*irp)->getOccurrence().getMasterCell() << endl;
-        cerr << "    Rebuilt instance name: " << insName << " " << offset << endl;
+      //cerr << "    Master Cell: " << (*irp)->getOccurrence().getMasterCell() << endl;
+      //cerr << "    Rebuilt instance name: " << insName << " " << offset << endl;
 
         auto  iid = _cellsToIds.find( insName );
         if (iid == _cellsToIds.end() ) {
@@ -307,8 +378,8 @@ namespace Etesian {
           Coloquinte::cell::pin  cellPin;
         //cellPin.name     = extractTerminalName( *irp );
           cellPin.d        = extractDirection   ( *irp );
-          cellPin.offs.x() = DbU::toLambda( offset.getX() );
-          cellPin.offs.y() = DbU::toLambda( offset.getY() );
+          cellPin.offs.x() = offset.getX() / DbU::fromLambda(5.0);
+          cellPin.offs.y() = offset.getY() / DbU::fromLambda(5.0);
           cellPin.ind  = cellPinId;
           _circuit->cells[cellId].pins.push_back( cellPin );
         }
@@ -316,6 +387,7 @@ namespace Etesian {
 
       netId++;
     }
+    dots.finish( Dots::Reset );
 
     _circuit->position_overlays.resize(1);
 	_circuit->position_overlays[0].x_pos = Coloquinte::circuit_vector( _cellsToIds.size() );
@@ -329,36 +401,60 @@ namespace Etesian {
     }
 
     _circuit->bounds = Coloquinte::circuit_box
-      ( Coloquinte::circuit_coordinate::Zero()
-      , Coloquinte::circuit_coordinate( { DbU::toLambda(getCell()->getAbutmentBox().getWidth ())
-                                        , DbU::toLambda(getCell()->getAbutmentBox().getHeight()) } ));
+      ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
+                                        , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
+      , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
+                                        , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
 
-	float strength, strength_incr;
+    _circuit->selfcheck();
 
-	cout << "Initial placement at " << time(NULL) << endl;
-	for(int j = 0; j < 3; j++){
+    cmess1 << "  o  Running Coloquinte." << endl;
+    cmess1 << "     - Computing initial placement..." << endl;
+    cmess2 << setfill('0') << right;
+
+    time_t  startTime = time(NULL);
+    time_t  timeDelta;
+    Coloquinte::circuit_scalar upperBound;
+    Coloquinte::circuit_scalar lowerBound;
+
+	for ( int j = 0; j < 3; j++ ) {
 		_circuit->position_overlays[0]
           = Coloquinte::solve_quadratic_model( *_circuit
                                              ,  _circuit->position_overlays[0]
                                              ,  _circuit->position_overlays[0]
                                              );
-		cout << "At " << time(NULL) << ", lower bound is "
-             << B2B_wirelength(*_circuit, _circuit->position_overlays[0]) << endl;
+
+        timeDelta  = time(NULL) - startTime;
+        lowerBound = B2B_wirelength( *_circuit, _circuit->position_overlays[0] );
+        cmess2 << "       Iteration "  << setw( 4) <<  (j+1)
+               <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
+               <<    "  Lower bound:"  << setw(10)
+               << lowerBound << endl;
+
+        _updatePlacement( 0 );
 	}
 	
-	strength      = 0.000001;
-    strength_incr = 0.000002;
+	float strength      = 0.000001;
+    float strength_incr = 0.000002;
+
+    cmess1 << "     - Optimizing placement..." << endl;
 
 	_circuit->position_overlays.resize(2);
-	for(int j = 0; j < 200; j++, strength = strength * 1.02 + strength_incr){
+	for ( int j = 0; j < 200; j++, strength = strength * 1.02 + strength_incr) {
       _circuit->position_overlays[1]
         = Coloquinte::legalize( *_circuit
                               , 1.0
                               , _circuit->position_overlays[0]
+                              , 1
                               , false
                               );
-      cout << "At " << time(NULL) << " and iteration " << j
-           << ", upper bound is " << /*B2B_wirelength(*_circuit, _circuit->position_overlays[1]) <<*/ endl;
+      
+      timeDelta  = time(NULL) - startTime;
+      upperBound = B2B_wirelength( *_circuit, _circuit->position_overlays[1] );
+      cmess2 << "       Iteration "  << setw( 4) << (j+1)
+             <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
+             <<    "  UPPER bound:"  << setw(10)
+             << upperBound << endl;
 
       _circuit->position_overlays[0]
         = Coloquinte::solve_quadratic_model( *_circuit
@@ -366,15 +462,24 @@ namespace Etesian {
                                            ,  _circuit->position_overlays[1]
                                            , strength
                                            );
-      cout << "At " << time(NULL) << " and iteration " << j
-           << ", lower bound is " << /*B2B_wirelength(*_circuit, _circuit->position_overlays[0]) <<*/ endl;
+      timeDelta  = time(NULL) - startTime;
+      lowerBound = B2B_wirelength( *_circuit, _circuit->position_overlays[0] );
+      cmess2 << "                     "
+             <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
+             <<    "  Lower bound:"  << setw(10)
+             << lowerBound << endl;
+      cmess2 << "                       Spreading ratio: "
+             << ((((double)upperBound-(double)lowerBound)*100) / (double)lowerBound) << "%" << endl;
+
+      _updatePlacement( 0 );
 	}
 
-    _updatePlacement();
+    _updatePlacement( 1 );
+    _flags &= ~NoPlacement;
   }
 
 
-  void  EtesianEngine::_updatePlacement ()
+  void  EtesianEngine::_updatePlacement ( unsigned int placementId )
   {
     UpdateSession::open();
 
@@ -392,18 +497,21 @@ namespace Etesian {
       if (iid == _cellsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        instancePosition.setX( DbU::fromLambda(_circuit->position_overlays[0].x_pos[(*iid).second]) );
-        instancePosition.setY( DbU::fromLambda(_circuit->position_overlays[0].y_pos[(*iid).second]) );
+        instancePosition.setX( _circuit->position_overlays[placementId].x_pos[(*iid).second] * DbU::fromLambda(5.0) );
+        instancePosition.setY( _circuit->position_overlays[placementId].y_pos[(*iid).second] * DbU::fromLambda(5.0) );
 
-        cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
+      //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 
       // This is temporary as it's not trans-hierarchic: we ignore the posutions
       // of all the intermediary instances.
         instance->setTransformation( instancePosition );
+        instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
       }
     }
 
     UpdateSession::close();
+
+    if (_cellWidget) _cellWidget->refresh();
   }
 
 

@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// This file is part of the VSLSI Stand-Alone Software.
+// This file is part of the VLSI Stand-Alone Software.
 // Copyright (c) UPMC 2013-2013, All Rights Reserved
 //
 // +-----------------------------------------------------------------+

@@ -15,11 +15,14 @@
 
 
 #include  <memory>
+#include  "vlsisapd/utilities/Dots.h"
 #include  "vlsisapd/bookshelf/Exception.h"
 #include  "vlsisapd/bookshelf/Node.h"
 #include  "vlsisapd/bookshelf/Pin.h"
 #include  "vlsisapd/bookshelf/Net.h"
+#include  "vlsisapd/bookshelf/Row.h"
 #include  "vlsisapd/bookshelf/Circuit.h"
+#include  "vlsisapd/bookshelf/Parser.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/DataBase.h"
@@ -31,6 +34,7 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/Library.h"
 #include  "hurricane/UpdateSession.h"
+#include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "crlcore/ToolBox.h"
 #include  "crlcore/Ispd05Bookshelf.h"
@@ -41,6 +45,9 @@ namespace {
   using namespace std;
   using namespace Hurricane;
   using namespace CRL;
+
+
+  DbU::Unit  pitch = 5.0;
 
 
   void  addSupplyNets ( Cell* cell )
@@ -59,70 +66,45 @@ namespace {
 
   Cell* toMasterCell ( AllianceFramework* af, Bookshelf::Node* node )
   {
-    if ( node->getHeight() > 16.0 ) return NULL;
-
     Technology* technology = DataBase::getDB()->getTechnology();
     Layer*      METAL1     = technology->getLayer ( "METAL1" );
 
-    Cell* master = af->createCell ( node->getName() );
-    Box  abutmentBox ( DbU::lambda( 0.0 )
-                     , DbU::lambda( 0.0 )
-                     , DbU::lambda( node->getWidth()*5.0 )
-                     , DbU::lambda( 50.0 )
-                     );
-    master->setAbutmentBox ( abutmentBox );
+    Cell* master = af->createCell( node->getName() );
+    Box  abutmentBox( DbU::fromLambda( 0.0 )
+                    , DbU::fromLambda( 0.0 )
+                    , DbU::fromLambda( node->getWidth ()*pitch )
+                    , DbU::fromLambda( node->getHeight()*pitch )
+                    );
+    master->setAbutmentBox( abutmentBox );
+    Point cellCenter = abutmentBox.getCenter();
 
-    addSupplyNets ( master );
+    addSupplyNets( master );
 
-    Segment* segment = Horizontal::create ( master->getNet("vss")
+    for ( auto ipin : node->getPins() ) {
+      Bookshelf::Pin* pin = ipin.second;
+      Point pinCenter ( cellCenter.getX() + DbU::fromLambda(pin->getX()*pitch)
+                      , cellCenter.getY() + DbU::fromLambda(pin->getY()*pitch) );
+      if (not abutmentBox.contains(pinCenter))
+        cerr << Error( "Ispd05::load(): Pin <%s> of node <%s> is outside abutment box.\n"
+                       "        (AB:[%dx%d], pin:(%d,%d))"
+                     , pin->getNet()->getName().c_str()
+                     , getString(node->getName()).c_str()
+                     , node->getWidth(), node->getHeight()
+                     , pin->getX()     , pin->getY() ) << endl;;
+
+      Net* net = master->getNet( pin->getNet()->getName() );
+      if (not net)
+        net = Net::create( master, pin->getNet()->getName() );
+      net->setExternal( true );
+
+      Vertical* segment = Vertical::create( net
                                           , METAL1
-                                          , abutmentBox.getYMin()+DbU::lambda(3.0)
-                                          , DbU::lambda(6.0)
-                                          , abutmentBox.getXMin()
-                                          , abutmentBox.getXMax()
+                                          , pinCenter.getX()
+                                          , DbU::fromLambda(2.0)
+                                          , pinCenter.getY() - DbU::fromLambda(0.5)
+                                          , pinCenter.getY() + DbU::fromLambda(0.5)
                                           );
-    NetExternalComponents::setExternal ( segment );
-
-    segment = Horizontal::create ( master->getNet("vdd")
-                                 , METAL1
-                                 , abutmentBox.getYMax()-DbU::lambda(3.0)
-                                 , DbU::lambda( 6.0)
-                                 , abutmentBox.getXMin()
-                                 , abutmentBox.getXMax()
-                                 );
-    NetExternalComponents::setExternal ( segment );
-
-    map<size_t,Bookshelf::Pin*>&          pins = node->getPins();
-    map<size_t,Bookshelf::Pin*>::iterator ipin = pins.begin();
-
-    if ( node->getWidth() < (double)pins.size() )
-      throw Error("Ispd05::load(): Node <%s> has only %.1f pitchs, cannot hold %zd terminals."
-                 ,node->getName().c_str(),node->getWidth(),pins.size());
-
-    DbU::Unit pinXMin = abutmentBox.getXMin() + DbU::lambda(5.0);
-    DbU::Unit pinXMax = abutmentBox.getXMax() - ((node->getWidth() > (double)pins.size()) ? DbU::lambda(5.0) : 0);
-    DbU::Unit pinX;
-
-    for ( size_t pinnb=0 ; ipin != pins.end() ; ++ipin, ++pinnb ) {
-      Net* net = Net::create ( master, (*ipin).second->getNet()->getName() );
-      net->setExternal ( true );
-
-      if ( pinnb % 2 ) {
-        pinX     = pinXMax;
-        pinXMax -= DbU::lambda(5.0);
-      } else {
-        pinX     = pinXMin;
-        pinXMin += DbU::lambda(5.0);
-      }
-
-      segment = Vertical::create ( net
-                                 , METAL1
-                                 , pinX
-                                 , DbU::lambda(1.0)
-                                 , abutmentBox.getYMin() + DbU::lambda(10.0)
-                                 , abutmentBox.getYMax() - DbU::lambda(10.0)
-                                 );
-      NetExternalComponents::setExternal ( segment );
+      NetExternalComponents::setExternal( segment );
     }
 
     return master;
@@ -140,76 +122,78 @@ namespace CRL {
   using Hurricane::Library;
   using Hurricane::Transformation;
   using Hurricane::UpdateSession;
+  using Utilities::Dots;
 
 
   Cell* Ispd05::load ( string benchmark )
   {
-    AllianceFramework* af = AllianceFramework::get ();
+    AllianceFramework* af = AllianceFramework::get();
 
     UpdateSession::open ();
 
-    auto_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse(benchmark) );
+    auto_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse( benchmark
+                                                                    , Bookshelf::Circuit::AllSlots
+                                                                    , Bookshelf::Parser::NoFlags
+                                                                    ) );
 
-    Cell* cell = af->createCell ( benchmark );
+    cmess1 << "  o  Converting <" << benchmark << "> from Bookshelf to Hurricane." << endl;
+    Cell* cell = af->createCell( benchmark );
 
-    addSupplyNets ( cell );
+    addSupplyNets( cell );
 
-    vector<Bookshelf::Net*>&          nets = circuit->getNets ();
-    vector<Bookshelf::Net*>::iterator inet = nets.begin();
-    for ( ; inet != nets.end() ; ++inet ) {
-      Net::create ( cell, (*inet)->getName() );
+    Dots  dots ( cmess2, "       ", 80, 1000 );
+    
+    cmess1 << "     - Converting Nets." << endl;
+    for ( auto net : circuit->getNets() ) {
+      dots.dot();
+      Net::create ( cell, net->getName() );
     }
+    dots.finish( Dots::Reset|Dots::FirstDot );
 
-    map<string,Bookshelf::Node*>&          nodes = circuit->getNodes();
-    map<string,Bookshelf::Node*>::iterator inode = nodes.begin();
+    cmess1 << "     - Converting Nodes." << endl;
+    for ( auto inode : circuit->getNodes() ) {
+      dots.dot();
+      Bookshelf::Node* node = inode.second;
 
-    Box abutmentBox;
-
-    for ( ; inode != nodes.end() ; ++inode ) {
-      Bookshelf::Node* node = (*inode).second;
-
-      if ( node->isTerminal () ) continue;
-      Cell* master = toMasterCell ( af, node );
-
-      if ( master == NULL ) {
-        cerr << Warning("Skipping megacell <%s>.",node->getName().c_str()) << endl;
+      Cell* master = toMasterCell( af, node );
+      if (master == NULL) {
+        cerr << Warning( "Skipping megacell <%s>.", node->getName().c_str() ) << endl;
         continue;
       }
 
-      Instance* instance = Instance::create ( cell, node->getName(), master );
+      Instance* instance = Instance::create( cell, node->getName(), master );
 
-      map<size_t,Bookshelf::Pin*>&          pins = node->getPins();
-      map<size_t,Bookshelf::Pin*>::iterator ipin = pins.begin();
-
-      for ( size_t pinnb=0 ; ipin != pins.end() ; ++ipin, ++pinnb ) {
-        Name netName (  (*ipin).second->getNet()->getName());
-        Net* masterNet = master->getNet ( netName );
-        instance->getPlug ( masterNet )->setNet ( cell->getNet(netName) );
-
-        DbU::Unit x = DbU::lambda( node->getX()       *  5.0);
-        DbU::Unit y = DbU::lambda((node->getY()/16.0) * 50.0);
-
-        if ( node->getOrientation() != Bookshelf::Orientation::N ) {
-          cerr << Warning("Skipping cell <%s>, unsupported orientation.",node->getName().c_str()) << endl;
-          continue;
-        }
-
-        Box masterABox = master->getAbutmentBox();
-        Transformation::Orientation orientation
-          = ( (int)(node->getY())%32 ) ? Transformation::Orientation::MY
-                                       : Transformation::Orientation::ID;
-      //Transformation::Orientation orientation = Transformation::Orientation::ID;
-        Transformation instanceTransformation = getTransformation(masterABox, x, y, orientation);
-
-        instance->setTransformation  ( instanceTransformation );
-        instance->setPlacementStatus ( Instance::PlacementStatus::PLACED );
-
-        abutmentBox.merge ( instance->getAbutmentBox() );
+      for ( auto ipin : node->getPins() ) {
+        Name netName   = ipin.second->getNet()->getName();
+        Net* masterNet = master->getNet( netName );
+        instance->getPlug( masterNet )->setNet( cell->getNet(netName) );
       }
     }
-    cell->setAbutmentBox ( abutmentBox );
+    dots.finish( Dots::Reset|Dots::FirstDot );
 
-    UpdateSession::close ();
+  // We assumes that the rows define a filled rectangular area.
+    cmess1 << "     - Converting scl Rows." << endl;
+    dots.setDivider( 10 );
+    Box abutmentBox;
+    for ( auto irow : circuit->getRows() ) {
+      dots.dot();
+
+      double x1 = (irow->getSubrowOrigin())*pitch;
+      double y1 = (irow->getCoordinate()  )*pitch;
+      double x2 = (irow->getSitewidth()*irow->getNumsites())*pitch + x1;
+      double y2 = (irow->getHeight()      )*pitch + y1;
+
+      Box rowBox = Box( DbU::fromLambda(x1)
+                      , DbU::fromLambda(y1)
+                      , DbU::fromLambda(x2)
+                      , DbU::fromLambda(y2)
+                      );
+      abutmentBox.merge( rowBox );
+    }
+    cell->setAbutmentBox( abutmentBox );
+    dots.finish( Dots::Reset|Dots::FirstDot );
+
+    UpdateSession::close();
 
     return cell;
   }
