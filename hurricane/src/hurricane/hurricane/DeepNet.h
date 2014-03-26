@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,28 +26,20 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/DeepNet.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# ifndef  __HURRICANE_DEEPNET__
-#   define  __HURRICANE_DEEPNET__
+#ifndef  HURRICANE_DEEPNET_H
+#define  HURRICANE_DEEPNET_H
 
 #include "hurricane/Net.h"
 #include "hurricane/HyperNet.h"
 #include "hurricane/Occurrence.h"
 
 
-
-
 namespace Hurricane {
 
-
   class DeepNet : public Net {
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
 
     // Attributes.
     protected:
@@ -68,8 +54,6 @@ namespace Hurricane {
       virtual Record* _getRecord  () const;
       virtual string  _getTypeName() const { return "DeepNet"; };
 
-# endif
-
     // Constructors.
     public:
       static  DeepNet* create      ( HyperNet& hyperNet );
@@ -83,16 +67,13 @@ namespace Hurricane {
 
     // Internal Modifiers.
     public:
-      size_t  _createRoutingPads ( bool buildRings=false );
+      size_t  _createRoutingPads ( unsigned int flags=0 );
 
 };
 
 Net* getDeepNet(HyperNet& hyperNet);
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-
-
-# endif
+#endif

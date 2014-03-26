@@ -40,6 +40,7 @@
                                        PyToolEngineCollection.cpp
                                        PyGraphicToolEngine.cpp
                                        PyAcmSigda.cpp
+                                       PyIspd05.cpp
                            )	    
                        set ( includes  crlcore/PyBanner.h
                                        crlcore/PyCatalog.h
@@ -54,6 +55,7 @@
                                        crlcore/PyToolEngineCollection.h
                                        crlcore/PyGraphicToolEngine.h
                                        crlcore/PyAcmSigda.h
+                                       crlcore/PyIspd05.h
                            )
 
 

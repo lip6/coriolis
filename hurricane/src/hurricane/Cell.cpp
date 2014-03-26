@@ -187,10 +187,11 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
     }
 }
 
-void Cell::flattenNets(bool buildRings)
-// ************************************
+void Cell::flattenNets(unsigned int flags)
+// ***************************************
 {
   UpdateSession::open();
+  bool buildRings = flags & BuildRings;
 
   forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
     Net* net = static_cast<Net*>((*ioccurrence).getEntity());
@@ -198,7 +199,7 @@ void Cell::flattenNets(bool buildRings)
     HyperNet  hyperNet ( *ioccurrence );
     if ( not (*ioccurrence).getPath().isEmpty() ) {
       DeepNet* deepNet = DeepNet::create ( hyperNet );
-      if (deepNet) deepNet->_createRoutingPads ( buildRings );
+      if (deepNet) deepNet->_createRoutingPads ( flags );
     } else {
       RoutingPad* previousRP = NULL;
       RoutingPad* currentRP  = NULL;
@@ -216,9 +217,11 @@ void Cell::flattenNets(bool buildRings)
       }
 
       forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea/*|RoutingPad::ShowWarning*/ );
+        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea );
         currentRP->materialize ();
-        if ( buildRings ) {
+        if ( flags & WarnOnUnplacedInstances )
+          currentRP->isPlacedOccurrence ( RoutingPad::ShowWarning );
+        if ( flags & BuildRings ) {
           if ( previousRP ) {
             currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
           }

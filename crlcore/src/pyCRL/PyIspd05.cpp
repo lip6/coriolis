@@ -10,11 +10,12 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :  "./PyAcmSigda.cpp"                              |
+// |  C++ Module  :  "./PyIspd05.cpp"                                |
 // +-----------------------------------------------------------------+
 
 
-#include "crlcore/PyAcmSigda.h"
+#include "crlcore/Ispd05Bookshelf.h"
+#include "crlcore/PyIspd05.h"
 #include "hurricane/isobar/PyCell.h"
 #include <string>
 #include <sstream>
@@ -48,23 +49,23 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 // +=================================================================+
-// |             "PyAcmSigda" Python Module Code Part                |
+// |              "PyIspd05" Python Module Code Part                 |
 // +=================================================================+
 
 
-  static PyObject* PyAcmSigda_load ( PyObject*, PyObject* args )
+  static PyObject* PyIspd05_load ( PyObject*, PyObject* args )
   {
-    trace << "PyAcmSigda_load()" << endl;
+    trace << "PyIspd05_load()" << endl;
 
     Cell* cell = NULL;
     
     HTRY
     char*     benchName = NULL;
     
-    if (PyArg_ParseTuple( args, "s:AcmSigda.load", &benchName )) {
-      cell = AcmSigda::load( benchName );
+    if (PyArg_ParseTuple( args, "s:Ispd05.load", &benchName )) {
+      cell = Ispd05::load( benchName );
     } else {
-      PyErr_SetString ( ConstructorError, "AcmSigda.load(): Bad type or bad number of parameters." );
+      PyErr_SetString ( ConstructorError, "Ispd05.load(): Bad type or bad number of parameters." );
       return NULL;
     }
     HCATCH
@@ -76,28 +77,28 @@ extern "C" {
   // Standart Destroy (Attribute).
 
 
-  PyMethodDef PyAcmSigda_Methods[] =
-    { { "load"                , (PyCFunction)PyAcmSigda_load     , METH_VARARGS|METH_STATIC
-                              , "Create a new AcmSigda." }
-  //, { "destroy"             , (PyCFunction)PyAcmSigda_destroy  , METH_VARARGS
+  PyMethodDef PyIspd05_Methods[] =
+    { { "load"                , (PyCFunction)PyIspd05_load     , METH_VARARGS|METH_STATIC
+                              , "Create a new Ispd05." }
+  //, { "destroy"             , (PyCFunction)PyIspd05_destroy  , METH_VARARGS
   //                          , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 
 
-  NoObjectDeleteMethod(AcmSigda)
-  PyTypeObjectLinkPyTypeWithoutObject(AcmSigda,AcmSigda)
+  NoObjectDeleteMethod(Ispd05)
+  PyTypeObjectLinkPyTypeWithoutObject(Ispd05,Ispd05)
 
 
 #else  // End of Python Module Code Part.
 
 
 // +=================================================================+
-// |              "PyAcmSigda" Shared Library Code Part              |
+// |               "PyIspd05" Shared Library Code Part               |
 // +=================================================================+
 
   // Type Definition.
-  PyTypeObjectDefinitionsOfModule(CRL,AcmSigda)
+  PyTypeObjectDefinitionsOfModule(CRL,Ispd05)
 
 
 #endif  // End of Shared Library Code Part.

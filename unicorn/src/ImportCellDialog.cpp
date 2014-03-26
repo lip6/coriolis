@@ -14,21 +14,20 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <iostream>
+#include <iostream>
 using namespace std;
 
-#include  <QLabel>
-#include  <QPushButton>
-#include  <QLineEdit>
-#include  <QComboBox>
-#include  <QCheckBox>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-
-#include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Graphics.h"
-
-#include  "unicorn/ImportCellDialog.h"
+#include <QLabel>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include "hurricane/Warning.h"
+#include "hurricane/viewer/Graphics.h"
+#include "unicorn/ImportCell.h"
+#include "unicorn/ImportCellDialog.h"
 
 
 namespace Unicorn {
@@ -82,11 +81,11 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
-    _formatComboBox->addItem ( tr("ACM/SIGDA (aka MCNC, .bench)"), AcmSigda    );
-    _formatComboBox->addItem ( tr("ISPD'04 (Bookshelf)")         , Ispd04      );
-    _formatComboBox->addItem ( tr("ISPD'05 (Bookshelf)")         , Ispd05      );
-    _formatComboBox->addItem ( tr("ICCAD'04 (LEF/DEF)")          , Iccad04     );
-    _formatComboBox->addItem ( tr("Alliance compliant DEF")      , AllianceDef );
+    _formatComboBox->addItem ( tr("ACM/SIGDA (aka MCNC, .bench)"), ImportCell::AcmSigda    );
+    _formatComboBox->addItem ( tr("ISPD'04 (Bookshelf)")         , ImportCell::Ispd04      );
+    _formatComboBox->addItem ( tr("ISPD'05 (Bookshelf)")         , ImportCell::Ispd05      );
+    _formatComboBox->addItem ( tr("ICCAD'04 (LEF/DEF)")          , ImportCell::Iccad04     );
+    _formatComboBox->addItem ( tr("Alliance compliant DEF")      , ImportCell::AllianceDef );
     hLayout2->addWidget ( _formatComboBox );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();

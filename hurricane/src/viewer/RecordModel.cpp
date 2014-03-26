@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RecordModel.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <QFont>
@@ -54,6 +45,8 @@ namespace Hurricane {
   {
   //cerr << "    Slot change" << endl;
 
+    emit layoutAboutToBeChanged ();
+
     vector< pair<QVariant,QVariant> >().swap ( _cache );
 
     if ( _slot  ) {
@@ -77,9 +70,10 @@ namespace Hurricane {
       record = slot->getDataRecord ();
     //cerr << "    New record build" << endl;
       if ( record == NULL ) {
-    //  cerr << "    Slot " << slot->getDataString() << " has NULL Record" << endl;
+      //cerr << "    Slot " << slot->getDataString() << " has NULL Record" << endl;
 
         delete slot;
+        emit layoutChanged ();
         return false;
       }
     }

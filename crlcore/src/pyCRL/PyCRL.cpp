@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -30,6 +29,7 @@
 #include "crlcore/PyToolEngine.h"
 #include "crlcore/PyToolEngineCollection.h"
 #include "crlcore/PyAcmSigda.h"
+#include "crlcore/PyIspd05.h"
 
 
 namespace CRL {
@@ -91,6 +91,7 @@ extern "C" {
     PyToolEngine_LinkPyType ();
     PyToolEngineCollection_LinkPyType ();
     PyAcmSigda_LinkPyType ();
+    PyIspd05_LinkPyType ();
 
     PYTYPE_READY ( Banner );
     PYTYPE_READY ( CatalogState );
@@ -106,6 +107,7 @@ extern "C" {
     PYTYPE_READY ( ToolEngineCollection );
     PYTYPE_READY ( ToolEngineCollectionLocator );
     PYTYPE_READY ( AcmSigda );
+    PYTYPE_READY ( Ispd05 );
    
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcEnv"     , &PyTypeEnvironment      , "<Environment>"      , false );
@@ -149,6 +151,8 @@ extern "C" {
     PyModule_AddObject ( module, "ToolEngineCollectionLocator", (PyObject*)&PyTypeToolEngineCollectionLocator );
     Py_INCREF ( &PyTypeAcmSigda );
     PyModule_AddObject ( module, "AcmSigda", (PyObject*)&PyTypeAcmSigda );
+    Py_INCREF ( &PyTypeIspd05 );
+    PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();

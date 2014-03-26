@@ -64,6 +64,7 @@ class Cell : public Entity {
 // Types
 // *****
 
+    public: enum Flag { BuildRings=0x0001, WarnOnUnplacedInstances=0x0002 };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
 
@@ -302,7 +303,7 @@ class Cell : public Entity {
     public: void setTerminal(bool isTerminal) {_isTerminal = isTerminal;};
     public: void setFlattenLeaf(bool isFlattenLeaf) {_isFlattenLeaf = isFlattenLeaf;};
     public: void setPad(bool isPad) {_isPad = isPad;};
-    public: void flattenNets(bool buildRings=true);
+    public: void flattenNets(unsigned int flags=BuildRings);
     public: void materialize();
     public: void unmaterialize();
 

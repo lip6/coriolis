@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -262,8 +261,13 @@ namespace Hurricane {
     if ( (_history.getSlot() != NULL) and (record == NULL) )
       record = _history.getSlot()->getDataRecord();
 
-  //cerr << "  Effective setSlot() ." << endl;
-    change = _baseModel->setSlot ( _history.getSlot(), record, _history.getDepth() );
+    // if (_history.getSlot())
+    //   cerr << "  Effective setSlot() " << _history.getSlot()->getName() << endl;
+    // else
+    //   cerr << "  Effective setSlot() NULL" << endl;
+
+    change = _baseModel->setSlot( _history.getSlot(), record, _history.getDepth() );
+  //cerr << "  setSlot() succeeded." << endl;
 
     return change;
   }
@@ -273,14 +277,14 @@ namespace Hurricane {
   {
   //cerr << "InspectorWidget::pushSlot()" << endl;
 
-    if ( slot   == NULL ) return;
-    if ( record == NULL ) {
-      record = slot->getDataRecord ();
-      if ( record == NULL ) return;
+    if (slot   == NULL) return;
+    if (record == NULL) {
+      record = slot->getDataRecord();
+      if (record == NULL) return;
     }
 
-    _history.push ( slot, record );
-    setSlot ( record );
+    _history.push( slot, record );
+    setSlot( record );
   }
 
 

@@ -14,40 +14,27 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QAction>
-#include  <QMenu>
-
-#include  "hurricane/Warning.h"
-#include  "hurricane/viewer/CellWidget.h"
-
-#include  "crlcore/Catalog.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/GraphicToolEngine.h"
-#include  "crlcore/AcmSigda.h"
-#include  "crlcore/Ispd04Bookshelf.h"
-#include  "crlcore/Ispd05Bookshelf.h"
-#include  "crlcore/Iccad04Lefdef.h"
-#include  "crlcore/DefImport.h"
-#include  "crlcore/DefExport.h"
-
-#include  "unicorn/OpenCellDialog.h"
-#include  "unicorn/SaveCellDialog.h"
-#include  "unicorn/ImportCellDialog.h"
-#include  "unicorn/ExportCellDialog.h"
-#include  "unicorn/UnicornGui.h"
+#include <QAction>
+#include <QMenu>
+#include "hurricane/Warning.h"
+#include "hurricane/viewer/CellWidget.h"
+#include "crlcore/Catalog.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/GraphicToolEngine.h"
+#include "crlcore/DefExport.h"
+#include "unicorn/ImportCell.h"
+#include "unicorn/OpenCellDialog.h"
+#include "unicorn/SaveCellDialog.h"
+#include "unicorn/ImportCellDialog.h"
+#include "unicorn/ExportCellDialog.h"
+#include "unicorn/UnicornGui.h"
 
 
 namespace Unicorn {
 
-
   using Hurricane::Warning;
   using CRL::Catalog;
   using CRL::AllianceFramework;
-  using CRL::AcmSigda;
-  using CRL::Ispd04;
-  using CRL::Ispd05;
-  using CRL::Iccad04Lefdef;
-  using CRL::DefImport;
   using CRL::DefExport;
 
 
@@ -186,36 +173,17 @@ namespace Unicorn {
     bool    newViewer;
     int     format;
 
-    if ( _importDialog->runDialog ( cellName, format, newViewer ) ) {
-      Cell* cell = NULL; 
+    if ( _importDialog->runDialog( cellName, format, newViewer ) ) {
+      Cell* cell = ImportCell::load( cellName.toStdString(), format ); 
 
-      switch ( format ) {
-        case ImportCellDialog::AcmSigda:
-          cell = AcmSigda::load ( cellName.toStdString() );
-          break;
-        case ImportCellDialog::Ispd04:
-          cell = Ispd04::load ( cellName.toStdString() );
-          break;
-        case ImportCellDialog::Ispd05:
-          cell = Ispd05::load ( cellName.toStdString() );
-          break;
-        case ImportCellDialog::Iccad04:
-          cell = Iccad04Lefdef::load ( cellName.toStdString() , 0 );
-          break;
-        case ImportCellDialog::AllianceDef:
-          cell = DefImport::load ( cellName.toStdString().c_str() , DefImport::FitAbOnCells );
-          break;
-      }
-
-      if ( cell ) {
+      if (cell) {
         UnicornGui* viewer = this;
-        if ( newViewer ) {
-          viewer = UnicornGui::create ();
-          viewer->show ();
+        if (newViewer) {
+          viewer = UnicornGui::create();
+          viewer->show();
         }
-        viewer->setCell ( cell );
-      } else
-        cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
+        viewer->setCell( cell );
+      }
     }
   }
 

@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +26,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./DeepNet.cpp"                                 |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/DeepNet.h"
@@ -54,126 +45,81 @@
 
 namespace Hurricane {
 
-namespace {
-
-
-  using namespace std;
-  using namespace Hurricane;
-
-
-
-
-# if !defined(__DOXYGEN_PROCESSOR__)
-
-
-# endif
-
-
-} // End of local namespace.
-
-
-// x-----------------------------------------------------------------x
-// |                 "::DeepNet" Class Definitions                   |
-// x-----------------------------------------------------------------x
-
-
-#   if !defined(__DOXYGEN_PROCESSOR__)
-
 
 // -------------------------------------------------------------------
-// Constructor  :  "DeepNet::DeepNet ()".
-
-DeepNet::DeepNet ( Occurrence& netOccurrence )
-  : Net(netOccurrence.getOwnerCell()
-       ,netOccurrence.getName()
-       )
-  , _netOccurrence(netOccurrence)
-{
-}
+// Class  :  "DeepNet".
 
 
+  DeepNet::DeepNet ( Occurrence& netOccurrence )
+    : Net(netOccurrence.getOwnerCell()
+         ,netOccurrence.getName()
+         )
+    , _netOccurrence(netOccurrence)
+  { }
 
 
-// -------------------------------------------------------------------
-// Inspector Management  :  "DeepNet::_getRecord ()".
+  DeepNet* DeepNet::create ( HyperNet& hyperNet )
+  {
+    if (not hyperNet.isValid())
+      throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
 
-Record* DeepNet::_getRecord () const
-{
-  Record* record = Net::_getRecord();
-  if (record) {
-        record->add(getSlot("_netOccurrence", &_netOccurrence));
+    Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hyperNet.getNetOccurrence() );
+
+    if (rootNetOccurrence.getMasterCell()->isFlattenLeaf()) return NULL;
+    if (rootNetOccurrence.getPath().isEmpty())              return NULL;
+
+    DeepNet* deepNet = new DeepNet( rootNetOccurrence );
+    deepNet->_postCreate();
+    
+    return deepNet;
   }
-  return record;
-}
 
 
-# endif
+  size_t  DeepNet::_createRoutingPads ( unsigned int flags )
+  {
+    size_t    nbRoutingPads = 0;
+    HyperNet  hyperNet      ( _netOccurrence );
 
+    RoutingPad* previousRP = NULL;
+    RoutingPad* currentRP  = NULL;
+    forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
+      nbRoutingPads++;
 
-// -------------------------------------------------------------------
-// Constructor  :  "DeepNet::create ()".
+      currentRP = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
+      if (flags & Cell::WarnOnUnplacedInstances)
+        currentRP->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
-DeepNet* DeepNet::create ( HyperNet& hyperNet )
-{
-  if ( !hyperNet.isValid() )
-    throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
-
-  Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hyperNet.getNetOccurrence() );
-
-  if ( rootNetOccurrence.getMasterCell()->isFlattenLeaf() ) return NULL;
-  if ( rootNetOccurrence.getPath().isEmpty() )              return NULL;
-
-  DeepNet* deepNet = new DeepNet ( rootNetOccurrence );
-  deepNet->_postCreate ();
-
-  return deepNet;
-}
-
-
-
-
-// -------------------------------------------------------------------
-// Internal Modifier  :  "DeepNet::_createRoutingPads ()".
-
-size_t  DeepNet::_createRoutingPads ( bool buildRings )
-{
-  size_t  nbRoutingPads = 0;
-  HyperNet  hyperNet ( _netOccurrence );
-
-  RoutingPad* previousRP = NULL;
-  RoutingPad* currentRP  = NULL;
-  for_each_occurrence ( plugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-    nbRoutingPads++;
-
-    currentRP = RoutingPad::create ( this, plugOccurrence, RoutingPad::BiggestArea );
-    if ( buildRings ) {
-      if ( previousRP ) {
-        currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
+      if (flags & Cell::BuildRings) {
+        if (previousRP) {
+          currentRP->getBodyHook()->attach( previousRP->getBodyHook() );
+        }
+        previousRP = currentRP;
       }
-      previousRP = currentRP;
     }
 
-    end_for
+    return nbRoutingPads;
   }
 
-  return nbRoutingPads;
-}
 
-
-// -------------------------------------------------------------------
-// 
-
-Net* getDeepNet(HyperNet& hypernet)
-// ********************************
+Net* getDeepNet ( HyperNet& hypernet )
 {
-    Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence ( hypernet.getNetOccurrence() );
+  Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hypernet.getNetOccurrence() );
 
-  //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-  //if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
+//if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
+//if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
 
-    return  rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
-
+  return rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
 }
+
+
+  Record* DeepNet::_getRecord () const
+  {
+    Record* record = Net::_getRecord();
+    if (record) {
+      record->add( getSlot("_netOccurrence", &_netOccurrence) );
+    }
+    return record;
+  }
 
 
 } // End of Hurricane namespace.

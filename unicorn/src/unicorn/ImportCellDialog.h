@@ -31,8 +31,6 @@ namespace Unicorn {
       Q_OBJECT;
 
     public:
-      enum Formats { AcmSigda=1, Ispd04, Ispd05, Iccad04, AllianceDef };
-    public:
                      ImportCellDialog ( QWidget* parent=NULL );
       bool           runDialog        ( QString& name, int& format, bool& newViewerRequest );
       const QString  getCellName      () const;

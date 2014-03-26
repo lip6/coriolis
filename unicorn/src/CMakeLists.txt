@@ -13,6 +13,7 @@
                        )
        add_definitions ( -DSYS_CONF_DIR="${SYS_CONF_DIR}" )
 
+                   set ( includes      unicorn/ImportCell.h )
                    set ( mocincludes   unicorn/UnicornGui.h
                                        unicorn/OpenCellDialog.h
                                        unicorn/SaveCellDialog.h
@@ -21,7 +22,8 @@
                        )
                    set ( pyIncludes    unicorn/PyUnicornGui.h
                        )
-		   set ( cpps          OpenCellDialog.cpp
+		   set ( cpps          ImportCell.cpp
+                                       OpenCellDialog.cpp
                                        SaveCellDialog.cpp
                                        ImportCellDialog.cpp
                                        ExportCellDialog.cpp
@@ -88,7 +90,7 @@
                install ( TARGETS       pyUnicorn      DESTINATION ${PYTHON_SITE_PACKAGES} )
                install ( TARGETS       cgt.bin        DESTINATION bin )
                install ( PROGRAMS      cgt.py         DESTINATION bin RENAME cgt )
-              #install ( PROGRAMS      cgt3.py        DESTINATION bin RENAME cgt3 )
-               install ( FILES         ${mocincludes}
+               install ( FILES         ${includes}
+                                       ${mocincludes}
                                        ${pyIncludes}  DESTINATION include/coriolis2/unicorn ) 
 

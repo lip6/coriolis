@@ -53,7 +53,7 @@ namespace Hurricane {
       enum    Flags { BiggestArea       = 0x0001
                     , HighestLayer      = 0x0002
                     , LowestLayer       = 0x0004
-                    , ComponentSelection=BiggestArea|HighestLayer|LowestLayer
+                    , ComponentSelection= BiggestArea|HighestLayer|LowestLayer
                     , ShowWarning       = 0x0008
                     };
     public:

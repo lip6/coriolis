@@ -235,7 +235,9 @@ namespace Kite {
     Cell* cell   = getCell();
   //Box   cellBb = cell->getBoundingBox();
     if (not _knik) {
-      cell->flattenNets( mode & KtBuildGlobalRouting );
+      unsigned int  flags = Cell::WarnOnUnplacedInstances;
+      flags |= (mode & KtBuildGlobalRouting) ? Cell::BuildRings : 0;
+      cell->flattenNets( flags );
   
       KatabaticEngine::chipPrep();
   
