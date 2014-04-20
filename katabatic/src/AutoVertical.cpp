@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -19,6 +18,7 @@
 #include  "hurricane/Bug.h"
 #include  "hurricane/Vertical.h"
 #include  "crlcore/RoutingGauge.h"
+#include  "katabatic/Configuration.h"
 #include  "katabatic/AutoContactTurn.h"
 #include  "katabatic/AutoVertical.h"
 #include  "katabatic/AutoHorizontal.h"
@@ -219,16 +219,23 @@ namespace Katabatic {
   {
     ltraceout(200);
 
+    Interval sourceSide        = getAutoSource()->getGCell()->getSide( KbHorizontal );
+    Interval targetSide        = getAutoTarget()->getGCell()->getSide( KbHorizontal );
     Interval sourceConstraints = Interval(getAutoSource()->getCBXMin(),getAutoSource()->getCBXMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBXMin(),getAutoTarget()->getCBXMax());
 
   // Ugly: should uses topRightShrink from GCell.
-    sourceConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-    targetConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+  //sourceConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+  //targetConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+  // Expand by a tiny amount for the "contains" to work for sure.
+    sourceConstraints.inflate( 1 );
+    targetConstraints.inflate( 1 );
 
   // Ugly: GCell's track number is hardwired.
-    if (sourceConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
-    if (targetConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
+  //if (sourceConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
+  //if (targetConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
+    if (not sourceConstraints.contains(sourceSide)) { ltraceout(200); return true; }
+    if (not targetConstraints.contains(targetSide)) { ltraceout(200); return true; }
 
     ltraceout(200);
     return false;
@@ -241,11 +248,11 @@ namespace Katabatic {
     ltracein(200);
 
     if (   not isStrongTerminal()
-       or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < DbU::lambda(5.0)*5)) )
+       or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
       { ltraceout(200); return false; }
 
     ltrace(200) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
-    ltrace(200) << "test:" << (getLength() < DbU::lambda(5.0)*5) << endl;
+    ltrace(200) << "test:" << (getLength() < getPitch()*5) << endl;
     ltrace(200) << "length:" << DbU::getValueString(getLength()) << endl;
 
     bool         success       = false;
@@ -258,8 +265,8 @@ namespace Katabatic {
     if (source->isTerminal()) {
       Interval  constraints       = source->getUConstraints      (KbHorizontal).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
       Interval  nativeConstraints = source->getNativeUConstraints(KbHorizontal).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-      int       slack             = constraints.getSize()       / DbU::lambda(5.0);
-      int       nativeSlack       = nativeConstraints.getSize() / DbU::lambda(5.0);
+      int       slack             = constraints.getSize()       / getPitch();
+      int       nativeSlack       = nativeConstraints.getSize() / getPitch();
 
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
@@ -289,8 +296,8 @@ namespace Katabatic {
     if (target->isTerminal()) {
       Interval  constraints       = target->getUConstraints      (KbHorizontal).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
       Interval  nativeConstraints = target->getNativeUConstraints(KbHorizontal).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-      int       slack             = constraints.getSize()       / DbU::lambda(5.0);
-      int       nativeSlack       = nativeConstraints.getSize() / DbU::lambda(5.0);
+      int       slack             = constraints.getSize()       / getPitch();
+      int       nativeSlack       = nativeConstraints.getSize() / getPitch();
 
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
@@ -628,7 +635,7 @@ namespace Katabatic {
     }
 
     size_t       depth        = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
-    bool         upLayer      = (depth+1 < Session::getRoutingGauge()->getDepth());
+    bool         upLayer      = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer ( depth + ((upLayer)?0:-1) );
     const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer ( depth + ((upLayer)?1:-1) );
 

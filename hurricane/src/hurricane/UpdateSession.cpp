@@ -20,6 +20,7 @@
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Go.h"
 #include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
 #include "hurricane/Error.h"
 
 namespace Hurricane {
@@ -77,24 +78,30 @@ void UpdateSession::_destroy()
     Inherit::destroy();
 }
 
-void UpdateSession::_preDestroy()
-// *****************************
-{
-    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-        throw Error("Invalid update session deletion : empty stack");
+  void UpdateSession::_preDestroy()
+  // ******************************
+  {
+    if (not UPDATOR_STACK or UPDATOR_STACK->empty())
+      throw Error( "Invalid update session deletion : empty stack" );
 
     if (UPDATOR_STACK->top() != this)
-        throw Error("Invalid update session deletion : not on top");
+      throw Error( "Invalid update session deletion : not on top" );
 
     UPDATOR_STACK->pop();
 
-    for_each_dbo(owner, getOwners()) {
-        if (dynamic_cast<Go*>(owner)) ((Go*)owner)->materialize();
-        end_for;
+    forEach( DBo*, iowner, getOwners() ) {
+      Cell* cell = dynamic_cast<Cell*>(*iowner);
+      if (cell) {
+      //cerr << "Notify Cell::CellChanged to: " << cell << endl; 
+        cell->notify( Cell::CellChanged );
+      } else {
+        Go* go = dynamic_cast<Go*>(*iowner);
+        if (go) go->materialize();
+      }
     }
 
     Inherit::_preDestroy();
-}
+  }
 
 string UpdateSession::_getString() const
 // *************************************
@@ -111,14 +118,14 @@ Record* UpdateSession::_getRecord() const
     return record;
 }
 
-void UpdateSession::onCapturedBy(DBo* owner)
-// *****************************************
-{
-    if (!dynamic_cast<Go*>(owner))
-        throw Error("Bad update session capture : not a graphic object");
-
+  void UpdateSession::onCapturedBy(DBo* owner)
+  // *****************************************
+  {
+    if ( not dynamic_cast<Go*>(owner) and not dynamic_cast<Cell*>(owner) )
+      throw Error( "Bad update session capture : not a graphic object (Go) or a Cell" );
+    
     Inherit::onCapturedBy(owner);
-}
+  }
 
 void UpdateSession::onNotOwned()
 // *****************************
@@ -131,34 +138,44 @@ void UpdateSession::onNotOwned()
 // Go::invalidate implementation : located here to access UPDATOR_STACK variable
 // ****************************************************************************************************
 
-void Go::invalidate(bool propagateFlag)
-// ************************************
-{
-// trace << "invalidate(" << this << ")" << endl;
-// trace_in();
+  void Go::invalidate(bool propagateFlag)
+  // ************************************
+  {
+  // trace << "invalidate(" << this << ")" << endl;
+  // trace_in();
 
-    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-        throw Error("Can't invalidate go : empty update session stack");
+    if (not UPDATOR_STACK or UPDATOR_STACK->empty())
+      throw Error( "Can't invalidate go: empty update session stack" );
 
-    Property* property = getProperty(UpdateSession::getPropertyName());
+    Property* property = getProperty( UpdateSession::getPropertyName() );
 
     if (property) {
-        if (!dynamic_cast<UpdateSession*>(property))
-            throw Error("Can't invalidate go : bad update session type");
-    }
-    else {
-        SlaveEntityMap::iterator  it;
-        SlaveEntityMap::iterator  end;
-        getCell()->_getSlaveEntities(this,it,end);
-        for(; it != end ; it++) {
-          Go* go = dynamic_cast<Go*>(it->second);
-          if (go) go->invalidate(propagateFlag);
-        }
+      if (not dynamic_cast<UpdateSession*>(property))
+        throw Error( "Can't invalidate go : bad update session type" );
+    } else {
+      SlaveEntityMap::iterator  it;
+      SlaveEntityMap::iterator  end;
+      getCell()->_getSlaveEntities( this, it, end );
+      for( ; it!=end ; it++ ) {
+        Go* go = dynamic_cast<Go*>( it->second );
+        if (go) go->invalidate( propagateFlag );
+      }
 
-        if (isMaterialized()) {
-            unmaterialize();
-            put(UPDATOR_STACK->top());
+      if (isMaterialized()) {
+        unmaterialize();
+        put( UPDATOR_STACK->top() );
+      }
+
+      Property* cellUpdateSession = getCell()->getProperty( UpdateSession::getPropertyName() );
+      if (not cellUpdateSession) {
+      // Put the cell in the UpdateSession relation, but *do not* unmaterialize it.
+      //cerr << "Notify Cell::CellAboutToChange to: " << getCell() << endl; 
+        getCell()->put   ( UPDATOR_STACK->top() );
+        getCell()->notify( Cell::CellAboutToChange );
+        forEach( Instance*, iinstance, getCell()->getSlaveInstances() ) {
+          iinstance->invalidate( false );
         }
+      }
     }
 // trace << "done" << endl;
 // trace_out();

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,7 +14,6 @@
 // +-----------------------------------------------------------------+
 
 
-#include <functional>
 #include <boost/bind.hpp>
 #include <QAction>
 #include <QMenu>
@@ -33,6 +31,7 @@
 #include <hurricane/viewer/CellWidget.h>
 #include <hurricane/viewer/CellViewer.h>
 #include <hurricane/viewer/ControllerWidget.h>
+#include <hurricane/viewer/ExceptionWidget.h>
 #include <crlcore/Utilities.h>
 #include <crlcore/AllianceFramework.h>
 #include <katabatic/GCell.h>
@@ -50,6 +49,7 @@ namespace Kite {
   using namespace std;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::Exception;
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
@@ -58,6 +58,7 @@ namespace Kite {
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
   using Hurricane::ControllerWidget;
+  using Hurricane::ExceptionWidget;
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using Knik::KnikEngine;
@@ -123,6 +124,7 @@ namespace Kite {
     if (not kite) {
       kite = KiteEngine::create( cell );
       kite->setPostEventCb( boost::bind(&GraphicKiteEngine::postEvent,this) );
+      kite->setViewer( _viewer );
     } else
       cerr << Warning( "%s already has a Kite engine.", getString(cell).c_str() ) << endl;
 
@@ -130,86 +132,84 @@ namespace Kite {
   }
 
 
-  KiteEngine* GraphicKiteEngine::getForFramework ()
+  KiteEngine* GraphicKiteEngine::getForFramework ( unsigned int flags )
   {
   // Currently, only one framework is avalaible: Alliance.
 
     KiteEngine* kite = KiteEngine::get( getCell() );
     if (kite) return kite;
 
-    kite = createEngine();
-    
-    if (not kite) 
-      throw Error( "Failed to create Kite engine on %s.", getString(getCell()).c_str() );
+    if (flags & CreateEngine) {
+      kite = createEngine();
+      if (not kite) 
+        throw Error( "Failed to create Kite engine on %s.", getString(getCell()).c_str() );
+    } else {
+      throw Error( "KiteEngine not created yet, run the global router first." );
+    }
 
     return kite;
   }
 
 
-  void  GraphicKiteEngine::saveGlobalSolution ()
+  void  GraphicKiteEngine::_loadGlobalSolution ()
+  {
+    KiteEngine* kite = getForFramework( CreateEngine );
+    kite->runGlobalRouter( KtLoadGlobalRouting );
+  }
+
+
+  void  GraphicKiteEngine::_saveGlobalSolution ()
   {
     KiteEngine* kite = KiteEngine::get( getCell() );
     if (kite) kite->saveGlobalSolution ();
   }
 
 
-  void  GraphicKiteEngine::loadGlobalSolution ()
+  void  GraphicKiteEngine::_globalRoute ()
   {
-    KiteEngine* kite = getForFramework();
-
-    emit cellPreModificated();
-    kite->runGlobalRouter( KtLoadGlobalRouting );
-    emit cellPostModificated();
-  }
-
-
-  void  GraphicKiteEngine::globalRoute ()
-  {
-    KiteEngine* kite = getForFramework();
-
-    emit cellPreModificated();
+    KiteEngine* kite = getForFramework( CreateEngine );
     kite->runGlobalRouter( KtBuildGlobalRouting );
-    emit cellPostModificated();
   }
 
 
-  void  GraphicKiteEngine::detailRoute ()
+  void  GraphicKiteEngine::_loadGlobalRouting ()
   {
     static KatabaticEngine::NetSet routingNets;
 
-    KiteEngine* kite = KiteEngine::get( getCell() );
-    if (not kite) {
-      throw Error( "KiteEngine not created yet, run the global router first." );
-    } 
+    KiteEngine* kite = getForFramework( NoFlags );
     if (cmess1.enabled()) kite->printConfiguration();
 
-    emit cellPreModificated();
     _viewer->clearToolInterrupt();
     kite->loadGlobalRouting( Katabatic::EngineLoadGrByNet, routingNets );
-    emit cellPostModificated();
-    emit cellPreModificated ();
-    kite->balanceGlobalDensity ();
-    kite->layerAssign ( Katabatic::EngineNoNetLayerAssign );
-    emit cellPostModificated();
-    emit cellPreModificated();
-    kite->runNegociate();
-    emit cellPostModificated();
   }
 
 
-  void  GraphicKiteEngine::finalize ()
+  void  GraphicKiteEngine::_balanceGlobalDensity ()
   {
-    emit cellPreModificated();
-    KiteEngine* kite = KiteEngine::get( getCell() );
+    KiteEngine* kite = getForFramework( NoFlags );
+    kite->balanceGlobalDensity ();
+    kite->layerAssign ( Katabatic::EngineNoNetLayerAssign );
+  }
+
+
+  void  GraphicKiteEngine::_runNegociate ()
+  {
+    KiteEngine* kite = getForFramework( NoFlags );
+    kite->runNegociate();
+  }
+
+
+  void  GraphicKiteEngine::_finalize ()
+  {
+    KiteEngine* kite = getForFramework( NoFlags );
     if (kite) {
       kite->finalizeLayout();
       kite->destroy();
     }
-    emit cellPostModificated();
   }
 
 
-  void  GraphicKiteEngine::save ()
+  void  GraphicKiteEngine::_save ()
   {
     Cell*              cell = getCell();
     AllianceFramework* af   = AllianceFramework::get();
@@ -218,6 +218,34 @@ namespace Kite {
     cell->setName( name );
     af->saveCell( cell, Catalog::State::Physical );
   }
+
+
+  void  GraphicKiteEngine::globalRoute ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_globalRoute,this) ); }
+
+
+  void  GraphicKiteEngine::loadGlobalSolution ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_loadGlobalSolution,this) ); }
+
+
+  void  GraphicKiteEngine::saveGlobalSolution ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_saveGlobalSolution,this) ); }
+
+
+  void  GraphicKiteEngine::detailRoute ()
+  {
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_loadGlobalRouting   ,this) );
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_balanceGlobalDensity,this) );
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_runNegociate        ,this) );
+  }
+
+
+  void  GraphicKiteEngine::finalize ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_finalize,this) ); }
+
+
+  void  GraphicKiteEngine::save ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_save,this) ); }
 
 
   void  GraphicKiteEngine::route ()
@@ -230,7 +258,7 @@ namespace Kite {
 
   void  GraphicKiteEngine::dumpMeasures ()
   {
-    KiteEngine* kite = getForFramework();
+    KiteEngine* kite = getForFramework( NoFlags );
     if (kite) kite->dumpMeasures();
   }
 
@@ -337,9 +365,6 @@ namespace Kite {
       connect( dDumpMeasuresAction, SIGNAL(triggered()), this, SLOT(dumpMeasures      ()) );
       connect( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
     }
-
-    connect( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
-    connect( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
   }
 
 

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2013, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -52,13 +52,14 @@ namespace Katabatic {
 
   AutoContactHTee* AutoContactHTee::create ( GCell* gcell, Net* net, const Layer* layer )
   {
-    Contact* contact = Contact::create ( net
-                                       , layer
-                                       , gcell->getCenter().getX()
-                                       , gcell->getCenter().getY()
-                                       , DbU::lambda(2.0)
-                                       , DbU::lambda(2.0)
-                                       );
+    DbU::Unit viaSide = Session::getViaWidth( layer );
+    Contact*  contact = Contact::create ( net
+                                        , layer
+                                        , gcell->getCenter().getX()
+                                        , gcell->getCenter().getY()
+                                        , viaSide
+                                        , viaSide
+                                        );
     AutoContactHTee* autoContact = new AutoContactHTee ( gcell, contact );
 
     autoContact->_postCreate();

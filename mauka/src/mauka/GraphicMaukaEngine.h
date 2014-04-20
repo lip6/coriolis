@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __MAUKA_GRAPHIC_MAUKA_ENGINE__
-#define  __MAUKA_GRAPHIC_MAUKA_ENGINE__
+#ifndef  MAUKA_GRAPHIC_MAUKA_ENGINE_H
+#define  MAUKA_GRAPHIC_MAUKA_ENGINE_H
 
 #include  <QObject>
 
@@ -51,8 +50,11 @@ namespace Mauka {
       Q_OBJECT;
 
     public:
+      enum Flags { NoFlags=0x0000, CreateEngine=0x0001 };
+
+    public:
               MaukaEngine*        createEngine         ();
-              MaukaEngine*        getForFramework      ();
+              MaukaEngine*        getForFramework      ( unsigned int flags );
       static  void                initMaukaContainer   ( CellWidget* );
       static  void                drawMaukaContainer   ( CellWidget*
                                                        , const Go*
@@ -77,12 +79,14 @@ namespace Mauka {
       static  GraphicMaukaEngine* _singleton;
               CellViewer*         _viewer;
     protected:
-                                  GraphicMaukaEngine ();
-      virtual                    ~GraphicMaukaEngine ();
+                                  GraphicMaukaEngine    ();
+      virtual                    ~GraphicMaukaEngine    ();
+               void               _doQuadriPart         ();
+               void               _doSimulatedAnnealing ();
+               void               _save                 ();
   };
 
 
-} // End of Mauka namespace.
+} // Mauka namespace.
 
-
-#endif  // __MAUKA_GRAPHIC_MAUKA_ENGINE__
+#endif  // MAUKA_GRAPHIC_MAUKA_ENGINE_H

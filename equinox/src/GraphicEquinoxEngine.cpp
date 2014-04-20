@@ -190,11 +190,11 @@ namespace Equinox {
     EquinoxEngine* equinox = createEngine ( );
     if ( !equinox ) return;
 
-    emit cellPreModificated ();
+  //emit cellPreModificated ();
 
     equinox->withAlimExtract(1);
 
-    emit cellPostModificated ();
+  //emit cellPostModificated ();
   }
 
 
@@ -203,11 +203,11 @@ namespace Equinox {
     EquinoxEngine* equinox = createEngine ( );
     if ( !equinox ) return;
 
-    emit cellPreModificated ();
+  //emit cellPreModificated ();
 
     equinox->withoutAlimExtract(1);
 
-    emit cellPostModificated ();
+  //emit cellPostModificated ();
   }
 
 

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -102,10 +101,10 @@ namespace {
   {
     ToolEngine* tool;
     while ( (tool = getSlaveOwners().getSubSet<ToolEngine*>().getFirst()) ) {
-      tool->setInRelationDestroy ( true );
-      tool->destroy ();
+      tool->setInRelationDestroy( true );
+      tool->destroy();
     }
-    Relation::_preDestroy ();
+    Relation::_preDestroy();
   }
 
 
@@ -221,13 +220,14 @@ namespace CRL {
 
   void  ToolEngine::_preDestroy ()
   {
-    ToolEnginesRelation* relation = ToolEnginesRelation::getToolEnginesRelation(_cell);
-    if ( !_inRelationDestroy ) {
-      if ( !relation )
-        throw Error ( "Abnormal state: no ToolEnginesRelation on cell ..." );
-      remove ( relation );
+    ToolEnginesRelation* relation = ToolEnginesRelation::getToolEnginesRelation( _cell );
+    if (not _inRelationDestroy) {
+      if (not relation)
+        throw Error( "Abnormal state: no ToolEnginesRelation on %s", getString(_cell).c_str() );
+      remove( relation );
     }
     DBo::_preDestroy();
+    _cell->notify( Cell::CellChanged );
   }
 
 

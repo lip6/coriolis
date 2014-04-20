@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,24 +11,18 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Graphics.cpp"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <assert.h>
-
-#include  <Qt>
-#include  <QBrush>
-#include  <QPen>
-#include  <QApplication>
-
-#include  "hurricane/Name.h"
-#include  "hurricane/Exception.h"
-
-#include  "hurricane/viewer/DisplayStyle.h"
-#include  "hurricane/viewer/Graphics.h"
+#include <assert.h>
+#include <Qt>
+#include <QBrush>
+#include <QPen>
+#include <QApplication>
+#include "hurricane/Name.h"
+#include "hurricane/Exception.h"
+#include "hurricane/viewer/DisplayStyle.h"
+#include "hurricane/viewer/Graphics.h"
 
 
 namespace Hurricane {
@@ -335,12 +323,12 @@ namespace Hurricane {
   {
     static BreakpointWidget* bpw = NULL;
 
-    if ( !bpw )
-      bpw = new BreakpointWidget ();
-    bpw->setMessage ( message.c_str() );
-    bpw->execNoModal ();
+    if (not bpw)
+      bpw = new BreakpointWidget();
+    bpw->setMessage( message.c_str() );
+    bpw->execNoModal();
 
-    return ( bpw->result() == QDialog::Accepted );
+    return (bpw->result() == QDialog::Accepted);
   }
 
 

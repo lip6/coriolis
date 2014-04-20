@@ -505,10 +505,10 @@ string Vertex::_getString() const
 // ******************************
 {
     return "<" + _TName ( "Vertex" )
-         + ":" + getString ( _connexID )
-         + " " + getString ( _netStamp )
-         + " " + getString ( DbU::getValueString(_position.getX()) )
-         + " " + getString ( DbU::getValueString(_position.getY()) ) + ">";
+         + " id:" + getString ( _connexID )
+         + " s:"  + getString ( _netStamp )
+         + " "    + getString ( DbU::getValueString(_position.getX()) )
+         + " "    + getString ( DbU::getValueString(_position.getY()) ) + ">";
 }
 
 Record* Vertex::_getRecord() const

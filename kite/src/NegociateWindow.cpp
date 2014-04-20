@@ -390,11 +390,11 @@ namespace Kite {
       RoutingEvent* event = _eventQueue.pop();
 
       if (tty::enabled()) {
-        cmess2 << "        <event:" << tty::bold << setw(7) << setfill('0')
+        cmess2 << "        <event:" << tty::bold << right << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
       } else {
-        cmess2 << "        <event:" << setw(7) << setfill('0')
+        cmess2 << "        <event:" << right << setw(7) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()

@@ -190,11 +190,11 @@ namespace Solstice {
     SolsticeEngine* solstice = createEngine ( );
     if ( !solstice ) return;
 
-    emit cellPreModificated ();
+  //emit cellPreModificated ();
 
       solstice->compare ();
 
-    emit cellPostModificated ();
+    //emit cellPostModificated ();
     _viewer->dumpObjectTree();
     QTabWidget* ctrlTab = _viewer->getControllerWidget();
     if (ctrlTab) {

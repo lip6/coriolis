@@ -80,14 +80,17 @@ namespace {
     public:
                         UsedFragments ();
                        ~UsedFragments ();
+      inline DbU::Unit  getPitch      () const;
       inline DbU::Unit  getMin        () const;
       inline DbU::Unit  getMax        () const;
              Interval   getMaxFree    () const;
       inline void       setSpan       ( DbU::Unit min, DbU::Unit max );
       inline void       setCapacity   ( size_t );
       inline void       incGlobals    ( size_t count=1 );
+      inline void       setPitch      ( DbU::Unit );
              void       merge         ( DbU::Unit axis, const Interval& );
     private:
+      DbU::Unit      _pitch;
       vector<Axis*>  _axiss;
       Interval       _span;
       size_t         _capacity;
@@ -100,8 +103,8 @@ namespace {
     , _axis      (axis)
     , _chunks    ()
   {
-    merge ( Interval ( ufragments->getMin()-DbU::lambda(5.0), ufragments->getMin() ) );
-    merge ( Interval ( ufragments->getMax(), ufragments->getMax()+DbU::lambda(5.0) ) );
+    merge ( Interval ( ufragments->getMin()-ufragments->getPitch(), ufragments->getMin() ) );
+    merge ( Interval ( ufragments->getMax(), ufragments->getMax()+ufragments->getPitch() ) );
   }
 
   inline DbU::Unit      UsedFragments::Axis::getAxis          () const { return _axis; }
@@ -180,7 +183,8 @@ namespace {
 
 
   UsedFragments::UsedFragments ()
-    : _axiss   ()
+    : _pitch   (0)
+    , _axiss   ()
     , _span    (false)
     , _capacity(0)
     , _globals (0)
@@ -196,8 +200,10 @@ namespace {
   }
 
 
+  inline DbU::Unit  UsedFragments::getPitch    () const { return _pitch; }
   inline DbU::Unit  UsedFragments::getMin      () const { return _span.getVMin(); }
   inline DbU::Unit  UsedFragments::getMax      () const { return _span.getVMax(); }
+  inline void       UsedFragments::setPitch    ( DbU::Unit pitch ) { _pitch=pitch; }
   inline void       UsedFragments::setSpan     ( DbU::Unit min, DbU::Unit max ) { _span=Interval(min,max); }
   inline void       UsedFragments::setCapacity ( size_t capacity ) { _capacity=capacity; }
   inline void       UsedFragments::incGlobals  ( size_t count ) { _globals+=count; }
@@ -529,13 +535,13 @@ namespace Katabatic {
 
   float  GCell::getHCapacity () const
   {
-    return (float)( _box.getHeight() / DbU::lambda(5.0) + 1 );
+    return (float)( _box.getHeight() / Session::getPitch(1) + 1 );
   }
 
 
   float  GCell::getVCapacity () const
   {
-    return (float)( _box.getWidth () / DbU::lambda(5.0) + 1 );
+    return (float)( _box.getWidth () / Session::getPitch(2) + 1 );
   }
 
 
@@ -764,17 +770,18 @@ namespace Katabatic {
     UsedFragments  ufragments   [ _depth ];
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
+      ufragments   [i].setPitch ( Session::getPitch(i) );
       _feedthroughs[i] = 0.0;
       uLengths2    [i] = 0;
       localCounts  [i] = 0.0;
       _globalsCount[i] = 0.0;
 
-      switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
-        case Constant::Horizontal:
+      switch ( Session::getDirection(i) ) {
+        case KbHorizontal:
           ufragments[i].setSpan     ( _box.getXMin(), _box.getXMax() );
           ufragments[i].setCapacity ( (size_t)hcapacity );
           break;
-        case Constant::Vertical:
+        case KbVertical:
           ufragments[i].setSpan     ( _box.getYMin(), _box.getYMax() );
           ufragments[i].setCapacity ( (size_t)vcapacity );
           break;
@@ -789,9 +796,9 @@ namespace Katabatic {
       for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
       (*it)->getLengths ( uLengths1, processeds );
       for ( size_t i=0 ; i<_depth ; i++ ) {
-        switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
-          case Constant::Horizontal: uLengths2[i] += uLengths1[i]+hpenalty; break;
-          case Constant::Vertical:   uLengths2[i] += uLengths1[i]+vpenalty; break;
+        switch ( Session::getDirection(i) ) {
+          case KbHorizontal: uLengths2[i] += uLengths1[i]+hpenalty; break;
+          case KbVertical:   uLengths2[i] += uLengths1[i]+vpenalty; break;
         }
       }
     }
@@ -874,13 +881,13 @@ namespace Katabatic {
 
   // Normalize: 0 < d < 1.0 (divide by H/V capacity).
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      switch ( Session::getRoutingGauge()->getLayerDirection(i) ) {
-        case Constant::Horizontal:
+      switch ( Session::getDirection(i) ) {
+        case KbHorizontal:
           _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)_box.getWidth() );
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getWidth());
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getWidth();
           break;
-        case Constant::Vertical:
+        case KbVertical:
           _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)_box.getHeight() );
           _feedthroughs  [i] += (float)(_blockages[i] / _box.getHeight());
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)_box.getHeight();
@@ -960,13 +967,13 @@ namespace Katabatic {
     vector<AutoSegment*>::const_iterator isegment;
     vector<AutoSegment*>::const_iterator iend;
 
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
+    switch ( Session::getDirection(depth) ) {
+      case KbHorizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
         capacity = getHCapacity ();
         break;
-      case Constant::Vertical:
+      case KbVertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
         capacity = getVCapacity ();
@@ -985,9 +992,9 @@ namespace Katabatic {
 #endif
 
     float capacity = 0.0;
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal: capacity = getHCapacity(); break;
-      case Constant::Vertical:   capacity = getVCapacity(); break;
+    switch ( Session::getDirection(depth) ) {
+      case KbHorizontal: capacity = getHCapacity(); break;
+      case KbVertical:   capacity = getVCapacity(); break;
     }
 
     ltrace(200) << "  | hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
@@ -1115,13 +1122,13 @@ namespace Katabatic {
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
+    switch ( Session::getDirection(depth) ) {
+      case KbHorizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
       //capacity = getHCapacity ();
         break;
-      case Constant::Vertical:
+      case KbVertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
       //capacity = getVCapacity ();
@@ -1160,13 +1167,13 @@ namespace Katabatic {
     vector<AutoSegment*>::iterator iend;
     set<Net*>                      globalNets;
 
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
+    switch ( Session::getDirection(depth) ) {
+      case KbHorizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
       //capacity = getHCapacity ();
         break;
-      case Constant::Vertical:
+      case KbVertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
       //capacity = getVCapacity ();
@@ -1205,13 +1212,13 @@ namespace Katabatic {
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
-    switch ( Session::getRoutingGauge()->getLayerDirection(depth) ) {
-      case Constant::Horizontal:
+    switch ( Session::getDirection(depth) ) {
+      case KbHorizontal:
         iend     = _hsegments.end   ();
         isegment = _hsegments.begin ();
       //capacity = getHCapacity ();
         break;
-      case Constant::Vertical:
+      case KbVertical:
         iend     = _vsegments.end   ();
         isegment = _vsegments.begin ();
       //capacity = getVCapacity ();

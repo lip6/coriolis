@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,41 +14,63 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <unistd.h>
-#include  <algorithm>
-#include  <sstream>
+#include <unistd.h>
+#include <algorithm>
+#include <sstream>
+#include <exception>
 
-#include  <QAction>
-#include  <QMenu>
-#include  <QMenuBar>
-#include  <QStatusBar>
-#include  <QDockWidget>
-#include  <QApplication>
-#include  <QPrinter>
-#include  <QPrintDialog>
-#include  <QFileDialog>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QDockWidget>
+#include <QApplication>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QFileDialog>
 
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Cell.h"
-
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Cell.h"
 //#include  "MapView.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/CellViewer.h"
-#include  "hurricane/viewer/CellPrinter.h"
-#include  "hurricane/viewer/CellImage.h"
-#include  "hurricane/viewer/MousePositionWidget.h"
-#include  "hurricane/viewer/ControllerWidget.h"
-#include  "hurricane/viewer/ScriptWidget.h"
-//#include  "hurricane/viewer/StratusWidget.h"
-#include  "hurricane/viewer/GotoWidget.h"
-#include  "hurricane/viewer/SelectCommand.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/CellViewer.h"
+#include "hurricane/viewer/CellPrinter.h"
+#include "hurricane/viewer/CellImage.h"
+#include "hurricane/viewer/MousePositionWidget.h"
+#include "hurricane/viewer/ControllerWidget.h"
+#include "hurricane/viewer/ScriptWidget.h"
+#include "hurricane/viewer/ExceptionWidget.h"
+//#include "hurricane/viewer/StratusWidget.h"
+#include "hurricane/viewer/GotoWidget.h"
+#include "hurricane/viewer/SelectCommand.h"
 
 
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "CellObserver".
+
+  void  CellObserver::notify ( unsigned int flags )
+  {
+    CellViewer* viewer = getOwner();
+    switch ( flags & (Cell::CellAboutToChange|Cell::CellChanged) ) {
+      case Cell::CellAboutToChange:
+        viewer->emitCellAboutToChange();
+        break;
+      case Cell::CellChanged:
+        viewer->emitCellChanged();
+        break;
+    }
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CellViewer".
+
   CellViewer::CellViewer ( QWidget* parent ) : QMainWindow             (parent)
+                                             , _cellObserver           (this)
                                              , _applicationName        (tr("Viewer"))
                                              , _toolInterruptAction    (NULL)
                                              , _openAction             (NULL)
@@ -88,6 +109,7 @@ namespace Hurricane {
                                              , _cellHistory            ()
                                              , _firstShow              (false)
                                              , _toolInterrupt          (false)
+                                             , _flags                  (0)
                                              , _updateState            (ExternalEmit)
   {
     setObjectName("viewer");
@@ -282,71 +304,73 @@ namespace Hurricane {
 
   void  CellViewer::createLayout ()
   {
-    if ( _cellWidget ) return;
+    if (_cellWidget) return;
 
-    _cellWidget       = new CellWidget       ();
-    _controller       = new ControllerWidget ();
-    _goto             = new GotoWidget       ();
-    _goto->changeDbuMode ( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
+    _cellWidget       = new CellWidget      ();
+    _controller       = new ControllerWidget();
+    _goto             = new GotoWidget      ();
+    _goto->changeDbuMode( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
   //_mapView    = _cellWidget->getMapView ();
 
-    _cellWidget->bindCommand ( &_moveCommand );
-    _cellWidget->bindCommand ( &_zoomCommand );
-    _cellWidget->bindCommand ( &_rulerCommand );
-    _cellWidget->bindCommand ( &_selectCommand );
-    _cellWidget->bindCommand ( &_hierarchyCommand );
-    _controller->setCellWidget ( _cellWidget );
+    _cellWidget->bindCommand( &_moveCommand );
+    _cellWidget->bindCommand( &_zoomCommand );
+    _cellWidget->bindCommand( &_rulerCommand );
+    _cellWidget->bindCommand( &_selectCommand );
+    _cellWidget->bindCommand( &_hierarchyCommand );
+    _controller->setCellWidget( _cellWidget );
 
-    MousePositionWidget* _mousePosition = new MousePositionWidget ();
-    statusBar()->addPermanentWidget ( _mousePosition );
+    MousePositionWidget* _mousePosition = new MousePositionWidget();
+    statusBar()->addPermanentWidget( _mousePosition );
 
-    setCorner ( Qt::TopLeftCorner    , Qt::LeftDockWidgetArea  );
-    setCorner ( Qt::BottomLeftCorner , Qt::LeftDockWidgetArea  );
-    setCorner ( Qt::TopRightCorner   , Qt::RightDockWidgetArea );
-    setCorner ( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
+    setCorner( Qt::TopLeftCorner    , Qt::LeftDockWidgetArea  );
+    setCorner( Qt::BottomLeftCorner , Qt::LeftDockWidgetArea  );
+    setCorner( Qt::TopRightCorner   , Qt::RightDockWidgetArea );
+    setCorner( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
 
-  //   QDockWidget* mapViewDock = new QDockWidget ( tr("Map") );
-  //   mapViewDock->setFeatures     ( QDockWidget::DockWidgetVerticalTitleBar
-  //                                | QDockWidget::DockWidgetMovable
-  //                                | QDockWidget::DockWidgetFloatable
-  //                                );
-  //   mapViewDock->setObjectName   ( "viewer.menuBar.dock.mapView" );
-  //   mapViewDock->setWidget       ( _mapView );
-  //   mapViewDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-  //   addDockWidget ( Qt::RightDockWidgetArea, mapViewDock );
+  //QDockWidget* mapViewDock = new QDockWidget ( tr("Map") );
+  //mapViewDock->setFeatures     ( QDockWidget::DockWidgetVerticalTitleBar
+  //                             | QDockWidget::DockWidgetMovable
+  //                             | QDockWidget::DockWidgetFloatable
+  //                             );
+  //mapViewDock->setObjectName   ( "viewer.menuBar.dock.mapView" );
+  //mapViewDock->setWidget       ( _mapView );
+  //mapViewDock->setAllowedAreas ( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
+  //addDockWidget( Qt::RightDockWidgetArea, mapViewDock );
 
-    setCentralWidget ( _cellWidget );
+    setCentralWidget( _cellWidget );
 
-    connect ( this                   , SIGNAL(redrawCellWidget()) , _cellWidget, SLOT(refresh()) );
-    connect ( _refreshAction         , SIGNAL(triggered())        , _cellWidget, SLOT(refresh()) );
-    connect ( _fitToContentsAction   , SIGNAL(triggered())        , _cellWidget, SLOT(fitToContents()) );
-    connect ( _showSelectionAction   , SIGNAL(toggled(bool))      , this       , SLOT(setShowSelection(bool)) );
-    connect ( _rubberChangeAction    , SIGNAL(triggered())        , _cellWidget, SLOT(rubberChange()) );
-    connect ( _clearRulersAction     , SIGNAL(triggered())        , _cellWidget, SLOT(clearRulers()) );
-    connect ( _controllerAction      , SIGNAL(triggered())        , _controller, SLOT(toggleShow()) );
-    connect ( _scriptAction          , SIGNAL(triggered())        , this       , SLOT(runScript()) );
-  //connect ( _stratusAction         , SIGNAL(triggered())        , this       , SLOT(runStratusScript()) );
-    connect ( _gotoAction            , SIGNAL(triggered())        , this       , SLOT(doGoto()) );
+    connect( this                   , SIGNAL(cellPreModificated()) , _cellWidget, SLOT(cellPreModificate())  );
+    connect( this                   , SIGNAL(cellPostModificated()), _cellWidget, SLOT(cellPostModificate()) );
+    connect( this                   , SIGNAL(redrawCellWidget())   , _cellWidget, SLOT(refresh()) );
+    connect( _refreshAction         , SIGNAL(triggered())          , _cellWidget, SLOT(refresh()) );
+    connect( _fitToContentsAction   , SIGNAL(triggered())          , _cellWidget, SLOT(fitToContents()) );
+    connect( _showSelectionAction   , SIGNAL(toggled(bool))        , this       , SLOT(setShowSelection(bool)) );
+    connect( _rubberChangeAction    , SIGNAL(triggered())          , _cellWidget, SLOT(rubberChange()) );
+    connect( _clearRulersAction     , SIGNAL(triggered())          , _cellWidget, SLOT(clearRulers()) );
+    connect( _controllerAction      , SIGNAL(triggered())          , _controller, SLOT(toggleShow()) );
+    connect( _scriptAction          , SIGNAL(triggered())          , this       , SLOT(runScript()) );
+  //connect( _stratusAction         , SIGNAL(triggered())          , this       , SLOT(runStratusScript()) );
+    connect( _gotoAction            , SIGNAL(triggered())          , this       , SLOT(doGoto()) );
 
-    connect ( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
-            , _goto                  , SLOT  (changeDbuMode (unsigned int,DbU::UnitPower)) );
+    connect( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
+           , _goto                  , SLOT  (changeDbuMode (unsigned int,DbU::UnitPower)) );
 
-    connect ( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
-            , _mousePosition         , SLOT  (setPosition(const Point&)) );
+    connect( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
+           , _mousePosition         , SLOT  (setPosition(const Point&)) );
 
-    connect ( _cellWidget            , SIGNAL(selectionModeChanged())
-            , this                   , SLOT  (changeSelectionMode ()) );
-    // connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
-    //         ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
-    connect ( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
-            ,  _cellWidget           , SLOT  (select           (Occurrence)) );
+    connect( _cellWidget            , SIGNAL(selectionModeChanged())
+           , this                   , SLOT  (changeSelectionMode ()) );
+  //connect( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
+  //       ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
+    connect( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
+           ,  _cellWidget           , SLOT  (select           (Occurrence)) );
 
-    connect ( _cellWidget            , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
-            , this                   , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
-    connect ( this                   , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
-            , _cellWidget            , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
+    connect( _cellWidget            , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+           , this                   , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
+    connect( this                   , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+           , _cellWidget            , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
 
-    _cellWidget->refresh ();
+    _cellWidget->refresh();
   }
 
 
@@ -409,17 +433,22 @@ namespace Hurricane {
 
   void  CellViewer::setCell ( Cell* cell )
   {
+    if (cell == getCell()) return;
+    if (getCell()) getCell()->removeObserver( getCellObserver() );
+
     Name cellName = (cell) ? cell->getName() : "empty";
 
     list< shared_ptr<CellWidget::State> >::iterator istate
-      = find_if ( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
+      = find_if( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
 
-    if ( istate != _cellHistory.end() ) {
+    if (istate != _cellHistory.end()) {
+      (*istate)->getCell()->addObserver( getCellObserver() );
       emit stateChanged ( *istate );
       return;
     }
 
-    _cellWidget->setCell ( cell );
+    cell->addObserver( getCellObserver() );
+    _cellWidget->setCell( cell );
   }
 
 
@@ -590,8 +619,12 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::_runScript ()
+  { ScriptWidget::runScript( this, getCell() ); }
+
+
   void  CellViewer::runScript ()
-  { ScriptWidget::runScript ( this, getCell() ); }
+  { ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this ) ); }
 
 
 //void  CellViewer::runStratusScript ()

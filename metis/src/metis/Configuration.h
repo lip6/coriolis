@@ -1,33 +1,24 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      M e t i s  -  h M e t i s   W r a p p e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./metis/Configuration.h"                  |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __METIS_CONFIGURATION__
-#define  __METIS_CONFIGURATION__
+#ifndef  METIS_CONFIGURATION_H
+#define  METIS_CONFIGURATION_H
 
 #include  <string>
-#include  <boost/function.hpp>
+#include  <functional>
 
 namespace Hurricane {
   class Record;
@@ -47,7 +38,7 @@ namespace Metis {
 
   class Configuration {
     public:
-      typedef boost::function< void(void) >  RefreshCb_t;
+      typedef std::function< void(void) >  RefreshCb_t;
     public:
       enum MetisOption { CustomOptions    =0
                        , HMetisNRuns      =1
@@ -139,10 +130,8 @@ namespace Metis {
                         { if (option<HMetisOptionsSize) _hmetisOptions[option] = value; }
 
 
-}  // End of Metis namespace.
-
+}  // Metis namespace.
 
 INSPECTOR_P_SUPPORT(Metis::Configuration);
 
-
-#endif  // __METIS_CONFIGURATION__
+#endif  // METIS_CONFIGURATION_H

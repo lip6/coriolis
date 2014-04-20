@@ -315,14 +315,41 @@ namespace Katabatic {
   }
 
 
-  unsigned int  Session::getLayerDirection ( const Layer* layer )
+  unsigned int  Session::getDirection ( size_t depth )
   {
     RoutingGauge* rg = get("getDirection()")->_routingGauge;
-    switch ( rg->getLayerDirection(layer) ) {
+    switch ( rg->getLayerDirection(depth) ) {
       case Constant::Horizontal: return KbHorizontal;
       case Constant::Vertical:   return KbVertical;
     }
     return 0;
+  }
+
+
+  DbU::Unit  Session::_getPitch ( size_t depth, unsigned int flags ) const
+  {
+    if (flags == Configuration::NoFlags) return _routingGauge->getLayerPitch(depth);
+
+    if (flags & Configuration::PitchAbove) {
+      if (depth < getAllowedDepth()) 
+        return _routingGauge->getLayerPitch( depth + 1 );
+      else {
+        if ( (depth > 0) and (_routingGauge->getLayerType(depth-1) != Constant::PinOnly) )
+          return _routingGauge->getLayerPitch( depth - 1 );
+      }
+    }
+
+    if (flags & Configuration::PitchBelow) {
+      if ( (depth > 0) and (_routingGauge->getLayerType(depth-1) != Constant::PinOnly) )
+        return _routingGauge->getLayerPitch( depth - 1 );
+      else {
+        if (depth < getAllowedDepth())
+          return _routingGauge->getLayerPitch( depth + 1 );
+      }
+    }
+
+  // Should issue at least a warning here.
+    return _routingGauge->getLayerPitch(depth);
   }
 
 
@@ -344,18 +371,6 @@ namespace Katabatic {
 
   void  Session::setKatabaticFlags ( unsigned int flags )
   { get("setKabaticFlags()")->_katabatic->setFlags(flags); }
-
-
-  DbU::Unit  Session::getExtensionCap ()
-  { return getConfiguration()->getExtensionCap(); }
-
-
-  const Layer* Session::getRoutingLayer ( size_t depth )
-  { return getConfiguration()->getRoutingLayer(depth); }
-
-
-  const Layer* Session::getContactLayer ( size_t depth )
-  { return getConfiguration()->getContactLayer(depth); }
 
 
   void  Session::link ( AutoContact* autoContact )

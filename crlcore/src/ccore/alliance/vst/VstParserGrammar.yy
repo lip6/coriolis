@@ -726,7 +726,7 @@ component_instantiation_statement
 	    if ( !__ys->_masterCell )
               throw Error ( "CParsVst(), Line %d:\n"
                             "  Model cell %s of instance %s has not been defined "
-                            "in the compenent list."
+                            "in the component list."
                           , vhdLineNumber, *$2->c_str(), *$1->c_str()
                           );
             __ys->_instance = Instance::create ( __ys->_cell, *$1, __ys->_masterCell );

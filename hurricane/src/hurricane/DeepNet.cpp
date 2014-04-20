@@ -77,23 +77,37 @@ namespace Hurricane {
 
   size_t  DeepNet::_createRoutingPads ( unsigned int flags )
   {
-    size_t    nbRoutingPads = 0;
-    HyperNet  hyperNet      ( _netOccurrence );
+    size_t      nbRoutingPads = 0;
+    HyperNet    hyperNet      ( _netOccurrence );
+    RoutingPad* previousRp    = NULL;
+    RoutingPad* currentRp     = NULL;
+    bool        buildRing     = false;
 
-    RoutingPad* previousRP = NULL;
-    RoutingPad* currentRP  = NULL;
     forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
       nbRoutingPads++;
 
-      currentRP = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
+      currentRp = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
       if (flags & Cell::WarnOnUnplacedInstances)
-        currentRP->isPlacedOccurrence ( RoutingPad::ShowWarning );
+        currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
-      if (flags & Cell::BuildRings) {
-        if (previousRP) {
-          currentRP->getBodyHook()->attach( previousRP->getBodyHook() );
+      if (nbRoutingPads == 1) {
+        Net* net = currentRp->getNet();
+
+        if (net->isGlobal()) {
+          if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
+          else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+        } else {
+          buildRing = flags & Cell::BuildRings;
         }
-        previousRP = currentRP;
+
+      //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << buildRing << endl;
+      }
+
+      if (buildRing) {
+        if (previousRp) {
+          currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
+        }
+        previousRp = currentRp;
       }
     }
 

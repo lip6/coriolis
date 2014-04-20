@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -36,6 +36,7 @@ namespace Katabatic {
 
   using  std::string;
   using  Hurricane::Record;
+  using  Hurricane::Name;
   using  Hurricane::Layer;
   using  Hurricane::DbU;
   using  Hurricane::Cell;
@@ -48,6 +49,8 @@ namespace Katabatic {
 
 
   class Configuration {
+    public:
+      enum Flag { NoFlags=0x0000, PitchAbove=0x0001, PitchBelow=0x0002 };
     public:
     // Constructor & Destructor.
       virtual                   ~Configuration      ();
@@ -63,6 +66,14 @@ namespace Katabatic {
       virtual const Layer*       getRoutingLayer    ( size_t depth ) const = 0;
       virtual Layer*             getContactLayer    ( size_t depth ) const = 0;
       virtual DbU::Unit          getExtensionCap    () const = 0;
+      virtual DbU::Unit          getPitch           ( size_t depth, unsigned int flags ) const = 0;
+      virtual DbU::Unit          getOffset          ( size_t depth ) const = 0;
+      virtual DbU::Unit          getWireWidth       ( size_t depth ) const = 0;
+      virtual unsigned int       getDirection       ( size_t depth ) const = 0;
+      virtual DbU::Unit          getPitch           ( const Layer*, unsigned int flags ) const = 0;
+      virtual DbU::Unit          getOffset          ( const Layer* ) const = 0;
+      virtual DbU::Unit          getWireWidth       ( const Layer* ) const = 0;
+      virtual unsigned int       getDirection       ( const Layer* ) const = 0;
       virtual float              getSaturateRatio   () const = 0;
       virtual size_t             getSaturateRp      () const = 0;
       virtual DbU::Unit          getGlobalThreshold () const = 0;
@@ -108,6 +119,14 @@ namespace Katabatic {
       virtual const Layer*           getRoutingLayer       ( size_t depth ) const;
       virtual Layer*                 getContactLayer       ( size_t depth ) const;
       virtual DbU::Unit              getExtensionCap       () const;
+      virtual DbU::Unit              getPitch              ( size_t depth, unsigned int flags ) const;
+      virtual DbU::Unit              getOffset             ( size_t depth ) const;
+      virtual DbU::Unit              getWireWidth          ( size_t depth ) const;
+      virtual unsigned int           getDirection          ( size_t depth ) const;
+      virtual DbU::Unit              getPitch              ( const Layer*, unsigned int flags ) const;
+      virtual DbU::Unit              getOffset             ( const Layer* ) const;
+      virtual DbU::Unit              getWireWidth          ( const Layer* ) const;
+      virtual unsigned int           getDirection          ( const Layer* ) const;
       virtual float                  getSaturateRatio      () const;
       virtual size_t                 getSaturateRp         () const;
       virtual DbU::Unit              getGlobalThreshold    () const;
@@ -137,6 +156,7 @@ namespace Katabatic {
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );
+      void                   _setTopRoutingLayer   ( Name name );
   };
 
 

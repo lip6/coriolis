@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Cell.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -20,6 +20,7 @@
 #ifndef HURRICANE_CELL
 #define HURRICANE_CELL
 
+#include "hurricane/Observer.h"
 #include "hurricane/Pathes.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Cells.h"
@@ -59,12 +60,19 @@ typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 // ****************************************************************************************************
 
 class Cell : public Entity {
-// ***********************
+// *************************
 
 // Types
 // *****
 
-    public: enum Flag { BuildRings=0x0001, WarnOnUnplacedInstances=0x0002 };
+    public: enum Flag { BuildRings              = 0x0001
+                      , BuildClockRings         = 0x0002
+                      , BuildSupplyRings        = 0x0004
+                      , WarnOnUnplacedInstances = 0x0008
+                      // Flags set for Observers.
+                      , CellAboutToChange       = 0x0001
+                      , CellChanged             = 0x0002
+                      };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
 
@@ -171,6 +179,7 @@ class Cell : public Entity {
     private: Cell* _nextOfLibraryCellMap;
     private: Cell* _nextOfSymbolCellSet;
     private: SlaveEntityMap _slaveEntityMap;
+    private: Observable _observers;
 
 // Constructors
 // ************
@@ -306,6 +315,9 @@ class Cell : public Entity {
     public: void flattenNets(unsigned int flags=BuildRings);
     public: void materialize();
     public: void unmaterialize();
+    public: void addObserver(BaseObserver*);
+    public: void removeObserver(BaseObserver*);
+    public: void notify(unsigned flags);
 
 };
 

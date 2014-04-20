@@ -67,7 +67,8 @@ namespace Knik {
             void setNextFrom      ( Edge* edge )         { _nextFrom = edge; };
             void setNextTo        ( Edge* edge )         { _nextTo = edge; };
             void setConnexID      ( int connexID )       { _connexID = connexID; };
-            void setCapacity      ( unsigned capacity )  { _capacity = capacity; };
+          //void setCapacity      ( unsigned capacity )  { _capacity = capacity; };
+            void setCapacity      ( unsigned capacity );
             void increaseCapacity ( int capacity );
             void setCost          ( float cost )         { _cost = cost; };
             void incCost          ( float inc )          { _cost += inc; };

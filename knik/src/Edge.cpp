@@ -81,6 +81,13 @@ void Edge::_preDestroy()
     Inherit::_preDestroy();
 }
 
+void Edge::setCapacity ( unsigned int capacity )
+// *****************************************
+{
+  _capacity = capacity;
+//cerr << "Setting capacity to " << _capacity << " on " << this << endl;
+}
+
 void Edge::increaseCapacity ( int capacity )
 // *****************************************
 {
@@ -92,6 +99,8 @@ void Edge::increaseCapacity ( int capacity )
 
   // cerr << "Increase Edge Capacity " << _from->getPosition()
   //      << " to " << _to->getPosition() << ":" << _capacity << endl;
+
+//cerr << "Increasing capacity to " << _capacity << " on " << this << endl;
 
   if ( _capacity == 0 )
     ltrace(300) << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
@@ -363,10 +372,12 @@ string Edge::_getString() const
 // ****************************
 {
     return "<" + _TName ( "Edge" )
-         + ":" + getString ( _connexID )
-         + " " + getString ( _netStamp )
-         + " " + getString ( _from )
-         + " " + getString ( _to ) + ">";
+         + " id:" + getString( _connexID )
+         + " s:"  + getString( _netStamp )
+         + " "    + getString( _realOccupancy )
+         + "/"    + getString( _capacity )
+         + " "    + getString( _from )
+         + " "    + getString( _to ) + ">";
 }
 
 Record* Edge::_getRecord() const

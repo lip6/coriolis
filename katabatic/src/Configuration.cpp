@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -10,16 +10,16 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Configuartion.cpp"                      |
+// |  C++ Module  :       "./Configuration.cpp"                      |
 // +-----------------------------------------------------------------+
 
 
 #include  <iostream>
 #include  <iomanip>
 #include  <vector>
-
 #include  "vlsisapd/configuration/Configuration.h"
 #include  "hurricane/Warning.h"
+#include  "hurricane/Error.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
@@ -42,6 +42,7 @@ namespace Katabatic {
   using  Hurricane::tab;
   using  Hurricane::inltrace;
   using  Hurricane::Warning;
+  using  Hurricane::Error;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
   using  CRL::AllianceFramework;
@@ -62,20 +63,23 @@ namespace Katabatic {
 
 
   ConfigurationConcrete::ConfigurationConcrete ( const RoutingGauge* rg )
-    : Configuration()
-    , _rg                (NULL)
-    , _extensionCap      (DbU::lambda(0.5))
-    , _saturateRatio     (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
-    , _saturateRp        (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
-    , _globalThreshold   (DbU::lambda((double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
-    , _allowedDepth      (0)
-    , _hEdgeCapacity     (0)
-    , _vEdgeCapacity     (0)
+    : Configuration   ()
+    , _rg             (NULL)
+    , _extensionCap   (DbU::lambda(0.5))
+    , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
+    , _saturateRp     (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
+    , _globalThreshold(DbU::lambda((double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
+    , _allowedDepth   (0)
+    , _hEdgeCapacity  (0)
+    , _vEdgeCapacity  (0)
   {
-    if ( rg == NULL ) rg = AllianceFramework::get()->getRoutingGauge();
+    if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
+    _rg = rg->getClone();
 
-    _rg           = rg->getClone();
-    _allowedDepth = rg->getDepth();
+    if (Cfg::hasParameter("katabatic.topRoutingLayer")) {
+      _setTopRoutingLayer( Cfg::getParamString("katabatic.topRoutingLayer")->asString() );
+    } else
+      _allowedDepth = rg->getDepth()-1;
 
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");
@@ -88,12 +92,12 @@ namespace Katabatic {
     vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
     for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
       RoutingLayerGauge* layerGauge = (*ilayerGauge);
-      if ( layerGauge->getType() != Constant::Default ) continue;
+      if (layerGauge->getType() != Constant::Default) continue;
 
-      if ( layerGauge->getDirection() == Constant::Horizontal ) {
+      if (layerGauge->getDirection() == Constant::Horizontal) {
         _hEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
-      } else if ( layerGauge->getDirection() == Constant::Vertical ) {
-        _vEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+      } else if (layerGauge->getDirection() == Constant::Vertical) {
+        _vEdgeCapacity += layerGauge->getTrackNumber( 0, DbU::lambda(50.0) ) - 1;
       }
     }
   }
@@ -169,6 +173,61 @@ namespace Katabatic {
   { return _extensionCap; }
 
 
+  DbU::Unit  ConfigurationConcrete::getPitch ( const Layer* layer, unsigned int flags ) const
+  { return getPitch( getLayerDepth(layer), flags ); }
+
+
+  DbU::Unit  ConfigurationConcrete::getOffset ( const Layer* layer ) const
+  { return getOffset( getLayerDepth(layer) ); }
+
+
+  DbU::Unit  ConfigurationConcrete::getWireWidth ( const Layer* layer ) const
+  { return getWireWidth( getLayerDepth(layer) ); }
+
+
+  unsigned int  ConfigurationConcrete::getDirection ( const Layer* layer ) const
+  { return getDirection( getLayerDepth(layer) ); }
+
+
+  DbU::Unit  ConfigurationConcrete::getPitch ( size_t depth, unsigned int flags ) const
+  {
+    if (flags == NoFlags) return _rg->getLayerPitch(depth);
+
+    if (flags & Configuration::PitchAbove) {
+      if (depth < getAllowedDepth()) 
+        return _rg->getLayerPitch( depth + 1 );
+      else {
+        if ( (depth > 0) and (_rg->getLayerType(depth-1) != Constant::PinOnly) )
+          return _rg->getLayerPitch( depth - 1 );
+      }
+    }
+
+    if (flags & Configuration::PitchBelow) {
+      if ( (depth > 0) and (_rg->getLayerType(depth-1) != Constant::PinOnly) )
+        return _rg->getLayerPitch( depth - 1 );
+      else {
+        if (depth < getAllowedDepth())
+          return _rg->getLayerPitch( depth + 1 );
+      }
+    }
+
+  // Should issue at least a warning here.
+    return _rg->getLayerPitch(depth);
+  }
+
+
+  DbU::Unit  ConfigurationConcrete::getOffset ( size_t depth ) const
+  { return _rg->getLayerOffset(depth); }
+
+
+  DbU::Unit  ConfigurationConcrete::getWireWidth ( size_t depth ) const
+  { return _rg->getLayerWireWidth(depth); }
+
+
+  unsigned int  ConfigurationConcrete::getDirection ( size_t depth ) const
+  { return _rg->getLayerDirection(depth); }
+
+
   float  ConfigurationConcrete::getSaturateRatio () const
   { return _saturateRatio; }
 
@@ -193,6 +252,21 @@ namespace Katabatic {
   { _allowedDepth = (allowedDepth > getDepth()) ? getDepth() : allowedDepth; }
 
 
+  void  ConfigurationConcrete::_setTopRoutingLayer ( Name name )
+  {
+    for ( size_t depth=0 ; depth<_rg->getDepth() ; ++depth ) {
+      if (_rg->getRoutingLayer(depth)->getName() == name) {
+        _allowedDepth = _rg->getLayerGauge(depth)->getDepth();
+        return;
+      }
+    }
+    cerr << Error( "In Configuration::Concrete::_setTopRoutingLayer():\n"
+                   "       The routing gauge <%s> has no layer named <%s>"
+                 , getString(_rg->getName()).c_str()
+                 , getString(name).c_str() ) << endl;
+  }
+
+
   void  ConfigurationConcrete::setSaturateRatio ( float ratio )
   { _saturateRatio = ratio; }
 
@@ -207,8 +281,14 @@ namespace Katabatic {
 
   void  ConfigurationConcrete::print ( Cell* cell ) const
   {
+    string       topLayerName = "UNKOWN";
+    const Layer* topLayer     = _rg->getRoutingLayer( _allowedDepth );
+    if (topLayer)
+      topLayerName = getString( topLayer->getName() );
+
     cout << "  o  Configuration of ToolEngine<Katabatic> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
+    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
     cout << Dots::asPercentage("     - GCell saturation threshold"  ,_saturateRatio) << endl;
     cout << Dots::asDouble    ("     - Long global length threshold",DbU::getLambda(_globalThreshold)) << endl;
   }
@@ -239,6 +319,9 @@ namespace Katabatic {
     record->add ( getSlot           ( "_gcontact"        , _gcontact         ) );
     record->add ( getSlot           ( "_saturateRatio"   , _saturateRatio    ) );
     record->add ( DbU::getValueSlot ( "_globalThreshold" , &_globalThreshold ) );
+    record->add ( getSlot           ( "_allowedDepth"    , _allowedDepth     ) );
+    record->add ( getSlot           ( "_hEdgeCapacity"   , _hEdgeCapacity    ) );
+    record->add ( getSlot           ( "_vEdgeCapacity"   , _vEdgeCapacity    ) );
                                      
     return ( record );
   }

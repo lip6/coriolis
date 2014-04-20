@@ -1,40 +1,30 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
-// |                 Knik - Global Router                            |
+// |        K n i k  -  G l o b a l   R o u t e r                    |
 // |                                                                 |
 // |  Author      :                       Damien Dupuis              |
 // |  E-mail      :               Damien.Dupuis@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./KnikEngine.h"                                |
-// | *************************************************************** |
-// |  Date        :  30/10/2006                                      |
-// |                                                                 |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./knik/KnikEngine.h"                           |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/Timer.h"
 #include "hurricane/Property.h"
 #include "hurricane/Net.h"
 #include "hurricane/RoutingPad.h"
-
-//#include "CEditor.h"
 #include "crlcore/ToolEngine.h"
+namespace CRL {
+  class RoutingGauge;
+}
 
-#ifndef _KNIK_H
-#define _KNIK_H
+#ifndef KNIK_KNIKENGINE_H
+#define KNIK_KNIKENGINE_H
 
 
 namespace Knik {
@@ -57,6 +47,7 @@ using Hurricane::Net;
 using Hurricane::Segment;
 using Hurricane::Contact;
 using Hurricane::Cell;
+using CRL::RoutingGauge;
 
 
 class Vertex;
@@ -129,7 +120,10 @@ typedef vector<NetRecord> NetVector;
 // **********
     private:
         static const Name  _toolName;
-        static float       _edgeCapacityPercent;
+        static float       _edgeHCapacityPercent;
+        static float       _edgeVCapacityPercent;
+        RoutingGauge*      _routingGauge;
+        unsigned int       _allowedDepth;
         Graph*             _routingGraph;
         RoutingGrid*       _routingGrid;
         Timer              _timer;
@@ -165,39 +159,48 @@ typedef vector<NetRecord> NetVector;
 //    private: void     RestructureNet ( Net* net );
 //    private: void     createLimitedZone ( Net* net, set<Vertex*,VertexPositionComp> gcells, Box vertexCenterBoundingBox, unsigned netStamp );
         string   adaptString ( string s );
-    public:
-        static void  setEdgeCapacityPercent ( float ecp ) { _edgeCapacityPercent = ecp; };
-        void     initGlobalRouting(); // Making it public, so it can be called earlier and then capacities on edges can be ajusted
-        void     run();
-        void     Route();
-        void     createRoutingGrid ( unsigned   nbXTiles
-                                   , unsigned   nbYTiles
-                                   , const Box& boundingBox
-                                   , DbU::Unit  tileWidth
-                                   , DbU::Unit  tileHeight
-                                   , unsigned   hcapacity
-                                   , unsigned   vcapacity );
-        void     updateEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, unsigned capacity );
-        void     increaseEdgeCapacity ( unsigned col1, unsigned row1, unsigned col2, unsigned row2, int capacity );
-        void     insertSegment ( Segment* segment );
-        bool     analyseRouting();
-        void     unrouteOvSegments();
-        void     reroute();
-        void     unrouteSelected();
-        // for ispd07 reload
-        void     createRoutingGraph();
-        void     addRoutingPadToGraph ( Hurricane::RoutingPad* routingPad );
-        inline Graph* getRoutingGraph() { return _routingGraph; }
-        Vertex*  getVertex ( Point );
-        Vertex*  getVertex ( DbU::Unit x, DbU::Unit y );
-        Edge*    getEdge   ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );
+  public:
+    static void          setHEdgeCapacityPercent ( float ecp ) { _edgeHCapacityPercent = ecp; };
+    static void          setVEdgeCapacityPercent ( float ecp ) { _edgeVCapacityPercent = ecp; };
+           void          setRoutingGauge         ( RoutingGauge* );
+           RoutingGauge* getRoutingGauge         () const { return _routingGauge; }
+           void          setAllowedDepth         ( unsigned int );
+           unsigned int  getAllowedDepth         () const { return _allowedDepth; }
+           void          initGlobalRouting       (); // Making it public, so it can be called earlier and then capacities on edges can be ajusted
+           void          run                     ();
+           void          Route                   ();
+           void          createRoutingGrid       ( unsigned   nbXTiles
+                                                 , unsigned   nbYTiles
+                                                 , const Box& boundingBox
+                                                 , DbU::Unit  tileWidth
+                                                 , DbU::Unit  tileHeight
+                                                 , unsigned   hcapacity
+                                                 , unsigned   vcapacity );
+           void          updateEdgeCapacity      ( unsigned col1, unsigned row1
+                                                 , unsigned col2, unsigned row2, unsigned capacity );
+           void          increaseEdgeCapacity    ( unsigned col1, unsigned row1
+                                                 , unsigned col2, unsigned row2, int capacity );
+           void          insertSegment           ( Segment* segment );
+           bool          analyseRouting          ();
+           void          unrouteOvSegments       ();
+           void          reroute                 ();
+           void          unrouteSelected         ();
+        // for ispd07 reload                     
+           void          createRoutingGraph      ();
+           void          addRoutingPadToGraph    ( Hurricane::RoutingPad* routingPad );
+    inline Graph*        getRoutingGraph         () { return _routingGraph; }
+           Vertex*       getVertex               ( Point );
+           Vertex*       getVertex               ( DbU::Unit x, DbU::Unit y );
+           Edge*         getEdge                 ( unsigned col1, unsigned row1
+                                                 , unsigned col2, unsigned row2 );
             
 // Others
 // ******
     public:
         static  KnikEngine* get                       ( const Cell* );
         static  const Name& staticGetName             () { return _toolName; };
-        static  float       getEdgeCapacityPercent    () { return _edgeCapacityPercent; };
+        static  float       getHEdgeCapacityPercent   () { return _edgeHCapacityPercent; };
+        static  float       getVEdgeCapacityPercent   () { return _edgeVCapacityPercent; };
                 const Name& getName                   () const { return _toolName; };
                 void        printTime                 ();
                 void        computeOverflow           ();

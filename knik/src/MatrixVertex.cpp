@@ -171,7 +171,8 @@ Vertex* MatrixVertex::createRegularMatrix ()
 //          << "    - latestTileHeight : " << _latestTileHeight << endl;
 
     // On cree les vecteurs de vertex en meme temps que les vertex et aussi les edges !
-    float ecp = KnikEngine::get ( cell )->getEdgeCapacityPercent();
+    float hecp = KnikEngine::get( cell )->getHEdgeCapacityPercent();
+    float vecp = KnikEngine::get( cell )->getVEdgeCapacityPercent();
     for ( unsigned j = 0 ; j < _nbYTiles ; j++ ) {
         vector<Vertex*> vect;
         for ( unsigned i = 0 ; i < _nbXTiles ; i++ ) {
@@ -190,7 +191,7 @@ Vertex* MatrixVertex::createRegularMatrix ()
                 assert(from);
                 Vertex* to = vect[i];
                 assert(to);
-                _routingGraph->createHEdge ( from, to, ecp );
+                _routingGraph->createHEdge ( from, to, hecp );
             }
             // si j > 0 alors on peut creer une edge verticale entre matrix[i][j-1] et matrix[i][j] c'est a dire _matrix[j-1][i] et vect[i]
             if ( j > 0 ) { //  _matrix est un vecteur de vecteur represantant les lignes -> _matrix[ligne][colonne]
@@ -198,7 +199,7 @@ Vertex* MatrixVertex::createRegularMatrix ()
                 assert(from);
                 Vertex* to = vect[i];
                 assert(to);
-                _routingGraph->createVEdge ( from, to, ecp );
+                _routingGraph->createVEdge ( from, to, vecp );
             }
         }
         _matrix.push_back ( vect );

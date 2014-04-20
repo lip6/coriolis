@@ -1,12 +1,24 @@
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+
+// |                   C O R I O L I S                               |
+// |        K n i k  -  G l o b a l   R o u t e r                    |
+// |                                                                 |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :               Damien.Dupuis@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./knik/Graph.h"                                |
+// +-----------------------------------------------------------------+
 
-#ifndef _KNIK_GRAPH_H
-#define _KNIK_GRAPH_H
+
+#ifndef KNIK_GRAPH_H
+#define KNIK_GRAPH_H
 
 #include <math.h>
-
-//#include "hurricane/viewer/DensityWindow.h"
 #include "hurricane/RoutingPad.h"
-
 #include "knik/Vertex.h"
 #include "knik/Vertexes.h"
 #include "knik/Edge.h"
@@ -16,10 +28,11 @@
 #include "knik/SlicingTree.h"
 #include "knik/RoutingGrid.h"
 
-//#include "knik/flute.h"
 struct FTree;
 
 namespace Knik {
+
+  class KnikEngine;
 
     class Graph {
     friend class Vertex;
@@ -54,6 +67,7 @@ namespace Knik {
     // **********
         private: 
                 Cell*               _cell;
+                KnikEngine*         _engine;
                 bool                _benchMode;
                 bool                _useSegments;
                 SlicingTree*        _slicingTree;
@@ -85,10 +99,10 @@ namespace Knik {
     // Constructors & Destructors
     // **************************
         protected:
-            Graph  ( Cell* cell, RoutingGrid* routingGrid, bool benchMode, bool useSegments );
+            Graph  ( KnikEngine*, RoutingGrid*, bool benchMode, bool useSegments );
             ~Graph() {};
         public:
-            static Graph* create ( Cell* cell, RoutingGrid* routingGrid, bool benchMode, bool useSegments );
+            static Graph* create ( KnikEngine*, RoutingGrid*, bool benchMode, bool useSegments );
             void   destroy();
             void  _postCreate();
             void  _preDestroy();
@@ -96,24 +110,25 @@ namespace Knik {
     // Accessors
     // *********
         public:
-            Cell*    getCell()        { return _cell; };
-            unsigned getNbSplitters() { return _nbSplitters; };
-            unsigned getNetStamp()    { return _netStamp; };
-            Net*     getWorkingNet()  { return _working_net; };
-            Vertex*  getPredecessor   ( const Vertex* vertex );
-            Edge*    getEdgeBetween   ( Vertex* vertex1, Vertex* vertex2 );
-            Edge*    getEdge          ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );
-            Vertex*  getCentralVertex ();
-            Vertex*  getVertex        ( Point );
-            Vertex*  getVertex        ( DbU::Unit x, DbU::Unit y );
-            Vertexes getVertexes()    { return VectorCollection<Vertex*>(_all_vertexes); };
-            Vertex*  getLowerLeftVertex() { return _lowerLeftVertex; };
-            unsigned getGridLength    ( Segment* segment );
-            unsigned getCongestEdgeNb ( Segment* segment );
-            size_t   getXSize         () const { return (_matrixVertex) ? _matrixVertex->getXSize() : 0; };
-            size_t   getYSize         () const { return (_matrixVertex) ? _matrixVertex->getYSize() : 0; };
-            float    getHEdgeNormalisedLength() const { return _hEdgeNormalisedLength; };
-            float    getVEdgeNormalisedLength() const { return _vEdgeNormalisedLength; };
+            KnikEngine* getEngine               () { return _engine; }
+            Cell*       getCell                 () { return _cell; };
+            unsigned    getNbSplitters          () { return _nbSplitters; };
+            unsigned    getNetStamp             () { return _netStamp; };
+            Net*        getWorkingNet           () { return _working_net; };
+            Vertex*     getPredecessor          ( const Vertex* vertex );
+            Edge*       getEdgeBetween          ( Vertex* vertex1, Vertex* vertex2 );
+            Edge*       getEdge                 ( unsigned col1, unsigned row1, unsigned col2, unsigned row2 );
+            Vertex*     getCentralVertex        ();
+            Vertex*     getVertex               ( Point );
+            Vertex*     getVertex               ( DbU::Unit x, DbU::Unit y );
+            Vertexes    getVertexes             ()    { return VectorCollection<Vertex*>(_all_vertexes); };
+            Vertex*     getLowerLeftVertex      () { return _lowerLeftVertex; };
+            unsigned    getGridLength           ( Segment* segment );
+            unsigned    getCongestEdgeNb        ( Segment* segment );
+            size_t      getXSize                () const { return (_matrixVertex) ? _matrixVertex->getXSize() : 0; };
+            size_t      getYSize                () const { return (_matrixVertex) ? _matrixVertex->getYSize() : 0; };
+            float       getHEdgeNormalisedLength() const { return _hEdgeNormalisedLength; };
+            float       getVEdgeNormalisedLength() const { return _vEdgeNormalisedLength; };
 
     // Modifiers
     // *********

@@ -24,6 +24,7 @@ namespace Hurricane {
   class Layer;
   class Net;
   class Cell;
+  class CellViewer;
 }
 
 #include "crlcore/RoutingGauge.h"
@@ -44,6 +45,7 @@ namespace Kite {
   using Hurricane::Layer;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::CellViewer;
   using CRL::RoutingGauge;
   using Katabatic::KatabaticEngine;
 
@@ -62,6 +64,7 @@ namespace Kite {
       static  KiteEngine*      create                     ( Cell* );
       static  KiteEngine*      get                        ( const Cell* );
     public:                                               
+      inline  CellViewer*      getViewer                  () const;
       inline  KatabaticEngine* base                       ();
       inline  Configuration*   getKiteConfiguration       ();
       virtual Configuration*   getConfiguration           ();
@@ -71,8 +74,8 @@ namespace Kite {
       inline  unsigned int     getRipupLimit              ( unsigned int type ) const;
               unsigned int     getRipupLimit              ( const TrackElement* ) const;
       inline  unsigned int     getRipupCost               () const;
-      inline  float            getExpandStep              () const;
-      inline  float            getEdgeCapacityPercent     () const;
+      inline  float            getHEdgeCapacityPercent    () const;
+      inline  float            getVEdgeCapacityPercent    () const;
       virtual const Name&      getName                    () const;
       inline  Configuration::PostEventCb_t&
                                getPostEventCb             ();
@@ -85,13 +88,14 @@ namespace Kite {
               void             printCompletion            () const;
               void             dumpMeasures               ( std::ostream& ) const;
               void             dumpMeasures               () const;
+      inline  void             setViewer                  ( CellViewer* );
       inline  void             setPostEventCb             ( Configuration::PostEventCb_t );
       inline  void             setEventLimit              ( unsigned long );
       inline  void             setMinimumWL               ( double );
       inline  void             setRipupLimit              ( unsigned int type, unsigned int );
       inline  void             setRipupCost               ( unsigned int );
-      inline  void             setExpandStep              ( float );
-      inline  void             setEdgeCapacityPercent     ( float );
+      inline  void             setHEdgeCapacityPercent    ( float );
+      inline  void             setVEdgeCapacityPercent    ( float );
               void             buildPowerRails            ();
               void             protectRoutingPads         ();
               void             preProcess                 ();
@@ -119,6 +123,7 @@ namespace Kite {
     // Attributes.
       static Name                   _toolName;
     protected:
+             CellViewer*            _viewer;
              Knik::KnikEngine*      _knik;
              Net*                   _blockageNet;
              Configuration*         _configuration;
@@ -140,27 +145,29 @@ namespace Kite {
 
 
 // Inline Functions.
-  inline  KatabaticEngine*              KiteEngine::base                   () { return static_cast<KatabaticEngine*>(this); }
-  inline  Configuration*                KiteEngine::getKiteConfiguration   () { return _configuration; }
-  inline  Net*                          KiteEngine::getBlockageNet         () { return _blockageNet; }
-  inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb         () { return _configuration->getPostEventCb(); }
-  inline  bool                          KiteEngine::getToolSuccess         () const { return _toolSuccess; }
-  inline  unsigned long                 KiteEngine::getEventsLimit         () const { return _configuration->getEventsLimit(); }
-  inline  unsigned int                  KiteEngine::getRipupCost           () const { return _configuration->getRipupCost(); }
-  inline  float                         KiteEngine::getExpandStep          () const { return _configuration->getExpandStep(); }
-  inline  float                         KiteEngine::getEdgeCapacityPercent () const { return _configuration->getEdgeCapacityPercent(); }
-  inline  unsigned int                  KiteEngine::getRipupLimit          ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
-  inline  NegociateWindow*              KiteEngine::getNegociateWindow     () { return _negociateWindow; }
-  inline  size_t                        KiteEngine::getRoutingPlanesSize   () const { return _routingPlanes.size(); }
-  inline  void                          KiteEngine::setEventLimit          ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
-  inline  void                          KiteEngine::setRipupLimit          ( unsigned int type, unsigned int limit ) { _configuration->setRipupLimit(limit,type); }
-  inline  void                          KiteEngine::setRipupCost           ( unsigned int cost ) { _configuration->setRipupCost(cost); }
-  inline  void                          KiteEngine::setExpandStep          ( float step ) { _configuration->setExpandStep(step); }
-  inline  void                          KiteEngine::setEdgeCapacityPercent ( float percent ) { _configuration->setEdgeCapacityPercent(percent); }
-  inline  void                          KiteEngine::setMinimumWL           ( double minimum ) { _minimumWL = minimum; }
-  inline  void                          KiteEngine::setPostEventCb         ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
-  inline  void                          KiteEngine::printConfiguration     () const { _configuration->print(getCell()); }
-  inline  TrackElement*                 KiteEngine::_lookup                ( AutoSegment* segment ) const { return segment->getObserver<TrackElement>(); }
+  inline  CellViewer*                   KiteEngine::getViewer               () const { return _viewer; }
+  inline  KatabaticEngine*              KiteEngine::base                    () { return static_cast<KatabaticEngine*>(this); }
+  inline  Configuration*                KiteEngine::getKiteConfiguration    () { return _configuration; }
+  inline  Net*                          KiteEngine::getBlockageNet          () { return _blockageNet; }
+  inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb          () { return _configuration->getPostEventCb(); }
+  inline  bool                          KiteEngine::getToolSuccess          () const { return _toolSuccess; }
+  inline  unsigned long                 KiteEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
+  inline  unsigned int                  KiteEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
+  inline  float                         KiteEngine::getHEdgeCapacityPercent () const { return _configuration->getHEdgeCapacityPercent(); }
+  inline  float                         KiteEngine::getVEdgeCapacityPercent () const { return _configuration->getVEdgeCapacityPercent(); }
+  inline  unsigned int                  KiteEngine::getRipupLimit           ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
+  inline  NegociateWindow*              KiteEngine::getNegociateWindow      () { return _negociateWindow; }
+  inline  size_t                        KiteEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
+  inline  void                          KiteEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
+  inline  void                          KiteEngine::setEventLimit           ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
+  inline  void                          KiteEngine::setRipupLimit           ( unsigned int type, unsigned int limit ) { _configuration->setRipupLimit(limit,type); }
+  inline  void                          KiteEngine::setRipupCost            ( unsigned int cost ) { _configuration->setRipupCost(cost); }
+  inline  void                          KiteEngine::setHEdgeCapacityPercent ( float percent ) { _configuration->setHEdgeCapacityPercent(percent); }
+  inline  void                          KiteEngine::setVEdgeCapacityPercent ( float percent ) { _configuration->setVEdgeCapacityPercent(percent); }
+  inline  void                          KiteEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
+  inline  void                          KiteEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
+  inline  void                          KiteEngine::printConfiguration      () const { _configuration->print(getCell()); }
+  inline  TrackElement*                 KiteEngine::_lookup                 ( AutoSegment* segment ) const { return segment->getObserver<TrackElement>(); }
 
 
 // Variables.

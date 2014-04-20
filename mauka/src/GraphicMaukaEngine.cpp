@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -17,14 +11,8 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./GraphicMaukaEngine.cpp"                 |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
-
-#include  <functional>
-#include  <boost/bind.hpp>
 
 #include  <QAction>
 #include  <QMenu>
@@ -42,6 +30,7 @@
 #include  <hurricane/viewer/CellWidget.h>
 #include  <hurricane/viewer/CellViewer.h>
 #include  <hurricane/viewer/ControllerWidget.h>
+#include  <hurricane/viewer/ExceptionWidget.h>
 #include  <crlcore/Utilities.h>
 #include  <crlcore/ToolBox.h>
 #include  <crlcore/AllianceFramework.h>
@@ -65,6 +54,7 @@ namespace Mauka {
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
   using Hurricane::ControllerWidget;
+  using Hurricane::ExceptionWidget;
   using CRL::Catalog;
   using CRL::getInstancesCount;
   using CRL::AllianceFramework;
@@ -140,111 +130,110 @@ namespace Mauka {
   }
 
 
-  MaukaEngine* GraphicMaukaEngine::getForFramework ()
+  MaukaEngine* GraphicMaukaEngine::getForFramework ( unsigned int flags )
   {
-    MaukaEngine* mauka = MaukaEngine::get ( getCell() );
-    if ( mauka != NULL ) return mauka;
+    MaukaEngine* mauka = MaukaEngine::get( getCell() );
+    if (mauka) return mauka;
 
-    mauka = createEngine ();
-    
-    if ( mauka == NULL ) 
-      throw Error("Failed to create Mauka engine on %s.",getString(getCell()).c_str());
+    if (flags & CreateEngine) {
+      mauka = createEngine();
+      if (not mauka) 
+        throw Error( "Failed to create Mauka engine on %s.", getString(getCell()).c_str() );
+    } else {
+      throw Error( "MaukaEngine not created yet, out of sequence action." );
+    }
 
     return mauka;
   }
 
 
-  void  GraphicMaukaEngine::doQuadriPart ()
+  void  GraphicMaukaEngine::_doQuadriPart ()
   {
     if ( not MetisEngine::isHMetisCapable() ) {
       cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
                       "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
       return;
     }
-    Cell* cell = getCell ();
+    Cell* cell = getCell();
 
-    emit cellPreModificated ();
-
-    NimbusEngine* nimbus = NimbusEngine::get ( cell );
-    if ( nimbus == NULL ) {
-      nimbus = NimbusEngine::create ( cell );
-      if ( cmess1.enabled() )
+    NimbusEngine* nimbus = NimbusEngine::get( cell );
+    if (nimbus == NULL) {
+      nimbus = NimbusEngine::create( cell );
+      if (cmess1.enabled())
         nimbus->getConfiguration()->print( cell );
     }
 
-    MetisEngine* metis = MetisEngine::get ( cell );
-    if ( metis == NULL ) {
-      metis  = MetisEngine ::create ( cell );
-      if ( getInstancesCount(cell) < metis->getNumberOfInstancesStopCriterion()*4 )
+    MetisEngine* metis = MetisEngine::get( cell );
+    if (metis == NULL) {
+      metis  = MetisEngine ::create( cell );
+      if (getInstancesCount(cell) < metis->getNumberOfInstancesStopCriterion()*4)
         return;
 
-      if ( cmess1.enabled() )
+      if (cmess1.enabled())
         metis->getConfiguration()->print( cell );
     }
-    metis->setRefreshCb ( boost::bind(&GraphicMaukaEngine::refreshViewer,this) );
+    metis->setRefreshCb( std::bind(&GraphicMaukaEngine::refreshViewer,this) );
 
-    MetisEngine::doQuadriPart ( cell );
+    MetisEngine::doQuadriPart( cell );
 
-    MaukaEngine* mauka = MaukaEngine::get ( cell );
-    if ( mauka != NULL )
+    MaukaEngine* mauka = MaukaEngine::get( cell );
+    if (mauka != NULL)
       throw Warning("GraphicMaukaEngine::doQuadriPart(): Placement already done on <%s>"
                    ,getString(cell->getName()).c_str());
 
     mauka = createEngine();
-    MaukaEngine::regroupOverloadedGCells ( cell );
+    MaukaEngine::regroupOverloadedGCells( cell );
 
-    _viewer->clearToolInterrupt ();
-    _viewer->getCellWidget()->fitToContents ();
-
-  //mauka->Run ();
-    emit cellPostModificated ();
+    _viewer->clearToolInterrupt();
+    _viewer->getCellWidget()->fitToContents();
   }
 
 
-  void  GraphicMaukaEngine::doSimulatedAnnealing ()
+  void  GraphicMaukaEngine::_doSimulatedAnnealing ()
   {
-    MaukaEngine* mauka = createEngine ();
-    if ( mauka == NULL ) {
-      throw Error("MaukaEngine not created yet, run the global router first.");
-    } 
-    mauka->setRefreshCb ( boost::bind(&GraphicMaukaEngine::refreshViewer,this) );
-    emit cellPreModificated ();
+    MaukaEngine* mauka = getForFramework( CreateEngine );
+    mauka->setRefreshCb ( std::bind(&GraphicMaukaEngine::refreshViewer,this) );
 
     _viewer->clearToolInterrupt ();
     _viewer->getCellWidget()->fitToContents ();
 
     mauka->Run ();
-    emit cellPostModificated ();
   }
 
 
   void  GraphicMaukaEngine::place ()
   {
-    if ( MetisEngine::isHMetisCapable() ) {
-        doQuadriPart ();
+    if (MetisEngine::isHMetisCapable()) {
+      doQuadriPart();
     } else {
       cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
                       "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
     }
 
-    doSimulatedAnnealing ();
-    save ();
+    doSimulatedAnnealing();
+    save();
   }
+
+
+  void  GraphicMaukaEngine::_save ()
+  {
+    MaukaEngine* mauka = getForFramework( NoFlags );
+
+    _viewer->clearToolInterrupt ();
+    mauka->Save ();
+  }
+
+
+  void  GraphicMaukaEngine::doQuadriPart ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_doQuadriPart,this) ); }
+
+
+  void  GraphicMaukaEngine::doSimulatedAnnealing ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_doSimulatedAnnealing,this) ); }
 
 
   void  GraphicMaukaEngine::save ()
-  {
-    MaukaEngine* mauka = createEngine ();
-    if ( mauka == NULL ) {
-      throw Error("MaukaEngine not created yet, run the placer first.");
-    } 
-    emit cellPreModificated ();
-
-    _viewer->clearToolInterrupt ();
-
-    mauka->Save ();
-    emit cellPostModificated ();
-  }
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_save,this) ); }
 
 
   void  GraphicMaukaEngine::addToMenu ( CellViewer* viewer )
@@ -296,9 +285,6 @@ namespace Mauka {
       connect ( annealingAction , SIGNAL(triggered()), this, SLOT(doSimulatedAnnealing()) );
       connect ( placeAction     , SIGNAL(triggered()), this, SLOT(place()) );
     }
-
-    connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
-    connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
 
     // ControllerWidget*    controller = _viewer->getControllerWidget();
     // ConfigurationWidget* setting     = controller->getSettings()

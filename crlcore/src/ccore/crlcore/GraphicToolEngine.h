@@ -1,31 +1,32 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./crlcore/GraphicTool.h"                       |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./crlcore/GraphicToolEngine.h"                 |
+// +-----------------------------------------------------------------+
 
 
-#ifndef __CRL_GRAPHIC_TOOL__
-#define __CRL_GRAPHIC_TOOL__
-
+#ifndef CRL_GRAPHIC_TOOL_H
+#define CRL_GRAPHIC_TOOL_H
 
 #include  <string>
 #include  <map>
+#include  <functional>
 #include  <QObject>
 
 class QMenu;
 
+#include  "hurricane/Error.h"
 #include  "hurricane/viewer/CellWidget.h"
+#include  "hurricane/viewer/ExceptionWidget.h"
 
 
 namespace Hurricane {
@@ -37,18 +38,19 @@ namespace Hurricane {
 
 namespace CRL {
 
-
   using std::string;
   using std::map;
+  using Hurricane::Error;
+  using Hurricane::Exception;
   using Hurricane::Name;
   using Hurricane::Cell;
   using Hurricane::CellWidget;
   using Hurricane::CellViewer;
+  using Hurricane::ExceptionWidget;
     
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::GraphicTool".
-
 
   class GraphicTool : public QObject {
       Q_OBJECT;
@@ -67,7 +69,6 @@ namespace CRL {
       };
     public:
       typedef map<Name,DrawGoFunctions> DrawGoMap;
-
     public:
               void               addDrawGo           ( const Name&
                                                      , CellWidget::InitExtensionGo_t*
@@ -78,16 +79,12 @@ namespace CRL {
       virtual void               addToMenu           ( CellViewer* ) = 0;
       virtual const Name&        getName             () const = 0;
       virtual size_t             release             () = 0;
-    signals:
-              void               cellPreModificated  ();
-              void               cellPostModificated ();
-
     protected:
       map<Name,DrawGoFunctions>  _drawGoMap;
-
     protected:
-                                  GraphicTool ();
-      virtual                    ~GraphicTool ();
+                                 GraphicTool     ();
+      virtual                   ~GraphicTool     ();
+    protected:
   };
 
 
@@ -109,7 +106,6 @@ namespace CRL {
   { return _drawGoMap; }
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
-
-#endif // __CRL_GRAPHIC_TOOL__
+#endif // CRL_GRAPHIC_TOOL_H

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CFG_CONFIGURATION__
-#define  __CFG_CONFIGURATION__
+#ifndef  CFG_CONFIGURATION_H
+#define  CFG_CONFIGURATION_H
 
 #include  <string>
 #include  <map>
@@ -135,6 +134,12 @@ namespace Cfg {
   }
 
 
+  inline bool  hasParameter ( const std::string& id )
+  {
+    return (Configuration::get()->getParameter(id,Parameter::Unknown) != NULL);
+  }
+
+
   inline Parameter* getParamString ( const std::string& id, const std::string& value="<undefined>" )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::String);
@@ -231,7 +236,7 @@ namespace Cfg {
 
 
 
-} // End of Cfg namespace.
+} // Cfg namespace.
 
 
-#endif  // __CFG_CONFIGURATION__
+#endif  // CFG_CONFIGURATION_H

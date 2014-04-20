@@ -46,7 +46,7 @@ namespace Knik {
         public:
             Vertex* getVertex()   const { return _vertex; }
             float   getDistance() const { return _distance; }
-            string  _getString()   const { string s = "<VTuple: ";
+            string  _getString()   const { string s = "<VTuple d:";
                                           s += getString(_distance);
                                           if (_vertex) s += " " + getString(_vertex);
                                           else         s += " NULL";
@@ -57,5 +57,8 @@ namespace Knik {
     };
 
 } // end namespace
+
+GETSTRING_POINTER_SUPPORT(Knik::VTuple);
+IOSTREAM_POINTER_SUPPORT(Knik::VTuple);
 
 #endif

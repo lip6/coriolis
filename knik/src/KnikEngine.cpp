@@ -1,53 +1,20 @@
+// -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
 //
-// Main contributors :
-//  Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//  Hugo Cl�ment                   <Hugo.Clement@lip6.fr>
-//  Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//  Christian Masson           <Christian.Masson@lip6.fr>
-// 
-// The Coriolis Project  is free software;  you can  redistribute it and/or
-// modify  it  under the  terms  of  the  GNU  General  Public License  as
-// published by  the Free  Software Foundation; either  version 2  of  the
-// License, or (at your option) any later version.
-// 
-// The Coriolis Project  is distributed in the hope that it will be useful,
-// but  WITHOUT  ANY  WARRANTY;  without  even  the  implied  warranty  of
-// MERCHANTABILITY  or  FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
-// General Public License for more details.
-// 
-// You should have received a copy  of  the  GNU  General  Public  License
-// along with  the Coriolis Project;  if  not,  write to the  Free Software
-// Foundation, inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-//
-//
-// License-Tag
-//
-//
-// Date   : 30/10/2006
-// Author : Damien Dupuis                        <Damien.Dupuis@lip6.fr>
-//
-// Authors-Tag 
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// x-----------------------------------------------------------------x
 // |                   C O R I O L I S                               |
-// |          Alliance / Hurricane  Interface                        |
+// |        K n i k  -  G l o b a l   R o u t e r                    |
 // |                                                                 |
-// |  Author      :                       Damien DUPUIS              |
-// |  E-mail      :               Damien.Dupuis.lip6.fr              |
+// |  Author      :                       Damien Dupuis              |
+// |  E-mail      :               Damien.Dupuis@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./Knik.cpp"                               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
+// |  C++ Header  :  "./KnikEngine.cpp"                              |
 // x-----------------------------------------------------------------x
 
-#include <climits>
 
+#include <climits>
 #include "hurricane/Warning.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Property.h"
@@ -59,14 +26,12 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Breakpoint.h"
-
 #include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
 #include "crlcore/Measures.h"
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/AllianceFramework.h"
-
 #include "knik/Configuration.h"
 #include "knik/Edge.h"
 #include "knik/Vertex.h"
@@ -76,8 +41,10 @@
 #include "knik/KnikEngine.h"
 #include "knik/flute.h"
 
+
 #define MAX_RUNTIME 86400
 #define MAX_ITERATION UINT_MAX
+
 
 namespace Knik {
 
@@ -88,40 +55,51 @@ namespace Knik {
   using CRL::AllianceFramework;
 
 
-//globale variables
-unsigned __congestion__;
-unsigned __precongestion__;
-float    __edge_cost__;
-bool     __initialized__;
+// Global Variables
+  unsigned int  __congestion__;
+  unsigned int  __precongestion__;
+  float         __edge_cost__;
+  bool          __initialized__;
+  
+  extern bool   __ripupMode__;
 
-extern bool __ripupMode__;
+  const Name KnikEngine::_toolName = "Knik::KnikEngine";
+  float      KnikEngine::_edgeHCapacityPercent = 1.0;
+  float      KnikEngine::_edgeVCapacityPercent = 1.0;
 
-const Name KnikEngine::_toolName = "Knik::KnikEngine";
-float      KnikEngine::_edgeCapacityPercent = 1.0;
 
-KnikEngine::KnikEngine ( Cell* cell, unsigned congestion, unsigned precongestion, bool benchMode, bool useSegments, float edgeCost )
-// *********************************************************************************************************************************
-    : Inherit ( cell )
-    , _routingGraph ( NULL )
-    , _routingGrid ( NULL )
-    , _benchMode ( benchMode )
-    , _useSegments ( useSegments )
-    , _routingDone ( false )
-    , _rerouteIteration ( 0 )
+  KnikEngine::KnikEngine ( Cell*     cell
+                         , unsigned  congestion
+                         , unsigned  precongestion
+                         , bool      benchMode
+                         , bool      useSegments
+                         , float     edgeCost )
+    : CRL::ToolEngine  ( cell )
+    , _routingGauge    ( NULL )
+    , _allowedDepth    ( 0)
+    , _routingGraph    ( NULL )
+    , _routingGrid     ( NULL )
+    , _benchMode       ( benchMode )
+    , _useSegments     ( useSegments )
+    , _routingDone     ( false )
+    , _rerouteIteration( 0 )
     , _segmentOverEdges()                              
-    , _sortSegmentOv()
-{
-    if ( congestion > 1 )
+    , _sortSegmentOv   ()
+  {
+    if (congestion > 1)
       throw Error ( "KnikEngine::KnikEngine(): congestion argument must be 0 (None) or 1 (Congestion) : %s."
                   , getString(congestion).c_str() );
     __congestion__    = congestion;
+
     if ( precongestion > 2 )
       throw Error ( "KnikEngine::KnikEngine():  precongestion argument must be 0 (None), 1 (Static) or 2 (Dynamic) : %s."
                   , getString(precongestion).c_str() );
+
     __precongestion__ = precongestion;
-    __edge_cost__ = edgeCost;
-    __initialized__ = false;
-}
+    __edge_cost__     = edgeCost;
+    __initialized__   = false;
+  }
+
 
 KnikEngine::~KnikEngine ()
 // ***********************
@@ -136,10 +114,11 @@ KnikEngine* KnikEngine::create ( Cell* cell, unsigned congestion, unsigned preco
     
     _knik->_postCreate();
 
-    cout << "  o  Knik -- Global router makes use of FLUTE software" << endl;
-    cout << Dots::asIdentifier("     - Author"       ,"Chris C. N. CHU") << endl;
-    cout << Dots::asIdentifier("     - Prof. Ident. ","Iowa State University") << endl;
-    cout << Dots::asIdentifier("     - URL"          ,"http://home.eng.iastate.edu/~cnchu") << endl;
+    // This is also printed in the banner of Unicorn/Cgt, no need to remind it here again.
+    // cout << "  o  Knik -- Global router makes use of FLUTE software" << endl;
+    // cout << Dots::asIdentifier("     - Author"       ,"Chris C. N. CHU") << endl;
+    // cout << Dots::asIdentifier("     - Prof. Ident. ","Iowa State University") << endl;
+    // cout << Dots::asIdentifier("     - URL"          ,"http://home.eng.iastate.edu/~cnchu") << endl;
 
     return _knik;
 }
@@ -171,6 +150,23 @@ void KnikEngine::_preDestroy()
     return;
 }
 
+
+  void  KnikEngine::setRoutingGauge ( RoutingGauge* rg )
+  {
+    _routingGauge = rg;
+    _allowedDepth = rg->getDepth();
+  }
+
+
+  void  KnikEngine::setAllowedDepth ( unsigned int allowedDepth )
+  {
+    if (not _routingGauge)
+      cerr << Error( "KnikEngine::setAllowedDepth(): Must set the RoutingGauge before the allowed depth." ) << endl;
+
+    _allowedDepth = (allowedDepth < _routingGauge->getDepth()) ? allowedDepth : _routingGauge->getDepth();
+  }
+
+
 void KnikEngine::MakeRoutingLeaves()
 // *********************************
 {
@@ -196,96 +192,76 @@ void KnikEngine::MakeRoutingLeaves()
 void KnikEngine::initGlobalRouting()
 // *********************************
 {
-    assert ( _nets_to_route.empty() );
-    cmess2 << "     o  Knik::initGlobalRouting()" << endl;
-    //#if defined(__USE_STATIC_PRECONGESTION__) || defined(__USE_DYNAMIC_PRECONGESTION__)
-    cmess2 << "        - Congestion: "    << __congestion__ << endl;
-    cmess2 << "        - PreCongestion: " << __precongestion__ << endl;
-    cmess2 << "        - EdgeCost: "      << __edge_cost__ << endl;
-    //#endif
+  assert( _nets_to_route.empty() );
+  cmess2 << "  o  Initializing global routing." << endl;
+//#if defined(__USE_STATIC_PRECONGESTION__) || defined(__USE_DYNAMIC_PRECONGESTION__)
+  cmess1 << Dots::asUInt  ( "     - Congestion Mode"    , __congestion__    ) << endl;
+  cmess1 << Dots::asUInt  ( "     - Pre-Congestion Mode", __precongestion__ ) << endl;
+  cmess1 << Dots::asDouble( "     - Edge Cost"          , __edge_cost__     ) << endl;
+//#endif
 
-    // create the route graph
-    if ( !_routingGraph ) {
-        _timer.resetIncrease();
-        _timer.start();
-        cmess2 << "        o  CLOSE sessionCreate routing graph." << endl;
-        Cell* cell = getCell();
-        _routingGraph = Graph::create ( cell, _routingGrid, _benchMode, _useSegments );
-        cmess2 << "           - Graph size: " << _routingGraph->getXSize()
-               << "x" << _routingGraph->getYSize() << endl;
-        _timer.stop();
-        printTime();
-    }
-    else {
-        cmess2 << "        - Reusing pre-existing graph." << endl;
-    }
-
-    // 20/02/09 tout ce qui suit dans la fonction etait inclu dans le if(!_routingGraph) on le sépare pour pouvoir
-    //          créer explicitement le graph dans une fonction, pour
-
+  if (not _routingGraph) {
     _timer.resetIncrease();
     _timer.start();
-    cmess2 << "        o  Selecting nets to route and create precongestion" << endl;
 
-    const unsigned int MaxDegree = 13000;
-    Name obstacleNetName ("obstaclenet");
-
-    //for_each_occurrence ( occurrence, cell->getHyperNetRootNetOccurrences() )   // working on deepNets
-    for_each_net ( net, getCell()->getNets() ) {
-        //Net* net = dynamic_cast<Net*>(occurrence.getEntity());  // working on deepNets
-
-        assert(net);
-
-        //cerr << " Net : " << net << endl;
-        if (   net->isGlobal()
-           or  net->isSupply()
-           or  net->isClock()
-           or (net->getName() == obstacleNetName) ) {
-          cmess1 << "     - <" << net->getName() << "> not routed (global, supply, clock or obstacle)." << endl;
-          continue;
-        }
-
-        //if ( !isVeryFlatCell &&  net->getCell()->isLeaf() ) { // Don't want to route Leaf Cells nets
-        //    //cerr << "  rootNet belongs to a leaf cell => continue" << endl;
-        //    continue;
-        //}  // working on deepNets
-        
-        // We want to route nets with more at least 2 and less than MaxDegree vertexes
-        unsigned netDegree = _routingGraph->countVertexes ( net );
-        if ( netDegree > 1 && netDegree < MaxDegree ) {
-            Box bbox = net->getBoundingBox();
-            NetRecord record ( net, (long int)((DbU::getLambda(bbox.getWidth())+1)*(DbU::getLambda(bbox.getHeight())+1)) );
-            assert ( record._net );
-            assert ( record._exArea > 0 );
-            _nets_to_route.push_back ( record );
-            //#if defined(__USE_STATIC_PRECONGESTION__) || defined(__USE_DYNAMIC_PRECONGESTION__)
-            if ( __precongestion__ )
-                _routingGraph->UpdateEstimateCongestion ( true );
-            //#endif
-            //cerr << "  will be routed." << endl;
-        }
-        else {
-          if ( netDegree > MaxDegree-1 )
-            cmess1 << Warning("%s has a not a degree in [2:%u[ (%d), not routed."
-                             ,getString(net).c_str(),MaxDegree,netDegree) << endl;
-        }
-
-        _routingGraph->resetVertexes();
-        end_for;
-    }
-    stable_sort ( _nets_to_route.begin(), _nets_to_route.end(), NetSurfacesComp() );
-    NetVector::iterator new_end = unique ( _nets_to_route.begin(), _nets_to_route.end() );
-    _nets_to_route.erase ( new_end, _nets_to_route.end() );
+    _routingGraph = Graph::create ( this, _routingGrid, _benchMode, _useSegments );
+    cmess2 << "     - Created RoutingGraph [" << _routingGraph->getXSize()
+           << "x" << _routingGraph->getYSize() << "]." << endl;
 
     _timer.stop();
-    printTime();
-    cmess2 << "           + Nets to route: " << _nets_to_route.size() << endl;
-    //#endif
+  } else {
+    cmess2 << "     - Reusing pre-existing graph." << endl;
+  }
 
-    // 20/02/09 fin de l'ancienne inclusion
+  _timer.resetIncrease();
+  _timer.start();
 
-    __initialized__ = true;
+  cmess2 << "  o  Selecting nets to route and create precongestion." << endl;
+
+  const unsigned int MaxDegree = 13000;
+  Name obstacleNetName ("obstaclenet");
+
+  forEach ( Net*, inet, getCell()->getNets() ) {
+    if (   inet->isGlobal()
+       or  inet->isSupply()
+       or  inet->isClock()
+       or (inet->getName() == obstacleNetName) ) {
+      cmess2 << "     - <" << inet->getName() << "> not routed (global, supply, clock or obstacle)." << endl;
+      continue;
+    }
+
+  // We want to route nets with more at least 2 and less than MaxDegree vertexes
+    unsigned netDegree = _routingGraph->countVertexes ( *inet );
+    if ( (netDegree > 1) and (netDegree < MaxDegree) ) {
+      Box       bbox   = inet->getBoundingBox();
+      NetRecord record ( *inet, (long int)((DbU::getLambda(bbox.getWidth())+1)*(DbU::getLambda(bbox.getHeight())+1)) );
+      assert( record._net );
+      assert( record._exArea > 0 );
+
+      _nets_to_route.push_back( record );
+//#if defined(__USE_STATIC_PRECONGESTION__) || defined(__USE_DYNAMIC_PRECONGESTION__)
+      if (__precongestion__)
+        _routingGraph->UpdateEstimateCongestion( true );
+//#endif
+    } else {
+      if (netDegree > MaxDegree-1)
+        cmess1 << Warning("%s has a not a degree in [2:%u[ (%d), not routed."
+                         ,getString(*inet).c_str(),MaxDegree,netDegree) << endl;
+    }
+
+    _routingGraph->resetVertexes();
+  }
+
+  stable_sort( _nets_to_route.begin(), _nets_to_route.end(), NetSurfacesComp() );
+  NetVector::iterator new_end = unique( _nets_to_route.begin(), _nets_to_route.end() );
+  _nets_to_route.erase( new_end, _nets_to_route.end() );
+
+  _timer.stop();
+  cmess2 << "     - # of Nets to route:" << _nets_to_route.size() << endl;
+  
+  __initialized__ = true;
 }
+
 
 void KnikEngine::createRoutingGrid ( unsigned   nbXTiles
                                    , unsigned   nbYTiles
@@ -308,8 +284,7 @@ void KnikEngine::createRoutingGrid ( unsigned   nbXTiles
 void KnikEngine::createRoutingGraph()
 // **********************************
 {
-    Cell* cell = getCell();
-    _routingGraph = Graph::create ( cell, _routingGrid, _benchMode, _useSegments );
+    _routingGraph = Graph::create ( this, _routingGrid, _benchMode, _useSegments );
       
   //Breakpoint::stop ( 0, "Point d'arret:<br>&nbsp;&nbsp;<b>createGlobalGraph()</b>&nbsp;"
   //                      "after Knik createGlobalGraph()." );
@@ -608,7 +583,7 @@ string KnikEngine::adaptString ( string s )
 void KnikEngine::unrouteOvSegments()
 // *********************************
 {
-     cmess2 << "     o  Unroute overflowed segments :" << endl;
+   //cmess2 << "     o  Unroute overflowed segments :" << endl;
      unsigned countSegments = 0;
      unsigned countContacts = 0;
      UpdateSession::open();
@@ -768,12 +743,15 @@ void KnikEngine::unrouteOvSegments()
      } while ( !_segmentsToUnroute.empty() );
 
      _timer.suspend();
-     cmess2 << "        + Done in " << _timer.getCombTime() 
-            << "s [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
+   //cmess2 << "        + Done in " << _timer.getCombTime() 
+   //       << "s [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
 
      UpdateSession::close();
-     cmess2 << "        - Segments destroyed : " << countSegments << endl
-            << "        - Contacts destroyed : " << countContacts << endl;
+   //cmess2 << "        - Segments destroyed : " << countSegments << endl
+   //       << "        - Contacts destroyed : " << countContacts << endl;
+
+     cmess2 << "                     Destroyed.  Segments: " << countSegments
+            << "  Contacts:" << countContacts << endl;
 
 }
 
@@ -870,7 +848,7 @@ void KnikEngine::unroute ( Segment* segment, set<Segment*> &segmentsToUnroute, C
 void KnikEngine::computeOverflow()
 // *******************************
 {
-    cmess1 << "     o  Computing Statistics" << endl;
+  //cmess1 << "     o  Computing Statistics" << endl;
     Vertex* currentVertex = _routingGraph->getLowerLeftVertex();
     int   nbEdgesTotal = 0;
     int   nbEdgesOver  = 0;
@@ -945,7 +923,7 @@ void KnikEngine::computeOverflow()
         else
             break;
     }
-    cmess2 << "        - first skimming through edges done (overflow computed)" << endl;
+    //cmess2 << "        - first skimming through edges done (overflow computed)" << endl;
     //averageOver = nbEdgesOver == 0 ? 0 : averageOver / (float)nbEdgesOver;
     
     // Now we've got the max we can print more detailed statistics about edges overflow
@@ -985,7 +963,7 @@ void KnikEngine::computeOverflow()
             else
                 break;
         }
-        cmess2 << "        - second skimming through edges done (overflow details)" << endl;
+      //cmess2 << "        - second skimming through edges done (overflow details)" << endl;
     }
 
     unsigned _wirelength          = 0;
@@ -1013,7 +991,7 @@ void KnikEngine::computeOverflow()
         }
         NetExtension::setWireLength ( *net, netWirelength );
     }
-    cmess2 << "        - Wirelength computed" << endl;
+  //cmess2 << "        - Wirelength computed" << endl;
     // *** Cannot build column several times, no hasColumn function ***
 //     CEditor* editor = getCEditor ( getCell() );
 //     CNetListWindow* netListWindow = editor->getNetListWindow();
@@ -1023,18 +1001,18 @@ void KnikEngine::computeOverflow()
 //     }
 //    cmess2 << "        - Netlist window rebuild" << endl;
 //    cmess1 << "        - Total number of edges : "   << nbEdgesTotal << endl
-    cmess1 << "        - Number of overcapacity edges : " << nbEdgesOver << " / " << nbEdgesTotal << endl
-         //<< "        - Total calls to Dijkstra : " << countDijkstra << endl
-         //<< "        - Total calls to Monotonic : " << countMonotonic << endl
-         //<< "        - Total calls to Materialize : " << countMaterialize << endl
-         //<< "        - Taille du Graphe de routage : " << _xSize << " x " << _ySize << endl
-           << "        - # of overflow : "           << overflow               << endl
-           << "        - max of overflow : "         << maxOver                << endl;
-//         << "    - # of net with overflow : "  << _netNbOverEdges.size() << endl
-    cmess1 << "        - grid wirelength : "         << _gridWirelength        << endl;
-    cmess2 << "        - grid wirelength : "         << _gridWirelength        << endl
-           << "        - grid wirelength w/o via : " << _gridWirelengthWoVia   << endl
-           << "        - real wirelength : "         << _wirelength            << endl;
+//     cmess1 << "        - Number of overcapacity edges : " << nbEdgesOver << " / " << nbEdgesTotal << endl
+//          //<< "        - Total calls to Dijkstra : " << countDijkstra << endl
+//          //<< "        - Total calls to Monotonic : " << countMonotonic << endl
+//          //<< "        - Total calls to Materialize : " << countMaterialize << endl
+//          //<< "        - Taille du Graphe de routage : " << _xSize << " x " << _ySize << endl
+//            << "        - # of overflow : "           << overflow               << endl
+//            << "        - max of overflow : "         << maxOver                << endl;
+// //         << "    - # of net with overflow : "  << _netNbOverEdges.size() << endl
+//     cmess1 << "        - grid wirelength : "         << _gridWirelength        << endl;
+//     cmess2 << "        - grid wirelength : "         << _gridWirelength        << endl
+//            << "        - grid wirelength w/o via : " << _gridWirelengthWoVia   << endl
+//            << "        - real wirelength : "         << _wirelength            << endl;
 
     //if ( ! ovEdgesStats.empty() ) {
     //    // print details about edges overflow
@@ -1068,6 +1046,13 @@ void KnikEngine::run()
         done = analyseRouting();
     }
 
+    ostringstream result;
+
+    result <<  Timer::getStringTime(_timer.getCombTime()) 
+           << ", " << Timer::getStringMemory(_timer.getIncrease());
+    cmess1 << "  o  Global Routing Completed." << endl;
+    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+
     addMeasure<double> ( getCell(), "knikT",  _timer.getCombTime  () );
     addMeasure<size_t> ( getCell(), "knikS", (_timer.getMemorySize() >> 20) );
 
@@ -1084,7 +1069,9 @@ void KnikEngine::Route()
     _timer.resetIncrease();
     _timer.start();
 
-    cmess1 << "     o  Knik::Route()" << endl;
+    cmess1 << "  o  Global Routing." << endl;
+    cmess2 << "     Iteration INIT"
+           <<    "  # of nets to route:" << left  << _nets_to_route.size() << endl;
 
     //CEditor* editor = getCEditor ( getCell() );
     //editor->showRubbers();
@@ -1123,25 +1110,18 @@ void KnikEngine::Route()
         //cmess1 << "%]\r";
     }
     _timer.suspend();
-    cmess1 << "        - [100%]: " << size << " nets routed." << endl;
 
-    //cmess2 << "        - NbSplitters : " << _routingGraph->getNbSplitters() << endl;
-    cmess2 << "        + Done in " << _timer.getCombTime() 
-           << "s [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
-    cmess2 << "          (raw measurements : " << _timer.getCombTime()
-           << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
-           << (_timer.getMemorySize()>>10) << "Ko])" << endl;
+    cmess2 << "                     Elapsed time: " << _timer.getCombTime() 
+           << "  Memory: " << Timer::getStringMemory(_timer.getIncrease()) << endl;
 
     // Comment to test with transhierarchic MIPS
     //computeOverflow();
-
 
     // To be able to plot congestionMap, we need to UpdateMaxEstimateCongestion :
     //_routingGraph->UpdateMaxEstimateCongestion(); // no more useful since qe use QT which allow to see colored edges.
     
     // passage en mode PERFORMANCE !
     //_routingGraph->testSTuplePQ();
-
 
     // While not debugging, comment this out :
     //_routingGraph->destroy();
@@ -1162,13 +1142,13 @@ bool KnikEngine::analyseRouting()
     }
     
     unsigned overflow = _routingGraph->analyseRouting (_segmentsToUnroute);
-    cmess2 << "        - Segments to unroute : " << _segmentsToUnroute.size() << endl;
+  //cmess2 << "        - Segments to unroute : " << _segmentsToUnroute.size() << endl;
 
     // redefine the new _nets_to_route vector
     _nets_to_route.clear();
 
     for ( set<Segment*>::iterator it = _segmentsToUnroute.begin() ; it != _segmentsToUnroute.end() ; it++ ) {
-        cmess2 << "           "<< (*it) << endl;
+    //cmess2 << "           "<< (*it) << endl;
         Net* net = (*it)->getNet();
 
         bool present = false;
@@ -1198,8 +1178,8 @@ bool KnikEngine::analyseRouting()
     //cmess1 << endl;
 
     _timer.suspend();
-    cmess1 << "        + Done in " << _timer.getCombTime() 
-           << "s [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
+    // cmess1 << "        + Done in " << _timer.getCombTime() 
+    //        << "s [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
 
     bool done = false;
     if ( (overflow==0) || (_timer.getCombTime() >= MAX_RUNTIME) || (_rerouteIteration >= MAX_ITERATION) )
@@ -1212,44 +1192,47 @@ void KnikEngine::reroute()
 {
     UpdateSession::open();
 
-    //Breakpoint::setStopLevel(1);
-    //analyseRouting();
-    //unrouteOvSegments();
-    cmess1 << "     o  Knik::reroute() : iteration " << ++_rerouteIteration << endl;
+  //Breakpoint::setStopLevel(1);
+  //analyseRouting();
+  //unrouteOvSegments();
+
+    cmess2 << "     Iteration "     << right << setw(4) << setfill('0') << ++_rerouteIteration
+           <<    "  # of nets to route:" << left  << _nets_to_route.size() << endl;
+
     _timer.resume();
 
-    unsigned size = _nets_to_route.size(); 
+    unsigned int size = _nets_to_route.size(); 
     __ripupMode__ = true;
-    for ( unsigned i = 0 ; i < size ; i++ ) {
-        Net* net = _nets_to_route[i]._net;
-        assert ( net );
-        //_routingGraph->checkGraphConsistency();
-        switch ( _routingGraph->initRouting ( net ) ) {
-            case 0:
-            case 1:
-                //cerr << "Nothing to global route" << endl;
-                break;
-            default:
-                _routingGraph->Dijkstra();
-                break;
-        }
-        
-        _routingGraph->incNetStamp();
-        _routingGraph->CleanRoutingState();
-        //cmess1 << "        - [";
-        //cmess1.width(3);
-        //cmess1 << floor((float)(i*100)/(float)(size));
-        //cmess1 << "%]\r";
-    }
-    _timer.suspend();
-    cmess1 << "        - [100%]: " << size << " nets routed." << endl;
 
-    //cmess2 << "        - NbSplitters : " << _routingGraph->getNbSplitters() << endl;
-    cmess2 << "        + Done in " << _timer.getCombTime() 
-           << " [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
-    cmess2 << "          (raw measurements : " << _timer.getCombTime()
-           << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
-           << (_timer.getMemorySize()>>10) << "Ko])" << endl;
+    for ( unsigned i = 0 ; i < size ; ++i ) {
+      Net* net = _nets_to_route[i]._net;
+      assert( net );
+    //_routingGraph->checkGraphConsistency();
+
+      switch ( _routingGraph->initRouting(net) ) {
+        case 0:
+        case 1:
+        //cerr << "Nothing to global route" << endl;
+          break;
+        default:
+          _routingGraph->Dijkstra();
+          break;
+      }
+        
+      _routingGraph->incNetStamp();
+      _routingGraph->CleanRoutingState();
+    }
+
+    _timer.suspend();
+
+    cmess2 << "                     Elapsed time: " << _timer.getCombTime() 
+           << "  Memory: " << Timer::getStringMemory(_timer.getIncrease()) << endl;
+
+    // cmess2 << "        + Done in " << _timer.getCombTime() 
+    //        << " [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
+    // cmess2 << "          (raw measurements : " << _timer.getCombTime()
+    //        << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
+    //        << (_timer.getMemorySize()>>10) << "Ko])" << endl;
 
     // Comment to test with transhierarchic MIPS
     //computeOverflow();
@@ -1263,28 +1246,29 @@ void KnikEngine::reroute()
 
 void  KnikEngine::computeSymbolicWireLength ()
 {
-// Ugly: hardcoded SxLib gauge characteristics.
+  if (not _routingGauge)
+    throw Error( "KnikEngine::computeSymbolicWireLength(): The routing gauge has not been set." );
 
-  size_t hEdgeCapacity = 0;
-  size_t vEdgeCapacity = 0;
-  double gcellSide     = 50.0;
+  size_t     hEdgeCapacity = 0;
+  size_t     vEdgeCapacity = 0;
+  DbU::Unit  gcellSide     = DbU::fromLambda( 50.0 );
 
-  RoutingGauge* rg = AllianceFramework::get()->getRoutingGauge();
-  vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
-  for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
+  vector<RoutingLayerGauge*>::const_iterator ilayerGauge = _routingGauge->getLayerGauges().begin();
+  for ( ; ilayerGauge != _routingGauge->getLayerGauges().end() ; ++ilayerGauge ) {
     RoutingLayerGauge* layerGauge = (*ilayerGauge);
-    if ( layerGauge->getType() != Constant::Default ) continue;
+    if (layerGauge->getType() != Constant::Default) continue;
+    if (layerGauge->getDepth() > _allowedDepth)     continue;
 
-    if ( layerGauge->getDirection() == Constant::Horizontal ) {
-      hEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+    if (layerGauge->getDirection() == Constant::Horizontal) {
+      hEdgeCapacity += layerGauge->getTrackNumber( 0, gcellSide ) - 1;
     } else if ( layerGauge->getDirection() == Constant::Vertical ) {
-      vEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+      vEdgeCapacity += layerGauge->getTrackNumber( 0, gcellSide ) - 1;
     }
   }
 
 // Complete formula: unitarian Wirelength/Area for one GCell.
 //   (side*(hEdgeCapacity+vEdgeCapacity)) / (side * side).
-  const double       normalize          = ((double)(hEdgeCapacity+vEdgeCapacity)) / gcellSide;
+  const double       normalize          = ((double)(hEdgeCapacity+vEdgeCapacity)) / DbU::toLambda(gcellSide);
   unsigned long long symbolicWireLength = 0;
 
   forEach ( Net*, net, getCell()->getNets() ) {

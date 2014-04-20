@@ -23,17 +23,18 @@ namespace Knik {
                     assert ( segment2 );
                     if ( segment1->getSourceX() <  segment2->getSourceX() ) return true;
                     if ( segment1->getSourceX() == segment2->getSourceX() ) {
-                        if ( segment1->getSourceY() <  segment2->getSourceY() ) return true;
-                        if ( segment1->getSourceY() == segment2->getSourceY() ) {
-                            // nous avons deux segemnts de meme cout exactement superposés
-                            // il n'est pas possible qu'ils aient le meme net !
-                            if (getString(segment1->getNet()->getName()) <  getString(segment2->getNet()->getName()) ) return true;
-                            if (getString(segment1->getNet()->getName()) == getString(segment2->getNet()->getName()) ) {
-                              cerr << segment1 << endl;
-                              cerr << segment2 << endl;
-                              assert(false);
-                            }
-                        }
+                      if ( segment1->getSourceY() <  segment2->getSourceY() ) return true;
+                      if ( segment1->getSourceY() == segment2->getSourceY() ) {
+                      // segment1 & segment2 are superposed and with exactly the same cost.
+                      // They musn't belong to the same net.
+                      // CURRENTLY DISABLED THIS CHECK MAY BE INACCURATE.
+                        if (getString(segment1->getNet()->getName()) <  getString(segment2->getNet()->getName()) ) return true;
+                        // if (getString(segment1->getNet()->getName()) == getString(segment2->getNet()->getName()) ) {
+                        //   cerr << segment1 << endl;
+                        //   cerr << segment2 << endl;
+                        // //assert(false);
+                        // }
+                      }
                     }
                 }
                 return false;

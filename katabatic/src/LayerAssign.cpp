@@ -49,7 +49,7 @@ namespace Katabatic {
                                      , unsigned long& total
                                      , unsigned long& globals )
   {
-    if (depth+2 >= Session::getConfiguration()->getAllowedDepth()) {
+    if (depth+2 >  Session::getConfiguration()->getAllowedDepth()) {
       cerr << Warning("Katabatic::_desaturate(): %s, no remaining upper layers."
                      ,getString(Session::getRoutingGauge()->getRoutingLayer(depth)->getName()).c_str()
                      ) << endl;
@@ -467,44 +467,46 @@ namespace Katabatic {
     startMeasures();
     Session::open( this );
 
-    switch ( method ) {
-      case EngineLayerAssignByLength: _layerAssignByLength( total, global, globalNets ); break;
-      case EngineLayerAssignByTrunk:  _layerAssignByTrunk ( total, global, globalNets ); break;
-      case EngineNoNetLayerAssign:    break;
-      default:
-        stopMeasures();
-        Session::close();
-        throw Error( badMethod
-                   , "Katabatic::layerAssign()"
-                   , method
-                   , getString(_cell).c_str()
-                   );
-    }
-
-    globalNets.clear();
-    Session::revalidate();
-
-    if (getConfiguration()->getAllowedDepth() > 2) {
-    //for ( int i=0 ; i < 3 ; i++ ) {
-        for ( size_t depth=1 ; depth < getConfiguration()->getAllowedDepth()-2; ++depth ) {
-          _desaturate( depth, globalNets, total, global );
-          if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
-        }
-
-        globalNets.clear ();
-
-    //  if (not _gcellGrid->updateDensity()) break;
-    //}
+    if (Session::getAllowedDepth() >= 3) {
+      switch ( method ) {
+        case EngineLayerAssignByLength: _layerAssignByLength( total, global, globalNets ); break;
+        case EngineLayerAssignByTrunk:  _layerAssignByTrunk ( total, global, globalNets ); break;
+        case EngineNoNetLayerAssign:    break;
+        default:
+          stopMeasures();
+          Session::close();
+          throw Error( badMethod
+                     , "Katabatic::layerAssign()"
+                     , method
+                     , getString(_cell).c_str()
+                     );
+      }
+  
+      globalNets.clear();
       Session::revalidate();
-    }
-
+  
+      if (getConfiguration()->getAllowedDepth() > 2) {
+      //for ( int i=0 ; i < 3 ; i++ ) {
+          for ( size_t depth=1 ; depth <= getConfiguration()->getAllowedDepth()-2; ++depth ) {
+            _desaturate( depth, globalNets, total, global );
+            if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
+          }
+  
+          globalNets.clear ();
+  
+      //  if (not _gcellGrid->updateDensity()) break;
+      //}
+        Session::revalidate();
+      }
+  
 #if defined(CHECK_DATABASE)
-    _check( "after layer assignment" );
+      _check( "after layer assignment" );
 #endif
-
-    Session::setKatabaticFlags( EngineWarnOnGCellOverload );
-    _gcellGrid->checkDensity();
-
+  
+      Session::setKatabaticFlags( EngineWarnOnGCellOverload );
+      _gcellGrid->checkDensity();
+    }
+  
     Session::close();
 
     stopMeasures();

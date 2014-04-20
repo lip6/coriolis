@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -231,8 +230,8 @@ namespace Hurricane {
     } else {
       getCellWidget()->setShowSelection ( false );
       getCellWidget()->setCumulativeSelection ( _cwCumulativeSelection );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(select  (const Net*)) );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(unselect(const Net*)) );
+      _netlistBrowser->disconnect ( getCellWidget(), SLOT(select  (Occurrence)) );
+      _netlistBrowser->disconnect ( getCellWidget(), SLOT(unselect(Occurrence)) );
     }
   }
 

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,24 +14,21 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_CELL_WIDGET_H__
-#define  __HURRICANE_CELL_WIDGET_H__
+#ifndef  HURRICANE_CELL_WIDGET_H
+#define  HURRICANE_CELL_WIDGET_H
 
-#include  <math.h>
-
-#include  <vector>
-#include  <functional>
-#include  <tr1/memory>
-#include  <boost/function.hpp>
-
-#include  <QWidget>
-#include  <QPixmap>
-#include  <QPainter>
-#include  <QPrinter>
-#include  <QImage>
-#include  <QRect>
-#include  <QPoint>
-
+#include <math.h>
+#include <vector>
+#include <functional>
+#include <tr1/memory>
+#include <boost/function.hpp>
+#include <QWidget>
+#include <QPixmap>
+#include <QPainter>
+#include <QPrinter>
+#include <QImage>
+#include <QRect>
+#include <QPoint>
 class QCursor;
 class QShowEvent;
 class QResizeEvent;
@@ -40,22 +36,18 @@ class QMouseEvent;
 class QKeyEvent;
 class QAction;
 
-
-#include  "hurricane/Timer.h"
-#include  "hurricane/Commons.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Point.h"
-#include  "hurricane/Box.h"
-#include  "hurricane/Transformation.h"
-#include  "hurricane/Query.h"
-
-#include  "hurricane/viewer/DisplayStyle.h"
-#include  "hurricane/viewer/CellWidgets.h"
-#include  "hurricane/viewer/Selector.h"
-#include  "hurricane/viewer/SelectorCriterion.h"
-#include  "hurricane/viewer/Ruler.h"
-
-
+#include "hurricane/Timer.h"
+#include "hurricane/Commons.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Point.h"
+#include "hurricane/Box.h"
+#include "hurricane/Transformation.h"
+#include "hurricane/Query.h"
+#include "hurricane/viewer/DisplayStyle.h"
+#include "hurricane/viewer/CellWidgets.h"
+#include "hurricane/viewer/Selector.h"
+#include "hurricane/viewer/SelectorCriterion.h"
+#include "hurricane/viewer/Ruler.h"
 
 
 namespace Hurricane {
@@ -74,7 +66,6 @@ namespace Hurricane {
   class Segment;
   class Contact;
   class Pad;
-
   class Selector;
   class PaletteWidget;
   class Command;

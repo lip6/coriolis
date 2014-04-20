@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -20,8 +20,6 @@
 #include  <set>
 #include  <iostream>
 #include  <functional>
-#include  <tr1/functional>
-
 #include  "hurricane/Interval.h"
 #include  "hurricane/Segment.h"
 #include  "hurricane/Components.h"
@@ -100,7 +98,7 @@ namespace Katabatic {
                         , Revalidate = 0x000000004
                         };
     public:
-      typedef  std::tr1::function< void(AutoSegment*) >  RevalidateCb_t;
+      typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
     public:
       static  void                setDestroyMode             ( bool );
       static  AutoSegment*        create                     ( AutoContact*  source
@@ -188,6 +186,8 @@ namespace Katabatic {
               AutoContact*        getOppositeAnchor          ( AutoContact* ) const;
               size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
       inline  AutoSegment*        getParent                  () const;
+      inline  unsigned int        getDepth                   () const;
+      inline  DbU::Unit           getPitch                   () const;
       inline  DbU::Unit           getAxis                    () const;
       virtual DbU::Unit           getSourceU                 () const = 0;
       virtual DbU::Unit           getTargetU                 () const = 0;
@@ -285,6 +285,7 @@ namespace Katabatic {
              GCell*               _gcell;
       const  unsigned long        _id;
              unsigned int         _flags;
+             unsigned int         _depth      : 8;
              unsigned int         _optimalMin : 8;
              unsigned int         _optimalMax : 8;
              DbU::Unit            _sourcePosition;
@@ -386,6 +387,8 @@ namespace Katabatic {
   inline  AutoContact*    AutoSegment::getAutoTarget        () const { return Session::lookup(getTarget()); }
   inline  bool            AutoSegment::getConstraints       ( Interval& i ) const { return getConstraints(i.getVMin(),i.getVMax()); }
   inline  AutoSegment*    AutoSegment::getCanonical         ( Interval& i ) { return getCanonical(i.getVMin(),i.getVMax()); }
+  inline  unsigned int    AutoSegment::getDepth             () const { return _depth; }
+  inline  DbU::Unit       AutoSegment::getPitch             () const { return Session::getPitch(getDepth(),Configuration::NoFlags); }
   inline  DbU::Unit       AutoSegment::getAxis              () const { return isHorizontal()?base()->getY():base()->getX(); }
   inline  DbU::Unit       AutoSegment::getOrigin            () const { return isHorizontal()?_gcell->getY():_gcell->getX(); }
   inline  DbU::Unit       AutoSegment::getExtremity         () const { return isHorizontal()?_gcell->getYMax():_gcell->getXMax(); }
@@ -422,7 +425,7 @@ namespace Katabatic {
                                                             
   inline  unsigned int    AutoSegment::getFlags             () const { return _flags; }
   inline  unsigned int    AutoSegment::_getFlags            () const { return _flags; }
-  inline  void            AutoSegment::setLayer             ( const Layer* layer ) { base()->setLayer(layer); }
+  inline  void            AutoSegment::setLayer             ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); }
   inline  void            AutoSegment::setOptimalMin        ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }
   inline  void            AutoSegment::setOptimalMax        ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
 //inline  void            AutoSegment::mergeUserConstraints ( const Interval& constraints ) { _userConstraints.intersection(constraints); }

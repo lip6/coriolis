@@ -1,8 +1,11 @@
 
+#include <sstream>
 #include <algorithm>
 #include <memory>
 
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
+#include "hurricane/Error.h"
 #include "hurricane/Name.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
@@ -27,6 +30,7 @@
 #include "knik/Edge.h"
 #include "knik/HEdge.h"
 #include "knik/VEdge.h"
+#include "knik/KnikEngine.h"
 
 #include "knik/flute.h"
 
@@ -38,6 +42,12 @@
 #define HISTORIC_INC 1.5 // define the increment of historic cost for ripup & reroute
 
 namespace Knik {
+
+  using Hurricane::inltrace;
+  using Hurricane::ltracein;
+  using Hurricane::ltraceout;
+  using Hurricane::tab;
+  using Hurricane::ForEachIterator;
 
 int  depthMaterialize;
 unsigned countDijkstra    = 0;
@@ -75,9 +85,10 @@ struct segmentStat {
     unsigned getSumOv() const { return sumOv; };
 };
 
-Graph::Graph ( Cell* cell, RoutingGrid* routingGrid, bool benchMode, bool useSegments )
-// **********************************************************************************************
-    : _cell ( cell )
+Graph::Graph ( KnikEngine* engine, RoutingGrid* routingGrid, bool benchMode, bool useSegments )
+// ********************************************************************************************
+    : _cell ( engine->getCell() )
+    , _engine ( engine )
     , _benchMode ( benchMode )
     , _useSegments ( useSegments )
     , _slicingTree ( NULL )
@@ -108,10 +119,10 @@ Graph::Graph ( Cell* cell, RoutingGrid* routingGrid, bool benchMode, bool useSeg
     __ripupMode__ = false;
 }
 
-Graph* Graph::create ( Cell* cell, RoutingGrid* routingGrid, bool benchMode, bool useSegments )
-// ******************************************************************************************************
+Graph* Graph::create ( KnikEngine* engine, RoutingGrid* routingGrid, bool benchMode, bool useSegments )
+// ****************************************************************************************************
 {
-    Graph* _graph = new Graph ( cell, routingGrid, benchMode, useSegments );
+    Graph* _graph = new Graph ( engine, routingGrid, benchMode, useSegments );
 
     _graph->_postCreate();
 
@@ -129,33 +140,33 @@ void Graph::_postCreate()
 
   // XXX On supprime tout ce qui concerne NIMBUS et on considère qu'il existe toujours une _routingGrid XXX
     if ( !_routingGrid ) {
-        #ifdef __USE_MATRIXVERTEX__
-            _matrixVertex = MatrixVertex::create(this);
-            if( !_matrixVertex )
-                throw Error ("Graph::_postCreate(): cannot create MatrixVertex");
-            _lowerLeftVertex = _matrixVertex->createRegularMatrix ();
-            cmess2 << "           - Initialization done (without routingGrid)" << endl;
-        #else
-            throw Error ("Graph::_postCreate(): cannot use another method than MatrixVertex");
-        #endif
-        // il faut définir les normalisedLength, pour l'instant on le fait pas
-    }
-    else {
-        cmess2 << "           - Size from routingGrid : " << _routingGrid->getNbXTiles() << ", " << _routingGrid->getNbYTiles() << endl;
-        #ifdef __USE_MATRIXVERTEX__
-            _matrixVertex = MatrixVertex::create(this);
-            if( !_matrixVertex )
-                throw Error ("Graph::_postCreate(): cannot create MatrixVertex");
-            _lowerLeftVertex = _matrixVertex->createRegularMatrix ( _routingGrid );
-            // initialisation des normalisedLength
-            float hEdgeLength = _routingGrid->getTileWidth();
-            float vEdgeLength = _routingGrid->getTileHeight();
-            _hEdgeNormalisedLength = hEdgeLength <= vEdgeLength ? 1.0 : hEdgeLength / vEdgeLength;
-            _vEdgeNormalisedLength = hEdgeLength <= vEdgeLength ? vEdgeLength / hEdgeLength : 1.0;
-            cmess2 << "           - Initialization done." << endl;
-        #else
-            throw Error ("Graph::_postCreate(): cannot use another method than MatrixVertex");
-        #endif
+#ifdef __USE_MATRIXVERTEX__
+      _matrixVertex = MatrixVertex::create(this);
+      if( !_matrixVertex )
+        throw Error ("Graph::_postCreate(): cannot create MatrixVertex");
+      _lowerLeftVertex = _matrixVertex->createRegularMatrix ();
+      cmess2 << "     - Created vertex matrix (without RoutingGrid)" << endl;
+#else
+      throw Error ("Graph::_postCreate(): cannot use another method than MatrixVertex");
+#endif
+    // il faut définir les normalisedLength, pour l'instant on le fait pas
+    } else {
+      cmess2 << "     - RoutingGrid size [" << _routingGrid->getNbXTiles() << "x" << _routingGrid->getNbYTiles() << "]." << endl;
+#ifdef __USE_MATRIXVERTEX__
+      _matrixVertex = MatrixVertex::create(this);
+      if( !_matrixVertex )
+        throw Error ("Graph::_postCreate(): cannot create MatrixVertex");
+
+      _lowerLeftVertex = _matrixVertex->createRegularMatrix ( _routingGrid );
+    // initialisation des normalisedLength
+      float hEdgeLength = _routingGrid->getTileWidth();
+      float vEdgeLength = _routingGrid->getTileHeight();
+      _hEdgeNormalisedLength = hEdgeLength <= vEdgeLength ? 1.0 : hEdgeLength / vEdgeLength;
+      _vEdgeNormalisedLength = hEdgeLength <= vEdgeLength ? vEdgeLength / hEdgeLength : 1.0;
+      cmess2 << "     - Created vertex matrix (from RoutingGrid)." << endl;
+#else
+      throw Error ("Graph::_postCreate(): cannot use another method than MatrixVertex");
+#endif
     }
 //    #ifdef __USE_MATRIXVERTEX__
 //        _matrixVertex = MatrixVertex::create(this);
@@ -227,7 +238,7 @@ void Graph::_postCreate()
     for ( unsigned i = 0 ; i < _all_vertexes.size() ; i++ ) {
         _all_vertexes[i]->sortEdges();
     }
-    cmess2 << "           - Tri des edges terminé" << endl;
+    cmess2 << "     - Edge sorting completed." << endl;
 
     STuple::setSTuplePQEnd ( _stuplePriorityQueue.end() );
 
@@ -511,11 +522,11 @@ Vertex* Graph::createVertex ( Point position, DbU::Unit halfWidth, DbU::Unit hal
         capacity = _routingGrid->getHCapacity();
       //cerr << "createHEdge capacity:" << capacity << " ecp:" << ecp << endl;
     } else {
-        vector<RoutingLayerGauge*> rtLGauges = AllianceFramework::get()->getRoutingGauge()->getLayerGauges();
+        vector<RoutingLayerGauge*> rtLGauges = _engine->getRoutingGauge()->getLayerGauges();
         for ( vector<RoutingLayerGauge*>::iterator it = rtLGauges.begin() ; it != rtLGauges.end() ; it++ ) {
             RoutingLayerGauge* routingLayerGauge = (*it);
-            if (routingLayerGauge->getType() != Constant::Default)
-                continue;
+            if (routingLayerGauge->getType() != Constant::Default) continue;
+            if (routingLayerGauge->getDepth() > _engine->getAllowedDepth()) continue;
 
             if (routingLayerGauge->getDirection() != Constant::Horizontal)
                 continue;
@@ -551,8 +562,8 @@ void Graph::createVEdge ( Vertex* from, Vertex* to, float ecp )
         vector<RoutingLayerGauge*> rtLGauges = AllianceFramework::get()->getRoutingGauge()->getLayerGauges();
         for ( vector<RoutingLayerGauge*>::iterator it = rtLGauges.begin() ; it != rtLGauges.end() ; it++ ) {
             RoutingLayerGauge* routingLayerGauge = (*it);
-            if (routingLayerGauge->getType() != Constant::Default)
-                continue;
+            if (routingLayerGauge->getType() != Constant::Default) continue;
+            if (routingLayerGauge->getDepth() > _engine->getAllowedDepth()) continue;
 
             if (routingLayerGauge->getDirection() != Constant::Vertical)
                 continue;
@@ -764,15 +775,16 @@ void Graph::increaseVTuplePriority ( VTuple* vtuple, float distance )
 }
 
 void Graph::printVTuplePriorityQueue()
-// **********************************
+// ***********************************
 {
-    cmess2 << "*** printing VTuplePriorityQueue ***" << endl;
-    VTuplePQIter pqit = _vtuplePriorityQueue.begin();
-    while ( pqit != _vtuplePriorityQueue.end() ) {
-      cmess2 << (*pqit)->getVertex() << " : " << (*pqit)->getDistance() << endl;
-        pqit++;
-    }
-    cmess2 << "***********************************" << endl;
+  ltracein(600);
+  ltrace(600) << "VTuplePriorityQueue:" << endl;
+  unsigned int i=0;
+  for ( auto iv : _vtuplePriorityQueue ) {
+    ltrace(600) << setw(3) << i << "| " << iv->getVertex() << " : " << iv->getDistance() << endl;
+    ++i;
+  }
+  ltraceout(600);
 }
 
 void Graph::clearPriorityQueue()
@@ -830,12 +842,12 @@ void Graph::popMaxFromSTuplePQ()
 void Graph::addToSTuplePQ ( STuple* stuple )
 // *****************************************
 {
-    assert ( stuple );
-    STuple::CostProperty* costProperty = stuple->getCostProperty();
-    assert ( costProperty );
-    costProperty->setPQIter ( _stuplePriorityQueue.insert ( stuple ) );
-    STuple::STuplePQIter pqit = costProperty->getPQIter();
-    assert ( (*pqit) == stuple );
+  assert( stuple );
+  STuple::CostProperty* costProperty = stuple->getCostProperty();
+  assert( costProperty );
+  costProperty->setPQIter ( _stuplePriorityQueue.insert( stuple ) );
+  STuple::STuplePQIter pqit = costProperty->getPQIter();
+  assert( (*pqit) == stuple );
 }
 
 void Graph::updateSTupleCost ( STuple* stuple, unsigned cost )
@@ -1086,213 +1098,188 @@ int Graph::initRouting ( Net* net )
 void Graph::Dijkstra()
 // *******************
 {
-    //checkEmptyPriorityQueue();
+//checkEmptyPriorityQueue();
 
-    //CEditor* editor = getCEditor( _nimbus->getCell() );
-    countDijkstra++;
+  countDijkstra++;
 
-    // first we need to choose the closest to center vertex in _vertexes_to_route
-    Vertex* centralVertex = getCentralVertex();
-    //ltrace(435) << "  most centered vertex is " << centralVertex << endl;
-    // we want to prepare all vertexes of the 'composante connexe'
-    //      set the distance to 0
-    //      insert each vertex in the vtuplePriorityQueue
-    initConnexComp ( centralVertex );
+// first we need to choose the closest to center vertex in _vertexes_to_route
+  Vertex* centralVertex = getCentralVertex();
+//ltrace(435) << "  most centered vertex is " << centralVertex << endl;
+// we want to prepare all vertexes of the 'composante connexe'
+//      set the distance to 0
+//      insert each vertex in the vtuplePriorityQueue
+  initConnexComp( centralVertex );
     
-    // create a copy of _vertexes_to_route vector fo method UpdateEstimateCongestion
-    //set<Vertex*,VertexPositionComp> copy_vertex = _vertexes_to_route; // This is no more useful
+// create a copy of _vertexes_to_route vector fo method UpdateEstimateCongestion
+//set<Vertex*,VertexPositionComp> copy_vertex = _vertexes_to_route; // This is no more useful
 
-    //#if defined ( __USE_DYNAMIC_PRECONGESTION__ )
-    if ( !__ripupMode__ &&  (__precongestion__ == 2) )
-        UpdateEstimateCongestion();
-    //#endif
+//#if defined ( __USE_DYNAMIC_PRECONGESTION__ )
+  if ( !__ripupMode__ &&  (__precongestion__ == 2) )
+    UpdateEstimateCongestion();
+//#endif
 
-    //debugging = (dynamic_cast<DeepNet*>(_working_net) != NULL);
-    //debugging = (_working_net->getName() == debugName );
-    bool debugging = false;
+  DebugSession::open( _working_net, 600 );
+  ltrace(600) << "Dijkstra for net: " << _working_net << endl;
+  ltracein(600);
+  ltrace(600) << "Stamp:" << _netStamp << endl;
+  ltrace(600) << "Central vertex : " << centralVertex << endl;
+  ltrace(600) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
+  ltracein(600);
+//Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
 
-    if (debugging) {
-        cerr << "Dijkstra for net " << _working_net << " : " << _netStamp << endl;
-        cerr << "    central vertex : " << centralVertex << endl;
-        cerr << "    _vertexes_to_route.size : " << _vertexes_to_route.size() << endl;
-      //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
+  while ( _vertexes_to_route.size() > 1 ) {
+  // Now, let's expanse the top of the queue
+    VertexList reachedVertexes;
+    float      reachedDistance = (float)(HUGE);
+
+  //checkGraphConsistency();
+    if (ltracelevel() >= 600) {
+      ltrace(600) << "_vertexes_to_route:" << endl;
+      for ( auto iv : _vertexes_to_route )
+        ltrace(600) << "| " << iv << endl;
     }
 
-    while ( _vertexes_to_route.size() > 1 ) {
-        // Now, let's expanse the top of the queue
-        VertexList reachedVertexes;
-        float      reachedDistance = (float)(HUGE);
+    ltrace(600) << "Source component" << endl;
+    printVTuplePriorityQueue();
+  //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>source connexe component</center>");
 
-        //checkGraphConsistency();
+    Vertex* firstVertex = getMinFromPriorityQueue();
+    assert( firstVertex );
+    Vertex* currentVertex     = firstVertex;
+    int     firstVertexConnex = firstVertex->getConnexID();
 
-        // DEBUG //
-        if ( debugging ) {
-            cerr << "   _vertexes_to_route :" << endl;
-            VertexSetIter vsit = _vertexes_to_route.begin();
-            while ( vsit != _vertexes_to_route.end() ) {
-                cerr << "      " << (*vsit) << endl;
-                vsit++;
-            }    
+    while ( currentVertex and (currentVertex->getDistance() < reachedDistance) ) {
+      PopMinFromPriorityQueue();
+      assert( not currentVertex->getVTuple() );
+
+    // IMPORTANT : each currentVertex considered here has been getFromPriorityQueue() 
+    // which means its NetStamp and ConnexID are set for the current _working_net :
+    // no need to check netStamp
+      int currentVertexConnex = currentVertex->getConnexID() ;
+      if ( (currentVertexConnex != -1) and (currentVertexConnex != firstVertexConnex) ) {
+        reachedDistance = currentVertex->getDistance();
+        reachedVertexes.clear();
+        reachedVertexes.push_back ( currentVertex );
+        ltrace(600) << "Re-init reachedVertexes with " << currentVertex << endl;
+        break;
+      }
+
+      Edge* arrivalEdgeCurrentVertex = currentVertex->getPredecessor();
+      forEach ( Edge*, iedge, currentVertex->getAdjacentEdges() ) {
+        if ( (iedge->getNetStamp() == _netStamp) && (iedge->getConnexID() == firstVertexConnex) ) {
+        // already visited iedge
+        //   ok because to reach a connex component the algorithm first reach a vertex !!
+          continue;
+        }
+        iedge->setConnexID(-1);  // reinitialize connexID for edge (was done by CleanRoutingState)
+        iedge->setNetStamp(_netStamp);
+        
+        Vertex* oppositeVertex = iedge->getOpposite ( currentVertex );
+        assert( oppositeVertex );
+        if (not _searchingArea.contains(oppositeVertex->getPosition()))
+          continue;
+
+        float newDistance          = currentVertex->getDistance()
+                                   + iedge->getCost( arrivalEdgeCurrentVertex );
+        bool  updateOppositeVertex = false;
+      // reinitialize the oppositeVertex if its netStamp is < _netStamp
+        if (oppositeVertex->getNetStamp() < _netStamp) {
+        //oppositeVertex->setLocalRingHook(NULL);
+          oppositeVertex->setContact(NULL);
+          oppositeVertex->setConnexID(-1);
+          updateOppositeVertex = true;
         }
 
-        if ( debugging ) {
-            cerr << "    source component" << endl;
-            printVTuplePriorityQueue();
-            cerr.flush();
-            Breakpoint::stop(1, "<center><b>Dijkstra</b><br>source connexe component</center>");
+        int   oppositeConnex       = oppositeVertex->getConnexID();
+        float oppositeDistance     = oppositeVertex->getDistance();
+        if ( updateOppositeVertex or (newDistance + EPSILON < oppositeDistance) ) {
+          assert( oppositeConnex != firstVertexConnex );
+          oppositeVertex->setPredecessor( *iedge );
+          oppositeVertex->setDistance   ( newDistance );
+          oppositeVertex->setNetStamp   ( _netStamp );
+
+          VTuple* oppositeVTuple = oppositeVertex->getVTuple();
+          if (oppositeVTuple) {
+            ltrace(600) << "Increasing priority for:" << endl;
+            ltrace(600) << "* " << oppositeVertex << endl;
+            ltrace(600) << "* " << oppositeVTuple << endl;
+            increaseVTuplePriority( oppositeVTuple, newDistance );
+          // Du fait de la reinit ce n'est plus seulement un increase!
+          // Non, c'est bon si on garde le CleanRoutingState (avec clearPriorityQueue)
+          } else {
+            VTuple* newOppositeVTuple = VTuple::create ( oppositeVertex, newDistance );
+            ltrace(600) << "Creating New VTuple for Vertex:" << endl;
+            ltrace(600) << "* " << oppositeVertex    << ":" << newDistance << endl;
+            ltrace(600) << "* " << newOppositeVTuple << endl;
+            addVTupleToPriorityQueue( newOppositeVTuple );
+          }
+
+          ltrace(600) << "Updated distance " << newDistance << " on: " << (*iedge) << endl;
+          printVTuplePriorityQueue();
+        //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
         }
-        //if ( debugging && (editor->getStopLevel() >= 1) ) {
-        //    editor->Refresh();
-        //    string stopMessage = "Source connexe component.";
-        //    editor->Stop(stopMessage);
-        //}
 
-        Vertex* firstVertex = getMinFromPriorityQueue();
-        assert ( firstVertex );
-        Vertex* currentVertex = firstVertex;
-        int firstVertexConnex = firstVertex->getConnexID();
-
-        while ( currentVertex && (currentVertex->getDistance() < reachedDistance) ) {
-            PopMinFromPriorityQueue();
-            assert ( !currentVertex->getVTuple() );
-
-            // IMPORTANT : each currentVertex considered here has been getFromPriorityQueue() 
-            // which means its NetStamp and ConnexID are set for the current _working_net : no need to check netStamp
-            int currentVertexConnex = currentVertex->getConnexID() ;
-            if ( (currentVertexConnex != -1) && (currentVertexConnex != firstVertexConnex) ) {
-                reachedDistance = currentVertex->getDistance();
-                reachedVertexes.clear();
-                if (debugging ) {
-                    cerr << "   reachedVertexes : clear + push_back vertex found in priorityQueue: " << currentVertex << endl;
-                }
-                reachedVertexes.push_back ( currentVertex );
+        if ( (oppositeConnex != -1) and (oppositeConnex != firstVertexConnex) ) {
+        // verifier si la newDistance est inférieure a la reachedDistance,
+        // si oui vider la liste des reachedVertex et ajouter l'oppositeVertex
+        // si == ajouter l'oppositeVertex a la liste (a condition qu'il n'y soit pas déjà)
+        // si > rien a faire (a verifier que la pile de priorité se comporte bien)
+          if (newDistance < reachedDistance) {
+            reachedDistance = newDistance;
+            reachedVertexes.clear();
+            reachedVertexes.push_back( oppositeVertex );
+            ltrace(600) << "Re-init (< distance) reachedVertexes with " << oppositeVertex << endl;
+          } else if (newDistance == reachedDistance) {
+          // on pourrait simplifier grandement tout ca : 1 seul vertex atteint sauvergardé!
+          // Conclusion qu'il ait le meme connexID ou pas, on ne fait rien, on en a deja atteint
+          // un avec la meme distance ...
+            bool  foundVertex = false;
+            for ( auto iv : reachedVertexes ) {
+            // the following test depends on the fact we authorize multiple representant (vertex)
+            // of the same connexe component in reachedVertexes list
+            //if (iv->getConnexID() == oppositeConnex) 
+              if (iv == oppositeVertex) {
+                foundVertex = true;
                 break;
+              }
             }
-            Edge* arrivalEdgeCurrentVertex = currentVertex->getPredecessor();
-            for_each_edge ( edge, currentVertex->getAdjacentEdges() ) {
-                if ( (edge->getNetStamp() == _netStamp) && (edge->getConnexID() == firstVertexConnex) ) {
-                    // already visited edge
-                    //   ok because to reach a connex component the algorithm first reach a vertex !!
-                    continue;
-                }
-                edge->setConnexID(-1);  // reinitialize connexID for edge (was done by CleanRoutingState)
-                //edge->setSplitter(NULL);
-                edge->setNetStamp(_netStamp);
-                
-                Vertex* oppositeVertex = edge->getOpposite ( currentVertex );
-                assert ( oppositeVertex );
-                if ( !_searchingArea.contains ( oppositeVertex->getPosition() ) )
-                    continue;
-                float newDistance          = currentVertex->getDistance() + edge->getCost ( arrivalEdgeCurrentVertex );
-                bool  updateOppositeVertex = false;
-                // reinitialize the oppositeVertex if its netStamp is < _netStamp
-                if ( oppositeVertex->getNetStamp() < _netStamp ) {
-                    //oppositeVertex->setLocalRingHook(NULL);
-                    oppositeVertex->setContact(NULL);
-                    oppositeVertex->setConnexID(-1);
-                    updateOppositeVertex = true;
-                }
-                int   oppositeConnex       = oppositeVertex->getConnexID();
-                float oppositeDistance     = oppositeVertex->getDistance();
-                if ( updateOppositeVertex || (newDistance + EPSILON < oppositeDistance) ) {
-                    assert ( oppositeConnex != firstVertexConnex );
-                    oppositeVertex->setPredecessor ( edge );
-                    oppositeVertex->setDistance ( newDistance );
-                    oppositeVertex->setNetStamp ( _netStamp );
-                    if ( VTuple* oppositeVTuple = oppositeVertex->getVTuple() ) {
-                        if (debugging) {
-                           cerr << "   increasing Priority for vertex : " << oppositeVertex
-                                << " and corresponding vtuple : " << oppositeVTuple->_getString() << endl;
-                        }
-                        increaseVTuplePriority ( oppositeVTuple, newDistance );   // XXX du fait de la reinit ce n'est plus seulement un increase !
-                                                                                // Non c'est bon si on garde le CleanRoutingState (avec clearPriorityQueue)
-                    }
-                    else {
-                        VTuple* newOppositeVTuple = VTuple::create ( oppositeVertex, newDistance );
-                        if (debugging)
-                           cerr << "   Creating new vtuple for vertex: " << oppositeVertex << "," << newDistance
-                                << " --> " << newOppositeVTuple->_getString() << endl;
-                        addVTupleToPriorityQueue ( newOppositeVTuple );
-                    }
-                    if ( debugging ) {
-                       cerr << "    distance has been updated : " << edge << endl;
-                       //cerr << "    current reachedDistance: " << reachedDistance << " for: " << (*(reachedVertexes.begin())) << endl;
-                       cerr << "    current reachedDistance: " << reachedDistance << endl;
-                       printVTuplePriorityQueue();
-                       Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
-                    }
-                    //if ( debugging && (editor->getStopLevel() >= 2) ) {
-                    //    editor->Refresh();
-                    //    string stopMessage = "distance has been updated: ";
-                    //    stopMessage += getString ( edge );
-                    //    editor->Stop(stopMessage);
-                    //}
-                }
-                if ( (oppositeConnex != -1) && (oppositeConnex != firstVertexConnex) ) {
-                    // verifier si la newDistance est inférieure a la reachedDistance,
-                    // si oui vider la liste des reachedVertex et ajouter l'oppositeVertex
-                    // si == ajouter l'oppositeVertex a la liste (a condition qu'il n'y soit pas déjà)
-                    // si > rien a faire (a verifier que la pile de priorité se comporte bien)
-                    if ( newDistance < reachedDistance ) {
-                        reachedDistance = newDistance;
-                        reachedVertexes.clear();
-                        //if (debugging ) {
-                        //    cerr << "   second, push_back : " << oppositeVertex << endl;
-                        //    cerr << "   reachedVertexes : clear + push_back reached vertex with < distance " << oppositeVertex << endl;
-                        //}
-                        reachedVertexes.push_back ( oppositeVertex );
-                    }
-                    else if ( newDistance == reachedDistance ) {
-                        VertexListIter lvit = reachedVertexes.begin();
-                        bool foundVertex = false;
-                        // on pourrait simplifier grandement tout ca : 1 seul vertex atteint sauvergardé ! conclusion qu'il ait le meme connexID ou pas
-                        // on ne fait rien, on en a deja atteint un avec la meme distance ...
-                        while ( lvit != reachedVertexes.end() ) {
-                            // the following test depends on the fact we authorize multiple representant (vertex)
-                            //   of the same connexe component in reachedVertexes list
-                            //if ( (*lvit)->getConnexID() == oppositeConnex ) 
-                            if ( (*lvit) == oppositeVertex ) {
-                                foundVertex = true;
-                                break;
-                            }
-                            lvit++;
-                        }
-                        if ( !foundVertex ) {
-                            //if (debugging ) {
-                            //    cerr << "   reachedVertexes : clear + push_back reached vertex with == distance " << oppositeVertex << endl;
-                            //}
-                            reachedVertexes.push_back ( oppositeVertex );
-                        }
-                    }
-                    else {
-                        // Nothing to do ?
-                    }
-                }
-                end_for;
+            if (not foundVertex) {
+              reachedVertexes.push_back( oppositeVertex );
+              ltrace(600) << "Re-init (== distance) reachedVertexes with " << oppositeVertex << endl;
             }
-            currentVertex = getMinFromPriorityQueue();
+          } else {
+          // Nothing to do?
+          }
         }
-        assert ( !reachedVertexes.empty() );
-        assert ( reachedDistance < (float)(HUGE) );
+      }
 
-        //if(debugging) {
-        //    cerr << "  updating 2 connex components : " << (*(reachedVertexes.begin())) << " & " << firstVertex << endl;
-        //    cerr.flush();
-        //    editor->Refresh();
-        //    editor->Stop("Dijkstra on 2 connex comopnents, gonna Update"); 
-        //}
-        UpdateConnexComp ( reachedVertexes, firstVertex );
-        //if(debugging) {
-        //    editor->Refresh();
-        //    editor->Stop("Update done"); 
-        //}
+      currentVertex = getMinFromPriorityQueue();
     }
-    //cerr << "check before materialize _vertexes_to_route.size = " << _vertexes_to_route.size() << endl;
-    //checkGraphConsistency();
-    MaterializeRouting ( *(_vertexes_to_route.begin()) );
 
-    //_vertexes_to_route.clear();   // no more useful
-    //_vertexes_to_route = copy_vertex ;
+    if (reachedVertexes.empty()) {
+      ostringstream message;
+      message << "In Graph::Dijkstra():\n";
+      message << "        Unable to reach target on net " << _working_net->getName() << ".";
+      throw Error( message.str() );
+    }
+    assert( reachedDistance < (float)(HUGE) );
+
+    ltrace(600) << "Updating two connex components:" << endl;
+    ltrace(600) << "1. " << (*(reachedVertexes.begin())) << endl;
+    ltrace(600) << "2. " << firstVertex << endl;
+    UpdateConnexComp( reachedVertexes, firstVertex );
+  }
+
+//cerr << "check before materialize _vertexes_to_route.size = " << _vertexes_to_route.size() << endl;
+//checkGraphConsistency();
+  MaterializeRouting ( *(_vertexes_to_route.begin()) );
+
+//_vertexes_to_route.clear();   // no more useful
+//_vertexes_to_route = copy_vertex ;
+
+  ltraceout(600);
+  ltraceout(600);
+  DebugSession::close();
 }
 
 void Graph::Monotonic()
@@ -1546,10 +1533,11 @@ void Graph::UpdateEstimateCongestion ( bool create )
     if ( _vertexes_to_route.size() < 2 )
        return;
     if ( _vertexes_to_route.size() >= FLUTE_LIMIT ) {
-        if ( create )
-            cerr << "[INFO] Graph::UpdateEstiateGongestion(): Net " << _working_net << " has more than " << getString(FLUTE_LIMIT)
-                 << " vertexes and can not be handled by FLUTE." << endl;
-       return;
+      if ( create )
+        cerr << Warning( "Graph::UpdateEstimateCongestion(): %s\n"
+                        "          has more than %d vertex/terminals and cannot be handled by FLUTE."
+                       , getString(_working_net).c_str(), FLUTE_LIMIT ) << endl;
+      return;
     }
     //cerr << "Running FLUTE for net : " << _working_net << endl;
     auto_ptr<FTree> flutetree ( createFluteTree() );
@@ -1986,25 +1974,29 @@ unsigned Graph::analyseRouting ( set<Segment*>& segmentsToUnroute )
             }
         }
     }
+
     unsigned nbDep = 0;
     unsigned nbTot = 0;
     float minimalCost = 0;
     float maximalCost = 0;
     for ( map<Segment*, segmentStat>::iterator it = segmentsMap.begin() ; it != segmentsMap.end() ; it++ ) {
-        assert((*it).second.getNbTot() != 0);
-        nbTot++;
-        wirelength += getGridLength ( (*it).first );
-        float segmentCost = (float((*it).second.getNbDep())/float((*it).second.getNbTot()))*(*it).second.getSumOv();
-        if ( segmentCost ) {
-            if (minimalCost == 0)
-                minimalCost = segmentCost;
-            minimalCost = segmentCost < minimalCost ? segmentCost : minimalCost;
-            maximalCost = segmentCost > maximalCost ? segmentCost : maximalCost;
-            STuple* stuple = STuple::create((*it).first, segmentCost);
-            addToSTuplePQ(stuple);
-            nbDep++;
-        }
+      assert( (*it).second.getNbTot() != 0 );
+
+      nbTot++;
+      wirelength += getGridLength( (*it).first );
+      float segmentCost = (float((*it).second.getNbDep()) / float((*it).second.getNbTot())) * (*it).second.getSumOv();
+      if ( segmentCost ) {
+        if (minimalCost == 0)
+          minimalCost = segmentCost;
+        minimalCost = segmentCost < minimalCost ? segmentCost : minimalCost;
+        maximalCost = segmentCost > maximalCost ? segmentCost : maximalCost;
+
+        STuple* stuple = STuple::create((*it).first, segmentCost);
+        addToSTuplePQ(stuple);
+        nbDep++;
+      }
     }
+
     forEach ( Net*, net, _cell->getNets() ) {
         forEach ( Contact*, contact, net->getContacts() ) {
             const Layer* cLayer = contact->getLayer();
@@ -2036,24 +2028,36 @@ unsigned Graph::analyseRouting ( set<Segment*>& segmentsToUnroute )
     //        }
     //    }
     //}
-    cmess1 << "     o  Analyse routing :" << endl
-           << "        - Number of overcapacity edges : " << nbEdgesOv << " / " << nbEdgesTot << endl
-           << "        - # of overflow : " << overflow << endl
-           << "        - max of overflow : " << maxOv << endl
-           << "        - avg overflow : " << (float)overflow / (float)nbEdgesTot << endl
-           << "        - grid wirelength : " << wirelength << endl
-           << "        - # of via : " << viaWirelength/3 << endl
-           << "        - total wirelength : " << wirelength + viaWirelength << endl
-           << "        - Overflowed segments : " << nbDep << " / " << nbTot << endl;
+
+    cmess2 << "                     # of Overcapacity edges:" << nbEdgesOv
+           <<                    "  (tot.:" << nbEdgesTot << ")" << endl;
+    cmess2 << "                     # of Overflow:" << overflow
+           <<                    "  Max. overflow:" << maxOv
+           <<                    "  Avg. overflow:" << (float)overflow / (float)nbEdgesTot << endl;
+    cmess2 << "                     # of Overflowed edges: " << nbDep << " (tot.:" << nbTot << ")" << endl; 
+    cmess2 << "                     gHPWL:" << wirelength
+           <<                    "  # of VIAs:" << viaWirelength/3
+           <<                    "  Tot. wirelength:" << wirelength + viaWirelength << endl;
+
+
+    // cmess1 << "     o  Analyse routing :" << endl
+    //        << "        - Number of overcapacity edges : " << nbEdgesOv << " / " << nbEdgesTot << endl
+    //        << "        - # of overflow : " << overflow << endl
+    //        << "        - max of overflow : " << maxOv << endl
+    //        << "        - avg overflow : " << (float)overflow / (float)nbEdgesTot << endl
+    //        << "        - grid wirelength : " << wirelength << endl
+    //        << "        - # of via : " << viaWirelength/3 << endl
+    //        << "        - total wirelength : " << wirelength + viaWirelength << endl
+    //        << "        - Overflowed segments : " << nbDep << " / " << nbTot << endl;
     // construct the list on segments to unroute
     if ( _stuplePriorityQueue.empty() ) {
-        cmess1 << "        - Nothing to reroute !" << endl;
-        cmess1 << "        - Maximum segment cost : 0" << endl;
+    //cmess1 << "        - Nothing to reroute !" << endl;
+    //cmess1 << "        - Maximum segment cost : 0" << endl;
     }
     else {
         STuple* topSTuple = getMaxFromSTuplePQ();
         float maxCost = topSTuple->getCost();
-        cmess1 << "        - Maximum segment cost : " << maxCost << endl;
+      //cmess1 << "        - Maximum segment cost : " << maxCost << endl;
         float minCost = 0.20;
         if (_stuplePriorityQueue.size() <= 100)
             minCost = 0.0;

@@ -2,6 +2,7 @@
 import os
 import re
 
+import Cfg
 from   Hurricane import *
 from   helpers   import ErrorMessage
 import CRL
@@ -920,6 +921,14 @@ def pyPowerRing ( cell, core, n ) :
 
   global pad_north, pad_south, pad_east, pad_west
   global RING_INTERVAL, RING_WIDTH
+
+  db = getDataBase()
+  
+  topRoutingLayerName = Cfg.getParamString('katabatic.topRoutingLayer', 'METAL4').asString()
+  topRoutingLayer     = db.getTechnology().getLayer( topRoutingLayerName )
+  allowedDepth        = CRL.AllianceFramework.get().getRoutingGauge().getLayerDepth( topRoutingLayer )
+
+  print 'topRoutingLayer: <%s> depth:%d' % (topRoutingLayer.getName(), allowedDepth)
   
   UpdateSession.open()
   
@@ -951,7 +960,6 @@ def pyPowerRing ( cell, core, n ) :
   pad_height  = getPadHeight ( cell )
   
   # Recuperer les layers ( Vias , Alus )  
-  db   = getDataBase()
   metal4 = db.getTechnology().getLayer ( "METAL4"  )
   metal3 = db.getTechnology().getLayer ( "METAL3"  )
   metal2 = db.getTechnology().getLayer ( "METAL2"  )
@@ -959,6 +967,15 @@ def pyPowerRing ( cell, core, n ) :
   via1 = db.getTechnology().getLayer ( "VIA12" )
   via2 = db.getTechnology().getLayer ( "VIA23" )
   via3 = db.getTechnology().getLayer ( "VIA34" )
+
+  if (allowedDepth < 3):
+    hCoronaLayer = metal2
+    vCoronaLayer = metal3
+    cCoronaLayer = via2
+  else:
+    hCoronaLayer = metal4
+    vCoronaLayer = metal3
+    cCoronaLayer = via3
                
   # Recuperer les nets ( qui connectent les connectors du plot : vdde , vsse , vddi , vssi , ck  )
   instance = cell.getInstance( pad_north[0].getName() )
@@ -1100,25 +1117,25 @@ def pyPowerRing ( cell, core, n ) :
   
   
   for i in range ( 0, 2*n+1, 2 ) : 
-    contact1 = Contact ( vss, via3, init_Xmin - decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
-    contact2 = Contact ( vss, via3, init_Xmin - decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
-    contact3 = Contact ( vss, via3, init_Xmax + decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
-    contact4 = Contact ( vss, via3, init_Xmax + decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
+    contact1 = Contact ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
+    contact2 = Contact ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
+    contact3 = Contact ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
+    contact4 = Contact ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
 
-    vertical_west_vss.append    ( Vertical   ( contact1, contact2, metal3, init_Xmin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    vertical_east_vss.append    ( Vertical   ( contact3, contact4, metal3, init_Xmax + decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    horizontal_south_vss.append ( Horizontal ( contact1, contact4, metal4, init_Ymin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    horizontal_north_vss.append ( Horizontal ( contact2, contact3, metal4, init_Ymax + decalage*i, DbU_lambda(RING_WIDTH) ) )
+    vertical_west_vss.append    ( Vertical   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    vertical_east_vss.append    ( Vertical   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    horizontal_south_vss.append ( Horizontal ( contact1, contact4, hCoronaLayer, init_Ymin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    horizontal_north_vss.append ( Horizontal ( contact2, contact3, hCoronaLayer, init_Ymax + decalage*i, DbU_lambda(RING_WIDTH) ) )
      
     if i != 2*n :   
-     contact1 = Contact ( vdd, via3, init_Xmin - decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )
-     contact2 = Contact ( vdd, via3, init_Xmin - decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
-     contact3 = Contact ( vdd, via3, init_Xmax + decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
-     contact4 = Contact ( vdd, via3, init_Xmax + decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )        
-     vertical_west_vdd.append    ( Vertical   ( contact1, contact2, metal3, init_Xmin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
-     vertical_east_vdd.append    ( Vertical   ( contact3, contact4, metal3, init_Xmax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
-     horizontal_south_vdd.append ( Horizontal ( contact1, contact4, metal4, init_Ymin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )  
-     horizontal_north_vdd.append ( Horizontal ( contact2, contact3, metal4, init_Ymax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     contact1 = Contact ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )
+     contact2 = Contact ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
+     contact3 = Contact ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
+     contact4 = Contact ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )        
+     vertical_west_vdd.append    ( Vertical   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     vertical_east_vdd.append    ( Vertical   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     horizontal_south_vdd.append ( Horizontal ( contact1, contact4, hCoronaLayer, init_Ymin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )  
+     horizontal_north_vdd.append ( Horizontal ( contact2, contact3, hCoronaLayer, init_Ymax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
   
   # MACRO pour les directions d'access des pins  
   UNDEFINED = 0
@@ -1140,7 +1157,8 @@ def pyPowerRing ( cell, core, n ) :
     _y = core_transformation.getY ( element.getX(), element.getY() )
 
     # Creer un contact a la place du pin 
-    if   re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vss, metal4, _x, _y , element.getHeight(), element.getHeight() ) 
+    if   (allowedDepth > 2) and \
+         re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vss, metal4, _x, _y , element.getHeight(), element.getHeight() ) 
     elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vss, metal1, _x, _y , element.getHeight(), element.getHeight() )
     elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vss, metal3, _x, _y , element.getHeight(), element.getHeight() )
     else : 
@@ -1160,7 +1178,7 @@ def pyPowerRing ( cell, core, n ) :
        contact_x =  init_Xmin - ( decalage*2 )*i # x du contact a creer
        contact_side = element.getHeight() - DbU_lambda(1.0) 
 
-       if  re.search ( "METAL4", element_layer_name ) :
+       if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
          contact     = Contact ( vss, via3 , contact_x , _y , contact_side , contact_side )
          horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
          old_contact = contact
@@ -1184,7 +1202,7 @@ def pyPowerRing ( cell, core, n ) :
         contact_x    =  init_Xmax + ( decalage*2 )*i # x du contact a creer         
         contact_side = element.getHeight() - DbU_lambda(1.0)
         
-        if  re.search ( "METAL4", element_layer_name ) :
+        if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
           contact     = Contact ( vss, via3 , contact_x , _y , contact_side, contact_side )
           horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
           old_contact = contact
@@ -1249,7 +1267,8 @@ def pyPowerRing ( cell, core, n ) :
     _y = core_transformation.getY ( element.getX(), element.getY() )
   
     # Creer un contact a la place du pin 
-    if   re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vdd, metal4, _x, _y , element.getHeight(), element.getHeight() )
+    if   (allowedDepth > 2) and \
+         re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vdd, metal4, _x, _y , element.getHeight(), element.getHeight() )
     elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vdd, metal1, _x, _y , element.getHeight(), element.getHeight() )
     elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vdd, metal3, _x, _y , element.getHeight(), element.getHeight() )  
     else : 
@@ -1269,7 +1288,7 @@ def pyPowerRing ( cell, core, n ) :
         contact_x    =  init_Xmin - decalage - ( decalage*2 )*i # x du contact a creer         
         contact_side = element.getHeight() - DbU_lambda(1.0)
   
-        if re.search ( "METAL4", element_layer_name ) :         
+        if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :         
           contact     = Contact ( vdd, via3, contact_x, _y, contact_side, contact_side )
           horizontal  = Horizontal ( contact, old_contact, metal4, _y, element.getHeight() )
           old_contact = contact 
@@ -1293,7 +1312,7 @@ def pyPowerRing ( cell, core, n ) :
        contact_x    =  init_Xmax + ( decalage*2 )*i + decalage # x du contact a creer         
        contact_side = element.getHeight() - DbU_lambda(1.0)
   
-       if re.search ( "METAL4", element_layer_name ) :
+       if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
          contact     = Contact ( vdd, via3 , contact_x , _y , contact_side , contact_side )
          horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
          old_contact = contact 
@@ -1365,7 +1384,8 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
           
-          contactPad = Contact ( vss, metal1, X, Y, height, height )
+          Contact ( vss, via2, X, Y, height, height )
+          contactPad = Contact ( vss, via1, X, Y, height, height )
           Horizontal ( contactPad, vertical_east_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
           Contact    ( vss, via1, vertical_east_vss[-1].getX(), Y, height, height )
           Contact    ( vss, via2, vertical_east_vss[-1].getX(), Y, height, height )
@@ -1379,7 +1399,8 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          contactPad = Contact ( vdd, metal1, X, Y, height, height )
+         #Contact ( vdd, via2, X, Y, height, height )
+          contactPad = Contact ( vdd, via1, X, Y, height, height )
           Horizontal ( contactPad, vertical_east_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
           Contact    ( vdd, via1, vertical_east_vdd[-1].getX(), Y, height, height )
           Contact    ( vdd, via2, vertical_east_vdd[-1].getX(), Y, height, height )
@@ -1397,7 +1418,8 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          contactPad = Contact ( vss, metal1, X, Y, height, height )
+         #Contact ( vss, via2, X, Y, height, height )
+          contactPad = Contact ( vss, via1, X, Y, height, height )
           Horizontal ( contactPad, vertical_west_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
           Contact    ( vss, via1, vertical_west_vss[-1].getX(), Y, height, height )
           Contact    ( vss, via2, vertical_west_vss[-1].getX(), Y, height, height )
@@ -1411,7 +1433,8 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          contactPad = Contact ( vdd, metal1, X, Y, height, height )
+         #Contact ( vdd, via2, X, Y, height, height )
+          contactPad = Contact ( vdd, via1, X, Y, height, height )
           Horizontal ( contactPad, vertical_west_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
           Contact    ( vdd, via1, vertical_west_vdd[-1].getX(), Y, height, height )
           Contact    ( vdd, via2, vertical_west_vdd[-1].getX(), Y, height, height )
@@ -1430,13 +1453,14 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
           Contact    ( vss, via1, X, Y, height, height )
-          Contact    ( vss, via2, X, Y, height, height )
+         #Contact    ( vss, via2, X, Y, height, height )
     
           contactPad = Contact ( vss, metal1, X, Y, height, height )
           Vertical   ( contactPad, horizontal_north_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
           Contact    ( vss, via1, X, horizontal_north_vss[-1].getY(), height, height )
-          Contact    ( vss, via2, X, horizontal_north_vss[-1].getY(), height, height )
-          Contact    ( vss, via3, X, horizontal_north_vss[-1].getY(), height, height )
+          if allowedDepth > 2:
+            Contact  ( vss, via2, X, horizontal_north_vss[-1].getY(), height, height )
+            Contact  ( vss, via3, X, horizontal_north_vss[-1].getY(), height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1448,13 +1472,14 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
           
           Contact    ( vdd, via1, X, Y, height, height )
-          Contact    ( vdd, via2, X, Y, height, height )
+         #Contact    ( vdd, via2, X, Y, height, height )
           
           contactPad = Contact ( vdd, metal1, X, Y, height, height )
           Vertical   ( contactPad, horizontal_north_vdd[-1], metal1, X, DbU_lambda ( RING_WIDTH ) )
           Contact    ( vdd, via1, X, horizontal_north_vdd[-1].getY(), height, height )
-          Contact    ( vdd, via2, X, horizontal_north_vdd[-1].getY(), height, height )
-          Contact    ( vdd, via3, X, horizontal_north_vdd[-1].getY(), height, height )
+          if allowedDepth > 2:
+            Contact  ( vdd, via2, X, horizontal_north_vdd[-1].getY(), height, height )
+            Contact  ( vdd, via3, X, horizontal_north_vdd[-1].getY(), height, height )
   
   for pad_inst in pad_south : 
     if isInternalPowerPad ( pad_inst )  or isExternalPowerPad ( pad_inst )  \
@@ -1465,18 +1490,19 @@ def pyPowerRing ( cell, core, n ) :
         height  = element.getBoundingBox().getHeight() - DbU_lambda(1.0)
     
         if re.search ( "METAL3", str ( layer ) ) \
-        and ( ( element.getY() - ( height / 2 ) ) < pad_inst.getMasterCell().getAbutmentBox().getYMin() ) :
+           and ( ( element.getY() - ( height / 2 ) ) < pad_inst.getMasterCell().getAbutmentBox().getYMin() ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
           Contact    ( vss, via1, X, Y, height, height )
-          Contact    ( vss, via2, X, Y, height, height )
+         #Contact    ( vss, via2, X, Y, height, height )
           
           contactPad = Contact ( vss, metal1, X, Y, height, height )
           Vertical ( contactPad, horizontal_south_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
           Contact    ( vss, via1, X, horizontal_south_vss[-1].getY(), height, height )
-          Contact    ( vss, via2, X, horizontal_south_vss[-1].getY(), height, height )
-          Contact    ( vss, via3, X, horizontal_south_vss[-1].getY(), height, height )
+          if allowedDepth > 2:
+            Contact  ( vss, via2, X, horizontal_south_vss[-1].getY(), height, height )
+            Contact  ( vss, via3, X, horizontal_south_vss[-1].getY(), height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1488,13 +1514,14 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
           Contact    ( vdd, via1, X, Y, height, height )
-          Contact    ( vdd, via2, X, Y, height, height )
+         #Contact    ( vdd, via2, X, Y, height, height )
           
           contactPad = Contact ( vdd, metal1, X, Y, height, height )
           Vertical ( contactPad, horizontal_south_vdd[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vdd, via1, X, horizontal_south_vdd[-1].getY(), height, height )
-          Contact    ( vdd, via2, X, horizontal_south_vdd[-1].getY(), height, height )
-          Contact    ( vdd, via3, X, horizontal_south_vdd[-1].getY(), height, height )
+          Contact  ( vdd, via1, X, horizontal_south_vdd[-1].getY(), height, height )
+          if allowedDepth > 2:
+            Contact  ( vdd, via2, X, horizontal_south_vdd[-1].getY(), height, height )
+            Contact  ( vdd, via3, X, horizontal_south_vdd[-1].getY(), height, height )
   
 
   #####################################                      ###########################

@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,38 +11,31 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PaletteWidget.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <limits>
-
-#include  <QLabel>
-#include  <QCheckBox>
-#include  <QPushButton>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-#include  <QGridLayout>
-
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/BasicLayers.h"
-#include  "hurricane/ExtensionSlice.h"
-#include  "hurricane/Cell.h"
-
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/PaletteItem.h"
-#include  "hurricane/viewer/PaletteNamedItem.h"
-#include  "hurricane/viewer/PaletteLayerItem.h"
-#include  "hurricane/viewer/PaletteExtensionGoItem.h"
-#include  "hurricane/viewer/PaletteWidget.h"
+#include <limits>
+#include <QLabel>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/BasicLayers.h"
+#include "hurricane/ExtensionSlice.h"
+#include "hurricane/Cell.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/PaletteItem.h"
+#include "hurricane/viewer/PaletteNamedItem.h"
+#include "hurricane/viewer/PaletteLayerItem.h"
+#include "hurricane/viewer/PaletteExtensionGoItem.h"
+#include "hurricane/viewer/PaletteWidget.h"
 
 
 namespace {
-
 
   using namespace std;
   using namespace Hurricane;
@@ -130,7 +117,7 @@ namespace {
   }
   
 
-} // End of anonymous namespace.
+} // Anonymous namespace.
 
 
 namespace Hurricane {
@@ -313,13 +300,15 @@ namespace Hurricane {
   void  PaletteWidget::updateExtensions ( Cell* cell )
   {
     _grid->removeWidget ( _extensionGroup );
-    _extensionGroup->deleteLater ();
+  //_extensionGroup->deleteLater ();
+    delete _extensionGroup;
     _extensionGroup = NULL;
 
     PaletteItems::iterator  iextension = _extensionGoItems.begin();
     for ( ; iextension != _extensionGoItems.end() ; ++iextension ) {
       _grid->removeWidget ( iextension->second );
-      iextension->second->deleteLater ();
+    //iextension->second->deleteLater ();
+      delete iextension->second;
     }
     _extensionGoItems.clear ();
 
@@ -492,4 +481,4 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.

@@ -33,6 +33,8 @@
 
 #ifdef HAVE_HMETIS_LIB
 
+#include <climits>
+
 #include "hurricane/Net.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Plug.h"

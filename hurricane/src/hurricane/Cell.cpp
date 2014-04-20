@@ -103,7 +103,8 @@ Cell::Cell(Library* library, const Name& name)
     _isPad(false),
     _nextOfLibraryCellMap(NULL),
     _nextOfSymbolCellSet(NULL),
-    _slaveEntityMap()
+    _slaveEntityMap(),
+    _observers()
 {
     if (!_library)
         throw Error("Can't create " + _TName("Cell") + " : null library");
@@ -191,61 +192,70 @@ void Cell::flattenNets(unsigned int flags)
 // ***************************************
 {
   UpdateSession::open();
-  bool buildRings = flags & BuildRings;
 
   forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
     Net* net = static_cast<Net*>((*ioccurrence).getEntity());
 
     HyperNet  hyperNet ( *ioccurrence );
     if ( not (*ioccurrence).getPath().isEmpty() ) {
-      DeepNet* deepNet = DeepNet::create ( hyperNet );
-      if (deepNet) deepNet->_createRoutingPads ( flags );
+      DeepNet* deepNet = DeepNet::create( hyperNet );
+      if (deepNet) deepNet->_createRoutingPads( flags );
     } else {
-      RoutingPad* previousRP = NULL;
-      RoutingPad* currentRP  = NULL;
+      RoutingPad* previousRp = NULL;
+      RoutingPad* currentRp  = NULL;
+      bool        buildRing  = false;
+
+      if (net->isGlobal()) {
+        if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
+        else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+      } else {
+        buildRing = flags & Cell::BuildRings;
+      }
 
       forEach ( Component*, icomponent, net->getComponents() ) {
         Plug* primaryPlug = dynamic_cast<Plug*>( *icomponent );
-        if ( primaryPlug ) {
+        if (primaryPlug) {
           if ( !primaryPlug->getBodyHook()->getSlaveHooks().isEmpty() ) {
             cerr << "[ERROR] " << primaryPlug << "\n"
                  << "        has attached components, not managed yet." << endl;
           } else {
-            primaryPlug->getBodyHook()->detach ();
+            primaryPlug->getBodyHook()->detach();
           }
         }
       }
 
       forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRP = RoutingPad::create ( net, *iplugOccurrence, RoutingPad::BiggestArea );
-        currentRP->materialize ();
-        if ( flags & WarnOnUnplacedInstances )
-          currentRP->isPlacedOccurrence ( RoutingPad::ShowWarning );
-        if ( flags & BuildRings ) {
-          if ( previousRP ) {
-            currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
+        currentRp = RoutingPad::create( net, *iplugOccurrence, RoutingPad::BiggestArea );
+        currentRp->materialize();
+
+        if (flags & WarnOnUnplacedInstances)
+          currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
+
+        if (buildRing) {
+          if (previousRp) {
+            currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
           }
           Plug* plug = static_cast<Plug*>( (*iplugOccurrence).getEntity() );
           if ( (*iplugOccurrence).getPath().isEmpty() ) {
-            plug->getBodyHook()->attach ( currentRP->getBodyHook() );
-            plug->getBodyHook()->detach ();
+            plug->getBodyHook()->attach( currentRp->getBodyHook() );
+            plug->getBodyHook()->detach();
           }
-          previousRP = currentRP;
+          previousRp = currentRp;
         }
       }
 
       forEach ( Component*, icomponent, net->getComponents() ) {
         Pin* pin = dynamic_cast<Pin*>( *icomponent );
-        if ( pin ) {
-          currentRP = RoutingPad::create ( pin );
-          if ( buildRings ) {
-            if ( previousRP ) {
-              currentRP->getBodyHook()->attach ( previousRP->getBodyHook() );
+        if (pin) {
+          currentRp = RoutingPad::create( pin );
+          if (buildRing) {
+            if (previousRp) {
+              currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
             }
-            pin->getBodyHook()->attach ( currentRP->getBodyHook() );
-            pin->getBodyHook()->detach ();
+            pin->getBodyHook()->attach( currentRp->getBodyHook() );
+            pin->getBodyHook()->detach();
           }
-          previousRP = currentRP;
+          previousRp = currentRp;
         }
       }
     }
@@ -395,6 +405,24 @@ void Cell::_getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, Sl
 {
   begin = _slaveEntityMap.lower_bound(entity);
   end   = _slaveEntityMap.upper_bound(entity);
+}
+
+void Cell::addObserver(BaseObserver* observer)
+// *******************************************
+{
+  _observers.addObserver(observer);
+}
+
+void Cell::removeObserver(BaseObserver* observer)
+// **********************************************
+{
+  _observers.removeObserver(observer);
+}
+
+void Cell::notify(unsigned flags)
+// ******************************
+{
+  _observers.notify(flags);
 }
 
 // ****************************************************************************************************

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -51,6 +50,8 @@ namespace Katabatic {
       inline const Torus& getCorona       () const;
       inline bool         intersectVPads  ( const Box& ) const;
       inline bool         intersectHPads  ( const Box& ) const;
+      inline bool         vPadsEnclosed   ( const Box& ) const;
+      inline bool         hPadsEnclosed   ( const Box& ) const;
     public:
              Record*      _getRecord      () const;
              std::string  _getString      () const;
@@ -85,6 +86,12 @@ namespace Katabatic {
 
   inline bool  ChipTools::intersectHPads ( const Box& box ) const
   { return _topPadsBb.intersect(box) or _bottomPadsBb.intersect(box); }
+
+  inline bool  ChipTools::vPadsEnclosed ( const Box& box ) const
+  { return _leftPadsBb.contains(box) or _rightPadsBb.contains(box); }
+
+  inline bool  ChipTools::hPadsEnclosed ( const Box& box ) const
+  { return _topPadsBb.contains(box) or _bottomPadsBb.contains(box); }
 
 
 } // Katabatic namespace.

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,18 +14,16 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_ROUTING_LAYER_GAUGE_H__
-#define  __CRL_ROUTING_LAYER_GAUGE_H__
+#ifndef  CRL_ROUTING_LAYER_GAUGE_H
+#define  CRL_ROUTING_LAYER_GAUGE_H
 
 
-#include  <map>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/DbU.h"
-#include  "hurricane/Collection.h"
-#include  "hurricane/Slot.h"
-
-#include  "crlcore/Utilities.h"
+#include <map>
+#include "hurricane/Commons.h"
+#include "hurricane/DbU.h"
+#include "hurricane/Collection.h"
+#include "hurricane/Slot.h"
+#include "crlcore/Utilities.h"
 
 namespace Hurricane {
   class Layer;

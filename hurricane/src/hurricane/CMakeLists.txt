@@ -5,6 +5,7 @@
                  set ( includes hurricane/Mask.h
                                 hurricane/DebugSession.h
                                 hurricane/Backtrace.h
+                                hurricane/Observer.h
                                 hurricane/BasicLayer.h            hurricane/BasicLayers.h
                                 hurricane/RegularLayer.h          hurricane/RegularLayers.h
                                 hurricane/ViaLayer.h              hurricane/ViaLayers.h
@@ -100,6 +101,7 @@
                                 Interruption.cpp
                                 Tabulation.cpp
                                 DebugSession.cpp
+                                Observer.cpp
                                 DbU.cpp
                                 Point.cpp
                                 Box.cpp

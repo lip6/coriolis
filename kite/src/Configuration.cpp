@@ -40,15 +40,14 @@ namespace Kite {
 
   Configuration::Configuration ( Katabatic::Configuration* base )
     : Katabatic::Configuration()
-    , _base               (base)
-    , _postEventCb        ()
-    , _edgeCapacityPercent(Cfg::getParamPercentage("kite.edgeCapacity", 80.0)->asDouble())
-    , _expandStep         (Cfg::getParamPercentage("kite.expandStep"  ,100.0)->asDouble())
-    , _ripupLimits        ()
-    , _ripupCost          (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
-    , _eventsLimit        (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
+    , _base                (base)
+    , _postEventCb         ()
+    , _hEdgeCapacityPercent(Cfg::getParamPercentage("kite.hEdgeCapacity", 80.0)->asDouble())
+    , _vEdgeCapacityPercent(Cfg::getParamPercentage("kite.vEdgeCapacity", 80.0)->asDouble())
+    , _ripupLimits         ()
+    , _ripupCost           (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
   {
-    _ripupLimits[BorderRipupLimit]     = Cfg::getParamInt("kite.borderRipupLimit"     ,26)->asInt();
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("kite.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("kite.globalRipupLimit"     , 5)->asInt();
@@ -77,17 +76,16 @@ namespace Kite {
 
   Configuration::Configuration ( const Configuration& other, Katabatic::Configuration* base )
     : Katabatic::Configuration()
-    , _base               (base)
-    , _postEventCb        (other._postEventCb)
-    , _edgeCapacityPercent(other._edgeCapacityPercent)
-    , _expandStep         (other._expandStep)
-    , _ripupLimits        ()
-    , _ripupCost          (other._ripupCost)
-    , _eventsLimit        (other._eventsLimit)
+    , _base                (base)
+    , _postEventCb         (other._postEventCb)
+    , _hEdgeCapacityPercent(other._hEdgeCapacityPercent)
+    , _vEdgeCapacityPercent(other._vEdgeCapacityPercent)
+    , _ripupLimits         ()
+    , _ripupCost           (other._ripupCost)
+    , _eventsLimit         (other._eventsLimit)
   {
     if ( _base == NULL ) _base = other._base->clone();
 
-    _ripupLimits[BorderRipupLimit]     = other._ripupLimits[BorderRipupLimit];
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
     _ripupLimits[GlobalRipupLimit]     = other._ripupLimits[GlobalRipupLimit];
@@ -143,6 +141,38 @@ namespace Kite {
   { return _base->getContactLayer(depth); }
 
 
+  DbU::Unit  Configuration::getPitch ( size_t depth, unsigned int flags ) const
+  { return _base->getPitch(depth,flags); }
+
+
+  DbU::Unit  Configuration::getOffset ( size_t depth ) const
+  { return _base->getOffset(depth); }
+
+
+  DbU::Unit  Configuration::getWireWidth ( size_t depth ) const
+  { return _base->getWireWidth(depth); }
+
+
+  unsigned int  Configuration::getDirection ( size_t depth ) const
+  { return _base->getDirection(depth); }
+
+
+  DbU::Unit  Configuration::getPitch ( const Layer* layer, unsigned int flags ) const
+  { return _base->getPitch(layer,flags); }
+
+
+  DbU::Unit  Configuration::getOffset ( const Layer* layer ) const
+  { return _base->getOffset(layer); }
+
+
+  DbU::Unit  Configuration::getWireWidth ( const Layer* layer ) const
+  { return _base->getWireWidth(layer); }
+
+
+  unsigned int  Configuration::getDirection ( const Layer* layer ) const
+  { return _base->getDirection(layer); }
+
+
   DbU::Unit  Configuration::getExtensionCap () const
   { return _base->getExtensionCap(); }
 
@@ -194,13 +224,23 @@ namespace Kite {
   }
 
 
-  void  Configuration::setEdgeCapacityPercent ( float percent )
+  void  Configuration::setHEdgeCapacityPercent ( float percent )
   {
-    if ( percent > 1.0 )
-      throw Error("Configuration::setEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
-                 ,percent);
+    if (percent > 1.0)
+      throw Error( "Configuration::setHEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
+                 , percent );
 
-    _edgeCapacityPercent = percent;
+    _hEdgeCapacityPercent = percent;
+  }
+
+
+  void  Configuration::setVEdgeCapacityPercent ( float percent )
+  {
+    if (percent > 1.0)
+      throw Error( "Configuration::setVEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
+                 , percent );
+
+    _vEdgeCapacityPercent = percent;
   }
 
 
@@ -218,10 +258,9 @@ namespace Kite {
   void  Configuration::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Kite> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asPercentage("     - Global router edge capacity"        ,_edgeCapacityPercent) << endl;
-    cout << Dots::asPercentage("     - GCell aggregation threshold (delta)",_expandStep) << endl;
+    cout << Dots::asPercentage("     - Global router H edge capacity"      ,_hEdgeCapacityPercent) << endl;
+    cout << Dots::asPercentage("     - Global router V edge capacity"      ,_vEdgeCapacityPercent) << endl;
     cout << Dots::asULong     ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
-    cout << Dots::asUInt      ("     - Ripup limit, borders"               ,_ripupLimits[BorderRipupLimit]) << endl;
     cout << Dots::asUInt      ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
     cout << Dots::asUInt      ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
     cout << Dots::asUInt      ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
@@ -250,10 +289,10 @@ namespace Kite {
     Record* record = _base->_getRecord();
   //record->add ( getSlot ( "_rg"       ,  _rg      ) );
     if ( record ) {
-      record->add ( getSlot("_edgeCapacityPercent",_edgeCapacityPercent) );
-      record->add ( getSlot("_ripupCost"          ,_ripupCost          ) );
-      record->add ( getSlot("_eventsLimit"        ,_eventsLimit        ) );
-      record->add ( getSlot("_edgeCapacityPercent",_edgeCapacityPercent) );
+      record->add ( getSlot("_hEdgeCapacityPercent" ,_hEdgeCapacityPercent ) );
+      record->add ( getSlot("_vEdgeCapacityPercent" ,_vEdgeCapacityPercent ) );
+      record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
+      record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
       record->add ( getSlot("_ripupLimits[StrapRipupLimit]"     ,_ripupLimits[StrapRipupLimit]     ) );
       record->add ( getSlot("_ripupLimits[LocalRipupLimit]"     ,_ripupLimits[LocalRipupLimit]     ) );

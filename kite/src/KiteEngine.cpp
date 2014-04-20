@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -101,6 +101,7 @@ namespace Kite {
 
   KiteEngine::KiteEngine ( Cell* cell )
     : KatabaticEngine (cell)
+    , _viewer         (NULL)
     , _knik           (NULL)
     , _blockageNet    (NULL)
     , _configuration  (new Configuration(getKatabaticConfiguration()))
@@ -238,10 +239,16 @@ namespace Kite {
       unsigned int  flags = Cell::WarnOnUnplacedInstances;
       flags |= (mode & KtBuildGlobalRouting) ? Cell::BuildRings : 0;
       cell->flattenNets( flags );
+
+    // Test signals from <snx2013>.
+    //DebugSession::addToTrace( getCell(), "core.snx_inst.a2_x2_8_sig" );
+    //DebugSession::addToTrace( getCell(), "m_clock" );
+    //DebugSession::addToTrace( getCell(), "a2_x2_8_sig" );
   
       KatabaticEngine::chipPrep();
   
-      KnikEngine::setEdgeCapacityPercent( 1.0 );
+      KnikEngine::setHEdgeCapacityPercent( 1.0 );
+      KnikEngine::setVEdgeCapacityPercent( 1.0 );
       _knik = KnikEngine::create( cell
                                 , 1     // _congestion
                                 , 2     // _preCongestion
@@ -249,37 +256,39 @@ namespace Kite {
                                 , true  // _useSegments
                                 , 2.5   // _edgeCost
                                 );
+      _knik->setRoutingGauge( getConfiguration()->getRoutingGauge() );
+      _knik->setAllowedDepth( getConfiguration()->getAllowedDepth() );
       _knik->createRoutingGraph();
-      KnikEngine::setEdgeCapacityPercent( getEdgeCapacityPercent() );
+      KnikEngine::setHEdgeCapacityPercent( getHEdgeCapacityPercent() );
+      KnikEngine::setVEdgeCapacityPercent( getVEdgeCapacityPercent() );
   
     // Decrease the edge's capacity only under the core area.
       const ChipTools& chipTools     = getChipTools();
-      float            corePercent   = getEdgeCapacityPercent();
+      float            corePercent   = 1.00;
       float            coronaPercent = 0.80;
   
       forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
           Knik::Edge* edge    = NULL;
-          bool        isVEdge = false;
   
           if (i==0) {
             edge = ivertex->getHEdgeOut();
             if (not edge) continue;
   
-            if (chipTools.intersectHPads(edge->getBoundingBox())) {
+            if (chipTools.hPadsEnclosed(edge->getBoundingBox())) {
               edge->setCapacity( 0 );
               continue;
             }
-            isVEdge = false;
+            corePercent = getHEdgeCapacityPercent();
           } else {
             edge = ivertex->getVEdgeOut();
             if (not edge) continue;
   
-            if (chipTools.intersectVPads(edge->getBoundingBox())) {
+            if (chipTools.vPadsEnclosed(edge->getBoundingBox())) {
               edge->setCapacity( 0 );
               continue;
             }
-            isVEdge = true;
+            corePercent = getVEdgeCapacityPercent();
           }
   
           float edgePercent = 1.00;
@@ -287,11 +296,12 @@ namespace Kite {
             edgePercent = corePercent;
           } else if (chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox())) {
             edgePercent = coronaPercent;
-            isVEdge = false;
           }
   
-          unsigned int capacity = (unsigned int)(edge->getCapacity() * edgePercent ) - ((isVEdge) ? 1 : 0);
-          edge->setCapacity( capacity );
+          float capacity = edgePercent * (float)edge->getCapacity();
+        //cerr << "Appling capacity percentage " << (edgePercent*100.0) << "% ("
+        //     << capacity << ") on: " << edge << endl;
+          edge->setCapacity( (unsigned int)capacity );
         }
       }
     }
@@ -333,7 +343,8 @@ namespace Kite {
     int vEdgeCapacity = 0;
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
-      if (rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
+      if (rp->getLayerGauge()->getType()  == Constant::PinOnly ) continue;
+      if (rp->getLayerGauge()->getDepth() > getConfiguration()->getAllowedDepth() ) continue;
 
       if (rp->getDirection() == KbHorizontal) ++hEdgeCapacity;
       else ++vEdgeCapacity;
@@ -342,6 +353,7 @@ namespace Kite {
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
       if (rp->getLayerGauge()->getType() == Constant::PinOnly ) continue;
+      if (rp->getLayerGauge()->getDepth() > getConfiguration()->getAllowedDepth() ) continue;
 
       size_t tracksSize = rp->getTracksSize();
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
@@ -493,7 +505,7 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_badr_sd_sel1" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_21" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_cause_rx(1)" );
-  //Test signals from <MIPS> (R3000,pipeline+chip).
+  // Test signals from <MIPS> (R3000,pipeline+chip).
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.banc.reada0" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(29)" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_re(4)" );
@@ -503,6 +515,8 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "dout_e_i(2)" );
   //DebugSession::addToTrace( getCell(), "i_ack_i" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.data_rm(7)" );
+  // Test signals from <snx2013>.
+  //DebugSession::addToTrace( getCell(), "core.snx_inst.not_v_inc_out(9)" );
 
     createDetailedGrid();
     buildPowerRails();
@@ -528,7 +542,7 @@ namespace Kite {
     KatabaticEngine::loadGlobalRouting( method, nets );
 
     Session::open( this );
-    getGCellGrid()->checkEdgeSaturation( getEdgeCapacityPercent() );
+    getGCellGrid()->checkEdgeSaturation( getHEdgeCapacityPercent() );
     Session::close();
   }
 
@@ -560,7 +574,7 @@ namespace Kite {
     float        edgeCapacity = 1.0;
     KnikEngine*  knik         = KnikEngine::get( getCell() );
 
-    if (knik) edgeCapacity = knik->getEdgeCapacityPercent();
+    if (knik) edgeCapacity = knik->getHEdgeCapacityPercent();
 
     if (cparanoid.enabled()) {
       cparanoid << "  o  Post-checking Knik capacity overload " << (edgeCapacity*100.0) << "%." << endl;

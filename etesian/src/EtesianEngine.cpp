@@ -250,8 +250,6 @@ namespace Etesian {
     if (_flags & NoPlacement) return;
     _flags |= FlatDesign;
 
-  //getCell()->flattenNets( true );
-
     Dots  dots ( cmess2, "     ", 80, 1000 );
 
     cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
@@ -299,7 +297,7 @@ namespace Etesian {
     AllianceFramework* af   = AllianceFramework::get();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-    getCell()->flattenNets( true );
+    getCell()->flattenNets( Cell::BuildRings );
 
   // Coloquinte circuit description data-structures.
     _circuit = new Coloquinte::circuit();
@@ -400,11 +398,19 @@ namespace Etesian {
       _circuit->position_overlays[0].y_pos[ipair.second] = position.y();
     }
 
-    _circuit->bounds = Coloquinte::circuit_box
-      ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
-                                        , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
-      , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
-                                        , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
+  // Temporarily force the circuit size.
+    getCell()->setAbutmentBox( Box( DbU::fromLambda(0.0)
+                                  , DbU::fromLambda(0.0)
+                                  , DbU::fromLambda(5.0)*12000
+                                  , DbU::fromLambda(5.0)*12000
+                                  ) );
+	_circuit->bounds = Coloquinte::circuit_box( Coloquinte::circuit_coordinate::Zero()
+                                              , Coloquinte::circuit_coordinate({12000, 12000}) );
+    // _circuit->bounds = Coloquinte::circuit_box
+    //   ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
+    //                                     , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
+    //   , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
+    //                                     , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
 
     _circuit->selfcheck();
 

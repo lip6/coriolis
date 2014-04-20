@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,18 +11,14 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./BreakpointWidget.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_BREAKPOINT_WIDGET__
-#define  __HURRICANE_BREAKPOINT_WIDGET__
+#ifndef  HURRICANE_BREAKPOINT_WIDGET_H
+#define  HURRICANE_BREAKPOINT_WIDGET_H
 
-
-#include  <QEventLoop>
-#include  <QDialog>
+#include <QEventLoop>
+#include <QDialog>
 class QLabel;
 class QSpinBox;
 
@@ -59,7 +49,6 @@ namespace Hurricane {
 
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif  // __HURRICANE_BREAKPOINT_WIDGET__
+#endif  // HURRICANE_BREAKPOINT_WIDGET_H

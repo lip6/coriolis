@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -17,17 +11,14 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __MAUKA_CONFIGURATION__
-#define  __MAUKA_CONFIGURATION__
+#ifndef  MAUKA_CONFIGURATION_H
+#define  MAUKA_CONFIGURATION_H
 
 #include  <string>
-#include  <boost/function.hpp>
+#include  <functional>
 #include  "crlcore/CellGauge.h"
 
 namespace Hurricane {
@@ -50,7 +41,7 @@ namespace Mauka {
 
   class Configuration {
     public:
-      typedef boost::function< void(void) >  RefreshCb_t;
+      typedef std::function< void(void) >  RefreshCb_t;
     public:
     // Constructor & Destructor.
                                Configuration                 ( CellGauge* cg=NULL );
@@ -125,16 +116,14 @@ namespace Mauka {
                            Configuration::getRefreshCb                  () { return _refreshCb; }
 
   inline double  Configuration::_normPercentage ( double ratio, double min, double max ) {
-    if ( ratio < min ) return min;
-    if ( ratio > max ) return max;
+    if (ratio < min) return min;
+    if (ratio > max) return max;
     return ratio;
   }
 
 
-}  // End of Mauka namespace.
-
+}  // Mauka namespace.
 
 INSPECTOR_P_SUPPORT(Mauka::Configuration);
 
-
-#endif  // __MAUKA_CONFIGURATION__
+#endif  // MAUKA_CONFIGURATION_H

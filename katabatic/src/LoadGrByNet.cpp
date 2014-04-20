@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -436,6 +436,9 @@ namespace {
     Point  source;
     Point  target;
 
+    size_t anchorDepth = Session::getLayerDepth( anchor->getLayer() );
+    if (anchorDepth == 0) ++anchorDepth;
+
     getPositions( anchor, source, target );
 
     DbU::Unit width  = abs( target.getX() - source.getX() );
@@ -443,9 +446,9 @@ namespace {
 
     unsigned int flags = 0;
   // HARDCODED VALUE.
-    flags |= (width  < DbU::lambda(15.0))    ? HSmall   : 0;
-    flags |= (height < DbU::lambda(15.0))    ? VSmall   : 0;
-    flags |= ((width == 0) && (height == 0)) ? Punctual : 0;
+    flags |= (width  < 3*Session::getPitch(anchorDepth)) ? HSmall   : 0;
+    flags |= (height < 3*Session::getPitch(anchorDepth)) ? VSmall   : 0;
+    flags |= ((width == 0) && (height == 0))             ? Punctual : 0;
 
     return flags;
   }
@@ -957,7 +960,7 @@ namespace {
         }
 #endif
       // HARDCODED VALUE.
-        if ( (_topology & Global_Fixed) and (globalSegment->getLength() < DbU::lambda(100.0)) )
+        if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*DbU::lambda(50.0)) )
           _toFixSegments.push_back( globalSegment );
         
         if (_connexity.fields.globals < 2) {
@@ -1013,7 +1016,9 @@ namespace {
     Point        sourcePosition;
     Point        targetPosition;
     const Layer* rpLayer        = rp->getLayer();
-    unsigned int direction      = Session::getLayerDirection( rp->getLayer() );
+    size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
+    unsigned int direction      = Session::getDirection ( rpDepth );
+    DbU::Unit    viaSide        = Session::getWireWidth ( rpDepth );
 
     getPositions( rp, sourcePosition, targetPosition );
 
@@ -1023,26 +1028,27 @@ namespace {
     GCell* sourceGCell = Session::getKatabatic()->getGCellGrid()->getGCell( sourcePosition );
     GCell* targetGCell = Session::getKatabatic()->getGCellGrid()->getGCell( targetPosition );
 
-    if (rp->getLayer() == Session::getRoutingLayer(0)) {
+    if (rpDepth == 0) {
       rpLayer   = Session::getContactLayer(0);
       direction = KbHorizontal;
+      viaSide   = Session::getViaWidth( rpDepth );
     }
 
   // Non-M1 terminal or punctual M1 protections.
-    if ((rp->getLayer() != Session::getRoutingLayer(0)) or (sourcePosition == targetPosition)) {
+    if ((rpDepth != 0) or (sourcePosition == targetPosition)) {
       map<Component*,AutoSegment*>::iterator irp = __routingPadAutoSegments.find( rp );
       if (irp == __routingPadAutoSegments.end()) {
         AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
                                                                 , rp
                                                                 , rpLayer
                                                                 , sourcePosition
-                                                                , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                                , viaSide, viaSide
                                                                 );
         AutoContact* targetProtect = AutoContactTerminal::create( targetGCell
                                                                 , rp
                                                                 , rpLayer
                                                                 , targetPosition
-                                                                , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                                , viaSide, viaSide
                                                                 );
         sourceProtect->setFlags( CntFixed );
         targetProtect->setFlags( CntFixed );
@@ -1060,14 +1066,14 @@ namespace {
                                             , rp
                                             , rpLayer
                                             , sourcePosition
-                                            , DbU::lambda(1.0), DbU::lambda(1.0)
+                                            , viaSide, viaSide
                                             );
       if (flags & DoTargetContact)
         target = AutoContactTerminal::create( targetGCell
                                             , rp
                                             , rpLayer
                                             , targetPosition
-                                            , DbU::lambda(1.0), DbU::lambda(1.0)
+                                            , viaSide, viaSide
                                             );
     }
 
@@ -1076,7 +1082,7 @@ namespace {
                                                    , rp
                                                    , rpLayer
                                                    , rp->getCenter()
-                                                   , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                   , viaSide, viaSide
                                                    );
     }
 
@@ -1241,7 +1247,7 @@ namespace {
                                          , _routingPads[0]
                                          , Session::getContactLayer(3)
                                          , position
-                                         , DbU::lambda(1.0), DbU::lambda(1.0)
+                                         , Session::getViaWidth(3), Session::getViaWidth(3)
                                          );
     source->setFlags( CntFixed );
 
@@ -1485,17 +1491,17 @@ namespace {
         AutoSegment::create( rpContact, _northEastContact, KbVertical );
       }
     } else {
+    // All RoutingPad are M1.
       Component* southWestRp = _routingPads[0];
       ltrace(99) << "| Initial S-W Global RP: " << southWestRp << endl;
       for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
-        if (southWestRp->getBoundingBox().getHeight() >= 4*DbU::lambda(5.0)) break;
+        if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
         if (_routingPads[i]->getBoundingBox().getHeight() > southWestRp->getBoundingBox().getHeight()) {
           ltrace(99) << "| Better RP: " << southWestRp << endl;
           southWestRp = _routingPads[i];
         }
       }
 
-    // All RoutingPad are M1.
       if (_west and not _south) {
         _southWestContact = doRp_Access( _gcell, southWestRp, HAccess );
       } else if (not _west and _south) {
@@ -1514,7 +1520,7 @@ namespace {
       if (_routingPads.size() > 1) {
         unsigned int i=_routingPads.size()-2;
         do {
-          if (northEastRp->getBoundingBox().getHeight() >= 4*DbU::lambda(5.0)) break;
+          if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
           if (_routingPads[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
             ltrace(99) << "| Better RP: " << northEastRp << endl;
             northEastRp = _routingPads[i];
@@ -1602,7 +1608,7 @@ namespace {
 
     if (flags & HAccess) {
     // HARDCODED VALUE.
-      if (_routingPads[0]->getBoundingBox().getHeight() < DbU::lambda(15)) {
+      if (_routingPads[0]->getBoundingBox().getHeight() < 3*Session::getPitch(1)) {
         AutoContact* subContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
         AutoSegment::create( _southWestContact, subContact, KbVertical );
 

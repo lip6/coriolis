@@ -1,10 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2006-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
 //
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -12,11 +11,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./mauka/MaukaEngine.h"                         |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef __MAUKA_ENGINE_H
-#define __MAUKA_ENGINE_H
+#ifndef MAUKA_ENGINE_H
+#define MAUKA_ENGINE_H
 
 #include "hurricane/Instance.h"
 #include "crlcore/ToolEngine.h"
@@ -169,6 +168,6 @@ namespace Mauka {
   bool TestMaukaConstruction(Cell* cell, GCell* gcell);
 
 
-}  // Enf of Mauka namespace.
+}  // Mauka namespace.
 
-#endif  // __MAUKA_ENGINE_H
+#endif  // MAUKA_ENGINE_H

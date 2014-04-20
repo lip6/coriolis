@@ -17,7 +17,7 @@
 #ifndef  KITE_CONFIGURATION_H
 #define  KITE_CONFIGURATION_H
 
-#include <boost/function.hpp>
+#include <functional>
 #include "katabatic/Configuration.h"
 
 
@@ -39,66 +39,73 @@ namespace Kite {
 
   class Configuration : public Katabatic::Configuration {
     public:
-      typedef  boost::function< void(void) >  PostEventCb_t;
+      typedef  std::function< void(void) >  PostEventCb_t;
     public:
-      enum RipupTable  { BorderRipupLimit    =0
-                       , StrapRipupLimit     =1
-                       , LocalRipupLimit     =2
-                       , GlobalRipupLimit    =3
-                       , LongGlobalRipupLimit=4
-                       , RipupLimitsTableSize=5
+      enum RipupTable  { StrapRipupLimit     =0
+                       , LocalRipupLimit     =1
+                       , GlobalRipupLimit    =2
+                       , LongGlobalRipupLimit=3
+                       , RipupLimitsTableSize=4
                        };
       enum Constants   { MaxMetalDepth=20 };
     public:
     // Constructor & Destructor.
-      virtual Configuration*             clone                  () const;
-      virtual Configuration*             clone                  ( KiteEngine* kite ) const;
-                                         Configuration          ( Katabatic::Configuration* );
-                                        ~Configuration          ();
-    // Decorateds.                                              
-      virtual bool                       isGMetal               ( const Layer* ) const;
-      virtual bool                       isGContact             ( const Layer* ) const;
-      virtual size_t                     getDepth               () const;
-      virtual size_t                     getAllowedDepth        () const;
-      virtual size_t                     getLayerDepth          ( const Layer* ) const;
-      virtual RoutingGauge*              getRoutingGauge        () const;
-      virtual RoutingLayerGauge*         getLayerGauge          ( size_t depth ) const;
-      virtual const Layer*               getRoutingLayer        ( size_t depth ) const;
-      virtual Layer*                     getContactLayer        ( size_t depth ) const;
-      virtual DbU::Unit                  getExtensionCap        () const;
-      virtual float                      getSaturateRatio       () const;
-      virtual size_t                     getSaturateRp          () const;
-      virtual DbU::Unit                  getGlobalThreshold     () const;
-      virtual size_t                     getHEdgeCapacity       () const;
-      virtual size_t                     getVEdgeCapacity       () const;
-      virtual void                       setAllowedDepth        ( size_t );
-      virtual void                       setSaturateRatio       ( float );
-      virtual void                       setSaturateRp          ( size_t );
-      virtual void                       setGlobalThreshold     ( DbU::Unit );
-      virtual void                       print                  ( Cell* ) const;
-    // Methods.
-      inline  Katabatic::Configuration*  base                   ();
-      inline  PostEventCb_t&             getPostEventCb         ();
-      inline  unsigned long              getEventsLimit         () const;
-      inline  float                      getExpandStep          () const;
-      inline  unsigned int               getRipupCost           () const;
-              unsigned int               getRipupLimit          ( unsigned int type ) const;
-      inline  float                      getEdgeCapacityPercent () const;
-      inline  void                       setEventsLimit         ( unsigned long );
-      inline  void                       setExpandStep          ( float );
-      inline  void                       setRipupCost           ( unsigned int );
-              void                       setRipupLimit          ( unsigned int limit, unsigned int type );
-      inline  void                       setPostEventCb         ( PostEventCb_t );
-              void                       setEdgeCapacityPercent ( float );
-      virtual Record*                    _getRecord             () const;
-      virtual string                     _getString             () const;
-      virtual string                     _getTypeName           () const;
+      virtual Configuration*             clone                   () const;
+      virtual Configuration*             clone                   ( KiteEngine* kite ) const;
+                                         Configuration           ( Katabatic::Configuration* );
+                                        ~Configuration           ();
+    // Decorateds.                                               
+      virtual bool                       isGMetal                ( const Layer* ) const;
+      virtual bool                       isGContact              ( const Layer* ) const;
+      virtual size_t                     getDepth                () const;
+      virtual size_t                     getAllowedDepth         () const;
+      virtual size_t                     getLayerDepth           ( const Layer* ) const;
+      virtual RoutingGauge*              getRoutingGauge         () const;
+      virtual RoutingLayerGauge*         getLayerGauge           ( size_t depth ) const;
+      virtual const Layer*               getRoutingLayer         ( size_t depth ) const;
+      virtual Layer*                     getContactLayer         ( size_t depth ) const;
+      virtual DbU::Unit                  getPitch                ( size_t depth, unsigned int flags ) const;
+      virtual DbU::Unit                  getOffset               ( size_t depth ) const;
+      virtual DbU::Unit                  getWireWidth            ( size_t depth ) const;
+      virtual unsigned int               getDirection            ( size_t depth ) const;
+      virtual DbU::Unit                  getPitch                ( const Layer*, unsigned int flags ) const;
+      virtual DbU::Unit                  getOffset               ( const Layer* ) const;
+      virtual DbU::Unit                  getWireWidth            ( const Layer* ) const;
+      virtual unsigned int               getDirection            ( const Layer* ) const;
+      virtual DbU::Unit                  getExtensionCap         () const;
+      virtual float                      getSaturateRatio        () const;
+      virtual size_t                     getSaturateRp           () const;
+      virtual DbU::Unit                  getGlobalThreshold      () const;
+      virtual size_t                     getHEdgeCapacity        () const;
+      virtual size_t                     getVEdgeCapacity        () const;
+      virtual void                       setAllowedDepth         ( size_t );
+      virtual void                       setSaturateRatio        ( float );
+      virtual void                       setSaturateRp           ( size_t );
+      virtual void                       setGlobalThreshold      ( DbU::Unit );
+      virtual void                       print                   ( Cell* ) const;
+    // Methods.                                                  
+      inline  Katabatic::Configuration*  base                    ();
+      inline  PostEventCb_t&             getPostEventCb          ();
+      inline  unsigned long              getEventsLimit          () const;
+      inline  unsigned int               getRipupCost            () const;
+              unsigned int               getRipupLimit           ( unsigned int type ) const;
+      inline  float                      getHEdgeCapacityPercent () const;
+      inline  float                      getVEdgeCapacityPercent () const;
+      inline  void                       setEventsLimit          ( unsigned long );
+      inline  void                       setRipupCost            ( unsigned int );
+              void                       setRipupLimit           ( unsigned int limit, unsigned int type );
+      inline  void                       setPostEventCb          ( PostEventCb_t );
+              void                       setHEdgeCapacityPercent ( float );
+              void                       setVEdgeCapacityPercent ( float );
+      virtual Record*                    _getRecord              () const;
+      virtual string                     _getString              () const;
+      virtual string                     _getTypeName            () const;
     private:
     // Attributes.
              Katabatic::Configuration*   _base;
              PostEventCb_t               _postEventCb;
-             float                       _edgeCapacityPercent;
-             float                       _expandStep;
+             float                       _hEdgeCapacityPercent;
+             float                       _vEdgeCapacityPercent;
              unsigned int                _ripupLimits    [RipupLimitsTableSize];
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
@@ -109,16 +116,15 @@ namespace Kite {
 
 
 // Inline Functions.
-  inline Katabatic::Configuration*     Configuration::base                   () { return _base; }
-  inline Configuration::PostEventCb_t& Configuration::getPostEventCb         () { return _postEventCb; }
-  inline unsigned long                 Configuration::getEventsLimit         () const { return _eventsLimit; }
-  inline unsigned int                  Configuration::getRipupCost           () const { return _ripupCost; }
-  inline float                         Configuration::getExpandStep          () const { return _expandStep; }
-  inline float                         Configuration::getEdgeCapacityPercent () const { return _edgeCapacityPercent; }
-  inline void                          Configuration::setRipupCost           ( unsigned int cost ) { _ripupCost = cost; }
-  inline void                          Configuration::setExpandStep          ( float step ) { _expandStep = step; }
-  inline void                          Configuration::setPostEventCb         ( PostEventCb_t cb ) { _postEventCb = cb; }
-  inline void                          Configuration::setEventsLimit         ( unsigned long limit ) { _eventsLimit = limit; }
+  inline Katabatic::Configuration*     Configuration::base                    () { return _base; }
+  inline Configuration::PostEventCb_t& Configuration::getPostEventCb          () { return _postEventCb; }
+  inline unsigned long                 Configuration::getEventsLimit          () const { return _eventsLimit; }
+  inline unsigned int                  Configuration::getRipupCost            () const { return _ripupCost; }
+  inline float                         Configuration::getHEdgeCapacityPercent () const { return _hEdgeCapacityPercent; }
+  inline float                         Configuration::getVEdgeCapacityPercent () const { return _vEdgeCapacityPercent; }
+  inline void                          Configuration::setRipupCost            ( unsigned int cost ) { _ripupCost = cost; }
+  inline void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
+  inline void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
 
 
 

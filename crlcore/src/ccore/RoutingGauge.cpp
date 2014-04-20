@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,24 +11,19 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingGauge.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <climits>
-#include  <sstream>
-#include  <algorithm>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Layer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/DataBase.h"
-
-#include  "crlcore/XmlParser.h"
-#include  "crlcore/RoutingLayerGauge.h"
-#include  "crlcore/RoutingGauge.h"
+#include <climits>
+#include <sstream>
+#include <algorithm>
+#include "hurricane/Commons.h"
+#include "hurricane/ViaLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/DataBase.h"
+#include "crlcore/XmlParser.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/RoutingGauge.h"
 
 
 namespace {
@@ -53,6 +42,7 @@ namespace CRL {
 
 
   using Hurricane::DataBase;
+  using Hurricane::ViaLayer;
 
 
 // -------------------------------------------------------------------
@@ -60,10 +50,10 @@ namespace CRL {
 
 
   RoutingGauge::RoutingGauge ( const char* name )
-    : _name(name)
+    : _name       (name)
     , _layerGauges()
-    , _viaLayers()
-    , _technology(DataBase::getDB()->getTechnology())
+    , _viaLayers  ()
+    , _technology (DataBase::getDB()->getTechnology())
   { }
 
 
@@ -131,12 +121,36 @@ namespace CRL {
   }
 
 
+  unsigned int  RoutingGauge::getLayerType ( const Layer* layer ) const
+  {
+    RoutingLayerGauge* layerGauge = getLayerGauge(layer);
+    if ( !layerGauge ) return 0;
+
+    return layerGauge->getType();
+  }
+
+
   unsigned int  RoutingGauge::getLayerDirection ( const Layer* layer ) const
   {
     RoutingLayerGauge* layerGauge = getLayerGauge(layer);
     if ( !layerGauge ) return 0;
 
     return layerGauge->getDirection();
+  }
+
+
+  size_t  RoutingGauge::getViaDepth ( const Layer* layer ) const
+  {
+    const Layer* bottomLayer = layer;
+    const Layer* viaLayer    = dynamic_cast<const ViaLayer*>(layer);
+
+    if (viaLayer) bottomLayer = viaLayer->getBottom();
+
+    for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
+      if ( _layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask() )
+        return i;
+    }
+    return UINT_MAX;
   }
 
 
@@ -169,10 +183,6 @@ namespace CRL {
     if ( depth >= _viaLayers.size() ) return NULL;
     return _viaLayers[depth];
   }
-
-
-  unsigned int  RoutingGauge::getLayerDirection ( size_t depth ) const
-  { return getLayerGauge(depth)->getDirection(); }
 
 
   const vector<RoutingLayerGauge*>&  RoutingGauge::getLayerGauges () const

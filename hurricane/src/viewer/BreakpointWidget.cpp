@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,22 +11,18 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./BreakpointWidget.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QPointer>
-#include  <QApplication>
-#include  <QLabel>
-#include  <QPushButton>
-#include  <QSpinBox>
-#include  <QGridLayout>
-#include  <QFrame>
-
-#include  "hurricane/Breakpoint.h"
-#include  "hurricane/viewer/BreakpointWidget.h"
+#include <QPointer>
+#include <QApplication>
+#include <QLabel>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QGridLayout>
+#include <QFrame>
+#include "hurricane/Breakpoint.h"
+#include "hurricane/viewer/BreakpointWidget.h"
 
 
 namespace Hurricane {
@@ -45,9 +35,10 @@ namespace Hurricane {
     , _isFinished(false)
     , _eventLoop (NULL)
   {
-    setModal       ( false );
-    setWindowTitle ( "Breakpoint" );
-    setToolTip     ( "Crush the Mush to continue..." );
+    setModal         ( false );
+  //setWindowModality( Qt::WindowModal );
+    setWindowTitle   ( "Breakpoint" );
+    setToolTip       ( "Crush the Mush to continue..." );
 
     _message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>No Message Yet</b>" );
@@ -81,7 +72,13 @@ namespace Hurricane {
 
   int  BreakpointWidget::execNoModal ()
   {
-    if ( isVisible() ) return -1;
+    if (isVisible()) return -1;
+
+    // while (QApplication::hasPendingEvents()) {
+    //   cerr << "Flush events from the main event loop." << endl;
+    //   QApplication::processEvents();
+    // }
+    QApplication::flush();
 
     _isFinished = false;
     show ();
@@ -89,7 +86,7 @@ namespace Hurricane {
   // Snipet code from Qt's QDialog.
     _eventLoop = new QEventLoop ();
     QPointer<QDialog> guard = this;
-    (void)_eventLoop->exec(QEventLoop::DialogExec);
+    _eventLoop->exec( QEventLoop::DialogExec );
     _eventLoop = NULL;
 
     if (guard.isNull()) return QDialog::Rejected;

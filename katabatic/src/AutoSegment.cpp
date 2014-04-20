@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -311,6 +311,7 @@ namespace Katabatic {
   AutoSegment::AutoSegment ( Segment* segment )
     : _id             (segment->getId())
     , _flags          (SegCreated)
+    , _depth          (Session::getLayerDepth(segment->getLayer()))
     , _optimalMin     (0)
     , _sourcePosition (0)
     , _targetPosition (0)
@@ -1266,7 +1267,7 @@ namespace Katabatic {
     if ( isLocal()          and (not (flags & KbAllowLocal   )) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
-    if (depth >= Session::getConfiguration()->getAllowedDepth()) return false;
+    if (depth > Session::getConfiguration()->getAllowedDepth()) return false;
 
     vector<GCell*> gcells;
     getGCells( gcells );
@@ -1363,7 +1364,7 @@ namespace Katabatic {
     if ( isLayerChange() or isFixed() /*or isTerminal()*/ or isLocal() ) return false;
 
     size_t upDepth = Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2;
-    if ( upDepth >= Session::getConfiguration()->getAllowedDepth() ) return false;
+    if ( upDepth > Session::getConfiguration()->getAllowedDepth() ) return false;
 
     vector<GCell*> gcells;
     getGCells ( gcells );
@@ -1578,8 +1579,8 @@ namespace Katabatic {
     if (leftCandidate) {
       DbU::Unit axis;
     // Ugly: Hard-wired track spacing.
-      if (leftDogleg) axis = interval.getVMin() - DbU::lambda(5.0);
-      else            axis = interval.getVMax() + DbU::lambda(5.0);
+      if (leftDogleg) axis = interval.getVMin() - getPitch();
+      else            axis = interval.getVMax() + getPitch();
 
       ltrace(200) << "Break @" << DbU::getValueString(axis) << " " << leftCandidate << endl;
 
@@ -1616,7 +1617,9 @@ namespace Katabatic {
 
     if (doglegGCell->isUnderIoPad()) {
       cerr << Bug( "Attempt to make a dogleg in a GCell under a Pad\n"
+                   "      %s\n"
                    "      %s"
+                 , getString(this).c_str()
                  , getString(doglegGCell).c_str() ) << endl;
     }
 
@@ -1818,7 +1821,9 @@ namespace Katabatic {
                                    )
   {
     static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
     static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
+    static DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
 
     AutoSegment* segment;
     AutoContact* reference = source;
@@ -1853,7 +1858,7 @@ namespace Katabatic {
                                           , target->base()
                                           , horizontalLayer
                                           , reference->getY()
-                                          , DbU::lambda(2.0) ) );
+                                          , horizontalWidth ) );
     } else if (dir & KbVertical) {
       segment = create( source
                       , target
@@ -1861,7 +1866,7 @@ namespace Katabatic {
                                         , target->base()
                                         , verticalLayer
                                         , reference->getX()
-                                        , DbU::lambda(2.0)
+                                        , verticalWidth
                                         ) );
     } else
       throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );

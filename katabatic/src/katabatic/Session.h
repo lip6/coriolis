@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Session.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -24,7 +24,9 @@
 #include  <boost/function.hpp>
 #include  "hurricane/Commons.h"
 #include  "hurricane/DbU.h"
+#include  "crlcore/RoutingGauge.h"
 #include  "katabatic/Constants.h"
+#include  "katabatic/Configuration.h"
 
 namespace Hurricane {
   class Layer;
@@ -34,13 +36,8 @@ namespace Hurricane {
   class Segment;
 }
 
-namespace CRL {
-  class RoutingGauge;
-}
-
 
 namespace Katabatic {
-
 
   using std::cerr;
   using std::endl;
@@ -61,7 +58,6 @@ namespace Katabatic {
   using Hurricane::Segment;
   using CRL::RoutingGauge;
 
-  class Configuration;
   class AutoContact;
   class AutoSegment;
   class KatabaticEngine;
@@ -82,13 +78,27 @@ namespace Katabatic {
       static inline Technology*                 getTechnology         ();
       static inline KatabaticEngine*            getKatabatic          ();
       static inline const Configuration*        getConfiguration      ();
-      static inline RoutingGauge*               getRoutingGauge       ();
-      static        unsigned int                getLayerDirection     ( const Layer* );
       static        float                       getSaturateRatio      ();
       static        size_t                      getSaturateRp         ();
+      static inline size_t                      getAllowedDepth       ();
       static        DbU::Unit                   getExtensionCap       ();
-      static        const Layer*                getRoutingLayer       ( size_t );
-      static        const Layer*                getContactLayer       ( size_t );
+      static inline RoutingGauge*               getRoutingGauge       ();
+      static inline RoutingLayerGauge*          getLayerGauge         ( size_t depth );
+      static inline size_t                      getDepth              ();
+      static inline size_t                      getViaDepth           ( const Layer* layer );
+      static inline size_t                      getLayerDepth         ( const Layer* layer );
+      static inline const Layer*                getRoutingLayer       ( size_t );
+      static inline const Layer*                getContactLayer       ( size_t );
+      static        unsigned int                getDirection          ( size_t depth );
+      static inline DbU::Unit                   getPitch              ( size_t depth, unsigned int flags );
+      static inline DbU::Unit                   getOffset             ( size_t depth );
+      static inline DbU::Unit                   getWireWidth          ( size_t depth );
+      static inline DbU::Unit                   getViaWidth           ( size_t depth );
+      static inline unsigned int                getDirection          ( const Layer* );
+      static inline DbU::Unit                   getPitch              ( const Layer*, unsigned int flags );
+      static inline DbU::Unit                   getOffset             ( const Layer* );
+      static inline DbU::Unit                   getWireWidth          ( const Layer* );
+      static inline DbU::Unit                   getViaWidth           ( const Layer* );
       static inline size_t                      getSegmentStackSize   ();
       static inline size_t                      getContactStackSize   ();
       static inline const vector<AutoSegment*>& getInvalidateds       (); 
@@ -128,6 +138,7 @@ namespace Katabatic {
                     void                        _canonize             ();
                     void                        _revalidateTopology   ();
                     size_t                      _revalidate           ();
+                    DbU::Unit                   _getPitch             ( size_t depth, unsigned int flags ) const;
                     Record*                     _getRecord            () const;
                     string                      _getString            () const;
             inline  string                      _getTypeName          () const;
@@ -180,6 +191,25 @@ namespace Katabatic {
   inline void                        Session::invalidate           ( AutoSegment* autoSegment ) { return get("invalidate(AutoSegment*)")->_invalidate(autoSegment); }
   inline void                        Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
   inline void                        Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
+
+  inline DbU::Unit                   Session::getExtensionCap      () { return getConfiguration()->getExtensionCap(); }
+  inline size_t                      Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
+
+  inline RoutingLayerGauge*          Session::getLayerGauge        ( size_t depth )       { return getRoutingGauge()->getLayerGauge(depth); }
+  inline size_t                      Session::getDepth             ()                     { return getRoutingGauge()->getDepth(); }
+  inline size_t                      Session::getViaDepth          ( const Layer* layer ) { return getRoutingGauge()->getViaDepth(layer); }
+  inline size_t                      Session::getLayerDepth        ( const Layer* layer ) { return getRoutingGauge()->getLayerDepth(layer); }
+  inline const Layer*                Session::getRoutingLayer      ( size_t depth )       { return getRoutingGauge()->getRoutingLayer(depth); }
+  inline const Layer*                Session::getContactLayer      ( size_t depth )       { return getRoutingGauge()->getContactLayer(depth); }
+  inline DbU::Unit                   Session::getPitch             ( unsigned int depth, unsigned int flags=Configuration::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
+  inline DbU::Unit                   Session::getOffset            ( size_t depth )       { return getRoutingGauge()->getLayerOffset(depth); }
+  inline DbU::Unit                   Session::getWireWidth         ( size_t depth )       { return getRoutingGauge()->getLayerWireWidth(depth); }
+  inline DbU::Unit                   Session::getViaWidth          ( size_t depth )       { return getRoutingGauge()->getViaWidth(depth); }
+  inline DbU::Unit                   Session::getPitch             ( const Layer* layer, unsigned int flags=Configuration::NoFlags ) { return getPitch( getLayerDepth(layer), flags ); }
+  inline DbU::Unit                   Session::getOffset            ( const Layer* layer ) { return getOffset   ( getLayerDepth(layer) ); }
+  inline DbU::Unit                   Session::getWireWidth         ( const Layer* layer ) { return getWireWidth( getLayerDepth(layer) ); }
+  inline DbU::Unit                   Session::getViaWidth          ( const Layer* layer ) { return getViaWidth ( getViaDepth(layer) ); }
+  inline unsigned int                Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
 
   inline void                        Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
   inline void                        Session::_doglegReset         () { _doglegs.clear(); }

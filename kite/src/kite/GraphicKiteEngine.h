@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -19,6 +18,7 @@
 #ifndef  KITE_GRAPHIC_KITE_ENGINE_H
 #define  KITE_GRAPHIC_KITE_ENGINE_H
 
+#include <functional>
 #include <QObject>
 
 namespace Hurricane {
@@ -51,8 +51,11 @@ namespace Kite {
       Q_OBJECT;
 
     public:
+      enum Flags { NoFlags=0x0000, CreateEngine=0x0001 };
+
+    public:
               KiteEngine*        createEngine       ();
-              KiteEngine*        getForFramework    ();
+              KiteEngine*        getForFramework    ( unsigned int flags );
       static  void               initKatabaticAc    ( CellWidget* );
       static  void               drawKatabaticAc    ( CellWidget*
                                                     , const Go*
@@ -88,12 +91,19 @@ namespace Kite {
       static  GraphicKiteEngine* _singleton;
               CellViewer*        _viewer;
     protected:
-                                 GraphicKiteEngine  ();
-      virtual                   ~GraphicKiteEngine  ();
+                                 GraphicKiteEngine     ();
+      virtual                   ~GraphicKiteEngine     ();
+              void               _loadGlobalSolution   ();
+              void               _saveGlobalSolution   ();
+              void               _globalRoute          ();
+              void               _loadGlobalRouting    ();
+              void               _balanceGlobalDensity ();
+              void               _runNegociate         ();
+              void               _finalize             ();
+              void               _save                 ();
   };
 
 
 }  // Kite namespace.
-
 
 #endif  // KITE_GRAPHIC_KITE_ENGINE_H

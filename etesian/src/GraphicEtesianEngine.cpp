@@ -32,6 +32,7 @@
 #include <hurricane/viewer/CellWidget.h>
 #include <hurricane/viewer/CellViewer.h>
 #include <hurricane/viewer/ControllerWidget.h>
+#include <hurricane/viewer/ExceptionWidget.h>
 #include <crlcore/Utilities.h>
 #include <crlcore/AllianceFramework.h>
 #include <etesian/GraphicEtesianEngine.h>
@@ -50,6 +51,7 @@ namespace Etesian {
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
   using Hurricane::ControllerWidget;
+  using Hurricane::ExceptionWidget;
   using CRL::Catalog;
   using CRL::AllianceFramework;
 
@@ -73,39 +75,45 @@ namespace Etesian {
   }
 
 
-  EtesianEngine* GraphicEtesianEngine::getForFramework ()
+  EtesianEngine* GraphicEtesianEngine::getForFramework ( unsigned int flags )
   {
   // Currently, only one framework is avalaible: Alliance.
 
     EtesianEngine* etesian = EtesianEngine::get( getCell() );
     if (etesian) return etesian;
 
-    etesian = createEngine();
-    
-    if (not etesian) 
-      throw Error( "Failed to create Etesian engine on %s.", getString(getCell()).c_str() );
+    if (flags & CreateEngine) {
+      etesian = createEngine();
+      if (not etesian) 
+        throw Error( "Failed to create Etesian engine on %s.", getString(getCell()).c_str() );
+    } else {
+      throw Error( "EtesianEngine not created yet, out of sequence action." );
+    }
 
     return etesian;
   }
 
 
+  void  GraphicEtesianEngine::_resetPlacement ()
+  {
+    _viewer->clearToolInterrupt();
+
+    EtesianEngine* etesian = getForFramework( CreateEngine );
+    etesian->resetPlacement();
+  }
+
+
+  void  GraphicEtesianEngine::_place ()
+  {
+    EtesianEngine* etesian = getForFramework( CreateEngine );
+    etesian->place();
+  }
+
+
   void  GraphicEtesianEngine::place ()
   {
-    EtesianEngine* etesian = EtesianEngine::get( getCell() );
-    if (not etesian) {
-      etesian = createEngine();
-    //throw Error( "EtesianEngine not created yet, run the global router first." );
-    } 
-  //if (cmess1.enabled()) etesian->printConfiguration();
-
-    emit cellPreModificated();
-    _viewer->clearToolInterrupt();
-    etesian->resetPlacement();
-    emit cellPostModificated();
-
-    emit cellPostModificated();
-    etesian->place();
-    emit cellPostModificated();
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicEtesianEngine::_resetPlacement,this) );
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicEtesianEngine::_place         ,this) );
   }
 
 
@@ -160,9 +168,6 @@ namespace Etesian {
 
       connect( placeAction        , SIGNAL(triggered()), this, SLOT(place             ()) );
     }
-
-    connect( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
-    connect( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
   }
 
 

@@ -326,6 +326,7 @@ namespace Cfg {
         ;
     }
 
+    def("hasParameter"      , hasParameter       );
     def("getParamString"    , getParamString1    , return_value_policy<reference_existing_object>());
     def("getParamString"    , getParamString2    , return_value_policy<reference_existing_object>());
     def("getParamBool"      , getParamBool1      , return_value_policy<reference_existing_object>());

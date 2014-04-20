@@ -1,47 +1,36 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./NetlistWidget.cpp"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QFontMetrics>
-#include  <QLabel>
-#include  <QLineEdit>
-#include  <QHeaderView>
-#include  <QKeyEvent>
-#include  <QGroupBox>
-#include  <QVBoxLayout>
-#include  <QAction>
-#include  <QModelIndex>
-
+#include <QFontMetrics>
+#include <QLabel>
+#include <QLineEdit>
+#include <QHeaderView>
+#include <QKeyEvent>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QAction>
+#include <QModelIndex>
 #include "hurricane/Commons.h"
 #include "hurricane/Net.h"
-
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/NetlistModel.h"
 #include "hurricane/viewer/NetlistWidget.h"
 
 
 namespace {
-
 
   using namespace Hurricane;
 

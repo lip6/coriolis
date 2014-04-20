@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +27,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Error.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_ERROR__
-#define  __HURRICANE_ERROR__
+#ifndef  HURRICANE_ERROR_H
+#define  HURRICANE_ERROR_H
 
 #include  "hurricane/Exception.h"
 #include  "hurricane/Backtrace.h"
@@ -77,7 +69,7 @@ namespace Hurricane {
   inline  string                Error::htmlWhere () const { return _backtrace.htmlWhere(); }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 GETSTRING_POINTER_SUPPORT(Hurricane::Error);
@@ -86,4 +78,4 @@ IOSTREAM_POINTER_SUPPORT(Hurricane::Error);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Error);
 
 
-#endif // __HURRICANE_ERROR__
+#endif // HURRICANE_ERROR_H

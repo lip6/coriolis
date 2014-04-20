@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -16,8 +15,11 @@
 
 
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/viewer/CellViewer.h"
+#include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/Cell.h"
 #include "kite/PyKiteEngine.h"
+#include <functional>
 
 # undef   ACCESS_OBJECT
 # undef   ACCESS_CLASS
@@ -36,6 +38,7 @@ namespace  Kite {
   using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::ExceptionWidget;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
@@ -51,6 +54,22 @@ namespace  Kite {
 extern "C" {
 
 #if defined(__PYTHON_MODULE__)
+
+
+#define DirectVoidToolMethod(SELF_TYPE, SELF_OBJECT, FUNC_NAME)         \
+  static PyObject* Py##SELF_TYPE##_##FUNC_NAME(Py##SELF_TYPE* self)     \
+  {                                                                     \
+      trace << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;             \
+      HTRY                                                              \
+      METHOD_HEAD(#SELF_TYPE "." #FUNC_NAME "()")                       \
+      if (SELF_OBJECT->getViewer()) {                                   \
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::FUNC_NAME,SELF_OBJECT) ); \
+      } else {                                                          \
+        SELF_OBJECT->FUNC_NAME();                                       \
+      }                                                                 \
+      HCATCH                                                            \
+      Py_RETURN_NONE;                                                   \
+  }
 
 
 // +=================================================================+
@@ -109,7 +128,11 @@ extern "C" {
     METHOD_HEAD("KiteEngine.runGlobalRouter()")
     unsigned int flags = 0;
     if (PyArg_ParseTuple(args,"I:KiteEngine.runGlobalRouter", &flags)) {
-      kite->runGlobalRouter(flags);
+      if (kite->getViewer()) {
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runGlobalRouter,kite,flags) );
+      } else {
+        kite->runGlobalRouter(flags);
+      }
     } else {
       PyErr_SetString(ConstructorError, "KiteEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
       return NULL;
@@ -153,7 +176,11 @@ extern "C" {
         Py_DECREF(iterator);
       }
 
-      kite->loadGlobalRouting(flags,*routingNets);
+      if (kite->getViewer()) {
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::loadGlobalRouting,kite,flags,*routingNets) );
+      } else {
+        kite->loadGlobalRouting(flags,*routingNets);
+      }
     } else {
       PyErr_SetString(ConstructorError, "KiteEngine.loadGlobalRouting(): Invalid number/bad type of parameter.");
       return NULL;
@@ -172,7 +199,12 @@ extern "C" {
     METHOD_HEAD("KiteEngine.layerAssign()")
     unsigned int flags = 0;
     if (PyArg_ParseTuple(args,"I:KiteEngine.layerAssign", &flags)) {
-      kite->layerAssign(flags);
+
+      if (kite->getViewer()) {
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::layerAssign,kite,flags) );
+      } else {
+        kite->layerAssign(flags);
+      }
     } else {
       PyErr_SetString(ConstructorError, "KiteEngine.layerAssign(): Invalid number/bad type of parameter.");
       return NULL;
@@ -183,11 +215,25 @@ extern "C" {
   }
 
 
+  static PyObject* PyKiteEngine_runNegociate ( PyKiteEngine* self )
+  {
+    trace << "PyKiteEngine_runNegociate()" << endl;
+    HTRY
+    METHOD_HEAD("KiteEngine.runNegociate()")
+    if (kite->getViewer()) {
+      ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,0) );
+    } else {
+      kite->runNegociate();
+    }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Accessors (Attributes).
-  DirectVoidMethod(KiteEngine,kite,runNegociate)
-  DirectVoidMethod(KiteEngine,kite,printConfiguration)
-  DirectVoidMethod(KiteEngine,kite,saveGlobalSolution)
-  DirectVoidMethod(KiteEngine,kite,finalizeLayout)
+  DirectVoidToolMethod(KiteEngine,kite,printConfiguration)
+  DirectVoidToolMethod(KiteEngine,kite,saveGlobalSolution)
+  DirectVoidToolMethod(KiteEngine,kite,finalizeLayout)
   DirectVoidMethod(KiteEngine,kite,dumpMeasures)
   DirectGetBoolAttribute(PyKiteEngine_getToolSuccess,getToolSuccess,PyKiteEngine,KiteEngine)
 

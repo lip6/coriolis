@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -24,6 +24,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Plug.h"
@@ -51,6 +52,7 @@ namespace {
   using Hurricane::Interval;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
   using Hurricane::Instance;
   using Hurricane::Plug;
@@ -70,6 +72,27 @@ namespace {
 
 
 // -------------------------------------------------------------------
+// Local Functions.
+
+  void  destroyRing ( Net* net )
+  {
+    forEach ( RoutingPad*, irp, net->getRoutingPads() ) {
+      bool          allMasters = true;
+      vector<Hook*> ring;
+      forEach ( Hook*, ihook, irp->getBodyHook()->getHooks() ) {
+        if (not ihook->isMaster()) { allMasters = false; break; }
+        ring.push_back( *ihook );
+      }
+      if (allMasters) {
+        for ( auto ihook : ring ) {
+          ihook->_setNextHook( ihook );
+        }
+      }
+    }
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "::GlobalNetTable".
 
   class GlobalNetTable {
@@ -82,9 +105,11 @@ namespace {
       inline Net*  getVssi        () const;
       inline Net*  getCk          () const;
       inline Net*  getCki         () const;
-      inline Net*  getCkc         () const;
+      inline Net*  getCko         () const;
       inline Net*  getBlockage    () const;
       inline void  setBlockage    ( Net* );
+    private:
+             bool  guessGlobalNet ( const Name&, Net* );
     private:
       Name  _vddeName;
       Name  _vddiName;
@@ -92,14 +117,14 @@ namespace {
       Name  _vssiName;
       Name  _ckName;
       Name  _ckiName;
-      Name  _ckcName;
+      Name  _ckoName;
       Net*  _vdde;
       Net*  _vddi;
       Net*  _vsse;
       Net*  _vssi;
       Net*  _ck;    // Clock net on the (external) pad.
       Net*  _cki;   // Clock net in the pad ring.
-      Net*  _ckc;   // Clock net of the core (design).
+      Net*  _cko;   // Clock net of the core (design).
       Net*  _blockage;
   };
 
@@ -110,7 +135,7 @@ namespace {
   inline Net*  GlobalNetTable::getVssi     () const { return _vssi; }
   inline Net*  GlobalNetTable::getCk       () const { return _ck; }
   inline Net*  GlobalNetTable::getCki      () const { return _cki; }
-  inline Net*  GlobalNetTable::getCkc      () const { return _ckc; }
+  inline Net*  GlobalNetTable::getCko      () const { return _cko; }
   inline Net*  GlobalNetTable::getBlockage () const { return _blockage; }
   inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
@@ -119,16 +144,16 @@ namespace {
     , _vddiName("vddi")
     , _vsseName("vsse")
     , _vssiName("vssi")
-    , _ckName  ("ck")
-    , _ckiName ("cki")
-    , _ckcName ("ckc")
+    , _ckName  ("pad" )
+    , _ckiName ("ck"  )
+    , _ckoName ("cko" )
     , _vdde    (NULL)
     , _vddi    (NULL)
     , _vsse    (NULL)
     , _vssi    (NULL)
     , _ck      (NULL)
     , _cki     (NULL)
-    , _ckc     (NULL)
+    , _cko     (NULL)
     , _blockage(NULL)
   {
     if ( topCell == NULL ) return;
@@ -137,77 +162,125 @@ namespace {
 
     bool hasPad = false;
     forEach ( Instance*, iinstance, topCell->getInstances() ) {
-      if ( af->isPad(iinstance->getMasterCell()) ) {
-        cmess1 << "  o  Design has pads, assuming complete chip top structure." << endl;
-        hasPad = true;
-        break;
-      }
-    }
-
-    forEach ( Net*, inet, topCell->getNets() ) {
-      Net::Type netType = inet->getType();
-      if (   (netType != Net::Type::POWER )
-         and (netType != Net::Type::GROUND)
-         and (netType != Net::Type::CLOCK ) ) continue;
-      if ( not inet->isGlobal() ) {
-        cerr << Warning("Non global supply/clock net <%s>.",getString(inet->getName()).c_str()) << endl;
-      }
-
-      if      ( hasPad and (inet->getName() == _vddeName) ) { _vdde = *inet; continue; }
-      else if ( hasPad and (inet->getName() == _vsseName) ) { _vsse = *inet; continue; }
-      else if ( hasPad and (inet->getName() == _ckName  ) ) { _ck   = *inet; continue; }
-      else if ( hasPad and (inet->getName() == _ckiName ) ) { _cki  = *inet; continue; }
-
-      if ( inet->isPower() ) {
-        if ( _vddi == NULL ) {
-          cmess1 << "     - Using <" << inet->getName() << "> as core power net." << endl;
-          _vddi = *inet;
-        } else {
-          cerr << Error("More than one power net in designs is not supported yet.\n"
-                        "        (<%s> and <%s>)"
-                       ,getString(_vddi->getName()).c_str()
-                       ,getString(inet->getName()).c_str()
-                       ) << endl;
+      if (af->isPad(iinstance->getMasterCell())) {
+        if (not hasPad) {
+          cmess1 << "  o  Design has pads, assuming complete chip top structure." << endl;
+          hasPad = true;
         }
-      }
 
-      if ( inet->isGround() ) {
-        if ( _vssi == NULL ) {
-          cmess1 << "     - Using <" << inet->getName() << "> as core ground net." << endl;
-          _vssi = *inet;
-        } else {
-          cerr << Error("More than one ground net in designs is not supported yet.\n"
-                        "        (<%s> and <%s>)"
-                       ,getString(_vssi->getName()).c_str()
-                       ,getString(inet->getName()).c_str()
-                       ) << endl;
+        if (iinstance->getMasterCell()->getName() == Name("pvddeck_px")) {
+          cmess1 << "     o  Reference power pad: " << iinstance->getName()
+                 << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
+
+        // Guessing the power, ground and clock nets from *this* pad connexions.
+          forEach ( Plug*, iplug, iinstance->getPlugs() ) {
+            Net*      masterNet = iplug->getMasterNet();
+            Net::Type netType   = masterNet->getType();
+            if (   (netType != Net::Type::POWER )
+               and (netType != Net::Type::GROUND)
+               and (netType != Net::Type::CLOCK ) ) continue;
+
+            Net* net = iplug->getNet();
+            if (not net) {
+              net = topCell->getNet( masterNet->getName() );
+              if (not net) {
+                cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
+                continue;
+              }
+            }
+
+            guessGlobalNet( masterNet->getName(), net );
+          }
         }
-      }
 
-      if ( inet->isClock() ) {
-        if ( _ckc == NULL ) {
-          cmess1 << "     - Using <" << inet->getName() << "> as core clock net." << endl;
-          _ckc = *inet;
-        } else {
-          cerr << Error("More than one clock net in designs is not supported yet.\n"
-                        "        (<%s> and <%s>)"
-                       ,getString(_ckc->getName()).c_str()
-                       ,getString(inet->getName()).c_str()
-                       ) << endl;
+        if (iinstance->getMasterCell()->getName() == Name("pck_px")) {
+          cmess1 << "     o  Reference clock pad: " << iinstance->getName()
+                 << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
+
+        // Guessing external clock net *only* from *this* pad connexions.
+          forEach ( Plug*, iplug, iinstance->getPlugs() ) {
+            Net* masterNet = iplug->getMasterNet();
+            Net* net       = iplug->getNet();
+            if (not net) {
+              net = topCell->getNet( masterNet->getName() );
+              if (not net) {
+                cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
+                continue;
+              }
+            }
+
+            if (masterNet->getName() == _ckName) {
+              cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
+              _ck = net;
+            }
+          }
         }
       }
     }
 
-    if ( hasPad ) {
-      if ( _vdde == NULL ) cerr << Error("Missing (pad) <vdde> net at chip level." ) << endl;
-      if ( _vsse == NULL ) cerr << Error("Missing (pad) <vsse> net at chip level." ) << endl;
-      if ( _ck   == NULL ) cerr << Warning("No (pad) <ck> net at chip level." ) << endl;
-      if ( _cki  == NULL ) cerr << Warning("No (pad) <cki> net at chip level." ) << endl;
+    if (hasPad) {
+      if (_vdde == NULL) cerr << Error("Missing <vdde> net (for pads) at chip level." ) << endl;
+      else destroyRing( _vdde );
+      if (_vsse == NULL) cerr << Error("Missing <vsse> net (for pads) at chip level." ) << endl;
+      else destroyRing( _vsse );
+      if (_ck   == NULL) cerr << Warning("No <ck> net at (for pads) chip level." ) << endl;
+      if (_cki  == NULL) cerr << Warning("No <cki> net at (for pads) chip level." ) << endl;
+      else destroyRing( _cki );
     }
 
-    if ( _vddi == NULL ) cerr << Error("Missing <vddi>/<vdd> net at top level." ) << endl;
-    if ( _vssi == NULL ) cerr << Error("Missing <vssi>/<vss> net at top level." ) << endl;
-    if ( _ckc  == NULL ) cparanoid << Warning("No <ck> net at top level." ) << endl;
+    if (_vddi == NULL) cerr << Error("Missing <vddi>/<vdd> net (for pads) at top level." ) << endl;
+    else destroyRing( _vddi );
+    if (_vssi == NULL) cerr << Error("Missing <vssi>/<vss> net (for pads) at top level." ) << endl;
+    else destroyRing( _vssi );
+    if (_cko  == NULL) cparanoid << Warning("No <ck> net at top level." ) << endl;
+  }
+
+
+  bool  GlobalNetTable::guessGlobalNet ( const Name& name, Net* net )
+  {
+    if (name == _vddeName) {
+      cmess1 << "        - Using <" << net->getName() << "> as corona (external:vdde) power net." << endl;
+      _vdde = net;
+      return true;
+    }
+
+    if (name == _vddiName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vddi) power net." << endl;
+      _vddi = net;
+      return true;
+    }
+
+    if (name == _vsseName) {
+      cmess1 << "        - Using <" << net->getName() << "> as corona (external:vsse) ground net." << endl;
+      _vsse = net;
+      return true;
+    }
+
+    if (name == _vssiName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vssi) ground net." << endl;
+      _vssi = net;
+      return true;
+    }
+
+    if (name == _ckiName) {
+      cmess1 << "        - Using <" << net->getName() << "> as corona (external:cki) clock net." << endl;
+      _cki = net;
+      return true;
+    }
+
+    if (name == _ckoName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:cko) clock net." << endl;
+      _cko = net;
+      return true;
+    }
+
+    if (name == _ckName) {
+      cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
+      _ck = net;
+      return true;
+    }
+
+    return false;
   }
 
 
@@ -247,7 +320,7 @@ namespace {
 
     if ( upNet->getName() == _ckName   ) return _ck;
     if ( upNet->getName() == _ckiName  ) return _cki;
-    if ( upNet->getName() == _ckcName  ) return _ckc;
+    if ( upNet->getName() == _ckoName  ) return _cko;
 
     return NULL;
   }
@@ -860,6 +933,8 @@ namespace {
     setArea       ( kite->getCell()->getBoundingBox() );
     setBasicLayer ( NULL );
     setFilter     ( Query::DoTerminalCells|Query::DoComponents );
+
+    cmess1 << "  o  Building power rails." << endl;
   }
 
 
@@ -1043,8 +1118,6 @@ namespace Kite {
 
   void  KiteEngine::buildPowerRails ()
   {
-    cmess1 << "  o  Building power rails." << endl;
-
     if (not _blockageNet) {
       _blockageNet = getCell()->getNet("blockagenet");
       if (not _blockageNet)

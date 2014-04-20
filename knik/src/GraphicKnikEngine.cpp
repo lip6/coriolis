@@ -1,31 +1,23 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
-// |               K n i k - Global Router                           |
+// |        K n i k  -  G l o  b a l   R o u t e r                   |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./GraphicKnikEngine.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :       "./GraphicKnikEngine.cpp"                  |
+// +-----------------------------------------------------------------+
 
 
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
+#include <hurricane/DebugSession.h>
 #include <hurricane/Warning.h>
 #include <hurricane/Go.h>
 #include <hurricane/Cell.h>
@@ -184,11 +176,11 @@ namespace Knik {
   {
     Cell* cell = getCell ();
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     cell->flattenNets ( Cell::BuildRings );
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
   }
 
 
@@ -197,11 +189,11 @@ namespace Knik {
     KnikEngine* knik = createEngine ( BuildSolution );
     if ( !knik ) return;
 
-    emit cellPreModificated ();
+  //emit cellPreModificated ();
 
     knik->run ();
 
-    emit cellPostModificated ();
+  //emit cellPostModificated ();
   }
 
 
@@ -210,11 +202,11 @@ namespace Knik {
     KnikEngine* knik = createEngine ( BuildSolution );
     if ( !knik ) return;
 
-    emit cellPreModificated ();
+  //emit cellPreModificated ();
 
     knik->Route ();
 
-    emit cellPostModificated ();
+  //emit cellPostModificated ();
   }
 
 
@@ -222,7 +214,7 @@ namespace Knik {
   {
     Cell* cell = getCell ();
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     bool        done = false;
     KnikEngine* knik = KnikEngine::get ( cell );
@@ -230,7 +222,7 @@ namespace Knik {
       done = knik->analyseRouting();
     }
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
     return done;
   }
 
@@ -239,12 +231,12 @@ namespace Knik {
   {
     Cell* cell = getCell ();
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     KnikEngine* knik = KnikEngine::get ( cell );
     if ( knik ) knik->unrouteOvSegments();
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
   }
 
 
@@ -252,12 +244,12 @@ namespace Knik {
   {
     Cell* cell = getCell ();
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     KnikEngine* knik = KnikEngine::get ( cell );
     if ( knik ) knik->reroute();
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
   }
 
 
@@ -265,12 +257,12 @@ namespace Knik {
   {
     Cell* cell = getCell ();
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     KnikEngine* knik = KnikEngine::get ( cell );
     if ( knik ) knik->saveSolution();
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
   }
 
 
@@ -279,11 +271,11 @@ namespace Knik {
     KnikEngine* knik = createEngine ( LoadSolution );
     if ( !knik ) return;
 
-    emit cellPreModificated();
+  //emit cellPreModificated();
 
     knik->loadSolution();
 
-    emit cellPostModificated();
+  //emit cellPostModificated();
   }
 
 
@@ -413,9 +405,6 @@ namespace Knik {
       connect ( gLoadAction, SIGNAL(triggered()), this, SLOT(loadSolution()) );
     }
     // fin du sous menu
-
-    connect ( this, SIGNAL(cellPreModificated ()), _viewer->getCellWidget(), SLOT(cellPreModificate ()) );
-    connect ( this, SIGNAL(cellPostModificated()), _viewer->getCellWidget(), SLOT(cellPostModificate()) );
   }
 
 

@@ -3,6 +3,9 @@
 *.pyc
 *.log
 *.bak
+
+TAGS
+
 man/
 rtf/
 html/

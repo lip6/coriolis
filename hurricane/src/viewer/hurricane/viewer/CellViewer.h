@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,16 +14,14 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_CELL_VIEWER__
-#define  __HURRICANE_CELL_VIEWER__
+#ifndef  HURRICANE_CELL_VIEWER_H
+#define  HURRICANE_CELL_VIEWER_H
 
-
-#include   <list>
-
+#include <list>
+#include <functional>
 using namespace std;
 
-#include  <QMainWindow>
-
+#include <QMainWindow>
 class QEvent;
 class QKeyEvent;
 class QAction;
@@ -32,9 +29,9 @@ class QMenu;
 class QPrinter;
 
 #include  "hurricane/Commons.h"
+#include  "hurricane/Observer.h"
 #include  "hurricane/Name.h"
 #include  "hurricane/Occurrence.h"
-
 #include  "hurricane/viewer/MoveCommand.h"
 #include  "hurricane/viewer/ZoomCommand.h"
 #include  "hurricane/viewer/RulerCommand.h"
@@ -52,13 +49,35 @@ namespace Hurricane {
   class MousePositionWidget;
   class ControllerWidget;
   class ScriptWidget;
+  class CellViewer;
 
+
+// -------------------------------------------------------------------
+// Class  :  "CellObserver".
+
+  class CellObserver : public Observer<CellViewer> {
+    public:
+      inline        CellObserver ( CellViewer* );
+      virtual void  notify       ( unsigned int flags );
+    private:
+                    CellObserver ( const CellObserver& );
+  };
+
+
+  inline  CellObserver::CellObserver ( CellViewer* owner )
+    : Observer<CellViewer>(owner)
+  { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CellViewer".
 
   class CellViewer : public QMainWindow {
       Q_OBJECT;
                                    
     public:                        
-      enum  { CellHistorySize = 10 };
+      enum       { CellHistorySize = 10 };
+      enum  Flag { InCellChange = 0x0001 };
     public:
                                    CellViewer                ( QWidget* parent=NULL );
       virtual                     ~CellViewer                ();
@@ -66,6 +85,7 @@ namespace Hurricane {
               QMenu*               createDebugMenu           ();
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
+      inline  CellObserver*        getCellObserver           ();
               Cell*                getCell                   () const;
       virtual void                 setCell                   ( Cell* );
               void                 renameCell                ( const char* );
@@ -78,6 +98,7 @@ namespace Hurricane {
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
       inline  void                 setLayerVisible           ( const Name& layer, bool visible );
+              void                 _runScript                ();
       virtual std::string          _getString                () const;
     public slots:                  
               void                 doGoto                    ();
@@ -92,10 +113,14 @@ namespace Hurricane {
               void                 clearToolInterrupt        ();
               void                 runScript                 ();
             //void                 runStratusScript          ();
+      inline  void                 emitCellAboutToChange     ();
+      inline  void                 emitCellChanged           ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
               void                 redrawCellWidget          ();
+              void                 cellPreModificated        ();
+              void                 cellPostModificated       ();
     protected:                     
               void                 createActions             ();
               void                 createMenus               ();
@@ -104,6 +129,7 @@ namespace Hurricane {
               void                 refreshHistory            ();
 
     protected:                     
+      CellObserver             _cellObserver;
       QString                  _applicationName;
       QAction*                 _toolInterruptAction;
       QAction*                 _openAction;
@@ -144,18 +170,22 @@ namespace Hurricane {
                                _cellHistory;
       bool                     _firstShow;
       bool                     _toolInterrupt;
+      unsigned int             _flags;
       UpdateState              _updateState;
 
   };
 
 
 // Inline Functions.
-  inline bool              CellViewer::isToolInterrupted   () const { return _toolInterrupt; }
-  inline CellWidget*       CellViewer::getCellWidget       () { return _cellWidget; }
-  inline const CellWidget* CellViewer::getCellWidget       () const { return _cellWidget; }
-  inline ControllerWidget* CellViewer::getControllerWidget () { return _controller; }
-  inline void              CellViewer::setApplicationName  ( const QString& name ) { _applicationName = name; }
-  inline void              CellViewer::setLayerVisible     ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
+  inline bool              CellViewer::isToolInterrupted     () const { return _toolInterrupt; }
+  inline CellObserver*     CellViewer::getCellObserver       () { return &_cellObserver; }
+  inline CellWidget*       CellViewer::getCellWidget         () { return _cellWidget; }
+  inline const CellWidget* CellViewer::getCellWidget         () const { return _cellWidget; }
+  inline ControllerWidget* CellViewer::getControllerWidget   () { return _controller; }
+  inline void              CellViewer::setApplicationName    ( const QString& name ) { _applicationName = name; }
+  inline void              CellViewer::setLayerVisible       ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
+  inline void              CellViewer::emitCellAboutToChange () { _flags |=  InCellChange; emit cellPreModificated(); }
+  inline void              CellViewer::emitCellChanged       () { _flags &= ~InCellChange; emit cellPostModificated(); }
 
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }

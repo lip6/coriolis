@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -15,24 +14,24 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <unistd.h>
-#include  <csignal>
-#include  <memory>
-#include  <QCloseEvent>
-#include  <QLabel>
-#include  <QPushButton>
-#include  <QCheckBox>
-#include  <QTextEdit>
-#include  <QScrollArea>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-#include  <QFrame>
-#include  <QFont>
-#include  <QFontMetrics>
-#include  "hurricane/Error.h"
-#include  "hurricane/Exception.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/ExceptionWidget.h"
+#include <unistd.h>
+#include <csignal>
+#include <memory>
+#include <QCloseEvent>
+#include <QLabel>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QTextEdit>
+#include <QScrollArea>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QFont>
+#include <QFontMetrics>
+#include "hurricane/Error.h"
+#include "hurricane/Exception.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/ExceptionWidget.h"
 
 
 namespace Hurricane {
@@ -62,6 +61,30 @@ namespace Hurricane {
 
     if ( ew->exec() == QDialog::Rejected )
       kill ( getpid(), SIGSEGV );
+  }
+
+
+  void  ExceptionWidget::catchAllWrapper ( std::function< void() > method )
+  {
+    try {
+      method();
+    }
+    catch ( Error& e ) {
+      ExceptionWidget::run( e );
+    }
+    catch ( Exception& e ) {
+      ExceptionWidget::run( e );
+    }
+    catch ( std::exception& e ) {
+      ExceptionWidget::run( e );
+    }
+    catch ( ... ) {
+      static const char* message =
+        "&nbsp;&nbsp;Unmanaged exception, neither a <b>Hurricane::Error</b><br>"
+        "nor a <b>std::exception</b>."; 
+
+      ExceptionWidget::run( message );
+    }
   }
 
 
