@@ -300,8 +300,11 @@ namespace Etesian {
     getCell()->flattenNets( Cell::BuildRings );
 
   // Coloquinte circuit description data-structures.
+    size_t  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
+    vector<Transformation>  idsToTransf ( instancesNb );
+
     _circuit = new Coloquinte::circuit();
-    _circuit->cells    .resize( getCell()->getLeafInstanceOccurrences().getSize() );
+    _circuit->cells    .resize( instancesNb );
     _circuit->hypernets.resize( getCell()->getNets().getSize() );
 
     cmess1 << "     - Converting Instances (Bookshelf nodes)" << endl;
@@ -322,6 +325,7 @@ namespace Etesian {
       Coloquinte::circuit_coordinate  cellSize ( masterCell->getAbutmentBox().getWidth () / DbU::fromLambda(5.0)
                                                , masterCell->getAbutmentBox().getHeight() / DbU::fromLambda(5.0) );
       _cellsToIds.insert( make_pair(instanceName,cellId) );
+      idsToTransf[cellId] = (*ioccurrence).getPath().getTransformation();
 
       dots.dot();
     //cerr << instanceName << " " << (int)instance->getPlacementStatus().getCode()
@@ -331,6 +335,8 @@ namespace Etesian {
       _circuit->cells[cellId].sizes   = cellSize;
       _circuit->cells[cellId].area    = cellSize.cast<Coloquinte::cell_area>().prod();
       _circuit->cells[cellId].movable = not instance->isFixed() and instance->isTerminal();
+      if (not _circuit->cells[cellId].movable)
+        cerr << "FIXED (movable=false):" << instance << endl;
     //_circuit->cells[cellId].movable = (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED);
 
       cellId++;
@@ -392,10 +398,15 @@ namespace Etesian {
 	_circuit->position_overlays[0].y_pos = Coloquinte::circuit_vector( _cellsToIds.size() );
 
     for ( auto ipair : _cellsToIds ) {
-      Coloquinte::circuit_coordinate position = Coloquinte::circuit_coordinate::Zero();
+      Coloquinte::circuit_coordinate position ( idsToTransf[ipair.second].getTx() / DbU::fromLambda(5.0)
+                                              , idsToTransf[ipair.second].getTy() / DbU::fromLambda(5.0) );
       position += _circuit->cells[ipair.second].get_sizes() / 2;
       _circuit->position_overlays[0].x_pos[ipair.second] = position.x();
       _circuit->position_overlays[0].y_pos[ipair.second] = position.y();
+
+      if (not _circuit->cells[ipair.second].movable) {
+        cerr << "Fixed cell @" << position.x() << "x" << position.y() << endl;
+      }
     }
 
   // Temporarily force the circuit size.

@@ -533,6 +533,7 @@ namespace Bookshelf {
   {
     unsigned int orientation      = Orientation::N;
     bool         orientationToken = false;
+    unsigned int flags            = 0;
     double       x                = 0;
     double       y                = 0;
 
@@ -544,6 +545,10 @@ namespace Bookshelf {
     for ( size_t itoken=1 ; itoken<_tokens.size() ; ++itoken ) {
     //std::cerr << "F:" << _tokens[itoken] << " ";
       if ( orientationToken ) {
+        if (itoken+1 < _tokens.size()) {
+          if ( _keywordCompare("/FIXED",_tokens[itoken+1]) == 0 ) flags |= Node::Fixed;
+        }
+
         if ( _keywordCompare("N" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::N; continue; }
         if ( _keywordCompare("E" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::E; continue; }
         if ( _keywordCompare("S" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::S; continue; }
@@ -572,6 +577,7 @@ namespace Bookshelf {
     node->setX           ( x );
     node->setY           ( y );
     node->setOrientation ( orientation );
+    node->setFlags       ( flags );
   }
 
 

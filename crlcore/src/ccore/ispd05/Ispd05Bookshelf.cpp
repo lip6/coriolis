@@ -111,6 +111,29 @@ namespace {
   }
 
 
+  Transformation  toTransformation ( Bookshelf::Node* node )
+  {
+    DbU::Unit x      = DbU::fromLambda( node->getX     ()*pitch );
+    DbU::Unit y      = DbU::fromLambda( node->getY     ()*pitch );
+    DbU::Unit width  = DbU::fromLambda( node->getWidth ()*pitch );
+    DbU::Unit height = DbU::fromLambda( node->getHeight()*pitch );
+
+
+	switch (node->getOrientation()) {
+      case Bookshelf::Orientation::Disabled:
+      case Bookshelf::Orientation::N:  return Transformation( x       , y       , Transformation::Orientation::ID );
+      case Bookshelf::Orientation::W:  return Transformation( x       , y+width , Transformation::Orientation::R1 );
+      case Bookshelf::Orientation::S:  return Transformation( x+width , y+height, Transformation::Orientation::R2 );
+      case Bookshelf::Orientation::E:  return Transformation( x+height, y       , Transformation::Orientation::R3 );
+      case Bookshelf::Orientation::FN: return Transformation( x+width , y       , Transformation::Orientation::MX );
+      case Bookshelf::Orientation::FW: return Transformation( x+height, y+width , Transformation::Orientation::XR );
+      case Bookshelf::Orientation::FS: return Transformation( x       , y+height, Transformation::Orientation::MY );
+      case Bookshelf::Orientation::FE: return Transformation( x+height, y+width , Transformation::Orientation::YR );
+	}
+	return Transformation();
+  }
+
+
 } // End of anonymous namespace.
 
 
@@ -162,6 +185,9 @@ namespace CRL {
       }
 
       Instance* instance = Instance::create( cell, node->getName(), master );
+      instance->setTransformation( toTransformation(node) );
+      if (node->isFixed())
+        instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
 
       for ( auto ipin : node->getPins() ) {
         Name netName   = ipin.second->getNet()->getName();

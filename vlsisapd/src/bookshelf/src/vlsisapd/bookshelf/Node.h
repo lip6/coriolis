@@ -42,12 +42,15 @@ namespace Bookshelf {
 
   class Node {
     public:
+      enum Flag { NoFlags=0x0000, Terminal=0x0001, Fixed=0x0002 };
+    public:
       inline                        Node           ( const std::string& name
                                                    , double             width   =0.0
                                                    , double             height  =0.0
                                                    , unsigned int       symmetry=Symmetry::Disabled
-                                                   , bool               terminal=false );
+                                                   , unsigned int       flags   =NoFlags );
       inline bool                   isTerminal     () const;
+      inline bool                   isFixed        () const;
       inline const std::string&     getName        () const;
       inline double                 getWidth       () const;
       inline double                 getHeight      () const;
@@ -58,6 +61,8 @@ namespace Bookshelf {
              Pin*                   getPin         ( size_t id ) const;
       inline std::map<size_t,Pin*>& getPins        ();
              void                   addPin         ( Pin* );
+      inline void                   setFlags       ( unsigned int flags );
+      inline void                   unsetFlags     ( unsigned int flags );
       inline void                   setX           ( double );
       inline void                   setY           ( double );
       inline void                   setOrientation ( unsigned int );
@@ -71,7 +76,7 @@ namespace Bookshelf {
       double                 _x;
       double                 _y;
       unsigned int           _orientation;
-      bool                   _terminal;
+      unsigned int           _flags;
       std::map<size_t,Pin*>  _pins;
   };
 
@@ -80,7 +85,7 @@ namespace Bookshelf {
                     , double             width
                     , double             height
                     , unsigned int       symmetry
-                    , bool               terminal
+                    , unsigned int       flags
                     )
     : _name       (name)
     , _width      (width)
@@ -89,7 +94,7 @@ namespace Bookshelf {
     , _x          (0.0)
     , _y          (0.0)
     , _orientation(Orientation::Disabled)
-    , _terminal   (terminal)
+    , _flags      (flags)
   {
     // std::cerr << "Node::Node() " 
     //           << (void*)this
@@ -102,7 +107,8 @@ namespace Bookshelf {
     //           << ">." << std::endl;
   }
 
-  inline bool                   Node::isTerminal     () const { return _terminal; }
+  inline bool                   Node::isTerminal     () const { return _flags&Terminal; }
+  inline bool                   Node::isFixed        () const { return _flags&Fixed; }
   inline const std::string&     Node::getName        () const { return _name; }
   inline double                 Node::getWidth       () const { return _width; }
   inline double                 Node::getHeight      () const { return _height; }
@@ -111,6 +117,8 @@ namespace Bookshelf {
   inline unsigned int           Node::getSymmetry    () const { return _symmetry; }
   inline unsigned int           Node::getOrientation () const { return _orientation; }
   inline std::map<size_t,Pin*>& Node::getPins        () { return _pins; }
+  inline void                   Node::setFlags       ( unsigned int flags ) { _flags |=  flags; }
+  inline void                   Node::unsetFlags     ( unsigned int flags ) { _flags &= ~flags; }
   inline void                   Node::setX           ( double x ) { _x=x; }
   inline void                   Node::setY           ( double y ) { _y=y; }
   inline void                   Node::setOrientation ( unsigned int orient ) { _orientation=orient; }
