@@ -325,7 +325,9 @@ namespace Etesian {
       Coloquinte::circuit_coordinate  cellSize ( masterCell->getAbutmentBox().getWidth () / DbU::fromLambda(5.0)
                                                , masterCell->getAbutmentBox().getHeight() / DbU::fromLambda(5.0) );
       _cellsToIds.insert( make_pair(instanceName,cellId) );
-      idsToTransf[cellId] = (*ioccurrence).getPath().getTransformation();
+      Transformation instanceTransf = instance->getTransformation();
+      (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
+      idsToTransf[cellId] = instanceTransf;
 
       dots.dot();
     //cerr << instanceName << " " << (int)instance->getPlacementStatus().getCode()
@@ -335,8 +337,8 @@ namespace Etesian {
       _circuit->cells[cellId].sizes   = cellSize;
       _circuit->cells[cellId].area    = cellSize.cast<Coloquinte::cell_area>().prod();
       _circuit->cells[cellId].movable = not instance->isFixed() and instance->isTerminal();
-      if (not _circuit->cells[cellId].movable)
-        cerr << "FIXED (movable=false):" << instance << endl;
+    //if (not _circuit->cells[cellId].movable)
+    //  cerr << "FIXED (movable=false):" << instance << endl;
     //_circuit->cells[cellId].movable = (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED);
 
       cellId++;
@@ -400,28 +402,33 @@ namespace Etesian {
     for ( auto ipair : _cellsToIds ) {
       Coloquinte::circuit_coordinate position ( idsToTransf[ipair.second].getTx() / DbU::fromLambda(5.0)
                                               , idsToTransf[ipair.second].getTy() / DbU::fromLambda(5.0) );
-      position += _circuit->cells[ipair.second].get_sizes() / 2;
+      // if (not _circuit->cells[ipair.second].movable) {
+      //   cerr << _circuit->cells[ipair.second].name << endl;
+      //   cerr << "  " << idsToTransf[ipair.second] << endl;
+      //   cerr << "  Fixed cell BEFORE @" << position.x() << "x" << position.y() << endl;
+      // }
+    //position += _circuit->cells[ipair.second].get_sizes() / 2;
       _circuit->position_overlays[0].x_pos[ipair.second] = position.x();
       _circuit->position_overlays[0].y_pos[ipair.second] = position.y();
 
-      if (not _circuit->cells[ipair.second].movable) {
-        cerr << "Fixed cell @" << position.x() << "x" << position.y() << endl;
-      }
+      // if (not _circuit->cells[ipair.second].movable) {
+      //   cerr << "  Fixed cell @" << position.x() << "x" << position.y() << endl;
+      // }
     }
 
   // Temporarily force the circuit size.
-    getCell()->setAbutmentBox( Box( DbU::fromLambda(0.0)
-                                  , DbU::fromLambda(0.0)
-                                  , DbU::fromLambda(5.0)*12000
-                                  , DbU::fromLambda(5.0)*12000
-                                  ) );
-	_circuit->bounds = Coloquinte::circuit_box( Coloquinte::circuit_coordinate::Zero()
-                                              , Coloquinte::circuit_coordinate({12000, 12000}) );
-    // _circuit->bounds = Coloquinte::circuit_box
-    //   ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
-    //                                     , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
-    //   , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
-    //                                     , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
+    // getCell()->setAbutmentBox( Box( DbU::fromLambda(0.0)
+    //                               , DbU::fromLambda(0.0)
+    //                               , DbU::fromLambda(5.0)*12000
+    //                               , DbU::fromLambda(5.0)*12000
+    //                               ) );
+	// _circuit->bounds = Coloquinte::circuit_box( Coloquinte::circuit_coordinate::Zero()
+    //                                           , Coloquinte::circuit_coordinate({12000, 12000}) );
+    _circuit->bounds = Coloquinte::circuit_box
+      ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
+                                        , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
+      , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
+                                        , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
 
     _circuit->selfcheck();
 
