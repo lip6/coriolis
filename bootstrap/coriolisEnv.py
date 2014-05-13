@@ -122,23 +122,23 @@ if __name__ == "__main__":
   strippedPythonPath  = stripPath ( "PYTHONPATH" )
 
   shellScriptSh = \
-    """echo "%(MESSAGE)s";\n"""                                       \
-    """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n"""          \
-    """PATH="%(PATH)s";\n"""                                          \
-    """BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";\n"""                        \
-    """CORIOLIS_TOP="%(CORIOLIS_TOP)s";\n"""                          \
-    """STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
-    """export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n""" \
-    """hash -r;\n"""
+    'echo "%(MESSAGE)s";\n'                                          \
+    'echo "Switching to Coriolis 2.x (%(buildDir)s)";\n'             \
+    'PATH="%(PATH)s";\n'                                             \
+    'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";\n'                           \
+    'CORIOLIS_TOP="%(CORIOLIS_TOP)s";\n'                             \
+    'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";\n'    \
+    'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n' \
+    'hash -r;\n'
 
   shellScriptCsh = \
-    """echo "%(MESSAGE)s";\n"""                              \
-    """echo "Switching to Coriolis 2.x (%(buildDir)s)";\n""" \
-    """setenv PATH "%(PATH)s";\n"""                          \
-    """setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";\n"""        \
-    """setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";\n"""          \
-    """setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";\n""" \
-    """rehash\n;"""
+    'echo "%(MESSAGE)s";\n'                              \
+    'echo "Switching to Coriolis 2.x (%(buildDir)s)";\n' \
+    'setenv PATH "%(PATH)s";\n'                          \
+    'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";\n'        \
+    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";\n'          \
+    'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";\n' \
+    'rehash\n;'
 
   buildDir  = buildType + "." + linkType
   scriptDir = os.path.dirname ( os.path.abspath(__file__) )
@@ -176,18 +176,21 @@ if __name__ == "__main__":
     strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
 
-    shellScriptSh  += """PYTHONPATH="%(PYTHONPATH)s";\n""" \
-                      """export PYTHONPATH;\n"""
-    shellScriptCsh += """setenv PYTHONPATH "%(PYTHONPATH)s";"""
+    shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";\n' \
+                      'export PYTHONPATH;\n'
+    shellScriptCsh += 'setenv PYTHONPATH "%(PYTHONPATH)s";'
 
     if osType == "Darwin":
-      shellScriptSh += """DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" \
-                       """export DYLD_LIBRARY_PATH;\n"""
-      shellScriptCsh += """setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" 
+      shellScriptSh  += 'DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' \
+                        'export DYLD_LIBRARY_PATH;\n'
+      shellScriptCsh += 'setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' 
     else:
-      shellScriptSh += """LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" \
-                       """export LD_LIBRARY_PATH;\n"""
-      shellScriptCsh += """setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n""" 
+      shellScriptSh  += 'LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' \
+                        'export LD_LIBRARY_PATH;\n'
+      shellScriptCsh += 'setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' 
+  
+  shellScriptSh  += "hash -r;\n"
+  shellScriptCSh += "rehash;\n"
 
   if options.csh: shellScript = shellScriptCsh
   else:           shellScript = shellScriptSh
