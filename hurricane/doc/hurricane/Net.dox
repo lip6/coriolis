@@ -30,50 +30,76 @@
   *                signal category.
   */
 
- /*! \enum         Net::Type::Code
-  *                This enumeration defines the signal category inside the Net::Type.
-  */
- /*! \var          Net::Type::Code Net::Type::UNDEFINED
-  *                Type undefined.
-  */
- /*! \var          Net::Type::Code Net::Type::LOGICAL
-  *                Type assigned to ordinary signals.
-  */
- /*! \var          Net::Type::Code Net::Type::CLOCK
-  *                Type assigned to clock signals.
-  */
- /*! \var          Net::Type::Code Net::Type::POWER
-  *                Type assigned to supply signals.
-  */
- /*! \var          Net::Type::Code Net::Type::GROUND
-  *                Type assigned to supply signals.
-  */
+ //! \enum         Net::Type::Code
+ //!               This enumeration defines the signal category inside the Net::Type.
 
- /*! \class        Net::Direction
-  *                Encapsulate the Net::Direction::Code enumeration that defines the
-  *                signal direction. This direction is meaningful for external nets only.
-  */
+ //! \var          Net::Type::Code Net::Type::UNDEFINED
+ //!               Type undefined.
 
- /*! \enum         Net::Direction::Code
-  *                This enumeration defines the signal direction inside the Net::Direction.
-  */
- /*! \var          Net::Direction::Code Net::Direction::UNDEFINED
-  *                Undefined direction.
-  */
- /*! \var          Net::Direction::Code Net::Direction::IN
-  *                There must be no driver inside and a single permanent driver
-  *                outside.
-  */
- /*! \var          Net::Direction::Code Net::Direction::OUT
-  *                There must be no driver outside and a single permanent driver 
-  *                inside.
-  */
- /*! \var          Net::Direction::Code Net::Direction::INOUT
-  *                No constraint.
-  */
- /*! \var          Net::Direction::Code Net::Direction::TRISTATE
-  *                Type assigned to logical tri-states signals.
-  */
+ //! \var          Net::Type::Code Net::Type::LOGICAL
+ //!               Type assigned to ordinary signals.
+
+ //! \var          Net::Type::Code Net::Type::CLOCK
+ //!               Type assigned to clock signals.
+
+ //! \var          Net::Type::Code Net::Type::POWER
+ //!               Type assigned to supply signals.
+
+ //! \var          Net::Type::Code Net::Type::GROUND
+ //!               Type assigned to supply signals.
+
+ //! \class        Net::Direction
+ //!               Encapsulate the Net::Direction::Code enumeration that defines the
+ //!               signal direction. This direction is meaningful for external nets only.
+ //!
+
+ //! \enum         Net::Direction::Code
+ //!               This enumeration defines the signal direction inside the Net::Direction.
+ //!               It is build upon two kind of atomic flags, one telling were the sources
+ //!               and sinks are located regarding the Cell and the other indicating the
+ //!               nature of the driver (normal, tristate, wired-or).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::DirUndefined
+ //!               Undefined direction (<em>atomic</em>).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::DirIn
+ //!               There is at least one sink on this net (<em>atomic</em>).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::DirOut
+ //!               There is at least one source on this net (<em>atomic</em>).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::ConnTristate
+ //!               The sources are <b>tristates</b>, this a bus (<em>atomic</em>).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::ConnWiredOr
+ //!               The sources are <b>wired or</b>, this a bus (<em>atomic</em>).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::UNDEFINED
+ //!               Undefined direction.
+ //!
+ //! \var          Net::Direction::Code Net::Direction::IN
+ //!               There must be only sinks inside and a single permanent driver
+ //!               outside.
+ //!
+ //! \var          Net::Direction::Code Net::Direction::OUT
+ //!               There must be no driver outside and a single permanent driver 
+ //!               inside (and no sinks inside).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::INOUT
+ //!               There must be one permanent driver inside withs at least one
+ //!               sink inside.
+ //!
+ //! \var          Net::Direction::Code Net::Direction::TRISTATE
+ //!               An OUT signal with a tristate driver (bus).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::TRANSCV
+ //!               An INOUT signal with a tristate driver (bus).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::WOR_OUT
+ //!               An OUT signal with a wired-or driver (bus).
+ //!
+ //! \var          Net::Direction::Code Net::Direction::WOR_INOUT
+ //!               An INOUT signal with a wired-or driver (bus).
 
 
  /*! \function     Net* Net::create(Cell* cell, const Name& name);

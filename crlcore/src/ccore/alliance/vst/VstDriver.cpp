@@ -151,20 +151,16 @@ unsigned FindIndex(const string& stringtosearch, string::size_type openpar)
     return atoi(numberString.c_str());
 }
 
-string getNetDirection(const Net* net) {
-    switch (net->getDirection()) {
-        case Net::Direction::UNDEFINED:
-            return ("linkage");
-        case Net::Direction::IN:
-            return ("in");
-        case Net::Direction::OUT:
-        case Net::Direction::TRISTATE:
-            return ("out");
-        case Net::Direction::INOUT:
-            return ("inout");
-        default:
-            throw Error("Unrecognized direction");
-    }
+string getNetDirection(const Net* net)
+{
+  switch ( net->getDirection() & Net::Direction::INOUT ) {
+    case Net::Direction::UNDEFINED: return "linkage";
+    case Net::Direction::IN:        return "in";
+    case Net::Direction::OUT:       return "out";
+    case Net::Direction::INOUT:     return "inout";
+    default:
+      throw Error( "Unrecognized direction" );
+  }
 }
 
 typedef vector<string*> StringPtVector;
@@ -233,10 +229,9 @@ void DumpPortList(ofstream &ccell, Cell* cell)
         }
         Net* net1 = snmit->second;
         string bitType;
-        if (net1->getDirection() == Net::Direction::TRISTATE)
-            bitType = " mux_bit bus";
-        else
-            bitType = " bit";
+        if      (net1->getDirection() & Net::Direction::ConnTristate) bitType = " mux_bit bus";
+        else if (net1->getDirection() & Net::Direction::ConnWiredOr ) bitType = " wor_bit bus";
+        else bitType = " bit";
             
         if (string1OpenPar == string::npos)
         {
@@ -298,13 +293,15 @@ void DumpPortList(ofstream &ccell, Cell* cell)
         string name = string(*string1, 0, string1OpenPar);
         string vectorType;
         string busType;
-        if (net1->getDirection() == Net::Direction::TRISTATE)
-        {
-            vectorType = " mux_vector(";
-            busType = " bus";
-        }
-        else
-            vectorType = " bit_vector(";
+        if (net1->getDirection() & Net::Direction::ConnTristate) {
+          vectorType = " mux_vector(";
+          busType    = " bus";
+        } else if (net1->getDirection() & Net::Direction::ConnWiredOr) {
+          vectorType = " wor_vector(";
+          busType    = " bus";
+        } else
+          vectorType = " bit_vector(";
+
         vectorizedNetsString.push_back(
                 "      "
                 + name

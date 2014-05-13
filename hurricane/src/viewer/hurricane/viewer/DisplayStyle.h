@@ -32,8 +32,8 @@
 namespace Hurricane {
 
   class RawDrawingStyle;
-  typedef  std::tr1::shared_ptr<RawDrawingStyle>  DrawingStyle;
-  typedef  std::vector         <DrawingStyle>     DrawingStyles;
+  typedef  std::shared_ptr<RawDrawingStyle>  DrawingStyle;
+  typedef  std::vector    <DrawingStyle>     DrawingStyles;
 
 
   class DrawingGroup {

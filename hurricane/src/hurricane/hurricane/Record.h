@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,23 +26,18 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Record.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_RECORD__
-#define  __HURRICANE_RECORD__
+#ifndef  HURRICANE_RECORD_H
+#define  HURRICANE_RECORD_H
 
-
-#ifndef  __HURRICANE_COMMONS__
+#ifndef  HURRICANE_COMMONS_H
 #error "Record.h musn't be included alone, please uses Commons.h."
 #endif
 
 
 namespace Hurricane {
-
 
   class Slot;
 
@@ -89,9 +78,7 @@ namespace Hurricane {
   inline  Record::SlotVector& Record::_getSlotVector () { return _slots; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
-
-
-#endif
+#endif  // HURRICANE_RECORD_H

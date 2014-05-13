@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,21 +31,16 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Commons.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_COMMONS__
-#define  __HURRICANE_COMMONS__
-
+#ifndef  HURRICANE_COMMONS_H
+#define  HURRICANE_COMMONS_H
 
 #include <cstdio>
 #include <cassert>
 #include <cmath>
-
-#include <tr1/memory>
+#include <memory>
 #include <string>
 #include <list>
 #include <set>
@@ -58,27 +52,21 @@
 #include <sstream>
 
 
-
-
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                        Macros Definition                        |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 namespace Hurricane {
 
-
   using namespace std;
-
 
   class Slot;
 
 
-
-
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |                 Tracing/Debugging Utilites                  |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
 
   bool          in_trace    ();
@@ -98,9 +86,9 @@ namespace Hurricane {
 
 
 
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |                shared_ptr<> support for DBo                 |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
 
   template<typename DboType>
@@ -111,17 +99,17 @@ namespace Hurricane {
 
 
   template<typename DboType>
-  class dbo_ptr : public tr1::shared_ptr<DboType> {
+  class dbo_ptr : public std::shared_ptr<DboType> {
     public:
-      dbo_ptr ( DboType* dbo ) : tr1::shared_ptr<DboType>(dbo,DboDestroy<DboType>()) { }
+      dbo_ptr ( DboType* dbo ) : std::shared_ptr<DboType>(dbo,DboDestroy<DboType>()) { }
   };
 
 
 
 
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |                   Miscellaneous Utilites                    |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
 
   inline string _TName ( const string& s ) { return s; }
@@ -171,9 +159,9 @@ namespace Hurricane {
 #include  "hurricane/Record.h"
 
 
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 // |                Functions for Inspector Support                  |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 // Note 1: Theses are specialized templates for "getString<>()" & "getRecord<>()".
 // Note 2: we are outside the Hurricane namespace.
@@ -750,11 +738,8 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 // |            Classes Neededs in All Hurricane Modules             |
 // x-----------------------------------------------------------------x
 
-
 #include "hurricane/Slot.h"
 #include "hurricane/Tabulation.h"
 
 
-
-
-#endif
+#endif  // HURRICANE_COMMONS_H

@@ -17,12 +17,12 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_TABULATION
-#define HURRICANE_TABULATION
+#ifndef HURRICANE_TABULATION_H
+#define HURRICANE_TABULATION_H
 
 #include "hurricane/Commons.h"
 
-#ifndef __HURRICANE_SLOT__
+#ifndef HURRICANE_SLOT_H
 #error "Tabulation.h must be included after Commons.h"
 #endif
 
@@ -96,7 +96,7 @@ INSPECTOR_PV_SUPPORT(Hurricane::Tabulation);
 // Generic functions
 // ****************************************************************************************************
 
-#endif // HURRICANE_TABULATION
+#endif // HURRICANE_TABULATION_H
 
 
 // ****************************************************************************************************

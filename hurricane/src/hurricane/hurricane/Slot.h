@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,29 +26,21 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Slot.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_SLOT__
-#define  __HURRICANE_SLOT__
+#ifndef  HURRICANE_SLOT_H
+#define  HURRICANE_SLOT_H
 
-
-#ifndef  __HURRICANE_COMMONS__
+#ifndef  HURRICANE_COMMONS_H
 #error "Slot.h musn't be included alone, please uses Commons.h."
 #endif
 
 
-
-
 namespace Hurricane {
-
 
 // -------------------------------------------------------------------
 // Class  :  "Slot".
-
 
   class Slot {
 
@@ -322,7 +308,7 @@ namespace Hurricane {
   { return new SlotTemplate<Record*>(_name,_data); }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 template<typename Data>
@@ -356,5 +342,4 @@ inline Hurricane::Slot* getSlot( const std::string& name, Data* d )
   return new Hurricane::SlotTemplate<Data*> ( name, d );
 }
 
-
-#endif
+#endif // HURRICANE_SLOT_H

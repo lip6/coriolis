@@ -45,7 +45,6 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include <string>
 #include <sstream>
 #include <map>
@@ -500,11 +499,7 @@ formal_port_element
             { if ( !__ys->_firstPass ) {
                 Net::Direction  modeDirection = (Net::Direction::Code)$4;
                 Net::Direction  typeDirection = (Net::Direction::Code)$5;
-                Net::Direction  direction;
-                if ( typeDirection != Net::Direction::UNDEFINED )
-                  direction = typeDirection;
-                else
-                  direction = modeDirection;
+                Net::Direction  direction     = (Net::Direction::Code)(modeDirection | typeDirection);
                 for ( unsigned int i=0 ; i < __ys->_identifiersList.size() ; i++ ) {
                   if ( __ys->_constraint.IsSet() ) {
                     int j;
@@ -1056,19 +1051,19 @@ type_convertion
     ;
 
 type_mark
-    : BIT             { $$ = Net::Direction::UNDEFINED; }
-    | WOR_BIT         { $$ = Net::Direction::UNDEFINED; }
-    | MUX_BIT         { $$ = Net::Direction::TRISTATE;  }
-    | BIT_VECTOR      { $$ = Net::Direction::UNDEFINED; }
-    | WOR_VECTOR      { $$ = Net::Direction::UNDEFINED; }
-    | MUX_VECTOR      { $$ = Net::Direction::TRISTATE;  }
-    | INTEGER         { $$ = Net::Direction::UNDEFINED; }
-    | NATURAL         { $$ = Net::Direction::UNDEFINED; }
-    | NATURAL_VECTOR  { $$ = Net::Direction::UNDEFINED; }
-    | POSITIVE        { $$ = Net::Direction::UNDEFINED; }
-    | STRING          { $$ = Net::Direction::UNDEFINED; }
-    | _LIST           { $$ = Net::Direction::UNDEFINED; }
-    | ARG             { $$ = Net::Direction::UNDEFINED; }
+    : BIT             { $$ = Net::Direction::UNDEFINED;    }
+    | WOR_BIT         { $$ = Net::Direction::ConnWiredOr;  }
+    | MUX_BIT         { $$ = Net::Direction::ConnTristate; }
+    | BIT_VECTOR      { $$ = Net::Direction::UNDEFINED;    }
+    | WOR_VECTOR      { $$ = Net::Direction::ConnWiredOr;  }
+    | MUX_VECTOR      { $$ = Net::Direction::ConnTristate; }
+    | INTEGER         { $$ = Net::Direction::UNDEFINED;    }
+    | NATURAL         { $$ = Net::Direction::UNDEFINED;    }
+    | NATURAL_VECTOR  { $$ = Net::Direction::UNDEFINED;    }
+    | POSITIVE        { $$ = Net::Direction::UNDEFINED;    }
+    | STRING          { $$ = Net::Direction::UNDEFINED;    }
+    | _LIST           { $$ = Net::Direction::UNDEFINED;    }
+    | ARG             { $$ = Net::Direction::UNDEFINED;    }
     ;
 
 .BUS.

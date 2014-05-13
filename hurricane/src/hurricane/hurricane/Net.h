@@ -80,7 +80,20 @@ class Net : public Entity {
     public: class Direction {
     // ********************
 
-        public: enum Code {UNDEFINED=0, IN=1, OUT=2, INOUT=3, TRISTATE=4};
+        public: enum Code { DirUndefined = 0x0000
+                          , DirIn        = 0x0001
+                          , DirOut       = 0x0002
+                          , ConnTristate = 0x0100
+                          , ConnWiredOr  = 0x0200
+                          , UNDEFINED    = DirUndefined
+                          , IN           = DirIn
+                          , OUT          =         DirOut
+                          , INOUT        = DirIn | DirOut
+                          , TRISTATE     =         DirOut | ConnTristate
+                          , TRANSCV      = DirIn | DirOut | ConnTristate
+                          , WOR_OUT      =         DirOut | ConnWiredOr
+                          , WOR_INOUT    = DirIn | DirOut | ConnWiredOr
+                          };
 
         private: Code _code;
 
@@ -271,14 +284,23 @@ template<>
 inline std::string  getString<const Hurricane::Net::Direction::Code*>
                              ( const Hurricane::Net::Direction::Code* object )
                              {
-                               switch ( *object ) {
-                                 case Hurricane::Net::Direction::UNDEFINED: return "UNDEFINED";
-                                 case Hurricane::Net::Direction::IN:        return "IN";
-                                 case Hurricane::Net::Direction::OUT:       return "OUT";
-                                 case Hurricane::Net::Direction::INOUT:     return "INOUT";
-                                 case Hurricane::Net::Direction::TRISTATE:  return "TRISTATE";
+                               std::ostringstream s;
+                               s << (((*object) & Hurricane::Net::Direction::DirIn       ) ? 'i' : '-');
+                               s << (((*object) & Hurricane::Net::Direction::DirOut      ) ? 'o' : '-');
+                               s << (((*object) & Hurricane::Net::Direction::ConnTristate) ? 't' : '-');
+                               s << (((*object) & Hurricane::Net::Direction::ConnWiredOr ) ? 'w' : '-');
+                               
+                               switch ( (int)*object ) {
+                                 case Hurricane::Net::Direction::UNDEFINED: s << " (UNDEFINED)"; break;
+                                 case Hurricane::Net::Direction::IN:        s << " (IN)";        break;
+                                 case Hurricane::Net::Direction::OUT:       s << " (OUT)";       break;
+                                 case Hurricane::Net::Direction::INOUT:     s << " (INOUT)";     break;
+                                 case Hurricane::Net::Direction::TRISTATE:  s << " (TRISTATE)";  break;
+                                 case Hurricane::Net::Direction::TRANSCV:   s << " (TRANSCV)";   break;
+                                 case Hurricane::Net::Direction::WOR_OUT:   s << " (WOR_OUT)";   break;
+                                 case Hurricane::Net::Direction::WOR_INOUT: s << " (WOR_INOUT)"; break;
                                }
-                               return "ABNORMAL";
+                               return s.str();
                              }
 
 template<>
