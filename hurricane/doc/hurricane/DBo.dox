@@ -70,7 +70,7 @@
   *                function which is provided for each type of instanciable
   *                object. The following example shows its implementation for a
   *                net :
-  *  \code
+  *  \code{.cpp}
  Net* Net::Create(Cell* cell, const Name& name)
  {
     Net* net = new Net(cell, name);

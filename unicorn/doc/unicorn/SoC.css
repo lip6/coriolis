@@ -7,8 +7,9 @@
  */
 
  html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
-   font-size:                   96%;
-   font-family:                 verdana, sans-serif;
+   font-size:                   11pt;
+   /* The Open Sans font family is supplied by TexLive. */
+   font-family:                 "Open Sans", Verdana, sans-serif;;
  }
 
  body {
@@ -19,8 +20,13 @@
    background-attachment:       fixed;
    background-repeat:           no-repeat;
    margin-top:                  2em;
-   margin-right:                8%;
-   margin-left:                 8%;
+   width:                       550pt;
+   margin-right:                auto;
+   margin-left:                 auto;
+   /*
+   margin-right:                12%;
+   margin-left:                 12%;
+   */
  }
 
  hr {
@@ -32,14 +38,14 @@
 
 
  h1, h2, h3, h4, h5, h6 {
-   font-family:                 "Liberation Serif", sans-serif;
+   /*font-family:                 "Liberation Serif", sans-serif;*/
  }
 
  h1                 { text-align:  center; }
  h2, h3, h4, h5, h6 { text-align:  left;
-                      padding-top: 2em;
+                      padding-top: 11pt;
                     }
- h1, h2, h3         { font-family: "Liberation Serif", sans-serif;
+ h1, h2, h3         { /*font-family: "Liberation Serif", sans-serif; */
                     /*color:       #09550B;*/
                     }
  h1                 { font-weight:normal;       font-size: 170%; letter-spacing:0.2em; word-spacing:0.4em; }
@@ -52,8 +58,8 @@
  h2.classHierarchy {
  /*border:                      1px none #008500;*/
    border:                      1px none #000000;
-   border-top-width:            2px;
-   border-top-style:            solid;
+   border-top-width:            1px;
+   border-top-style:            dotted;
    padding-top:                 1em;
  }
  
@@ -110,7 +116,7 @@
 
 
  pre, tt, code {
-   font-family:                 "andale mono", monospace;
+   /*font-family:                 "andale mono", monospace;*/
    font-size:                   100%;
    white-space:                 pre;
  }
@@ -131,7 +137,7 @@
 
  tt          { color:           green;   }
  em          { font-style:      italic;
-               font-weight:     bold;    }
+               font-weight:     normal;  }
  strong      { font-weight:     bold;    }
 
  span.textit { font-style:      italic;  }
@@ -161,8 +167,6 @@
  }
 
 
-
-
 /*
  * +-----------------------------------------------------------------+
  * |                    Doxygen Specific Classes                     |
@@ -176,7 +180,7 @@
 
  h1.header {
    font-size:                   200%;
-   font-family:                 times, verdana, sans-serif;
+ /*font-family:                 times, verdana, sans-serif;*/
  }
 
  center.header {
@@ -184,17 +188,45 @@
  }
 
  table.header {
-   /*width:                       100%;*/
-   /*background-color:            #EEEEEE;*/
+ /*width:                       100%;*/
+ /*background-color:            #EEEEEE;*/
    background-color:            #CCE6CA;
+ }
+
+ div.header {
+   text-align:                  center;
+   margin:                      14pt 0pt 0pt 0pt;
+ }
+
+ div.summary {
+   color:                       white;
+   background-color:            black;
+   border:                      4px solid black;
+ }
+
+ div.summary a {
+   font-size:                   90%;
+   color:                       white;
+   padding:                     2px 0px;
+   text-align:                  center;
+   background-color:            black;
  }
 
  table.header td {
    padding:                     2px 14px;
    text-align:                  center;
    font-weight:                 bold;
-   font-family:                 verdana, sans-serif;
+ /*font-family:                 verdana, sans-serif;*/
    font-size:                   110%;
+ }
+
+ table.DoxUser td, table.DoxUser th {
+   padding:                    0px 5px;
+   border:                     0px;
+ }
+
+ table.DoxUser th {
+   background-color:            #CCE6CA;
  }
 
  table.footer1, table.footer2 { width:       100%;  }
@@ -203,7 +235,7 @@
  td.CFooter                   { text-align:  center;}
  table.footer2 td.RFooter     { font-weight: bold; width: 35%  }
  table.footer2 td.CFooter     { width: 30%  }
- table.footer2 td.LFooter     { font-weight: bold; width: 35%; font-family: time; }
+ table.footer2 td.LFooter     { font-weight: bold; width: 35%; /*font-family: time;*/ }
 
  table.classHierarchy {
    border-collapse:             separate;
@@ -245,9 +277,123 @@
    font-weight:                 bold;
  }
 
- div.ah {
-   font-family:                 time;
-   font-size:                   250%;
+ div.ah, div.title {
+ /*font-family:                 time;*/
+   text-align:                  center;
+   font-size:                   200%;
+   font-weight:                 bold;
+   padding:                     20px;
+   border:                      2px solid black;
+ }
+
+ div.center {
+   text-align:                  center;
+ }
+
+
+/* -------------------------------------------------------------------
+ * Top navigation lists.
+ */
+
+ span.mlabels {
+   font-size:     90%;
+   font-style:    italic;
+   padding-left:  10pt;
+   margin:        10pt;
+   border-left:   1px solid black
+ }
+
+ div.contents {
+   padding-top:    20pt;
+ }
+
+ div.tabs {
+   border-top:     1px solid black;
+ }
+
+ div.tabs, div.tabs1, div.tabs2, div.tabs3, div.tabs4 {
+   border-left:    1px solid black;
+ }
+
+ ul.tablist {
+ /*
+   padding:      5pt;
+   background-color: red;
+  */
+   margin:           0pt;
+   padding:          0pt;
+   border-top:       none;
+   border-bottom:    none;
+   border-left:      none;
+   border-right:     none;
+ }
+
+ ul.tablist li {
+ /*
+   margin-left:      auto;
+   margin-right:     auto;
+   overflow:         auto;
+   display:          inline;
+   background-color: yellow;
+  */
+   font-size:        90%;
+   border-top:       none;
+   border-bottom:    1px solid black;
+   border-left:      none;
+   border-right:     1px solid black;
+   display:          table-cell;
+   text-align:       center;
+   padding:          2pt;
+   width:            10%;
+ }
+
+ ul.tablist li:hover {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist li:hover a {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist * a:link img, ul.tablist * a:visited img { border-style: none; }
+
+ ul.tablist * a:link, ul.tablist * a:visited {
+   color:               black;
+   text-decoration:     none;
+ }
+
+ ul.tablist * a:hover, ul.tablist * a:focus, ul.tablist * a:active {
+   color:               white;
+   text-decoration:     underline;
+ }
+
+ div.navpath {
+   padding:             5pt 0pt 0pt 0pt;
+ }
+
+ .navpath ul {
+   text-align:          center;
+ }
+
+ .navpath ul li {
+   display:             inline;
+   list-style-type:     none;
+   padding-left:        20px;
+   padding-right:       10px;
+   background-image:    url('closed.png');
+   background-repeat:   no-repeat;
+   background-position: left;
+   color:               #364D7C;
+ }
+
+ .navpath ul li a {
+   border:              2px solid black;
+   padding-left:        10px;
+   padding-right:       10px;
+   font-weight:         bold;
+   color:               black;
  }
 
 
@@ -270,7 +416,9 @@
 
  a.qindex, a.qindex:visited, a.qindex:hover, a.qindexHL, a.el, a.elRef {
    text-decoration:             none;
-   font-weight:                 bold;
+ /*font-family:                 Courier;*/
+   font-weight:                 normal;
+ /*font-size:                   110%;*/
  }
 
  a.qindex, a.qindex:visited {
@@ -398,7 +546,23 @@
  * Verbatim Source Code / Examples.
  */
 
- /* pre.fragment       { background-color: #EEEEEE; } */
+ div.fragment {
+   font-family:      "Monospace";
+   font-size:        80%;
+   border:           dashed;
+   border-width:     thin;
+   border-color:     #003300;
+   background-color: #FCFCE1;
+   padding:          0.5em;
+   margin-left:      5%;
+   margin-right:     5%
+ }
+
+ div.line {
+   white-space:      pre;
+   padding:          0pt;
+   margin:           0pt;
+ }
 
  span.keyword       { color: #008000 }
  span.keywordtype   { color: #604020 }
@@ -407,11 +571,16 @@
  span.preprocessor  { color: #806020 }
  span.stringliteral { color: #002080 }
  span.charliteral   { color: #008080 }
+ span.red           { color: red }
 
 
 /* -------------------------------------------------------------------
  * Attributes Listing.
  */
+
+p.formulaDsp {
+  text-align: center;
+}
 
  .mdTable {
  /*border:                      1px solid #868686;*/
@@ -466,6 +635,10 @@
    font-size:                   105%;
  }
 
+ table.memname * {
+   font-family:                 "Monospace";
+ }
+
 
  .memdoc{
    padding-left:                5px;
@@ -479,7 +652,12 @@
    padding:                     3px 3px 3px 8px;
  }
 
+ .memSeparator {
+   font-size:                   1pt;
+ }
+
  .memItemLeft, .memItemRight, .memTemplItemLeft, .memTemplItemRight {
+   vertical-align:              top;
  /*padding:                     1px 0px 0px 8px;*/
    padding:                     3px 3px 3px 8px;
    margin:                      4px;
@@ -495,12 +673,15 @@
   */
    border-top-style:            none;
    border-right-style:          none;
+/*
    border-bottom-style:         dotted;
+*/
    border-left-style:           none;
  /*background-color:            #DADAEF;*/
  /*background-color:            #eeeeff;*/
  /*background-color:            #EEEEEE;*/
  /*background-color:            #CCE6CA;*/
+   font-family:                 "Monospace";
  }
 
  .memTemplItemLeft, .memTemplItemRight {
@@ -509,7 +690,7 @@
    font-weight:                 bold;
  }
 
- .memItemLeft       { font-size: 11px; }
+ .memItemLeft       { font-size: 11px; width: 35%; }
  .memItemRight      { font-size: 12px; }
  .memTemplItemLeft  { font-size: 11px; }
  .memTemplItemRight { font-size: 12px; }
@@ -529,6 +710,96 @@
  }
 
  .groupHeader       {
-   margin-bottom:              -30pt;
+   margin-bottom:               -30pt;
  }
 
+ .inherit {
+   display:                     none;
+ }
+
+
+/* -------------------------------------------------------------------
+ * General Classes Index.
+ */
+
+ div.toc li.level1 {
+   margin-left:      0px;
+ }
+ 
+ div.toc li.level2 {
+   margin-left:      15px;
+   display:          none;
+ }
+ 
+ div.toc li.level3 {
+   margin-left:      30px;
+   display:          none;
+ }
+ 
+ div.toc li.level4 {
+   margin-left:      45px;
+   display:          none;
+ }
+
+ .directory .levels {
+   white-space:      nowrap;
+   width:            100%;
+   text-align:       right;
+   font-size:        9pt;
+ }
+
+ .directory .levels span {
+   cursor:           pointer;
+   padding-left:     2px;
+   padding-right:    2px;
+   color:            #3D578C;
+ }
+
+
+ div.directory {
+   margin:           10px 0px;
+   border-top:       2px solid black;
+   border-bottom:    2px solid black;
+   width:            100%;
+ }
+
+ .directory table {
+   border-collapse:  collapse;
+ }
+
+ .directory td {
+   margin:           0px;
+   padding:          0px;
+   vertical-align:   top;
+ }
+
+ .directory td.entry {
+   white-space:      nowrap;
+   padding-right:    6px;
+   padding-top:      3px;
+ }
+
+ .directory td.entry a {
+   outline:          none;
+ }
+
+ .directory td.entry a img {
+   border:           none;
+ }
+
+ .directory td.desc {
+   width:            100%;
+   padding-left:     6px;
+   padding-right:    6px;
+   padding-top:      3px;
+   border-left:      1px solid rgba(0,0,0,0.05);
+ }
+
+ .directory tr.even {
+   padding-left:     6px;
+   background-color: #F7F8FB;
+ }
+
+ .directory img {
+   vertical-align:  -30%;
+ }

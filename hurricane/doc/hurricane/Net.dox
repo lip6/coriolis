@@ -4,18 +4,16 @@
 
  namespace Hurricane {
 
- /*! \class        Net
-  *  \brief        Net description (\b API)
-  *
-  *  \section      secNetPredefinedFilters  Predefined filters
-  *
-  *                <b>Hurricane::Net::getIsGlobalFilter</b>
-  *                <b>Hurricane::Net::getIsExternalFilter</b>
-  *                <b>Hurricane::Net::getIsInternalFilter</b>
-  *                <b>Hurricane::Net::getIsClockFilter</b>
-  *                <b>Hurricane::Net::getIsSupplyFilter</b>
-  */
-
+ //! \class        Net
+ //! \brief        Net description (\b API)
+ //!
+ //! \section      secNetPredefinedFilters  Predefined filters
+ //!
+ //!               - <b>Hurricane::Net::getIsGlobalFilter</b>
+ //!               - <b>Hurricane::Net::getIsExternalFilter</b>
+ //!               - <b>Hurricane::Net::getIsInternalFilter</b>
+ //!               - <b>Hurricane::Net::getIsClockFilter</b>
+ //!               - <b>Hurricane::Net::getIsSupplyFilter</b>
 
  /*! \typedef      Net::Inherit
   *                Useful for calling upon methods of the base class without 

@@ -1,6 +1,14 @@
-
  // -*- C++ -*-
 
+ //! \mainpage     Katabatic Documentation
+ //!
+ //!               Additionnal documents:
+ //!                 - \ref grpSynthHierarchy
+ //!
+ //! \defgroup     grpSynthHierarchy  Synthetic Class Hierarchy
+ //! \brief        Simplificated class hierarchy
+ //!
+ //!               \htmlinclude customHierarchy.html
 
  namespace Katabatic {
 

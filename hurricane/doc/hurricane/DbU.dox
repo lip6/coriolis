@@ -5,6 +5,7 @@
  namespace Hurricane {
 
  /*! \defgroup     DbUGroup  DbU/Unit description
+  *  \brief        Fixed point numbers management
   *
   *  \section      secDbUIntro  Introduction
   *

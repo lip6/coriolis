@@ -1,11 +1,19 @@
-
  // -*- C++ -*-
 
+ //! \mainpage     Hurricane Documentation
+ //!
+ //!               Additionnal documents:
+ //!                 - \ref grpSynthHierarchy
+ //!
+ //!
+ //! \defgroup     grpSynthHierarchy  Synthetic Class Hierarchy
+ //! \brief        Simplificated class hierarchy.
+ //!
+ //!               \htmlinclude customHierarchy.html
 
  namespace Hurricane {
 
- /*! \namespace    Hurricane
-  *  \brief        The namespace dedicated to Hurricane.
-  */
+ //! \namespace    Hurricane
+ //! \brief        The namespace dedicated to Hurricane.
 
  }

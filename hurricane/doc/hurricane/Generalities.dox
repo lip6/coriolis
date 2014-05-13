@@ -5,6 +5,7 @@
  namespace Hurricane {
 
  /*! \defgroup     Generalities  Generalities
+  *  \brief        The supporting paraphernalia.
   *
   *  \section      secGeneralitiesIntro  Introduction
   *

@@ -18,8 +18,17 @@
   *                      or patch Kite for their own purpose (my secret hope).
   *                </ul>
   *
+  *                Additionnal documents:
+  *                  - \ref grpSynthHierarchy
   *
-  *  \defgroup     AlgorithmOverview  Algorithm Overview (internal)
+  *  \defgroup     grpSynthHierarchy  Synthetic Hierarchy (API)
+  *  \brief        Simplificated class hierarchy
+  *
+  *                \htmlinclude customHierarchy.html
+  *
+  *
+  *  \defgroup     AlgorithmOverview  Algorithm Overview
+  *  \brief        Description of the algorithm 
   *
   *                The algorithm top-level is implemented in the \c NegociateWindow.
   *

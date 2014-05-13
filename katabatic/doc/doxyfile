@@ -8,6 +8,7 @@ PROJECT_NAME           = "Katabatic - Routing Toolbox"
 PROJECT_NUMBER         = 1.0
 OUTPUT_DIRECTORY       = .
 OUTPUT_LANGUAGE        = English
+MARKDOWN_SUPPORT       = NO
 #USE_WINDOWS_ENCODING  = NO
 #LAYOUT_FILE           = DoxygenLayout.xml
 BRIEF_MEMBER_DESC      = YES
@@ -136,7 +137,7 @@ RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = .
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = images
@@ -164,19 +165,19 @@ IGNORE_PREFIX          =
 # Configuration options related to the HTML output
 
 GENERATE_HTML          = YES
+#HTML_DYNAMIC_SECTIONS  = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = header.html
 HTML_FOOTER            = footer.html
 HTML_STYLESHEET        = SoC.css
-HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
 HHC_LOCATION           = 
 GENERATE_CHI           = NO
 BINARY_TOC             = NO
 TOC_EXPAND             = NO
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 1
 GENERATE_TREEVIEW      = NO
 TREEVIEW_WIDTH         = 250
@@ -252,7 +253,9 @@ SKIP_FUNCTION_MACROS   = YES
 # --------------------------------------------------------------------
 # Configuration::addtions related to external references   
 
-TAGFILES               = ../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane
+TAGFILES               = ../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane \
+                         ../../hurricane/doc/viewer/html/viewer.tag=../viewer \
+                         ../../crlcore/doc/crlcore/html/crlcore.tag=../crlcore
 GENERATE_TAGFILE       = html/katabatic.tag
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES

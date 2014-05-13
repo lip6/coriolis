@@ -47,7 +47,8 @@
 
 namespace {
 
-/*! \defgroup     LoadGlobalRouting  Global Routing Loading (internal)
+/*! \defgroup     LoadGlobalRouting  Global Routing Loading
+ *  \brief        Translation rules to build detailed routing from global
  *
  *                This module documents how the global routing built by \c Knik is
  *                loaded into the \c Katabatic data-base. It is intented for developpers

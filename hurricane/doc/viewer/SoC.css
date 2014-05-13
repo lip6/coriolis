@@ -193,6 +193,25 @@
    background-color:            #CCE6CA;
  }
 
+ div.header {
+   text-align:                  center;
+   margin:                      14pt 0pt 0pt 0pt;
+ }
+
+ div.summary {
+   color:                       white;
+   background-color:            black;
+   border:                      4px solid black;
+ }
+
+ div.summary a {
+   font-size:                   90%;
+   color:                       white;
+   padding:                     2px 0px;
+   text-align:                  center;
+   background-color:            black;
+ }
+
  table.header td {
    padding:                     2px 14px;
    text-align:                  center;
@@ -258,9 +277,123 @@
    font-weight:                 bold;
  }
 
- div.ah {
+ div.ah, div.title {
  /*font-family:                 time;*/
-   font-size:                   250%;
+   text-align:                  center;
+   font-size:                   200%;
+   font-weight:                 bold;
+   padding:                     20px;
+   border:                      2px solid black;
+ }
+
+ div.center {
+   text-align:                  center;
+ }
+
+
+/* -------------------------------------------------------------------
+ * Top navigation lists.
+ */
+
+ span.mlabels {
+   font-size:     90%;
+   font-style:    italic;
+   padding-left:  10pt;
+   margin:        10pt;
+   border-left:   1px solid black
+ }
+
+ div.contents {
+   padding-top:    20pt;
+ }
+
+ div.tabs {
+   border-top:     1px solid black;
+ }
+
+ div.tabs, div.tabs1, div.tabs2, div.tabs3, div.tabs4 {
+   border-left:    1px solid black;
+ }
+
+ ul.tablist {
+ /*
+   padding:      5pt;
+   background-color: red;
+  */
+   margin:           0pt;
+   padding:          0pt;
+   border-top:       none;
+   border-bottom:    none;
+   border-left:      none;
+   border-right:     none;
+ }
+
+ ul.tablist li {
+ /*
+   margin-left:      auto;
+   margin-right:     auto;
+   overflow:         auto;
+   display:          inline;
+   background-color: yellow;
+  */
+   font-size:        90%;
+   border-top:       none;
+   border-bottom:    1px solid black;
+   border-left:      none;
+   border-right:     1px solid black;
+   display:          table-cell;
+   text-align:       center;
+   padding:          2pt;
+   width:            10%;
+ }
+
+ ul.tablist li:hover {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist li:hover a {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist * a:link img, ul.tablist * a:visited img { border-style: none; }
+
+ ul.tablist * a:link, ul.tablist * a:visited {
+   color:               black;
+   text-decoration:     none;
+ }
+
+ ul.tablist * a:hover, ul.tablist * a:focus, ul.tablist * a:active {
+   color:               white;
+   text-decoration:     underline;
+ }
+
+ div.navpath {
+   padding:             5pt 0pt 0pt 0pt;
+ }
+
+ .navpath ul {
+   text-align:          center;
+ }
+
+ .navpath ul li {
+   display:             inline;
+   list-style-type:     none;
+   padding-left:        20px;
+   padding-right:       10px;
+   background-image:    url('closed.png');
+   background-repeat:   no-repeat;
+   background-position: left;
+   color:               #364D7C;
+ }
+
+ .navpath ul li a {
+   border:              2px solid black;
+   padding-left:        10px;
+   padding-right:       10px;
+   font-weight:         bold;
+   color:               black;
  }
 
 
@@ -413,7 +546,23 @@
  * Verbatim Source Code / Examples.
  */
 
- /* pre.fragment       { background-color: #EEEEEE; } */
+ div.fragment {
+   font-family:      "Monospace";
+   font-size:        80%;
+   border:           dashed;
+   border-width:     thin;
+   border-color:     #003300;
+   background-color: #FCFCE1;
+   padding:          0.5em;
+   margin-left:      5%;
+   margin-right:     5%
+ }
+
+ div.line {
+   white-space:      pre;
+   padding:          0pt;
+   margin:           0pt;
+ }
 
  span.keyword       { color: #008000 }
  span.keywordtype   { color: #604020 }
@@ -503,7 +652,12 @@ p.formulaDsp {
    padding:                     3px 3px 3px 8px;
  }
 
+ .memSeparator {
+   font-size:                   1pt;
+ }
+
  .memItemLeft, .memItemRight, .memTemplItemLeft, .memTemplItemRight {
+   vertical-align:              top;
  /*padding:                     1px 0px 0px 8px;*/
    padding:                     3px 3px 3px 8px;
    margin:                      4px;
@@ -519,7 +673,9 @@ p.formulaDsp {
   */
    border-top-style:            none;
    border-right-style:          none;
+/*
    border-bottom-style:         dotted;
+*/
    border-left-style:           none;
  /*background-color:            #DADAEF;*/
  /*background-color:            #eeeeff;*/
@@ -554,6 +710,96 @@ p.formulaDsp {
  }
 
  .groupHeader       {
-   margin-bottom:              -30pt;
+   margin-bottom:               -30pt;
  }
 
+ .inherit {
+   display:                     none;
+ }
+
+
+/* -------------------------------------------------------------------
+ * General Classes Index.
+ */
+
+ div.toc li.level1 {
+   margin-left:      0px;
+ }
+ 
+ div.toc li.level2 {
+   margin-left:      15px;
+   display:          none;
+ }
+ 
+ div.toc li.level3 {
+   margin-left:      30px;
+   display:          none;
+ }
+ 
+ div.toc li.level4 {
+   margin-left:      45px;
+   display:          none;
+ }
+
+ .directory .levels {
+   white-space:      nowrap;
+   width:            100%;
+   text-align:       right;
+   font-size:        9pt;
+ }
+
+ .directory .levels span {
+   cursor:           pointer;
+   padding-left:     2px;
+   padding-right:    2px;
+   color:            #3D578C;
+ }
+
+
+ div.directory {
+   margin:           10px 0px;
+   border-top:       2px solid black;
+   border-bottom:    2px solid black;
+   width:            100%;
+ }
+
+ .directory table {
+   border-collapse:  collapse;
+ }
+
+ .directory td {
+   margin:           0px;
+   padding:          0px;
+   vertical-align:   top;
+ }
+
+ .directory td.entry {
+   white-space:      nowrap;
+   padding-right:    6px;
+   padding-top:      3px;
+ }
+
+ .directory td.entry a {
+   outline:          none;
+ }
+
+ .directory td.entry a img {
+   border:           none;
+ }
+
+ .directory td.desc {
+   width:            100%;
+   padding-left:     6px;
+   padding-right:    6px;
+   padding-top:      3px;
+   border-left:      1px solid rgba(0,0,0,0.05);
+ }
+
+ .directory tr.even {
+   padding-left:     6px;
+   background-color: #F7F8FB;
+ }
+
+ .directory img {
+   vertical-align:  -30%;
+ }

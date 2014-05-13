@@ -4,7 +4,8 @@
 
  namespace Hurricane {
 
- /*! \defgroup     graphicsGroup  Graphics: Access to Graphical Resources.
+ /*! \defgroup     graphicsGroup  Graphics
+  *  \brief        Access to Graphical Resources.
   *
   *  \section      secGraphicsStructure  General Structure of the Graphics Object
   *

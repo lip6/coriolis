@@ -10,6 +10,8 @@
 #       TAG += value [value, ...]
 # Values that contain spaces should be placed between quotes (" ")
 
+MARKDOWN_SUPPORT       = NO
+
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
@@ -306,7 +308,7 @@ TYPEDEF_HIDES_STRUCT   = NO
 # 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
 # corresponding to a cache size of 2^16 = 65536 symbols
 
-SYMBOL_CACHE_SIZE      = 0
+#SYMBOL_CACHE_SIZE      = 0
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -490,7 +492,7 @@ SHOW_USED_FILES        = YES
 # then setting the SHOW_DIRECTORIES tag to YES will show the directory hierarchy 
 # in the documentation. The default is NO.
 
-SHOW_DIRECTORIES       = NO
+#SHOW_DIRECTORIES       = NO
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page.
 # This will remove the Files entry from the Quick Index and from the 
@@ -583,7 +585,9 @@ WARN_LOGFILE           = doxygen.warn.log
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../../src/hurricane/hurricane/Commons.h \
+INPUT                  = Generalities.dox \
+                         Hurricane.dox \
+                         ../../src/hurricane/hurricane/Commons.h \
                          Commons.dox \
                          ../../src/hurricane/hurricane/Exception.h \
                          ../../src/hurricane/hurricane/Error.h \
@@ -782,7 +786,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = .
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -947,13 +951,13 @@ HTML_FOOTER            = footer.html
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = SoC.css
+HTML_EXTRA_STYLESHEET  = SoC.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
 # NO a bullet list will be used.
 
-HTML_ALIGN_MEMBERS     = YES
+#HTML_ALIGN_MEMBERS     = YES
 
 # If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML 
 # documentation will contain sections that can be hidden and shown after the 
@@ -1069,7 +1073,7 @@ QHG_LOCATION           =
 # top of each HTML page. The value NO (the default) enables the index and 
 # the value YES disables it.
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 # This tag can be used to set the number of enum values (range [1..20]) 
 # that doxygen will group on one line in the generated HTML documentation.
@@ -1475,7 +1479,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # toolkit from AT&T and Lucent Bell Labs. The other options in this section 
 # have no effect if this option is set to NO (the default)
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # By default doxygen will write a font called FreeSans.ttf to the output 
 # directory and reference it in all dot files that doxygen generates. This 
@@ -1486,7 +1490,7 @@ HAVE_DOT               = NO
 # DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory 
 # containing the font.
 
-DOT_FONTNAME           = FreeSans
+#DOT_FONTNAME           = FreeSans
 
 # The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs. 
 # The default size is 10pt.
