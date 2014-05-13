@@ -16,6 +16,7 @@
 .. |Si2|                            replace:: :sc:`Si2`
 .. |LEFDEF|                         replace:: :sc:`lefdef`
 .. |Flute|                          replace:: :sc:`Flute`
+.. |MacOS|                          replace:: :sc:`MacOS`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -68,6 +69,8 @@
 .. |FC13|                           replace:: :sc:`fc13`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
+.. |MacPorts|                       replace:: :sc:`MacPorts`
+.. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
 .. |tty|                            replace:: :cb:`tty`
 .. |svn|                            replace:: :cb:`svn`
@@ -358,6 +361,19 @@ then we generate the documentation in ``-j1``
 
 The complete list of |ccb| functionalities can be accessed with the ``--help`` argument.
 It also may be run in graphical mode (``--gui``).
+
+
+Additionnal Requirement under |MacOS|
+-------------------------------------
+
+|Coriolis| make uses of the :cb:`boost::python` module, but the |macports| |boost|
+seems unable to work with the |Python| bundled with |MacOS|. So you have to install
+both of them from |macports|: ::
+
+    dummy@macos:~$ port install boost +python27
+    dummy@macos:~$ port select python python27
+
+Then proceed with the generic install instructions.
 
 
 Packaging Coriolis
