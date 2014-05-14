@@ -201,7 +201,7 @@ namespace Katabatic {
   inline size_t                      Session::getLayerDepth        ( const Layer* layer ) { return getRoutingGauge()->getLayerDepth(layer); }
   inline const Layer*                Session::getRoutingLayer      ( size_t depth )       { return getRoutingGauge()->getRoutingLayer(depth); }
   inline const Layer*                Session::getContactLayer      ( size_t depth )       { return getRoutingGauge()->getContactLayer(depth); }
-  inline DbU::Unit                   Session::getPitch             ( unsigned int depth, unsigned int flags=Configuration::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
+  inline DbU::Unit                   Session::getPitch             ( size_t depth, unsigned int flags=Configuration::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
   inline DbU::Unit                   Session::getOffset            ( size_t depth )       { return getRoutingGauge()->getLayerOffset(depth); }
   inline DbU::Unit                   Session::getWireWidth         ( size_t depth )       { return getRoutingGauge()->getLayerWireWidth(depth); }
   inline DbU::Unit                   Session::getViaWidth          ( size_t depth )       { return getRoutingGauge()->getViaWidth(depth); }

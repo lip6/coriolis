@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) LIP6 2010-2013, All Rights Reserved
+// Copyright (c) LIP6 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -708,6 +708,8 @@ namespace {
 namespace CRL {
 
   using std::string;
+  using std::cerr;
+  using std::endl;
   using Hurricane::Library;
   using Hurricane::Transformation;
   using Hurricane::UpdateSession;
