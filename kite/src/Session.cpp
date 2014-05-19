@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Session.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -204,6 +204,10 @@ namespace Kite {
 # if defined(CHECK_DATABASE)
     for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
       (*it)->check( overlaps, "Session::_revalidate() - on packed track." );
+
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      revalidateds[i]->_check();
+    }
 
   //_getKiteEngine()->_showOverlap ();
 # endif

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -58,17 +57,20 @@ namespace Kite {
     , _deltaShared    (0)
     , _deltaPerpand   (0)
     , _axisWeight     (0)
-    , _distanceToFixed(DbU::lambda(100.0))
+    , _distanceToFixed(2*Session::getSliceHeight())
     , _longuestOverlap(0)
     , _dataState      (0)
     , _ripupCount     (0)
   {
+  // This is the GCell side (it is *one* cell height from the gauge).
+    DbU::Unit  cellHeight = Session::getSliceHeight();
+
     TrackElement* neighbor;
     if ( _begin != Track::npos ) {
       neighbor = _track->getSegment(_begin);
       if ( neighbor and (neighbor->getNet() != net) ) {
         DbU::Unit distance = interval.getVMin() - neighbor->getTargetU();
-        if ( distance < DbU::lambda(50.0) )
+        if ( distance < cellHeight )
           _distanceToFixed = distance;
       }
       // if ( neighbor and neighbor->isFixed() ) {
@@ -80,8 +82,8 @@ namespace Kite {
       neighbor = _track->getSegment(_end);
       if ( neighbor and (neighbor->getNet() != net) ) {
         DbU::Unit distance = neighbor->getSourceU() - interval.getVMax();
-        if ( _distanceToFixed == DbU::lambda(100.0) ) _distanceToFixed = 0;
-        if ( distance < DbU::lambda(50.0) )
+        if ( _distanceToFixed == 2*cellHeight ) _distanceToFixed = 0;
+        if ( distance < cellHeight )
           _distanceToFixed += distance;
       }
       // if ( neighbor and neighbor->isFixed() ) {

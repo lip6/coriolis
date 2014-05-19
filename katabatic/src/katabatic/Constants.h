@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Constants.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2013-2013, All Rights Reserved
+// Copyright (c) UPMC 2013-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -27,8 +27,8 @@ namespace Katabatic {
                        , KbHorizontal        = 0x00000010
                        , KbVertical          = 0x00000020
                        , KbWithPerpands      = 0x00000040
-                       , KbBySource          = 0x00000080
-                       , KbByTarget          = 0x00000100
+                       , KbSource            = 0x00000080
+                       , KbTarget            = 0x00000100
                        , KbWarnOnError       = 0x00000200
                        , KbTopology          = 0x00000400
                        , KbGlobalSegment     = 0x00000800
@@ -44,6 +44,7 @@ namespace Katabatic {
                        , KbWithNeighbors     = 0x00200000
                        , KbNoCheckLayer      = 0x00400000
                        , KbHalfSlacken       = 0x00800000
+                       , KbNoGCellShrink     = 0x01000000
                        , KbDirectionMask     = KbHorizontal|KbVertical
                        };
 
@@ -72,7 +73,7 @@ namespace Katabatic {
 
   inline unsigned int  perpandicularTo ( unsigned int direction )
   {
-    switch ( direction ) {
+    switch ( direction & KbDirectionMask ) {
       case KbHorizontal: return KbVertical;
       case KbVertical:   return KbHorizontal;
     }

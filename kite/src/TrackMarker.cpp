@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -65,8 +64,9 @@ namespace Kite {
   {
     Point         sourcePoint  = pad->getSourcePosition();
     Point         targetPoint  = pad->getTargetPosition();
-    RoutingGauge* rg           = Session::getKiteEngine()->getRoutingGauge();
+    RoutingGauge* rg           = Session::getRoutingGauge();
     RoutingPlane* rp           = Session::getKiteEngine()->getRoutingPlaneByIndex(depth);
+    DbU::Unit     pitch        = DbU::toLambda(Session::getPitch(depth));
     unsigned int  rpDirection  = rg->getLayerDirection(depth);
     Interval      trackSpan;
 
@@ -81,9 +81,9 @@ namespace Kite {
     }
 
     if ( rpDirection xor rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
-      _weight = (unsigned int)(( 5.0 / (5.0+DbU::getLambda(trackSpan.getSize())) ) * 100.0) ;
+      _weight = (unsigned int)(( pitch / (pitch+DbU::toLambda(trackSpan.getSize())) ) * 100.0) ;
     } else {
-      _weight = (unsigned int)( (5.0 + DbU::getLambda(trackSpan.getSize())) * 20.0 );
+      _weight = (unsigned int)( (pitch + DbU::toLambda(trackSpan.getSize())) * 20.0 );
     }
 
     Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );

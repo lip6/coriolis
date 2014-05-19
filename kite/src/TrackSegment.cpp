@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -53,11 +52,18 @@ namespace Kite {
 // -------------------------------------------------------------------
 // Class  :  "TrackSegment".
 
+  size_t  TrackSegment::_allocateds = 0;
+
+
+  size_t  TrackSegment::getAllocateds ()
+  { return _allocateds; }
+
 
   TrackSegment::TrackSegment ( AutoSegment* segment, Track* track )
     : TrackElement  (track)
     , _base         (segment)
     , _freedomDegree(0)
+    , _ppitch       (0)
     , _data         (NULL)
     , _dogLegLevel  (0)
   {
@@ -69,7 +75,10 @@ namespace Kite {
       _data = new DataNegociate( this );
       _base->getCanonical( _sourceU, _targetU );
       updateFreedomDegree();
+      updatePPitch();
     }
+
+    ++_allocateds;
   }
 
 
@@ -83,6 +92,7 @@ namespace Kite {
   TrackSegment::~TrackSegment ()
   {
     if (_data) delete _data;
+    --_allocateds;
   }
 
 
@@ -131,12 +141,15 @@ namespace Kite {
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
+  bool           TrackSegment::isSameLayerDogleg    () const { return _base->isSameLayerDogleg(); }
 // Predicates.
 // Accessors.
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }
   unsigned int   TrackSegment::getDirection         () const { return _base->getDirection(); }
   Net*           TrackSegment::getNet               () const { return _base->getNet(); }
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
+  DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
+  DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
   unsigned int   TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
@@ -275,6 +288,13 @@ namespace Kite {
 
   void  TrackSegment::updateFreedomDegree ()
   { _freedomDegree = _base->getSlack(); }
+
+
+  void  TrackSegment::updatePPitch ()
+  {
+    _ppitch = _base->getPPitch();
+  //cerr << "Update P/Pitch (" << DbU::toLambda(getPPitch()) << ") on " << this << endl;
+  }
 
 
   void  TrackSegment::setTrack ( Track* track )

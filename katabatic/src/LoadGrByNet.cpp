@@ -961,7 +961,7 @@ namespace {
         }
 #endif
       // HARDCODED VALUE.
-        if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*DbU::lambda(50.0)) )
+        if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
           _toFixSegments.push_back( globalSegment );
         
         if (_connexity.fields.globals < 2) {

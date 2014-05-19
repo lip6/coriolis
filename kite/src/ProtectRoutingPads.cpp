@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -98,7 +97,7 @@ namespace {
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
       DbU::Unit     delta     =   plane->getLayerGauge()->getHalfPitch()
                                 + wireWidth/2
-                                - DbU::lambda(0.1);
+                                - DbU::fromLambda(0.1);
       DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
       Box           bb        ( segments[i]->getBoundingBox() );
 

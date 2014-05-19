@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -243,20 +242,21 @@ namespace {
     for ( size_t i=0 ; i<track->getSize() ; ++i ) {
       TrackElement* segment = track->getSegment(i);
       if ( segment and segment->isFixed() and segment->isTerminal() ) {
-        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
+        Interval   freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
+        DbU::Unit  ppitch       = segment->getPPitch();
 
-      //if (freeInterval.getSize() < DbU::lambda(5.0)*6) {
-        if (  (segment->getSourceU() - freeInterval.getVMin() < DbU::lambda(5.0)*3)
-           or (freeInterval.getVMax() - segment->getTargetU() < DbU::lambda(5.0)*3) ) {
+      //if (freeInterval.getSize() < ppitch*6) {
+        if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
+           or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
           cinfo << "Caged terminal: " << segment << endl;
-          if (  (segment->getLayer() != metal2)
-             or (segment->getLength() >= DbU::lambda(5.0))
-             or (segment->getNet() == neighborNet) ) {
+          if (  (segment->getLayer () != metal2)
+             or (segment->getLength() >= ppitch)
+             or (segment->getNet   () == neighborNet) ) {
             neighborNet = segment->getNet();
             continue;
           }
 
-          if (segment->getSourceU() - lastMovedUp < DbU::lambda(5.0)*4) {
+          if (segment->getSourceU() - lastMovedUp < ppitch*4) {
             ++moveUpCount;
             if (moveUpCount % 2 == 0) {
               moveUpCaged( segment );
@@ -274,7 +274,7 @@ namespace {
                                                     , rp
                                                     , metal3
                                                     , rp->getSourcePosition()
-                                                    , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                    , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
                                                     );
           source->setFlags( Katabatic::CntIgnoreAnchor );
     
@@ -283,7 +283,7 @@ namespace {
                                                   , rp
                                                   , metal3
                                                   , rp->getSourcePosition()
-                                                  , DbU::lambda(1.0), DbU::lambda(1.0)
+                                                  , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
                                                   );
           target->setFlags( Katabatic::CntIgnoreAnchor );
           

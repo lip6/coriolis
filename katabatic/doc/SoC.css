@@ -286,7 +286,7 @@
    border:                      2px solid black;
  }
 
- div.center {
+ div.center, div.image {
    text-align:                  center;
  }
 

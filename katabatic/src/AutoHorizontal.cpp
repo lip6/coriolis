@@ -231,9 +231,6 @@ namespace Katabatic {
     Interval sourceConstraints = Interval(getAutoSource()->getCBYMin(),getAutoSource()->getCBYMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBYMin(),getAutoTarget()->getCBYMax());
 
-  // Ugly: should uses topRightShrink from GCell.
-  //sourceConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-  //targetConstraints.inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
   // Expand by a tiny amount for the "contains" to work for sure.
     sourceConstraints.inflate( 1 );
     targetConstraints.inflate( 1 );
@@ -245,9 +242,6 @@ namespace Katabatic {
     ltrace(200) << "target constraints: " << targetConstraints
                 << " " << DbU::getValueString(targetConstraints.getSize()) << endl;
 
-  // Ugly: GCell's track number is hardwired.
-  //if (sourceConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
-  //if (targetConstraints.getSize() / DbU::lambda(5.0) < 10) { ltraceout(200); return true; }
     if (not sourceConstraints.contains(sourceSide)) { ltraceout(200); return true; }
     if (not targetConstraints.contains(targetSide)) { ltraceout(200); return true; }
 
@@ -298,8 +292,8 @@ namespace Katabatic {
 
     if (source->isTerminal()) {
       Interval  perpandConstraints = getAutoTarget()->getUConstraints(KbHorizontal);
-      Interval  constraints        = source->getUConstraints      (KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-      Interval  nativeConstraints  = source->getNativeUConstraints(KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      Interval  constraints        = source->getUConstraints      (KbVertical|KbNoGCellShrink);
+      Interval  nativeConstraints  = source->getNativeUConstraints(KbVertical|KbNoGCellShrink);
       int       slack              = constraints.getSize()       / getPitch();
       int       nativeSlack        = nativeConstraints.getSize() / getPitch();
 
@@ -334,8 +328,8 @@ namespace Katabatic {
     if (parallel) target = parallel->getAutoTarget();
 
     if (target->isTerminal()) {
-      Interval  constraints       = target->getUConstraints      (KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
-      Interval  nativeConstraints = target->getNativeUConstraints(KbVertical).inflate( 0, /*Katabatic::GCell::getTopRightShrink()*/ DbU::lambda(1.0) );
+      Interval  constraints       = target->getUConstraints      (KbVertical|KbNoGCellShrink);
+      Interval  nativeConstraints = target->getNativeUConstraints(KbVertical|KbNoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();
       int       nativeSlack       = nativeConstraints.getSize() / getPitch();
 
@@ -390,7 +384,7 @@ namespace Katabatic {
 
     if (_horizontal->getY() == axis) return;
 
-    ltrace(80) << "_setAxis() @Y " << DbU::getLambda(axis) << " " << this << endl;
+    ltrace(80) << "_setAxis() @Y " << DbU::toLambda(axis) << " " << this << endl;
 
     _horizontal->setY( axis );
     invalidate();
@@ -410,6 +404,13 @@ namespace Katabatic {
     if (_horizontal->getTargetX() < _horizontal->getSourceX()) {
       ltrace(80) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _horizontal->invert();
+
+      unsigned int spinFlags = _flags & SegDepthSpin;
+      unsetFlags( SegDepthSpin );
+      if (spinFlags & SegSourceTop   ) setFlags( SegTargetTop );
+      if (spinFlags & SegSourceBottom) setFlags( SegTargetBottom );
+      if (spinFlags & SegTargetTop   ) setFlags( SegSourceTop );
+      if (spinFlags & SegTargetBottom) setFlags( SegSourceBottom );
     }
   }
 
@@ -690,7 +691,7 @@ namespace Katabatic {
   {
     ltrace(200) << "AutoHorizontal::_makeDogleg(GCell*)" << endl;
 
-    DebugSession::open( getNet(), 110 );
+    DebugSession::open( getNet(), 80 );
     ltracein(159);
 
   //Session::doglegReset();
@@ -723,7 +724,7 @@ namespace Katabatic {
 
     Session::dogleg( this );
     targetDetach();
-    invalidate();
+    invalidate( KbTopology );
     autoTarget->invalidate( KbTopology );
     AutoContact* dlContact1 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );
     AutoContact* dlContact2 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );

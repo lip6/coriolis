@@ -42,6 +42,7 @@ namespace Katabatic {
       inline bool         isChip          () const;
       inline Cell*        getCell         () const;
       inline Instance*    getCore         () const;
+      inline Cell*        getReferencePad () const;
       inline const Box&   getChipBb       () const;
       inline const Box&   getLeftPadsBb   () const;
       inline const Box&   getRightPadsBb  () const;
@@ -59,6 +60,7 @@ namespace Katabatic {
     private:
       Cell*     _cell;
       Instance* _core;
+      Cell*     _referencePad;
       bool      _isChip;
       Box       _chipBb;
       Box       _leftPadsBb;
@@ -73,6 +75,7 @@ namespace Katabatic {
   inline bool         ChipTools::isChip          () const { return _isChip; }
   inline Cell*        ChipTools::getCell         () const { return _cell; }
   inline Instance*    ChipTools::getCore         () const { return _core; }
+  inline Cell*        ChipTools::getReferencePad () const { return _referencePad; }
   inline const Box&   ChipTools::getChipBb       () const { return _chipBb; }
   inline const Box&   ChipTools::getLeftPadsBb   () const { return _leftPadsBb; };
   inline const Box&   ChipTools::getRightPadsBb  () const { return _rightPadsBb; };

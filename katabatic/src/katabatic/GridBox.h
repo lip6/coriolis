@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -172,14 +171,14 @@ namespace Katabatic {
                                        ) const
   {
     if ( direction & Constant::Horizontal ) {
-      channelMin   = getYMin() + DbU::lambda( inclusive?0:0.1 );
+      channelMin   = getYMin() + DbU::toLambda( inclusive?0:0.1 );
       channelMax   = getYMax();
-      channelLeft  = getXMin() + DbU::lambda( inclusive?0:0.1 );
+      channelLeft  = getXMin() + DbU::toLambda( inclusive?0:0.1 );
       channelRight = getXMax();
     } else {
-      channelMin   = getXMin() + DbU::lambda( inclusive?0:0.1 );
+      channelMin   = getXMin() + DbU::toLambda( inclusive?0:0.1 );
       channelMax   = getXMax();
-      channelLeft  = getYMin() + DbU::lambda( inclusive?0:0.1 );
+      channelLeft  = getYMin() + DbU::toLambda( inclusive?0:0.1 );
       channelRight = getYMax();
     }
   }

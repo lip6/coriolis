@@ -106,6 +106,7 @@ namespace Katabatic {
       inline  unsigned int          getFlags                  ( unsigned int mask ) const;
       inline  Configuration*        getKatabaticConfiguration ();
       virtual Configuration*        getConfiguration          ();
+      inline  CellGauge*            getCellGauge              () const;
       inline  RoutingGauge*         getRoutingGauge           () const;
       inline  RoutingLayerGauge*    getLayerGauge             ( size_t depth ) const;
       inline  const Layer*          getRoutingLayer           ( size_t depth ) const ;
@@ -219,6 +220,7 @@ namespace Katabatic {
   inline void                           KatabaticEngine::setGlobalThreshold        ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
   inline unsigned int                   KatabaticEngine::getFlags                  ( unsigned int mask ) const { return _flags & mask; }
   inline EngineState                    KatabaticEngine::getState                  () const { return _state; }
+  inline CellGauge*                     KatabaticEngine::getCellGauge              () const { return _configuration->getCellGauge(); }
   inline RoutingGauge*                  KatabaticEngine::getRoutingGauge           () const { return _configuration->getRoutingGauge(); }
   inline RoutingLayerGauge*             KatabaticEngine::getLayerGauge             ( size_t depth ) const { return _configuration->getLayerGauge(depth); }
   inline const Layer*                   KatabaticEngine::getRoutingLayer           ( size_t depth ) const { return _configuration->getRoutingLayer(depth); }

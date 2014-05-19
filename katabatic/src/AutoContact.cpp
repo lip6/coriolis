@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -30,7 +29,6 @@
 #include  "hurricane/RoutingPad.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
 #include  "hurricane/DebugSession.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/AutoContact.h"
@@ -90,10 +88,10 @@ namespace Katabatic {
     restoreNativeConstraintBox();
 
     ltrace(90) << "Native CBox: " << this
-               << " <" << DbU::getLambda(getCBXMin())
-               << " "  << DbU::getLambda(getCBYMin())
-               << " "  << DbU::getLambda(getCBXMax())
-               << " "  << DbU::getLambda(getCBYMax()) << ">" << endl;
+               << " <" << DbU::toLambda(getCBXMin())
+               << " "  << DbU::toLambda(getCBYMin())
+               << " "  << DbU::toLambda(getCBXMax())
+               << " "  << DbU::toLambda(getCBYMax()) << ">" << endl;
     
     Session::link( this );
     invalidate( KbTopology );
@@ -212,6 +210,9 @@ namespace Katabatic {
 
   void  AutoContact::getLengths ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& processeds )
   {
+    DbU::Unit hSideLength = getGCell()->getSide( KbHorizontal ).getSize();
+    DbU::Unit vSideLength = getGCell()->getSide( KbVertical   ).getSize();
+
     forEach ( AutoSegment*, isegment, getAutoSegments() ) {
       bool isSourceHook = (isegment->getAutoSource() == this);
 
@@ -223,9 +224,11 @@ namespace Katabatic {
       if (isegment->isLocal()) {
         length = isegment->getLength();
         lengths[depth] += length;
-        if ( not isegment->isUnbound() and (abs(length) > DbU::lambda(50.0)) )
+
+        DbU::Unit sideLength = (isegment->isHorizontal()) ? hSideLength : vSideLength;
+        if ( not isegment->isUnbound() and (abs(length) > sideLength) )
           cerr << Error("Suspicious length:%.2f of %s."
-                       ,DbU::getLambda(length),getString(*isegment).c_str()) << endl;
+                       ,DbU::toLambda(length),getString(*isegment).c_str()) << endl;
       } else {
         if ( isegment->isHorizontal() ) {
           if ( isSourceHook )
@@ -249,20 +252,28 @@ namespace Katabatic {
 
   Interval  AutoContact::getNativeUConstraints ( unsigned int direction ) const
   {
-    Box  nativeConstraints = getNativeConstraintBox();
+    Box       nativeConstraints = getNativeConstraintBox();
+    Interval  constraint;
     if (direction & KbHorizontal) {
-      return Interval( nativeConstraints.getXMin(), nativeConstraints.getXMax() );
+      constraint = Interval( nativeConstraints.getXMin(), nativeConstraints.getXMax() );
+    } else {
+      constraint = Interval( nativeConstraints.getYMin(), nativeConstraints.getYMax() );
     }
-    return Interval( nativeConstraints.getYMin(), nativeConstraints.getYMax() );
+    if (direction & KbNoGCellShrink) constraint.inflate( 0, GCell::getTopRightShrink() );
+    return constraint;
   }
 
 
   Interval  AutoContact::getUConstraints ( unsigned int direction ) const
   {
+    Interval  constraint;
     if (direction & KbHorizontal) {
-      return Interval( getCBXMin(), getCBXMax() );
+      constraint = Interval( getCBXMin(), getCBXMax() );
+    } else {
+      constraint = Interval( getCBYMin(), getCBYMax() );
     }
-    return Interval( getCBYMin(), getCBYMax() );
+    if (direction & KbNoGCellShrink) constraint.inflate( 0, GCell::getTopRightShrink() );
+    return constraint;
   }
 
 
@@ -429,13 +440,13 @@ namespace Katabatic {
         cerr << Error ( "Incompatible DY restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBYMax() )
           cerr << Error ( "(constraintMin > CBYMax : %.2lf > %.2lf)"
-                        , DbU::getLambda(constraintMin)
-                        , DbU::getLambda(getCBYMax()) )
+                        , DbU::toLambda(constraintMin)
+                        , DbU::toLambda(getCBYMax()) )
                << endl;
         if ( constraintMax < getCBYMin() )
           cerr << Error ( "(constraintMax < CBYMin : %.2lf < %.2lf)"
-                        , DbU::getLambda(constraintMax)
-                        , DbU::getLambda(getCBYMin()) )
+                        , DbU::toLambda(constraintMax)
+                        , DbU::toLambda(getCBYMin()) )
                << endl;
         return false;
       }
@@ -448,13 +459,13 @@ namespace Katabatic {
         cerr << Error ( "Incompatible DX restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBXMax() )
           cerr << Error ( "(constraintMin > CBXMax : %.2lf > %.2lf)"
-                        , DbU::getLambda(constraintMin)
-                        , DbU::getLambda(getCBXMax()) )
+                        , DbU::toLambda(constraintMin)
+                        , DbU::toLambda(getCBXMax()) )
                << endl;
         if ( constraintMax < getCBXMin() )
           cerr << Error ( "(constraintMax < CBXMin : %.2lf < %.2lf)"
-                        , DbU::getLambda(constraintMax)
-                        , DbU::getLambda(getCBXMin()) )
+                        , DbU::toLambda(constraintMax)
+                        , DbU::toLambda(getCBXMin()) )
                << endl;
         return false;
       }

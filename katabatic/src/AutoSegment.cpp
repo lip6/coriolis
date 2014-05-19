@@ -198,7 +198,7 @@ namespace {
     _attractors[position]++;
     _attractorsCount++;
 
-    ltrace(88) << "add Attractor @" << DbU::getLambda(position)
+    ltrace(88) << "add Attractor @" << DbU::toLambda(position)
                << " [" << _attractors[position] << "]" << endl;
   }
 
@@ -356,9 +356,7 @@ namespace Katabatic {
     Session::link( this );
     updateOrient();
     updatePositions();
-    invalidate( KbNoFlags );
-  //sourceAttach( getAutoSource() );
-  //targetAttach( getAutoTarget() );
+    invalidate( KbTopology );
 
     _observers.notify( Create );
   }
@@ -415,15 +413,19 @@ namespace Katabatic {
   void  AutoSegment::invalidate ( unsigned int flags )
   {
     if (Session::doDestroyTool()) return;
+    if (flags & KbSource) setFlags( SegInvalidatedSource );
+    if (flags & KbTarget) setFlags( SegInvalidatedTarget );
     if (isInvalidated()) return;
 
     ltrace(200) << "AutoSegment::invalidate() " << flags << " " << this << endl;
     ltracein(200);
 
     _invalidate();
+
     if ((flags & KbPropagate) and not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds() )
+      forEach( AutoSegment*, isegment, getAligneds() ) {
         isegment->_invalidate();
+      }
     }
     ltraceout(200);
   }
@@ -441,20 +443,63 @@ namespace Katabatic {
   }
 
 
+  void  AutoSegment::invalidate ( AutoContact* contact )
+  {
+    if (Session::doDestroyTool()) return;
+    if (contact == getAutoSource()) setFlags( SegInvalidatedSource );
+    if (contact == getAutoTarget()) setFlags( SegInvalidatedTarget );
+  }
+
+
   void  AutoSegment::revalidate ()
   {
-    ltrace(110) << "AutoSegment::revalidate() " << this << endl;
+    ltrace(200) << "AutoSegment::revalidate() " << this << endl;
     if (not isInvalidated()) return;
 
-    ltracein(110);
+    ltracein(200);
 
-    updateOrient();
+    updateOrient   ();
     updatePositions();
-    unsetFlags( SegInvalidated|SegInvalidatedLayer|SegCreated );
 
-    _observers.notify( Revalidate );
+    unsigned int oldSpinFlags = _flags & SegDepthSpin;
 
-    ltraceout(110);
+    if (_flags & (SegInvalidatedSource|SegCreated)) {
+      const Layer*  contactLayer = getAutoSource()->getLayer();
+      const Layer*  segmentLayer = getLayer();
+      ltrace(200) << "Changed source: " << getAutoSource() << endl;
+
+      unsetFlags( SegSourceTop|SegSourceBottom );
+      if (contactLayer != segmentLayer) {
+        setFlags( (segmentLayer == contactLayer->getTop()) ? SegSourceBottom : SegSourceTop ); 
+      }
+    }
+
+    if (_flags & (SegInvalidatedTarget|SegCreated)) {
+      const Layer*  contactLayer = getAutoTarget()->getLayer();
+      const Layer*  segmentLayer = getLayer();
+      ltrace(200) << "Changed target: " << getAutoTarget() << endl;
+
+      unsetFlags( SegTargetTop|SegTargetBottom );
+      if (contactLayer != segmentLayer) {
+        setFlags( (segmentLayer == contactLayer->getTop()) ? SegTargetBottom : SegTargetTop ); 
+      }
+    }
+
+    unsigned int observerFlags = Revalidate;
+    if ( (_flags & SegCreated) or (oldSpinFlags != (_flags & SegDepthSpin)) )
+      observerFlags |= RevalidatePPitch;
+
+    unsetFlags( SegInvalidated
+              | SegInvalidatedSource
+              | SegInvalidatedTarget
+              | SegInvalidatedLayer
+              | SegCreated
+              );
+
+    _observers.notify( observerFlags );
+
+    ltrace(200) << "Updated: " << this << endl;
+    ltraceout(200);
   }
 
 
@@ -468,6 +513,38 @@ namespace Katabatic {
       }
     }
     return false;
+  }
+
+
+  bool  AutoSegment::isSameLayerDogleg () const
+  {
+    if (not isSpinTopOrBottom()) return false;
+
+    unsigned int perpandicularDepth = getDepth() + (isSpinTop() ? 1 : -1);
+    if (perpandicularDepth >= Session::getDepth()) {
+      cerr << this << " isSpinTop too high." << endl;
+    }
+    perpandicularDepth = Session::getDepth() - 1;
+
+    return (getLength() > (Session::getPitch(perpandicularDepth)))
+      and  (getLength() < (Session::getPitch(perpandicularDepth) * 3));
+  }
+
+
+  DbU::Unit  AutoSegment::getPPitch () const
+  {
+    DbU::Unit    topPPitch     = getPitch();
+    DbU::Unit    bottomPPitch  = topPPitch;
+    unsigned int depth         = getDepth();
+
+    if (depth < Session::getDepth()) {
+      topPPitch = Session::getPitch( depth + ((_flags & SegSpinTop) ? 1 : 0) );
+    }
+    if (depth > 0) {
+      bottomPPitch = Session::getPitch( depth - ((_flags & SegSpinBottom) ? 1 : 0) );
+    }
+
+    return std::max( topPPitch, bottomPPitch );
   }
 
 
@@ -578,6 +655,49 @@ namespace Katabatic {
   { return AutoSegments_Perpandiculars( this ); }
 
 
+  bool  AutoSegment::checkDepthSpin () const
+  {
+    bool         valid       = true;
+    const Layer* sourceLayer = getAutoSource()->getLayer();
+    const Layer* targetLayer = getAutoTarget()->getLayer();
+
+    if (  (_flags & SegSourceTop) and (sourceLayer->getBottom() != getLayer()) ) {
+      cerr << Error("%s\n"
+                    "        Source is not going above, connected to *top* of %s."
+                   , getString(this).c_str()
+                   , getString(getAutoSource()).c_str()
+                   ) << endl;
+      valid = false;
+    }
+    if (  (_flags & SegSourceBottom) and (sourceLayer->getTop() != getLayer()) ) {
+      cerr << Error("%s\n"
+                    "        Source is not going below, connected to *bottom* of %s."
+                   , getString(this).c_str()
+                   , getString(getAutoSource()).c_str()
+                   ) << endl;
+      valid = false;
+    }
+    if (  (_flags & SegTargetTop) and (targetLayer->getBottom() != getLayer()) ) {
+      cerr << Error("%s\n"
+                    "        Target is not going above connected to *top* of %s."
+                   , getString(this).c_str()
+                   , getString(getAutoTarget()).c_str()
+                   ) << endl;
+      valid = false;
+    }
+    if (  (_flags & SegTargetBottom) and (targetLayer->getTop() != getLayer()) ) {
+      cerr << Error("%s\n"
+                    "        Target is not going below, connected to *bottom* of %s."
+                   , getString(this).c_str()
+                   , getString(getAutoTarget()).c_str()
+                   ) << endl;
+      valid = false;
+    }
+
+    return valid;
+  }
+
+
   void  AutoSegment::setFlagsOnAligneds ( unsigned int flags )
   {
     setFlags( flags );
@@ -595,6 +715,7 @@ namespace Katabatic {
       base()->getSourceHook()->detach();
       source->cacheDetach( this );
       unsetFlags( SegNotSourceAligned );
+      setFlags( SegInvalidatedSource );
     }
   }
 
@@ -606,6 +727,7 @@ namespace Katabatic {
       base()->getTargetHook()->detach();
       target->cacheDetach( this );
       unsetFlags( SegNotTargetAligned );
+      setFlags( SegInvalidatedTarget );
     }
   }
 
@@ -662,9 +784,10 @@ namespace Katabatic {
     if (constraintMin > constraintMax) { ltraceout(200); return false; }
 
     if (isDogleg()) {
-    // Ugly: hard-wired value of the track spacing.
-      constraintMin -= DbU::lambda(25.0);
-      constraintMax += DbU::lambda(25.0);
+      DbU::Unit halfSideLength = getAutoSource()->getGCell()->getSide
+                                   ( isHorizontal() ? KbVertical : KbHorizontal ).getHalfSize();
+      constraintMin -= halfSideLength;
+      constraintMax += halfSideLength;
     }
 
     if (getAxis() < constraintMin) {
@@ -725,8 +848,8 @@ namespace Katabatic {
     if ( (axis == getAxis()) and not (flags & KbRealignate) ) return;
 
     ltrace(200) << "setAxis() @"
-                << ((isHorizontal())?"Y ":"X ") << DbU::getLambda(getAxis())
-                << " to " << DbU::getLambda(axis) << " on " << this << endl;
+                << ((isHorizontal())?"Y ":"X ") << DbU::toLambda(getAxis())
+                << " to " << DbU::toLambda(axis) << " on " << this << endl;
     ltracein(80);
 
     _setAxis( axis );
@@ -856,8 +979,8 @@ namespace Katabatic {
     getConstraints( constraintMin, constraintMax );
 
     if (attractors.getAttractorsCount()) {
-      ltrace(89) << "Lower Median " << DbU::getLambda(attractors.getLowerMedian()) << endl;
-      ltrace(89) << "Upper Median " << DbU::getLambda(attractors.getUpperMedian()) << endl;
+      ltrace(89) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
+      ltrace(89) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
 
       optimalMin = attractors.getLowerMedian();
       optimalMax = attractors.getUpperMedian();
@@ -1044,7 +1167,7 @@ namespace Katabatic {
     ltracein(200);
 
     invalidate( KbNoFlags );
-    setFlags( SegInvalidatedLayer );
+    setFlags( SegInvalidatedLayer|SegInvalidatedSource|SegInvalidatedTarget );
 
     const Layer* newLayer = Session::getRoutingGauge()->getRoutingLayer(depth);
     if (getLayer() != newLayer) {
@@ -1658,9 +1781,10 @@ namespace Katabatic {
   {
     bool coherency = true;
 
-    coherency = coherency && checkNotInvalidated();
-    coherency = coherency && checkPositions();
-    coherency = coherency && checkConstraints();
+    coherency = checkNotInvalidated() and coherency;
+    coherency = checkPositions()      and coherency;
+    coherency = checkConstraints()    and coherency;
+    coherency = checkDepthSpin()      and coherency;
 
     return coherency;
   }
@@ -1681,6 +1805,14 @@ namespace Katabatic {
     state += isNotAligned    () ? "A": "-";
     state += isSlackened     () ? "S": "-";
     state += isInvalidated   () ? "i": "-";
+
+    if      (_flags & SegSourceTop)    state += 'T';
+    else if (_flags & SegSourceBottom) state += 'B';
+    else state += '-';
+    if      (_flags & SegTargetTop)    state += 'T';
+    else if (_flags & SegTargetBottom) state += 'B';
+    else state += '-';
+
     return state;
   }
 

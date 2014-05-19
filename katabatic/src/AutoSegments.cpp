@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -381,8 +380,8 @@ namespace Katabatic {
         ltrace(79) << _hookLocator->getElement() << endl;
         Hook* hook = dynamic_cast<Segment::SourceHook*>(_hookLocator->getElement());
         if (hook) {
-          if (  ((_flags & KbBySource) and (dynamic_cast<Segment::SourceHook*>(hook)))
-             or ((_flags & KbByTarget) and (dynamic_cast<Segment::TargetHook*>(hook))) ) {
+          if (  ((_flags & KbSource) and (dynamic_cast<Segment::SourceHook*>(hook)))
+             or ((_flags & KbTarget) and (dynamic_cast<Segment::TargetHook*>(hook))) ) {
             _element = Session::lookup( static_cast<Segment*>(hook->getComponent()) );
 
             if (_element->isHorizontal()) {

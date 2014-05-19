@@ -47,16 +47,20 @@ namespace {
   enum SegmentType { LocalSegments=0x10, GlobalSegments=0x20 };
 
 
-  bool  isChip ( Cell* cell, Instance*& core )
+  bool  isChip ( Cell* cell, Instance*& core, Cell*& referencePad )
   {
     AllianceFramework* af = AllianceFramework::get();
     int pads  = 0;
     int cores = 0;
 
+    core         = NULL;
+    referencePad = NULL;
     forEach ( Instance*, iinstance, cell->getInstances() ) {
-      if ( af->isPad(iinstance->getMasterCell()) )
+      if ( af->isPad(iinstance->getMasterCell()) ) {
         ++pads;
-      else {
+        if (not referencePad)
+          referencePad = iinstance->getMasterCell();
+      } else {
         ++cores;
         core = *iinstance;
       }
@@ -177,7 +181,7 @@ namespace Katabatic {
     cmess1 << "  o  Slackening IOs of <" << core->getName() << ">." << endl;
 
     Layer::Mask mask = Session::getRoutingLayer(1)->getMask();
-    slackenBorder ( core->getBoundingBox().inflate(DbU::lambda(50.0))
+    slackenBorder ( core->getBoundingBox().inflate(Session::getSliceHeight())
                   , mask
                   , GlobalSegments|Constant::Horizontal
                   );
@@ -186,19 +190,19 @@ namespace Katabatic {
 
   void  KatabaticEngine::chipPrep ()
   {
-    if ( isChip() ) {
-      reselectPadRp ( getCell() );
-    // slackenBlockIos ( _core );
+    if (isChip()) {
+      reselectPadRp( getCell() );
+    //slackenBlockIos( _core );
 
-    // cmess1 << "  o  Slackening Pads-connected segments." << endl;
-    // slackenBorder ( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
-    //               , Session::getRoutingLayer(3)->getMask()
-    //               , GlobalSegments|LocalSegments|Constant::Horizontal
-    //               );
-    // slackenBorder ( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
-    //               , Session::getRoutingLayer(1)->getMask()
-    //               , GlobalSegments|Constant::Horizontal
-    //               );
+    //cmess1 << "  o  Slackening Pads-connected segments." << endl;
+    //slackenBorder( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
+    //             , Session::getRoutingLayer(3)->getMask()
+    //             , GlobalSegments|LocalSegments|Constant::Horizontal
+    //             );
+    //slackenBorder( _cell->getBoundingBox().inflate(DbU::lambda(-425.0))
+    //             , Session::getRoutingLayer(1)->getMask()
+    //             , GlobalSegments|Constant::Horizontal
+    //             );
     }
   }
 
@@ -206,6 +210,7 @@ namespace Katabatic {
   ChipTools::ChipTools ( Cell* cell )
     : _cell        (cell)
     , _core        (NULL)
+    , _referencePad(NULL)
     , _isChip      (false)
     , _chipBb      (cell->getBoundingBox())
     , _leftPadsBb  ()
@@ -214,11 +219,11 @@ namespace Katabatic {
     , _bottomPadsBb()
     , _chipCorona  ()
   {
-    _isChip = ::isChip ( _cell, _core );
+    _isChip = ::isChip( _cell, _core, _referencePad );
 
-    if ( _isChip ) {
+    if (_isChip) {
     // Ugly: hard-coded pads height.
-      const DbU::Unit padHeight = DbU::lambda(400.0);
+      const DbU::Unit padHeight = _referencePad->getAbutmentBox().getHeight();
 
       Box outer = _cell->getBoundingBox().inflate ( -padHeight );
       _chipCorona   = Torus ( outer, _core->getBoundingBox() );
@@ -228,9 +233,10 @@ namespace Katabatic {
       _topPadsBb    = Box   ( _chipBb.getXMin(), _chipCorona.getOuterBox().getYMax(), _chipBb.getXMax(),                   _chipBb.getYMax() );
 
       cmess1 << "  o  Design is a complete chip." << endl;
-      cmess1 << "     - Core: <" << _core->getName() << ">/<"
+      cmess1 << "     - Core:          <" << _core->getName() << ">/<"
              << _core->getMasterCell()->getName() << ">." << endl;
-      cmess1 << "     - Corona: " << _chipCorona << "." << endl;
+      cmess1 << "     - Reference pad: <" << _referencePad->getName() << ">" << endl;
+      cmess1 << "     - Corona:        " << _chipCorona << "." << endl;
     } else {
       _chipCorona = Torus ( _cell->getBoundingBox(), _cell->getBoundingBox() );
     }
@@ -253,6 +259,7 @@ namespace Katabatic {
                                      
     record->add ( getSlot ( "_cell"        ,  _cell         ) );
     record->add ( getSlot ( "_core"        ,  _core         ) );
+    record->add ( getSlot ( "_referencePad",  _referencePad ) );
     record->add ( getSlot ( "_isChip"      , &_isChip       ) );
     record->add ( getSlot ( "_chipBb"      , &_chipBb       ) );
     record->add ( getSlot ( "_leftPadsBb"  , &_leftPadsBb   ) );

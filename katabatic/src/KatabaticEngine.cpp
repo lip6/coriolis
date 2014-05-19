@@ -401,7 +401,7 @@ namespace Katabatic {
     AutoSegmentLut::const_iterator  it = _autoSegmentLut.begin();
     AutoSegmentLut::const_iterator end = _autoSegmentLut.end  ();
     for ( ; it != end ; it++ )
-      coherency = coherency && it->second->_check();
+      coherency = it->second->_check() and coherency;
 
     vector<GCell*>::const_iterator  itGCell = _gcellGrid->getGCellVector()->begin();
     vector<GCell*>::const_iterator endGCell = _gcellGrid->getGCellVector()->end();
@@ -573,7 +573,7 @@ namespace Katabatic {
         }
 
         ltrace(159) << "Align on " << aligneds[0]
-                    << " " << DbU::getLambda(aligneds[0]->getAxis()) << endl;
+                    << " " << DbU::toLambda(aligneds[0]->getAxis()) << endl;
         aligneds[0]->setAxis( aligneds[0]->getAxis(), KbRealignate );
         aligneds.clear();
 

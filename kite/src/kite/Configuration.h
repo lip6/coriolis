@@ -28,6 +28,7 @@ namespace Kite {
   using Hurricane::Layer;
   using Hurricane::DbU;
   using Hurricane::Cell;
+  using CRL::CellGauge;
   using CRL::RoutingGauge;
   using CRL::RoutingLayerGauge;
 
@@ -59,7 +60,10 @@ namespace Kite {
       virtual bool                       isGContact              ( const Layer* ) const;
       virtual size_t                     getDepth                () const;
       virtual size_t                     getAllowedDepth         () const;
+      virtual DbU::Unit                  getSliceHeight          () const;
+      virtual DbU::Unit                  getSliceStep            () const;
       virtual size_t                     getLayerDepth           ( const Layer* ) const;
+      virtual CellGauge*                 getCellGauge            () const;
       virtual RoutingGauge*              getRoutingGauge         () const;
       virtual RoutingLayerGauge*         getLayerGauge           ( size_t depth ) const;
       virtual const Layer*               getRoutingLayer         ( size_t depth ) const;

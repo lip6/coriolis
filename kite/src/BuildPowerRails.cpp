@@ -223,16 +223,67 @@ namespace {
       else destroyRing( _vdde );
       if (_vsse == NULL) cerr << Error("Missing <vsse> net (for pads) at chip level." ) << endl;
       else destroyRing( _vsse );
+      if (_vddi == NULL) cerr << Error("Missing <vddi>/<vdd> net (for pads) at top level." ) << endl;
+      else destroyRing( _vddi );
+      if (_vssi == NULL) cerr << Error("Missing <vssi>/<vss> net (for pads) at top level." ) << endl;
+      else destroyRing( _vssi );
       if (_ck   == NULL) cerr << Warning("No <ck> net at (for pads) chip level." ) << endl;
       if (_cki  == NULL) cerr << Warning("No <cki> net at (for pads) chip level." ) << endl;
       else destroyRing( _cki );
+    } else {
+      _vddiName = "";
+      _vssiName = "";
+      _ckoName  = "";
+
+      forEach ( Net*, inet, topCell->getNets() ) {
+        Net::Type netType = inet->getType();
+        if (netType == Net::Type::POWER) {
+          if (_vddiName.isEmpty()) {
+            _vddiName =  inet->getName();
+            _vddi     = *inet;
+          } else {
+            cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
+                          "        (will consider only <%s>)"
+                         , getString(inet ->getName()).c_str()
+                         , getString(_vddi->getName()).c_str()
+                         ) << endl;
+          }
+        }
+
+        if (netType == Net::Type::GROUND) {
+          if (_vssiName.isEmpty()) {
+            _vssiName =  inet->getName();
+            _vssi     = *inet;
+          } else {
+            cerr << Error("Second power ground net <%s> net at top block level will be ignored.\n"
+                          "        (will consider only <%s>)"
+                         , getString(inet ->getName()).c_str()
+                         , getString(_vssi->getName()).c_str()
+                         ) << endl;
+          }
+        }
+
+        if (netType == Net::Type::CLOCK) {
+          if (_ckoName.isEmpty()) {
+            _ckoName =  inet->getName();
+            _cko     = *inet;
+          } else {
+            cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
+                          "        (will consider only <%s>)"
+                         , getString(inet ->getName()).c_str()
+                         , getString(_cko->getName()).c_str()
+                         ) << endl;
+          }
+        }
+      }
+      
+      if ((_vddi) == NULL) cerr << Error("Missing <vdd> net at top block level." ) << endl;
+      else destroyRing( _vddi );
+      if (_vssi == NULL) cerr << Error("Missing <vss> net at top block level." ) << endl;
+      else destroyRing( _vssi );
     }
 
-    if (_vddi == NULL) cerr << Error("Missing <vddi>/<vdd> net (for pads) at top level." ) << endl;
-    else destroyRing( _vddi );
-    if (_vssi == NULL) cerr << Error("Missing <vssi>/<vss> net (for pads) at top level." ) << endl;
-    else destroyRing( _vssi );
-    if (_cko  == NULL) cparanoid << Warning("No <ck> net at top level." ) << endl;
+    if (_cko  == NULL) cparanoid << Warning("No clock net at top level." ) << endl;
   }
 
 
@@ -524,7 +575,7 @@ namespace {
     Segment*      segment   = NULL;
     DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
                               - plane->getLayerGauge()->getHalfWireWidth()
-                              - DbU::lambda(0.1);
+                              - DbU::fromLambda(0.1);
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
   //unsigned int  type      = plane->getLayerGauge()->getType();
@@ -1020,8 +1071,8 @@ namespace {
 
         if (    _chipTools.isChip()
             and ((depth == 2) or (depth == 3))
-            and (segment->getWidth () == DbU::lambda( 12.0))
-            and (segment->getLength() >  DbU::lambda(200.0))
+            and (segment->getWidth () == DbU::fromLambda( 12.0))
+            and (segment->getLength() >  DbU::fromLambda(200.0))
             and (_kite->getChipTools().getCorona().contains(bb)) ) {
           switch ( depth ) {
             case 2: _vRingSegments.push_back ( segment ); break; // M3 V.

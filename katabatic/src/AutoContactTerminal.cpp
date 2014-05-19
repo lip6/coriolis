@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2013, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -30,7 +29,6 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
-#include "hurricane/UpdateSession.h"
 #include "hurricane/DebugSession.h"
 #include "crlcore/RoutingGauge.h"
 #include "katabatic/AutoContactTerminal.h"
@@ -265,7 +263,6 @@ namespace Katabatic {
       throw Error( os.str() );
     }
     unsetFlags( CntInvalidatedCache );
-
     ltrace(110) << "seg:" << _segment << endl;
 
     delete [] horizontals;
@@ -354,6 +351,7 @@ namespace Katabatic {
       else if (delta == 0) setLayer( rg->getRoutingLayer(anchorDepth) );
       else if (delta == 1) setLayer( rg->getContactLayer(std::min(anchorDepth,segmentDepth)) );
     }
+    _segment->invalidate( this );
 
     ltraceout(110);
     DebugSession::close();

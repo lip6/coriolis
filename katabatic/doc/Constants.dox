@@ -31,11 +31,13 @@
  //! \var         KbWithPerpands
  //!              Request that AutoSegments in perpandicular direction should be includeds.
 
- //! \var         KbBySource
- //!              Request AutoSegments anchored by their source anchor.
+ //! \var         KbSource
+ //!              Request AutoSegments anchored by their source anchor or that some
+ //!              operation has to be performed on the source.
 
- //! \var         KbByTarget
- //!              Request AutoSegments anchored by their target anchor.
+ //! \var         KbTarget
+ //!              Request AutoSegments anchored by their target anchor or that some
+ //!              operation has to be performed on the target.
 
  //! \var         KbWarnOnError
  //!              Display a warning if something has gone wrong.

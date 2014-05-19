@@ -26,7 +26,6 @@
 #include <hurricane/Go.h>
 #include <hurricane/Net.h>
 #include <hurricane/Cell.h>
-#include <hurricane/UpdateSession.h>
 #include <hurricane/viewer/Graphics.h>
 #include <hurricane/viewer/CellWidget.h>
 #include <hurricane/viewer/CellViewer.h>
@@ -52,7 +51,6 @@ namespace Kite {
   using Hurricane::Exception;
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
-  using Hurricane::UpdateSession;
   using Hurricane::Point;
   using Hurricane::Net;
   using Hurricane::Graphics;

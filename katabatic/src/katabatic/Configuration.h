@@ -25,8 +25,9 @@ namespace Hurricane {
   class Cell;
 }
 
-#include  "crlcore/RoutingGauge.h"
 namespace CRL {
+  class CellGauge;
+  class RoutingGauge;
   class RoutingLayerGauge;
 }
 
@@ -40,6 +41,7 @@ namespace Katabatic {
   using  Hurricane::Layer;
   using  Hurricane::DbU;
   using  Hurricane::Cell;
+  using  CRL::CellGauge;
   using  CRL::RoutingGauge;
   using  CRL::RoutingLayerGauge;
 
@@ -61,11 +63,14 @@ namespace Katabatic {
       virtual size_t             getDepth           () const = 0;
       virtual size_t             getAllowedDepth    () const = 0;
       virtual size_t             getLayerDepth      ( const Layer* ) const = 0;
+      virtual CellGauge*         getCellGauge       () const = 0;
       virtual RoutingGauge*      getRoutingGauge    () const = 0;
       virtual RoutingLayerGauge* getLayerGauge      ( size_t depth ) const = 0;
       virtual const Layer*       getRoutingLayer    ( size_t depth ) const = 0;
       virtual Layer*             getContactLayer    ( size_t depth ) const = 0;
       virtual DbU::Unit          getExtensionCap    () const = 0;
+      virtual DbU::Unit          getSliceHeight     () const = 0;
+      virtual DbU::Unit          getSliceStep       () const = 0;
       virtual DbU::Unit          getPitch           ( size_t depth, unsigned int flags ) const = 0;
       virtual DbU::Unit          getOffset          ( size_t depth ) const = 0;
       virtual DbU::Unit          getWireWidth       ( size_t depth ) const = 0;
@@ -105,7 +110,7 @@ namespace Katabatic {
       friend class Configuration;
     public:
     // Constructor & Destructor.
-                                     ConfigurationConcrete ( const RoutingGauge* rg=NULL );
+                                     ConfigurationConcrete ( const CellGauge* cg=NULL, const RoutingGauge* rg=NULL );
       virtual                       ~ConfigurationConcrete ();
       virtual ConfigurationConcrete* clone                 () const;
     // Methods.
@@ -114,11 +119,14 @@ namespace Katabatic {
       virtual size_t                 getDepth              () const;
       virtual size_t                 getAllowedDepth       () const;
       virtual size_t                 getLayerDepth         ( const Layer* ) const;
+      virtual CellGauge*             getCellGauge          () const;
       virtual RoutingGauge*          getRoutingGauge       () const;
       virtual RoutingLayerGauge*     getLayerGauge         ( size_t depth ) const;
       virtual const Layer*           getRoutingLayer       ( size_t depth ) const;
       virtual Layer*                 getContactLayer       ( size_t depth ) const;
       virtual DbU::Unit              getExtensionCap       () const;
+      virtual DbU::Unit              getSliceHeight        () const;
+      virtual DbU::Unit              getSliceStep          () const;
       virtual DbU::Unit              getPitch              ( size_t depth, unsigned int flags ) const;
       virtual DbU::Unit              getOffset             ( size_t depth ) const;
       virtual DbU::Unit              getWireWidth          ( size_t depth ) const;
@@ -145,6 +153,7 @@ namespace Katabatic {
       const Layer*  _gmetalh;
       const Layer*  _gmetalv;
       const Layer*  _gcontact;
+      CellGauge*    _cg;
       RoutingGauge* _rg;
       DbU::Unit     _extensionCap;
       float         _saturateRatio;

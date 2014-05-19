@@ -127,13 +127,13 @@ namespace Kite {
 
     TrackElement* neighbor = _segment->getPrevious();
     if (neighbor and (neighbor->isFixed() or neighbor->isBlockage())) {
-      if (abs(axis - neighbor->getTargetU()) < DbU::lambda(10.0))
+      if (abs(axis - neighbor->getTargetU()) < getPPitch()*2)
         return true;
     }
 
     neighbor = _segment->getNext();
     if (neighbor and (neighbor->isFixed() or neighbor->isBlockage())) {
-      if (abs(axis - neighbor->getSourceU()) < DbU::lambda(10.0))
+      if (abs(axis - neighbor->getSourceU()) < getPPitch()*2)
         return true;
     }
 
@@ -209,8 +209,7 @@ namespace Kite {
         
       if (Manipulator(perpandiculars[i],_fsm).ripup(perpandicularActionFlags)) {
         if (dislodgeCaged) {
-        // Ugly: hard-coded uses of pitch.
-          _event->setAxisHint( _event->getSegment()->getAxis() + DbU::lambda(5.0) );
+          _event->setAxisHint( _event->getSegment()->getAxis() + _event->getSegment()->getPitch() );
         }
         continue;
       }
@@ -272,7 +271,7 @@ namespace Kite {
 
   bool  Manipulator::relax ( Interval interval, unsigned int flags )
   {
-    interval.inflate( - Session::getExtensionCap() /*+ DbU::lambda(5.0)*/ ); // Ugly.
+    interval.inflate( - Session::getExtensionCap() );
     ltrace(200) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
 
     if (_segment->isFixed()) return false;
@@ -451,9 +450,8 @@ namespace Kite {
       uside = gcells[imaxconflict+1]->getSide( _segment->getDirection() );
       ltrace(200) << "GCell Edge Comparison (max): " << uside
                   << " vs. " << DbU::getValueString(interval.getVMax()) << endl;
-    // Ugly: Direct uses of routing pitch.
-      if (interval.getVMax()+DbU::lambda(5.0) >= uside.getVMin()) {
-        interval.inflate( 0, DbU::fromLambda(5.0) );
+      if (interval.getVMax()+getPPitch() >= uside.getVMin()) {
+        interval.inflate( 0, getPPitch() );
         ltrace(200) << "Using next GCell " << interval << endl;
         imaxconflict++;
       }
@@ -501,8 +499,7 @@ namespace Kite {
         doglegAxis = dogLegGCell->getSide( _segment->getDirection() ).getCenter();
       //ltrace(200) << "MARK 1 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       } else {
-      // Ugly: hardcoded pitch.
-        doglegAxis = interval.getVMin() - DbU::lambda(5.0);
+        doglegAxis = interval.getVMin() - getPPitch();
       //ltrace(200) << "MARK 2 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       }
     } else {
@@ -510,8 +507,7 @@ namespace Kite {
         doglegAxis = dogLegGCell->getSide( _segment->getDirection() ).getVMin();
       //ltrace(200) << "MARK 3 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       } else {
-      // Ugly: hardcoded pitch (5.0 - 1.0).
-        doglegAxis = interval.getVMax() + DbU::lambda(4.0);
+        doglegAxis = interval.getVMax() + getPPitch() - DbU::fromLambda(1.0);
       //ltrace(200) << "MARK 4 doglegAxis: " << DbU::getValueString(doglegAxis) << endl;
       }
     }
@@ -558,8 +554,7 @@ namespace Kite {
       if (maxExpanded) {
         doglegAxis = dogLegGCell->getSide(segment1->getDirection()/*,false*/).getCenter();
       } else {
-      // Ugly: hardcoded pitch.
-        doglegAxis = interval.getVMax() + DbU::lambda(5.0);
+        doglegAxis = interval.getVMax() + getPPitch();
       }
       if (doglegReuse2) _fsm.addAction( dogleg, SegmentAction::OtherRipup );
       else              dogleg->setAxis( doglegAxis );
@@ -740,7 +735,7 @@ namespace Kite {
           if ( shrinkRight ) {
             if ( not (success=Manipulator(*isegment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
-                           , toFree.getVMin() - DbU::lambda(2.5)
+                           , toFree.getVMin() - getPPitch()/2
                            )) )
               break;
 
@@ -755,7 +750,7 @@ namespace Kite {
           if ( shrinkLeft  ) {
             if ( not (success=Manipulator(*isegment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
-                           , toFree.getVMax() + DbU::lambda(2.5)
+                           , toFree.getVMax() + getPPitch()/2
                            )) )
               break;
             if ( event3->getTracksFree() == 1 ) {
@@ -1033,12 +1028,12 @@ namespace Kite {
 
         if (other->getAxis() < _segment->getAxis()) {
         // Ugly: routing pitch.
-          shiftedAxisHint = otherEvent->getAxisHint() - DbU::lambda(5.0);
+          shiftedAxisHint = otherEvent->getAxisHint() - getPitch();
           if (shiftedAxisHint < uside.getVMin())
             shiftedAxisHint = uside.getVMin();
         } else {
         // Ugly: routing pitch.
-          shiftedAxisHint = otherEvent->getAxisHint() + DbU::lambda(5.0);
+          shiftedAxisHint = otherEvent->getAxisHint() + getPitch();
           if (shiftedAxisHint > uside.getVMax())
             shiftedAxisHint = uside.getVMax();
         }
@@ -1094,7 +1089,7 @@ namespace Kite {
       if (_segment->isLocal()) {
         if (not _segment->canPivotUp(0.5)) return false;
       } else {
-        if (_segment->getLength() < DbU::lambda(100.0)) {
+        if (_segment->getLength() < 20*getPitch()) {
           if (not (flags & AllowShortPivotUp)) return false;
           if (not _segment->canPivotUp(1.0)) return false;
         }
@@ -1113,7 +1108,7 @@ namespace Kite {
 
     if (    _segment->isFixed()) return false;
     if (not _segment->isLocal()) return false;
-    if (_segment->getLength() < 5*DbU::lambda(5.0)) return false;
+    if (_segment->getLength() < 5*getPitch()) return false;
 
     if (_fsm.getCosts().size()) {
       Track*    track    = _fsm.getTrack(0);

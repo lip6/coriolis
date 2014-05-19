@@ -28,7 +28,6 @@
 #include  "hurricane/Plug.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
 #include  "hurricane/DebugSession.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/AutoContactVTee.h"
@@ -289,6 +288,9 @@ namespace Katabatic {
         }
       }
     }
+    _horizontal1->invalidate( this );
+    _vertical1  ->invalidate( this );
+    _vertical2  ->invalidate( this );
 
     ltraceout(110);
     DebugSession::close ();

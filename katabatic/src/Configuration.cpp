@@ -14,19 +14,21 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-#include  <iomanip>
-#include  <vector>
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Cell.h"
-#include  "crlcore/Utilities.h"
-#include  "crlcore/RoutingLayerGauge.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "katabatic/Configuration.h"
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Error.h"
+#include "hurricane/Technology.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Cell.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/CellGauge.h"
+#include "crlcore/RoutingGauge.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/AllianceFramework.h"
+#include "katabatic/Configuration.h"
 
 
 
@@ -62,18 +64,21 @@ namespace Katabatic {
 // Class  :  "Katabatic::ConfigurationConcrete".
 
 
-  ConfigurationConcrete::ConfigurationConcrete ( const RoutingGauge* rg )
+  ConfigurationConcrete::ConfigurationConcrete ( const CellGauge* cg, const RoutingGauge* rg )
     : Configuration   ()
+    , _cg             (NULL)
     , _rg             (NULL)
     , _extensionCap   (DbU::lambda(0.5))
     , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
     , _saturateRp     (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
-    , _globalThreshold(DbU::lambda((double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*50)->asInt())) // Ugly: direct uses of SxLib gauge.
+    , _globalThreshold(0)
     , _allowedDepth   (0)
     , _hEdgeCapacity  (0)
     , _vEdgeCapacity  (0)
   {
+    if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
+    _cg = cg->getClone();
     _rg = rg->getClone();
 
     if (Cfg::hasParameter("katabatic.topRoutingLayer")) {
@@ -89,15 +94,19 @@ namespace Katabatic {
     if (_gmetalv  == NULL) cerr << Warning("Cannot get \"gmetalv\" layer from the Technology.") << endl;
     if (_gmetalh  == NULL) cerr << Warning("Cannot get \"gmetalh\" layer from the Technology.") << endl;
 
+    DbU::Unit sliceHeight = _cg->getSliceHeight();
+    _globalThreshold = DbU::fromLambda
+      ( (double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*DbU::toLambda(sliceHeight))->asInt() );
+
     vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
     for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
       RoutingLayerGauge* layerGauge = (*ilayerGauge);
       if (layerGauge->getType() != Constant::Default) continue;
 
       if (layerGauge->getDirection() == Constant::Horizontal) {
-        _hEdgeCapacity += layerGauge->getTrackNumber ( 0, DbU::lambda(50.0) ) - 1;
+        _hEdgeCapacity += layerGauge->getTrackNumber ( 0, sliceHeight ) - 1;
       } else if (layerGauge->getDirection() == Constant::Vertical) {
-        _vEdgeCapacity += layerGauge->getTrackNumber( 0, DbU::lambda(50.0) ) - 1;
+        _vEdgeCapacity += layerGauge->getTrackNumber( 0, sliceHeight ) - 1;
       }
     }
   }
@@ -108,19 +117,22 @@ namespace Katabatic {
     , _gmetalh           (other._gmetalh)
     , _gmetalv           (other._gmetalv)
     , _gcontact          (other._gcontact)
+    , _cg                (NULL)
     , _rg                (NULL)
     , _extensionCap      (other._extensionCap)
     , _saturateRatio     (other._saturateRatio)
     , _globalThreshold   (other._globalThreshold)
     , _allowedDepth      (other._allowedDepth)
   {
-    if ( other._rg ) _rg = other._rg->getClone();
+    if (other._cg) _cg = other._cg->getClone();
+    if (other._rg) _rg = other._rg->getClone();
   }
 
 
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
     ltrace(89) << "About to delete attribute _rg (RoutingGauge)." << endl;
+    _cg->destroy ();
     _rg->destroy ();
   }
 
@@ -153,6 +165,10 @@ namespace Katabatic {
   { return _rg->getLayerDepth(layer); }
 
 
+  CellGauge* ConfigurationConcrete::getCellGauge () const
+  { return _cg; }
+
+
   RoutingGauge* ConfigurationConcrete::getRoutingGauge () const
   { return _rg; }
 
@@ -171,6 +187,14 @@ namespace Katabatic {
 
   DbU::Unit  ConfigurationConcrete::getExtensionCap () const
   { return _extensionCap; }
+
+
+  DbU::Unit  ConfigurationConcrete::getSliceHeight () const
+  { return _cg->getSliceHeight(); }
+
+
+  DbU::Unit  ConfigurationConcrete::getSliceStep () const
+  { return _cg->getSliceStep(); }
 
 
   DbU::Unit  ConfigurationConcrete::getPitch ( const Layer* layer, unsigned int flags ) const
@@ -290,7 +314,7 @@ namespace Katabatic {
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
     cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
     cout << Dots::asPercentage("     - GCell saturation threshold"  ,_saturateRatio) << endl;
-    cout << Dots::asDouble    ("     - Long global length threshold",DbU::getLambda(_globalThreshold)) << endl;
+    cout << Dots::asDouble    ("     - Long global length threshold",DbU::toLambda(_globalThreshold)) << endl;
   }
 
 

@@ -102,20 +102,23 @@ namespace Kite {
   void  SegmentObserver::notify ( unsigned int flags )
   {
     TrackElement* segment = getOwner();
-    switch ( flags ) {
-      case AutoSegment::Invalidate:
-        if (not segment->isInvalidated()) {
-          ltrace(200) << "::notify() <Invalidate> on " << segment << endl;
-          segment->invalidate();
-        }
-        break;
-      case AutoSegment::Revalidate:
-        // Revalidation must be delayed until *all* the AutoSegments have been revalidated.
-        // if (segment->isInvalidated()) {
-        //   ltrace(200) << "::notify() <Revalidate> on " << segment << endl;
-        //   segment->revalidate( true );
-        // }
-        break;
+    if (flags & AutoSegment::Invalidate) {
+      if (not segment->isInvalidated()) {
+        ltrace(200) << "::notify() <Invalidate> on " << segment << endl;
+        segment->invalidate();
+      }
+    }
+
+    if (flags & AutoSegment::Revalidate) {
+    // Revalidation must be delayed until *all* the AutoSegments have been revalidated.
+    // if (segment->isInvalidated()) {
+    //   ltrace(200) << "::notify() <Revalidate> on " << segment << endl;
+    //   segment->revalidate( true );
+    // }
+    }
+
+    if (flags & AutoSegment::RevalidatePPitch) {
+      segment->updatePPitch();
     }
   }
 
@@ -146,6 +149,7 @@ namespace Kite {
   bool           TrackElement::isStrap              () const { return false; }
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
+  bool           TrackElement::isSameLayerDogleg    () const { return false; }
 // Predicates.
   bool           TrackElement::canSlacken           () const { return false; }
   bool           TrackElement::canPivotUp           ( float ) const { return false; };
@@ -157,6 +161,8 @@ namespace Kite {
 // Accessors.
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }
+  DbU::Unit      TrackElement::getPitch             () const { return 0; }
+  DbU::Unit      TrackElement::getPPitch            () const { return 0; }
   float          TrackElement::getMaxUnderDensity   ( unsigned int ) const { return 0.0; };
   unsigned int   TrackElement::getDoglegLevel       () const { return 0; }
   TrackElement*  TrackElement::getParent            () const { return NULL; }
@@ -176,6 +182,7 @@ namespace Kite {
   void           TrackElement::reschedule           ( unsigned int ) { }
   void           TrackElement::detach               () { }
   void           TrackElement::revalidate           () { }
+  void           TrackElement::updatePPitch         () { }
   void           TrackElement::setAxis              ( DbU::Unit, unsigned int flags ) { }
   TrackElement*  TrackElement::makeDogleg           () { return NULL; }
   TrackElement*  TrackElement::makeDogleg           ( Interval, unsigned int&  ) { return NULL; }

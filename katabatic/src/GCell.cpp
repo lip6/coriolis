@@ -361,8 +361,7 @@ namespace Katabatic {
 
   GCell* GCell::create ( GCellGrid* gcellGrid, unsigned int index, Box box )
   {
-    if (_topRightShrink == 0)
-      _topRightShrink = 1 /*DbU::lambda(0.0)*/;
+    if (_topRightShrink == 0) _topRightShrink = 1;
 
     DbU::Unit  trShrink = (  gcellGrid->isOnTopBorder  (index)
                           or gcellGrid->isOnRightBorder(index)) ? 0 : _topRightShrink;
@@ -499,25 +498,25 @@ namespace Katabatic {
 
   AutoSegments  GCell::getHStartSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbBySource);
+    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbSource);
   }
 
 
   AutoSegments  GCell::getVStartSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbBySource);
+    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbSource);
   }
 
 
   AutoSegments  GCell::getHStopSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbByTarget);
+    return new AutoSegments_AnchorOnGCell (this,KbHorizontal|KbTarget);
   }
 
 
   AutoSegments  GCell::getVStopSegments ()
   {
-    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbByTarget);
+    return new AutoSegments_AnchorOnGCell (this,KbVertical|KbTarget);
   }
 
 
@@ -1324,8 +1323,8 @@ namespace Katabatic {
              , "<GCell index=\"%04i %04i\" corner=\"%06.1f %06.1f\" density=\"%3.2f,%3.2f\">"
              , getColumn()
              , getRow()
-             , DbU::getLambda(getX())
-             , DbU::getLambda(getY())
+             , DbU::toLambda(getX())
+             , DbU::toLambda(getY())
              , getDensity()
              , _cDensity
              );

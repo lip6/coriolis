@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -25,7 +25,6 @@ namespace bopts = boost::program_options;
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Warning.h"
-#include "hurricane/UpdateSession.h"
 using namespace Hurricane;
 
 #include "crlcore/Utilities.h"

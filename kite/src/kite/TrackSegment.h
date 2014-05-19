@@ -52,6 +52,7 @@ namespace Kite {
 
     public:
       static  TrackElement*         create                 ( AutoSegment*, Track*, bool& created );
+      static  size_t                getAllocateds          ();
     public:                                                
     // Wrapped AutoSegment Functions (when applicable).
       virtual AutoSegment*          base                   () const;
@@ -66,6 +67,7 @@ namespace Kite {
       virtual bool                  isStrap                () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
+      virtual bool                  isSameLayerDogleg      () const;
     // Predicates.
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );
@@ -79,6 +81,8 @@ namespace Kite {
       virtual unsigned int          getDirection           () const;
       virtual Net*                  getNet                 () const;
       virtual const Layer*          getLayer               () const;
+      virtual DbU::Unit             getPitch               () const;
+      virtual DbU::Unit             getPPitch              () const;
       virtual unsigned long         getFreedomDegree       () const;
       virtual unsigned int          getDoglegLevel         () const;
       virtual TrackElement*         getNext                () const;
@@ -102,8 +106,9 @@ namespace Kite {
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( unsigned int level );
       virtual void                  detach                 ();
-      virtual void                  revalidate             ();
       virtual void                  invalidate             ();
+      virtual void                  revalidate             ();
+      virtual void                  updatePPitch           ();
       virtual void                  setAxis                ( DbU::Unit, unsigned int flags );
       virtual TrackElement*         makeDogleg             ();
       virtual TrackElement*         makeDogleg             ( Katabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
@@ -123,10 +128,12 @@ namespace Kite {
 
     protected:
     // Attributes.
-      AutoSegment*   _base;
-      unsigned long  _freedomDegree;
-      DataNegociate* _data;
-      unsigned int   _dogLegLevel:4;
+      static size_t         _allocateds;
+             AutoSegment*   _base;
+             unsigned long  _freedomDegree;
+             DbU::Unit      _ppitch;
+             DataNegociate* _data;
+             unsigned int   _dogLegLevel:4;
 
     protected:
     // Constructors & Destructors.

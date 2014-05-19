@@ -60,30 +60,40 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
 
-  enum AutoSegmentFlag { SegHorizontal       = 0x00000001
-                       , SegFixed            = 0x00000002
-                       , SegGlobal           = 0x00000004
-                       , SegWeakGlobal       = 0x00000008
-                       , SegCanonical        = 0x00000010
-                       , SegBipoint          = 0x00000020
-                       , SegDogleg           = 0x00000040
-                       , SegStrap            = 0x00000080
-                       , SegLayerChange      = 0x00000100
-                       , SegStrongTerminal   = 0x00000200  // Replace Terminal.
-                       , SegWeakTerminal1    = 0x00000400  // Replace TopologicalEnd.
-                       , SegWeakTerminal2    = 0x00000800  // Replace TopologicalEnd.
-                       , SegNotSourceAligned = 0x00001000
-                       , SegNotTargetAligned = 0x00002000
-                       , SegUnbound          = 0x00010000
-                       , SegHalfSlackened    = 0x00020000
-                       , SegSlackened        = 0x00040000
-                       , SegAxisSet          = 0x00080000
-                       , SegInvalidated      = 0x00100000
-                       , SegInvalidatedLayer = 0x00200000
-                       , SegCreated          = 0x00400000
-                       // Masks.     
-                       , SegWeakTerminal     = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
-                       , SegNotAligned       = SegNotSourceAligned|SegNotTargetAligned
+  enum AutoSegmentFlag { SegNoFlags           = 0x00000000
+                       , SegHorizontal        = 0x00000001
+                       , SegFixed             = 0x00000002
+                       , SegGlobal            = 0x00000004
+                       , SegWeakGlobal        = 0x00000008
+                       , SegCanonical         = 0x00000010
+                       , SegBipoint           = 0x00000020
+                       , SegDogleg            = 0x00000040
+                       , SegStrap             = 0x00000080
+                       , SegSourceTop         = 0x00000100
+                       , SegSourceBottom      = 0x00000200
+                       , SegTargetTop         = 0x00000400
+                       , SegTargetBottom      = 0x00000800
+                       , SegLayerChange       = 0x00001000
+                       , SegStrongTerminal    = 0x00002000  // Replace Terminal.
+                       , SegWeakTerminal1     = 0x00004000  // Replace TopologicalEnd.
+                       , SegWeakTerminal2     = 0x00008000  // Replace TopologicalEnd.
+                       , SegNotSourceAligned  = 0x00010000
+                       , SegNotTargetAligned  = 0x00020000
+                       , SegUnbound           = 0x00100000
+                       , SegHalfSlackened     = 0x00200000
+                       , SegSlackened         = 0x00400000
+                       , SegAxisSet           = 0x00800000
+                       , SegInvalidated       = 0x01000000
+                       , SegInvalidatedSource = 0x02000000
+                       , SegInvalidatedTarget = 0x04000000
+                       , SegInvalidatedLayer  = 0x08000000
+                       , SegCreated           = 0x10000000
+                       // Masks.              
+                       , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
+                       , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
+                       , SegSpinTop           = SegSourceTop   |SegTargetTop
+                       , SegSpinBottom        = SegSourceBottom|SegTargetBottom
+                       , SegDepthSpin         = SegSpinTop     |SegSpinBottom
                        };
  
 
@@ -92,10 +102,11 @@ namespace Katabatic {
       friend class AutoVertical;
 
     public:
-      enum ObserverFlag { Create     = 0x000000001
-                        , Destroy    = 0x000000002
-                        , Invalidate = 0x000000003
-                        , Revalidate = 0x000000004
+      enum ObserverFlag { Create           = 0x000000001
+                        , Destroy          = 0x000000002
+                        , Invalidate       = 0x000000004
+                        , Revalidate       = 0x000000008
+                        , RevalidatePPitch = 0x000000010
                         };
     public:
       typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
@@ -153,7 +164,11 @@ namespace Katabatic {
       inline  bool                isNotTargetAligned         () const;
       inline  bool                isNotAligned               () const;
               bool                isStrongTerminal           ( unsigned int flags=0 ) const;
+              bool                isSameLayerDogleg          () const;
       inline  bool                isLayerChange              () const;
+      inline  bool                isSpinTop                  () const;
+      inline  bool                isSpinBottom               () const;
+      inline  bool                isSpinTopOrBottom          () const;
       inline  bool                isStrap                    () const;
       inline  bool                isDogleg                   () const;
       inline  bool                isUnbound                  () const;
@@ -173,6 +188,7 @@ namespace Katabatic {
               bool                canSlacken                 ( unsigned int flags=0 ) const;
       virtual bool                checkPositions             () const = 0;
       virtual bool                checkConstraints           () const = 0;
+              bool                checkDepthSpin             () const;
     // Accessors.                                            
       template< typename T >
       inline  T*                  getObserver                ();
@@ -188,6 +204,7 @@ namespace Katabatic {
       inline  AutoSegment*        getParent                  () const;
       inline  unsigned int        getDepth                   () const;
       inline  DbU::Unit           getPitch                   () const;
+              DbU::Unit           getPPitch                  () const;
       inline  DbU::Unit           getAxis                    () const;
       virtual DbU::Unit           getSourceU                 () const = 0;
       virtual DbU::Unit           getTargetU                 () const = 0;
@@ -221,6 +238,8 @@ namespace Katabatic {
               void                computeTerminal            ();
       virtual void                updateOrient               () = 0;
       virtual void                updatePositions            () = 0;
+              void                updateSourceSpin           ();
+              void                updateTargetSpin           ();
               void                sourceDetach               ();
               void                targetDetach               ();
               void                sourceAttach               ( AutoContact* );
@@ -248,6 +267,7 @@ namespace Katabatic {
     // Canonical Modifiers.                                            
               AutoSegment*        canonize                   ( unsigned int flags=KbNoFlags );
       virtual void                invalidate                 ( unsigned int flags=KbPropagate );
+              void                invalidate                 ( AutoContact* );
               void                computeOptimal             ( set<AutoSegment*>& processeds );
               void                setAxis                    ( DbU::Unit, unsigned int flags=KbNoFlags );
               bool                toConstraintAxis           ( unsigned int flags=KbRealignate );
@@ -414,6 +434,9 @@ namespace Katabatic {
   inline  bool            AutoSegment::isUnbound            () const { return _flags & SegUnbound  ; }
   inline  bool            AutoSegment::isStrap              () const { return _flags & SegStrap; }
   inline  bool            AutoSegment::isLayerChange        () const { return _flags & SegLayerChange; }
+  inline  bool            AutoSegment::isSpinTop            () const { return ((_flags & SegSpinTop   ) == SegSpinTop); }
+  inline  bool            AutoSegment::isSpinBottom         () const { return ((_flags & SegSpinBottom) == SegSpinBottom); }
+  inline  bool            AutoSegment::isSpinTopOrBottom    () const { return isSpinTop() or isSpinBottom(); }
   inline  bool            AutoSegment::isSlackened          () const { return _flags & SegSlackened; }
   inline  bool            AutoSegment::isCanonical          () const { return _flags & SegCanonical; }
   inline  bool            AutoSegment::isUnsetAxis          () const { return not (_flags & SegAxisSet); }

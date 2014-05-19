@@ -24,6 +24,7 @@
 #include  <boost/function.hpp>
 #include  "hurricane/Commons.h"
 #include  "hurricane/DbU.h"
+#include  "crlcore/CellGauge.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/Constants.h"
 #include  "katabatic/Configuration.h"
@@ -82,6 +83,9 @@ namespace Katabatic {
       static        size_t                      getSaturateRp         ();
       static inline size_t                      getAllowedDepth       ();
       static        DbU::Unit                   getExtensionCap       ();
+      static inline CellGauge*                  getCellGauge          ();
+      static inline DbU::Unit                   getSliceHeight        ();
+      static inline DbU::Unit                   getSliceStep          ();
       static inline RoutingGauge*               getRoutingGauge       ();
       static inline RoutingLayerGauge*          getLayerGauge         ( size_t depth );
       static inline size_t                      getDepth              ();
@@ -147,6 +151,7 @@ namespace Katabatic {
       static Session*              _session;
              KatabaticEngine*      _katabatic;
              Technology*           _technology;
+             CellGauge*            _cellGauge;
              RoutingGauge*         _routingGauge;
              vector<AutoContact*>  _autoContacts;
              vector<AutoSegment*>  _doglegs;
@@ -170,6 +175,7 @@ namespace Katabatic {
 
 // Inline Functions.
   inline Technology*                 Session::getTechnology        () { return get("getTechnology()")->_technology; }
+  inline CellGauge*                  Session::getCellGauge         () { return get("getCellGauge()")->_cellGauge; }
   inline RoutingGauge*               Session::getRoutingGauge      () { return get("getRoutingGauge()")->_routingGauge; }
   inline bool                        Session::doDestroyBaseContact () { return get("doDestroyBaseContact()")->_doDestroyBaseContact(); }
   inline bool                        Session::doDestroyBaseSegment () { return get("doDestroyBaseSegment()")->_doDestroyBaseSegment(); }
@@ -195,6 +201,8 @@ namespace Katabatic {
   inline DbU::Unit                   Session::getExtensionCap      () { return getConfiguration()->getExtensionCap(); }
   inline size_t                      Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
 
+  inline DbU::Unit                   Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
+  inline DbU::Unit                   Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline RoutingLayerGauge*          Session::getLayerGauge        ( size_t depth )       { return getRoutingGauge()->getLayerGauge(depth); }
   inline size_t                      Session::getDepth             ()                     { return getRoutingGauge()->getDepth(); }
   inline size_t                      Session::getViaDepth          ( const Layer* layer ) { return getRoutingGauge()->getViaDepth(layer); }

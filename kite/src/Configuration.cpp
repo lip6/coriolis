@@ -125,8 +125,20 @@ namespace Kite {
   { return _base->getLayerDepth(layer); }
 
 
+  CellGauge* Configuration::getCellGauge () const
+  { return _base->getCellGauge(); }
+
+
   RoutingGauge* Configuration::getRoutingGauge () const
   { return _base->getRoutingGauge(); }
+
+
+  DbU::Unit  Configuration::getSliceHeight () const
+  { return _base->getSliceHeight(); }
+
+
+  DbU::Unit  Configuration::getSliceStep () const
+  { return _base->getSliceStep(); }
 
 
   RoutingLayerGauge* Configuration::getLayerGauge ( size_t depth ) const

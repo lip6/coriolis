@@ -185,6 +185,18 @@
  //!              This AutoSegment has been created to to reconnect parts of an AutoSegment
  //!              after slackening.
 
+ //! \var         AutoSegmentFlag::SegSourceTop
+ //!              The source contact of this segment is connected to the <em>top</em> layer.
+
+ //! \var         AutoSegmentFlag::SegSourceBottom
+ //!              The source contact of this segment is connected to the <em>bottom</em> layer.
+
+ //! \var         AutoSegmentFlag::SegTargetTop
+ //!              The target contact of this segment is connected to the <em>top</em> layer.
+
+ //! \var         AutoSegmentFlag::SegTargetBottom
+ //!              The target contact of this segment is connected to the <em>bottom</em> layer.
+
  //! \var         AutoSegmentFlag::SegLayerChange
  //!              This AutoSegment has been created to to reconnect parts of an AutoSegment
  //!              after a layer change.

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -100,18 +99,27 @@ namespace Kite {
     if (not plane->_layerGauge)
       throw Error( badLayerGauge, depth, getString(kite->getRoutingGauge()).c_str() );
 
+    DbU::Unit    hExtension = 0;
+    DbU::Unit    vExtension = 0;
+    unsigned int gaugeDepth = 0;
+    if (Session::getLayerGauge(gaugeDepth)->getType() == Constant::PinOnly) ++gaugeDepth;
+
+    bool HV = (Session::getLayerGauge(gaugeDepth)->getDirection() == Constant::Horizontal);
+    hExtension = Session::getLayerGauge( gaugeDepth + (HV?1:0) )->getPitch() / 2;
+    vExtension = Session::getLayerGauge( gaugeDepth + (HV?0:1) )->getPitch() / 2;
+
     size_t  trackNumber;
     Box     abutmentBox = kite->getCell()->getAbutmentBox();
   // HARD CODED.
     if (plane->getDirection() == KbHorizontal) {
-      plane->_trackMin = abutmentBox.getXMin() - DbU::lambda(2.0);
-      plane->_trackMax = abutmentBox.getXMax() + DbU::lambda(2.0);
+      plane->_trackMin = abutmentBox.getXMin() - hExtension;
+      plane->_trackMax = abutmentBox.getXMax() + hExtension;
       plane->_axisMin  = abutmentBox.getYMin();
       plane->_axisMax  = abutmentBox.getYMax();
       trackNumber      = plane->computeTracksSize();
     } else {
-      plane->_trackMin = abutmentBox.getYMin() - DbU::lambda(2.0);
-      plane->_trackMax = abutmentBox.getYMax() + DbU::lambda(2.0);
+      plane->_trackMin = abutmentBox.getYMin() - vExtension;
+      plane->_trackMax = abutmentBox.getYMax() + vExtension;
       plane->_axisMin  = abutmentBox.getXMin();
       plane->_axisMax  = abutmentBox.getXMax();
       trackNumber      = plane->computeTracksSize();

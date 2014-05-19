@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -41,7 +41,7 @@ namespace {
 
   class Cs1Candidate {
     public:
-      inline            Cs1Candidate       ( Track* track=NULL );
+      inline            Cs1Candidate       ( Track* track=NULL, DbU::Unit ppitch=0 );
       inline Track*     getTrack           () const;
       inline size_t     getBegin           () const;
       inline size_t     getEnd             () const;
@@ -58,6 +58,7 @@ namespace {
       friend inline bool  operator< ( const Cs1Candidate&, const Cs1Candidate& );
     private:
       Track*             _track;
+      DbU::Unit          _ppitch;
       size_t             _begin;
       size_t             _end;
       vector<Interval>   _conflicts;
@@ -67,8 +68,9 @@ namespace {
   };
 
 
-  inline  Cs1Candidate::Cs1Candidate ( Track* track )
+  inline  Cs1Candidate::Cs1Candidate ( Track* track, DbU::Unit ppitch )
     : _track          (track)
+    , _ppitch         (ppitch)
     , _begin          (0)
     , _end            (0)
     , _conflicts      ()
@@ -123,7 +125,7 @@ namespace {
       }
 
     // Ugly: hard-coded pitch.
-      _breakPos = _conflicts[i].getVMin() - DbU::lambda(5.0);
+      _breakPos = _conflicts[i].getVMin() - _ppitch;
     }
   }
 
@@ -742,7 +744,7 @@ namespace Kite {
     }
 
     for ( ; track and track->getAxis() <= constraints.getVMax() ; track = track->getNextTrack() ) {
-      candidates.push_back( Cs1Candidate(track) );
+      candidates.push_back( Cs1Candidate(track,segment->getPPitch()) );
 
       size_t        begin;
       size_t        end;

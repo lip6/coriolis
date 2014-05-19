@@ -299,7 +299,7 @@ namespace Katabatic {
         locals.push_back( autoSegment );
       } else {
       // Ugly: Hard-coded GCell side.
-        if ( (autoSegment->getLength() < 3*DbU::lambda(50.0)) and (autoSegment != seed) )
+        if ( (autoSegment->getLength() < 3*Session::getSliceHeight()) and (autoSegment != seed) )
           locals.push_back( autoSegment );
         else
           globals.push_back( autoSegment );

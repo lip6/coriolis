@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Constants.h<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -28,8 +28,8 @@ namespace Kite {
   using Katabatic::KbHorizontal;
   using Katabatic::KbVertical;
   using Katabatic::KbWithPerpands;
-  using Katabatic::KbBySource;
-  using Katabatic::KbByTarget;
+  using Katabatic::KbSource;
+  using Katabatic::KbTarget;
   using Katabatic::KbWarnOnError;
   using Katabatic::perpandicularTo;
 

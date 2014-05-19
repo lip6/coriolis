@@ -125,7 +125,7 @@ namespace Kite {
       if (RoutingEvent::getStage() == RoutingEvent::Repair)
         perpandicular->base()->setFlagsOnAligneds( Katabatic::SegUnbound );
 
-      interval.inflate( DbU::lambda(-0.5) );
+      interval.inflate( DbU::fromLambda(-0.5) );
 
       ltrace(148) << "| perpandicular: " << perpandiculars[i] << endl;
       ltrace(148) << "| canonical:     " << perpandicular << endl;

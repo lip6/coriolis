@@ -30,7 +30,6 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
-#include "hurricane/UpdateSession.h"
 #include "crlcore/Measures.h"
 #include "knik/Vertex.h"
 #include "knik/Edge.h"
@@ -41,6 +40,7 @@
 #include "kite/DataNegociate.h"
 #include "kite/RoutingPlane.h"
 #include "kite/Session.h"
+#include "kite/TrackSegment.h"
 #include "kite/NegociateWindow.h"
 #include "kite/KiteEngine.h"
 
@@ -456,6 +456,7 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "acc_reg_ckx" );
   //DebugSession::addToTrace( getCell(), "acc_reg_nckx" );
   //DebugSession::addToTrace( getCell(), "i(0)" );
+  //DebugSession::addToTrace( getCell(), "ram_nmux_0_sel0" );
   //DebugSession::addToTrace( getCell(), "ram_adrb_14" );
   //DebugSession::addToTrace( getCell(), "ram_adrb_9" );
   //DebugSession::addToTrace( getCell(), "ram_adra(11)" );
@@ -463,7 +464,7 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "ram_adrb(8)" );
   //DebugSession::addToTrace( getCell(), "alu_carry(1)" );
   //DebugSession::addToTrace( getCell(), "alu_np(0)" );
-  //DebugSession::addToTrace( getCell(), "ram_d(3)" );
+  //DebugSession::addToTrace( getCell(), "ram_q2(0)" );
   //DebugSession::addToTrace( getCell(), "ram_q1(0)" );
   //DebugSession::addToTrace( getCell(), "ram_i_up" );
   // Test signals from <amd2901> (M1-VLSI).
@@ -504,6 +505,7 @@ namespace Kite {
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_s_mw_se_sel0" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_badr_sd_sel1" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_21" );
+  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_4_26" );
   //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_cause_rx(1)" );
   // Test signals from <MIPS> (R3000,pipeline+chip).
   //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.banc.reada0" );
@@ -552,7 +554,6 @@ namespace Kite {
     if (_negociateWindow) return;
 
     startMeasures();
-
     Session::open( this );
 
     _negociateWindow = NegociateWindow::create( this );
@@ -564,9 +565,9 @@ namespace Kite {
     _negociateWindow = NULL;
 
     Session::close();
+    stopMeasures();
   //if ( _editor ) _editor->refresh ();
 
-    stopMeasures();
     printMeasures( "algo" );
 
     Session::open( this );
@@ -601,7 +602,7 @@ namespace Kite {
       TrackElement* segment = _lookup( ilut->second );
       if (segment == NULL) continue;
 
-      unsigned long long wl = (unsigned long long)DbU::getLambda( segment->getLength() );
+      unsigned long long wl = (unsigned long long)DbU::toLambda( segment->getLength() );
       if (wl > 100000) {
         cerr << Error("KiteEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
                      ,wl,ilut->first,getString(segment).c_str()) << endl;
@@ -609,6 +610,12 @@ namespace Kite {
       }
 
       if (segment->isFixed() or segment->isBlockage()) continue;
+
+      // if (segment->isSameLayerDogleg()) {
+      //   cerr << "   Same layer:" << segment << endl;
+      //   cerr << "     S: " << segment->base()->getAutoSource() << endl;
+      //   cerr << "     T: " << segment->base()->getAutoTarget() << endl;
+      // }
 
       totalWireLength += wl;
       if (segment->getTrack() != NULL) {

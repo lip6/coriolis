@@ -116,6 +116,7 @@ namespace Kite {
       virtual bool                   isStrap              () const;
       virtual bool                   isSlackened          () const;
       virtual bool                   isDogleg             () const;
+      virtual bool                   isSameLayerDogleg    () const;
     // Predicates.                   
       inline  bool                   isCreated            () const;
       inline  bool                   isInvalidated        () const;
@@ -138,6 +139,8 @@ namespace Kite {
       virtual unsigned int           getDirection         () const = 0;
       virtual Net*                   getNet               () const = 0;
       virtual const Layer*           getLayer             () const = 0;
+      virtual DbU::Unit              getPitch             () const;
+      virtual DbU::Unit              getPPitch            () const;
       inline  Track*                 getTrack             () const;
       inline  size_t                 getIndex             () const;
       virtual unsigned long          getFreedomDegree     () const;
@@ -171,8 +174,9 @@ namespace Kite {
       virtual void                   swapTrack            ( TrackElement* );
       virtual void                   reschedule           ( unsigned int level );
       virtual void                   detach               ();
-      virtual void                   revalidate           ();
       virtual void                   invalidate           ();
+      virtual void                   revalidate           ();
+      virtual void                   updatePPitch         ();
       virtual void                   incOverlapCost       ( Net*, TrackCost& ) const;
       virtual void                   setAxis              ( DbU::Unit, unsigned int flags=Katabatic::SegAxisSet );
       virtual TrackElement*          makeDogleg           ();

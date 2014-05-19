@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -617,8 +616,7 @@ namespace Kite {
         ltrace(200) << "Not expanding on Terminals:" << _constraints << endl;
       } else {
         ltrace(200) << "Expanding:" << _constraints << endl;
-      // Ugly: direct uses of Cell Gauge.
-        _constraints.inflate( DbU::lambda(50.0) );
+        _constraints.inflate( Session::getSliceHeight() );
         ltrace(200) << "Expanding (after):" << _constraints << endl;
       }
     }
@@ -655,8 +653,8 @@ namespace Kite {
     }
       
     _priority
-      = (DbU::getLambda(_segment->getLength())        + 1.0)
-      * (DbU::getLambda(_segment->base()->getSlack()) + 1.0);
+      = (DbU::toLambda(_segment->getLength())        + 1.0)
+      * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
 
     ltrace(200) << _segment << " has " << _tracksNb << " choices " << perpandicular << endl;
     ltraceout(200);

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -56,6 +56,8 @@ namespace Kite {
       inline TrackElement*        getSegment              () const;
       inline DataNegociate*       getData                 () const;
       inline RoutingEvent*        getEvent                () const;
+      inline DbU::Unit            getPitch                () const;
+      inline DbU::Unit            getPPitch               () const;
              bool                 canRipup                ( unsigned int flags=0 ) const;
              bool                 isCaged                 ( DbU::Unit ) const;
              bool                 ripup                   ( unsigned int type, DbU::Unit axisHint=0 );
@@ -91,6 +93,8 @@ namespace Kite {
   inline TrackElement*  Manipulator::getSegment () const { return _segment; }
   inline DataNegociate* Manipulator::getData    () const { return _data; }
   inline RoutingEvent*  Manipulator::getEvent   () const { return _event; }
+  inline DbU::Unit      Manipulator::getPitch   () const { return _segment->getPitch(); }
+  inline DbU::Unit      Manipulator::getPPitch  () const { return _segment->getPPitch(); }
 
 
 }  // Kite namespace.

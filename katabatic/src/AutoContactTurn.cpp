@@ -28,7 +28,6 @@
 #include  "hurricane/Plug.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
 #include  "hurricane/DebugSession.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/AutoContactTurn.h"
@@ -251,6 +250,8 @@ namespace Katabatic {
         setLayer ( (delta == 0) ? rg->getRoutingLayer(depthContact) : rg->getContactLayer(depthContact) );
       }
     }
+    _horizontal1->invalidate( this );
+    _vertical1  ->invalidate( this );
 
     ltraceout(110);
     DebugSession::close ();
