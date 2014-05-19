@@ -190,7 +190,7 @@ if __name__ == "__main__":
       shellScriptCsh += 'setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' 
   
   shellScriptSh  += "hash -r;\n"
-  shellScriptCSh += "rehash;\n"
+  shellScriptCsh += "rehash;\n"
 
   if options.csh: shellScript = shellScriptCsh
   else:           shellScript = shellScriptSh
