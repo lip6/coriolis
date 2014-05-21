@@ -1,5 +1,6 @@
 
  install ( FILES      coriolis2_techno.conf             DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+ install ( DIRECTORY  common                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  cmos                              DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  vsc200                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  hcmos9                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 

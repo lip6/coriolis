@@ -451,6 +451,15 @@ between the system-wide configuration files and the user's configuration,
 they may use the same Python helpers.
 |medskip|
 
+Configuration is done in two stages:
+
+#. Selecting the symbolic technology.
+#. Loading the complete configuration for the given technology.
+
+
+First Stage: Symbolic Technology Selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 |noindent|
 The initialization process is done by executing, in order, the following
 file(s):
@@ -458,7 +467,37 @@ file(s):
 +-------+----------------------------------+----------------------------------------------+
 | Order | Meaning                          | File                                         |
 +=======+==================================+==============================================+
-| **1** | The system initialization        | :cb:`/etc/coriolis2/<TOOL>.conf`             |
+| **1** | The system setting               | :cb:`/etc/coriolis2/coriolis2_techno.conf`   |
++-------+----------------------------------+----------------------------------------------+
+| **2** | The user's global setting        | :cb:`${HOME}/.coriolis2_techno.conf`         |
++-------+----------------------------------+----------------------------------------------+
+| **3** | The user's local setting         | :cb:`<CWD>/.coriolis2_techno.conf`           |
++-------+----------------------------------+----------------------------------------------+
+
+Thoses files must provides only two variables, the name of the symbolic technology
+and the one of the real technology. For example: ::
+
+    # -*- Mode:Python -*-
+    
+    symbolicTechno = 'cmos'
+    realTechno     = 'hcmos9'
+
+
+Second Stage: Technology Configuration Loading
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|noindent|
+The :cb:`TECHNO` variable is set by the first stage and it's the name of the
+symbolic technology. A directory of that name, with all the configuration files,
+must exists in the configuration directory. In addition to the technology-specific
+directories, a :cb:`common/` directory is there to provides a trunk for all the
+identical datas across the various technologies. The initialization process is done
+by executing, in order, the following file(s):
+
++-------+----------------------------------+----------------------------------------------+
+| Order | Meaning                          | File                                         |
++=======+==================================+==============================================+
+| **1** | The system initialization        | :cb:`/etc/coriolis2/<TECHNO>/<TOOL>.conf`    |
 +-------+----------------------------------+----------------------------------------------+
 | **2** | The user's global initialization | :cb:`${HOME}/.coriolis2.conf`                |
 +-------+----------------------------------+----------------------------------------------+
