@@ -60,6 +60,8 @@ DisabledByXml       = 0x0200
 
 
 def coriolisConfigure():
+  global symbolicTechno
+
   confHelpers  = ( ('allianceConfig'    , Alliance.loadAllianceConfig    , SystemMandatory|DisabledByXml|AllianceHelper)
                  , ('routingGaugesTable', Alliance.loadRoutingGaugesTable, SystemMandatory|DisabledByXml|AllianceHelper)
                  , ('cellGaugesTable'   , Alliance.loadCellGaugesTable   , SystemMandatory|DisabledByXml|AllianceHelper)
@@ -77,23 +79,48 @@ def coriolisConfigure():
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
-  confFiles    = [ (helpers.sysConfDir+'/alliance.conf', SystemFile|AllianceHelper)
-                 , (helpers.sysConfDir+'/patterns.conf', SystemFile|PatternsHelper)
-                 , (helpers.sysConfDir+'/display.conf' , SystemFile|DisplayHelper)
-                 , (helpers.sysConfDir+'/misc.conf'    , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/hMetis.conf'  , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/nimbus.conf'  , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/mauka.conf'   , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/kite.conf'    , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/stratus1.conf', SystemFile|ConfigurationHelper)
+  technoFiles  = [  helpers.sysConfDir+'/coriolis2_techno.conf' ]
+  if os.getenv('HOME'):
+    technoFiles += [  os.getenv('HOME')+'/.coriolis2_techno.conf' ]
+  technoFiles += [  os.getcwd()+'/.coriolis2_techno.conf' ]
+
+  technoFiles.reverse()
+  for technoFile in technoFiles:
+    if os.path.isfile(technoFile):
+      print '          - Loading \"%s\".' % helpers.truncPath(technoFile)
+      execfile(technoFile,moduleGlobals)
+      break
+  if moduleGlobals.has_key('symbolicTechno'):
+    helpers.symbolicTechno = symbolicTechno
+    helpers.symbolicDir    = os.path.join( helpers.sysConfDir, symbolicTechno )
+  else:
+    print '[ERROR] The symbolic technology name is not set. Using <cmos>.' 
+  if moduleGlobals.has_key('realTechno'):
+    helpers.realTechno = realTechno
+    helpers.realDir    = os.path.join( helpers.sysConfDir, realTechno )
+  else:
+    print '[ERROR] The real technology name is not set. Using <hcmos9>.' 
+    
+
+  confFiles    = [ (helpers.sysConfDir+'/'+symbolicTechno+'/alliance.conf', SystemFile|AllianceHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/patterns.conf', SystemFile|PatternsHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/display.conf' , SystemFile|DisplayHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/misc.conf'    , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/hMetis.conf'  , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/nimbus.conf'  , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/mauka.conf'   , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/kite.conf'    , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/stratus1.conf', SystemFile|ConfigurationHelper)
                  ]
-  if os.getenv('HOME'): confFiles += [ (os.getenv('HOME')+'/.coriolis2.conf', 0) ]
+  if os.getenv('HOME'):
+    confFiles   += [ (os.getenv('HOME')+'/.coriolis2.conf', 0) ]
   else:
     w = WarningMessage(['The <HOME> environment variable is not defined, this is most unusual.'
                        ,'It prevents the loading of ${HOME}/.coriolis2.conf'])
     print w
 
-  confFiles += [ (os.getcwd()+'/.coriolis2.conf', 0) ]
+  confFiles   += [ (os.getcwd()+'/.coriolis2.conf', 0) ]
+
 
   if helpers.xmlCompatMode:
     Alliance.loadCompatXml()

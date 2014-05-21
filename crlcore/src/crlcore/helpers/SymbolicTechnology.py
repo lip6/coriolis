@@ -14,10 +14,12 @@ from   Hurricane import TransistorLayer
 from   Hurricane import RegularLayer
 from   Hurricane import ContactLayer
 from   Hurricane import ViaLayer
+from   CRL       import AllianceFramework
 from   helpers   import ErrorMessage
 
 
-symbolicFile = '<No symbolic file specified>'
+symbolicTechno = None
+symbolicFile   = '<No symbolic file specified>'
 
 
 class SymbolicLayerType ( object ):
@@ -272,8 +274,10 @@ def load ( symbolicPath ):
              , ('workingLayersTable' , loadWorkingLayers )
              )
 
+    global symbolicTechno
     global symbolicFile
-    symbolicFile = os.path.basename(symbolicPath)
+    symbolicFile   = os.path.basename(symbolicPath)
+    symbolicTechno = AllianceFramework.get().getEnvironment().getSYMB_TECHNO_NAME()
 
     confGlobals = globals()
     execfile(symbolicPath,confGlobals)

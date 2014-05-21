@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -37,6 +36,8 @@ namespace CRL {
                                ~Environment            ();
     // Accessors.
       inline const std::string& getCORIOLIS_TOP        () const;
+      inline const std::string& getSYMB_TECHNO_NAME    () const;
+      inline const std::string& getREAL_TECHNO_NAME    () const;
       inline const std::string& getDisplayStyle        () const;
       inline       long         getSCALE_X             () const;
       inline const std::string& getSYMBOLIC_TECHNOLOGY () const;
@@ -64,6 +65,8 @@ namespace CRL {
              void               validate               () const;
              void               loadFromXml            ( const std::string& path="", bool warnNotFound=true );
              void               loadFromShell          ();
+      inline void               setSYMB_TECHNO_NAME    ( const char* value );
+      inline void               setREAL_TECHNO_NAME    ( const char* value );
       inline void               setDisplayStyle        ( const char* );
       inline void               setSCALE_X             ( long value );
       inline void               setSYMBOLIC_TECHNOLOGY ( const char* value );
@@ -89,6 +92,8 @@ namespace CRL {
     protected:
     // Internal: Attributes.
              std::string        _CORIOLIS_TOP;
+             std::string        _SYMB_TECHNO_NAME;
+             std::string        _REAL_TECHNO_NAME;
              std::string        _displayStyle;
              long               _SCALE_X;
              std::string        _SYMBOLIC_TECHNOLOGY;
@@ -118,6 +123,8 @@ namespace CRL {
 
   // Inline Member Functions.
   inline const std::string&     Environment::getCORIOLIS_TOP        () const { return _CORIOLIS_TOP; }
+  inline const std::string&     Environment::getSYMB_TECHNO_NAME    () const { return _SYMB_TECHNO_NAME; }
+  inline const std::string&     Environment::getREAL_TECHNO_NAME    () const { return _REAL_TECHNO_NAME; }
   inline const std::string&     Environment::getDisplayStyle        () const { return _displayStyle; }
   inline       long             Environment::getSCALE_X             () const { return _SCALE_X; }
   inline const std::string&     Environment::getSYMBOLIC_TECHNOLOGY () const { return _SYMBOLIC_TECHNOLOGY; }
@@ -135,6 +142,8 @@ namespace CRL {
   inline const std::string&     Environment::getCATALOG             () const { return _CATALOG; }
   inline       SearchPath&      Environment::getLIBRARIES           () { return _LIBRARIES; }
                                
+  inline void                   Environment::setSYMB_TECHNO_NAME    ( const char* value ) { _SYMB_TECHNO_NAME = value; }
+  inline void                   Environment::setREAL_TECHNO_NAME    ( const char* value ) { _REAL_TECHNO_NAME = value; }
   inline void                   Environment::setDisplayStyle        ( const char* value ) { _displayStyle = value; }
   inline void                   Environment::setSCALE_X             ( long        value ) { _SCALE_X = value; }
   inline void                   Environment::setSYMBOLIC_TECHNOLOGY ( const char* value ) { _SYMBOLIC_TECHNOLOGY = value; }

@@ -18,16 +18,21 @@ displayFile = '<displayFile has not been set>'
 
 stdColors = \
     { 'Black'       : '0,0,0'
-    , 'Gray50'      : '50,50,50'
+    , 'Gray50'      : '050,050,050'
     , 'Gray238'     : '238,238,238'
     , 'White'       : '255,255,255'
     , 'Seashell4'   : '139,134,130'
     , 'Red'         : '255,0,0'      # Shade of Reds.
+    , 'OrangeRed'   : "255,69,0"
+    , 'DarkOrange'  : "255,140,0"
+    , 'Orange'      : "255,165,0"
+    , 'Wheat'       : "245,222,179"
     , 'LightPink'   : '255,182,193'
     , 'Green'       : '0,255,0'      # Shade of Green.
     , 'LawnGreen'   : '124,252,0'
     , 'Blue'        : '0,0,255'      # Shade of Blue.
     , 'Aqua'        : '0,255,255'
+    , 'BlueViolet'  : '138,43,226'
     , 'Violet'      : '238;130;238'  # Shade of Violets.
     , 'Magenta'     : '255,0,255'
     , 'Magenta4'    : '139,0,139'

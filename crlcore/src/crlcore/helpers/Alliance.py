@@ -27,6 +27,9 @@ def xmlToConf ( xmlPath ):
     if filename.endswith('.xml'):
         hasExtention = True
         filename     = filename[:-4]
+    if filename.endswith('.conf'):
+        hasExtention = True
+        filename     = filename[:-5]
     filename = filename.replace('.','_')
     confPath = os.sep.join(components[:-1] + [filename])
     if hasExtention:
@@ -49,6 +52,8 @@ def _loadAllianceConfig ( af, allianceConfig ):
                                      ])
 
             key, value = entry
+            if key == 'SYMB_TECHNO_NAME':    env.setSYMB_TECHNO_NAME(value)
+            if key == 'REAL_TECHNO_NAME':    env.setREAL_TECHNO_NAME(value)
             if key == 'SYMBOLIC_TECHNOLOGY': env.setSYMBOLIC_TECHNOLOGY(value)
             if key == 'REAL_TECHNOLOGY':     env.setREAL_TECHNOLOGY(value)
             if key == 'DISPLAY':             env.setDISPLAY(value)

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -187,6 +186,8 @@ extern "C" {
   
   // Standart Accessors (Attributes).
   DirectGetStringAttribute(PyEnvironment_getCORIOLIS_TOP       ,getCORIOLIS_TOP       ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getSYMB_TECHNO_NAME   ,getSYMB_TECHNO_NAME   ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getREAL_TECHNO_NAME   ,getREAL_TECHNO_NAME   ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getDisplayStyle       ,getDisplayStyle       ,PyEnvironment,Environment)
   DirectGetLongAttribute  (PyEnvironment_getSCALE_X            ,getSCALE_X            ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getSYMBOLIC_TECHNOLOGY,getSYMBOLIC_TECHNOLOGY,PyEnvironment,Environment)
@@ -211,6 +212,8 @@ extern "C" {
   DirectIsAFromCStringAttribute(PyEnvironment_isPad     ,isPad     ,PyEnvironment,Environment)
 
   // Standart Mutators (Attributes).
+  DirectSetCStringAttribute(PyEnvironment_setSYMB_TECHNO_NAME   ,setSYMB_TECHNO_NAME   ,"Environment.setSYMB_TECHNO_NAME"   ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setREAL_TECHNO_NAME   ,setREAL_TECHNO_NAME   ,"Environment.setSYMB_TECHNO_NAME"   ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setDisplayStyle       ,setDisplayStyle       ,"Environment.setDisplayStyle"       ,PyEnvironment,Environment)
   DirectSetLongAttribute   (PyEnvironment_setSCALE_X            ,setSCALE_X            ,"Environment.setSCALE_X"            ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setSYMBOLIC_TECHNOLOGY,setSYMBOLIC_TECHNOLOGY,"Environment.setSYMBOLIC_TECHNOLOGY",PyEnvironment,Environment)
@@ -236,6 +239,10 @@ extern "C" {
   PyMethodDef PyEnvironment_Methods[] =
     { { "getCORIOLIS_TOP"       , (PyCFunction)PyEnvironment_getCORIOLIS_TOP       , METH_NOARGS
                                 , "Gets the symbolic technology file." }
+    , { "getSYMB_TECHNO_NAME"   , (PyCFunction)PyEnvironment_getSYMB_TECHNO_NAME   , METH_NOARGS
+                                , "Gets the symbolic technology name." }
+    , { "getREAL_TECHNO_NAME"   , (PyCFunction)PyEnvironment_getREAL_TECHNO_NAME   , METH_NOARGS
+                                , "Gets the real (target) technology name." }
     , { "getDisplayStyle"       , (PyCFunction)PyEnvironment_getDisplayStyle       , METH_NOARGS
                                 , "Gets the name of the display style currently in use." }
     , { "getSCALE_X"            , (PyCFunction)PyEnvironment_getSCALE_X            , METH_NOARGS
@@ -286,6 +293,10 @@ extern "C" {
                                 , "Call the legacy XML Alliance environment parser." }
     , { "loadFromShell"         , (PyCFunction)PyEnvironment_loadFromShell         , METH_NOARGS
                                 , "Read the the environment from the process UNIX context." }
+    , { "setSYMB_TECHNO_NAME"   , (PyCFunction)PyEnvironment_setSYMB_TECHNO_NAME   , METH_VARARGS
+                                , "Sets the symbolic technology name." }
+    , { "setREAL_TECHNO_NAME"   , (PyCFunction)PyEnvironment_setREAL_TECHNO_NAME   , METH_VARARGS
+                                , "Sets the real (target) technology name." }
     , { "setDisplayStyle"       , (PyCFunction)PyEnvironment_setDisplayStyle       , METH_VARARGS
                                 , "Sets the name of the display style to be used." }
     , { "setSCALE_X"            , (PyCFunction)PyEnvironment_setSCALE_X            , METH_VARARGS

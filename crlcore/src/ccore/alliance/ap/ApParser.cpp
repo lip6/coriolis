@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -214,6 +213,7 @@ namespace {
       _layerInformations.add ( "NTRANS"     , "NTRANS"     , false, false );
       _layerInformations.add ( "PTRANS"     , "PTRANS"     , false, false );
       _layerInformations.add ( "POLY"       , "POLY"       , false, false );
+      _layerInformations.add ( "POLY2"      , "POLY2"      , false, false );
       
       _layerInformations.add ( "ALU1"       , "METAL1"     , false, false );
       _layerInformations.add ( "ALU2"       , "METAL2"     , false, false );
@@ -221,6 +221,8 @@ namespace {
       _layerInformations.add ( "ALU4"       , "METAL4"     , false, false );
       _layerInformations.add ( "ALU5"       , "METAL5"     , false, false );
       _layerInformations.add ( "ALU6"       , "METAL6"     , false, false );
+      _layerInformations.add ( "ALU7"       , "METAL7"     , false, false );
+      _layerInformations.add ( "ALU8"       , "METAL8"     , false, false );
 
       _layerInformations.add ( "CALU1"      , "METAL1"     ,  true, false );
       _layerInformations.add ( "CALU2"      , "METAL2"     ,  true, false );
@@ -228,6 +230,8 @@ namespace {
       _layerInformations.add ( "CALU4"      , "METAL4"     ,  true, false );
       _layerInformations.add ( "CALU5"      , "METAL5"     ,  true, false );
       _layerInformations.add ( "CALU6"      , "METAL6"     ,  true, false );
+      _layerInformations.add ( "CALU7"      , "METAL7"     ,  true, false );
+      _layerInformations.add ( "CALU8"      , "METAL8"     ,  true, false );
 
       _layerInformations.add ( "TALU1"      , "BLOCKAGE1"  , false,  true );
       _layerInformations.add ( "TALU2"      , "BLOCKAGE2"  , false,  true );
@@ -235,23 +239,30 @@ namespace {
       _layerInformations.add ( "TALU4"      , "BLOCKAGE4"  , false,  true );
       _layerInformations.add ( "TALU5"      , "BLOCKAGE5"  , false,  true );
       _layerInformations.add ( "TALU6"      , "BLOCKAGE6"  , false,  true );
+      _layerInformations.add ( "TALU7"      , "BLOCKAGE7"  , false,  true );
+      _layerInformations.add ( "TALU8"      , "BLOCKAGE8"  , false,  true );
 
       _layerInformations.add ( "CONT_BODY_N", "CONT_BODY_N", false, false );
       _layerInformations.add ( "CONT_BODY_P", "CONT_BODY_P", false, false );
       _layerInformations.add ( "CONT_DIF_N" , "CONT_DIF_N" , false, false );
       _layerInformations.add ( "CONT_DIF_P" , "CONT_DIF_P" , false, false );
       _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
+      _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
       _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
       _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
       _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
       _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );
       _layerInformations.add ( "CONT_VIA5"  , "VIA56"      , false, false );
+      _layerInformations.add ( "CONT_VIA6"  , "VIA67"      , false, false );
+      _layerInformations.add ( "CONT_VIA7"  , "VIA78"      , false, false );
       _layerInformations.add ( "CONT_TURN1" , "METAL1"     , false, false );
       _layerInformations.add ( "CONT_TURN2" , "METAL2"     , false, false );
       _layerInformations.add ( "CONT_TURN3" , "METAL3"     , false, false );
       _layerInformations.add ( "CONT_TURN4" , "METAL4"     , false, false );
       _layerInformations.add ( "CONT_TURN5" , "METAL5"     , false, false );
       _layerInformations.add ( "CONT_TURN6" , "METAL6"     , false, false );
+      _layerInformations.add ( "CONT_TURN7" , "METAL7"     , false, false );
+      _layerInformations.add ( "CONT_TURN8" , "METAL8"     , false, false );
     }
   }
 
@@ -515,7 +526,7 @@ namespace {
 
   void  ApParser::_parseVia ()
   {
-    static DbU::Unit              XVIA, YVIA;
+    static DbU::Unit         XVIA, YVIA;
     static Net*              net;
     static LayerInformation* layerInfo;
 

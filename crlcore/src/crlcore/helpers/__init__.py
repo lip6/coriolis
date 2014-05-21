@@ -1,8 +1,7 @@
-
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+# Copyright (c) UPMC 2012-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -26,8 +25,12 @@ import re
 import traceback
 import Hurricane
 
-sysConfDir    = None
-xmlCompatMode = False
+sysConfDir     = None
+xmlCompatMode  = False
+symbolicTechno = 'cmos'
+symbolicDir    = None
+realTechno     = 'hcmos9'
+realDir        = None
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
@@ -155,4 +158,7 @@ for (modulePath,moduleLine,contextType,lineContent) in traceback.extract_stack()
       else:
         raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
                                , 'The path is something ending by <.../etc/coriolis2>.'] )
+
+    symbolicDir = os.path.join( sysConfDir, symbolicTechno )
+    realDir     = os.path.join( sysConfDir, realTechno )
     break

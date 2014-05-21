@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -11,7 +10,7 @@
 // |  Author      :                Christophe Alexandre              |
 // |  E-mail      :   Christophe.Alexandre@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ParsersDrivers.h"                       |
+// |  C++ Header  :       "./ApDriver.h"                             |
 // +-----------------------------------------------------------------+
 
 
@@ -81,6 +80,7 @@ bool  toMBKLayer ( const char*& mbkLayer
     tableLayer [ "NTRANS" ] = "NTRANS";
     tableLayer [ "PTRANS" ] = "PTRANS";
     tableLayer [ "POLY"   ] = "POLY";
+    tableLayer [ "POLY2"  ] = "POLY2";
   
     tableLayer [ "METAL1" ] = "ALU1";
     tableLayer [ "METAL2" ] = "ALU2";
@@ -88,6 +88,8 @@ bool  toMBKLayer ( const char*& mbkLayer
     tableLayer [ "METAL4" ] = "ALU4";
     tableLayer [ "METAL5" ] = "ALU5";
     tableLayer [ "METAL6" ] = "ALU6";
+    tableLayer [ "METAL7" ] = "ALU7";
+    tableLayer [ "METAL8" ] = "ALU8";
 
     tableLayer [ "BLOCKAGE1" ] = "TALU1";
     tableLayer [ "BLOCKAGE2" ] = "TALU2";
@@ -95,6 +97,8 @@ bool  toMBKLayer ( const char*& mbkLayer
     tableLayer [ "BLOCKAGE4" ] = "TALU4";
     tableLayer [ "BLOCKAGE5" ] = "TALU5";
     tableLayer [ "BLOCKAGE6" ] = "TALU6";
+    tableLayer [ "BLOCKAGE7" ] = "TALU7";
+    tableLayer [ "BLOCKAGE8" ] = "TALU8";
 
     tableConnector [ "METAL1" ] = "CALU1";
     tableConnector [ "METAL2" ] = "CALU2";
@@ -102,23 +106,30 @@ bool  toMBKLayer ( const char*& mbkLayer
     tableConnector [ "METAL4" ] = "CALU4";
     tableConnector [ "METAL5" ] = "CALU5";
     tableConnector [ "METAL6" ] = "CALU6";
+    tableConnector [ "METAL7" ] = "CALU7";
+    tableConnector [ "METAL8" ] = "CALU8";
 
     tableContact [ "CONT_BODY_N" ] = "CONT_BODY_N";
     tableContact [ "CONT_BODY_P" ] = "CONT_BODY_P";
     tableContact [ "CONT_DIF_N"  ] = "CONT_DIF_N";
     tableContact [ "CONT_DIF_P"  ] = "CONT_DIF_P";
     tableContact [ "CONT_POLY"   ] = "CONT_POLY";
+    tableContact [ "CONT_POLY2"  ] = "CONT_POLY2";
     tableContact [ "VIA12"       ] = "CONT_VIA";
     tableContact [ "VIA23"       ] = "CONT_VIA2";
     tableContact [ "VIA34"       ] = "CONT_VIA3";
     tableContact [ "VIA45"       ] = "CONT_VIA4";
     tableContact [ "VIA56"       ] = "CONT_VIA5";
+    tableContact [ "VIA67"       ] = "CONT_VIA6";
+    tableContact [ "VIA78"       ] = "CONT_VIA7";
     tableContact [ "METAL1"      ] = "CONT_TURN1";
     tableContact [ "METAL2"      ] = "CONT_TURN2";
     tableContact [ "METAL3"      ] = "CONT_TURN3";
     tableContact [ "METAL4"      ] = "CONT_TURN4";
     tableContact [ "METAL5"      ] = "CONT_TURN5";
     tableContact [ "METAL6"      ] = "CONT_TURN6";
+    tableContact [ "METAL7"      ] = "CONT_TURN7";
+    tableContact [ "METAL8"      ] = "CONT_TURN8";
   }
 
   map<const Name,const char*>::iterator  it;

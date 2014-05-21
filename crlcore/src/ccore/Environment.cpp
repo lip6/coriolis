@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -507,6 +506,8 @@ namespace CRL {
 
   Environment::Environment ()
     : _CORIOLIS_TOP       (CORIOLIS_TOP)
+    , _SYMB_TECHNO_NAME   ("<notset>")
+    , _REAL_TECHNO_NAME   ("<notset>")
     , _displayStyle       ()
     , _SCALE_X            (10)
     , _SYMBOLIC_TECHNOLOGY("")
