@@ -161,7 +161,7 @@ namespace Kite {
     : _cloned              (false)
     , _processed           (false)
     , _disabled            (false)
-    , _canHandleConstraints(false)
+    , _overConstrained     (false)
     , _minimized           (false)
     , _forceToHint         (false)
     , _ripedByLocal        (false)
@@ -397,7 +397,7 @@ namespace Kite {
 
     DebugSession::open( _segment->getNet(), 148 );
 
-    ltrace(500) << "Deter| Event"
+    ltrace(500) << "Deter| Event "
                 <<         getProcesseds()
                 << ","  << getEventLevel()
                 << ","  << setw(6) << getPriority()
@@ -468,7 +468,7 @@ namespace Kite {
       ltrace(200) << "| " << fsm.getCost(itrack) << endl;
 
     itrack = 0;
-    if (Manipulator(_segment,fsm).canRipup()) {
+    if ( (not isOverConstrained()) and Manipulator(_segment,fsm).canRipup() ) {
       if (fsm.getCosts().size() and fsm.getCost(itrack).isFree()) {
         ltrace(200) << "Insert in free space " << this << endl;
         resetInsertState();
@@ -501,6 +501,10 @@ namespace Kite {
       }
     } else {
     // Ripup limit has been reached.
+      if (isOverConstrained()) {
+        ltrace(200) << "Immediate slackening due to overconstraint" << endl;
+        fsm.getData()->setState( DataNegociate::Slacken );
+      }
       if (not fsm.slackenTopology()) {
         fsm.setState( SegmentFsm::SelfMaximumSlack );
       }
@@ -606,7 +610,7 @@ namespace Kite {
     setAxisHintFromParent();
     ltrace(200) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
 
-    _canHandleConstraints = true;
+    _overConstrained = false;
     _segment->base()->getConstraints( _constraints );
     _segment->base()->getOptimal    ( _optimal );
 
@@ -644,12 +648,12 @@ namespace Kite {
       if ( track && (track->getAxis() < _constraints.getVMin()) ) track = track->getNextTrack();
       for ( ; track && (track->getAxis() <= _constraints.getVMax())
             ; track = track->getNextTrack(), _tracksNb++ );
-
-      _canHandleConstraints = false;
     }
     if (not _tracksNb) {
       ltrace(200) << "| Pure constraints are too tight." << endl;
-      _canHandleConstraints = false;
+      if (_segment->base())
+        _overConstrained =     _segment->base()->getAutoSource()->isTerminal()
+                           and _segment->base()->getAutoTarget()->isTerminal();
     }
       
     _priority

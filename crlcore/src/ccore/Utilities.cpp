@@ -118,7 +118,7 @@ namespace {
 
 int           tty::_width          = 80;
 bool          tty::_enabled        = true;
-unsigned int  mstream::_activeMask = mstream::Verbose0;
+unsigned int  mstream::_activeMask = mstream::PassThrough|mstream::Verbose0;
 
 mstream  cmess0    ( mstream::Verbose0, std::cout );
 mstream  cmess1    ( mstream::Verbose1, std::cout );

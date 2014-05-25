@@ -71,12 +71,13 @@ namespace Kite {
       virtual DbU::Unit                  getPitch                ( size_t depth, unsigned int flags ) const;
       virtual DbU::Unit                  getOffset               ( size_t depth ) const;
       virtual DbU::Unit                  getWireWidth            ( size_t depth ) const;
+      virtual DbU::Unit                  getExtensionCap         ( size_t depth ) const;
       virtual unsigned int               getDirection            ( size_t depth ) const;
       virtual DbU::Unit                  getPitch                ( const Layer*, unsigned int flags ) const;
       virtual DbU::Unit                  getOffset               ( const Layer* ) const;
       virtual DbU::Unit                  getWireWidth            ( const Layer* ) const;
       virtual unsigned int               getDirection            ( const Layer* ) const;
-      virtual DbU::Unit                  getExtensionCap         () const;
+      virtual DbU::Unit                  getExtensionCap         ( const Layer* ) const;
       virtual float                      getSaturateRatio        () const;
       virtual size_t                     getSaturateRp           () const;
       virtual DbU::Unit                  getGlobalThreshold      () const;

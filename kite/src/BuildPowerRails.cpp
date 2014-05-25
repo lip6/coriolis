@@ -871,6 +871,7 @@ namespace {
 
       _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
 
+      if (lg->getType() == Constant::PinOnly) continue;
       const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
       if (not blockageLayer) continue;
 
@@ -1014,10 +1015,6 @@ namespace {
     PowerRailsPlanes::Plane* activePlane = _powerRailsPlanes.getActivePlane();
 
     if (not activePlane) return;
-    // if (activePlane->getRoutingPlane()->getLayerGauge()->getType() == Constant::PinOnly) {
-    //   cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " - Skipped (PinOnly layer)." << endl;
-    //   return;
-    // }
 
     cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " ..." << endl;
     Query::doQuery();

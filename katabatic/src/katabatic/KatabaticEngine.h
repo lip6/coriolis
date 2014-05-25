@@ -230,7 +230,6 @@ namespace Katabatic {
   inline DbU::Unit                      KatabaticEngine::getGlobalThreshold        () const { return _configuration->getGlobalThreshold(); }
   inline float                          KatabaticEngine::getSaturateRatio          () const { return _configuration->getSaturateRatio(); }
   inline size_t                         KatabaticEngine::getSaturateRp             () const { return _configuration->getSaturateRp(); }
-  inline DbU::Unit                      KatabaticEngine::getExtensionCap           () const { return _configuration->getExtensionCap(); }
   inline const AutoContactLut&          KatabaticEngine::_getAutoContactLut        () const { return _autoContactLut; }
   inline const AutoSegmentLut&          KatabaticEngine::_getAutoSegmentLut        () const { return _autoSegmentLut; }
   inline void                           KatabaticEngine::setState                  ( EngineState state ) { _state = state; }

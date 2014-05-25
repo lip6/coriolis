@@ -271,7 +271,7 @@ namespace Kite {
 
   bool  Manipulator::relax ( Interval interval, unsigned int flags )
   {
-    interval.inflate( - Session::getExtensionCap() );
+    interval.inflate( - Session::getExtensionCap(getLayer()) );
     ltrace(200) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
 
     if (_segment->isFixed()) return false;
@@ -741,7 +741,7 @@ namespace Kite {
 
             if ( event3->getTracksFree() == 1 ) {
               ltrace(200) << "Potential left intrication with other perpandicular." << endl;
-              if ( isegment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap() ) {
+              if ( isegment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap(getLayer()) ) {
                 leftIntrication = true;
                 leftAxisHint    = isegment3->getAxis();
               }
@@ -755,7 +755,7 @@ namespace Kite {
               break;
             if ( event3->getTracksFree() == 1 ) {
               ltrace(200) << "Potential right intrication with other perpandicular." << endl;
-              if ( isegment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap() ) {
+              if ( isegment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap(getLayer()) ) {
                 rightIntrication = true;
                 rightAxisHint    = isegment3->getAxis();
               }
@@ -861,8 +861,8 @@ namespace Kite {
     Net*                ownerNet    = _segment->getNet();
     set<TrackElement*>  canonicals;
     bool                success     = true;
-    DbU::Unit           leftExtend  = _segment->getSourceU() + Session::getExtensionCap();
-    DbU::Unit           rightExtend = _segment->getSourceU() - Session::getExtensionCap();
+    DbU::Unit           leftExtend  = _segment->getSourceU() + Session::getExtensionCap(getLayer());
+    DbU::Unit           rightExtend = _segment->getSourceU() - Session::getExtensionCap(getLayer());
 
     ltrace(200) << "Manipulator::shrinkToTrack()" << endl;
 
@@ -1377,10 +1377,10 @@ namespace Kite {
 
     // Ugly: ExtensionCap usage.
       if ( moveLeft ) {
-        if ( perpandicular->getTargetU()-Session::getExtensionCap() == _event->getAxisHistory() )
+        if ( perpandicular->getTargetU()-Session::getExtensionCap(getLayer()) == _event->getAxisHistory() )
           _fsm.addAction ( perpandicular, SegmentAction::OtherRipupPerpandAndPacking );
       } else {
-        if ( perpandicular->getSourceU()+Session::getExtensionCap() == _event->getAxisHistory() )
+        if ( perpandicular->getSourceU()+Session::getExtensionCap(getLayer()) == _event->getAxisHistory() )
           _fsm.addAction ( perpandicular, SegmentAction::OtherRipupPerpandAndPacking );
       }
     }

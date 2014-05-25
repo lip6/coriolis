@@ -45,6 +45,7 @@ namespace Katabatic {
                        , KbNoCheckLayer      = 0x00400000
                        , KbHalfSlacken       = 0x00800000
                        , KbNoGCellShrink     = 0x01000000
+                       , KbCParanoid         = 0x02000000
                        , KbDirectionMask     = KbHorizontal|KbVertical
                        };
 

@@ -446,10 +446,15 @@ namespace {
     DbU::Unit height = abs( target.getY() - source.getY() );
 
     unsigned int flags = 0;
-  // HARDCODED VALUE.
     flags |= (width  < 3*Session::getPitch(anchorDepth)) ? HSmall   : 0;
     flags |= (height < 3*Session::getPitch(anchorDepth)) ? VSmall   : 0;
     flags |= ((width == 0) && (height == 0))             ? Punctual : 0;
+
+    ltrace(99) << "::checkRoutingPadSize(): pitch[" << anchorDepth << "]:"
+               << DbU::toLambda(Session::getPitch(anchorDepth)) << " "
+               << ((flags & HSmall) ? "HSmall " : " ")
+               << ((flags & VSmall) ? "VSmall " : " ")
+               << endl;
 
     return flags;
   }
@@ -1104,10 +1109,20 @@ namespace {
 
     doRp_AutoContacts( gcell, rp, rpContactSource, rpContactTarget, flags );
 
-    if ( not (flags & HAccess) and (flags & HSmall) ) {
-      AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
-      AutoSegment::create( rpContactSource, subContact1, KbHorizontal );
-      rpContactSource = subContact1;
+    if (flags & HAccess) {
+      if (flags & VSmall) {
+        AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
+        AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( rpContactSource, subContact1, KbHorizontal );
+        AutoSegment::create( subContact1,     subContact2, KbVertical );
+        rpContactSource = subContact2;
+      }
+    } else {
+      if (flags & HSmall) {
+        AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( rpContactSource, subContact1, KbHorizontal );
+        rpContactSource = subContact1;
+      }
     }
 
     ltraceout(99);

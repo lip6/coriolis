@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -113,6 +113,7 @@ namespace Kite {
       inline  bool                         isForcedToHint        () const;
       inline  bool                         isSheared             () const;
       inline  bool                         isRipedByLocal        () const;
+      inline  bool                         isOverConstrained     () const;
       inline  unsigned int                 getId                 () const;
       inline  bool                         getMode               () const;
       inline  bool                         canMinimize           () const;
@@ -172,7 +173,7 @@ namespace Kite {
       mutable bool          _cloned;
       bool                  _processed;
       bool                  _disabled;
-      bool                  _canHandleConstraints;
+      bool                  _overConstrained;
       bool                  _minimized;
       bool                  _forceToHint;
       bool                  _ripedByLocal;
@@ -202,6 +203,7 @@ namespace Kite {
   inline bool                          RoutingEvent::isDisabled              () const { return _disabled; }
   inline bool                          RoutingEvent::isForcedToHint          () const { return _forceToHint; }
   inline bool                          RoutingEvent::isRipedByLocal          () const { return _ripedByLocal; }
+  inline bool                          RoutingEvent::isOverConstrained       () const { return _overConstrained; }
   inline unsigned int                  RoutingEvent::getId                   () const { return _id; }
   inline bool                          RoutingEvent::getMode                 () const { return _mode; }
   inline bool                          RoutingEvent::canMinimize             () const { return !_minimized; }

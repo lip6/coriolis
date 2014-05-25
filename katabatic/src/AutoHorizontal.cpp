@@ -417,16 +417,16 @@ namespace Katabatic {
 
   void  AutoHorizontal::updatePositions ()
   {
-    _sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap();
-    _targetPosition = _horizontal->getTargetX() + Session::getExtensionCap();
+    _sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
+    _targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
   }
 
 
   bool  AutoHorizontal::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap();
-    DbU::Unit targetPosition = _horizontal->getTargetX() + Session::getExtensionCap();
+    DbU::Unit sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
+    DbU::Unit targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -745,16 +745,14 @@ namespace Katabatic {
     segment2->setFlags( (isSlackened()?SegSlackened:0) );
     Session::dogleg( segment2 );
 
-    if (isStrongTerminal()) {
-      if (autoSource->getAnchor()) {
-        segment1->setFlags( SegWeakTerminal1 );
-        segment2->setFlags( SegWeakTerminal1 );
-      } else {
-        unsetFlags( SegStrongTerminal );
-        setFlags( SegWeakTerminal1 );
-        segment1->setFlags( SegWeakTerminal1 );
-        segment2->setFlags( SegStrongTerminal );
-      }
+    if (isSourceTerminal()) {
+      segment1->setFlags( SegWeakTerminal1 );
+      segment2->setFlags( SegWeakTerminal1 );
+    } else if (isTargetTerminal()) {
+      unsetFlags( SegTargetTerminal );
+      setFlags( SegWeakTerminal1 );
+      segment1->setFlags( SegWeakTerminal1 );
+      segment2->setFlags( SegTargetTerminal );
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );

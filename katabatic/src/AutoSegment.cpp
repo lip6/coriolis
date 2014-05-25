@@ -324,8 +324,9 @@ namespace Katabatic {
 
     _allocateds++;
 
-    if (dynamic_cast<Horizontal*>(segment))           setFlags( SegHorizontal );
-    if (source->isTerminal() or target->isTerminal()) setFlags( SegStrongTerminal );
+    if (dynamic_cast<Horizontal*>(segment)) setFlags( SegHorizontal );
+    if (source->isTerminal())               setFlags( SegSourceTerminal );
+    if (target->isTerminal())               setFlags( SegTargetTerminal );
 
     _gcell = source->getGCell();
     setOptimalMax ( isHorizontal() ? _gcell->getBoundingBox().getYMax()
@@ -875,14 +876,19 @@ namespace Katabatic {
                << " T:" << target->isTerminal()
                << " " << this << endl;
 
-    if (source->isTerminal() or target->isTerminal()) {
+    if (source->isTerminal()) {
       unsetFlags( SegWeakTerminal );
-      setFlags  ( SegStrongTerminal );
+      setFlags  ( SegSourceTerminal );
+    } else if (target->isTerminal()) {
+      unsetFlags( SegWeakTerminal );
+      setFlags  ( SegTargetTerminal );
     } else {
       unsigned int terminalFlag = 0;
       switch ( _getFlags() & SegWeakTerminal ) {
         case 0: break;
-        case SegStrongTerminal: terminalFlag = SegWeakTerminal1; break;
+        case SegSourceTerminal|SegTargetTerminal:
+        case SegSourceTerminal:
+        case SegTargetTerminal: terminalFlag = SegWeakTerminal1; break;
         case SegWeakTerminal1:  terminalFlag = SegWeakTerminal1; break;
         case SegWeakTerminal2:  terminalFlag = SegWeakTerminal2; break;
         default:
@@ -1847,7 +1853,9 @@ namespace Katabatic {
                                    )
   {
     static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
     static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
+    static DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
 
     bool         reattachSource = false;
     bool         reattachTarget = false;
@@ -1922,6 +1930,7 @@ namespace Katabatic {
                          ,getString(horizontal).c_str()
                          ,getString(horizontalLayer).c_str()) << endl;
         horizontal->setLayer( horizontalLayer );
+        horizontal->setWidth( horizontalWidth );
       }
 
       horizontal->setY( reference->getY() );
@@ -1934,6 +1943,7 @@ namespace Katabatic {
                          ,getString(vertical).c_str()
                          ,getString(verticalLayer).c_str()) << endl;
         vertical->setLayer( verticalLayer );
+        vertical->setWidth( verticalWidth );
       }
 
       vertical->setX( reference->getX() );

@@ -103,6 +103,7 @@ namespace Katabatic {
       static inline DbU::Unit                   getOffset             ( const Layer* );
       static inline DbU::Unit                   getWireWidth          ( const Layer* );
       static inline DbU::Unit                   getViaWidth           ( const Layer* );
+      static inline DbU::Unit                   getExtensionCap       ( const Layer* );
       static inline size_t                      getSegmentStackSize   ();
       static inline size_t                      getContactStackSize   ();
       static inline const vector<AutoSegment*>& getInvalidateds       (); 
@@ -198,7 +199,6 @@ namespace Katabatic {
   inline void                        Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
   inline void                        Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
 
-  inline DbU::Unit                   Session::getExtensionCap      () { return getConfiguration()->getExtensionCap(); }
   inline size_t                      Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
 
   inline DbU::Unit                   Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
@@ -217,6 +217,7 @@ namespace Katabatic {
   inline DbU::Unit                   Session::getOffset            ( const Layer* layer ) { return getOffset   ( getLayerDepth(layer) ); }
   inline DbU::Unit                   Session::getWireWidth         ( const Layer* layer ) { return getWireWidth( getLayerDepth(layer) ); }
   inline DbU::Unit                   Session::getViaWidth          ( const Layer* layer ) { return getViaWidth ( getViaDepth(layer) ); }
+  inline DbU::Unit                   Session::getExtensionCap      ( const Layer* layer ) { return getConfiguration()->getExtensionCap(layer); }
   inline unsigned int                Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
 
   inline void                        Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }

@@ -22,6 +22,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/RegularLayer.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/CellGauge.h"
@@ -47,6 +48,7 @@ namespace Katabatic {
   using  Hurricane::Error;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
+  using  Hurricane::RegularLayer;
   using  CRL::AllianceFramework;
   using  CRL::RoutingGauge;
   using  CRL::RoutingLayerGauge;
@@ -68,7 +70,7 @@ namespace Katabatic {
     : Configuration   ()
     , _cg             (NULL)
     , _rg             (NULL)
-    , _extensionCap   (DbU::lambda(0.5))
+    , _extensionCaps  ()
     , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
     , _saturateRp     (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
     , _globalThreshold(0)
@@ -98,15 +100,26 @@ namespace Katabatic {
     _globalThreshold = DbU::fromLambda
       ( (double)Cfg::getParamInt("katabatic.globalLengthThreshold",29*DbU::toLambda(sliceHeight))->asInt() );
 
-    vector<RoutingLayerGauge*>::const_iterator ilayerGauge = rg->getLayerGauges().begin();
-    for ( ; ilayerGauge != rg->getLayerGauges().end() ; ++ilayerGauge ) {
-      RoutingLayerGauge* layerGauge = (*ilayerGauge);
-      if (layerGauge->getType() != Constant::Default) continue;
+    const vector<RoutingLayerGauge*>& layerGauges = rg->getLayerGauges();
+    for ( size_t depth=0 ; depth < layerGauges.size() ; ++depth ) {
+      const RegularLayer* regularLayer = dynamic_cast<const RegularLayer*>( layerGauges[depth]->getLayer() );
+      if (regularLayer)
+        _extensionCaps.push_back( regularLayer->getExtentionCap() );
+      else {
+        _extensionCaps.push_back( 0 );
+        cerr << Warning( "Routing layer at depth %d is *not* a RegularLayer, cannot guess extension cap.\n"
+                         "          (%s)"
+                       , depth
+                       , getString(layerGauges[depth]->getLayer()).c_str()
+                       ) << endl;
+      }
 
-      if (layerGauge->getDirection() == Constant::Horizontal) {
-        _hEdgeCapacity += layerGauge->getTrackNumber ( 0, sliceHeight ) - 1;
-      } else if (layerGauge->getDirection() == Constant::Vertical) {
-        _vEdgeCapacity += layerGauge->getTrackNumber( 0, sliceHeight ) - 1;
+      if (layerGauges[depth]->getType() != Constant::Default) continue;
+      
+      if (layerGauges[depth]->getDirection() == Constant::Horizontal) {
+        _hEdgeCapacity += layerGauges[depth]->getTrackNumber( 0, sliceHeight ) - 1;
+      } else if (layerGauges[depth]->getDirection() == Constant::Vertical) {
+        _vEdgeCapacity += layerGauges[depth]->getTrackNumber( 0, sliceHeight ) - 1;
       }
     }
   }
@@ -119,7 +132,7 @@ namespace Katabatic {
     , _gcontact          (other._gcontact)
     , _cg                (NULL)
     , _rg                (NULL)
-    , _extensionCap      (other._extensionCap)
+    , _extensionCaps     (other._extensionCaps)
     , _saturateRatio     (other._saturateRatio)
     , _globalThreshold   (other._globalThreshold)
     , _allowedDepth      (other._allowedDepth)
@@ -185,10 +198,6 @@ namespace Katabatic {
   { return _rg->getContactLayer(depth); }
 
 
-  DbU::Unit  ConfigurationConcrete::getExtensionCap () const
-  { return _extensionCap; }
-
-
   DbU::Unit  ConfigurationConcrete::getSliceHeight () const
   { return _cg->getSliceHeight(); }
 
@@ -203,6 +212,10 @@ namespace Katabatic {
 
   DbU::Unit  ConfigurationConcrete::getOffset ( const Layer* layer ) const
   { return getOffset( getLayerDepth(layer) ); }
+
+
+  DbU::Unit  ConfigurationConcrete::getExtensionCap ( const Layer* layer ) const
+  { return getExtensionCap( getLayerDepth(layer) ); }
 
 
   DbU::Unit  ConfigurationConcrete::getWireWidth ( const Layer* layer ) const
@@ -246,6 +259,10 @@ namespace Katabatic {
 
   DbU::Unit  ConfigurationConcrete::getWireWidth ( size_t depth ) const
   { return _rg->getLayerWireWidth(depth); }
+
+
+  DbU::Unit  ConfigurationConcrete::getExtensionCap ( size_t depth ) const
+  { return _extensionCaps[depth]; }
 
 
   unsigned int  ConfigurationConcrete::getDirection ( size_t depth ) const

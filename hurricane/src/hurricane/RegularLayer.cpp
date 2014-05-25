@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,20 +26,16 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./RegularLayer.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/RegularLayer.h"
-# include  "hurricane/Technology.h"
-# include  "hurricane/Error.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Error.h"
 
 
 namespace {
-
 
   const char* nullLayer =
     "RegularLayer::setBasicLayer() [%s]\n"
@@ -55,12 +45,10 @@ namespace {
     "RegularLayer::setBasicLayer() [%s]\n"
     "  Reseting the basic layer is forbidden.";
 
-
 }
 
 
 namespace Hurricane {
-
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::RegularLayer_RegularLayers".
@@ -335,4 +323,4 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.

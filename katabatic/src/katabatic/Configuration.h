@@ -18,6 +18,7 @@
 #define  KATABATIC_CONFIGURATION_H
 
 #include  <string>
+#include  <vector>
 
 #include  "hurricane/DbU.h"
 namespace Hurricane {
@@ -68,16 +69,17 @@ namespace Katabatic {
       virtual RoutingLayerGauge* getLayerGauge      ( size_t depth ) const = 0;
       virtual const Layer*       getRoutingLayer    ( size_t depth ) const = 0;
       virtual Layer*             getContactLayer    ( size_t depth ) const = 0;
-      virtual DbU::Unit          getExtensionCap    () const = 0;
       virtual DbU::Unit          getSliceHeight     () const = 0;
       virtual DbU::Unit          getSliceStep       () const = 0;
       virtual DbU::Unit          getPitch           ( size_t depth, unsigned int flags ) const = 0;
       virtual DbU::Unit          getOffset          ( size_t depth ) const = 0;
       virtual DbU::Unit          getWireWidth       ( size_t depth ) const = 0;
+      virtual DbU::Unit          getExtensionCap    ( size_t depth ) const = 0;
       virtual unsigned int       getDirection       ( size_t depth ) const = 0;
       virtual DbU::Unit          getPitch           ( const Layer*, unsigned int flags ) const = 0;
       virtual DbU::Unit          getOffset          ( const Layer* ) const = 0;
       virtual DbU::Unit          getWireWidth       ( const Layer* ) const = 0;
+      virtual DbU::Unit          getExtensionCap    ( const Layer* ) const = 0;
       virtual unsigned int       getDirection       ( const Layer* ) const = 0;
       virtual float              getSaturateRatio   () const = 0;
       virtual size_t             getSaturateRp      () const = 0;
@@ -124,16 +126,17 @@ namespace Katabatic {
       virtual RoutingLayerGauge*     getLayerGauge         ( size_t depth ) const;
       virtual const Layer*           getRoutingLayer       ( size_t depth ) const;
       virtual Layer*                 getContactLayer       ( size_t depth ) const;
-      virtual DbU::Unit              getExtensionCap       () const;
       virtual DbU::Unit              getSliceHeight        () const;
       virtual DbU::Unit              getSliceStep          () const;
       virtual DbU::Unit              getPitch              ( size_t depth, unsigned int flags ) const;
       virtual DbU::Unit              getOffset             ( size_t depth ) const;
       virtual DbU::Unit              getWireWidth          ( size_t depth ) const;
+      virtual DbU::Unit              getExtensionCap       ( size_t depth ) const;
       virtual unsigned int           getDirection          ( size_t depth ) const;
       virtual DbU::Unit              getPitch              ( const Layer*, unsigned int flags ) const;
       virtual DbU::Unit              getOffset             ( const Layer* ) const;
       virtual DbU::Unit              getWireWidth          ( const Layer* ) const;
+      virtual DbU::Unit              getExtensionCap       ( const Layer* ) const;
       virtual unsigned int           getDirection          ( const Layer* ) const;
       virtual float                  getSaturateRatio      () const;
       virtual size_t                 getSaturateRp         () const;
@@ -150,18 +153,18 @@ namespace Katabatic {
       virtual string                 _getTypeName          () const;
     protected:
     // Attributes.
-      const Layer*  _gmetalh;
-      const Layer*  _gmetalv;
-      const Layer*  _gcontact;
-      CellGauge*    _cg;
-      RoutingGauge* _rg;
-      DbU::Unit     _extensionCap;
-      float         _saturateRatio;
-      size_t        _saturateRp;
-      DbU::Unit     _globalThreshold;
-      size_t        _allowedDepth;
-      size_t        _hEdgeCapacity;
-      size_t        _vEdgeCapacity;
+      const Layer*            _gmetalh;
+      const Layer*            _gmetalv;
+      const Layer*            _gcontact;
+      CellGauge*              _cg;
+      RoutingGauge*           _rg;
+      std::vector<DbU::Unit>  _extensionCaps;
+      float                   _saturateRatio;
+      size_t                  _saturateRp;
+      DbU::Unit               _globalThreshold;
+      size_t                  _allowedDepth;
+      size_t                  _hEdgeCapacity;
+      size_t                  _vEdgeCapacity;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

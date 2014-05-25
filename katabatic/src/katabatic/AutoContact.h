@@ -144,7 +144,7 @@ namespace Katabatic {
       virtual void             updateCache                () = 0;
       virtual void             updateGeometry             () = 0;
       virtual void             updateTopology             () = 0;
-              void             showTopologyError          ( const std::string& );
+              void             showTopologyError          ( const std::string&, unsigned int flags=0 );
       virtual void             checkTopology              ();
       inline  void             setFlags                   ( unsigned int );
       inline  void             unsetFlags                 ( unsigned int );

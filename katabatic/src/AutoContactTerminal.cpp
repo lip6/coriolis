@@ -298,7 +298,10 @@ namespace Katabatic {
           ltrace(110) << "Cached: " << _segment << endl;
           message << "Terminal horizontal segment Y " << DbU::getValueString(_segment->getY())
                   << " axis is outside RoutingPad " << getUConstraints(KbVertical) << ".";
-          showTopologyError( message.str() );
+
+          unsigned int flags = 0;
+          if (_segment->isCreated()) flags |= KbCParanoid;
+          showTopologyError( message.str(), flags );
         } else
           setY( _segment->getY() );
       } else {
@@ -306,7 +309,10 @@ namespace Katabatic {
           ltrace(110) << "Cached: " << _segment << endl;
           message << "Terminal vertical segment X" << DbU::getValueString(_segment->getX())
                   << " axis is outside RoutingPad " << getUConstraints(KbHorizontal) << ".";
-          showTopologyError( message.str() );
+
+          unsigned int flags = 0;
+          if (_segment->isCreated()) flags |= KbCParanoid;
+          showTopologyError( message.str(), flags );
         } else
           setX( _segment->getX() );
       }

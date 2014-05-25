@@ -74,11 +74,13 @@ namespace Katabatic {
                        , SegTargetTop         = 0x00000400
                        , SegTargetBottom      = 0x00000800
                        , SegLayerChange       = 0x00001000
-                       , SegStrongTerminal    = 0x00002000  // Replace Terminal.
-                       , SegWeakTerminal1     = 0x00004000  // Replace TopologicalEnd.
-                       , SegWeakTerminal2     = 0x00008000  // Replace TopologicalEnd.
-                       , SegNotSourceAligned  = 0x00010000
-                       , SegNotTargetAligned  = 0x00020000
+                       , SegSourceTerminal    = 0x00002000  // Replace Terminal.
+                       , SegTargetTerminal    = 0x00004000  // Replace Terminal.
+                       , SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal
+                       , SegWeakTerminal1     = 0x00008000  // Replace TopologicalEnd.
+                       , SegWeakTerminal2     = 0x00010000  // Replace TopologicalEnd.
+                       , SegNotSourceAligned  = 0x00020000
+                       , SegNotTargetAligned  = 0x00040000
                        , SegUnbound           = 0x00100000
                        , SegHalfSlackened     = 0x00200000
                        , SegSlackened         = 0x00400000
@@ -164,6 +166,8 @@ namespace Katabatic {
       inline  bool                isNotTargetAligned         () const;
       inline  bool                isNotAligned               () const;
               bool                isStrongTerminal           ( unsigned int flags=0 ) const;
+      inline  bool                isSourceTerminal           () const;
+      inline  bool                isTargetTerminal           () const;
               bool                isSameLayerDogleg          () const;
       inline  bool                isLayerChange              () const;
       inline  bool                isSpinTop                  () const;
@@ -426,6 +430,8 @@ namespace Katabatic {
   inline  bool            AutoSegment::isWeakTerminal       () const { return _flags & SegWeakTerminal; }
   inline  bool            AutoSegment::isWeakTerminal1      () const { return _flags & SegWeakTerminal1; }
   inline  bool            AutoSegment::isWeakTerminal2      () const { return _flags & SegWeakTerminal2; }
+  inline  bool            AutoSegment::isSourceTerminal     () const { return _flags & SegSourceTerminal; }
+  inline  bool            AutoSegment::isTargetTerminal     () const { return _flags & SegTargetTerminal; }
   inline  bool            AutoSegment::isTerminal           () const { return _flags & SegStrongTerminal; }
   inline  bool            AutoSegment::isNotSourceAligned   () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned   () const { return _flags & SegNotTargetAligned; }

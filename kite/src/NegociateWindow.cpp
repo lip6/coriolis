@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -238,7 +237,7 @@ namespace Kite {
       Interval      blockageSpan;
 
       autoSegment->getCanonical( fixedSpan );
-      fixedSpan.inflate( Session::getExtensionCap()-1 );
+      fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
 
       track->getOverlapBounds( fixedSpan, begin, end );
       for ( ; (begin < end) ; begin++ ) {
@@ -249,7 +248,7 @@ namespace Kite {
         if (not other->isBlockage()) continue;
 
         other->getCanonical( blockageSpan );
-        blockageSpan.inflate( Session::getExtensionCap() );
+        blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
 
         ltrace(200) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
 

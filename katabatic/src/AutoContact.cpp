@@ -341,34 +341,37 @@ namespace Katabatic {
   }
 
 
-  void  AutoContact::showTopologyError ( const std::string& message )
+  void  AutoContact::showTopologyError ( const std::string& message, unsigned int flags )
   {
-    Component*   anchor      = NULL;
-    Horizontal** horizontals = new Horizontal* [10];
-    Vertical**   verticals   = new Vertical*   [10];
+    Component*    anchor      = NULL;
+    Horizontal**  horizontals = new Horizontal* [10];
+    Vertical**    verticals   = new Vertical*   [10];
+
+    if (not (flags & KbCParanoid)) cparanoid.setStreamMask( mstream::PassThrough );
 
     _getTopology ( anchor, horizontals, verticals, 10 );
  
-    cerr << Error("In topology of %s",getString(this).c_str()) << endl;
-    if (anchor) cerr << "        A: " << anchor << endl;
+    cparanoid << Error("In topology of %s",getString(this).c_str()) << endl;
+    if (anchor) cparanoid << "        A: " << anchor << endl;
 
     for ( size_t i=0 ; (i<10) and (horizontals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( horizontals[i] );
       if (autoSegment != NULL)
-        cerr << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
       else
-        cerr << "        ?: " << horizontals[i] << endl; 
+        cparanoid << "        ?: " << horizontals[i] << endl; 
     }
 
     for ( size_t i=0 ; (i<10) and (verticals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( verticals[i] );
       if (autoSegment != NULL)
-        cerr << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
       else
-        cerr << "        ?: " << verticals[i] << endl; 
+        cparanoid << "        ?: " << verticals[i] << endl; 
     }
 
-    cerr << "        " << message  << endl;
+    cparanoid << "        " << message  << endl;
+    if (not (flags & KbCParanoid)) cparanoid.unsetStreamMask( mstream::PassThrough );
 
     delete [] horizontals;
     delete [] verticals;

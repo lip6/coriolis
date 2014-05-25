@@ -56,6 +56,7 @@ namespace Kite {
       inline TrackElement*        getSegment              () const;
       inline DataNegociate*       getData                 () const;
       inline RoutingEvent*        getEvent                () const;
+      inline const Layer*         getLayer                () const;
       inline DbU::Unit            getPitch                () const;
       inline DbU::Unit            getPPitch               () const;
              bool                 canRipup                ( unsigned int flags=0 ) const;
@@ -93,6 +94,7 @@ namespace Kite {
   inline TrackElement*  Manipulator::getSegment () const { return _segment; }
   inline DataNegociate* Manipulator::getData    () const { return _data; }
   inline RoutingEvent*  Manipulator::getEvent   () const { return _event; }
+  inline const Layer*   Manipulator::getLayer   () const { return _segment->getLayer(); }
   inline DbU::Unit      Manipulator::getPitch   () const { return _segment->getPitch(); }
   inline DbU::Unit      Manipulator::getPPitch  () const { return _segment->getPPitch(); }
 

@@ -165,6 +165,10 @@ namespace Kite {
   { return _base->getWireWidth(depth); }
 
 
+  DbU::Unit  Configuration::getExtensionCap ( size_t depth ) const
+  { return _base->getExtensionCap(depth); }
+
+
   unsigned int  Configuration::getDirection ( size_t depth ) const
   { return _base->getDirection(depth); }
 
@@ -185,8 +189,8 @@ namespace Kite {
   { return _base->getDirection(layer); }
 
 
-  DbU::Unit  Configuration::getExtensionCap () const
-  { return _base->getExtensionCap(); }
+  DbU::Unit  Configuration::getExtensionCap ( const Layer* layer ) const
+  { return _base->getExtensionCap(layer); }
 
 
   float  Configuration::getSaturateRatio () const

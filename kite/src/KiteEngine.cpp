@@ -449,6 +449,9 @@ namespace Kite {
 
     createGlobalGraph( mode );
 
+  // Test signals from <multi4_a>.
+  //DebugSession::addToTrace( getCell(), "aux34" );
+
   // Test signals from <addaccu>.
   //DebugSession::addToTrace( getCell(), "auxsc37" );
   // Test signals from <amd2901_core_flat>.

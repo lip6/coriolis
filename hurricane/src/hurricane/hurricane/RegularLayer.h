@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,17 +27,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/RegularLayer.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_REGULAR_LAYER__
-#define  __HURRICANE_REGULAR_LAYER__
+#ifndef  HURRICANE_REGULAR_LAYER_H
+#define  HURRICANE_REGULAR_LAYER_H
 
-#include  "hurricane/Layer.h"
-#include  "hurricane/RegularLayers.h"
+#include "hurricane/Layer.h"
+#include "hurricane/RegularLayers.h"
 
 
 namespace Hurricane {
@@ -98,10 +90,8 @@ namespace Hurricane {
   inline BasicLayer*  RegularLayer::getBasicLayer    () const { return _basicLayer; }
 
 
-} // End of Hurricane namespace.
-
+} // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::RegularLayer);
 
-
-# endif
+#endif  // HURRICANE_REGULAR_LAYER_H

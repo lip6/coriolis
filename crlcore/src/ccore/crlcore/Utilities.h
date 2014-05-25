@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -257,20 +256,23 @@ inline std::string  tty::bgcolor ( unsigned int mask )
 
   class mstream : public std::ostream {
     public:
-      enum StreamMasks { Verbose0      = 0x00000001
-                       , Verbose1      = 0x00000002
-                       , Verbose2      = 0x00000004
-                       , Info          = 0x00000008
-                       , Paranoid      = 0x00000010
-                       , Bug           = 0x00000020
+      enum StreamMasks { PassThrough   = 0x00000001
+                       , Verbose0      = 0x00000002
+                       , Verbose1      = 0x00000004
+                       , Verbose2      = 0x00000008
+                       , Info          = 0x00000010
+                       , Paranoid      = 0x00000020
+                       , Bug           = 0x00000040
                        };
     public:
-      static        void          enable       ( unsigned int mask );
-      static        void          disable      ( unsigned int mask );
-      inline                      mstream      ( unsigned int mask, std::ostream &s );
-      inline        unsigned int  getStreamMask() const;
-      static inline unsigned int  getActiveMask();
-      inline        bool          enabled      () const;
+      static        void          enable          ( unsigned int mask );
+      static        void          disable         ( unsigned int mask );
+      inline                      mstream         ( unsigned int mask, std::ostream &s );
+      inline        bool          enabled         () const;
+      inline        unsigned int  getStreamMask   () const;
+      static inline unsigned int  getActiveMask   ();
+      inline        void          setStreamMask   ( unsigned int mask );
+      inline        void          unsetStreamMask ( unsigned int mask );
     // Overload for formatted outputs.
       template<typename T> inline mstream& operator<< ( T& t );
       template<typename T> inline mstream& operator<< ( T* t );
@@ -287,12 +289,14 @@ inline std::string  tty::bgcolor ( unsigned int mask )
   };
 
 
-  inline               mstream::mstream      ( unsigned int mask, std::ostream& s ): std::ostream(s.rdbuf()) , _streamMask(mask) {}  
-  inline unsigned int  mstream::getStreamMask() const { return  _streamMask; }
-  inline unsigned int  mstream::getActiveMask()       { return  _activeMask; }
-  inline bool          mstream::enabled      () const { return (_streamMask & _activeMask); }
-  inline mstream&      mstream::flush        () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
-  inline mstream&      mstream::operator<<   ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
+  inline               mstream::mstream        ( unsigned int mask, std::ostream& s ): std::ostream(s.rdbuf()) , _streamMask(mask) {}  
+  inline bool          mstream::enabled        () const { return (_streamMask & _activeMask); }
+  inline unsigned int  mstream::getStreamMask  () const { return  _streamMask; }
+  inline unsigned int  mstream::getActiveMask  ()       { return  _activeMask; }
+  inline void          mstream::setStreamMask  ( unsigned int mask ) { _streamMask |= mask; }
+  inline void          mstream::unsetStreamMask( unsigned int mask ) { _streamMask &= ~mask; }
+  inline mstream&      mstream::flush          () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
+  inline mstream&      mstream::operator<<     ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
 
   template<typename T>
   inline mstream& mstream::operator<< ( T& t )

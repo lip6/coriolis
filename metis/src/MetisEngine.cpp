@@ -119,7 +119,7 @@ namespace Metis {
   bool MetisEngine::isHMetisCapable ()
   {
 #ifdef HAVE_HMETIS_LIB
-    return true;
+    return false;
 #else
     return false;
 #endif // HAVE_HMETIS_LIB
