@@ -186,6 +186,7 @@ namespace Mauka {
 
     _viewer->clearToolInterrupt();
     _viewer->getCellWidget()->fitToContents();
+    _viewer->redrawCellWidget();
   }
 
 
@@ -198,10 +199,11 @@ namespace Mauka {
     _viewer->getCellWidget()->fitToContents ();
 
     mauka->Run ();
+    _viewer->redrawCellWidget();
   }
 
 
-  void  GraphicMaukaEngine::place ()
+  void  GraphicMaukaEngine::_place ()
   {
     if (MetisEngine::isHMetisCapable()) {
       doQuadriPart();
@@ -211,7 +213,7 @@ namespace Mauka {
     }
 
     doSimulatedAnnealing();
-    save();
+    _save();
   }
 
 
@@ -220,6 +222,7 @@ namespace Mauka {
     MaukaEngine* mauka = getForFramework( NoFlags );
 
     _viewer->clearToolInterrupt ();
+    _viewer->redrawCellWidget();
     mauka->Save ();
   }
 
@@ -230,6 +233,10 @@ namespace Mauka {
 
   void  GraphicMaukaEngine::doSimulatedAnnealing ()
   { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_doSimulatedAnnealing,this) ); }
+
+
+  void  GraphicMaukaEngine::place ()
+  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_place,this) ); }
 
 
   void  GraphicMaukaEngine::save ()

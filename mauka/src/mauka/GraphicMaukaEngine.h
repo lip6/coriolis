@@ -83,6 +83,7 @@ namespace Mauka {
       virtual                    ~GraphicMaukaEngine    ();
                void               _doQuadriPart         ();
                void               _doSimulatedAnnealing ();
+               void               _place                ();
                void               _save                 ();
   };
 

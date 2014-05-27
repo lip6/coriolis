@@ -89,15 +89,23 @@ void UpdateSession::_destroy()
 
     UPDATOR_STACK->pop();
 
+    vector<Cell*> changedCells;
     forEach( DBo*, iowner, getOwners() ) {
       Cell* cell = dynamic_cast<Cell*>(*iowner);
       if (cell) {
       //cerr << "Notify Cell::CellChanged to: " << cell << endl; 
-        cell->notify( Cell::CellChanged );
+        changedCells.push_back( cell );
       } else {
         Go* go = dynamic_cast<Go*>(*iowner);
         if (go) go->materialize();
       }
+    }
+
+  // Changed cells must be notified *after* all the Gos are materialized.
+  // They also should be sorted according to their hierarchical depth and
+  // revalidated bottom-up (TODO).
+    for ( auto icell : changedCells ) {
+      icell->notify( Cell::CellChanged );
     }
 
     Inherit::_preDestroy();
