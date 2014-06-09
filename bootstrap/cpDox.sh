@@ -1,12 +1,12 @@
 #!/bin/sh
 
  confFiles=""
- confFiles="${confFiles} open.png"
- confFiles="${confFiles} closed.png"
- confFiles="${confFiles} jquery.js"
- confFiles="${confFiles} dynsections.js"
+#confFiles="${confFiles} open.png"
+#confFiles="${confFiles} closed.png"
+#confFiles="${confFiles} jquery.js"
+#confFiles="${confFiles} dynsections.js"
  confFiles="${confFiles} SoC.css"
- confFiles="${confFiles} header.html"
+#confFiles="${confFiles} header.html"
 
        rootDir="${HOME}/coriolis-2.x/src/coriolis"
  sourceToolDoc="${rootDir}/hurricane/doc/hurricane"

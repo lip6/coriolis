@@ -277,8 +277,13 @@
    font-weight:                 bold;
  }
 
- div.ah, div.title {
- /*font-family:                 time;*/
+ div.ah {
+   font-family:                 Times;
+   font-size:                   300%;
+   font-weight:                 bold;
+   padding:                     20px;
+ }
+ div.title {
    text-align:                  center;
    font-size:                   200%;
    font-weight:                 bold;
@@ -286,7 +291,7 @@
    border:                      2px solid black;
  }
 
- div.center, div.image {
+ div.center {
    text-align:                  center;
  }
 
