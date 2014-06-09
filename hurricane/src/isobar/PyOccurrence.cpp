@@ -1,5 +1,9 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2013-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -7,10 +11,8 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyOccurrence.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
@@ -222,6 +224,8 @@ extern "C" {
         return NULL;
     }
 
+    PyOccurrence* pyOccurrence = NULL;
+    HTRY
     if      ( __cs.getObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
     else if ( __cs.getObjectIds() == ENT_ARG      ) { occurrence = new Occurrence (  PYENTITY_O(arg0) ); }
     else if ( __cs.getObjectIds() == COMP_PATH_ARG) { occurrence = new Occurrence (  PYSEGMENT_O(arg0)
@@ -233,10 +237,9 @@ extern "C" {
       return ( NULL );
     }
 
-    PyOccurrence* pyOccurrence = PyObject_NEW(PyOccurrence, &PyTypeOccurrence);
+    pyOccurrence = PyObject_NEW(PyOccurrence, &PyTypeOccurrence);
     if (pyOccurrence == NULL) return NULL;
     
-    HTRY
     pyOccurrence->_object = occurrence;
     HCATCH
 
