@@ -18,7 +18,7 @@
                                     equinox/Strategy.h
                                     equinox/Tile.h                   equinox/Tiles.h
                                     equinox/UnionFind.h
-				    equinox/SweepLine.h             equinox/TileSweepLine.h
+				    equinox/SweepLine.h              equinox/TileSweepLine.h
                        )
                    set ( mocIncludes   equinox/GraphicEquinoxEngine.h )
 
@@ -36,13 +36,13 @@
                    set ( intervalTreeIncludes intervalTree/src/equinox/Interval.h
 		                              intervalTree/src/equinox/IntervalTree.h )
                    set ( intervalTreeCpps     intervalTree/src/IntervalTree.cpp )
-          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qt5_wrap_cpp ( mocCpps              ${mocIncludes} )
 
            add_library ( intervalTree   ${intervalTreeCpps} )
  set_target_properties ( intervalTree   PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( intervalTree   ${HURRICANE_LIBRARIES} )
 
-           add_library ( equinox       ${cpps} )
+           add_library ( equinox       ${cpps} ${mocCpps} )
  set_target_properties ( equinox       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( equinox       intervalTree
                                        ${CORIOLIS_LIBRARIES}

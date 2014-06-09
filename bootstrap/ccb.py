@@ -170,6 +170,7 @@ parser.add_option (       "--no-build"    , action="store_true" ,               
 parser.add_option (       "--no-cache"    , action="store_true" ,                dest="noCache"      , help="Remove previous CMake cache before building." )
 parser.add_option (       "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
 parser.add_option (       "--devtoolset-2", action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
+parser.add_option (       "--ninja"       , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
 parser.add_option (       "--make"        , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
 parser.add_option (       "--project"     , action="append"     , type="string", dest="projects"     , help="The name of a project to build (may appears any number of time)." )
 parser.add_option ( "-t", "--tool"        , action="append"     , type="string", dest="tools"        , help="The name of a tool to build (may appears any number of time)." )
@@ -240,6 +241,7 @@ else:
     if options.noBuild:          builder.doBuild           = False
     if options.noCache:          builder.noCache           = True
     if options.rmBuild:          builder.rmBuild           = True
+    if options.ninja:            builder.ninja             = True
     if options.devtoolset2:      builder.devtoolset2       = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
    #if options.svnMethod:        builder.svnMethod         = options.svnMethod

@@ -1,4 +1,3 @@
-
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
@@ -34,6 +33,7 @@ class Builder:
         self._rmBuild          = False
         self._doBuild          = True
         self._noCache          = False
+        self._ninja            = False
         self._devtoolset2      = False
         self._enableShared     = "ON"
         self._enableDoc        = "OFF"
@@ -56,6 +56,7 @@ class Builder:
         elif attribute == "rmBuild":          self._rmBuild          = value
         elif attribute == "doBuild":          self._doBuild          = value
         elif attribute == "noCache":          self._noCache          = value
+        elif attribute == "ninja":            self._ninja            = value
         elif attribute == "devtoolset2":      self._devtoolset2      = value
         elif attribute == "enableDoc":        self._enableDoc        = value
         elif attribute == "enableShared":     self._enableShared     = value
@@ -130,6 +131,7 @@ class Builder:
 
     def _execute ( self, command, error ):
         if self._devtoolset2 == True:
+            print 'Using devtoolset-2 (scl enable devtoolset-2 ...)'
             commandAsString = ''
             for i in range(len(command)):
                 if i: commandAsString += ' '
@@ -160,25 +162,24 @@ class Builder:
             print ErrorMessage( 0, "Missing tool source directory: \"%s\" (skipped)."%toolSourceDir )
             return
 
-        boostNoSystemPaths = 'FALSE'
-        if self._devtoolset2 == True:
-            boostNoSystemPaths = 'TRUE'
-
         if self._rmBuild:
             print "Removing tool build directory: \"%s\"." % toolBuildDir
             command = [ "/bin/rm", "-rf", toolBuildDir ]
             self._execute ( command, "Removing tool build directory" )
+
+        command = [ 'cmake' ]
+        if self._ninja:       command += [ "-G", "Ninja" ]
+        if self._devtoolset2: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
+
+        command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"  % self.buildMode
+                   , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self.enableShared
+                  #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
+                   , toolSourceDir ]
             
         if not os.path.isdir(toolBuildDir):
             print "Creating tool build directory: \"%s\"." % toolBuildDir
             os.makedirs ( toolBuildDir )
             os.chdir    ( toolBuildDir )
-
-            command = ["cmake", "-D", "Boost_NO_SYSTEM_PATHS:STRING=%s" % boostNoSystemPaths
-                              , "-D", "CMAKE_BUILD_TYPE:STRING=%s"      % self.buildMode
-                              , "-D", "BUILD_SHARED_LIBS:STRING=%s"     % self.enableShared
-                             #, "-D", "CMAKE_MODULE_PATH:STRING=%s"     % cmakeModules
-                                    , toolSourceDir ]
             self._execute ( command, "First CMake failed" )
 
         os.chdir ( toolBuildDir )
@@ -186,15 +187,12 @@ class Builder:
             cmakeCache = os.path.join(toolBuildDir,"CMakeCache.txt")
             if os.path.isfile ( cmakeCache ): os.unlink ( cmakeCache )
 
-        command = ["cmake", "-D", "Boost_NO_SYSTEM_PATHS:STRING=%s"  % boostNoSystemPaths
-                          , "-D", "CMAKE_BUILD_TYPE:STRING=%s"       % self.buildMode
-                          , "-D", "BUILD_SHARED_LIBS:STRING=%s"      % self.enableShared
-                          , "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
-                          , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
-                          , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
-                          , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
-                          , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self.installDir
-                          ]
+        command += [ "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
+                   , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
+                   , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
+                   , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
+                   , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self.installDir
+                   ]
         if self.libSuffix:
             command += [ "-D", "LIB_SUFFIX:STRING=%s" % self.libSuffix ]
         command += [ toolSourceDir ]
@@ -203,13 +201,15 @@ class Builder:
 
         if self._doBuild:
             command  = [ "make" ]
+            if self._ninja:
+                command  = [ "ninja-build" ]
            #command += [ "DESTDIR=%s" % self.installDir ]
             if self._enableDoc == "ON":
                #if tool.name == "crlcore" or tool.name == "stratus1":
                 if tool.name == "stratus1":
                     command += [ "dvi", "safepdf", "html" ]
             command += self._makeArguments
-            print "Make command:", command
+            print "Make/Ninja command:", command
             sys.stdout.flush ()
             self._execute ( command, "Build failed" )
         return

@@ -84,6 +84,7 @@
                                        ${BOOKSHELF_LIBRARY}
                                        ${CIF_LIBRARY}
                                        ${AGDS_LIBRARY}
+                                       ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${COLOQUINTE_LIBRARIES}
                                        ${OA_LIBRARIES}
