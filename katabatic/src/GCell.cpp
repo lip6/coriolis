@@ -1007,12 +1007,12 @@ namespace Katabatic {
   }
 
 
-  bool  GCell::checkEdgeSaturation ( float threshold ) const
+  bool  GCell::checkEdgeSaturation ( size_t hreserved, size_t vreserved) const
   {
-    unsigned int edgeUpUsage         = 0;
-    unsigned int edgeRightUsage      = 0;
-    float        edgeUpSaturation    = 0.0;
-    float        edgeRightSaturation = 0.0;
+    size_t edgeUpUsage       = 0;
+    size_t edgeRightUsage    = 0;
+    size_t edgeUpCapacity    = getGCellGrid()->getVEdgeCapacity() - vreserved;
+    size_t edgeRightCapacity = getGCellGrid()->getHEdgeCapacity() - hreserved;
 
     if ( getUp() ) {
     // Up Edge Density.
@@ -1030,7 +1030,6 @@ namespace Katabatic {
           edgeUpUsage++;
         }
       }
-      edgeUpSaturation = (float)edgeUpUsage/getGCellGrid()->getVEdgeCapacity();
     }
 
     if ( getRight() ) {
@@ -1049,24 +1048,24 @@ namespace Katabatic {
           edgeRightUsage++;
         }
       }
-      edgeRightSaturation = (float)edgeRightUsage/getGCellGrid()->getHEdgeCapacity();
     }
 
     bool overload = false;
-    if ( (edgeUpSaturation > threshold) or (edgeRightSaturation > threshold) ) {
+    if ( (edgeUpUsage > edgeUpCapacity) or (edgeRightUsage > edgeRightCapacity) ) {
       overload = true;
 
-      cparanoid << Warning("In %s, (over %.2f) ", _getString().c_str(), threshold);
+      cparanoid << Warning( "In %s, (over h:%d or v:%d)"
+                          , _getString().c_str(), edgeRightCapacity, edgeUpCapacity);
 
       ostringstream message;
       message << setprecision(3);
-      if ( edgeUpSaturation > threshold )
-        message << "up edge: " << edgeUpUsage << "/" << getGCellGrid()->getVEdgeCapacity()
-                << " " << edgeUpSaturation;
-      if ( edgeRightSaturation > threshold ) {
+      if ( edgeUpUsage > edgeUpCapacity )
+        message << "up edge: " << edgeUpUsage << " vs. " << getGCellGrid()->getVEdgeCapacity()
+                << "-" << vreserved;
+      if ( edgeRightUsage > edgeRightCapacity ) {
         if ( message.str().size() ) message << " & ";
-        message << "right edge: " << edgeRightUsage << "/" << getGCellGrid()->getHEdgeCapacity()
-                << " " << edgeRightSaturation;
+        message << "right edge: " << edgeRightUsage << " vs. " << getGCellGrid()->getHEdgeCapacity()
+                << "-" << hreserved;
       }
 
       cparanoid << message.str() << "." << endl;

@@ -247,8 +247,8 @@ namespace Kite {
   
       KatabaticEngine::chipPrep();
   
-      KnikEngine::setHEdgeCapacityPercent( 1.0 );
-      KnikEngine::setVEdgeCapacityPercent( 1.0 );
+      KnikEngine::setHEdgeReservedLocal( 0 );
+      KnikEngine::setVEdgeReservedLocal( 0 );
       _knik = KnikEngine::create( cell
                                 , 1     // _congestion
                                 , 2     // _preCongestion
@@ -259,13 +259,13 @@ namespace Kite {
       _knik->setRoutingGauge( getConfiguration()->getRoutingGauge() );
       _knik->setAllowedDepth( getConfiguration()->getAllowedDepth() );
       _knik->createRoutingGraph();
-      KnikEngine::setHEdgeCapacityPercent( getHEdgeCapacityPercent() );
-      KnikEngine::setVEdgeCapacityPercent( getVEdgeCapacityPercent() );
+      KnikEngine::setHEdgeReservedLocal( getHTracksReservedLocal() );
+      KnikEngine::setVEdgeReservedLocal( getVTracksReservedLocal() );
   
     // Decrease the edge's capacity only under the core area.
-      const ChipTools& chipTools     = getChipTools();
-      float            corePercent   = 1.00;
-      float            coronaPercent = 0.80;
+      const ChipTools& chipTools      = getChipTools();
+      size_t           coreReserved   = 0;
+      size_t           coronaReserved = 4;
   
       forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
@@ -279,7 +279,7 @@ namespace Kite {
               edge->setCapacity( 0 );
               continue;
             }
-            corePercent = getHEdgeCapacityPercent();
+            coreReserved = getHTracksReservedLocal();
           } else {
             edge = ivertex->getVEdgeOut();
             if (not edge) continue;
@@ -288,20 +288,21 @@ namespace Kite {
               edge->setCapacity( 0 );
               continue;
             }
-            corePercent = getVEdgeCapacityPercent();
+            coreReserved = getVTracksReservedLocal();
           }
   
-          float edgePercent = 1.00;
+          size_t edgeReserved = 0;
           if (chipTools.getCorona().getInnerBox().contains(edge->getBoundingBox())) {
-            edgePercent = corePercent;
+            edgeReserved = coreReserved;
           } else if (chipTools.getCorona().getOuterBox().contains(edge->getBoundingBox())) {
-            edgePercent = coronaPercent;
+            edgeReserved = coronaReserved;
           }
   
-          float capacity = edgePercent * (float)edge->getCapacity();
+          size_t capacity = (edge->getCapacity()>edgeReserved)
+                          ? (edge->getCapacity()-edgeReserved) : 0;
         //cerr << "Appling capacity percentage " << (edgePercent*100.0) << "% ("
         //     << capacity << ") on: " << edge << endl;
-          edge->setCapacity( (unsigned int)capacity );
+          edge->setCapacity( capacity );
         }
       }
     }
@@ -547,7 +548,7 @@ namespace Kite {
     KatabaticEngine::loadGlobalRouting( method, nets );
 
     Session::open( this );
-    getGCellGrid()->checkEdgeSaturation( getHEdgeCapacityPercent() );
+    getGCellGrid()->checkEdgeOverflow( getHTracksReservedLocal(), getVTracksReservedLocal() );
     Session::close();
   }
 
@@ -574,15 +575,20 @@ namespace Kite {
     printMeasures( "algo" );
 
     Session::open( this );
-    unsigned int overlaps     = 0;
-    float        edgeCapacity = 1.0;
-    KnikEngine*  knik         = KnikEngine::get( getCell() );
+    unsigned int overlaps             = 0;
+    size_t       hTracksReservedLocal = getHTracksReservedLocal();
+    size_t       vTracksReservedLocal = getVTracksReservedLocal();
+    KnikEngine*  knik                 = KnikEngine::get( getCell() );
 
-    if (knik) edgeCapacity = knik->getHEdgeCapacityPercent();
+    if (knik) {
+      hTracksReservedLocal = knik->getHEdgeReservedLocal();
+      vTracksReservedLocal = knik->getVEdgeReservedLocal();
+    }
 
     if (cparanoid.enabled()) {
-      cparanoid << "  o  Post-checking Knik capacity overload " << (edgeCapacity*100.0) << "%." << endl;
-      getGCellGrid()->checkEdgeSaturation( edgeCapacity );
+      cparanoid << "  o  Post-checking Knik capacity overload h:" << hTracksReservedLocal
+                << " v:." << vTracksReservedLocal << endl;
+      getGCellGrid()->checkEdgeOverflow( hTracksReservedLocal, vTracksReservedLocal );
     }
 
     _check( overlaps );

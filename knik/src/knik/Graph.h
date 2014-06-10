@@ -144,8 +144,8 @@ namespace Knik {
             void   setNetStampConnexID    ( Segment* segment, int connexID );
         public:
             Vertex* createVertex     ( Point position, DbU::Unit halfWidth, DbU::Unit halfHeight );
-            void   createHEdge       ( Vertex* from, Vertex* to, float ecp=1.0 );
-            void   createVEdge       ( Vertex* from, Vertex* to, float ecp=1.0 );
+            void   createHEdge       ( Vertex* from, Vertex* to, size_t reserved=0 );
+            void   createVEdge       ( Vertex* from, Vertex* to, size_t reserved=0 );
             void   resetVertexes     ()                    { _vertexes_to_route.clear(); };
             void   setNetStamp       ( unsigned netStamp ) { _netStamp = netStamp; };
             void   incNetStamp       ()                    { _netStamp++; };

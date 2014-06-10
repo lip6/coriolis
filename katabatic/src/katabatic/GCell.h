@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -158,7 +158,7 @@ namespace Katabatic {
               size_t                      getRoutingPads      ( set<RoutingPad*>& );
       inline  const Key&                  getKey              () const;
               size_t                      checkDensity        () const;
-              bool                        checkEdgeSaturation ( float threshold ) const;
+              bool                        checkEdgeSaturation ( size_t hreserved, size_t vreserved) const;
     // Modifiers.                         
               void                        addBlockage         ( unsigned int depth, DbU::Unit );
       inline  void                        addHSegment         ( AutoSegment* );

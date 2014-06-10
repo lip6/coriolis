@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
 // x-----------------------------------------------------------------x
 // |                   C O R I O L I S                               |
@@ -63,9 +63,9 @@ namespace Knik {
   
   extern bool   __ripupMode__;
 
-  const Name KnikEngine::_toolName = "Knik::KnikEngine";
-  float      KnikEngine::_edgeHCapacityPercent = 1.0;
-  float      KnikEngine::_edgeVCapacityPercent = 1.0;
+  const Name KnikEngine::_toolName           = "Knik::KnikEngine";
+  size_t     KnikEngine::_hEdgeReservedLocal = 0;
+  size_t     KnikEngine::_vEdgeReservedLocal = 0;
 
 
   KnikEngine::KnikEngine ( Cell*     cell

@@ -104,8 +104,8 @@ if __name__ == '__main__':
       parser.add_option( '-G', '--global-route'     , action='store_true', dest='globalRoute'    , help='Run the global router (Knik).')
       parser.add_option( '-g', '--load-global'      , action='store_true', dest='loadGlobal'     , help='Reload a global routing from disk.')
       parser.add_option(       '--save-global'      , action='store_true', dest='saveGlobal'     , help='Save the global routing solution.')
-      parser.add_option(       '--h-edge'           , type='float'       , dest='hEdgeCapacity'  , help='The horizontal egde density ratio applied on global router\'s edges.')
-      parser.add_option(       '--v-edge'           , type='float'       , dest='vEdgeCapacity'  , help='The vertical egde density ratio applied on global router\'s edges.')
+      parser.add_option(       '--htracks-local'    , type='int'         , dest='hTracksLocal'   , help='The amount of horizontal tracks reserved for the GCell local routing.')
+      parser.add_option(       '--vtracks-local'    , type='int'         , dest='vTracksLocal'   , help='The amount of vertical tracks reserved for the GCell local routing .')
       parser.add_option(       '--events-limit'     , type='int'         , dest='eventsLimit'    , help='The maximum number of iterations (events) that the router is allowed to perform.')
       parser.add_option( '-R', '--detail-route'     , action='store_true', dest='detailRoute'    , help='Run the detailed router (Kite).')
       parser.add_option( '-M', '--dump-measures'    , action='store_true', dest='dumpMeasures'   , help='Dump some statistical measurements on the disk.')
@@ -129,9 +129,9 @@ if __name__ == '__main__':
       if options.showConf:        Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
       if options.margin:          Cfg.getParamPercentage('nimbus.spaceMargin').setPercentage(options.margin)
       if options.minPSize:        Cfg.getParamInt       ('metis.numberOfInstancesStopCriterion').setInt(options.minPSize)
-      if options.hEdgeCapacity:   Cfg.getParamPercentage('kite.hEdgeCapacity').setPercentage(options.hEdgeCapacity)
-      if options.vEdgeCapacity:   Cfg.getParamPercentage('kite.vEdgeCapacity').setPercentage(options.vEdgeCapacity)
-      if options.eventsLimit:     Cfg.getParamInt       ('kite.eventsLimit'  ).setInt(options.eventsLimit)
+      if options.hTracksLocal:    Cfg.getParamInt       ('kite.hTracksReservedLocal').setInt(options.hTracksLocal)
+      if options.vTracksLocal:    Cfg.getParamInt       ('kite.vTracksReservedLocal').setInt(options.vTracksLocal)
+      if options.eventsLimit:     Cfg.getParamInt       ('kite.eventsLimit'         ).setInt(options.eventsLimit)
       if options.topRoutingLayer: Cfg.getParamString    ('katabatic.topRoutingLayer').setString(options.topRoutingLayer)
 
       quadPlace      = options.quadPlace

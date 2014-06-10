@@ -74,8 +74,8 @@ namespace Kite {
       inline  unsigned int     getRipupLimit              ( unsigned int type ) const;
               unsigned int     getRipupLimit              ( const TrackElement* ) const;
       inline  unsigned int     getRipupCost               () const;
-      inline  float            getHEdgeCapacityPercent    () const;
-      inline  float            getVEdgeCapacityPercent    () const;
+      inline  size_t           getHTracksReservedLocal    () const;
+      inline  size_t           getVTracksReservedLocal    () const;
       virtual const Name&      getName                    () const;
       inline  Configuration::PostEventCb_t&
                                getPostEventCb             ();
@@ -94,8 +94,8 @@ namespace Kite {
       inline  void             setMinimumWL               ( double );
       inline  void             setRipupLimit              ( unsigned int type, unsigned int );
       inline  void             setRipupCost               ( unsigned int );
-      inline  void             setHEdgeCapacityPercent    ( float );
-      inline  void             setVEdgeCapacityPercent    ( float );
+      inline  void             setHTracksReservedLocal    ( size_t );
+      inline  void             setVTracksReservedLocal    ( size_t );
               void             buildPowerRails            ();
               void             protectRoutingPads         ();
               void             preProcess                 ();
@@ -153,8 +153,8 @@ namespace Kite {
   inline  bool                          KiteEngine::getToolSuccess          () const { return _toolSuccess; }
   inline  unsigned long                 KiteEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
   inline  unsigned int                  KiteEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
-  inline  float                         KiteEngine::getHEdgeCapacityPercent () const { return _configuration->getHEdgeCapacityPercent(); }
-  inline  float                         KiteEngine::getVEdgeCapacityPercent () const { return _configuration->getVEdgeCapacityPercent(); }
+  inline  size_t                        KiteEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
+  inline  size_t                        KiteEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
   inline  unsigned int                  KiteEngine::getRipupLimit           ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
@@ -162,8 +162,8 @@ namespace Kite {
   inline  void                          KiteEngine::setEventLimit           ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
   inline  void                          KiteEngine::setRipupLimit           ( unsigned int type, unsigned int limit ) { _configuration->setRipupLimit(limit,type); }
   inline  void                          KiteEngine::setRipupCost            ( unsigned int cost ) { _configuration->setRipupCost(cost); }
-  inline  void                          KiteEngine::setHEdgeCapacityPercent ( float percent ) { _configuration->setHEdgeCapacityPercent(percent); }
-  inline  void                          KiteEngine::setVEdgeCapacityPercent ( float percent ) { _configuration->setVEdgeCapacityPercent(percent); }
+  inline  void                          KiteEngine::setHTracksReservedLocal ( size_t reserved ) { _configuration->setHTracksReservedLocal(reserved); }
+  inline  void                          KiteEngine::setVTracksReservedLocal ( size_t reserved ) { _configuration->setVTracksReservedLocal(reserved); }
   inline  void                          KiteEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KiteEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KiteEngine::printConfiguration      () const { _configuration->print(getCell()); }

@@ -168,6 +168,10 @@ void Graph::_postCreate()
       throw Error ("Graph::_postCreate(): cannot use another method than MatrixVertex");
 #endif
     }
+
+    cout << Dots::asUInt ("     - Global router H edges capacity"     ,_lowerLeftVertex->getHEdgeOut()->getCapacity()) << endl;
+    cout << Dots::asUInt ("     - Global router V edges capacity"     ,_lowerLeftVertex->getVEdgeOut()->getCapacity()) << endl;
+    
 //    #ifdef __USE_MATRIXVERTEX__
 //        _matrixVertex = MatrixVertex::create(this);
 //        if ( _routingGrid ) {  
@@ -514,13 +518,13 @@ Vertex* Graph::createVertex ( Point position, DbU::Unit halfWidth, DbU::Unit hal
     return vertex;
 }
 
-  void Graph::createHEdge ( Vertex* from, Vertex* to, float ecp )
-// **************************************************************
+  void Graph::createHEdge ( Vertex* from, Vertex* to, size_t reserved )
+// ********************************************************************
 {
-    unsigned int capacity = 0;
+    size_t capacity = 0;
     if ( _routingGrid ) {
         capacity = _routingGrid->getHCapacity();
-      //cerr << "createHEdge capacity:" << capacity << " ecp:" << ecp << endl;
+      //cerr << "createHEdge capacity:" << capacity << " reserved:" << reserved << endl;
     } else {
         vector<RoutingLayerGauge*> rtLGauges = _engine->getRoutingGauge()->getLayerGauges();
         for ( vector<RoutingLayerGauge*>::iterator it = rtLGauges.begin() ; it != rtLGauges.end() ; it++ ) {
@@ -533,9 +537,9 @@ Vertex* Graph::createVertex ( Point position, DbU::Unit halfWidth, DbU::Unit hal
 
             capacity += routingLayerGauge->getTrackNumber ( from->getYMin(), from->getYMax() ) - 1;
         }
-      //cerr << "createHEdge capacity:" << capacity << " ecp:" << ecp << endl;
+      //cerr << "createHEdge capacity:" << capacity << " reserved:" << reserved << endl;
     }
-    Edge* newEdge = HEdge::create ( from, to, (unsigned)((float)(capacity)*ecp) );
+    Edge* newEdge = HEdge::create ( from, to, capacity-reserved );
 
     _all_edges.push_back ( newEdge );
 
@@ -552,10 +556,10 @@ Vertex* Graph::createVertex ( Point position, DbU::Unit halfWidth, DbU::Unit hal
     to->setHEdgeIn ( newEdge );
 }
 
-void Graph::createVEdge ( Vertex* from, Vertex* to, float ecp )
-// ************************************************************
+void Graph::createVEdge ( Vertex* from, Vertex* to, size_t reserved )
+// ******************************************************************
 {
-    unsigned int capacity = 0;
+    size_t capacity = 0;
     if ( _routingGrid )
         capacity = _routingGrid->getVCapacity();
     else {
@@ -570,9 +574,9 @@ void Graph::createVEdge ( Vertex* from, Vertex* to, float ecp )
 
             capacity += routingLayerGauge->getTrackNumber ( from->getXMin(), from->getXMax() ) - 1;
         }
-      //cerr << "createVEdge capacity:" << capacity << " ecp:" << ecp << endl;
+      //cerr << "createVEdge capacity:" << capacity << " reserved:" << reserved << endl;
     }
-    Edge* newEdge = VEdge::create ( from, to, (unsigned)((float)(capacity)*ecp) );
+    Edge* newEdge = VEdge::create ( from, to, capacity-reserved );
 
     _all_edges.push_back ( newEdge );
 

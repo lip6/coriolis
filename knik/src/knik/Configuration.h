@@ -1,15 +1,9 @@
-
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Configuration.h<knik>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |                 Knik - Global Router                            |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Configuration.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __KNIK_CONFIGURATION__
-#define  __KNIK_CONFIGURATION__
+#ifndef  KNIK_CONFIGURATION_H
+#define  KNIK_CONFIGURATION_H
 
 
 namespace Hurricane {
@@ -71,7 +62,6 @@ namespace Knik {
   inline const Layer* Configuration::_getGContact () const { return _gContact; }
 
 
-} // End of Knik namespace.
+} // Knik namespace.
 
-
-#endif // __KNIK_CONFIGURATION__
+#endif // KNIK_CONFIGURATION_H

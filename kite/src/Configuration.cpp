@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -42,11 +42,11 @@ namespace Kite {
     : Katabatic::Configuration()
     , _base                (base)
     , _postEventCb         ()
-    , _hEdgeCapacityPercent(Cfg::getParamPercentage("kite.hEdgeCapacity", 80.0)->asDouble())
-    , _vEdgeCapacityPercent(Cfg::getParamPercentage("kite.vEdgeCapacity", 80.0)->asDouble())
+    , _hTracksReservedLocal(Cfg::getParamInt("kite.hTracksReservedLocal",    3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt("kite.vTracksReservedLocal",    3)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt("kite.ripupCost"   ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt("kite.eventsLimit" ,4000000)->asInt())
+    , _ripupCost           (Cfg::getParamInt("kite.ripupCost"           ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt("kite.eventsLimit"         ,4000000)->asInt())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("kite.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();
@@ -78,8 +78,8 @@ namespace Kite {
     : Katabatic::Configuration()
     , _base                (base)
     , _postEventCb         (other._postEventCb)
-    , _hEdgeCapacityPercent(other._hEdgeCapacityPercent)
-    , _vEdgeCapacityPercent(other._vEdgeCapacityPercent)
+    , _hTracksReservedLocal(other._hTracksReservedLocal)
+    , _vTracksReservedLocal(other._vTracksReservedLocal)
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
@@ -240,23 +240,23 @@ namespace Kite {
   }
 
 
-  void  Configuration::setHEdgeCapacityPercent ( float percent )
+  void  Configuration::setHTracksReservedLocal ( size_t reserved )
   {
-    if (percent > 1.0)
-      throw Error( "Configuration::setHEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
-                 , percent );
+    if (reserved > getHEdgeCapacity())
+      throw Error( "Configuration::setHTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
+                 , reserved, getHEdgeCapacity() );
 
-    _hEdgeCapacityPercent = percent;
+    _hTracksReservedLocal = reserved;
   }
 
 
-  void  Configuration::setVEdgeCapacityPercent ( float percent )
+  void  Configuration::setVTracksReservedLocal ( size_t reserved )
   {
-    if (percent > 1.0)
-      throw Error( "Configuration::setVEdgeCapacityPercent(): edge capacity ratio greater than 1.0 (%.1f)."
-                 , percent );
+    if (reserved > 1.0)
+      throw Error( "Configuration::setVTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
+                 , reserved, getVEdgeCapacity() );
 
-    _vEdgeCapacityPercent = percent;
+    _vTracksReservedLocal = reserved;
   }
 
 
@@ -274,13 +274,13 @@ namespace Kite {
   void  Configuration::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Kite> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asPercentage("     - Global router H edge capacity"      ,_hEdgeCapacityPercent) << endl;
-    cout << Dots::asPercentage("     - Global router V edge capacity"      ,_vEdgeCapacityPercent) << endl;
-    cout << Dots::asULong     ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
-    cout << Dots::asUInt      ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
-    cout << Dots::asUInt      ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
-    cout << Dots::asUInt      ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
-    cout << Dots::asUInt      ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+    cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
+    cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;
+    cout << Dots::asULong("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
+    cout << Dots::asUInt ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
+    cout << Dots::asUInt ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
+    cout << Dots::asUInt ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
 
     _base->print ( cell );
   }
@@ -305,8 +305,8 @@ namespace Kite {
     Record* record = _base->_getRecord();
   //record->add ( getSlot ( "_rg"       ,  _rg      ) );
     if ( record ) {
-      record->add ( getSlot("_hEdgeCapacityPercent" ,_hEdgeCapacityPercent ) );
-      record->add ( getSlot("_vEdgeCapacityPercent" ,_vEdgeCapacityPercent ) );
+      record->add ( getSlot("_hTracksReservedLocal" ,_hTracksReservedLocal ) );
+      record->add ( getSlot("_vTracksReservedLocal" ,_vTracksReservedLocal ) );
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 

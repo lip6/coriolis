@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -120,8 +120,8 @@ typedef vector<NetRecord> NetVector;
 // **********
     private:
         static const Name  _toolName;
-        static float       _edgeHCapacityPercent;
-        static float       _edgeVCapacityPercent;
+        static size_t      _hEdgeReservedLocal;
+        static size_t      _vEdgeReservedLocal;
         RoutingGauge*      _routingGauge;
         unsigned int       _allowedDepth;
         Graph*             _routingGraph;
@@ -160,8 +160,8 @@ typedef vector<NetRecord> NetVector;
 //    private: void     createLimitedZone ( Net* net, set<Vertex*,VertexPositionComp> gcells, Box vertexCenterBoundingBox, unsigned netStamp );
         string   adaptString ( string s );
   public:
-    static void          setHEdgeCapacityPercent ( float ecp ) { _edgeHCapacityPercent = ecp; };
-    static void          setVEdgeCapacityPercent ( float ecp ) { _edgeVCapacityPercent = ecp; };
+    static void          setHEdgeReservedLocal   ( size_t reserved ) { _hEdgeReservedLocal = reserved; };
+    static void          setVEdgeReservedLocal   ( size_t reserved ) { _vEdgeReservedLocal = reserved; };
            void          setRoutingGauge         ( RoutingGauge* );
            RoutingGauge* getRoutingGauge         () const { return _routingGauge; }
            void          setAllowedDepth         ( unsigned int );
@@ -199,8 +199,8 @@ typedef vector<NetRecord> NetVector;
     public:
         static  KnikEngine* get                       ( const Cell* );
         static  const Name& staticGetName             () { return _toolName; };
-        static  float       getHEdgeCapacityPercent   () { return _edgeHCapacityPercent; };
-        static  float       getVEdgeCapacityPercent   () { return _edgeVCapacityPercent; };
+        static  float       getHEdgeReservedLocal     () { return _hEdgeReservedLocal; };
+        static  float       getVEdgeReservedLocal     () { return _vEdgeReservedLocal; };
                 const Name& getName                   () const { return _toolName; };
                 void        printTime                 ();
                 void        computeOverflow           ();

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -58,7 +58,7 @@ namespace Katabatic {
       inline  size_t           getVEdgeCapacity    () const;
               Interval         getUSide            ( unsigned int ) const;
               size_t           checkDensity        () const;
-              bool             checkEdgeSaturation ( float threshold ) const;
+              bool             checkEdgeOverflow   ( size_t hreserved, size_t vreserved ) const;
               size_t           updateDensity       ();
               void             updateContacts      ( unsigned int flags=KbOpenSession );
       inline  void             setDensityMode      ( unsigned int );

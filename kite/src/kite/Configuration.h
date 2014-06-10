@@ -94,14 +94,14 @@ namespace Kite {
       inline  unsigned long              getEventsLimit          () const;
       inline  unsigned int               getRipupCost            () const;
               unsigned int               getRipupLimit           ( unsigned int type ) const;
-      inline  float                      getHEdgeCapacityPercent () const;
-      inline  float                      getVEdgeCapacityPercent () const;
+      inline  size_t                     getHTracksReservedLocal () const;
+      inline  size_t                     getVTracksReservedLocal () const;
       inline  void                       setEventsLimit          ( unsigned long );
       inline  void                       setRipupCost            ( unsigned int );
               void                       setRipupLimit           ( unsigned int limit, unsigned int type );
       inline  void                       setPostEventCb          ( PostEventCb_t );
-              void                       setHEdgeCapacityPercent ( float );
-              void                       setVEdgeCapacityPercent ( float );
+              void                       setHTracksReservedLocal ( size_t );
+              void                       setVTracksReservedLocal ( size_t );
       virtual Record*                    _getRecord              () const;
       virtual string                     _getString              () const;
       virtual string                     _getTypeName            () const;
@@ -109,9 +109,9 @@ namespace Kite {
     // Attributes.
              Katabatic::Configuration*   _base;
              PostEventCb_t               _postEventCb;
-             float                       _hEdgeCapacityPercent;
-             float                       _vEdgeCapacityPercent;
-             unsigned int                _ripupLimits    [RipupLimitsTableSize];
+             size_t                      _hTracksReservedLocal;
+             size_t                      _vTracksReservedLocal;
+             unsigned int                _ripupLimits         [RipupLimitsTableSize];
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
     private:
@@ -125,8 +125,8 @@ namespace Kite {
   inline Configuration::PostEventCb_t& Configuration::getPostEventCb          () { return _postEventCb; }
   inline unsigned long                 Configuration::getEventsLimit          () const { return _eventsLimit; }
   inline unsigned int                  Configuration::getRipupCost            () const { return _ripupCost; }
-  inline float                         Configuration::getHEdgeCapacityPercent () const { return _hEdgeCapacityPercent; }
-  inline float                         Configuration::getVEdgeCapacityPercent () const { return _vEdgeCapacityPercent; }
+  inline size_t                        Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
+  inline size_t                        Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
   inline void                          Configuration::setRipupCost            ( unsigned int cost ) { _ripupCost = cost; }
   inline void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
