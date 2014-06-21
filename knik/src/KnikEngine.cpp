@@ -79,6 +79,8 @@ namespace Knik {
     , _allowedDepth    ( 0)
     , _routingGraph    ( NULL )
     , _routingGrid     ( NULL )
+    , _timer           ()
+    , _nets_to_route   ()
     , _benchMode       ( benchMode )
     , _useSegments     ( useSegments )
     , _routingDone     ( false )
@@ -189,8 +191,8 @@ void KnikEngine::MakeRoutingLeaves()
     return;
 }
 
-void KnikEngine::initGlobalRouting()
-// *********************************
+void KnikEngine::initGlobalRouting( const map<Name,Net*>& excludedNets )
+// *********************************************************************
 {
   assert( _nets_to_route.empty() );
   cmess2 << "  o  Initializing global routing." << endl;
@@ -222,6 +224,11 @@ void KnikEngine::initGlobalRouting()
   Name obstacleNetName ("obstaclenet");
 
   forEach ( Net*, inet, getCell()->getNets() ) {
+    if (excludedNets.find(inet->getName()) != excludedNets.end()) {
+      cparanoid << "     - <" << inet->getName() << "> not routed (pre-routing found)." << endl;
+      continue;
+    }
+
     if (   inet->isGlobal()
        or  inet->isSupply()
        or  inet->isClock()
@@ -1035,10 +1042,10 @@ void KnikEngine::computeOverflow()
 //         _routingGraph->UpdateOccupancyWindow();
 // }
 
-void KnikEngine::run()
-// *******************
+void KnikEngine::run( const map<Name,Net*>& excludedNets )
+// *******************************************************
 {
-    Route();
+    Route( excludedNets );
     bool done = analyseRouting();
     while ( !done ) {
         unrouteOvSegments();
@@ -1059,12 +1066,12 @@ void KnikEngine::run()
     computeSymbolicWireLength ();
 }
 
-void KnikEngine::Route()
-// *********************
+void KnikEngine::Route( const map<Name,Net*>& excludedNets )
+// *********************************************************
 {
     UpdateSession::open();
     if ( !__initialized__ )
-        initGlobalRouting();
+        initGlobalRouting( excludedNets );
 
     _timer.resetIncrease();
     _timer.start();
@@ -1073,11 +1080,6 @@ void KnikEngine::Route()
     cmess2 << "     Iteration INIT"
            <<    "  # of nets to route:" << left  << _nets_to_route.size() << endl;
 
-    //CEditor* editor = getCEditor ( getCell() );
-    //editor->showRubbers();
-    //editor->Refresh();
-    //editor->Stop("Global Routing is going to do its job");
-    
     // initializing netStamp for routingGraph:
     //_routingGraph->setNetStamp(1); // Maybe NetStamp should not be initialized here !
     // Be aware that initializingthe NetStamp in the construction of the routingGraph, might be a bad idea, if a lotof rerouting processes are run, it may overpass the unsigne limit (really ?)

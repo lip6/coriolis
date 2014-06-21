@@ -119,20 +119,20 @@ typedef vector<NetRecord> NetVector;
 // Attributes
 // **********
     private:
-        static const Name  _toolName;
-        static size_t      _hEdgeReservedLocal;
-        static size_t      _vEdgeReservedLocal;
-        RoutingGauge*      _routingGauge;
-        unsigned int       _allowedDepth;
-        Graph*             _routingGraph;
-        RoutingGrid*       _routingGrid;
-        Timer              _timer;
-        NetVector          _nets_to_route;
-        bool               _benchMode;
-        bool               _useSegments;
-        bool               _routingDone;
-        unsigned           _rerouteIteration;
-        map<Segment*,SegRecord> _segmentOverEdges;
+        static const Name    _toolName;
+        static size_t        _hEdgeReservedLocal;
+        static size_t        _vEdgeReservedLocal;
+        RoutingGauge*        _routingGauge;
+        unsigned int         _allowedDepth;
+        Graph*               _routingGraph;
+        RoutingGrid*         _routingGrid;
+        Timer                _timer;
+        NetVector            _nets_to_route;
+        bool                 _benchMode;
+        bool                 _useSegments;
+        bool                 _routingDone;
+        unsigned             _rerouteIteration;
+        map<Segment*,SegRecord>            _segmentOverEdges;
         vector<pair<Segment*,SegRecord*> > _sortSegmentOv;
         set<Segment*> _segmentsToUnroute;
 
@@ -166,9 +166,9 @@ typedef vector<NetRecord> NetVector;
            RoutingGauge* getRoutingGauge         () const { return _routingGauge; }
            void          setAllowedDepth         ( unsigned int );
            unsigned int  getAllowedDepth         () const { return _allowedDepth; }
-           void          initGlobalRouting       (); // Making it public, so it can be called earlier and then capacities on edges can be ajusted
-           void          run                     ();
-           void          Route                   ();
+           void          initGlobalRouting       ( const map<Name,Net*>& excludedNets ); // Making it public, so it can be called earlier and then capacities on edges can be ajusted
+           void          run                     ( const map<Name,Net*>& excludedNets );
+           void          Route                   ( const map<Name,Net*>& excludedNets );
            void          createRoutingGrid       ( unsigned   nbXTiles
                                                  , unsigned   nbYTiles
                                                  , const Box& boundingBox

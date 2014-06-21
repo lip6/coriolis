@@ -190,8 +190,9 @@ namespace Knik {
     if ( !knik ) return;
 
   //emit cellPreModificated ();
-
-    knik->run ();
+    
+    map<Name,Net*> excludedNets;
+    knik->run ( excludedNets );
 
   //emit cellPostModificated ();
   }
@@ -204,7 +205,8 @@ namespace Knik {
 
   //emit cellPreModificated ();
 
-    knik->Route ();
+    map<Name,Net*> excludedNets;
+    knik->Route ( excludedNets );
 
   //emit cellPostModificated ();
   }
