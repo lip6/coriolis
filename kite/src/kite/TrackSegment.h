@@ -68,6 +68,7 @@ namespace Kite {
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isSameLayerDogleg      () const;
+      virtual bool                  isUserDefined          () const;
     // Predicates.
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );

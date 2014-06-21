@@ -117,6 +117,7 @@ namespace Kite {
       virtual bool                   isSlackened          () const;
       virtual bool                   isDogleg             () const;
       virtual bool                   isSameLayerDogleg    () const;
+      virtual bool                   isUserDefined        () const;
     // Predicates.                   
       inline  bool                   isCreated            () const;
       inline  bool                   isInvalidated        () const;
@@ -167,6 +168,7 @@ namespace Kite {
     // Mutators.                     
       inline  void                   setFlags             ( unsigned int );
       inline  void                   unsetFlags           ( unsigned int );
+      inline  void                   setRouted            ();
       virtual void                   setTrack             ( Track* );
       inline  void                   setIndex             ( size_t );
       virtual void                   updateFreedomDegree  ();
@@ -239,6 +241,12 @@ namespace Kite {
   inline DbU::Unit        TrackElement::getTargetU           () const { return _targetU; }
   inline Interval         TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
   inline void             TrackElement::setIndex             ( size_t index ) { _index=index; }
+
+  inline void  TrackElement::setRouted()
+  {
+    _flags |= TElemRouted;
+    if (base()) base()->setFlags( Katabatic::SegFixed );
+  }
 
   inline Box  TrackElement::getBoundingBox () const
   {

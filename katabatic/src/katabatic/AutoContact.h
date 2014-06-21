@@ -68,7 +68,9 @@ namespace Katabatic {
                        , CntIgnoreAnchor        = 0x00000200
                        };
 
-  class AutoContact : public ExtensionGo {
+  class AutoContact {
+    public:
+      static  AutoContact*     createFrom                 ( Contact* );
     public:
     // Wrapped Contact Accessors.
       inline  Hook*            getBodyHook                ();
@@ -158,6 +160,7 @@ namespace Katabatic {
                                                           , DbU::Unit constraintMax
                                                           , unsigned int flags=KbWarnOnError );
               void             restoreNativeConstraintBox ();
+              void             destroy                    ();
     // Inspector Management.
               Record*          _getRecord                 () const;
       virtual string           _getString                 () const;
@@ -193,7 +196,7 @@ namespace Katabatic {
     protected:
       inline  int              _getDeltaMin ( DbU::Unit x, DbU::Unit xMin );
       inline  int              _getDeltaMax ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax );
-              void             _getTopology ( Component*& anchor, Horizontal**&, Vertical**&, size_t );
+      static  void             _getTopology ( Contact*, Component*& anchor, Horizontal**&, Vertical**&, size_t );
       virtual void             _invalidate  ( unsigned int flags ) = 0;
   };
 

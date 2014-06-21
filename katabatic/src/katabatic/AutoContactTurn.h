@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2013, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -31,6 +30,7 @@ namespace Katabatic {
 
 
   class AutoContactTurn : public AutoContact {
+      friend class AutoContact;
     public:
       static  AutoContactTurn* create                 ( GCell*, Net*, const Layer* );
       static  void             insert                 ( AutoContactTerminal* );

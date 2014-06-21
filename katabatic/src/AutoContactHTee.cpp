@@ -180,7 +180,7 @@ namespace Katabatic {
     Horizontal** horizontals = new Horizontal* [3];
     Vertical**   verticals   = new Vertical*   [3];
 
-    _getTopology( anchor, horizontals, verticals, 3 );
+    _getTopology( base(), anchor, horizontals, verticals, 3 );
 
     _horizontal1 = static_cast<AutoHorizontal*>( Session::lookup(horizontals[0]) );
     _horizontal2 = static_cast<AutoHorizontal*>( Session::lookup(horizontals[1]) );
@@ -192,6 +192,9 @@ namespace Katabatic {
     else if (horizontals[2] != NULL) message = "HTee has more than two horizontal segments.";
     else if (verticals  [0] == NULL) message = "HTee is missing mandatory vertical segment.";
     else if (verticals  [1] != NULL) message = "HTee has more than one vertical segment.";
+    else if (_horizontal1   == NULL) message = "AutoSegment lookup failed on first horizontal segment.";
+    else if (_horizontal2   == NULL) message = "AutoSegment lookup failed on second horizontal segment.";
+    else if (_vertical1     == NULL) message = "AutoSegment lookup failed on vertical segment.";
     else if (   (not _horizontal1->isCreated() and not _horizontal2->isCreated())
             and (_horizontal1->getY() != _horizontal2->getY()) ) {
       message = "HTee has misaligned horizontal segments";

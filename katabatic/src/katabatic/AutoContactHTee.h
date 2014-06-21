@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -32,6 +31,7 @@ namespace Katabatic {
 
 
   class AutoContactHTee : public AutoContact {
+      friend class AutoContact;
     public:
       static  AutoContactHTee* create                 ( GCell*, Net*, const Layer* );
     protected:

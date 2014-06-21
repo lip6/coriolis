@@ -151,7 +151,7 @@ namespace Katabatic {
     Horizontal** horizontals = new Horizontal* [2];
     Vertical**   verticals   = new Vertical*   [2];
 
-    _getTopology ( anchor, horizontals, verticals, 2 );
+    _getTopology ( base(), anchor, horizontals, verticals, 2 );
 
     _horizontal1 = static_cast<AutoHorizontal*>( Session::lookup(horizontals[0]) );
     _vertical1   = static_cast<AutoVertical  *>( Session::lookup(verticals  [0]) );
@@ -161,6 +161,8 @@ namespace Katabatic {
     else if (horizontals[1] != NULL) message = "Turn has more than one horizontal segment.";
     else if (verticals  [0] == NULL) message = "Turn is missing mandatory vertical segment.";
     else if (verticals  [1] != NULL) message = "Turn has more than one vertical segment.";
+    else if (_horizontal1   == NULL) message = "AutoSegment lookup failed on horizontal segment.";
+    else if (_vertical1     == NULL) message = "AutoSegment lookup failed on vertical segment.";
     if (not message.empty()) {
       showTopologyError( message );
       setFlags( CntBadTopology );

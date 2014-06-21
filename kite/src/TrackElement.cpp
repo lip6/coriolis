@@ -150,6 +150,7 @@ namespace Kite {
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
   bool           TrackElement::isSameLayerDogleg    () const { return false; }
+  bool           TrackElement::isUserDefined        () const { return false; }
 // Predicates.
   bool           TrackElement::canSlacken           () const { return false; }
   bool           TrackElement::canPivotUp           ( float ) const { return false; };

@@ -427,7 +427,7 @@ namespace Katabatic {
     for ( ; ilut!=_autoSegmentLut.end() ; ++ilut ) {
       AutoSegment* segment = (*ilut).second;
 
-      if (segment->isLocal()) continue;
+      if (segment->isLocal() or segment->isFixed()) continue;
       if (not segment->isCanonical()) continue;
 
       segments.push_back( segment );

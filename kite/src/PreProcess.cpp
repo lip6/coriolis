@@ -241,7 +241,8 @@ namespace {
 
     for ( size_t i=0 ; i<track->getSize() ; ++i ) {
       TrackElement* segment = track->getSegment(i);
-      if ( segment and segment->isFixed() and segment->isTerminal() ) {
+      if (not segment or segment->isRouted()) continue;
+      if (segment and segment->isFixed() and segment->isTerminal()) {
         Interval   freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
         DbU::Unit  ppitch       = segment->getPPitch();
 

@@ -77,6 +77,7 @@ namespace Kite {
       virtual void               addToMenu          ( CellViewer* );
               void               postEvent          ();
     public slots:                                  
+               void              detailPreRoute     ();
                void              loadGlobalSolution ();
                void              saveGlobalSolution ();
                void              globalRoute        ();
@@ -91,16 +92,17 @@ namespace Kite {
       static  GraphicKiteEngine* _singleton;
               CellViewer*        _viewer;
     protected:
-                                 GraphicKiteEngine     ();
-      virtual                   ~GraphicKiteEngine     ();
-              void               _loadGlobalSolution   ();
-              void               _saveGlobalSolution   ();
-              void               _globalRoute          ();
-              void               _loadGlobalRouting    ();
-              void               _balanceGlobalDensity ();
-              void               _runNegociate         ();
-              void               _finalize             ();
-              void               _save                 ();
+                                 GraphicKiteEngine      ();
+      virtual                   ~GraphicKiteEngine      ();
+              void               _loadGlobalSolution    ();
+              void               _saveGlobalSolution    ();
+              void               _globalRoute           ();
+              void               _loadGlobalRouting     ();
+              void               _balanceGlobalDensity  ();
+              void               _runNegociatePreRouted ();
+              void               _runNegociate          ();
+              void               _finalize              ();
+              void               _save                  ();
   };
 
 

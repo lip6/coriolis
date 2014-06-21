@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -114,7 +113,7 @@ namespace Kite {
              TrackElement*                 createTrackSegment ( AutoSegment*, unsigned int flags );
              void                          addRoutingEvent    ( TrackElement*, unsigned int level );
       inline void                          rescheduleEvent    ( RoutingEvent*, unsigned int level );
-             void                          run                ( int slowMotion=0 );
+             void                          run                ( unsigned int flags );
              void                          printStatistics    () const;
              void                          _createRouting     ( Katabatic::GCell* );
              size_t                        _negociate         ();
@@ -124,7 +123,7 @@ namespace Kite {
 
     private:
     // Attributes.
-      unsigned int                _slowMotion;
+      unsigned int                _flags;
       bool                        _interrupt;
       KiteEngine*                 _kite;
       Katabatic::GCellVector      _gcells;

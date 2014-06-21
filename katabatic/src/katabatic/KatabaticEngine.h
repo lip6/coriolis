@@ -21,6 +21,7 @@
 #include  <string>
 #include  <vector>
 #include  <set>
+#include  <map>
 #include  "hurricane/Timer.h"
 #include  "hurricane/DbU.h"
 #include  "hurricane/Torus.h"
@@ -134,7 +135,7 @@ namespace Katabatic {
       virtual void                  createDetailedGrid        ();
               void                  chipPrep                  ();
               void                  makePowerRails            ();
-      virtual void                  loadGlobalRouting         ( unsigned int method, NetSet& );
+      virtual void                  loadGlobalRouting         ( unsigned int method, NetSet&, const std::map<Name,Net*>& );
               void                  slackenBorder             ( Box bb, Layer::Mask, unsigned int flags );
               void                  slackenBlockIos           ( Instance* core );
               bool                  moveUpNetTrunk            ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );

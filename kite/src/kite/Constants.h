@@ -33,7 +33,8 @@ namespace Kite {
   using Katabatic::KbWarnOnError;
   using Katabatic::perpandicularTo;
 
-  enum FunctionFlags { KtLoadGlobalRouting  = 0x00000001
+  enum FunctionFlags { KtNoFlags            = 0x00000000
+                     , KtLoadGlobalRouting  = 0x00000001
                      , KtBuildGlobalRouting = 0x00000002
                      , KtAllowDoglegReuse   = 0x00000004
                      , KtDataSelf           = 0x00000008
@@ -45,6 +46,8 @@ namespace Kite {
                      , KtMoveToLeft         = 0x00000200
                      , KtMoveToRight        = 0x00000400
                      , KtLoadingStage       = 0x00000800
+                     , KtSlowMotion         = 0x00001000
+                     , KtPreRoutedStage     = 0x00002000
                      , };
 
 } // Kite namespace.

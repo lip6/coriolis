@@ -142,6 +142,7 @@ namespace Kite {
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
   bool           TrackSegment::isSameLayerDogleg    () const { return _base->isSameLayerDogleg(); }
+  bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
 // Predicates.
 // Accessors.
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }
@@ -543,6 +544,11 @@ namespace Kite {
       return false;
     }
 
+    if (isRouted()) {
+      ltrace(200) << "Failed: belongs to an already routed net." << endl;
+      return false;
+    }
+
     if (isSlackened()) {
       ltrace(200) << "Failed: is local & slackened." << endl;
       return false;
@@ -575,6 +581,12 @@ namespace Kite {
 
     if (isFixed()) {
       ltrace(200) << "false: Cannot dogleg a fixed segment." << endl;
+      ltraceout(200);
+      return false;
+    }
+
+    if (isRouted()) {
+      ltrace(200) << "false: Cannot dogleg a segment belonging to an already routed net." << endl;
       ltraceout(200);
       return false;
     }
@@ -652,6 +664,11 @@ namespace Kite {
 
     if (isFixed()) {
       ltrace(200) << "Failed: is fixed" << endl;
+      return false;
+    }
+
+    if (isRouted()) {
+      ltrace(200) << "Failed: belongs to an already routed net" << endl;
       return false;
     }
 
@@ -809,11 +826,15 @@ namespace Kite {
     base()->checkPositions();
     base()->getCanonical( min, max );
     if (getSourceU() != min) {
-      cerr << "[CHECK] " << this << " has bad source position " << DbU::getValueString(min) << "." << endl;
+      cerr << "[CHECK] " << this << " has bad source position "
+           << "cache:" << DbU::getValueString(getSourceU()) << " vs. "
+           << "canon:" << DbU::getValueString(min)          << "."  << endl;
       coherency = false;
     }
     if (getTargetU() != max) {
-      cerr << "[CHECK] " << this << " has bad target position " << DbU::getValueString(max) << "." << endl;
+      cerr << "[CHECK] " << this << " has bad target position "
+           << "cache:" << DbU::getValueString(getTargetU()) << " vs. "
+           << "canon:" << DbU::getValueString(max)          << "." << endl;
       coherency = false;
     }
 
@@ -833,13 +854,14 @@ namespace Kite {
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               +  " "   + getString(_dogLegLevel)
               + " ["   + ((_track) ? getString(_index) : "npos") + "] "
+              + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")
               + ((canRipple()      ) ? "r" : "-")
               + ((hasSourceDogleg()) ? "s" : "-")
               + ((hasTargetDogleg()) ? "t" : "-");
 
-    s1.insert ( s1.size()-1, s2 );
+    s1.insert( s1.size()-1, s2 );
 
     return s1;
   }

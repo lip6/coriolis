@@ -97,7 +97,7 @@ namespace {
 
   class GlobalNetTable {
     public:
-                   GlobalNetTable ( Cell* );
+                   GlobalNetTable ( KiteEngine* );
              Net*  getRootNet     ( const Net*, Path ) const;
       inline Net*  getVdde        () const;
       inline Net*  getVddi        () const;
@@ -139,7 +139,7 @@ namespace {
   inline Net*  GlobalNetTable::getBlockage () const { return _blockage; }
   inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
-  GlobalNetTable::GlobalNetTable ( Cell* topCell )
+  GlobalNetTable::GlobalNetTable ( KiteEngine* kite )
     : _vddeName("vdde")
     , _vddiName("vddi")
     , _vsseName("vsse")
@@ -156,9 +156,10 @@ namespace {
     , _cko     (NULL)
     , _blockage(NULL)
   {
-    if ( topCell == NULL ) return;
+    Cell* topCell = kite->getCell();
+    if (topCell == NULL) return;
 
-    AllianceFramework* af = AllianceFramework::get ();
+    AllianceFramework* af = AllianceFramework::get();
 
     bool hasPad = false;
     forEach ( Instance*, iinstance, topCell->getInstances() ) {
@@ -235,7 +236,11 @@ namespace {
       _vssiName = "";
       _ckoName  = "";
 
+      map<Name,Net*>  preRouteds = kite->getPreRouteds();
+
       forEach ( Net*, inet, topCell->getNets() ) {
+        if (preRouteds.find(inet->getName()) != preRouteds.end()) continue;
+
         Net::Type netType = inet->getType();
         if (netType == Net::Type::POWER) {
           if (_vddiName.isEmpty()) {
@@ -476,12 +481,6 @@ namespace {
       PlanesMap       _planes;
       Plane*          _activePlane;
   };
-
-
-} // Anonymous namespace.
-
-
-namespace {
 
 
   PowerRailsPlanes::Rail::Rail ( Rails* rails, DbU::Unit axis, DbU::Unit width )
@@ -847,7 +846,7 @@ namespace {
 
   PowerRailsPlanes::PowerRailsPlanes ( KiteEngine* kite )
     : _kite       (kite)
-    , _globalNets (kite->getCell())
+    , _globalNets (kite)
     , _planes     ()
     , _activePlane(NULL)
   {

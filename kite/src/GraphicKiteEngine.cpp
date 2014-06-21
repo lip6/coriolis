@@ -52,6 +52,7 @@ namespace Kite {
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::Point;
+  using Hurricane::Entity;
   using Hurricane::Net;
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
@@ -190,6 +191,13 @@ namespace Kite {
   }
 
 
+  void  GraphicKiteEngine::_runNegociatePreRouted ()
+  {
+    KiteEngine* kite = getForFramework( CreateEngine );
+    kite->runNegociate( KtPreRoutedStage );
+  }
+
+
   void  GraphicKiteEngine::_runNegociate ()
   {
     KiteEngine* kite = getForFramework( NoFlags );
@@ -230,6 +238,12 @@ namespace Kite {
   { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_saveGlobalSolution,this) ); }
 
 
+  void  GraphicKiteEngine::detailPreRoute ()
+  {
+    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_runNegociatePreRouted,this) );
+  }
+
+
   void  GraphicKiteEngine::detailRoute ()
   {
     ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_loadGlobalRouting   ,this) );
@@ -248,9 +262,10 @@ namespace Kite {
 
   void  GraphicKiteEngine::route ()
   {
-    globalRoute();
-    detailRoute();
-    finalize   ();
+    detailPreRoute();
+    globalRoute   ();
+    detailRoute   ();
+    finalize      ();
   }
 
 
@@ -306,6 +321,12 @@ namespace Kite {
     else {
       stepMenu->addSeparator();
 
+      QAction* dPreRouteAction = new QAction ( tr("Kite - Detailed Pre-Route"), _viewer );
+      dPreRouteAction->setObjectName( "viewer.menuBar.placeAndPreRoute.stepBystep.detailedPreRoute" );
+      dPreRouteAction->setStatusTip ( tr("Run the <b>Kite</b> detailed router on pre-routed nets") );
+      dPreRouteAction->setVisible   ( true );
+      stepMenu->addAction( dPreRouteAction );
+
       QAction* gRouteAction = new QAction ( tr("Kite - &Global Route"), _viewer );
       gRouteAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.globalRoute" );
       gRouteAction->setStatusTip ( tr("Run the <b>Knik</b> global router") );
@@ -357,6 +378,7 @@ namespace Kite {
       connect( gLoadSolutionAction, SIGNAL(triggered()), this, SLOT(loadGlobalSolution()) );
       connect( gSaveSolutionAction, SIGNAL(triggered()), this, SLOT(saveGlobalSolution()) );
       connect( gRouteAction       , SIGNAL(triggered()), this, SLOT(globalRoute       ()) );
+      connect( dPreRouteAction    , SIGNAL(triggered()), this, SLOT(detailPreRoute    ()) );
       connect( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
       connect( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
       connect( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );

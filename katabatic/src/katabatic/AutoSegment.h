@@ -90,6 +90,7 @@ namespace Katabatic {
                        , SegInvalidatedTarget = 0x04000000
                        , SegInvalidatedLayer  = 0x08000000
                        , SegCreated           = 0x10000000
+                       , SegUserDefined       = 0x20000000
                        // Masks.              
                        , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
                        , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
@@ -182,6 +183,7 @@ namespace Katabatic {
       inline  bool                isCanonical                () const;
       inline  bool                isUnsetAxis                () const;
       inline  bool                isSlackened                () const;
+      inline  bool                isUserDefined              () const;
       virtual bool                _canSlacken                () const = 0;
               unsigned int        canDogleg                  ( Interval );
       virtual bool                canMoveULeft               ( float reserve=0.0 ) const = 0;
@@ -449,6 +451,7 @@ namespace Katabatic {
   inline  bool            AutoSegment::isInvalidated        () const { return _flags & SegInvalidated; }
   inline  bool            AutoSegment::isInvalidatedLayer   () const { return _flags & SegInvalidatedLayer; }
   inline  bool            AutoSegment::isCreated            () const { return _flags & SegCreated; }
+  inline  bool            AutoSegment::isUserDefined        () const { return _flags & SegUserDefined; }
   inline  void            AutoSegment::setFlags             ( unsigned int flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags           ( unsigned int flags ) { _flags &= ~flags; }
                                                             

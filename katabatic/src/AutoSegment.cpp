@@ -909,91 +909,96 @@ namespace Katabatic {
     ltrace(89) << "computeOptimal() - " << this << endl;
     ltracein(89);
 
-    DbU::Unit      minGCell    = getOrigin();
-    DbU::Unit      maxGCell    = getExtremity();
-    DbU::Unit      terminalMin;
-    DbU::Unit      terminalMax;
-    AttractorsMap  attractors;
-
-    AutoContact* anchor = getAutoSource();
-    if (anchor->isTerminal()) {
-      Box constraintBox = anchor->getConstraintBox();
-      if ( isHorizontal() ) {
-        terminalMin = constraintBox.getYMin();
-        terminalMax = constraintBox.getYMax();
-      } else {
-        terminalMin = constraintBox.getXMin();
-        terminalMax = constraintBox.getXMax();
-      }
-
-      attractors.addAttractor( terminalMin );
-      if (terminalMin != terminalMax)
-        attractors.addAttractor( terminalMax );
-    }
-
-    anchor = getAutoTarget();
-    if (anchor->isTerminal()) {
-      Box constraintBox = anchor->getConstraintBox();
-      if (isHorizontal()) {
-        terminalMin = constraintBox.getYMin();
-        terminalMax = constraintBox.getYMax();
-      } else {
-        terminalMin = constraintBox.getXMin();
-        terminalMax = constraintBox.getXMax();
-      }
-
-      attractors.addAttractor( terminalMin );
-      if (terminalMin != terminalMax)
-        attractors.addAttractor( terminalMax );
-    }
-
-    forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
-      ltrace(89) << "Perpandicular " << *autoSegment << endl;
-      ltracein(89);
-      if (autoSegment->isLocal()) {
-        if (not autoSegment->isStrongTerminal()) { ltraceout(89); continue; }
-
-        DbU::Unit  terminalMin;
-        DbU::Unit  terminalMax;
-
-        if (getTerminalInterval( *autoSegment
-                               , NULL
-                               , isHorizontal()
-                               , terminalMin
-                               , terminalMax )) {
-          attractors.addAttractor( terminalMin );
-          if (terminalMin != terminalMax)
-            attractors.addAttractor( terminalMax );
-        }
-      } else {
-        bool isMin = true;
-        if (    isHorizontal()
-           and (autoSegment->getAutoSource()->getGCell()->getRow() == _gcell->getRow()) )
-          isMin = false;
-        if (    isVertical()
-           and (autoSegment->getAutoSource()->getGCell()->getColumn() == _gcell->getColumn()) )
-          isMin = false;
-        attractors.addAttractor( (isMin) ? minGCell : maxGCell );
-      }
-      ltraceout(89);
-    }
-
     DbU::Unit  optimalMin;
     DbU::Unit  optimalMax;
     DbU::Unit  constraintMin;
     DbU::Unit  constraintMax;
+  
     getConstraints( constraintMin, constraintMax );
 
-    if (attractors.getAttractorsCount()) {
-      ltrace(89) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
-      ltrace(89) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
-
-      optimalMin = attractors.getLowerMedian();
-      optimalMax = attractors.getUpperMedian();
+    if (isUserDefined()) {
+      optimalMin = optimalMax = getAxis();
     } else {
-      optimalMin = 0;
-      optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
-                                    : _gcell->getBoundingBox().getXMax();
+      DbU::Unit      minGCell    = getOrigin();
+      DbU::Unit      maxGCell    = getExtremity();
+      DbU::Unit      terminalMin;
+      DbU::Unit      terminalMax;
+      AttractorsMap  attractors;
+  
+      AutoContact* anchor = getAutoSource();
+      if (anchor->isTerminal()) {
+        Box constraintBox = anchor->getConstraintBox();
+        if ( isHorizontal() ) {
+          terminalMin = constraintBox.getYMin();
+          terminalMax = constraintBox.getYMax();
+        } else {
+          terminalMin = constraintBox.getXMin();
+          terminalMax = constraintBox.getXMax();
+        }
+  
+        attractors.addAttractor( terminalMin );
+        if (terminalMin != terminalMax)
+          attractors.addAttractor( terminalMax );
+      }
+  
+      anchor = getAutoTarget();
+      if (anchor->isTerminal()) {
+        Box constraintBox = anchor->getConstraintBox();
+        if (isHorizontal()) {
+          terminalMin = constraintBox.getYMin();
+          terminalMax = constraintBox.getYMax();
+        } else {
+          terminalMin = constraintBox.getXMin();
+          terminalMax = constraintBox.getXMax();
+        }
+  
+        attractors.addAttractor( terminalMin );
+        if (terminalMin != terminalMax)
+          attractors.addAttractor( terminalMax );
+      }
+  
+      forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
+        ltrace(89) << "Perpandicular " << *autoSegment << endl;
+        ltracein(89);
+        if (autoSegment->isLocal()) {
+          if (not autoSegment->isStrongTerminal()) { ltraceout(89); continue; }
+  
+          DbU::Unit  terminalMin;
+          DbU::Unit  terminalMax;
+  
+          if (getTerminalInterval( *autoSegment
+                                 , NULL
+                                 , isHorizontal()
+                                 , terminalMin
+                                 , terminalMax )) {
+            attractors.addAttractor( terminalMin );
+            if (terminalMin != terminalMax)
+              attractors.addAttractor( terminalMax );
+          }
+        } else {
+          bool isMin = true;
+          if (    isHorizontal()
+             and (autoSegment->getAutoSource()->getGCell()->getRow() == _gcell->getRow()) )
+            isMin = false;
+          if (    isVertical()
+             and (autoSegment->getAutoSource()->getGCell()->getColumn() == _gcell->getColumn()) )
+            isMin = false;
+          attractors.addAttractor( (isMin) ? minGCell : maxGCell );
+        }
+        ltraceout(89);
+      }
+  
+      if (attractors.getAttractorsCount()) {
+        ltrace(89) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
+        ltrace(89) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
+  
+        optimalMin = attractors.getLowerMedian();
+        optimalMax = attractors.getUpperMedian();
+      } else {
+        optimalMin = 0;
+        optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
+                                      : _gcell->getBoundingBox().getXMax();
+      }
     }
 
     setInBound( constraintMin, constraintMax, optimalMin );
@@ -1925,12 +1930,16 @@ namespace Katabatic {
 
     if (horizontal) {
       if (horizontal->getLayer() != horizontalLayer) {
-        if ( not Session::getKatabatic()->isGMetal(horizontal->getLayer()) )
-          cerr << Warning("Segment %s forced to %s."
-                         ,getString(horizontal).c_str()
-                         ,getString(horizontalLayer).c_str()) << endl;
-        horizontal->setLayer( horizontalLayer );
-        horizontal->setWidth( horizontalWidth );
+        if (Session::getKatabatic()->isGMetal(horizontal->getLayer())) {
+          horizontal->setLayer( horizontalLayer );
+          horizontal->setWidth( horizontalWidth );
+        } else {
+          if (horizontal->getWidth() != horizontalWidth) {
+            cerr << Warning("Segment %s has non-default width %s."
+                           ,getString(horizontal).c_str()
+                           ,DbU::getValueString(horizontal->getWidth()).c_str()) << endl;
+          }
+        }
       }
 
       horizontal->setY( reference->getY() );
@@ -1938,12 +1947,15 @@ namespace Katabatic {
       segment->_postCreate();
     } else if (vertical) {
       if (vertical->getLayer() != verticalLayer) {
-        if ( not Session::getKatabatic()->isGMetal(vertical->getLayer()) )
-          cerr << Warning("Segment %s forced to %s."
-                         ,getString(vertical).c_str()
-                         ,getString(verticalLayer).c_str()) << endl;
+        if (Session::getKatabatic()->isGMetal(vertical->getLayer()) )
         vertical->setLayer( verticalLayer );
         vertical->setWidth( verticalWidth );
+      } else {
+        if (vertical->getWidth() != verticalWidth) {
+            cerr << Warning("Segment %s has non-default width %s."
+                           ,getString(horizontal).c_str()
+                           ,DbU::getValueString(horizontal->getWidth()).c_str()) << endl;
+        }
       }
 
       vertical->setX( reference->getX() );

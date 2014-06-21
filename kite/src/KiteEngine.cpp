@@ -105,6 +105,7 @@ namespace Kite {
     , _knik           (NULL)
     , _blockageNet    (NULL)
     , _configuration  (new Configuration(getKatabaticConfiguration()))
+    , _preRouteds     ()
     , _routingPlanes  ()
     , _negociateWindow(NULL)
     , _minimumWL      (0.0)
@@ -115,15 +116,23 @@ namespace Kite {
   void  KiteEngine::_postCreate ()
   {
     KatabaticEngine::_postCreate ();
+  }
 
-#ifdef KNIK_NOT_EMBEDDED
-    size_t maxDepth = getRoutingGauge()->getDepth();
 
-    _routingPlanes.reserve( maxDepth );
-    for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
-      _routingPlanes.push_back( RoutingPlane::create( this, depth ) );
-    }
-#endif
+  void  KiteEngine::_initDataBase ()
+  {
+    ltrace(90) << "KiteEngine::_initDataBase()" << endl;
+    ltracein(90);
+
+    Session::open( this );
+    createGlobalGraph( KtNoFlags );
+    createDetailedGrid();
+    buildPreRouteds();
+    buildPowerRails();
+    protectRoutingPads();
+    Session::close();
+
+    ltraceout(90);
   }
 
 
@@ -132,6 +141,8 @@ namespace Kite {
     KiteEngine* kite = new KiteEngine ( cell );
 
     kite->_postCreate();
+    kite->_initDataBase();
+
     return kite;
   }
 
@@ -370,8 +381,11 @@ namespace Kite {
               ltrace(300) << "Reject capacity from (not Net): " << element << endl;
               continue;
             }
-            if ( (not element->isFixed()) and (not element->isBlockage()) ) {
-              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
+            if (   (not element->isFixed())
+               and (not element->isBlockage())
+               and (not element->isUserDefined()) ) {
+              cmess2 << "Reject capacity from (neither fixed, blockage nor user defined): " << element << endl;
+            //ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
               continue;
             }
 
@@ -445,10 +459,6 @@ namespace Kite {
   {
     if (getState() >= Katabatic::EngineGlobalLoaded)
       throw Error ("KiteEngine::runGlobalRouter(): Global routing already done or loaded.");
-
-    Session::open( this );
-
-    createGlobalGraph( mode );
 
   // Test signals from <multi4_a>.
   //DebugSession::addToTrace( getCell(), "aux34" );
@@ -524,17 +534,13 @@ namespace Kite {
   // Test signals from <snx2013>.
   //DebugSession::addToTrace( getCell(), "core.snx_inst.not_v_inc_out(9)" );
 
-    createDetailedGrid();
-    buildPowerRails();
-    protectRoutingPads();
-
-    Session::revalidate();
+    Session::open( this );
 
     if (mode & KtLoadGlobalRouting) {
       _knik->loadSolution();
     } else {
       annotateGlobalGraph();
-      _knik->run();
+      _knik->run( getPreRouteds() );
     }
 
     setState( Katabatic::EngineGlobalLoaded );
@@ -545,7 +551,7 @@ namespace Kite {
 
   void  KiteEngine::loadGlobalRouting ( unsigned int method, KatabaticEngine::NetSet& nets )
   {
-    KatabaticEngine::loadGlobalRouting( method, nets );
+    KatabaticEngine::loadGlobalRouting( method, nets, getPreRouteds() );
 
     Session::open( this );
     getGCellGrid()->checkEdgeOverflow( getHTracksReservedLocal(), getVTracksReservedLocal() );
@@ -553,7 +559,7 @@ namespace Kite {
   }
 
 
-  void  KiteEngine::runNegociate ( unsigned int slowMotion )
+  void  KiteEngine::runNegociate ( unsigned int flags )
   {
     if (_negociateWindow) return;
 
@@ -563,7 +569,7 @@ namespace Kite {
     _negociateWindow = NegociateWindow::create( this );
     _negociateWindow->setGCells( *(getGCellGrid()->getGCellVector()) );
     _computeCagedConstraints();
-    _negociateWindow->run( slowMotion );
+    _negociateWindow->run( flags );
     _negociateWindow->printStatistics();
     _negociateWindow->destroy();
     _negociateWindow = NULL;

@@ -60,64 +60,66 @@ namespace Kite {
   class KiteEngine : public KatabaticEngine {
 
     public:
-      static  const Name&      staticGetName              ();
-      static  KiteEngine*      create                     ( Cell* );
-      static  KiteEngine*      get                        ( const Cell* );
-    public:                                               
-      inline  CellViewer*      getViewer                  () const;
-      inline  KatabaticEngine* base                       ();
-      inline  Configuration*   getKiteConfiguration       ();
-      virtual Configuration*   getConfiguration           ();
-      inline  Net*             getBlockageNet             ();
-      inline  bool             getToolSuccess             () const;
-      inline  unsigned long    getEventsLimit             () const;
-      inline  unsigned int     getRipupLimit              ( unsigned int type ) const;
-              unsigned int     getRipupLimit              ( const TrackElement* ) const;
-      inline  unsigned int     getRipupCost               () const;
-      inline  size_t           getHTracksReservedLocal    () const;
-      inline  size_t           getVTracksReservedLocal    () const;
-      virtual const Name&      getName                    () const;
+      static  const Name&           staticGetName              ();
+      static  KiteEngine*           create                     ( Cell* );
+      static  KiteEngine*           get                        ( const Cell* );
+    public:                                                    
+      inline  CellViewer*           getViewer                  () const;
+      inline  KatabaticEngine*      base                       ();
+      inline  Configuration*        getKiteConfiguration       ();
+      virtual Configuration*        getConfiguration           ();
+      inline  const map<Name,Net*>& getPreRouteds             () const;
+      inline  Net*                  getBlockageNet             ();
+      inline  bool                  getToolSuccess             () const;
+      inline  unsigned long         getEventsLimit             () const;
+      inline  unsigned int          getRipupLimit              ( unsigned int type ) const;
+              unsigned int          getRipupLimit              ( const TrackElement* ) const;
+      inline  unsigned int          getRipupCost               () const;
+      inline  size_t                getHTracksReservedLocal    () const;
+      inline  size_t                getVTracksReservedLocal    () const;
+      virtual const Name&           getName                    () const;
       inline  Configuration::PostEventCb_t&
-                               getPostEventCb             ();
-      inline  NegociateWindow* getNegociateWindow         ();
-      inline  size_t           getRoutingPlanesSize       () const;
-              RoutingPlane*    getRoutingPlaneByIndex     ( size_t index ) const;
-              RoutingPlane*    getRoutingPlaneByLayer     ( const Layer* ) const;
-              Track*           getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
-      inline  void             printConfiguration         () const;
-              void             printCompletion            () const;
-              void             dumpMeasures               ( std::ostream& ) const;
-              void             dumpMeasures               () const;
-      inline  void             setViewer                  ( CellViewer* );
-      inline  void             setPostEventCb             ( Configuration::PostEventCb_t );
-      inline  void             setEventLimit              ( unsigned long );
-      inline  void             setMinimumWL               ( double );
-      inline  void             setRipupLimit              ( unsigned int type, unsigned int );
-      inline  void             setRipupCost               ( unsigned int );
-      inline  void             setHTracksReservedLocal    ( size_t );
-      inline  void             setVTracksReservedLocal    ( size_t );
-              void             buildPowerRails            ();
-              void             protectRoutingPads         ();
-              void             preProcess                 ();
-              void             setInterrupt               ( bool );
-              void             buildBlockages             ();
-              void             createGlobalGraph          ( unsigned int mode );
-      virtual void             createDetailedGrid         ();
-              void             saveGlobalSolution         ();
-              void             annotateGlobalGraph        ();
-              void             runNegociate               ( unsigned int slowMotion=0 );
-              void             runGlobalRouter            ( unsigned int mode );
-      virtual void             loadGlobalRouting          ( unsigned int method, KatabaticEngine::NetSet& );
-      virtual void             finalizeLayout             ();
-              void             _gutKite                   ();
-              void             _computeCagedConstraints   ();
-              TrackElement*    _lookup                    ( Segment* ) const;
-      inline  TrackElement*    _lookup                    ( AutoSegment* ) const;
-              bool             _check                     ( unsigned int& overlap, const char* message=NULL ) const;
-              void             _check                     ( Net* ) const;
-      virtual Record*          _getRecord                 () const;
-      virtual string           _getString                 () const;
-      virtual string           _getTypeName               () const;
+                                    getPostEventCb             ();
+      inline  NegociateWindow*      getNegociateWindow         ();
+      inline  size_t                getRoutingPlanesSize       () const;
+              RoutingPlane*         getRoutingPlaneByIndex     ( size_t index ) const;
+              RoutingPlane*         getRoutingPlaneByLayer     ( const Layer* ) const;
+              Track*                getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
+      inline  void                  printConfiguration         () const;
+              void                  printCompletion            () const;
+              void                  dumpMeasures               ( std::ostream& ) const;
+              void                  dumpMeasures               () const;
+      inline  void                  setViewer                  ( CellViewer* );
+      inline  void                  setPostEventCb             ( Configuration::PostEventCb_t );
+      inline  void                  setEventLimit              ( unsigned long );
+      inline  void                  setMinimumWL               ( double );
+      inline  void                  setRipupLimit              ( unsigned int type, unsigned int );
+      inline  void                  setRipupCost               ( unsigned int );
+      inline  void                  setHTracksReservedLocal    ( size_t );
+      inline  void                  setVTracksReservedLocal    ( size_t );
+              void                  buildPowerRails            ();
+              void                  buildPreRouteds            ();
+              void                  protectRoutingPads         ();
+              void                  preProcess                 ();
+              void                  setInterrupt               ( bool );
+              void                  createGlobalGraph          ( unsigned int mode );
+      virtual void                  createDetailedGrid         ();
+              void                  saveGlobalSolution         ();
+              void                  annotateGlobalGraph        ();
+              void                  setFixedPreRouted          ();
+              void                  runNegociate               ( unsigned int flags=KtNoFlags );
+              void                  runGlobalRouter            ( unsigned int mode );
+      virtual void                  loadGlobalRouting          ( unsigned int method, KatabaticEngine::NetSet& );
+      virtual void                  finalizeLayout             ();
+              void                  _gutKite                   ();
+              void                  _computeCagedConstraints   ();
+              TrackElement*         _lookup                    ( Segment* ) const;
+      inline  TrackElement*         _lookup                    ( AutoSegment* ) const;
+              bool                  _check                     ( unsigned int& overlap, const char* message=NULL ) const;
+              void                  _check                     ( Net* ) const;
+      virtual Record*               _getRecord                 () const;
+      virtual string                _getString                 () const;
+      virtual string                _getTypeName               () const;
 
     private:
     // Attributes.
@@ -127,6 +129,7 @@ namespace Kite {
              Knik::KnikEngine*      _knik;
              Net*                   _blockageNet;
              Configuration*         _configuration;
+             map<Name,Net*>         _preRouteds;
              vector<RoutingPlane*>  _routingPlanes;
              NegociateWindow*       _negociateWindow;
              double                 _minimumWL;
@@ -134,13 +137,14 @@ namespace Kite {
 
     protected:
     // Constructors & Destructors.
-                          KiteEngine  ( Cell* );
-      virtual            ~KiteEngine  ();
-      virtual void        _postCreate ();
-      virtual void        _preDestroy ();
+                          KiteEngine    ( Cell* );
+      virtual            ~KiteEngine    ();
+      virtual void        _postCreate   ();
+      virtual void        _preDestroy   ();
+              void        _initDataBase ();
     private:
-                          KiteEngine  ( const KiteEngine& );
-              KiteEngine& operator=   ( const KiteEngine& );
+                          KiteEngine    ( const KiteEngine& );
+              KiteEngine& operator=     ( const KiteEngine& );
   };
 
 
@@ -149,6 +153,7 @@ namespace Kite {
   inline  KatabaticEngine*              KiteEngine::base                    () { return static_cast<KatabaticEngine*>(this); }
   inline  Configuration*                KiteEngine::getKiteConfiguration    () { return _configuration; }
   inline  Net*                          KiteEngine::getBlockageNet          () { return _blockageNet; }
+  inline  const map<Name,Net*>&         KiteEngine::getPreRouteds           () const { return _preRouteds; }
   inline  Configuration::PostEventCb_t& KiteEngine::getPostEventCb          () { return _configuration->getPostEventCb(); }
   inline  bool                          KiteEngine::getToolSuccess          () const { return _toolSuccess; }
   inline  unsigned long                 KiteEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }

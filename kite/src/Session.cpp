@@ -206,7 +206,7 @@ namespace Kite {
       (*it)->check( overlaps, "Session::_revalidate() - on packed track." );
 
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
-      revalidateds[i]->_check();
+      revalidateds[i]->check();
     }
 
   //_getKiteEngine()->_showOverlap ();

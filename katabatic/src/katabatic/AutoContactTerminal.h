@@ -28,6 +28,7 @@ namespace Katabatic {
 
 
   class AutoContactTerminal : public AutoContact {
+      friend class AutoContact;
     public:
       static  AutoContactTerminal* create                 ( GCell*       gcell
                                                           , Component*   anchor

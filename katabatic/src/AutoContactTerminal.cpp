@@ -44,6 +44,7 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::DebugSession;
+  using Hurricane::Entity;
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
 
@@ -60,7 +61,7 @@ namespace Katabatic {
                                                    , DbU::Unit    height
                                                    )
   {
-    ltrace(90) << "AutoContactTerminal::create(... Point ...)" << endl;
+    ltrace(90) << "AutoContactTerminal::create(... Point, ...)" << endl;
     ltracein(90);
     ltrace(90) << "@" << point << endl; 
 
@@ -86,7 +87,7 @@ namespace Katabatic {
                                                    , const DbU::Unit  height
                                                    )
   {
-    ltrace(90) << "AutoContactTerminal::create(... x, y ...)" << endl;
+    ltrace(90) << "AutoContactTerminal::create(... x, y, ...)" << endl;
     ltrace(90) << "@ x:" << DbU::getValueString(x) << " y:" << DbU::getValueString(y) << endl; 
 
     Point anchorPosition = anchor->getPosition();
@@ -232,7 +233,7 @@ namespace Katabatic {
     Horizontal** horizontals = new Horizontal* [2];
     Vertical**   verticals   = new Vertical*   [2];
 
-    _getTopology( anchor, horizontals, verticals, 2 );
+    _getTopology( base(), anchor, horizontals, verticals, 2 );
 
     if (anchor == NULL)
       showTopologyError( "Terminal is missing an anchor (RoutingPad or Component)." );

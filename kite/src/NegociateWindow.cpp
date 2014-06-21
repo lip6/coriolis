@@ -158,7 +158,7 @@ namespace Kite {
 
 
   NegociateWindow::NegociateWindow ( KiteEngine* kite )
-    : _slowMotion  (0)
+    : _flags       (KtNoFlags)
     , _interrupt   (false)
     , _kite        (kite)
     , _gcells      ()
@@ -464,7 +464,7 @@ namespace Kite {
   }
 
 
-  void  NegociateWindow::run ( int slowMotion )
+  void  NegociateWindow::run ( unsigned int flags )
   {
     ltrace(150) << "NegociateWindow::run()" << endl;
     ltracein(149);
@@ -478,18 +478,25 @@ namespace Kite {
       _createRouting( _gcells[igcell] );
     }
     Session::revalidate();
-    _kite->preProcess();
-    Session::revalidate();
 
-    getKiteEngine()->setMinimumWL( computeWirelength() );
+    if (not (flags & KtPreRoutedStage)) {
+      _kite->preProcess();
+      Session::revalidate();
+    }
+
+    _kite->setMinimumWL( computeWirelength() );
 
 #if defined(CHECK_DATABASE)
     unsigned int overlaps = 0;
     Session::getKiteEngine()->_check( overlaps, "after _createRouting(GCell*)" );
 #endif 
 
-    _slowMotion = slowMotion;
+    _flags |= flags;
     _negociate();
+
+    if (flags & KtPreRoutedStage) {
+      _kite->setFixedPreRouted();
+    }
 
     Session::get()->isEmpty();
 

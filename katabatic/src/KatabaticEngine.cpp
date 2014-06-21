@@ -459,7 +459,7 @@ namespace Katabatic {
   { return _configuration; }
 
 
-  void  KatabaticEngine::loadGlobalRouting ( unsigned int method, NetSet& nets )
+  void  KatabaticEngine::loadGlobalRouting ( unsigned int method, NetSet& nets, const map<Name,Net*>& excludeds )
   {
     if (_state < EngineGlobalLoaded)
       throw Error ("KatabaticEngine::loadGlobalRouting() : global routing not present yet.");
@@ -480,6 +480,7 @@ namespace Katabatic {
           continue;
         }
         if (af->isBLOCKAGE(net->getName())) continue;
+        if (excludeds.find(net->getName()) != excludeds.end()) continue;
         _routingNets.insert ( *net );
       }
     } else {
@@ -493,8 +494,10 @@ namespace Katabatic {
         if (excludedType) {
           cparanoid << Warning( "%s is not a routable net (%s), removed from set."
                               , getString(*it).c_str(), excludedType ) << endl;
-        } else
+        } else {
+          if (excludeds.find((*it)->getName()) != excludeds.end()) continue;
           _routingNets.insert( *it );
+        }
       }
     }
 

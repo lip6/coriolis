@@ -32,8 +32,14 @@
 #include  "hurricane/DebugSession.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "katabatic/AutoContact.h"
+#include  "katabatic/AutoContactTerminal.h"
+#include  "katabatic/AutoContactTurn.h"
+#include  "katabatic/AutoContactHTee.h"
+#include  "katabatic/AutoContactVTee.h"
 #include  "katabatic/AutoVertical.h"
 #include  "katabatic/AutoHorizontal.h"
+#include  "katabatic/KatabaticEngine.h"
+#include  "katabatic/GCellGrid.h"
 #include  "katabatic/Session.h"
 
 
@@ -57,9 +63,7 @@ namespace Katabatic {
 
 
   AutoContact::AutoContact ( GCell* gcell, Contact* contact )
-    : ExtensionGo(contact->getCell())
-  //, _id        (_maxId++)
-    , _id        (contact->getId())
+    : _id        (contact->getId())
     , _contact   (contact)
     , _gcell     (gcell)
     , _flags     (CntInvalidatedCache|CntInCreationStage)
@@ -83,8 +87,6 @@ namespace Katabatic {
 
   void  AutoContact::_postCreate ()
   {
-    ExtensionGo::_postCreate();
-
     restoreNativeConstraintBox();
 
     ltrace(90) << "Native CBox: " << this
@@ -97,6 +99,13 @@ namespace Katabatic {
     invalidate( KbTopology );
 
     ltrace(90) << "AutoContact::_postCreate() - " << this << " in " << _gcell << endl;
+  }
+
+
+  void  AutoContact::destroy ()
+  {
+    _preDestroy ();
+    delete this;
   }
 
 
@@ -128,7 +137,6 @@ namespace Katabatic {
       Session::unlink( this );
     }
         
-    ExtensionGo::_preDestroy();
 #if 0
     if (Session::doDestroyBaseContact() and canDestroyBase)
       _contact->destroy();
@@ -317,7 +325,7 @@ namespace Katabatic {
   }
 
 
-  void  AutoContact::_getTopology ( Component*& anchor, Horizontal**& horizontals, Vertical**& verticals, size_t size )
+  void  AutoContact::_getTopology ( Contact* support, Component*& anchor, Horizontal**& horizontals, Vertical**& verticals, size_t size )
   {
     size_t hcount = 0;
     size_t vcount = 0;
@@ -327,9 +335,9 @@ namespace Katabatic {
       verticals  [i] = NULL;
     }
 
-    anchor = getAnchor();
+    anchor = support->getAnchor();
 
-    forEach ( Component*, icomponent, getSlaveComponents() ) {
+    forEach ( Component*, icomponent, support->getSlaveComponents() ) {
       Horizontal* h = dynamic_cast<Horizontal*>(*icomponent);
       if (h != NULL) {
         if (hcount < size) horizontals[hcount++] = h;
@@ -349,7 +357,7 @@ namespace Katabatic {
 
     if (not (flags & KbCParanoid)) cparanoid.setStreamMask( mstream::PassThrough );
 
-    _getTopology ( anchor, horizontals, verticals, 10 );
+    _getTopology ( base(), anchor, horizontals, verticals, 10 );
  
     cparanoid << Error("In topology of %s",getString(this).c_str()) << endl;
     if (anchor) cparanoid << "        A: " << anchor << endl;
@@ -496,6 +504,67 @@ namespace Katabatic {
   {
     cerr << Warning("Calling AutoContact::translate() is likely a bug.") << endl;
     _contact->translate ( tx, ty );
+  }
+
+
+  AutoContact* AutoContact::createFrom ( Contact* hurricaneContact )
+  {
+    AutoContact* autoContact = NULL;
+    Component*   anchor;
+    size_t       hSize       = 0;
+    size_t       vSize       = 0;
+    Horizontal** horizontals = new Horizontal* [4];
+    Vertical**   verticals   = new Vertical*   [4];
+    GCell*       gcell       = Session::getKatabatic()->getGCellGrid()->getGCell( hurricaneContact->getCenter() );
+
+    if (not gcell) {
+      throw Error("AutoContact::createFrom( %s ):\n"
+                  "        Contact is *not* under a GCell (outside routed area?)"
+                 , getString(hurricaneContact).c_str()
+                 );
+    }
+
+    _getTopology ( hurricaneContact, anchor, horizontals, verticals, 4 );
+
+    for ( size_t i=0 ; i<4 ; ++i ) {
+      hSize += (horizontals[i] != NULL) ? 1 : 0;
+      vSize += (verticals  [i] != NULL) ? 1 : 0;
+    }
+
+    if (anchor) {
+      if (hSize+vSize == 1) {
+        autoContact = new AutoContactTerminal( gcell, hurricaneContact );
+        autoContact->_postCreate();
+        autoContact->unsetFlags( CntInCreationStage );
+      }
+    } else {
+      if ((hSize == 1) and (vSize == 1)) {
+        autoContact = new AutoContactTurn ( gcell, hurricaneContact );
+        autoContact->_postCreate();
+        autoContact->unsetFlags( CntInCreationStage );
+      } else if ((hSize == 2) and (vSize == 1)) {
+        autoContact = new AutoContactHTee ( gcell, hurricaneContact );
+        autoContact->_postCreate();
+        autoContact->unsetFlags( CntInCreationStage );
+      } else if ((hSize == 1) and (vSize == 2)) {
+        autoContact = new AutoContactVTee ( gcell, hurricaneContact );
+      }
+    }
+
+    if (not autoContact) {
+      throw Error("AutoContact::createFrom( %s ):\n"
+                  "        Contact do not have a manageable topology (a:%u, h:%u, v:%u)"
+                 , getString(hurricaneContact).c_str()
+                 , ((anchor) ? 1 : 0)
+                 , hSize
+                 , vSize
+                 );
+    }
+
+    autoContact->_postCreate();
+    autoContact->unsetFlags( CntInCreationStage );
+
+    return autoContact;
   }
 
 

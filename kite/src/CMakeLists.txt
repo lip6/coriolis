@@ -59,6 +59,7 @@
                                        RoutingEventLoop.cpp
                                        NegociateWindow.cpp
                                        BuildPowerRails.cpp
+                                       BuildPreRouteds.cpp
                                        ProtectRoutingPads.cpp
                                        PreProcess.cpp
                                        Configuration.cpp

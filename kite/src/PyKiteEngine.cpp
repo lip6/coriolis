@@ -215,6 +215,21 @@ extern "C" {
   }
 
 
+  static PyObject* PyKiteEngine_runNegociatePreRouted ( PyKiteEngine* self )
+  {
+    trace << "PyKiteEngine_runNegociatePreRouted()" << endl;
+    HTRY
+    METHOD_HEAD("KiteEngine.runNegociatePreRouted()")
+    if (kite->getViewer()) {
+      ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,Kite::KtPreRoutedStage) );
+    } else {
+      kite->runNegociate( Kite::KtPreRoutedStage );
+    }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyKiteEngine_runNegociate ( PyKiteEngine* self )
   {
     trace << "PyKiteEngine_runNegociate()" << endl;
@@ -242,31 +257,33 @@ extern "C" {
 
 
   PyMethodDef PyKiteEngine_Methods[] =
-    { { "get"               , (PyCFunction)PyKiteEngine_get               , METH_VARARGS|METH_STATIC
-                            , "Returns the Kite engine attached to the Cell, None if there isnt't." }
-    , { "create"            , (PyCFunction)PyKiteEngine_create            , METH_VARARGS|METH_STATIC
-                            , "Create a Kite engine on this cell." }
-    , { "printConfiguration", (PyCFunction)PyKiteEngine_printConfiguration, METH_NOARGS
-                            , "Display on the console the configuration of Kite." }
-    , { "saveGlobalSolution", (PyCFunction)PyKiteEngine_saveGlobalSolution, METH_NOARGS
-                            , "Save the global routing solution on disk." }
-    , { "getToolSuccess"    , (PyCFunction)PyKiteEngine_getToolSuccess    , METH_NOARGS
-                            , "Returns True if the detailed routing has been successful." }
-    , { "loadGlobalRouting" , (PyCFunction)PyKiteEngine_loadGlobalRouting , METH_VARARGS
-                            , "Read/load the global routing and build topologies for Kite." }
-    , { "runGlobalRouter"   , (PyCFunction)PyKiteEngine_runGlobalRouter   , METH_VARARGS
-                            , "Run the global router (Knik)." }
-    , { "layerAssign"       , (PyCFunction)PyKiteEngine_layerAssign       , METH_VARARGS
-                            , "Run the layer assigment stage." }
-    , { "runNegociate"      , (PyCFunction)PyKiteEngine_runNegociate      , METH_NOARGS
-                            , "Run the negociation stage of the detailed router." }
-    , { "finalizeLayout"    , (PyCFunction)PyKiteEngine_finalizeLayout    , METH_NOARGS
-                            , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
-    , { "dumpMeasures"      , (PyCFunction)PyKiteEngine_dumpMeasures      , METH_NOARGS
-                            , "Dump to disk lots of statistical informations about the routing." }
-    , { "destroy"           , (PyCFunction)PyKiteEngine_destroy           , METH_NOARGS
-                            , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL} /* sentinel */
+    { { "get"                  , (PyCFunction)PyKiteEngine_get                  , METH_VARARGS|METH_STATIC
+                               , "Returns the Kite engine attached to the Cell, None if there isnt't." }
+    , { "create"               , (PyCFunction)PyKiteEngine_create               , METH_VARARGS|METH_STATIC
+                               , "Create a Kite engine on this cell." }
+    , { "printConfiguration"   , (PyCFunction)PyKiteEngine_printConfiguration   , METH_NOARGS
+                               , "Display on the console the configuration of Kite." }
+    , { "saveGlobalSolution"   , (PyCFunction)PyKiteEngine_saveGlobalSolution   , METH_NOARGS
+                               , "Save the global routing solution on disk." }
+    , { "getToolSuccess"       , (PyCFunction)PyKiteEngine_getToolSuccess       , METH_NOARGS
+                               , "Returns True if the detailed routing has been successful." }
+    , { "loadGlobalRouting"    , (PyCFunction)PyKiteEngine_loadGlobalRouting    , METH_VARARGS
+                               , "Read/load the global routing and build topologies for Kite." }
+    , { "runGlobalRouter"      , (PyCFunction)PyKiteEngine_runGlobalRouter      , METH_VARARGS
+                               , "Run the global router (Knik)." }
+    , { "layerAssign"          , (PyCFunction)PyKiteEngine_layerAssign          , METH_VARARGS
+                               , "Run the layer assigment stage." }
+    , { "runNegociatePreRouted", (PyCFunction)PyKiteEngine_runNegociatePreRouted, METH_NOARGS
+                               , "Run the negociation stage for pre-routed of the detailed router." }
+    , { "runNegociate"         , (PyCFunction)PyKiteEngine_runNegociate         , METH_NOARGS
+                               , "Run the negociation stage of the detailed router." }
+    , { "finalizeLayout"       , (PyCFunction)PyKiteEngine_finalizeLayout       , METH_NOARGS
+                               , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
+    , { "dumpMeasures"         , (PyCFunction)PyKiteEngine_dumpMeasures         , METH_NOARGS
+                               , "Dump to disk lots of statistical informations about the routing." }
+    , { "destroy"              , (PyCFunction)PyKiteEngine_destroy              , METH_NOARGS
+                               , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 
