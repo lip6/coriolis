@@ -485,7 +485,7 @@ typedef list<PlacementProblem*> PlacementProblemList;
                  );
     }
     if (_margin < 0.15)
-      cerr << Warning("Low margin %d, may not be able to complete successfully",_margin) << endl;
+      cerr << Warning("Low margin %f, may not be able to complete successfully",_margin) << endl;
     
     _computeCapacity();
   }
@@ -704,7 +704,7 @@ void Surface::_DisplayInstances(MaukaEngine::UVector& instanceids, SubRowList& s
 
         if (srlit == subrowlist.end())
         {
-            if ( cmess2.enabled() ) cerr << "\n";
+          //if ( cmess2.enabled() ) cerr << "\n";
             cerr << Warning("Mauka::_DisplayInstances(): Cannot honor Bin margin, bypassing.") << endl;
 
             srlit = subrowlist.begin();
