@@ -41,6 +41,8 @@ namespace Hurricane {
     public:
       typedef DBo Inherit;
     public:
+      static  unsigned int  getIdCounter  ();
+    public:
       inline  unsigned int  getId         () const;
       virtual Cell*         getCell       () const = 0;
       virtual Box           getBoundingBox() const = 0;

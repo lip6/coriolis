@@ -212,6 +212,19 @@ void Cell::flattenNets(unsigned int flags)
         buildRing = flags & Cell::BuildRings;
       }
 
+      bool hasRoutingPads = false;
+      forEach ( Component*, icomponent, net->getComponents() ) {
+        RoutingPad* rp = dynamic_cast<RoutingPad*>( *icomponent );
+        if (rp) {
+        // At least one RoutingPad is present: assumes that the net is already
+        // flattened (completly).
+        //cerr << net << " has already RoutingPads, skipped " << rp << endl; 
+          hasRoutingPads = true;
+          break;
+        }
+      }
+      if (hasRoutingPads) continue;
+
       forEach ( Component*, icomponent, net->getComponents() ) {
         Plug* primaryPlug = dynamic_cast<Plug*>( *icomponent );
         if (primaryPlug) {

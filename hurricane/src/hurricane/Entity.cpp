@@ -37,6 +37,10 @@ namespace Hurricane {
   unsigned int  Entity::_idCounter = 0;
 
 
+  unsigned int  Entity::getIdCounter ()
+  { return _idCounter; }
+
+
   Entity::Entity()
     : Inherit()
     , _id(_idCounter++)
