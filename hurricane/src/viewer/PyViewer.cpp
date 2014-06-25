@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -113,6 +112,7 @@ extern "C" {
     PyModule_AddObject ( module, "CellViewer", (PyObject*)&PyTypeCellViewer );
     
     PyDisplayStyle_postModuleInit();
+    PyCellViewer_postModuleInit();
 
     trace << "Viewer.so loaded " << (void*)&typeid(string) << endl;
   }

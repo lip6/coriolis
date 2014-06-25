@@ -76,16 +76,6 @@ namespace Kite {
       virtual size_t             release            ();
       virtual void               addToMenu          ( CellViewer* );
               void               postEvent          ();
-    public slots:                                  
-               void              detailPreRoute     ();
-               void              loadGlobalSolution ();
-               void              saveGlobalSolution ();
-               void              globalRoute        ();
-               void              detailRoute        ();
-               void              finalize           ();
-               void              route              ();
-               void              save               ();
-               void              dumpMeasures       ();
                                
     protected:                 
       static  size_t             _references;
@@ -94,6 +84,7 @@ namespace Kite {
     protected:
                                  GraphicKiteEngine      ();
       virtual                   ~GraphicKiteEngine      ();
+              void               _route                 ();
               void               _loadGlobalSolution    ();
               void               _saveGlobalSolution    ();
               void               _globalRoute           ();
@@ -101,8 +92,10 @@ namespace Kite {
               void               _balanceGlobalDensity  ();
               void               _runNegociatePreRouted ();
               void               _runNegociate          ();
+              void               _detailRoute           ();
               void               _finalize              ();
               void               _save                  ();
+              void               _dumpMeasures          ();
   };
 
 

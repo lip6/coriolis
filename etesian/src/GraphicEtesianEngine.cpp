@@ -94,26 +94,13 @@ namespace Etesian {
   }
 
 
-  void  GraphicEtesianEngine::_resetPlacement ()
+  void  GraphicEtesianEngine::_place ()
   {
     _viewer->clearToolInterrupt();
 
     EtesianEngine* etesian = getForFramework( CreateEngine );
     etesian->resetPlacement();
-  }
-
-
-  void  GraphicEtesianEngine::_place ()
-  {
-    EtesianEngine* etesian = getForFramework( CreateEngine );
     etesian->place();
-  }
-
-
-  void  GraphicEtesianEngine::place ()
-  {
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicEtesianEngine::_resetPlacement,this) );
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicEtesianEngine::_place         ,this) );
   }
 
 
@@ -139,35 +126,16 @@ namespace Etesian {
 
     _viewer = viewer;
 
-    QMenu* prMenu   = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute");
-    QMenu* stepMenu = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute.stepByStep");
-    if (prMenu == NULL) {
-      QMenuBar* menuBar = _viewer->findChild<QMenuBar*>("viewer.menuBar");
-      if (menuBar == NULL) {
-        cerr << Warning( "GraphicEtesianEngine::addToMenu() - No MenuBar in parent widget." ) << endl;
-        return;
-      }
-      prMenu = menuBar->addMenu( tr("P&&R") );
-      prMenu->setObjectName( "viewer.menuBar.placeAndRoute" );
-
-      stepMenu = prMenu->addMenu( tr("&Step by Step") );
-      stepMenu->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep" );
-
-      prMenu->addSeparator();
+    if (_viewer->hasMenuAction("placeAndRoute.etesianPlace")) {
+      cerr << Warning( "GraphicEtesianEngine::addToMenu() - Etesian placer already hooked in." ) << endl;
+      return;
     }
 
-    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.etesianPlace");
-    if (placeAction)
-      cerr << Warning( "GraphicEtesianEngine::addToMenu() - Etesian detailed router already hooked in." ) << endl;
-    else {
-      QAction* placeAction = new QAction ( tr("Etesian - &Place"), _viewer );
-      placeAction->setObjectName( "viewer.menuBar.placeAndRoute.etesianPlace" );
-      placeAction->setStatusTip ( tr("Place the design") );
-      placeAction->setVisible   ( true );
-      prMenu->addAction( placeAction );
-
-      connect( placeAction        , SIGNAL(triggered()), this, SLOT(place             ()) );
-    }
+    _viewer->addToMenu( "placeAndRoute.etesianPlace"
+                      , "Etesian - Plac&e"
+                      , "Run the <b>Etesian</b> placer"
+                      , std::bind(&GraphicEtesianEngine::_place,this)
+                      );
   }
 
 

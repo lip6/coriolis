@@ -30,7 +30,7 @@ namespace Hurricane {
   class ScriptWidget : public QDialog {
       Q_OBJECT;
     public:
-      static  bool           runScript     ( QWidget* parent, Cell* );
+      static  void           runScript     ( QWidget* parent, Cell* );
               const QString  getScriptName () const;
     protected:
                              ScriptWidget  ( QWidget* parent=NULL );

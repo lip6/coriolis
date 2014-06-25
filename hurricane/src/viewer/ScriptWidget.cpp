@@ -14,7 +14,6 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <Python.h>
 #include  <iostream>
 #include  <memory>
 using namespace std;
@@ -27,9 +26,7 @@ using namespace std;
 #include  <QCheckBox>
 #include  <QHBoxLayout>
 #include  <QVBoxLayout>
-#include  "vlsisapd/utilities/Path.h"
 #include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Script.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ScriptWidget.h"
 #include  "hurricane/viewer/CellViewer.h"
@@ -94,34 +91,21 @@ namespace Hurricane {
   }
 
 
-  bool  ScriptWidget::runScript ( QWidget* parent, Cell* cell )
+  void  ScriptWidget::runScript ( QWidget* parent, Cell* cell )
   {
     ScriptWidget* dialog      = new ScriptWidget ( parent );
     bool          doRunScript = (dialog->exec() == Accepted);
     QString       scriptName  = dialog->getScriptName ();
 
     delete dialog;
-    if ( not doRunScript ) return false;
+    if (not doRunScript) return;
 
-    if ( scriptName.endsWith(".py",Qt::CaseInsensitive) )
-      scriptName.truncate ( scriptName.size()-3 );
-
-    Utilities::Path userScript    ( scriptName.toStdString() );
-    Utilities::Path userDirectory ( userScript.dirname() );
-
-    if ( not userDirectory.absolute() )
-      userDirectory = Utilities::Path::cwd() / userDirectory;
-
-    Isobar::Script::addPath ( userDirectory.string() );
-
-    dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().string());
-    script->setEditor ( qobject_cast<CellViewer*>(parent) );
-
-    bool returnCode = script->runFunction ( "ScriptMain", cell );
-
-    Isobar::Script::removePath ( userDirectory.string() );
-
-    return returnCode;
+    CellViewer* cw = qobject_cast<CellViewer*>(parent);
+    if (not cw) {
+      cerr << Error("ScriptWidget::runScript(): The parent widget is *not* a CellViewer, cancelling.") << endl;
+      return;
+    }
+    cw->runScript( scriptName );
   }
 
 

@@ -93,4 +93,6 @@
                install ( FILES         ${includes}
                                        ${mocincludes}
                                        ${pyIncludes}  DESTINATION include/coriolis2/unicorn ) 
+               install ( FILES         init/unicornInit.py
+                                                      DESTINATION ${PYTHON_SITE_PACKAGES}/unicorn )
 

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-# ifndef  __ISOBAR_SCRIPT__
-# define  __ISOBAR_SCRIPT__
+# ifndef  ISOBAR_SCRIPT_H
+# define  ISOBAR_SCRIPT_H
 
 #include <vector>
 
@@ -78,4 +77,4 @@ namespace Isobar {
 } // End of Isobar namespace.
 
 
-# endif // __ISOBAR_SCRIPT__
+# endif // ISOBAR_SCRIPT_H

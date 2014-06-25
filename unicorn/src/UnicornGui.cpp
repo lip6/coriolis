@@ -14,9 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
+#include <Python.h>
 #include <QAction>
 #include <QMenu>
 #include "hurricane/Warning.h"
+#include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
@@ -32,7 +34,9 @@
 
 namespace Unicorn {
 
+  using Hurricane::dbo_ptr;
   using Hurricane::Warning;
+  using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using CRL::DefExport;
@@ -56,11 +60,38 @@ namespace Unicorn {
     , _tools       ()
     , _importDialog(new ImportCellDialog(this))
     , _exportDialog(new ExportCellDialog(this))
-  { }
+  {
+    addMenu  ( "placeAndRoute"           , "P&&R"          , CellViewer::TopMenu );
+    addMenu  ( "placeAndRoute.stepByStep", "&Step by Step" );
+    addToMenu( "placeAndRoute.========" );
+
+    _runUnicornInit();
+  }
 
 
   UnicornGui::~UnicornGui ()
   { }
+
+
+  void  UnicornGui::_runUnicornInit ()
+  {
+    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
+    Utilities::Path systemConfDir      = pythonSitePackages / "unicorn";
+    Utilities::Path systemConfFile     = systemConfDir      / "unicornInit.py";
+
+    if (systemConfFile.exists()) {
+      Isobar::Script::addPath( systemConfDir.string() );
+
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().string() );
+      script->setEditor  ( this );
+      script->runFunction( "unicornConfigure", getCell() );
+
+      Isobar::Script::removePath( systemConfDir.string() );
+    } else {
+      cerr << Warning("System configuration file:\n  <%s> not found."
+                     ,systemConfFile.string().c_str()) << endl;
+    }
+  }
 
 
   UnicornGui* UnicornGui::create ( QWidget* parent )

@@ -61,8 +61,6 @@ namespace Etesian {
       virtual size_t                release         ();
       virtual void                  addToMenu       ( CellViewer* );
               void                  postEvent       ();
-    public slots:                                   
-               void                 place           ();
                                
     protected:                 
       static  size_t                _references;
@@ -71,7 +69,6 @@ namespace Etesian {
     protected:
                                     GraphicEtesianEngine ();
       virtual                      ~GraphicEtesianEngine ();
-              void                  _resetPlacement      ();
               void                  _place               ();
   };
 

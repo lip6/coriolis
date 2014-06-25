@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -39,6 +38,95 @@ extern "C" {
 
   // Standart Destroy (Attribute).
   DirectDestroyAttribute(PyCellViewer_destroy, PyCellViewer)
+
+
+  static PyObject* PyCellViewer_hasMenu ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_hasMenu()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.hasMenu()")
+
+    char* path = NULL;
+    if (not PyArg_ParseTuple(args,"s:CellViewer.hasMenu()", &path)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.hasMenu(): Takes exactly one argument." );
+      return NULL;
+    }
+
+    if (cw->hasMenu( path )) Py_RETURN_TRUE;
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  static PyObject* PyCellViewer_hasMenuAction ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_hasMenuAction()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.hasMenuAction()")
+
+    char* path = NULL;
+    if (not PyArg_ParseTuple(args,"s:CellViewer.hasMenuAction()", &path)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.hasMenuAction(): Takes exactly one argument." );
+      return NULL;
+    }
+
+    if (cw->hasMenuAction( path )) Py_RETURN_TRUE;
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  static PyObject* PyCellViewer_addMenu ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_addMenu()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.addMenu()")
+
+    char* path  = NULL;
+    char* text  = NULL;
+    long  flags = 0;
+    if (not PyArg_ParseTuple(args,"ssl:CellViewer.addMenu()", &path, &text, &flags)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.addMenu(): Takes exactly three arguments." );
+      return NULL;
+    }
+
+    if (cw->addMenu( path, text, flags )) Py_RETURN_TRUE;
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  static PyObject* PyCellViewer_addToMenu ( PyCellViewer* self, PyObject* args )
+  {
+    trace << "PyCellViewer_addToMenu()" << endl;
+
+    HTRY
+    METHOD_HEAD("CellViewer.addToMenu()")
+
+    char* path       = NULL;
+    char* text       = NULL;
+    char* textTip    = NULL;
+    char* scriptPath = NULL;
+    if (not PyArg_ParseTuple(args,"s|sss:CellViewer.addToMenu()", &path, &text, &textTip, &scriptPath)) {
+      PyErr_SetString ( ConstructorError, "CellViewer.addToMenu(): Takes one or four arguments exactly." );
+      return NULL;
+    }
+
+    if (text != NULL) {
+      if (cw->addToMenu( path, text, textTip, scriptPath )) Py_RETURN_TRUE;
+    } else {
+      if (cw->addToMenu( path )) Py_RETURN_TRUE;
+    }
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
 
 
   static PyObject* PyCellViewer_getCell ( PyCellViewer* self )
@@ -170,7 +258,15 @@ extern "C" {
   // PyCellViewer Attribute Method table.
 
   PyMethodDef PyCellViewer_Methods[] =
-    { { "getCell"             , (PyCFunction)PyCellViewer_getCell             , METH_NOARGS
+    { { "hasMenu"             , (PyCFunction)PyCellViewer_hasMenu             , METH_VARARGS
+                              , "Return true if the menu at \"path\" exists." }
+    , { "hasMenuAction"       , (PyCFunction)PyCellViewer_hasMenuAction       , METH_VARARGS
+                              , "Return true if the menu action at \"path\" exists." }
+    , { "addMenu"             , (PyCFunction)PyCellViewer_addMenu             , METH_VARARGS
+                              , "Create a new menu at \"path\" and returns true if success." }
+    , { "addToMenu"           , (PyCFunction)PyCellViewer_addToMenu           , METH_VARARGS
+                              , "Creates a new action at \"path\" and returns true if success." }
+    , { "getCell"             , (PyCFunction)PyCellViewer_getCell             , METH_NOARGS
                               , "Return the currently edited Cell." }
     , { "setCell"             , (PyCFunction)PyCellViewer_setCell             , METH_VARARGS
                               , "Load a Cell into the viewer." }
@@ -204,6 +300,19 @@ extern "C" {
 
   PyTypeRootObjectDefinitions(CellViewer)
 
+
+  static void  CellViewerLoadConstants ( PyObject* dictionnary ) {
+    PyObject* constant;
+
+    LoadObjectConstant( dictionnary, CellViewer::NoFlags, "NoFlags" )
+    LoadObjectConstant( dictionnary, CellViewer::TopMenu, "TopMenu" )
+  }
+
+
+  extern  void  PyCellViewer_postModuleInit ()
+  {
+    CellViewerLoadConstants(PyTypeCellViewer.tp_dict);
+  }
 
 # endif  // End of Shared Library Code Part.
 

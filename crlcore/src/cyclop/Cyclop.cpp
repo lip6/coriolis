@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |      C y c l o p  -  S i m p l e   V i e w e r                  |
 // |                                                                 |
@@ -17,24 +11,18 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Cyclop.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QAction>
-#include  <QMenu>
-
-#include  "hurricane/viewer/CellWidget.h"
-
-#include  "OpenCellDialog.h"
-#include  "DemoGo.h"
-#include  "Cyclop.h"
+#include <QAction>
+#include <QMenu>
+#include "hurricane/viewer/CellWidget.h"
+#include "OpenCellDialog.h"
+#include "DemoGo.h"
+#include "Cyclop.h"
 
 
 namespace CRL {
-
 
 // -------------------------------------------------------------------
 // Class  :  "Cyclop".

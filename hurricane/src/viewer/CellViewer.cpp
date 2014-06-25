@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <Python.h>
 #include <unistd.h>
 #include <algorithm>
 #include <sstream>
@@ -29,10 +30,12 @@
 #include <QPrintDialog>
 #include <QFileDialog>
 
+#include "vlsisapd/utilities/Path.h"
 #include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
 //#include  "MapView.h"
+#include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/viewer/CellPrinter.h"
@@ -41,7 +44,6 @@
 #include "hurricane/viewer/ControllerWidget.h"
 #include "hurricane/viewer/ScriptWidget.h"
 #include "hurricane/viewer/ExceptionWidget.h"
-//#include "hurricane/viewer/StratusWidget.h"
 #include "hurricane/viewer/GotoWidget.h"
 #include "hurricane/viewer/SelectCommand.h"
 
@@ -69,32 +71,15 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "CellViewer".
 
+  QString  CellViewer::_prefixWPath ( "viewer.menuBar." );
+
+
   CellViewer::CellViewer ( QWidget* parent ) : QMainWindow             (parent)
                                              , _cellObserver           (this)
                                              , _applicationName        (tr("Viewer"))
-                                             , _toolInterruptAction    (NULL)
-                                             , _openAction             (NULL)
-                                             , _importAction           (NULL)
-                                             , _nextAction             (NULL)
-                                             , _printAction            (NULL)
-                                             , _imageAction            (NULL)
-                                             , _saveAction             (NULL)
-                                             , _exportAction           (NULL)
-                                             , _closeAction            (NULL)
-                                             , _exitAction             (NULL)
-                                             , _refreshAction          (NULL)
-                                             , _fitToContentsAction    (NULL)
-                                             , _gotoAction             (NULL)
                                              , _showSelectionAction    (NULL)
-                                             , _rubberChangeAction     (NULL)
-                                             , _clearRulersAction      (NULL)
-                                             , _controllerAction       (NULL)
-                                             , _scriptAction           (NULL)
-                                             , _stratusAction          (NULL)
-                                             , _fileMenu               (NULL)
-                                             , _viewMenu               (NULL)
-                                             , _toolsMenu              (NULL)
                                              , _debugMenu              (NULL)
+                                             , _actionCallbacks        ()
                                            //, _mapView                (NULL)
                                              , _mousePosition          (NULL)
                                              , _controller             (NULL)
@@ -112,205 +97,13 @@ namespace Hurricane {
                                              , _flags                  (0)
                                              , _updateState            (ExternalEmit)
   {
-    setObjectName("viewer");
-
-    createMenus  ();
-    createLayout ();
-  }
-
-
-  CellViewer::~CellViewer ()
-  {
-    _controller->deleteLater ();
-  //_script->deleteLater ();
-    _goto->deleteLater ();
-  }
-
-
-  void  CellViewer::createActions ()
-  {
-    if ( _openAction ) return;
-
-    _toolInterruptAction = new QAction  ( tr("Interrupt"), this );
-    _toolInterruptAction->setObjectName ( "viewer.interrupt" );
-    _toolInterruptAction->setShortcut   ( QKeySequence(tr("CTRL+C")) );
-  //_toolInterruptAction->setIcon       ( QIcon(":/images/stock_open.png") );
-    _toolInterruptAction->setStatusTip  ( tr("Interrupt the running tool") );
-    connect ( _toolInterruptAction, SIGNAL(triggered()), this, SLOT(raiseToolInterrupt()) );
-    addAction ( _toolInterruptAction );
-
-    _openAction = new QAction  ( tr("&Open Cell"), this );
-    _openAction->setObjectName ( "viewer.menuBar.file.openCell" );
-    _openAction->setShortcut   ( QKeySequence(tr("CTRL+O")) );
-    _openAction->setIcon       ( QIcon(":/images/stock_open.png") );
-    _openAction->setStatusTip  ( tr("Open (load) a new Cell") );
-
-    _importAction = new QAction  ( tr("&Import Cell"), this );
-    _importAction->setObjectName ( "viewer.menuBar.file.importCell" );
-    _importAction->setStatusTip  ( tr("Import (convert) a new Cell") );
-
-    _nextAction = new QAction  ( tr("&Next Breakpoint"), this );
-    _nextAction->setObjectName ( "viewer.menuBar.file.nextBreakpoint" );
-    _nextAction->setStatusTip  ( tr("Proceed to the next breakpoint") );
-
-    for ( int i=0 ; i<CellHistorySize ; i++ ) {
-      _cellHistoryAction[i] = new QAction ( this );
-      _cellHistoryAction[i]->setObjectName ( QString("viewer.menuBar.file.cellHistory[%1]").arg(i) );
-      _cellHistoryAction[i]->setVisible ( false );
-      _cellHistoryAction[i]->setData    ( i );
-      _cellHistoryAction[i]->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
-      connect ( _cellHistoryAction[i], SIGNAL(triggered()), this, SLOT(openHistoryCell()));
-    }
-
-    _printAction = new QAction  ( tr("&Print"), this );
-    _printAction->setObjectName ( "viewer.menuBar.file.print" );
-    _printAction->setStatusTip  ( tr("Print the displayed area") );
-    _printAction->setShortcut   ( QKeySequence(tr("CTRL+P")) );
-    _printAction->setVisible    ( true );
-    connect ( _printAction, SIGNAL(triggered()), this, SLOT(printDisplay()) );
-
-    _imageAction = new QAction  ( tr("Save to &Image"), this );
-    _imageAction->setObjectName ( "viewer.menuBar.file.image" );
-    _imageAction->setStatusTip  ( tr("Save the displayed area to image") );
-    _imageAction->setVisible    ( true );
-    connect ( _imageAction, SIGNAL(triggered()), this, SLOT(imageDisplay()) );
-
-    _saveAction = new QAction  ( tr("&Save Cell"), this );
-    _saveAction->setObjectName ( "viewer.menuBar.file.saveCell" );
-    _saveAction->setIcon       ( QIcon(":/images/stock_save.png") );
-    _saveAction->setStatusTip  ( tr("Save (write) the current Cell") );
-    _saveAction->setVisible    ( false );
-
-    _exportAction = new QAction  ( tr("&Export Cell"), this );
-    _exportAction->setObjectName ( "viewer.menuBar.file.exportCell" );
-    _exportAction->setStatusTip  ( tr("Export (convert) Cell") );
-
-    _closeAction = new QAction  ( tr("&Close"), this );
-    _closeAction->setObjectName ( "viewer.menuBar.file.close" );
-    _closeAction->setStatusTip  ( tr("Close This Coriolis CellViewer") );
-    _closeAction->setShortcut   ( QKeySequence(tr("CTRL+W")) );
-    connect ( _closeAction, SIGNAL(triggered()), this, SLOT(close()) );
-
-    _exitAction = new QAction  ( tr("&Exit"), this );
-    _exitAction->setObjectName ( "viewer.menuBar.file.exit" );
-    _exitAction->setStatusTip  ( tr("Exit All Coriolis CellViewer") );
-    _exitAction->setShortcut   ( QKeySequence(tr("CTRL+Q")) );
-    connect ( _exitAction, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
-
-    _refreshAction = new QAction  ( tr("&Refresh"), this );
-    _refreshAction->setObjectName ( "viewer.menuBar.view.refresh" );
-    _refreshAction->setStatusTip  ( tr("Force full redrawing of the display") );
-    _refreshAction->setShortcut   ( QKeySequence(tr("CTRL+L")) );
-
-    _fitToContentsAction = new QAction  ( tr("&Fit to Contents"), this );
-    _fitToContentsAction->setObjectName ( "viewer.menuBar.view.fit" );
-    _fitToContentsAction->setStatusTip  ( tr("Adjust zoom to fit the whole cell's contents") );
-    _fitToContentsAction->setShortcut   ( Qt::Key_F );
-
-    _gotoAction = new QAction  ( tr("&Goto"), this );
-    _gotoAction->setObjectName ( "viewer.menuBar.view.goto" );
-    _gotoAction->setStatusTip  ( tr("Center view on that point, with zoom adjustment") );
-    _gotoAction->setShortcut   ( Qt::Key_G );
-
-    _showSelectionAction = new QAction  ( tr("&Show Selection"), this );
-    _showSelectionAction->setObjectName ( "viewer.menuBar.view.showSelection" );
-    _showSelectionAction->setStatusTip  ( tr("Highlight the selected items (darken others)") );
-    _showSelectionAction->setShortcut   ( Qt::Key_S );
-    _showSelectionAction->setCheckable  ( true );
-
-    _rubberChangeAction = new QAction  ( tr("Change Rubber Style"), this );
-    _rubberChangeAction->setObjectName ( "viewer.menuBar.view.changeRubber" );
-    _rubberChangeAction->setStatusTip  ( tr("Cycle through all avalaibles rubber drawing styles") );
-    _rubberChangeAction->setShortcut   ( Qt::Key_Asterisk );
-
-    _clearRulersAction = new QAction  ( tr("Clear Rulers"), this );
-    _clearRulersAction->setObjectName ( "viewer.menuBar.view.clearRulers" );
-    _clearRulersAction->setStatusTip  ( tr("Remove all rulers") );
-  //_clearRulersAction->setShortcut   ( QKeySequence(tr("K")) );
-
-    _controllerAction = new QAction  ( tr("Controller"), this );
-    _controllerAction->setObjectName ( "viewer.menuBar.tools.controller" );
-    _controllerAction->setStatusTip  ( tr("Fine Tune && Inspect DataBase") );
-    _controllerAction->setIcon       ( QIcon(":/images/swiss-knife.png") );
-    _controllerAction->setShortcut   ( QKeySequence(tr("CTRL+I")) );
-
-    _scriptAction = new QAction  ( tr("Python Script"), this );
-    _scriptAction->setObjectName ( "viewer.menuBar.tools.script" );
-    _scriptAction->setStatusTip  ( tr("Run Python Script. Must provide a ScripMain(cell) function") );
-    _scriptAction->setIcon       ( QIcon(":/images/python-logo-v3.png") );
-    _scriptAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
-
-  //_stratusAction = new QAction  ( tr("Stratus"), this );
-  //_stratusAction->setObjectName ( "viewer.menuBar.tools.stratusScript" );
-  //_stratusAction->setStatusTip  ( tr("Run Stratus Script") );
-  //_stratusAction->setIcon       ( QIcon(":/images/stratus-cloud.png") );
-  //_stratusAction->setShortcut   ( QKeySequence(tr("SHIFT+P,SHIFT+S")) );
-  }
-
-
-  void  CellViewer::createMenus ()
-  {
-    if (  _fileMenu   ) return;
-    if ( !_openAction ) createActions ();
-
-    menuBar()->setObjectName ( tr("viewer.menuBar") );
-
-    _fileMenu = menuBar()->addMenu ( tr("File") );
-    _fileMenu->setObjectName ( "viewer.menuBar.file" );
-    _fileMenu->addAction ( _openAction   );
-    _fileMenu->addSeparator ();
-    for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
-      _fileMenu->addAction ( _cellHistoryAction[i] );
-    }
-    _fileMenu->addSeparator ();
-    _fileMenu->addAction ( _saveAction );
-    _fileMenu->addSeparator ();
-    _fileMenu->addAction ( _importAction );
-    _fileMenu->addAction ( _exportAction );
-    _fileMenu->addSeparator ();
-    _fileMenu->addAction ( _printAction );
-    _fileMenu->addAction ( _imageAction );
-    _fileMenu->addAction ( _nextAction   );
-    _fileMenu->addSeparator ();
-    _fileMenu->addAction ( _closeAction );
-    _fileMenu->addAction ( _exitAction );
-
-    _viewMenu = menuBar()->addMenu ( tr("View") );
-    _viewMenu->setObjectName ( "viewer.menuBar.view" );
-    _viewMenu->addAction ( _refreshAction );
-    _viewMenu->addAction ( _fitToContentsAction );
-    _viewMenu->addAction ( _gotoAction );
-    _viewMenu->addAction ( _showSelectionAction );
-    _viewMenu->addAction ( _rubberChangeAction );
-    _viewMenu->addAction ( _clearRulersAction );
-
-    _toolsMenu = menuBar()->addMenu ( tr("Tools") );
-    _toolsMenu->setObjectName ( "viewer.menuBar.tools" );
-    _toolsMenu->addAction ( _controllerAction );
-    _toolsMenu->addAction ( _scriptAction );
-  //_toolsMenu->addAction ( _stratusAction );
-  }
-
-
-  QMenu* CellViewer::createDebugMenu ()
-  {
-    if ( !_debugMenu ) {
-      _debugMenu = menuBar()->addMenu ( tr("Debug") );
-      _debugMenu->setObjectName ( "viewer.menuBar.debug" );
-    }
-    return _debugMenu;
-  }
-
-
-  void  CellViewer::createLayout ()
-  {
-    if (_cellWidget) return;
+    setObjectName( "viewer" );
+    menuBar()->setObjectName ( _getAbsWidgetPath("") );
 
     _cellWidget       = new CellWidget      ();
     _controller       = new ControllerWidget();
     _goto             = new GotoWidget      ();
     _goto->changeDbuMode( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
-  //_mapView    = _cellWidget->getMapView ();
 
     _cellWidget->bindCommand( &_moveCommand );
     _cellWidget->bindCommand( &_zoomCommand );
@@ -319,7 +112,7 @@ namespace Hurricane {
     _cellWidget->bindCommand( &_hierarchyCommand );
     _controller->setCellWidget( _cellWidget );
 
-    MousePositionWidget* _mousePosition = new MousePositionWidget();
+    _mousePosition = new MousePositionWidget();
     statusBar()->addPermanentWidget( _mousePosition );
 
     setCorner( Qt::TopLeftCorner    , Qt::LeftDockWidgetArea  );
@@ -327,6 +120,7 @@ namespace Hurricane {
     setCorner( Qt::TopRightCorner   , Qt::RightDockWidgetArea );
     setCorner( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
 
+  //_mapView = _cellWidget->getMapView ();
   //QDockWidget* mapViewDock = new QDockWidget ( tr("Map") );
   //mapViewDock->setFeatures     ( QDockWidget::DockWidgetVerticalTitleBar
   //                             | QDockWidget::DockWidgetMovable
@@ -339,38 +133,382 @@ namespace Hurricane {
 
     setCentralWidget( _cellWidget );
 
-    connect( this                   , SIGNAL(cellPreModificated()) , _cellWidget, SLOT(cellPreModificate())  );
-    connect( this                   , SIGNAL(cellPostModificated()), _cellWidget, SLOT(cellPostModificate()) );
-    connect( this                   , SIGNAL(redrawCellWidget())   , _cellWidget, SLOT(refresh()) );
-    connect( _refreshAction         , SIGNAL(triggered())          , _cellWidget, SLOT(refresh()) );
-    connect( _fitToContentsAction   , SIGNAL(triggered())          , _cellWidget, SLOT(fitToContents()) );
-    connect( _showSelectionAction   , SIGNAL(toggled(bool))        , this       , SLOT(setShowSelection(bool)) );
-    connect( _rubberChangeAction    , SIGNAL(triggered())          , _cellWidget, SLOT(rubberChange()) );
-    connect( _clearRulersAction     , SIGNAL(triggered())          , _cellWidget, SLOT(clearRulers()) );
-    connect( _controllerAction      , SIGNAL(triggered())          , _controller, SLOT(toggleShow()) );
-    connect( _scriptAction          , SIGNAL(triggered())          , this       , SLOT(runScript()) );
-  //connect( _stratusAction         , SIGNAL(triggered())          , this       , SLOT(runStratusScript()) );
-    connect( _gotoAction            , SIGNAL(triggered())          , this       , SLOT(doGoto()) );
+    createMenus();
 
-    connect( _cellWidget            , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
-           , _goto                  , SLOT  (changeDbuMode (unsigned int,DbU::UnitPower)) );
+    connect( this           , SIGNAL(cellPreModificated()) , _cellWidget, SLOT(cellPreModificate())  );
+    connect( this           , SIGNAL(cellPostModificated()), _cellWidget, SLOT(cellPostModificate()) );
+    connect( this           , SIGNAL(redrawCellWidget())   , _cellWidget, SLOT(refresh()) );
 
-    connect( _cellWidget            , SIGNAL(mousePositionChanged(const Point&))
-           , _mousePosition         , SLOT  (setPosition(const Point&)) );
+    connect( _cellWidget    , SIGNAL(dbuModeChanged(unsigned int,DbU::UnitPower))
+           , _goto          , SLOT  (changeDbuMode (unsigned int,DbU::UnitPower)) );
 
-    connect( _cellWidget            , SIGNAL(selectionModeChanged())
-           , this                   , SLOT  (changeSelectionMode ()) );
-  //connect( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
-  //       ,  _cellWidget           , SLOT  (toggleSelection  (Occurrence)) );
-    connect( &_selectCommand        , SIGNAL(selectionToggled (Occurrence))
-           ,  _cellWidget           , SLOT  (select           (Occurrence)) );
+    connect( _cellWidget    , SIGNAL(mousePositionChanged(const Point&))
+           , _mousePosition , SLOT  (setPosition(const Point&)) );
 
-    connect( _cellWidget            , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
-           , this                   , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
-    connect( this                   , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
-           , _cellWidget            , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
+    connect( _cellWidget    , SIGNAL(selectionModeChanged())
+           , this           , SLOT  (changeSelectionMode ()) );
+    connect( &_selectCommand, SIGNAL(selectionToggled (Occurrence))
+           ,  _cellWidget   , SLOT  (select           (Occurrence)) );
+
+    connect( _cellWidget    , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+           , this           , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
+    connect( this           , SIGNAL(stateChanged(shared_ptr<CellWidget::State>&))
+           , _cellWidget    , SLOT  (setState    (shared_ptr<CellWidget::State>&)) );
 
     _cellWidget->refresh();
+  }
+
+
+  CellViewer::~CellViewer ()
+  {
+    _controller->deleteLater ();
+  //_script->deleteLater ();
+    _goto->deleteLater ();
+  }
+
+
+  QString  CellViewer::_getAbsWidgetPath ( const QString& relPath ) const
+  {
+    if (relPath.startsWith("viewer.")) return relPath;
+    return QString(_prefixWPath).append( relPath );
+  }
+
+
+  bool  CellViewer::hasMenu( const QString& relativePath ) const
+  { return findChild<QObject*>(_getAbsWidgetPath(relativePath)) != NULL; }
+
+
+  bool  CellViewer::hasMenuAction( const QString& relativePath ) const
+  { return findChild<QAction*>(_getAbsWidgetPath(relativePath)) != NULL; }
+
+
+  QMenu* CellViewer::_getParentMenu( const QString& absolutePath ) const
+  {
+    QString parentPath = absolutePath.section('.',0,-2);
+    QMenu*  parentMenu = findChild<QMenu*>(parentPath);
+    if (parentMenu == NULL) {
+      if (parentPath != "viewer") {
+        cerr << Warning( "CellViewer::_getParentMenu() - Missing parent menu for %s."
+                       , absolutePath.toStdString().c_str() ) << endl;
+      }
+      return NULL;
+    }
+    return parentMenu;
+  }
+
+
+  QMenu* CellViewer::addMenu ( const QString& path, string text, unsigned int flags )
+  {
+    QString  absolutePath = _getAbsWidgetPath( path );
+    QMenu*   menu         = findChild<QMenu*>(absolutePath);
+
+    if (menu != NULL) return menu;
+
+    if (flags & TopMenu) {
+      menu = menuBar()->addMenu( tr(text.c_str()) );
+      menu->setObjectName( absolutePath );
+    } else {
+      QMenu* parentMenu = _getParentMenu( absolutePath );
+      if (parentMenu == NULL) return NULL;
+
+      menu = parentMenu->addMenu( tr(text.c_str()) );
+      menu->setObjectName( absolutePath );
+    }
+    return menu;
+  }
+
+
+  bool  CellViewer::addToMenu ( const QString& path )
+  {
+    if (not path.endsWith("====")) return false;
+
+    QMenu* menu = _getParentMenu( _getAbsWidgetPath(path) );
+    if (menu == NULL) return false;
+
+    menu->addSeparator();
+    return true;
+  }
+
+
+  QAction* CellViewer::addToMenu ( const QString&          path
+                                 , string                  text
+                                 , string                  textTip
+                                 , std::function< void() > callback
+                                 , QIcon                   icon )
+  {
+    QString  absolutePath = _getAbsWidgetPath( path );
+    QAction* action       = findChild<QAction*>(absolutePath);
+    if (action == NULL) {
+      QMenu* parentMenu = _getParentMenu( absolutePath );
+      if (parentMenu == NULL) return NULL;
+
+      action = new QAction( tr(text.c_str()), this );
+      action->setObjectName( absolutePath );
+      action->setStatusTip ( tr(textTip.c_str()) );
+      action->setVisible   ( true );
+      if (not icon.isNull()) action->setIcon( icon );
+      parentMenu->addAction( action );
+
+      _actionCallbacks.insert( make_pair(absolutePath,boost::any(callback)) );
+      connect( action, SIGNAL(triggered()), this, SLOT(doAction()) );
+    }
+    return action;
+  }
+
+
+  QAction* CellViewer::addToMenu ( const QString& path
+                                 , string         text
+                                 , string         textTip
+                                 , string         scriptPath )
+  {
+    QString  absolutePath = _getAbsWidgetPath( path );
+    QAction* action       = findChild<QAction*>(absolutePath);
+    if (action == NULL) {
+      action = new QAction( tr(text.c_str()), this );
+      action->setObjectName( absolutePath );
+      action->setStatusTip ( tr(textTip.c_str()) );
+      action->setVisible   ( true );
+
+      QMenu* parentMenu = _getParentMenu( absolutePath );
+      if (parentMenu != NULL) {
+        parentMenu->addAction( action );
+      } else if (absolutePath == "viewer") {
+        addAction( action );
+      }
+
+      _actionCallbacks.insert( make_pair(absolutePath,boost::any(QString(scriptPath.c_str()))) );
+      connect( action, SIGNAL(triggered()), this, SLOT(doAction()) );
+    }
+    return action;
+  }
+
+
+  QAction* CellViewer::addToMenu ( QString             path
+                                 , QString             text
+                                 , QString             textTip
+                                 , const QKeySequence& shortCut
+                                 , QIcon               icon
+                               //, QWidget*            receiver
+                               //, SlotMethod          slotMethod
+                                 )
+  {
+    QString  absolutePath = _getAbsWidgetPath( path );
+    QAction* action       = findChild<QAction*>(absolutePath);
+    if (action == NULL) {
+      action = new QAction( text, this );
+      action->setObjectName( absolutePath );
+      action->setStatusTip ( textTip );
+      action->setShortcut  ( shortCut );
+      action->setVisible   ( true );
+      if (not icon.isNull()) action->setIcon( icon );
+
+      QMenu* parentMenu = _getParentMenu( absolutePath );
+      if (parentMenu != NULL) {
+        parentMenu->addAction( action );
+      } else if (absolutePath == "viewer") {
+        addAction( action );
+      }
+
+    //if ((receiver != NULL) and (slotMethod != NULL))
+    //  connect( action, &QAction::triggered, receiver, slotMethod );
+    }
+    return action;
+  }
+
+
+  void  CellViewer::doAction ()
+  {
+    QString path = sender()->objectName();
+    ActionLut::const_iterator iaction = _actionCallbacks.find( path );
+    if (iaction == _actionCallbacks.end()) {
+      cerr << Error( "CellViewer::doAction() - Path \"%s\" in not registered."
+                   , path.toStdString().c_str() ) << endl;
+      return;
+    }
+
+    const boost::any& callback = iaction->second;
+    if (callback.type() == typeid( std::function<void()> )) {
+      cerr << "Called function " << qPrintable(path) << endl;
+      ExceptionWidget::catchAllWrapper( boost::any_cast< std::function<void()> >(callback) );
+    } else if (callback.type() == typeid( QString )) {
+      cerr << "Called script " << qPrintable(path) << ":"
+           << qPrintable(boost::any_cast<QString>(callback)) << endl;
+      runScript( boost::any_cast<QString>(callback) );
+    } else {
+      cerr << Error("CellViewer::doAction(): For action \"%s\",\n"
+                    "        cannot cast the callback into QString or std::function<void()>."
+                   , path.toStdString().c_str() ) << endl;
+    }
+  }
+
+
+  void  CellViewer::createMenus ()
+  {
+    addMenu ( "file" , "File" , TopMenu );
+    addMenu ( "view" , "View" , TopMenu );
+    addMenu ( "tools", "Tools", TopMenu );
+
+  // Building the "File" menu.
+    QAction* action = addToMenu( "viewer.interrupt"
+                               , tr("Interrupt")
+                               , tr("Interrupt the running tool")
+                               , QKeySequence(tr("CTRL+C"))
+                               );
+    action->setVisible( false );
+    addAction( action );
+    connect( action, &QAction::triggered, this, &CellViewer::raiseToolInterrupt );
+
+    action = addToMenu( "file.openCell"
+                      , tr("&Open Cell")
+                      , tr("Open (load) a new Cell")
+                      , QKeySequence(tr("CTRL+O"))
+                      , QIcon(":/images/stock_open.png")
+                      );
+    addToMenu( "file.========" );
+
+    for ( int i=0 ; i<CellHistorySize ; i++ ) {
+      _cellHistoryAction[i] = addToMenu( QString("file.cellHistory[%1]").arg(i)
+                                       , QString("Slot[%1]").arg(i)
+                                       , QString("History empty Slot[%1]").arg(i)
+                                       , QKeySequence()
+                                       );
+      _cellHistoryAction[i]->setVisible( false );
+      _cellHistoryAction[i]->setData   ( i );
+      _cellHistoryAction[i]->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
+      connect( _cellHistoryAction[i], &QAction::triggered, this, &CellViewer::openHistoryCell );
+    }
+    addToMenu( "file.========" );
+
+    action = addToMenu( "file.saveCell"
+                      , tr("&Save Cell")
+                      , tr("Save (write) the current Cell")
+                      , QKeySequence()
+                      , QIcon(":/images/stock_save.png")
+                      );
+    action->setVisible( false );
+    addToMenu( "file.========" );
+
+    action = addToMenu( "file.importCell"
+                      , tr("&Import Cell")
+                      , tr("Import (convert) a new Cell")
+                      , QKeySequence()
+                      );
+    action = addToMenu( "file.exportCell"
+                      , tr("&Export Cell")
+                      , tr("Export (convert) Cell")
+                      , QKeySequence()
+                      );
+    addToMenu( "file.========" );
+
+    action = addToMenu( "file.print"
+                      , tr("&Print")
+                      , tr("Print the displayed area")
+                      , QKeySequence(tr("CTRL+P"))
+                      );
+    connect( action, &QAction::triggered, this, &CellViewer::printDisplay );
+
+    action = addToMenu( "file.image"
+                      , tr("Save to &Image")
+                      , tr("Save the displayed area to image")
+                      , QKeySequence()
+                      );
+    connect( action, &QAction::triggered, this, &CellViewer::imageDisplay );
+
+    action = addToMenu( "file.nextBreakpoint"
+                      , tr("&Next Breakpoint")
+                      , tr("Proceed to the next breakpoint")
+                      , QKeySequence()
+                      );
+    addToMenu( "file.========" );
+
+    action = addToMenu( "file.close"
+                      , tr("&Close")
+                      , tr("Close This Coriolis CellViewer")
+                      , QKeySequence(tr("CTRL+W"))
+                      );
+    connect( action, &QAction::triggered, this, &CellViewer::close );
+
+    action = addToMenu( "file.close"
+                      , tr("&Close")
+                      , tr("Close This Coriolis CellViewer")
+                      , QKeySequence(tr("CTRL+W"))
+                      );
+
+    action = addToMenu( "file.exit"
+                      , tr("&Exit")
+                      , tr("Exit All Coriolis CellViewer")
+                      , QKeySequence(tr("CTRL+Q"))
+                      );
+    connect ( action, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
+
+  // Building the "View" menu.
+    action = addToMenu( "view.refresh"
+                      , tr("&Refresh")
+                      , tr("Force full redrawing of the display")
+                      , QKeySequence(tr("CTRL+L"))
+                      );
+    connect( action, &QAction::triggered, _cellWidget, &CellWidget::refresh );
+
+    action = addToMenu( "view.fit"
+                      , tr("&Fit to Contents")
+                      , tr("Adjust zoom to fit the whole cell's contents")
+                      , Qt::Key_F
+                      );
+    connect( action, &QAction::triggered, _cellWidget, &CellWidget::fitToContents );
+
+    action = addToMenu( "view.goto"
+                      , tr("&Goto")
+                      , tr("Center view on that point, with zoom adjustment")
+                      , Qt::Key_G
+                      );
+    connect( action, &QAction::triggered, this, &CellViewer::doGoto );
+
+    _showSelectionAction = addToMenu( "view.showSelection"
+                                    , tr("&Show Selection")
+                                    , tr("Highlight the selected items (darken others)")
+                                    , Qt::Key_S
+                                    );
+    _showSelectionAction->setCheckable( true );
+    connect( _showSelectionAction, &QAction::toggled, this, &CellViewer::setShowSelection );
+
+    action = addToMenu( "view.changeRubber"
+                      , tr("Change Rubber Style")
+                      , tr("Cycle through all avalaibles rubber drawing styles")
+                      , Qt::Key_Asterisk
+                      );
+    connect( action, &QAction::triggered, _cellWidget, &CellWidget::rubberChange );
+
+    action = addToMenu( "view.clearRulers"
+                      , tr("Clear Rulers")
+                      , tr("Remove all rulers")
+                      , QKeySequence()
+                      );
+    connect( action, &QAction::triggered, _cellWidget, &CellWidget::clearRulers );
+
+  // Building the "Tools" menu.
+    action = addToMenu( "tools.controller"
+                      , tr("Controller")
+                      , tr("Fine Tune && Inspect DataBase")
+                      , QKeySequence(tr("CTRL+I"))
+                      , QIcon(":/images/swiss-knife.png")
+                      );
+    connect( action, &QAction::triggered, _controller, &ControllerWidget::toggleShow );
+
+    action = addToMenu( "tools.script"
+                      , tr("Python Script")
+                      , tr("Run Python Script. Must provide a ScripMain(cell) function")
+                      , QKeySequence(tr("SHIFT+P,SHIFT+S"))
+                      , QIcon(":/images/python-logo-v3.png")
+                      );
+    connect( action, &QAction::triggered, this, &CellViewer::runScriptWidget );
+  }
+
+
+  QMenu* CellViewer::createDebugMenu ()
+  {
+    if (not _debugMenu)
+      addMenu ( "debug" , "Debug" , TopMenu );
+    return _debugMenu;
   }
 
 
@@ -619,16 +757,33 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::_runScript ()
+  void  CellViewer::_runScript ( QString scriptPath )
+  {
+    if (scriptPath.endsWith(".py",Qt::CaseInsensitive))
+      scriptPath.truncate( scriptPath.size()-3 );
+
+    Utilities::Path userScript    ( scriptPath.toStdString() );
+    Utilities::Path userDirectory ( userScript.dirname() );
+
+    if (not userDirectory.absolute())
+      userDirectory = Utilities::Path::cwd() / userDirectory;
+
+    Isobar::Script::addPath( userDirectory.string() );
+
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().string());
+    script->setEditor  ( this );
+    script->runFunction( "ScriptMain", getCell() );
+
+    Isobar::Script::removePath( userDirectory.string() );
+  }
+
+
+  void  CellViewer::runScript ( QString scriptPath )
+  { ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this, scriptPath ) ); }
+
+
+  void  CellViewer::runScriptWidget ()
   { ScriptWidget::runScript( this, getCell() ); }
-
-
-  void  CellViewer::runScript ()
-  { ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this ) ); }
-
-
-//void  CellViewer::runStratusScript ()
-//{ StratusWidget::runScript ( this ); }
 
 
   string  CellViewer::_getString () const

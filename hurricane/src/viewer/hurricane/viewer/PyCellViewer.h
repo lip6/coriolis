@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __PY_HURRICANE_CELL_VIEWER__
-#define  __PY_HURRICANE_CELL_VIEWER__
+#ifndef  PY_HURRICANE_CELL_VIEWER_H
+#define  PY_HURRICANE_CELL_VIEWER_H
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/viewer/CellViewer.h"
@@ -42,8 +41,9 @@ extern "C" {
   extern PyTypeObject  PyTypeCellViewer;
   extern PyMethodDef   PyCellViewer_Methods[];
 
-  extern PyObject* PyCellViewer_create     ( PyObject* self, PyObject* args );
-  extern void      PyCellViewer_LinkPyType ();
+  extern PyObject* PyCellViewer_create         ( PyObject* self, PyObject* args );
+  extern void      PyCellViewer_LinkPyType     ();
+  extern void      PyCellViewer_postModuleInit ();
 
 
 #define  IsPyCellViewer(v)      ( (v)->ob_type == &PyTypeCellViewer )
@@ -57,4 +57,4 @@ extern "C" {
 }  // End of Isobar namespace.
 
 
-#endif  // __PY_HURRICANE_CELL_VIEWER__
+#endif  // PY_HURRICANE_CELL_VIEWER_H

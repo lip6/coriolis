@@ -51,7 +51,6 @@ namespace Mauka {
 
     public:
       enum Flags { NoFlags=0x0000, CreateEngine=0x0001 };
-
     public:
               MaukaEngine*        createEngine         ();
               MaukaEngine*        getForFramework      ( unsigned int flags );
@@ -68,12 +67,6 @@ namespace Mauka {
       virtual size_t              release              ();
       virtual void                addToMenu            ( CellViewer* );
               void                refreshViewer        ();
-    public slots:                                      
-               void               doQuadriPart         ();
-               void               doSimulatedAnnealing ();
-               void               place                ();
-               void               save                 ();
-                               
     protected:                 
       static  size_t              _references;
       static  GraphicMaukaEngine* _singleton;

@@ -206,13 +206,13 @@ namespace Mauka {
   void  GraphicMaukaEngine::_place ()
   {
     if (MetisEngine::isHMetisCapable()) {
-      doQuadriPart();
+      _doQuadriPart();
     } else {
       cerr << Warning("Mauka has not been compiled againts hMETIS.\n"
                       "          Quadri-partition step is disabled, simulated annealing may be *very* long." ) << endl;
     }
 
-    doSimulatedAnnealing();
+    _doSimulatedAnnealing();
     _save();
   }
 
@@ -227,85 +227,32 @@ namespace Mauka {
   }
 
 
-  void  GraphicMaukaEngine::doQuadriPart ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_doQuadriPart,this) ); }
-
-
-  void  GraphicMaukaEngine::doSimulatedAnnealing ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_doSimulatedAnnealing,this) ); }
-
-
-  void  GraphicMaukaEngine::place ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_place,this) ); }
-
-
-  void  GraphicMaukaEngine::save ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicMaukaEngine::_save,this) ); }
-
-
   void  GraphicMaukaEngine::addToMenu ( CellViewer* viewer )
   {
-    assert ( _viewer == NULL );
+    assert( _viewer == NULL );
 
     _viewer = viewer;
 
-    QMenu* prMenu   = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute");
-    QMenu* stepMenu = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute.stepByStep");
-    if ( prMenu == NULL ) {
-      QMenuBar* menuBar = _viewer->findChild<QMenuBar*>("viewer.menuBar");
-      if ( menuBar == NULL ) {
-        cerr << Warning("GraphicMaukaEngine::addToMenu() - No MenuBar in parent widget.") << endl;
-        return;
-      }
-      prMenu = menuBar->addMenu ( tr("P&&R") );
-      prMenu->setObjectName ( "viewer.menuBar.placeAndRoute" );
-
-      stepMenu = prMenu->addMenu ( tr("&Step by Step") );
-      stepMenu->setObjectName ( "viewer.menuBar.placeAndRoute.stepByStep" );
-
-      prMenu->addSeparator ();
+    if (_viewer->hasMenuAction("placeAndRoute.maukaPlace")) {
+      cerr << Warning( "GraphicMaukaEngine::addToMenu() - Mauka placer already hooked in." ) << endl;
+      return;
     }
 
-    QAction* placeAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.maukaPlace");
-    if ( placeAction != NULL )
-      cerr << Warning("GraphicMaukaEngine::addToMenu() - Mauka placer already hooked in.") << endl;
-    else {
-      QAction* quadriPartAction = new QAction  ( tr("Mauka - &QuadriPartition"), _viewer );
-      quadriPartAction->setObjectName ( "viewer.menuBar.placeAndRoute.quadriPartition" );
-      quadriPartAction->setStatusTip  ( tr("Run the <b>hMETIS</b> quadri-partitioner") );
-      quadriPartAction->setVisible    ( true );
-      stepMenu->addAction ( quadriPartAction );
-
-      QAction* annealingAction = new QAction  ( tr("Mauka - &Place"), _viewer );
-      annealingAction->setObjectName ( "viewer.menuBar.placeAndRoute.maukaPlace" );
-      annealingAction->setStatusTip  ( tr("Run the <b>Mauka</b> placer") );
-      annealingAction->setVisible    ( true );
-      stepMenu->addAction ( annealingAction );
-
-      QAction* placeAction = new QAction  ( tr("Mauka - &Place"), _viewer );
-      placeAction->setObjectName ( "viewer.menuBar.placeAndRoute.place" );
-      placeAction->setStatusTip  ( tr("Run the <b>Mauka</b> placer") );
-      placeAction->setVisible    ( true );
-      prMenu->addAction ( placeAction );
-
-      connect ( quadriPartAction, SIGNAL(triggered()), this, SLOT(doQuadriPart()) );
-      connect ( annealingAction , SIGNAL(triggered()), this, SLOT(doSimulatedAnnealing()) );
-      connect ( placeAction     , SIGNAL(triggered()), this, SLOT(place()) );
-    }
-
-    // ControllerWidget*    controller = _viewer->getControllerWidget();
-    // ConfigurationWidget* setting     = controller->getSettings()
-    //   ->findChild<ConfigurationWidget*>("controller.tabSettings.setting.mauka");
-
-    // if ( setting == NULL ) {
-    //   setting = new ConfigurationWidget ();
-    //   setting->setObjectName    ( "controller.tabSettings.setting.mauka" );
-    //   setting->setConfiguration ( Nimbus::Configuration::getDefault()
-    //                             , Metis::Configuration::getDefault()
-    //                             , Configuration::getDefault()
-    //                             );
-    //   controller->addSetting ( setting, "Mauka" );
-    // }
+    _viewer->addToMenu( "placeAndRoute.maukaPlace"
+                      , "Mauka - &Place"
+                      , "Run the <b>Mauka</b> placer"
+                      , std::bind(&GraphicMaukaEngine::_place,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.quadriPartition"
+                      , "Mauka - &QuadriPartition"
+                      , "Run the <b>hMETIS</b> quadri-partitioner"
+                      , std::bind(&GraphicMaukaEngine::_doQuadriPart,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.simulatedAnnealing"
+                      , "Mauka - &Simulated Annealing"
+                      , "Run the <b>Mauka</b> simulated annealing detailed placer"
+                      , std::bind(&GraphicMaukaEngine::_doSimulatedAnnealing,this)
+                      );
   }
 
 

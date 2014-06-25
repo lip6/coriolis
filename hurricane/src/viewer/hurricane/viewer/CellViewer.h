@@ -18,9 +18,11 @@
 #define  HURRICANE_CELL_VIEWER_H
 
 #include <list>
+#include <map>
 #include <functional>
-using namespace std;
+#include <boost/any.hpp>
 
+#include <QIcon>
 #include <QMainWindow>
 class QEvent;
 class QKeyEvent;
@@ -76,13 +78,39 @@ namespace Hurricane {
       Q_OBJECT;
                                    
     public:                        
-      enum       { CellHistorySize = 10 };
-      enum  Flag { InCellChange = 0x0001 };
+      enum               { CellHistorySize = 10 };
+      enum  Flag         { InCellChange    = 0x0001 };
+      enum  FunctionFlag { NoFlags         = 0x0000
+                         , TopMenu         = 0x0001 };
+    private:
+      typedef  std::map< const QString, boost::any >  ActionLut;
+      typedef  bool (QWidget::* SlotMethod)();
     public:
                                    CellViewer                ( QWidget* parent=NULL );
       virtual                     ~CellViewer                ();
       inline  bool                 isToolInterrupted         () const;
               QMenu*               createDebugMenu           ();
+              bool                 hasMenu                   ( const QString& path ) const;
+              bool                 hasMenuAction             ( const QString& path ) const;
+              QMenu*               addMenu                   ( const QString& path
+                                                             , std::string text
+                                                             , unsigned int flags=NoFlags
+                                                             );
+              bool                 addToMenu                 ( const QString& path );
+              QAction*             addToMenu                 ( const QString& path
+                                                             , std::string  text
+                                                             , std::string  textTip
+                                                             , std::function< void() >
+                                                             , QIcon        icon=QIcon() );
+              QAction*             addToMenu                 ( const QString& path
+                                                             , std::string  text
+                                                             , std::string  textTip
+                                                             , std::string  scriptPath );
+              QAction*             addToMenu                 ( QString             path
+                                                             , QString             text
+                                                             , QString             textTip
+                                                             , const QKeySequence& shortCut 
+                                                             , QIcon               icon    =QIcon());
       inline  void                 setEnableRedrawInterrupt  ( bool );
       inline  void                 setApplicationName        ( const QString& );
       inline  CellObserver*        getCellObserver           ();
@@ -98,9 +126,10 @@ namespace Hurricane {
               void                 unselect                  ( Occurrence& );
               void                 unselectAll               ();
       inline  void                 setLayerVisible           ( const Name& layer, bool visible );
-              void                 _runScript                ();
+              void                 runScript                 ( QString scriptPath );
       virtual std::string          _getString                () const;
     public slots:                  
+              void                 doAction                  ();
               void                 doGoto                    ();
               void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
@@ -111,8 +140,7 @@ namespace Hurricane {
               void                 imageDisplay              ();
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
-              void                 runScript                 ();
-            //void                 runStratusScript          ();
+              void                 runScriptWidget           ();
       inline  void                 emitCellAboutToChange     ();
       inline  void                 emitCellChanged           ();
     signals:                       
@@ -122,56 +150,40 @@ namespace Hurricane {
               void                 cellPreModificated        ();
               void                 cellPostModificated       ();
     protected:                     
-              void                 createActions             ();
               void                 createMenus               ();
-              void                 createLayout              ();
               void                 refreshTitle              ();
               void                 refreshHistory            ();
+    private:
+              QString              _getAbsWidgetPath         ( const QString& relPath ) const;
+              QMenu*               _getParentMenu            ( const QString& ) const;
+              void                 _runScript                ( QString scriptPath );
 
     protected:                     
-      CellObserver             _cellObserver;
-      QString                  _applicationName;
-      QAction*                 _toolInterruptAction;
-      QAction*                 _openAction;
-      QAction*                 _importAction;
-      QAction*                 _nextAction;
-      QAction*                 _cellHistoryAction[CellHistorySize];
-      QAction*                 _printAction;
-      QAction*                 _imageAction;
-      QAction*                 _saveAction;
-      QAction*                 _exportAction;
-      QAction*                 _closeAction;
-      QAction*                 _exitAction;
-      QAction*                 _refreshAction;
-      QAction*                 _fitToContentsAction;
-      QAction*                 _gotoAction;
-      QAction*                 _showSelectionAction;
-      QAction*                 _rubberChangeAction;
-      QAction*                 _clearRulersAction;
-      QAction*                 _controllerAction;
-      QAction*                 _scriptAction;
-      QAction*                 _stratusAction;
-      QMenu*                   _fileMenu;
-      QMenu*                   _viewMenu;
-      QMenu*                   _toolsMenu;
-      QMenu*                   _debugMenu;
-    //MapView*                 _mapView;
-      MousePositionWidget*     _mousePosition;
-      ControllerWidget*        _controller;
-      ScriptWidget*            _script;
-      GotoWidget*              _goto;
-      CellWidget*              _cellWidget;
-      MoveCommand              _moveCommand;
-      ZoomCommand              _zoomCommand;
-      RulerCommand             _rulerCommand;
-      SelectCommand            _selectCommand;
-      HierarchyCommand         _hierarchyCommand;
-      list< shared_ptr<CellWidget::State> >
-                               _cellHistory;
-      bool                     _firstShow;
-      bool                     _toolInterrupt;
-      unsigned int             _flags;
-      UpdateState              _updateState;
+      static QString                  _prefixWPath;
+             CellObserver             _cellObserver;
+             QString                  _applicationName;
+             QAction*                 _openAction;
+             QAction*                 _cellHistoryAction[CellHistorySize];
+             QAction*                 _showSelectionAction;
+             QMenu*                   _debugMenu;
+             ActionLut                _actionCallbacks;
+    //       MapView*                 _mapView;
+             MousePositionWidget*     _mousePosition;
+             ControllerWidget*        _controller;
+             ScriptWidget*            _script;
+             GotoWidget*              _goto;
+             CellWidget*              _cellWidget;
+             MoveCommand              _moveCommand;
+             ZoomCommand              _zoomCommand;
+             RulerCommand             _rulerCommand;
+             SelectCommand            _selectCommand;
+             HierarchyCommand         _hierarchyCommand;
+             list< shared_ptr<CellWidget::State> >
+                                      _cellHistory;
+             bool                     _firstShow;
+             bool                     _toolInterrupt;
+             unsigned int             _flags;
+             UpdateState              _updateState;
 
   };
 

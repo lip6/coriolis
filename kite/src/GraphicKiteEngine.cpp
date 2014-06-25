@@ -159,7 +159,7 @@ namespace Kite {
 
   void  GraphicKiteEngine::_saveGlobalSolution ()
   {
-    KiteEngine* kite = KiteEngine::get( getCell() );
+    KiteEngine* kite = getForFramework( NoFlags );
     if (kite) kite->saveGlobalSolution ();
   }
 
@@ -214,6 +214,13 @@ namespace Kite {
     }
   }
 
+  
+  void  GraphicKiteEngine::_dumpMeasures ()
+  {
+    KiteEngine* kite = getForFramework( NoFlags );
+    if (kite) kite->dumpMeasures();
+  }
+
 
   void  GraphicKiteEngine::_save ()
   {
@@ -226,53 +233,20 @@ namespace Kite {
   }
 
 
-  void  GraphicKiteEngine::globalRoute ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_globalRoute,this) ); }
-
-
-  void  GraphicKiteEngine::loadGlobalSolution ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_loadGlobalSolution,this) ); }
-
-
-  void  GraphicKiteEngine::saveGlobalSolution ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_saveGlobalSolution,this) ); }
-
-
-  void  GraphicKiteEngine::detailPreRoute ()
+  void  GraphicKiteEngine::_detailRoute ()
   {
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_runNegociatePreRouted,this) );
+    _loadGlobalRouting   ();
+    _balanceGlobalDensity();
+    _runNegociate        ();
   }
 
 
-  void  GraphicKiteEngine::detailRoute ()
+  void  GraphicKiteEngine::_route ()
   {
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_loadGlobalRouting   ,this) );
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_balanceGlobalDensity,this) );
-    ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_runNegociate        ,this) );
-  }
-
-
-  void  GraphicKiteEngine::finalize ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_finalize,this) ); }
-
-
-  void  GraphicKiteEngine::save ()
-  { ExceptionWidget::catchAllWrapper( std::bind(&GraphicKiteEngine::_save,this) ); }
-
-
-  void  GraphicKiteEngine::route ()
-  {
-    detailPreRoute();
-    globalRoute   ();
-    detailRoute   ();
-    finalize      ();
-  }
-
-
-  void  GraphicKiteEngine::dumpMeasures ()
-  {
-    KiteEngine* kite = getForFramework( NoFlags );
-    if (kite) kite->dumpMeasures();
+    _runNegociatePreRouted();
+    _globalRoute          ();
+    _detailRoute          ();
+    _finalize             ();
   }
 
 
@@ -298,93 +272,58 @@ namespace Kite {
 
     _viewer = viewer;
 
-    QMenu* prMenu   = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute");
-    QMenu* stepMenu = _viewer->findChild<QMenu*>("viewer.menuBar.placeAndRoute.stepByStep");
-    if (prMenu == NULL) {
-      QMenuBar* menuBar = _viewer->findChild<QMenuBar*>("viewer.menuBar");
-      if (menuBar == NULL) {
-        cerr << Warning( "GraphicKiteEngine::addToMenu() - No MenuBar in parent widget." ) << endl;
-        return;
-      }
-      prMenu = menuBar->addMenu( tr("P&&R") );
-      prMenu->setObjectName( "viewer.menuBar.placeAndRoute" );
-
-      stepMenu = prMenu->addMenu( tr("&Step by Step") );
-      stepMenu->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep" );
-
-      prMenu->addSeparator();
-    }
-
-    QAction* dRouteAction = _viewer->findChild<QAction*>("viewer.menuBar.placeAndRoute.detailedRoute");
-    if (dRouteAction)
+    if (_viewer->hasMenuAction("placeAndRoute.route")) {
       cerr << Warning( "GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in." ) << endl;
-    else {
-      stepMenu->addSeparator();
-
-      QAction* dPreRouteAction = new QAction ( tr("Kite - Detailed Pre-Route"), _viewer );
-      dPreRouteAction->setObjectName( "viewer.menuBar.placeAndPreRoute.stepBystep.detailedPreRoute" );
-      dPreRouteAction->setStatusTip ( tr("Run the <b>Kite</b> detailed router on pre-routed nets") );
-      dPreRouteAction->setVisible   ( true );
-      stepMenu->addAction( dPreRouteAction );
-
-      QAction* gRouteAction = new QAction ( tr("Kite - &Global Route"), _viewer );
-      gRouteAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.globalRoute" );
-      gRouteAction->setStatusTip ( tr("Run the <b>Knik</b> global router") );
-      gRouteAction->setVisible   ( true );
-      stepMenu->addAction( gRouteAction );
-
-      QAction* gLoadSolutionAction = new QAction ( tr("Kite - &Load Global Routing"), _viewer );
-      gLoadSolutionAction->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep.loadGlobalRouting" );
-      gLoadSolutionAction->setStatusTip ( tr("Load a solution for the global routing (.kgr)") );
-      gLoadSolutionAction->setVisible   ( true );
-      stepMenu->addAction( gLoadSolutionAction );
-
-      QAction* gSaveSolutionAction = new QAction ( tr("Kite - &Save Global Routing"), _viewer );
-      gSaveSolutionAction->setObjectName( "viewer.menuBar.placeAndRoute.stepByStep.saveGlobalRouting" );
-      gSaveSolutionAction->setStatusTip ( tr("Save a global router solution (.kgr)") );
-      gSaveSolutionAction->setVisible   ( true );
-      stepMenu->addAction( gSaveSolutionAction );
-
-      dRouteAction = new QAction ( tr("Kite - &Detailed Route"), _viewer );
-      dRouteAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.detailedRoute" );
-      dRouteAction->setStatusTip ( tr("Run the <b>Kite</b> detailed router") );
-      dRouteAction->setVisible   ( true );
-      stepMenu->addAction( dRouteAction );
-
-      QAction* dFinalizeAction = new QAction( tr("Kite - &Finalize Routing"), _viewer );
-      dFinalizeAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.finalize" );
-      dFinalizeAction->setStatusTip ( tr("Closing Routing") );
-      dFinalizeAction->setVisible   ( true );
-      stepMenu->addAction( dFinalizeAction );
-
-      QAction* dDumpMeasuresAction = new QAction ( tr("Kite - Dump &Measures"), _viewer );
-      dDumpMeasuresAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.dumpMeasures" );
-      dDumpMeasuresAction->setStatusTip ( tr("Dumping Measurements on the disk") );
-      dDumpMeasuresAction->setVisible   ( true );
-      stepMenu->addAction( dDumpMeasuresAction );
-
-      QAction* dSaveAction = new QAction ( tr("Kite - &Save Design"), _viewer );
-      dSaveAction->setObjectName( "viewer.menuBar.placeAndRoute.stepBystep.save" );
-      dSaveAction->setStatusTip ( tr("Save routed design (temporary hack)") );
-      dSaveAction->setVisible   ( true );
-      stepMenu->addAction( dSaveAction );
-
-      QAction* routeAction = new QAction ( tr("Kite - &Route"), _viewer );
-      routeAction->setObjectName( "viewer.menuBar.placeAndRoute.route" );
-      routeAction->setStatusTip ( tr("Route the design (global & detailed)") );
-      routeAction->setVisible   ( true );
-      prMenu->addAction( routeAction );
-
-      connect( gLoadSolutionAction, SIGNAL(triggered()), this, SLOT(loadGlobalSolution()) );
-      connect( gSaveSolutionAction, SIGNAL(triggered()), this, SLOT(saveGlobalSolution()) );
-      connect( gRouteAction       , SIGNAL(triggered()), this, SLOT(globalRoute       ()) );
-      connect( dPreRouteAction    , SIGNAL(triggered()), this, SLOT(detailPreRoute    ()) );
-      connect( dRouteAction       , SIGNAL(triggered()), this, SLOT(detailRoute       ()) );
-      connect( dFinalizeAction    , SIGNAL(triggered()), this, SLOT(finalize          ()) );
-      connect( dSaveAction        , SIGNAL(triggered()), this, SLOT(save              ()) );
-      connect( dDumpMeasuresAction, SIGNAL(triggered()), this, SLOT(dumpMeasures      ()) );
-      connect( routeAction        , SIGNAL(triggered()), this, SLOT(route             ()) );
+      return;
     }
+
+    _viewer->addToMenu( "placeAndRoute.route"
+                      , "Kite - &Route"
+                      , "Route the design (global & detailed)"
+                      , std::bind(&GraphicKiteEngine::_route,this)
+                      );
+
+    _viewer->addToMenu( "placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedPreRoute"
+                      , "Kite - Detailed Pre-Route"
+                      , "Run the <b>Kite</b> detailed router on pre-routed nets"
+                      , std::bind(&GraphicKiteEngine::_runNegociatePreRouted,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.globalRoute"
+                      , "Kite - &Global Route"
+                      , "Run the <b>Knik</b> global router"
+                      , std::bind(&GraphicKiteEngine::_globalRoute,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.loadGlobalRouting"
+                      , "Kite - &Load Global Routing"
+                      , "Load a solution for the global routing (.kgr)"
+                      , std::bind(&GraphicKiteEngine::_loadGlobalSolution,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.saveGlobalRouting"
+                      , "Kite - &Save Global Routing"
+                      , "Save a global router solution (.kgr)"
+                      , std::bind(&GraphicKiteEngine::_saveGlobalSolution,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedRoute"
+                      , "Kite - &Detailed Route"
+                      , "Run the <b>Kite</b> detailed router"
+                      , std::bind(&GraphicKiteEngine::_detailRoute,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.finalize"
+                      , "Kite - &Finalize Routing"
+                      , "Closing Routing"
+                      , std::bind(&GraphicKiteEngine::_finalize,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.dumpMeasures"
+                      , "Kite - Dump &Measures"
+                      , "Dumping Measurements on the disk"
+                      , std::bind(&GraphicKiteEngine::_dumpMeasures,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.save"
+                      , "Kite - &Save Design"
+                      , "Save routed design (temporary hack)"
+                      , std::bind(&GraphicKiteEngine::_save,this)
+                      );
   }
 
 
