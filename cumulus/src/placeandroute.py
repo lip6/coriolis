@@ -104,7 +104,7 @@ def pyPlaceCentric ( cell, instance ) :
   Ty       = New_Ymin - instance.getAbutmentBox().getYMin() 
   
   instance.setTransformation ( Transformation ( Tx, Ty ).getTransformation ( instance.getTransformation() ) )  
-  instance.setPlacementStatus ( PlacementStatusPLACED )
+  instance.setPlacementStatus ( Instance.PlacementStatus.PLACED )
     
   UpdateSession.close()
     
@@ -168,8 +168,6 @@ def pyRouteCk ( cell, netCk ) :
 def pyAlimVerticalRail ( cell, xcoord ) :
   '''x is in pitch, it is where the vertical alimentation call back are placed'''
 
-  print 'pyAlimVerticalRail'
-
   global PITCH, SLICE
   global standard_instances_list, nb_alims_verticales, nb_lignes, standard_instances_masque
   global nb_vdd_pins, nb_vss_pins
@@ -212,12 +210,12 @@ def pyAlimVerticalRail ( cell, xcoord ) :
   nb_alims_verticales += 1
   
   # get the opposite of orientation ID=>MY MY=>ID
-  if orientation in [OrientationID, OrientationMX] :
-    inv_orientation = OrientationMY
-    orientation     = OrientationID
-  elif orientation in [OrientationMY, OrientationR2] :
-    inv_orientation = OrientationID     
-    orientation     = OrientationMY
+  if orientation in [Transformation.Orientation.ID, Transformation.Orientation.MX] :
+    inv_orientation = Transformation.Orientation.MY
+    orientation     = Transformation.Orientation.ID
+  elif orientation in [Transformation.Orientation.MY, Transformation.Orientation.R2] :
+    inv_orientation = Transformation.Orientation.ID     
+    orientation     = Transformation.Orientation.MY
   else :
     raise ErrorMessage(2,"AlimVerticalRail : Strawberry.")
     
@@ -258,7 +256,7 @@ def pyAlimVerticalRail ( cell, xcoord ) :
       place ( Powmid, int(x), int(y), my_orientation )
   
   # place pins (connectors) in metal3 on top and bottom 
-  metal3 = getDataBase().getTechnology().getLayer( "METAL3" )
+  metal3 = DataBase.getDB().getTechnology().getLayer( "METAL3" )
 
   powerNet = None
   for net in cell.getPowerNets():
@@ -275,7 +273,7 @@ def pyAlimVerticalRail ( cell, xcoord ) :
     groundNet = net
   if not groundNet:
     raise ErrorMessage(2,"AlimVerticalRail : no Ground Net found !")
-  
+
   pin_height = 10
   pin_width  = 10
   pin_x1     = xcoord * DbU_lambda(PITCH) + DbU_lambda(10)
@@ -286,21 +284,21 @@ def pyAlimVerticalRail ( cell, xcoord ) :
   # Top
   if standard_instances_masque[nb_lignes-1][xcoord] == FREE :
     pin_name       = str(powerNet.getName()) + "." + str(nb_vdd_pins)
-    pin            = Pin ( powerNet, pin_name, 1, 2, metal3, pin_x1, pin_y1, DbU_lambda(pin_width), DbU_lambda(pin_height) )
+    pin            = Pin.create ( powerNet, pin_name, 1, 2, metal3, pin_x1, pin_y1, DbU_lambda(pin_width), DbU_lambda(pin_height) )
     nb_vdd_pins   += 1 
   
     pin_name       = str(groundNet.getName()) + "." + str(nb_vss_pins)
-    pin            = Pin ( groundNet, pin_name, 1, 2, metal3, pin_x2, pin_y1, DbU_lambda(pin_width), DbU_lambda(pin_height) )
+    pin            = Pin.create ( groundNet, pin_name, 1, 2, metal3, pin_x2, pin_y1, DbU_lambda(pin_width), DbU_lambda(pin_height) )
     nb_vss_pins   += 1 
   
   # Bottom
   if standard_instances_masque[0][xcoord] == FREE :          
     pin_name       = str(powerNet.getName()) + "." + str(nb_vdd_pins)
-    pin            = Pin ( powerNet, pin_name, 2 , 2, metal3, pin_x1, pin_y2, DbU_lambda(pin_width), DbU_lambda(pin_height) )
+    pin            = Pin.create ( powerNet, pin_name, 2 , 2, metal3, pin_x1, pin_y2, DbU_lambda(pin_width), DbU_lambda(pin_height) )
     nb_vdd_pins   += 1 
   
     pin_name       = str(groundNet.getName()) + "." + str(nb_vss_pins)
-    pin            = Pin ( groundNet, pin_name, 2 , 2, metal3, pin_x2, pin_y2, DbU_lambda(pin_width), DbU_lambda(pin_height) )
+    pin            = Pin.create ( groundNet, pin_name, 2 , 2, metal3, pin_x2, pin_y2, DbU_lambda(pin_width), DbU_lambda(pin_height) )
     nb_vss_pins   += 1
 
   UpdateSession.close()    
@@ -342,10 +340,10 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
     raise ErrorMessage(2,err)
   
   # get layers     
-  metal4 = getDataBase().getTechnology().getLayer ( "METAL4" )
-  via1 = getDataBase().getTechnology().getLayer ( "VIA12" )
-  via2 = getDataBase().getTechnology().getLayer ( "VIA23" )
-  via3 = getDataBase().getTechnology().getLayer ( "VIA34" )
+  metal4 = DataBase.getDB().getTechnology().getLayer ( "METAL4" )
+  via1 = DataBase.getDB().getTechnology().getLayer ( "VIA12" )
+  via2 = DataBase.getDB().getTechnology().getLayer ( "VIA23" )
+  via3 = DataBase.getDB().getTechnology().getLayer ( "VIA34" )
   
   # Know if it is vdd or vss 
   string = getVddVss ( cell, ycoord )  
@@ -361,26 +359,26 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
     net = cell.getNet ( "vdd" )   
     
     pin_name      = str(net.getName()) + "." + str(nb_vdd_pins)
-    pin1          = Pin ( net, pin_name, 4, 2, metal4, pin_x1, pin_y, pin_width, pin_height )
+    pin1          = Pin.create ( net, pin_name, 4, 2, metal4, pin_x1, pin_y, pin_width, pin_height )
     nb_vdd_pins  += 1 
     
     pin_name      = str(net.getName()) + "." + str(nb_vdd_pins)
-    pin2          = Pin ( net, pin_name, 3, 2, metal4, pin_x2, pin_y, pin_width, pin_height ) 
+    pin2          = Pin.create ( net, pin_name, 3, 2, metal4, pin_x2, pin_y, pin_width, pin_height ) 
     nb_vdd_pins  += 1 
   
   else : 
     net = cell.getNet ( "vss" )   
 
     pin_name      = str(net.getName()) + "." + str(nb_vss_pins)
-    pin1          = Pin ( net, pin_name, 4, 2, metal4, pin_x1, pin_y, pin_width, pin_height )
+    pin1          = Pin.create ( net, pin_name, 4, 2, metal4, pin_x1, pin_y, pin_width, pin_height )
     nb_vss_pins  += 1 
     
     pin_name      = str(net.getName()) + "." + str(nb_vss_pins)
-    pin2          = Pin ( net, pin_name, 3, 2, metal4, pin_x2, pin_y, pin_width, pin_height ) 
+    pin2          = Pin.create ( net, pin_name, 3, 2, metal4, pin_x2, pin_y, pin_width, pin_height ) 
     nb_vss_pins  += 1 
   
   # Create horizontal rail 
-  rail_horizontal = Horizontal ( pin1 , pin2 , metal4 , pin_y, pin_height, 0 , 0 )
+  rail_horizontal = Horizontal.create ( pin1 , pin2 , metal4 , pin_y, pin_height, 0 , 0 )
    
   power_hur_cell  = CRL.AllianceFramework.get().getCell ( "powmid_x0", CRL.Catalog.State.Views )
   Width_power     = power_hur_cell.getAbutmentBox().getWidth()  
@@ -393,8 +391,8 @@ def pyAlimHorizontalRail ( cell, ycoord ) :
    if standard_instances_masque[ycoord][i] == POWER :
      contact_side = DbU_lambda(RING_WIDTH) - DbU_lambda(1.0)
       
-     if string == "vdd" : contact3 = Contact ( rail_horizontal, via3, i*DbU_lambda(PITCH) + DbU_lambda(10), 0, contact_side, DbU_lambda(2) ) 
-     else               : contact3 = Contact ( rail_horizontal, via3, i*DbU_lambda(PITCH) + DbU_lambda(25), 0, contact_side, DbU_lambda(2) ) 
+     if string == "vdd" : contact3 = Contact.create ( rail_horizontal, via3, i*DbU_lambda(PITCH) + DbU_lambda(10), 0, contact_side, DbU_lambda(2) ) 
+     else               : contact3 = Contact.create ( rail_horizontal, via3, i*DbU_lambda(PITCH) + DbU_lambda(25), 0, contact_side, DbU_lambda(2) ) 
      i += nb_pitchs
   
    i+=1  
@@ -428,7 +426,7 @@ def pyAlimConnectors ( cell ) :
         + "Please place some instances before the placement of alim connectors.\n"
     raise ErrorMessage(2,err)
     
-  metal1 = getDataBase().getTechnology().getLayer("METAL1")
+  metal1 = DataBase.getDB().getTechnology().getLayer("METAL1")
   string = getVddVss ( cell, 0 )
      
   if re.search ( "vdd", string ) :
@@ -468,23 +466,23 @@ def pyAlimConnectors ( cell ) :
     # Ligne impaire
     if i % 2 :                              
       pin_name       = str(netImpair.getName()) + "." + str(nb_inv_pins)
-      pin1           = Pin ( netImpair, pin_name, 4, 2, metal1, pin_x1, pin_y, pin_width, pin_height ) 
+      pin1           = Pin.create ( netImpair, pin_name, 4, 2, metal1, pin_x1, pin_y, pin_width, pin_height ) 
       nb_inv_pins   += 1 
 
       pin_name       = str(netImpair.getName()) + "." + str(nb_inv_pins)
-      pin2           = Pin ( netImpair, pin_name, 3, 2, metal1, pin_x2, pin_y, pin_width, pin_height ) 
+      pin2           = Pin.create ( netImpair, pin_name, 3, 2, metal1, pin_x2, pin_y, pin_width, pin_height ) 
       nb_inv_pins   += 1
-      Horizontal ( pin1, pin2, metal1, pin1.getY(), pin_height )
+      Horizontal.create ( pin1, pin2, metal1, pin1.getY(), pin_height )
     # Ligne paire   
     else :
       pin_name        = str(netPair.getName()) + "." + str(nb_string_pins)
-      pin1            = Pin ( netPair, pin_name, 4, 2, metal1, pin_x1, pin_y, pin_width, pin_height ) 
+      pin1            = Pin.create ( netPair, pin_name, 4, 2, metal1, pin_x1, pin_y, pin_width, pin_height ) 
       nb_string_pins += 1 
 
       pin_name        = str(netPair.getName()) + "." + str(nb_string_pins)
-      pin2            = Pin ( netPair, pin_name, 3, 2, metal1, pin_x2, pin_y, pin_width, pin_height )
+      pin2            = Pin.create ( netPair, pin_name, 3, 2, metal1, pin_x2, pin_y, pin_width, pin_height )
       nb_string_pins += 1
-      Horizontal ( pin1, pin2, metal1, pin1.getY(), pin_height )
+      Horizontal.create ( pin1, pin2, metal1, pin1.getY(), pin_height )
       
   if re.search ( "vdd", string ) :
     nb_vdd_pins = nb_string_pins
@@ -651,11 +649,11 @@ def pyPadNorth ( cell, core, args ) :
   
     ins.setTransformation ( Transformation ( _x - _difx
                                            , _y - _dify
-                                           , OrientationID
+                                           , Transformation.Orientation.ID
                                            )
                           )
   
-    ins.setPlacementStatus ( PlacementStatusFIXED )
+    ins.setPlacementStatus ( Instance.PlacementStatus.FIXED )
 
   UpdateSession.close()
     
@@ -728,16 +726,16 @@ def pyPadSouth ( cell, core, args ) :
   
     # avoir x y apres orientation
     box   = ins.getMasterCell().getAbutmentBox()
-    _difx = Transformation ( 0, 0, OrientationMY ).getBox ( box ).getXMin()
-    _dify = Transformation ( 0, 0, OrientationMY ).getBox ( box ).getYMin() 
+    _difx = Transformation ( 0, 0, Transformation.Orientation.MY ).getBox ( box ).getXMin()
+    _dify = Transformation ( 0, 0, Transformation.Orientation.MY ).getBox ( box ).getYMin() 
   
     ins.setTransformation ( Transformation ( _x - _difx
                                            , _y - _dify
-                                           , OrientationMY
+                                           , Transformation.Orientation.MY
                                            )
                           )
   
-    ins.setPlacementStatus ( PlacementStatusFIXED )  
+    ins.setPlacementStatus ( Instance.PlacementStatus.FIXED )  
     
   UpdateSession.close()
 
@@ -819,11 +817,11 @@ def pyPadEast ( cell, core, args ) :
   
     ins.setTransformation ( Transformation ( _x - _difx
                                            , _y - _dify
-                                           , OrientationYR
+                                           , Transformation.Orientation.YR
                                            )
                           )
   
-    ins.setPlacementStatus ( PlacementStatusFIXED )  
+    ins.setPlacementStatus ( Instance.PlacementStatus.FIXED )  
     
   UpdateSession.close()
 
@@ -902,11 +900,11 @@ def pyPadWest ( cell, core, args ) :
   
     ins.setTransformation ( Transformation ( _x - _difx
                                            , _y - _dify
-                                           , OrientationR1
+                                           , Transformation.Orientation.R1
                                            )
                           )
   
-    ins.setPlacementStatus ( PlacementStatusFIXED )  
+    ins.setPlacementStatus ( Instance.PlacementStatus.FIXED )  
     
   UpdateSession.close()
 
@@ -922,7 +920,7 @@ def pyPowerRing ( cell, core, n ) :
   global pad_north, pad_south, pad_east, pad_west
   global RING_INTERVAL, RING_WIDTH
 
-  db = getDataBase()
+  db = DataBase.getDB()
   
   topRoutingLayerName = Cfg.getParamString('katabatic.topRoutingLayer', 'METAL4').asString()
   topRoutingLayer     = db.getTechnology().getLayer( topRoutingLayerName )
@@ -1117,25 +1115,25 @@ def pyPowerRing ( cell, core, n ) :
   
   
   for i in range ( 0, 2*n+1, 2 ) : 
-    contact1 = Contact ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
-    contact2 = Contact ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
-    contact3 = Contact ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
-    contact4 = Contact ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
+    contact1 = Contact.create ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
+    contact2 = Contact.create ( vss, cCoronaLayer, init_Xmin - decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
+    contact3 = Contact.create ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymax + decalage*i, contact_side, contact_side )
+    contact4 = Contact.create ( vss, cCoronaLayer, init_Xmax + decalage*i, init_Ymin - decalage*i, contact_side, contact_side )
 
-    vertical_west_vss.append    ( Vertical   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    vertical_east_vss.append    ( Vertical   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    horizontal_south_vss.append ( Horizontal ( contact1, contact4, hCoronaLayer, init_Ymin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
-    horizontal_north_vss.append ( Horizontal ( contact2, contact3, hCoronaLayer, init_Ymax + decalage*i, DbU_lambda(RING_WIDTH) ) )
+    vertical_west_vss.append    ( Vertical.create   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    vertical_east_vss.append    ( Vertical.create   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    horizontal_south_vss.append ( Horizontal.create ( contact1, contact4, hCoronaLayer, init_Ymin - decalage*i, DbU_lambda(RING_WIDTH) ) )          
+    horizontal_north_vss.append ( Horizontal.create ( contact2, contact3, hCoronaLayer, init_Ymax + decalage*i, DbU_lambda(RING_WIDTH) ) )
      
     if i != 2*n :   
-     contact1 = Contact ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )
-     contact2 = Contact ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
-     contact3 = Contact ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
-     contact4 = Contact ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )        
-     vertical_west_vdd.append    ( Vertical   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
-     vertical_east_vdd.append    ( Vertical   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
-     horizontal_south_vdd.append ( Horizontal ( contact1, contact4, hCoronaLayer, init_Ymin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )  
-     horizontal_north_vdd.append ( Horizontal ( contact2, contact3, hCoronaLayer, init_Ymax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     contact1 = Contact.create ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )
+     contact2 = Contact.create ( vdd, cCoronaLayer, init_Xmin - decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
+     contact3 = Contact.create ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymax + decalage*( i + 1 ) , contact_side, contact_side )
+     contact4 = Contact.create ( vdd, cCoronaLayer, init_Xmax + decalage* ( i + 1 ), init_Ymin - decalage*( i + 1 ) , contact_side, contact_side )        
+     vertical_west_vdd.append    ( Vertical.create   ( contact1, contact2, vCoronaLayer, init_Xmin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     vertical_east_vdd.append    ( Vertical.create   ( contact3, contact4, vCoronaLayer, init_Xmax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
+     horizontal_south_vdd.append ( Horizontal.create ( contact1, contact4, hCoronaLayer, init_Ymin - decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )  
+     horizontal_north_vdd.append ( Horizontal.create ( contact2, contact3, hCoronaLayer, init_Ymax + decalage* ( i + 1 ), DbU_lambda(RING_WIDTH) ) )
   
   # MACRO pour les directions d'access des pins  
   UNDEFINED = 0
@@ -1158,9 +1156,9 @@ def pyPowerRing ( cell, core, n ) :
 
     # Creer un contact a la place du pin 
     if   (allowedDepth > 2) and \
-         re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vss, metal4, _x, _y , element.getHeight(), element.getHeight() ) 
-    elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vss, metal1, _x, _y , element.getHeight(), element.getHeight() )
-    elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vss, metal3, _x, _y , element.getHeight(), element.getHeight() )
+         re.search ( "METAL4", element_layer_name ) : old_contact = Contact.create ( vss, metal4, _x, _y , element.getHeight(), element.getHeight() ) 
+    elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact.create ( vss, metal1, _x, _y , element.getHeight(), element.getHeight() )
+    elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact.create ( vss, metal3, _x, _y , element.getHeight(), element.getHeight() )
     else : 
       raise ErrorMessage(2,"wrong layer of pin in the west of core : %s.\n" % element_layer_name)
   
@@ -1179,13 +1177,13 @@ def pyPowerRing ( cell, core, n ) :
        contact_side = element.getHeight() - DbU_lambda(1.0) 
 
        if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
-         contact     = Contact ( vss, via3 , contact_x , _y , contact_side , contact_side )
-         horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
+         contact     = Contact.create ( vss, via3 , contact_x , _y , contact_side , contact_side )
+         horizontal  = Horizontal.create ( contact, old_contact , metal4 , _y , element.getHeight() )
          old_contact = contact
        else : 
-         contact_via1 = Contact ( vss, via1 , contact_x , _y , contact_side , contact_side )
-         contact_via2 = Contact ( vss, via2 , contact_x , _y , contact_side , contact_side )
-         horizontal   = Horizontal ( contact_via1 , old_contact , metal1 , _y , element.getHeight() )       
+         contact_via1 = Contact.create ( vss, via1 , contact_x , _y , contact_side , contact_side )
+         contact_via2 = Contact.create ( vss, via2 , contact_x , _y , contact_side , contact_side )
+         horizontal   = Horizontal.create ( contact_via1 , old_contact , metal1 , _y , element.getHeight() )       
          old_contact  = contact_via1
          
     # Connection du cote de l'est   
@@ -1203,13 +1201,13 @@ def pyPowerRing ( cell, core, n ) :
         contact_side = element.getHeight() - DbU_lambda(1.0)
         
         if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
-          contact     = Contact ( vss, via3 , contact_x , _y , contact_side, contact_side )
-          horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
+          contact     = Contact.create ( vss, via3 , contact_x , _y , contact_side, contact_side )
+          horizontal  = Horizontal.create ( contact, old_contact , metal4 , _y , element.getHeight() )
           old_contact = contact
         else : 
-          contact_via1 = Contact ( vss, via1 , contact_x , _y , contact_side , contact_side )
-          contact_via2 = Contact ( vss, via2 , contact_x , _y , contact_side , contact_side )
-          horizontal   = Horizontal ( contact_via1 , old_contact , metal1 , _y , element.getHeight() )
+          contact_via1 = Contact.create ( vss, via1 , contact_x , _y , contact_side , contact_side )
+          contact_via2 = Contact.create ( vss, via2 , contact_x , _y , contact_side , contact_side )
+          horizontal   = Horizontal.create ( contact_via1 , old_contact , metal1 , _y , element.getHeight() )
           old_contact  = contact_via1
   
     # Connection du cote du nord    
@@ -1226,8 +1224,8 @@ def pyPowerRing ( cell, core, n ) :
         contact_y =  init_Ymax  +  ( decalage*2 )*i # y du contact a creer         
   
         if re.search ( "METAL3", element_layer_name ) :         
-          contact     = Contact ( vss, via3, _x, contact_y, element.getHeight(), element.getHeight() )
-          vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
+          contact     = Contact.create ( vss, via3, _x, contact_y, element.getHeight(), element.getHeight() )
+          vertical    = Vertical.create ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact 
         else :
           raise ErrorMessage(2,"wrong layer of pin in the west of core : %s.\n"% element_layer_name)
@@ -1246,8 +1244,8 @@ def pyPowerRing ( cell, core, n ) :
         contact_y =  init_Ymin  -  ( decalage*2 )*i # x du contact a creer
   
         if re.search ( "METAL3", element_layer_name ) :         
-          contact     = Contact ( vss, via3, _x, contact_y, element.getHeight(), element.getHeight() )
-          vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
+          contact     = Contact.create ( vss, via3, _x, contact_y, element.getHeight(), element.getHeight() )
+          vertical    = Vertical.create ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact
         else :
           raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
@@ -1268,9 +1266,9 @@ def pyPowerRing ( cell, core, n ) :
   
     # Creer un contact a la place du pin 
     if   (allowedDepth > 2) and \
-         re.search ( "METAL4", element_layer_name ) : old_contact = Contact ( vdd, metal4, _x, _y , element.getHeight(), element.getHeight() )
-    elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact ( vdd, metal1, _x, _y , element.getHeight(), element.getHeight() )
-    elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact ( vdd, metal3, _x, _y , element.getHeight(), element.getHeight() )  
+         re.search ( "METAL4", element_layer_name ) : old_contact = Contact.create ( vdd, metal4, _x, _y , element.getHeight(), element.getHeight() )
+    elif re.search ( "METAL1", element_layer_name ) : old_contact = Contact.create ( vdd, metal1, _x, _y , element.getHeight(), element.getHeight() )
+    elif re.search ( "METAL3", element_layer_name ) : old_contact = Contact.create ( vdd, metal3, _x, _y , element.getHeight(), element.getHeight() )  
     else : 
       raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
   
@@ -1289,13 +1287,13 @@ def pyPowerRing ( cell, core, n ) :
         contact_side = element.getHeight() - DbU_lambda(1.0)
   
         if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :         
-          contact     = Contact ( vdd, via3, contact_x, _y, contact_side, contact_side )
-          horizontal  = Horizontal ( contact, old_contact, metal4, _y, element.getHeight() )
+          contact     = Contact.create ( vdd, via3, contact_x, _y, contact_side, contact_side )
+          horizontal  = Horizontal.create ( contact, old_contact, metal4, _y, element.getHeight() )
           old_contact = contact 
         else : 
-          contact_via1 = Contact ( vdd, via1, contact_x, _y, contact_side, contact_side )
-          contact_via2 = Contact ( vdd, via2, contact_x, _y, contact_side, contact_side )
-          horizontal   = Horizontal ( contact_via1, old_contact, metal1, _y, element.getHeight() )       
+          contact_via1 = Contact.create ( vdd, via1, contact_x, _y, contact_side, contact_side )
+          contact_via2 = Contact.create ( vdd, via2, contact_x, _y, contact_side, contact_side )
+          horizontal   = Horizontal.create ( contact_via1, old_contact, metal1, _y, element.getHeight() )       
           old_contact  = contact_via1
   
     # Connection du cote de l'est   
@@ -1313,13 +1311,13 @@ def pyPowerRing ( cell, core, n ) :
        contact_side = element.getHeight() - DbU_lambda(1.0)
   
        if (allowedDepth > 2) and re.search( "METAL4", element_layer_name ) :
-         contact     = Contact ( vdd, via3 , contact_x , _y , contact_side , contact_side )
-         horizontal  = Horizontal ( contact, old_contact , metal4 , _y , element.getHeight() )
+         contact     = Contact.create ( vdd, via3 , contact_x , _y , contact_side , contact_side )
+         horizontal  = Horizontal.create ( contact, old_contact , metal4 , _y , element.getHeight() )
          old_contact = contact 
        else : 
-         contact_via1 = Contact ( vdd, via1, contact_x, _y, contact_side, contact_side )
-         contact_via2 = Contact ( vdd, via2, contact_x, _y, contact_side, contact_side )
-         horizontal   = Horizontal ( contact_via1, old_contact, metal1, _y, element.getHeight() )       
+         contact_via1 = Contact.create ( vdd, via1, contact_x, _y, contact_side, contact_side )
+         contact_via2 = Contact.create ( vdd, via2, contact_x, _y, contact_side, contact_side )
+         horizontal   = Horizontal.create ( contact_via1, old_contact, metal1, _y, element.getHeight() )       
          old_contact  = contact_via1  
   
     # Connection du cote du nord    
@@ -1336,8 +1334,8 @@ def pyPowerRing ( cell, core, n ) :
         contact_y =  init_Ymax + decalage + ( decalage*2 )*i # x du contact a creer         
   
         if re.search ( "METAL3", element_layer_name ) :         
-          contact     = Contact ( vdd, via3, _x, contact_y, element.getHeight(), element.getHeight() )
-          vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
+          contact     = Contact.create ( vdd, via3, _x, contact_y, element.getHeight(), element.getHeight() )
+          vertical    = Vertical.create ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact 
         else :
           raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
@@ -1356,8 +1354,8 @@ def pyPowerRing ( cell, core, n ) :
         contact_y =  init_Ymin - decalage - ( decalage*2 )*i # x du contact a creer         
   
         if re.search ( "METAL3", element_layer_name ) :         
-          contact     = Contact ( vdd, via3, _x, contact_y, element.getHeight(), element.getHeight() )
-          vertical    = Vertical ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
+          contact     = Contact.create ( vdd, via3, _x, contact_y, element.getHeight(), element.getHeight() )
+          vertical    = Vertical.create ( contact, old_contact, metal3, _x, DbU_lambda(RING_WIDTH) )
           old_contact = contact     
         else :
           raise ErrorMessage(2,"wrong layer of pin in the west of core : %s."%element_layer_name)
@@ -1384,11 +1382,11 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
           
-          Contact ( vss, via2, X, Y, height, height )
-          contactPad = Contact ( vss, via1, X, Y, height, height )
-          Horizontal ( contactPad, vertical_east_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vss, via1, vertical_east_vss[-1].getX(), Y, height, height )
-          Contact    ( vss, via2, vertical_east_vss[-1].getX(), Y, height, height )
+          Contact.create ( vss, via2, X, Y, height, height )
+          contactPad = Contact.create ( vss, via1, X, Y, height, height )
+          Horizontal.create ( contactPad, vertical_east_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vss, via1, vertical_east_vss[-1].getX(), Y, height, height )
+          Contact.create    ( vss, via2, vertical_east_vss[-1].getX(), Y, height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1400,10 +1398,10 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
          #Contact ( vdd, via2, X, Y, height, height )
-          contactPad = Contact ( vdd, via1, X, Y, height, height )
-          Horizontal ( contactPad, vertical_east_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vdd, via1, vertical_east_vdd[-1].getX(), Y, height, height )
-          Contact    ( vdd, via2, vertical_east_vdd[-1].getX(), Y, height, height )
+          contactPad = Contact.create ( vdd, via1, X, Y, height, height )
+          Horizontal.create ( contactPad, vertical_east_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vdd, via1, vertical_east_vdd[-1].getX(), Y, height, height )
+          Contact.create    ( vdd, via2, vertical_east_vdd[-1].getX(), Y, height, height )
       
   for pad_inst in pad_west :
     if isInternalPowerPad ( pad_inst )  or isExternalPowerPad ( pad_inst )  \
@@ -1419,10 +1417,10 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
          #Contact ( vss, via2, X, Y, height, height )
-          contactPad = Contact ( vss, via1, X, Y, height, height )
-          Horizontal ( contactPad, vertical_west_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vss, via1, vertical_west_vss[-1].getX(), Y, height, height )
-          Contact    ( vss, via2, vertical_west_vss[-1].getX(), Y, height, height )
+          contactPad = Contact.create ( vss, via1, X, Y, height, height )
+          Horizontal.create ( contactPad, vertical_west_vss[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vss, via1, vertical_west_vss[-1].getX(), Y, height, height )
+          Contact.create    ( vss, via2, vertical_west_vss[-1].getX(), Y, height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1434,10 +1432,10 @@ def pyPowerRing ( cell, core, n ) :
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
          #Contact ( vdd, via2, X, Y, height, height )
-          contactPad = Contact ( vdd, via1, X, Y, height, height )
-          Horizontal ( contactPad, vertical_west_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vdd, via1, vertical_west_vdd[-1].getX(), Y, height, height )
-          Contact    ( vdd, via2, vertical_west_vdd[-1].getX(), Y, height, height )
+          contactPad = Contact.create ( vdd, via1, X, Y, height, height )
+          Horizontal.create ( contactPad, vertical_west_vdd[-1], metal1, Y, DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vdd, via1, vertical_west_vdd[-1].getX(), Y, height, height )
+          Contact.create    ( vdd, via2, vertical_west_vdd[-1].getX(), Y, height, height )
       
   for pad_inst in pad_north : 
     if isInternalPowerPad ( pad_inst )  or isExternalPowerPad ( pad_inst )  \
@@ -1452,15 +1450,15 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          Contact    ( vss, via1, X, Y, height, height )
-         #Contact    ( vss, via2, X, Y, height, height )
+          Contact.create    ( vss, via1, X, Y, height, height )
+         #Contact.create    ( vss, via2, X, Y, height, height )
     
-          contactPad = Contact ( vss, metal1, X, Y, height, height )
-          Vertical   ( contactPad, horizontal_north_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vss, via1, X, horizontal_north_vss[-1].getY(), height, height )
+          contactPad = Contact.create ( vss, metal1, X, Y, height, height )
+          Vertical.create   ( contactPad, horizontal_north_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vss, via1, X, horizontal_north_vss[-1].getY(), height, height )
           if allowedDepth > 2:
-            Contact  ( vss, via2, X, horizontal_north_vss[-1].getY(), height, height )
-            Contact  ( vss, via3, X, horizontal_north_vss[-1].getY(), height, height )
+            Contact.create  ( vss, via2, X, horizontal_north_vss[-1].getY(), height, height )
+            Contact.create  ( vss, via3, X, horizontal_north_vss[-1].getY(), height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1471,15 +1469,15 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
           
-          Contact    ( vdd, via1, X, Y, height, height )
-         #Contact    ( vdd, via2, X, Y, height, height )
+          Contact.create    ( vdd, via1, X, Y, height, height )
+         #Contact.create    ( vdd, via2, X, Y, height, height )
           
-          contactPad = Contact ( vdd, metal1, X, Y, height, height )
-          Vertical   ( contactPad, horizontal_north_vdd[-1], metal1, X, DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vdd, via1, X, horizontal_north_vdd[-1].getY(), height, height )
+          contactPad = Contact.create ( vdd, metal1, X, Y, height, height )
+          Vertical.create   ( contactPad, horizontal_north_vdd[-1], metal1, X, DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vdd, via1, X, horizontal_north_vdd[-1].getY(), height, height )
           if allowedDepth > 2:
-            Contact  ( vdd, via2, X, horizontal_north_vdd[-1].getY(), height, height )
-            Contact  ( vdd, via3, X, horizontal_north_vdd[-1].getY(), height, height )
+            Contact.create  ( vdd, via2, X, horizontal_north_vdd[-1].getY(), height, height )
+            Contact.create  ( vdd, via3, X, horizontal_north_vdd[-1].getY(), height, height )
   
   for pad_inst in pad_south : 
     if isInternalPowerPad ( pad_inst )  or isExternalPowerPad ( pad_inst )  \
@@ -1494,15 +1492,15 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          Contact    ( vss, via1, X, Y, height, height )
-         #Contact    ( vss, via2, X, Y, height, height )
+          Contact.create    ( vss, via1, X, Y, height, height )
+         #Contact.create    ( vss, via2, X, Y, height, height )
           
-          contactPad = Contact ( vss, metal1, X, Y, height, height )
-          Vertical ( contactPad, horizontal_south_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
-          Contact    ( vss, via1, X, horizontal_south_vss[-1].getY(), height, height )
+          contactPad = Contact.create ( vss, metal1, X, Y, height, height )
+          Vertical.create ( contactPad, horizontal_south_vss[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
+          Contact.create    ( vss, via1, X, horizontal_south_vss[-1].getY(), height, height )
           if allowedDepth > 2:
-            Contact  ( vss, via2, X, horizontal_south_vss[-1].getY(), height, height )
-            Contact  ( vss, via3, X, horizontal_south_vss[-1].getY(), height, height )
+            Contact.create  ( vss, via2, X, horizontal_south_vss[-1].getY(), height, height )
+            Contact.create  ( vss, via3, X, horizontal_south_vss[-1].getY(), height, height )
       
       for element in NetExternalComponents.get ( pad_inst.getMasterCell().getNet("vddi") ):
         layer   = element.getLayer()
@@ -1513,15 +1511,15 @@ def pyPowerRing ( cell, core, n ) :
           X = pad_inst.getTransformation().getX ( element.getX(), element.getY() ) 
           Y = pad_inst.getTransformation().getY ( element.getX(), element.getY() )
 
-          Contact    ( vdd, via1, X, Y, height, height )
-         #Contact    ( vdd, via2, X, Y, height, height )
+          Contact.create    ( vdd, via1, X, Y, height, height )
+         #Contact.create    ( vdd, via2, X, Y, height, height )
           
-          contactPad = Contact ( vdd, metal1, X, Y, height, height )
-          Vertical ( contactPad, horizontal_south_vdd[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
-          Contact  ( vdd, via1, X, horizontal_south_vdd[-1].getY(), height, height )
+          contactPad = Contact.create ( vdd, metal1, X, Y, height, height )
+          Vertical.create ( contactPad, horizontal_south_vdd[-1], metal1, X , DbU_lambda ( RING_WIDTH ) )
+          Contact.create  ( vdd, via1, X, horizontal_south_vdd[-1].getY(), height, height )
           if allowedDepth > 2:
-            Contact  ( vdd, via2, X, horizontal_south_vdd[-1].getY(), height, height )
-            Contact  ( vdd, via3, X, horizontal_south_vdd[-1].getY(), height, height )
+            Contact.create  ( vdd, via2, X, horizontal_south_vdd[-1].getY(), height, height )
+            Contact.create  ( vdd, via3, X, horizontal_south_vdd[-1].getY(), height, height )
   
 
   #####################################                      ###########################
@@ -1558,22 +1556,22 @@ def pyPowerRing ( cell, core, n ) :
         # On calcule les differents points aux angles pour chaque net
         X_point = cell_Xmin + Y
         Y_point = cell_Ymin + Y
-        contact = Contact ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
+        contact = Contact.create ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
         points_0.append ( dict ( [ ['X',X_point], ['Y',Y_point], ['N',NET], ['L',layer], ['R',RING_HEIGHT], ['C',contact] ] ) )
   
         X_point = cell_Xmin + Y
         Y_point = cell_Ymin + ( cell_Ymax - Y )
-        contact = Contact ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
+        contact = Contact.create ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
         points_1.append ( dict ( [ ['X',X_point], ['Y',Y_point], ['N',NET], ['L',layer], ['R',RING_HEIGHT], ['C',contact] ] ) )
         
         X_point = cell_Xmin + ( cell_Xmax - Y )
         Y_point = cell_Ymin + ( cell_Ymax - Y )
-        contact = Contact ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
+        contact = Contact.create ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
         points_2.append ( dict ( [ ['X',X_point], ['Y',Y_point], ['N',NET], ['L',layer], ['R',RING_HEIGHT], ['C',contact] ] ) )
       
         X_point = cell_Xmin + ( cell_Xmax - Y )
         Y_point = cell_Ymin + Y
-        contact = Contact ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
+        contact = Contact.create ( NET, layer, X_point, Y_point, RING_HEIGHT, RING_HEIGHT )
         points_3.append ( dict ( [ ['X',X_point], ['Y',Y_point], ['N',NET], ['L',layer], ['R',RING_HEIGHT], ['C',contact] ] ) )
       # end of while
   # end of while
@@ -1587,16 +1585,16 @@ def pyPowerRing ( cell, core, n ) :
   
     if ins_pad == pad_north[0] :
       for point in points_1 :
-        contact = Contact ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
-        Horizontal ( point['C'], contact, point['L'], point['Y'], point['R'] ) 
+        contact = Contact.create ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
+        Horizontal.create ( point['C'], contact, point['L'], point['Y'], point['R'] ) 
     else :
       for point in points_1 :
-        Horizontal ( point['N'], point['L'], point['Y'], point['R'], old_X_pad, X_pad ) 
+        Horizontal.create ( point['N'], point['L'], point['Y'], point['R'], old_X_pad, X_pad ) 
       
     if ins_pad == pad_north[-1] :
       for point in points_2 :
-        contact = Contact ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
-        Horizontal ( contact, point['C'], point['L'], point['Y'], point['R'] ) 
+        contact = Contact.create ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
+        Horizontal.create ( contact, point['C'], point['L'], point['Y'], point['R'] ) 
   
     old_X_pad = X_pad
 
@@ -1607,16 +1605,16 @@ def pyPowerRing ( cell, core, n ) :
   
     if ins_pad == pad_east[0] :
       for point in points_3 :
-        contact = Contact ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
-        Vertical ( point['C'], contact, point['L'], point['X'], point['R'] )  
+        contact = Contact.create ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
+        Vertical.create ( point['C'], contact, point['L'], point['X'], point['R'] )  
     else :
       for point in points_3 :
-        Vertical ( point['N'], point['L'], point['X'], point['R'], old_Y_pad, Y_pad )  
+        Vertical.create ( point['N'], point['L'], point['X'], point['R'], old_Y_pad, Y_pad )  
   
     if ins_pad == pad_east[-1] :
       for point in points_2 :
-        contact = Contact ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
-        Vertical ( contact, point['C'], point['L'], point['X'], point['R'] )  
+        contact = Contact.create ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
+        Vertical.create ( contact, point['C'], point['L'], point['X'], point['R'] )  
        
     old_Y_pad = Y_pad
 
@@ -1627,16 +1625,16 @@ def pyPowerRing ( cell, core, n ) :
   
     if ins_pad == pad_south[0] :
       for point in points_0 :
-        contact = Contact ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
-        Horizontal ( point['C'], contact, point['L'], point['Y'], point['R'] ) 
+        contact = Contact.create ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
+        Horizontal.create ( point['C'], contact, point['L'], point['Y'], point['R'] ) 
     else :
       for point in points_0 :
-        Horizontal ( point['N'], point['L'], point['Y'], point['R'], old_X_pad, X_pad ) 
+        Horizontal.create ( point['N'], point['L'], point['Y'], point['R'], old_X_pad, X_pad ) 
       
     if ins_pad == pad_south[-1] :
       for point in points_3 :
-        contact = Contact ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
-        Horizontal ( contact, point['C'], point['L'], point['Y'], point['R'] ) 
+        contact = Contact.create ( point['N'], point['L'], X_pad, point['Y'], point['R'], point['R'] )
+        Horizontal.create ( contact, point['C'], point['L'], point['Y'], point['R'] ) 
   
     old_X_pad = X_pad
     
@@ -1647,16 +1645,16 @@ def pyPowerRing ( cell, core, n ) :
   
     if ins_pad == pad_west[0] :
       for point in points_0 :
-        contact = Contact ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
-        Vertical ( point['C'], contact, point['L'], point['X'], point['R'] )  
+        contact = Contact.create ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
+        Vertical.create ( point['C'], contact, point['L'], point['X'], point['R'] )  
     else :
       for point in points_0 :
-        Vertical ( point['N'], point['L'], point['X'], point['R'], old_Y_pad, Y_pad )  
+        Vertical.create ( point['N'], point['L'], point['X'], point['R'], old_Y_pad, Y_pad )  
   
     if ins_pad == pad_west[-1] :
       for point in points_1 :
-        contact = Contact ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
-        Vertical ( contact, point['C'], point['L'], point['X'], point['R'] )  
+        contact = Contact.create ( point['N'], point['L'], point['X'], Y_pad, point['R'], point['R'] )
+        Vertical.create ( contact, point['C'], point['L'], point['X'], point['R'] )  
        
     old_Y_pad = Y_pad
 
@@ -1676,7 +1674,7 @@ def create_inst ( model, name, cell ) :
   if not modelmastercell :
     raise ErrorMessage(2,"Cannot create instance %s : model %s does not exist in the database."%(name,model))
     
-  inst = Instance ( cell, name, modelmastercell )
+  inst = Instance.create ( cell, name, modelmastercell )
   
   # Connection
   plugGround = inst.getPlug ( iter(modelmastercell.getGroundNets()).next() )
@@ -1694,17 +1692,17 @@ def place ( inst, x, y, orientation ) :
     raise ErrorMessage(2,"Layout : The instance of %s has not been created."%str(inst.getName()))
  
   # Error : if the instance is already placed
-  if inst.getPlacementStatus() == PlacementStatusFIXED :
+  if inst.getPlacementStatus() == Instance.PlacementStatus.FIXED :
     raise ErrorMessage(2,"Placement : the instance %s is already placed."%str(inst.getName()))
   
   UpdateSession.open()
     
   ## A COMPLETER POUR FAIRE DES PLACE AVEC TOUTES LES SYMETRIES ##
-  if orientation == OrientationMY :
+  if orientation == Transformation.Orientation.MY :
     y += inst.getAbutmentBox().getHeight()
     
   inst.setTransformation  ( Transformation ( x, y, orientation ) )
-  inst.setPlacementStatus ( PlacementStatusFIXED ) 
+  inst.setPlacementStatus ( Instance.PlacementStatus.FIXED ) 
 
   UpdateSession.close()
 
@@ -1737,7 +1735,7 @@ def getAllStandardInstances ( cell ) :
   
   for element in cell.getInstances():
     # FOR EACH PLACED or FIXED instance of the cell, we call getStandardInstances method
-    if element.getPlacementStatus() != PlacementStatusUNPLACED :
+    if element.getPlacementStatus() != Instance.PlacementStatus.UNPLACED :
       reference = getStandardInstances ( cell, element, element.getTransformation(), cell.getName() )
 
   return reference
@@ -1752,7 +1750,7 @@ def getStandardInstances ( cell, inst, transformation, name_masterinst ) :
   global standard_instances_masque, reference
 
   # Si l'instance est PLACED ou FIXED
-  if inst.getPlacementStatus() != PlacementStatusUNPLACED :
+  if inst.getPlacementStatus() != Instance.PlacementStatus.UNPLACED :
     name = str ( inst.getMasterCell().getLibrary().getName() )
     
     if inst.isLeaf() :
@@ -2057,22 +2055,22 @@ def createGrid ( my_tuple ) :
   def CreateZ ( contact1, contact2 ) :
     centerX   = (contact1.getX() + contact2.getX() ) / 2
     centerX   = centerX - (centerX % DbU_lambda(5))
-    zContact1 = Contact ( net, via5, centerX, contact1.getY(), DbU_lambda(11), DbU_lambda(11) )
-    zContact2 = Contact ( net, via5, centerX, contact2.getY(), DbU_lambda(11), DbU_lambda(11) )
+    zContact1 = Contact.create ( net, via5, centerX, contact1.getY(), DbU_lambda(11), DbU_lambda(11) )
+    zContact2 = Contact.create ( net, via5, centerX, contact2.getY(), DbU_lambda(11), DbU_lambda(11) )
     
-    Horizontal ( contact1,  zContact1, metal6, contact1.getY(),  DbU_lambda(12) )
-    Vertical   ( zContact1, zContact2, metal5, zContact1.getX(), DbU_lambda(12) )
-    Horizontal ( zContact2, contact2,  metal6, zContact2.getY(), DbU_lambda(12) )
+    Horizontal.create ( contact1,  zContact1, metal6, contact1.getY(),  DbU_lambda(12) )
+    Vertical.create   ( zContact1, zContact2, metal5, zContact1.getX(), DbU_lambda(12) )
+    Horizontal.create ( zContact2, contact2,  metal6, zContact2.getY(), DbU_lambda(12) )
     
   def CreateN ( contact1, contact2 ) :
     centerY   = ( contact1.getY() + contact2.getY() ) / 2
     centerY   = centerY - ( centerY % DbU_lambda(5) )
-    nContact1 = Contact ( net, via5, contact1.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
-    nContact2 = Contact ( net, via5, contact2.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
+    nContact1 = Contact.create ( net, via5, contact1.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
+    nContact2 = Contact.create ( net, via5, contact2.getX(), centerY, DbU_lambda(11), DbU_lambda(11) )
     
-    Vertical   ( contact1,  nContact1, metal5, contact1.getX(),  DbU_lambda(12) )
-    Horizontal ( nContact1, nContact2, metal6, nContact1.getY(), DbU_lambda(12) )
-    Vertical   ( nContact2, contact2,  metal5, nContact2.getX(), DbU_lambda(12) )
+    Vertical.create   ( contact1,  nContact1, metal5, contact1.getX(),  DbU_lambda(12) )
+    Horizontal.create ( nContact1, nContact2, metal6, nContact1.getY(), DbU_lambda(12) )
+    Vertical.create   ( nContact2, contact2,  metal5, nContact2.getX(), DbU_lambda(12) )
     
   def FindPositionForContact ( position, contactlist1, contactlist2 ) :
     def PositionIsInTargetRange ( position, target ) :
@@ -2117,9 +2115,9 @@ def createGrid ( my_tuple ) :
   _Ymax = coreBox.getYMax()
   ck_contact_list = []  
 
-  getNetInstances ( cell, net, Transformation ( 0, 0, OrientationID ) )
+  getNetInstances ( cell, net, Transformation ( 0, 0, Transformation.Orientation.ID ) )
    
-  db   = getDataBase()
+  db   = DataBase.getDB()
   via1 = db.getTechnology().getLayer ( "VIA12" )
   via2 = db.getTechnology().getLayer ( "VIA23" )
   via3 = db.getTechnology().getLayer ( "VIA34" )
@@ -2136,10 +2134,10 @@ def createGrid ( my_tuple ) :
   gridBoundingBox.inflate ( DbU_lambda(15) )
   
   #Create the Bounding Box grid
-  NEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
-  NWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
-  SEContact    = Contact ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
-  SWContact    = Contact ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
+  NEContact    = Contact.create ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
+  NWContact    = Contact.create ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMax() , DbU_lambda(11), DbU_lambda(11) )
+  SEContact    = Contact.create ( net, via5, gridBoundingBox.getXMin(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
+  SWContact    = Contact.create ( net, via5, gridBoundingBox.getXMax(), gridBoundingBox.getYMin() , DbU_lambda(11), DbU_lambda(11) )
   northSegment = Segment ( NEContact, NWContact, metal6, DbU_lambda(12) )
   southSegment = Segment ( SEContact, SWContact, metal6, DbU_lambda(12) )
   eastSegment  = Segment ( NEContact, SEContact, metal5, DbU_lambda(12) )
@@ -2178,7 +2176,7 @@ def createGrid ( my_tuple ) :
             elif x == gridBoundingBox.getXMax() :
               gridContact = NEContact
             else :
-              gridContact = Contact(southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
+              gridContact = Contact.create(southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
               southContacts.append(x)
               
           elif y > gridBoundingBox.getYMax() :
@@ -2187,7 +2185,7 @@ def createGrid ( my_tuple ) :
             elif x == gridBoundingBox.getXMax() :
               gridBoundingBox = SEContact
             else :
-              gridContact = Contact(northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
+              gridContact = Contact.create(northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
               northContacts.append(x)
           else : 
             raise ErrorMessage(2,"RouteCK : bad pad placement.") 
@@ -2200,7 +2198,7 @@ def createGrid ( my_tuple ) :
             elif y == gridBoundingBox.getYMax() :
               gridContact = NWContact
             else :
-              gridContact = Contact(eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
+              gridContact = Contact.create(eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
               eastContacts.append(y)
           elif x > gridBoundingBox.getXMax() :
             if y == gridBoundingBox.getYMin() :
@@ -2208,7 +2206,7 @@ def createGrid ( my_tuple ) :
             elif y == gridBoundingBox.getYMax() :
               gridContact = SWContact
             else :
-              gridContact = Contact(westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
+              gridContact = Contact.create(westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11))
               westContacts.append(y)
           else : 
             raise ErrorMessage(2,"RouteCK : bad pad placement.") 
@@ -2219,7 +2217,7 @@ def createGrid ( my_tuple ) :
                     ]
           raise ErrorMessage(2,message)
 
-        compContact = Contact ( net, via5, x, y, DbU_lambda(11), DbU_lambda(11) )
+        compContact = Contact.create ( net, via5, x, y, DbU_lambda(11), DbU_lambda(11) )
     
         Segment ( compContact, gridContact, layer , DbU_lambda(12) )
     
@@ -2244,8 +2242,8 @@ def createGrid ( my_tuple ) :
     x = x - (x % DbU_lambda(5))
     x = FindPositionForContact(x, northContacts, southContacts)
     
-    contact1 = Contact ( southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
-    contact2 = Contact ( northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
+    contact1 = Contact.create ( southSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
+    contact2 = Contact.create ( northSegment, via5, x, 0, DbU_lambda(11), DbU_lambda(11))
     
     Segment ( contact1, contact2, metal5, DbU_lambda(12) )
     
@@ -2256,14 +2254,14 @@ def createGrid ( my_tuple ) :
     y = y - ( y % DbU_lambda(5) )
     y = FindPositionForContact ( y, eastContacts, westContacts )
     
-    contact1 = Contact ( westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
-    contact2 = Contact ( eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
+    contact1 = Contact.create ( westSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
+    contact2 = Contact.create ( eastSegment, via5, 0, y, DbU_lambda(11), DbU_lambda(11) )
     
     horizontal = Segment ( contact1, contact2, metal6, DbU_lambda(12) )
     
     yList.append ( y )
 
-    for x in xList : Contact ( horizontal, via5, x, 0, DbU_lambda(11), DbU_lambda(11) )
+    for x in xList : Contact.create ( horizontal, via5, x, 0, DbU_lambda(11), DbU_lambda(11) )
           
   # Connection to the grid
   # Cette liste contient les contacts qui sont deja crees 
@@ -2273,7 +2271,7 @@ def createGrid ( my_tuple ) :
   for contact in ck_contact_list :
     xContact = contact[0]
     yContact = contact[1]
-    plugContact = Contact ( net, via1 , xContact, yContact, via12Side, via12Side ) 
+    plugContact = Contact.create ( net, via1 , xContact, yContact, via12Side, via12Side ) 
     #find the closest x,y on grid
     xList.insert ( 0, gridBoundingBox.getXMin() )
     yList.insert ( 0, gridBoundingBox.getYMin() )
@@ -2286,35 +2284,35 @@ def createGrid ( my_tuple ) :
     xDistance = abs ( xTarget - xContact )
     yDistance = abs ( yTarget - yContact )
 
-    Contact(net, via2, xContact, yContact, via23Side, via23Side ) 
-    Contact(net, via3, xContact, yContact, via34Side, via34Side ) 
-    Contact(net, via4, xContact, yContact, via45Side, via45Side )
+    Contact.create(net, via2, xContact, yContact, via23Side, via23Side ) 
+    Contact.create(net, via3, xContact, yContact, via34Side, via34Side ) 
+    Contact.create(net, via4, xContact, yContact, via45Side, via45Side )
 
     if xDistance != 0 or yDistance != 0 :
       if ( xDistance <= yDistance + DbU_lambda(10) ):  # test pour faire un horizontal
         if xDistance != 0 :
           if abs(xDistance) <= DbU_lambda(3) :
-            gridContact = Contact ( net, metal5, xTarget, yContact, via56Side, via56Side ) 
+            gridContact = Contact.create ( net, metal5, xTarget, yContact, via56Side, via56Side ) 
             layer = metal5
           else :
-            Contact ( net, via5, xContact, yContact, via56Side, via56Side )
-            gridContact = Contact ( net, via5, xTarget, yContact, via56Side, via56Side ) 
+            Contact.create ( net, via5, xContact, yContact, via56Side, via56Side )
+            gridContact = Contact.create ( net, via5, xTarget, yContact, via56Side, via56Side ) 
             layer = metal6
-          Horizontal( gridContact, plugContact, layer, gridContact.getY(), DbU_lambda(2) )
+          Horizontal.create( gridContact, plugContact, layer, gridContact.getY(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xTarget, yContact, via56Side, via56Side ) 
+          gridContact = Contact.create ( net, via5, xTarget, yContact, via56Side, via56Side ) 
       else:
         if yDistance != 0 :
           if abs(yDistance) <= DbU_lambda(3) :
             layer = metal6
-            gridContact = Contact ( net, metal6, xContact, yTarget, via56Side, via56Side ) 
-            Contact ( net, via5, xContact, yContact, via56Side, via56Side ) 
+            gridContact = Contact.create ( net, metal6, xContact, yTarget, via56Side, via56Side ) 
+            Contact.create ( net, via5, xContact, yContact, via56Side, via56Side ) 
           else :
-            gridContact = Contact ( net, via5, xContact, yTarget, via56Side, via56Side ) 
+            gridContact = Contact.create ( net, via5, xContact, yTarget, via56Side, via56Side ) 
             layer = metal5
-          Vertical ( gridContact, plugContact, layer, gridContact.getX(), DbU_lambda(2) )
+          Vertical.create ( gridContact, plugContact, layer, gridContact.getX(), DbU_lambda(2) )
         else :
-          gridContact = Contact ( net, via5, xContact, yTarget, via56Side, via56Side ) 
+          gridContact = Contact.create ( net, via5, xContact, yTarget, via56Side, via56Side ) 
 
   del _Xmin
   del _Ymin 
@@ -2335,7 +2333,7 @@ def getNetInstances ( cell, net, transformation) :
     
     # Si c est une instance de type leaf 
     if ins.isLeaf() :
-      if ins.getPlacementStatus() == PlacementStatusUNPLACED :
+      if ins.getPlacementStatus() == Instance.PlacementStatus.UNPLACED :
         raise ErrorMessage(2,"getNetInstances : instance %s is unplaced" % str(ins.getName()))
       else :
         if not isPad ( ins ) :
@@ -2382,7 +2380,7 @@ def getNetInstances ( cell, net, transformation) :
           if ( not ck_contact_list ) : print "Error in function getNetInstances : no segment found"
               
     else :
-      if ins.getPlacementStatus() == PlacementStatusUNPLACED :
+      if ins.getPlacementStatus() == Instance.PlacementStatus.UNPLACED :
         raise ErrorMessage(2,"getNetInstances : instance %s is unplaced" % str(ins.getName()))
       else :        
         getNetInstances ( cell, plug.getMasterNet(), transformation.getTransformation ( ins.getTransformation () ))
@@ -2391,12 +2389,12 @@ def getNetInstances ( cell, net, transformation) :
 def getNonCLayer ( layer ) :
   '''This function returns the nonC layer corresponding to the one given as argument'''
   
-  metal1 = getDataBase ().getTechnology ().getLayer ( "METAL1" )
-  metal2 = getDataBase ().getTechnology ().getLayer ( "METAL2" )
-  metal3 = getDataBase ().getTechnology ().getLayer ( "METAL3" )
-  metal4 = getDataBase ().getTechnology ().getLayer ( "METAL4" )
-  metal5 = getDataBase ().getTechnology ().getLayer ( "METAL5" )
-  metal6 = getDataBase ().getTechnology ().getLayer ( "METAL6" )
+  metal1 = DataBase.getDB ().getTechnology ().getLayer ( "METAL1" )
+  metal2 = DataBase.getDB ().getTechnology ().getLayer ( "METAL2" )
+  metal3 = DataBase.getDB ().getTechnology ().getLayer ( "METAL3" )
+  metal4 = DataBase.getDB ().getTechnology ().getLayer ( "METAL4" )
+  metal5 = DataBase.getDB ().getTechnology ().getLayer ( "METAL5" )
+  metal6 = DataBase.getDB ().getTechnology ().getLayer ( "METAL6" )
 
   if re.search ( "CMETAL1", str ( layer.getName() ) ) : return metal1
   if re.search ( "CMETAL2", str ( layer.getName() ) ) : return metal2
@@ -2411,7 +2409,7 @@ def getNonCLayer ( layer ) :
 def Segment ( component1, component2, layer, width ) :
   '''This function creates a segment linking component1 and component2'''
   
-  if   component1.getX() == component2.getX() : return Vertical   ( component1, component2, layer, component1.getX(), width )
-  elif component1.getY() == component2.getY() : return Horizontal ( component1, component2, layer, component1.getY(), width )
+  if   component1.getX() == component2.getX() : return Vertical.create   ( component1, component2, layer, component1.getX(), width )
+  elif component1.getY() == component2.getY() : return Horizontal.create ( component1, component2, layer, component1.getY(), width )
   else:
     raise ErrorMessage(2,"Segment : the components must be horizontaly or verticaly aligned.")

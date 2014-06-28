@@ -390,7 +390,7 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
     raise Exception ( err )
  
   # Error : if the instance is already placed
-  if hur_inst.getPlacementStatus() == PlacementStatusFIXED :
+  if hur_inst.getPlacementStatus() == Instance.PlacementStatus.FIXED :
     err = "\n[Stratus ERROR] Placement : the instance " + st_inst._name + " is already placed.\n"
     raise Exception ( err )      
   
@@ -409,45 +409,45 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
   cell._insref = st_inst
 
   ##### Placement #####
-  if st_inst._sym == OrientationID :
+  if st_inst._sym == Transformation.Orientation.ID :
     st_inst._x = x
     st_inst._y = y
     
-  elif st_inst._sym == OrientationMX :
+  elif st_inst._sym == Transformation.Orientation.MX :
     abtemp     = ab ( st_inst, cell )
   
     st_inst._x = x + abtemp.getWidth ()
     st_inst._y = y
     
-  elif st_inst._sym == OrientationMY :
+  elif st_inst._sym == Transformation.Orientation.MY :
     abtemp     = ab ( st_inst, cell )
   
     st_inst._x = x
     st_inst._y = y + abtemp.getHeight ()
     
-  elif st_inst._sym == OrientationR2 :
+  elif st_inst._sym == Transformation.Orientation.R2 :
     abtemp     = ab ( st_inst, cell )
   
     st_inst._x = x + abtemp.getWidth  ()
     st_inst._y = y + abtemp.getHeight ()
     
-  elif st_inst._sym == OrientationR1 :
+  elif st_inst._sym == Transformation.Orientation.R1 :
     abtemp     = ab ( st_inst, cell )
   
     st_inst._x = x + abtemp.getHeight ()
     st_inst._y = y
     
-  elif st_inst._sym == OrientationR3 :
+  elif st_inst._sym == Transformation.Orientation.R3 :
     abtemp     = ab ( st_inst, cell )
   
     st_inst._x = x
     st_inst._y = y + abtemp.getWidth ()
     
-  elif st_inst._sym == OrientationYR :
+  elif st_inst._sym == Transformation.Orientation.YR :
     st_inst._x = x
     st_inst._y = y
     
-  elif st_inst._sym == OrientationXR :
+  elif st_inst._sym == Transformation.Orientation.XR :
     abtemp     = ab ( st_inst, cell )
 
     st_inst._x = x + abtemp.getHeight ()
@@ -457,7 +457,7 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
     raise Exception ( "\n[Stratus ERROR] Placement : wrong transformation.\n" )
 
   # if the abutment box is not at 0 0  FIXME
-  if st_inst._sym == OrientationMY :
+  if st_inst._sym == Transformation.Orientation.MY :
     x = st_inst._x + hur_inst.getAbutmentBox().getXMin()
     y = st_inst._y + hur_inst.getAbutmentBox().getYMin()
   else :
@@ -470,12 +470,12 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
 
   if   plac == PLACED :
     cell._hur_cell.setAbutmentBox ( cell._hur_cell.getAbutmentBox ().merge ( hur_inst.getAbutmentBox () ) )
-    hur_inst.setPlacementStatus   ( PlacementStatusPLACED )
+    hur_inst.setPlacementStatus   ( Instance.PlacementStatus.PLACED )
   elif plac == FIXED :
     cell._hur_cell.setAbutmentBox ( cell._hur_cell.getAbutmentBox ().merge ( hur_inst.getAbutmentBox () ) )
-    hur_inst.setPlacementStatus   ( PlacementStatusFIXED )
+    hur_inst.setPlacementStatus   ( Instance.PlacementStatus.FIXED )
   elif plac == UNPLACED :
-    hur_inst.setPlacementStatus   ( PlacementStatusUNPLACED )
+    hur_inst.setPlacementStatus   ( Instance.PlacementStatus.UNPLACED )
   else :
     raise Exception ( "\n[Stratus ERROR] Placement : wrong argument for type of placement.\n" )
 
@@ -486,14 +486,14 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
 
 ## Two names for the symetry ##
 def transformation ( symetry ) :
-  if   symetry == NOSYM or symetry == OrientationID : transf = OrientationID
-  elif symetry == SYM_X or symetry == OrientationMX : transf = OrientationMX
-  elif symetry == SYM_Y or symetry == OrientationMY : transf = OrientationMY
-  elif symetry == SYMXY or symetry == OrientationR2 : transf = OrientationR2
-  elif symetry == ROT_P or symetry == OrientationR1 : transf = OrientationR1
-  elif symetry == ROT_M or symetry == OrientationR3 : transf = OrientationR3
-  elif symetry == SY_RP or symetry == OrientationYR : transf = OrientationYR
-  elif symetry == SY_RM or symetry == OrientationXR : transf = OrientationXR
+  if   symetry == NOSYM or symetry == Transformation.Orientation.ID : transf = Transformation.Orientation.ID
+  elif symetry == SYM_X or symetry == Transformation.Orientation.MX : transf = Transformation.Orientation.MX
+  elif symetry == SYM_Y or symetry == Transformation.Orientation.MY : transf = Transformation.Orientation.MY
+  elif symetry == SYMXY or symetry == Transformation.Orientation.R2 : transf = Transformation.Orientation.R2
+  elif symetry == ROT_P or symetry == Transformation.Orientation.R1 : transf = Transformation.Orientation.R1
+  elif symetry == ROT_M or symetry == Transformation.Orientation.R3 : transf = Transformation.Orientation.R3
+  elif symetry == SY_RP or symetry == Transformation.Orientation.YR : transf = Transformation.Orientation.YR
+  elif symetry == SY_RM or symetry == Transformation.Orientation.XR : transf = Transformation.Orientation.XR
   else :
     err = "\n[Stratus ERROR] Placement :Illegal transformation.\n"
     raise Exception ( err )
@@ -519,19 +519,19 @@ def width ( ins ) :
 
 ## Test of symetry ##
 def vertical ( sym ) :
-  return sym == OrientationID or sym == OrientationMX or sym == OrientationMY or sym == OrientationR2
+  return sym == Transformation.Orientation.ID or sym == Transformation.Orientation.MX or sym == Transformation.Orientation.MY or sym == Transformation.Orientation.R2
   
 def horizontal ( sym ) :
-  return sym == OrientationR1 or sym == OrientationR3 or sym == OrientationYR or sym == OrientationXR    
+  return sym == Transformation.Orientation.R1 or sym == Transformation.Orientation.R3 or sym == Transformation.Orientation.YR or sym == Transformation.Orientation.XR    
   
 def bas ( sym ) :
-  return sym == OrientationID or sym == OrientationMX or sym == OrientationR1 or sym == OrientationYR
+  return sym == Transformation.Orientation.ID or sym == Transformation.Orientation.MX or sym == Transformation.Orientation.R1 or sym == Transformation.Orientation.YR
   
 def haut ( sym ) :
-  return sym == OrientationR2 or sym == OrientationMY or sym == OrientationR3 or sym == OrientationXR 
+  return sym == Transformation.Orientation.R2 or sym == Transformation.Orientation.MY or sym == Transformation.Orientation.R3 or sym == Transformation.Orientation.XR 
   
 def gauche ( sym ) :
-  return sym == OrientationID or sym == OrientationMY or sym == OrientationR3 or sym == OrientationYR   
+  return sym == Transformation.Orientation.ID or sym == Transformation.Orientation.MY or sym == Transformation.Orientation.R3 or sym == Transformation.Orientation.YR   
   
 def droite ( sym ) :
-  return sym == OrientationR2 or sym == OrientationMX or sym == OrientationR1 or sym == OrientationXR
+  return sym == Transformation.Orientation.R2 or sym == Transformation.Orientation.MX or sym == Transformation.Orientation.R1 or sym == Transformation.Orientation.XR

@@ -1,18 +1,17 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2007-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Sophie BELLOEIL               |
-// |  E-mail      :       Sophie.Belloeil@asim.lip6.fr               |
+// |  Author      :                     Sophie BELLOEIL              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyHorizontal.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Module  :  "./PyHorizontal.cpp"                            |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyNet.h"
@@ -21,7 +20,6 @@
 
 
 namespace  Isobar {
-
 
 using namespace Hurricane;
 
@@ -60,65 +58,9 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHorizontal_translate ()"
-
-  static PyObject* PyHorizontal_translate ( PyHorizontal *self, PyObject* args ) {
-    trace << "PyHorizontal_translate ()" << endl;
-    
-    HTRY
-    METHOD_HEAD ( "Horizontal.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Horizontal.translate", &dx, &dy)) {
-        horizontal->translate(dx, dy);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal.translate()" );
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
-  // ---------------------------------------------------------------
-  // PyHorizontal Attribute Method table.
-
-  PyMethodDef PyHorizontal_Methods[] =
-    { { "getY"       , (PyCFunction)PyHorizontal_getY       , METH_NOARGS , "Get the segment Y position." }
-    , { "getDxSource", (PyCFunction)PyHorizontal_getDxSource, METH_NOARGS , "Get the segment source X offset." }
-    , { "getDxTarget", (PyCFunction)PyHorizontal_getDxTarget, METH_NOARGS , "Get the segment target X offset." }
-    , { "setY"       , (PyCFunction)PyHorizontal_setY       , METH_VARARGS, "Modify the segment Y position." }
-    , { "setDxSource", (PyCFunction)PyHorizontal_setDxSource, METH_VARARGS, "Modify the segment source X offset." }
-    , { "setDxTarget", (PyCFunction)PyHorizontal_setDxTarget, METH_VARARGS, "Modify the segment target X offset." }
-    , { "translate"  , (PyCFunction)PyHorizontal_translate  , METH_VARARGS, "Translates the Horizontal segment of dx and dy." }
-    , { "destroy"    , (PyCFunction)PyHorizontal_destroy    , METH_NOARGS
-                     , "destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
-    };
-
-
-
-
-  // x-------------------------------------------------------------x
-  // |               "PyHorizontal" Object Methods                 |
-  // x-------------------------------------------------------------x
-
-
-  DBoDeleteMethod(Horizontal)
-  PyTypeObjectLinkPyType(Horizontal)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |            "PyHorizontal" Shared Library Code Part              |
-// x=================================================================x
-
-  // ---------------------------------------------------------------
   // Attribute Method  :  "PyHorizontal_create ()"
 
-  PyObject* PyHorizontal_create ( PyObject *module, PyObject *args ) {
+  static PyObject* PyHorizontal_create ( PyObject*, PyObject *args ) {
     trace << "PyHorizontal_create()" << endl;
 
     PyObject* arg0;
@@ -204,6 +146,65 @@ extern "C" {
 
     return PyHorizontal_Link ( horizontal );
   }
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyHorizontal_translate ()"
+
+  static PyObject* PyHorizontal_translate ( PyHorizontal *self, PyObject* args ) {
+    trace << "PyHorizontal_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Horizontal.translate()" )
+    DbU::Unit dx=0, dy=0;
+    if (PyArg_ParseTuple(args,"ll:Horizontal.translate", &dx, &dy)) {
+        horizontal->translate(dx, dy);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal.translate()" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  // ---------------------------------------------------------------
+  // PyHorizontal Attribute Method table.
+
+  PyMethodDef PyHorizontal_Methods[] =
+    { { "create"     , (PyCFunction)PyHorizontal_create     , METH_VARARGS|METH_STATIC
+                     , "Create a new Horizontal." }
+    , { "getY"       , (PyCFunction)PyHorizontal_getY       , METH_NOARGS , "Get the segment Y position." }
+    , { "getDxSource", (PyCFunction)PyHorizontal_getDxSource, METH_NOARGS , "Get the segment source X offset." }
+    , { "getDxTarget", (PyCFunction)PyHorizontal_getDxTarget, METH_NOARGS , "Get the segment target X offset." }
+    , { "setY"       , (PyCFunction)PyHorizontal_setY       , METH_VARARGS, "Modify the segment Y position." }
+    , { "setDxSource", (PyCFunction)PyHorizontal_setDxSource, METH_VARARGS, "Modify the segment source X offset." }
+    , { "setDxTarget", (PyCFunction)PyHorizontal_setDxTarget, METH_VARARGS, "Modify the segment target X offset." }
+    , { "translate"  , (PyCFunction)PyHorizontal_translate  , METH_VARARGS, "Translates the Horizontal segment of dx and dy." }
+    , { "destroy"    , (PyCFunction)PyHorizontal_destroy    , METH_NOARGS
+                     , "destroy associated hurricane object, the python object remains." }
+    , {NULL, NULL, 0, NULL}           /* sentinel */
+    };
+
+
+
+
+  // x-------------------------------------------------------------x
+  // |               "PyHorizontal" Object Methods                 |
+  // x-------------------------------------------------------------x
+
+
+  DBoDeleteMethod(Horizontal)
+  PyTypeObjectLinkPyType(Horizontal)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |            "PyHorizontal" Shared Library Code Part              |
+// x=================================================================x
 
 
 

@@ -1,17 +1,17 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                   Jean-Paul Chaput               |
-// |  E-mail      :      Jean-Paul.Chaput@asim.lip6.fr               |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyReference.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyReference.h"
@@ -50,6 +50,49 @@ extern "C" {
   // Attribute Method  :  "PyReference_getName ()"
 
   GetNameMethod(Reference, reference)
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyReference_create ()"
+
+  PyObject* PyReference_create ( PyObject*, PyObject *args ) {
+    trace << "PyReference_create()" << endl;
+    Reference*  reference = NULL;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+
+    HTRY
+
+    __cs.init ("Reference.create");
+    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Reference.create"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           ,Converter,&arg3
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
+        return NULL;
+    }
+
+    if      ( __cs.getObjectIds() == ":ent:string:int:int" )
+      reference = Reference::create (  PYCELL_O(arg0)
+                                    ,  Name(PyString_AsString(arg1))
+                                    ,  PyInt_AsLong(arg2)
+                                    ,  PyInt_AsLong(arg3) );
+    else if ( __cs.getObjectIds() == ":ent:name:point" )
+      reference = Reference::create (  PYCELL_O(arg0)
+                                    ,  Name(PyString_AsString(arg1))
+                                    , *PYPOINT_O(arg2) );
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
+      return NULL;
+    }
+
+    HCATCH
+    return PyReference_Link ( reference );
+  }
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyReference_getPoint ()"
@@ -120,7 +163,9 @@ extern "C" {
   // PyReference Attribute Method table.
 
   PyMethodDef PyReference_Methods[] =
-    { { "destroy"        , (PyCFunction)PyReference_destroy        , METH_NOARGS
+    { { "create"         , (PyCFunction)PyReference_create         , METH_NOARGS|METH_STATIC
+                         , "Create a new Reference." }
+    , { "destroy"        , (PyCFunction)PyReference_destroy        , METH_NOARGS
                          , "destroy associated hurricane object, the python object remains." }
     , { "getName"        , (PyCFunction)PyReference_getName        , METH_NOARGS , "Returns the name of the reference." }
     , { "getPoint"       , (PyCFunction)PyReference_getPoint       , METH_NOARGS , "Return the reference point." }
@@ -146,50 +191,6 @@ extern "C" {
 // x=================================================================x
 // |            "PyReference" Shared Library Code Part               |
 // x=================================================================x
-  
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyReference_create ()"
-
-  PyObject* PyReference_create ( PyObject *module, PyObject *args ) {
-    trace << "PyReference_create()" << endl;
-    Reference*  reference = NULL;
-
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-    PyObject* arg3;
-
-    HTRY
-
-    __cs.init ("Reference.create");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Reference.create"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           ,Converter,&arg2
-                           ,Converter,&arg3
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
-        return NULL;
-    }
-
-    if      ( __cs.getObjectIds() == ":ent:string:int:int" )
-      reference = Reference::create (  PYCELL_O(arg0)
-                                    ,  Name(PyString_AsString(arg1))
-                                    ,  PyInt_AsLong(arg2)
-                                    ,  PyInt_AsLong(arg3) );
-    else if ( __cs.getObjectIds() == ":ent:name:point" )
-      reference = Reference::create (  PYCELL_O(arg0)
-                                    ,  Name(PyString_AsString(arg1))
-                                    , *PYPOINT_O(arg2) );
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Reference constructor." );
-      return NULL;
-    }
-
-    HCATCH
-    return PyReference_Link ( reference );
-  }
 
 
 

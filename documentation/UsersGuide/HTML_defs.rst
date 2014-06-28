@@ -52,6 +52,7 @@
 .. |ControllerInspector_2|          replace:: :raw-html:`<center><img src="./images/Controller-Inspector-2.png" alt="Controller Basic Snapshot"></center>`
 .. |ControllerInspector_3|          replace:: :raw-html:`<center><img src="./images/Controller-Inspector-3.png" alt="Controller Basic Snapshot"></center>`
 .. |ControllerSettings_1|           replace:: :raw-html:`<center><img src="./images/Controller-Settings-1.png" alt="Controller Basic Snapshot"></center>`
+.. |CoriolisSoftSchema|             replace:: :raw-html:`<center><img src="./images/Coriolis-Soft-Schema.png" alt="Coriolis Software Schematic"></center>` 
 
 .. |BigMouse|                       image:: ./images/ComputerMouse.png
                                     :scale: 25%

@@ -20,6 +20,7 @@
                                     PyHorizontal.cpp
                                     PyHurricane.cpp
                                     PyHyperNet.cpp
+                                    PyPlacementStatus.cpp
                                     PyInstance.cpp
                                     PyInstanceCollection.cpp
                                     PyMaterial.cpp
@@ -37,6 +38,8 @@
                                     PyViaLayerCollection.cpp
                                     PyLibrary.cpp
                                     PyNet.cpp
+                                    PyNetType.cpp
+                                    PyNetDirection.cpp
                                     PyNetCollection.cpp
                                     PyNetExternalComponents.cpp
                                     PyOccurrence.cpp
@@ -46,6 +49,8 @@
                                     PyPad.cpp
                                     PyPath.cpp
                                     PyPin.cpp
+                                    PyPinPlacementStatus.cpp
+                                    PyPinDirection.cpp
                                     PyPinCollection.cpp
                                     PyPlug.cpp
                                     PyPlugCollection.cpp
@@ -57,6 +62,7 @@
                                     PySegmentCollection.cpp
                                     PyTechnology.cpp
                                     PyTransformation.cpp
+                                    PyOrientation.cpp
                                     PyDbU.cpp
                                     PyUpdateSession.cpp
                                     PyVertical.cpp
@@ -76,6 +82,7 @@
                                     hurricane/isobar/PyHorizontal.h
                                     hurricane/isobar/PyHurricane.h
                                     hurricane/isobar/PyHyperNet.h
+                                    hurricane/isobar/PyPlacementStatus.h
                                     hurricane/isobar/PyInstance.h
                                     hurricane/isobar/PyInstanceCollection.h
                                     hurricane/isobar/PyMaterial.h
@@ -93,6 +100,8 @@
                                     hurricane/isobar/PyViaLayer.h
                                     hurricane/isobar/PyLibrary.h
                                     hurricane/isobar/PyNet.h
+                                    hurricane/isobar/PyNetType.h
+                                    hurricane/isobar/PyNetDirection.h
                                     hurricane/isobar/PyNetCollection.h
                                     hurricane/isobar/PyNetExternalComponents.h
                                     hurricane/isobar/PyOccurrence.h
@@ -102,6 +111,8 @@
                                     hurricane/isobar/PyPad.h
                                     hurricane/isobar/PyPath.h
                                     hurricane/isobar/PyPin.h
+                                    hurricane/isobar/PyPinPlacementStatus.h
+                                    hurricane/isobar/PyPinDirection.h
                                     hurricane/isobar/PyPinCollection.h
                                     hurricane/isobar/PyPlug.h
                                     hurricane/isobar/PyPlugCollection.h
@@ -113,6 +124,7 @@
                                     hurricane/isobar/PySegmentCollection.h
                                     hurricane/isobar/PyTechnology.h
                                     hurricane/isobar/PyTransformation.h
+                                    hurricane/isobar/PyOrientation.h
                                     hurricane/isobar/PyDbU.h
                                     hurricane/isobar/PyUpdateSession.h
                                     hurricane/isobar/PyVertical.h

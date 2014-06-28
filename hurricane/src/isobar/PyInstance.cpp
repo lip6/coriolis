@@ -1,22 +1,25 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyInstance.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./PyInstance.cpp"                              |
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyPlacementStatus.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyPlug.h"
 #include "hurricane/isobar/PyPlugCollection.h"
@@ -49,23 +52,6 @@ extern "C" {
 
 
   // x-------------------------------------------------------------x
-  // |                  Global Constants Loading                   |
-  // x-------------------------------------------------------------x
-
-
-  extern void  InstanceLoadConstants ( PyObject* dictionnary )
-  {
-    PyObject* constant;
-      
-    LOAD_CONSTANT ( Instance::PlacementStatus::UNPLACED, "PlacementStatusUNPLACED" )
-    LOAD_CONSTANT ( Instance::PlacementStatus::PLACED  , "PlacementStatusPLACED" )
-    LOAD_CONSTANT ( Instance::PlacementStatus::FIXED   , "PlacementStatusFIXED" )
-  }
-
-
-
-
-  // x-------------------------------------------------------------x
   // |               "PyInstance" Local Functions                  |
   // x-------------------------------------------------------------x
       
@@ -93,17 +79,58 @@ extern "C" {
 
   // Standart Accessors (Attributes).
 
-
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyInstance_destroy,PyInstance)
-
-
-
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getName ()"
 
   GetNameMethod(Instance, instance)
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyInstance_create ()"
+
+  PyObject* PyInstance_create ( PyObject*, PyObject *args ) {
+    trace << "PyInstance_create ()" << endl;
+    
+    Instance* instance = NULL;
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+
+    HTRY
+    __cs.init ("Instance.create");
+    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Instance.new"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           ,Converter,&arg3
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
+        return NULL;
+    }
+
+    if      ( __cs.getObjectIds() == ":ent:string:ent") {
+        instance = Instance::create(
+                PYCELL_O(arg0),
+                Name(PyString_AsString(arg1)),
+                PYCELL_O(arg2) );
+    } else if ( __cs.getObjectIds() == ":ent:string:ent:transfo") {
+        instance = Instance::create(
+                PYCELL_O(arg0),
+                Name(PyString_AsString(arg1)),
+                PYCELL_O(arg2),
+                *PYTRANSFORMATION_O(arg3),
+                Instance::PlacementStatus::PLACED);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
+      return NULL;
+    }
+    HCATCH
+
+    return PyInstance_Link ( instance );
+  }
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyInstance_getMasterCell ()"
@@ -341,24 +368,25 @@ extern "C" {
   // PyInstance Attribute Method table.
 
   PyMethodDef PyInstance_Methods[] =
-    { { "getName"                   , (PyCFunction)PyInstance_getName                   , METH_NOARGS , "Returns the instance name." }
+    { { "create"                    , (PyCFunction)PyInstance_create                    , METH_VARARGS|METH_STATIC
+                                    , "Create a new Instance." }
+    , { "getName"                   , (PyCFunction)PyInstance_getName                   , METH_NOARGS , "Returns the instance name." }
     , { "getMasterCell"             , (PyCFunction)PyInstance_getMasterCell             , METH_NOARGS , "Returns the cell model referenced by the instance." }
     , { "getTransformation"         , (PyCFunction)PyInstance_getTransformation         , METH_NOARGS , "Returns the transformation associated to the instance." }
     , { "getPlacementStatus"        , (PyCFunction)PyInstance_getPlacementStatus        , METH_NOARGS , "Returns the placement status of the instance." }
     , { "getPlug"                   , (PyCFunction)PyInstance_getPlug                   , METH_VARARGS, "Returns the plug associated to the <masterNet> if it exists or else NULL (if the net is not external)." }
-    , { "getPlugs"           , (PyCFunction)PyInstance_getPlugs           , METH_NOARGS , "Returns the collection of instance plugs." }
-    , { "getConnectedPlugs"  , (PyCFunction)PyInstance_getConnectedPlugs  , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
-    , { "getUnconnectedPlugs", (PyCFunction)PyInstance_getUnconnectedPlugs, METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
+    , { "getPlugs"                  , (PyCFunction)PyInstance_getPlugs                  , METH_NOARGS , "Returns the collection of instance plugs." }
+    , { "getConnectedPlugs"         , (PyCFunction)PyInstance_getConnectedPlugs         , METH_NOARGS , "Returns the collection of instance plugs which are effectively connected." }
+    , { "getUnconnectedPlugs"       , (PyCFunction)PyInstance_getUnconnectedPlugs       , METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
     , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
     , { "isTerminal"                , (PyCFunction)PyInstance_isTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
     , { "isLeaf"                    , (PyCFunction)PyInstance_isLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
-    , { "isBound"                   , (PyCFunction)PyInstance_isPyBound                 , METH_NOARGS, "Returns true if the instance is bounded to the hurricane instance" }
+    , { "isBound"                   , (PyCFunction)PyInstance_isPyBound                 , METH_NOARGS , "Returns true if the instance is bounded to the hurricane instance" }
     , { "setName"                   , (PyCFunction)PyInstance_setName                   , METH_VARARGS, "Allows to change the instance name." }
     , { "setTransformation"         , (PyCFunction)PyInstance_setTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }
     , { "setPlacementStatus"        , (PyCFunction)PyInstance_setPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
     , { "setMasterCell"             , (PyCFunction)PyInstance_setMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
-    , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS
-                                    , "Destroy associated hurricane object The python object remains." }
+    , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
@@ -380,50 +408,6 @@ extern "C" {
 // |             "PyInstance" Shared Library Code Part               |
 // x=================================================================x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_new ()"
-
-  PyObject* PyInstance_create ( PyObject *module, PyObject *args ) {
-    trace << "PyInstance_create ()" << endl;
-    
-    Instance* instance = NULL;
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-    PyObject* arg3;
-
-    HTRY
-    __cs.init ("Instance.create");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Instance.new"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           ,Converter,&arg2
-                           ,Converter,&arg3
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
-        return NULL;
-    }
-
-    if      ( __cs.getObjectIds() == ":ent:string:ent") {
-        instance = Instance::create(
-                PYCELL_O(arg0),
-                Name(PyString_AsString(arg1)),
-                PYCELL_O(arg2) );
-    } else if ( __cs.getObjectIds() == ":ent:string:ent:transfo") {
-        instance = Instance::create(
-                PYCELL_O(arg0),
-                Name(PyString_AsString(arg1)),
-                PYCELL_O(arg2),
-                *PYTRANSFORMATION_O(arg3),
-                Instance::PlacementStatus::PLACED);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
-      return NULL;
-    }
-    HCATCH
-
-    return PyInstance_Link ( instance );
-  }
 
 
   // Link/Creation Method.
@@ -434,6 +418,14 @@ extern "C" {
   // PyInstance Object Definitions.
 
   PyTypeInheritedObjectDefinitions(Instance, Entity)
+
+
+  extern  void  PyInstance_postModuleInit ()
+  {
+    PyPlacementStatus_postModuleInit();
+
+    PyDict_SetItemString( PyTypeInstance.tp_dict, "PlacementStatus", (PyObject*)&PyTypePlacementStatus );
+  }
 
 
 #endif  // End of Shared Library Code Part.

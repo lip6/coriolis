@@ -429,7 +429,8 @@ are avalaibles here `Coriolis Tools Documentation`_.
    mimic *as closely as possible* the C++ interface, so the documentation
    applies to both languages with only minor syntactic changes.
 
-**General Software Architecture**
+General Software Architecture
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |Coriolis| has been build with respect of the classical paradigm that the
 computational instensive parts have been written in C++, and almost
@@ -440,6 +441,8 @@ two methods:
 * For all modules based on |Hurricane|, we created our own wrappers due
   to very specific requirements such as shared functions between modules
   or C++/|Python| secure bi-directional object deletion.
+
+|CoriolisSoftSchema|
 
 
 Coriolis Configuration & Initialisation
@@ -695,6 +698,44 @@ Taxonomy of the file:
   #. ``DefaultValue``, the default value for that parameter.
 
 
+Hacking the Configuration Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Asides from the symbols that gets used by the configuration helpers like
+:cb:`allianceConfig` or :cb:`parametersTable`, you can put pretty much anything
+in :cb:`<CWD>/.coriolis2.conf` (that is, written in |Python|).
+
+For example: ::
+
+    # -*- Mode:Python -*-
+    
+    defaultStyle = 'Alliance.Classic [black]'
+    
+    # Regular Coriolis configuration.
+    parametersTable = \
+        ( ('misc.catchCore'           , TypeBool      , False  )
+        , ('misc.info'                , TypeBool      , False  )
+        , ('misc.paranoid'            , TypeBool      , False  )
+        , ('misc.bug'                 , TypeBool      , False  )
+        , ('misc.logMode'             , TypeBool      , True   )
+        , ('misc.verboseLevel1'       , TypeBool      , False  )
+        , ('misc.verboseLevel2'       , TypeBool      , True   )
+        , ('misc.traceLevel'          , TypeInt       , 1000   )
+        )
+    
+    # Some ordinary Python script...
+    import os
+    
+    print '       o  Cleaning up ClockTree previous run.'
+    for fileName in os.listdir('.'):
+      if fileName.endswith('.ap') or (fileName.find('_clocked.') >= 0):
+        print '          - <%s>' % fileName
+        os.unlink(fileName)
+
+
+See `Python Interface to Coriolis`_ for more details those capabilities.
+
+
 CGT - The Graphical Interface
 =============================
 
@@ -871,10 +912,18 @@ the :cb:`kite.` prefix.
 
 The |Katabatic| parameters control the layer assignment step.
 
+All the defaults value given below are from the default |Alliance| technology
+(:cb:`cmos` and :cb:`SxLib` cell gauge/routing gauge).
+
 +-----------------------------------+------------------+----------------------------+
 | Parameter Identifier              |   Type           |  Default                   |
 +===================================+==================+============================+
 | **Katabatic Parameters**                                                          |
++-----------------------------------+------------------+----------------------------+
+|``katabatic.topRoutingLayer``      | TypeString       | :cb:`METAL5`               |
+|                                   +------------------+----------------------------+
+|                                   | Define the highest metal layer that will be   |
+|                                   | used for routing (inclusive).                 |
 +-----------------------------------+------------------+----------------------------+
 |``katabatic.globalLengthThreshold``| TypeInt          | :cb:`1450`                 |
 |                                   +------------------+----------------------------+
@@ -897,12 +946,18 @@ The |Katabatic| parameters control the layer assignment step.
 +-----------------------------------+------------------+----------------------------+
 | **Knik Parameters**                                                               |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.edgeCapacity``             | TypePercentage   | :cb:`85`                   |
+| ``kite.hTracksReservedLocal``     | TypeInt          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
-|                                   | Adjust the maximum capacity of the global     |
-|                                   | router's edges. The GCells would be too       |
-|                                   | saturated for the detailed router if the edge |
-|                                   | capacity is left to 100%.                     |
+|                                   | To take account the tracks needed *inside* a  |
+|                                   | GCell to build the *local* routing, decrease  |
+|                                   | the capacity of the edges of the global       |
+|                                   | router. Horizontal and vertical locally       |
+|                                   | reserved capacity can be distinguished for    |
+|                                   | more accuracy.                                |
++-----------------------------------+------------------+----------------------------+
+| ``kite.vTracksReservedLocal``     | TypeInt          | :cb:`3`                    |
+|                                   +------------------+----------------------------+
+|                                   | cf. ``kite.hTracksReservedLocal``             |
 +-----------------------------------+------------------+----------------------------+
 | **Kite Parameters**                                                               |
 +-----------------------------------+------------------+----------------------------+
@@ -955,36 +1010,16 @@ Python/Stratus scripts can be executed either in text or graphical mode.
    it must be reachable through the ``PYTHONPATH``. You may uses the
    dotted module notation.
 
-A Python/Stratus script must contains a function called ``StratusScript``
+A Python/Stratus script must contains a function called ``ScriptMain()``
 with one optional argument, the graphical editor into which it may be
-running (will be set to ``None`` in text mode).
-
-Asides for this requirement, the python script can contains anything valid
-in |Python|, so don't hesitate to use any package or extention.
+running (will be set to ``None`` in text mode). The Python interface to
+the editor (type: :cb:`CellViewer`) is limited to basic capabilities
+only.
 
 Any script given on the command line will be run immediatly *after* the
 initializations and *before* any other argument is processed.
 
-Small example of Python/Stratus script: ::
-
-    from status import *
-
-    def doSomething ():
-        # ...
-        return
-
-    def StratusScript ( editor=None ):
-      if globals().has_key ( "__editor" ): editor = __editor
-      if editor: setEditor ( editor )
-
-      doSomething()
-      return
-    
-    if __name__ == "__main__" :
-      StratusScript ()
-
-This script could be run directly with Python (thanks to the two last lines)
-or through |cgt| in both text and graphical modes.
+For more explanation on Python scripts see `Python Interface to Coriolis`_.
 
 
 Printing & Snapshots
@@ -1370,6 +1405,49 @@ The Settings Tab
 Here comes the description of the *Settings* tab.
 
 |ControllerSettings_1|
+
+
+.. _Python Interface to Coriolis:
+
+Python Interface for |Hurricane| / |Coriolis|
+=============================================
+
+The (almost) complete interface of |Hurricane| is exported as a |Python| module
+and some part of the other components of |Coriolis| (each one in a separate
+module). The interface has been made to mirror as closely as possible the
+C++ one, so the C++ doxygen documentation could be used to write code with
+either languages.
+
+`Summary of the C++ Documentation <file:../../../index.html>`_
+
+A script could be run directly in text mode from the command line or through
+the graphical interface (see `Python Scripts in Cgt`_).
+
+Asides for this requirement, the python script can contains anything valid
+in |Python|, so don't hesitate to use any package or extention.
+
+Small example of Python/Stratus script: ::
+
+    from Hurricane import *
+    from Stratus   import *
+
+    def doSomething ():
+        # ...
+        return
+
+    def ScriptMain ( editor=None ):
+      if globals().has_key( "__editor" ): editor = __editor
+      if editor: setEditor( editor )
+
+      doSomething()
+      return
+    
+    if __name__ == "__main__" :
+      ScriptMain ()
+
+This script could be run directly with Python (thanks to the two last lines)
+or through |cgt| in both text and graphical modes through the :cb:`ScriptMain()`
+function.
 
 
 A Simple Example: AM2901

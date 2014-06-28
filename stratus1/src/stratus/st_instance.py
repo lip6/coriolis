@@ -208,10 +208,10 @@ class Inst :
       err = "\n[Stratus ERROR] HurricanePlug : Problem of hurricane cell.\nTry to contact Coriolis team.\n"
       raise Exception ( err )
       
-    inst = Instance ( self._st_cell._hur_cell
-                    , self._name
-                    , self._hur_masterCell
-                    )
+    inst = Instance.create ( self._st_cell._hur_cell
+                           , self._name
+                           , self._hur_masterCell
+                           )
     # The hurricane instance is connected to the stratus instance
     self._hur_instance = inst
     

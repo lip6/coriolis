@@ -1,56 +1,48 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Sophie BELLOEIL               |
-// |  E-mail      :       Sophie.Belloeil@asim.lip6.fr               |
+// |  Author      :                     Sophie BELLOEIL              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyNet.h"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/isobar/PyNet.h"                    |
+// +-----------------------------------------------------------------+
 
 
-
-
-
-#ifndef __PYNET__
-#define __PYNET__
-
+#ifndef PY_NET_H
+#define PY_NET_H
 
 #include "hurricane/isobar/PyEntity.h"
-
 #include "hurricane/Net.h"
 
 
 namespace  Isobar {
 
-
-extern "C" {
+  extern "C" {
 
 
 // -------------------------------------------------------------------
 // Python Object  :  "PyNet".
 
-  typedef struct {
-      PyEntity  _baseObject;
-  } PyNet;
-
-
+    typedef struct {
+        PyEntity  _baseObject;
+    } PyNet;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyTypeObject  PyTypeNet;
-  extern  PyMethodDef   PyNet_Methods[];
+    extern  PyTypeObject  PyTypeNet;
+    extern  PyMethodDef   PyNet_Methods[];
 
-  extern  PyObject* PyNet_create     ( PyObject* module, PyObject* args );
-  extern  PyObject* PyNet_Link       ( Hurricane::Net* object );
-  extern  void      NetLoadConstants ( PyObject* dictionnary );
-  extern  void      PyNet_LinkPyType ();
+    extern  PyObject* PyNet_Link           ( Hurricane::Net* object );
+    extern  void      PyNet_LinkPyType     ();
+    extern  void      PyNet_postModuleInit ();
 
 
 
@@ -59,14 +51,8 @@ extern "C" {
 #define PYNET_O(v) (dynamic_cast<Net*>(PYNET(v)->_baseObject._object))
 
 
-}  // End of extern "C".
+  }  // extern "C".
 
+}  // Isobar namespace.
 
-
-
-}  // End of Isobar namespace.
- 
-
-
-
-#endif
+#endif  // PY_NET_H

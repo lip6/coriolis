@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -22,6 +21,7 @@
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
+#include "hurricane/isobar/PyOrientation.h"
 #include "hurricane/isobar/PyDataBase.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyEntity.h"
@@ -41,12 +41,17 @@
 #include "hurricane/isobar/PyRegularLayerCollection.h"
 #include "hurricane/isobar/PyViaLayerCollection.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyPinPlacementStatus.h"
+#include "hurricane/isobar/PyPinDirection.h"
 #include "hurricane/isobar/PyPinCollection.h"
+#include "hurricane/isobar/PyPlacementStatus.h"
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyInstanceCollection.h"
 #include "hurricane/isobar/PyReference.h"
 #include "hurricane/isobar/PyReferenceCollection.h"
 #include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyNetType.h"
+#include "hurricane/isobar/PyNetDirection.h"
 #include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyHyperNet.h"
@@ -472,36 +477,16 @@ extern "C" {
   }
 
   static PyMethodDef PyHurricane_Methods[] =
-    { { "trace"                 ,              PyCommons_trace                   , METH_VARARGS, "Switch on/off the trace mode (for debugging)." }
-    , { "DbU_db"                ,              PyDbU_fromDb                      , METH_VARARGS, "Converts an integer to DbU::Unit (no scale factor)." }
-    , { "DbU_grid"              ,              PyDbU_fromGrid                    , METH_VARARGS, "Converts a founder grid to DbU::Unit." }
-    , { "DbU_lambda"            ,              PyDbU_fromLambda                  , METH_VARARGS, "Converts a symbolic (lambda) to DbU::Unit." }
-    , { "DbU_getDb"             ,              PyDbU_toDb                        , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
-    , { "DbU_getGrid"           ,              PyDbU_toGrid                      , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
-    , { "DbU_getLambda"         ,              PyDbU_toLambda                    , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
-    , { "DbU_getPhysical"       ,              PyDbU_toPhysical                  , METH_VARARGS, "Converts a DbU::Unit to a physical value." }
-    , { "DbU_getOnPhysicalGrid" ,              PyDbU_getOnPhysicalGrid           , METH_VARARGS, "Adjusts a DbU::Unit to physical grid." }
-    , { "Point"                 ,              PyPoint_create                    , METH_VARARGS, "Creates a new Point." }
-    , { "Box"                   ,              PyBox_create                      , METH_VARARGS, "Creates a new Box." }
-    , { "Transformation"        ,              PyTransformation_create           , METH_VARARGS, "Creates a new Transformation." }
-    , { "DataBase"              , (PyCFunction)PyDataBase_create                 , METH_NOARGS , "Creates the DataBase." }
-    , { "getDB"                 , (PyCFunction)PyDataBase_getDB                  , METH_NOARGS , "Gets the current DataBase." }
-    , { "getDataBase"           , (PyCFunction)PyDataBase_getDB                  , METH_NOARGS , "Gets the current DataBase." }
-    , { "Library"               , (PyCFunction)PyLibrary_create                  , METH_VARARGS, "Creates a new Library." }
-//  , { "getLibrary"            , (PyCFunction)PyLibrary_getLibrary              , METH_NOARGS , "Gets the current Library." }
-    , { "Reference"             , (PyCFunction)PyReference_create                , METH_VARARGS, "Creates a new Reference." }
-    , { "Cell"                  , (PyCFunction)PyCell_create                     , METH_VARARGS, "Creates a new Cell." }
-    , { "Instance"              , (PyCFunction)PyInstance_create                 , METH_VARARGS, "Creates a new Instance." }
-    , { "Net"                   , (PyCFunction)PyNet_create                      , METH_VARARGS, "Creates a new Net." }
-    , { "HyperNet"              , (PyCFunction)PyHyperNet_create                 , METH_VARARGS, "Creates a new HyperNet." }
-    , { "Horizontal"            , (PyCFunction)PyHorizontal_create               , METH_VARARGS, "Creates a new Horizontal." }
-    , { "Vertical"              , (PyCFunction)PyVertical_create                 , METH_VARARGS, "Creates a new Vertical." }
-    , { "Contact"               , (PyCFunction)PyContact_create                  , METH_VARARGS, "Creates a new Contact." }
-    , { "Pin"                   , (PyCFunction)PyPin_create                      , METH_VARARGS, "Creates a new Pin." }
-    , { "Pad"                   , (PyCFunction)PyPad_create                      , METH_VARARGS, "Creates a new Pad." }
-    , { "Path"                  , (PyCFunction)PyPath_create                     , METH_VARARGS, "Creates a new Path." }
-    , { "Occurrence"            , (PyCFunction)PyOccurrence_create               , METH_VARARGS, "Creates a new Occurrence." }
-    , {NULL, NULL, 0, NULL}     /* sentinel */
+    { { "trace"                , PyCommons_trace        , METH_VARARGS, "Switch on/off the trace mode (for debugging)." }
+    , { "DbU_db"               , PyDbU_fromDb           , METH_VARARGS, "Converts an integer to DbU::Unit (no scale factor)." }
+    , { "DbU_grid"             , PyDbU_fromGrid         , METH_VARARGS, "Converts a founder grid to DbU::Unit." }
+    , { "DbU_lambda"           , PyDbU_fromLambda       , METH_VARARGS, "Converts a symbolic (lambda) to DbU::Unit." }
+    , { "DbU_getDb"            , PyDbU_toDb             , METH_VARARGS, "Converts a DbU::Unit to an integer value (no scale factor)." }
+    , { "DbU_getGrid"          , PyDbU_toGrid           , METH_VARARGS, "Converts a DbU::Unit to a to grid founder." }
+    , { "DbU_getLambda"        , PyDbU_toLambda         , METH_VARARGS, "Converts a DbU::Unit to a symbolic value (to lambda)." }
+    , { "DbU_getPhysical"      , PyDbU_toPhysical       , METH_VARARGS, "Converts a DbU::Unit to a physical value." }
+    , { "DbU_getOnPhysicalGrid", PyDbU_getOnPhysicalGrid, METH_VARARGS, "Adjusts a DbU::Unit to physical grid." }
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 
@@ -516,6 +501,7 @@ extern "C" {
     PyPoint_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
+    PyOrientation_LinkPyType ();
     PyDataBase_LinkPyType ();
     PyTechnology_LinkPyType ();
     PyLibrary_LinkPyType ();
@@ -540,6 +526,8 @@ extern "C" {
     PyNetCollection_LinkPyType ();
     PyNetExternalComponents_LinkPyType ();
     PyCellCollection_LinkPyType ();
+    PyPinPlacementStatus_LinkPyType ();
+    PyPinDirection_LinkPyType ();
     PyPinCollection_LinkPyType ();
     PySegmentCollection_LinkPyType ();
     PyOccurrenceCollection_LinkPyType ();
@@ -547,8 +535,11 @@ extern "C" {
     PyReferenceCollection_LinkPyType ();
     PyCell_LinkPyType ();
     PyInstance_LinkPyType ();
+    PyPlacementStatus_LinkPyType ();
     PyReference_LinkPyType ();
     PyNet_LinkPyType ();
+    PyNetType_LinkPyType ();
+    PyNetDirection_LinkPyType ();
     PyHyperNet_LinkPyType ();
     PyHook_LinkPyType ();
     PyHookCollection_LinkPyType ();
@@ -570,6 +561,7 @@ extern "C" {
     PYTYPE_READY ( DbU                           )
     PYTYPE_READY ( Box                           )
     PYTYPE_READY ( Transformation                )
+    PYTYPE_READY ( Orientation                   )
     PYTYPE_READY ( DataBase                      )
     PYTYPE_READY ( Technology                    )
     PYTYPE_READY ( Library                       )
@@ -589,14 +581,19 @@ extern "C" {
     PYTYPE_READY ( ViaLayerCollectionLocator     )
     PYTYPE_READY ( Path                          )
     PYTYPE_READY ( Occurrence                    )
+    PYTYPE_READY ( PlacementStatus               )
     PYTYPE_READY ( InstanceCollection            )
     PYTYPE_READY ( InstanceCollectionLocator     )
     PYTYPE_READY ( PlugCollection                )
     PYTYPE_READY ( PlugCollectionLocator         )
+    PYTYPE_READY ( NetType                       )
+    PYTYPE_READY ( NetDirection                  )
     PYTYPE_READY ( NetCollection                 )
     PYTYPE_READY ( NetCollectionLocator          )
     PYTYPE_READY ( CellCollection                )
     PYTYPE_READY ( CellCollectionLocator         )
+    PYTYPE_READY ( PinPlacementStatus            )
+    PYTYPE_READY ( PinDirection                  )
     PYTYPE_READY ( PinCollection                 )
     PYTYPE_READY ( PinCollectionLocator          )
     PYTYPE_READY ( SegmentCollection             )
@@ -687,6 +684,7 @@ extern "C" {
     __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
     __cs.addType ( "techno"     , &PyTypeTechnology            , "<Technology>"            , false );
     __cs.addType ( "transfo"    , &PyTypeTransformation        , "<Transformation>"        , false );
+    __cs.addType ( "orient"     , &PyTypeOrientation           , "<Orientation>"           , false );
     __cs.addType ( "vert"       , &PyTypeVertical              , "<Vertical>"              , false, "segment" );
     __cs.addType ( "path"       , &PyTypePath                  , "<Path>"                  , false );
     __cs.addType ( "occur"      , &PyTypeOccurrence            , "<Occurrence>"            , false );
@@ -704,6 +702,29 @@ extern "C" {
 
     Py_INCREF ( &PyTypeDbU );
     PyModule_AddObject ( module, "DbU"                  , (PyObject*)&PyTypeDbU );
+    Py_INCREF ( &PyTypePoint );
+    PyModule_AddObject ( module, "Box"                  , (PyObject*)&PyTypeBox );
+    Py_INCREF ( &PyTypePoint );
+    PyModule_AddObject ( module, "Point"                , (PyObject*)&PyTypePoint );
+    Py_INCREF ( &PyTypeTransformation );
+    PyModule_AddObject ( module, "Transformation"       , (PyObject*)&PyTypeTransformation );
+    Py_INCREF ( &PyTypePath );
+    PyModule_AddObject ( module, "Path"                 , (PyObject*)&PyTypePath );
+    Py_INCREF ( &PyTypeOccurrence );
+    PyModule_AddObject ( module, "Occurrence"           , (PyObject*)&PyTypeOccurrence );
+
+    Py_INCREF ( &PyTypeDataBase );
+    PyModule_AddObject ( module, "DataBase"             , (PyObject*)&PyTypeDataBase );
+    Py_INCREF ( &PyTypeLibrary );
+    PyModule_AddObject ( module, "Library"              , (PyObject*)&PyTypeLibrary );
+    Py_INCREF ( &PyTypeNet );
+    PyModule_AddObject ( module, "Net"                  , (PyObject*)&PyTypeNet );
+    Py_INCREF ( &PyTypeHyperNet );
+    PyModule_AddObject ( module, "HyperNet"             , (PyObject*)&PyTypeHyperNet );
+    Py_INCREF ( &PyTypeInstance );
+    PyModule_AddObject ( module, "Cell"                 , (PyObject*)&PyTypeCell );
+    Py_INCREF ( &PyTypeInstance );
+    PyModule_AddObject ( module, "Instance"             , (PyObject*)&PyTypeInstance );
     Py_INCREF ( &PyTypeTechnology );
     PyModule_AddObject ( module, "Technology"           , (PyObject*)&PyTypeTechnology );
     Py_INCREF ( &PyTypeLayer );
@@ -730,23 +751,27 @@ extern "C" {
     PyModule_AddObject ( module, "Breakpoint"           , (PyObject*)&PyTypeBreakpoint );
     Py_INCREF ( &PyTypeQuery );
     PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
+    Py_INCREF ( &PyTypeReference );
+    PyModule_AddObject ( module, "Reference"            , (PyObject*)&PyTypeReference );
 
     Py_INCREF ( &PyTypeHook );
     PyModule_AddObject ( module, "Hook"                 , (PyObject*)&PyTypeHook );
     Py_INCREF ( &PyTypeHookCollection );
     PyModule_AddObject ( module, "HookCollection"       , (PyObject*)&PyTypeHookCollection );
+    Py_INCREF ( &PyTypePlug );
+    PyModule_AddObject ( module, "PyPlug"               , (PyObject*)&PyTypePlug );
     Py_INCREF ( &PyTypeRoutingPad );
     PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
     Py_INCREF ( &PyTypeVertical );
-    PyModule_AddObject ( module, "PyVertical"           , (PyObject*)&PyTypeVertical );
+    PyModule_AddObject ( module, "Vertical"             , (PyObject*)&PyTypeVertical );
     Py_INCREF ( &PyTypeHorizontal );
-    PyModule_AddObject ( module, "PyHorizontal"         , (PyObject*)&PyTypeHorizontal );
+    PyModule_AddObject ( module, "Horizontal"           , (PyObject*)&PyTypeHorizontal );
     Py_INCREF ( &PyTypeContact );
-    PyModule_AddObject ( module, "PyContact"            , (PyObject*)&PyTypeContact );
-    Py_INCREF ( &PyTypePlug );
-    PyModule_AddObject ( module, "PyPlug"               , (PyObject*)&PyTypePlug );
+    PyModule_AddObject ( module, "Contact"              , (PyObject*)&PyTypeContact );
+    Py_INCREF ( &PyTypePin );
+    PyModule_AddObject ( module, "Pin"                  , (PyObject*)&PyTypePin );
     Py_INCREF ( &PyTypePad );
-    PyModule_AddObject ( module, "PyPad"                , (PyObject*)&PyTypePad );
+    PyModule_AddObject ( module, "Pad"                  , (PyObject*)&PyTypePad );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );
@@ -760,16 +785,16 @@ extern "C" {
     PyDict_SetItemString ( dictionnary, "ProxyError"      , ProxyError );
     PyDict_SetItemString ( dictionnary, "HurricaneError"  , HurricaneError );
 
-    DbULoadConstants           ( dictionnary );
-    TransformationLoadConstants( dictionnary );
-    NetLoadConstants           ( dictionnary );
-    InstanceLoadConstants      ( dictionnary );
-    PinLoadConstants           ( dictionnary );
+    DbULoadConstants( dictionnary );
 
     PyDbU_postModuleInit();
+    PyTransformation_postModuleInit();
     PyLayer_postModuleInit();
     PyBasicLayer_postModuleInit();
+    PyPin_postModuleInit();
     PyRoutingPad_postModuleInit();
+    PyNet_postModuleInit();
+    PyInstance_postModuleInit();
 
     trace << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }

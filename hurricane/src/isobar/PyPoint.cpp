@@ -1,59 +1,20 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyPoint.cpp,v 1.17 2006/09/22 11:27:32 tsunami Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyPoint.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Module  :  "./PyPoint.cpp"                                 |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyPoint.h"
-
 
 
 namespace Isobar {
@@ -76,6 +37,53 @@ extern "C" {
   // x-------------------------------------------------------------x
   // |               "PyPoint" Attribute Methods                   |
   // x-------------------------------------------------------------x
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPoint_NEW ()"
+
+  static PyObject* PyPoint_NEW ( PyObject* module, PyObject *args )
+  {
+    trace << "PyPoint_NEW()" << endl;
+
+    Point*    point;
+    PyObject* arg0;
+    PyObject* arg1;
+
+    __cs.init ("Point.Point");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Point.Point"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
+        return NULL;
+    }
+
+    if      ( __cs.getObjectIds() == NO_ARG    ) { point = new Point (); }
+    else if ( __cs.getObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { point = new Point ( PyInt_AsLong(arg0)
+                                                                     , PyInt_AsLong(arg1) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
+      return NULL;
+    }
+
+    PyPoint* pyPoint = PyObject_NEW(PyPoint, &PyTypePoint);
+    if (pyPoint == NULL) { return NULL; }
+    
+    HTRY
+    pyPoint->_object = point;
+    HCATCH
+
+    return ( (PyObject*)pyPoint );
+  }
+
+
+  static int  PyPoint_Init ( PyPoint* self, PyObject* args, PyObject* kwargs )
+  {
+    trace << "PyPoint_Init(): " << (void*)self << endl;
+    return 0;
+  }
 
 
   // ---------------------------------------------------------------
@@ -140,7 +148,8 @@ extern "C" {
 
 
   DirectDeleteMethod(PyPoint_DeAlloc,PyPoint)
-  PyTypeObjectLinkPyType(Point)
+  PyTypeObjectLinkPyTypeNewInit(Point)
+//PyTypeObjectLinkPyType(Point)
 
 #else  // End of Python Module Code Part.
 
@@ -148,61 +157,14 @@ extern "C" {
 // x=================================================================x
 // |               "PyPoint" Shared Library Code Part                |
 // x=================================================================x
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPoint_create ()"
-
-  PyObject* PyPoint_create ( PyObject* module, PyObject *args )
-  {
-    trace << "PyPoint_create()" << endl;
-
-    Point*    point;
-    PyObject* arg0;
-    PyObject* arg1;
-
-    __cs.init ("Point.create");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Point.create"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
-        return NULL;
-    }
-
-    if      ( __cs.getObjectIds() == NO_ARG    ) { point = new Point (); }
-    else if ( __cs.getObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { point = new Point ( PyInt_AsLong(arg0)
-                                                                     , PyInt_AsLong(arg1) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
-      return NULL;
-    }
-
-    PyPoint* pyPoint = PyObject_NEW(PyPoint, &PyTypePoint);
-    if (pyPoint == NULL) { return NULL; }
-    
-    HTRY
-    pyPoint->_object = point;
-    HCATCH
-
-    return ( (PyObject*)pyPoint );
-  }
-  // ---------------------------------------------------------------
-  // PyPoint Object Definitions.
   
+
   PyTypeObjectDefinitions(Point)
 
 
-#endif  // End of Shared Library Code Part.
+#endif  // Shared Library Code Part.
 
+}  // extern "C".
 
-
-
-}  // End of extern "C".
-
-
-
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.
  

@@ -1,17 +1,16 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyCell.cpp"                             |
+// |  C++ Module  :  "./PyCell.cpp"                                  |
 // +-----------------------------------------------------------------+
 
 
@@ -60,6 +59,29 @@ extern "C" {
 
   // Standart Delete (Attribute).
   DBoDestroyAttribute(PyCell_destroy,PyCell)
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_create ()"
+
+  PyObject* PyCell_create ( PyObject*, PyObject *args ) {
+    trace << "PyCell_create()" << endl;
+
+    char* name = NULL;
+    PyLibrary* pyLibrary = NULL;
+    Cell* cell = NULL;
+
+    HTRY
+    if (PyArg_ParseTuple(args,"O!s:Cell.create", &PyTypeLibrary, &pyLibrary, &name)) {
+        cell = Cell::create(PYLIBRARY_O(pyLibrary), Name(name));
+    } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
+        return NULL;
+    }
+    HCATCH
+
+    return PyCell_Link(cell);
+  }
 
   
   // ---------------------------------------------------------------
@@ -642,7 +664,9 @@ extern "C" {
   // PyCell Attribute Method table.
 
   PyMethodDef PyCell_Methods[] =
-    { { "getLibrary"          , (PyCFunction)PyCell_getLibrary           , METH_NOARGS , "Returns the library owning the cell." }
+    { { "create"              , (PyCFunction)PyCell_create               , METH_VARARGS|METH_STATIC
+                              , "Create a new cell." }
+    , { "getLibrary"          , (PyCFunction)PyCell_getLibrary           , METH_NOARGS , "Returns the library owning the cell." }
     , { "getName"             , (PyCFunction)PyCell_getName              , METH_NOARGS , "Returns the name of the cell." }
     , { "getInstance"         , (PyCFunction)PyCell_getInstance          , METH_VARARGS, "Returns the instance of name <name> if it exists, else NULL." }
     , { "getInstances"        , (PyCFunction)PyCell_getInstances         , METH_NOARGS , "Returns the locator of the collection of all instances called by the cell." } // getInstances
@@ -693,33 +717,8 @@ extern "C" {
 // |               "PyCell" Shared Library Code Part                 |
 // x=================================================================x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_create ()"
-  PyObject* PyCell_create ( PyObject *module, PyObject *args ) {
-    trace << "PyCell_create()" << endl;
-
-    char* name = NULL;
-    PyLibrary* pyLibrary = NULL;
-    Cell* cell = NULL;
-
-    HTRY
-    if (PyArg_ParseTuple(args,"O!s:Cell.create", &PyTypeLibrary, &pyLibrary, &name)) {
-        cell = Cell::create(PYLIBRARY_O(pyLibrary), Name(name));
-    } else {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
-        return NULL;
-    }
-    HCATCH
-
-    return PyCell_Link(cell);
-  }
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Cell)
-
-
-  // ---------------------------------------------------------------
-  // PyCell Object Definitions.
   PyTypeInheritedObjectDefinitions(Cell, Entity)
 
 

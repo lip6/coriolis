@@ -7,6 +7,7 @@ import string
 import traceback
 import Hurricane
 from   Hurricane import DbU
+from   Hurricane import DataBase
 from   Hurricane import Layer
 from   Hurricane import BasicLayer
 from   Hurricane import DiffusionLayer
@@ -282,7 +283,7 @@ def load ( symbolicPath ):
     confGlobals = globals()
     execfile(symbolicPath,confGlobals)
 
-    db         = Hurricane.getDataBase()
+    db         = DataBase.getDB()
     technology = db.getTechnology()
 
     for symbol, loader in tables:

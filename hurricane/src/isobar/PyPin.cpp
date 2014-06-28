@@ -1,24 +1,27 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                       Damien DUPUIS              |
-// |  E-mail      :          Damien.Dupuis@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :            "./PyPin.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./PyPin.cpp"                                   |
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyPinPlacementStatus.h"
+#include "hurricane/isobar/PyPinDirection.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
 
 
 namespace Isobar {
-
 
 using namespace Hurricane;
 
@@ -37,71 +40,12 @@ extern "C" {
 // x=================================================================x
 
 #if defined(__PYTHON_MODULE__)
-
-  // x-------------------------------------------------------------x
-  // |                  Global Constants Loading                   |
-  // x-------------------------------------------------------------x
-
-
-  extern void  PinLoadConstants ( PyObject* dictionnary ) {
-    PyObject* constant;
-      
-    LOAD_CONSTANT ( Pin::PlacementStatus::UNPLACED , "PinPlacementStatusUNPLACED"  )
-    LOAD_CONSTANT ( Pin::PlacementStatus::PLACED   , "PinPlacementStatusPLACED"    )
-    LOAD_CONSTANT ( Pin::PlacementStatus::FIXED    , "PinPlacementStatusFIXED"     )
-    LOAD_CONSTANT ( Pin::AccessDirection::UNDEFINED, "PinAccessDirectionUNDEFINED" )
-    LOAD_CONSTANT ( Pin::AccessDirection::NORTH    , "PinAccessDirectionNORTH"     )
-    LOAD_CONSTANT ( Pin::AccessDirection::SOUTH    , "PinAccessDirectionSOUTH"     )
-    LOAD_CONSTANT ( Pin::AccessDirection::EAST     , "PinAccessDirectionEAST"      )
-    LOAD_CONSTANT ( Pin::AccessDirection::WEST     , "PinAccessDirectionWEST"      )
-  }
-
     
 
   // x-------------------------------------------------------------x
   // |                 "PyPin" Attribute Methods                   |
   // x-------------------------------------------------------------x
-  
 
-  // Standart Accessors (Attributes).
-  
-  PyObject* PyPin_getAccessDirection( PyPin* self ) {
-      trace << "PyNet_getAccessDirection ()" << endl;
-
-      METHOD_HEAD ( "Net.getAccessDirection()" )
-  
-      return (PyObject *)Py_BuildValue("l",  pin->getAccessDirection().getCode() );
-
-  }
-    
-
-  // ---------------------------------------------------------------
-  // PyPin Attribute Method table.
-
-  PyMethodDef PyPin_Methods[] =
-    { { "getAccessDirection"  , (PyCFunction)PyPin_getAccessDirection  , METH_NOARGS
-                              , "Returns the pin accessdirection (by default set to UNDEFINED) ." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
-    };
-
-
-
-
-  // x-------------------------------------------------------------x
-  // |                  "PyPin" Object Methods                     |
-  // x-------------------------------------------------------------x
-
-
-  DBoDeleteMethod(Pin)
-  PyTypeObjectLinkPyType(Pin)
-
-
-#else  // End of Python Module Code Part.
-
-
-// x=================================================================x
-// |                "PyPin" Shared Library Code Part                 |
-// x=================================================================x
 
   static Pin::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
@@ -112,6 +56,7 @@ extern "C" {
 
     return ( Pin::PlacementStatus(Pin::PlacementStatus::UNPLACED) );
   }
+
 
   static Pin::AccessDirection  PyInt_AsAccessDirection ( PyObject* object ) {
     switch ( PyInt_AsLong(object) ) {
@@ -125,10 +70,11 @@ extern "C" {
     return ( Pin::AccessDirection(Pin::AccessDirection::UNDEFINED) );
   }
 
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyPin_create ()"
 
-  PyObject* PyPin_create ( PyObject *module, PyObject *args ) {
+  static PyObject* PyPin_create ( PyObject*, PyObject *args ) {
     Pin* pin = NULL;
     
     HTRY
@@ -201,19 +147,66 @@ extern "C" {
 
     return PyPin_Link ( pin );
   }
+  
+
+  // Standart Accessors (Attributes).
+  
+  PyObject* PyPin_getAccessDirection( PyPin* self ) {
+      trace << "PyNet_getAccessDirection ()" << endl;
+
+      METHOD_HEAD ( "Net.getAccessDirection()" )
+  
+      return (PyObject *)Py_BuildValue("l",  pin->getAccessDirection().getCode() );
+
+  }
+    
+
+  // ---------------------------------------------------------------
+  // PyPin Attribute Method table.
+
+  PyMethodDef PyPin_Methods[] =
+    { { "create"              , (PyCFunction)PyPin_create              , METH_VARARGS|METH_STATIC
+                              , "Create a new Pin." }
+    , { "getAccessDirection"  , (PyCFunction)PyPin_getAccessDirection  , METH_NOARGS
+                              , "Returns the pin accessdirection (by default set to UNDEFINED) ." }
+    , {NULL, NULL, 0, NULL}           /* sentinel */
+    };
+
+
+
+
+  // x-------------------------------------------------------------x
+  // |                  "PyPin" Object Methods                     |
+  // x-------------------------------------------------------------x
+
+
+  DBoDeleteMethod(Pin)
+  PyTypeObjectLinkPyType(Pin)
+
+
+#else  // End of Python Module Code Part.
+
+
+// x=================================================================x
+// |                "PyPin" Shared Library Code Part                 |
+// x=================================================================x
 
 
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Pin)
-
-
-
-
-  // ---------------------------------------------------------------
-  // PyPin Object Definitions.
-
   PyTypeInheritedObjectDefinitions(Pin, Contact)
+
+
+  extern  void  PyPin_postModuleInit ()
+  {
+    PyPinPlacementStatus_postModuleInit();
+    PyPinDirection_postModuleInit();
+
+    PyDict_SetItemString( PyTypePin.tp_dict, "PlacementStatus", (PyObject*)&PyTypePinPlacementStatus );
+    PyDict_SetItemString( PyTypePin.tp_dict, "Direction"      , (PyObject*)&PyTypePinDirection );
+  }
+
 
 #endif  // End of Shared Library Code Part.
 

@@ -1,3 +1,19 @@
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                   C O R I O L I S                               |
+// |    I s o b a r  -  Hurricane / Python Interface                 |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./PyPad.cpp"                                   |
+// +-----------------------------------------------------------------+
+
+
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyBox.h"
@@ -26,7 +42,7 @@ extern "C" {
 
 
   // x-------------------------------------------------------------x
-  // |               "PyPad" Attribute Methods                 |
+  // |                 "PyPad" Attribute Methods                   |
   // x-------------------------------------------------------------x
 
 
@@ -36,6 +52,40 @@ extern "C" {
 
   // Standard Destroy (Attribute).
   DBoDestroyAttribute(PyPad_destroy, PyPad)
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPad_create ()"
+
+  static PyObject* PyPad_create ( PyObject*, PyObject *args ) {
+    trace << "PyPad_create()" << endl;
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    Pad* pad = NULL;
+
+    HTRY
+    __cs.init ("Pad.create");
+    if (!PyArg_ParseTuple(args,"O&O&O&:Pad.create"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
+        return NULL;
+    }
+
+    if ( __cs.getObjectIds() == ":ent:layer:box") {
+      pad = Pad::create(PYNET_O(arg0), PYLAYER_O(arg1), *PYBOX_O(arg2));
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
+      return NULL;
+    }
+
+    HCATCH
+
+    return PyPad_Link(pad);
+  }
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyPad_getBoundingBox ()"
@@ -100,14 +150,16 @@ extern "C" {
   // PyPad Attribute Method table.
 
   PyMethodDef PyPad_Methods[] =
-    { { "getX"                 , (PyCFunction)PyPad_getX       , METH_NOARGS, "Return the Pad X value." }
-    , { "getY"                 , (PyCFunction)PyPad_getY       , METH_NOARGS, "Return the Pad Y value." }
-    , { "getBoundingBox"       , (PyCFunction)PyPad_getBoundingBox, METH_NOARGS, "Return the Pad Bounding Box." }
-    , { "setBoundingBox"       , (PyCFunction)PyPad_setBoundingBox, METH_VARARGS, "Sets the Pad Bounding Box." }
-    , { "translate"            , (PyCFunction)PyPad_translate     , METH_VARARGS, "Translates the Pad of dx and dy." }
-    , { "destroy"              , (PyCFunction)PyPad_destroy          , METH_NOARGS
-                               , "Destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "create"        , (PyCFunction)PyPad_create        , METH_VARARGS|METH_STATIC
+                        , "Create a new Pad." }
+    , { "getX"          , (PyCFunction)PyPad_getX          , METH_NOARGS, "Return the Pad X value." }
+    , { "getY"          , (PyCFunction)PyPad_getY          , METH_NOARGS, "Return the Pad Y value." }
+    , { "getBoundingBox", (PyCFunction)PyPad_getBoundingBox, METH_NOARGS, "Return the Pad Bounding Box." }
+    , { "setBoundingBox", (PyCFunction)PyPad_setBoundingBox, METH_VARARGS, "Sets the Pad Bounding Box." }
+    , { "translate"     , (PyCFunction)PyPad_translate     , METH_VARARGS, "Translates the Pad of dx and dy." }
+    , { "destroy"       , (PyCFunction)PyPad_destroy       , METH_NOARGS
+                        , "Destroy associated hurricane object, the python object remains." }
+    , {NULL, NULL, 0, NULL}  /* sentinel */
     };
 
 
@@ -127,55 +179,14 @@ extern "C" {
 // |             "PyPad" Shared Library Code Part                    |
 // x=================================================================x
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPad_new ()"
-
-  PyObject* PyPad_create ( PyObject *module, PyObject *args ) {
-    trace << "PyPad_create()" << endl;
-
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-    Pad* pad = NULL;
-
-    HTRY
-    __cs.init ("Pad.create");
-    if (!PyArg_ParseTuple(args,"O&O&O&:Pad.create"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           ,Converter,&arg2
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
-        return NULL;
-    }
-
-    if ( __cs.getObjectIds() == ":ent:layer:box") {
-      pad = Pad::create(PYNET_O(arg0), PYLAYER_O(arg1), *PYBOX_O(arg2));
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
-      return NULL;
-    }
-
-    HCATCH
-
-    return PyPad_Link(pad);
-  }
-
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Pad)
-
-
-  // ---------------------------------------------------------------
-  // PyPad Object Definitions.
-
-
   PyTypeInheritedObjectDefinitions(Pad, Component)
 
-#endif  // End of Shared Library Code Part.
+#endif  // Shared Library Code Part.
 
-
-}  // End of extern "C".
+}  // extern "C".
 
 
 

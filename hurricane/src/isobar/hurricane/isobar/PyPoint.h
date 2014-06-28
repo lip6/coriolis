@@ -1,92 +1,46 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: PyPoint.h,v 1.6 2006/05/03 14:00:04 jpc Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PyPoint.h"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/isobar/PyPoint.h"                  |
+// +-----------------------------------------------------------------+
 
 
-
-
-
-# ifndef  __PYPOINT__
-#   define  __PYPOINT__
-
+#ifndef  PY_POINT_H
+#define  PY_POINT_H
 
 #include "hurricane/isobar/PyHurricane.h"
-
 #include "hurricane/Point.h"
 
 
 namespace  Isobar {
 
-
-extern "C" {
-
+  extern "C" {
 
 // -------------------------------------------------------------------
 // Python Object  :  "PyPoint".
 
-  typedef struct {
-      PyObject_HEAD
-      Hurricane::Point* _object;
-  } PyPoint;
-
-
+    typedef struct {
+        PyObject_HEAD
+        Hurricane::Point* _object;
+    } PyPoint;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-  extern  PyTypeObject  PyTypePoint;
-  extern  PyMethodDef   PyPoint_Methods[];
+    extern  PyTypeObject  PyTypePoint;
+    extern  PyMethodDef   PyPoint_Methods[];
 
-  extern  PyObject* PyPoint_create    ( PyObject* self, PyObject* args );
-  extern  void      PyPoint_LinkPyType();
+    extern  void      PyPoint_LinkPyType();
 
 
 # define IsPyPoint(v)    ( (v)->ob_type == &PyTypePoint )
@@ -94,14 +48,8 @@ extern "C" {
 # define PYPOINT_O(v)    ( PYPOINT(v)->_object )
 
 
-}  // End of extern "C".
+  }  // extern "C".
 
+}  // Isobar namespace.
 
-
-
-}  // End of Isobar namespace.
- 
-
-
-
-# endif
+#endif  // PY_POINT_H

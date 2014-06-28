@@ -10,6 +10,8 @@ try:
   from   Hurricane import DbU
   from   Hurricane import UpdateSession
   from   Hurricane import Breakpoint
+  from   Hurricane import Transformation
+  from   Hurricane import Instance
   import Viewer
   import CRL
   from   helpers   import ErrorMessage
@@ -37,7 +39,7 @@ except Exception, e:
 def checkForUnplaceds ( cell ):
   unplaceds = []
   for instance in cell.getInstances():
-      if instance.getPlacementStatus() == Hurricane.PlacementStatusUNPLACED:
+      if instance.getPlacementStatus() == Instance.PlacementStatus.UNPLACED:
           unplaceds += [ instance ]
   if unplaceds:
       message = [ 'Some instances are still unplaceds:' ]
@@ -125,8 +127,8 @@ def ScriptMain ( cell=None ):
     instanceCoeur = amd2901.getInstance( 'core' )
     instanceCoeur.setTransformation(Hurricane.Transformation( (chipSide-coreSide)/2
                                                             , (chipSide-coreSide)/2
-                                                            , Hurricane.OrientationID ) )
-    instanceCoeur.setPlacementStatus( Hurricane.PlacementStatusPLACED )
+                                                            , Transformation.Orientation.ID ) )
+    instanceCoeur.setPlacementStatus( Instance.PlacementStatus.PLACED )
   
    # Placing Pads
     southPads = [ 'p_a3'  , 'p_a2', 'p_a1', 'p_r0', 'p_vddick0', 'p_vssick0', 'p_a0'     , 'p_i6', 'p_i8' , 'p_i7'  , 'p_r3' ]
@@ -144,27 +146,27 @@ def ScriptMain ( cell=None ):
             if key == 'south' :
                xpad = abutmentBoxChip.getXMin() + padHeight + ipad*(padWidth)
                ypad = abutmentBoxChip.getYMin() + padHeight
-               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Hurricane.OrientationMY) )
+               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Transformation.Orientation.MY) )
             
             # east
             if key == 'east' :
                xpad = abutmentBoxChip.getXMax() - padHeight
                ypad = padHeight + padWidth + ipad*(padWidth)
-               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Hurricane.OrientationR3) )
+               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Transformation.Orientation.R3) )
 
             # north
             if key == 'north' :
                xpad = padHeight + ipad*(padWidth)
                ypad = abutmentBoxChip.getYMax() - padHeight
-               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Hurricane.OrientationID) )
+               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Transformation.Orientation.ID) )
 
             # west
             if key == 'west' :
                xpad = padHeight
                ypad = padHeight + ipad*(padWidth)
-               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Hurricane.OrientationR1) )
+               pad.setTransformation( Hurricane.Transformation( xpad, ypad, Transformation.Orientation.R1) )
 
-            pad.setPlacementStatus( Hurricane.PlacementStatusPLACED )
+            pad.setPlacementStatus( Instance.PlacementStatus.PLACED )
   
   except ErrorMessage, e:
       print e; errorCode = e.code

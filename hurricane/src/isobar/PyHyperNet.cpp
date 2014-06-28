@@ -1,14 +1,13 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2007-2013, All Rights Reserved
+// Copyright (c) UPMC 2007-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Jean-Paul CHAPUT              |
+// |  Author      :                       Damien DUPUIS              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyHyperNet.cpp"                         |
@@ -19,7 +18,6 @@
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/PyOccurrenceCollection.h" 
-
 using namespace Hurricane;
 
 
@@ -42,6 +40,31 @@ extern "C" {
 
   // Standart Delete (Attribute).
   DirectDestroyAttribute(PyHyperNet_destroy, PyHyperNet)
+
+
+  static PyObject* PyHyperNet_create ( PyObject*, PyObject *args ) {
+    trace << "PyHyperNet_create()" << endl;
+
+    HyperNet* hyperNet = NULL;
+    PyObject* arg0;
+    
+    if (! ParseOneArg ( "HyperNet.create()", args, ":occur", &arg0 )) {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for HyperNet constructor." );
+        return ( NULL );
+    }
+
+    hyperNet =  new HyperNet ( *PYOCCURRENCE_O(arg0) );
+
+    PyHyperNet* pyHyperNet;
+    pyHyperNet = PyObject_NEW(PyHyperNet, &PyTypeHyperNet);
+    if (pyHyperNet == NULL) return NULL;
+
+    HTRY
+    pyHyperNet->_object = hyperNet;
+    HCATCH
+
+    return ( (PyObject*)pyHyperNet );
+  }
 
 
   static PyObject* PyHyperNet_getNetOccurrences(PyHyperNet *self)
@@ -106,7 +129,9 @@ extern "C" {
 
 
   PyMethodDef PyHyperNet_Methods[] =
-    { { "getCell"               , (PyCFunction)PyHyperNet_getCell               , METH_NOARGS , "Returns the hyperNet cell." }
+    { { "create"                , (PyCFunction)PyHyperNet_create                , METH_VARARGS|METH_STATIC
+                                , "Create a new HyperNet." }
+    , { "getCell"               , (PyCFunction)PyHyperNet_getCell               , METH_NOARGS , "Returns the hyperNet cell." }
     , { "isValid"               , (PyCFunction)PyHyperNet_isValid               , METH_NOARGS , "Returns trus if the HyperNet isValid." }
     , { "getNetOccurrences"     , (PyCFunction)PyHyperNet_getNetOccurrences     , METH_NOARGS 
                                 , "Returns the collection of Net occurrences" }
@@ -122,7 +147,7 @@ extern "C" {
   PyTypeObjectLinkPyType(HyperNet)
 
 
-#else  // End of Python Module Code Part.
+#else  // Python Module Code Part.
 
 
 // +=================================================================+
@@ -130,36 +155,10 @@ extern "C" {
 // +=================================================================+
 
 
-  PyObject* PyHyperNet_create ( PyObject *module, PyObject *args ) {
-    trace << "PyHyperNet_create()" << endl;
-
-    HyperNet* hyperNet = NULL;
-    PyObject* arg0;
-    
-    if (! ParseOneArg ( "HyperNet.create()", args, ":occur", &arg0 )) {
-        PyErr_SetString(ConstructorError, "invalid number of parameters for HyperNet constructor." );
-        return ( NULL );
-    }
-
-    hyperNet =  new HyperNet ( *PYOCCURRENCE_O(arg0) );
-
-    PyHyperNet* pyHyperNet;
-    pyHyperNet = PyObject_NEW(PyHyperNet, &PyTypeHyperNet);
-    if (pyHyperNet == NULL) return NULL;
-
-    HTRY
-    pyHyperNet->_object = hyperNet;
-    HCATCH
-
-    return ( (PyObject*)pyHyperNet );
-  }
-
-
   PyTypeObjectDefinitions(HyperNet)
 
 
-#endif  // End of Shared Library Code Part.
-
+#endif  // Shared Library Code Part.
 
 }  // extern "C".
 

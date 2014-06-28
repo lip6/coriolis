@@ -53,6 +53,7 @@
 .. |ControllerInspector_2|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-2.eps}\end{center}`
 .. |ControllerInspector_3|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-3.eps}\end{center}`
 .. |ControllerSettings_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Settings-1.eps}\end{center}`
+.. |CoriolisSoftSchema|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Coriolis-Soft-Schema.eps}\end{center}`
 
 .. |BigMouse|                       image:: ./images/ComputerMouse.eps
                                     :scale: 25%

@@ -61,58 +61,9 @@ extern "C" {
   
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyContact_destroy, PyContact)
-
-
-  static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
-    trace << "PyContact_translate ()" << endl;
-    
-    HTRY
-    METHOD_HEAD ( "Contact.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Contact.translate", &dx, &dy)) {
-        contact->translate(dx, dy);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact.translate()" );
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
-  PyMethodDef PyContact_Methods[] =
-    { { "destroy"        , (PyCFunction)PyContact_destroy        , METH_NOARGS
-                         , "Destroy associated hurricane object, the python object remains." }
-    , { "getAnchorHook"  , (PyCFunction)PyContact_getAnchorHook  , METH_NOARGS , "Return the contact anchor hook." }
-    , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
-    , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
-    , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
-    , { "getHalfHeight"  , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
-    , { "getDx"          , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
-    , { "getDy"          , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
-    , { "translate"      , (PyCFunction)PyContact_translate      , METH_VARARGS, "Translates the Contact of dx and dy." }
-    , { "setX"           , (PyCFunction)PyContact_setX           , METH_VARARGS, "Sets the contact X value." }
-    , { "setY"           , (PyCFunction)PyContact_setY           , METH_VARARGS, "Sets the contact Y value." }
-    , { "setDx"          , (PyCFunction)PyContact_setDx          , METH_VARARGS, "Sets the contact dx value." }
-    , { "setDy"          , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
-    };
-
-
-  DBoDeleteMethod(Contact)
-  PyTypeObjectLinkPyType(Contact)
-
-
-#else  // End of Python Module Code Part.
-
-
-// +=================================================================+
-// |             "PyContact" Shared Library Code Part                |
-// +=================================================================+
   
 
-  PyObject* PyContact_create ( PyObject *module, PyObject *args ) {
+  static PyObject* PyContact_create ( PyObject*, PyObject *args ) {
     trace << "PyContact_create()" << endl;
 
     Contact* contact = NULL;
@@ -143,6 +94,57 @@ extern "C" {
 
     return PyContact_Link(contact);
   }
+
+
+  static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
+    trace << "PyContact_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Contact.translate()" )
+    DbU::Unit dx=0, dy=0;
+    if (PyArg_ParseTuple(args,"ll:Contact.translate", &dx, &dy)) {
+        contact->translate(dx, dy);
+    } else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact.translate()" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  PyMethodDef PyContact_Methods[] =
+    { { "create"         , (PyCFunction)PyContact_create         , METH_VARARGS|METH_STATIC
+                         , "Create a new Contact." }
+    , { "destroy"        , (PyCFunction)PyContact_destroy        , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
+    , { "getAnchorHook"  , (PyCFunction)PyContact_getAnchorHook  , METH_NOARGS , "Return the contact anchor hook." }
+    , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
+    , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
+    , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
+    , { "getHalfHeight"  , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
+    , { "getDx"          , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
+    , { "getDy"          , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
+    , { "translate"      , (PyCFunction)PyContact_translate      , METH_VARARGS, "Translates the Contact of dx and dy." }
+    , { "setX"           , (PyCFunction)PyContact_setX           , METH_VARARGS, "Sets the contact X value." }
+    , { "setY"           , (PyCFunction)PyContact_setY           , METH_VARARGS, "Sets the contact Y value." }
+    , { "setDx"          , (PyCFunction)PyContact_setDx          , METH_VARARGS, "Sets the contact dx value." }
+    , { "setDy"          , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
+    , {NULL, NULL, 0, NULL}           /* sentinel */
+    };
+
+
+  DBoDeleteMethod(Contact)
+  PyTypeObjectLinkPyType(Contact)
+
+
+#else  // End of Python Module Code Part.
+
+
+// +=================================================================+
+// |             "PyContact" Shared Library Code Part                |
+// +=================================================================+
 
 
   // Link/Creation Method.

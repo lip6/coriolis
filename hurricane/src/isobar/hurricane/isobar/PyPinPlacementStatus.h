@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2014, All Rights Reserved
+// Copyright (c) UPMC 2014-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -10,16 +10,16 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/isobar/PyTransformation.h"         |
+// |  C++ Header  :  "./hurricane/isobar/PyPinPlacementStatus.h"     |
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_TRANSFORMATION_H
-#define PY_TRANSFORMATION_H
+#ifndef PY_PIN_PLACEMENTSTATUS_H
+#define PY_PIN_PLACEMENTSTATUS_H
 
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/Transformation.h"
+#include "hurricane/Pin.h"
 
 
 namespace  Isobar {
@@ -28,31 +28,32 @@ namespace  Isobar {
 
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyTransformation".
+// Python Object  :  "PyPinPlacementStatus".
 
     typedef struct {
         PyObject_HEAD
-        Hurricane::Transformation* _object;
-    } PyTransformation;
+        Hurricane::Pin::PlacementStatus* _object;
+    } PyPinPlacementStatus;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-    extern PyTypeObject  PyTypeTransformation;
-    extern PyMethodDef   PyTransformation_Methods[];
+    extern PyTypeObject  PyTypePinPlacementStatus;
+    extern PyMethodDef   PyPinPlacementStatus_Methods[];
 
-    extern void      PyTransformation_LinkPyType ();
-    extern void      PyTransformation_postModuleInit ();
+    extern PyObject* PyPinPlacementStatus_Link           ( Hurricane::Pin::PlacementStatus* );
+    extern void      PyPinPlacementStatus_LinkPyType ();
+    extern void      PyPinPlacementStatus_postModuleInit ();
 
 
-# define IsPyTransformation(v)    ( (v)->ob_type == &PyTypeTransformation )
-# define PYTRANSFORMATION(v)      ( (PyTransformation*)(v) )
-# define PYTRANSFORMATION_O(v)    ( PYTRANSFORMATION(v)->_object )
+# define IsPyPinPlacementStatus(v)    ( (v)->ob_type == &PyTypePinPlacementStatus )
+# define PYPINPLACEMENTSTATUS(v)      ( (PyPinPlacementStatus*)(v) )
+# define PYPINPLACEMENTSTATUS_O(v)    ( PYPINPLACEMENTSTATUS(v)->_object )
 
 
   }  // extern "C".
 
 }  // Isobar namespace.
  
-#endif  // PY_TRANSFORMATION_H
+#endif  // PY_PIN_PLACEMENTSTATUS_H

@@ -9,6 +9,7 @@ try:
   import Cfg
   import Hurricane
   from   Hurricane import DbU
+  from   Hurricane import Transformation
   from   Hurricane import Box
   from   Hurricane import Path
   from   Hurricane import Occurrence
@@ -118,7 +119,7 @@ class HTree ( object ):
     self.bufferCell   = self.framework.getCell( 'buf_x2', CRL.Catalog.State.Logical )
     self.cellGauge    = self.framework.getCellGauge()
     self.routingGauge = self.framework.getRoutingGauge()
-    self.topBuffer    = Instance( self.cell, 'ck_htree', self.bufferCell )
+    self.topBuffer    = Instance.create( self.cell, 'ck_htree', self.bufferCell )
     self.cloneds      = [ self.cell ]
     self.plugToRp     = {}
     self._createChildNet( self.topBuffer, 'ck_htree' )
@@ -153,63 +154,63 @@ class HTree ( object ):
     return
 
   def _createChildNet ( self, ibuffer, tag ):
-    childNet = Net( self.cell, tag )
-    childNet.setType( Hurricane.TypeCLOCK )
+    childNet = Net.create( self.cell, tag )
+    childNet.setType( Net.Type.CLOCK )
     getPlugByName(ibuffer, 'q').setNet( childNet )
     return
 
   def _createContact ( self, net, x, y ):
-    return Contact( net
-                  , self.routingGauge.getContactLayer(self.horizontalDepth)
-                  , x, y
-                  , self.routingGauge.getLayerGauge(self.horizontalDepth).getViaWidth()
-                  , self.routingGauge.getLayerGauge(self.horizontalDepth).getViaWidth()
-                  )
+    return Contact.create( net
+                         , self.routingGauge.getContactLayer(self.horizontalDepth)
+                         , x, y
+                         , self.routingGauge.getLayerGauge(self.horizontalDepth).getViaWidth()
+                         , self.routingGauge.getLayerGauge(self.horizontalDepth).getViaWidth()
+                         )
 
   def _createHorizontal ( self, source, target, y ):
-    return Horizontal( source
-                     , target
-                     , self.routingGauge.getRoutingLayer(self.horizontalDepth)
-                     , y
-                     , self.routingGauge.getLayerGauge(self.horizontalDepth).getWireWidth()
-                     )
+    return Horizontal.create( source
+                            , target
+                            , self.routingGauge.getRoutingLayer(self.horizontalDepth)
+                            , y
+                            , self.routingGauge.getLayerGauge(self.horizontalDepth).getWireWidth()
+                            )
 
   def _createVertical ( self, source, target, x ):
-    return Vertical( source
-                   , target
-                   , self.routingGauge.getRoutingLayer(self.verticalDepth)
-                   , x
-                   , self.routingGauge.getLayerGauge(self.verticalDepth).getWireWidth()
-                   )
+    return Vertical.create( source
+                          , target
+                          , self.routingGauge.getRoutingLayer(self.verticalDepth)
+                          , x
+                          , self.routingGauge.getLayerGauge(self.verticalDepth).getWireWidth()
+                          )
 
   def _rpAccess ( self, rp, net, flags=0 ):
-    contact1  = Contact( rp, self.routingGauge.getContactLayer(0), 0, 0 )
+    contact1  = Contact.create( rp, self.routingGauge.getContactLayer(0), 0, 0 )
 
     if flags & HTree.HAccess: stopDepth = self.horizontalDepth
     else:                     stopDepth = self.verticalDepth
 
     for depth in range(1,stopDepth):
-      contact2 = Contact( net
-                        , self.routingGauge.getContactLayer(depth)
-                        , contact1.getX()
-                        , contact1.getY()
-                        , self.routingGauge.getLayerGauge(depth).getViaWidth()
-                        , self.routingGauge.getLayerGauge(depth).getViaWidth()
-                        )
+      contact2 = Contact.create( net
+                               , self.routingGauge.getContactLayer(depth)
+                               , contact1.getX()
+                               , contact1.getY()
+                               , self.routingGauge.getLayerGauge(depth).getViaWidth()
+                               , self.routingGauge.getLayerGauge(depth).getViaWidth()
+                               )
       if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
-        Horizontal( contact1
-                  , contact2
-                  , self.routingGauge.getRoutingLayer(depth)
-                  , contact1.getY()
-                  , self.routingGauge.getLayerGauge(depth).getWireWidth()
-                  )
+        Horizontal.create( contact1
+                         , contact2
+                         , self.routingGauge.getRoutingLayer(depth)
+                         , contact1.getY()
+                         , self.routingGauge.getLayerGauge(depth).getWireWidth()
+                         )
       else:
-        Vertical( contact1
-                , contact2
-                , self.routingGauge.getRoutingLayer(depth)
-                , contact1.getX()
-                , self.routingGauge.getLayerGauge(depth).getWireWidth()
-                )
+        Vertical.create( contact1
+                       , contact2
+                       , self.routingGauge.getRoutingLayer(depth)
+                       , contact1.getX()
+                       , self.routingGauge.getLayerGauge(depth).getWireWidth()
+                       )
       contact1 = contact2
 
     return contact1
@@ -244,13 +245,13 @@ class HTree ( object ):
     xslice = self.toXCellGrid(x)
     yslice = self.toYCellGrid(y)
 
-    transformation = Hurricane.OrientationID
+    transformation = Transformation.Orientation.ID
     if (yslice / self.cellGauge.getSliceHeight()) % 2 != 0:
-      transformation = Hurricane.OrientationMY
+      transformation = Transformation.Orientation.MY
       yslice        += self.cellGauge.getSliceHeight()
 
-    instance.setTransformation ( Hurricane.Transformation(xslice, yslice, transformation) )
-    instance.setPlacementStatus( Hurricane.PlacementStatusFIXED )
+    instance.setTransformation ( Transformation(xslice, yslice, transformation) )
+    instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
     return
 
   def getTreeDepth ( self ):
@@ -288,10 +289,10 @@ class HTree ( object ):
       return self.addDeepPlug( headPlug.getMasterNet(), tailPath )
 
     masterCell = headInstance.getMasterCell()
-    masterNet  = Net( masterCell, topNet.getName() )
+    masterNet  = Net.create( masterCell, topNet.getName() )
     masterNet.setExternal ( True )
-    masterNet.setType     ( Hurricane.TypeCLOCK )
-    masterNet.setDirection( Hurricane.DirectionIN )
+    masterNet.setType     ( Net.Type.CLOCK )
+    masterNet.setDirection( Net.Direction.IN )
     headPlug   = headInstance.getPlug( masterNet )
     if not headPlug:
       raise ErrorMessage( 3, 'Plug not created for %s on instance %s of %s' \
@@ -306,7 +307,7 @@ class HTree ( object ):
     UpdateSession.open()
 
     leafConnects     = []
-    hyperMasterClock = HyperNet( Occurrence(self.masterClock) )
+    hyperMasterClock = HyperNet.create( Occurrence(self.masterClock) )
     for plugOccurrence in hyperMasterClock.getLeafPlugOccurrences():
       position   = plugOccurrence.getBoundingBox().getCenter()
       leafBuffer = self.getLeafBufferUnder( position )
@@ -363,10 +364,10 @@ class HTreeNode ( object ):
     self.area         = area
     self.prefix       = prefix
 
-    self.blBuffer     = Instance( self.topTree.cell, 'ck_htree'+self.prefix+'_bl_ins', self.topTree.bufferCell )
-    self.brBuffer     = Instance( self.topTree.cell, 'ck_htree'+self.prefix+'_br_ins', self.topTree.bufferCell )
-    self.tlBuffer     = Instance( self.topTree.cell, 'ck_htree'+self.prefix+'_tl_ins', self.topTree.bufferCell )
-    self.trBuffer     = Instance( self.topTree.cell, 'ck_htree'+self.prefix+'_tr_ins', self.topTree.bufferCell )
+    self.blBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_bl_ins', self.topTree.bufferCell )
+    self.brBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_br_ins', self.topTree.bufferCell )
+    self.tlBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_tl_ins', self.topTree.bufferCell )
+    self.trBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_tr_ins', self.topTree.bufferCell )
     self.ckNet        = getPlugByName(self.sourceBuffer, 'q').getNet()
     getPlugByName(self.blBuffer, 'i').setNet( self.ckNet )
     getPlugByName(self.brBuffer, 'i').setNet( self.ckNet )

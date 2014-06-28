@@ -57,6 +57,7 @@
 .. |ControllerInspector_2|          replace:: :raw-html:`<center><img src="https://soc-extras.lip6.fr/media/filer/2012/12/07/controller-inspector-2.png" alt="Controller Basic Snapshot"></center>`
 .. |ControllerInspector_3|          replace:: :raw-html:`<center><img src="https://soc-extras.lip6.fr/media/filer/2012/12/07/controller-inspector-3.png" alt="Controller Basic Snapshot"></center>`
 .. |ControllerSettings_1|           replace:: :raw-html:`<center><img src="https://soc-extras.lip6.fr/media/filer/2012/12/07/controller-settings-1.png" alt="Controller Basic Snapshot"></center>`
+.. |CoriolisSoftSchema|             replace:: :raw-html:`<center><img src="https://soc-extras.lip6.fr/media/filer/2014/06/29/Coriolis-Soft-Schema.png" alt="Coriolis Software Schematic"></center>` 
 
 .. |BigMouse|                       image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/computermouse.png
                                     :scale: 25%

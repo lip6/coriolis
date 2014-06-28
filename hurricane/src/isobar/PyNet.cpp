@@ -1,32 +1,31 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                    Sophie BELLOEIL               |
-// |  E-mail      :       Sophie.Belloeil@asim.lip6.fr               |
+// |  Author      :                     Sophie BELLOEIL              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyNet.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Module  :  "./PyNet.cpp"                                   |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyNet.h"
+#include "hurricane/isobar/PyNetType.h"
+#include "hurricane/isobar/PyNetDirection.h"
 #include "hurricane/isobar/PyCell.h" 
 #include "hurricane/isobar/PyPoint.h" 
 #include "hurricane/isobar/PyPlugCollection.h" 
 #include "hurricane/isobar/PySegmentCollection.h" 
 #include "hurricane/isobar/PyComponentCollection.h" 
 #include "hurricane/isobar/PyPinCollection.h" 
-
 #include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
 using namespace Hurricane;
-
 
 
 namespace  Isobar {
@@ -93,33 +92,9 @@ extern "C" {
   }
 
 
-
-
-  // x-------------------------------------------------------------x
-  // |                  Global Constants Loading                   |
-  // x-------------------------------------------------------------x
-
-  extern void  NetLoadConstants ( PyObject* dictionnary ) {
-    PyObject* constant;
-
-    LOAD_CONSTANT ( Net::Type::UNDEFINED        , "TypeUNDEFINED" )
-    LOAD_CONSTANT ( Net::Type::LOGICAL          , "TypeLOGICAL" )
-    LOAD_CONSTANT ( Net::Type::CLOCK            , "TypeCLOCK" )
-    LOAD_CONSTANT ( Net::Type::POWER            , "TypePOWER" )
-    LOAD_CONSTANT ( Net::Type::GROUND           , "TypeGROUND" )
-    LOAD_CONSTANT ( Net::Direction::UNDEFINED   , "DirectionUNDEFINED" )
-    LOAD_CONSTANT ( Net::Direction::IN          , "DirectionIN" )
-    LOAD_CONSTANT ( Net::Direction::OUT         , "DirectionOUT" )
-    LOAD_CONSTANT ( Net::Direction::INOUT       , "DirectionINOUT" )
-    LOAD_CONSTANT ( Net::Direction::TRISTATE    , "DirectionTRISTATE" )
-  }
-
-
-
   // x-------------------------------------------------------------x
   // |                "PyNet" Attribute Methods                    |
   // x-------------------------------------------------------------x
-
 
 
   // Standart Accessors (Attributes).
@@ -141,11 +116,33 @@ extern "C" {
   DBoDestroyAttribute(PyNet_destroy, PyNet)
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_getName ()"
+
+  GetNameMethod(Net, net)
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getName ()"
-  GetNameMethod(Net, net)
+  // Attribute Method  :  "PyNet_create ()"
+
+  static PyObject* PyNet_create ( PyObject*, PyObject *args ) {
+    trace << "PyNet_create()" << endl;
+
+    char* name = NULL;
+    PyCell* pyCell = NULL;
+    Net* net = NULL;
+    
+    HTRY
+    if (PyArg_ParseTuple(args,"O!s:Net.create", &PyTypeCell, &pyCell, &name)) {
+        net = Net::create(PYCELL_O(pyCell), Name(name));
+    } else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
+        return NULL;
+    }
+    HCATCH
+
+    return PyNet_Link(net);
+  }
 
 
   // ---------------------------------------------------------------
@@ -449,7 +446,9 @@ extern "C" {
   // PyNet Attribute Method table.
 
   PyMethodDef PyNet_Methods[] =
-    { { "getName"              , (PyCFunction)PyNet_getName                  , METH_NOARGS , "Returns the net name." }
+    { { "create"               , (PyCFunction)PyNet_create                   , METH_VARARGS|METH_STATIC
+                               , "Create a new Net." }
+    , { "getName"              , (PyCFunction)PyNet_getName                  , METH_NOARGS , "Returns the net name." }
     , { "getType"              , (PyCFunction)PyNet_getType                  , METH_NOARGS , "Returns the signal type (by default set to UNDEFINED)." }
     , { "getDirection"         , (PyCFunction)PyNet_getDirection             , METH_NOARGS , "Returns the signal direction (by default set to UNDEFINED)." }
     , { "getX"                 , (PyCFunction)PyNet_getX                     , METH_NOARGS , "Returns net abscissa." }
@@ -497,48 +496,22 @@ extern "C" {
 // x=================================================================x
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_create ()"
-
-  PyObject* PyNet_create ( PyObject *module, PyObject *args ) {
-    trace << "PyNet_create()" << endl;
-
-    char* name = NULL;
-    PyCell* pyCell = NULL;
-    Net* net = NULL;
-    
-    HTRY
-    if (PyArg_ParseTuple(args,"O!s:Net.create", &PyTypeCell, &pyCell, &name)) {
-        net = Net::create(PYCELL_O(pyCell), Name(name));
-    } else {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Net constructor." );
-        return NULL;
-    }
-    HCATCH
-
-    return PyNet_Link(net);
-  }
-
-
-
-  // Link/Creation Method.
   DBoLinkCreateMethod(Net)
-
-
-
-
-  // ---------------------------------------------------------------
-  // PyNet Object Definitions.
-
   PyTypeInheritedObjectDefinitions(Net, Entity)
 
 
-# endif  // End of Shared Library Code Part.
+  extern  void  PyNet_postModuleInit ()
+  {
+    PyNetType_postModuleInit();
+    PyNetDirection_postModuleInit();
+
+    PyDict_SetItemString( PyTypeNet.tp_dict, "Type"     , (PyObject*)&PyTypeNetType );
+    PyDict_SetItemString( PyTypeNet.tp_dict, "Direction", (PyObject*)&PyTypeNetDirection );
+  }
 
 
-}  // End of extern "C".
+# endif  // Shared Library Code Part.
 
+}  // extern "C".
 
-
-
-}  // End of Isobar namespace.
+}  // Isobar namespace.

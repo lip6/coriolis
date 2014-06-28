@@ -1,16 +1,18 @@
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyPath.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./PyPath.cpp"                                  |
+// +-----------------------------------------------------------------+
+
 
 #include "hurricane/isobar/PyTransformation.h"
 #include "hurricane/isobar/PyPath.h"
@@ -52,6 +54,57 @@ extern "C" {
   DirectDestroyAttribute(PyPath_destroy, PyPath)
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyPath_NEW ()"
+
+  static PyObject* PyPath_NEW ( PyObject *module, PyObject *args ) {
+    trace << "PyPath_NEW()" << endl;
+
+    Path*     path   = NULL;
+    PyObject* arg0   = NULL;
+    PyObject* arg1   = NULL;
+    PyPath*   pyPath = NULL;
+
+    __cs.init ("Path.Path");
+    if ( ! PyArg_ParseTuple(args,"|O&O&:Path.Path"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
+        return NULL;
+    }
+
+    HTRY
+
+    if      ( __cs.getObjectIds() == NO_ARG          ) { path = new Path (); }
+    else if ( __cs.getObjectIds() == INST_ARG        ) { path = new Path (  PYINSTANCE_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INST_PATH_ARG   ) { path = new Path (  PYINSTANCE_O(arg0)
+                                                                         , *PYPATH_O(arg1) ); }
+    else if ( __cs.getObjectIds() == PATH_INST_ARG   ) { path = new Path ( *PYPATH_O(arg0)
+                                                                         ,  PYINSTANCE_O(arg1) ); }
+    else if ( __cs.getObjectIds() == CELL_STRING_ARG ) { path = new Path (  PYCELL_O(arg0) 
+                                                                         ,  PyString_AsString(arg1) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
+      return ( NULL );
+    }
+    
+    pyPath = PyObject_NEW(PyPath, &PyTypePath);
+    if (pyPath == NULL) return NULL;
+    
+    pyPath->_object = path;
+
+    HCATCH
+
+    return ( (PyObject*)pyPath );
+  }
+
+
+  static int  PyPath_Init ( PyPath* self, PyObject* args, PyObject* kwargs )
+  {
+    trace << "PyPath_Init(): " << (void*)self << endl;
+    return 0;
+  }
 
 
   // ---------------------------------------------------------------
@@ -260,7 +313,8 @@ extern "C" {
   // x-------------------------------------------------------------x
   
   DirectDeleteMethod(PyPath_DeAlloc,PyPath)
-  PyTypeObjectLinkPyType(Path)
+  PyTypeObjectLinkPyTypeNewInit(Path)
+//PyTypeObjectLinkPyType(Path)
 
 
 # else  // End of Python Module Code Part.
@@ -269,51 +323,6 @@ extern "C" {
 // x=================================================================x
 // |               "PyPath" Shared Library Code Part                 |
 // x=================================================================x
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPath_create ()"
-
-  PyObject* PyPath_create ( PyObject *module, PyObject *args ) {
-    trace << "PyPath_create()" << endl;
-
-    Path*     path   = NULL;
-    PyObject* arg0   = NULL;
-    PyObject* arg1   = NULL;
-    PyPath*   pyPath = NULL;
-
-    __cs.init ("Path.create");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Path.create"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
-        return NULL;
-    }
-
-    HTRY
-
-    if      ( __cs.getObjectIds() == NO_ARG          ) { path = new Path (); }
-    else if ( __cs.getObjectIds() == INST_ARG        ) { path = new Path (  PYINSTANCE_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INST_PATH_ARG   ) { path = new Path (  PYINSTANCE_O(arg0)
-                                                                         , *PYPATH_O(arg1) ); }
-    else if ( __cs.getObjectIds() == PATH_INST_ARG   ) { path = new Path ( *PYPATH_O(arg0)
-                                                                         ,  PYINSTANCE_O(arg1) ); }
-    else if ( __cs.getObjectIds() == CELL_STRING_ARG ) { path = new Path (  PYCELL_O(arg0) 
-                                                                         ,  PyString_AsString(arg1) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Path constructor." );
-      return ( NULL );
-    }
-    
-    pyPath = PyObject_NEW(PyPath, &PyTypePath);
-    if (pyPath == NULL) return NULL;
-    
-    pyPath->_object = path;
-
-    HCATCH
-
-    return ( (PyObject*)pyPath );
-  }
 
 
   // ---------------------------------------------------------------

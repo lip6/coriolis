@@ -4,6 +4,7 @@ import os.path
 import sys
 import Hurricane
 from   Hurricane import DbU
+from   Hurricane import DataBase
 from   Hurricane import Layer
 import CRL
 from   CRL       import Environment
@@ -97,7 +98,7 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
     for gaugeName in routingGaugesTable.keys():
         gaugeDatas = routingGaugesTable[gaugeName]
 
-        technology = Hurricane.getDataBase().getTechnology()
+        technology = DataBase.getDB().getTechnology()
         gauge      = RoutingGauge.create(gaugeName)
         
         entryNo = 0
@@ -171,7 +172,7 @@ def loadAllianceConfig ( table, fromFile ):
 
     loadTechno = False
     af         = AllianceFramework.get()
-    db         = Hurricane.getDataBase()
+    db         = DataBase.getDB()
     technology = db.getTechnology()
     if not technology:
         loadTechno = True
@@ -189,7 +190,7 @@ def loadAllianceConfig ( table, fromFile ):
 
 def loadCompatXml ():
     af         = AllianceFramework.get()
-    db         = Hurricane.getDataBase()
+    db         = DataBase.getDB()
     technology = Hurricane.Technology.create(db,'Alliance')
 
     env = af.getEnvironment()

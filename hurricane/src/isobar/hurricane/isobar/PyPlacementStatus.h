@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2014, All Rights Reserved
+// Copyright (c) UPMC 2014-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -10,49 +10,48 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/isobar/PyTransformation.h"         |
+// |  C++ Header  :  "./hurricane/isobar/PyPlacementStatus.h"        |
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_TRANSFORMATION_H
-#define PY_TRANSFORMATION_H
-
+#ifndef PY_PLACEMENTSTATUS_H
+#define PY_PLACEMENTSTATUS_H
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/Transformation.h"
+#include "hurricane/Instance.h"
 
 
 namespace  Isobar {
 
   extern "C" {
 
-
 // -------------------------------------------------------------------
-// Python Object  :  "PyTransformation".
+// Python Object  :  "PyPlacementStatus".
 
     typedef struct {
         PyObject_HEAD
-        Hurricane::Transformation* _object;
-    } PyTransformation;
+        Hurricane::Instance::PlacementStatus* _object;
+    } PyPlacementStatus;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-    extern PyTypeObject  PyTypeTransformation;
-    extern PyMethodDef   PyTransformation_Methods[];
+    extern  PyTypeObject  PyTypePlacementStatus;
+    extern  PyMethodDef   PyPlacementStatus_Methods[];
 
-    extern void      PyTransformation_LinkPyType ();
-    extern void      PyTransformation_postModuleInit ();
-
-
-# define IsPyTransformation(v)    ( (v)->ob_type == &PyTypeTransformation )
-# define PYTRANSFORMATION(v)      ( (PyTransformation*)(v) )
-# define PYTRANSFORMATION_O(v)    ( PYTRANSFORMATION(v)->_object )
+    extern  PyObject* PyPlacementStatus_Link           ( Hurricane::Instance::PlacementStatus* );
+    extern  void      PyPlacementStatus_LinkPyType     ();
+    extern  void      PyPlacementStatus_postModuleInit ();
 
 
-  }  // extern "C".
+#define IsPyPlacementStatus(v)  ( (v)->ob_type == &PyTypePlacementStatus )
+#define PYPLACEMENTSTATUS(v)    ( (PyPlacementStatus*)(v) )
+#define PYPLACEMENTSTATUS_O(v)  ( PYPLACEMENTSTATUS(v)->_object )
 
-}  // Isobar namespace.
- 
-#endif  // PY_TRANSFORMATION_H
+
+  }  // End of extern "C".
+
+}  // End of Isobar namespace.
+
+#endif  // PY_PLACEMENTSTATUS_H

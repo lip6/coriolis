@@ -14,8 +14,6 @@
 // +-----------------------------------------------------------------+
 
 
-
-
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 
@@ -58,6 +56,59 @@ extern "C" {
 
   // Standart Destroy (Attribute).
   DirectDestroyAttribute(PyBox_destroy, PyBox)
+  
+
+  // ---------------------------------------------------------------
+  // Class Method  :  "PyBox_NEW ()"
+
+  static PyObject* PyBox_NEW (PyObject *module, PyObject *args) {
+    trace << "PyBox_NEW()" << endl;
+
+    Box* box = NULL;
+    PyBox* pyBox = NULL;
+
+    HTRY
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    PyObject* arg3;
+    __cs.init ("Box.Box");
+
+    if (! PyArg_ParseTuple(args,"|O&O&O&O&:Box.Box",
+                Converter, &arg0,
+                Converter, &arg1,
+                Converter, &arg2,
+                Converter, &arg3)) {
+        return NULL;
+    }
+
+    if  (__cs.getObjectIds() == NO_ARG) { box = new Box (); }
+    else if ( __cs.getObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
+    else if ( __cs.getObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0) , *PYPOINT_O(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG   ) {
+        box = new Box ( PyInt_AsLong(arg0), PyInt_AsLong(arg1), PyInt_AsLong(arg2) , PyInt_AsLong(arg3) );
+    } else {
+        PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
+        return NULL;
+    }
+
+    pyBox = PyObject_NEW(PyBox, &PyTypeBox);
+    if (pyBox == NULL) return NULL;
+
+    pyBox->_object = box;
+    HCATCH
+
+    return ( (PyObject*)pyBox );
+  }
+
+
+  static int  PyBox_Init ( PyBox* self, PyObject* args, PyObject* kwargs )
+  {
+    trace << "PyBox_Init(): " << (void*)self << endl;
+    return 0;
+  }
 
 
   static PyObject* PyBox_getCenter ( PyBox *self ) {
@@ -370,7 +421,8 @@ extern "C" {
 
 
   DirectDeleteMethod(PyBox_DeAlloc,PyBox)
-  PyTypeObjectLinkPyType(Box)
+  PyTypeObjectLinkPyTypeNewInit(Box)
+//PyTypeObjectLinkPyType(Box)
 
 #else  // End of Python Module Code Part.
 
@@ -378,52 +430,6 @@ extern "C" {
 // x=================================================================x
 // |                "PyBox" Shared Library Code Part                 |
 // x=================================================================x
-  
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_create ()"
-
-  PyObject* PyBox_create (PyObject *module, PyObject *args) {
-    trace << "PyBox_create()" << endl;
-
-    Box* box = NULL;
-    PyBox* pyBox = NULL;
-
-    HTRY
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-    PyObject* arg3;
-    __cs.init ("Box.create");
-
-    if (! PyArg_ParseTuple(args,"|O&O&O&O&:Box.create",
-                Converter, &arg0,
-                Converter, &arg1,
-                Converter, &arg2,
-                Converter, &arg3)) {
-        return NULL;
-    }
-
-    if  (__cs.getObjectIds() == NO_ARG) { box = new Box (); }
-    else if ( __cs.getObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
-    else if ( __cs.getObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0) , *PYPOINT_O(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) , PyInt_AsLong(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS4_ARG   ) {
-        box = new Box ( PyInt_AsLong(arg0), PyInt_AsLong(arg1), PyInt_AsLong(arg2) , PyInt_AsLong(arg3) );
-    } else {
-        PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
-        return NULL;
-    }
-
-    pyBox = PyObject_NEW(PyBox, &PyTypeBox);
-    if (pyBox == NULL) return NULL;
-
-    pyBox->_object = box;
-    HCATCH
-
-    return ( (PyObject*)pyBox );
-  }
 
 
 

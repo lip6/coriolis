@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -38,18 +37,31 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
-  PyObject* PyDataBase_getDB ( PyObject* module ) {
+  static PyObject* PyDataBase_create ( PyObject* ) {
+    trace << "PyDataBase_create()" << endl;
+
+    DataBase* db = NULL;
+    
+    HTRY
+    db = DataBase::create();
+    HCATCH
+
+    return PyDataBase_Link(db);
+  }
+
+
+  static PyObject* PyDataBase_getDB ( PyObject* ) {
     trace << "PyDataBase_getDB()" << endl;
 
     DataBase* db = NULL;
 
     HTRY
-    db = DataBase::getDB ();
-    if ( db == NULL )
-      PyErr_SetString ( HurricaneError, "DataBase has not been created yet" );
+    db = DataBase::getDB();
+    if (db == NULL)
+      PyErr_SetString( HurricaneError, "DataBase.getDB(): DataBase has not been created yet" );
     HCATCH
 
-    return PyDataBase_Link ( db );
+    return PyDataBase_Link( db );
   }
 
 
@@ -94,7 +106,11 @@ extern "C" {
   // PyDataBase Attribute Method table.
 
   PyMethodDef PyDataBase_Methods[] =
-    { { "getTechnology" , (PyCFunction)PyDataBase_getTechnology , METH_NOARGS, "Return the Technology" }
+    { { "create"        , (PyCFunction)PyDataBase_create        , METH_NOARGS|METH_STATIC
+                        , "Create the DataBase (only the first call created it)" }
+    , { "getDB"         , (PyCFunction)PyDataBase_getDB         , METH_NOARGS|METH_STATIC
+                        , "Get the DataBase" }
+    , { "getTechnology" , (PyCFunction)PyDataBase_getTechnology , METH_NOARGS, "Return the Technology" }
     , { "getRootLibrary", (PyCFunction)PyDataBase_getRootLibrary, METH_NOARGS, "Return the root library" }
     , { "destroy"       , (PyCFunction)PyDataBase_destroy       , METH_NOARGS
                         , "Destroy associated hurricane object The python object remains." }
@@ -113,23 +129,8 @@ extern "C" {
 // +=================================================================+
 
 
-  PyObject* PyDataBase_create ( PyObject *module ) {
-    trace << "PyDataBase_create()" << endl;
-
-    DataBase* db = NULL;
-    
-    HTRY
-    db = DataBase::create ();
-    HCATCH
-
-    return PyDataBase_Link(db);
-  }
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(DataBase)
-
-      
   PyTypeObjectDefinitions(DataBase)
 
 #endif  // End of Shared Library Code Part.

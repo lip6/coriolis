@@ -934,24 +934,24 @@ class net :
       self._hur_net += [cat[0]._hur_net[cat[1]]]
       return
  
-    net = Net ( self._st_cell._hur_cell, name )
+    net = Net.create ( self._st_cell._hur_cell, name )
       
-    net.setType ( TypeLOGICAL )
+    net.setType ( Net.Type.LOGICAL )
     
     if self._ext : net.setExternal ( True )
     else         : net.setExternal ( False )
 
     if self._ext :
-      if   self._direct ==       "IN" : net.setDirection ( DirectionIN        )
-      elif self._direct ==      "OUT" : net.setDirection ( DirectionOUT       )
-      elif self._direct ==    "INOUT" : net.setDirection ( DirectionINOUT     )
-      elif self._direct == "TRISTATE" : net.setDirection ( DirectionTRISTATE  )
-      elif self._direct ==  "UNKNOWN" : net.setDirection ( DirectionUNDEFINED )
+      if   self._direct ==       "IN" : net.setDirection ( Net.Direction.IN        )
+      elif self._direct ==      "OUT" : net.setDirection ( Net.Direction.OUT       )
+      elif self._direct ==    "INOUT" : net.setDirection ( Net.Direction.INOUT     )
+      elif self._direct == "TRISTATE" : net.setDirection ( Net.Direction.TRISTATE  )
+      elif self._direct ==  "UNKNOWN" : net.setDirection ( Net.Direction.UNDEFINED )
       
     if '_h_type' in self.__dict__ :
-      if   self._h_type ==  "POWER" : net.setType ( TypePOWER  )
-      elif self._h_type == "GROUND" : net.setType ( TypeGROUND )
-      elif self._h_type ==  "CLOCK" : net.setType ( TypeCLOCK  )
+      if   self._h_type ==  "POWER" : net.setType ( Net.Type.POWER  )
+      elif self._h_type == "GROUND" : net.setType ( Net.Type.GROUND )
+      elif self._h_type ==  "CLOCK" : net.setType ( Net.Type.CLOCK  )
     
     self._hur_net += [net]
 
@@ -1015,15 +1015,15 @@ class net :
     else                    : self._ext = False
     
     if hur_net.isExternal() :
-      if   hur_net.getDirection() == DirectionIN        : self._direct = "IN"
-      elif hur_net.getDirection() == DirectionOUT       : self._direct = "OUT"
-      elif hur_net.getDirection() == DirectionINOUT     : self._direct = "INOUT"
-      elif hur_net.getDirection() == DirectionTRISTATE  : self._direct = "TRISTATE"
-      elif hur_net.getDirection() == DirectionUNDEFINED : self._direct = "UNDEFINED"
+      if   hur_net.getDirection() == Net.Direction.IN        : self._direct = "IN"
+      elif hur_net.getDirection() == Net.Direction.OUT       : self._direct = "OUT"
+      elif hur_net.getDirection() == Net.Direction.INOUT     : self._direct = "INOUT"
+      elif hur_net.getDirection() == Net.Direction.TRISTATE  : self._direct = "TRISTATE"
+      elif hur_net.getDirection() == Net.Direction.UNDEFINED : self._direct = "UNDEFINED"
     
-    if   hur_net.getType() == TypePOWER  : self._h_type = "POWER"
-    elif hur_net.getType() == TypeGROUND : self._h_type = "GROUND"
-    elif hur_net.getType() == TypeCLOCK  : self._h_type = "CLOCK"
+    if   hur_net.getType() == Net.Type.POWER  : self._h_type = "POWER"
+    elif hur_net.getType() == Net.Type.GROUND : self._h_type = "GROUND"
+    elif hur_net.getType() == Net.Type.CLOCK  : self._h_type = "CLOCK"
                                                               
     self._hur_net  = [hur_net]
       

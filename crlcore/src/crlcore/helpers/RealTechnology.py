@@ -7,6 +7,7 @@ import string
 import traceback
 import Hurricane
 from   Hurricane import DbU
+from   Hurricane import DataBase
 from   Hurricane import BasicLayer
 from   helpers   import ErrorMessage
 
@@ -102,7 +103,7 @@ def load ( realPath ):
     confGlobals = globals()
     execfile(realPath,confGlobals)
 
-    technology = Hurricane.getDataBase().getTechnology()
+    technology = DataBase.getDB().getTechnology()
 
     for symbol, loader in tables:
         if not confGlobals.has_key(symbol):

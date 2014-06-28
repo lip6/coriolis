@@ -1,26 +1,23 @@
+// -*- C++ -*-
 //
-// $Id: PyTransformation.cpp,v 1.17 2007/01/30 14:47:24 cobell Exp $
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./PyTransformation.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// |  C++ Module  :  "./PyTransformation.cpp"                        |
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyPoint.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
+#include "hurricane/isobar/PyOrientation.h"
 
 
 namespace  Isobar {
@@ -41,27 +38,6 @@ extern "C" {
 
 
   // x-------------------------------------------------------------x
-  // |                  Global Constants Loading                   |
-  // x-------------------------------------------------------------x
-
-  extern void  TransformationLoadConstants ( PyObject* dictionnary )
-  {
-    PyObject* constant;
-
-    LOAD_CONSTANT ( Transformation::Orientation::ID, "OrientationID" )
-    LOAD_CONSTANT ( Transformation::Orientation::R1, "OrientationR1" )
-    LOAD_CONSTANT ( Transformation::Orientation::R2, "OrientationR2" )
-    LOAD_CONSTANT ( Transformation::Orientation::R3, "OrientationR3" )
-    LOAD_CONSTANT ( Transformation::Orientation::MX, "OrientationMX" )
-    LOAD_CONSTANT ( Transformation::Orientation::XR, "OrientationXR" )
-    LOAD_CONSTANT ( Transformation::Orientation::MY, "OrientationMY" )
-    LOAD_CONSTANT ( Transformation::Orientation::YR, "OrientationYR" )
-  }
-
-
-
-
-  // x-------------------------------------------------------------x
   // |           "PyTransformation" Attribute Methods              |
   // x-------------------------------------------------------------x
 
@@ -73,8 +49,82 @@ extern "C" {
 
   // Standard destroy (Attribute).
   DirectDestroyAttribute(PyTransformation_destroy, PyTransformation)
+  
+
+  static Transformation::Orientation  PyInt_AsOrientation ( PyObject* object ) {
+    switch ( PyInt_AsLong(object) ) {
+      case Transformation::Orientation::ID : return ( Transformation::Orientation(Transformation::Orientation::ID) );
+      case Transformation::Orientation::R1 : return ( Transformation::Orientation(Transformation::Orientation::R1) );
+      case Transformation::Orientation::R2 : return ( Transformation::Orientation(Transformation::Orientation::R2) );
+      case Transformation::Orientation::R3 : return ( Transformation::Orientation(Transformation::Orientation::R3) );
+      case Transformation::Orientation::MX : return ( Transformation::Orientation(Transformation::Orientation::MX) );
+      case Transformation::Orientation::XR : return ( Transformation::Orientation(Transformation::Orientation::XR) );
+      case Transformation::Orientation::MY : return ( Transformation::Orientation(Transformation::Orientation::MY) );
+      case Transformation::Orientation::YR : return ( Transformation::Orientation(Transformation::Orientation::YR) );
+    }
+
+    return ( Transformation::Orientation(Transformation::Orientation::ID) );
+  }
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyTransformation_NEW ()"
+
+  static PyObject* PyTransformation_NEW (PyObject *module, PyObject *args) {
+    trace << "PyTransformation_NEW()" << endl;
+
+    Transformation* transf;
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+
+    __cs.init ("Transformation.Transformation");
+    if ( ! PyArg_ParseTuple(args,"|O&O&O&:Transformation.Transformation"
+                           ,Converter,&arg0
+                           ,Converter,&arg1
+                           ,Converter,&arg2
+                           )) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
+        return NULL;
+    }
+
+    if      ( __cs.getObjectIds() == NO_ARG        ) { transf = new Transformation (); }
+    else if ( __cs.getObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
+    else if ( __cs.getObjectIds() == TRANS_ARG     ) { transf = new Transformation ( *PYTRANSFORMATION_O(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
+                                                                                   , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == POINT_INT_ARG ) { transf = new Transformation ( *PYPOINT_O(arg0)
+                                                                                   , PyInt_AsOrientation(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
+                                                                                   , PyInt_AsLong(arg1)
+                                                                                   , PyInt_AsOrientation(arg2) ); }
+    else {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
+      return NULL;
+    }
+
+    PyTransformation* pyTransformation = PyObject_NEW(PyTransformation, &PyTypeTransformation);
+    if (pyTransformation == NULL) { return NULL; }
+    
+    trace_in ();
+    trace << "new PyTransformation [" << hex << pyTransformation << "]" << endl;
+    trace_out ();
+    
+    HTRY
+
+    pyTransformation->_object = transf;
+
+    HCATCH
+
+    return (PyObject*)pyTransformation;
+  }
+
+
+  static int  PyTransformation_Init ( PyTransformation* self, PyObject* args, PyObject* kwargs )
+  {
+    trace << "PyTransformation_Init(): " << (void*)self << endl;
+    return 0;
+  }
 
 
   // ---------------------------------------------------------------
@@ -459,8 +509,6 @@ extern "C" {
   }
 
 
-
-
   // ---------------------------------------------------------------
   // PyTransformation Attribute Method table.
 
@@ -487,14 +535,13 @@ extern "C" {
     };
 
 
-
-
   // x-------------------------------------------------------------x
   // |             "PyTransformation" Object Methods               |
   // x-------------------------------------------------------------x
 
   DirectDeleteMethod(PyTransformation_DeAlloc,PyTransformation)
-  PyTypeObjectLinkPyType(Transformation)
+  PyTypeObjectLinkPyTypeNewInit(Transformation)
+//PyTypeObjectLinkPyType(Transformation)
 
 
 #else  // End of Python Module Code Part.
@@ -503,82 +550,19 @@ extern "C" {
 // x=================================================================x
 // |          "PyTransformation" Shared Library Code Part            |
 // x=================================================================x
-  
-  static Transformation::Orientation  PyInt_AsOrientation ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
-      case Transformation::Orientation::ID : return ( Transformation::Orientation(Transformation::Orientation::ID) );
-      case Transformation::Orientation::R1 : return ( Transformation::Orientation(Transformation::Orientation::R1) );
-      case Transformation::Orientation::R2 : return ( Transformation::Orientation(Transformation::Orientation::R2) );
-      case Transformation::Orientation::R3 : return ( Transformation::Orientation(Transformation::Orientation::R3) );
-      case Transformation::Orientation::MX : return ( Transformation::Orientation(Transformation::Orientation::MX) );
-      case Transformation::Orientation::XR : return ( Transformation::Orientation(Transformation::Orientation::XR) );
-      case Transformation::Orientation::MY : return ( Transformation::Orientation(Transformation::Orientation::MY) );
-      case Transformation::Orientation::YR : return ( Transformation::Orientation(Transformation::Orientation::YR) );
-    }
 
-    return ( Transformation::Orientation(Transformation::Orientation::ID) );
-  }
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyTransformation_create ()"
-
-  PyObject* PyTransformation_create (PyObject *module, PyObject *args) {
-    trace << "PyTransformation_create()" << endl;
-
-    Transformation* transf;
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-
-    __cs.init ("Transformation.create");
-    if ( ! PyArg_ParseTuple(args,"|O&O&O&:Transformation.create"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           ,Converter,&arg2
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
-        return NULL;
-    }
-
-    if      ( __cs.getObjectIds() == NO_ARG        ) { transf = new Transformation (); }
-    else if ( __cs.getObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == TRANS_ARG     ) { transf = new Transformation ( *PYTRANSFORMATION_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
-                                                                                   , PyInt_AsLong(arg1) ); }
-    else if ( __cs.getObjectIds() == POINT_INT_ARG ) { transf = new Transformation ( *PYPOINT_O(arg0)
-                                                                                   , PyInt_AsOrientation(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
-                                                                                   , PyInt_AsLong(arg1)
-                                                                                   , PyInt_AsOrientation(arg2) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
-      return NULL;
-    }
-
-    PyTransformation* pyTransformation = PyObject_NEW(PyTransformation, &PyTypeTransformation);
-    if (pyTransformation == NULL) { return NULL; }
-    
-    trace_in ();
-    trace << "new PyTransformation [" << hex << pyTransformation << "]" << endl;
-    trace_out ();
-    
-    HTRY
-
-    pyTransformation->_object = transf;
-
-    HCATCH
-
-    return (PyObject*)pyTransformation;
-  }
-
-
-  // x-------------------------------------------------------------x
-  // |            "PyTransformation" Local Functions               |
-  // x-------------------------------------------------------------x
 
   // ---------------------------------------------------------------
   // PyTransformation Object Definitions.
   PyTypeObjectDefinitions(Transformation)
+
+
+  extern  void  PyTransformation_postModuleInit ()
+  {
+    PyOrientation_postModuleInit();
+
+    PyDict_SetItemString( PyTypeTransformation.tp_dict, "Orientation", (PyObject*)&PyTypeOrientation );
+  }
 
 
 #endif  // End of Shared Library Code Part.

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -38,6 +37,35 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
   GetNameMethod(Library, lib)
+
+
+  static PyObject* PyLibrary_create ( PyObject *, PyObject *args ) {
+      trace << "PyLibrary_create()" << endl;
+
+      PyObject* arg0;
+      PyObject* arg1;
+      Library* library = NULL;
+
+      HTRY
+      __cs.init ("Library.create");
+      if (!PyArg_ParseTuple(args,"O&O&:Library.create", Converter, &arg0, Converter, &arg1)) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":db:string") {
+          DataBase* db = PYDATABASE_O(arg0);
+          library = Library::create(db, Name(PyString_AsString(arg1)));
+      } else if (__cs.getObjectIds() == ":library:string") {
+          Library* masterLibrary = PYLIBRARY_O(arg0);
+          library = Library::create(masterLibrary, Name(PyString_AsString(arg1)));
+      } else {
+          PyErr_SetString( ConstructorError, "invalid number of parameters for Library constructor." );
+          return NULL;
+      }
+      HCATCH
+
+      return PyLibrary_Link( library );
+  }
 
 
   static PyObject* PyLibrary_getSubLibrary ( PyLibrary *self, PyObject* args ) {
@@ -107,8 +135,9 @@ extern "C" {
 
 
   PyMethodDef PyLibrary_Methods[] =
-    {
-      { "getName"   , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
+    { { "create"    , (PyCFunction)PyLibrary_create       , METH_NOARGS|METH_STATIC
+                    , "Creates a new library." }
+    , { "getName"   , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
     , { "getLibrary", (PyCFunction)PyLibrary_getSubLibrary, METH_VARARGS, "Get the sub-library named <name>" }
     , { "getCell"   , (PyCFunction)PyLibrary_getCell      , METH_VARARGS, "Get the cell of name <name>" }
     , { "getCells"  , (PyCFunction)PyLibrary_getCells     , METH_NOARGS , "Returns the collection of all cells of the library." }
@@ -130,39 +159,8 @@ extern "C" {
 // +=================================================================+
 
 
-  PyObject* PyLibrary_create ( PyObject *module, PyObject *args ) {
-      trace << "PyLibrary_create()" << endl;
-
-      PyObject* arg0;
-      PyObject* arg1;
-      Library* library = NULL;
-
-      HTRY
-      __cs.init ("Library.create");
-      if (!PyArg_ParseTuple(args,"O&O&:Library.create", Converter, &arg0, Converter, &arg1)) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
-        return NULL;
-      }
-      if (__cs.getObjectIds() == ":db:string") {
-          DataBase* db = PYDATABASE_O(arg0);
-          library = Library::create(db, Name(PyString_AsString(arg1)));
-      } else if (__cs.getObjectIds() == ":library:string") {
-          Library* masterLibrary = PYLIBRARY_O(arg0);
-          library = Library::create(masterLibrary, Name(PyString_AsString(arg1)));
-      } else {
-          PyErr_SetString ( ConstructorError, "invalid number of parameters for Library constructor." );
-          return NULL;
-      }
-      HCATCH
-
-      return PyLibrary_Link ( library );
-  }
-
-
   // Link/Creation Method.
   DBoLinkCreateMethod(Library)
-
-
   PyTypeObjectDefinitions(Library)
 
 
