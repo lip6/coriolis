@@ -42,6 +42,7 @@
 .. |menu_KiteLoadGlobalRouting|     image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/pr-sbs-loadglobal.png
 .. |menu_KiteGlobalRoute|           image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/pr-globalroute.png
 .. |menu_KiteDetailedRoute|         image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/pr-detailedroute.png
+.. |menu_KiteDetailedPreRoute|      image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/pr-detailedpreroute.png
 .. |menu_KiteFinalizeRoute|         image:: https://soc-extras.lip6.fr/media/filer/2012/12/07/pr-finalizeroute.png
 
 .. Stand-alone images.

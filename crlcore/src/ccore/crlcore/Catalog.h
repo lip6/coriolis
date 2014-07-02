@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,15 +14,14 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __CRL_CATALOG_H__
-#define __CRL_CATALOG_H__
+#ifndef CRL_CATALOG_H
+#define CRL_CATALOG_H
 
-#include  <string>
-#include  <map>
-
-#include  "hurricane/Name.h"
-#include  "hurricane/Property.h"
-#include  "hurricane/Slot.h"
+#include <string>
+#include <map>
+#include "hurricane/Name.h"
+#include "hurricane/Property.h"
+#include "hurricane/Slot.h"
 
 namespace Hurricane {
   class Cell;
@@ -406,4 +404,4 @@ INSPECTOR_P_SUPPORT(CRL::Catalog);
 INSPECTOR_P_SUPPORT(CRL::Catalog::State);
 
 
-#endif
+#endif  // CRL_CATALOG_H

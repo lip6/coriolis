@@ -38,6 +38,7 @@
 .. |menu_KiteLoadGlobalRouting|     replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{L}oad Global Routing}}}}`
 .. |menu_KiteGlobalRoute|           replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{G}lobal Route}}}}`
 .. |menu_KiteDetailedRoute|         replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{D}etailed Route}}}}`
+.. |menu_KiteDetailedPreRoute|      replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{D}etailed Pre-Route}}}}`
 .. |menu_KiteFinalizeRoute|         replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{F}inalize Route}}}}`
 
 .. Stand-alone images.

@@ -400,7 +400,6 @@ int main ( int argc, char *argv[] )
         unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
                                                 : Kite::KtBuildGlobalRouting;
 
-        static KatabaticEngine::NetSet routingNets;
         KiteEngine* kite = KiteEngine::create ( cell );
         if ( showConf ) kite->printConfiguration ();
         
@@ -408,7 +407,7 @@ int main ( int argc, char *argv[] )
         if ( saveGlobal ) kite->saveGlobalSolution ();
 
         if ( detailedRoute ) {
-          kite->loadGlobalRouting ( Katabatic::EngineLoadGrByNet, routingNets );
+          kite->loadGlobalRouting ( Katabatic::EngineLoadGrByNet );
           kite->layerAssign       ( Katabatic::EngineNoNetLayerAssign );
           kite->runNegociate      ();
           kiteSuccess = kite->getToolSuccess ();

@@ -28,6 +28,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Cell.h"
 #include "crlcore/RoutingGauge.h"
 #include "katabatic/AutoContact.h"
 #include "katabatic/AutoSegment.h"
@@ -131,9 +132,11 @@ namespace Katabatic {
   {
     cmess1 << "  o  Assign Layer (simple wirelength)." << endl;
 
-    NetSet::iterator  inet = _routingNets.begin();
-    for ( ; inet != _routingNets.end() ; ++inet )
-      _layerAssignByLength ( *inet, total, global, globalNets );
+    forEach ( Net* , inet , getCell()->getNets() ) {
+      if (NetRoutingExtension::get(*inet)->isAutomaticGlobalRoute()) {
+        _layerAssignByLength ( *inet, total, global, globalNets );
+      }
+    } // forEach(Net*)
   }
 
 
@@ -188,9 +191,11 @@ namespace Katabatic {
   {
     cmess1 << "  o  Assign Layer (whole net trunk)." << endl;
 
-    NetSet::iterator inet = _routingNets.begin();
-    for ( ; inet != _routingNets.end() ; ++inet )
-      _layerAssignByTrunk( *inet, globalNets, total, global );
+    forEach ( Net* , inet , getCell()->getNets() ) {
+      if (NetRoutingExtension::get(*inet)->isAutomaticGlobalRoute()) {
+        _layerAssignByTrunk( *inet, globalNets, total, global );
+      }
+    }
   }
 
 

@@ -886,18 +886,25 @@ which represent one track. The maximum capacity of the |SxLib| gauge is
 
 |newpage|
 
-Routing a design is done in three ordered steps:
+Routing a design is done in four ordered steps:
 
-#. Global routing   |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteGlobalRoute|. 
-#. Detailed routing |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteDetailedRoute|. 
-#. Finalize routing |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteFinalizeRoute|. 
+#. Detailed pre-route |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteDetailedPreRoute|. 
+#. Global routing     |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteGlobalRoute|. 
+#. Detailed routing   |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteDetailedRoute|. 
+#. Finalize routing   |menu_P&R| |rightarrow| |menu_StepByStep| |rightarrow| |menu_KiteFinalizeRoute|. 
 
-After the detailed routing step the |Kite| data-structure is still active.
-The wiring is thus represented in a way that allows |Kite| to manage it but
-which is not completly finished. The finalize step performs the removal of
-the |Kite| data-structure and finish/cleanup the wiring so that its
-connex in the sense of |Hurricane|. *Do not* try to save
-your design before that step, you would get gaps in it.
+It is possible to supply to the router a complete wiring for some nets that the user's
+wants to be routed according to a specific topology. The supplied topology must respect
+the building rules of the |Katabatic| database (contacts must be, terminals, turns, h-tee
+& v-tee only). During the first step :fboxtt:`Detailed Pre-Route` the router will solve
+overlaps between the segments, without making any dogleg. If no pre-routed topologies
+are present, this step may be ommited. Any net routed at this step is then fixed and
+become unmovable for the later stages.
+
+After the detailed routing step the |Kite| data-structure is still active
+(the Hurricane wiring is decorated). The finalize step performs the removal of
+the |Kite| data-structure, and it is not advisable to save the design before
+that step.
 
 You may visualize the density (saturation) of either |Knik| (on edges) or
 |Kite| (on GCells) until the routing is finalized. Special layers appears

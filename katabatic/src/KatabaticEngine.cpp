@@ -153,7 +153,9 @@ namespace Katabatic {
     , _configuration     (new ConfigurationConcrete())
     , _gcellGrid         (NULL)
     , _chipTools         (cell)
-    , _routingNets       ()
+    , _autoSegmentLut    ()
+    , _autoContactLut    ()
+    , _netRoutingStates  ()
   {
     addMeasure<size_t>( cell, "Gates"
                       , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
@@ -459,47 +461,63 @@ namespace Katabatic {
   { return _configuration; }
 
 
-  void  KatabaticEngine::loadGlobalRouting ( unsigned int method, NetSet& nets, const map<Name,Net*>& excludeds )
+  void  KatabaticEngine::findSpecialNets ()
+  {
+    AllianceFramework* af = AllianceFramework::get();
+    forEach ( Net*, net, _cell->getNets() ) {
+      
+      const char* excludedType = NULL;
+      if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
+      if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
+    //if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
+      if (excludedType) {
+        cparanoid << Warning( "%s is not a routable net (%s,excluded)."
+                            , getString(*net).c_str(), excludedType ) << endl;
+      }
+      if (af->isBLOCKAGE(net->getName())) excludedType = "BLOCKAGE";
+      if (excludedType) {
+        NetRoutingState* state = getRoutingState( *net, KbCreate );
+        state->setFlags( NetRoutingState::Fixed );
+      }
+    }  // forEach( Net* )
+  }
+
+
+  NetRoutingState* KatabaticEngine::getRoutingState ( Net* net, unsigned int flags )
+  {
+    NetRoutingState* state = NetRoutingExtension::get( net );
+
+    if (state) {
+      NetRoutingStates::iterator istate = _netRoutingStates.find( net->getName() );
+      if (istate != _netRoutingStates.end()) {
+        if (istate->second != state) {
+          cerr << Error( "KatabaticEngine::updateRoutingStates() - %s incoherency between property and LUT:\n"
+                        "        Property:%x vs. LUT:%x, re-init LUT from property."
+                       , getString(net->getName()).c_str()
+                       , (void*)state
+                       , (void*)(istate->second)) << endl;
+          _netRoutingStates.insert( make_pair(net->getName(), state) );
+        }
+        return state;
+      }
+    } else {
+      if (not (flags & KbCreate)) return NULL;
+
+      state = NetRoutingExtension::create( net );
+    }
+
+    _netRoutingStates.insert( make_pair(net->getName(), state) );
+    return state;
+  }
+
+
+  void  KatabaticEngine::loadGlobalRouting ( unsigned int method )
   {
     if (_state < EngineGlobalLoaded)
       throw Error ("KatabaticEngine::loadGlobalRouting() : global routing not present yet.");
 
     if (_state > EngineGlobalLoaded)
       throw Error ("KatabaticEngine::loadGlobalRouting() : global routing already loaded.");
-
-    AllianceFramework* af = AllianceFramework::get();
-    if (nets.empty()) {
-      forEach ( Net*, net, _cell->getNets() ) {
-        const char* excludedType = NULL;
-        if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
-        if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
-        if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
-        if (excludedType) {
-          cparanoid << Warning( "%s is not a routable net (%s,excluded)."
-                              , getString(*net).c_str(), excludedType ) << endl;
-          continue;
-        }
-        if (af->isBLOCKAGE(net->getName())) continue;
-        if (excludeds.find(net->getName()) != excludeds.end()) continue;
-        _routingNets.insert ( *net );
-      }
-    } else {
-      NetSet::iterator  it = nets.begin();
-      for ( ; it != nets.end() ; it++ ) {
-        const char* excludedType = NULL;
-        if ((*it)->getType() == Net::Type::POWER ) excludedType = "POWER";
-        if ((*it)->getType() == Net::Type::GROUND) excludedType = "GROUND";
-        if ((*it)->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
-        if (af->isBLOCKAGE((*it)->getName()))      excludedType = "BLOCKAGE";
-        if (excludedType) {
-          cparanoid << Warning( "%s is not a routable net (%s), removed from set."
-                              , getString(*it).c_str(), excludedType ) << endl;
-        } else {
-          if (excludeds.find((*it)->getName()) != excludeds.end()) continue;
-          _routingNets.insert( *it );
-        }
-      }
-    }
 
     switch ( method ) {
       case EngineLoadGrByNet:   _loadGrByNet(); break;
@@ -825,9 +843,9 @@ namespace Katabatic {
     record->add( getSlot( "_configuration"   ,  _configuration   ) );
     record->add( getSlot( "_gcellGrid"       ,  _gcellGrid       ) );
     record->add( getSlot( "_chipTools"       ,  _chipTools       ) );
-    record->add( getSlot( "_routingNets"     , &_routingNets     ) );
     record->add( getSlot( "_autoContactLut"  , &_autoContactLut  ) );
     record->add( getSlot( "_autoSegmentLut"  , &_autoSegmentLut  ) );
+    record->add( getSlot( "_netRoutingStates", &_netRoutingStates) );
                                      
     return record;
   }

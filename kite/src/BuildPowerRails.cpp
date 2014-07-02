@@ -31,6 +31,7 @@
 #include "hurricane/Path.h"
 #include "hurricane/Query.h"
 #include "crlcore/AllianceFramework.h"
+#include "katabatic/NetRoutingProperty.h"
 #include "kite/RoutingPlane.h"
 #include "kite/TrackFixedSegment.h"
 #include "kite/Track.h"
@@ -68,6 +69,7 @@ namespace {
   using Hurricane::DataBase;
   using CRL::AllianceFramework;
   using Katabatic::ChipTools;
+  using Katabatic::NetRoutingExtension;
   using namespace Kite;
 
 
@@ -236,10 +238,8 @@ namespace {
       _vssiName = "";
       _ckoName  = "";
 
-      map<Name,Net*>  preRouteds = kite->getPreRouteds();
-
       forEach ( Net*, inet, topCell->getNets() ) {
-        if (preRouteds.find(inet->getName()) != preRouteds.end()) continue;
+        if (NetRoutingExtension::isManualGlobalRoute(*inet)) continue;
 
         Net::Type netType = inet->getType();
         if (netType == Net::Type::POWER) {
@@ -1161,6 +1161,7 @@ namespace Kite {
   using Hurricane::Technology;
   using Hurricane::BasicLayer;
   using Hurricane::ForEachIterator;
+  using Katabatic::NetRoutingState;
 
 
   void  KiteEngine::buildPowerRails ()
@@ -1169,6 +1170,9 @@ namespace Kite {
       _blockageNet = getCell()->getNet("blockagenet");
       if (not _blockageNet)
         _blockageNet = Net::create( getCell(), "blockagenet" );
+
+      NetRoutingState* state = getRoutingState( _blockageNet, Katabatic::KbCreate );
+      state->setFlags( NetRoutingState::Fixed );
     }
 
     QueryPowerRails query ( this );

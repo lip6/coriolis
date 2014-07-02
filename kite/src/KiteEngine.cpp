@@ -57,6 +57,7 @@ namespace Kite {
   using std::ostringstream;
   using std::setprecision;
   using std::vector;
+  using std::make_pair;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -100,16 +101,15 @@ namespace Kite {
 
 
   KiteEngine::KiteEngine ( Cell* cell )
-    : KatabaticEngine (cell)
-    , _viewer         (NULL)
-    , _knik           (NULL)
-    , _blockageNet    (NULL)
-    , _configuration  (new Configuration(getKatabaticConfiguration()))
-    , _preRouteds     ()
-    , _routingPlanes  ()
-    , _negociateWindow(NULL)
-    , _minimumWL      (0.0)
-    , _toolSuccess    (false)
+    : KatabaticEngine  (cell)
+    , _viewer          (NULL)
+    , _knik            (NULL)
+    , _blockageNet     (NULL)
+    , _configuration   (new Configuration(getKatabaticConfiguration()))
+    , _routingPlanes   ()
+    , _negociateWindow (NULL)
+    , _minimumWL       (0.0)
+    , _toolSuccess     (false)
   { }
 
 
@@ -127,6 +127,7 @@ namespace Kite {
     Session::open( this );
     createGlobalGraph( KtNoFlags );
     createDetailedGrid();
+    findSpecialNets();
     buildPreRouteds();
     buildPowerRails();
     protectRoutingPads();
@@ -540,7 +541,12 @@ namespace Kite {
       _knik->loadSolution();
     } else {
       annotateGlobalGraph();
-      _knik->run( getPreRouteds() );
+      map<Name,Net*>  preRouteds;
+      for ( auto istate : getNetRoutingStates() ) {
+        if (istate.second->isMixedPreRoute())
+          preRouteds.insert( make_pair(istate.first, istate.second->getNet()) );
+      }
+      _knik->run( preRouteds );
     }
 
     setState( Katabatic::EngineGlobalLoaded );
@@ -549,9 +555,9 @@ namespace Kite {
   }
 
 
-  void  KiteEngine::loadGlobalRouting ( unsigned int method, KatabaticEngine::NetSet& nets )
+  void  KiteEngine::loadGlobalRouting ( unsigned int method )
   {
-    KatabaticEngine::loadGlobalRouting( method, nets, getPreRouteds() );
+    KatabaticEngine::loadGlobalRouting( method );
 
     Session::open( this );
     getGCellGrid()->checkEdgeOverflow( getHTracksReservedLocal(), getVTracksReservedLocal() );

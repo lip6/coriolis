@@ -46,6 +46,7 @@ namespace Katabatic {
                        , KbHalfSlacken       = 0x00800000
                        , KbNoGCellShrink     = 0x01000000
                        , KbCParanoid         = 0x02000000
+                       , KbCreate            = 0x04000000
                        , KbDirectionMask     = KbHorizontal|KbVertical
                        };
 

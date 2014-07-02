@@ -173,13 +173,11 @@ namespace Kite {
 
   void  GraphicKiteEngine::_loadGlobalRouting ()
   {
-    static KatabaticEngine::NetSet routingNets;
-
     KiteEngine* kite = getForFramework( NoFlags );
     if (cmess1.enabled()) kite->printConfiguration();
 
     _viewer->clearToolInterrupt();
-    kite->loadGlobalRouting( Katabatic::EngineLoadGrByNet, routingNets );
+    kite->loadGlobalRouting( Katabatic::EngineLoadGrByNet );
   }
 
 

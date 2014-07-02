@@ -31,6 +31,7 @@
 #include "hurricane/Path.h"
 #include "hurricane/Query.h"
 #include "crlcore/AllianceFramework.h"
+#include "katabatic/NetRoutingProperty.h"
 #include "katabatic/AutoContact.h"
 #include "kite/RoutingPlane.h"
 #include "kite/TrackFixedSegment.h"
@@ -39,6 +40,12 @@
 
 
 namespace {
+
+
+} // Anonymous namespace.
+
+
+namespace Kite {
 
   using namespace std;
   using Hurricane::tab;
@@ -68,22 +75,12 @@ namespace {
   using Hurricane::Technology;
   using Hurricane::DataBase;
   using CRL::AllianceFramework;
+  using Hurricane::ForEachIterator;
+  using Katabatic::NetRoutingExtension;
+  using Katabatic::NetRoutingState;
   using Katabatic::AutoContact;
   using Katabatic::AutoSegment;
   using Katabatic::ChipTools;
-  using namespace Kite;
-
-
-} // Anonymous namespace.
-
-
-namespace Kite {
-
-
-  using Hurricane::DataBase;
-  using Hurricane::Technology;
-  using Hurricane::BasicLayer;
-  using Hurricane::ForEachIterator;
 
 
   void  KiteEngine::buildPreRouteds ()
@@ -131,7 +128,9 @@ namespace Kite {
       }
 
       if (isPreRouted or (rpCount < 2)) {
-        _preRouteds.insert( make_pair(inet->getName(),*inet) );
+        NetRoutingState* state = getRoutingState( *inet, Katabatic::KbCreate );
+        state->setFlags  ( NetRoutingState::ManualGlobalRoute );
+        state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
 
         if (rpCount > 1) {
           for ( auto icontact : contacts ) {
@@ -148,7 +147,7 @@ namespace Kite {
       }
     }
 
-    Session::revalidate ();
+    Session::revalidate();
   }
 
 

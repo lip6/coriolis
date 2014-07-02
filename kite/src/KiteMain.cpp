@@ -142,7 +142,6 @@ int main ( int argc, char *argv[] )
       }
     }
 
-    KatabaticEngine::NetSet routingNets;
     unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
                                             : Kite::KtBuildGlobalRouting;
 
@@ -152,7 +151,7 @@ int main ( int argc, char *argv[] )
     kite->runGlobalRouter( globalFlags );
     if (saveGlobal) kite->saveGlobalSolution ();
 
-    kite->loadGlobalRouting   ( Katabatic::EngineLoadGrByNet, routingNets );
+    kite->loadGlobalRouting   ( Katabatic::EngineLoadGrByNet );
     kite->balanceGlobalDensity();
     kite->layerAssign         ( Katabatic::EngineNoNetLayerAssign );
     kite->runNegociate        ();

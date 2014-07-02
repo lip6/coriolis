@@ -328,11 +328,8 @@ namespace Hurricane {
 
     const boost::any& callback = iaction->second;
     if (callback.type() == typeid( std::function<void()> )) {
-      cerr << "Called function " << qPrintable(path) << endl;
       ExceptionWidget::catchAllWrapper( boost::any_cast< std::function<void()> >(callback) );
     } else if (callback.type() == typeid( QString )) {
-      cerr << "Called script " << qPrintable(path) << ":"
-           << qPrintable(boost::any_cast<QString>(callback)) << endl;
       runScript( boost::any_cast<QString>(callback) );
     } else {
       cerr << Error("CellViewer::doAction(): For action \"%s\",\n"

@@ -1799,13 +1799,14 @@ namespace Katabatic {
     startMeasures();
     Session::open( this );
 
-    NetSet::iterator inet = _routingNets.begin();
-    while ( inet != _routingNets.end() ) {
-      DebugSession::open( *inet, 80 );
-      _loadNetGlobalRouting( *(inet++) );
-      Session::revalidate();
-      DebugSession::close();
-    }
+    forEach ( Net*, inet, getCell()->getNets() ) {
+      if (NetRoutingExtension::isAutomaticGlobalRoute(*inet)) {
+        DebugSession::open( *inet, 80 );
+        _loadNetGlobalRouting( *inet );
+        Session::revalidate();
+        DebugSession::close();
+      } 
+    } // forEach(Net*)
 
 #if defined(CHECK_DATABASE)
     _check ( "after Katabatic loading" );
@@ -1889,7 +1890,8 @@ namespace Katabatic {
         cerr << Warning("More than 10 unconnected RoutingPads (%u) on %s, missing global routing?"
                        ,unconnecteds, getString(net->getName()).c_str() ) << endl;
 
-        _routingNets.erase( net );
+        NetRoutingExtension::create( net )->setFlags  ( NetRoutingState::Excluded );
+        NetRoutingExtension::create( net )->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
         ltraceout(99);
         return;
       }

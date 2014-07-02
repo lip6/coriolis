@@ -177,9 +177,9 @@ extern "C" {
       }
 
       if (kite->getViewer()) {
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::loadGlobalRouting,kite,flags,*routingNets) );
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::loadGlobalRouting,kite,flags/*,*routingNets*/) );
       } else {
-        kite->loadGlobalRouting(flags,*routingNets);
+        kite->loadGlobalRouting(flags/*,*routingNets*/);
       }
     } else {
       PyErr_SetString(ConstructorError, "KiteEngine.loadGlobalRouting(): Invalid number/bad type of parameter.");

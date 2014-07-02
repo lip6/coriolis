@@ -37,6 +37,7 @@
 .. |menu_KiteLoadGlobalRouting|     image:: ./images/PR-SBS-LoadGlobal.png
 .. |menu_KiteGlobalRoute|           image:: ./images/PR-GlobalRoute.png
 .. |menu_KiteDetailedRoute|         image:: ./images/PR-DetailedRoute.png
+.. |menu_KiteDetailedPreRoute|      image:: ./images/PR-DetailedPreRoute.png
 .. |menu_KiteFinalizeRoute|         image:: ./images/PR-FinalizeRoute.png
 
 .. Stand-alone images.
