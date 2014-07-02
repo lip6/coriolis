@@ -233,6 +233,7 @@ namespace {
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );
     const Layer*   metal3        = configuration->getRoutingLayer( 2 );
     Net*           neighborNet   = NULL;
+    RoutingPlane*  metal3plane   = track->getRoutingPlane()->getTop();
 
     if (track->getLayer() != metal2) {
       ltraceout(150);
@@ -249,11 +250,20 @@ namespace {
       //if (freeInterval.getSize() < ppitch*6) {
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
            or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
-          cinfo << "Caged terminal: " << segment << endl;
+          cparanoid << "[INFO] Caged terminal: " << segment << endl;
           if (  (segment->getLayer () != metal2)
              or (segment->getLength() >= ppitch)
              or (segment->getNet   () == neighborNet) ) {
             neighborNet = segment->getNet();
+            continue;
+          }
+
+          Katabatic::AutoContact* support     = segment->base()->getAutoSource();
+          RoutingPad*             rp          = dynamic_cast<RoutingPad*>(support->getAnchor());
+          Track*                  metal3track = metal3plane->getTrackByPosition( rp->getSourcePosition().getX() );
+
+          if (metal3track->getFreeInterval(segment->getAxis(),segment->getNet()).isEmpty()) {
+            cparanoid << "[INFO]   Cannot protect caged terminal because top layer (metal3) is obstructed." << endl;
             continue;
           }
 
@@ -266,9 +276,6 @@ namespace {
             moveUpCount = 0;
           }
           lastMovedUp = segment->getSourceU();
-
-          Katabatic::AutoContact* support = segment->base()->getAutoSource();
-          RoutingPad*             rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
           
           Katabatic::AutoContact* source
             = Katabatic::AutoContactTerminal::create( support->getGCell()

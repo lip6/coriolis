@@ -576,7 +576,6 @@ namespace Kite {
     _negociateWindow->setGCells( *(getGCellGrid()->getGCellVector()) );
     _computeCagedConstraints();
     _negociateWindow->run( flags );
-    _negociateWindow->printStatistics();
     _negociateWindow->destroy();
     _negociateWindow = NULL;
 

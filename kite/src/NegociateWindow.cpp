@@ -493,6 +493,7 @@ namespace Kite {
 
     _flags |= flags;
     _negociate();
+    printStatistics();
 
     if (flags & KtPreRoutedStage) {
       _kite->setFixedPreRouted();

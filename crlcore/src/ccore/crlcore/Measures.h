@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,21 +11,18 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Measures.h"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_MEASURES_PROPERTY__
-#define  __CRL_MEASURES_PROPERTY__
+#ifndef CRL_MEASURES_PROPERTY_H
+#define CRL_MEASURES_PROPERTY_H
 
-#include  <string>
-#include  <sstream>
-#include  <iomanip>
-#include  <map>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <map>
 
-#include  "hurricane/Property.h"
+#include "hurricane/Property.h"
 
 namespace Hurricane {
   class DBo;
@@ -168,16 +159,28 @@ namespace CRL {
   template<typename Data>
   inline void  addMeasure ( DBo* object, const Name& name, const Data& data, unsigned int width )
   {
-    Measures::Extension* extension = Measures::_getOrCreate ( object );
-    extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data,width)) );
+    Measures::Extension*   extension = Measures::_getOrCreate( object );
+    MeasuresSet::iterator  imeasure  = extension->getValue()._measures.find(name);
+
+    if (imeasure == extension->getValue()._measures.end()) {
+      extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data,width)) );
+    } else {
+      static_cast< Measure<Data>* >( (*imeasure).second )->setData( data );
+    }
   }
 
 
   template<typename Data>
   inline void  addMeasure ( DBo* object, const Name& name, Data* data )
   {
-    Measures::Extension* extension = Measures::_getOrCreate ( object );
-    extension->getValue()._measures.insert ( std::make_pair(name,new Measure<Data>(name,data)) );
+    Measures::Extension*   extension = Measures::_getOrCreate( object );
+    MeasuresSet::iterator  imeasure  = extension->getValue()._measures.find(name);
+    
+    if (imeasure == extension->getValue()._measures.end()) {
+      extension->getValue()._measures.insert( std::make_pair(name,new Measure<Data>(name,data)) );
+    } else {
+      static_cast< Measure<Data>* >( (*imeasure).second )->setData( data );
+    }
   }
 
 
@@ -201,4 +204,4 @@ INSPECTOR_P_SUPPORT(CRL::BaseMeasure);
 INSPECTOR_P_SUPPORT(CRL::MeasuresDatas);
 
 
-#endif  // __CRL_MEASURES_PROPERTY__
+#endif  // CRL_MEASURES_PROPERTY_H
