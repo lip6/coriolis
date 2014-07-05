@@ -39,7 +39,6 @@
                                      hurricane/viewer/DisplayFilterWidget.h
                                      hurricane/viewer/ControllerWidget.h
                                      hurricane/viewer/ScriptWidget.h
-                                     hurricane/viewer/StratusWidget.h
                        )
                    set ( includes    hurricane/viewer/ScreenUtilities.h
                                      hurricane/viewer/DisplayStyle.h
@@ -56,7 +55,6 @@
                                      hurricane/viewer/HierarchyCommand.h
                                      hurricane/viewer/SelectorCriterion.h
                                      hurricane/viewer/CellWidgets.h
-                                     hurricane/viewer/StratusScript.h
                        )
                    set ( pyincludes  hurricane/viewer/PyHSVr.h
                                      hurricane/viewer/PyDrawingStyle.h
@@ -108,8 +106,6 @@
                                      DisplayFilterWidget.cpp
                                      ControllerWidget.cpp
                                      ScriptWidget.cpp
-                                     StratusScript.cpp
-                                     StratusWidget.cpp
                        )
                    set ( pycpps      PyHSVr.cpp
                                      PyDrawingStyle.cpp

@@ -39,8 +39,11 @@ namespace Isobar {
       inline PyObject* getSysModule       ();
       inline PyObject* getHurricaneModule ();
       inline PyObject* getUserModule      ();
+#if THIS_IS_DISABLED
              void      setEditor          ( Hurricane::CellViewer* );
+#endif
              bool      runFunction        ( const std::string& function, Hurricane::Cell* cell, unsigned int flags=0 );
+             void      addKwArgument      ( const char* key, PyObject* object );
     protected:
       static std::vector<std::string>  _pathes;
              std::string               _moduleName;
@@ -49,8 +52,11 @@ namespace Isobar {
              PyObject*                 _userModule;
              PyObject*                 _pyFunction;
              PyObject*                 _pyArgs;
+             PyObject*                 _pyKw;
              PyObject*                 _pyResult;
+#if THIS_IS_DISABLED
              Hurricane::CellViewer*    _cellViewer;
+#endif
              PyThreadState*            _globalState;
              PyThreadState*            _subInterpreter;
              long                      _flags;
@@ -64,7 +70,9 @@ namespace Isobar {
       PyObject* _importModule    ( const std::string& );
       void      _initialize      ();
       void      _finalize        ();
+#if THIS_IS_DISABLED
       void      _setEditor       ();
+#endif
   };
 
 

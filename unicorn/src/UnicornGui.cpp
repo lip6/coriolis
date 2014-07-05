@@ -19,7 +19,8 @@
 #include <QMenu>
 #include "hurricane/Warning.h"
 #include "hurricane/viewer/Script.h"
-#include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/CellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/GraphicToolEngine.h"
@@ -36,6 +37,7 @@ namespace Unicorn {
 
   using Hurricane::dbo_ptr;
   using Hurricane::Warning;
+  using Hurricane::PyCellViewer_Link;
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
@@ -83,8 +85,8 @@ namespace Unicorn {
       Isobar::Script::addPath( systemConfDir.string() );
 
       dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().string() );
-      script->setEditor  ( this );
-      script->runFunction( "unicornConfigure", getCell() );
+      script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
+      script->runFunction  ( "unicornConfigure", getCell() );
 
       Isobar::Script::removePath( systemConfDir.string() );
     } else {

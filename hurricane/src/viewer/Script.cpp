@@ -25,7 +25,9 @@
 
 namespace {
 
+#if THIS_IS_DISABLED
   const char* __editorKw = "__editor";
+#endif
 
 } // End of anonymous namespace.
 
@@ -67,8 +69,11 @@ namespace Isobar {
     , _userModule     (NULL)
     , _pyFunction     (NULL)
     , _pyArgs         (NULL)
+    , _pyKw           (NULL)
     , _pyResult       (NULL)
+#if THIS_IS_DISABLED
     , _cellViewer     (NULL)
+#endif
     , _globalState    (NULL)
     , _subInterpreter (NULL)
     , _flags          (0)
@@ -95,47 +100,55 @@ namespace Isobar {
   }
 
 
+#if THIS_IS_DISABLED
   void  Script::setEditor ( CellViewer* viewer )
   { _cellViewer = viewer; }
+#endif
 
 
   bool  Script::runFunction ( const std::string& function, Cell* cell, unsigned int flags )
   {
     bool returnCode = true;
 
-    _initialize ();
+    _initialize();
 
-    _userModule = PyImport_ImportModule ( const_cast<char*>(_moduleName.c_str()) );
+    _userModule = PyImport_ImportModule( const_cast<char*>(_moduleName.c_str()) );
 
-    if ( _userModule == NULL ) {
-      if ( PyErr_Occurred() ) {
-        PyErr_Print ();
+    if (_userModule == NULL) {
+      if (PyErr_Occurred()) {
+        PyErr_Print();
       }
-      _finalize ();
-      throw Error("Cannot load python module: <%s>",_moduleName.c_str());
+      _finalize();
+      throw Error( "Cannot load python module: %s",_moduleName.c_str() );
     }
 
-    _setEditor ();
+#if THIS_IS_DISABLED
+    _setEditor();
+#endif
 
-    _pyFunction = PyObject_GetAttrString(_userModule, const_cast<char*>(function.c_str()));
+    _pyFunction = PyObject_GetAttrString( _userModule, const_cast<char*>(function.c_str()) );
     if ( (_pyFunction == NULL) or not PyCallable_Check(_pyFunction) ) {
-      _finalize ();
-      throw Error("Python module <%s> doesn't contains any <%s> function."
-                 ,_moduleName.c_str(),function.c_str());
+      _finalize();
+      throw Error( "Python module %s doesn't contains any %s function."
+                 , _moduleName.c_str(),function.c_str());
     }
 
-    _pyArgs  = PyTuple_New(1);
-    if ( cell != NULL ) PyTuple_SetItem ( _pyArgs, 0, (PyObject*)PyCell_Link(cell) );
-    else                PyTuple_SetItem ( _pyArgs, 0, Py_None );
+    _pyArgs = PyTuple_New( 0 );
+#if THIS_IS_DISABLED
+    if (cell        != NULL) addKwArgument( "cell"  , (PyObject*)PyCell_Link(cell) );
+    if (_cellViewer != NULL) addKwArgument( "editor", (PyObject*)PyCellViewer_Link(_cellViewer) );
+#endif
 
-    _pyResult = PyEval_CallObject ( _pyFunction, (flags&NoScriptArgs) ? NULL : _pyArgs );
+    _pyResult = PyObject_Call( _pyFunction, _pyArgs, _pyKw );
+    _pyArgs   = NULL;
+    _pyKw     = NULL;
 
-    if ( _pyResult == NULL ) {
+    if (_pyResult == NULL) {
       cerr << "Something has gone slightly wrong" << endl;
     }
 
-    if ( PyErr_Occurred() ) {
-      PyErr_Print ();
+    if (PyErr_Occurred()) {
+      PyErr_Print();
       returnCode = false;
     }
 
@@ -174,7 +187,9 @@ namespace Isobar {
     if ( _hurricaneModule == NULL )
       throw Error("Script::_importModule(): No Hurricane module.");
 
+#if THIS_IS_DISABLED
     PyModule_AddObject ( _hurricaneModule, const_cast<char*>(__editorKw), Py_None );
+#endif
   }
 
 
@@ -237,6 +252,7 @@ namespace Isobar {
   }
 
 
+#if THIS_IS_DISABLED
   void  Script::_setEditor ()
   {
     if ( _userModule == NULL ) return;
@@ -251,6 +267,22 @@ namespace Isobar {
     } else {
       PyDict_SetItemString ( dictionary, __editorKw, Py_None );
     }
+  }
+#endif
+
+
+  void  Script::addKwArgument ( const char* key, PyObject* object )
+  {
+    if (_pyKw == NULL) _pyKw = PyDict_New();
+
+    PyObject* pyKey = PyString_FromString( key );
+    if (PyDict_Contains(_pyKw,pyKey) == 1) {
+      cerr << Error( "Script::addKwArgument(): Attempt to add twice key %s (nothing done)."
+                   , key ) << endl;
+      return;
+    }
+
+    PyDict_SetItem( _pyKw, pyKey, object );
   }
 
 

@@ -19,10 +19,10 @@ except Exception, e:
   sys.exit(2)
 
 
-def unicornConfigure ( cell=None ):
+def unicornConfigure ( **kw ):
     editor = None
-    if globals().has_key('__editor'):
-        editor = __editor
+    if kw.has_key('editor'):
+        editor = kw['editor']
     else:
         print ErrorMessage( 3, 'unicornConfigure.py: Must be run from a CellView derived class.' )
         return

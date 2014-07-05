@@ -35,6 +35,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
 //#include  "MapView.h"
+#include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/CellViewer.h"
@@ -46,9 +47,12 @@
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/viewer/GotoWidget.h"
 #include "hurricane/viewer/SelectCommand.h"
+#include "hurricane/viewer/PyCellViewer.h"
 
 
 namespace Hurricane {
+
+  using Isobar::PyCell_Link;
 
 
 // -------------------------------------------------------------------
@@ -768,8 +772,9 @@ namespace Hurricane {
     Isobar::Script::addPath( userDirectory.string() );
 
     dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().string());
-    script->setEditor  ( this );
-    script->runFunction( "ScriptMain", getCell() );
+    script->addKwArgument( "cell"      , (PyObject*)PyCell_Link(getCell()) );
+    script->addKwArgument( "editor"    , (PyObject*)PyCellViewer_Link(this) );
+    script->runFunction  ( "ScriptMain", getCell() );
 
     Isobar::Script::removePath( userDirectory.string() );
   }

@@ -42,7 +42,6 @@ namespace bopts = boost::program_options;
 
 #include "hurricane/viewer/HApplication.h"
 #include "hurricane/viewer/Graphics.h"
-#include "hurricane/viewer/StratusScript.h"
 #include "hurricane/viewer/SelectCommand.h"
 using namespace Hurricane;
 
@@ -287,14 +286,14 @@ int main ( int argc, char *argv[] )
     cout   << endl;
   //cmess2 << af->getPrint() << endl;
 
-    if ( arguments.count("stratus-script") ) {
-      string scriptName = arguments["stratus-script"].as<string>();
-      cmess1 << "  o  Running stratus script:" << endl;
-      cmess1 << "     - <" << scriptName << ">" << endl;
+    // if ( arguments.count("stratus-script") ) {
+    //   string scriptName = arguments["stratus-script"].as<string>();
+    //   cmess1 << "  o  Running stratus script:" << endl;
+    //   cmess1 << "     - <" << scriptName << ">" << endl;
 
-      dbo_ptr<StratusScript> script = StratusScript::create ( scriptName, NULL );
-      script->run ();
-    }
+    //   dbo_ptr<StratusScript> script = StratusScript::create ( scriptName, NULL );
+    //   script->run ();
+    // }
 
     if ( cell ) {
     // Python Script test.

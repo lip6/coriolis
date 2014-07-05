@@ -42,6 +42,7 @@ extern "C" {
   extern PyMethodDef   PyCellViewer_Methods[];
 
   extern PyObject* PyCellViewer_create         ( PyObject* self, PyObject* args );
+  extern PyObject* PyCellViewer_Link           ( Hurricane::CellViewer* object );
   extern void      PyCellViewer_LinkPyType     ();
   extern void      PyCellViewer_postModuleInit ();
 

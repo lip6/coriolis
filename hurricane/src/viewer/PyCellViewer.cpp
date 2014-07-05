@@ -298,6 +298,7 @@ extern "C" {
 // +=================================================================+
 
 
+  LinkCreateMethod(CellViewer)
   PyTypeRootObjectDefinitions(CellViewer)
 
 
