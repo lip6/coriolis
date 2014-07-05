@@ -1,61 +1,54 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2014, All Rights Reserved
+// Copyright (c) UPMC 2014-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                     Sophie BELLOEIL              |
+// |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./hurricane/isobar/PyEntity.h"            |
+// |  C++ Header  :       "./PyDebugSession.h"                       |
 // +-----------------------------------------------------------------+
 
 
-#ifndef ISOBAR_PY_ENTITY_H
-#define ISOBAR_PY_ENTITY_H
+#ifndef  ISOBAR_PY_DEBUG_SESSION_H
+#define  ISOBAR_PY_DEBUG_SESSION_H
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/Entity.h"
+#include "hurricane/DebugSession.h"
 
 
 namespace  Isobar {
 
   extern "C" {
 
-
 // -------------------------------------------------------------------
-// Python Object  :  "PyEntity".
+// Python Object  :  "PyDebugSession".
 
     typedef struct {
         PyObject_HEAD
-        Hurricane::Entity* _object;
-    } PyEntity;
+    } PyDebugSession;
 
 
 // -------------------------------------------------------------------
-// Functions & Types exported to "PyHurricane.ccp".
+// Functions & Types exported to "PyHurricane.cpp".
 
-  extern  PyObject* PyEntity_NEW        ( Hurricane::Entity* entity );
-  extern  void      PyEntity_LinkPyType ();
+    extern PyTypeObject  PyTypeDebugSession;
+    extern PyMethodDef   PyDebugSession_Methods[];
 
-  extern  PyTypeObject  PyTypeEntity;
-  extern  PyMethodDef   PyEntity_Methods[];
+    extern void  PyDebugSession_LinkPyType  ();
 
 
-#define IsPyEntity(v)    ( (v)->ob_type == &PyTypeEntity )
-#define PYENTITY(v)      ( (PyEntity*)(v) )
-#define PYENTITY_O(v)    ( PYENTITY(v)->_object )
+#define IsPyDebugSession(v)   ( (v)->ob_type == &PyTypeDebugSession )
+#define PYUPDATESESSION(v)     ( (PyDebugSession*)(v) )
+#define PYUPDATESESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
 
 
   }  // extern "C".
 
-
-  Hurricane::Entity*  EntityCast ( PyObject* derivedObject );
-
-
 }  // Isobar namespace.
 
-#endif  // ISOBAR_PY_ENTITY_H
+# endif

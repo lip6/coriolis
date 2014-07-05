@@ -65,6 +65,7 @@
                                     PyOrientation.cpp
                                     PyDbU.cpp
                                     PyUpdateSession.cpp
+                                    PyDebugSession.cpp
                                     PyVertical.cpp
                                     PyQueryMask.cpp
                                     PyQuery.cpp
@@ -127,6 +128,7 @@
                                     hurricane/isobar/PyOrientation.h
                                     hurricane/isobar/PyDbU.h
                                     hurricane/isobar/PyUpdateSession.h
+                                    hurricane/isobar/PyDebugSession.h
                                     hurricane/isobar/PyVertical.h
                                     hurricane/isobar/PyQueryMask.h
                                     hurricane/isobar/PyQuery.h

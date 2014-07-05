@@ -90,7 +90,7 @@ namespace Unicorn {
 
       Isobar::Script::removePath( systemConfDir.string() );
     } else {
-      cerr << Warning("System configuration file:\n  <%s> not found."
+      cerr << Warning("Unicorn system configuration file:\n  <%s> not found."
                      ,systemConfFile.string().c_str()) << endl;
     }
   }

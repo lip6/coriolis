@@ -114,4 +114,7 @@
                install ( FILES         ${includes}
                                        ${mocIncludes}
                                        ${pyIncludes}   DESTINATION include/coriolis2/kite ) 
+               install ( FILES         init/kiteInit.py
+                                                       DESTINATION ${PYTHON_SITE_PACKAGES}/kite )
+
    

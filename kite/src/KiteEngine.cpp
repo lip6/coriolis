@@ -14,9 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
+#include <Python.h>
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include "vlsisapd/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
@@ -30,6 +32,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/viewer/Script.h"
 #include "crlcore/Measures.h"
 #include "knik/Vertex.h"
 #include "knik/Edge.h"
@@ -43,6 +46,7 @@
 #include "kite/TrackSegment.h"
 #include "kite/NegociateWindow.h"
 #include "kite/KiteEngine.h"
+#include "kite/PyKiteEngine.h"
 
 
 namespace Kite {
@@ -58,6 +62,7 @@ namespace Kite {
   using std::setprecision;
   using std::vector;
   using std::make_pair;
+  using Hurricane::dbo_ptr;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -72,6 +77,7 @@ namespace Kite {
   using Hurricane::Torus;
   using Hurricane::Layer;
   using Hurricane::Cell;
+  using CRL::System;
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
@@ -119,6 +125,27 @@ namespace Kite {
   }
 
 
+  void  KiteEngine::_runKiteInit ()
+  {
+    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
+    Utilities::Path systemConfDir      = pythonSitePackages / "kite";
+    Utilities::Path systemConfFile     = systemConfDir      / "kiteInit.py";
+
+    if (systemConfFile.exists()) {
+      Isobar::Script::addPath( systemConfDir.string() );
+
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().string() );
+      script->addKwArgument( "kite"    , (PyObject*)PyKiteEngine_Link(this) );
+      script->runFunction  ( "kiteHook", getCell() );
+
+      Isobar::Script::removePath( systemConfDir.string() );
+    } else {
+      cerr << Warning("Kite system configuration file:\n  <%s> not found."
+                     ,systemConfFile.string().c_str()) << endl;
+    }
+  }
+
+
   void  KiteEngine::_initDataBase ()
   {
     ltrace(90) << "KiteEngine::_initDataBase()" << endl;
@@ -132,6 +159,7 @@ namespace Kite {
     buildPowerRails();
     protectRoutingPads();
     Session::close();
+    _runKiteInit();
 
     ltraceout(90);
   }

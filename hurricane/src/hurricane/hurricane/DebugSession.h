@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,24 +26,18 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/DebugSession.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DEBUG_SESSION_H__
-#define  __HURRICANE_DEBUG_SESSION_H__
+#ifndef  HURRICANE_DEBUG_SESSION_H
+#define  HURRICANE_DEBUG_SESSION_H
 
-
-#include  <set>
-#include  <stack>
-
-#include  "hurricane/Commons.h"
+#include <set>
+#include <stack>
+#include "hurricane/Commons.h"
 
 
 namespace Hurricane {
-
 
   class Name;
   class Net;
@@ -61,7 +49,6 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::DebugSession".
- 
 
   class DebugSession {
 
@@ -104,7 +91,6 @@ namespace Hurricane {
 
 // Inline Functions.
 
-
   void  DebugSession::open ( const void* symbol, unsigned int traceLevel )
   {
     if ( _singleton->_isTraced(symbol) )
@@ -136,10 +122,10 @@ namespace Hurricane {
 
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::DebugSession);
 
 
-#endif  // __HURRICANE_DEBUG_SESSION__
+#endif  // HURRICANE_DEBUG_SESSION_H

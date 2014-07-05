@@ -16,6 +16,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyBreakpoint.h"
+#include "hurricane/isobar/PyDebugSession.h"
 #include "hurricane/isobar/PyUpdateSession.h"
 #include "hurricane/isobar/PyDbU.h"
 #include "hurricane/isobar/PyPoint.h"
@@ -496,6 +497,7 @@ extern "C" {
   DL_EXPORT(void) initHurricane () {
     trace << "initHurricane()" << endl;
 
+    PyDebugSession_LinkPyType ();
     PyUpdateSession_LinkPyType ();
     PyDbU_LinkPyType ();
     PyPoint_LinkPyType ();
@@ -556,6 +558,7 @@ extern "C" {
     PyQuery_LinkPyType ();
     PyQueryMask_LinkPyType ();
 
+    PYTYPE_READY ( DebugSession                  )
     PYTYPE_READY ( UpdateSession                 )
     PYTYPE_READY ( Point                         )
     PYTYPE_READY ( DbU                           )
@@ -745,6 +748,8 @@ extern "C" {
     PyModule_AddObject ( module, "ContactLayer"         , (PyObject*)&PyTypeContactLayer );
     Py_INCREF ( &PyTypeNetExternalComponents );
     PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
+    Py_INCREF ( &PyTypeDebugSession );
+    PyModule_AddObject ( module, "DebugSession"         , (PyObject*)&PyTypeDebugSession );
     Py_INCREF ( &PyTypeUpdateSession );
     PyModule_AddObject ( module, "UpdateSession"        , (PyObject*)&PyTypeUpdateSession );
     Py_INCREF ( &PyTypeBreakpoint );

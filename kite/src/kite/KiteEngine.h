@@ -110,6 +110,7 @@ namespace Kite {
               void                    runGlobalRouter            ( unsigned int mode );
       virtual void                    loadGlobalRouting          ( unsigned int method );
       virtual void                    finalizeLayout             ();
+              void                    _runKiteInit               ();
               void                    _gutKite                   ();
               void                    _computeCagedConstraints   ();
               TrackElement*           _lookup                    ( Segment* ) const;
