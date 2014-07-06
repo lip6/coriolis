@@ -124,6 +124,7 @@ namespace Kite {
       kite = KiteEngine::create( cell );
       kite->setPostEventCb( boost::bind(&GraphicKiteEngine::postEvent,this) );
       kite->setViewer( _viewer );
+      if (cmess1.enabled()) kite->printConfiguration();
     } else
       cerr << Warning( "%s already has a Kite engine.", getString(cell).c_str() ) << endl;
 
@@ -174,7 +175,6 @@ namespace Kite {
   void  GraphicKiteEngine::_loadGlobalRouting ()
   {
     KiteEngine* kite = getForFramework( NoFlags );
-    if (cmess1.enabled()) kite->printConfiguration();
 
     _viewer->clearToolInterrupt();
     kite->loadGlobalRouting( Katabatic::EngineLoadGrByNet );

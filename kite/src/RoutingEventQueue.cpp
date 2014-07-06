@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -218,7 +218,7 @@ namespace Kite {
   {
     multiset<RoutingEvent*,RoutingEvent::Compare>::const_iterator ievent = _events.begin ();
     for ( ; ievent != _events.end(); ievent++ ) {
-      cerr << "Order: Queue:"
+      cerr << "Deter| Queue:"
            <<         (*ievent)->getEventLevel()
            << ","  << setw(6) << (*ievent)->getPriority()
            << " "  << setw(6) << DbU::getValueString((*ievent)->getSegment()->getLength())

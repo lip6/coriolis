@@ -201,9 +201,11 @@ extern "C" {
     if (PyArg_ParseTuple(args,"I:KiteEngine.layerAssign", &flags)) {
 
       if (kite->getViewer()) {
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::layerAssign,kite,flags) );
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::balanceGlobalDensity,kite) );
+        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::layerAssign         ,kite,flags) );
       } else {
-        kite->layerAssign(flags);
+        kite->balanceGlobalDensity();
+        kite->layerAssign         (flags);
       }
     } else {
       PyErr_SetString(ConstructorError, "KiteEngine.layerAssign(): Invalid number/bad type of parameter.");

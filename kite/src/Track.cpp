@@ -452,6 +452,8 @@ namespace Kite {
 
   void  Track::insert ( TrackElement* segment )
   {
+    // ltrace(500) << "Deter| Track::insert() " << getLayer()->getName()
+    //             << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
     ltrace(200) << "Track::insert() " << getLayer()->getName()
                 << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
 

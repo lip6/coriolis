@@ -475,9 +475,7 @@ namespace Kite {
 
         _axisHistory = _segment->getAxis();
         _eventLevel  = 0;
-        ltrace(500) << "Deter| addInsertEvent()" << endl;
-        ltrace(500) << "Deter| | " << _segment << endl;
-        ltrace(500) << "Deter| | " << fsm.getCost(itrack).getTrack() << endl;
+        ltrace(500) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
         Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
         fsm.setState( SegmentFsm::SelfInserted );
       } else {
@@ -486,6 +484,11 @@ namespace Kite {
           Manipulator(_segment,fsm).ripupPerpandiculars();
         } else {
           if (Manipulator(_segment,fsm).canRipup(Manipulator::NotOnLastRipup)) {
+            if (inltrace(500)) {
+              for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
+                ltrace(500) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
+              }
+            }
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
               ltrace(200) << "Trying Track: " << itrack << endl;
               if (fsm.getCost(itrack).isInfinite()) break;

@@ -81,6 +81,7 @@ namespace Kite {
   {
     DebugSession::open( _trackSegment->getNet(), 148 );
 
+  //ltrace(500) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
     ltrace(148) << "DataNegociate::update() - " << _trackSegment << endl;
     ltracein(148);
 
@@ -97,6 +98,7 @@ namespace Kite {
                                     );
 
     _terminals = AutoSegment::getTerminalCount( _trackSegment->base(), collapseds );
+  //ltrace(500) << "Deter|    Terminals:" << _terminals << endl;
     _attractors.clear();
     _perpandiculars.clear();
     _perpandicularFree = Interval(false);

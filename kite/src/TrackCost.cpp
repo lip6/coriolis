@@ -43,6 +43,7 @@ namespace Kite {
     , _begin          (begin)
     , _end            (end)
     , _interval       (interval)
+    , _forGlobal      (false)
     , _blockage       (false)
     , _fixed          (false)
     , _infinite       (false)

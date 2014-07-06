@@ -52,6 +52,7 @@ namespace {
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
   {
+    ltrace(500) << "Deter| NegociateOverlapCost() " << segment << endl;
     Interval intersect = segment->getCanonicalInterval();
 
     if (not intersect.intersect(cost.getInterval())) return;
@@ -99,8 +100,12 @@ namespace {
 
     cost.setOverlap();
     if ( segment->isLocal()
-       or (cost.isForGlobal() and (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3)) )
+       or (cost.isForGlobal() and (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3)) ) {
+      ltrace(500) << "Deter|     incTerminals() " << boolalpha << cost.isForGlobal() << " " << (data->getTerminals()*100) << endl;
       cost.incTerminals( data->getTerminals()*100 );
+    } else {
+      ltrace(500) << "Deter|     isForGlobal() " << boolalpha << cost.isForGlobal() << endl;
+    }
 
     ltrace(200) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
     cost.incDelta( intersect.getSize() );
@@ -382,6 +387,8 @@ namespace Kite {
 
     _eventHistory.clear();
     _eventQueue.load( _segments );
+
+    if (inltrace(500)) _eventQueue.dump();
 
     size_t count = 0;
     RoutingEvent::setStage( RoutingEvent::Negociate );

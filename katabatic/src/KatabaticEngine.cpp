@@ -387,7 +387,7 @@ namespace Katabatic {
            << (_timer.getMemorySize()>>10) << "Kb";
     cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
 
-    if (not tag.empty()) {
+   if (not tag.empty()) {
       addMeasure<double>( getCell(), tag+"T",  _timer.getCombTime  () );
       addMeasure<size_t>( getCell(), tag+"S", (_timer.getMemorySize() >> 20) );
     }

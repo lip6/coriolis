@@ -511,7 +511,10 @@ namespace Kite {
       _costs.push_back ( itrack->getOverlapCost(segment,costflags) );
       _costs.back().setAxisWeight   ( _event->getAxisWeight(itrack->getAxis()) );
       _costs.back().incDeltaPerpand ( _data->getWiringDelta(itrack->getAxis()) );
-      if (segment->isGlobal()) _costs.back().setForGlobal();
+      if (segment->isGlobal()) {
+        ltrace(500) << "Deter| setForGlobal() on " << *itrack << endl;
+        _costs.back().setForGlobal();
+      }
 
       if ( inLocalDepth and (_costs.back().getDataState() == DataNegociate::MaximumSlack) )
         _costs.back().setInfinite ();

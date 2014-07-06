@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
               routingNets = []
               kite = Kite.KiteEngine.create(cell)
-              if options.showConf:           kite.printConfiguration()
+              if options.showConf: kite.printConfiguration()
     
               kite.runGlobalRouter(globalFlags)
               if saveGlobal: kite.saveGlobalSolution()
