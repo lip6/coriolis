@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
+# Copyright (c) UPMC 2008-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -131,6 +131,10 @@ class Configuration ( object ):
         self._osFreeBSD8x_64    = re.compile (".*FreeBSD 8.*x86_64.*")
         self._osFreeBSD8x       = re.compile (".*FreeBSD 8.*")
         self._osDarwin          = re.compile (".*Darwin.*")
+        self._osCygwinW7_64     = re.compile (".*CYGWIN_NT-6\.1-WOW64.*")
+        self._osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*")
+        self._osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3]-WOW64.*")
+        self._osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*")
 
         uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
         lines = uname.stdout.readlines()
@@ -155,6 +159,14 @@ class Configuration ( object ):
             self._osType    = "FreeBSD.8x.x86_64"
             self._libSuffix = "64"
         elif self._osFreeBSD8x .match(lines[0]): self._osType = "FreeBSD.8x.i386"
+        elif self._osCygwinW7_64.match(lines[0]):
+            self._osType = "Cygwin.W7_64"
+            self._libSuffix = "64"
+        elif self._osCygwinW7.match(lines[0]): self._osType = "Cygwin.W7"
+        elif self._osCygwinW8_64.match(lines[0]):
+            self._osType = "Cygwin.W8_64"
+            self._libSuffix = "64"
+        elif self._osCygwinW8.match(lines[0]): self._osType = "Cygwin.W8"
         else:
             uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
             self._osType = uname.stdout.readlines()[0][:-1]

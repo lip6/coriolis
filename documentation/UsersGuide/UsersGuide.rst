@@ -318,6 +318,10 @@ automatically created either by |ccb| or the build system.
 | | Linux, SL 6, 64 bits   | | ~/coriolis-2.x/Linux.slsoc6x_64/Release.Shared/build/<tool>               |
 | | FreeBSD 8, 32 bits     | | ~/coriolis-2.x/FreeBSD.8x.i386/Release.Shared/build/<tool>                |
 | | FreeBSD 8, 64 bits     | | ~/coriolis-2.x/FreeBSD.8x.amd64/Release.Shared/build/<tool>               |
+| | Windows 7, 32 bits     | | ~/coriolis-2.x/Cygwin.W7/Release.Shared/build/<tool>                      |
+| | Windows 7, 64 bits     | | ~/coriolis-2.x/Cygwin.W7_64/Release.Shared/build/<tool>                   |
+| | Windows 8.x, 32 bits   | | ~/coriolis-2.x/Cygwin.W8/Release.Shared/build/<tool>                      |
+| | Windows 8.x, 64 bits   | | ~/coriolis-2.x/Cygwin.W8_64/Release.Shared/build/<tool>                   |
 +--------------------------+-----------------------------------------------------------------------------+
 | **Architecture Dependant Install**                                                                     |
 +--------------------------+-----------------------------------------------------------------------------+
@@ -363,6 +367,24 @@ The complete list of |ccb| functionalities can be accessed with the ``--help`` a
 It also may be run in graphical mode (``--gui``).
 
 
+Building the Devel Branch
+-------------------------
+
+In the |Coriolis| |git| repository, two branches are present:
+
+* The :cb:`master` branch, which contains the latest stable version. This is the 
+  one used by default if you follow the above instructions.
+
+* The :cb:`devel` branch, which obviously contains the latest commits from the
+  development team. To use it instead of the :cb:`master` one, do the following
+  command just after the first step: ::
+
+      dummy@lepka:~$ git checkout devel
+
+  Be aware that it may requires newer versions of the depnencies and may introduce
+  incompatibilites with the stable version.
+
+
 Additionnal Requirement under |MacOS|
 -------------------------------------
 
@@ -401,8 +423,8 @@ cells libraries. In a typical installation, this is generally
 :cb:`/usr/share/alliance/cells`.
 
 
-Environment Helper
-~~~~~~~~~~~~~~~~~~
+Setting up the Environment (coriolisEnv.py)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To simplify the tedious task of configuring your environment, a helper is provided
 in the ``bootstrap`` source directory: ::

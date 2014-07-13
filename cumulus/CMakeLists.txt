@@ -1,5 +1,6 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<cumulus>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(CUMULUS)
  
  cmake_minimum_required(VERSION 2.4.0)

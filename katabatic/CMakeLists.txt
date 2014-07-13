@@ -1,5 +1,6 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<katabatic>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(KATABATIC)
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)

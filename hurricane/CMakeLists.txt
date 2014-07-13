@@ -1,5 +1,6 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<hurricane>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(HURRICANE)
 
  option(BUILD_DOC "Build the documentation (doxygen)" OFF)

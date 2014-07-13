@@ -1,5 +1,6 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<etesian>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(ETESIAN)
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)

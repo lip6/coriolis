@@ -1,5 +1,6 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<stratus1>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(STRATUS1)
  
  option(BUILD_DOC "Build the documentation (latex2html)" OFF)

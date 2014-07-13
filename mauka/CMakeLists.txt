@@ -1,5 +1,6 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<mauka>" -*-
 
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(MAUKA)
 
  cmake_minimum_required(VERSION 2.8.9)

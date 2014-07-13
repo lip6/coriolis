@@ -44,6 +44,10 @@ def guessOs ():
     osFreeBSD8x_amd64 = re.compile (".*FreeBSD 8.*amd64.*")
     osFreeBSD8x_64    = re.compile (".*FreeBSD 8.*x86_64.*")
     osFreeBSD8x       = re.compile (".*FreeBSD 8.*")
+    osCygwinW7_64     = re.compile (".*CYGWIN_NT-6\.1-WOW64.*")
+    osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*")
+    osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3]-WOW64.*")
+    osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -78,12 +82,22 @@ def guessOs ():
       osType = "FreeBSD.8x.i386"
     elif osDarwin.match(lines[0]):
       osType = "Darwin"
+    elif osCygwinW7_64.match(lines[0]):
+      osType = "Cygwin.W7_64"
+      libDir = "lib64"
+    elif osCygwinW7.match(lines[0]):
+      osType = "Cygwin.W7"
+    elif osCygwinW8_64.match(lines[0]):
+      osType = "Cygwin.W8_64"
+      libDir = "lib64"
+    elif osCygwinW8.match(lines[0]):
+      osType = "Cygwin.W8"
     else:
-        uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
-        osType = uname.stdout.readlines()[0][:-1]
+      uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
+      osType = uname.stdout.readlines()[0][:-1]
 
-       #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
-       #print "          (using: \"%s\")" % osType
+     #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
+     #print "          (using: \"%s\")" % osType
     
     return (osType,libDir)
       
