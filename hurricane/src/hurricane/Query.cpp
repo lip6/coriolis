@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,10 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -35,7 +30,6 @@
 
 
 #include <limits>
-
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Cell.h"
@@ -45,14 +39,8 @@
 
 namespace Hurricane {
 
-
-// -------------------------------------------------------------------
-// Slave Class  :  "QueryState".
-
-
 // -------------------------------------------------------------------
 // Class  :  "QueryStack".
-
 
   QueryStack::QueryStack ()
     : vector<QueryState*>()

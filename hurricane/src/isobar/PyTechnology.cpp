@@ -146,7 +146,7 @@ extern "C" {
     }
     HCATCH
     
-    return PyLayer_Link(layer);
+    return PyLayer_LinkDerived(layer);
   }
 
 

@@ -1,6 +1,21 @@
 #!/usr/bin/env python
+#
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC 2014-2014, All Rights Reserved
+#
+# +-----------------------------------------------------------------+
+# |                   C O R I O L I S                               |
+# |          U n i c o r n  -  M a i n   G U I                      |
+# |                                                                 |
+# |  Author      :                    Jean-Paul CHAPUT              |
+# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# | =============================================================== |
+# |  Python      :       "./init/unicornInit.py"                    |
+# +-----------------------------------------------------------------+
+
 
 try:
+  import traceback
   import sys
   import os.path
   from   helpers   import ErrorMessage
@@ -49,16 +64,24 @@ def unicornConfigure ( **kw ):
     editor.addMenu( 'plugins', 'Plu&gins', Viewer.CellViewer.TopMenu )
 
     for pluginFile in os.listdir( pluginsDir ):
+      if pluginFile == "__init__.py":    continue
       if not pluginFile.endswith('.py'): continue
-
       moduleName = os.path.basename(pluginFile)[:-3]
-      module     = __import__( moduleName, globals(), locals(), moduleName )
 
-      if not module.__dict__.has_key('unicornHook'):
-        print WarningMessage( 'Module <%s> do not provides the unicornHook() method, skipped.' \
-                              % moduleName )
-        continue
+      try:
+        module = __import__( moduleName, globals(), locals(), moduleName )
 
-      module.__dict__['unicornHook']( editor )
+        if not module.__dict__.has_key('unicornHook'):
+          print WarningMessage( 'Plugin <%s> do not provides the unicornHook() method, skipped.' \
+                                 % moduleName )
+          continue
+
+        module.__dict__['unicornHook']( **kw )
+      except ErrorMessage, e:
+        print e
+      except Exception, e:
+        print ErrorMessage( 3, 'Plugin <%s> cannot be loaded, see message below:' % moduleName )
+        print e
+        traceback.print_tb(sys.exc_info()[2])
 
     return

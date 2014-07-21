@@ -1,36 +1,7 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -47,6 +18,11 @@
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyLayerMask.h"
 #include "hurricane/isobar/PyBasicLayer.h"
+#include "hurricane/isobar/PyRegularLayer.h"
+#include "hurricane/isobar/PyContactLayer.h"
+#include "hurricane/isobar/PyViaLayer.h"
+#include "hurricane/isobar/PyDiffusionLayer.h"
+#include "hurricane/isobar/PyTransistorLayer.h"
 #include "hurricane/isobar/PyBasicLayerCollection.h"
 
 
@@ -133,24 +109,7 @@ extern "C" {
     }                                                                                    \
     HCATCH                                                                               \
                                                                                          \
-    return PyLayer_Link(rlayer);                                                         \
-  }
-
-
-# define  accessorLayerFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)  \
-  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )     \
-  {                                                                      \
-    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                  \
-                                                                         \
-    Layer* rlayer = NULL;                                                \
-                                                                         \
-    HTRY                                                                 \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")   \
-    rlayer = const_cast<SELF_TYPE*>(cobject->FUNC_NAME());               \
-    HCATCH                                                               \
-                                                                         \
-    if (rlayer == NULL) Py_RETURN_NONE;                                  \
-    return PyLayer_Link(rlayer);                                         \
+    return PyLayer_LinkDerived(rlayer);                                                  \
   }
 
 
@@ -196,7 +155,7 @@ extern "C" {
     HCATCH                                                                              \
                                                                                         \
     if (rlayer == NULL) Py_RETURN_NONE;                                                 \
-    return PyLayer_Link(rlayer);                                                        \
+    return PyLayer_LinkDerived(rlayer);                                                 \
   }
 
 
@@ -406,6 +365,32 @@ extern "C" {
   extern  void  PyLayer_postModuleInit ()
   {
     PyDict_SetItemString ( PyTypeLayer.tp_dict, "Mask", (PyObject*)&PyTypeLayerMask );
+  }
+
+
+  extern PyObject* PyLayer_LinkDerived ( Layer* object )
+  {
+    if (object == NULL) Py_RETURN_NONE;
+
+    BasicLayer* basicLayer = dynamic_cast<BasicLayer*>(object);
+    if (basicLayer) return PyBasicLayer_Link(basicLayer);
+
+    ContactLayer* contactLayer = dynamic_cast<ContactLayer*>(object);
+    if (contactLayer) return PyContactLayer_Link(contactLayer);
+
+    ViaLayer* viaLayer = dynamic_cast<ViaLayer*>(object);
+    if (viaLayer) return PyViaLayer_Link(viaLayer);
+
+    DiffusionLayer* diffusionLayer = dynamic_cast<DiffusionLayer*>(object);
+    if (diffusionLayer) return PyDiffusionLayer_Link(diffusionLayer);
+
+    RegularLayer* regularLayer = dynamic_cast<RegularLayer*>(object);
+    if (regularLayer) return PyRegularLayer_Link(regularLayer);
+
+    TransistorLayer* transistorLayer = dynamic_cast<TransistorLayer*>(object);
+    if (transistorLayer) return PyTransistorLayer_Link(transistorLayer);
+
+    Py_RETURN_NONE;
   }
 
 

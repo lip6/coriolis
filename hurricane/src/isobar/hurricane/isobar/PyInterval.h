@@ -1,59 +1,56 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2014, All Rights Reserved
-//
+// Copyright (c) UPMC 2014-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                       Damien DUPUIS              |
+// |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/isobar/PyQuery.h"                  |
+// |  C++ Header  :  "./hurricane/isobar/PyInterval.h"               |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_PYQUERY_H
-#define  HURRICANE_PYQUERY_H
+#ifndef  ISOBAR_PY_INTERVAL_H
+#define  ISOBAR_PY_INTERVAL_H
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/Query.h"
+#include "hurricane/Interval.h"
+
 
 namespace  Isobar {
-
-  using namespace Hurricane;
-
 
   extern "C" {
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyQuery".
+// Python Object  :  "PyInterval".
 
     typedef struct {
         PyObject_HEAD
-        Query* _object;
-    } PyQuery;
+        Hurricane::Interval* _object;
+    } PyInterval;
 
 
 // -------------------------------------------------------------------
-// Functions & Types exported to "PyHurricane.ccp".
+// Functions & Types exported to "PyHurricane.cpp".
 
-    extern  PyTypeObject  PyTypeQuery;
-    extern  PyMethodDef   PyQuery_Methods[];
+    extern PyTypeObject  PyTypeInterval;
+    extern PyMethodDef   PyInterval_Methods[];
 
-    extern  PyObject* PyQuery_Link           ( Query* object );
-    extern  void      PyQuery_LinkPyType     ();
-    extern  void      PyQuery_postModuleInit ();
+    extern PyObject*     PyInterval_Link       ( Hurricane::Interval* object );
+    extern void          PyInterval_LinkPyType ();
 
-#define IsPyQuery(v)    ( (v)->ob_type == &PyTypeQuery )
-#define PYQUERY(v)      ( (PyQuery*)(v) )
-#define PYQUERY_O(v)    ( PYQUERY(v)->_object )
+
+#define IsPyInterval(v)    ( (v)->ob_type == &PyTypeInterval )
+#define PYINTERVAL(v)      ( (PyInterval*)(v) )
+#define PYINTERVAL_O(v)    ( PYINTERVAL(v)->_object )
 
 
   }  // extern "C".
 
 }  // Isobar namespace.
- 
-#endif
+
+#endif  // PY_INTERVAL_H

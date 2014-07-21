@@ -9,6 +9,7 @@
                        )
                    set ( sources    ProxyProperty.cpp
                                     PyBreakpoint.cpp
+                                    PyInterval.cpp
                                     PyBox.cpp
                                     PyCell.cpp
                                     PyCellCollection.cpp
@@ -72,6 +73,7 @@
                        )	    
                    set ( includes   hurricane/isobar/ProxyProperty.h
                                     hurricane/isobar/PyBreakpoint.h
+                                    hurricane/isobar/PyInterval.h
                                     hurricane/isobar/PyBox.h
                                     hurricane/isobar/PyCell.h
                                     hurricane/isobar/PyCellCollection.h

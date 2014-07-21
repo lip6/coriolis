@@ -1,36 +1,7 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
-//
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -44,9 +15,11 @@
 
 
 #include "hurricane/isobar/PyBox.h"
+#include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyTransformation.h"
 #include "hurricane/isobar/PyBasicLayer.h"
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyQuery.h"
 #include "hurricane/isobar/PyQueryMask.h"
@@ -88,6 +61,12 @@ extern "C" {
   };
 
 
+  inline void  BaseQuery::setGoCallback          ( PyObject* cb ) { _goCallback          = cb; }
+  inline void  BaseQuery::setMarkerCallback      ( PyObject* cb ) { _markerCallback      = cb; }
+  inline void  BaseQuery::setRubberCallback      ( PyObject* cb ) { _rubberCallback      = cb; }
+  inline void  BaseQuery::setExtensionGoCallback ( PyObject* cb ) { _extensionGoCallback = cb; }
+  inline void  BaseQuery::setMasterCellCallback  ( PyObject* cb ) { _masterCellCallback  = cb; }
+
   BaseQuery::BaseQuery ( PyQuery* self )
     : Query()
     , _self               (self)
@@ -98,13 +77,7 @@ extern "C" {
     , _masterCellCallback (NULL)
   { }
 
-  inline void  BaseQuery::setGoCallback          ( PyObject* cb ) { _goCallback          = cb; cerr << "BaseQuery::setGoCallback()" << endl; }
-  inline void  BaseQuery::setMarkerCallback      ( PyObject* cb ) { _markerCallback      = cb; }
-  inline void  BaseQuery::setRubberCallback      ( PyObject* cb ) { _rubberCallback      = cb; }
-  inline void  BaseQuery::setExtensionGoCallback ( PyObject* cb ) { _extensionGoCallback = cb; }
-  inline void  BaseQuery::setMasterCellCallback  ( PyObject* cb ) { _masterCellCallback  = cb; }
-
-  bool  BaseQuery::hasGoCallback          () const { cerr << "BaseQuery::hasGoCallback():" << _goCallback << endl; return _goCallback          != NULL; }
+  bool  BaseQuery::hasGoCallback          () const { return _goCallback          != NULL; }
   bool  BaseQuery::hasMarkerCallback      () const { return _markerCallback      != NULL; }
   bool  BaseQuery::hasRubberCallback      () const { return _rubberCallback      != NULL; }
   bool  BaseQuery::hasExtensionGoCallback () const { return _extensionGoCallback != NULL; }
@@ -112,7 +85,6 @@ extern "C" {
 
   void  BaseQuery::goCallback ( Go* go )
   {
-    cerr << "BaseQuery::goCallback():" << go << endl;
     if (PyCallable_Check(_goCallback)) {
       PyObject_CallFunctionObjArgs( _goCallback, _self, PyEntity_NEW(go), NULL );
     }
@@ -143,7 +115,7 @@ extern "C" {
   }
 
 
-#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Query,query,function)
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(BaseQuery,query,function)
 
 
 // +=================================================================+
@@ -153,72 +125,9 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
-#if 0
-  template< typename PySelf, typename Self, typename RType, typename... Args >
-  class PySetFunctor {
-    public:
-      typedef PyObject* (PySet_fp)          ( PySelf*, PyObject* );
-      typedef RType     (Self::* CppSet_fp) ( Args... );
-    public:
-      inline PySet_fp wrapper() const;
-    private:
-      static PyObject* _wrapper ( PySelf* self, PyObject* args )
-      {
-      }
-    private:
-      CppSet_fp  _fp;
-      string     _name;
-  };
-
-  template< typename PySelf, typename Self, typename RType, typename... Args >
-  inline PySetFunctor<PySelf,Self,RType,Args>::PySet_fp  PySetFunctor<PySelf,Self,RType,Args>::wrapper() const
-  { return _wrapper; }
-#endif
-
-
   // +-------------------------------------------------------------+
   // |                "PyQuery" Attribute Methods                  |
   // +-------------------------------------------------------------+
-
-
-#if WORK_IN_PROGRESS
-  static MethodDefTable<PyQuery,64>  pyObjectMethods;
-
-  template< typename CppType, typename PySelf >
-  inline CppType* getCppObject ( PySelf* self, const string& methodName )
-  {
-    if (self._object == NULL) {
-      string message = "Attempt to call "+methodName+"on an unbound hurricane object.";
-      PyErr_SetString( ProxyError, message.c_str() );
-      return NULL;
-    }
-
-    CppType* cppObject = dynamic_cast<CppType*>(self._object);
-    if (cppObject == NULL) {
-      string message = "Invalid dynamic_cast<>() in "+methodName+" (internal error).";
-      PyErr_SetString( ProxyError, message.c_str() );
-      return NULL;
-    }
-    return cppObject;
-  }
-  
-
-
-  template< typename CppType, typename PySelf, typename ReturnType, typename PyReturnType, int fdefindex >
-  PyType* accessor ( PySelf* self ) {
-    string methodName = pyObjectMethods.getFullMethodName(fdefindex);
-
-    trace << methodName << endl;
-    
-    ReturnType* value = NULL;
-    try {
-      CppType* cppThis = getCppObject<CppType,PySelf>( self );
-      if (cppThis == NULL) return NULL;
-
-      
-    }
-  } 
-#endif
 
 
   static PyObject* PyQuery_getMasterCell ( PyQuery *self ) {
@@ -232,6 +141,54 @@ extern "C" {
     HCATCH
 
     return PyCell_Link(cell);
+  }
+
+
+  static PyObject* PyQuery_getInstance ( PyQuery *self ) {
+    trace << "PyQuery.getInstance()" << endl;
+
+    Instance* instance = NULL;
+
+    HTRY
+      METHOD_HEAD("PyQuery.getInstance()")
+      instance = query->getInstance();
+    HCATCH
+
+    return PyInstance_Link(instance);
+  }
+
+
+  static PyObject* PyQuery_getPath ( PyQuery *self )
+  {
+    trace << "PyQuery_getPath ()" << endl;
+    
+    METHOD_HEAD( "PyQuery.getPath()" )
+
+    PyPath* pyPath = PyObject_NEW( PyPath, &PyTypePath );
+    if (pyPath == NULL) return NULL;
+
+    HTRY
+    pyPath->_object = new Path ( query->getPath() );
+    HCATCH
+    
+    return (PyObject*)pyPath;
+  }
+
+
+  static PyObject* PyQuery_getTransformation ( PyQuery *self )
+  {
+    trace << "PyQuery_getTransformation ()" << endl;
+    
+    METHOD_HEAD( "PyQuery.getTransformation()" )
+
+    PyTransformation* pyTransformation = PyObject_NEW( PyTransformation, &PyTypeTransformation );
+    if (pyTransformation == NULL) return NULL;
+
+    HTRY
+    pyTransformation->_object = new Transformation ( query->getTransformation() );
+    HCATCH
+    
+    return (PyObject*)pyTransformation;
   }
 
 
@@ -251,6 +208,24 @@ extern "C" {
         query->setCell( PYCELL_O(pyCell) );
       } else {
         PyErr_SetString ( ConstructorError, "Bad parameters given to Query.setCell()." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyQuery_setFilter ( PyQuery* self, PyObject* args )
+  {
+    trace << "PyQuery.setFilter()" << endl;
+    METHOD_HEAD("PyQuery.setFilter()")
+
+    HTRY
+      int  mask = 0;
+      if (PyArg_ParseTuple(args,"i:Query.setFilter()",&mask) ) {
+        query->setFilter( mask );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to Query.setFilter()." );
         return NULL;
       }
     HCATCH
@@ -446,16 +421,14 @@ extern "C" {
   {
     trace << "PyQuery.new()" << endl;
 
-    Query*   query   = NULL;
-    PyQuery* pyQuery = NULL;
+    BaseQuery* query   = NULL;
+    PyQuery*   pyQuery = NULL;
 
     HTRY
     pyQuery = PyObject_NEW( PyQuery, &PyTypeQuery );
     if (pyQuery == NULL) return NULL;
     query = new BaseQuery( pyQuery );
     pyQuery->_object = query;
-
-    cerr << "PyQuery_NEW(): " << (void*)pyQuery << endl;
     HCATCH
 
     return (PyObject*)pyQuery;
@@ -464,7 +437,6 @@ extern "C" {
 
   int  PyQuery_Init ( PyQuery* self, PyObject* args, PyObject* kwargs )
   {
-    cerr << "PyQuery_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -478,8 +450,16 @@ extern "C" {
   PyMethodDef PyQuery_Methods[] =
     { { "getMasterCell"         , (PyCFunction)PyQuery_getMasterCell        , METH_NOARGS
                                 , "Returns the master Cell currently under exploration." }
+    , { "getInstance"           , (PyCFunction)PyQuery_getInstance          , METH_NOARGS
+                                , "Returns the Instance currently under exploration." }
+    , { "getPath"               , (PyCFunction)PyQuery_getPath              , METH_NOARGS
+                                , "Returns the Path to the Instance (inclusive) under exploration." }
+    , { "getTransformation"     , (PyCFunction)PyQuery_getTransformation    , METH_NOARGS
+                                , "Returns the Transformation to the master Cell under exploration." }
     , { "setCell"               , (PyCFunction)PyQuery_setCell              , METH_VARARGS
                                 , "Set the cell upon which perform the query." }
+    , { "setFilter"             , (PyCFunction)PyQuery_setFilter            , METH_VARARGS
+                                , "Set what classes of objects will be took into account." }
     , { "setArea"               , (PyCFunction)PyQuery_setArea              , METH_VARARGS
                                 , "Set the area into which perform the query." }
     , { "setTransformation"     , (PyCFunction)PyQuery_setTransformation    , METH_VARARGS
@@ -494,9 +474,9 @@ extern "C" {
                                 , "Set the callback function for the Rubbers." }
     , { "setExtensionGoCallback", (PyCFunction)PyQuery_setExtensionGoCallback, METH_VARARGS
                                 , "Set the callback function for the ExtensionGos." }
-    , { "setMasterCellCallback" , (PyCFunction)PyQuery_setMasterCellCallback, METH_VARARGS
+    , { "setMasterCellCallback" , (PyCFunction)PyQuery_setMasterCellCallback , METH_VARARGS
                                 , "Set the callback function for the MasterCell." }
-    , { "doQuery"               , (PyCFunction)PyQuery_doQuery              , METH_NOARGS
+    , { "doQuery"               , (PyCFunction)PyQuery_doQuery               , METH_NOARGS
                                 , "Perform the actual Query walk." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
@@ -508,56 +488,6 @@ extern "C" {
 
   DirectDeleteMethod(PyQuery_DeAlloc,PyQuery)
   PyTypeObjectLinkPyTypeNewInit(Query)
-
-#if WORK_IN_PROGRESS
-  DirectReprMethod(PyQuery_Repr, PyQuery,   Query)
-  DirectStrMethod (PyQuery_Str,  PyQuery,   Query)
-  DirectCmpMethod (PyQuery_Cmp,  IsPyQuery, PyQuery)
-  DirectHashMethod(PyQuery_Hash, PyQuery)
-
-
-  extern void  PyQuery_LinkPyType ()
-  {
-    trace << "PyQuery_LinkType()" << endl;
-
-    PyTypeQuery.tp_dealloc = (destructor) PyQuery_DeAlloc;
-    PyTypeQuery.tp_compare = (cmpfunc)    PyQuery_Cmp;
-    PyTypeQuery.tp_repr    = (reprfunc)   PyQuery_Repr;
-    PyTypeQuery.tp_str     = (reprfunc)   PyQuery_Str;
-    PyTypeQuery.tp_hash    = (hashfunc)   PyQuery_Hash;
-    PyTypeQuery.tp_new     = (newfunc)    PyQuery_NEW;
-    PyTypeQuery.tp_init    = (initproc)   PyQuery_Init;
-  //PyTypeQuery.tp_methods = PyQuery_Methods;
-
-    if (not pyObjectMethods.size()) {
-      pyObjectMethods
-        ( "getMasterCell"         , (PyCFunction)PyQuery_getMasterCell, METH_NOARGS
-                                  , "Returns the master Cell currently under exploration." )
-        ( "setCell"               , (PyCFunction)PyQuery_setCell, METH_VARARGS
-                                  , "Set the cell upon which perform the query." )
-        ( "setArea"               , (PyCFunction)PyQuery_setArea, METH_VARARGS
-                                  , "Set the area into which perform the query." )
-        ( "setTransformation"     , (PyCFunction)PyQuery_setTransformation, METH_VARARGS
-                                  , "Set the initial transformation applied to the query area." )
-        ( "setBasicLayer"         , (PyCFunction)PyQuery_setBasicLayer, METH_VARARGS
-                                  , "Set the BasicLayer on which perform the query." )
-        ( "setGoCallback"         , (PyCFunction)PyQuery_setGoCallback, METH_VARARGS
-                                  , "Set the callback function for the Gos." )
-        ( "setMarkerCallback"     , (PyCFunction)PyQuery_setMarkerCallback, METH_VARARGS
-                                  , "Set the callback function for the Markers." )
-        ( "setRubberCallback"     , (PyCFunction)PyQuery_setRubberCallback, METH_VARARGS
-                                  , "Set the callback function for the Rubbers." )
-        ( "setExtensionGoCallback", (PyCFunction)PyQuery_setExtensionGoCallback, METH_VARARGS
-                                  , "Set the callback function for the ExtensionGos." )
-        ( "setMasterCellCallback" , (PyCFunction)PyQuery_setMasterCellCallback, METH_VARARGS
-                                  , "Set the callback function for the MasterCell." )
-        ( "doQuery"               , (PyCFunction)PyQuery_doQuery, METH_NOARGS
-                                  , "Perform the actual Query walk." );
-    }
-
-    PyTypeQuery.tp_methods = pyObjectMethods.getMethods();
-  }
-#endif
 
 
 #else  // End of Python Module Code Part.

@@ -1,4 +1,17 @@
 #!/usr/bin/env python
+#
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC 2014-2014, All Rights Reserved
+#
+# +-----------------------------------------------------------------+
+# |                   C O R I O L I S                               |
+# |      C u m u l u s  -  P y t h o n   T o o l s                  |
+# |                                                                 |
+# |  Author      :                    Jean-Paul CHAPUT              |
+# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# | =============================================================== |
+# |  Python      :       "./plugins/ClockTree.cpp"                  |
+# +-----------------------------------------------------------------+
 
 try:
   import sys
@@ -32,6 +45,7 @@ try:
   import Katabatic
   import Kite
   import Unicorn
+  import plugins
 except ImportError, e:
   module = str(e).split()[-1]
 
@@ -444,19 +458,20 @@ class HTreeNode ( object ):
     return
 
   def route ( self ):
-    sourceContact = self.topTree._rpAccessByPlugName( self.sourceBuffer, 'q', self.ckNet , HTree.HAccess )
-    blContact     = self.topTree._rpAccessByPlugName( self.blBuffer    , 'i', self.ckNet )
-    brContact     = self.topTree._rpAccessByPlugName( self.brBuffer    , 'i', self.ckNet )
-    tlContact     = self.topTree._rpAccessByPlugName( self.tlBuffer    , 'i', self.ckNet )
-    trContact     = self.topTree._rpAccessByPlugName( self.trBuffer    , 'i', self.ckNet )
-    leftContact   = self.topTree._createContact( self.ckNet, blContact.getX(), sourceContact.getY() )
-    rightContact  = self.topTree._createContact( self.ckNet, brContact.getX(), sourceContact.getY() )
-    self.topTree._createHorizontal( leftContact  , sourceContact, sourceContact.getY() )
-    self.topTree._createHorizontal( sourceContact, rightContact , sourceContact.getY() )
-    self.topTree._createVertical  ( leftContact  , blContact    , leftContact.getX()   )
-    self.topTree._createVertical  ( tlContact    , leftContact  , leftContact.getX()   )
-    self.topTree._createVertical  ( rightContact , brContact    , rightContact.getX()  )
-    self.topTree._createVertical  ( trContact    , rightContact , rightContact.getX()  )
+    leftSourceContact  = self.topTree._rpAccessByPlugName( self.sourceBuffer, 'q', self.ckNet , HTree.HAccess )
+    rightSourceContact = self.topTree._rpAccessByPlugName( self.sourceBuffer, 'q', self.ckNet , HTree.HAccess )
+    blContact          = self.topTree._rpAccessByPlugName( self.blBuffer    , 'i', self.ckNet )
+    brContact          = self.topTree._rpAccessByPlugName( self.brBuffer    , 'i', self.ckNet )
+    tlContact          = self.topTree._rpAccessByPlugName( self.tlBuffer    , 'i', self.ckNet )
+    trContact          = self.topTree._rpAccessByPlugName( self.trBuffer    , 'i', self.ckNet )
+    leftContact        = self.topTree._createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
+    rightContact       = self.topTree._createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
+    self.topTree._createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() )
+    self.topTree._createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY() )
+    self.topTree._createVertical  ( leftContact       , blContact        , leftContact.getX()   )
+    self.topTree._createVertical  ( tlContact         , leftContact      , leftContact.getX()   )
+    self.topTree._createVertical  ( rightContact      , brContact        , rightContact.getX()  )
+    self.topTree._createVertical  ( trContact         , rightContact     , rightContact.getX()  )
 
     for child in self.childs: child.route()
     return
@@ -497,22 +512,17 @@ def computeAbutmentBox ( cell, spaceMargin, aspectRatio, cellGauge ):
   return abutmentBox
 
 
-def unicornHook ( editor ):
-   #print '       o  Hooking up ClockTree script.'
-    moduleFile = sys.modules[__name__].__file__
-    if moduleFile.endswith('.pyc') or moduleFile.endswith('.pyo'):
-      moduleFile = moduleFile[:-1]
-
-    editor.addToMenu( 'plugins.clockTree'
-                    , 'ClockTree'
-                    , 'Build a buffered H-Tree for the clock'
-                    , moduleFile
-                    )
-   #print '          <%s>' % moduleFile
+def unicornHook ( **kw ):
+    plugins.kwUnicornHook( 'plugins.clockTree'
+                         , 'ClockTree'
+                         , 'Build a buffered H-Tree for the clock'
+                         , sys.modules[__name__].__file__
+                         , **kw
+                         )
     return
 
 
-def ScriptMain ( cell=None ):
+def ScriptMain ( **kw ):
   try:
     errorCode = 0
 
@@ -522,10 +532,14 @@ def ScriptMain ( cell=None ):
         print '      - <%s>' % fileName
         os.unlink(fileName)
 
+    cell = None
+    if kw.has_key('cell') and kw['cell']:
+      cell = kw['cell']
+
     editor = None
-    if globals().has_key('__editor'):
+    if kw.has_key('editor') and kw['editor']:
+      editor = kw['editor']
       print '  o  Editor detected, running in graphic mode.'
-      editor = __editor
       if cell == None: cell = editor.getCell()
 
     if cell == None:

@@ -111,6 +111,7 @@ def coriolisConfigure():
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/mauka.conf'   , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/kite.conf'    , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/stratus1.conf', SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/plugins.conf' , SystemFile|ConfigurationHelper)
                  ]
   if os.getenv('HOME'):
     confFiles   += [ (os.getenv('HOME')+'/.coriolis2.conf', 0) ]

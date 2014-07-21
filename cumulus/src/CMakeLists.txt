@@ -1,12 +1,19 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<cumulus/src>" -*-
 
-              set ( pysources ${CMAKE_CURRENT_SOURCE_DIR}/placeandroute.py
-                              ${CMAKE_CURRENT_SOURCE_DIR}/ref.py
+              set ( pySources    ${CMAKE_CURRENT_SOURCE_DIR}/placeandroute.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/ref.py
                   )
-              set ( pyplugins ${CMAKE_CURRENT_SOURCE_DIR}/plugins/__init__.py
-                              ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ClockTree.py
-                              ${CMAKE_CURRENT_SOURCE_DIR}/plugins/Chip.py
+              set ( pyPlugins    ${CMAKE_CURRENT_SOURCE_DIR}/plugins/__init__.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ClockTree.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ChipPlugin.py
+                  )
+              set ( pyPluginChip ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/__init__.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/BlockPower.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/BlockCorona.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/PadsCorona.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/Configuration.py
                   )
          
-          install ( FILES ${pysources} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
-          install ( FILES ${pyplugins} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+          install ( FILES ${pySources}    DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
+          install ( FILES ${pyPlugins}    DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+          install ( FILES ${pyPluginChip} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )

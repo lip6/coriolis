@@ -130,9 +130,9 @@ extern "C" {
   PyMethodDef PyPoint_Methods[] =
     { { "getX"     , (PyCFunction)PyPoint_getX     , METH_NOARGS , "Return the Point X value." }
     , { "getY"     , (PyCFunction)PyPoint_getY     , METH_NOARGS , "Return the Point Y value." }
-    , { "SetX"     , (PyCFunction)PyPoint_SetX     , METH_VARARGS, "Modify the Point X value." }
-    , { "SetY"     , (PyCFunction)PyPoint_SetY     , METH_VARARGS, "Modify the Point Y value." }
-    , { "Translate", (PyCFunction)PyPoint_Translate, METH_VARARGS, "Translate the point of dx and dy." }
+    , { "setX"     , (PyCFunction)PyPoint_SetX     , METH_VARARGS, "Modify the Point X value." }
+    , { "setY"     , (PyCFunction)PyPoint_SetY     , METH_VARARGS, "Modify the Point Y value." }
+    , { "translate", (PyCFunction)PyPoint_Translate, METH_VARARGS, "Translate the point of dx and dy." }
     , { "destroy"  , (PyCFunction)PyPoint_destroy  , METH_NOARGS
                    , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

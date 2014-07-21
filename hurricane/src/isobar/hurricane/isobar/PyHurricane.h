@@ -120,6 +120,7 @@ extern "C" {
 
 #define NO_ARG                   ""
 #define BOX_ARG                  ":box"
+#define INTV_ARG                 ":intv"
 #define CELL_ARG                 ":ent"
 #define POINT_ARG                ":point"
 #define POINTS2_ARG              ":point:point"
@@ -324,6 +325,23 @@ extern "C" {
   }
 
 
+# define  accessorLayerFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                    \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )                 \
+  {                                                                                  \
+    trace << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                              \
+                                                                                     \
+    Layer* rlayer = NULL;                                                            \
+                                                                                     \
+    HTRY                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")               \
+    rlayer = const_cast<Layer*>( dynamic_cast<const Layer*>(cobject->FUNC_NAME()) ); \
+    HCATCH                                                                           \
+                                                                                     \
+    if (rlayer == NULL) Py_RETURN_NONE;                                              \
+    return PyLayer_LinkDerived(rlayer);                                              \
+  }
+
+
 # define  accessorAnyLayerFromName(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE,LAYER_TYPE)         \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
@@ -382,7 +400,7 @@ extern "C" {
     HCATCH                                                                              \
                                                                                         \
     if (rlayer == NULL) Py_RETURN_NONE;                                                 \
-    return PyLayer_Link(rlayer);                                                        \
+    return PyLayer_LinkDerived(rlayer);                                                 \
   }
 
 
@@ -414,7 +432,7 @@ extern "C" {
     HCATCH                                                                               \
                                                                                          \
     if (rlayer == NULL) Py_RETURN_NONE;                                                  \
-    return PyLayer_Link(rlayer);                                                         \
+    return PyLayer_LinkDerived(rlayer);                                                  \
   }
 
 
@@ -439,7 +457,7 @@ extern "C" {
     HCATCH                                                                               \
                                                                                          \
     if (rlayer == NULL) Py_RETURN_NONE;                                                  \
-    return PyLayer_Link(rlayer);                                                         \
+    return PyLayer_LinkDerived(rlayer);                                                  \
   }
 
 

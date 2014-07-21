@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -42,7 +41,7 @@ namespace  CRL {
   using Isobar::__cs;
   using Isobar::PyLayer;
   using Isobar::PyTypeLayer;
-  using Isobar::PyLayer_Link;
+  using Isobar::PyLayer_LinkDerived;
 
 
 extern "C" {
@@ -146,7 +145,7 @@ extern "C" {
     layer = const_cast<Layer*>(rlg->getLayer());
     HCATCH
 
-    return PyLayer_Link(layer);
+    return PyLayer_LinkDerived(layer);
   }
 
 
@@ -161,7 +160,7 @@ extern "C" {
     layer = const_cast<Layer*>(rlg->getBlockageLayer());
     HCATCH
 
-    return PyLayer_Link(layer);
+    return PyLayer_LinkDerived(layer);
   }
 
 

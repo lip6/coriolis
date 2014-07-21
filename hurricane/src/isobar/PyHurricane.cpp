@@ -20,6 +20,7 @@
 #include "hurricane/isobar/PyUpdateSession.h"
 #include "hurricane/isobar/PyDbU.h"
 #include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyInterval.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
 #include "hurricane/isobar/PyOrientation.h"
@@ -501,6 +502,7 @@ extern "C" {
     PyUpdateSession_LinkPyType ();
     PyDbU_LinkPyType ();
     PyPoint_LinkPyType ();
+    PyInterval_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
     PyOrientation_LinkPyType ();
@@ -560,8 +562,9 @@ extern "C" {
 
     PYTYPE_READY ( DebugSession                  )
     PYTYPE_READY ( UpdateSession                 )
-    PYTYPE_READY ( Point                         )
     PYTYPE_READY ( DbU                           )
+    PYTYPE_READY ( Point                         )
+    PYTYPE_READY ( Interval                      )
     PYTYPE_READY ( Box                           )
     PYTYPE_READY ( Transformation                )
     PYTYPE_READY ( Orientation                   )
@@ -635,6 +638,7 @@ extern "C" {
     PYTYPE_READY_SUB ( Pad            , Component)
 
     // Identifier string can take up to 10 characters !
+    __cs.addType ( "intv"       , &PyTypeInterval              , "<Interval>"              , false );
     __cs.addType ( "box"        , &PyTypeBox                   , "<Box>"                   , false );
     __cs.addType ( "ent"        , &PyTypeEntity                , "<Entity>"                , false );
     __cs.addType ( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
@@ -706,9 +710,11 @@ extern "C" {
     Py_INCREF ( &PyTypeDbU );
     PyModule_AddObject ( module, "DbU"                  , (PyObject*)&PyTypeDbU );
     Py_INCREF ( &PyTypePoint );
-    PyModule_AddObject ( module, "Box"                  , (PyObject*)&PyTypeBox );
-    Py_INCREF ( &PyTypePoint );
     PyModule_AddObject ( module, "Point"                , (PyObject*)&PyTypePoint );
+    Py_INCREF ( &PyTypeInterval );
+    PyModule_AddObject ( module, "Interval"             , (PyObject*)&PyTypeInterval );
+    Py_INCREF ( &PyTypeBox );
+    PyModule_AddObject ( module, "Box"                  , (PyObject*)&PyTypeBox );
     Py_INCREF ( &PyTypeTransformation );
     PyModule_AddObject ( module, "Transformation"       , (PyObject*)&PyTypeTransformation );
     Py_INCREF ( &PyTypePath );
@@ -800,6 +806,7 @@ extern "C" {
     PyRoutingPad_postModuleInit();
     PyNet_postModuleInit();
     PyInstance_postModuleInit();
+    PyQuery_postModuleInit();
 
     trace << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }

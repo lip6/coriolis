@@ -44,7 +44,7 @@ namespace  CRL {
   using Isobar::Converter;
   using Isobar::PyLayer;
   using Isobar::PyTypeLayer;
-  using Isobar::PyLayer_Link;
+  using Isobar::PyLayer_LinkDerived;
   using Isobar::PyTechnology;
   using Isobar::PyTypeTechnology;
   using Isobar::PyTechnology_Link;
@@ -238,7 +238,7 @@ extern "C" {
     }
     HCATCH
 
-    return PyLayer_Link(layer);
+    return PyLayer_LinkDerived(layer);
   }
 
 
@@ -265,7 +265,7 @@ extern "C" {
     }
     HCATCH
 
-    return PyLayer_Link(layer);
+    return PyLayer_LinkDerived(layer);
   }
 
 

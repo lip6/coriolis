@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,10 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -34,21 +29,18 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __QUERY_H__
-#define  __QUERY_H__
+#ifndef  HURRICANE_QUERY_H
+#define  HURRICANE_QUERY_H
 
-
-#include  <vector>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Box.h"
-#include  "hurricane/Transformation.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Instance.h"
+#include <vector>
+#include "hurricane/Commons.h"
+#include "hurricane/Box.h"
+#include "hurricane/Transformation.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
 
 
 namespace Hurricane {
-
 
   class BasicLayer;
   class Go;
@@ -57,7 +49,6 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Slave Class  :  "QueryState".
-
 
   class QueryState {
     private:
@@ -386,8 +377,6 @@ namespace Hurricane {
 //inline const Tabulation&      Query::getTab             () const { return _stack.getTab(); }
   
 
+} // Hurricane namespace.
 
-} // End of Hurricane namespace.
-
-
-#endif // __QUERY_H__
+#endif // HURRICANE_QUERY_H

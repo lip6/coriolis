@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -260,6 +259,27 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_isPad ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_isPad ()" << endl;
+
+    char* name = NULL;
+    
+    HTRY
+    METHOD_HEAD("AllianceFramework.isPad()")
+
+    if ( not PyArg_ParseTuple(args,"s",&name) ) {
+      PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell AllianceFramework.isPad().");
+      return NULL;
+    }
+
+    if (af->isPad(name)) Py_RETURN_TRUE;
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
   extern PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_addRoutingGauge ()" << endl;
@@ -366,6 +386,8 @@ extern "C" {
                                , "Saves an Alliance Cell." }                           
     , { "createCell"           , (PyCFunction)PyAllianceFramework_createCell           , METH_VARARGS
                                , "Create a Cell in the Alliance framework." }
+    , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                 , METH_VARARGS
+                               , "Tells if a cell name is a Pad." }
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
                                , "Add a new cell gauge." }
     , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS

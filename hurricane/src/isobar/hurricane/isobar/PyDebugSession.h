@@ -43,8 +43,8 @@ namespace  Isobar {
 
 
 #define IsPyDebugSession(v)   ( (v)->ob_type == &PyTypeDebugSession )
-#define PYUPDATESESSION(v)     ( (PyDebugSession*)(v) )
-#define PYUPDATESESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
+#define PYDEBUGSESSION(v)     ( (PyDebugSession*)(v) )
+#define PYDEBUGSESSION_O(v)   ( PY_UPDATE_SESSION(v)->_object )
 
 
   }  // extern "C".

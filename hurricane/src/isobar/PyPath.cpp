@@ -298,11 +298,11 @@ extern "C" {
     , { "getMasterCell"      , (PyCFunction)PyPath_getMasterCell      , METH_NOARGS , "Returns the master cell referenced by the last instance of the path." }
     , { "getName"            , (PyCFunction)PyPath_getName            , METH_NOARGS , "Returns the concatenation of instances names." }
     , { "getTransformation"  , (PyCFunction)PyPath_getTransformation  , METH_VARARGS, "Return the resulting transformation." }
-    , { "getInstances", (PyCFunction)PyPath_getInstances, METH_NOARGS , "Returns the collection of instances defining the path." }
+    , { "getInstances"       , (PyCFunction)PyPath_getInstances       , METH_NOARGS , "Returns the collection of instances defining the path." }
     , { "isEmpty"            , (PyCFunction)PyPath_isEmpty            , METH_NOARGS , "Return true if the path is empty." }
     , { "destroy"            , (PyCFunction)PyPath_destroy            , METH_NOARGS
                              , "Destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}  /* sentinel */
     };
 
 

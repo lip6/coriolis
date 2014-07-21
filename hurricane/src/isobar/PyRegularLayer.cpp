@@ -107,6 +107,7 @@ extern "C" {
 
 
   // Standart Attribute.
+  accessorLayerFromVoid(getBasicLayer         ,PyRegularLayer,RegularLayer)
   updatorFromBasicLayer(setBasicLayer         ,PyRegularLayer,RegularLayer)
   DBoDestroyAttribute  (PyRegularLayer_destroy, PyRegularLayer)
 
@@ -117,6 +118,8 @@ extern "C" {
   PyMethodDef PyRegularLayer_Methods[] =
     { { "create"       , (PyCFunction)PyRegularLayer_create       , METH_VARARGS|METH_STATIC
                        , "Create a new RegularLayer." }
+    , { "getBasicLayer", (PyCFunction)PyRegularLayer_getBasicLayer, METH_NOARGS
+                       , "Get the BasicLayer associated to this RegularLayer." }
     , { "setBasicLayer", (PyCFunction)PyRegularLayer_setBasicLayer, METH_VARARGS
                        , "Associate a BasicLayer with this RegularLayer." }
     , { "destroy"      , (PyCFunction)PyRegularLayer_destroy      , METH_NOARGS
