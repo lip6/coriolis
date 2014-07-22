@@ -71,7 +71,7 @@
                                        PyGraphicKiteEngine.cpp
                        )
                    set ( kitecpps      KiteMain.cpp )
-          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qtX_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
            add_library ( kite         ${cpps} ${mocCpps} ${pyCpps} )

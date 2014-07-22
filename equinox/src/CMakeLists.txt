@@ -36,7 +36,7 @@
                    set ( intervalTreeIncludes intervalTree/src/equinox/Interval.h
 		                              intervalTree/src/equinox/IntervalTree.h )
                    set ( intervalTreeCpps     intervalTree/src/IntervalTree.cpp )
-          qt5_wrap_cpp ( mocCpps              ${mocIncludes} )
+          qtX_wrap_cpp ( mocCpps              ${mocIncludes} )
 
            add_library ( intervalTree   ${intervalTreeCpps} )
  set_target_properties ( intervalTree   PROPERTIES VERSION 1.0 SOVERSION 1 )

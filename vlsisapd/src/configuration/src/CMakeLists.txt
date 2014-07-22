@@ -1,6 +1,5 @@
 
 
-#              include ( ${QT_USE_FILE} )
    include_directories ( ${VLSISAPD_SOURCE_DIR}/src/utilities/src
                          ${VLSISAPD_SOURCE_DIR}/src/configuration/src
                          ${VLSISAPD_SOURCE_DIR}/src/openChams/src
@@ -37,8 +36,8 @@
                    set ( pycpps          PyConfiguration.cpp )
                    set ( editorcpp       ConfEditorMain.cpp )
 				         
-          qt5_wrap_cpp ( mocCpps         ${mocIncludes} )
-     qt5_add_resources ( RCC_SRCS        Configuration.qrc )
+          qtX_wrap_cpp ( mocCpps         ${mocIncludes} )
+     qtX_add_resources ( RCC_SRCS        Configuration.qrc )
 				         
            add_library ( configuration   ${cpps} ${mocCpps} ${RCC_SRCS} )
  set_target_properties ( configuration   PROPERTIES VERSION 1.0 SOVERSION 1 )

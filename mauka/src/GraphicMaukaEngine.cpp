@@ -186,7 +186,7 @@ namespace Mauka {
 
     _viewer->clearToolInterrupt();
     _viewer->getCellWidget()->fitToContents();
-    _viewer->redrawCellWidget();
+  //_viewer->redrawCellWidget();
   }
 
 
@@ -199,7 +199,7 @@ namespace Mauka {
     _viewer->getCellWidget()->fitToContents ();
 
     mauka->Run ();
-    _viewer->redrawCellWidget();
+  //_viewer->redrawCellWidget();
   }
 
 
@@ -222,7 +222,7 @@ namespace Mauka {
     MaukaEngine* mauka = getForFramework( NoFlags );
 
     _viewer->clearToolInterrupt ();
-    _viewer->redrawCellWidget();
+  //_viewer->redrawCellWidget();
     mauka->Save ();
   }
 

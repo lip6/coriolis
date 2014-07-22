@@ -34,10 +34,10 @@
                        )
                    set ( cgtcpp        CgtMain.cpp )
  
-          qt5_wrap_cpp ( MOCcpps       ${mocincludes} )
-     qt5_add_resources ( RCC_SRCS      Unicorn.qrc )
+          qtX_wrap_cpp ( mocCpps       ${mocincludes} )
+     qtX_add_resources ( RCC_SRCS      Unicorn.qrc )
 
-           add_library ( unicorn       ${cpps} ${MOCcpps} ${pyCpps} )
+           add_library ( unicorn       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties ( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries ( unicorn       ${SOLSTICE_GRAPHICAL_LIBRARIES}
                                        ${SOLSTICE_LIBRARIES}

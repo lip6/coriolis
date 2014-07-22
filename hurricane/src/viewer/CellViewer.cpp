@@ -357,7 +357,7 @@ namespace Hurricane {
                                );
     action->setVisible( false );
     addAction( action );
-    connect( action, &QAction::triggered, this, &CellViewer::raiseToolInterrupt );
+    connect( action, SIGNAL(triggered()), this, SLOT(raiseToolInterrupt()) );
 
     action = addToMenu( "file.openCell"
                       , tr("&Open Cell")
@@ -376,7 +376,7 @@ namespace Hurricane {
       _cellHistoryAction[i]->setVisible( false );
       _cellHistoryAction[i]->setData   ( i );
       _cellHistoryAction[i]->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
-      connect( _cellHistoryAction[i], &QAction::triggered, this, &CellViewer::openHistoryCell );
+      connect( _cellHistoryAction[i], SIGNAL(triggered()), this, SLOT(openHistoryCell()) );
     }
     addToMenu( "file.========" );
 
@@ -406,14 +406,14 @@ namespace Hurricane {
                       , tr("Print the displayed area")
                       , QKeySequence(tr("CTRL+P"))
                       );
-    connect( action, &QAction::triggered, this, &CellViewer::printDisplay );
+    connect( action, SIGNAL(triggered()), this, SLOT(printDisplay()) );
 
     action = addToMenu( "file.image"
                       , tr("Save to &Image")
                       , tr("Save the displayed area to image")
                       , QKeySequence()
                       );
-    connect( action, &QAction::triggered, this, &CellViewer::imageDisplay );
+    connect( action, SIGNAL(triggered()), this, SLOT(imageDisplay()) );
 
     action = addToMenu( "file.nextBreakpoint"
                       , tr("&Next Breakpoint")
@@ -427,7 +427,7 @@ namespace Hurricane {
                       , tr("Close This Coriolis CellViewer")
                       , QKeySequence(tr("CTRL+W"))
                       );
-    connect( action, &QAction::triggered, this, &CellViewer::close );
+    connect( action, SIGNAL(triggered()), this, SLOT(close()) );
 
     action = addToMenu( "file.close"
                       , tr("&Close")
@@ -440,7 +440,7 @@ namespace Hurricane {
                       , tr("Exit All Coriolis CellViewer")
                       , QKeySequence(tr("CTRL+Q"))
                       );
-    connect ( action, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
+    connect( action, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
 
   // Building the "View" menu.
     action = addToMenu( "view.refresh"
@@ -448,21 +448,21 @@ namespace Hurricane {
                       , tr("Force full redrawing of the display")
                       , QKeySequence(tr("CTRL+L"))
                       );
-    connect( action, &QAction::triggered, _cellWidget, &CellWidget::refresh );
+    connect( action, SIGNAL(triggered()), _cellWidget, SLOT(refresh()) );
 
     action = addToMenu( "view.fit"
                       , tr("&Fit to Contents")
                       , tr("Adjust zoom to fit the whole cell's contents")
                       , Qt::Key_F
                       );
-    connect( action, &QAction::triggered, _cellWidget, &CellWidget::fitToContents );
+    connect( action, SIGNAL(triggered()), _cellWidget, SLOT(fitToContents()) );
 
     action = addToMenu( "view.goto"
                       , tr("&Goto")
                       , tr("Center view on that point, with zoom adjustment")
                       , Qt::Key_G
                       );
-    connect( action, &QAction::triggered, this, &CellViewer::doGoto );
+    connect( action, SIGNAL(triggered()), this, SLOT(doGoto()) );
 
     _showSelectionAction = addToMenu( "view.showSelection"
                                     , tr("&Show Selection")
@@ -470,21 +470,21 @@ namespace Hurricane {
                                     , Qt::Key_S
                                     );
     _showSelectionAction->setCheckable( true );
-    connect( _showSelectionAction, &QAction::toggled, this, &CellViewer::setShowSelection );
+    connect( _showSelectionAction, SIGNAL(toggled()), this, SLOT(setShowSelection()) );
 
     action = addToMenu( "view.changeRubber"
                       , tr("Change Rubber Style")
                       , tr("Cycle through all avalaibles rubber drawing styles")
                       , Qt::Key_Asterisk
                       );
-    connect( action, &QAction::triggered, _cellWidget, &CellWidget::rubberChange );
+    connect( action, SIGNAL(triggered()), _cellWidget, SLOT(rubberChange()) );
 
     action = addToMenu( "view.clearRulers"
                       , tr("Clear Rulers")
                       , tr("Remove all rulers")
                       , QKeySequence()
                       );
-    connect( action, &QAction::triggered, _cellWidget, &CellWidget::clearRulers );
+    connect( action, SIGNAL(triggered()), _cellWidget, SLOT(clearRulers()) );
 
   // Building the "Tools" menu.
     action = addToMenu( "tools.controller"
@@ -493,7 +493,7 @@ namespace Hurricane {
                       , QKeySequence(tr("CTRL+I"))
                       , QIcon(":/images/swiss-knife.png")
                       );
-    connect( action, &QAction::triggered, _controller, &ControllerWidget::toggleShow );
+    connect( action, SIGNAL(triggered()), _controller, SLOT(toggleShow()) );
 
     action = addToMenu( "tools.script"
                       , tr("Python Script")
@@ -501,7 +501,7 @@ namespace Hurricane {
                       , QKeySequence(tr("SHIFT+P,SHIFT+S"))
                       , QIcon(":/images/python-logo-v3.png")
                       );
-    connect( action, &QAction::triggered, this, &CellViewer::runScriptWidget );
+    connect( action, SIGNAL(triggered()), this, SLOT(runScriptWidget()) );
   }
 
 

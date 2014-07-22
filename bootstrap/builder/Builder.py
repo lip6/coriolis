@@ -35,6 +35,7 @@ class Builder:
         self._noCache          = False
         self._ninja            = False
         self._devtoolset2      = False
+        self._qt5              = False
         self._enableShared     = "ON"
         self._enableDoc        = "OFF"
         self._checkDatabase    = "OFF"
@@ -58,6 +59,7 @@ class Builder:
         elif attribute == "noCache":          self._noCache          = value
         elif attribute == "ninja":            self._ninja            = value
         elif attribute == "devtoolset2":      self._devtoolset2      = value
+        elif attribute == "qt5":              self._qt5              = value
         elif attribute == "enableDoc":        self._enableDoc        = value
         elif attribute == "enableShared":     self._enableShared     = value
         elif attribute == "checkDatabase":    self._checkDatabase    = value
@@ -170,6 +172,7 @@ class Builder:
         command = [ 'cmake' ]
         if self._ninja:       command += [ "-G", "Ninja" ]
         if self._devtoolset2: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
+        if self._qt5:         command += [ "-D", "WITH_QT5:STRING=TRUE" ]
 
         command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"  % self.buildMode
                    , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self.enableShared

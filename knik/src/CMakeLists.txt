@@ -41,7 +41,7 @@
                        )
                    set ( fluteIncludes flute-2.4/src/knik/flute.h )
                    set ( fluteCpps     flute-2.4/src/flute.cpp )
-          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qtX_wrap_cpp ( mocCpps       ${mocIncludes} )
 
 
            add_library ( flute         ${fluteCpps} )

@@ -72,7 +72,7 @@
                                        PyGraphicEtesianEngine.cpp
                        )
 #                  set ( etesiancpps   EtesianMain.cpp )
-          qt5_wrap_cpp ( mocCpps       ${mocIncludes} )
+          qtX_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( etesian       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties ( etesian       PROPERTIES VERSION 1.0 SOVERSION 1 )

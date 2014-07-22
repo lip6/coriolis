@@ -277,7 +277,7 @@
  set_source_files_properties ( ${AcmSigdaParserGrammarCpp} GENERATED )
 
 
-                qt5_wrap_cpp ( moc_cpps ${mocincludes} )
+                qtX_wrap_cpp ( moc_cpps ${mocincludes} )
 
                  add_library ( crlcore  ${ccore_cpps}
                                         ${moc_cpps}

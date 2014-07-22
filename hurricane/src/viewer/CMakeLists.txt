@@ -121,8 +121,8 @@
                    set ( sources2   Script.cpp )
                    set ( includes2  hurricane/viewer/Script.h )
 
-          qt5_wrap_cpp ( MOC_SRCS    ${mocincludes} )
-     qt5_add_resources ( RCC_SRCS    CellViewer.qrc )
+          qtX_wrap_cpp ( MOC_SRCS    ${mocincludes} )
+     qtX_add_resources ( RCC_SRCS    CellViewer.qrc )
 
            add_library ( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${sources2} ${pycpps} )
  set_target_properties ( viewer      PROPERTIES VERSION 1.0 SOVERSION 1 )

@@ -206,24 +206,44 @@
 # Find Qt, the union of all the modules we need for the whole project.
 #
  macro(setup_qt)
-  # For Qt4.
-  #set(QT_USE_QTXML "true")
-  #find_package(Qt4 REQUIRED) # find and setup Qt4 for this project
+   if(WITH_QT5)
+    # For Qt5
+     find_package(Qt5Core            REQUIRED)
+     find_package(Qt5Gui             REQUIRED)
+     find_package(Qt5Widgets         REQUIRED)
+     find_package(Qt5PrintSupport    REQUIRED)
+     set(CMAKE_AUTOMOC ON)
+     set(QtX_INCLUDE_DIR ${Qt5PrintSupport_INCLUDE_DIR}
+                         ${Qt5Widgets_INCLUDE_DIR}
+                         ${Qt5Gui_INCLUDE_DIR}
+                         ${Qt5Core_INCLUDE_DIR} )
+     set(QtX_LIBRARIES   ${Qt5PrintSupport_LIBRARIES}
+                         ${Qt5Widgets_LIBRARIES}
+                         ${Qt5Gui_LIBRARIES}
+                         ${Qt5Core_LIBRARIES} )
+   else()
+    # For Qt4.
+    #set(QT_USE_QTXML "true")
+     find_package(Qt4 REQUIRED)
+     include(${QT_USE_FILE})
+     set(QtX_LIBRARIES ${QT_LIBRARIES})
+   endif()
+ endmacro()
 
-  # For Qt5
-   find_package(Qt5Core            REQUIRED)
-   find_package(Qt5Gui             REQUIRED)
-   find_package(Qt5Widgets         REQUIRED)
-   find_package(Qt5PrintSupport    REQUIRED)
-   set(CMAKE_AUTOMOC ON)
-   set(QtX_INCLUDE_DIR ${Qt5PrintSupport_INCLUDE_DIR}
-                       ${Qt5Widgets_INCLUDE_DIR}
-                       ${Qt5Gui_INCLUDE_DIR}
-                       ${Qt5Core_INCLUDE_DIR} )
-   set(QtX_LIBRARIES   ${Qt5PrintSupport_LIBRARIES}
-                       ${Qt5Widgets_LIBRARIES}
-                       ${Qt5Gui_LIBRARIES}
-                       ${Qt5Core_LIBRARIES} )
+ macro(qtX_wrap_cpp variable)
+   if (WITH_QT5)
+     qt5_wrap_cpp(${variable} ${ARGN})
+   else()
+     qt4_wrap_cpp(${variable} ${ARGN})
+   endif()
+ endmacro()
+
+ macro(qtX_add_resources variable)
+   if (WITH_QT5)
+     qt5_add_resources(${variable} ${ARGN})
+   else()
+     qt4_add_resources(${variable} ${ARGN})
+   endif()
  endmacro()
 
 

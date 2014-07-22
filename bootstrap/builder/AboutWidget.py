@@ -54,7 +54,7 @@ class AboutWidget ( QWidget ):
     subTitle.setFont( QFont('Courier',10,QFont.Bold) )
 
     authors  = QLabel( 'Coriolis CAD System 1.0 . . . . . . . .  ccb 1.0\n'
-                       'Copyright (c) 2008-2013 . . . . . . . . . . UPMC\n'
+                       'Copyright (c) 2008-2014 . . . . . . . . . . UPMC\n'
                        'Authors . . . . . . . . . . . . .  Damien Dupuis\n'
                        '        . . . . . . . . . . . . Jean-Paul Chaput\n'
                        'E-Mail  . . . . . . . . Jean-Paul.Chaput@lip6.fr'
