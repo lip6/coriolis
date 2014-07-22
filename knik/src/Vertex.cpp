@@ -1,5 +1,5 @@
+#include <cmath>
 #include <algorithm>
-//#include "crlcore/CEditor.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
 #include "knik/Vertex.h"
@@ -101,7 +101,7 @@ Vertex::Vertex ( Graph* routingGraph, Point position, DbU::Unit halfWidth, DbU::
     , _contact (NULL)
     , _position (position)
     , _vtuple (NULL)
-    , _distance ((float)(HUGE))
+    , _distance ((float)(HUGE_VAL))
     , _connexID (-1)
     , _netStamp (0)
     , _halfWidth  (halfWidth)
@@ -459,8 +459,8 @@ Cell* Vertex::getCell() const
 // {
 //     DbU::Unit size = DbU::lambda(5);
 //     view->FillCircle ( transformation.getPoint ( getPosition() ), size );
-//     //if ( _distance < (float)(HUGE) )
-//     if ( _netStamp == _routingGraph->getNetStamp() &&  _distance < (float)(HUGE) )
+//     //if ( _distance < (float)(HUGE_VAL) )
+//     if ( _netStamp == _routingGraph->getNetStamp() &&  _distance < (float)(HUGE_VAL) )
 //         view->DrawString ( getString(_distance), getXMax() - (_halfWidth), getYMax() - (_halfHeight/2) );
 //     if ( _connexID != -1 )
 //         view->DrawString ( getString(_connexID)+","+getString(_netStamp), getXMax() - (_halfWidth), getYMin() + (_halfHeight/2) );

@@ -17,7 +17,9 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#if HAVE_COLOQUINTE
 #include "coloquinte/circuit_graph.hxx"
+#endif
 #include "vlsisapd/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
@@ -99,6 +101,7 @@ namespace {
   }
 
 
+#if HAVE_COLOQUINTE
   Coloquinte::cell::pin::pin_dir  extractDirection ( const RoutingPad* rp )
   {
     switch ( rp->_getEntityAsComponent()->getNet()->getDirection() ) {
@@ -111,6 +114,7 @@ namespace {
 
     return Coloquinte::cell::pin::O;
   }
+#endif
 
 
   Point  extractRpOffset ( const RoutingPad* rp )
@@ -230,7 +234,9 @@ namespace Etesian {
 
   EtesianEngine::~EtesianEngine ()
   {
+#if HAVE_COLOQUINTE
     if (_circuit) delete _circuit;
+#endif
     delete _configuration;
   }
 
@@ -289,6 +295,7 @@ namespace Etesian {
 
   void  EtesianEngine::place ( unsigned int slowMotion )
   {
+#if HAVE_COLOQUINTE
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
 
     resetPlacement();
@@ -500,11 +507,15 @@ namespace Etesian {
 
     _updatePlacement( 1 );
     _flags &= ~NoPlacement;
+#else
+    cerr << Warning("Coloquinte library wasn't found, Etesian is disabled.") << endl;
+#endif
   }
 
 
   void  EtesianEngine::_updatePlacement ( unsigned int placementId )
   {
+#if HAVE_COLOQUINTE
     UpdateSession::open();
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
@@ -536,6 +547,7 @@ namespace Etesian {
     UpdateSession::close();
 
     if (_cellWidget) _cellWidget->refresh();
+#endif
   }
 
 

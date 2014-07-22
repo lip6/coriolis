@@ -1,4 +1,5 @@
 
+#include <cmath>
 #include "crlcore/Utilities.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/Warning.h"
@@ -199,7 +200,7 @@ float Edge::getCost ( Edge* arrivalEdge )
 {
 // 20/10/2010: Check for null capacity, which may occurs after back-annotation
 // by Kite.
-  if ( _capacity == 0.0 ) return (float)(HUGE);
+  if ( _capacity == 0.0 ) return (float)(HUGE_VAL);
 
 //#ifdef __USE_CONGESTION__
     if ( __congestion__ ) {

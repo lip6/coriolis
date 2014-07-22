@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,26 +19,20 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
-// |  Author      :                       Remy Escassut              |
+// |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :  "./Error.cpp"                                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./Backtrace.cpp"                               |
+// +-----------------------------------------------------------------+
 
 
+#if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
 #include  <execinfo.h>
+#endif
 #include  <sstream>
 #include  <iomanip>
 #include  <boost/regex.hpp>
@@ -72,9 +66,11 @@ namespace Hurricane {
   Backtrace::Backtrace ()
     : _stack()
   {
+#if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
     void*  rawStack [ _stackSize ];
     size_t depth    = backtrace ( rawStack, _stackSize );
     char** symbols  = backtrace_symbols ( rawStack, depth );
+#endif
 
 #if (defined __linux__ || defined __FreeBSD__)
     boost::regex  re ( "([^/]+)\\(([^+]+)\\+" ); 

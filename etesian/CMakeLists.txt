@@ -20,7 +20,7 @@
  find_package(LibXml2            REQUIRED)
  find_package(PythonLibs         REQUIRED)
  find_package(PythonSitePackages REQUIRED)
- find_package(COLOQUINTE         REQUIRED)
+ find_package(COLOQUINTE         )
  find_package(VLSISAPD           REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
@@ -29,6 +29,10 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
+
+ if(COLOQUINTE_FOUND)
+   add_definitions(-DHAVE_COLOQUINTE)
+ endif()
 
  if(BUILD_DOC)
    find_package(Doxygen)

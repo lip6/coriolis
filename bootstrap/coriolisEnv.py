@@ -44,10 +44,10 @@ def guessOs ():
     osFreeBSD8x_amd64 = re.compile (".*FreeBSD 8.*amd64.*")
     osFreeBSD8x_64    = re.compile (".*FreeBSD 8.*x86_64.*")
     osFreeBSD8x       = re.compile (".*FreeBSD 8.*")
-    osCygwinW7_64     = re.compile (".*CYGWIN_NT-6\.1-WOW64.*")
-    osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*")
-    osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3]-WOW64.*")
-    osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*")
+    osCygwinW7_64     = re.compile (".*CYGWIN_NT-6\.1.*x86_64.*")
+    osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*i686.*")
+    osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3].*x86_64.*")
+    osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*i686.*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -173,6 +173,9 @@ if __name__ == "__main__":
     sysconfDir   = coriolisTop + "/etc/coriolis2"
     shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
 
+  if osType.startswith("Cygwin"):
+    strippedPath = "%s/%s:%s" % ( coriolisTop, libDir, strippedPath )
+
   absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
   strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
@@ -180,7 +183,10 @@ if __name__ == "__main__":
   if not options.nopython:
     pyVersion = sys.version_info
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-    if osType.startswith("Linux.SL") or osType.startswith("Linux.sl") or osType.startswith("Darwin"):
+    if    osType.startswith("Linux.SL") \
+       or osType.startswith("Linux.sl") \
+       or osType.startswith("Darwin")   \
+       or osType.startswith("Cygwin"):
       sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
     else:
       sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
