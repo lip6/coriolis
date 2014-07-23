@@ -26,7 +26,7 @@ namespace boptions = boost::program_options;
 #include  <QApplication>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
     (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
-    not defined (__APPLE__)
+    not defined (__APPLE__) and not defined (__CYGWIN__)
 #  include  <QGtkStyle>
 #endif
 #include  "vlsisapd/utilities/Path.h"
@@ -66,7 +66,7 @@ int main ( int argc, char* argv[] )
     auto_ptr<QApplication> qa ( new QApplication(argc,argv) );
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
     (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
-    not defined (__APPLE__)
+    not defined (__APPLE__) and not defined (__CYGWIN__)
     if ( not disableGtkStyle ) qa->setStyle ( new QGtkStyle() );
 #endif
 

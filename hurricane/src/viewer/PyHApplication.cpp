@@ -19,7 +19,7 @@
 #include <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
     (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
-    not defined (__APPLE__)
+    not defined (__APPLE__) and not defined(__CYGWIN__)
 #  include  <QGtkStyle>
 #endif
 
@@ -100,7 +100,7 @@ extern "C" {
     ha = new HApplication(argc,argv);
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
     (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
-    not defined (__APPLE__)
+    not defined (__APPLE__) and not defined (__CYGWIN__)
     ha->setStyle ( new QGtkStyle() );
 #endif
 
