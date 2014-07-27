@@ -2,6 +2,7 @@
 
               set ( pySources    ${CMAKE_CURRENT_SOURCE_DIR}/placeandroute.py
                                  ${CMAKE_CURRENT_SOURCE_DIR}/ref.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/Alliance.py
                   )
               set ( pyPlugins    ${CMAKE_CURRENT_SOURCE_DIR}/plugins/__init__.py
                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ClockTree.py

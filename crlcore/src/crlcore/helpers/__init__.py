@@ -137,28 +137,31 @@ class WarningMessage ( Exception ):
         return formatted
 
 
-for (modulePath,moduleLine,contextType,lineContent) in traceback.extract_stack():
-  if modulePath.endswith('/coriolisInit.py'):
-
-    reSysConfDir = re.compile(r'.*etc\/coriolis2')
-    print '  o  Locating configuration directory:'
-
-    for path in sys.path:
-      if reSysConfDir.match(path):
-        sysConfDir = path
-        print '     - <%s>' % sysConfDir
-        break
-    
-    if not sysConfDir:
-      coriolisTop = os.getenv('CORIOLIS_TOP')
-      if coriolisTop == '/usr':
-        sysConfDir = '/etc/coriolis2'
-      elif coriolisTop:
-        sysConfDir = os.path.join(coriolisTop,'/etc/coriolis2')
-      else:
-        raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                               , 'The path is something ending by <.../etc/coriolis2>.'] )
-
-    symbolicDir = os.path.join( sysConfDir, symbolicTechno )
-    realDir     = os.path.join( sysConfDir, realTechno )
-    break
+def staticInitialization ():
+  global sysConfDir
+  global symbolicDir
+  global realDir
+  
+  reSysConfDir = re.compile(r'.*etc\/coriolis2')
+  print '  o  Locating configuration directory:'
+  
+  for path in sys.path:
+    if reSysConfDir.match(path):
+      sysConfDir = path
+      print '     - <%s>' % sysConfDir
+      break
+  
+  if not sysConfDir:
+    coriolisTop = os.getenv('CORIOLIS_TOP')
+    if coriolisTop == '/usr':
+      sysConfDir = '/etc/coriolis2'
+    elif coriolisTop:
+      sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
+    else:
+      raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+                             , 'The path is something ending by <.../etc/coriolis2>.'] )
+  
+  print '     - <%s>' % sysConfDir
+  symbolicDir = os.path.join( sysConfDir, symbolicTechno )
+  realDir     = os.path.join( sysConfDir, realTechno )
+  return

@@ -46,6 +46,7 @@ except Exception, e:
   sys.exit(2)
 
 
+helpers.staticInitialization()
 moduleGlobals       = globals()
 
 SystemFile          = 0x0001
