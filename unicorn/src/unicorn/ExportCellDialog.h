@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./ExportCellDialog.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __UNICORN_EXPORT_CELL_DIALOG_H__
-#define  __UNICORN_EXPORT_CELL_DIALOG_H__
+#ifndef  UNICORN_EXPORT_CELL_DIALOG_H
+#define  UNICORN_EXPORT_CELL_DIALOG_H
 
 #include  <QDialog>
 
@@ -40,7 +31,7 @@ namespace Unicorn {
       Q_OBJECT;
 
     public:
-      enum Formats { AllianceDef=1 };
+      enum Formats { AllianceDef=1, AsciiGds=2 };
     public:
                      ExportCellDialog ( QWidget* parent=NULL );
       bool           runDialog        ( QString& name, int& format );

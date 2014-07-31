@@ -25,6 +25,7 @@
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/GraphicToolEngine.h"
 #include "crlcore/DefExport.h"
+#include "crlcore/GdsDriver.h"
 #include "unicorn/ImportCell.h"
 #include "unicorn/OpenCellDialog.h"
 #include "unicorn/SaveCellDialog.h"
@@ -42,6 +43,7 @@ namespace Unicorn {
   using CRL::Catalog;
   using CRL::AllianceFramework;
   using CRL::DefExport;
+  using CRL::GdsDriver;
 
 
 // -------------------------------------------------------------------
@@ -240,6 +242,10 @@ namespace Unicorn {
         //   break;
         case ExportCellDialog::AllianceDef:
           DefExport::drive ( cell, DefExport::WithLEF );
+          break;
+        case ExportCellDialog::AsciiGds:
+          GdsDriver gdsDriver ( cell );
+          gdsDriver.save( getString(cell->getName())+".agds" );
           break;
       }
     }

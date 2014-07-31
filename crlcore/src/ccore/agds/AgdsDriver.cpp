@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2009-2013, All Rights Reserved
+// Copyright (c) UPMC 2009-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -14,12 +14,14 @@
 // +-----------------------------------------------------------------+
 
 
+#include <cmath>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
 using namespace std;
 
+#include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Library.h"
@@ -42,6 +44,21 @@ using namespace Hurricane;
 
 
 namespace {
+
+
+  void isInteger ( double& value, Go* go, Path path )
+  {
+    double rounded = round( value );
+    if (abs(value - rounded) > 0.01) {
+      cerr << Warning( "agdsDriver(): Coordinate is not on grid %.2f, rounded to %.2f\n"
+                       "          On %s (%s)"
+                     , value, rounded
+                     , getString(go).c_str()
+                     , getString(path).c_str()
+                     ) << endl;
+      value = rounded;
+    }
+  }
 
 
   class AgdsQuery : public Query {
@@ -91,12 +108,19 @@ namespace {
     else
       return;
 
+    double xmin = DbU::getPhysical(b.getXMin(), DbU::Nano);
+    double ymin = DbU::getPhysical(b.getYMin(), DbU::Nano);
+    double xmax = DbU::getPhysical(b.getXMax(), DbU::Nano);
+    double ymax = DbU::getPhysical(b.getYMax(), DbU::Nano);
+
+    isInteger( xmin, go, getPath() );
+    isInteger( ymin, go, getPath() );
+    isInteger( xmax, go, getPath() );
+    isInteger( ymax, go, getPath() );
+
     getTransformation().applyOn( b );
     AGDS::Rectangle* rect = new AGDS::Rectangle ( getBasicLayer()->getExtractNumber()
-                                                , DbU::getPhysical(b.getXMin(), DbU::Nano)
-                                                , DbU::getPhysical(b.getYMin(), DbU::Nano)
-                                                , DbU::getPhysical(b.getXMax(), DbU::Nano)
-                                                , DbU::getPhysical(b.getYMax(), DbU::Nano));
+                                                , xmin, ymin, xmax, ymax ); 
     _str->addElement( rect );
   }
 

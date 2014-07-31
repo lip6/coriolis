@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ExportCellDialog.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  <iostream>
@@ -87,7 +78,8 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
-    _formatComboBox->addItem ( tr("Alliance compliant DEF")      , AllianceDef );
+    _formatComboBox->addItem ( tr("Alliance compliant DEF"), AllianceDef );
+    _formatComboBox->addItem ( tr("ASCII/GDSII (AGDS)")    , AsciiGds    );
     hLayout2->addWidget ( _formatComboBox );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();

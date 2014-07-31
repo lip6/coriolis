@@ -1,32 +1,23 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          U n i c o r n  -  M a i n   G U I                      |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SaveCellDialog.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./unicorn/SaveCellDialog.h"               |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __UNICORN_SAVE_CELL_DIALOG_H__
-#define  __UNICORN_SAVE_CELL_DIALOG_H__
+#ifndef  UNICORN_SAVE_CELL_DIALOG_H
+#define  UNICORN_SAVE_CELL_DIALOG_H
 
-#include  <QDialog>
+#include <QDialog>
 
 class QCheckBox;
 class QLineEdit;
@@ -50,9 +41,6 @@ namespace Unicorn {
   };
 
 
+} // Unicorn namespace.
 
-
-} // End of Unicorn namespace.
-
-
-#endif
+#endif  // UNICORN_SAVE_CELL_DIALOG_H
