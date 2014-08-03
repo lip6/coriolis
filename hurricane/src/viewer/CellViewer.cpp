@@ -470,7 +470,7 @@ namespace Hurricane {
                                     , Qt::Key_S
                                     );
     _showSelectionAction->setCheckable( true );
-    connect( _showSelectionAction, SIGNAL(toggled()), this, SLOT(setShowSelection()) );
+    connect( _showSelectionAction, SIGNAL(toggled(bool)), this, SLOT(setShowSelection(bool)) );
 
     action = addToMenu( "view.changeRubber"
                       , tr("Change Rubber Style")
