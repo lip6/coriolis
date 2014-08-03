@@ -8,6 +8,7 @@
  cmake_minimum_required(VERSION 2.8.9)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
+ find_package(COLOQUINTE)
  find_package(Bootstrap REQUIRED)
  setup_project_paths(CORIOLIS)
  setup_project_paths(COLOQUINTE)
@@ -20,7 +21,6 @@
  find_package(LibXml2            REQUIRED)
  find_package(PythonLibs         REQUIRED)
  find_package(PythonSitePackages REQUIRED)
- find_package(COLOQUINTE         )
  find_package(VLSISAPD           REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
@@ -29,10 +29,6 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
-
- if(COLOQUINTE_FOUND)
-   add_definitions(-DHAVE_COLOQUINTE)
- endif()
 
  if(BUILD_DOC)
    find_package(Doxygen)
