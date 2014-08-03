@@ -1,3 +1,18 @@
+# -*- Mode:Python; explicit-buffer-name: "Alliance.py<crlcore/helpers>" -*-
+#
+# This file is part of the Coriolis Software.
+# Copyright (c) UPMC 2012-2014, All Rights Reserved
+#
+# +-----------------------------------------------------------------+
+# |                   C O R I O L I S                               |
+# |          Alliance / Hurricane  Interface                        |
+# |                                                                 |
+# |  Author      :                    Jean-Paul CHAPUT              |
+# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# | =============================================================== |
+# |  Python      :       "./crlcore/helpers/Alliance.py"            |
+# +-----------------------------------------------------------------+
+
 
 import os
 import os.path
@@ -19,6 +34,35 @@ import helpers.SymbolicTechnology
 
 
 allianceFile = '<allianceFile has not been set>'
+
+
+class AddMode ( object ):
+
+  Append  = 1
+  Prepend = 2
+  Replace = 3
+
+  @staticmethod
+  def toEnvironment ( mode ):
+    if mode == AddMode.Prepend: return Environment.Prepend
+    if mode == AddMode.Replace: return Environment.Replace
+    return Environment.Append
+
+
+class Gauge ( object ):
+
+  Vertical   = 1
+  Horizontal = 2
+  PinOnly    = 3
+  Default    = 4
+
+  @staticmethod
+  def toRlGauge ( value ):
+    if value == Gauge.Vertical:   return RoutingLayerGauge.Vertical
+    if value == Gauge.Horizontal: return RoutingLayerGauge.Horizontal
+    if value == Gauge.PinOnly:    return RoutingLayerGauge.PinOnly
+    if value == Gauge.Default:    return RoutingLayerGauge.Default
+    return None
 
 
 def xmlToConf ( xmlPath ):
@@ -77,7 +121,7 @@ def _loadAllianceConfig ( af, allianceConfig ):
                                              ,str(libraryEntry)
                                              ])
                     libPath, mode = libraryEntry
-                    env.addSYSTEM_LIBRARY(library=libPath,mode=mode)
+                    env.addSYSTEM_LIBRARY(library=libPath,mode=AddMode.toEnvironment(mode))
 
         except Exception, e:
             ErrorMessage.wrapPrint(e,'In %s:<Alliance> at index %d.' % (allianceFile,entryNo))
@@ -119,14 +163,14 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
                                          ])
 
                 gauge.addLayerGauge( RoutingLayerGauge.create( technology.getLayer(entry[0])
-                                                             , entry[1][0]                 # Direction. 
-                                                             , entry[1][1]                 # Type.
-                                                             , entry[1][2]                 # Depth.
-                                                             , entry[1][3]                 # Density.
-                                                             , DbU.fromLambda(entry[1][4]) # Offset.
-                                                             , DbU.fromLambda(entry[1][5]) # Pitch.
-                                                             , DbU.fromLambda(entry[1][6]) # Wire width.
-                                                             , DbU.fromLambda(entry[1][7]) # Via width.
+                                                             , Gauge.toRlGauge(entry[1][0]) # Direction. 
+                                                             , Gauge.toRlGauge(entry[1][1]) # Type.
+                                                             , entry[1][2]                  # Depth.
+                                                             , entry[1][3]                  # Density.
+                                                             , DbU.fromLambda(entry[1][4])  # Offset.
+                                                             , DbU.fromLambda(entry[1][5])  # Pitch.
+                                                             , DbU.fromLambda(entry[1][6])  # Wire width.
+                                                             , DbU.fromLambda(entry[1][7])  # Via width.
                                                              ) )
 
             except Exception, e:

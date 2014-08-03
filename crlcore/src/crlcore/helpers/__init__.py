@@ -1,4 +1,4 @@
-# -*- mode:Python -*-
+# -*- mode:Python; explicit-buffer-name: "__init__.py<crlcore/helpers>" -*-
 #
 # This file is part of the Coriolis Software.
 # Copyright (c) UPMC 2012-2014, All Rights Reserved
@@ -10,7 +10,7 @@
 # |  Author      :                    Jean-Paul Chaput              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 # | =============================================================== |
-# |  Python      :   "./builder/__init__.py"                        |
+# |  Python      :   "./crlcore/__init__.py"                        |
 # +-----------------------------------------------------------------+
 #
 # This is file is mandatory to tell python that 'helpers' is a module
@@ -135,6 +135,37 @@ class WarningMessage ( Exception ):
             else:      formatted += "          %s" % self._warnings[i]
             if i+1 < len(self._warnings): formatted += "\n"
         return formatted
+
+
+class Dots ( object ):
+
+    def __init__ (self, header="", width=73):
+        self._header = header
+        self._width  = width - len(self._header)
+        self._count  = 0
+        return
+
+    def dot (self):
+        if self._count == 0:
+            sys.stdout.write(self._header)
+        else:
+            if not (self._count % self._width):
+                sys.stdout.write("\n%s"%self._header)
+
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        self._count += 1
+        return
+
+    def flush (self):
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+        return
+
+    def reset (self):
+        self._count = 0
+        self.flush()
+        return
 
 
 def staticInitialization ():
