@@ -259,8 +259,8 @@
 #
  macro(setup_sysconfdir INSTALLDIR)
    message("-- Checking installation directory <${INSTALLDIR}>")
-   string(REGEX MATCH "^/usr" IS_USR ${INSTALLDIR})
-   string(REGEX MATCH "^/opt" IS_OPT ${INSTALLDIR})
+   string(REGEX MATCH "^/usr$" IS_USR ${INSTALLDIR})
+   string(REGEX MATCH "^/opt$" IS_OPT ${INSTALLDIR})
    if(IS_USR OR IS_OPT)
      message("-- Using system-wide /etc.")
      set(SYS_CONF_DIR "/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
