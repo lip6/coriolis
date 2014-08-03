@@ -340,7 +340,7 @@ namespace Kite {
   
           size_t capacity = (edge->getCapacity()>edgeReserved)
                           ? (edge->getCapacity()-edgeReserved) : 0;
-        //cerr << "Appling capacity percentage " << (edgePercent*100.0) << "% ("
+        //cerr << "Setting capacity " << capacity << " ("
         //     << capacity << ") on: " << edge << endl;
           edge->setCapacity( capacity );
         }
