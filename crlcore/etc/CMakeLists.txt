@@ -3,6 +3,8 @@
  install ( DIRECTORY  common                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  cmos                              DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  vsc200                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+ install ( DIRECTORY  scmos_deep_018                    DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+ install ( DIRECTORY  scn6m_deep                        DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  hcmos9                            DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
 						     
  install ( FILES      environment.alliance.xml          DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
