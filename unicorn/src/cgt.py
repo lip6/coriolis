@@ -245,7 +245,7 @@ if __name__ == '__main__':
                   views |= CRL.Catalog.State.Logical
               af.saveCell(cell, views)
 
-          sys.exit(kiteSuccess)
+          sys.exit(not kiteSuccess)
 
     except Exception, e:
       print e
