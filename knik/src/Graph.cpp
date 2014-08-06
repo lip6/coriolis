@@ -1016,7 +1016,7 @@ int Graph::initRouting ( Net* net )
                 //cerr << "            [0;32mAdding vertex to _vertexes_to_route: continue[0m" << endl;
                 _vertexes_to_route.insert ( contactVertex );
                 _searchingArea.merge ( contactVertex->getBox() );
-                contactVertex->setDistance((float)(HUGE));
+                contactVertex->setDistance((float)(HUGE_VAL));
                 contactVertex->setPredecessor(NULL);
                 currentConnexID++;
             }
@@ -1056,7 +1056,7 @@ int Graph::initRouting ( Net* net )
                 _searchingArea.merge ( rpVertex->getBox() );
                 rpVertex->setConnexID ( currentConnexID );
                 rpVertex->setNetStamp ( _netStamp );
-                rpVertex->setDistance((float)(HUGE));
+                rpVertex->setDistance((float)(HUGE_VAL));
                 rpVertex->setPredecessor(NULL);
                 currentConnexID++;
             }
@@ -1142,7 +1142,7 @@ void Graph::Dijkstra()
   while ( _vertexes_to_route.size() > 1 ) {
   // Now, let's expanse the top of the queue
     VertexList reachedVertexes;
-    float      reachedDistance = (float)(HUGE);
+    float      reachedDistance = (float)(HUGE_VAL);
 
   //checkGraphConsistency();
     if (ltracelevel() >= 600) {
@@ -1274,7 +1274,7 @@ void Graph::Dijkstra()
       message << "        Unable to reach target on net " << _working_net->getName() << ".";
       throw Error( message.str() );
     }
-    assert( reachedDistance < (float)(HUGE) );
+    assert( reachedDistance < (float)(HUGE_VAL) );
 
     ltrace(600) << "Updating two connex components:" << endl;
     ltrace(600) << "1. " << (*(reachedVertexes.begin())) << endl;
@@ -1375,8 +1375,8 @@ void Graph::Monotonic()
                 while ( topEdge ) {
                     Vertex* currentVertex = topEdge->getOpposite ( vertPred );
                     if ( currentVertex->getPosition().getY() <= targetY ) {
-                        float vertDistance = (float)(HUGE);
-                        float horzDistance = (float)(HUGE);
+                        float vertDistance = (float)(HUGE_VAL);
+                        float horzDistance = (float)(HUGE_VAL);
 
                         vertDistance = vertPred->getDistance() + topEdge->getCost ( vertPred->getPredecessor() );
                         Edge* leftEdge = currentVertex->getHEdgeIn();
@@ -1450,8 +1450,8 @@ void Graph::Monotonic()
                 while ( bottomEdge ) {
                     Vertex* currentVertex = bottomEdge->getOpposite ( vertPred );
                     if ( currentVertex->getPosition().getY() >= targetY ) {
-                        float vertDistance = (float)(HUGE);
-                        float horzDistance = (float)(HUGE);
+                        float vertDistance = (float)(HUGE_VAL);
+                        float horzDistance = (float)(HUGE_VAL);
 
                         vertDistance = vertPred->getDistance() + bottomEdge->getCost ( vertPred->getPredecessor() );
                         Edge* leftEdge = currentVertex->getHEdgeIn();
@@ -1819,7 +1819,7 @@ void Graph::rebuildConnexComponent ( Contact* contact, int connexID, Segment* ar
     contactVertex->setContact  ( contact );
     contactVertex->setConnexID ( connexID );
     contactVertex->setNetStamp ( _netStamp );
-    contactVertex->setDistance((float)(HUGE));
+    contactVertex->setDistance((float)(HUGE_VAL));
     contactVertex->setPredecessor(NULL);
     //cerr << "from :" << contact << endl;
     //cerr << "arrivalSegment: " << arrivalSegment << endl;
@@ -1858,7 +1858,7 @@ void Graph::setNetStampConnexID ( Segment* segment, int connexID )
             assert(vertex);
             vertex->setNetStamp ( _netStamp );
             vertex->setConnexID ( connexID );
-            vertex->setDistance((float)(HUGE));
+            vertex->setDistance((float)(HUGE_VAL));
             Edge* edge = vertex->getVEdgeOut();
             assert(edge);
             edge->setNetStamp ( _netStamp );
@@ -1868,7 +1868,7 @@ void Graph::setNetStampConnexID ( Segment* segment, int connexID )
         assert(vertex);
         vertex->setNetStamp ( _netStamp );
         vertex->setConnexID ( connexID );
-        vertex->setDistance((float)(HUGE));
+        vertex->setDistance((float)(HUGE_VAL));
         return;
     }
     if ( sourceLineIdx == targetLineIdx ) { // horizontal segment
@@ -1877,7 +1877,7 @@ void Graph::setNetStampConnexID ( Segment* segment, int connexID )
             assert(vertex);
             vertex->setNetStamp ( _netStamp );
             vertex->setConnexID ( connexID );
-            vertex->setDistance((float)(HUGE));
+            vertex->setDistance((float)(HUGE_VAL));
             Edge* edge = vertex->getHEdgeOut();
             assert(edge);
             edge->setNetStamp ( _netStamp );
@@ -1887,7 +1887,7 @@ void Graph::setNetStampConnexID ( Segment* segment, int connexID )
         assert(vertex);
         vertex->setNetStamp ( _netStamp );
         vertex->setConnexID ( connexID );
-        vertex->setDistance((float)(HUGE));
+        vertex->setDistance((float)(HUGE_VAL));
         return;
     }
     throw Error ( "Graph::setNetStampConnexId(): what sort of segment is that, a diagonal one?" );
@@ -2332,7 +2332,7 @@ void Graph::CleanRoutingState()
     //    assert (vertex);
     //    vertex->setLocalRingHook(NULL);
     //    vertex->setConnexID(-1);
-    //    vertex->setDistance((float)(HUGE));
+    //    vertex->setDistance((float)(HUGE_VAL));
     //    vertex->setPredecessor(NULL);
     //    assert ( vertex->getVTuple() == NULL );
     //}

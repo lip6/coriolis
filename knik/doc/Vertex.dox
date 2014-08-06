@@ -72,7 +72,7 @@
  /*! \var          float Vertex::_distance
   *                In Dijkstra's algorithm implementation each vertex has a distance from source vertex
   *
-  *  \Initial      (float)(HUGE)
+  *  \Initial      (float)(HUGE_VAL)
   */
 
  /*! \var          int Vertex::_connexID
