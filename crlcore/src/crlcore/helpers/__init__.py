@@ -31,6 +31,8 @@ symbolicTechno = 'cmos'
 symbolicDir    = None
 realTechno     = 'hcmos9'
 realDir        = None
+tab            = None
+_trace         = None
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
@@ -168,18 +170,100 @@ class Dots ( object ):
         return
 
 
-def staticInitialization ():
+class Tab ( object ):
+
+   def __init__ ( self, stepSize=2 ):
+     self._stepSize = stepSize
+     self._tsize    = 0
+     return
+
+   def inc ( self, step=1 ): self._tsize += step*self._stepSize
+   def dec ( self, step=1 ):
+     if step*self._stepSize < self._tsize:
+       self._tsize -= step*self._stepSize
+     else:
+       self._tsize  = 0
+     return
+
+   def __str__ ( self ): return ' '*self._tsize
+
+
+class Trace ( object ):
+
+  def __init__ ( self ):
+    self._tab   = Tab()
+    self._level = 10000
+    return
+
+  @property
+  def level ( self ): return self._level
+  @level.setter
+  def level ( self, level ): self._level = level
+
+  def write ( self, level, arg1='', arg2=None ):
+    if level < self._level: return
+
+    sflags  = [ '', '' ]
+    message = None
+    if isinstance(arg1,str) and len(arg1) and arg1[0] in '+-,':
+      sflags  = arg1.split( ',' , 1 )
+      if len(sflags) < 2: sflags.append('')
+      message = arg2
+    else:
+      message = arg1
+
+    for f in sflags[0]:
+      if f == '+': self._tab.inc()
+      if f == '-': self._tab.dec()
+
+    if message:
+      if not isinstance(message,str):
+        message = '\t'+str(message)+'\n'
+  
+      if len(message) and message[0] == '\t':
+        sys.stderr.write( str(self._tab) )
+        sys.stderr.write( message[1:] )
+      else:
+        sys.stderr.write( message )
+      sys.stderr.flush()
+
+    for f in sflags[1]:
+      if f == '+': self._tab.inc()
+      if f == '-': self._tab.dec()
+    return
+
+
+def trace ( *args ):
+  global _trace
+  _trace.write( *args )
+  return
+
+
+def setTraceLevel ( level ):
+  global _trace
+  _trace.level = level
+  return
+
+
+def staticInitialization ( quiet=False ):
   global sysConfDir
   global symbolicDir
   global realDir
+  global tab
+  global _trace
+
+  if sysConfDir != None: return
+
+  tab    = Tab()
+  _trace = Trace()
   
   reSysConfDir = re.compile(r'.*etc\/coriolis2')
-  print '  o  Locating configuration directory:'
+  if not quiet: print '  o  Locating configuration directory:'
   
   for path in sys.path:
     if reSysConfDir.match(path):
       sysConfDir = path
-      print '     - <%s>' % sysConfDir
+      if not quiet: print '     - <%s>' % sysConfDir
       break
   
   if not sysConfDir:
@@ -192,7 +276,7 @@ def staticInitialization ():
       raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
                              , 'The path is something ending by <.../etc/coriolis2>.'] )
   
-  print '     - <%s>' % sysConfDir
+  if not quiet: print '     - <%s>' % sysConfDir
   symbolicDir = os.path.join( sysConfDir, symbolicTechno )
   realDir     = os.path.join( sysConfDir, realTechno )
   return

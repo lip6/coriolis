@@ -13,6 +13,7 @@
 # |  Python      :       "./plugins/ChipPlugin.py"                  |
 # +-----------------------------------------------------------------+
 
+
 try:
   import sys
   import traceback
@@ -41,6 +42,7 @@ try:
   import Viewer
   import CRL
   from   CRL import RoutingLayerGauge
+  import helpers
   from   helpers   import ErrorMessage
   from   helpers   import WarningMessage
   import Nimbus
@@ -50,6 +52,7 @@ try:
   import Kite
   import Unicorn
   import plugins
+  import clocktree.ClockTree
   import chip.Configuration
   import chip.BlockPower
   import chip.BlockCorona
@@ -71,10 +74,10 @@ except Exception, e:
 # Plugin working part.
 
 
-class PlaceCore ( chip.Configuration.Wrapper ):
+class PlaceCore ( chip.Configuration.ChipConfWrapper ):
 
-  def __init__ ( self, confWrapper ):
-    chip.Configuration.Wrapper.__init__( self, confWrapper.conf )
+  def __init__ ( self, conf ):
+    chip.Configuration.ChipConfWrapper.__init__( self, conf.gaugeConf, conf.chipConf )
     self.validated = False
     return
 
@@ -113,12 +116,33 @@ class PlaceCore ( chip.Configuration.Wrapper ):
   def doPlacement ( self ):
     if not self.validated: return
 
-    checkUnplaced = plugins.CheckUnplaced( self.cores[0].getMasterCell(), plugins.NoFlags )
+    coreCell = self.cores[0].getMasterCell()
+
+    checkUnplaced = plugins.CheckUnplaced( coreCell, plugins.NoFlags )
     if not checkUnplaced.check(): return
-    
-    mauka  = Mauka.MaukaEngine.create( self.cores[0].getMasterCell() )
-    mauka.run()
-    mauka.destroy()
+
+    ckCore = None
+    for plug in self.cko.getPlugs():
+      if plug.getInstance() == self.cores[0]:
+        ckCore = plug.getMasterNet()
+    if not ckCore:
+      print WarningMessage( 'Core <%s> is not connected to chip clock.'
+                            % self.cores[0].getName() )
+
+    if self.useClockTree and ckCore:
+      ht = clocktree.ClockTree.HTree.create( self, coreCell, ckCore, coreCell.getAbutmentBox() )
+      ht.addCloned( self.cell )
+      mauka  = Mauka.MaukaEngine.create( coreCell )
+      mauka.run()
+      mauka.destroy()
+      ht.connectLeaf()
+      ht.prune()
+      ht.route()
+      ht.save( self.cell )
+    else:
+      mauka  = Mauka.MaukaEngine.create( coreCell )
+      mauka.run()
+      mauka.destroy()
     return
 
 
@@ -139,6 +163,9 @@ def unicornHook ( **kw ):
 
 def ScriptMain ( **kw ):
   try:
+    helpers.staticInitialization( quiet=True )
+   #helpers.setTraceLevel( 550 )
+
     cell, editor = plugins.kwParseMain( **kw )
 
     conf = chip.Configuration.loadConfiguration( cell )
@@ -151,10 +178,17 @@ def ScriptMain ( **kw ):
     placeCore = PlaceCore( conf )
     placeCore.validate()
     placeCore.doFloorplan()
+    editor.fit()
+
     placeCore.doPlacement()
-    corePower = chip.BlockPower.Block( Path(conf.cores[0]), conf.vddi, conf.vssi )
-    corePower.queryPower()
+    editor.fit()
+
+    corePower = chip.BlockPower.Block( conf )
+    corePower.connectPower()
+    corePower.connectClock()
     corePower.doLayout()
+    editor.fit()
+
     coreCorona = chip.BlockCorona.Corona( corePower )
     coreCorona.connectPads( padsCorona )
     coreCorona.connectBlock()
@@ -167,5 +201,8 @@ def ScriptMain ( **kw ):
   except Exception, e:
     print '\n\n', e; errorCode = 1
     traceback.print_tb(sys.exc_info()[2])
+
+  sys.stdout.flush()
+  sys.stderr.flush()
       
   return 0

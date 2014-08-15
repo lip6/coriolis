@@ -30,6 +30,7 @@ from   Hurricane import Vertical
 from   Hurricane import Instance
 import CRL
 from   CRL import RoutingLayerGauge
+from   helpers   import trace
 from   helpers   import ErrorMessage
 from   helpers   import WarningMessage
 import chip.Configuration
@@ -108,12 +109,24 @@ class Side ( object ):
 
     def _createPowerContacts ( self, pad, net ):
       if self._type == chip.North or self._type == chip.South:
-        hvDepth = self._corona.getVDepth()
+        hvDepth = self._corona.padVDepth
       elif self._type == chip.East or self._type == chip.West:
-        hvDepth = self._corona.getHDepth()
+        hvDepth = self._corona.padHDepth
+
+      trace( 550, ',+', '\t_createPowerContacts() for %s\n' % net.getName() )
 
       masterCell = pad.getMasterCell()
-      for component in masterCell.getNet(net.getName()).getExternalComponents():
+      if net.isGlobal(): components = masterCell.getNet(net.getName()).getExternalComponents()
+      else:
+        for plug in net.getPlugs():
+          if plug.getInstance() == pad:
+            trace( 550, '\tFound Plug on %s\n' % pad )
+            components = plug.getMasterNet().getExternalComponents()
+
+      connecteds = False
+      for component in components:
+        trace( 550, '\t- %s\n' % component )
+
         if component.getBoundingBox().getYMin() > masterCell.getAbutmentBox().getYMin(): continue
         if self._corona.routingGauge.getLayerDepth(component.getLayer()) != hvDepth: continue
         if not isinstance(component,Vertical): continue
@@ -128,6 +141,7 @@ class Side ( object ):
         position = Point( component.getX(), masterCell.getAbutmentBox().getYMin() )
         pad.getTransformation().applyOn( position )
 
+        connecteds = True
         self._powerContacts.append( Contact.create( net
                                                   , component.getLayer()
                                                   , position.getX()
@@ -135,6 +149,11 @@ class Side ( object ):
                                                   , width
                                                   , height
                                                   ) )
+      if not connecteds:
+        print WarningMessage( 'Cannot find a suitable connector for <%s> on pad <%s>'
+                            % (net.getName(),pad.getName()) )
+
+      trace( 550, '-' )
       return
 
 
@@ -149,6 +168,7 @@ class Side ( object ):
        #print 'Power pad:', pad
         self._createPowerContacts( pad, self._corona.vddi )
         self._createPowerContacts( pad, self._corona.vssi )
+        self._createPowerContacts( pad, self._corona.cko  )
       return
 
 
@@ -226,10 +246,10 @@ class Side ( object ):
       return
 
 
-class Corona ( chip.Configuration.Wrapper ):
+class Corona ( chip.Configuration.ChipConfWrapper ):
 
-  def __init__ ( self, confWrapper ):
-    chip.Configuration.Wrapper.__init__( self, confWrapper.conf )
+  def __init__ ( self, conf ):
+    chip.Configuration.ChipConfWrapper.__init__( self, conf.gaugeConf, conf.chipConf )
     self.validated   = False
     self._northSide  = Side( self, chip.North )
     self._southSide  = Side( self, chip.South )
@@ -243,7 +263,7 @@ class Corona ( chip.Configuration.Wrapper ):
     self._powerRails = []  # [ , [net, layer, axis, width] ]
 
     self._locatePadRails()
-    self._guessHvLayers()
+    self._guessPadHvLayers()
     return
 
   @property
@@ -254,6 +274,10 @@ class Corona ( chip.Configuration.Wrapper ):
   def eastSide  ( self ): return self._eastSide
   @property
   def westSide  ( self ): return self._westSide
+  @property
+  def padHDepth ( self ): return self._horizontalPadDepth
+  @property
+  def padVDepth ( self ): return self._verticalPadDepth
 
   def getSwCorner  ( self, i ): return self._corners[chip.SouthWest][i]
   def getSeCorner  ( self, i ): return self._corners[chip.SouthEast][i]
@@ -263,8 +287,6 @@ class Corona ( chip.Configuration.Wrapper ):
   def getRailLayer ( self, i ): return self._powerRails[i][1]
   def getRailAxis  ( self, i ): return self._powerRails[i][2]
   def getRailWidth ( self, i ): return self._powerRails[i][3]
-  def getHDepth    ( self ):    return self._horizontalDepth
-  def getVDepth    ( self ):    return self._verticalDepth
 
 
   def validate ( self ):
@@ -316,7 +338,7 @@ class Corona ( chip.Configuration.Wrapper ):
    #                                              )
     return
 
-  def _guessHvLayers ( self ):
+  def _guessPadHvLayers ( self ):
     if not self.powerPad:
       print ErrorMessage( 1, 'There must be at least one pad of model "pvddick_px" to guess the pad power terminals.' )
       return False
@@ -329,18 +351,18 @@ class Corona ( chip.Configuration.Wrapper ):
 
    #print 'available depth:', availableDepths
 
-    self._horizontalDepth = 0
-    self._verticalDepth   = 0
+    self._horizontalPadDepth = 0
+    self._verticalPadDepth   = 0
     for depth in range(0,self.topLayerDepth+1):
       if not depth in availableDepths: continue
 
       if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
-        self._horizontalDepth = depth
+        self._horizontalPadDepth = depth
       if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
-        self._verticalDepth = depth
+        self._verticalPadDepth = depth
 
-   #print 'h:', self._horizontalDepth
-   #print 'v:', self._verticalDepth
+   #print 'h:', self._horizontalPadDepth
+   #print 'v:', self._verticalPadDepth
     return
 
 

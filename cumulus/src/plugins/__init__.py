@@ -111,6 +111,8 @@ class StackedVia ( object ):
       self._vias        = []
       return
 
+    def getNet ( self ): return self._net
+
     def mergeDepth ( self, depth ):
       if self._hasLayout:
         print WarningMessage( 'StackedVia.mergeDepth(): Cannot be called *after* StackVia.doLayout()' )

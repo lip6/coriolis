@@ -14,6 +14,7 @@
 # +-----------------------------------------------------------------+
 
 
+import sys
 from   Hurricane import DbU
 from   Hurricane import Point
 from   Hurricane import Transformation
@@ -28,9 +29,15 @@ from   Hurricane import Horizontal
 from   Hurricane import Vertical
 from   Hurricane import Query
 import CRL
+import helpers
+from   helpers   import trace
 from   helpers   import ErrorMessage
 from   helpers   import WarningMessage
 import chip.Configuration
+
+
+helpers.staticInitialization( quiet=True )
+helpers.trace.level = 550
 
 
 class Side ( object ):
@@ -90,13 +97,16 @@ class Side ( object ):
       height = 0
       y      = self.block.bb.getYMax()
 
+    minWidth = DbU.fromLambda( 6.0 )
     for terminal in self.terminals:
       if self.side == chip.West or self.side == chip.East:
         center = Point( x, terminal[0].getCenter() )
         height = terminal[0].getSize()
+        if height < minWidth: height = minWidth
       elif self.side == chip.North or self.side == chip.South:
         center = Point( terminal[0].getCenter(), y )
         width = terminal[0].getSize()
+        if width < minWidth: width = minWidth
 
       self.block.path.getTransformation().applyOn( center )
 
@@ -172,14 +182,13 @@ class GoCb ( object ):
     return
 
 
-class Block ( object ):
+class Block ( chip.Configuration.ChipConfWrapper ):
 
-  def __init__ ( self, path, vddi, vssi ):
-    self.path        = path
-    self.cell        = self.path.getTailInstance().getMasterCell()
-    self.bb          = self.cell.getAbutmentBox()
-    self.vddi        = vddi
-    self.vssi        = vssi
+  def __init__ ( self, conf ):
+    chip.Configuration.ChipConfWrapper.__init__( self, conf.gaugeConf, conf.chipConf )
+    self.path        = Path( self.cores[0] )
+    self.block       = self.path.getTailInstance().getMasterCell()
+    self.bb          = self.block.getAbutmentBox()
     self.planes      = { }
     self.activePlane = None
 
@@ -190,7 +199,7 @@ class Block ( object ):
     return
 
 
-  def queryPower ( self ):
+  def connectPower ( self ):
     if not self.vddi or not self.vssi:
       print ErrorMessage( 1, 'Cannot build block power terminals as vddi and/or vss are not known.' )
       return
@@ -198,7 +207,7 @@ class Block ( object ):
     goCb = GoCb( self )
     query = Query()
     query.setGoCallback( goCb )
-    query.setCell( self.cell )
+    query.setCell( self.block )
     query.setArea( self.bb )
     query.setFilter( Query.DoComponents|Query.DoTerminalCells )
 
@@ -208,6 +217,59 @@ class Block ( object ):
       query.setBasicLayer( layerGauge.getLayer().getBasicLayer() )
       query.doQuery()
     self.activePlane = None
+    return
+
+
+  def connectClock ( self ):
+    if not self.cko:
+      print ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
+      return
+
+    blockCk = None
+    for plug in self.path.getTailInstance().getPlugs():
+      if plug.getNet() == self.cko:
+        blockCk = plug.getMasterNet()
+
+    if not blockCk:
+      print ErrorMessage( 1, 'Block <%s> has no net connected to the clock <%s>.'
+                             % (self.path.getTailInstance().getName(),self.ck.getName()) )
+      return
+
+    plugs = []
+    for plug in blockCk.getPlugs():
+      if plug.getInstance().getName() == 'ck_htree':
+        plugs.append( plug )
+
+    if len(plugs) != 1:
+      message = 'Block <%s> has not exactly one H-Tree connecteds to the clock <%s>:' \
+                % (self.path.getTailInstance().getName(),blockCk.getName())
+      for plug in plugs:
+        message += '\n        - %s' % plug
+      print ErrorMessage( 1, message )
+      return
+
+    UpdateSession.open()
+    bufferRp = self.rpAccessByOccurrence( Occurrence(plugs[0], self.path), self.cko )
+    blockAb  = self.block.getAbutmentBox()
+    self.path.getTransformation().applyOn( blockAb )
+    layerGauge = self.routingGauge.getLayerGauge(self.verticalDepth)
+    
+    contact  = Contact.create( self.cko
+                             , self.routingGauge.getRoutingLayer(self.verticalDepth)
+                             , bufferRp.getX()
+                             , blockAb.getYMax() 
+                             , layerGauge.getViaWidth()
+                             , layerGauge.getViaWidth()
+                             )
+    segment = self.createVertical( bufferRp, contact, bufferRp.getX() )
+
+    self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
+    bb = segment.getBoundingBox( self.activePlane.metal.getBasicLayer() )
+    self.path.getTransformation().getInvert().applyOn( bb )
+    self.activePlane.addTerminal( self.cko, Plane.Vertical, bb )
+    
+    UpdateSession.close()
+
     return
 
   def doLayout ( self ):

@@ -30,6 +30,7 @@ from   Hurricane import Horizontal
 from   Hurricane import Vertical
 import CRL
 from   CRL import RoutingLayerGauge
+from   helpers   import trace
 from   helpers   import ErrorMessage
 from   helpers   import WarningMessage
 from   plugins   import StackedVia
@@ -64,7 +65,7 @@ class HorizontalRail ( Rail ):
                                    , '(corona:%s)'                        % str(self.side.innerBb) ] ) 
 
        #print '  HorizontalRail.connect() net:%s contact:%s' % (self.net.getName(),str(contact))
-        if self.net != contact.getNet(): return False
+       #if self.net != contact.getNet(): return False
         if self.vias.has_key(contact.getX()): return False
         
         keys        = self.vias.keys()
@@ -87,25 +88,13 @@ class HorizontalRail ( Rail ):
                                                   , self.side.getLayerDepth(self.side.getHLayer())
                                                   , contact.getX()
                                                   , self.axis
-                                                  , contact.getWidth()
-                                                  , self.side.hRailWidth
+                                                  , contact.getWidth()   - DbU.fromLambda(1.0)
+                                                  , self.side.hRailWidth - DbU.fromLambda(1.0)
                                                   )
                                       , contact ]
        #print '    ADD contact @ [%d %d]' % (DbU.toLambda(contact.getX()), DbU.toLambda(self.axis))
         self.vias[ contact.getX() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
         return True
-
-    def doLayout ( self ):
-        for via in self.vias.values():
-          via[1].doLayout()
-
-        Horizontal.create( self.side.corner0(self.order)
-                         , self.side.corner1(self.order)
-                         , self.side.getHLayer()
-                         , self.axis
-                         , self.side.hRailWidth
-                         )
-        return
 
     def doLayout ( self ):
        #print 'HorizontalRail[%s] @%d' % (self.order,DbU.toLambda(self.axis))
@@ -114,6 +103,8 @@ class HorizontalRail ( Rail ):
                    , self.side.corner1(self.order) ]
 
         for via in self.vias.values():
+          if via[1].getNet() != via[2].getNet(): continue
+
           via[1].doLayout()
          #print '  Connect:', via[2], via[1].getVia( via[2].getLayer() )
           Vertical.create( via[1].getVia( via[2].getLayer() )
@@ -149,7 +140,8 @@ class VerticalRail ( Rail ):
                    , self.side.corner1(self.order) ]
 
         for via in self.vias.values():
-         #print '  Connect: ', via[2]
+          if via[1].getNet() != via[2].getNet(): continue
+
           via[1].doLayout()
           Horizontal.create( via[1].getVia( via[2].getLayer() )
                            , via[2]
@@ -178,30 +170,36 @@ class VerticalRail ( Rail ):
                                    , 'power pad is likely to be to far off north or south.'
                                    , '(corona:%s)'                       % str(self.side.innerBb) ] ) 
 
-        if self.net != contact.getNet(): return False
+       #if self.net != contact.getNet(): return False
         if self.vias.has_key(contact.getY()): return False
+
+        trace( 550, ',+', '\tVerticalRail.connect() [%s] @%d\n' % (self.order,DbU.toLambda(self.axis)) )
+        trace( 550, contact )
         
         keys        = self.vias.keys()
         keys.sort()
         insertIndex = bisect.bisect_left( keys, contact.getY() )
-       #print 'keys:', keys
+        trace( 550, ',+', '\tkeys:' )
+        for key in keys:
+            trace( 550, ' %d' % DbU.toLambda(key) )
+        trace( 550, '\n' )
 
         if len(keys) > 0:
             if insertIndex < len(keys):
                 insertPosition = keys[ insertIndex ]
-               #print 'insertIndex:%d' % insertIndex
-               #print 'Check NEXT contactBb:%s via:%s' \
-               #    % ( str(contactBb)
-               #      , str(self.vias[insertPosition][2].getBoundingBox()) )
+                trace( 550, '\tinsertIndex:%d' % insertIndex )
+                trace( 550, '\tCheck NEXT contactBb:%s via:%s\n' \
+                    % ( contactBb
+                      , self.vias[insertPosition][2].getBoundingBox()) )
                 if contactBb.getYMax() >= self.vias[insertPosition][2].getBoundingBox().getYMin():
-               #    print 'Reject %s intersect NEXT' % str(contact)
+                    trace( 550, ',--', '\tReject %s intersect NEXT\n' % contact )
                     return False
             if insertIndex > 0:
-               #print 'check PREVIOUS contactBb:%s via:%s' \
-               #    % ( str(contactBb)
-               #      , str(self.vias[keys[insertIndex-1]][2].getBoundingBox()) )
+                trace( 550, '\tcheck PREVIOUS contactBb:%s via:%s\n' \
+                    % ( contactBb
+                      , self.vias[keys[insertIndex-1]][2].getBoundingBox()) )
                 if self.vias[keys[insertIndex-1]][2].getBoundingBox().getYMax() >= contactBb.getYMin():
-               #    print 'Reject %s intersect PREVIOUS' % str(contact)
+                    trace( 550, ',--', '\tReject %s intersect PREVIOUS\n' % contact )
                     return False
 
         self.vias[ contact.getY() ] = [ contact.getY()
@@ -209,11 +207,11 @@ class VerticalRail ( Rail ):
                                                   , self.side.getLayerDepth(self.side.getVLayer())
                                                   , self.axis
                                                   , contact.getY()
-                                                  , self.side.vRailWidth
-                                                  , contact.getHeight()
+                                                  , self.side.vRailWidth - DbU.fromLambda(1.0)
+                                                  , contact.getHeight()  - DbU.fromLambda(1.0)
                                                   )
                                       , contact ]
-       #print 'ADD %s' % str(contact)
+        trace(550, ',--' '\tADD %s\n' % contact )
         self.vias[ contact.getY() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
         return True
 
@@ -265,12 +263,18 @@ class Side ( object ):
         return
 
     def connectPads ( self, padSide ):
-        halfRails = len(self._rails)/2
         for terminal in padSide._powerContacts:
-         #print 'Connect pad terminal ', terminal
+         #print '  Connect to [-%i] @%d' % (0, DbU.toLambda(self.getOuterRail(0).axis))
+          self.getOuterRail( 0 ).connect( terminal )
+
+        halfRails = (len(self._rails)-1)/2
+        trace( 550, 'halfRails:%i' % halfRails )
+        for terminal in padSide._powerContacts:
+          trace( 550, ',+', '\tConnect pad terminal %s\n' % terminal )
           for i in range(halfRails):
-           #print '  Connect to [-%i] @%d' % (i, DbU.toLambda(self.getOuterRail(i).axis))
-            self.getOuterRail(i).connect( terminal )
+            trace( 550, '\tConnect to [-%i] @%d\n' % (i+1, DbU.toLambda(self.getOuterRail(i+1).axis)) )
+            self.getOuterRail(i+1).connect( terminal )
+          trace( 550, '-' )
         return
 
     def doLayout ( self ):
@@ -364,60 +368,45 @@ class Corona ( object ):
         if not isinstance(block,chip.BlockPower.Block):
             raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
 
-        self._framework    = CRL.AllianceFramework.get()
-        self._routingGauge = self._framework.getRoutingGauge()
-        self._block        = block
-        self._innerBb      = self._block.bb
+        self._block           = block
+        self._innerBb         = self._block.bb
         self._block.path.getTransformation().applyOn( self._innerBb )
 
-        self._railsNb         = 4
+        self._railsNb         = 5
         self._hRailWidth      = DbU.fromLambda( 12.0 )
         self._vRailWidth      = DbU.fromLambda( 12.0 )
         self._hRailSpace      = DbU.fromLambda(  6.0 )
         self._vRailSpace      = DbU.fromLambda(  6.0 )
-        self._topLayerDepth   = 0
-        self._horizontalDepth = 0
-        self._verticalDepth   = 0
 
-        self._southSide  = SouthSide( self )
-        self._northSide  = NorthSide( self )
-        self._westSide   = WestSide ( self )
-        self._eastSide   = EastSide ( self )
+        self._southSide       = SouthSide( self )
+        self._northSide       = NorthSide( self )
+        self._westSide        = WestSide ( self )
+        self._eastSide        = EastSide ( self )
 
-        self._guessHvLayers()
         return
 
-    def _guessHvLayers ( self ):
-        topLayer = Cfg.getParamString('katabatic.topRoutingLayer').asString()
-        self._topLayerDepth = 0
-        for layerGauge in self._routingGauge.getLayerGauges():
-          if layerGauge.getLayer().getName() == topLayer:
-            self._topLayerDepth = layerGauge.getDepth()
-            break
-        if not self._topLayerDepth:
-          print WarningMessage( 'Gauge top layer not defined, using top of gauge (%d).' \
-                                % self._routingGauge.getDepth() )
-          self._topLayerDepth = self._routingGauge.getDepth()
-        
-        for depth in range(0,self._topLayerDepth+1):
-          if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
-            self._horizontalDepth = depth
-          if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
-            self._verticalDepth = depth
-        return
+    @property
+    def routingGauge    ( self ): return self._block.routingGauge
+    @property
+    def topLayerDepth   ( self ): return self._block.topLayerDepth
+    @property
+    def horizontalDepth ( self ): return self._block.horizontalDepth
+    @property
+    def verticalDepth   ( self ): return self._block.verticalDepth
 
     def getLayerDepth ( self, metal ):
-        return self._routingGauge.getLayerDepth( metal )
+        return self.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
+        if i == self._railsNb-1: return self._block.cko
         if i % 2: return self._block.vssi
         return self._block.vddi
 
     def getHLayer ( self ):
-        return self._routingGauge.getLayerGauge( self._horizontalDepth ).getLayer()
+        return self.routingGauge.getLayerGauge( self.horizontalDepth ).getLayer()
 
     def getVLayer ( self ):
-        return self._routingGauge.getLayerGauge( self._verticalDepth ).getLayer()
+        return self.routingGauge.getLayerGauge( self.verticalDepth ).getLayer()
 
     def connectBlock ( self ):
         for plane in self._block.planes.values():
@@ -436,15 +425,15 @@ class Corona ( object ):
         return
 
     def doLayout ( self ):
-        self._corners = { chip.SouthWest  : []
+        self._corners = { chip.SouthWest : []
                         , chip.SouthEast : []
-                        , chip.NorthWest     : []
-                        , chip.NorthEast    : []
+                        , chip.NorthWest : []
+                        , chip.NorthEast : []
                         }
 
-        contactDepth = self._horizontalDepth
-        if self._horizontalDepth > self._verticalDepth:
-            contactDepth = self._verticalDepth
+        contactDepth = self.horizontalDepth
+        if self.horizontalDepth > self.verticalDepth:
+            contactDepth = self.verticalDepth
 
         for i in range(self._railsNb):
             xBL = self._westSide .getRail(i).axis
@@ -453,30 +442,31 @@ class Corona ( object ):
             yTR = self._northSide.getRail(i).axis
             net = self.getRailNet( i )
 
+            self.routingGauge.getContactLayer(contactDepth)
             self._corners[chip.SouthWest].append( 
                 Contact.create( net
-                              , self._routingGauge.getContactLayer(contactDepth)
+                              , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yBL
                               , self._hRailWidth
                               , self._vRailWidth
                               ) )
             self._corners[chip.NorthWest].append( 
                 Contact.create( net
-                              , self._routingGauge.getContactLayer(contactDepth)
+                              , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yTR
                               , self._hRailWidth
                               , self._vRailWidth
                               ) )
             self._corners[chip.SouthEast].append( 
                 Contact.create( net
-                              , self._routingGauge.getContactLayer(contactDepth)
+                              , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yBL
                               , self._hRailWidth
                               , self._vRailWidth
                               ) )
             self._corners[chip.NorthEast].append( 
                 Contact.create( net
-                              , self._routingGauge.getContactLayer(contactDepth)
+                              , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yTR
                               , self._hRailWidth
                               , self._vRailWidth
