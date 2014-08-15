@@ -80,7 +80,12 @@ namespace {
     , _cell(cell)
     , _str (NULL)
   {
-    Query::setQuery( _cell, _cell->getBoundingBox(), Transformation(), NULL, 0, Query::DoComponents );
+    Query::setQuery( _cell
+                   , _cell->getBoundingBox()
+                   , Transformation()
+                   , NULL
+                   , 0
+                   , Query::DoComponents|Query::DoMasterCells|Query::DoTerminalCells );
   }
 
 
@@ -108,6 +113,8 @@ namespace {
     else
       return;
 
+    getTransformation().applyOn( b );
+
     double xmin = DbU::getPhysical(b.getXMin(), DbU::Nano);
     double ymin = DbU::getPhysical(b.getYMin(), DbU::Nano);
     double xmax = DbU::getPhysical(b.getXMax(), DbU::Nano);
@@ -118,7 +125,6 @@ namespace {
     isInteger( xmax, go, getPath() );
     isInteger( ymax, go, getPath() );
 
-    getTransformation().applyOn( b );
     AGDS::Rectangle* rect = new AGDS::Rectangle ( getBasicLayer()->getExtractNumber()
                                                 , xmin, ymin, xmax, ymax ); 
     _str->addElement( rect );
