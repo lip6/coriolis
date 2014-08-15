@@ -26,6 +26,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/DeepNet.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Path.h"
@@ -62,6 +63,7 @@ namespace Kite {
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
+  using Hurricane::DeepNet;
   using Hurricane::Instance;
   using Hurricane::Plug;
   using Hurricane::Path;
@@ -85,63 +87,93 @@ namespace Kite {
 
   void  KiteEngine::buildPreRouteds ()
   {
+    cmess1 << "  o  Looking for fixed or manually global routed nets." << endl;
+
     forEach ( Net*, inet, getCell()->getNets() ) {
       if (*inet == _blockageNet) continue;
       if (inet->getType() == Net::Type::POWER ) continue;
       if (inet->getType() == Net::Type::GROUND) continue;
-    // Don't consider the clock.
+    // Don't skip the clock.
 
       vector<Segment*>  segments;
       vector<Contact*>  contacts;
 
       bool   isPreRouted = false;
-      size_t rpCount     = 0;
-      forEach ( Component*, icomponent, inet->getComponents() ) {
-        Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
-        if (horizontal) {
-          segments.push_back( horizontal );
-          isPreRouted = true;
-        } else {
-          Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
-          if (vertical) {
+      bool   isFixed     = false;
+      size_t rpCount         = 0;
+
+      if (inet->isDeepNet()) {
+        rpCount = 2;
+
+        Net* rootNet = dynamic_cast<Net*>(
+                         dynamic_cast<DeepNet*>(*inet)->getRootNetOccurrence().getEntity() );
+        forEach ( Component*, icomponent, rootNet->getComponents() ) {
+          if (dynamic_cast<Horizontal*>(*icomponent)) { isFixed = true; break; }
+          if (dynamic_cast<Vertical*>  (*icomponent)) { isFixed = true; break; }
+          if (dynamic_cast<Contact*>   (*icomponent)) { isFixed = true; break; }
+        }
+      } else {
+        forEach ( Component*, icomponent, inet->getComponents() ) {
+          Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
+          if (horizontal) {
+            segments.push_back( horizontal );
             isPreRouted = true;
-            segments.push_back( vertical );
+            if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
+              isFixed = true;
           } else {
-            Contact* contact = dynamic_cast<Contact*>(*icomponent);
-            if (contact) {
+            Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
+            if (vertical) {
               isPreRouted = true;
-              contacts.push_back( contact );
+              segments.push_back( vertical );
+              if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
+                isFixed = true;
             } else {
-              RoutingPad* rp = dynamic_cast<RoutingPad*>(*icomponent);
-              if (rp) {
-                ++rpCount;
+              Contact* contact = dynamic_cast<Contact*>(*icomponent);
+              if (contact) {
+                isPreRouted = true;
+                contacts.push_back( contact );
+                if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
+                   or (contact->getHeight() != Session::getViaWidth(contact->getLayer())) )
+                  isFixed = true;
               } else {
-                // Plug* plug = dynamic_cast<Plug*>(*icomponent);
-                // if (plug) {
-                //   cerr << "buildPreRouteds(): " << plug << endl;
-                //   ++rpCount;
-                // }
+                RoutingPad* rp = dynamic_cast<RoutingPad*>(*icomponent);
+                if (rp) {
+                  ++rpCount;
+                } else {
+                  // Plug* plug = dynamic_cast<Plug*>(*icomponent);
+                  // if (plug) {
+                  //   cerr << "buildPreRouteds(): " << plug << endl;
+                  //   ++rpCount;
+                  // }
+                }
               }
             }
           }
         }
       }
 
-      if (isPreRouted or (rpCount < 2)) {
+      if (isFixed or isPreRouted or (rpCount < 2)) {
         NetRoutingState* state = getRoutingState( *inet, Katabatic::KbCreate );
-        state->setFlags  ( NetRoutingState::ManualGlobalRoute );
         state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
+        state->setFlags  ( NetRoutingState::ManualGlobalRoute );
 
-        if (rpCount > 1) {
-          for ( auto icontact : contacts ) {
-            AutoContact::createFrom( icontact );
-          }
-
-          for ( auto isegment : segments ) {
-            AutoContact* source = Session::base()->lookup( dynamic_cast<Contact*>( isegment->getSource() ));
-            AutoContact* target = Session::base()->lookup( dynamic_cast<Contact*>( isegment->getTarget() ));
-            AutoSegment* autoSegment = AutoSegment::create( source, target, isegment );
-            autoSegment->setFlags( Katabatic::SegUserDefined|Katabatic::SegAxisSet );
+        if (isFixed) {
+          cmess2 << "     - <" << (*inet)->getName() << "> is fixed." << endl;
+          state->unsetFlags( NetRoutingState::ManualGlobalRoute );
+          state->setFlags  ( NetRoutingState::Fixed );
+        } else {
+          if (rpCount > 1) {
+            cmess2 << "     - <" << (*inet)->getName() << "> is manually global routed." << endl;
+            for ( auto icontact : contacts ) {
+              AutoContact::createFrom( icontact );
+            }
+          
+            for ( auto isegment : segments ) {
+              AutoContact* source = Session::base()->lookup( dynamic_cast<Contact*>( isegment->getSource() ));
+              AutoContact* target = Session::base()->lookup( dynamic_cast<Contact*>( isegment->getTarget() ));
+              AutoSegment* autoSegment = AutoSegment::create( source, target, isegment );
+              autoSegment->setFlags( Katabatic::SegUserDefined|Katabatic::SegAxisSet );
+            }
           }
         }
       }

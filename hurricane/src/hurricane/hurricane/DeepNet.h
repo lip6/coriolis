@@ -60,6 +60,7 @@ namespace Hurricane {
 
     // Accessors.
     public:
+      inline  Occurrence  getRootNetOccurrence () const;
 
     // Predicates.
     public:
@@ -70,6 +71,8 @@ namespace Hurricane {
       size_t  _createRoutingPads ( unsigned int flags=0 );
 
 };
+
+inline Occurrence  DeepNet::getRootNetOccurrence() const { return _netOccurrence; }
 
 Net* getDeepNet(HyperNet& hyperNet);
 

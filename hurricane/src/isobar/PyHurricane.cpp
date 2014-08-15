@@ -750,8 +750,6 @@ extern "C" {
     PyModule_AddObject ( module, "TransistorLayer"      , (PyObject*)&PyTypeTransistorLayer );
     Py_INCREF ( &PyTypeViaLayer );
     PyModule_AddObject ( module, "ViaLayer"             , (PyObject*)&PyTypeViaLayer );
-    Py_INCREF ( &PyTypeContactLayer );
-    PyModule_AddObject ( module, "ContactLayer"         , (PyObject*)&PyTypeContactLayer );
     Py_INCREF ( &PyTypeNetExternalComponents );
     PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
     Py_INCREF ( &PyTypeDebugSession );
@@ -770,7 +768,7 @@ extern "C" {
     Py_INCREF ( &PyTypeHookCollection );
     PyModule_AddObject ( module, "HookCollection"       , (PyObject*)&PyTypeHookCollection );
     Py_INCREF ( &PyTypePlug );
-    PyModule_AddObject ( module, "PyPlug"               , (PyObject*)&PyTypePlug );
+    PyModule_AddObject ( module, "Plug"                 , (PyObject*)&PyTypePlug );
     Py_INCREF ( &PyTypeRoutingPad );
     PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
     Py_INCREF ( &PyTypeVertical );

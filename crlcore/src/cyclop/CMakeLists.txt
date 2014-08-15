@@ -21,6 +21,7 @@
 
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
 
+#       add_executable ( cyclop        ${cpps} )
         add_executable ( cyclop        ${cpps} ${mocCpps} )
  target_link_libraries ( cyclop        crlcore
                                        ${HURRICANE_PYTHON_LIBRARIES}

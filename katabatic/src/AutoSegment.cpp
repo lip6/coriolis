@@ -1953,8 +1953,8 @@ namespace Katabatic {
       } else {
         if (vertical->getWidth() != verticalWidth) {
             cerr << Warning("Segment %s has non-default width %s."
-                           ,getString(horizontal).c_str()
-                           ,DbU::getValueString(horizontal->getWidth()).c_str()) << endl;
+                           ,getString(vertical).c_str()
+                           ,DbU::getValueString(vertical->getWidth()).c_str()) << endl;
         }
       }
 

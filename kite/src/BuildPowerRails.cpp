@@ -270,6 +270,7 @@ namespace {
 
         if (netType == Net::Type::CLOCK) {
           if (_ckoName.isEmpty()) {
+            cmess1 << "        - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
             _ckoName =  inet->getName();
             _cko     = *inet;
           } else {
@@ -282,7 +283,7 @@ namespace {
         }
       }
       
-      if ((_vddi) == NULL) cerr << Error("Missing <vdd> net at top block level." ) << endl;
+      if (_vddi == NULL) cerr << Error("Missing <vdd> net at top block level." ) << endl;
       else destroyRing( _vddi );
       if (_vssi == NULL) cerr << Error("Missing <vss> net at top block level." ) << endl;
       else destroyRing( _vssi );
@@ -362,7 +363,7 @@ namespace {
       while ( true ) {
       //cerr << path << "+" << upNet << endl;
 
-        if ( (upNet == NULL) or not upNet->isExternal() ) return NULL;
+        if ( (upNet == NULL) or not upNet->isExternal() ) return _blockage;
         if ( path.isEmpty() ) break;
 
         instance = path.getTailInstance();
@@ -467,19 +468,21 @@ namespace {
     public:
       typedef  map<const BasicLayer*,Plane*,BasicLayer::CompareByMask>  PlanesMap;
     public:
-                    PowerRailsPlanes    ( KiteEngine* );
-                   ~PowerRailsPlanes    ();
-      inline Net*   getRootNet          ( Net*, Path );
-             bool   hasPlane            ( const BasicLayer* );
-             bool   setActivePlane      ( const BasicLayer* );
-      inline Plane* getActivePlane      () const;
-             void   merge               ( const Box&, Net* );
-             void   doLayout            ();
+                    PowerRailsPlanes       ( KiteEngine* );
+                   ~PowerRailsPlanes       ();
+      inline Net*   getRootNet             ( Net*, Path );
+             bool   hasPlane               ( const BasicLayer* );
+             bool   setActivePlane         ( const BasicLayer* );
+      inline Plane* getActivePlane         () const;
+      inline Plane* getActiveBlockagePlane () const;
+             void   merge                  ( const Box&, Net* );
+             void   doLayout               ();
     private:
       KiteEngine*     _kite;
       GlobalNetTable  _globalNets;
       PlanesMap       _planes;
       Plane*          _activePlane;
+      Plane*          _activeBlockagePlane;
   };
 
 
@@ -496,12 +499,12 @@ namespace {
                 << " " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")<< endl;
   }
 
-  inline DbU::Unit                PowerRailsPlanes::Rail::getAxis           () const { return _axis; }
-  inline DbU::Unit                PowerRailsPlanes::Rail::getWidth          () const { return _width; }
-  inline PowerRailsPlanes::Rails* PowerRailsPlanes::Rail::getRails          () const { return _rails; }
-  inline RoutingPlane*            PowerRailsPlanes::Rail::getRoutingPlane   () const { return _rails->getRoutingPlane(); }
-  inline unsigned int             PowerRailsPlanes::Rail::getDirection      () const { return _rails->getDirection(); }
-  inline Net*                     PowerRailsPlanes::Rail::getNet            () const { return _rails->getNet(); }
+  inline DbU::Unit                PowerRailsPlanes::Rail::getAxis          () const { return _axis; }
+  inline DbU::Unit                PowerRailsPlanes::Rail::getWidth         () const { return _width; }
+  inline PowerRailsPlanes::Rails* PowerRailsPlanes::Rail::getRails         () const { return _rails; }
+  inline RoutingPlane*            PowerRailsPlanes::Rail::getRoutingPlane  () const { return _rails->getRoutingPlane(); }
+  inline unsigned int             PowerRailsPlanes::Rail::getDirection     () const { return _rails->getDirection(); }
+  inline Net*                     PowerRailsPlanes::Rail::getNet           () const { return _rails->getNet(); }
 
 
   void  PowerRailsPlanes::Rail::merge ( DbU::Unit source, DbU::Unit target )
@@ -845,10 +848,11 @@ namespace {
 
 
   PowerRailsPlanes::PowerRailsPlanes ( KiteEngine* kite )
-    : _kite       (kite)
-    , _globalNets (kite)
-    , _planes     ()
-    , _activePlane(NULL)
+    : _kite               (kite)
+    , _globalNets         (kite)
+    , _planes             ()
+    , _activePlane        (NULL)
+    , _activeBlockagePlane(NULL)
   {
     _globalNets.setBlockage( kite->getBlockageNet() );
 
@@ -899,9 +903,16 @@ namespace {
   bool  PowerRailsPlanes::setActivePlane ( const BasicLayer* layer )
   {
     PlanesMap::iterator iplane = _planes.find(layer);
-    if ( iplane == _planes.end() ) return false;
+    if (iplane == _planes.end()) return false;
 
-    _activePlane = iplane->second;
+    _activePlane         = iplane->second;
+    _activeBlockagePlane = NULL;
+    if (layer->getMaterial() != BasicLayer::Material::blockage) {
+      BasicLayer* blockageLayer = layer->getBlockageLayer();
+      PlanesMap::iterator ibplane = _planes.find(blockageLayer);
+      if (ibplane != _planes.end())
+        _activeBlockagePlane = ibplane->second;
+    }
     return true;
   }
 
@@ -910,17 +921,24 @@ namespace {
   { return _activePlane; }
 
 
+  inline PowerRailsPlanes::Plane* PowerRailsPlanes::getActiveBlockagePlane () const
+  { return _activeBlockagePlane; }
+
+
   void  PowerRailsPlanes::merge ( const Box& bb, Net* net )
   {
-    if ( not _activePlane ) return;
+    if (not _activePlane) return;
 
-    Net* topGlobalNet = _globalNets.getRootNet ( net, Path() );
-    if ( topGlobalNet == NULL ) {
+    Net* topGlobalNet = _globalNets.getRootNet( net, Path() );
+    if (topGlobalNet == NULL) {
       ltrace(300) << "Not a global net: " << net << endl;
       return;
     }
 
-    _activePlane->merge ( bb, topGlobalNet );
+    if ( (topGlobalNet == _globalNets.getBlockage()) and (_activeBlockagePlane != NULL) )
+      _activeBlockagePlane->merge( bb, topGlobalNet );
+    else
+      _activePlane->merge( bb, topGlobalNet );
   }
 
 
@@ -1017,7 +1035,6 @@ namespace {
 
     cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " ..." << endl;
     Query::doQuery();
-
   }
 
 

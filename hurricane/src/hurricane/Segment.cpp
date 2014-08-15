@@ -20,6 +20,7 @@
 #include "hurricane/Segment.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Error.h"
+#include "hurricane/Net.h"
 
 namespace Hurricane {
 
@@ -173,16 +174,20 @@ Segment::Segment(Net* net, Component* source, Component* target, const Layer* la
 {
     if (source) {
         if (!source->getNet())
-            throw Error("Can't create " + _TName("Segment") + " : unconnected source");
+            throw Error("Can't create " + _TName("Segment") + ": unconnected source");
         if (source->getNet() != net)
-            throw Error("Can't create " + _TName("Segment") + " : incompatible source");
+            throw Error(  "Can't create " + _TName("Segment") + ": incompatible source \n"
+                        + "        - Source:" + getString(source->getNet()) + "\n"
+                        + "        - Owner: " + getString(net) );
     }
 
     if (target) {
         if (!target->getNet())
-            throw Error("Can't create " + _TName("Segment") + " : unconnected target");
+            throw Error("Can't create " + _TName("Segment") + ": unconnected target");
         if (target->getNet() != net)
-            throw Error("Can't create " + _TName("Segment") + " : incompatible target");
+            throw Error(  "Can't create " + _TName("Segment") + ": incompatible target\n"
+                        + "        - Target:" + getString(target->getNet()) + "\n"
+                        + "        - Owner: " + getString(net) );
     }
 
     if (!_layer)
