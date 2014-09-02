@@ -87,16 +87,15 @@ class HTree ( GaugeConfWrapper ):
     ht = HTree( conf, cell, clockNet, clockBox )
     print '  o  Creating Clock H-Tree for <%s>.' % cell.getName()
     ht.build()
+    trace( 550, '\tht.build() OK\n' )
     ht.place()
+    trace( 550, '\tht.place() OK\n' )
    #ht.route()
     print '     - H-Tree depth: %d' % ht.getTreeDepth()
     trace( 550, '\tusedVTracks: %s\n' % str(ht.usedVTracks) )
     return ht
 
   def __init__ ( self, conf, cell, clockNet, area ):
-    print type(conf)
-    print type(conf.gaugeConf)
-    sys.stdout.flush()
     GaugeConfWrapper.__init__( self, conf.gaugeConf )
     
     self.minSide = DbU.fromLambda( Cfg.getParamInt('clockTree.minimumSide').asInt() )
@@ -108,7 +107,8 @@ class HTree ( GaugeConfWrapper ):
     self.cell         = cell
     self.area         = area
     self.childs       = []
-    self.bufferCell   = self.framework.getCell( 'buf_x2', CRL.Catalog.State.Logical )
+   #self.bufferCell   = self.framework.getCell( 'buf_x2', CRL.Catalog.State.Logical )
+    self._getBufferIo()
     self.tieCell      = self.framework.getCell( 'tie_x0', CRL.Catalog.State.Views )
     self.cellGauge    = self.framework.getCellGauge()
     self.topBuffer    = Instance.create( self.cell, 'ck_htree', self.bufferCell )
@@ -128,10 +128,23 @@ class HTree ( GaugeConfWrapper ):
 
     return
 
+  def _getBufferIo ( self ):
+    self.bufferCell = self.framework.getCell( Cfg.getParamString('clockTree.buffer').asString()
+                                            , CRL.Catalog.State.Logical )
+    for net in self.bufferCell.getNets():
+      if not net.isExternal(): continue
+      if     net.isGlobal(): continue
+      if     net.getDirection() & Net.Direction.IN:  self.bufferIn  = net.getName()
+      elif   net.getDirection() & Net.Direction.OUT: self.bufferOut = net.getName()
+
+    trace( 550, '\tbufferIn :<%s>\n' % self.bufferIn  ) 
+    trace( 550, '\tbufferOut:<%s>\n' % self.bufferOut ) 
+    return
+
   def _createChildNet ( self, ibuffer, tag ):
     childNet = Net.create( self.cell, tag )
     childNet.setType( Net.Type.CLOCK )
-    getPlugByName(ibuffer, 'q').setNet( childNet )
+    getPlugByName(ibuffer, self.bufferOut).setNet( childNet )
     return
 
   def feedCounter ( self ):
@@ -193,7 +206,8 @@ class HTree ( GaugeConfWrapper ):
     UpdateSession.open()
     center = self.area.getCenter()
     self.placeInstance( self.topBuffer, center.getX(), center.getY() )
-    self.usedVTracks += [ getRpBb(self.topBuffer, 'i').getCenter().getX() ]
+    trace( 550, '\rplace top level\n' )
+    self.usedVTracks += [ getRpBb(self.topBuffer, self.bufferIn).getCenter().getX() ]
     self.childs[0].place()
     UpdateSession.close()
     return
@@ -285,8 +299,8 @@ class HTree ( GaugeConfWrapper ):
     trace( 550, ',+', '\tBuffer <%s> has %i leafs.\n' % (leafBuffer.getName(),len(leafs)) )
     if len(leafs) == 0: return
 
-    leafCk   = getPlugByName(leafBuffer,'q').getNet()
-    bufferRp = self.rpByPlugName( leafBuffer, 'q', leafCk )
+    leafCk   = getPlugByName(leafBuffer,self.bufferOut).getNet()
+    bufferRp = self.rpByPlugName( leafBuffer, self.bufferOut, leafCk )
 
     rsmt = RSMT( leafCk.getName() )
     rsmt.addNode( bufferRp, bufferRp.getX(), self.toYCellGrid(bufferRp.getY()) )
@@ -312,7 +326,7 @@ class HTree ( GaugeConfWrapper ):
     self.childs[0].connectLeafs()
     sys.stdout.flush()
 
-    getPlugByName( self.topBuffer, 'i' ).setNet( self.masterClock )
+    getPlugByName( self.topBuffer, self.bufferIn ).setNet( self.masterClock )
     UpdateSession.close()
 
     return
@@ -360,11 +374,11 @@ class HTreeNode ( object ):
     self.brBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_br_ins', self.topTree.bufferCell )
     self.tlBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_tl_ins', self.topTree.bufferCell )
     self.trBuffer     = Instance.create( self.topTree.cell, 'ck_htree'+self.prefix+'_tr_ins', self.topTree.bufferCell )
-    self.ckNet        = getPlugByName(self.sourceBuffer, 'q').getNet()
-    getPlugByName(self.blBuffer, 'i').setNet( self.ckNet )
-    getPlugByName(self.brBuffer, 'i').setNet( self.ckNet )
-    getPlugByName(self.tlBuffer, 'i').setNet( self.ckNet )
-    getPlugByName(self.trBuffer, 'i').setNet( self.ckNet )
+    self.ckNet        = getPlugByName(self.sourceBuffer, self.topTree.bufferOut).getNet()
+    getPlugByName(self.blBuffer, self.topTree.bufferIn).setNet( self.ckNet )
+    getPlugByName(self.brBuffer, self.topTree.bufferIn).setNet( self.ckNet )
+    getPlugByName(self.tlBuffer, self.topTree.bufferIn).setNet( self.ckNet )
+    getPlugByName(self.trBuffer, self.topTree.bufferIn).setNet( self.ckNet )
 
     self.topTree._createChildNet( self.blBuffer, 'ck_htree'+self.prefix+'_bl' )
     self.topTree._createChildNet( self.brBuffer, 'ck_htree'+self.prefix+'_br' )
@@ -446,7 +460,7 @@ class HTreeNode ( object ):
       self.trLeafs.append( plugOccurrence )
       leafBuffer = self.trBuffer
 
-    leafCk   = getPlugByName(leafBuffer,'q').getNet()
+    leafCk   = getPlugByName(leafBuffer,self.topTree.bufferOut).getNet()
     deepPlug = self.topTree.addDeepPlug( leafCk, plugOccurrence.getPath() )
     plugOccurrence.getEntity().setNet( deepPlug.getMasterNet() )
 
@@ -465,6 +479,7 @@ class HTreeNode ( object ):
     return self.trBuffer
 
   def place ( self ):
+    trace( 550, '\rplace HTreeNode %s\n' % self.ckNet.getName() )
     x          = self.area.getXMin() + self.area.getWidth ()/4
     y          = self.area.getYMin() + self.area.getHeight()/4
     halfWidth  = self.area.getHalfWidth ()
@@ -476,8 +491,8 @@ class HTreeNode ( object ):
     self.topTree.placeInstance( self.trBuffer, x+halfWidth, y+halfHeight )
 
     self.topTree.usedVTracks += \
-        [ self.topTree.rpAccessByPlugName( self.blBuffer, 'i', self.ckNet ).getX()
-        , self.topTree.rpAccessByPlugName( self.brBuffer, 'i', self.ckNet ).getX() ]
+        [ self.topTree.rpAccessByPlugName( self.blBuffer, self.topTree.bufferIn, self.ckNet ).getX()
+        , self.topTree.rpAccessByPlugName( self.brBuffer, self.topTree.bufferIn, self.ckNet ).getX() ]
 
     for child in self.childs: child.place()
     return
@@ -485,12 +500,12 @@ class HTreeNode ( object ):
   def route ( self ):
     if not self.hasLeafs(): return
 
-    leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, 'q', self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
-    rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, 'q', self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
-    blContact          = self.topTree.rpAccessByPlugName( self.blBuffer    , 'i', self.ckNet )
-    brContact          = self.topTree.rpAccessByPlugName( self.brBuffer    , 'i', self.ckNet )
-    tlContact          = self.topTree.rpAccessByPlugName( self.tlBuffer    , 'i', self.ckNet )
-    trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , 'i', self.ckNet )
+    leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
+    rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
+    blContact          = self.topTree.rpAccessByPlugName( self.blBuffer    , self.topTree.bufferIn , self.ckNet )
+    brContact          = self.topTree.rpAccessByPlugName( self.brBuffer    , self.topTree.bufferIn , self.ckNet )
+    tlContact          = self.topTree.rpAccessByPlugName( self.tlBuffer    , self.topTree.bufferIn , self.ckNet )
+    trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
     leftContact        = self.topTree.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
     rightContact       = self.topTree.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
     self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() )

@@ -368,20 +368,20 @@ class Corona ( object ):
         if not isinstance(block,chip.BlockPower.Block):
             raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
 
-        self._block           = block
-        self._innerBb         = self._block.bb
+        self._block      = block
+        self._innerBb    = self._block.bb
         self._block.path.getTransformation().applyOn( self._innerBb )
 
-        self._railsNb         = 5
-        self._hRailWidth      = DbU.fromLambda( 12.0 )
-        self._vRailWidth      = DbU.fromLambda( 12.0 )
-        self._hRailSpace      = DbU.fromLambda(  6.0 )
-        self._vRailSpace      = DbU.fromLambda(  6.0 )
+        self._railsNb    = Cfg.getParamInt('chip.block.rails.count').asInt()
+        self._hRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt() )
+        self._vRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt() )
+        self._hRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hSpacing').asInt() )
+        self._vRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vSpacing').asInt() )
 
-        self._southSide       = SouthSide( self )
-        self._northSide       = NorthSide( self )
-        self._westSide        = WestSide ( self )
-        self._eastSide        = EastSide ( self )
+        self._southSide  = SouthSide( self )
+        self._northSide  = NorthSide( self )
+        self._westSide   = WestSide ( self )
+        self._eastSide   = EastSide ( self )
 
         return
 

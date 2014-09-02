@@ -116,7 +116,9 @@ class Side ( object ):
       trace( 550, ',+', '\t_createPowerContacts() for %s\n' % net.getName() )
 
       masterCell = pad.getMasterCell()
-      if net.isGlobal(): components = masterCell.getNet(net.getName()).getExternalComponents()
+      if net.isGlobal():
+        trace( 550, '\tLooking for global net %s\n' % net.getName() )
+        components = masterCell.getNet(net.getName()).getExternalComponents()
       else:
         for plug in net.getPlugs():
           if plug.getInstance() == pad:

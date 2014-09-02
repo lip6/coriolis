@@ -36,10 +36,6 @@ from   helpers   import WarningMessage
 import chip.Configuration
 
 
-helpers.staticInitialization( quiet=True )
-helpers.trace.level = 550
-
-
 class Side ( object ):
 
   def __init__ ( self, block, side, net, metal ):

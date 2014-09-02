@@ -59,6 +59,9 @@ def unicornHook ( **kw ):
 
 def ScriptMain ( **kw ):
   try:
+    helpers.staticInitialization( quiet=True )
+    helpers.setTraceLevel( 550 )
+
     errorCode = 0
 
     print '  o  Cleaning up any previous run.'
