@@ -727,7 +727,7 @@ extern "C" {
   {                                                                              \
       Locator<TYPE*>* locator = pyLocator->_object;                              \
       HTRY                                                                       \
-      if (locator->isValid()) {                                                  \
+      if (locator and locator->isValid()) {                                      \
           TYPE* object = locator->getElement();                                  \
           locator->progress();                                                   \
           return Py##TYPE##_Link(object);                                        \
@@ -741,7 +741,7 @@ extern "C" {
   {                                                                              \
       Locator<TYPE*>* locator = pyLocator->_object;                              \
       HTRY                                                                       \
-      if (locator->isValid()) {                                                  \
+      if (locator and locator->isValid()) {                                      \
           Py##TYPE* pyObject = PyObject_NEW( Py##TYPE, &PyType##TYPE );          \
           if (pyObject == NULL) return NULL;                                     \
           pyObject->_object = locator->getElement();                             \
@@ -757,7 +757,7 @@ extern "C" {
   static PyObject* Py##TYPE##LocatorNext(Py##TYPE##CollectionLocator* pyLocator) {  \
       Locator<TYPE*>* locator = pyLocator->_object;                     \
       HTRY                                                              \
-      if (locator->isValid()) {                                         \
+      if (locator and locator->isValid()) {                             \
           TYPE* object = locator->getElement();                         \
           locator->progress();                                          \
           return PyEntity_NEW(object);                                  \

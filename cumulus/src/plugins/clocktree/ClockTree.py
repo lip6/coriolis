@@ -130,7 +130,7 @@ class HTree ( GaugeConfWrapper ):
 
   def _getBufferIo ( self ):
     self.bufferCell = self.framework.getCell( Cfg.getParamString('clockTree.buffer').asString()
-                                            , CRL.Catalog.State.Logical )
+                                            , CRL.Catalog.State.Views )
     for net in self.bufferCell.getNets():
       if not net.isExternal(): continue
       if     net.isGlobal(): continue

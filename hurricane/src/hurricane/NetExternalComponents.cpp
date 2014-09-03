@@ -52,14 +52,12 @@ namespace Hurricane {
   StandardRelation* NetExternalComponents::getRelation ( const Net* net )
   {
     Property* property = net->getProperty(_name);
-    if (!property) {
-        return NULL;
-    } else {
-        StandardRelation* relation = dynamic_cast<StandardRelation*>(property);
-        if (!relation)
-            throw Error("Bad Property type: Must be a Standard Relation");
-        return relation;
-    }
+    if (not property) return NULL;
+
+    StandardRelation* relation = dynamic_cast<StandardRelation*>(property);
+    if (not relation)
+      throw Error("Bad Property type: Must be a Standard Relation");
+    return relation;
   }
 
 

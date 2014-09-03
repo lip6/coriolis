@@ -284,9 +284,7 @@ extern "C" {
     Components* components = new Components(NetExternalComponents::get(net));
 
     pyComponentCollection = PyObject_NEW(PyComponentCollection, &PyTypeComponentCollection);
-    if (pyComponentCollection == NULL) { 
-        return NULL;
-    }
+    if (pyComponentCollection == NULL) return NULL;
 
     pyComponentCollection->_object = components;
     HCATCH

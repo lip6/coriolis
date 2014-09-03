@@ -62,23 +62,12 @@ def getPlugByNet ( instance, net ):
 
 
 def getRpBb ( instance, netName ):
-  print 'getRpBb()'
-  sys.stdout.flush()
   bb = Box()
   for net in instance.getMasterCell().getNets():
-    print net
-    sys.stdout.flush()
     if net.isExternal() and net.getName() == netName:
-      print 'all components'
-      for component in net.getComponents():
-        print component
-      print 'external components'
       for component in net.getExternalComponents():
-        print component
-        sys.stdout.flush()
         if isinstance(component,Vertical):
           bb = component.getBoundingBox()
-      print 'End of loop'
   instance.getTransformation().applyOn( bb )
   return bb
 

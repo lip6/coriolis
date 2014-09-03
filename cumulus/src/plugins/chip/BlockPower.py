@@ -231,21 +231,31 @@ class Block ( chip.Configuration.ChipConfWrapper ):
                              % (self.path.getTailInstance().getName(),self.ck.getName()) )
       return
 
-    plugs = []
+    htPlugs = []
+    ffPlugs = []
     for plug in blockCk.getPlugs():
       if plug.getInstance().getName() == 'ck_htree':
-        plugs.append( plug )
+        htPlugs.append( plug )
+      else:
+        if plug.getInstance().getMasterCell().isTerminal():
+          ffPlugs.append( plug )
 
-    if len(plugs) != 1:
+    if len(ffPlugs) > 0:
+      message = 'Clock <%s> of block <%s> is not organized as a H-Tree.' \
+                % (blockCk.getName(),self.path.getTailInstance().getName())
+      print ErrorMessage( 1, message )
+      return
+
+    if len(htPlugs) > 1:
       message = 'Block <%s> has not exactly one H-Tree connecteds to the clock <%s>:' \
                 % (self.path.getTailInstance().getName(),blockCk.getName())
-      for plug in plugs:
+      for plug in htPlugs:
         message += '\n        - %s' % plug
       print ErrorMessage( 1, message )
       return
 
     UpdateSession.open()
-    bufferRp = self.rpAccessByOccurrence( Occurrence(plugs[0], self.path), self.cko )
+    bufferRp = self.rpAccessByOccurrence( Occurrence(htPlugs[0], self.path), self.cko )
     blockAb  = self.block.getAbutmentBox()
     self.path.getTransformation().applyOn( blockAb )
     layerGauge = self.routingGauge.getLayerGauge(self.verticalDepth)
