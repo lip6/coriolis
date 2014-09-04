@@ -178,26 +178,26 @@ def ScriptMain ( **kw ):
     placeCore = PlaceCore( conf )
     placeCore.validate()
     placeCore.doFloorplan()
-    editor.fit()
+    if editor: editor.fit()
 
     placeCore.doPlacement()
-    editor.fit()
+    if editor: editor.fit()
 
     corePower = chip.BlockPower.Block( conf )
     corePower.connectPower()
     corePower.connectClock()
     corePower.doLayout()
-    editor.fit()
+    if editor: editor.fit()
 
     coreCorona = chip.BlockCorona.Corona( corePower )
     coreCorona.connectPads( padsCorona )
     coreCorona.connectBlock()
     coreCorona.doLayout()
-    editor.fit()
+    if editor: editor.fit()
 
   except ErrorMessage, e:
     print e; errorCode = e.code
-    editor.fit()
+    if editor: editor.fit()
   except Exception, e:
     print '\n\n', e; errorCode = 1
     traceback.print_tb(sys.exc_info()[2])

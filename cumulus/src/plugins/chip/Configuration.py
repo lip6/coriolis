@@ -559,8 +559,8 @@ class ChipConfWrapper ( GaugeConfWrapper ):
     def __init__ ( self, gaugeConf, chipConf ):
       GaugeConfWrapper.__init__( self, gaugeConf )
 
-      if not isinstance(chipConf,ChipConf):
-        raise ErrorMessage( 1, 'Attempt to create a ChipConfWrapper() from non-ChipConf object.' )
+     #if not isinstance(chipConf,ChipConf):
+     #  raise ErrorMessage( 1, 'Attempt to create a ChipConfWrapper() from non-ChipConf object.' )
       self._chipConf = chipConf
       return
 
