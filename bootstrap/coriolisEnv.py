@@ -191,10 +191,11 @@ if __name__ == "__main__":
     else:
       sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
 
-    strippedPythonPath = "%s:"         % (sitePackagesDir) + strippedPythonPath
-    strippedPythonPath = "%s/crlcore:" % (sitePackagesDir) + strippedPythonPath
-    strippedPythonPath = "%s/cumulus:" % (sitePackagesDir) + strippedPythonPath
-    strippedPythonPath = "%s/stratus:" % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s:"                 % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/crlcore:"         % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/cumulus:"         % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/cumulus/plugins:" % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s/stratus:"         % (sitePackagesDir) + strippedPythonPath
 
     shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";\n' \
                       'export PYTHONPATH;\n'
