@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,9 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_ALLIANCE_FRAMEWORK__
-#define  __CRL_ALLIANCE_FRAMEWORK__
-
+#ifndef  CRL_ALLIANCE_FRAMEWORK_H
+#define  CRL_ALLIANCE_FRAMEWORK_H
 
 #include  <map>
 #include  <limits>
@@ -156,10 +155,9 @@ namespace CRL {
   inline string       AllianceFramework::_getTypeName     () const { return "AllianceFramework"; }
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
 
 INSPECTOR_P_SUPPORT(CRL::AllianceFramework);
 
-
-#endif // __CRL_ALLIANCE_FRAMEWORK__
+#endif // CRL_ALLIANCE_FRAMEWORK_H

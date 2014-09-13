@@ -113,6 +113,8 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
     self.cores[0].getMasterCell().setAbutmentBox( self.coreSize )
     x = (self.chipSize.getWidth () - self.coreSize.getWidth ()) / 2
     y = (self.chipSize.getHeight() - self.coreSize.getHeight()) / 2
+    x = x - (x % self.gaugeConf.getSliceHeight())
+    y = y - (y % self.gaugeConf.getSliceHeight())
     self.cores[0].setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
     self.cores[0].setPlacementStatus( Instance.PlacementStatus.FIXED )
     UpdateSession.close()

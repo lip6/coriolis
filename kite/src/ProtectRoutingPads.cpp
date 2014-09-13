@@ -27,6 +27,7 @@
 #include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
 #include "crlcore/Catalog.h"
+#include "katabatic/NetRoutingProperty.h"
 #include "katabatic/AutoContact.h"
 #include "katabatic/AutoSegment.h"
 #include "katabatic/GCell.h"
@@ -144,12 +145,12 @@ namespace {
 
 namespace Kite {
 
-
   using Hurricane::DataBase;
   using Hurricane::Technology;
   using Hurricane::BasicLayer;
   using Hurricane::ForEachIterator;
   using Hurricane::Cell;
+  using Katabatic::NetRoutingState;
 
 
   void  KiteEngine::protectRoutingPads ()
@@ -158,6 +159,9 @@ namespace Kite {
 
     forEach ( Net*, inet, getCell()->getNets() ) {
       if ( (*inet)->isSupply() ) continue;
+
+      NetRoutingState* state = getRoutingState( *inet );
+      if (state and state->isFixed()) continue;
 
       vector<RoutingPad*> rps;
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {

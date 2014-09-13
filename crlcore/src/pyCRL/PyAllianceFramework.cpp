@@ -42,6 +42,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::PyAny_AsLong;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyLibrary;
@@ -184,7 +185,7 @@ extern "C" {
     PyObject* arg0;
     if ( not ParseOneArg ( "AllianceFramework.getLibrary()", args, INT_ARG, &arg0 ) ) return NULL;
 
-    lib = af->getLibrary ( PyInt_AsLong(arg0) );
+    lib = af->getLibrary ( PyAny_AsLong(arg0) );
     
     if ( lib == NULL ) Py_RETURN_NONE;
     HCATCH
@@ -229,7 +230,7 @@ extern "C" {
 
     if ( not ParseTwoArg ( "AllianceFramework.saveCell", args, CELL_INT_ARG, &arg0, &arg1) ) return NULL;
 
-    af->saveCell ( PYCELL_O(arg0),PyInt_AsLong(arg1) );
+    af->saveCell ( PYCELL_O(arg0),PyAny_AsLong(arg1) );
 
     HCATCH
 

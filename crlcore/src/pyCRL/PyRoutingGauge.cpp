@@ -38,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::PyAny_AsLong;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -165,7 +166,7 @@ extern "C" {
       if ( __cs.getObjectIds() == ":layer" )
         rlg = rg->getLayerGauge( PYLAYER_O(arg0) );
       else if  ( __cs.getObjectIds() == ":int" )
-        rlg = rg->getLayerGauge( (size_t)PyInt_AsLong(arg0) );
+        rlg = rg->getLayerGauge( (size_t)PyAny_AsLong(arg0) );
       else {
         PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerGauge()." );
         return NULL;
@@ -200,7 +201,7 @@ extern "C" {
       if ( __cs.getObjectIds() == ":layer" )
         direction = rg->getLayerDirection( PYLAYER_O(arg0) );
       else if  ( __cs.getObjectIds() == ":int" )
-        direction = rg->getLayerDirection( (size_t)PyInt_AsLong(arg0) );
+        direction = rg->getLayerDirection( (size_t)PyAny_AsLong(arg0) );
       else {
         PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerDirection()." );
         return NULL;

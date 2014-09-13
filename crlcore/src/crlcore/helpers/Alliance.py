@@ -112,6 +112,7 @@ def _loadAllianceConfig ( af, allianceConfig ):
             if key == 'GROUND':              env.setGROUND(value)
             if key == 'CLOCK':               env.setCLOCK(value)
             if key == 'BLOCKAGE':            env.setBLOCKAGE(value)
+            if key == 'PAD':                 env.setPad(value)
             if key == 'WORKING_LIBRARY':     env.setWORKING_LIBRARY(value)
             if key == 'SYSTEM_LIBRARY':
                 for libraryEntry in value:

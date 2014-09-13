@@ -89,51 +89,51 @@ extern "C" {
     if      ( __cs.getObjectIds() == NET_LAYER_INT_ARG )
       vertical = Vertical::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
-                                  , PyInt_AsLong(arg2) );
+                                  , PyAny_AsLong(arg2) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS2_ARG )
       vertical = Vertical::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
-                                  , PyInt_AsLong(arg2)
-                                  , PyInt_AsLong(arg3) );
+                                  , PyAny_AsLong(arg2)
+                                  , PyAny_AsLong(arg3) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INT_ARG )
       vertical = Vertical::create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
-                                  , PyInt_AsLong(arg3) );
+                                  , PyAny_AsLong(arg3) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS3_ARG )
       vertical = Vertical::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
-                                  , PyInt_AsLong(arg2)
-                                  , PyInt_AsLong(arg3)
-                                  , PyInt_AsLong(arg4) );
+                                  , PyAny_AsLong(arg2)
+                                  , PyAny_AsLong(arg3)
+                                  , PyAny_AsLong(arg4) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS2_ARG )
       vertical = Vertical::create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
-                                  , PyInt_AsLong(arg3)
-                                  , PyInt_AsLong(arg4) );
+                                  , PyAny_AsLong(arg3)
+                                  , PyAny_AsLong(arg4) );
     else if ( __cs.getObjectIds() == NET_LAYER_INTS4_ARG )
       vertical = Vertical::create ( PYNET_O(arg0)
                                   , PYLAYER_O(arg1)
-                                  , PyInt_AsLong(arg2)
-                                  , PyInt_AsLong(arg3)
-                                  , PyInt_AsLong(arg4)
-                                  , PyInt_AsLong(arg5) );
+                                  , PyAny_AsLong(arg2)
+                                  , PyAny_AsLong(arg3)
+                                  , PyAny_AsLong(arg4)
+                                  , PyAny_AsLong(arg5) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS3_ARG )
       vertical = Vertical::create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
-                                  , PyInt_AsLong(arg3)
-                                  , PyInt_AsLong(arg4)
-                                  , PyInt_AsLong(arg5) );
+                                  , PyAny_AsLong(arg3)
+                                  , PyAny_AsLong(arg4)
+                                  , PyAny_AsLong(arg5) );
     else if ( __cs.getObjectIds() == COMPS2_LAYER_INTS4_ARG )
       vertical = Vertical::create ( ComponentCast(arg0)
                                   , ComponentCast(arg1)
                                   , PYLAYER_O(arg2)
-                                  , PyInt_AsLong(arg3)
-                                  , PyInt_AsLong(arg4)
-                                  , PyInt_AsLong(arg5)
-                                  , PyInt_AsLong(arg6) );
+                                  , PyAny_AsLong(arg3)
+                                  , PyAny_AsLong(arg4)
+                                  , PyAny_AsLong(arg5)
+                                  , PyAny_AsLong(arg6) );
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Vertical constructor." );
       return NULL;

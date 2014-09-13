@@ -71,7 +71,7 @@ extern "C" {
       return NULL;
 
     if      (__cs.getObjectIds() == NO_ARG   ) { interval = new Interval (); }
-    else if (__cs.getObjectIds() == INTS2_ARG) { interval = new Interval ( PyInt_AsLong(arg0) , PyInt_AsLong(arg1) ); }
+    else if (__cs.getObjectIds() == INTS2_ARG) { interval = new Interval ( PyAny_AsLong(arg0) , PyAny_AsLong(arg1) ); }
     else if (__cs.getObjectIds() == INTV_ARG ) { interval = new Interval ( *PYINTERVAL_O(arg0) ); }
     else {
       PyErr_SetString(ConstructorError, "invalid number of parameters for Interval constructor." );
@@ -139,7 +139,7 @@ extern "C" {
     if (not PyArg_ParseTuple(args,"|O&:Interval.contains",Converter,&arg0) )
       return NULL;
 
-    if      (__cs.getObjectIds() == INT_ARG ) { result = interval->contains ( PyInt_AsLong(arg0) ); }
+    if      (__cs.getObjectIds() == INT_ARG ) { result = interval->contains ( PyAny_AsLong(arg0) ); }
     else if (__cs.getObjectIds() == INTV_ARG) { result = interval->contains ( *PYINTERVAL_O(arg0) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Interval.contains constructor." );
@@ -197,8 +197,8 @@ extern "C" {
     if (not PyArg_ParseTuple(args,"|O&O&:Interval.inflate",Converter,&arg0,Converter,&arg1))
       return NULL;
 
-    if      (__cs.getObjectIds() == INT_ARG  ) { interval->inflate( PyInt_AsLong(arg0) ); }
-    else if (__cs.getObjectIds() == INTS2_ARG) { interval->inflate( PyInt_AsLong(arg0), PyInt_AsLong(arg1) ); }
+    if      (__cs.getObjectIds() == INT_ARG  ) { interval->inflate( PyAny_AsLong(arg0) ); }
+    else if (__cs.getObjectIds() == INTS2_ARG) { interval->inflate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Interval.inflate()" );
       return NULL;
@@ -223,7 +223,7 @@ extern "C" {
     if (not PyArg_ParseTuple(args,"|O&O&:Interval.merge",Converter,&arg0,Converter,&arg1))
       return NULL;
 
-    if      (__cs.getObjectIds() == INT_ARG ) { interval->merge( PyInt_AsLong(arg0) ); }
+    if      (__cs.getObjectIds() == INT_ARG ) { interval->merge( PyAny_AsLong(arg0) ); }
     else if (__cs.getObjectIds() == INTV_ARG) { interval->merge( *PYINTERVAL_O(arg0) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Interval.merge()" );
@@ -250,7 +250,7 @@ extern "C" {
       return NULL;
 
     if      (__cs.getObjectIds() == INTV_ARG ) { interval->intersection( *PYINTERVAL_O(arg0) ); }
-    else if (__cs.getObjectIds() == INTS2_ARG) { interval->intersection( PyInt_AsLong(arg0), PyInt_AsLong(arg1) ); }
+    else if (__cs.getObjectIds() == INTS2_ARG) { interval->intersection( PyAny_AsLong(arg0), PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Interval.intersection()" );
       return NULL;

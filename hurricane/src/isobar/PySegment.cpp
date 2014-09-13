@@ -1,21 +1,17 @@
+// -*- C++ -*-
 //
-// $Id: PySegment.cpp,v 1.12 2008/02/07 17:09:42 xtof Exp $
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
-// |  Author      :                   Jean-Paul Chaput               |
-// |  E-mail      :      Jean-Paul.Chaput@asim.lip6.fr               |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PySegment.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyHook.h"
@@ -56,6 +52,8 @@ extern "C" {
   // Standard Accessors (Attributes).
   DirectGetLongAttribute(PySegment_getSourceX,getSourceX,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getSourceY,getSourceY,PySegment,Segment)
+  DirectGetLongAttribute(PySegment_getTargetX,getTargetX,PySegment,Segment)
+  DirectGetLongAttribute(PySegment_getTargetY,getTargetY,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getWidth  ,getWidth  ,PySegment,Segment)
   DirectSetLongAttribute(PySegment_setWidth  ,setWidth  ,"Segment.setWidth",PySegment,Segment)
   DirectVoidMethod(Segment,segment,invert)
@@ -170,6 +168,8 @@ extern "C" {
     , { "getTarget"            , (PyCFunction)PySegment_getTarget        , METH_NOARGS , "Return the Segment target component (or None)." }
     , { "getSourceX"           , (PyCFunction)PySegment_getSourceX       , METH_NOARGS , "Return the Segment source X value." }
     , { "getSourceY"           , (PyCFunction)PySegment_getSourceY       , METH_NOARGS , "Return the Segment source Y value." }
+    , { "getTargetX"           , (PyCFunction)PySegment_getTargetX       , METH_NOARGS , "Return the Segment source X value." }
+    , { "getTargetY"           , (PyCFunction)PySegment_getTargetY       , METH_NOARGS , "Return the Segment source Y value." }
     , { "getSourcePosition"    , (PyCFunction)PySegment_getSourcePosition, METH_NOARGS , "Return the Segment source point value." }
     , { "getTargetPosition"    , (PyCFunction)PySegment_getTargetPosition, METH_NOARGS , "Return the Segment target point value." }
     , { "getWidth"             , (PyCFunction)PySegment_getWidth         , METH_NOARGS , "Return the segment width." }

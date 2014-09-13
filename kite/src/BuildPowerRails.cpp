@@ -171,7 +171,8 @@ namespace {
           hasPad = true;
         }
 
-        if (iinstance->getMasterCell()->getName() == Name("pvddeck_px")) {
+        string padName = getString( iinstance->getMasterCell()->getName() );
+        if (padName.substr(0,8) == "pvddeck_") {
           cmess1 << "     o  Reference power pad: " << iinstance->getName()
                  << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
 
@@ -196,7 +197,8 @@ namespace {
           }
         }
 
-        if (iinstance->getMasterCell()->getName() == Name("pck_px")) {
+        padName = getString( iinstance->getMasterCell()->getName() );
+        if (padName.substr(0,4) == "pck_") {
           cmess1 << "     o  Reference clock pad: " << iinstance->getName()
                  << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
 
@@ -343,41 +345,41 @@ namespace {
 
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
-  //ltrace(300) << "getRootNet:" << path << ":" << net << endl;
-    if ( net == _blockage ) return _blockage;
+    ltrace(300) << "getRootNet:" << path << ":" << net << endl;
+    if (net == _blockage) return _blockage;
 
-    if ( net->getName() == _vddeName ) return _vdde;
-    if ( net->getName() == _vsseName ) return _vsse;
+    if (net->getName() == _vddeName) return _vdde;
+    if (net->getName() == _vsseName) return _vsse;
 
-    if ( net->getType() == Net::Type::POWER  ) return _vddi;
-    if ( net->getType() == Net::Type::GROUND ) return _vssi;
-    if ( net->getType() != Net::Type::CLOCK  ) return NULL;
+    if (net->getType() == Net::Type::POWER ) return _vddi;
+    if (net->getType() == Net::Type::GROUND) return _vssi;
+    if (net->getType() != Net::Type::CLOCK ) return NULL;
 
     const Net* upNet = net;
 
-    if ( not path.isEmpty() ) {
+    if (not path.isEmpty()) {
       Path       upPath   = path;
       Instance*  instance = NULL;
       Plug*      plug     = NULL;
 
       while ( true ) {
-      //cerr << path << "+" << upNet << endl;
+        ltrace(300) << path << "+" << upNet << endl;
 
-        if ( (upNet == NULL) or not upNet->isExternal() ) return _blockage;
-        if ( path.isEmpty() ) break;
+        if ((upNet == NULL) or not upNet->isExternal()) return _blockage;
+        if (path.isEmpty()) break;
 
         instance = path.getTailInstance();
-        plug     = instance->getPlug(net);
-        if ( plug == NULL ) return NULL;
+        plug     = instance->getPlug(upNet);
+        if (plug == NULL) return NULL;
 
         upNet = plug->getNet();
         path  = path.getHeadPath();
       }
     }
 
-    if ( upNet->getName() == _ckName   ) return _ck;
-    if ( upNet->getName() == _ckiName  ) return _cki;
-    if ( upNet->getName() == _ckoName  ) return _cko;
+    if (upNet->getName() == _ckName ) return _ck;
+    if (upNet->getName() == _ckiName) return _cki;
+    if (upNet->getName() == _ckoName) return _cko;
 
     return NULL;
   }
@@ -1072,6 +1074,9 @@ namespace {
       else
         rootNet = _kite->getBlockageNet();
       if ( rootNet == NULL ) return;
+
+      ltrace(300) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
+                  << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {

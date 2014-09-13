@@ -14,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ENVIRONMENT
-#define  CRL_ENVIRONMENT
+#ifndef  CRL_ENVIRONMENT_H
+#define  CRL_ENVIRONMENT_H
 
 #include <regex.h>
 #include <string>
@@ -164,4 +164,4 @@ namespace CRL {
 INSPECTOR_P_SUPPORT(CRL::Environment);
 
 
-#endif
+#endif  // CRL_ENVIRONMENT_H

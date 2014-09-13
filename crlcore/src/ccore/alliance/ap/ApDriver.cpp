@@ -191,49 +191,41 @@ void DumpContacts(ofstream& ccell, Cell *cell)
 {
   const char* mbkLayer;
 
-    for_each_net(net, cell->getNets())
-    {
-        for_each_component(component, net->getComponents())
-        {
-            if (Contact* contact = dynamic_cast<Contact*>(component))
-            {
-                if (dynamic_cast<Pin*>(contact))
-                    continue;
-                else
-                {
-                    if (   (contact->getWidth () <= DbU::lambda(2.0))
-                        && (contact->getHeight() <= DbU::lambda(2.0)))
-                    {
-                      if (toMBKLayer(mbkLayer,contact->getLayer()->getName(),true))
-                        ccell << "V "
-                              << toMBKlambda(contact->getX()) << ","
-                              << toMBKlambda(contact->getY()) << ","
-                              << mbkLayer << ","
-                              << toMBKName(contact->getNet()->getName())
-                              << endl;
-                    }
-                    else
-                    {
-                      DbU::Unit expand = 0;
-                      if ( not dynamic_cast<const RegularLayer*>(contact->getLayer()) )
-                        expand = DbU::lambda(1.0);
+  forEach ( Net*, inet, cell->getNets() )
+  {
+    forEach ( Component*, icomponent, inet->getComponents()) {
+      if (Contact* contact = dynamic_cast<Contact*>(*icomponent)) {
+        if (dynamic_cast<Pin*>(contact))
+          continue;
+        else {
+          if (  (contact->getWidth () <= contact->getLayer()->getMinimalSize())
+             or (contact->getHeight() <= contact->getLayer()->getMinimalSize())) {
+            if (toMBKLayer(mbkLayer,contact->getLayer()->getName(),true))
+              ccell << "V "
+                    << toMBKlambda(contact->getX()) << ","
+                    << toMBKlambda(contact->getY()) << ","
+                    << mbkLayer << ","
+                    << toMBKName(contact->getNet()->getName())
+                    << endl;
+          } else {
+            DbU::Unit expand = 0;
+            if ( not dynamic_cast<const RegularLayer*>(contact->getLayer()) )
+              expand = DbU::lambda(1.0);
 
-                      if (toMBKLayer(mbkLayer,contact->getLayer()->getName(),true))
-                        ccell << "B "
-                              << toMBKlambda(contact->getX()) << ","
-                              << toMBKlambda(contact->getY()) << ","
-                              << toMBKlambda(contact->getWidth () + expand) << ","
-                              << toMBKlambda(contact->getHeight() + expand) << ","
-                              << mbkLayer << ","
-                              << toMBKName(contact->getNet()->getName())
-                              << endl;
-                    }
-                }
-            }
-            end_for;
+            if (toMBKLayer(mbkLayer,contact->getLayer()->getName(),true))
+              ccell << "B "
+                    << toMBKlambda(contact->getX()) << ","
+                    << toMBKlambda(contact->getY()) << ","
+                    << toMBKlambda(contact->getWidth () + expand) << ","
+                    << toMBKlambda(contact->getHeight() + expand) << ","
+                    << mbkLayer << ","
+                    << toMBKName(contact->getNet()->getName())
+                    << endl;
+          }
         }
-        end_for;
-    }
+      }
+    } // forEach( Component* )
+  } // forEach( Net* )
 }
 
 

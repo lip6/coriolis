@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -30,8 +30,8 @@
 // +-----------------------------------------------------------------+
 
 
-# ifndef  __HURRICANE_BASIC_LAYER__
-# define  __HURRICANE_BASIC_LAYER__
+# ifndef  HURRICANE_BASIC_LAYER_H
+# define  HURRICANE_BASIC_LAYER_H
 
 # include  "hurricane/Layer.h"
 # include  "hurricane/BasicLayers.h"

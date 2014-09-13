@@ -1534,14 +1534,14 @@ namespace {
       ltrace(99) << "| Initial N-E Global RP: " << northEastRp << endl;
 
       if (_routingPads.size() > 1) {
-        unsigned int i=_routingPads.size()-2;
-        do {
+        for ( unsigned int i=_routingPads.size()-1; i != 0 ; ) {
+          i -= 1;
           if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
           if (_routingPads[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
             ltrace(99) << "| Better RP: " << northEastRp << endl;
             northEastRp = _routingPads[i];
           }
-        } while (i != 0);
+        } 
       }
 
       if (_east and not _north) {

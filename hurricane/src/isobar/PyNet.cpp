@@ -62,7 +62,7 @@ extern "C" {
   // Local Function  :  "PyInt_AsType ()"
   
   static Net::Type  PyInt_AsType ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case Net::Type::UNDEFINED : return ( Net::Type(Net::Type::UNDEFINED) );
       case Net::Type::LOGICAL   : return ( Net::Type(Net::Type::LOGICAL) );
       case Net::Type::CLOCK     : return ( Net::Type(Net::Type::CLOCK) );
@@ -80,7 +80,7 @@ extern "C" {
 
   static Net::Direction  PyInt_AsDirection ( PyObject* object )
   {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case Net::Direction::UNDEFINED      : return ( Net::Direction(Net::Direction::UNDEFINED) );
       case Net::Direction::IN             : return ( Net::Direction(Net::Direction::IN) );
       case Net::Direction::OUT            : return ( Net::Direction(Net::Direction::OUT) );
@@ -154,7 +154,7 @@ extern "C" {
     
     METHOD_HEAD ( "Net.getType()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)net->getType().getCode()) );
+    return ( (PyObject*)PyLong_FromLong((long)net->getType().getCode()) );
   }
 
   
@@ -168,7 +168,7 @@ extern "C" {
    
     METHOD_HEAD ( "Net.getDirection()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)net->getDirection().getCode()) );
+    return ( (PyObject*)PyLong_FromLong((long)net->getDirection().getCode()) );
   }
 
 

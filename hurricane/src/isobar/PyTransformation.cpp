@@ -52,7 +52,7 @@ extern "C" {
   
 
   static Transformation::Orientation  PyInt_AsOrientation ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case Transformation::Orientation::ID : return ( Transformation::Orientation(Transformation::Orientation::ID) );
       case Transformation::Orientation::R1 : return ( Transformation::Orientation(Transformation::Orientation::R1) );
       case Transformation::Orientation::R2 : return ( Transformation::Orientation(Transformation::Orientation::R2) );
@@ -91,12 +91,12 @@ extern "C" {
     if      ( __cs.getObjectIds() == NO_ARG        ) { transf = new Transformation (); }
     else if ( __cs.getObjectIds() == POINT_ARG     ) { transf = new Transformation ( *PYPOINT_O(arg0) ); }
     else if ( __cs.getObjectIds() == TRANS_ARG     ) { transf = new Transformation ( *PYTRANSFORMATION_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
-                                                                                   , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG     ) { transf = new Transformation ( PyAny_AsLong(arg0)
+                                                                                   , PyAny_AsLong(arg1) ); }
     else if ( __cs.getObjectIds() == POINT_INT_ARG ) { transf = new Transformation ( *PYPOINT_O(arg0)
                                                                                    , PyInt_AsOrientation(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyInt_AsLong(arg0)
-                                                                                   , PyInt_AsLong(arg1)
+    else if ( __cs.getObjectIds() == INTS3_ARG     ) { transf = new Transformation ( PyAny_AsLong(arg0)
+                                                                                   , PyAny_AsLong(arg1)
                                                                                    , PyInt_AsOrientation(arg2) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Transformation constructor." );
@@ -162,7 +162,7 @@ extern "C" {
     
     METHOD_HEAD ( "Translation.getOrientation()" )
 
-    return ( (PyObject*)Py_BuildValue("i",(long)transf->getOrientation().getCode()) );
+    return ( (PyObject*)PyLong_FromLong( (long)transf->getOrientation().getCode()) );
   }
 
 
@@ -188,8 +188,8 @@ extern "C" {
       return ( NULL );
 
     if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getX ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getX ( PyInt_AsLong(arg0)
-                                                                         , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getX ( PyAny_AsLong(arg0)
+                                                                         , PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getX()." );
       return ( NULL );
@@ -197,7 +197,7 @@ extern "C" {
 
     HCATCH
 
-    return ( (PyObject*)Py_BuildValue("i",result) );
+    return ( (PyObject*)PyLong_FromLong(result) );
   }
 
 
@@ -223,8 +223,8 @@ extern "C" {
       return ( NULL );
 
     if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getY ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getY ( PyInt_AsLong(arg0)
-                                                                         , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getY ( PyAny_AsLong(arg0)
+                                                                         , PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getY()." );
       return ( NULL );
@@ -232,7 +232,7 @@ extern "C" {
 
     HCATCH
 
-    return ( (PyObject*)Py_BuildValue("i",result) );
+    return ( (PyObject*)PyLong_FromLong(result) );
   }
 
 
@@ -254,11 +254,11 @@ extern "C" {
     HTRY
 
     if ( ! ParseTwoArg ( "Transformation.getDx", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-    result = transf->getDx ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+    result = transf->getDx ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
 
     HCATCH
 
-    return ( (PyObject*)Py_BuildValue("i",result) );
+    return ( (PyObject*)PyLong_FromLong(result) );
   }
 
 
@@ -280,11 +280,11 @@ extern "C" {
     HTRY
 
     if ( ! ParseTwoArg ( "Transformation.getDy", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-    result = transf->getDy ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+    result = transf->getDy ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
 
     HCATCH
 
-    return ( (PyObject*)Py_BuildValue("i",result) );
+    return ( (PyObject*)PyLong_FromLong(result) );
   }
 
 
@@ -342,8 +342,8 @@ extern "C" {
       return ( NULL );
 
     if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getPoint ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getPoint ( PyInt_AsLong(arg0)
-                                                                             , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getPoint ( PyAny_AsLong(arg0)
+                                                                             , PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getPoint()." );
       return ( NULL );
@@ -394,10 +394,10 @@ extern "C" {
     if      ( __cs.getObjectIds() == BOX_ARG     ) { result = transf->getBox ( *PYBOX_O(arg0) ); }
     else if ( __cs.getObjectIds() == POINTS2_ARG ) { result = transf->getBox ( *PYPOINT_O(arg0)
                                                                              , *PYPOINT_O(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS4_ARG   ) { result = transf->getBox ( PyInt_AsLong(arg0)
-                                                                             , PyInt_AsLong(arg1)
-                                                                             , PyInt_AsLong(arg2)
-                                                                             , PyInt_AsLong(arg3) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG   ) { result = transf->getBox ( PyAny_AsLong(arg0)
+                                                                             , PyAny_AsLong(arg1)
+                                                                             , PyAny_AsLong(arg2)
+                                                                             , PyAny_AsLong(arg3) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getBox()." );
       return ( NULL );

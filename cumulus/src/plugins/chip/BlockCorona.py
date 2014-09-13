@@ -368,15 +368,16 @@ class Corona ( object ):
         if not isinstance(block,chip.BlockPower.Block):
             raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
 
-        self._block      = block
-        self._innerBb    = self._block.bb
-        self._block.path.getTransformation().applyOn( self._innerBb )
-
         self._railsNb    = Cfg.getParamInt('chip.block.rails.count').asInt()
         self._hRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt() )
         self._vRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt() )
         self._hRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hSpacing').asInt() )
         self._vRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vSpacing').asInt() )
+
+        self._block      = block
+        self._innerBb    = self._block.bb
+        self._block.path.getTransformation().applyOn( self._innerBb )
+        self._innerBb.inflate( self._hRailSpace/2, self._vRailSpace/2 )
 
         self._southSide  = SouthSide( self )
         self._northSide  = NorthSide( self )

@@ -133,7 +133,7 @@ extern "C" {
   PyObject* PyQueryMask_nthbit ( PyQueryMask* self, PyObject* pyInt )
   {
     Query::Mask result;
-    result = self->_object.nthbit(PyInt_AsLong(pyInt));
+    result = self->_object.nthbit(PyAny_AsLong(pyInt));
     return PyQueryMask_Link(result);
   }
 
@@ -180,7 +180,7 @@ extern "C" {
 #define  binaryInFunctionMaskInt(FUNC_NAME,OP) \
   PyObject* PyQueryMask_##FUNC_NAME ( PyQueryMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
-    pyMask0->_object OP= PyInt_AsLong(pyInt);                                 \
+    pyMask0->_object OP= PyAny_AsLong(pyInt);                                 \
     Py_INCREF(pyMask0);                                                       \
     return (PyObject*)pyMask0;                                                \
   }
@@ -199,7 +199,7 @@ extern "C" {
   PyObject* PyQueryMask_##FUNC_NAME ( PyQueryMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
     Query::Mask result;                                                       \
-    result = pyMask0->_object OP PyInt_AsLong(pyInt);                         \
+    result = pyMask0->_object OP PyAny_AsLong(pyInt);                         \
     return PyQueryMask_Link(result);                                          \
   }
 

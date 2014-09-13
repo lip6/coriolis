@@ -48,7 +48,7 @@ extern "C" {
 
 
   static Pin::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case Pin::PlacementStatus::UNPLACED : return ( Pin::PlacementStatus(Pin::PlacementStatus::UNPLACED) );
       case Pin::PlacementStatus::PLACED   : return ( Pin::PlacementStatus(Pin::PlacementStatus::PLACED) );
       case Pin::PlacementStatus::FIXED    : return ( Pin::PlacementStatus(Pin::PlacementStatus::FIXED) );
@@ -59,7 +59,7 @@ extern "C" {
 
 
   static Pin::AccessDirection  PyInt_AsAccessDirection ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case Pin::AccessDirection::UNDEFINED : return ( Pin::AccessDirection(Pin::AccessDirection::UNDEFINED) );
       case Pin::AccessDirection::NORTH     : return ( Pin::AccessDirection(Pin::AccessDirection::NORTH) );
       case Pin::AccessDirection::SOUTH     : return ( Pin::AccessDirection(Pin::AccessDirection::SOUTH) );
@@ -116,10 +116,10 @@ extern "C" {
                 PyInt_AsAccessDirection ( arg2 ),
                 PyInt_AsPlacementStatus ( arg3 ),
                 PYLAYER_O ( arg4 ),
-                PyInt_AsLong ( arg5 ),
-                PyInt_AsLong ( arg6 ),
-                PyInt_AsLong ( arg7 ),
-                PyInt_AsLong ( arg8 ) );
+                PyAny_AsLong ( arg5 ),
+                PyAny_AsLong ( arg6 ),
+                PyAny_AsLong ( arg7 ),
+                PyAny_AsLong ( arg8 ) );
     } else if ( __cs.getObjectIds() == pin_arg2 ) {
         pin = Pin::create (
                 PYNET_O ( arg0 ),
@@ -127,17 +127,17 @@ extern "C" {
                 PyInt_AsAccessDirection ( arg2 ),
                 PyInt_AsPlacementStatus ( arg3 ),
                 PYLAYER_O ( arg4 ),
-                PyInt_AsLong ( arg5 ),
-                PyInt_AsLong ( arg6 ),
-                PyInt_AsLong ( arg7 ) );
+                PyAny_AsLong ( arg5 ),
+                PyAny_AsLong ( arg6 ),
+                PyAny_AsLong ( arg7 ) );
     } else if ( __cs.getObjectIds() == pin_arg3 ) {
         pin = Pin::create ( PYNET_O ( arg0 ),
                 Name(PyString_AsString(arg1)),
                 PyInt_AsAccessDirection ( arg2 ),
                 PyInt_AsPlacementStatus ( arg3 ),
                 PYLAYER_O ( arg4 ),
-                PyInt_AsLong ( arg5 ),
-                PyInt_AsLong ( arg6 ) );
+                PyAny_AsLong ( arg5 ),
+                PyAny_AsLong ( arg6 ) );
     } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for Pin constructor." );
         return NULL;
@@ -156,7 +156,7 @@ extern "C" {
 
       METHOD_HEAD ( "Net.getAccessDirection()" )
   
-      return (PyObject *)Py_BuildValue("l",  pin->getAccessDirection().getCode() );
+      return (PyObject *)PyLong_FromLong( pin->getAccessDirection().getCode() );
 
   }
     

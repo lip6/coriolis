@@ -61,8 +61,8 @@ extern "C" {
 
     if      ( __cs.getObjectIds() == NO_ARG    ) { point = new Point (); }
     else if ( __cs.getObjectIds() == POINT_ARG ) { point = new Point ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { point = new Point ( PyInt_AsLong(arg0)
-                                                                     , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { point = new Point ( PyAny_AsLong(arg0)
+                                                                     , PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Point constructor." );
       return NULL;
@@ -101,7 +101,7 @@ extern "C" {
     PyObject* arg1;
     if ( ! ParseTwoArg ( "Box.Translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
 
-    point->translate ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+    point->translate ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
 
     HCATCH
 

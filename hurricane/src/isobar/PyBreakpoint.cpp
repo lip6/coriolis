@@ -59,7 +59,7 @@ extern "C" {
     PyObject* arg1;
     if ( not ParseTwoArg ( "Breakpoint::stop()", args, ":int:string", &arg0, &arg1) ) return NULL;
     
-    result = Breakpoint::stop( (unsigned int)PyInt_AsLong     (arg0)
+    result = Breakpoint::stop( (unsigned int)PyAny_AsLong     (arg0)
                              ,               PyString_AsString(arg1)
                              );
     HCATCH
@@ -79,7 +79,7 @@ extern "C" {
     PyObject* arg0;
     if ( not ParseOneArg ( "Breakpoint::setStopLevel()", args, ":int", &arg0) ) return NULL;
 
-    Breakpoint::setStopLevel ( (unsigned int)PyInt_AsLong(arg0) );
+    Breakpoint::setStopLevel ( (unsigned int)PyAny_AsLong(arg0) );
 
     HCATCH
 

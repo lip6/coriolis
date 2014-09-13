@@ -86,9 +86,9 @@ extern "C" {
     else if ( __cs.getObjectIds() == POINT_ARG   ) { box = new Box ( *PYPOINT_O(arg0) ); }
     else if ( __cs.getObjectIds() == BOX_ARG     ) { box = new Box ( *PYBOX_O(arg0) ); }
     else if ( __cs.getObjectIds() == POINTS2_ARG ) { box = new Box ( *PYPOINT_O(arg0) , *PYPOINT_O(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyInt_AsLong(arg0) , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG   ) { box = new Box ( PyAny_AsLong(arg0) , PyAny_AsLong(arg1) ); }
     else if ( __cs.getObjectIds() == INTS4_ARG   ) {
-        box = new Box ( PyInt_AsLong(arg0), PyInt_AsLong(arg1), PyInt_AsLong(arg2) , PyInt_AsLong(arg3) );
+        box = new Box ( PyAny_AsLong(arg0), PyAny_AsLong(arg1), PyAny_AsLong(arg2) , PyAny_AsLong(arg3) );
     } else {
         PyErr_SetString(ConstructorError, "invalid number of parameters for Box constructor." );
         return NULL;
@@ -195,8 +195,8 @@ extern "C" {
 
     if      ( __cs.getObjectIds() == BOX_ARG   ) { result = box->contains ( *PYBOX_O(arg0) ); }
     else if ( __cs.getObjectIds() == POINT_ARG ) { result = box->contains ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = box->contains ( PyInt_AsLong(arg0)
-                                                                          , PyInt_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = box->contains ( PyAny_AsLong(arg0)
+                                                                          , PyAny_AsLong(arg1) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.contains constructor." );
       return NULL;
@@ -304,13 +304,13 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&O&O&O&:Box.inflate",Converter,&arg0,Converter,&arg1,Converter,&arg2,Converter,&arg3) )
       return ( NULL );
 
-    if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyInt_AsLong(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->inflate ( PyInt_AsLong(arg0)
-                                                                , PyInt_AsLong(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->inflate ( PyInt_AsLong(arg0)
-                                                                , PyInt_AsLong(arg1)
-                                                                , PyInt_AsLong(arg2)
-                                                                , PyInt_AsLong(arg3) ); }
+    if      ( __cs.getObjectIds() == INT_ARG   ) { box->inflate ( PyAny_AsLong(arg0) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->inflate ( PyAny_AsLong(arg0)
+                                                                , PyAny_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->inflate ( PyAny_AsLong(arg0)
+                                                                , PyAny_AsLong(arg1)
+                                                                , PyAny_AsLong(arg2)
+                                                                , PyAny_AsLong(arg3) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.inflate()" );
       return ( NULL );
@@ -343,12 +343,12 @@ extern "C" {
 
     if      ( __cs.getObjectIds() == POINT_ARG ) { box->merge ( *PYPOINT_O(arg0) ); }
     else if ( __cs.getObjectIds() == BOX_ARG   ) { box->merge ( *PYBOX_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->merge ( PyInt_AsLong(arg0)
-                                                              , PyInt_AsLong(arg1) ); }
-    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->merge ( PyInt_AsLong(arg0)
-                                                              , PyInt_AsLong(arg1)
-                                                              , PyInt_AsLong(arg2)
-                                                              , PyInt_AsLong(arg3) ); }
+    else if ( __cs.getObjectIds() == INTS2_ARG ) { box->merge ( PyAny_AsLong(arg0)
+                                                              , PyAny_AsLong(arg1) ); }
+    else if ( __cs.getObjectIds() == INTS4_ARG ) { box->merge ( PyAny_AsLong(arg0)
+                                                              , PyAny_AsLong(arg1)
+                                                              , PyAny_AsLong(arg2)
+                                                              , PyAny_AsLong(arg3) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.merge()" );
       return ( NULL );

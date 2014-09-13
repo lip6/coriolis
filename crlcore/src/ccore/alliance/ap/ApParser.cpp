@@ -635,20 +635,20 @@ namespace {
   void  ApParser::_parseInstance ()
   {
     static DbU::Unit  XINS, YINS;
-    static Name  masterCellName;
-    static Name  instanceName;
-    static Name  orientName;
+    static Name    masterCellName;
+    static Name    instanceName;
+    static Name    orientName;
     static Transformation::Orientation
-                 orient         = Transformation::Orientation::ID;
-    static Name  NOSYM          = "NOSYM";
-    static Name  SYM_X          = "SYM_X";
-    static Name  SYM_Y          = "SYM_Y";
-    static Name  SYMXY          = "SYMXY";
-    static Name  ROT_P          = "ROT_P";
-    static Name  ROT_M          = "ROT_M";
-    static Name  SY_RM          = "SY_RM";
-    static Name  SY_RP          = "SY_RP";
-    static Name  padreal        = "padreal";
+                   orient         = Transformation::Orientation::ID;
+    static Name    NOSYM          = "NOSYM";
+    static Name    SYM_X          = "SYM_X";
+    static Name    SYM_Y          = "SYM_Y";
+    static Name    SYMXY          = "SYMXY";
+    static Name    ROT_P          = "ROT_P";
+    static Name    ROT_M          = "ROT_M";
+    static Name    SY_RM          = "SY_RM";
+    static Name    SY_RP          = "SY_RP";
+    static string  padreal        = "padreal";
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 5 )
@@ -682,7 +682,7 @@ namespace {
           );
         instance->setPlacementStatus ( Instance::PlacementStatus::FIXED );
       } else {
-        bool            ignoreInstance = (masterCellName == padreal);
+        bool            ignoreInstance = (getString(masterCellName).substr(0,7) == padreal);
         Catalog::State* instanceState  = _framework->getCatalog()->getState ( masterCellName );
         if ( not ignoreInstance and ( not instanceState or (not instanceState->isFeed()) ) ) {
           _printError ( false

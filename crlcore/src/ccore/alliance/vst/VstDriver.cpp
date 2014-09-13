@@ -484,9 +484,9 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
                       end_for;
                     }
 #endif
-                  if ( connectedNetName.empty() )
+                  if ( connectedNetName.empty() ) {
                     throw Error("No global net " + masterNet->getName()._getString() + " in cell " + instance->getCell()->getName()._getString()); 
-                 
+                  }
                 }
                 else
                 {

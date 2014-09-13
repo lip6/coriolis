@@ -94,6 +94,20 @@ extern "C" {
   }
 
 
+  static PyObject* PyBasicLayer_getMaterial ( PyBasicLayer *self )
+  {
+    trace << "PyBasicLayer_getMaterial ()" << endl;
+    METHOD_HEAD ( "BasicLayer.getMaterial()" )
+
+    BasicLayer::Material* material = NULL;
+    HTRY
+    material = new BasicLayer::Material( basicLayer->getMaterial() );
+    HCATCH
+
+    return (PyObject*)PyMaterial_Link( material );
+  }
+
+
   updatorFromBasicLayer    (setBlockageLayer     ,PyBasicLayer,BasicLayer)
   DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,"BasicLayer.setExtractNumber",PyBasicLayer,BasicLayer)
   DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,"BasicLayer.setRealName"     ,PyBasicLayer,BasicLayer)
@@ -109,6 +123,8 @@ extern "C" {
   PyMethodDef PyBasicLayer_Methods[] =
     { { "create"             , (PyCFunction)PyBasicLayer_create           , METH_VARARGS|METH_STATIC
                              , "Create a new BasicLayer." }
+    , { "getMaterial"        , (PyCFunction)PyBasicLayer_getMaterial      , METH_NOARGS
+                             , "Returns the type of Material." }
     , { "setBlockageLayer"   , (PyCFunction)PyBasicLayer_setBlockageLayer , METH_VARARGS
                              , "Sets the blockage layer associated to this one." }
     , { "setExtractNumber"   , (PyCFunction)PyBasicLayer_setExtractNumber , METH_VARARGS

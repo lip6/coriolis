@@ -184,7 +184,7 @@ extern "C" {
     }
     HCATCH
 
-    return Py_BuildValue("I",trackNumber);
+    return PyLong_FromLong(trackNumber);
   }
 
 
@@ -246,7 +246,7 @@ extern "C" {
     }
     HCATCH
 
-    return Py_BuildValue("l",(long)trackPosition);
+    return PyLong_FromLong((long)trackPosition);
   }
 
 

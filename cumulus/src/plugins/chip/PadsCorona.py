@@ -14,6 +14,7 @@
 # +-----------------------------------------------------------------+
 
 
+import sys
 from   operator  import itemgetter  
 import Cfg
 from   Hurricane import DbU
@@ -52,7 +53,7 @@ class Side ( object ):
       return
 
 
-    def _toGrid ( self, v ): return v - (v % DbU.fromLambda(5.0))
+    def _toGrid ( self, v ): return v - (v % self._corona.getSliceStep())
 
 
     def getAxis ( self, i ):
@@ -76,6 +77,10 @@ class Side ( object ):
         sideName = 'tall'
   
       if checkSize > chipSize:
+        sliceHeight = self._corona.getSliceHeight()
+        if checkSize % sliceHeight != 0:
+          checkSize += sliceHeight - (checkSize % sliceHeight)
+
         print ErrorMessage( 1, [ 'Chip is not %s enought to accomodate the %s,' % (sideName,checkName)
                                , 'needs %dl, but only has %dl.'
                                  % ( DbU.toLambda(checkSize), DbU.toLambda(chipSize) )
@@ -118,6 +123,13 @@ class Side ( object ):
       masterCell = pad.getMasterCell()
       if net.isGlobal():
         trace( 550, '\tLooking for global net %s\n' % net.getName() )
+        masterNet = masterCell.getNet( net.getName() )
+        if not masterNet:
+          raise ErrorMessage( 1, [ 'PadsCorona.Side._createPowerContact():'
+                                 , 'Pad model <%s> of instance <%s> do not have global net <%s>' % (pad.getName(),masterCell.getName(),net.getName())
+                                 , 'The power/clock nets *names* in the chip must match those of the pads models.'
+                                 ] )
+          
         components = masterCell.getNet(net.getName()).getExternalComponents()
       else:
         for plug in net.getPlugs():
@@ -126,9 +138,8 @@ class Side ( object ):
             components = plug.getMasterNet().getExternalComponents()
 
       connecteds = False
+      trace( 550, '\t %s\n' % str(masterCell.getAbutmentBox()) )
       for component in components:
-        trace( 550, '\t- %s\n' % component )
-
         if component.getBoundingBox().getYMin() > masterCell.getAbutmentBox().getYMin(): continue
         if self._corona.routingGauge.getLayerDepth(component.getLayer()) != hvDepth: continue
         if not isinstance(component,Vertical): continue
@@ -162,10 +173,10 @@ class Side ( object ):
     def _createAllPowerContacts ( self ):
       for pad in self._pads:
         masterCell = pad.getMasterCell()
-        if     masterCell.getName() != 'pvddick_px' \
-           and masterCell.getName() != 'pvssick_px' \
-           and masterCell.getName() != 'pvddeck_px' \
-           and masterCell.getName() != 'pvsseck_px':
+        if     masterCell.getName() != self._corona.pvddickName \
+           and masterCell.getName() != self._corona.pvssickName \
+           and masterCell.getName() != self._corona.pvddeckName \
+           and masterCell.getName() != self._corona.pvsseckName:
           continue
        #print 'Power pad:', pad
         self._createPowerContacts( pad, self._corona.vddi )
@@ -301,7 +312,8 @@ class Corona ( chip.Configuration.ChipConfWrapper ):
 
   def _locatePadRails ( self ):
     if not self.clockPad:
-      print ErrorMessage( 1, 'There must be at least one pad of model "pck_px" to guess the pad rails.' )
+      print ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad rails.' \
+                             % self.pckName )
       return False
 
     for plug in self.clockPad.getPlugs():
@@ -342,7 +354,8 @@ class Corona ( chip.Configuration.ChipConfWrapper ):
 
   def _guessPadHvLayers ( self ):
     if not self.powerPad:
-      print ErrorMessage( 1, 'There must be at least one pad of model "pvddick_px" to guess the pad power terminals.' )
+      print ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad power terminals.' \
+                             % self.pvddick )
       return False
 
     availableDepths = set()

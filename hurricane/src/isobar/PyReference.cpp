@@ -79,8 +79,8 @@ extern "C" {
     if      ( __cs.getObjectIds() == ":ent:string:int:int" )
       reference = Reference::create (  PYCELL_O(arg0)
                                     ,  Name(PyString_AsString(arg1))
-                                    ,  PyInt_AsLong(arg2)
-                                    ,  PyInt_AsLong(arg3) );
+                                    ,  PyAny_AsLong(arg2)
+                                    ,  PyAny_AsLong(arg3) );
     else if ( __cs.getObjectIds() == ":ent:name:point" )
       reference = Reference::create (  PYCELL_O(arg0)
                                     ,  Name(PyString_AsString(arg1))
@@ -149,7 +149,7 @@ extern "C" {
 
     if ( ! ParseTwoArg ( "Reference.translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
 
-    reference->translate ( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+    reference->translate ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
 
     HCATCH
 

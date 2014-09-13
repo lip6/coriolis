@@ -116,6 +116,7 @@ class GaugeConf ( object ):
     OffsetBottom1 = 0x0008
 
     def __init__ ( self ):
+      self._cellGauge     = None
       self._routingGauge  = None
       self._topLayerDepth = 0
       self._plugToRp      = { }
@@ -123,8 +124,11 @@ class GaugeConf ( object ):
       self._loadRoutingGauge()
       return
 
+    def getSliceHeight ( self ): return self._cellGauge.getSliceHeight()
+    def getSliceStep   ( self ): return self._cellGauge.getSliceStep()
 
     def _loadRoutingGauge ( self ):
+      self._cellGauge    = CRL.AllianceFramework.get().getCellGauge()
       self._routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
 
       topLayer = Cfg.getParamString('katabatic.topRoutingLayer').asString()
@@ -179,13 +183,17 @@ class GaugeConf ( object ):
     def _rpAccess ( self, rp, flags ):
       trace( 550, ',+', '\t_rpAccess() %s\n' % str(rp) )
 
+      hpitch    = self._routingGauge.getLayerGauge(self._horizontalDepth).getPitch()
+      hoffset   = self._routingGauge.getLayerGauge(self._horizontalDepth).getOffset()
       contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
+      midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
+                                                     + self._cellGauge.getSliceHeight() / 2
+      midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
+      dy        = midSliceY - contact1.getY()
   
-      if flags & GaugeConf.OffsetBottom1:
-        contact1.setDy(   self._routingGauge.getLayerGauge(self._horizontalDepth).getPitch() )
-  
-      if flags & GaugeConf.OffsetTop1:
-        contact1.setDy( - self._routingGauge.getLayerGauge(self._horizontalDepth).getPitch() )
+      if flags & GaugeConf.OffsetBottom1: dy += hpitch
+      if flags & GaugeConf.OffsetTop1:    dy -= hpitch
+      contact1.setDy( dy )
 
       trace( 550, contact1 )
   
@@ -386,10 +394,10 @@ class ChipConf ( object ):
 
         padList.append( instance )
 
-        if not self._clockPad and instance.getMasterCell().getName() == 'pck_px':
+        if not self._clockPad and instance.getMasterCell().getName() == self._pckName:
           self._clockPad = instance
 
-        if not self._powerPad and instance.getMasterCell().getName() == 'pvddick_px':
+        if not self._powerPad and instance.getMasterCell().getName() == self._pvddickName:
           self._powerPad = instance
       
       return padList
@@ -413,12 +421,18 @@ class ChipConf ( object ):
       self._validated     = True
       self._cell          = cell
      # Block Corona parameters.
-      self._railsNb         = DbU.fromLambda( getParameter('chip','chip.block.rails.count'   ).asInt() )
-      self._hRailWidth      = DbU.fromLambda( getParameter('chip','chip.block.rails.hWidth'  ).asInt() )
-      self._vRailWidth      = DbU.fromLambda( getParameter('chip','chip.block.rails.vWidth'  ).asInt() )
-      self._hRailSpace      = DbU.fromLambda( getParameter('chip','chip.block.rails.hSpacing').asInt() )
-      self._vRailSpace      = DbU.fromLambda( getParameter('chip','chip.block.rails.vSpacing').asInt() )
-     # Global net names.
+      self._railsNb       = getParameter('chip','chip.block.rails.count').asInt()
+      self._hRailWidth    = DbU.fromLambda( getParameter('chip','chip.block.rails.hWidth'  ).asInt() )
+      self._vRailWidth    = DbU.fromLambda( getParameter('chip','chip.block.rails.vWidth'  ).asInt() )
+      self._hRailSpace    = DbU.fromLambda( getParameter('chip','chip.block.rails.hSpacing').asInt() )
+      self._vRailSpace    = DbU.fromLambda( getParameter('chip','chip.block.rails.vSpacing').asInt() )
+     # Global Pad names.
+      self._pckName       = getParameter('chip', 'chip.pad.pck'    ).asString()
+      self._pvddickName   = getParameter('chip', 'chip.pad.pvddick').asString()
+      self._pvssickName   = getParameter('chip', 'chip.pad.pvssick').asString()
+      self._pvddeckName   = getParameter('chip', 'chip.pad.pvddeck').asString()
+      self._pvsseckName   = getParameter('chip', 'chip.pad.pvsseck').asString()
+     # Global Net names.
       self._vddeName      = "vdde"
       self._vddiName      = "vddi"
       self._vsseName      = "vsse"
@@ -426,7 +440,7 @@ class ChipConf ( object ):
       self._ckiName       = "ck"
       self._ckoName       = "cko"
       self._ckName        = "pad"
-     # Global net names.  
+     # Global Nets.  
       self._vdde          = None
       self._vddi          = None
       self._vsse          = None
@@ -444,10 +458,14 @@ class ChipConf ( object ):
       self._westPads      = self._readPads( chipConfigDict, 'pads.west'  )
       self._coreSize      = ChipConf._readCoreSize( chipConfigDict )
       self._chipSize      = ChipConf._readChipSize( chipConfigDict )
-      self._minCorona     = DbU.fromLambda( 100 )
       self._padWidth      = 0
       self._padHeight     = 0
       self._useClockTree  = ChipConf._readClockTree( chipConfigDict )
+
+      minHCorona          = self._railsNb*(self._hRailWidth + self._hRailSpace) + self._hRailSpace
+      minVCorona          = self._railsNb*(self._vRailWidth + self._vRailSpace) + self._vRailSpace
+      if minHCorona > minVCorona: self._minCorona = minHCorona*2
+      else:                       self._minCorona = minVCorona*2
 
       self.checkPads()
       self.computeChipSize()
@@ -525,7 +543,8 @@ class ChipConf ( object ):
 
     def computeChipSize ( self ):
       if not self._clockPad:
-        print ErrorMessage( 1, 'There must be at least one pad of model "pck_px" to be used as reference.' )
+        print ErrorMessage( 1, 'There must be at least one pad of model "%s" to be used as reference.' \
+                               % self._pckName )
         self._validated = False
         return False
 
@@ -569,8 +588,23 @@ class ChipConfWrapper ( GaugeConfWrapper ):
     @property
     def chipConf ( self ): return self._chipConf
 
+    def getSliceHeight ( self ): return self._gaugeConf.getSliceHeight()
+    def getSliceStep   ( self ): return self._gaugeConf.getSliceStep()
+
     @property
     def cell ( self ): return self._chipConf._cell
+
+    # Global Pad names.
+    @property
+    def pvddeckName ( self ): return self._chipConf._pvddeckName
+    @property
+    def pvsseckName ( self ): return self._chipConf._pvsseckName
+    @property
+    def pvddickName ( self ): return self._chipConf._pvddickName
+    @property
+    def pvssickName ( self ): return self._chipConf._pvssickName
+    @property
+    def pckName     ( self ): return self._chipConf._pckName
 
     # Global Net names.
     @property

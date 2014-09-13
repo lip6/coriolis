@@ -129,10 +129,21 @@ using namespace Hurricane;
 // +-----------------------------------------------------------------+
 
 
+  long  PyAny_AsLong ( PyObject* object )
+  {
+    long  value = 0;
+
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return value;
+  }
+
+
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::ObjectType::PyEqual ()"
 
-  bool  ConverterState::ObjectType::PyEqual ( PyTypeObject* pyType ) {
+  bool  ConverterState::ObjectType::PyEqual ( PyTypeObject* pyType )
+  {
     if ( _pyType    == pyType ) return true;
     if ( _idBase[0] == '\0'   ) return false;
     return ( __cs.getObject(_idBase)->PyEqual(pyType) );
@@ -180,11 +191,11 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Method  : "::ConverterState::addType ()"
 
-  void  ConverterState::addType ( const char*         id
+  void  ConverterState::addType ( const char*   id
                                 , PyTypeObject* pyType
-                                , const char*         name
+                                , const char*   name
                                 , bool          isPythonType
-                                , const char*         idBase ) {
+                                , const char*   idBase ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) ) {
         //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification so Pharos can run several scripts during one execution
@@ -240,13 +251,17 @@ using namespace Hurricane;
 
   const char* ConverterState::getObjectId ( PyObject* object ) const {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
-      if ( ( ! strcmp ( _types[i]->_id, "function" ) ) && ( PyCallable_Check(object) ) )
-        return ( _types[i]->_id );
+      if ( ( not strcmp( _types[i]->_id, "function" ) ) and ( PyCallable_Check(object) ) )
+        return _types[i]->_id;
         
-      if ( ( ! strcmp ( _types[i]->_id, "none" ) ) && ( object == Py_None ) )
-        return ( _types[i]->_id );
+      if ( (not strcmp( _types[i]->_id, "none")) and (object == Py_None) )
+        return _types[i]->_id;
         
-      if ( object->ob_type == _types[i]->_pyType ) return ( _types[i]->_id );
+      if (object->ob_type == _types[i]->_pyType) return _types[i]->_id;
+      if (&PyLong_Type    == _types[i]->_pyType) {
+        cerr << "PyLong_Type, now check for PyInt_Type" << endl;
+        if (object->ob_type == &PyInt_Type) return _types[i]->_id;
+      }
     }
 
     return ( "unknown" ); // return 'X'
@@ -289,45 +304,49 @@ using namespace Hurricane;
 // -------------------------------------------------------------------
 // Function  : "Converter ()"
 
-  int  Converter ( PyObject* object, void** pArg ) {
+  int  Converter ( PyObject* object, void** pArg )
+  {
     ostringstream               message;
     string                      unboundObject = "";
     ConverterState::ObjectType* baseType;
 
     for ( unsigned i=0 ; i < __cs.getTypes().size() ; i++ ) {
-      baseType = __cs.getTypes()[i]->PyBase ( object->ob_type );
-      if ( PyCallable_Check(object) || baseType ) {
+      PyTypeObject* obType = object->ob_type;
+      if (obType == &PyInt_Type) obType = &PyLong_Type;
+
+      baseType = __cs.getTypes()[i]->PyBase( obType );
+      if (PyCallable_Check(object) or baseType) {
         *pArg = object;
         i = baseType->_index;
-        __cs.addId ( baseType->_id );
+        __cs.addId( baseType->_id );
 
-        if ( ! __cs.getTypes()[i]->_isPythonType ) {
+        if (not __cs.getTypes()[i]->_isPythonType) {
           void** member = ( (void**)( (unsigned long)object + __objectOffset ) );
 
-          if ( *member == NULL ) {
+          if (*member == NULL) {
             unboundObject = __cs.getTypes()[i]->_name;
             break;
           }
         }
 
-        return ( 1 );
+        return 1;
       }
     }
 
-    if ( unboundObject.size() ) {
+    if (unboundObject.size()) {
       message << "Attempt to call " << __cs.getFunction()
               << "() with an unbound " << unboundObject << " argument";
 
-      PyErr_SetString ( ProxyError, message.str().c_str() );
-      return ( 0 );
+      PyErr_SetString( ProxyError, message.str().c_str() );
+      return 0;
     }
 
     message << "Argument " << __cs.getSize() + 1
             << " of call to " << __cs.getFunction()
             << "() is of unmanaged type " << object->ob_type->tp_name;
 
-    PyErr_SetString ( ProxyError, message.str().c_str() );
-    return ( 0 );
+    PyErr_SetString( ProxyError, message.str().c_str() );
+    return 0;
   }
 
 
@@ -651,7 +670,7 @@ extern "C" {
     // Do not change the "none" string. It's hardwired to the None object.             
     __cs.addType ( "none"       ,  Py_None->ob_type            , "<None>"                  , true  );
     __cs.addType ( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
-    __cs.addType ( "int"        , &PyInt_Type                  , "<Int>"                   , true  );
+    __cs.addType ( "int"        , &PyLong_Type                 , "<Int>"                   , true  );
     __cs.addType ( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
     __cs.addType ( "string"     , &PyString_Type               , "<String>"                , true  );
     __cs.addType ( "list"       , &PyList_Type                 , "<List>"                  , true  );

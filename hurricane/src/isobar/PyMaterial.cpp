@@ -129,10 +129,20 @@ extern "C" {
   // |                "PyMaterial" Object Methods                  |
   // +-------------------------------------------------------------+
 
+  static int  PyMaterial_Cmp ( PyMaterial *self, PyObject* other )
+  {
+    if (not IsPyMaterial(other) ) return -1;
+
+    PyMaterial* otherPyObject = (PyMaterial *)other;
+    if (self->_object->getCode() == otherPyObject->_object->getCode()) return  0;
+    if (self->_object->getCode() <  otherPyObject->_object->getCode()) return -1;
+
+    return 1;
+  }
+
   DirectHashMethod  (PyMaterial_Hash   , PyMaterial)
   DirectReprMethod  (PyMaterial_Repr   , PyMaterial, BasicLayer::Material)
   DirectStrMethod   (PyMaterial_Str    , PyMaterial, BasicLayer::Material)
-  DirectStrMethod   (PyMaterial_Cmp    , PyMaterial, BasicLayer::Material)
   DirectDeleteMethod(PyMaterial_DeAlloc, PyMaterial)
 
   extern void  PyMaterial_LinkPyType() {

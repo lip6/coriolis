@@ -81,7 +81,7 @@ extern "C" {
     }
 
     if ( __cs.getObjectIds() == ":ent:occur:int" )
-      rp = RoutingPad::create( PYNET_O(arg0), *(PYOCCURRENCE_O(arg1)), PyInt_AsLong(arg2) );
+      rp = RoutingPad::create( PYNET_O(arg0), *(PYOCCURRENCE_O(arg1)), PyAny_AsLong(arg2) );
     else if ( __cs.getObjectIds() == ":pin" )
       rp = RoutingPad::create( dynamic_cast<Pin*>(EntityCast(arg0)) );
     else {
@@ -198,7 +198,7 @@ extern "C" {
     }
 
     if ( __cs.getObjectIds() == ":int:int" )
-      rp->setPosition( PyInt_AsLong(arg0), PyInt_AsLong(arg1) );
+      rp->setPosition( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
     else if ( __cs.getObjectIds() == ":point" )
       rp->setPosition( *PYPOINT_O(arg0) );
     else {

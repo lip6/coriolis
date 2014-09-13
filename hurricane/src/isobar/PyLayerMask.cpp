@@ -133,7 +133,7 @@ extern "C" {
   PyObject* PyLayerMask_nthbit ( PyLayerMask* self, PyObject* pyInt )
   {
     Layer::Mask result;
-    result = self->_object.nthbit(PyInt_AsLong(pyInt));
+    result = self->_object.nthbit(PyAny_AsLong(pyInt));
     return PyLayerMask_Link(result);
   }
 
@@ -180,7 +180,7 @@ extern "C" {
 #define  binaryInFunctionMaskInt(FUNC_NAME,OP) \
   PyObject* PyLayerMask_##FUNC_NAME ( PyLayerMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
-    pyMask0->_object OP= PyInt_AsLong(pyInt);                                 \
+    pyMask0->_object OP= PyAny_AsLong(pyInt);                                 \
     Py_INCREF(pyMask0);                                                       \
     return (PyObject*)pyMask0;                                                \
   }
@@ -199,7 +199,7 @@ extern "C" {
   PyObject* PyLayerMask_##FUNC_NAME ( PyLayerMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
     Layer::Mask result;                                                       \
-    result = pyMask0->_object OP PyInt_AsLong(pyInt);                         \
+    result = pyMask0->_object OP PyAny_AsLong(pyInt);                         \
     return PyLayerMask_Link(result);                                          \
   }
 

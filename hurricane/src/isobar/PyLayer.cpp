@@ -78,7 +78,7 @@ extern "C" {
     }                                                                                   \
     HCATCH                                                                              \
                                                                                         \
-    return Py_BuildValue("l",rvalue);                                                   \
+    return PyLong_FromLong(rvalue);                                                     \
   }
 
 

@@ -61,7 +61,7 @@ extern "C" {
 
 
   static DbU::SnapMode PyInt_AsSnapMode ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
       case DbU::Inferior : return ( DbU::Inferior );
       case DbU::Superior : return ( DbU::Superior );
       case DbU::Nearest  : return ( DbU::Nearest );
@@ -71,7 +71,7 @@ extern "C" {
   }
 
   static DbU::UnitPower PyInt_AsUnitPower ( PyObject* object ) {
-    switch ( PyInt_AsLong(object) ) {
+    switch ( PyAny_AsLong(object) ) {
         case DbU::Pico  : return ( DbU::Pico );
         case DbU::Nano  : return ( DbU::Nano );
         case DbU::Micro : return ( DbU::Micro );
@@ -104,14 +104,14 @@ extern "C" {
     if ( ! PyArg_ParseTuple(args,"|O&:DbU.fromDb",Converter,&arg0) )
       return ( NULL );
     
-    if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::fromDb ( PyInt_AsLong ( arg0 ) ); }
+    if ( __cs.getObjectIds() == INT_ARG   ) { result = DbU::fromDb ( PyAny_AsLong ( arg0 ) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.fromDb converter." );
       return ( NULL );
     }
     HCATCH
     
-    return Py_BuildValue("i",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -126,14 +126,14 @@ extern "C" {
       return ( NULL );
     
     if      ( __cs.getObjectIds() == FLOAT_ARG )  { result = DbU::fromGrid ( PyFloat_AsDouble ( arg0 ) ); }
-    else if ( __cs.getObjectIds() == INT_ARG   )  { result = DbU::fromGrid (     PyInt_AsLong ( arg0 ) ); }
+    else if ( __cs.getObjectIds() == INT_ARG   )  { result = DbU::fromGrid (     PyAny_AsLong ( arg0 ) ); }
     else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters or bad type for DbU.fromGrid converter." );
       return ( NULL );
     }
     HCATCH
     
-    return Py_BuildValue("i",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -155,7 +155,7 @@ extern "C" {
     }
     HCATCH
     
-    return Py_BuildValue ("i",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -173,7 +173,7 @@ extern "C" {
     result = DbU::fromPhysical(value,(DbU::UnitPower)power);
     HCATCH
 
-    return Py_BuildValue("l",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -282,7 +282,7 @@ extern "C" {
 
 
   extern PyObject* PyDbU_getRealSnapGridStep ( PyObject* )
-  { return Py_BuildValue("l",DbU::getRealSnapGridStep()); }
+  { return PyLong_FromLong(DbU::getRealSnapGridStep()); }
 
 
   extern PyObject* PyDbU_getOnRealSnapGrid ( PyObject* , PyObject* args )
@@ -299,7 +299,7 @@ extern "C" {
     result = DbU::getOnRealSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
     HCATCH
 
-    return Py_BuildValue("l",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -320,7 +320,7 @@ extern "C" {
 
 
   extern PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject* )
-  { return Py_BuildValue("l",DbU::getSymbolicSnapGridStep()); }
+  { return PyLong_FromLong(DbU::getSymbolicSnapGridStep()); }
 
 
   extern PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject* , PyObject* args )
@@ -337,7 +337,7 @@ extern "C" {
     result = DbU::getOnSymbolicSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
     HCATCH
 
-    return Py_BuildValue("l",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -372,7 +372,7 @@ extern "C" {
     result = DbU::getOnCustomGrid(DbU::db(value),DbU::db(step),(DbU::SnapMode)snap);
     HCATCH
 
-    return Py_BuildValue("l",result);
+    return PyLong_FromLong(result);
   }
 
 
@@ -390,31 +390,31 @@ extern "C" {
     result = DbU::getOnPhysicalGrid(DbU::db(value),(DbU::SnapMode)snap);
     HCATCH
 
-    return Py_BuildValue("l",result);
+    return PyLong_FromLong(result);
   }
 
 
   extern PyObject* PyDbU_toDb ( PyObject* , PyObject* args )
   {
     PyObject* arg0;
-    if ( not ParseOneArg( "Dbu.toDb", args,INT_ARG, &arg0 ) ) return NULL;
-    return Py_BuildValue("i",DbU::toDb(PyInt_AsLong(arg0)));
+    if ( not ParseOneArg( "DbU.toDb", args,INT_ARG, &arg0 ) ) return NULL;
+    return PyLong_FromLong(DbU::toDb(PyAny_AsLong(arg0)));
   }
 
 
   extern PyObject* PyDbU_toGrid ( PyObject* , PyObject* args )
   {
     PyObject* arg0;
-    if ( not ParseOneArg( "Dbu.toGrid", args,INT_ARG, &arg0 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toGrid(PyInt_AsLong(arg0)));
+    if ( not ParseOneArg( "DbU.toGrid", args,INT_ARG, &arg0 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toGrid(PyAny_AsLong(arg0)));
   }
 
 
   extern PyObject* PyDbU_toLambda ( PyObject* , PyObject* args )
   {
     PyObject* arg0;
-    if ( not ParseOneArg( "Dbu.toLambda", args,INT_ARG, &arg0 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toLambda(PyInt_AsLong(arg0)));
+    if ( not ParseOneArg( "DbU.toLambda", args,INT_ARG, &arg0 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toLambda(PyAny_AsLong(arg0)));
   }
 
 
@@ -422,8 +422,8 @@ extern "C" {
   {
     PyObject* arg0;
     PyObject* arg1;
-    if ( not ParseTwoArg( "Dbu.toPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toPhysical(PyInt_AsLong(arg0), PyInt_AsUnitPower(arg1)));
+    if ( not ParseTwoArg( "DbU.toPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return NULL;
+    return Py_BuildValue("d",DbU::toPhysical(PyAny_AsLong(arg0), PyInt_AsUnitPower(arg1)));
   }
 
 

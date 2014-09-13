@@ -105,6 +105,9 @@ using namespace std;
   extern ConverterState             __cs;
   extern int                        __objectOffset;
 
+  long  PyAny_AsLong ( PyObject* object );
+
+
 extern "C" {
 
 
@@ -210,7 +213,7 @@ extern "C" {
     long  result = 1;                                                \
     if ( self->ACCESS_OBJECT == NULL ) result = 0;                   \
                                                                      \
-    return ( Py_BuildValue ("i",result) );                           \
+    return ( PyLong_FromLong(result) );                              \
   }
 
 
@@ -288,7 +291,7 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetLongAttribute()")           \
-    return ( Py_BuildValue ("l",cobject->FUNC_NAME()) );                        \
+    return ( PyLong_FromLong(cobject->FUNC_NAME()) );                           \
   }
 
 
@@ -539,7 +542,7 @@ extern "C" {
     PyObject* arg0;                                                    \
     if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )          \
       return ( NULL );                                                 \
-    cobject->FUNC_NAME ( PyInt_AsLong(arg0) );                         \
+    cobject->FUNC_NAME ( Isobar::PyAny_AsLong(arg0) );                 \
     HCATCH                                                             \
                                                                        \
     Py_RETURN_NONE;                                                    \

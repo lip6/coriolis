@@ -113,7 +113,6 @@ class HTree ( GaugeConfWrapper ):
     self.cell         = cell
     self.area         = area
     self.childs       = []
-   #self.bufferCell   = self.framework.getCell( 'buf_x2', CRL.Catalog.State.Logical )
     self._getBufferIo()
     self.tieCell      = self.framework.getCell( 'tie_x0', CRL.Catalog.State.Views )
     self.cellGauge    = self.framework.getCellGauge()
@@ -468,7 +467,9 @@ class HTreeNode ( object ):
 
     leafCk   = getPlugByName(leafBuffer,self.topTree.bufferOut).getNet()
     deepPlug = self.topTree.addDeepPlug( leafCk, plugOccurrence.getPath() )
-    plugOccurrence.getEntity().setNet( deepPlug.getMasterNet() )
+    if deepPlug:
+      leafCk = deepPlug.getMasterNet()
+    plugOccurrence.getEntity().setNet( leafCk )
 
     return
 

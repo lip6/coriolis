@@ -100,7 +100,7 @@ namespace Kite {
 
       bool   isPreRouted = false;
       bool   isFixed     = false;
-      size_t rpCount         = 0;
+      size_t rpCount     = 0;
 
       if (inet->isDeepNet()) {
         rpCount = 2;

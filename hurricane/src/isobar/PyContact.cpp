@@ -52,10 +52,12 @@ extern "C" {
   DirectGetLongAttribute(PyContact_getDx, getDx, PyContact,Contact)
   DirectGetLongAttribute(PyContact_getDy, getDy, PyContact,Contact)
 
-  DirectSetLongAttribute(PyContact_setX ,setX ,"Contact.setX" ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setY ,setY ,"Contact.setY" ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDx,setDx,"Contact.setDx",PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDy,setDy,"Contact.setDy",PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setX     ,setX     ,"Contact.setX"     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setY     ,setY     ,"Contact.setY"     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDx    ,setDx    ,"Contact.setDx"    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDy    ,setDy    ,"Contact.setDy"    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setWidth ,setWidth ,"Contact.setWidth" ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setHeight,setHeight,"Contact.setHeight",PyContact,Contact)
   accessorHook(getAnchorHook,PyContact,Contact)
 
   
@@ -131,6 +133,8 @@ extern "C" {
     , { "setY"           , (PyCFunction)PyContact_setY           , METH_VARARGS, "Sets the contact Y value." }
     , { "setDx"          , (PyCFunction)PyContact_setDx          , METH_VARARGS, "Sets the contact dx value." }
     , { "setDy"          , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
+    , { "setWidth"       , (PyCFunction)PyContact_setWidth       , METH_VARARGS, "Sets the contact width." }
+    , { "setHeight"      , (PyCFunction)PyContact_setHeight      , METH_VARARGS, "Sets the contact height." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
