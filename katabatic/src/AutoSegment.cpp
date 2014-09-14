@@ -534,16 +534,9 @@ namespace Katabatic {
 
   DbU::Unit  AutoSegment::getPPitch () const
   {
-    DbU::Unit    topPPitch     = getPitch();
-    DbU::Unit    bottomPPitch  = topPPitch;
-    unsigned int depth         = getDepth();
-
-    if (depth < Session::getDepth()) {
-      topPPitch = Session::getPitch( depth + ((_flags & SegSpinTop) ? 1 : 0) );
-    }
-    if (depth > 0) {
-      bottomPPitch = Session::getPitch( depth - ((_flags & SegSpinBottom) ? 1 : 0) );
-    }
+    unsigned int depth        = getDepth();
+    DbU::Unit    topPPitch    = Session::getPitch( depth + ( ((_flags & SegSpinTop) and (depth+1 < Session::getDepth())) ? 1 : 0) );
+    DbU::Unit    bottomPPitch = Session::getPitch( depth - ( ((_flags & SegSpinBottom) and (depth > 0))? 1 : 0) );
 
     return std::max( topPPitch, bottomPPitch );
   }

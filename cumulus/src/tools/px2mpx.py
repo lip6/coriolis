@@ -121,6 +121,8 @@ def px2mpx ( editor, pxCell ):
     raise ErrorMessage( 3, 'px2mpx.px2mpx(): Mandatory pxCell argument is None.' )
   mpxCell = None
 
+  print '\nProcessing', pxCell
+
   UpdateSession.open()
   try:
     if pxCell.getName() != 'padreal':
@@ -178,8 +180,9 @@ def px2mpx ( editor, pxCell ):
                                        )
         elif isinstance(component,Horizontal):
           dL, dW, mW = getDeltas( layer )
-          dLLeft  = dL
-          dLRight = dL
+          dLLeft        = dL
+          dLRight       = dL
+          skipComponent = False
 
           bb = component.getBoundingBox()
           if component.getSourceX() > component.getTargetX(): component.invert()
@@ -198,12 +201,16 @@ def px2mpx ( editor, pxCell ):
                   print '      Shrink right.'
                   dLRight = dL - DbU.fromLambda( 1.5 )
 
+                if layer.getName()[-1] == '4' and state == AllSpan:
+                  print '      Skipping component.'
+                  skipComponent = True
+
           width = mW
           if component.getWidth() > mW:
             width = component.getWidth()*2 + dW
 
          #print DbU.toLambda(bb.getWidth()), DbU.toLambda( dLLeft-dLRight)
-          if bb.getWidth()*2 > abs(dLLeft+dLRight):
+          if bb.getWidth()*2 > abs(dLLeft+dLRight) and not skipComponent:
             dupComponent = Horizontal.create( mpxNet
                                             , layer
                                             , component.getY       ()*2
@@ -212,11 +219,14 @@ def px2mpx ( editor, pxCell ):
                                             , component.getDxTarget()*2 + dLRight
                                             )
           else:
-            print '    Horizontal component too small, not converted'
+            print '    Horizontal component too small *or* skipped, not converted'
 
         elif isinstance(component,Vertical):
           dL, dW, mW = getDeltas( component.getLayer() )
-          dX = 0
+          dLTop         = dL
+          dLBottom      = dL
+          dX            = 0
+          skipComponent = False
 
           if component.getSourceY() > component.getTargetY(): component.invert()
           if isinstance(layer,RegularLayer):
@@ -237,7 +247,14 @@ def px2mpx ( editor, pxCell ):
                   dX  = 0
                   dW += DbU.fromLambda( -4.0 )
 
-          if dW < component.getWidth():
+                if layer.getName()[-1] == '5':
+                  if state == AllSpan:
+                    print '      Skipping component.'
+                    skipComponent = True
+                  else:
+                    dLTop = DbU.fromLambda(120.0) - component.getDyTarget()*2
+
+          if dW < component.getWidth() and not skipComponent:
             width = mW
             if component.getWidth() > mW:
               width = component.getWidth()*2 + dW
@@ -246,11 +263,11 @@ def px2mpx ( editor, pxCell ):
                                           , layer
                                           , component.getX       ()*2 + dX
                                           , width
-                                          , component.getDySource()*2 - dL
-                                          , component.getDyTarget()*2 + dL
+                                          , component.getDySource()*2 - dLBottom
+                                          , component.getDyTarget()*2 + dLTop
                                           )
           else:
-            print '    Vertical component too small, not converted'
+            print '    Vertical component too small *or* skipped, not converted'
 
         else:
           print '[WARNING] Unchanged component:', component

@@ -787,10 +787,10 @@ namespace Kite {
           }
           otherNet      = other->getNet();
           otherOverlap  = other->getCanonicalInterval();
-          otherIsGlobal = other->isGlobal() or other->isBlockage();
+          otherIsGlobal = other->isGlobal() or other->isBlockage() or other->isFixed();
         } else {
           otherOverlap.merge(other->getCanonicalInterval());
-          otherIsGlobal = otherIsGlobal or other->isGlobal() or other->isBlockage();
+          otherIsGlobal = otherIsGlobal or other->isGlobal() or other->isBlockage() or other->isFixed();
         }
       }
       if (not otherOverlap.isEmpty()) {

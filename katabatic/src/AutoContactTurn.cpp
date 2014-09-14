@@ -136,7 +136,8 @@ namespace Katabatic {
       }
       _vertical1 = static_cast<AutoVertical*>(segment);
     }
-    unsetFlags( CntInvalidatedCache  );
+
+    if (_horizontal1 and _vertical1) unsetFlags( CntInvalidatedCache  );
   }
 
 
