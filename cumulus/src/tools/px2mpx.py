@@ -71,7 +71,7 @@ def getDeltas ( layer ):
  #         , 'mW_METAL2'  : DbU.fromLambda(  4.0 )
  #         }
   deltas = { 'L_METAL1'   : DbU.fromLambda( -1.0 )
-           , 'L_METAL2'   : DbU.fromLambda(  3.0 )
+           , 'L_METAL2'   : DbU.fromLambda(  1.5 )
            , 'L_blockage2': DbU.fromLambda( -0.5 )
            , 'L_blockage4': DbU.fromLambda( -0.5 )
            , 'L_xWell'    : DbU.fromLambda(  6.0 )
@@ -82,7 +82,7 @@ def getDeltas ( layer ):
            , 'W_xWell'    : DbU.fromLambda( 12.0 )
            , 'W_blockage2': DbU.fromLambda( -1.0 )
            , 'mW_METAL1'  : DbU.fromLambda(  4.0 )
-           , 'mW_METAL2'  : DbU.fromLambda(  4.0 )
+           , 'mW_METAL2'  : DbU.fromLambda(  6.0 )
            }
 
   dL = 0
@@ -218,6 +218,7 @@ def px2mpx ( editor, pxCell ):
                                             , component.getDxSource()*2 - dLLeft
                                             , component.getDxTarget()*2 + dLRight
                                             )
+            print '    Copy:', dupComponent
           else:
             print '    Horizontal component too small *or* skipped, not converted'
 

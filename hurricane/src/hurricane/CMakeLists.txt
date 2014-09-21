@@ -49,6 +49,7 @@
                                 hurricane/Marker.h                hurricane/Markers.h
                                 hurricane/Name.h                  hurricane/Names.h
                                 hurricane/NetExternalComponents.h
+                                hurricane/NetRoutingProperty.h
                                 hurricane/Net.h                   hurricane/Nets.h
                                 hurricane/Occurrence.h            hurricane/Occurrences.h
                                 hurricane/Pad.h                   hurricane/Pads.h
@@ -140,6 +141,7 @@
                                 Pad.cpp
                                 RoutingPad.cpp
                                 NetExternalComponents.cpp
+                                NetRoutingProperty.cpp
                                 Reference.cpp
                                 Rubber.cpp
                                 Quark.cpp

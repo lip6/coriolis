@@ -26,13 +26,13 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/NetRoutingProperty.h"
 #include "hurricane/DeepNet.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Path.h"
 #include "hurricane/Query.h"
 #include "crlcore/AllianceFramework.h"
-#include "katabatic/NetRoutingProperty.h"
 #include "katabatic/AutoContact.h"
 #include "kite/RoutingPlane.h"
 #include "kite/TrackFixedSegment.h"
@@ -63,6 +63,8 @@ namespace Kite {
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using Hurricane::DeepNet;
   using Hurricane::Instance;
   using Hurricane::Plug;
@@ -78,8 +80,6 @@ namespace Kite {
   using Hurricane::DataBase;
   using CRL::AllianceFramework;
   using Hurricane::ForEachIterator;
-  using Katabatic::NetRoutingExtension;
-  using Katabatic::NetRoutingState;
   using Katabatic::AutoContact;
   using Katabatic::AutoSegment;
   using Katabatic::ChipTools;

@@ -177,8 +177,9 @@ namespace Kite {
     s += " " + getString(_dataState);
     s += "+" + getString(_ripupCount);
     s += ":" + getString((_dataState<<2)+_ripupCount);
-    s += " " + string ( (_blockage      )?"b":"-" );
-    s +=       string ( (_blockage      )?"f":"-" );
+    s += " " + string ( (_infinite      )?"I":"-" );
+    s +=       string ( (_blockage      )?"b":"-" );
+    s +=       string ( (_fixed         )?"f":"-" );
     s +=       string ( (_hardOverlap   )?"h":"-" );
     s +=       string ( (_overlap       )?"o":"-" );
     s +=       string ( (_overlapGlobal )?"g":"-" );

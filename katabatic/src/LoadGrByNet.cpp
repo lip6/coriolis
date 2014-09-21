@@ -921,25 +921,26 @@ namespace {
         _do_xG();
         break;
       default:
-        cerr << Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                     "      The global routing seems to be defective."
-                   , _connexity.connexity
-                   , _connexity.fields.globals
-                   , _connexity.fields.M1     
-                   , _connexity.fields.M2     
-                   , _connexity.fields.M3
-                   , _connexity.fields.Pin
-                   , _connexity.fields.Pad
-                   , _net->_getString().c_str()
-                   , getString(_gcell).c_str()
-                   ) << endl;
+        throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
+                   "      The global routing seems to be defective."
+                 , _connexity.connexity
+                 , _connexity.fields.globals
+                 , _connexity.fields.M1     
+                 , _connexity.fields.M2     
+                 , _connexity.fields.M3
+                 , _connexity.fields.Pin
+                 , _connexity.fields.Pad
+                 , _net->_getString().c_str()
+                 , getString(_gcell).c_str()
+                 );
         _do_xG();
     }
 
     if (straightLine) {
     // This a global router problem.
-      cerr << Bug( "Unmanaged configuration: straight line,\n"
+      cerr << Bug( "Unmanaged configuration: straight line in %s,\n"
                    "      The global routing seems to be defective."
+                 , _net->_getString().c_str()
                  ) << endl;
       return;
     } else {

@@ -107,23 +107,30 @@ extern "C" {
 
 
   // Standart Attribute.
+  DirectGetLongAttribute(PyRegularLayer_getExtentionCap  ,getExtentionCap  ,PyRegularLayer,RegularLayer)
+  DirectGetLongAttribute(PyRegularLayer_getExtentionWidth,getExtentionWidth,PyRegularLayer,RegularLayer)
+
   accessorLayerFromVoid(getBasicLayer         ,PyRegularLayer,RegularLayer)
   updatorFromBasicLayer(setBasicLayer         ,PyRegularLayer,RegularLayer)
-  DBoDestroyAttribute  (PyRegularLayer_destroy, PyRegularLayer)
+  DBoDestroyAttribute  (PyRegularLayer_destroy,PyRegularLayer)
 
 
   // ---------------------------------------------------------------
   // PyRegularLayer Attribute Method table.
 
   PyMethodDef PyRegularLayer_Methods[] =
-    { { "create"       , (PyCFunction)PyRegularLayer_create       , METH_VARARGS|METH_STATIC
-                       , "Create a new RegularLayer." }
-    , { "getBasicLayer", (PyCFunction)PyRegularLayer_getBasicLayer, METH_NOARGS
-                       , "Get the BasicLayer associated to this RegularLayer." }
-    , { "setBasicLayer", (PyCFunction)PyRegularLayer_setBasicLayer, METH_VARARGS
-                       , "Associate a BasicLayer with this RegularLayer." }
-    , { "destroy"      , (PyCFunction)PyRegularLayer_destroy      , METH_NOARGS
-                       , "destroy associated hurricane object, the python object remains." }
+    { { "create"           , (PyCFunction)PyRegularLayer_create           , METH_VARARGS|METH_STATIC
+                           , "Create a new RegularLayer." }
+    , { "getExtentionWidth", (PyCFunction)PyRegularLayer_getExtentionWidth, METH_NOARGS
+                           , "Return the width extension (delta)." }
+    , { "getExtentionCap"  , (PyCFunction)PyRegularLayer_getExtentionCap  , METH_NOARGS
+                           , "Return the cap extension (begin/end delta)." }
+    , { "getBasicLayer"    , (PyCFunction)PyRegularLayer_getBasicLayer    , METH_NOARGS
+                           , "Get the BasicLayer associated to this RegularLayer." }
+    , { "setBasicLayer"    , (PyCFunction)PyRegularLayer_setBasicLayer    , METH_VARARGS
+                           , "Associate a BasicLayer with this RegularLayer." }
+    , { "destroy"          , (PyCFunction)PyRegularLayer_destroy          , METH_NOARGS
+                           , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}  /* sentinel */
     };
 

@@ -26,12 +26,12 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/NetRoutingProperty.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Path.h"
 #include "hurricane/Query.h"
 #include "crlcore/AllianceFramework.h"
-#include "katabatic/NetRoutingProperty.h"
 #include "kite/RoutingPlane.h"
 #include "kite/TrackFixedSegment.h"
 #include "kite/Track.h"
@@ -55,6 +55,8 @@ namespace {
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using Hurricane::Instance;
   using Hurricane::Plug;
   using Hurricane::Path;
@@ -113,13 +115,13 @@ namespace {
     private:
              bool  guessGlobalNet ( const Name&, Net* );
     private:
-      Name  _vddeName;
-      Name  _vddiName;
-      Name  _vsseName;
-      Name  _vssiName;
-      Name  _ckName;
-      Name  _ckiName;
-      Name  _ckoName;
+      Name  _vddePadNetName;
+      Name  _vddiPadNetName;
+      Name  _vssePadNetName;
+      Name  _vssiPadNetName;
+      Name  _ckPadNetName;
+      Name  _ckiPadNetName;
+      Name  _ckoPadNetName;
       Net*  _vdde;
       Net*  _vddi;
       Net*  _vsse;
@@ -142,13 +144,13 @@ namespace {
   inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
   GlobalNetTable::GlobalNetTable ( KiteEngine* kite )
-    : _vddeName("vdde")
-    , _vddiName("vddi")
-    , _vsseName("vsse")
-    , _vssiName("vssi")
-    , _ckName  ("pad" )
-    , _ckiName ("ck"  )
-    , _ckoName ("cko" )
+    : _vddePadNetName("vdde")
+    , _vddiPadNetName("vddi")
+    , _vssePadNetName("vsse")
+    , _vssiPadNetName("vssi")
+    , _ckPadNetName  ("pad" )
+    , _ckiPadNetName ("ck"  )
+    , _ckoPadNetName ("cko" )
     , _vdde    (NULL)
     , _vddi    (NULL)
     , _vsse    (NULL)
@@ -214,7 +216,7 @@ namespace {
               }
             }
 
-            if (masterNet->getName() == _ckName) {
+            if (masterNet->getName() == _ckPadNetName) {
               cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
               _ck = net;
             }
@@ -236,17 +238,17 @@ namespace {
       if (_cki  == NULL) cerr << Warning("No <cki> net at (for pads) chip level." ) << endl;
       else destroyRing( _cki );
     } else {
-      _vddiName = "";
-      _vssiName = "";
-      _ckoName  = "";
+      _vddiPadNetName = "";
+      _vssiPadNetName = "";
+      _ckoPadNetName  = "";
 
       forEach ( Net*, inet, topCell->getNets() ) {
         if (NetRoutingExtension::isManualGlobalRoute(*inet)) continue;
 
         Net::Type netType = inet->getType();
         if (netType == Net::Type::POWER) {
-          if (_vddiName.isEmpty()) {
-            _vddiName =  inet->getName();
+          if (_vddiPadNetName.isEmpty()) {
+            _vddiPadNetName =  inet->getName();
             _vddi     = *inet;
           } else {
             cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
@@ -258,8 +260,8 @@ namespace {
         }
 
         if (netType == Net::Type::GROUND) {
-          if (_vssiName.isEmpty()) {
-            _vssiName =  inet->getName();
+          if (_vssiPadNetName.isEmpty()) {
+            _vssiPadNetName =  inet->getName();
             _vssi     = *inet;
           } else {
             cerr << Error("Second power ground net <%s> net at top block level will be ignored.\n"
@@ -271,9 +273,9 @@ namespace {
         }
 
         if (netType == Net::Type::CLOCK) {
-          if (_ckoName.isEmpty()) {
+          if (_ckoPadNetName.isEmpty()) {
             cmess1 << "        - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
-            _ckoName =  inet->getName();
+            _ckoPadNetName =  inet->getName();
             _cko     = *inet;
           } else {
             cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
@@ -297,43 +299,43 @@ namespace {
 
   bool  GlobalNetTable::guessGlobalNet ( const Name& name, Net* net )
   {
-    if (name == _vddeName) {
+    if (name == _vddePadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as corona (external:vdde) power net." << endl;
       _vdde = net;
       return true;
     }
 
-    if (name == _vddiName) {
+    if (name == _vddiPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as core (internal:vddi) power net." << endl;
       _vddi = net;
       return true;
     }
 
-    if (name == _vsseName) {
+    if (name == _vssePadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as corona (external:vsse) ground net." << endl;
       _vsse = net;
       return true;
     }
 
-    if (name == _vssiName) {
+    if (name == _vssiPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as core (internal:vssi) ground net." << endl;
       _vssi = net;
       return true;
     }
 
-    if (name == _ckiName) {
+    if (name == _ckiPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as corona (external:cki) clock net." << endl;
       _cki = net;
       return true;
     }
 
-    if (name == _ckoName) {
+    if (name == _ckoPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as core (internal:cko) clock net." << endl;
       _cko = net;
       return true;
     }
 
-    if (name == _ckName) {
+    if (name == _ckPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
       _ck = net;
       return true;
@@ -345,15 +347,17 @@ namespace {
 
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
-    ltrace(300) << "getRootNet:" << path << ":" << net << endl;
+    ltrace(300) << "    getRootNet:" << path << ":" << net << endl;
     if (net == _blockage) return _blockage;
 
-    if (net->getName() == _vddeName) return _vdde;
-    if (net->getName() == _vsseName) return _vsse;
+    if (net->getName() == _vdde->getName()) return _vdde;
+    if (net->getName() == _vsse->getName()) return _vsse;
 
     if (net->getType() == Net::Type::POWER ) return _vddi;
     if (net->getType() == Net::Type::GROUND) return _vssi;
-    if (net->getType() != Net::Type::CLOCK ) return NULL;
+    if (net->getType() != Net::Type::CLOCK ) {
+      return NULL;
+    }
 
     const Net* upNet = net;
 
@@ -377,9 +381,12 @@ namespace {
       }
     }
 
-    if (upNet->getName() == _ckName ) return _ck;
-    if (upNet->getName() == _ckiName) return _cki;
-    if (upNet->getName() == _ckoName) return _cko;
+    ltrace(300) << "      Check againts top clocks ck:" << _ck->getName()
+                << " cki:" << _cki->getName() << " cko:" << _cko->getName() << endl;
+
+    if (upNet->getName() == _ck->getName() ) return _ck;
+    if (upNet->getName() == _cki->getName()) return _cki;
+    if (upNet->getName() == _cko->getName()) return _cko;
 
     return NULL;
   }
@@ -1073,7 +1080,10 @@ namespace {
         rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
       else
         rootNet = _kite->getBlockageNet();
-      if ( rootNet == NULL ) return;
+      if ( rootNet == NULL ) {
+        ltrace(300) << "  rootNet is NULL, not taken into account." << endl;
+        return;
+      }
 
       ltrace(300) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
                   << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;

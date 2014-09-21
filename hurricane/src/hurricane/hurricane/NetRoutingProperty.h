@@ -14,33 +14,24 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATABATIC_NET_ROUTING_PROPERTY_H
-#define  KATABATIC_NET_ROUTING_PROPERTY_H
+#ifndef  HURRICANE_NET_ROUTING_PROPERTY_H
+#define  HURRICANE_NET_ROUTING_PROPERTY_H
 
 #include <string>
 #include <map>
 #include "hurricane/Name.h"
 #include "hurricane/Property.h"
 #include "hurricane/Slot.h"
+#include "hurricane/Net.h"
+
 
 namespace Hurricane {
-    class Net;
-}
-
-namespace Katabatic {
-
-  using Hurricane::_TName;
-  using Hurricane::Name;
-  using Hurricane::Record;
-  using Hurricane::PrivateProperty;
-  using Hurricane::DBo;
-  using Hurricane::Net;
 
   class NetRoutingProperty;
 
 
 // -------------------------------------------------------------------
-// Class  :  "Katabatic::NetRoutingState".
+// Class  :  "Hurricane::NetRoutingState".
 
   class NetRoutingState {
       friend class NetRoutingProperty;
@@ -88,7 +79,7 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Katabatic::NetRoutingProperty".
+// Class  :  "Hurricane::NetRoutingProperty".
 
   class NetRoutingProperty : public PrivateProperty {
       friend class NetRoutingExtension;
@@ -118,7 +109,7 @@ namespace Katabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Katabatic::NetRoutingExtension".
+// Class  :  "Hurricane::NetRoutingExtension".
 
   class NetRoutingExtension {
     public:
@@ -186,10 +177,10 @@ namespace Katabatic {
   }
 
 
-}  // Katabatic namespace.
+}  // Hurricane namespace.
 
 
-INSPECTOR_P_SUPPORT(Katabatic::NetRoutingState);
+INSPECTOR_P_SUPPORT(Hurricane::NetRoutingState);
 
 
-#endif   // KATABATIC_NET_ROUTING_PROPERTY_H
+#endif   // HURRICANE_NET_ROUTING_PROPERTY_H

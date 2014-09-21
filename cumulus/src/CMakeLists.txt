@@ -7,6 +7,7 @@
               set ( pyPlugins    ${CMAKE_CURRENT_SOURCE_DIR}/plugins/__init__.py
                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ChipPlugin.py
                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ClockTreePlugin.py
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/plugins/RSavePlugin.py
                   )
               set ( pyPluginCT   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/clocktree/__init__.py
                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/clocktree/RSMT.py

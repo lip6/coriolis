@@ -54,6 +54,7 @@ try:
   from   chip.Configuration import getPlugByName
   from   chip.Configuration import getRpBb
   from   chip.Configuration import destroyNetComponents
+  from   chip.Configuration import GaugeConf
   from   chip.Configuration import GaugeConfWrapper
 except ImportError, e:
   serror = str(e)
@@ -75,11 +76,6 @@ except Exception, e:
 
 
 class HTree ( GaugeConfWrapper ):
-
-  HAccess       = 0x0001
-  OffsetRight1  = 0x0002
-  OffsetTop1    = 0x0004
-  OffsetBottom1 = 0x0008
 
   @staticmethod
   def create ( conf, cell, clockNet, clockBox ):
@@ -263,25 +259,28 @@ class HTree ( GaugeConfWrapper ):
       if not node.component:
         x = node.realX
         if node.realX in self.usedVTracks:
-          x += self.routingGauge.getLayerGauge(self.verticalDepth).getPitch()
+          x += self.routingGauge.getLayerGauge(self.verticalDeepDepth).getPitch()
        # This is a Steiner point.
         node.component = self.createContact( net
                                            , x
-                                           , node.realY - self.routingGauge.getLayerGauge(self.horizontalDepth).getPitch() )
-        trace( 550, '\tCreate node.component: @Y%d (y:%d) %s\n' % (DbU.toLambda(node.realY)
-                                                                  ,DbU.toLambda(node.y)
-                                                                  ,node.component) )
+                                           , node.y + self.cellGauge.getSliceHeight()/2 - self.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch()
+                                           , GaugeConf.DeepDepth )
+        trace( 550, '\tCreate (Steiner) node.component: @Y%d (y:%d - %d) %s\n' \
+                 % (DbU.toLambda(node.realY)
+                   ,DbU.toLambda(node.y)
+                   ,DbU.toLambda(self.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch())
+                   ,node.component) )
       else:
        # This a terminal (graph) point
         for edge in node.edges:
-          flags = HTree.HAccess
+          flags = GaugeConf.HAccess|GaugeConf.DeepDepth
           if not edge.isHorizontal():
             if node.isSame(edge.source) or edge.isVertical():
-              flags = 0
+              flags &= ~GaugeConf.HAccess
               break
-        flags |= HTree.OffsetTop1
+        flags |= GaugeConf.OffsetTop1
         if node.realX in self.usedVTracks:
-          flags |= HTree.OffsetRight1
+          flags |= GaugeConf.OffsetRight1
         node.component = self.rpAccess( node.component, flags )
 
     for edge in mst.edges:
@@ -289,32 +288,33 @@ class HTree ( GaugeConfWrapper ):
       targetContact = edge.target.component
 
       if edge.isHorizontal():
-        self.createHorizontal( sourceContact, targetContact, targetContact.getY() )
+        self.createHorizontal( sourceContact, targetContact, targetContact.getY(), GaugeConf.DeepDepth )
       elif edge.isVertical():
-        self.createVertical  ( sourceContact, targetContact, sourceContact.getX() )
+        self.createVertical  ( sourceContact, targetContact, sourceContact.getX(), GaugeConf.DeepDepth )
       else:
         turn = self.createContact( edge.source.component.getNet()
                                  , sourceContact.getX()
-                                 , targetContact.getY() )
-        self.createVertical  ( sourceContact, turn, sourceContact.getX() )
-        self.createHorizontal( turn, targetContact, targetContact.getY() )
+                                 , targetContact.getY()
+                                 , GaugeConf.DeepDepth )
+        self.createVertical  ( sourceContact, turn, sourceContact.getX(), GaugeConf.DeepDepth )
+        self.createHorizontal( turn, targetContact, targetContact.getY(), GaugeConf.DeepDepth )
     return
 
   def _connectLeafs ( self, leafBuffer, leafs ):
     trace( 550, ',+', '\tBuffer <%s> has %i leafs.\n' % (leafBuffer.getName(),len(leafs)) )
-    if len(leafs) == 0: return
-
-    leafCk   = getPlugByName(leafBuffer,self.bufferOut).getNet()
-    bufferRp = self.rpByPlugName( leafBuffer, self.bufferOut, leafCk )
-
-    rsmt = RSMT( leafCk.getName() )
-    rsmt.addNode( bufferRp, bufferRp.getX(), self.toYCellGrid(bufferRp.getY()) )
-    for leaf in leafs:
-      registerRp = self.rpByOccurrence( leaf, leafCk )
-      rsmt.addNode( registerRp, registerRp.getX(), self.toYCellGrid(registerRp.getY()) )
-
-    rsmt.runI1S()
-    self._RSMTtoLayout( rsmt, leafCk )
+   #if len(leafs) == 0: return
+   #
+   #leafCk   = getPlugByName(leafBuffer,self.bufferOut).getNet()
+   #bufferRp = self.rpByPlugName( leafBuffer, self.bufferOut, leafCk )
+   #
+   #rsmt = RSMT( leafCk.getName() )
+   #rsmt.addNode( bufferRp, bufferRp.getX(), self.toYCellGrid(bufferRp.getY()) )
+   #for leaf in leafs:
+   #  registerRp = self.rpByOccurrence( leaf, leafCk )
+   #  rsmt.addNode( registerRp, registerRp.getX(), self.toYCellGrid(registerRp.getY()) )
+   #
+   #rsmt.runI1S()
+   #self._RSMTtoLayout( rsmt, leafCk )
 
     trace( 550, '-' )
     return
@@ -507,8 +507,8 @@ class HTreeNode ( object ):
   def route ( self ):
     if not self.hasLeafs(): return
 
-    leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
-    rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , HTree.HAccess|HTree.OffsetBottom1 )
+    leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+    rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
     blContact          = self.topTree.rpAccessByPlugName( self.blBuffer    , self.topTree.bufferIn , self.ckNet )
     brContact          = self.topTree.rpAccessByPlugName( self.brBuffer    , self.topTree.bufferIn , self.ckNet )
     tlContact          = self.topTree.rpAccessByPlugName( self.tlBuffer    , self.topTree.bufferIn , self.ckNet )

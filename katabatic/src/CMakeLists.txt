@@ -16,7 +16,6 @@ endif ( CHECK_DETERMINISM )
                        )
                    set ( includes      katabatic/Constants.h
 		                       katabatic/Observer.h
-		                       katabatic/NetRoutingProperty.h
                                        katabatic/Configuration.h
                                        katabatic/ChipTools.h
                                        katabatic/AutoContact.h
@@ -38,7 +37,6 @@ endif ( CHECK_DETERMINISM )
  	           set ( mocIncludes   katabatic/GraphicKatabaticEngine.h )
                    set ( cpps          Configuration.cpp
                                        Observer.cpp
-                                       NetRoutingProperty.cpp
                                        ChipTools.cpp
                                        AutoContact.cpp
                                        AutoContactTerminal.cpp

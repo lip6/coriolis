@@ -199,7 +199,7 @@ class Graph ( object ):
 
     def addNode  ( self, component, x, y ):
       self._nodes.append( Node( component, x, y ) )
-      return
+      return self._nodes[-1]
 
     def copyNode ( self, node ):
        self.addNode( node.component, node.x, node.y )
@@ -314,6 +314,11 @@ class RSMT ( Graph ):
           self._hananNodes.append( Node( None, x, y ) )
           self._hananNodes[-1].realY = realYs[ y ]
       trace( 550, ',--', "\n" )
+      return
+
+    def addNode  ( self, component, x, y ):
+      node = Graph.addNode( self, component, x, y )
+      trace( 550, '\t  New Node: %s\n' % node )
       return
 
     def runI1S ( self ):

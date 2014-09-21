@@ -39,11 +39,12 @@ import chip.Configuration
 class Side ( object ):
 
   def __init__ ( self, block, side, net, metal ):
-    self.block     = block
-    self.side      = side
-    self.net       = net
-    self.metal     = metal
-    self.terminals = [ ]
+    self.block      = block
+    self.side       = side
+    self.net        = net
+    self.metal      = metal
+    self.deltaWidth = metal.getExtentionWidth()*2
+    self.terminals  = [ ]
     return
 
   def addTerminal ( self, position, width ):
@@ -97,11 +98,11 @@ class Side ( object ):
     for terminal in self.terminals:
       if self.side == chip.West or self.side == chip.East:
         center = Point( x, terminal[0].getCenter() )
-        height = terminal[0].getSize()
+        height = terminal[0].getSize() - self.deltaWidth
         if height < minWidth: height = minWidth
       elif self.side == chip.North or self.side == chip.South:
         center = Point( terminal[0].getCenter(), y )
-        width = terminal[0].getSize()
+        width = terminal[0].getSize() - self.deltaWidth
         if width < minWidth: width = minWidth
 
       self.block.path.getTransformation().applyOn( center )

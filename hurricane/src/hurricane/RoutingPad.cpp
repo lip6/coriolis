@@ -338,9 +338,19 @@ namespace Hurricane {
           break;
         case BiggestArea:
         default:
-           if ( getArea(*icomponent) > getArea(bestComponent) )
-             bestComponent = *icomponent;
-           break;
+          {
+            double compArea = getArea(*icomponent);
+            double bestArea = getArea(bestComponent);
+
+            if (compArea == bestArea) {
+              if (icomponent->getId() < bestComponent->getId())
+                bestComponent = *icomponent;
+            } else {
+              if (compArea > bestArea)
+                bestComponent = *icomponent;
+            }
+          }
+          break;
       }
     }
 

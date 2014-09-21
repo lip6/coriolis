@@ -26,8 +26,8 @@
 #include "hurricane/Occurrence.h"
 #include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/NetRoutingProperty.h"
 #include "crlcore/Catalog.h"
-#include "katabatic/NetRoutingProperty.h"
 #include "katabatic/AutoContact.h"
 #include "katabatic/AutoSegment.h"
 #include "katabatic/GCell.h"
@@ -60,6 +60,8 @@ namespace {
   using Hurricane::Occurrence;
   using Hurricane::Path;
   using Hurricane::NetExternalComponents;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using CRL::CatalogExtension;
   using Katabatic::GCellGrid;
   using Katabatic::AutoContact;

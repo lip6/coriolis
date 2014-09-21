@@ -114,6 +114,7 @@ class GaugeConf ( object ):
     OffsetRight1  = 0x0002
     OffsetTop1    = 0x0004
     OffsetBottom1 = 0x0008
+    DeepDepth     = 0x0010
 
     def __init__ ( self ):
       self._cellGauge     = None
@@ -143,39 +144,56 @@ class GaugeConf ( object ):
                               % self._routingGauge.getDepth() )
         self._topLayerDepth = self._routingGauge.getDepth()
 
-      self._horizontalDepth = 0
-      self._verticalDepth   = 0
+      self._horizontalDepth     = -1
+      self._verticalDepth       = -1
+      self._horizontalDeepDepth = -1
+      self._verticalDeepDepth   = -1
       for depth in range(0,self._topLayerDepth+1):
+        if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
+          continue
         if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
+          if self._horizontalDeepDepth < 0:
+            self._horizontalDeepDepth = depth
           self._horizontalDepth = depth
         if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
+          if self._verticalDeepDepth < 0:
+            self._verticalDeepDepth = depth
           self._verticalDepth = depth
       return
 
-    def _createContact ( self, net, x, y ):
+    def _createContact ( self, net, x, y, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
+      else:                           depth = self._horizontalDepth
+
       return Contact.create( net
-                           , self._routingGauge.getContactLayer(self._horizontalDepth)
+                           , self._routingGauge.getContactLayer(depth)
                            , x, y
-                           , self._routingGauge.getLayerGauge(self._horizontalDepth).getViaWidth()
-                           , self._routingGauge.getLayerGauge(self._horizontalDepth).getViaWidth()
+                           , self._routingGauge.getLayerGauge(depth).getViaWidth()
+                           , self._routingGauge.getLayerGauge(depth).getViaWidth()
                            )
 
-    def _createHorizontal ( self, source, target, y ):
+    def _createHorizontal ( self, source, target, y, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
+      else:                           depth = self._horizontalDepth
+
       segment = Horizontal.create( source
                                  , target
-                                 , self._routingGauge.getRoutingLayer(self._horizontalDepth)
+                                 , self._routingGauge.getRoutingLayer(depth)
                                  , y
-                                 , self._routingGauge.getLayerGauge(self._horizontalDepth).getWireWidth()
+                                 , self._routingGauge.getLayerGauge(depth).getWireWidth()
                                  )
       trace( 550, segment )
       return segment
   
-    def _createVertical ( self, source, target, x ):
+    def _createVertical ( self, source, target, x, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self._verticalDeepDepth
+      else:                           depth = self._verticalDepth
+
       segment = Vertical.create( source
                                , target
-                               , self._routingGauge.getRoutingLayer(self._verticalDepth)
+                               , self._routingGauge.getRoutingLayer(depth)
                                , x
-                               , self._routingGauge.getLayerGauge(self._verticalDepth).getWireWidth()
+                               , self._routingGauge.getLayerGauge(depth).getWireWidth()
                                )
       trace( 550, segment )
       return segment
@@ -183,8 +201,15 @@ class GaugeConf ( object ):
     def _rpAccess ( self, rp, flags ):
       trace( 550, ',+', '\t_rpAccess() %s\n' % str(rp) )
 
-      hpitch    = self._routingGauge.getLayerGauge(self._horizontalDepth).getPitch()
-      hoffset   = self._routingGauge.getLayerGauge(self._horizontalDepth).getOffset()
+      if flags & GaugeConf.DeepDepth:
+        hdepth = self._horizontalDeepDepth
+        vdepth = self._verticalDeepDepth
+      else:
+        hdepth = self._horizontalDepth
+        vdepth = self._verticalDepth
+
+      hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
+      hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
       contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
       midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
                                                      + self._cellGauge.getSliceHeight() / 2
@@ -197,8 +222,8 @@ class GaugeConf ( object ):
 
       trace( 550, contact1 )
   
-      if flags & GaugeConf.HAccess: stopDepth = self._horizontalDepth
-      else:                         stopDepth = self._verticalDepth
+      if flags & GaugeConf.HAccess: stopDepth = hdepth
+      else:                         stopDepth = vdepth
   
       for depth in range(1,stopDepth):
         xoffset = 0
@@ -289,13 +314,17 @@ class GaugeConfWrapper ( object ):
     def gaugeConf ( self ): return self._gaugeConf
 
     @property
-    def routingGauge    ( self ): return self._gaugeConf._routingGauge
+    def routingGauge        ( self ): return self._gaugeConf._routingGauge
+    @property               
+    def topLayerDepth       ( self ): return self._gaugeConf._topLayerDepth
+    @property               
+    def horizontalDepth     ( self ): return self._gaugeConf._horizontalDepth
+    @property               
+    def verticalDepth       ( self ): return self._gaugeConf._verticalDepth
     @property
-    def topLayerDepth   ( self ): return self._gaugeConf._topLayerDepth
+    def horizontalDeepDepth ( self ): return self._gaugeConf._horizontalDeepDepth
     @property
-    def horizontalDepth ( self ): return self._gaugeConf._horizontalDepth
-    @property
-    def verticalDepth   ( self ): return self._gaugeConf._verticalDepth
+    def verticalDeepDepth   ( self ): return self._gaugeConf._verticalDeepDepth
 
     def loadRoutingGauge ( self ): self._gaugeConf._loadRoutingGauge()
 
@@ -314,14 +343,14 @@ class GaugeConfWrapper ( object ):
     def rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
       return self._gaugeConf._rpAccessByPlugName( instance, plugName, net, flags )
 
-    def createContact ( self, net, x, y ):
-      return self._gaugeConf._createContact( net, x, y )
+    def createContact ( self, net, x, y, flags=0 ):
+      return self._gaugeConf._createContact( net, x, y, flags )
 
-    def createHorizontal ( self, source, target, y ):
-      return self._gaugeConf._createHorizontal( source, target, y )
+    def createHorizontal ( self, source, target, y, flags=0 ):
+      return self._gaugeConf._createHorizontal( source, target, y, flags )
 
-    def createVertical ( self, source, target, x ):
-      return self._gaugeConf._createVertical( source, target, x )
+    def createVertical ( self, source, target, x, flags=0 ):
+      return self._gaugeConf._createVertical( source, target, x, flags )
 
 
 # -------------------------------------------------------------------
@@ -672,7 +701,10 @@ class ChipConfWrapper ( GaugeConfWrapper ):
 def loadConfiguration ( cell ):
     sys.path.append( os.getcwd() )
 
-    confFile   = cell.getName()+'_chip'
+    confFile = cell.getName()+'_chip'
+    if not os.path.isfile(confFile+'.py'):
+      raise ErrorMessage( 1, 'ChipPlugin configuration file <%s.py> is missing.' % confFile )
+    
     confModule = __import__( confFile, globals(), locals(), confFile )
 
     if not confModule.__dict__.has_key('chip'):

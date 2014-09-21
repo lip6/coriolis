@@ -252,9 +252,10 @@ namespace Katabatic {
 
         setLayer ( (delta == 0) ? rg->getRoutingLayer(depthContact) : rg->getContactLayer(depthContact) );
       }
+
+      _horizontal1->invalidate( this );
+      _vertical1  ->invalidate( this );
     }
-    _horizontal1->invalidate( this );
-    _vertical1  ->invalidate( this );
 
     ltraceout(110);
     DebugSession::close ();

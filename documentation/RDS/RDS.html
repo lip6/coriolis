@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<title></title>
+<meta name="date" content="16, september 2014" />
+<meta name="authors" content="Jean-Paul Chaput" />
+<link rel="stylesheet" href="./SoC.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Date:</th>
+<td>16, september 2014</td></tr>
+<tr><th class="docinfo-name">Authors:</th>
+<td>Jean-Paul Chaput</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td>&lt;<a class="reference external" href="mailto:alliance-users&#64;soc.lip6.fr">alliance-users&#64;soc.lip6.fr</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Version:</th>
+<td>0.1</td></tr>
+</tbody>
+</table>
+<!-- -*- Mode: rst -*- -->
+<!-- -*- Mode: rst -*- -->
+<!-- URLs that changes between the various backends. -->
+<!-- For HTML backend -->
+<!-- Stand-alone images. -->
+<!-- Direct LaTeX commands encapsulation. -->
+<!-- -*- Mode: rst -*- -->
+<!-- Acronyms & names. -->
+<!-- Tools -->
+<!-- RDS file syntax. -->
+<p><span class="raw-html"><br></span></p>
+<p><strong>Disclaimer:</strong> This document is still far from complete.</p>
+<p><span class="raw-html"><br></span></p>
+<div class="section" id="rds-file-format">
+<h1><a class="toc-backref" href="#id1">RDS File Format</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#rds-file-format" id="id1">RDS File Format</a><ul>
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#physical-grid-lambda-value" id="id3">Physical Grid &amp; Lambda Value</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-segment-table" id="id4">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-via-table" id="id5">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table" id="id6">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table" id="id7">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-wiresetting-table" id="id8">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><span class="raw-html"><br></span></p>
+<p><span class="raw-html"><br></span></p>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id2">Introduction</a></h2>
+<p>The RDS file control how a symbolic layout is transformed into it's real
+conterpart.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Unit used inside the RDS file:</strong> all units are expressed in micrometers.</p>
+</div>
+<p>Alliance tools relying on the RDS file, and what layers are active for them:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="16%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Tool</th>
+<th class="head">Name</th>
+<th class="head">RDS Flags</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Layout editor</td>
+<td><tt class="docutils literal">graal</tt></td>
+<td><tt class="docutils literal">ALL</tt></td>
+</tr>
+<tr><td>Design Rule Checker</td>
+<td><tt class="docutils literal">druc</tt></td>
+<td><tt class="docutils literal">ALL</tt>, <tt class="docutils literal">DRC</tt></td>
+</tr>
+<tr><td>Electrical extractor</td>
+<td><tt class="docutils literal">cougar</tt></td>
+<td><tt class="docutils literal">ALL</tt>, <tt class="docutils literal">EXT</tt></td>
+</tr>
+<tr><td>The symbolic to real layout translator</td>
+<td><tt class="docutils literal">s2r</tt></td>
+<td><tt class="docutils literal">ALL</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="physical-grid-lambda-value">
+<h2><a class="toc-backref" href="#id3">Physical Grid &amp; Lambda Value</a></h2>
+<p>RDS file:</p>
+<pre class="literal-block">
+DEFINE  PHYSICAL_GRID  0.005
+DEFINE  LAMBDA         0.09
+</pre>
+<p>Tells that the physical grid (founder grid) step is 0.005µm and the lambda has
+a value of 0.09µm. That is, one lambda is 18 grid steps.</p>
+<p>We can distinguish two kind of <span class="sc">rds</span> files:</p>
+<ul class="simple">
+<li>The <em>1µm</em> kind, odd segment widths and coordinates are allowed, but the <tt class="docutils literal">LAMBDA</tt>
+value <strong>must</strong> represent an <em>even</em> number of foundry grid step.</li>
+<li>The <em>2µm</em> kind, segments widths and coordinates must all be even. And in that case
+the <tt class="docutils literal">LAMBDA</tt> value can be any multiple of the foundry grid.</li>
+</ul>
+</div>
+<div class="section" id="the-mbk-to-rds-segment-table">
+<h2><a class="toc-backref" href="#id4">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></h2>
+<p>The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table control the way segments are translated into
+real rectangles. Be aware that we are translating <em>segments</em> and not <em>rectangles</em>.
+Segments are defined by their axis (source &amp; target points) and their width.
+The geometrical transformations are described according to that model.
+Obviously, they are either horizontal or vertical.</p>
+<p>The translation method of a symbolic segment is as follow:</p>
+<ol class="arabic">
+<li><p class="first">The segment is translated into one or more physical rectangles.
+The generated rectangles depends on the tool which is actually
+using <span class="sc">rds</span> and the flag for the considered real layer.
+For instance, real layers flagged with <tt class="docutils literal">DRC</tt> will be generated
+for <tt class="docutils literal">s2r</tt> (for the <tt class="docutils literal">cif</tt> or <tt class="docutils literal">gds</tt>) and <tt class="docutils literal">druc</tt>, but will not
+be shown under <tt class="docutils literal">graal</tt>.</p>
+</li>
+<li><p class="first">Translation into one real layer. <em>First</em> the source &amp; target coordinates and width
+of the symbolic segment are multiplied by the <tt class="docutils literal">LAMBDA</tt> value to obtain a real
+segment. <em>Then</em> one of the <tt class="docutils literal">VW</tt>, <tt class="docutils literal">LCW</tt> or <tt class="docutils literal">RCW</tt> transformation is applied to
+that segment to get the final real rectangle.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">VW</tt> for Variable Width, expand the real layer staying centered from the
+original one. In those rules, the third number is not used, it is only here
+to make the life easier for the parser...</p>
+<p><span class="raw-html"><center><img src="./images/RDS_VW.png"  alt="RDS Variable Width Rule"></center></span></p>
+</li>
+<li><p class="first"><tt class="docutils literal">LCW</tt> or <tt class="docutils literal">RCW</tt> for Left/Right Constant Width, create an off-center rectangle
+of fixed width relatively to the real segment. Note that the <tt class="docutils literal">SP</tt> number
+is the distance <em>between the edge</em> of the real segment and the edge of the
+generated real rectangle (<em>not</em> from the axis). It is often zero.</p>
+<p><span class="raw-html"><center><img src="./images/RDS_LCW.png" alt="RDS Left Constant Width Rule"></center></span></p>
+</li>
+</ul>
+</li>
+</ol>
+<p><span class="raw-html"><br></span></p>
+<p>Examples:</p>
+<pre class="literal-block">
+TABLE MBK_TO_RDS_SEGMENT
+
+    # (Case 1)
+    ALU1       RDS_ALU1   VW  0.18  0.09  0.0  ALL
+
+    # (Case 2)
+    NDIF       RDS_NDIF   VW  0.18  0.0   0.0  ALL \
+               RDS_ACTIV  VW  0.18  0.0   0.0  DRC \
+               RDS_NIMP   VW  0.36  0.36  0.0  DRC
+
+    # (Case 3)
+    NTRANS     RDS_POLY   VW  0.27  0.00  0.0  ALL \
+               RDS_GATE   VW  0.27  0.00  0.0  DRC \
+               RDS_NDIF  LCW  0.0   0.27  0.0  EXT \
+               RDS_NDIF  RCW  0.0   0.27  0.0  EXT \
+               RDS_NDIF   VW  0.0   0.72  0.0  DRC \
+               RDS_ACTIV  VW  0.0   0.72  0.0  ALL \
+               RDS_NIMP   VW  0.18  1.26  0.0  DRC
+
+END
+</pre>
+<p><span class="fboxtt">Case 1</span> the <tt class="docutils literal">ALU1</tt> is translated in exacltly one real rectangle of
+<tt class="docutils literal">RDS_ALU1</tt>, both ends are extended by 0.18µm and it's width is increased
+by 0.09µm.</p>
+<p><span class="fboxtt">Case 2</span> the <tt class="docutils literal">NDIF</tt> will be translated into only one segment
+under <tt class="docutils literal">graal</tt>, for symbolic visualization. And into three real rectangles
+for <tt class="docutils literal">s2r</tt> and <tt class="docutils literal">druc</tt>.</p>
+<p><span class="fboxtt">Case 3</span> the <tt class="docutils literal">NTRANS</tt>, associated to a transistor is a little bit
+more complex, the generated shapes are different for the extractor <tt class="docutils literal">cougar</tt>
+in one hand, and for both <tt class="docutils literal">druc</tt> &amp; <tt class="docutils literal">s2r</tt> in the other hand.</p>
+<ul>
+<li><p class="first">For the extractor (<tt class="docutils literal">EXT</tt> &amp; <tt class="docutils literal">ALL</tt> flags) there will be four rectangles
+generateds:</p>
+<ol class="arabic simple">
+<li>The gate (<tt class="docutils literal">RDS_GATE</tt>)</li>
+<li>The left diffusion of the transistor (source or drain) (<tt class="docutils literal">RDS_NDIF</tt>).</li>
+<li>The right diffusion of the transistor (drain or source) (<tt class="docutils literal">RDS_NDIF</tt>).</li>
+<li>The active area (<tt class="docutils literal">RDS_ACTIV</tt>).</li>
+</ol>
+<p>As the extractor must kept separate the source and the drain of the transistor,
+they are generated as two offset rectangles, using the <tt class="docutils literal">LCW</tt> and <tt class="docutils literal">RCW</tt> directives.</p>
+</li>
+<li><p class="first">For <tt class="docutils literal">s2r</tt> and <tt class="docutils literal">druc</tt> (<tt class="docutils literal">DRC</tt> and <tt class="docutils literal">ALL</tt>), five rectangles are generateds:</p>
+<ol class="arabic simple">
+<li>The poly (<tt class="docutils literal">RDS_POLY</tt>).</li>
+<li>The gate (<tt class="docutils literal">RDS_GATE</tt>).</li>
+<li>The diffusion, as one rectangle that covers both the <tt class="docutils literal">LCW</tt> and the <tt class="docutils literal">RCW</tt> (<tt class="docutils literal">RDS_NDIF</tt>).</li>
+<li>The active area (<tt class="docutils literal">RDS_ACTIV</tt>).</li>
+<li>The N implantation (<tt class="docutils literal">RDS_NIMP</tt>).</li>
+</ol>
+<p>In the layout send to the foundry, the source &amp; drain are draw as one rectangle
+across the gate area (the transistor being defined by the intersection of both
+rectangles).</p>
+</li>
+</ul>
+<p><span class="raw-html"><br></span></p>
+</div>
+<div class="section" id="the-mbk-to-rds-via-table">
+<h2><a class="toc-backref" href="#id5">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></h2>
+<p>This table is to translate <em>default</em> VIAs into real via. In the symbolic layout
+the default VIA is simply a point and a set of layers. All layers are converted
+in squares shapes centered on the VIA coordinate. The one dimension given is the
+size of the side of that square.</p>
+<p>Note that although we are refering to VIAs, which for the purists are between two
+metal layers, this table also describe <em>contacts</em>.</p>
+<p>Example:</p>
+<pre class="literal-block">
+TABLE MBK_TO_RDS_VIA
+
+    CONT_DIF_P RDS_PDIF  0.54 ALL \
+               RDS_CONT  0.18 ALL \
+               RDS_ALU1  0.36 ALL \
+               RDS_ACTIV 0.54 DRC \
+               RDS_PIMP  0.90 DRC
+
+    CONT_POLY  RDS_POLY  0.54 ALL \
+               RDS_CONT  0.18 ALL \
+               RDS_ALU1  0.36 ALL
+
+    CONT_VIA   RDS_ALU1  0.45 ALL \
+               RDS_VIA1  0.27 ALL \
+               RDS_ALU2  0.45 ALL
+
+END
+</pre>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>In CONT_DIF_P</strong> you may see that only three layers will be shown under
+<tt class="docutils literal">graal</tt>, but five will be generated in the <tt class="docutils literal">gds</tt> layout.</p>
+</div>
+</div>
+<div class="section" id="the-mbk-to-rds-bigvia-hole-table">
+<h2><a class="toc-backref" href="#id6">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></h2>
+<p>In <tt class="docutils literal">s2r</tt>, when generating BIGVIAs, the matrix of holes they contains is
+not draw relative to the position of the BIGVIA itself, but on a grid which
+is common througout all the design real layout. This is to allow overlap
+between two BIGVIA without risking the holes matrix to be not exactly overlapping.
+As a consequence, when visualizing the <tt class="docutils literal">gds</tt> file, the holes may not be centerend
+inside one individual BIGVIA.</p>
+<p>The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table define the global hole matrix for the whole
+design. The first number is the individual hole side and the second the grid step
+(center to center).</p>
+<p>Example:</p>
+<pre class="literal-block">
+TABLE MBK_TO_RDS_BIGVIA_HOLE
+
+    CONT_VIA   RDS_VIA1 0.27 0.27 ALL
+    CONT_VIA2  RDS_VIA2 0.27 0.27 ALL
+    CONT_VIA3  RDS_VIA3 0.27 0.27 ALL
+    CONT_VIA4  RDS_VIA4 0.27 0.27 ALL
+    CONT_VIA5  RDS_VIA5 0.36 0.36 ALL
+
+END
+</pre>
+<p><span class="raw-html"><br></span></p>
+</div>
+<div class="section" id="the-mbk-to-rds-bigvia-metal-table">
+<h2><a class="toc-backref" href="#id7">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></h2>
+<p>This table describe how the metal part of a BIGVIA is expanded (for the hole
+part, see the previous table <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt>). The rule give for each
+metal:</p>
+<ol class="arabic simple">
+<li>The <em>delta-with</em> (have to ask Franck).</li>
+<li>The <em>overhang</em>, the length the real rectangle is expanded on each side from
+the symbolic rectange.</li>
+</ol>
+<p>Example:</p>
+<pre class="literal-block">
+TABLE MBK_TO_RDS_BIGVIA_METAL
+
+    CONT_VIA  RDS_ALU1 0.0 0.09  ALL \
+              RDS_ALU2 0.0 0.09  ALL
+
+    CONT_VIA2 RDS_ALU2 0.0 0.09  ALL \
+              RDS_ALU3 0.0 0.09  ALL
+
+    CONT_VIA3 RDS_ALU3 0.0 0.09  ALL \
+              RDS_ALU4 0.0 0.09  ALL
+
+    CONT_VIA4 RDS_ALU4 0.0 0.09  ALL \
+              RDS_ALU5 0.0 0.09  ALL
+
+    CONT_VIA5 RDS_ALU5 0.0 0.09  ALL \
+              RDS_ALU6 0.0 0.18  ALL
+
+END
+</pre>
+<p><span class="raw-html"><br></span></p>
+</div>
+<div class="section" id="the-mbk-wiresetting-table">
+<h2><a class="toc-backref" href="#id8">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></h2>
+<p>From a strict standpoint this table shouldn't be here but put in a separate
+configuration file, because it contains informations only used by the symbolic
+layout tools (<tt class="docutils literal">ocp</tt>, <tt class="docutils literal">nero</tt>, <tt class="docutils literal">ring</tt>).</p>
+<p>This table defines the cell gauge the routing pitch and minimal (symbolic)
+wire width and minimal spacing for the routers. They are patly redundant.</p>
+<p>Example:</p>
+<pre class="literal-block">
+TABLE MBK_WIRESETTING
+
+    X_GRID             10
+    Y_GRID             10
+    Y_SLICE           100
+    WIDTH_VDD          12
+    WIDTH_VSS          12
+    TRACK_WIDTH_ALU8    0
+    TRACK_WIDTH_ALU7    4
+    TRACK_WIDTH_ALU6    4
+    TRACK_WIDTH_ALU5    4
+    TRACK_WIDTH_ALU4    3
+    TRACK_WIDTH_ALU3    3
+    TRACK_WIDTH_ALU2    3
+    TRACK_WIDTH_ALU1    3
+    TRACK_SPACING_ALU8  0
+    TRACK_SPACING_ALU7  4
+    TRACK_SPACING_ALU6  4
+    TRACK_SPACING_ALU5  4
+    TRACK_SPACING_ALU4  4
+    TRACK_SPACING_ALU3  4
+    TRACK_SPACING_ALU2  4
+    TRACK_SPACING_ALU1  3
+
+END
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>

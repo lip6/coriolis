@@ -16,8 +16,9 @@
 
 #include <climits>
 #include "hurricane/Warning.h"
-#include "hurricane/RoutingPad.h"
 #include "hurricane/Property.h"
+#include "hurricane/NetRoutingProperty.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
@@ -49,6 +50,8 @@
 namespace Knik {
 
   using Hurricane::Warning;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using CRL::addMeasure;
   using CRL::RoutingGauge;
   using CRL::RoutingLayerGauge;
@@ -392,7 +395,8 @@ void KnikEngine::saveSolution ( const string& fileName )
       if (   net->isGlobal()
          or  net->isSupply()
          or  net->isClock()
-         or (net->getName() == obstacleNetName) ) continue;
+         or (net->getName() == obstacleNetName) 
+         or not NetRoutingExtension::isAutomaticGlobalRoute(*net) ) continue;
       all_nets.push_back(*net);
     }
     stable_sort ( all_nets.begin(), all_nets.end(), netId_sort ); 

@@ -33,6 +33,7 @@ from   CRL import RoutingLayerGauge
 from   helpers   import trace
 from   helpers   import ErrorMessage
 from   helpers   import WarningMessage
+import plugins
 from   plugins   import StackedVia
 import chip.BlockPower
 
@@ -365,8 +366,8 @@ class EastSide ( VerticalSide ):
 class Corona ( object ):
 
     def __init__ ( self, block ):
-        if not isinstance(block,chip.BlockPower.Block):
-            raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
+       #if not isinstance(block,plugins.chip.BlockPower.Block):
+       #    raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
 
         self._railsNb    = Cfg.getParamInt('chip.block.rails.count').asInt()
         self._hRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt() )

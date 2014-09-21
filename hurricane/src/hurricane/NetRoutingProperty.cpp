@@ -14,11 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
-#include  "katabatic/NetRoutingProperty.h"
+#include  "hurricane/NetRoutingProperty.h"
 #include  "hurricane/Net.h"
 
 
-namespace Katabatic {
+namespace Hurricane {
 
   using namespace std;
   using Hurricane::Property;
@@ -50,7 +50,7 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "NetRoutingProperty"
 
-  Name  NetRoutingProperty::_name = "Katabatic NetRouting State";
+  Name  NetRoutingProperty::_name = "Hurricane NetRouting State";
 
 
   NetRoutingProperty* NetRoutingProperty::create ( Net* owner )
@@ -135,4 +135,4 @@ namespace Katabatic {
   }
 
 
-}  // Katabatic namespace.
+}  // Hurricane namespace.

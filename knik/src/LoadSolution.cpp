@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -21,6 +21,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Layer.h"
+#include "hurricane/NetRoutingProperty.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
@@ -29,6 +30,8 @@
 #include "hurricane/UpdateSession.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/CellGauge.h"
 #include "knik/Configuration.h"
 #include "knik/Graph.h"
 #include "knik/KnikEngine.h"
@@ -44,6 +47,7 @@ namespace {
   using std::make_pair;
 
   using CRL::IoFile;
+  using CRL::AllianceFramework;
 
   using Hurricane::ForEachIterator;
   using Hurricane::Error;
@@ -56,6 +60,8 @@ namespace {
   using Hurricane::Technology;
   using Hurricane::Layer;
   using Hurricane::Net;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using Hurricane::Contact;
   using Hurricane::Segment;
   using Hurricane::Vertical;
@@ -284,11 +290,12 @@ namespace {
   void SolutionParser::load ()
   {
     UpdateSession::open();
-
     
     try {
       cmess1 << "  o  Loading solution: \"" << _fileName << "\"." << endl;
 
+
+      DbU::Unit   sliceHeight = AllianceFramework::get()->getCellGauge()->getSliceHeight();
       CRL::IoFile fileStream ( _fileName );
       fileStream.open( "r" );
       if (not fileStream.isOpen())
@@ -376,24 +383,26 @@ namespace {
 
           Box         rpBox;
           RoutingPad* previousRp  = NULL;
-          forEach ( RoutingPad*, rp, net->getRoutingPads() ) {
-            rpBox.merge( rp->getBoundingBox() );
-            Contact* gcontact = contactMap.findVertexContact( rp->getBoundingBox() );
-            if (gcontact) {
-              rp->getBodyHook()->attach( gcontact->getBodyHook() );
-            } else {
-              if (previousRp)
-                rp->getBodyHook()->attach( previousRp->getBodyHook() );
+          if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
+            forEach ( RoutingPad*, rp, net->getRoutingPads() ) {
+              rpBox.merge( rp->getBoundingBox() );
+              Contact* gcontact = contactMap.findVertexContact( rp->getBoundingBox() );
+              if (gcontact) {
+                rp->getBodyHook()->attach( gcontact->getBodyHook() );
+              } else {
+                if (previousRp)
+                  rp->getBodyHook()->attach( previousRp->getBodyHook() );
+              }
+              previousRp = *rp;
+              ++nbRoutingPad;
+            //cerr << rp->_getString() << " should be attached to " << gcontact << endl;
             }
-            previousRp = *rp;
-            ++nbRoutingPad;
-          //cerr << rp->_getString() << " should be attached to " << gcontact << endl;
           }
 
-          if ( (nbRoutingPad > 1)
+          if (   (nbRoutingPad > 1)
              and (not contactMap.size())
-             and (  (rpBox.getHeight() > DbU::fromLambda(50.0))
-                 or (rpBox.getWidth () > DbU::fromLambda(50.0)) ) ) {
+             and (  (rpBox.getHeight() > sliceHeight)
+                 or (rpBox.getWidth () > sliceHeight) ) ) {
             ++missingGlobalRouting;
             cerr << Warning( "Net <%s> is missing global routing."
                            , getString(net->getName()).c_str() ) << endl;

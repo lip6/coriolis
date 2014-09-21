@@ -290,10 +290,11 @@ namespace Katabatic {
           }
         }
       }
+
+      _horizontal1->invalidate( this );
+      _vertical1  ->invalidate( this );
+      _vertical2  ->invalidate( this );
     }
-    _horizontal1->invalidate( this );
-    _vertical1  ->invalidate( this );
-    _vertical2  ->invalidate( this );
 
     ltraceout(110);
     DebugSession::close ();

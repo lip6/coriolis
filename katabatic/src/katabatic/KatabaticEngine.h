@@ -27,6 +27,7 @@
 #include  "hurricane/Torus.h"
 #include  "hurricane/Layer.h"
 #include  "hurricane/Net.h"
+#include  "hurricane/NetRoutingProperty.h"
 
 namespace Hurricane {
   class Name;
@@ -43,7 +44,6 @@ namespace CRL {
 
 #include  "katabatic/Constants.h"
 #include  "katabatic/Configuration.h"
-#include  "katabatic/NetRoutingProperty.h"
 #include  "katabatic/GCell.h"
 #include  "katabatic/AutoSegments.h"
 #include  "katabatic/AutoContact.h"
@@ -64,6 +64,8 @@ namespace Katabatic {
   using Hurricane::Nets;
   using Hurricane::Cell;
   using Hurricane::Instance;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::NetRoutingState;
   using CRL::RoutingGauge;
   using CRL::RoutingLayerGauge;
   using CRL::ToolEngine;
