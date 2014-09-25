@@ -343,8 +343,20 @@ namespace Hurricane {
             double bestArea = getArea(bestComponent);
 
             if (compArea == bestArea) {
-              if (icomponent->getId() < bestComponent->getId())
-                bestComponent = *icomponent;
+              Box compBox  = icomponent->getBoundingBox();
+              Box bestBox  = bestComponent->getBoundingBox();
+
+              if (compBox.getXMin() == bestBox.getXMin()) {
+                if (compBox.getYMin() == bestBox.getYMin()) {
+                  if (icomponent->getId() < bestComponent->getId())
+                    bestComponent = *icomponent;
+                } else
+                  if (compBox.getYMin() < bestBox.getYMin())
+                    bestComponent = *icomponent;
+              } else {
+                if (compBox.getXMin() < bestBox.getXMin())
+                  bestComponent = *icomponent;
+              }
             } else {
               if (compArea > bestArea)
                 bestComponent = *icomponent;
