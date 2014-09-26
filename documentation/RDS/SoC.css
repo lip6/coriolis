@@ -1,11 +1,37 @@
 
 html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
   font-size:                   96%;
-  /*
-  font-family:                 verdana, sans-serif;
-  */
-  font-family:                 "Open Sans", sans-serif;
+  font-family:                 "Open Sans", verdana, sans-serif;
 }
+
+p, li {
+  text-align:                  justify;
+}
+
+.sc {
+  font-variant:                small-caps;
+  font-size:                   120%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family:                 "Open Sans", verdana, sans-serif;
+}
+
+h1                 { text-align:     center;
+                     border-top:     2px solid #09550b; 
+                     border-bottom:  2px solid #09550b; 
+                     padding-top:    7pt;
+                     padding-bottom: 7pt;
+                   }
+h2, h3, h4, h5, h6 { text-align:  left; }
+h1, h2, h3         { font-family: "Open Sans";
+                   }
+h1                 { font-weight:  normal;     font-size: 170%; padding-top: 7pt; margin-top: 25pt; }
+h2                 { font-weight:  normal;     font-size: 140%; padding-top: 7pt; margin-top: 25pt; }
+h3                 { font-weight:  bold;       font-size: 118%; padding-top: 7pt; margin-top: 25pt; }
+h4                 { font-weight:  bold;       font-size: 100%; }
+h5                 { font-style:   italic;     font-size: 100%; }
+h6                 { font-variant: small-caps; font-size: 100%; }
 
 body {
   color:                       black;
@@ -18,32 +44,16 @@ body {
   background-attachment:       fixed;
   background-repeat:           no-repeat;
   margin:                      0 0 0 0;
-  padding:                     0 0 0 0;
-  margin-right:                10%;
-  margin-left:                 30%;
+  padding:                     20pt;
+  width:                       550pt;
+  margin-right:                auto;
+  margin-left:                 auto;
+  margin-top:                  20pt;
+  margin-bottom:               20pt;
+  -moz-box-shadow:             4px 4px 5px 3px #ccc;
+  -webkit-box-shadow:          4px 4px 5px 3px #ccc;
+  box-shadow:                  4px 4px 5px 3px #ccc;
 }
-
-body.gsummary {
-  margin-right:                10%;
-  margin-left:                 10%;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family:                 "Open Sans", sans-serif;
-}
-
-h1                 { text-align:  left; }
-h2, h3, h4, h5, h6 { text-align:  left; }
-h1, h2, h3         { font-family: "Serif";
-                   }
-h1                 { font-weight:  normal;     font-size: 170%; padding-top: 7pt; margin-top: 25pt; }
-h2                 { font-weight:  normal;     font-size: 140%; padding-top: 7pt; margin-top: 25pt; }
-h3                 { font-weight:  bold;       font-size: 118%; padding-top: 7pt; margin-top: 25pt; }
-h4                 { font-weight:  bold;       font-size: 100%; }
-h5                 { font-style:   italic;     font-size: 100%; }
-h6                 { font-variant: small-caps; font-size: 100%; }
-
-body.gsummary h1   { text-align: center;       font-size: 220%; }
 
 hr {
   color:                       #09550b;
@@ -57,21 +67,34 @@ div#contents {
   margin:             30pt;
   padding:            2pt 10pt;
   background-color:   #fff676;
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+
+/*  Shadow explanation:
+ *  The shadow is a rectangle the same size as the box. It is then shifted
+ *  blurred according to the following parameters.
+ *
+ *  1. The horizontal offset of the shadow, positive means the shadow will be
+ *     on the right of the box, a negative offset will put the shadow on the
+ *     left of the box.
+ *  2. The vertical offset of the shadow, a negative one means the box-shadow
+ *     will be above the box, a positive one means the shadow will be below
+ *     the box.
+ *  3. The blur radius (optional), if set to 0 the shadow will be sharp,
+ *     the higher the number, the more blurred it will be.
+ *  4. The spread radius (optional), positive values increase the size of the
+ *     shadow, negative values decrease the size. Default is 0 (the shadow is
+ *     same size as blur).
+ *  5. Color
+ */
 }
+
 
 div#centered {
   margin-left:                 auto;
   margin-right:                auto;
   text-align:                  center;
-}
-
-p, li {
-  text-align:                  justify;
-}
-
-.sc {
-  font-variant:                small-caps;
-  font-size:                   110%;
 }
 
 pre, tt, code {
@@ -114,30 +137,8 @@ a:hover, a:focus, a:visited {
   border-bottom:               1px dotted #09550b; 
 }
 
-body.gsummary a:link, a:active {
-  font-size:                   140%;
-  font-weight:                 bold;
-  text-decoration:             none;
-  color:                       #09550b;
-  border-bottom:               none;
-  /*
-  border-bottom:               1px dotted #09550b; 
-  */
-}
-
-body.gsummary a:hover, a:focus, a:visited {
-  font-size:                   120%;
-  font-weight:                 bold;
-  font-style:                  italic;
-  text-decoration:             none;
-  /*
-  color:                       #A40010;
-  border-bottom:               1px dotted #A40010; 
-  */
-  color:                       #09550b;
-  /*
-  border-bottom:               1px dotted #09550b; 
-  */
+h1 a:link {
+  border-bottom:               0px; 
 }
 
 p.credit {
@@ -586,55 +587,14 @@ div.topic p.first {
   font-weight:        bold;
 }
 
-body.gsummary table {
-  border-collapse: collapse;
-  border-color:    transparent;
-  width:           60%;
-  margin-left:     auto;
-  margin-right:    auto;
-}
-
-/*
-body.gsummary table th {
-}
-*/
-
-body.gsummary table td {
-  border: none;
-}
-
-/*
-body.gsummary table tr td ul {
-  margin:          0pt;
-  border-left:     1px solid black;
-}
-*/
-
-/*
-body.gsummary table tr td ul li {
-  border-bottom:   2px dotted black;
-}
-*/
-
-body.gsummary li {
-  padding:           0%;
-  list-style-type:   none;
-}
-
-body.gsummary ul {
-  padding:         0px 0px 10px 0px;
-  margin:          0%;
-  border-bottom:   1px dotted black;
-}
-
 table.wiki th, table th {
   color:                       black;
   background:                  #FFFFCC;
 }
 
 table.docutils {
-  margin-left:    5%;
-  margin-right:   5%;
+  margin-left:    10%;
+  margin-right:   10%;
 }
 
 table.wiki, table.wiki th, table.wiki td { border:          1px solid black; }
@@ -700,13 +660,13 @@ span.cb {
   white-space:                 pre;
 }
 
-span.fboxtt {
+span.fboxtt {                  
   border:                      1px solid black;
   padding:                     0px 4px;
   font-family:                 "andale mono", monospace;
   font-weight:                 bold;
-  white-space:                 pre;
-}
+  white-space:                 pre;  
+} 
 
 #notice.system-message, .notice.system-message {
   color:                       black;

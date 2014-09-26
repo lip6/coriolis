@@ -5,9 +5,762 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title></title>
-<meta name="date" content="16, september 2014" />
+<meta name="date" content="26, september 2014" />
 <meta name="authors" content="Jean-Paul Chaput" />
-<link rel="stylesheet" href="./SoC.css" type="text/css" />
+<style type="text/css">
+
+
+html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
+  font-size:                   96%;
+  font-family:                 "Open Sans", verdana, sans-serif;
+}
+
+p, li {
+  text-align:                  justify;
+}
+
+.sc {
+  font-variant:                small-caps;
+  font-size:                   120%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family:                 "Open Sans", verdana, sans-serif;
+}
+
+h1                 { text-align:     center;
+                     border-top:     2px solid #09550b; 
+                     border-bottom:  2px solid #09550b; 
+                     padding-top:    7pt;
+                     padding-bottom: 7pt;
+                   }
+h2, h3, h4, h5, h6 { text-align:  left; }
+h1, h2, h3         { font-family: "Open Sans";
+                   }
+h1                 { font-weight:  normal;     font-size: 170%; padding-top: 7pt; margin-top: 25pt; }
+h2                 { font-weight:  normal;     font-size: 140%; padding-top: 7pt; margin-top: 25pt; }
+h3                 { font-weight:  bold;       font-size: 118%; padding-top: 7pt; margin-top: 25pt; }
+h4                 { font-weight:  bold;       font-size: 100%; }
+h5                 { font-style:   italic;     font-size: 100%; }
+h6                 { font-variant: small-caps; font-size: 100%; }
+
+body {
+  color:                       black;
+  background:                  white;
+  /*
+  background:                  #09550B;
+  background-color:            white;
+  */
+  background-position:         top left;
+  background-attachment:       fixed;
+  background-repeat:           no-repeat;
+  margin:                      0 0 0 0;
+  padding:                     20pt;
+  width:                       550pt;
+  margin-right:                auto;
+  margin-left:                 auto;
+  margin-top:                  20pt;
+  margin-bottom:               20pt;
+  -moz-box-shadow:             4px 4px 5px 3px #ccc;
+  -webkit-box-shadow:          4px 4px 5px 3px #ccc;
+  box-shadow:                  4px 4px 5px 3px #ccc;
+}
+
+hr {
+  color:                       #09550b;
+  border:                      1px dotted #09550b;
+  border-style:                none none dotted;
+  padding-top:                 10pt;
+  padding-bottom:              10pt;
+}
+
+div#contents {
+  margin:             30pt;
+  padding:            2pt 10pt;
+  background-color:   #fff676;
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+
+/*  Shadow explanation:
+ *  The shadow is a rectangle the same size as the box. It is then shifted
+ *  blurred according to the following parameters.
+ *
+ *  1. The horizontal offset of the shadow, positive means the shadow will be
+ *     on the right of the box, a negative offset will put the shadow on the
+ *     left of the box.
+ *  2. The vertical offset of the shadow, a negative one means the box-shadow
+ *     will be above the box, a positive one means the shadow will be below
+ *     the box.
+ *  3. The blur radius (optional), if set to 0 the shadow will be sharp,
+ *     the higher the number, the more blurred it will be.
+ *  4. The spread radius (optional), positive values increase the size of the
+ *     shadow, negative values decrease the size. Default is 0 (the shadow is
+ *     same size as blur).
+ *  5. Color
+ */
+}
+
+
+div#centered {
+  margin-left:                 auto;
+  margin-right:                auto;
+  text-align:                  center;
+}
+
+pre, tt, code {
+  font-family:                 "courrier", "andale mono", monospace;
+  font-size:                   100%;
+  white-space:                 pre;
+}
+
+tt {
+  color:                       #09550b;
+}
+
+pre.wiki, div.code, pre.literal-block {
+  font-size:                   90%;
+  padding:                     5pt;
+  margin-left:                 4%;
+  margin-right:                4%;
+  border:                      dashed;
+  border-width:                thin;
+  border-color:                #FC8676;
+  background-color:            #FCFCE1;
+}
+
+a:link, a:active {
+  font-weight:                 normal;
+  text-decoration:             none;
+  color:                       #09550b;
+  border-bottom:               1px dotted #09550b; 
+}
+
+a:hover, a:focus, a:visited {
+  font-weight:                 normal;
+  font-style:                  italic;
+  text-decoration:             none;
+  /*
+  color:                       #A40010;
+  border-bottom:               1px dotted #A40010; 
+  */
+  color:                       #09550b;
+  border-bottom:               1px dotted #09550b; 
+}
+
+h1 a:link {
+  border-bottom:               0px; 
+}
+
+p.credit {
+  margin-left:                 10%;
+  margin-right:                10%;
+  font-size:                   110%;
+}
+
+p.credit span.left {
+  float:                       left;
+  white-space:                 nowrap;
+}
+
+p.credit span.right {
+  float:                       right;
+  white-space:                 nowrap;
+}
+
+img.addborder {
+  border:                      1px solid black; 
+}
+
+div#header {
+  margin:                      0px;
+  padding:                     0pt;
+  background-color:            white;
+  display:                     inline-block;
+  width:                       100%;
+}
+
+div#header_logo {
+  margin:                      0px;
+  padding:                     10px 0px 10px 12pt;
+  background-color:            white;
+  width:                       40%;
+  float:                       left;
+}
+
+div#header_menus {
+  background-color:            white;
+  width:                       55%;
+  float:                       right;
+  padding-top:                 60pt;
+  padding-right:               10pt;
+  text-align:                  right;
+  font-size:                   80%;
+}
+
+div#header_menus ul {
+  padding-top:                 45pt;
+  list-style:                  none;
+  text-align:                  right;
+  font-size:                   80%;
+}
+
+div#header_menus li {
+  padding:                     0pt;
+  margin:                      0pt;
+  display:                     inline;
+  white-space:                 nowrap;
+}
+
+/*
+div#header_menus a {
+  border-left:                 1px solid #d7d7d7;
+  padding:                     0 .75em;
+}
+
+div#header_menus a.first {
+  border-left:                none;
+}
+*/
+
+div#header a:link, div#header a:active, div#header a:visited {
+  margin:                      0pt;
+  padding:                     0pt 5pt;
+  font-weight:                 normal;
+  color:                       black;
+  text-decoration:             none;
+  border-bottom:               1px solid black; 
+  border-left:                 0px;
+  border-right:                0px;
+}
+
+div#header a:hover, div#header a:focus {
+  margin:                      0pt;
+  padding:                     0pt 5pt;
+  font-weight:                 normal;
+  color:                       black;
+  text-decoration:             none;
+  border-bottom:               4px solid #09550b; 
+  border-left:                 0px;
+  border-right:                0px;
+}
+
+div#header a.current:link, div#header a.current:active, div#header a.current:visited {
+  margin:                      0pt;
+  padding:                     0pt 5pt;
+  font-weight:                 bold;
+  font-style:                  normal;
+  font-size:                   120%;
+  color:                       white;
+  text-decoration:             none;
+  border-bottom:               4px solid #09550b; 
+  border-left:                 0px;
+  border-right:                0px;
+  background-color:            #09550b;
+}
+
+div#header a.current:hover, div#header a.current:focus {
+  margin:                      0pt;
+  padding:                     0pt 5pt;
+  font-weight:                 bold;
+  font-style:                  normal;
+  font-size:                   120%;
+  color:                       white;
+  text-decoration:             none;
+  border-bottom:               4px solid #09550b; 
+  border-left:                 0px;
+  border-right:                0px;
+  background-color:            #09550b;
+}
+
+div#header_ancestors {
+  padding:                     4px 0px 4px 12pt;
+  background-color:            #09550B;
+  color:                       white;
+}
+
+div#header_ancestors ul, div#header_ancestors * li {
+  display:                     inline;
+  list-style-type:             none;
+  padding:                     0px 0px 0px 0pt;
+}
+
+div#header_ancestors a:link, div#header_ancestors a:active, div#header_ancestors a:visited {
+  font-weight:                 bold;
+  color:                       white;
+  text-decoration:             none;
+  border-bottom:               0px;
+}
+
+div#header_ancestors a:hover, div#header_ancestors a:focus {
+  font-weight:                 bold;
+  color:                       white;
+  text-decoration:             underline;
+}
+
+div#footer {
+  margin:                      0px;
+  padding:                     0px;
+  border-top:                  1px dotted #09550b; 
+  background-color:            white;
+  display:                     inline-block;
+  width:                       100%;
+  text-align:                  right;
+}
+
+div#searchform {
+  width:                       80%;
+  background-color:            #ccffcd;
+  padding:                     15pt 10pt 15pt 10pt;
+  margin-top:                  50pt;
+  margin-bottom:               50pt;
+  margin-left:                 auto;
+  margin-right:                auto;
+  text-align:                  center;
+}
+
+div#searchform input#id_q {
+  background-color:            white;
+  border:                      1px solid #09550b;
+  padding:                     2pt;
+  width:                       80%;
+  font-size:                   110%;
+  font-weight:                 bold;
+}
+
+span.queryref {
+  font-weight:                 bold;
+}
+
+div#searchform ul {
+  list-style:                  none;
+}
+
+div#searchform li {
+  display:                     inline;
+}
+
+hr#search_vs_results {
+  color:                       #09550b;
+  border:                      2px dotted #09550b;
+  border-style:                none none dotted;
+  margin-top:                  0pt;
+  margin-bottom:               20pt;
+}
+
+div#search_results {
+  width:                       85%;
+  margin:                      auto;
+}
+
+div#sidebar hr#separator {
+  color:                       white;
+  border:                      0px;
+  margin-top:                  0pt;
+  margin-bottom:               20pt;
+}
+
+img.footer-logo {
+  height:                      24px;
+  padding:                     0px 2px;
+}
+
+hr#site_vs_page {
+  color:                       white;
+  border:                      3px dotted white;
+  border-style:                none none dotted;
+  margin-top:                  20pt;
+  margin-bottom:               20pt;
+}
+
+div#sidebar {
+  /*
+  background:                  #09550B;
+  background:                  #ccffcd;
+  */
+  background:                  white;
+}
+
+div#sidebar div#sitemenu, div#sidebar div#pagemenu {
+  /*
+  background:                  white;
+  */
+  background:                  #09550b;
+  width:                       85%;
+  margin:                      auto;
+  padding:                     5pt 10pt;
+}
+
+div#sidebar * li {
+  text-align:                  left;
+}
+
+div#sidebar * ul {
+  list-style-type:             square;
+  padding-left:                12pt;
+}
+
+div#sitemenu ul {
+  list-style-type:             none;
+  padding-left:                0pt;
+}
+
+div#sitemenu ul ul {
+  list-style-type:             none;
+  padding-left:                0pt;
+}
+
+div#sitemenu ul ul ul {
+  list-style-type:             square;
+  padding-left:                12pt;
+}
+
+div#sitemenu ul li ul li {
+  padding-top:                 3pt;
+  padding-bottom:              5pt;
+  border-top:                  1px dotted white;
+}
+
+div#sitemenu ul li ul li ul li {
+  border-top:                  none;
+  padding-top:                 1pt;
+  padding-bottom:              1pt;
+}
+
+div#sitemenu ul li a:link,
+div#sitemenu ul li a:active,
+div#sitemenu ul lu a:visited
+{
+  font-size:                   140%;
+  font-weight:                 bold;
+  border-bottom:               none;
+}
+
+div#sitemenu ul li a:focus,
+div#sitemenu ul lu a:hover
+{
+  font-size:                   140%;
+  font-weight:                 bold;
+  font-style:                  italic;
+  border-bottom:               none;
+}
+
+div#sitemenu ul ul li a:link,
+div#sitemenu ul ul li a:active,
+div#sitemenu ul ul lu a:visited,
+div#sitemenu ul ul li a:focus,
+div#sitemenu ul ul lu a:hover
+{
+  font-size:                   90%;
+  font-weight:                 normal;
+  border-bottom:               none;
+/*border-bottom:               1px dotted white;*/
+}
+
+div#pagemenu ul {
+  list-style-type:             none;
+  padding-left:                0pt;
+}
+
+div#pagemenu ul ul {
+  list-style-type:             none;
+  padding-left:                0pt;
+}
+
+div#pagemenu ul ul ul {
+  padding-left:                12pt;
+}
+
+div#pagemenu ul li ul li {
+  padding-top:                 3pt;
+  padding-bottom:              5pt;
+  border-top:                  1px dotted white;
+}
+
+div#pagemenu ul li ul li ul li {
+  border-top:                  none;
+  padding-top:                 1pt;
+  padding-bottom:              1pt;
+}
+
+div#pagemenu ul li a:link,
+div#pagemenu ul li a:active,
+div#pagemenu ul lu a:visited
+{
+  font-size:                   120%;
+  font-weight:                 bold;
+  border-bottom:               none;
+}
+
+div#pagemenu ul li a:focus,
+div#pagemenu ul lu a:hover
+{
+  font-size:                   120%;
+  font-weight:                 bold;
+  font-style:                  italic;
+  border-bottom:               none;
+}
+
+div#pagemenu ul ul li a:link,
+div#pagemenu ul ul li a:active,
+div#pagemenu ul ul lu a:visited,
+div#pagemenu ul ul li a:focus,
+div#pagemenu ul ul lu a:hover
+{
+  font-size:                   90%;
+  font-weight:                 normal;
+  border-bottom:               none;
+  /*
+  border-bottom:               1px dotted white; 
+  */
+}
+
+
+div#sidebar ul.ancestor * li {
+  padding-top:                 0pt;
+}
+
+div#sidebar ul {
+  padding-bottom:              8pt;
+}
+
+div#sidebar a:link, div#sidebar a:active, div#sidebar a:visited {
+  /*
+  font-weight:                 normal;
+  */
+  color:                       white;
+  text-align:                  left;
+  text-decoration:             none;
+  border-bottom:               1px dotted white; 
+}
+
+div#sidebar a:hover, div#sidebar a:focus {
+  /*
+  font-weight:                 normal;
+  */
+  color:                       white;
+  text-align:                  left;
+  text-decoration:             none;
+  border-bottom:               1px dotted white; 
+}
+
+div#main {
+  border-left:                 1px solid #09550b; 
+}
+
+div#main ul#summary {
+  list-style-type:             square;
+  padding-left:                12pt;
+  font-size:                   14pt;
+}
+
+div#main ul#summary * ul {
+  padding-left:                12pt;
+  padding-bottom:              14pt;
+  font-size:                   95%;
+}
+
+div.code * {
+  background-color:            #FCFCE1;
+}
+
+div.note {
+  margin:             8px 2% 0px 2%;
+  border:             1px none #fff01c;
+  border-left-width:  4px;
+  border-left-style:  solid;
+  padding:            1px 10pt 1px 55px;
+  background:         #fff676 url('./images/clipboard.png') no-repeat 0% 50%;;
+  font-size:          90%
+}
+
+div.error {
+  margin:             8px 2% 0px 2%;
+  border:             1px none #dd0000;
+  border-left-width:  4px;
+  border-left-style:  solid;
+  padding:            1px 10pt 1px 55px;
+  background:         #ffddcc url('./images/i-core.png') no-repeat 0% 50%;;
+  font-size:          90%
+}
+
+p.admonition-title {
+  font-weight:        bold;
+}
+
+div.topic {
+  margin:             5pt;
+  padding:            2pt 10pt;
+  background-color:   fff676;
+}
+
+div.topic p.first {
+  font-weight:        bold;
+}
+
+table.wiki th, table th {
+  color:                       black;
+  background:                  #FFFFCC;
+}
+
+table.docutils {
+  margin-left:    10%;
+  margin-right:   10%;
+}
+
+table.wiki, table.wiki th, table.wiki td { border:          1px solid black; }
+table.wiki th * p                        { text-align:      center; }
+table.wiki * p                           { margin:          0pt; }
+table.wiki * blockquote                  { margin:          0pt; }
+table                                    { border-collapse: collapse; }
+table th, table td                       { border:          1px solid black;
+                                           padding:         2px 10px 2px 10px; }
+
+table.docinfo {
+  margin-top:      10pt;
+  margin-left:     auto;
+  margin-right:    0pt;
+  border:          10px solid #303030;
+  border-collapse: collapse;
+  background:      #303030;
+  font-size:       90%;
+  font-family:     sans-serif;
+}
+
+table.docinfo tr {
+  border-bottom:   1px dotted white;
+}
+
+th.docinfo-name,
+table.docinfo td,
+table.docinfo td a:link,
+table.docinfo td a:active,
+table.docinfo td a:visited,
+table.docinfo td a:focus,
+table.docinfo td a:hover
+{
+  border:                      0px solid white;
+  background:                  #303030;
+  color:                       white;
+  text-align:                  left;
+  font-weight:                 bold;
+}
+
+th.docinfo-name {
+  font-weight:                 normal;
+}
+
+table.docinfo td {
+  font-weight:                 bold;
+}
+
+span.ul {
+  text-decoration:             underline;
+}
+
+* span.smallcaps {
+  /*font-variant:                "small-caps";*/
+  text-transform:                "uppercase";
+  font-size:                     "smaller";
+}
+
+
+span.cb {
+  font-family:                 "andale mono", monospace;
+  font-weight:                 bold;
+  white-space:                 pre;
+}
+
+span.fboxtt {                  
+  border:                      1px solid black;
+  padding:                     0px 4px;
+  font-family:                 "andale mono", monospace;
+  font-weight:                 bold;
+  white-space:                 pre;  
+} 
+
+#notice.system-message, .notice.system-message {
+  color:                       black;
+  background:                  #DDFFDD;
+  padding-top:                 5pt;
+  padding-bottom:              5pt;
+  border:                      1px none  #55BB55;
+  border-top-width:            4px;
+  border-top-style:            solid;
+}
+
+#content.error .message, div.system-message {
+  color:                       #550000;
+  background:                  #ffddcc;
+  border:                      2px none #dd0000;
+  border-top-width:            4px;
+  border-top-style:            solid;
+  padding:                     .5em;
+  margin:                      1em 0;
+}
+
+#main {
+  float:                       right;
+  width:                       70%;
+  padding:                     0pt;
+  margin:                      0pt;
+  min-height:                  700px;
+  background:                  white;
+}
+
+div#main h1 {
+  border-bottom:               2px solid #09550b;
+}
+
+div#main div.section h1 {
+  border-bottom:               none;
+}
+
+#cmscontent {
+  padding:                     0pt 4% 10pt 4%;
+  margin:                      0pt;
+}
+
+div#htmlerrorcontents {
+  padding:                     10pt 4% 10pt 4%;
+  margin:                      0pt;
+}
+
+div#htmlerrorcontents span.cs {
+  font-size:                   80%;
+  font-family:                 "andale mono", monospace;
+  white-space:                 pre;
+}
+
+div#htmlerrorcontents hr.lang_separator {
+  border:                      1px dotted black;
+  border-style:                none none dotted;
+  margin-top:                  20pt;
+  margin-bottom:               10pt;
+}
+
+#embedcontent {
+  border:                      0pt;
+  padding:                     0pt;
+  margin:                      0pt;
+}
+
+#sidebar {
+  float:                       left;
+  width:                       29.9%;
+  padding:                     0 0 0 0;
+  margin:                      0 0 0 0;
+  color:                       white;
+  background:                  #09550B;
+  /*
+  min-height:                  300px;
+  background:                  #f2f2f2;
+  border-right:                1px solid #ccc;
+  padding:                     0 0 0 10px;
+  */
+}
+
+</style>
 </head>
 <body>
 <div class="document">
@@ -17,13 +770,13 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Date:</th>
-<td>16, september 2014</td></tr>
+<td>26, september 2014</td></tr>
 <tr><th class="docinfo-name">Authors:</th>
 <td>Jean-Paul Chaput</td></tr>
 <tr><th class="docinfo-name">Contact:</th>
 <td>&lt;<a class="reference external" href="mailto:alliance-users&#64;soc.lip6.fr">alliance-users&#64;soc.lip6.fr</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>0.1</td></tr>
+<td>0.2</td></tr>
 </tbody>
 </table>
 <!-- -*- Mode: rst -*- -->
@@ -39,27 +792,205 @@
 <p><span class="raw-html"><br></span></p>
 <p><strong>Disclaimer:</strong> This document is still far from complete.</p>
 <p><span class="raw-html"><br></span></p>
-<div class="section" id="rds-file-format">
-<h1><a class="toc-backref" href="#id1">RDS File Format</a></h1>
+<div class="section" id="symbolic-to-real-conversion-in-alliance">
+<h1><a class="toc-backref" href="#id1">Symbolic to Real Conversion In Alliance</a></h1>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#rds-file-format" id="id1">RDS File Format</a><ul>
-<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
-<li><a class="reference internal" href="#physical-grid-lambda-value" id="id3">Physical Grid &amp; Lambda Value</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-segment-table" id="id4">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-via-table" id="id5">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table" id="id6">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table" id="id7">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-wiresetting-table" id="id8">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></li>
+<li><a class="reference internal" href="#symbolic-to-real-conversion-in-alliance" id="id1">Symbolic to Real Conversion In Alliance</a><ul>
+<li><a class="reference internal" href="#symbolic-layout" id="id2">Symbolic Layout</a><ul>
+<li><a class="reference internal" href="#symbolic-components" id="id3">Symbolic Components</a></li>
+<li><a class="reference internal" href="#symbolic-segments" id="id4">Symbolic Segments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-rds-file" id="id5">The RDS File</a><ul>
+<li><a class="reference internal" href="#physical-grid-lambda-value" id="id6">Physical Grid &amp; Lambda Value</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-segment-table" id="id7">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-via-table" id="id8">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table" id="id9">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table" id="id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-wiresetting-table" id="id11">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 <p><span class="raw-html"><br></span></p>
 <p><span class="raw-html"><br></span></p>
-<div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id2">Introduction</a></h2>
+<div class="section" id="symbolic-layout">
+<h2><a class="toc-backref" href="#id2">Symbolic Layout</a></h2>
+<div class="section" id="symbolic-components">
+<h3><a class="toc-backref" href="#id3">Symbolic Components</a></h3>
+<p>A symbolic layout is, in practice, made of only of three objects:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="13%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Object</th>
+<th class="head"><span class="sc">mbk</span></th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Segments</td>
+<td><tt class="docutils literal">phseg</tt></td>
+<td>Oriented segments with a width and an orientation.</td>
+</tr>
+<tr><td>VIAs &amp; contacts</td>
+<td><tt class="docutils literal">phvia</tt></td>
+<td>Boils down to just a point.</td>
+</tr>
+<tr><td>Big VIAs &amp; Big Contacts</td>
+<td><tt class="docutils literal">phvia</tt></td>
+<td>Point with a width and a height
+That is a rectangle of width by height centered
+on the VIA coordinates.</td>
+</tr>
+</tbody>
+</table>
+<p>Each of thoses objects is associated to a <em>symbolic layer</em> which will
+control how the object is translated in many <em>real rectangles</em>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="19%" />
+<col width="16%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><span class="sc">mbk</span></th>
+<th class="head">Layer Name</th>
+<th class="head">Usable By</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td rowspan="12"><tt class="docutils literal">phseg</tt></td>
+<td><tt class="docutils literal">NWELL</tt></td>
+<td>Segment</td>
+<td>N Well</td>
+</tr>
+<tr><td><tt class="docutils literal">PWELL</tt></td>
+<td>Segment</td>
+<td>P Well</td>
+</tr>
+<tr><td><tt class="docutils literal">NDIF</tt></td>
+<td>Segment</td>
+<td>N Diffusion</td>
+</tr>
+<tr><td><tt class="docutils literal">PDIF</tt></td>
+<td>Segment</td>
+<td>P Diffusion</td>
+</tr>
+<tr><td><tt class="docutils literal">NTIE</tt></td>
+<td>Segment</td>
+<td>N Tie</td>
+</tr>
+<tr><td><tt class="docutils literal">PTIE</tt></td>
+<td>Segment</td>
+<td>P Tie</td>
+</tr>
+<tr><td><tt class="docutils literal">NTRANS</tt></td>
+<td>Segment</td>
+<td>N transistor, in <span class="sc">Alliance</span>, a transistor
+is represented as a segment (it's grid).</td>
+</tr>
+<tr><td><tt class="docutils literal">PTRANS</tt></td>
+<td>Segment</td>
+<td>P transistor</td>
+</tr>
+<tr><td><tt class="docutils literal">POLY</tt></td>
+<td>Segment</td>
+<td>Polysilicium</td>
+</tr>
+<tr><td><tt class="docutils literal">ALUx</tt></td>
+<td>Segment</td>
+<td>Metal level <em>x</em></td>
+</tr>
+<tr><td><tt class="docutils literal">CALUx</tt></td>
+<td>Segment</td>
+<td>Metal level <em>x</em>, that can be used by the
+upper hierarchical level as a connector.
+From the layout point of view it is the
+same as <tt class="docutils literal">ALUx</tt>.</td>
+</tr>
+<tr><td><tt class="docutils literal">TALUx</tt></td>
+<td>Segment</td>
+<td>Blockage for metal level <em>x</em>. Will
+diseappear in the real layout as it is an
+information for the P&amp;R tools only.</td>
+</tr>
+<tr><td rowspan="9"><tt class="docutils literal">phvia</tt></td>
+<td><tt class="docutils literal">CONT_BODY_N</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to N Well</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_BODY_P</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to P Well</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_DIF_N</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to N Diffusion</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_DIF_P</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to P Diffusion</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_POLY</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to polysilicium</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_VIA</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact between metal1 and metal2</td>
+</tr>
+<tr><td><tt class="docutils literal">CONT_VIAx</tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact between metal <em>x</em> and metal <em>x+1</em>.
+The index is the the one of the bottom
+metal of the VIA.</td>
+</tr>
+<tr><td><tt class="docutils literal">C_X_N</tt></td>
+<td>VIA</td>
+<td>N transistor corner, to build transistor
+bend. Not used anymore in recent technos</td>
+</tr>
+<tr><td><tt class="docutils literal">C_X_P</tt></td>
+<td>VIA</td>
+<td>P transistor corner, to build transistor
+bend. Not used anymore in recent technos</td>
+</tr>
+</tbody>
+</table>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all association of object and symbolic layers are meaningful.
+For instance you cannot associate a contact to a <tt class="docutils literal">NTRANS</tt> layer.</p>
+</div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">The symbolic layer associated with blockages is prefixed by a <tt class="docutils literal">T</tt>,
+for <em>transparency</em>, which may seems silly. It is for historical reasons,
+it started as a true transparency, but at some point we had to invert
+the meaning (blockage) with the rise of over-the-cell routing, but the
+name stuck...</p>
+</div>
+</div>
+<div class="section" id="symbolic-segments">
+<h3><a class="toc-backref" href="#id4">Symbolic Segments</a></h3>
+<p>In <span class="sc">Alliance</span>, segments are oriented (up, down, left, right). This disambiguate
+the left or right side when using the <tt class="docutils literal">LCW</tt> and <tt class="docutils literal">RCW</tt> rules in the <span class="sc">rds</span> file.
+It allows to generate, if needed, asymetric object in the real layout file.</p>
+<p><span class="raw-html"><center><img src="./images/SegmentOrientation.png" alt="Symbolic Segment Orientations"></center></span></p>
+</div>
+</div>
+<div class="section" id="the-rds-file">
+<h2><a class="toc-backref" href="#id5">The RDS File</a></h2>
 <p>The RDS file control how a symbolic layout is transformed into it's real
 conterpart.</p>
 <div class="note">
@@ -98,9 +1029,8 @@ conterpart.</p>
 </tr>
 </tbody>
 </table>
-</div>
 <div class="section" id="physical-grid-lambda-value">
-<h2><a class="toc-backref" href="#id3">Physical Grid &amp; Lambda Value</a></h2>
+<h3><a class="toc-backref" href="#id6">Physical Grid &amp; Lambda Value</a></h3>
 <p>RDS file:</p>
 <pre class="literal-block">
 DEFINE  PHYSICAL_GRID  0.005
@@ -117,7 +1047,7 @@ the <tt class="docutils literal">LAMBDA</tt> value can be any multiple of the fo
 </ul>
 </div>
 <div class="section" id="the-mbk-to-rds-segment-table">
-<h2><a class="toc-backref" href="#id4">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></h2>
+<h3><a class="toc-backref" href="#id7">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></h3>
 <p>The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table control the way segments are translated into
 real rectangles. Be aware that we are translating <em>segments</em> and not <em>rectangles</em>.
 Segments are defined by their axis (source &amp; target points) and their width.
@@ -212,7 +1142,7 @@ rectangles).</p>
 <p><span class="raw-html"><br></span></p>
 </div>
 <div class="section" id="the-mbk-to-rds-via-table">
-<h2><a class="toc-backref" href="#id5">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></h2>
+<h3><a class="toc-backref" href="#id8">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></h3>
 <p>This table is to translate <em>default</em> VIAs into real via. In the symbolic layout
 the default VIA is simply a point and a set of layers. All layers are converted
 in squares shapes centered on the VIA coordinate. The one dimension given is the
@@ -246,7 +1176,7 @@ END
 </div>
 </div>
 <div class="section" id="the-mbk-to-rds-bigvia-hole-table">
-<h2><a class="toc-backref" href="#id6">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></h2>
+<h3><a class="toc-backref" href="#id9">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></h3>
 <p>In <tt class="docutils literal">s2r</tt>, when generating BIGVIAs, the matrix of holes they contains is
 not draw relative to the position of the BIGVIA itself, but on a grid which
 is common througout all the design real layout. This is to allow overlap
@@ -255,7 +1185,10 @@ As a consequence, when visualizing the <tt class="docutils literal">gds</tt> fil
 inside one individual BIGVIA.</p>
 <p>The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table define the global hole matrix for the whole
 design. The first number is the individual hole side and the second the grid step
-(center to center).</p>
+(edge to edge). The figure below show the hole generation.</p>
+<p><span class="raw-html"><center><img src="./images/bigvia-1.png" alt="BIGVIA holes"></center></span></p>
+<p>Example of BIGVIA overlap:</p>
+<p><span class="raw-html"><center><img src="./images/bigvia-2.png" alt="BIGVIA holes overlap"></center></span></p>
 <p>Example:</p>
 <pre class="literal-block">
 TABLE MBK_TO_RDS_BIGVIA_HOLE
@@ -268,10 +1201,17 @@ TABLE MBK_TO_RDS_BIGVIA_HOLE
 
 END
 </pre>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>BIGVIA demotion.</strong> If the size of the bigvia is too small, there is
+a possibility that no hole from the global matrix will be under it.
+To avoid that case, if the either side of the BIGVIA is less than
+<tt class="docutils literal">1.5 * step</tt>, the BIGVIA is demoted to a simple VIA.</p>
+</div>
 <p><span class="raw-html"><br></span></p>
 </div>
 <div class="section" id="the-mbk-to-rds-bigvia-metal-table">
-<h2><a class="toc-backref" href="#id7">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></h2>
+<h3><a class="toc-backref" href="#id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></h3>
 <p>This table describe how the metal part of a BIGVIA is expanded (for the hole
 part, see the previous table <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt>). The rule give for each
 metal:</p>
@@ -304,7 +1244,7 @@ END
 <p><span class="raw-html"><br></span></p>
 </div>
 <div class="section" id="the-mbk-wiresetting-table">
-<h2><a class="toc-backref" href="#id8">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></h2>
+<h3><a class="toc-backref" href="#id11">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></h3>
 <p>From a strict standpoint this table shouldn't be here but put in a separate
 configuration file, because it contains informations only used by the symbolic
 layout tools (<tt class="docutils literal">ocp</tt>, <tt class="docutils literal">nero</tt>, <tt class="docutils literal">ring</tt>).</p>
@@ -338,6 +1278,7 @@ TABLE MBK_WIRESETTING
 
 END
 </pre>
+</div>
 </div>
 </div>
 </div>

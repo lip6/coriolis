@@ -10,6 +10,8 @@
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
 .. |UPMC|                           replace:: :sc:`upmc`
+.. |Alliance|                       replace:: :sc:`Alliance`
+.. |MBK|                            replace:: :sc:`mbk`
 .. |RDS|                            replace:: :sc:`rds`
 
 .. Tools 
@@ -22,6 +24,8 @@
 .. |cougar|                         replace:: ``cougar``
 .. |cif|                            replace:: ``cif``
 .. |gds|                            replace:: ``gds``
+.. |phseg|                          replace:: ``phseg``
+.. |phvia|                          replace:: ``phvia``
 
 .. RDS file syntax.
 .. |MBK_TO_RDS_SEGMENT|             replace:: ``MBK_TO_RDS_SEGMENT``
@@ -35,10 +39,28 @@
 .. |VW|                             replace:: ``VW``
 .. |LCW|                            replace:: ``LCW``
 .. |RCW|                            replace:: ``RCW``
+.. |ALUx|                           replace:: ``ALUx``
+.. |CALUx|                          replace:: ``CALUx``
+.. |TALUx|                          replace:: ``TALUx``
 .. |ALU1|                           replace:: ``ALU1``
+.. |POLY|                           replace:: ``POLY``
+.. |NTIE|                           replace:: ``NTIE``
+.. |PTIE|                           replace:: ``PTIE``
 .. |NDIF|                           replace:: ``NDIF``
+.. |PDIF|                           replace:: ``PDIF``
+.. |NWELL|                          replace:: ``NWELL``
+.. |PWELL|                          replace:: ``PWELL``
 .. |NTRANS|                         replace:: ``NTRANS``
+.. |PTRANS|                         replace:: ``PTRANS``
+.. |CONT_DIF_N|                     replace:: ``CONT_DIF_N``
 .. |CONT_DIF_P|                     replace:: ``CONT_DIF_P``
+.. |CONT_BODY_N|                    replace:: ``CONT_BODY_N``
+.. |CONT_BODY_P|                    replace:: ``CONT_BODY_P``
+.. |CONT_POLY|                      replace:: ``CONT_POLY``
+.. |CONT_VIA|                       replace:: ``CONT_VIA``
+.. |CONT_VIAx|                      replace:: ``CONT_VIAx``
+.. |C_X_N|                          replace:: ``C_X_N``
+.. |C_X_P|                          replace:: ``C_X_P``
 .. |RDS_NDIF|                       replace:: ``RDS_NDIF``
 .. |RDS_NIMP|                       replace:: ``RDS_NIMP``
 .. |RDS_ACTIV|                      replace:: ``RDS_ACTIV``
@@ -47,10 +69,10 @@
 .. |RDS_ALU1|                       replace:: ``RDS_ALU1``
 
 
-:Date:    16, september 2014
+:Date:    26, september 2014
 :Authors: Jean-Paul Chaput
 :Contact: <alliance-users@soc.lip6.fr>
-:Version: 0.1
+:Version: 0.2
 
 |medskip|
 
@@ -58,9 +80,9 @@
 
 |medskip|
 
-===============
-RDS File Format
-===============
+=========================================
+Symbolic to Real Conversion In Alliance
+=========================================
 
 
 .. contents::
@@ -70,7 +92,109 @@ RDS File Format
 |newpage|
 
 
-Introduction
+Symbolic Layout
+===============
+
+Symbolic Components
+~~~~~~~~~~~~~~~~~~~
+
+A symbolic layout is, in practice, made of only of three objects:
+
+===========================  ============  ===================================================
+Object                       |MBK|         Explanation
+===========================  ============  ===================================================
+Segments                     |phseg|       Oriented segments with a width and an orientation.
+VIAs & contacts              |phvia|       Boils down to just a point.
+Big VIAs & Big Contacts      |phvia|       Point with a width and a height
+                                           That is a rectangle of width by height centered
+                                           on the VIA coordinates.
+===========================  ============  ===================================================
+
+Each of thoses objects is associated to a *symbolic layer* which will
+control how the object is translated in many *real rectangles*.
+
++---------+---------------+-------------+--------------------------------------------+
+| |MBK|   | Layer Name    | Usable By   | Usage                                      |
++=========+===============+=============+============================================+
+| |phseg| | |NWELL|       | Segment     | N Well                                     |
+|         +---------------+-------------+--------------------------------------------+
+|         | |PWELL|       | Segment     | P Well                                     |
+|         +---------------+-------------+--------------------------------------------+
+|         | |NDIF|        | Segment     | N Diffusion                                |
+|         +---------------+-------------+--------------------------------------------+
+|         | |PDIF|        | Segment     | P Diffusion                                |
+|         +---------------+-------------+--------------------------------------------+
+|         | |NTIE|        | Segment     | N Tie                                      |
+|         +---------------+-------------+--------------------------------------------+
+|         | |PTIE|        | Segment     | P Tie                                      |
+|         +---------------+-------------+--------------------------------------------+
+|         | |NTRANS|      | Segment     | N transistor, in |Alliance|, a transistor  |
+|         |               |             | is represented as a segment (it's grid).   |
+|         +---------------+-------------+--------------------------------------------+
+|         | |PTRANS|      | Segment     | P transistor                               |
+|         +---------------+-------------+--------------------------------------------+
+|         | |POLY|        | Segment     | Polysilicium                               |
+|         +---------------+-------------+--------------------------------------------+
+|         | |ALUx|        | Segment     | Metal level *x*                            |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CALUx|       | Segment     | Metal level *x*, that can be used by the   |
+|         |               |             | upper hierarchical level as a connector.   |
+|         |               |             | From the layout point of view it is the    |
+|         |               |             | same as |ALUx|.                            |
+|         +---------------+-------------+--------------------------------------------+
+|         | |TALUx|       | Segment     | Blockage for metal level *x*. Will         |
+|         |               |             | diseappear in the real layout as it is an  |
+|         |               |             | information for the P&R tools only.        |
++---------+---------------+-------------+--------------------------------------------+
+| |phvia| | |CONT_BODY_N| | VIA, BIGVIA | Contact to N Well                          |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_BODY_P| | VIA, BIGVIA | Contact to P Well                          |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_DIF_N|  | VIA, BIGVIA | Contact to N Diffusion                     |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_DIF_P|  | VIA, BIGVIA | Contact to P Diffusion                     |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_POLY|   | VIA, BIGVIA | Contact to polysilicium                    |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_VIA|    | VIA, BIGVIA | Contact between metal1 and metal2          |
+|         +---------------+-------------+--------------------------------------------+
+|         | |CONT_VIAx|   | VIA, BIGVIA | Contact between metal *x* and metal *x+1*. |
+|         |               |             | The index is the the one of the bottom     |
+|         |               |             | metal of the VIA.                          |
+|         +---------------+-------------+--------------------------------------------+
+|         | |C_X_N|       | VIA         | N transistor corner, to build transistor   |
+|         |               |             | bend. Not used anymore in recent technos   |
+|         +---------------+-------------+--------------------------------------------+
+|         | |C_X_P|       | VIA         | P transistor corner, to build transistor   |
+|         |               |             | bend. Not used anymore in recent technos   |
++---------+---------------+-------------+--------------------------------------------+
+
+.. note::
+   Not all association of object and symbolic layers are meaningful.
+   For instance you cannot associate a contact to a ``NTRANS`` layer.
+
+.. note::
+   The symbolic layer associated with blockages is prefixed by a ``T``,
+   for *transparency*, which may seems silly. It is for historical reasons,
+   it started as a true transparency, but at some point we had to invert
+   the meaning (blockage) with the rise of over-the-cell routing, but the
+   name stuck...
+
+
+
+Symbolic Segments
+~~~~~~~~~~~~~~~~~
+
+In |Alliance|, segments are oriented (up, down, left, right). This disambiguate
+the left or right side when using the ``LCW`` and ``RCW`` rules in the |RDS| file.
+It allows to generate, if needed, asymetric object in the real layout file.
+
+|SegmentOrientation|
+
+|newpage|
+
+
+The RDS File
 ============
 
 
@@ -92,7 +216,7 @@ The symbolic to real layout translator   |s2r|          |ALL|
 
 
 Physical Grid & Lambda Value
-============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RDS file: ::
 
@@ -111,7 +235,7 @@ We can distinguish two kind of |RDS| files:
 
 
 The |MBK_TO_RDS_SEGMENT| table
-==============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The |MBK_TO_RDS_SEGMENT| table control the way segments are translated into
 real rectangles. Be aware that we are translating *segments* and not *rectangles*.
@@ -211,7 +335,7 @@ in one hand, and for both |druc| & |s2r| in the other hand.
 |newpage|
 
 The |MBK_TO_RDS_VIA| table
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This table is to translate *default* VIAs into real via. In the symbolic layout
 the default VIA is simply a point and a set of layers. All layers are converted
@@ -246,7 +370,7 @@ Example: ::
 
 
 The |MBK_TO_RDS_BIGVIA_HOLE| table
-==================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In |s2r|, when generating BIGVIAs, the matrix of holes they contains is
 not draw relative to the position of the BIGVIA itself, but on a grid which
@@ -257,7 +381,13 @@ inside one individual BIGVIA.
 
 The |MBK_TO_RDS_BIGVIA_HOLE| table define the global hole matrix for the whole
 design. The first number is the individual hole side and the second the grid step
-(center to center).
+(edge to edge). The figure below show the hole generation.
+
+|BIGVIA_1|
+
+Example of BIGVIA overlap:
+
+|BIGVIA_2|
 
 Example: ::
 
@@ -271,11 +401,16 @@ Example: ::
     
     END
 
+.. note:: **BIGVIA demotion.** If the size of the bigvia is too small, there is
+   a possibility that no hole from the global matrix will be under it.
+   To avoid that case, if the either side of the BIGVIA is less than
+   ``1.5 * step``, the BIGVIA is demoted to a simple VIA.
+
 
 |newpage|
 
 The |MBK_TO_RDS_BIGVIA_METAL| table
-===================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This table describe how the metal part of a BIGVIA is expanded (for the hole
 part, see the previous table |MBK_TO_RDS_BIGVIA_HOLE|). The rule give for each
@@ -310,7 +445,7 @@ Example: ::
 |newpage|
 
 The |MBK_WIRESETTING| table
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From a strict standpoint this table shouldn't be here but put in a separate
 configuration file, because it contains informations only used by the symbolic
