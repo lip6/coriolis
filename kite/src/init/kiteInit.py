@@ -33,7 +33,7 @@ def kiteHook ( **kw ):
         print ErrorMessage( 3, 'kiteHook(): Must be run from a KiteEngine.' )
         return
 
-    userInit = os.path.join( os.getcwd(), '.coriolis2.kite.py' )
+    userInit = os.path.join( os.getcwd(), '.coriolis2/kite.py' )
     if (os.path.exists(userInit)):
       execfile( userInit )
     return
