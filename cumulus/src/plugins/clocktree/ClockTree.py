@@ -110,7 +110,7 @@ class HTree ( GaugeConfWrapper ):
     self.area         = area
     self.childs       = []
     self._getBufferIo()
-    self.tieCell      = self.framework.getCell( 'tie_x0', CRL.Catalog.State.Views )
+    self.tieCell      = self.framework.getCell( 'rowend_x0', CRL.Catalog.State.Views )
     self.cellGauge    = self.framework.getCellGauge()
     self.topBuffer    = Instance.create( self.cell, 'ck_htree', self.bufferCell )
     self.cloneds      = [ self.cell ]

@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              M a u k a  -  P l a c e r                          |
 // |                                                                 |
@@ -17,15 +11,12 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./InsertFeeds.cpp"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/UpdateSession.h"
-#include  "crlcore/ToolBox.h"
-#include  "mauka/MaukaEngine.h"
+#include "hurricane/UpdateSession.h"
+#include "crlcore/ToolBox.h"
+#include "mauka/MaukaEngine.h"
 
 
 namespace {
