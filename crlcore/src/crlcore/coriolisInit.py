@@ -86,10 +86,10 @@ def coriolisConfigure():
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
-  technoFiles  = [  helpers.sysConfDir+'/techno.conf' ]
+  technoFiles  = [ helpers.sysConfDir+'/techno.conf' ]
   if os.getenv('HOME'):
-    technoFiles += [  os.getenv('HOME')+'/.coriolis2/techno.conf' ]
-  technoFiles += [  os.getcwd()+'/.coriolis2/techno.conf' ]
+    technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
+  technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
 
   technoFiles.reverse()
   for technoFile in technoFiles:
@@ -121,13 +121,13 @@ def coriolisConfigure():
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/plugins.conf' , SystemFile|ConfigurationHelper)
                  ]
   if os.getenv('HOME'):
-    confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.conf', 0) ]
+    confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.py', 0) ]
   else:
     w = WarningMessage(['The <HOME> environment variable is not defined, this is most unusual.'
-                       ,'It prevents the loading of ${HOME}/.coriolis2/settings.conf'])
+                       ,'It prevents the loading of ${HOME}/.coriolis2/settings.py'])
     print w
 
-  confFiles   += [ (os.getcwd()+'/.coriolis2/settings.conf', 0) ]
+  confFiles   += [ (os.getcwd()+'/.coriolis2/settings.py', 0) ]
 
 
   if helpers.xmlCompatMode:
