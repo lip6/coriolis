@@ -172,8 +172,8 @@ namespace Katabatic {
         ltrace(110) << "Canonical: " << canonical << endl;
 
         for ( size_t j=0 ; j<aligneds.size() ; j++ ) {
-          if (isWeakGlobal) aligneds[j]->setFlags  ( SegWeakGlobal );
-          else              aligneds[j]->unsetFlags( SegWeakGlobal );
+          if (isWeakGlobal and not aligneds[j]->isGlobal()) aligneds[j]->setFlags  ( SegWeakGlobal );
+          else                                              aligneds[j]->unsetFlags( SegWeakGlobal );
 
           if (aligneds[j] == canonical) continue;
           if (aligneds[j]->isCanonical()) {

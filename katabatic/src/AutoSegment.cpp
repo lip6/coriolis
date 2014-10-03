@@ -1048,8 +1048,10 @@ namespace Katabatic {
 
       canonical->setFlags( SegCanonical );
       if (hasGlobal) {
-        for ( size_t i=0 ; i<segments.size() ; ++i )
-          segments[i]->setFlags( SegWeakGlobal );
+        for ( size_t i=0 ; i<segments.size() ; ++i ) {
+          if (not segments[i]->isGlobal())
+            segments[i]->setFlags( SegWeakGlobal );
+        }
       } else {
         for ( size_t i=0 ; i<segments.size() ; ++i )
           segments[i]->unsetFlags( SegWeakGlobal );
@@ -1742,7 +1744,8 @@ namespace Katabatic {
 
     unsigned int  rflags = 0;
 
-    if (doglegGCell->isUnderIoPad()) {
+    if (    doglegGCell->isUnderIoPad()
+       and (Session::getKatabatic()->getState() != EngineGlobalLoaded) ) {
       cerr << Bug( "Attempt to make a dogleg in a GCell under a Pad\n"
                    "      %s\n"
                    "      %s"
