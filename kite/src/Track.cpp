@@ -644,6 +644,8 @@ namespace Kite {
 
   void  Track::doReorder ()
   {
+    ltrace(200) << "Track::doReorder() " << this << endl;
+
     if (not _segmentsValid ) {
       std::sort ( _segments.begin(), _segments.end(), SegmentCompare() );
       for ( size_t i=0 ; i < _segments.size() ; i++ ) {
@@ -665,10 +667,16 @@ namespace Kite {
 
     size_t j = 0;
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
+      if (not _segments[i]->isBlockage() and (_segments[i]->getLayer() != getLayer()) ) {
+        cerr << Error( " Track vs. Segment Layer discrepency:\n  %s\n  %s  "
+                     , getString(this).c_str()
+                     , getString(_segments[i]).c_str() ) << endl;
+      }
+
       if ( _segments[i]->getNet() == _segments[i+1]->getNet() ) {
         if ( _segments[i]->getSourceU() == _segments[i+1]->getSourceU() ) {
           if ( _segments[i]->getTargetU() < _segments[i+1]->getTargetU() ) {
-            cerr << Error(" Invalid sorting length order in %s:\n%s  \n%s  "
+            cerr << Error(" Invalid sorting length order in %s:\n  %s\n  %s  "
                          ,getString(this).c_str()
                          ,getString(_segments[i  ]).c_str()
                          ,getString(_segments[i+1]).c_str()) << endl;

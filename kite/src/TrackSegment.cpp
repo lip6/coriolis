@@ -765,20 +765,20 @@ namespace Kite {
         segments[i+0]->getDataNegociate()->resetRipupCount();
       //segments[i+0]->getDataNegociate()->resetStateCount();
         segments[i+0]->getDataNegociate()->setState( DataNegociate::RipupPerpandiculars );
-        doglegLevel = segments[i+0]->getDoglegLevel() + 1;
-        segments[i+0]->setDoglegLevel( doglegLevel );
+        doglegLevel = segments[i+0]->getDoglegLevel();
+        segments[i+0]->setDoglegLevel( doglegLevel + (segments[i]->isLocal()?1:0) );
 
         ltrace(200) << "Looking up new perpand:  " << doglegs[i+1] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
         segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
-        segments[i+1]->setDoglegLevel( doglegLevel );
+        segments[i+1]->setDoglegLevel( doglegLevel + 1 );
 
         ltrace(200) << "Looking up new parallel: " << doglegs[i+2] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
         segments[i+2]->setFlags( TElemSourceDogleg );
         segments[i+2]->getDataNegociate()->resetStateCount();
         segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
-        segments[i+2]->setDoglegLevel( doglegLevel );
+        segments[i+2]->setDoglegLevel( doglegLevel + (segments[i]->isLocal()?1:0) );
 
         segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
 
@@ -802,6 +802,8 @@ namespace Kite {
         ltrace(200) << "[" << (i/3) << ":" << i << "] " << segPart << ": "
                     << segments[i] << endl;
       }
+    } else {
+      reschedule( 1 );
     }      
 
     ltraceout(200);
