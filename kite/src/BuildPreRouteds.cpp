@@ -25,6 +25,7 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Pin.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
 #include "hurricane/DeepNet.h"
@@ -62,6 +63,7 @@ namespace Kite {
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
+  using Hurricane::Pin;
   using Hurricane::NetExternalComponents;
   using Hurricane::NetRoutingExtension;
   using Hurricane::NetRoutingState;
@@ -114,8 +116,15 @@ namespace Kite {
         }
       } else {
         forEach ( Component*, icomponent, inet->getComponents() ) {
+          if (dynamic_cast<Pin*>(*icomponent)) continue;
+
+          const RegularLayer* layer = dynamic_cast<const RegularLayer*>(icomponent->getLayer());
+          if (layer and (layer->getBasicLayer()->getMaterial() == BasicLayer::Material::blockage))
+            continue;
+
           Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
           if (horizontal) {
+            cerr << horizontal << endl;
             segments.push_back( horizontal );
             isPreRouted = true;
             if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
@@ -123,6 +132,7 @@ namespace Kite {
           } else {
             Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
             if (vertical) {
+            cerr << vertical << endl;
               isPreRouted = true;
               segments.push_back( vertical );
               if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
@@ -130,6 +140,7 @@ namespace Kite {
             } else {
               Contact* contact = dynamic_cast<Contact*>(*icomponent);
               if (contact) {
+                cerr << contact << endl;
                 isPreRouted = true;
                 contacts.push_back( contact );
                 if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))

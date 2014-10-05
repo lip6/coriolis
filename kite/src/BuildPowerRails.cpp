@@ -350,8 +350,8 @@ namespace {
     ltrace(300) << "    getRootNet:" << path << ":" << net << endl;
     if (net == _blockage) return _blockage;
 
-    if (net->getName() == _vdde->getName()) return _vdde;
-    if (net->getName() == _vsse->getName()) return _vsse;
+    if (_vdde and (net->getName() == _vdde->getName())) return _vdde;
+    if (_vsse and (net->getName() == _vsse->getName())) return _vsse;
 
     if (net->getType() == Net::Type::POWER ) return _vddi;
     if (net->getType() == Net::Type::GROUND) return _vssi;
