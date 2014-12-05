@@ -32,6 +32,7 @@ def stripPath ( pathName ):
 
 
 def guessOs ():
+    useDevtoolset2    = False
     osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el|slsoc)6.*")
     osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
@@ -54,12 +55,15 @@ def guessOs ():
 
     libDir="lib"
     if osSlsoc6x_64.match(lines[0]):
-      osType = "Linux.slsoc6x_64"
-      libDir = "lib64"
-    elif osSlsoc6x.match(lines[0]): osType = "Linux.slsoc6x"
+      osType         = "Linux.slsoc6x_64"
+      libDir         = "lib64"
+      useDevtoolset2 = True
+    elif osSlsoc6x.match(lines[0]):
+      osType         = "Linux.slsoc6x"
+      useDevtoolset2 = True
     elif osSLSoC5x_64.match(lines[0]):
-      osType = "Linux.SLSoC5x_64"
-      libDir = "lib64"
+      osType         = "Linux.SLSoC5x_64"
+      libDir         = "lib64"
     elif osSLSoC5x.match(lines[0]):
       osType = "Linux.SLSoC5x"
     elif osUbuntu1004.match(lines[0]):
@@ -99,17 +103,17 @@ def guessOs ():
      #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
      #print "          (using: \"%s\")" % osType
     
-    return (osType,libDir)
+    return (osType,libDir,useDevtoolset2)
       
 
 
 
 if __name__ == "__main__":
 
-  (osType,libDir) = guessOs()
-  buildType       = "Release"
-  linkType        = "Shared"
-  rootDir         = None
+  osType,libDir,useDevtoolset2 = guessOs()
+  buildType                    = "Release"
+  linkType                     = "Shared"
+  rootDir                      = None
 
   parser = optparse.OptionParser ()  
  # Build relateds.
@@ -136,23 +140,21 @@ if __name__ == "__main__":
   strippedPythonPath  = stripPath ( "PYTHONPATH" )
 
   shellScriptSh = \
-    'echo "%(MESSAGE)s";\n'                                          \
-    'echo "Switching to Coriolis 2.x (%(buildDir)s)";\n'             \
-    'PATH="%(PATH)s";\n'                                             \
-    'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";\n'                           \
-    'CORIOLIS_TOP="%(CORIOLIS_TOP)s";\n'                             \
-    'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";\n'    \
-    'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;\n' \
-    'hash -r;\n'
+    'echo "%(MESSAGE)s";'                                          \
+    'echo "Switching to Coriolis 2.x (%(buildDir)s)";'             \
+    'PATH="%(PATH)s";'                                             \
+    'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";'                           \
+    'CORIOLIS_TOP="%(CORIOLIS_TOP)s";'                             \
+    'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
+    'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;'
 
   shellScriptCsh = \
-    'echo "%(MESSAGE)s";\n'                              \
-    'echo "Switching to Coriolis 2.x (%(buildDir)s)";\n' \
-    'setenv PATH "%(PATH)s";\n'                          \
-    'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";\n'        \
-    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";\n'          \
-    'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";\n' \
-    'rehash\n;'
+    'echo "%(MESSAGE)s";'                              \
+    'echo "Switching to Coriolis 2.x (%(buildDir)s)";' \
+    'setenv PATH "%(PATH)s";'                          \
+    'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";'        \
+    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'          \
+    'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";'
 
   buildDir  = buildType + "." + linkType
   scriptDir = os.path.dirname ( os.path.abspath(__file__) )
@@ -197,31 +199,35 @@ if __name__ == "__main__":
     strippedPythonPath = "%s/cumulus/plugins:" % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/stratus:"         % (sitePackagesDir) + strippedPythonPath
 
-    shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";\n' \
-                      'export PYTHONPATH;\n'
+    shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";' \
+                      'export PYTHONPATH;'
     shellScriptCsh += 'setenv PYTHONPATH "%(PYTHONPATH)s";'
 
     if osType == "Darwin":
-      shellScriptSh  += 'DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' \
-                        'export DYLD_LIBRARY_PATH;\n'
-      shellScriptCsh += 'setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' 
+      shellScriptSh  += 'DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' \
+                        'export DYLD_LIBRARY_PATH;'
+      shellScriptCsh += 'setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' 
     else:
-      shellScriptSh  += 'LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' \
-                        'export LD_LIBRARY_PATH;\n'
-      shellScriptCsh += 'setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";\n' 
+      shellScriptSh  += 'LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' \
+                        'export LD_LIBRARY_PATH;'
+      shellScriptCsh += 'setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";'
   
-  shellScriptSh  += "hash -r;\n"
-  shellScriptCsh += "rehash;\n"
+  shellScriptSh  += "hash -r;"
+  shellScriptCsh += "rehash;"
 
   if options.csh: shellScript = shellScriptCsh
   else:           shellScript = shellScriptSh
 
-  print shellScript % { "PATH"            : strippedPath
-                      , "LD_LIBRARY_PATH" : strippedLibraryPath
-                      , "PYTHONPATH"      : strippedPythonPath
-                      , "BOOTSTRAP_TOP"   : coriolisTop
-                      , "CORIOLIS_TOP"    : coriolisTop
-                      , "SYSCONF_DIR"     : sysconfDir
-                      , "MESSAGE"         : shellMessage
-                      , "buildDir"        : buildDir
-                      }
+  evalScript = shellScript % { "PATH"            : strippedPath
+                             , "LD_LIBRARY_PATH" : strippedLibraryPath
+                             , "PYTHONPATH"      : strippedPythonPath
+                             , "BOOTSTRAP_TOP"   : coriolisTop
+                             , "CORIOLIS_TOP"    : coriolisTop
+                             , "SYSCONF_DIR"     : sysconfDir
+                             , "MESSAGE"         : shellMessage
+                             , "buildDir"        : buildDir
+                             }
+  if useDevtoolset2:
+    evalScript = '%s scl enable devtoolset-2 ${SHELL}' % evalScript
+
+  print evalScript

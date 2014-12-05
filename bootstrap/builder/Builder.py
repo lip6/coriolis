@@ -34,6 +34,7 @@ class Builder:
         self._doBuild          = True
         self._noCache          = False
         self._ninja            = False
+        self._clang            = False
         self._devtoolset2      = False
         self._qt5              = False
         self._enableShared     = "ON"
@@ -58,6 +59,7 @@ class Builder:
         elif attribute == "doBuild":          self._doBuild          = value
         elif attribute == "noCache":          self._noCache          = value
         elif attribute == "ninja":            self._ninja            = value
+        elif attribute == "clang":            self._clang            = value
         elif attribute == "devtoolset2":      self._devtoolset2      = value
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "enableDoc":        self._enableDoc        = value
@@ -340,6 +342,9 @@ class Builder:
 
 
     def _commandTemplate ( self, tools, projects, command ):
+        if self._clang:
+            self._environment[ 'CC'  ] = '/usr/bin/clang'
+            self._environment[ 'CXX' ] = '/usr/bin/clang++'
         if self._devtoolset2:
             self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-2/root/usr/include'
             self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-2/root/usr/lib'

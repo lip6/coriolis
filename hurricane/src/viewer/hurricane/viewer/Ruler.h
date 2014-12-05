@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,16 +11,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./Ruler.h"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_RULER__
-#define  __HURRICANE_RULER__
+#ifndef  HURRICANE_RULER_H
+#define  HURRICANE_RULER_H
 
-#include  <tr1/memory>
+#include  <memory>
 #include  <set>
 
 #include  "hurricane/Point.h"
@@ -63,7 +54,7 @@ namespace Hurricane {
   inline void         Ruler::setExtremity   ( const Point& extremity ) { _extremity = extremity; }
   inline bool         Ruler::intersect      ( const Box& area ) const { return area.intersect(Box(_origin,getAngle())); }
 
-  typedef  std::set< std::tr1::shared_ptr<Ruler> >  RulerSet;
+  typedef  std::set< std::shared_ptr<Ruler> >  RulerSet;
 
 } // End of Hurricane namespace.
 

@@ -20,7 +20,7 @@
 #include <math.h>
 #include <vector>
 #include <functional>
-#include <tr1/memory>
+#include <memory>
 #include <boost/function.hpp>
 #include <QWidget>
 #include <QPixmap>
@@ -54,7 +54,7 @@ namespace Hurricane {
 
   using std::vector;
   using std::unary_function;
-  using std::tr1::shared_ptr;
+  using std::shared_ptr;
 
   class Technology;
   class BasicLayer;

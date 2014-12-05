@@ -186,6 +186,7 @@ parser.add_option (       "--rm-build"    , action="store_true" ,               
 parser.add_option (       "--devtoolset-2", action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
 parser.add_option (       "--qt5"         , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
 parser.add_option (       "--ninja"       , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
+parser.add_option (       "--clang"       , action="store_true" ,                dest="clang"        , help="Force use of Clang C/C++ compiler instead of system default." )
 parser.add_option (       "--make"        , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
 parser.add_option (       "--project"     , action="append"     , type="string", dest="projects"     , help="The name of a project to build (may appears any number of time)." )
 parser.add_option ( "-t", "--tool"        , action="append"     , type="string", dest="tools"        , help="The name of a tool to build (may appears any number of time)." )
@@ -257,6 +258,7 @@ else:
     if options.noCache:          builder.noCache           = True
     if options.rmBuild:          builder.rmBuild           = True
     if options.ninja:            builder.ninja             = True
+    if options.clang:            builder.clang             = True
     if options.devtoolset2:      builder.devtoolset2       = True
     if options.qt5:              builder.qt5               = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments

@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -154,7 +153,7 @@ extern "C" {
   // // we allocate dynamically (so it doesn't get destructed at the function's
   // // exit).
   //   DrawingStyle* empty = new DrawingStyle();
-  //   memcpy((void*)&(pyDs->_object),(void*)empty,sizeof(tr1::shared_ptr<RawDrawingStyle>));
+  //   memcpy((void*)&(pyDs->_object),(void*)empty,sizeof(shared_ptr<RawDrawingStyle>));
 
   // //cerr << "ptr:"        << pyDs->_object.get()
   // //     << " use_count:" << pyDs->_object.use_count() << endl;
