@@ -55,7 +55,7 @@ namespace Knik {
         public: 
             //static Edge* create ( Fence* fence, Vertex* from, Vertex* to );
             void  destroy();
-            void _postCreate ( bool capacity );
+            void _postCreate();
             void _preDestroy();
 
         // Modifiers

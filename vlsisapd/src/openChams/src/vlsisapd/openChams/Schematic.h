@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI SAPD Software.
-// Copyright (c) UPMC/LIP6 2010-2012, All Rights Reserved
+// Copyright (c) UPMC 2010-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  V L S I   S A P D                              |
@@ -15,8 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __OPENCHAMS_SCHEMATIC_H__
-#define __OPENCHAMS_SCHEMATIC_H__
+#ifndef VLSISAPD_OPENCHAMS_SCHEMATIC_H
+#define VLSISAPD_OPENCHAMS_SCHEMATIC_H
 
 #include <map>
 #include <string>

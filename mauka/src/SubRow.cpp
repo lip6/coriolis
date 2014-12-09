@@ -56,11 +56,11 @@ SubRow::SubRow(Cell* cell, Surface* surface, const Box& box)
 SubRow* SubRow::create(Cell* cell, Surface* surface, const Box& box, bool orientation)
 {
     SubRow* subRow = new SubRow(cell, surface, box);
-    subRow->_postCreate(orientation);
+    subRow->_subRowPostCreate(orientation);
     return subRow;
 }
 
-  void SubRow::_postCreate(bool orientation)
+  void SubRow::_subRowPostCreate(bool orientation)
   {
     _row = _surface->InsertSubRowInRow(this, orientation); 
 

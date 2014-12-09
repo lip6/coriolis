@@ -180,11 +180,9 @@ namespace CRL {
   inline bool              Catalog::State::isLogical        () const { return (_flags&Logical    )?1:0; }
   inline unsigned int      Catalog::State::getFlags         ( unsigned int mask ) const { return ( _flags & mask ); }
   inline bool              Catalog::State::setFlags         ( unsigned int mask, bool value ) {
-                                                              switch ( value ) {
-                                                                case true:  _flags |=  mask; break;
-                                                                case false: _flags &= ~mask; break;
-                                                              }
-                                                              return ( (_flags&mask) ? true : false );
+                                                              if (value) { _flags |=  mask; }
+                                                              else       { _flags &= ~mask; }
+                                                              return ((_flags&mask) ? true : false);
                                                             }
   inline bool              Catalog::State::setFlattenLeaf   ( bool value ) { return setFlags(FlattenLeaf,value); }
   inline bool              Catalog::State::setFeed          ( bool value ) { return setFlags(Feed       ,value); }

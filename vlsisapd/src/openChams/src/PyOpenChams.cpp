@@ -1,4 +1,3 @@
-using namespace std;
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -20,8 +19,8 @@ using namespace boost::python;
 #include "vlsisapd/openChams/Port.h"
 #include "vlsisapd/openChams/Wire.h"
 #include "vlsisapd/openChams/OpenChamsException.h"
-
 #include "vlsisapd/openChams/PySTLMapWrapper.h"
+using namespace std;
 
 namespace OpenChams {
 

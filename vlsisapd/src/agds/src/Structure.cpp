@@ -25,7 +25,7 @@ bool Structure::write(ofstream &file) {
     tm now = *localtime(&curtime);
     char date[BUFSIZ]={0};
     const char format[]="%y-%m-%d  %H:%M:%S";
-    if (!strftime(date, sizeof(date)-1, format, &now)>0)
+    if (strftime(date, sizeof(date)-1, format, &now) == 0)
         cerr << "[GDS DRIVE ERROR]: cannot build current date." << endl;
 
     // Header

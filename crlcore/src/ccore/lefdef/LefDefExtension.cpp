@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,16 +11,16 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./LefDefExtension.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Error.h"
-#include  "hurricane/Cell.h"
+#include "hurricane/Error.h"
+#include "hurricane/Cell.h"
+#include "crlcore/LefDefExtension.h"
 
-#include  "crlcore/LefDefExtension.h"
+
+template<>
+Hurricane::Name  CRL::LefDefExtension::Extension::_name = "CRL::LefDefExtension";
 
 
 namespace CRL {
@@ -36,10 +30,6 @@ namespace CRL {
 
 
   const char* MissingLefDefExtension = "LefDefExtension::%s(): %s missing the LEF/DEF extension.";
-
-
-  template<>
-  Name  LefDefExtension::Extension::_name = "CRL::LefDefExtension";
 
   
 // -------------------------------------------------------------------

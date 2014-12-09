@@ -9,6 +9,7 @@
 
 #include <math.h>
 
+#include "hurricane/Box.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/UpdateSession.h"

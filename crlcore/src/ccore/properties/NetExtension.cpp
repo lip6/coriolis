@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,17 +11,17 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./NetExtension.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Error.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Cell.h"
+#include "hurricane/Error.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "crlcore/NetExtension.h"
 
-#include  "crlcore/NetExtension.h"
+
+template<>
+Hurricane::Name  Hurricane::StandardPrivateProperty<CRL::NetExtensionDatas>::_name = "CRL::NetExtension";
 
 
 namespace CRL {
@@ -38,10 +32,6 @@ namespace CRL {
 
 
   const char* MissingNetExtension = "NetExtension::%s(): %s missing the Net extension.";
-
-
-  template<>
-  Name  StandardPrivateProperty<NetExtensionDatas>::_name = "CRL::NetExtension";
 
   
 // -------------------------------------------------------------------

@@ -23,7 +23,7 @@ namespace Knik {
             static HEdge* create ( Vertex* from, Vertex* to );
             static HEdge* create ( Vertex* from, Vertex* to, unsigned capacity );
             //void destroy();
-            void _postCreate ( bool fenceCapacity );
+            void _postCreate ();
             //void _preDestroy();
 
         // Others

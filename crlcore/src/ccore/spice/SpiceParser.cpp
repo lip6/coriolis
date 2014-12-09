@@ -551,10 +551,12 @@ END_IF
 	list<string>::iterator it6_begin = (*it5_begin).second.begin(),
 	  it6_end = (*it5_begin).second.end();  // signal index list iterator
 
-        list<Net*>::iterator it7_begin =      // masterModel port list iterator 
-	  modelNameToPortListMap[getString(masterModel->getName())].begin(),
-	   it7_end = 
-	     modelNameToPortListMap[getString(masterModel->getName())].end();
+      list<Net*>::iterator it7_begin =      // masterModel port list iterator 
+	    modelNameToPortListMap[getString(masterModel->getName())].begin();
+#ifndef NDEBUG
+	  list<Net*>::iterator it7_end = 
+	    modelNameToPortListMap[getString(masterModel->getName())].end();
+#endif
 	
 	while(it6_begin!=it6_end){  // For all port<=> signals to branch. 
          ins->getPlug(*it7_begin)->setNet(_model->getNet((*_indexToNetNameMap)[*it6_begin])); 

@@ -178,7 +178,7 @@ namespace Katabatic {
               bool                        stepNetDesaturate   ( unsigned int depth
                                                               , set<Net*>&   globalNets
                                                               , SetIndex&    invalidateds );
-      inline  void                        invalidate          ();
+      inline  void                        invalidateCt        ();
       inline  void                        setUnderIoPad       ();
     // Inspector Management.                                  
               Record*                     _getRecord          () const;
@@ -246,7 +246,7 @@ namespace Katabatic {
   inline  const vector<AutoSegment*>& GCell::getHSegments () const { return _hsegments; }
   inline  const vector<AutoContact*>& GCell::getContacts  () const { return _contacts; }
   inline  string                      GCell::_getTypeName () const { return _TName("GCell"); }
-  inline  void                        GCell::invalidate   () { _flags |= GCellInvalidated; }
+  inline  void                        GCell::invalidateCt () { _flags |= GCellInvalidated; }
   inline  void                        GCell::setUnderIoPad() { _flags |= GCellUnderIoPad; }
   inline  const GCell::Key&           GCell::getKey       () const { return _key; }
   inline  void                        GCell::updateKey    ( unsigned int depth ) { _key.update(depth); }
@@ -276,13 +276,13 @@ namespace Katabatic {
   { return (depth<_depth) ? _blockages[depth] : 0; }
 
   inline  void  GCell::addVSegment ( AutoSegment* segment )
-  { invalidate(); _vsegments.push_back(segment); }
+  { invalidateCt(); _vsegments.push_back(segment); }
 
   inline  void  GCell::addHSegment ( AutoSegment* segment )
-  { invalidate(); _hsegments.push_back(segment); }
+  { invalidateCt(); _hsegments.push_back(segment); }
 
   inline  void  GCell::addContact ( AutoContact* contact )
-  { invalidate(); _contacts.push_back(contact); }
+  { invalidateCt(); _contacts.push_back(contact); }
 
 
 // GCell::CompareByIndex Inline Functions.

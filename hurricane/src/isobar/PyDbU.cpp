@@ -60,15 +60,15 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
-  static DbU::SnapMode PyInt_AsSnapMode ( PyObject* object ) {
-    switch ( PyAny_AsLong(object) ) {
-      case DbU::Inferior : return ( DbU::Inferior );
-      case DbU::Superior : return ( DbU::Superior );
-      case DbU::Nearest  : return ( DbU::Nearest );
-    }
+  // static DbU::SnapMode PyInt_AsSnapMode ( PyObject* object ) {
+  //   switch ( PyAny_AsLong(object) ) {
+  //     case DbU::Inferior : return ( DbU::Inferior );
+  //     case DbU::Superior : return ( DbU::Superior );
+  //     case DbU::Nearest  : return ( DbU::Nearest );
+  //   }
 
-    return ( DbU::Superior );
-  }
+  //   return ( DbU::Superior );
+  // }
 
   static DbU::UnitPower PyInt_AsUnitPower ( PyObject* object ) {
     switch ( PyAny_AsLong(object) ) {

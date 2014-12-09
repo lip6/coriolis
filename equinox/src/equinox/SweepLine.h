@@ -89,10 +89,10 @@ namespace Equinox {
     /**/        Record*         _getRecord           () const;
     /**/        string          _getString           () const;
     /**/        Box             getBoundingBox       () const;
-    /**/        void            run                  ( vector < ITEM  >* _itemsByXmin, 
-						       vector < ITEM  >* _itemsByXmax,
-						       bool stopToMax,
-						       int max);
+    /**/        void            run                  ( vector < ITEM  >* _itemsByXmin
+                                                     , vector < ITEM  >* _itemsByXmax
+                                                     , bool stopToMax = false
+                                                     , int max = 0 );
     
     /**/        void            initIntervalSets           () ;
     /**/inline        void      insertInterval       (ITEM newitem);
@@ -346,7 +346,7 @@ inline  void SweepLine<ITEM,ENGINE>::insertInterval(ITEM item)
 
 
   template < typename ITEM, typename ENGINE > 
-  void SweepLine<ITEM,ENGINE>::run (vector < ITEM  >* _itemsByXmin,  vector < ITEM  >* _itemsByXmax,bool stopAtMax = false,int max = 0)
+  void SweepLine<ITEM,ENGINE>::run (vector < ITEM  >* _itemsByXmin,  vector < ITEM  >* _itemsByXmax,bool stopAtMax, int max )
   {
 
     ///*DEBUG*/    cmess1 << "                             o SweepLine :: run  : " << endl;

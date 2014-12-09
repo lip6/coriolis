@@ -611,14 +611,12 @@ namespace Katabatic {
         if ( (i%2) and (_densities[i] > density) ) density = _densities[i];
       }
     //density = roundfp(density);
-      density = density;
     } else if (getGCellGrid()->getDensityMode() == GCellGrid::MaxVDensity) {
     // Density of the most saturated vertical layer.
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
         if ( (i%2 == 0) and (_densities[i] > density) ) density = _densities[i];
       }
     //density = roundfp(density);
-      density = density;
     }
 
     return density;
@@ -758,18 +756,18 @@ namespace Katabatic {
     sort ( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort ( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
 
-    float          hcapacity    = getHCapacity ();
-    float          vcapacity    = getVCapacity ();
-    float          ccapacity    = hcapacity * vcapacity * 4; 
-    DbU::Unit      hpenalty     = 0 /*_box.getWidth () / 3*/;
-    DbU::Unit      vpenalty     = 0 /*_box.getHeight() / 3*/;
-    DbU::Unit      uLengths1    [ _depth ];
-    DbU::Unit      uLengths2    [ _depth ];
-    float          localCounts  [ _depth ];
-    UsedFragments  ufragments   [ _depth ];
+    float                    hcapacity    = getHCapacity ();
+    float                    vcapacity    = getVCapacity ();
+    float                    ccapacity    = hcapacity * vcapacity * 4; 
+    DbU::Unit                hpenalty     = 0 /*_box.getWidth () / 3*/;
+    DbU::Unit                vpenalty     = 0 /*_box.getHeight() / 3*/;
+    DbU::Unit                uLengths1    [ _depth ];
+    DbU::Unit                uLengths2    [ _depth ];
+    float                    localCounts  [ _depth ];
+    vector<UsedFragments>    ufragments   ( _depth );
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      ufragments   [i].setPitch ( Session::getPitch(i) );
+      ufragments[i].setPitch ( Session::getPitch(i) );
       _feedthroughs[i] = 0.0;
       uLengths2    [i] = 0;
       localCounts  [i] = 0.0;
@@ -809,7 +807,7 @@ namespace Katabatic {
       size_t       count = 0;
       for ( size_t i=0 ; i<_hsegments.size() ; i++ ) {
         _globalsCount[depth] += 1.0;
-        ufragments   [depth].incGlobals();
+        ufragments[depth].incGlobals();
 
         if ( layer != _hsegments[i]->getLayer() ) {
           uLengths2[depth] += count * _box.getWidth();
@@ -833,7 +831,7 @@ namespace Katabatic {
       size_t       count = 0;
       for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
         _globalsCount[depth] += 1.0;
-        ufragments   [depth].incGlobals();
+        ufragments[depth].incGlobals();
 
         if ( layer != _vsegments[i]->getLayer() ) {
           uLengths2[depth] += count * _box.getHeight();

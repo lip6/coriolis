@@ -1,4 +1,3 @@
-using namespace std;
 
 #include <boost/python.hpp>
 using namespace boost::python;
@@ -7,6 +6,7 @@ using namespace boost::python;
 #include "vlsisapd/agds/Structure.h"
 #include "vlsisapd/agds/Element.h"
 #include "vlsisapd/agds/Rectangle.h"
+using namespace std;
 
 namespace AGDS {
 BOOST_PYTHON_MODULE(AGDS) {

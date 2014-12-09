@@ -1,4 +1,3 @@
-using namespace std;
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -9,8 +8,8 @@ using namespace boost::python;
 #include "vlsisapd/spice/Subckt.h"
 #include "vlsisapd/spice/Circuit.h"
 #include "vlsisapd/spice/SpiceException.h"
-
 #include "vlsisapd/spice/PySTLMapWrapper.h"
+using namespace std;
 
 namespace SPICE {
 void translator(SpiceException const& e) {

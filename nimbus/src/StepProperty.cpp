@@ -46,9 +46,13 @@ namespace Nimbus {
 
   typedef  StandardPrivateProperty<unsigned>  InstanceProperty;
 
-  template<>
-  Name InstanceProperty::_name = "Nimbus::InstanceProperty";
+}
 
+template<>
+Hurricane::Name Nimbus::InstanceProperty::_name = "Nimbus::InstanceProperty";
+
+
+namespace Nimbus {
 
 unsigned getStep(const Instance& instance)
 {

@@ -57,7 +57,7 @@ void  doFindMegaCells ( Circuit* circuit )
     Node* node = (*inode).second;
 
     map<size_t,Pin*>&          pins = node->getPins();
-    map<size_t,Pin*>::iterator ipin = pins.begin();
+  //map<size_t,Pin*>::iterator ipin = pins.begin();
     if ( (double)pins.size() > node->getWidth() ) {
       cout << setw(4) << right << megacellsNb
            << ":megacell:" << node->getName()

@@ -858,7 +858,9 @@ void Graph::addToSTuplePQ ( STuple* stuple )
   STuple::CostProperty* costProperty = stuple->getCostProperty();
   assert( costProperty );
   costProperty->setPQIter ( _stuplePriorityQueue.insert( stuple ) );
+#ifndef NDEBUG
   STuple::STuplePQIter pqit = costProperty->getPQIter();
+#endif
   assert( (*pqit) == stuple );
 }
 
@@ -2068,7 +2070,7 @@ unsigned Graph::analyseRouting ( set<Segment*>& segmentsToUnroute )
     }
     else {
         STuple* topSTuple = getMaxFromSTuplePQ();
-        float maxCost = topSTuple->getCost();
+      //float maxCost = topSTuple->getCost();
       //cmess1 << "        - Maximum segment cost : " << maxCost << endl;
         float minCost = 0.20;
         if (_stuplePriorityQueue.size() <= 100)

@@ -1,4 +1,3 @@
-using namespace std;
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -14,8 +13,8 @@ using namespace boost::python;
 #include "vlsisapd/liberty/Timing.h"
 #include "vlsisapd/liberty/FlipFlop.h"
 #include "vlsisapd/liberty/Library.h"
-
 #include "vlsisapd/liberty/PySTLMapWrapper.h"
+using namespace std;
 
 namespace LIB {
 //void translator(LibertyException const& e) {

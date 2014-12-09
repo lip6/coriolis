@@ -25,7 +25,7 @@ bool Circuit::writeToFile(string filename) {
     tm now = *localtime(&curtime);
     char date[BUFSIZ]={0};
     const char format[]="%d-%b-%Y  %H:%M:%S";
-    if (!strftime(date, sizeof(date)-1, format, &now)>0)
+    if (strftime(date, sizeof(date)-1, format, &now) == 0)
         cerr << "[CIF DRIVE ERROR]: cannot build current date." << endl;
 
     ofstream file;

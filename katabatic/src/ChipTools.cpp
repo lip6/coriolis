@@ -18,6 +18,7 @@
 #include  <sstream>
 #include  "hurricane/Warning.h"
 #include  "hurricane/Bug.h"
+#include  "hurricane/Torus.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/Horizontal.h"

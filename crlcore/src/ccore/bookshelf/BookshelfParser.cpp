@@ -45,22 +45,17 @@
 
 
 #include <string.h>
-
 #include <sstream>
-
 #include <regex.h>
-
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/UpdateSession.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/UpdateSession.h"
 using namespace Hurricane;
-
 
 #include "crlcore/Utilities.h"
 #include "crlcore/AllianceFramework.h"
-
-#include  "Bookshelf.h"
+#include "Bookshelf.h"
 
 
 const char* badRegex =
@@ -77,13 +72,13 @@ namespace {
 
 
 
-  char* lower ( char* str )
-  {
-    for ( char* ptr = str; *ptr != '\0' ; ptr++ )
-      *ptr = (char)tolower ( *ptr );
-
-    return str;
-  }
+// char* lower ( char* str )
+// {
+//   for ( char* ptr = str; *ptr != '\0' ; ptr++ )
+//     *ptr = (char)tolower ( *ptr );
+//
+//   return str;
+// }
 
 // CParsAP should read this code :
 // *******************************
@@ -297,24 +292,24 @@ Name BKParser::getNewNetName()
 }
 
 
-Net* MergeNets ( Net* net1, Net* net2 )
-// ************************************
-{
-    if ( net2->getName()[0] != '~' ) {
-        if ( ( net1->getName()[0] == '~' ) ||
-             ( net2->isGlobal()   && !net1->isGlobal()   ) ||
-             ( net2->isExternal() && !net1->isExternal() ) ) {
-            Net* tmpNet = net1;
-            net1 = net2;
-            net2 = tmpNet;
-        }
-    }
-    net1->setExternal ( net1->isExternal() || net2->isExternal() );
-    net1->setGlobal   ( net1->isGlobal()   || net2->isGlobal()   );
-    
-    net1->merge ( net2 ); // Caution : net2 will be deleted
-    return net1;
-}
+// Net* MergeNets ( Net* net1, Net* net2 )
+// // ************************************
+// {
+//     if ( net2->getName()[0] != '~' ) {
+//         if ( ( net1->getName()[0] == '~' ) ||
+//              ( net2->isGlobal()   && !net1->isGlobal()   ) ||
+//              ( net2->isExternal() && !net1->isExternal() ) ) {
+//             Net* tmpNet = net1;
+//             net1 = net2;
+//             net2 = tmpNet;
+//         }
+//     }
+//     net1->setExternal ( net1->isExternal() || net2->isExternal() );
+//     net1->setGlobal   ( net1->isGlobal()   || net2->isGlobal()   );
+//    
+//     net1->merge ( net2 ); // Caution : net2 will be deleted
+//     return net1;
+// }
 
 
 // ************************************************************************************
@@ -734,28 +729,28 @@ Transformation getTransformation ( const Box& abox, const DbU::Unit& x, const Db
 }
 
 
-void UpdateSizes ( Contact* contact )
-// **********************************
-{
-    DbU::Unit width = 0;
-    DbU::Unit height = 0;
-    const Layer* layer = contact->getLayer();
-  //if ( layer->getType() == CompositeLayer::Type::VIA ) {
-    width  = max ( contact->getWidth(),  layer->getMinimalSize() );
-    height = max ( contact->getHeight(), layer->getMinimalSize() );
-  //}
-
-    for_each_hook ( hook, contact->getBodyHook()->getSlaveHooks() ) {
-        Component* component = hook->getComponent();
-        if ( Vertical* vertical = dynamic_cast<Vertical*> ( component ) ) {
-            width  = max ( width,  vertical->getWidth() );
-        } else if ( Horizontal* horizontal = dynamic_cast<Horizontal*> ( component ) ) {
-            height = max ( height, horizontal->getWidth() );
-        }
-        end_for;
-    }
-    contact->setSizes ( width, height );
-}
+// void UpdateSizes ( Contact* contact )
+// // **********************************
+// {
+//     DbU::Unit width = 0;
+//     DbU::Unit height = 0;
+//     const Layer* layer = contact->getLayer();
+//   //if ( layer->getType() == CompositeLayer::Type::VIA ) {
+//     width  = max ( contact->getWidth(),  layer->getMinimalSize() );
+//     height = max ( contact->getHeight(), layer->getMinimalSize() );
+//   //}
+//
+//     for_each_hook ( hook, contact->getBodyHook()->getSlaveHooks() ) {
+//         Component* component = hook->getComponent();
+//         if ( Vertical* vertical = dynamic_cast<Vertical*> ( component ) ) {
+//             width  = max ( width,  vertical->getWidth() );
+//         } else if ( Horizontal* horizontal = dynamic_cast<Horizontal*> ( component ) ) {
+//             height = max ( height, horizontal->getWidth() );
+//         }
+//         end_for;
+//     }
+//     contact->setSizes ( width, height );
+// }
 
 
 // ***************************************************************************************

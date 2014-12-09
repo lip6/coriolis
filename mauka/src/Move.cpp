@@ -53,18 +53,18 @@ namespace {
 
 using Hurricane::DbU;
     
-DbU::Unit PositionRand(const DbU::Unit position, const double distance, const DbU::Unit min, const DbU::Unit max)
-{
-    DbU::Unit borneInf, borneSup;
+// DbU::Unit PositionRand(const DbU::Unit position, const double distance, const DbU::Unit min, const DbU::Unit max)
+// {
+//     DbU::Unit borneInf, borneSup;
 
-    if ((borneSup = position + DbU::lambda((int)(distance * DbU::getLambda(max) + 0.5)) ) > max )
-        borneSup = max;
+//     if ((borneSup = position + DbU::lambda((int)(distance * DbU::getLambda(max) + 0.5)) ) > max )
+//         borneSup = max;
 
-    if ((borneInf = position - DbU::lambda((int)(distance * DbU::getLambda(max) + 0.5)) ) < min )
-        borneInf = min;
+//     if ((borneInf = position - DbU::lambda((int)(distance * DbU::getLambda(max) + 0.5)) ) < min )
+//         borneInf = min;
     
-    return borneInf + DbU::lambda((int)(DbU::getLambda(borneSup - borneInf) * rand() / (RAND_MAX+1.0)));
-}
+//     return borneInf + DbU::lambda((int)(DbU::getLambda(borneSup - borneInf) * rand() / (RAND_MAX+1.0)));
+// }
 
 } // End of anonymous namespace.
 

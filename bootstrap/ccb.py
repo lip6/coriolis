@@ -54,6 +54,7 @@ def safeImport ( moduleName, symbol=None ):
 
 def guessOs ():
     libDir            = 'lib'
+    osSlsoc7x_64      = re.compile (".*Linux.*(el7|slsoc7).*x86_64.*")
     osSlsoc6x_64      = re.compile (".*Linux.*(el6|slsoc6).*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
     osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
@@ -72,7 +73,10 @@ def guessOs ():
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
 
-    if osSlsoc6x_64.match(lines[0]):
+    if osSlsoc7x_64.match(lines[0]):
+        osType = "Linux.el7_64"
+        libDir = "lib64"
+    elif osSlsoc6x_64.match(lines[0]):
         osType = "Linux.slsoc6x_64"
         libDir = "lib64"
     elif osSlsoc6x.match(lines[0]):

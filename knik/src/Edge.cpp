@@ -56,8 +56,8 @@ Edge::Edge ( Vertex* from, Vertex* to, unsigned capacity )
 //cerr << "    Edge::Edge() capacity:" << _capacity << endl;
 }
 
-void Edge::_postCreate ( bool capacity )
-// *************************************
+void Edge::_postCreate ()
+// **********************
 {
     Inherit::_postCreate();
 

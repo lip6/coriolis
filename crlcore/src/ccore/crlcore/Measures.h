@@ -147,7 +147,8 @@ namespace CRL {
     public:
       typedef StandardPrivateProperty<MeasuresDatas> Extension;
     public:
-      template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, const Data&, unsigned int width=8 );
+      template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, const Data&, unsigned int width );
+      template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, const Data& );
       template<typename Data> friend inline void                 addMeasure   ( DBo*, const Name&, Data* );
       template<typename Data> friend inline const Measure<Data>* getMeasure   ( DBo*, const Name& );
                                      static const MeasuresSet*   get          ( const DBo* );
@@ -168,6 +169,11 @@ namespace CRL {
       static_cast< Measure<Data>* >( (*imeasure).second )->setData( data );
     }
   }
+
+
+  template<typename Data>
+  inline void  addMeasure ( DBo* object, const Name& name, const Data& data )
+  { return addMeasure(object,name,data,8); }
 
 
   template<typename Data>

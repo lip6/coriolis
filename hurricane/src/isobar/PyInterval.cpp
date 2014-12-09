@@ -95,12 +95,13 @@ extern "C" {
 
     METHOD_HEAD ( "Interval.getUnion()" )
 
-    PyInterval* otherPyInterval;
+    Interval*   uinterval       = NULL;
+    PyInterval* otherPyInterval = NULL;
     if (PyArg_ParseTuple(args,"O!:Interval.getUnion", &PyTypeInterval, &otherPyInterval)) {
       HTRY
-      Interval* interval = new Interval ( interval->getUnion(*PYINTERVAL_O(otherPyInterval)));
+      uinterval = new Interval ( interval->getUnion(*PYINTERVAL_O(otherPyInterval)));
       HCATCH
-      return PyInterval_Link( interval );
+      return PyInterval_Link( uinterval );
     } else {
       PyErr_SetString ( ConstructorError, "invalid number of parameters for Interval.getUnion.");
     }
@@ -113,12 +114,13 @@ extern "C" {
 
     METHOD_HEAD ( "Interval.getIntersection()" )
 
+    Interval*   iinterval       = NULL;
     PyInterval* otherPyInterval = NULL;
     if (PyArg_ParseTuple(args,"O!:Interval.getIntersection", &PyTypeInterval, &otherPyInterval)) {
       HTRY
-        Interval* interval = new Interval(interval->getIntersection(*PYINTERVAL_O(otherPyInterval)));
+        iinterval = new Interval(interval->getIntersection(*PYINTERVAL_O(otherPyInterval)));
       HCATCH
-      return PyInterval_Link( interval );
+      return PyInterval_Link( iinterval );
     } else {
       PyErr_SetString(ConstructorError, "invalid number of parameters for Interval.getIntersection.");
     }

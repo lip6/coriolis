@@ -10,7 +10,7 @@ class Polygon {
         Polygon(long);
 
         void addPoint (long, long);
-        void write ( ofstream& );
+        void write ( std::ofstream& );
 
     private:
         long _layer;

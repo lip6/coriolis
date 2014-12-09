@@ -31,7 +31,6 @@
 
 namespace CRL {
 
-
   using Hurricane::_TName;
   using Hurricane::Record;
   using Hurricane::Error;
@@ -152,11 +151,8 @@ namespace CRL {
 }  // End of CRL namespace.
 
 
-
-
 // -------------------------------------------------------------------
 // Class  :  "::tty()".
-
 
 class tty {
   public:
@@ -253,7 +249,6 @@ inline std::string  tty::bgcolor ( unsigned int mask )
 // Wrapper around the STL ostream which uses a verbose level to choose
 // wether to print or not.
 
-
   class mstream : public std::ostream {
     public:
       enum StreamMasks { PassThrough   = 0x00000001
@@ -298,45 +293,56 @@ inline std::string  tty::bgcolor ( unsigned int mask )
   inline mstream&      mstream::flush          () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
   inline mstream&      mstream::operator<<     ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
 
+// For POD Types.
   template<typename T>
   inline mstream& mstream::operator<< ( T& t )
-    { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+  { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
 
   template<typename T>
   inline mstream& mstream::operator<< ( T* t )
-    { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+  { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
 
   template<typename T>
   inline mstream& mstream::operator<< ( const T& t )
-    { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+  { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
 
   template<typename T>
   inline mstream& mstream::operator<< ( const T* t )
-    { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+  { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+
+// For STL Types.
+  inline mstream& operator<< ( mstream& o, const std::string& s )
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
 
 // Specific non-member operator overload. Must be one for each type.
 #define  MSTREAM_V_SUPPORT(Type)                           \
-  inline mstream& operator<< ( mstream& o, const Type s )  \
-    { if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
+  inline mstream& operator<< ( mstream& o, Type t )        \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; }; \
+                                                           \
+  inline mstream& operator<< ( mstream& o, const Type t )  \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; };
 
 #define  MSTREAM_R_SUPPORT(Type)                           \
-  inline mstream& operator<< ( mstream& o, const Type& s ) \
-    { if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
+  inline mstream& operator<< ( mstream& o, const Type& t ) \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; }; \
+                                                           \
+  inline mstream& operator<< ( mstream& o, Type& t )       \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; };
 
 #define  MSTREAM_P_SUPPORT(Type)                           \
-  inline mstream& operator<< ( mstream& o, const Type* s ) \
-    { if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
+  inline mstream& operator<< ( mstream& o, const Type* t ) \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; }; \
+                                                           \
+  inline mstream& operator<< ( mstream& o, Type* t )       \
+  { if (o.enabled()) { static_cast<std::ostream&>(o) << t; } return o; };
 
 #define  MSTREAM_PR_SUPPORT(Type) \
          MSTREAM_P_SUPPORT(Type)  \
          MSTREAM_R_SUPPORT(Type)
 
-MSTREAM_PR_SUPPORT(std::string);
-
 
 // -------------------------------------------------------------------
 // Shared objects.
-
 
 extern mstream  cmess0;
 extern mstream  cmess1;
@@ -347,37 +353,10 @@ extern mstream  cbug;
 
 
 // -------------------------------------------------------------------
-// Class  :  "::Dots".
-
-
-class  Dots {
-  public:
-    static Dots          asPercentage ( const std::string& left, float );
-    static Dots          asBool       ( const std::string& left, bool );
-    static Dots          asInt        ( const std::string& left, int );
-    static Dots          asUInt       ( const std::string& left, unsigned int );
-    static Dots          asULong      ( const std::string& left, unsigned long );
-    static Dots          asSizet      ( const std::string& left, size_t );
-    static Dots          asDouble     ( const std::string& left, double );
-    static Dots          asLambda     ( const std::string& left, Hurricane::DbU::Unit );
-    static Dots          asLambda     ( const std::string& left, double );
-    static Dots          asIdentifier ( const std::string& left, const std::string& );
-    static Dots          asString     ( const std::string& left, const std::string& );
-  private:
-                         Dots         ( const std::string& left, const std::string& right );
-    friend std::ostream& operator<<   ( std::ostream&, const Dots& );
-  private:
-    const std::string _left;
-    const std::string _right;
-};
-
-
-// -------------------------------------------------------------------
 // Class  :  "::linefill()".
 //
 // Wrapper around the STL ostream which try print unbufferized filed
 // lines.
-
 
 class linefill : public std::ostream {
   public:
@@ -458,6 +437,31 @@ inline linefill& linefill::operator<< ( const T* t )
          LINEFILL_R_SUPPORT(Type)
 
 LINEFILL_PR_SUPPORT(std::string);
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Dots".
+
+class  Dots {
+  public:
+    static Dots          asPercentage ( const std::string& left, float );
+    static Dots          asBool       ( const std::string& left, bool );
+    static Dots          asInt        ( const std::string& left, int );
+    static Dots          asUInt       ( const std::string& left, unsigned int );
+    static Dots          asULong      ( const std::string& left, unsigned long );
+    static Dots          asSizet      ( const std::string& left, size_t );
+    static Dots          asDouble     ( const std::string& left, double );
+    static Dots          asLambda     ( const std::string& left, Hurricane::DbU::Unit );
+    static Dots          asLambda     ( const std::string& left, double );
+    static Dots          asIdentifier ( const std::string& left, const std::string& );
+    static Dots          asString     ( const std::string& left, const std::string& );
+  private:
+                         Dots         ( const std::string& left, const std::string& right );
+    friend std::ostream& operator<<   ( std::ostream&, const Dots& );
+  private:
+    const std::string _left;
+    const std::string _right;
+};
 
 
 #endif // CRL_UTILITIES

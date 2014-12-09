@@ -243,7 +243,7 @@ namespace Utilities {
   
   Path& Path::operator= ( const Path& other )
   {
-    _elements.swap( vector<std::string>() );
+    vector<std::string>().swap( _elements );
     _elements  = other._elements;
     _flags     = other._flags;
     _pathcache = other._pathcache;

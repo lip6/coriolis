@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,18 +11,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./NetExtension.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __NET_EXTENSION__
-#define  __NET_EXTENSION__
+#ifndef  CRL_NET_EXTENSION_H
+#define  CRL_NET_EXTENSION_H
 
-#include  <set>
-
-#include  "hurricane/Property.h"
+#include <set>
+#include "hurricane/Property.h"
 
 namespace Hurricane {
   class Net;
@@ -79,7 +69,6 @@ namespace CRL {
   };
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
-
-#endif  // __NET_EXTENSION__
+#endif  // CRL_NET_EXTENSION_H

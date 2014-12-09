@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2014, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -478,7 +478,7 @@ namespace {
       orientation = fields[5];
 
       index       = -1;
-      if (fields[4] != '\0') index = atoi( fields[4] );
+      if (fields[4][0] != '\0') index = atoi( fields[4] );
 
       size_t length = strlen( fields[3] );
       if (length > 1000) {

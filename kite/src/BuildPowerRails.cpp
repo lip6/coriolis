@@ -417,7 +417,6 @@ namespace {
           DbU::Unit      _axis;
           DbU::Unit      _width;
           list<Interval> _chunks;
-          Net*           _net;
       };
 
     private:

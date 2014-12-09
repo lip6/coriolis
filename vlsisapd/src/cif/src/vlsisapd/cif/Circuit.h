@@ -2,6 +2,7 @@
 #define __CIF_CIRCUIT_H
 
 #include <vector>
+#include <string>
 
 namespace CIF {
 class Polygon;
@@ -13,8 +14,8 @@ class Circuit {
         bool writeToFile ( std::string );
 
     private:
-        string _name;
-        string _unit;
+        std::string _name;
+        std::string _unit;
         double _scale;
 
         std::vector<Polygon*> _polygons;

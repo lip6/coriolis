@@ -1,6 +1,6 @@
-using namespace std;
 
 #include "vlsisapd/liberty/Name.h"
+using namespace std;
 
 namespace LIB {
 unsigned long Name::_globalId = 0;

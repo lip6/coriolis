@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,19 +11,15 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./LefDefExtension.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __LEFDEF_EXTENSION__
-#define  __LEFDEF_EXTENSION__
+#ifndef  CRL_LEFDEF_EXTENSION_H
+#define  CRL_LEFDEF_EXTENSION_H
 
-#include  <list>
-
-#include  "hurricane/Box.h"
-#include  "hurricane/Property.h"
+#include <list>
+#include "hurricane/Box.h"
+#include "hurricane/Property.h"
 
 namespace Hurricane {
   class Cell;
@@ -91,7 +81,6 @@ namespace CRL {
   };
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
-
-#endif  // __LEFDEF_EXTENSION__
+#endif  // CRL_LEFDEF_EXTENSION_H

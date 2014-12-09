@@ -43,7 +43,6 @@ class Circuit {
     typedef std::vector<std::string>            string_vector;
     typedef std::map<std::string, std::string>  strings_map;
     private:
-    unsigned               _line;
     std::string            _title;
     string_vector          _includes;
     strpair_vector         _libraries;
@@ -54,7 +53,7 @@ class Circuit {
     std::vector<Source*>   _sources;
 
     public:
-    Circuit(): _line(0), _title(""), _includes(), _libraries(), _options(), _parameters(), _subckts(), _instances() {};
+    Circuit(): _title(""), _includes(), _libraries(), _options(), _parameters(), _subckts(), _instances() {};
     ~Circuit() {};
 
     inline std::string getTitle();

@@ -29,12 +29,12 @@ namespace {
   using std::istringstream;
 
 
-  void  parseInt ( const char* s, int& value )
-  { istringstream is ( s ); is >> value; }
+  // void  parseInt ( const char* s, int& value )
+  // { istringstream is ( s ); is >> value; }
 
 
-  void  parseFloat ( const char* s, float& value )
-  { istringstream is ( s ); is >> value; }
+  // void  parseFloat ( const char* s, float& value )
+  // { istringstream is ( s ); is >> value; }
 
 
   void  parseRgbColor ( const char* color, int& red, int& green, int& blue )
@@ -44,7 +44,6 @@ namespace {
     istringstream is ( color );
     is >> red >> colon1 >> green >> colon2 >> blue;
   }
-
 
 
 } // Anonymous namespace.

@@ -36,7 +36,7 @@ VEdge* VEdge::create ( Vertex* from, Vertex* to )
 
     VEdge* vEdge = new VEdge ( from, to );
 
-    vEdge->_postCreate(true);
+    vEdge->_postCreate();
 
     return vEdge;
 }
@@ -49,15 +49,15 @@ VEdge* VEdge::create ( Vertex* from, Vertex* to, unsigned capacity )
 
     VEdge* vEdge = new VEdge ( from, to, capacity );
 
-    vEdge->_postCreate(false);
+    vEdge->_postCreate();
 
     return vEdge;
 }
 
-void VEdge::_postCreate( bool fenceCapacity )
-// ******************************************
+void VEdge::_postCreate()
+// **********************
 {
-    Inherit::_postCreate ( fenceCapacity );
+    Inherit::_postCreate ();
 }
 
 VEdge::~VEdge()

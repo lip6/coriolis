@@ -36,7 +36,7 @@ HEdge* HEdge::create ( Vertex* from, Vertex* to )
 
     HEdge* hEdge = new HEdge ( from, to );
 
-    hEdge->_postCreate(true);
+    hEdge->_postCreate();
 
     return hEdge;
 }
@@ -49,15 +49,15 @@ HEdge* HEdge::create ( Vertex* from, Vertex* to, unsigned capacity )
 
     HEdge* hEdge = new HEdge ( from, to, capacity );
 
-    hEdge->_postCreate(false);
+    hEdge->_postCreate();
 
     return hEdge;
 }
 
-void HEdge::_postCreate ( bool fenceCapacity )
-// *******************************************
+void HEdge::_postCreate ()
+// ***********************
 {
-    Inherit::_postCreate ( fenceCapacity );
+    Inherit::_postCreate();
 }
 
 HEdge::~HEdge()

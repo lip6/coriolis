@@ -33,6 +33,7 @@ def stripPath ( pathName ):
 
 def guessOs ():
     useDevtoolset2    = False
+    osSlsoc7x_64      = re.compile (".*Linux.*el7.*x86_64.*")
     osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el|slsoc)6.*")
     osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
@@ -54,7 +55,10 @@ def guessOs ():
     lines = uname.stdout.readlines()
 
     libDir="lib"
-    if osSlsoc6x_64.match(lines[0]):
+    if osSlsoc7x_64.match(lines[0]):
+      osType         = "Linux.el7_64"
+      libDir         = "lib64"
+    elif osSlsoc6x_64.match(lines[0]):
       osType         = "Linux.slsoc6x_64"
       libDir         = "lib64"
       useDevtoolset2 = True
@@ -100,8 +104,8 @@ def guessOs ():
       uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
       osType = uname.stdout.readlines()[0][:-1]
 
-     #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
-     #print "          (using: \"%s\")" % osType
+      print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
+      print "          (using: \"%s\")" % osType
     
     return (osType,libDir,useDevtoolset2)
       

@@ -89,8 +89,10 @@ namespace Metis {
       static const Name     _toolName;
              Configuration* _configuration;
              unsigned       _step;
+#ifdef HAVE_HMETIS_LIB
              MetisGraphs*   _actualGraphs;
              MetisGraphs*   _newGraphs;
+#endif
              int            _globalEdgeCut;
     private:
     // Internals.

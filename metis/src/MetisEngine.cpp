@@ -64,8 +64,10 @@ namespace Metis {
     : Inherit       (cell)
     , _configuration(new Configuration())
     , _step         (0)
+#ifdef HAVE_HMETIS_LIB
     , _actualGraphs ()
     , _newGraphs    ()
+#endif
     , _globalEdgeCut(0)
   {
 #ifdef HAVE_HMETIS_LIB

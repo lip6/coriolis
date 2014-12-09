@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2006-2014, All Rights Reserved
+// Copyright (c) UPMC 2006-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -134,7 +134,7 @@ namespace Mauka {
     private:
     // Internals.
                        MaukaEngine           ( Cell* );
-              void     _postCreate           ( Box& placementbox );
+              void     _maukaPostCreate      ( Box& placementbox );
               void     _preDestroy           ();
       inline  Surface* _getSurface           () const { return _surface; }
               Box      PlotFixedPointsLabels ( std::ofstream& ) const;

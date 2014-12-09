@@ -768,7 +768,9 @@ GCell* GCell::getSubUpperLeft () const
     assert (col != _pavement.end());
 
     RBMap::const_reverse_iterator rbit = ((*col).second)->rbegin();
+#ifndef NDEBUG
     RBMap::const_reverse_iterator rbend = ((*col).second)->rend();
+#endif
     assert (rbit != rbend);
 
     return (*rbit).second;
@@ -783,7 +785,9 @@ GCell* GCell::getSubUpperRight () const
     assert (col != _pavement.rend());
 
     RBMap::const_reverse_iterator rbit = ((*col).second)->rbegin();
+#ifndef NDEBUG
     RBMap::const_reverse_iterator rbend = ((*col).second)->rend();
+#endif
     assert (rbit != rbend);
 
     return (*rbit).second;

@@ -40,8 +40,8 @@ namespace {
   };
 
 
-  DbU::Unit  getPositionByIterator ( const vector<TrackElement*>& v, size_t i )
-  { return (*(v.begin()+i))->getSourceU(); }
+  // DbU::Unit  getPositionByIterator ( const vector<TrackElement*>& v, size_t i )
+  // { return (*(v.begin()+i))->getSourceU(); }
 
 
 } // Anonymous namespace.

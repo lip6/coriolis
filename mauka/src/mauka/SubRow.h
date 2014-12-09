@@ -100,7 +100,7 @@ class SubRow : public Container {
     private: void _computeCapacity(double margin);
     private: bool _MergeBins();
     public: void DisplayBinHits() const;
-    protected: virtual void _postCreate(bool orientation);
+    protected: virtual void _subRowPostCreate(bool orientation);
     protected: virtual void _preDestroy();
     public: double getBinCost() const;
     public: DbU::Unit getBinsSize() const;

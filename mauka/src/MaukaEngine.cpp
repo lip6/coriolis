@@ -94,13 +94,13 @@ MaukaEngine* MaukaEngine::create(Cell* cell, Box placementbox)
 {
     MaukaEngine* mauka = new MaukaEngine(cell);
 
-    mauka->_postCreate(placementbox);
+    mauka->_maukaPostCreate(placementbox);
 
     return mauka;
 }
 
-void MaukaEngine::_postCreate(Box& placementbox)
-// *********************************************
+void MaukaEngine::_maukaPostCreate(Box& placementbox)
+// **************************************************
 {
     Inherit::_postCreate();
 
@@ -109,17 +109,11 @@ void MaukaEngine::_postCreate(Box& placementbox)
     addFeed ( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
 
     Construct();
-
     //_simAnnealingPlacer = new SimAnnealingPlacer(this, 1, 0.0, 0.0);
     _simAnnealingPlacer = new SimAnnealingPlacer(this);
-
     //_displaySlot = DisplaySlot::create(getCell(),,139,0,139);
-
     _surface = Surface::create(this, placementbox);
-
-
     _simAnnealingPlacer->init();
-
     //Plot();
 }
 
@@ -162,22 +156,22 @@ void MaukaEngine::Run()
 }
 
 namespace {
-void VerifyPathCellBox(const Occurrence& occurrence)
-//On occurrence Path set all cells Abox to (0,0,0,0) if Box is empty
-//This avoids bad Transfos on Path
-{
-    Path path = occurrence.getPath();
-    while (!path.isEmpty())
-    {
-        Instance* instance = path.getHeadInstance();
-        Cell* model = instance->getMasterCell();
-        if (model->getAbutmentBox().isEmpty())
-        {
-            model->setAbutmentBox(Box(Point(0,0), Point(0,0)));
-        }
-        path = path.getTailPath();
-    }
-}
+// void VerifyPathCellBox(const Occurrence& occurrence)
+// //On occurrence Path set all cells Abox to (0,0,0,0) if Box is empty
+// //This avoids bad Transfos on Path
+// {
+//     Path path = occurrence.getPath();
+//     while (!path.isEmpty())
+//     {
+//         Instance* instance = path.getHeadInstance();
+//         Cell* model = instance->getMasterCell();
+//         if (model->getAbutmentBox().isEmpty())
+//         {
+//             model->setAbutmentBox(Box(Point(0,0), Point(0,0)));
+//         }
+//         path = path.getTailPath();
+//     }
+// }
 }
 
 void MaukaEngine::Construct()

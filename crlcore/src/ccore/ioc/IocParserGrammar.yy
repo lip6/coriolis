@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-using namespace std;
 
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
@@ -15,6 +14,7 @@ using namespace Hurricane;
 #include "crlcore/LefDefExtension.h"
 #include "crlcore/NetExtension.h"
 using namespace CRL;
+using namespace std;
 #include "crlcore/Ioc.h"
 
 #define  yyin    Iocin

@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |              K n i k  -  Global Router                          |
 // |                                                                 |
@@ -17,31 +11,26 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./NetExtension.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Error.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Cell.h"
+#include "hurricane/Error.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "knik/NetExtension.h"
 
-#include  "knik/NetExtension.h"
+
+template<>
+Hurricane::Name  Hurricane::StandardPrivateProperty<Knik::NetExtensionDatas>::_name = "Knik::NetExtension";
 
 
 namespace Knik {
-
 
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
 
 
   const char* MissingNetExtension = "NetExtension::%s(): %s missing the Knik::Net extension.";
-
-
-  template<>
-  Name  StandardPrivateProperty<NetExtensionDatas>::_name = "Knik::NetExtension";
 
   
 // -------------------------------------------------------------------

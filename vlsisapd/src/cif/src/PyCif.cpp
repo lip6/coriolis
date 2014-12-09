@@ -1,10 +1,10 @@
-using namespace std;
 
 #include <boost/python.hpp>
 using namespace boost::python;
 
 #include "vlsisapd/cif/Polygon.h"
 #include "vlsisapd/cif/Circuit.h"
+using namespace std;
 
 namespace CIF {
 BOOST_PYTHON_MODULE(CIF) {

@@ -44,7 +44,7 @@ namespace Knik {
         // Predicates
         // **********
         public:
-            virtual bool isTerminal() { return false; };
+            virtual bool isTerminal() const { return false; };
 
             virtual bool isVertical()   const = 0;
             virtual bool isHorizontal() const = 0;

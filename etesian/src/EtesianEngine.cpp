@@ -50,6 +50,7 @@ namespace {
   using namespace Hurricane;
 
 
+#if HAVE_COLOQUINTE
   string  extractInstanceName ( const RoutingPad* rp )
   {
     ostringstream name;
@@ -101,7 +102,6 @@ namespace {
   }
 
 
-#if HAVE_COLOQUINTE
   Coloquinte::cell::pin::pin_dir  extractDirection ( const RoutingPad* rp )
   {
     switch ( rp->_getEntityAsComponent()->getNet()->getDirection() ) {
@@ -114,7 +114,6 @@ namespace {
 
     return Coloquinte::cell::pin::O;
   }
-#endif
 
 
   Point  extractRpOffset ( const RoutingPad* rp )
@@ -130,6 +129,7 @@ namespace {
 
     return offset;
   }
+#endif
 
 
 } // Anonymous namespace.

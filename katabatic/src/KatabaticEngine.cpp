@@ -43,6 +43,7 @@ namespace {
   using namespace Hurricane;
 
 
+#if 0
   bool  isTopAndBottomConnected ( Segment* segment, set<const Layer*>& layers )
   {
     ltrace(88) << "* Potential Null Length: " << segment << endl;
@@ -77,6 +78,7 @@ namespace {
 
     return layers.size()+supplemental > 2;
   }
+#endif
 
 
 } // End of anonymous namespace.

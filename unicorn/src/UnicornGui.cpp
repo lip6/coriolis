@@ -21,6 +21,7 @@
 #include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/viewer/PyCellViewer.h"
+#include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/GraphicToolEngine.h"

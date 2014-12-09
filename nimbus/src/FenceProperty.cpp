@@ -12,10 +12,10 @@
 #include "nimbus/FenceProperty.h"
 #include "nimbus/Fence.h"
 
-namespace Nimbus {
+template<>
+Hurricane::Name  Hurricane::StandardPrivateProperty<Nimbus::Fence*>::_name = "ComponentFencePropName";
 
-  template<>
-  Name StandardPrivateProperty<Fence*>::_name = "ComponentFencePropName";
+namespace Nimbus {
 
 
 Fence* getFence ( const Component& component )

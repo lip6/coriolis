@@ -308,7 +308,7 @@ unsigned int MatrixVertex::getLineIndex ( DbU::Unit y )
     }
 
     assert(is_sorted(_linesIndexes.begin(), _linesIndexes.end()));
-    if ( _linesIndexes.empty() );
+    if ( _linesIndexes.empty() )
       throw Error ( "MatrixVertex::getLineIndex(): Indexes map is empty." );
 
     pair<pairIterator,pairIterator> result = equal_range (_linesIndexes.begin(), _linesIndexes.end()
@@ -346,7 +346,7 @@ unsigned int MatrixVertex::getColumnIndex ( DbU::Unit x )
     }
 
     assert(is_sorted(_columnsIndexes.begin(),_columnsIndexes.end()));
-    if ( _columnsIndexes.empty() );
+    if ( _columnsIndexes.empty() )
       throw Error ( "MatrixVertex::getColumnIndex(): Indexes map is empty." );
 
     pair<pairIterator,pairIterator> result = equal_range (_columnsIndexes.begin(), _columnsIndexes.end()

@@ -1,5 +1,4 @@
 
-using namespace std;
 
 #include <boost/python.hpp>
 using namespace boost::python;
@@ -7,6 +6,7 @@ using namespace boost::python;
 #include "vlsisapd/dtr/Techno.h"
 #include "vlsisapd/dtr/Rules.h"
 #include "vlsisapd/dtr/DTRException.h"
+using namespace std;
 
 
 namespace DTR {

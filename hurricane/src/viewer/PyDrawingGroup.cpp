@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC 2012-2014, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -26,12 +26,12 @@ namespace {
   using std::istringstream;
 
 
-  void  parseInt ( const char* s, int& value )
-  { istringstream is ( s ); is >> value; }
+  // void  parseInt ( const char* s, int& value )
+  // { istringstream is ( s ); is >> value; }
 
 
-  void  parseFloat ( const char* s, float& value )
-  { istringstream is ( s ); is >> value; }
+  // void  parseFloat ( const char* s, float& value )
+  // { istringstream is ( s ); is >> value; }
 
 
   void  parseRgbColor ( const char* color, int& red, int& green, int& blue )

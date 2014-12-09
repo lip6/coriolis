@@ -7,7 +7,6 @@
  *
  */
 
-using namespace std;
 
 #include "vlsisapd/openChams/SimulModel.h"
 

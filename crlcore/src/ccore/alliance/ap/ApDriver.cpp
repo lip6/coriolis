@@ -15,7 +15,6 @@
 
 
 #include <time.h>
-using namespace std;
 
 #include  "hurricane/Pin.h"
 #include  "hurricane/Instance.h"
@@ -32,6 +31,8 @@ using namespace std;
 
 #include  "Ap.h"
 #include  "crlcore/Catalog.h"
+
+using namespace std;
 
 
 namespace {
