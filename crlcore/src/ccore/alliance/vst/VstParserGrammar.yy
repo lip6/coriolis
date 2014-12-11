@@ -1,46 +1,21 @@
 %{
 
-
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2014, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// This file is based on the Alliance VHDL parser written by
-//    L.A. Tabusse, Vuong H.N., P. Bazargan-Sabet & D. Hommais.
-//
-//  Yacc Rules for Alliance Structural VHDL.
-//
-// ===================================================================
-//
-// $Id$
+// +-----------------------------------------------------------------+ 
+// |                   C O R I O L I S                               |
+// |          Alliance / Hurricane  Interface                        |
+// |      Yacc Grammar for Alliance Structural VHDL                  |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// | =============================================================== |
+// |  Yacc        :  "./VstParserGrammar.yy"                         |
+// |                                                                 |
+// |  This file is based on the Alliance VHDL parser written by      |
+// |       L.A. Tabusse, Vuong H.N., P. Bazargan-Sabet & D. Hommais  |
+// +-----------------------------------------------------------------+
 
 
 #include <stdio.h>
@@ -49,9 +24,10 @@
 #include <sstream>
 #include <map>
 #include <vector>
-#include <queue>
+#include <deque>
 using namespace std;
 
+#include  "hurricane/Warning.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/Plug.h"
@@ -68,23 +44,29 @@ using namespace CRL;
 
 
 // Symbols from Flex which should be substituted.
-# define    yyrestart    VSTrestart
-# define    yytext       VSTtext
-# define    yywrap       VSTwrap
-# define    yyin         VSTin
+#define    yyrestart    VSTrestart
+#define    yytext       VSTtext
+#define    yywrap       VSTwrap
+#define    yyin         VSTin
 
 
-extern void  ClearVstIdentifiers ();
 extern int   yylex               ();
 extern int   yywrap              ();
 extern void  yyrestart           ( FILE* );
 extern char* yytext;
 extern FILE* yyin;
 
-int  vhdLineNumber = 1;
-
-
 namespace {
+
+  int   yyerror    ( const char* message );
+
+}  // Anonymous namespace.
+
+
+namespace Vst {
+
+  extern void  incVhdLineNumber ();
+  extern void  ClearIdentifiers ();
 
 
   class  Constraint {
@@ -134,14 +116,15 @@ namespace {
   typedef  map<Cell*,VectorMap>  CellVectorMap;
 
 
-  AllianceFramework* __framework;
 
 
   class YaccState {
     public:
+      string           _vhdFileName;
+      int              _vhdLineNumber;
       int              _errorCount;
       int              _maxErrors;
-      queue<Name>      _cellQueue;
+      deque<Name>      _cellQueue;
       Catalog::State*  _state;
       Cell*            _cell;
       Cell*            _masterCell;
@@ -155,24 +138,37 @@ namespace {
       bool             _firstPass;
       bool             _behavioral;
     public:
-      YaccState ()
-        : _errorCount(0)
-        , _maxErrors(10)
-        , _cellQueue()
-        , _state(NULL)
-        , _cell(NULL)
-        , _masterCell(NULL)
-        , _instance(NULL)
-        , _constraint()
+      YaccState ( const string& vhdFileName )
+        : _vhdFileName    (vhdFileName)
+        , _vhdLineNumber  (1)
+        , _errorCount     (0)
+        , _maxErrors      (10)
+        , _cellQueue      ()
+        , _state          (NULL)
+        , _cell           (NULL)
+        , _masterCell     (NULL)
+        , _instance       (NULL)
+        , _constraint     ()
         , _identifiersList()
-        , _cellVectorMap()
-        , _instanceNets()
-        , _masterNets()
-        , _masterPort(true)
-        , _firstPass(true) 
-        , _behavioral(false) 
+        , _cellVectorMap  ()
+        , _instanceNets   ()
+        , _masterNets     ()
+        , _masterPort     (true)
+        , _firstPass      (true) 
+        , _behavioral     (false) 
         { }
+      bool  pushCell ( Name );
   };
+
+
+  bool  YaccState::pushCell ( Name cellName )
+  {
+    for ( size_t i=0 ; i<_cellQueue.size(); ++i ) {
+      if (_cellQueue[i] == cellName) return false;
+    }
+    _cellQueue.push_back( cellName );
+    return true;
+  }
 
 
   class YaccStateStack : public vector<YaccState*> {
@@ -182,18 +178,15 @@ namespace {
   };
 
 
-  YaccStateStack  __ys;
+  YaccStateStack     states;
+  AllianceFramework* framework;
 
 
-  
-
-
-  int   yyerror    ( const char* message );
-  void  VstError   ( int code, const string& name );
+  void  Error      ( int code, const string& name );
   Net*  getNet     ( Cell* cell, const string& name ); 
   void  SetNetType ( Net* net );
 
-}
+}  // Vst namespace.
 
 
 %}
@@ -388,7 +381,7 @@ entity_declaration
       Semicolon_ERR
     | ENTITY
       error
-            { VstError ( 2, "<no parameter>" ); }
+            { Vst::Error ( 2, "<no parameter>" ); }
     ;
 
 .generic_clause.
@@ -426,8 +419,10 @@ formal_generic_element
       type_mark
       .constraint.
       generic_VarAsgn__expression
-          { __ys->_constraint.UnSet ();
-            __ys->_identifiersList.clear ();
+          { if (not Vst::states->_firstPass) {
+              Vst::states->_constraint.UnSet();
+              Vst::states->_identifiersList.clear();
+            }
           }
     | error
     ;
@@ -451,7 +446,7 @@ constraint
 range
     : abstractlit
       direction
-      abstractlit { __ys->_constraint.Set ( $1, $2, $3 ); }
+      abstractlit { if (not Vst::states->_firstPass) Vst::states->_constraint.Set( $1, $2, $3 ); }
     ;
 
 direction
@@ -473,7 +468,7 @@ port_clause
     | PORT
       error
       Semicolon_ERR
-            { VstError ( 3, "<no parameter>" ); }
+            { Vst::Error ( 3, "<no parameter>" ); }
     ;
 
 formal_port_list
@@ -496,36 +491,36 @@ formal_port_element
       type_mark
       .constraint.
       .BUS.
-            { if ( !__ys->_firstPass ) {
+            { if (not Vst::states->_firstPass) {
                 Net::Direction  modeDirection = (Net::Direction::Code)$4;
                 Net::Direction  typeDirection = (Net::Direction::Code)$5;
                 Net::Direction  direction     = (Net::Direction::Code)(modeDirection | typeDirection);
-                for ( unsigned int i=0 ; i < __ys->_identifiersList.size() ; i++ ) {
-                  if ( __ys->_constraint.IsSet() ) {
+                for ( unsigned int i=0 ; i < Vst::states->_identifiersList.size() ; i++ ) {
+                  if ( Vst::states->_constraint.IsSet() ) {
                     int j;
-                    for ( __ys->_constraint.Init(j) ; __ys->_constraint.End(j) ; __ys->_constraint.Next(j) ) {
+                    for ( Vst::states->_constraint.Init(j) ; Vst::states->_constraint.End(j) ; Vst::states->_constraint.Next(j) ) {
                       ostringstream name;
-                      name << *__ys->_identifiersList[i] << "(" << j << ")";
-                      Net* net = Net::create ( __ys->_cell, name.str() );
+                      name << *Vst::states->_identifiersList[i] << "(" << j << ")";
+                      Net* net = Net::create ( Vst::states->_cell, name.str() );
                       net->setDirection ( direction );
                       net->setExternal  ( true );
-                      SetNetType ( net );
-                      __ys->_cellVectorMap[__ys->_cell][*__ys->_identifiersList[i]].push_back ( net );
+                      Vst::SetNetType ( net );
+                      Vst::states->_cellVectorMap[Vst::states->_cell][*Vst::states->_identifiersList[i]].push_back ( net );
                       NetExtension::addPort ( net, name.str() );
                     }
                   } else {
-                    Net* net = Net::create ( __ys->_cell, *__ys->_identifiersList[i] );
+                    Net* net = Net::create ( Vst::states->_cell, *Vst::states->_identifiersList[i] );
                     net->setDirection ( direction );
                     net->setExternal  ( true );
-                    SetNetType ( net );
-                    __ys->_cellVectorMap[__ys->_cell][*__ys->_identifiersList[i]].push_back ( net );
-                    NetExtension::addPort ( net, *__ys->_identifiersList[i] );
+                    Vst::SetNetType ( net );
+                    Vst::states->_cellVectorMap[Vst::states->_cell][*Vst::states->_identifiersList[i]].push_back ( net );
+                    NetExtension::addPort ( net, *Vst::states->_identifiersList[i] );
                   }
                 }
-              }
 
-              __ys->_constraint.UnSet ();
-              __ys->_identifiersList.clear ();
+                Vst::states->_constraint.UnSet ();
+                Vst::states->_identifiersList.clear ();
+              }
             }
     | error
             { /* Reject tokens until the sync token Semicolon is found. */
@@ -534,35 +529,35 @@ formal_port_element
               } while ( (yychar != Semicolon) && (yychar != 0) );
               yyerrok;
 
-              VstError ( 6, "<no parameter>" );
+              Vst::Error ( 6, "<no parameter>" );
             }
     ;
 
 architecture_body
     : ARCHITECTURE
       simple_name
-          { if (    ( __ys->_behavioral )
-                 || ( __ys->_state->isFlattenLeaf() )
-                 || ( __ys->_state->getDepth() <= 0 )
+          { if (    ( Vst::states->_behavioral )
+                 || ( Vst::states->_state->isFlattenLeaf() )
+                 || ( Vst::states->_state->getDepth() <= 0 )
                ) YYACCEPT;
           }
       OF
       simple_name
       IS
-          { if ( __ys->_cell->getName() != *$5 ) VstError ( 1, *$5 ); }
+          { if ( Vst::states->_cell->getName() != *$5 ) Vst::Error ( 1, *$5 ); }
       architecture_declarative_part
       _BEGIN
-          { if ( __ys->_firstPass ) YYACCEPT; }
+          { /*if (Vst::states->_firstPass) YYACCEPT;*/ }
       architecture_statement_part
       END_ERR
       .simple_name.
       Semicolon_ERR
             { if ( ( $13 != NULL ) && ( *$13 != *$2 ) )
-                VstError ( 7, *$13 );
+                Vst::Error ( 7, *$13 );
             }
     | ARCHITECTURE
       error
-            { VstError ( 8, "<no parameter>" ); }
+            { Vst::Error ( 8, "<no parameter>" ); }
     ;
 
 architecture_declarative_part
@@ -580,7 +575,7 @@ block_declaration_item
     | component_declaration
     | error
       Semicolon_ERR
-            { VstError ( 9, "<no parameter>" ); }
+            { Vst::Error ( 9, "<no parameter>" ); }
     ;
 
 signal_declaration
@@ -591,43 +586,43 @@ signal_declaration
       .constraint.
       .BUS.
       Semicolon_ERR
-          { if ( !__ys->_firstPass ) {
+          { if (not Vst::states->_firstPass) {
               Net::Direction  direction = (Net::Direction::Code)$4;
-              for ( unsigned int i=0 ; i < __ys->_identifiersList.size() ; i++ ) {
-                if ( __ys->_constraint.IsSet() ) {
+              for ( unsigned int i=0 ; i < Vst::states->_identifiersList.size() ; i++ ) {
+                if ( Vst::states->_constraint.IsSet() ) {
                   int j;
-                  for ( __ys->_constraint.Init(j) ; __ys->_constraint.End(j) ; __ys->_constraint.Next(j) ) {
+                  for ( Vst::states->_constraint.Init(j) ; Vst::states->_constraint.End(j) ; Vst::states->_constraint.Next(j) ) {
                     ostringstream name;
-                    name << *__ys->_identifiersList[i] << "(" << j << ")";
-                    Net* net = Net::create ( __ys->_cell, name.str() );
+                    name << *Vst::states->_identifiersList[i] << "(" << j << ")";
+                    Net* net = Net::create ( Vst::states->_cell, name.str() );
                     net->setDirection ( direction );
                     net->setExternal  ( false );
-                    SetNetType ( net );
-                    __ys->_cellVectorMap[__ys->_cell][*__ys->_identifiersList[i]].push_back ( net );
+                    Vst::SetNetType ( net );
+                    Vst::states->_cellVectorMap[Vst::states->_cell][*Vst::states->_identifiersList[i]].push_back ( net );
                   }
                 } else {
-                  Net* net = Net::create ( __ys->_cell, *__ys->_identifiersList[i] );
+                  Net* net = Net::create ( Vst::states->_cell, *Vst::states->_identifiersList[i] );
                   net->setDirection ( direction );
                   net->setExternal  ( false );
-                  SetNetType ( net );
-                  __ys->_cellVectorMap[__ys->_cell][*__ys->_identifiersList[i]].push_back ( net );
+                  Vst::SetNetType ( net );
+                  Vst::states->_cellVectorMap[Vst::states->_cell][*Vst::states->_identifiersList[i]].push_back ( net );
                 }
               }
             }
 
-            __ys->_constraint.UnSet ();
-            __ys->_identifiersList.clear ();
+            Vst::states->_constraint.UnSet ();
+            Vst::states->_identifiersList.clear ();
           }
     ;
 
 component_declaration
     : COMPONENT
       Identifier
-          { if ( __ys->_firstPass ) {
-              if ( !__framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory) )
-                  __ys->_cellQueue.push ( *$2 );
+          { if (Vst::states->_firstPass) {
+              if (not Vst::framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory))
+                  Vst::states->pushCell( *$2 );
             } else {
-              __ys->_masterCell = __framework->getCell ( *$2, Catalog::State::Views );
+              Vst::states->_masterCell = Vst::framework->getCell ( *$2, Catalog::State::Views );
             }
           }
       .generic_clause.
@@ -666,25 +661,25 @@ local_port_element
       type_mark
       .constraint.
       .BUS.
-          { if ( !__ys->_firstPass ) {
-              for ( unsigned int i=0 ; i < __ys->_identifiersList.size() ; i++ ) {
-                if ( __ys->_constraint.IsSet() ) {
+          { if (not Vst::states->_firstPass) {
+              for ( unsigned int i=0 ; i < Vst::states->_identifiersList.size() ; i++ ) {
+                if ( Vst::states->_constraint.IsSet() ) {
                   int j;
-                  for ( __ys->_constraint.Init(j) ; __ys->_constraint.End(j) ; __ys->_constraint.Next(j) ) {
+                  for ( Vst::states->_constraint.Init(j) ; Vst::states->_constraint.End(j) ; Vst::states->_constraint.Next(j) ) {
                     ostringstream name;
-                    name << *__ys->_identifiersList[i] << "(" << j << ")";
-                    Net* net = getNet ( __ys->_masterCell, name.str() );
-                    __ys->_cellVectorMap[__ys->_masterCell][*__ys->_identifiersList[i]].push_back ( net );
+                    name << *Vst::states->_identifiersList[i] << "(" << j << ")";
+                    Net* net = Vst::getNet ( Vst::states->_masterCell, name.str() );
+                    Vst::states->_cellVectorMap[Vst::states->_masterCell][*Vst::states->_identifiersList[i]].push_back ( net );
                   }
                 } else {
-                  Net* net = getNet ( __ys->_masterCell, *__ys->_identifiersList[i] );
-                  __ys->_cellVectorMap[__ys->_masterCell][*__ys->_identifiersList[i]].push_back ( net );
+                  Net* net = Vst::getNet ( Vst::states->_masterCell, *Vst::states->_identifiersList[i] );
+                  Vst::states->_cellVectorMap[Vst::states->_masterCell][*Vst::states->_identifiersList[i]].push_back ( net );
                 }
               }
             }
 
-            __ys->_constraint.UnSet ();
-            __ys->_identifiersList.clear ();
+            Vst::states->_constraint.UnSet ();
+            Vst::states->_identifiersList.clear ();
           }
     | error
             { /* Reject tokens until the sync token Semicolon is found. */
@@ -693,7 +688,7 @@ local_port_element
               } while ( (yychar != Semicolon) && (yychar != 0) );
               yyerrok;
 
-              VstError ( 6, "<no parameter>" );
+              Vst::Error ( 6, "<no parameter>" );
             }
     ;
 
@@ -711,21 +706,36 @@ concurrent_statement
     : component_instantiation_statement
     | error
       Semicolon_ERR
-          { VstError (18, "<no parameter>"); }
+          { Vst::Error (18, "<no parameter>"); }
     ;
 
 component_instantiation_statement
     : a_label
       simple_name
-          { __ys->_masterCell = __framework->getCell ( *$2, Catalog::State::Views|Catalog::State::InMemory );
-	    if ( !__ys->_masterCell )
-              throw Error ( "CParsVst(), Line %d:\n"
-                            "  Model cell %s of instance %s has not been defined "
-                            "in the component list."
-                          , vhdLineNumber, *$2->c_str(), *$1->c_str()
-                          );
-            __ys->_instance = Instance::create ( __ys->_cell, *$1, __ys->_masterCell );
-            __ys->_cell->setTerminal ( false );
+          { if (not Vst::states->_firstPass) {
+              Vst::states->_masterCell = Vst::framework->getCell( *$2, Catalog::State::Views|Catalog::State::InMemory );
+	      if (not Vst::states->_masterCell) {
+                ostringstream message;
+		message << "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName
+                        <<  "> Line:" << Vst::states->_vhdLineNumber << "\n"
+                        <<  "  Model cell " << *$2 << " of instance "
+                        << *$1 << " has not been defined in the component list.";
+                throw Error( message.str() );
+              }
+              Vst::states->_instance = Instance::create( Vst::states->_cell, *$1, Vst::states->_masterCell );
+              Vst::states->_cell->setTerminal( false );
+            } else {
+              if (not Vst::framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory)) {
+                if (Vst::states->pushCell(*$2)) {
+                  ostringstream message;
+		  message << "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName
+                          <<  "> Line:" << Vst::states->_vhdLineNumber << "\n"
+                          <<  "  Model cell " << *$2 << " of instance "
+                          << *$1 << " has not been defined in the component list.";
+                  cerr << Warning( message.str() );
+                }
+              }
+            }
           }
       .generic_map_aspect.
       .port_map_aspect.
@@ -891,28 +901,36 @@ association_list
 association_element
     : formal_port_name
       Arrow
-        { __ys->_masterPort = false; }
+        { if (not Vst::states->_firstPass) Vst::states->_masterPort = false; }
       actual_port_name
-        { if ( __ys->_masterNets.size() != __ys->_instanceNets.size() )
-            throw Error ( "CParsVst(), line %d:\n"
-                          "  Port map assignment discrepency."
-                        , vhdLineNumber
-                        );
-
-          for ( unsigned int i=0 ; i < __ys->_masterNets.size() ; i++ )
-            if (  not __ys->_masterNets[i]->isGlobal()
-               or (__ys->_masterNets[i]->getName() != __ys->_instanceNets[i]->getName()) )
-              __ys->_instance->getPlug ( __ys->_masterNets[i] )->setNet ( __ys->_instanceNets[i] );
-
-          __ys->_masterPort = true;
-          __ys->_masterNets.clear ();
-          __ys->_instanceNets.clear ();
+        { if (not Vst::states->_firstPass) {
+            if ( Vst::states->_masterNets.size() != Vst::states->_instanceNets.size() ) {
+	      ostringstream message;
+              message <<  "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName.c_str()
+                      << "> Line:" << Vst::states->_vhdLineNumber << "\n"
+                      << "  Port map assignment discrepency "
+                      << "instance:" << Vst::states->_instanceNets.size()
+                      << " vs. model:"   << Vst::states->_masterNets.size();
+              throw Error( message.str() );
+            }
+	    
+            for ( unsigned int i=0 ; i < Vst::states->_masterNets.size() ; i++ )
+              if (  not Vst::states->_masterNets[i]->isGlobal()
+                 or (Vst::states->_masterNets[i]->getName() != Vst::states->_instanceNets[i]->getName()) )
+                Vst::states->_instance->getPlug ( Vst::states->_masterNets[i] )->setNet ( Vst::states->_instanceNets[i] );
+	    
+            Vst::states->_masterPort = true;
+            Vst::states->_masterNets.clear ();
+            Vst::states->_instanceNets.clear ();
+          }
         }
     | actual_port_name
-        { throw Error ( "CParsVst(), line %d:\n"
-                        "  While processing %s: implicit connexions are not allowed.\n"
-                      , vhdLineNumber, getString(__ys->_instance->getName()).c_str()
-                      );
+        { ostringstream message;
+          message << "CParsVst() VHDL Parser - File<" << Vst::states->_vhdFileName
+                  << ">, Line:" << Vst::states->_vhdLineNumber << "\n"
+                  << "  While processing " << Vst::states->_instance->getName()
+                  << ": implicit connexions are not allowed.\n";
+          throw Error( message.str() );
         }
     | error
             { /* Reject tokens until the sync token Comma is found. */
@@ -921,7 +939,7 @@ association_element
               } while ( (yychar != Comma) && (yychar != 0) );
               yyerrok;
 
-              VstError ( 31, "<no parameter>" );
+              Vst::Error ( 31, "<no parameter>" );
             }
     ;
 
@@ -935,15 +953,17 @@ actual_port_name
 
 name
     : simple_name
-          { if ( __ys->_masterPort ) {
-              PinVector& nets = __ys->_cellVectorMap[__ys->_masterCell][*$1];
-              for ( unsigned int i=0 ; i < nets.size() ; i++ ) {
-                __ys->_masterNets.push_back ( nets[i] );
-              }
-            } else {
-              PinVector& nets = __ys->_cellVectorMap[__ys->_cell][*$1];
-              for ( unsigned int i=0 ; i < nets.size() ; i++ ) {
-                __ys->_instanceNets.push_back ( nets[i] );
+          { if (not Vst::states->_firstPass) {
+              if ( Vst::states->_masterPort ) {
+                Vst::PinVector& nets = Vst::states->_cellVectorMap[Vst::states->_masterCell][*$1];
+                for ( unsigned int i=0 ; i < nets.size() ; i++ ) {
+                  Vst::states->_masterNets.push_back ( nets[i] );
+                }
+              } else {
+                Vst::PinVector& nets = Vst::states->_cellVectorMap[Vst::states->_cell][*$1];
+                for ( unsigned int i=0 ; i < nets.size() ; i++ ) {
+                  Vst::states->_instanceNets.push_back ( nets[i] );
+                }
               }
             }
           }
@@ -956,26 +976,30 @@ indexed_name
       LeftParen
       abstractlit
       RightParen_ERR
-          { ostringstream name;
-            name << *$1 << "(" << $3 << ")";
-            if ( __ys->_masterPort )
-              __ys->_masterNets.push_back ( getNet(__ys->_masterCell,name.str()) );
-            else
-              __ys->_instanceNets.push_back ( getNet(__ys->_cell,name.str()) );
+          { if (not Vst::states->_firstPass) {
+              ostringstream name;
+              name << *$1 << "(" << $3 << ")";
+              if ( Vst::states->_masterPort )
+                Vst::states->_masterNets.push_back ( Vst::getNet(Vst::states->_masterCell,name.str()) );
+              else
+                Vst::states->_instanceNets.push_back ( Vst::getNet(Vst::states->_cell,name.str()) );
+            }
           }
     ;
 
 slice_name
     : simple_name
       constraint
-          { int j;
-            for ( __ys->_constraint.Init(j) ; __ys->_constraint.End(j) ; __ys->_constraint.Next(j) ) {
-               ostringstream name;
-               name << *$1 << "(" << j << ")";
-               if ( __ys->_masterPort )
-                 __ys->_masterNets.push_back ( getNet(__ys->_masterCell,name.str()) );
-               else
-                 __ys->_instanceNets.push_back ( getNet(__ys->_cell,name.str()) );
+          { if (not Vst::states->_firstPass) {
+              int j;
+              for ( Vst::states->_constraint.Init(j) ; Vst::states->_constraint.End(j) ; Vst::states->_constraint.Next(j) ) {
+                 ostringstream name;
+                 name << *$1 << "(" << j << ")";
+                 if ( Vst::states->_masterPort )
+                   Vst::states->_masterNets.push_back ( Vst::getNet(Vst::states->_masterCell,name.str()) );
+                 else
+                   Vst::states->_instanceNets.push_back ( Vst::getNet(Vst::states->_cell,name.str()) );
+              }
             }
           }
     ;
@@ -1072,7 +1096,7 @@ type_mark
     ;
 
 identifier_list
-    : Identifier { __ys->_identifiersList.push_back ( $1 ); }
+    : Identifier { if (not Vst::states->_firstPass) Vst::states->_identifiersList.push_back( $1 ); }
       ...identifier..
     ;
 
@@ -1080,7 +1104,7 @@ identifier_list
     : /*empty*/
     | ...identifier..
       Comma
-      Identifier { __ys->_identifiersList.push_back ( $3 ); }
+      Identifier { if (not Vst::states->_firstPass) Vst::states->_identifiersList.push_back( $3 ); }
     ;
 
 a_label
@@ -1127,32 +1151,44 @@ namespace {
 
   int  yyerror ( const char* message )
   {
-     throw Error ( "CParsVst():\n  %s before %s at line %d.\n"
-                 , message, yytext, vhdLineNumber );
+     ostringstream formatted;
+     formatted << "CParsVst() - VHDL Parser, File:<" << Vst::states->_vhdFileName
+               << ">, Line:" << Vst::states->_vhdLineNumber << "\n  "
+               << message << " before " << yytext << ".\n";
+     throw Hurricane::Error( formatted.str() );
      return 0;
   }
 
 
+}  // Anonymous namespace.
+
+
+namespace Vst {
+
+
+  void  incVhdLineNumber ()
+  { ++states->_vhdLineNumber; }
 
 
   // ---------------------------------------------------------------
-  // Function  :  "VstError()".
+  // Function  :  "Vst::Error()".
   //
   // Manage errors from wich we can recover and continue a little
   // while.
 
-  void  VstError ( int code, const string& name )
+  void  Error ( int code, const string& name )
   {
-    __ys->_errorCount++;
+    states->_errorCount++;
 
-    if ( __ys->_errorCount >= __ys->_maxErrors )
-        throw Error ( "CParsVst(): Too many errors occured.\n" );
+    if ( states->_errorCount >= states->_maxErrors )
+        throw Hurricane::Error ( "CParsVst() VHDL Parser, Too many errors occured.\n" );
 
     if ( code < 100 )
-      cerr << "[ERROR] CParsVst(): Code " << code << " line " << vhdLineNumber << " :\n  ";
+      cerr << "[ERROR] CParsVst() VHDL Parser, File:<" << states->_vhdFileName
+           << ">, Line:%d" << states->_vhdLineNumber << " Code:" << code  << " :\n  ";
     else {
       if (code < 200)
-        cerr << "[ERROR] CParsVst(): Code " << code << " :\n  ";
+        cerr << "[ERROR] CParsVst() VHDL Parser, Code:" << code << " :\n  ";
     }
 
     switch ( code ) {
@@ -1183,11 +1219,9 @@ namespace {
       case  76: cerr << "Instance \"" << name << "\"mismatch with model." << endl; break;
       default:  cerr << "Syntax error." << endl; break;
       case 200:
-        throw Error ( "Error(s) occured.\n" );
+        throw Hurricane::Error ( "Error(s) occured.\n" );
     }
   }
-
-
 
 
   // ---------------------------------------------------------------
@@ -1197,18 +1231,17 @@ namespace {
   {
      Net* net = cell->getNet ( Name(name) );
      if ( !net ) {
-       throw Error ( "CParsVst(), line %d:\n"
-                     "  No net \"%s\" in cell \"%s\".\n"
-                   , vhdLineNumber
-                   , name.c_str()
-                   , getString(cell->getName()).c_str()
-                   );
+       ostringstream message;
+       message << "CParsVst() VHDL Parser, File:<" << states->_vhdFileName
+               << "> Line:" << states->_vhdLineNumber
+               << "\n"
+               << "  No net \"" << name
+               << "\" in cell \"" << cell->getName() << "\".\n";
+       throw Hurricane::Error( message.str() );
      }
 
      return net;
   }
-
-
 
 
   // ---------------------------------------------------------------
@@ -1216,20 +1249,20 @@ namespace {
 
   void  SetNetType ( Net* net )
   {
-    if ( __framework->isPOWER(net->getName()) ) {
+    if ( framework->isPOWER(net->getName()) ) {
       net->setType   ( Net::Type::POWER  );
       net->setGlobal ( true );
-    } else if ( __framework->isGROUND(net->getName()) ) {
+    } else if ( framework->isGROUND(net->getName()) ) {
       net->setType   ( Net::Type::GROUND );
       net->setGlobal ( true );
-    } else if ( __framework->isCLOCK(net->getName()) ) {
+    } else if ( framework->isCLOCK(net->getName()) ) {
       net->setType   ( Net::Type::CLOCK );
     } else
       net->setType ( Net::Type::LOGICAL );
   }
 
 
-}
+}  // Vst namespace.
 
 
 
@@ -1242,27 +1275,27 @@ namespace CRL {
 
 void  vstParser ( const string cellPath, Cell *cell )
 {
-  cmess2 << "     " << tab << "+ " << cellPath << endl; tab++;
+  cmess2 << "     " << tab << "+ " << cellPath << " (childs)" << endl; tab++;
 
   static bool firstCall = true;
   if ( firstCall ) {
-    firstCall   = false;
-    __framework = AllianceFramework::get ();
+    firstCall      = false;
+    Vst::framework = AllianceFramework::get ();
   }
 
-  __ys.push_back ( new YaccState() );
+  Vst::states.push_back ( new Vst::YaccState(cellPath) );
 
   if ( ( cellPath.size() > 4 ) && ( !cellPath.compare(cellPath.size()-4,4,".vbe") ) )
-    __ys->_behavioral = true;
+    Vst::states->_behavioral = true;
 
   CatalogProperty *sprop =
     (CatalogProperty*)cell->getProperty ( CatalogProperty::getPropertyName() );
   if ( sprop == NULL )
     throw Error ( "Missing CatalogProperty in cell %s.\n" , getString(cell->getName()).c_str() );
 
-  __ys->_state = sprop->getState ();
-  __ys->_state->setLogical ( true );
-  __ys->_cell = cell;
+  Vst::states->_state = sprop->getState ();
+  Vst::states->_state->setLogical ( true );
+  Vst::states->_cell = cell;
 
   IoFile ccell ( cellPath );
   ccell.open ( "r" );
@@ -1270,24 +1303,22 @@ void  vstParser ( const string cellPath, Cell *cell )
   if ( !firstCall ) yyrestart ( VSTin );
   yyparse ();
 
-  bool hasInstances = false;
-  while ( !__ys->_cellQueue.empty() ) {
-    hasInstances = true;
-    if ( !__framework->getCell ( getString(__ys->_cellQueue.front())
-                        , Catalog::State::Views
-                        , __ys->_state->getDepth()-1) ) {
-      throw Error ( "CParsVst():\n"
-                    "  Unable to find cell \"%s\", please check your <.environment.alliance.xml>.\n"
-                  , getString(__ys->_cellQueue.front()).c_str()
+  while ( !Vst::states->_cellQueue.empty() ) {
+    if ( !Vst::framework->getCell ( getString(Vst::states->_cellQueue.front())
+                                  , Catalog::State::Views
+                                  , Vst::states->_state->getDepth()-1) ) {
+      throw Error ( "CParsVst() VHDL Parser:\n"
+                    "  Unable to find cell \"%s\", please check your <.coriolis2/settings.py>.\n"
+                  , getString(Vst::states->_cellQueue.front()).c_str()
                   );
     }
-    __ys->_cellQueue.pop ();
+    Vst::states->_cellQueue.pop_front();
   }
 
-  if ( hasInstances ) cmess2 << "     " << --tab << "+ " << cellPath << endl;
-  else                --tab;
+  cmess2 << "     " << --tab << "+ " << cellPath << " (loading)" << endl;
 
-  __ys->_firstPass = false;
+  Vst::states->_firstPass     = false;
+  Vst::states->_vhdLineNumber = 1;
   ccell.close ();
   ccell.open  ( "r" );
   yyin = ccell.getFile ();
@@ -1295,9 +1326,14 @@ void  vstParser ( const string cellPath, Cell *cell )
   UpdateSession::open ();
   yyparse ();
   UpdateSession::close ();
-  ClearVstIdentifiers ();
 
-  __ys.pop_back();
+  forEach ( Net*, inet, Vst::states->_cell->getNets() ) {
+    cerr << *inet << endl;
+  }
+
+  Vst::ClearIdentifiers ();
+  Vst::states.pop_back();
+
 
   ccell.close ();
 }
