@@ -1272,11 +1272,17 @@ namespace CRL {
 
 // -------------------------------------------------------------------
 // Function  :  "vstParser()".
+//
+// The parser work in 2.5 (two and a half) passes:
+// 1.0 Read the vst in search of COMPONENTS and/or instances declarations.
+//     Build an ordered list of all the model (i.e. master Cell) needed.
+// 1.5 Load, in order all the Cell required. This is a recursive process,
+//     that is, the model, in turn can trigger the loading of yet other
+//     master Cells.
+// 2.0 Read the vst a second time, actually builing the Cell.
 
 void  vstParser ( const string cellPath, Cell *cell )
 {
-  cmess2 << "     " << tab << "+ " << cellPath << " (childs)" << endl; tab++;
-
   static bool firstCall = true;
   if ( firstCall ) {
     firstCall      = false;
@@ -1299,41 +1305,46 @@ void  vstParser ( const string cellPath, Cell *cell )
 
   IoFile ccell ( cellPath );
   ccell.open ( "r" );
-  yyin = ccell.getFile ();
-  if ( !firstCall ) yyrestart ( VSTin );
-  yyparse ();
 
-  while ( !Vst::states->_cellQueue.empty() ) {
-    if ( !Vst::framework->getCell ( getString(Vst::states->_cellQueue.front())
-                                  , Catalog::State::Views
-                                  , Vst::states->_state->getDepth()-1) ) {
-      throw Error ( "CParsVst() VHDL Parser:\n"
-                    "  Unable to find cell \"%s\", please check your <.coriolis2/settings.py>.\n"
-                  , getString(Vst::states->_cellQueue.front()).c_str()
-                  );
+  if (Vst::states->_behavioral) {
+    cmess2 << "     " << tab << "+ " << cellPath << " [behavioral]" << endl;
+  } else {
+    cmess2 << "     " << tab << "+ " << cellPath << " [models]" << endl; tab++;
+
+  // 1.0 step: Build the ordered list of model (Cell) required by the instances.
+    yyin = ccell.getFile ();
+    if ( !firstCall ) yyrestart ( VSTin );
+    yyparse ();
+  
+  // 1.5 step: Load, in order, the model Cells (recursive).
+    while ( !Vst::states->_cellQueue.empty() ) {
+      if ( !Vst::framework->getCell ( getString(Vst::states->_cellQueue.front())
+                                    , Catalog::State::Views
+                                    , Vst::states->_state->getDepth()-1) ) {
+        throw Error ( "CParsVst() VHDL Parser:\n"
+                      "  Unable to find cell \"%s\", please check your <.coriolis2/settings.py>.\n"
+                    , getString(Vst::states->_cellQueue.front()).c_str()
+                    );
+      }
+      Vst::states->_cellQueue.pop_front();
     }
-    Vst::states->_cellQueue.pop_front();
+    --tab;
+    cmess2 << "     " << tab << "+ " << cellPath << " [structural]" << endl;
   }
-
-  cmess2 << "     " << --tab << "+ " << cellPath << " (loading)" << endl;
 
   Vst::states->_firstPass     = false;
   Vst::states->_vhdLineNumber = 1;
   ccell.close ();
+
+// 2.0 step: Now really read and build the Cell.
   ccell.open  ( "r" );
   yyin = ccell.getFile ();
   yyrestart ( VSTin );
   UpdateSession::open ();
   yyparse ();
   UpdateSession::close ();
-
-  forEach ( Net*, inet, Vst::states->_cell->getNets() ) {
-    cerr << *inet << endl;
-  }
-
   Vst::ClearIdentifiers ();
   Vst::states.pop_back();
-
 
   ccell.close ();
 }
