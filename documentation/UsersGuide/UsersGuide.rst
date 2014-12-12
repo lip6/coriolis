@@ -17,6 +17,8 @@
 .. |LEFDEF|                         replace:: :sc:`lefdef`
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
+.. |RHEL6|                          replace:: :sc:`rhel6`
+.. |SL6|                            replace:: :sc:`Scientific Linux 6`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -70,6 +72,7 @@
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MacPorts|                       replace:: :sc:`MacPorts`
+.. |devtoolset2|                    replace:: :cb:`devtoolset2`
 .. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
 .. |tty|                            replace:: :cb:`tty`
@@ -381,8 +384,12 @@ In the |Coriolis| |git| repository, two branches are present:
 
       dummy@lepka:~$ git checkout devel
 
-  Be aware that it may requires newer versions of the depnencies and may introduce
+  Be aware that it may requires newer versions of the dependencies and may introduce
   incompatibilites with the stable version.
+
+  Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
+
+      dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis --devtoolset-2 --make="-j4 install"
 
 
 Additionnal Requirement under |MacOS|
@@ -394,6 +401,10 @@ both of them from |macports|: ::
 
     dummy@macos:~$ port install boost +python27
     dummy@macos:~$ port select python python27
+    dummy@macos:-$ export DYLD_FRAMEWORK_PATH=/opt/local/Library/Frameworks
+
+The last two lines tell |MacOS| to use the |Python| from |macports| and *not* from
+the system.
 
 Then proceed with the generic install instructions.
 
@@ -427,13 +438,23 @@ Setting up the Environment (coriolisEnv.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To simplify the tedious task of configuring your environment, a helper is provided
-in the ``bootstrap`` source directory: ::
+in the ``bootstrap`` source directory (also installed in the directory
+``.../install/etc/coriolis2/``) : ::
 
-    ~/coriolis-2.x/src/bootstrap/coriolisEnv.py
+    ~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py
 
 Use it like this: ::
 
-    dummy@lepka:~> eval `~/coriolis-2.x/src/bootstrap/coriolisEnv.py`
+    dummy@lepka:~> eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
+
+.. note:: **Do not call that script in your environement initialisation.**
+   When used under |RHEL6| or clones, it needs to be run in the |devtoolset2|
+   environement. The script then launch a new shell, which may cause an
+   infinite loop if it's called again in, say :cb:`~/.bashrc`.
+
+   Instead you may want to create an alias: ::
+
+       alias c2r='eval "`~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`"'
 
 
 |newpage|
