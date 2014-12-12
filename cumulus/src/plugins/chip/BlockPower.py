@@ -218,6 +218,10 @@ class Block ( chip.Configuration.ChipConfWrapper ):
 
 
   def connectClock ( self ):
+    if not self.useClockTree:
+      print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False) ignored." )
+      return
+
     if not self.cko:
       print ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
       return
