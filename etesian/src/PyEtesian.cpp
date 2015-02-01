@@ -87,11 +87,7 @@ extern "C" {
     Py_INCREF( &PyTypeGraphicEtesianEngine );
     PyModule_AddObject( module, "GraphicEtesianEngine", (PyObject*)&PyTypeGraphicEtesianEngine );
 
-  //PyObject* dictionnary = PyModule_GetDict( module );
-  //PyObject* constant;
-
-  //LoadObjectConstant( dictionnary, KtBuildGlobalRouting, "KtBuildGlobalRouting" );
-  //LoadObjectConstant( dictionnary, KtLoadGlobalRouting , "KtLoadGlobalRouting"  );
+    PyEtesianEngine_postModuleInit();
   }
 
   

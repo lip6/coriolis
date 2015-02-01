@@ -36,6 +36,7 @@
 #include  "hurricane/UpdateSession.h"
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
+#include  "crlcore/CellGauge.h"
 #include  "crlcore/ToolBox.h"
 #include  "crlcore/Ispd05Bookshelf.h"
 
@@ -151,6 +152,7 @@ namespace CRL {
   Cell* Ispd05::load ( string benchmark )
   {
     AllianceFramework* af = AllianceFramework::get();
+    pitch = af->getCellGauge()->getPitch();
 
     UpdateSession::open ();
 

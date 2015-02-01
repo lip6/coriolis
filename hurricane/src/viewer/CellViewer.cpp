@@ -502,6 +502,14 @@ namespace Hurricane {
                       , QIcon(":/images/python-logo-v3.png")
                       );
     connect( action, SIGNAL(triggered()), this, SLOT(runScriptWidget()) );
+
+    action = addToMenu( "tools.stressScript"
+                      , tr("Python Stress Script")
+                      , tr("Run Python Stress Script (50 times...).")
+                      , QKeySequence()
+                      , QIcon(":/images/python-logo-v3.png")
+                      );
+    connect( action, SIGNAL(triggered()), this, SLOT(runStressScript()) );
   }
 
 
@@ -781,6 +789,15 @@ namespace Hurricane {
 
   void  CellViewer::runScript ( QString scriptPath )
   { ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this, scriptPath ) ); }
+
+
+  void  CellViewer::runStressScript ()
+  {
+    for ( size_t i=0 ; i<1000 ; ++i ) {
+      cerr << "Calling ./stressScript [" << setw(3) << right << setfill('0') << i << "]" << endl;
+      ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this, "stressScript.py" ) );
+    }
+  }
 
 
   void  CellViewer::runScriptWidget ()

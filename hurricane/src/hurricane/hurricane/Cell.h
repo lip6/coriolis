@@ -72,6 +72,8 @@ class Cell : public Entity {
                       // Flags set for Observers.
                       , CellAboutToChange       = 0x0001
                       , CellChanged             = 0x0002
+                      // Cell states
+                      , FlattenedNets           = 0x0001
                       };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
@@ -180,6 +182,7 @@ class Cell : public Entity {
     private: Cell* _nextOfSymbolCellSet;
     private: SlaveEntityMap _slaveEntityMap;
     private: Observable _observers;
+    private: unsigned int _flags;
 
 // Constructors
 // ************
@@ -303,6 +306,7 @@ class Cell : public Entity {
     public: bool isFlattenLeaf() const {return _isFlattenLeaf;};
     public: bool isLeaf() const;
     public: bool isPad() const {return _isPad;};
+    public: bool isFlattenedNets() const {return _flags & FlattenedNets;};
 
 // Updators
 // ********

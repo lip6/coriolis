@@ -164,9 +164,12 @@ namespace Kite {
       }
 
       if (isFixed or isPreRouted or (rpCount < 2)) {
+
         NetRoutingState* state = getRoutingState( *inet, Katabatic::KbCreate );
         state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
         state->setFlags  ( NetRoutingState::ManualGlobalRoute );
+        if (rpCount < 2)
+          state->setFlags  ( NetRoutingState::Unconnected );
 
         if (isFixed) {
           cmess2 << "     - <" << (*inet)->getName() << "> is fixed." << endl;

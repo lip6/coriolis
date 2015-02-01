@@ -191,6 +191,7 @@ if __name__ == "__main__":
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
     if    osType.startswith("Linux.SL") \
        or osType.startswith("Linux.sl") \
+       or osType.startswith("Linux.el") \
        or osType.startswith("Darwin")   \
        or osType.startswith("Cygwin"):
       sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)

@@ -4,7 +4,6 @@
 
    include_directories ( ${ETESIAN_SOURCE_DIR}/src
                          ${COLOQUINTE_INCLUDE_DIR} 
-                         ${EIGEN3_INCLUDE_DIR} 
                          ${CORIOLIS_INCLUDE_DIR} 
                          ${HURRICANE_INCLUDE_DIR} 
                          ${CONFIGURATION_INCLUDE_DIR} 
@@ -12,27 +11,8 @@
                          ${Boost_INCLUDE_DIRS}
                          ${PYTHON_INCLUDE_PATH}
                        )
-                   set ( includes     #etesian/Constants.h
-                                      #etesian/TrackCost.h
-                                      #etesian/DataNegociate.h
-                                      #etesian/TrackElement.h       etesian/TrackElements.h
-                                      #etesian/TrackSegment.h
-                                      #etesian/TrackFixedSegment.h
-                                      #etesian/TrackMarker.h
-                                      #etesian/Track.h
-                                      #etesian/Tracks.h
-                                      #etesian/HorizontalTrack.h
-                                      #etesian/VerticalTrack.h
-                                      #etesian/RoutingPlane.h
-                                      #etesian/Session.h
-				      #etesian/Manipulator.h
-				      #etesian/SegmentFsm.h
-                                      #etesian/RoutingEvent.h
-                                      #etesian/RoutingEventQueue.h
-                                      #etesian/RoutingEventHistory.h
-                                      #etesian/RoutingEventLoop.h
-                                      #etesian/NegociateWindow.h
-                                       etesian/Configuration.h
+                   set ( includes      etesian/Configuration.h
+                                       etesian/FeedCells.h
                                        etesian/EtesianEngine.h
                                        etesian/GraphicEtesianEngine.h
                        )	       
@@ -40,30 +20,9 @@
                                        etesian/PyGraphicEtesianEngine.h
                        )
 		   set ( mocIncludes   etesian/GraphicEtesianEngine.h )
-                   set ( cpps         #TrackCost.cpp
-                                      #DataNegociate.cpp
-                                      #TrackElement.cpp
-                                      #TrackElements.cpp
-                                      #TrackSegment.cpp
-                                      #TrackFixedSegment.cpp
-                                      #TrackMarker.cpp
-                                      #Track.cpp
-                                      #Tracks.cpp
-                                      #HorizontalTrack.cpp
-                                      #VerticalTrack.cpp
-                                      #RoutingPlane.cpp
-                                      #Session.cpp
-				      #Manipulator.cpp
-				      #SegmentFsm.cpp
-                                      #RoutingEvent.cpp
-                                      #RoutingEventQueue.cpp
-                                      #RoutingEventHistory.cpp
-                                      #RoutingEventLoop.cpp
-                                      #NegociateWindow.cpp
-                                      #BuildPowerRails.cpp
-                                      #ProtectRoutingPads.cpp
-                                      #PreProcess.cpp
-                                       Configuration.cpp
+                   set ( cpps          Configuration.cpp
+                                       AddFeeds.cpp
+                                       FeedCells.cpp
                                        EtesianEngine.cpp
                                        GraphicEtesianEngine.cpp
                        )
@@ -71,7 +30,6 @@
                                        PyEtesianEngine.cpp
                                        PyGraphicEtesianEngine.cpp
                        )
-#                  set ( etesiancpps   EtesianMain.cpp )
           qtX_wrap_cpp ( mocCpps       ${mocIncludes} )
 
            add_library ( etesian       ${cpps} ${mocCpps} ${pyCpps} )

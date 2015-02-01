@@ -109,7 +109,7 @@ extern "C" {
     METHOD_HEAD("EtesianEngine.place()")
     unsigned int flags = 0;
     if (PyArg_ParseTuple(args,"I:EtesianEngine.place", &flags)) {
-      etesian->place(/*flags*/);
+      etesian->place( flags );
     } else {
       PyErr_SetString(ConstructorError, "EtesianEngine.place(): Invalid number/bad type of parameter.");
       return NULL;
@@ -137,24 +137,8 @@ extern "C" {
                             , "Returns the Etesian engine attached to the Cell, None if there isnt't." }
     , { "create"            , (PyCFunction)PyEtesianEngine_create            , METH_VARARGS|METH_STATIC
                             , "Create a Etesian engine on this cell." }
- // , { "printConfiguration", (PyCFunction)PyEtesianEngine_printConfiguration, METH_NOARGS
- //                         , "Display on the console the configuration of Etesian." }
- // , { "saveGlobalSolution", (PyCFunction)PyEtesianEngine_saveGlobalSolution, METH_NOARGS
- //                         , "Save the global routing solution on disk." }
- // , { "getToolSuccess"    , (PyCFunction)PyEtesianEngine_getToolSuccess    , METH_NOARGS
- //                         , "Returns True if the detailed routing has been successful." }
- // , { "loadGlobalRouting" , (PyCFunction)PyEtesianEngine_loadGlobalRouting , METH_VARARGS
- //                         , "Read/load the global routing and build topologies for Etesian." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_VARARGS
                             , "Run the global router (Knik)." }
- // , { "layerAssign"       , (PyCFunction)PyEtesianEngine_layerAssign       , METH_VARARGS
- //                         , "Run the layer assigment stage." }
- // , { "runNegociate"      , (PyCFunction)PyEtesianEngine_runNegociate      , METH_NOARGS
- //                         , "Run the negociation stage of the detailed router." }
- // , { "finalizeLayout"    , (PyCFunction)PyEtesianEngine_finalizeLayout    , METH_NOARGS
- //                         , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
- // , { "dumpMeasures"      , (PyCFunction)PyEtesianEngine_dumpMeasures      , METH_NOARGS
- //                         , "Dump to disk lots of statistical informations about the routing." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
                             , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */
@@ -176,6 +160,14 @@ extern "C" {
   // Link/Creation Method.
   PyTypeInheritedObjectDefinitions(EtesianEngine,PyToolEngine)
   DBoLinkCreateMethod(EtesianEngine)
+
+
+  extern void  PyEtesianEngine_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeEtesianEngine.tp_dict,EtesianEngine::SlowMotion,"SlowMotion");
+  }
 
 
 #endif  // Shared Library Code Part.

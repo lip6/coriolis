@@ -381,12 +381,14 @@ namespace {
       }
     }
 
-    ltrace(300) << "      Check againts top clocks ck:" << _ck->getName()
-                << " cki:" << _cki->getName() << " cko:" << _cko->getName() << endl;
+    ltrace(300) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
+                << " cki:" << ((_cki) ? _cki->getName() : "NULL")
+                << " cko:" << ((_cko) ? _cko->getName() : "NULL")
+                << endl;
 
-    if (upNet->getName() == _ck->getName() ) return _ck;
-    if (upNet->getName() == _cki->getName()) return _cki;
-    if (upNet->getName() == _cko->getName()) return _cko;
+    if ( _ck  and (upNet->getName() == _ck->getName() ) ) return _ck;
+    if ( _cki and (upNet->getName() == _cki->getName()) ) return _cki;
+    if ( _cko and (upNet->getName() == _cko->getName()) ) return _cko;
 
     return NULL;
   }

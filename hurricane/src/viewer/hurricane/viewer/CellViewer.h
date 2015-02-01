@@ -141,6 +141,7 @@ namespace Hurricane {
               void                 raiseToolInterrupt        ();
               void                 clearToolInterrupt        ();
               void                 runScriptWidget           ();
+              void                 runStressScript           ();
       inline  void                 emitCellAboutToChange     ();
       inline  void                 emitCellChanged           ();
     signals:                       

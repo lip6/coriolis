@@ -141,7 +141,7 @@ class Configuration ( object ):
         lines = uname.stdout.readlines()
 
         if self._osSlsoc7x_64.match(lines[0]):
-            self._osType    = "Linux.el7"
+            self._osType    = "Linux.el7_64"
             self._libSuffix = "64"
         elif self._osSlsoc6x_64.match(lines[0]):
             self._osType    = "Linux.slsoc6x_64"

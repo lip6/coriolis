@@ -24,9 +24,10 @@
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 #include  "crlcore/Utilities.h"
-#include  "crlcore/RoutingLayerGauge.h"
+#include  "crlcore/CellGauge.h"
 #include  "crlcore/AllianceFramework.h"
 #include  "etesian/Configuration.h"
+#include  "etesian/EtesianEngine.h"
 
 
 
@@ -45,8 +46,7 @@ namespace Etesian {
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
   using  CRL::AllianceFramework;
-  using  CRL::RoutingGauge;
-  using  CRL::RoutingLayerGauge;
+  using  CRL::CellGauge;
 
 
 // -------------------------------------------------------------------
@@ -61,43 +61,44 @@ namespace Etesian {
 // Class  :  "Etesian::ConfigurationConcrete".
 
 
-  ConfigurationConcrete::ConfigurationConcrete ( const RoutingGauge* rg )
+  ConfigurationConcrete::ConfigurationConcrete ( const CellGauge* cg )
     : Configuration()
-    , _rg                (NULL)
+    , _cg          (NULL)
+    , _flags       (0)
   {
-    if ( rg == NULL ) rg = AllianceFramework::get()->getRoutingGauge();
+    if ( cg == NULL ) cg = AllianceFramework::get()->getCellGauge();
 
-    _rg = rg->getClone();
+    _cg = cg->getClone();
   }
 
 
   ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
     : Configuration()
-    , _rg          (NULL)
+    , _cg          (NULL)
+    , _flags       (other._flags)
   {
-    if ( other._rg ) _rg = other._rg->getClone();
+    if ( other._cg ) _cg = other._cg->getClone();
   }
 
 
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
-    ltrace(89) << "About to delete attribute _rg (RoutingGauge)." << endl;
-    _rg->destroy ();
+    ltrace(89) << "About to delete attribute _cg (CellGauge)." << endl;
+    _cg->destroy ();
   }
 
 
-  ConfigurationConcrete* ConfigurationConcrete::clone () const
-  { return new ConfigurationConcrete(*this); }
-
-
-  RoutingGauge* ConfigurationConcrete::getRoutingGauge () const
-  { return _rg; }
+  ConfigurationConcrete* ConfigurationConcrete::clone        () const { return new ConfigurationConcrete(*this); }
+  CellGauge*             ConfigurationConcrete::getCellGauge () const { return _cg; }
+  bool                   ConfigurationConcrete::isSlowMotion () const { return _flags & EtesianEngine::SlowMotion; }
+  void                   ConfigurationConcrete::setFlags     ( unsigned int flags ) { _flags |=  flags; }
+  void                   ConfigurationConcrete::unsetFlags   ( unsigned int flags ) { _flags &= ~flags; }
 
 
   void  ConfigurationConcrete::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
+    cout << Dots::asIdentifier("     - Cell Gauge",getString(_cg->getName())) << endl;
   }
 
 
@@ -109,7 +110,7 @@ namespace Etesian {
   {
     ostringstream  os;
 
-    os << "<" << _getTypeName() << " " << _rg->getName() << ">";
+    os << "<" << _getTypeName() << " " << _cg->getName() << ">";
 
     return os.str();
   }
@@ -118,7 +119,7 @@ namespace Etesian {
   Record* ConfigurationConcrete::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot           ( "_rg"              ,  _rg              ) );
+    record->add ( getSlot           ( "_cg"              ,  _cg              ) );
                                      
     return ( record );
   }

@@ -104,7 +104,8 @@ Cell::Cell(Library* library, const Name& name)
     _nextOfLibraryCellMap(NULL),
     _nextOfSymbolCellSet(NULL),
     _slaveEntityMap(),
-    _observers()
+    _observers(),
+    _flags(0)
 {
     if (!_library)
         throw Error("Can't create " + _TName("Cell") + " : null library");
@@ -192,6 +193,8 @@ void Cell::flattenNets(unsigned int flags)
 // ***************************************
 {
   UpdateSession::open();
+
+  _flags |= FlattenedNets;
 
   forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
     Net* net = static_cast<Net*>((*ioccurrence).getEntity());

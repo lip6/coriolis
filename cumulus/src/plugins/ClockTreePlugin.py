@@ -27,6 +27,7 @@ try:
   from   helpers   import trace
   from   helpers   import ErrorMessage
   import Mauka
+  import Etesian
   import Unicorn
   import plugins
   import clocktree.ClockTree
@@ -101,9 +102,16 @@ def ScriptMain ( **kw ):
     ht = clocktree.ClockTree.HTree.create( chip.Configuration.GaugeConfWrapper(chip.Configuration.GaugeConf())
                                          , cell, None, cell.getAbutmentBox() )
     if editor: editor.refresh()
-    mauka = Mauka.MaukaEngine.create( cell )
-    mauka.run()
-    mauka.destroy()
+
+    if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
+      mauka = Mauka.MaukaEngine.create( cell )
+      mauka.run()
+      mauka.destroy()
+    else:
+      etesian = Etesian.EtesianEngine.create( cell )
+      etesian.place( Etesian.EtesianEngine.SlowMotion )
+      etesian.destroy()
+
     ht.connectLeaf()
     ht.prune()
     ht.route()

@@ -40,11 +40,13 @@ namespace Hurricane {
     public:
       enum State { Excluded             = 0x0001
                  , Fixed                = 0x0002
-                 , ManualGlobalRoute    = 0x0004
-                 , AutomaticGlobalRoute = 0x0008
+                 , Unconnected          = 0x0004
+                 , ManualGlobalRoute    = 0x0008
+                 , AutomaticGlobalRoute = 0x0010
                  , MixedPreRoute        = Fixed|ManualGlobalRoute
                  };
     public:
+      inline  bool          isUnconnected          () const;
       inline  bool          isFixed                () const;
       inline  bool          isManualGlobalRoute    () const;
       inline  bool          isAutomaticGlobalRoute () const;
@@ -67,6 +69,7 @@ namespace Hurricane {
 
   inline NetRoutingState::NetRoutingState ( Net* net, unsigned int flags ) : _net(net), _flags(flags) { }
 
+  inline bool          NetRoutingState::isUnconnected          () const { return _flags & Unconnected; };
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
   inline bool          NetRoutingState::isManualGlobalRoute    () const { return _flags & ManualGlobalRoute; };
   inline bool          NetRoutingState::isAutomaticGlobalRoute () const { return _flags & AutomaticGlobalRoute; };
@@ -113,6 +116,7 @@ namespace Hurricane {
 
   class NetRoutingExtension {
     public:
+      static inline  bool             isUnconnected          ( const Net* );
       static inline  bool             isFixed                ( const Net* );
       static inline  bool             isManualGlobalRoute    ( const Net* );
       static inline  bool             isAutomaticGlobalRoute ( const Net* );
@@ -126,6 +130,13 @@ namespace Hurricane {
       static const Net*       _owner;
       static NetRoutingState* _cache;
   };
+
+
+  inline bool  NetRoutingExtension::isUnconnected ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isUnconnected();
+  }
 
 
   inline bool  NetRoutingExtension::isFixed ( const Net* net )

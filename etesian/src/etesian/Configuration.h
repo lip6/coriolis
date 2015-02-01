@@ -25,10 +25,7 @@ namespace Hurricane {
   class Cell;
 }
 
-#include  "crlcore/RoutingGauge.h"
-namespace CRL {
-  class RoutingLayerGauge;
-}
+#include  "crlcore/CellGauge.h"
 
 
 namespace Etesian {
@@ -39,8 +36,7 @@ namespace Etesian {
   using  Hurricane::Layer;
   using  Hurricane::DbU;
   using  Hurricane::Cell;
-  using  CRL::RoutingGauge;
-  using  CRL::RoutingLayerGauge;
+  using  CRL::CellGauge;
 
 
 // -------------------------------------------------------------------
@@ -53,7 +49,10 @@ namespace Etesian {
       virtual                   ~Configuration      ();
       virtual Configuration*     clone              () const = 0;
     // Methods.                                     
-      virtual RoutingGauge*      getRoutingGauge    () const = 0;
+      virtual CellGauge*         getCellGauge       () const = 0;
+      virtual bool               isSlowMotion       () const = 0;
+      virtual void               setFlags           ( unsigned int ) = 0;
+      virtual void               unsetFlags         ( unsigned int ) = 0;
       virtual void               print              ( Cell* ) const = 0;
       virtual Record*            _getRecord         () const = 0;
       virtual string             _getString         () const = 0;
@@ -76,18 +75,22 @@ namespace Etesian {
       friend class Configuration;
     public:
     // Constructor & Destructor.
-                                     ConfigurationConcrete ( const RoutingGauge* rg=NULL );
+                                     ConfigurationConcrete ( const CellGauge* cg=NULL );
       virtual                       ~ConfigurationConcrete ();
       virtual ConfigurationConcrete* clone                 () const;
     // Methods.
-      virtual RoutingGauge*          getRoutingGauge       () const;
+      virtual CellGauge*             getCellGauge          () const;
+      virtual bool                   isSlowMotion          () const;
+      virtual void                   setFlags              ( unsigned int );
+      virtual void                   unsetFlags            ( unsigned int );
       virtual void                   print                 ( Cell* ) const;
       virtual Record*                _getRecord            () const;
       virtual string                 _getString            () const;
       virtual string                 _getTypeName          () const;
     protected:
     // Attributes.
-      RoutingGauge* _rg;
+      CellGauge*    _cg;
+      unsigned int  _flags;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

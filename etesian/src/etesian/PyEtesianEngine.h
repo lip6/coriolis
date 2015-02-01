@@ -42,8 +42,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeEtesianEngine;
   extern  PyMethodDef   PyEtesianEngine_Methods[];
 
-  extern  PyObject* PyEtesianEngine_Link       ( Etesian::EtesianEngine* );
-  extern  void      PyEtesianEngine_LinkPyType ();
+  extern  PyObject* PyEtesianEngine_Link           ( Etesian::EtesianEngine* );
+  extern  void      PyEtesianEngine_LinkPyType     ();
+  extern  void      PyEtesianEngine_postModuleInit ();
 
 
 #define IsPyEtesianEngine(v)  ( (v)->ob_type == &PyTypeEtesianEngine )

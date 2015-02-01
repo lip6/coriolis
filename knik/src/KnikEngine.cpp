@@ -228,7 +228,10 @@ void KnikEngine::initGlobalRouting( const map<Name,Net*>& excludedNets )
 
   forEach ( Net*, inet, getCell()->getNets() ) {
     if (excludedNets.find(inet->getName()) != excludedNets.end()) {
-      cparanoid << "     - <" << inet->getName() << "> not routed (pre-routing found)." << endl;
+      if (NetRoutingExtension::isUnconnected(*inet))
+        cparanoid << "     - <" << inet->getName() << "> not routed (unconnected)." << endl;
+      else
+        cparanoid << "     - <" << inet->getName() << "> not routed (pre-routing found)." << endl;
       continue;
     }
 

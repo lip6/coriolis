@@ -18,7 +18,8 @@
 #include <fstream>
 #include <iomanip>
 #if HAVE_COLOQUINTE
-#include "coloquinte/circuit_graph.hxx"
+#include "Coloquinte/circuit.hxx"
+#include "Coloquinte/legalizer.hxx"
 #endif
 #include "vlsisapd/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
@@ -42,15 +43,23 @@
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
 #include "etesian/EtesianEngine.h"
+#include "etesian/FeedCells.h"
 
 
 namespace {
 
   using namespace std;
   using namespace Hurricane;
+  using coloquinte::float_t;
+  using coloquinte::point;
+
+
 
 
 #if HAVE_COLOQUINTE
+  inline bool  isNan( const float_t& f ) { return (f != f); }
+
+
   string  extractInstanceName ( const RoutingPad* rp )
   {
     ostringstream name;
@@ -102,6 +111,7 @@ namespace {
   }
 
 
+#if 0
   Coloquinte::cell::pin::pin_dir  extractDirection ( const RoutingPad* rp )
   {
     switch ( rp->_getEntityAsComponent()->getNet()->getDirection() ) {
@@ -114,6 +124,7 @@ namespace {
 
     return Coloquinte::cell::pin::O;
   }
+#endif
 
 
   Point  extractRpOffset ( const RoutingPad* rp )
@@ -128,6 +139,38 @@ namespace {
     }
 
     return offset;
+  }
+
+
+  Transformation  toTransformation ( point<float_t>  position
+                                   , point<float_t>  orientation
+                                   , Cell*           model
+                                   , DbU::Unit       pitch
+                                   )
+  {
+    DbU::Unit tx         = position.x_ * pitch;
+    DbU::Unit ty         = position.y_ * pitch;
+    Point     center     = model->getAbutmentBox().getCenter();
+    Transformation::Orientation orient = Transformation::Orientation::ID;
+
+    if ( (orientation.x_ >= 0) and (orientation.y_ >= 0) ) {
+      tx += - center.getX();
+      ty += - center.getY();
+    } else if ( (orientation.x_ <  0) and (orientation.y_ >= 0) ) {
+      tx    +=   center.getX();
+      ty    += - center.getY();
+      orient = Transformation::Orientation::MX;
+    } else if ( (orientation.x_ >= 0) and (orientation.y_ <  0) ) {
+      tx    += - center.getX();
+      ty    +=   center.getY();
+      orient = Transformation::Orientation::MY;
+    } else if ( (orientation.x_ <  0) and (orientation.y_ <  0) ) {
+      tx    += center.getX();
+      ty    += center.getY();
+      orient = Transformation::Orientation::R2;
+    }
+
+    return Transformation( tx, ty, orient );
   }
 #endif
 
@@ -172,11 +215,31 @@ namespace Etesian {
   using Hurricane::CellWidget;
   using CRL::ToolEngine;
   using CRL::AllianceFramework;
+  using CRL::Catalog;
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
   using CRL::CatalogExtension;
-
+  using coloquinte::index_t;
+  using coloquinte::capacity_t;
+  using coloquinte::int_t;
+  using coloquinte::float_t;
+  using coloquinte::point;
+  using coloquinte::box;
+  using coloquinte::Movability;
+  using coloquinte::temporary_cell;
+  using coloquinte::temporary_net;
+  using coloquinte::temporary_pin;
+  using coloquinte::netlist;
+  using coloquinte::gp::placement_t;
+  using coloquinte::gp::get_rough_legalizer;
+  using coloquinte::gp::get_star_linear_system;
+  using coloquinte::gp::get_result;
+  using coloquinte::dp::legalize;
+  using coloquinte::dp::swaps_global;
+  using coloquinte::dp::swaps_row;
+  using coloquinte::dp::OSRP_convex;
+  using coloquinte::dp::row_compatible_orientation;
 
   const char* missingEtesian =
     "%s :\n\n"
@@ -199,16 +262,27 @@ namespace Etesian {
 
   EtesianEngine::EtesianEngine ( Cell* cell )
     : ToolEngine    (cell)
-    , _configuration(NULL)
+    , _configuration(new ConfigurationConcrete())
     , _flags        (0)
-    , _circuit      (NULL)
+    , _timer        ()
+    , _surface      ()
+    , _circuit      ()
+    , _placementLB  ()
+    , _placementUB  ()
     , _cellsToIds   ()
+    , _idsToInsts   ()
     , _cellWidget   (NULL)
+    , _feedCells    (this)
   { }
 
 
   void  EtesianEngine::_postCreate ()
-  { }
+  {
+  // Ugly. Direct uses of Alliance Framework.
+  // Must change toward something in the settings.
+    _feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
+    _feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
+  }
 
 
   EtesianEngine* EtesianEngine::create ( Cell* cell )
@@ -234,9 +308,6 @@ namespace Etesian {
 
   EtesianEngine::~EtesianEngine ()
   {
-#if HAVE_COLOQUINTE
-    if (_circuit) delete _circuit;
-#endif
     delete _configuration;
   }
 
@@ -245,8 +316,39 @@ namespace Etesian {
   { return _toolName; }
 
 
+  const Configuration* EtesianEngine::getConfiguration () const
+  { return _configuration; }
+
+
   Configuration* EtesianEngine::getConfiguration ()
   { return _configuration; }
+
+
+  void  EtesianEngine::startMeasures ()
+  {
+    _timer.resetIncrease();
+    _timer.start();
+  }
+
+
+  void  EtesianEngine::stopMeasures ()
+  { _timer.stop(); }
+
+
+  void  EtesianEngine::printMeasures ( string tag ) const
+  {
+    ostringstream result;
+
+    result <<  Timer::getStringTime(_timer.getCombTime()) << ", " 
+           << Timer::getStringMemory(_timer.getIncrease());
+    cmess1 << ::Dots::asString( "     - Done in", result.str() ) << endl;
+
+    result.str("");
+    result << _timer.getCombTime()
+           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
+           << (_timer.getMemorySize()>>10) << "Kb";
+    cmess2 << ::Dots::asString( "     - Raw measurements", result.str() ) << endl;
+  }
 
 
   void  EtesianEngine::resetPlacement ()
@@ -293,31 +395,46 @@ namespace Etesian {
   }
 
 
-  void  EtesianEngine::place ( unsigned int slowMotion )
+  void  EtesianEngine::toColoquinte ()
   {
 #if HAVE_COLOQUINTE
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
 
     resetPlacement();
 
-    Dots               dots ( cmess2, "       ", 80, 1000 );
-    AllianceFramework* af   = AllianceFramework::get();
+    Dots               dots  ( cmess2, "       ", 80, 1000 );
+    AllianceFramework* af    = AllianceFramework::get();
+    DbU::Unit          pitch = getPitch();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
     getCell()->flattenNets( Cell::BuildRings );
 
   // Coloquinte circuit description data-structures.
     size_t  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
-    vector<Transformation>  idsToTransf ( instancesNb );
+    vector<Transformation>    idsToTransf ( instancesNb );
+    vector<temporary_cell>    instances   ( instancesNb );
+    vector< point<float_t> >  positions   ( instancesNb );
+    vector< point<float_t> >  orientations( instancesNb, point<float_t>(1.0,1.0) );
 
-    _circuit = new Coloquinte::circuit();
-    _circuit->cells    .resize( instancesNb );
-    _circuit->hypernets.resize( getCell()->getNets().getSize() );
-
-    cmess1 << "     - Converting Instances (Bookshelf nodes)" << endl;
+    cmess1 << "     - Converting " << instancesNb << " instances" << endl;
     cout.flush();
 
-    Coloquinte::cell_id  cellId = 0;
+    Box topAb = getCell()->getAbutmentBox();
+
+    UpdateSession::open();
+    forEach ( Occurrence, ioccurrence, getCell()->getNonLeafInstanceOccurrences() )
+    {
+      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+
+    // Have to check here if the model is fully placed or not.
+      masterCell->setAbutmentBox( topAb );
+      instance->setTransformation( Transformation() ); // (0,0,ID).
+      instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+    }
+    UpdateSession::close();
+
+    index_t instanceId = 0;
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
@@ -327,32 +444,48 @@ namespace Etesian {
       instanceName.erase( 0, 1 );
       instanceName.erase( instanceName.size()-1 );
 
-      if (CatalogExtension::isFeed(masterCell)) continue;
+      if (CatalogExtension::isFeed(masterCell)) {
+        cerr << Warning("Feed instance found and skipped.") << endl;
+        continue;
+      }
 
-      Coloquinte::circuit_coordinate  cellSize ( masterCell->getAbutmentBox().getWidth () / DbU::fromLambda(5.0)
-                                               , masterCell->getAbutmentBox().getHeight() / DbU::fromLambda(5.0) );
-      _cellsToIds.insert( make_pair(instanceName,cellId) );
+      Box instanceAb = masterCell->getAbutmentBox();
+
       Transformation instanceTransf = instance->getTransformation();
       (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
-      idsToTransf[cellId] = instanceTransf;
+      instanceTransf.applyOn( instanceAb );
 
+      double xsize = instanceAb.getWidth ()        / pitch;
+      double ysize = instanceAb.getHeight()        / pitch;
+      double xpos  = instanceAb.getCenter().getX() / pitch;
+      double ypos  = instanceAb.getCenter().getY() / pitch;
+
+      instances[instanceId].size       = point<int_t>( xsize, ysize );
+      instances[instanceId].list_index = instanceId;
+      instances[instanceId].area       = static_cast<capacity_t>(xsize) * static_cast<capacity_t>(ysize);
+      positions[instanceId] = point<float_t>( xpos, ypos );
+
+      if ( not instance->isFixed() and instance->isTerminal() ) {
+        instances[instanceId].attributes = coloquinte::XMovable
+                                          |coloquinte::YMovable
+                                          |coloquinte::XFlippable
+                                          |coloquinte::YFlippable;
+      } else {
+        instances[instanceId].attributes = 0;
+      }
+
+      _cellsToIds.insert( make_pair(instanceName,instanceId) );
+      _idsToInsts.push_back( instance );
+      ++instanceId;
       dots.dot();
-    //cerr << instanceName << " " << (int)instance->getPlacementStatus().getCode()
-    //     << " area:" << cellSize.cast<Coloquinte::cell_area>().prod() << endl;
-
-      _circuit->cells[cellId].name    = instanceName;
-      _circuit->cells[cellId].sizes   = cellSize;
-      _circuit->cells[cellId].area    = cellSize.cast<Coloquinte::cell_area>().prod();
-      _circuit->cells[cellId].movable = not instance->isFixed() and instance->isTerminal();
-    //if (not _circuit->cells[cellId].movable)
-    //  cerr << "FIXED (movable=false):" << instance << endl;
-    //_circuit->cells[cellId].movable = (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED);
-
-      cellId++;
     }
     dots.finish( Dots::Reset|Dots::FirstDot );
 
-    cmess1 << "     - Converting Nets (Bookshelf nets)" << endl;
+    size_t netsNb = getCell()->getNets().getSize();
+    cmess1 << "     - Converting " << netsNb << " nets" << endl;
+
+    vector<temporary_net>  nets ( netsNb );
+    vector<temporary_pin>  pins;
 
     unsigned int netId = 0;
     forEach ( Net*, inet, getCell()->getNets() )
@@ -369,32 +502,20 @@ namespace Etesian {
       if (af->isBLOCKAGE((*inet)->getName())) continue;
 
       dots.dot();
-    //cerr << (*inet)->getName() << endl;
+
+      nets[netId] = temporary_net( netId, 1.0 );
 
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
-      //cerr << "    " << (*irp)->getOccurrence().getCompactString() << endl;
         string insName = extractInstanceName( *irp );
         Point  offset  = extractRpOffset    ( *irp );
-
-      //cerr << "    Master Cell: " << (*irp)->getOccurrence().getMasterCell() << endl;
-      //cerr << "    Rebuilt instance name: " << insName << " " << offset << endl;
+        double xpin    = offset.getX() / pitch;
+        double ypin    = offset.getY() / pitch;
 
         auto  iid = _cellsToIds.find( insName );
         if (iid == _cellsToIds.end() ) {
           cerr << Error( "Unable to lookup instance <%s>.", insName.c_str() ) << endl;
         } else {
-          Coloquinte::cell_id           cellId    = (*iid).second;
-          Coloquinte::hypernet::pin_id  netPinId  ( cellId, _circuit->cells    [cellId].pins.size() );
-          Coloquinte::cell::pin_id      cellPinId ( netId , _circuit->hypernets[netId ].pins.size() );
-          _circuit->hypernets[netId].pins.push_back( netPinId );
-     
-          Coloquinte::cell::pin  cellPin;
-        //cellPin.name     = extractTerminalName( *irp );
-          cellPin.d        = extractDirection   ( *irp );
-          cellPin.offs.x() = offset.getX() / DbU::fromLambda(5.0);
-          cellPin.offs.y() = offset.getY() / DbU::fromLambda(5.0);
-          cellPin.ind  = cellPinId;
-          _circuit->cells[cellId].pins.push_back( cellPin );
+          pins.push_back( temporary_pin( point<float_t>(xpin,ypin), (*iid).second, netId ) );
         }
       }
 
@@ -402,110 +523,186 @@ namespace Etesian {
     }
     dots.finish( Dots::Reset );
 
-    _circuit->position_overlays.resize(1);
-	_circuit->position_overlays[0].x_pos = Coloquinte::circuit_vector( _cellsToIds.size() );
-	_circuit->position_overlays[0].y_pos = Coloquinte::circuit_vector( _cellsToIds.size() );
+    _surface = box<int_t>( (int_t)(getCell()->getAbutmentBox().getXMin() / pitch)
+                         , (int_t)(getCell()->getAbutmentBox().getXMax() / pitch)
+                         , (int_t)(getCell()->getAbutmentBox().getYMin() / pitch)
+                         , (int_t)(getCell()->getAbutmentBox().getYMax() / pitch)
+                         );
+    _circuit     = netlist( instances, nets, pins );
+    _placementLB.positions_    = positions;
+    _placementLB.orientations_ = orientations;
+    _placementUB = _placementLB;
+    cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y_ << endl;
 
-    for ( auto ipair : _cellsToIds ) {
-      Coloquinte::circuit_coordinate position ( idsToTransf[ipair.second].getTx() / DbU::fromLambda(5.0)
-                                              , idsToTransf[ipair.second].getTy() / DbU::fromLambda(5.0) );
-      // if (not _circuit->cells[ipair.second].movable) {
-      //   cerr << _circuit->cells[ipair.second].name << endl;
-      //   cerr << "  " << idsToTransf[ipair.second] << endl;
-      //   cerr << "  Fixed cell BEFORE @" << position.x() << "x" << position.y() << endl;
-      // }
-    //position += _circuit->cells[ipair.second].get_sizes() / 2;
-      _circuit->position_overlays[0].x_pos[ipair.second] = position.x();
-      _circuit->position_overlays[0].y_pos[ipair.second] = position.y();
+#endif  // HAVE_COLOQUINTE
+  }
 
-      // if (not _circuit->cells[ipair.second].movable) {
-      //   cerr << "  Fixed cell @" << position.x() << "x" << position.y() << endl;
-      // }
-    }
+  void  EtesianEngine::place ( unsigned int flags )
+  {
+#if HAVE_COLOQUINTE
+    if (flags & SlowMotion) getConfiguration()->  setFlags( SlowMotion );
+    else                    getConfiguration()->unsetFlags( SlowMotion );
 
-  // Temporarily force the circuit size.
-    // getCell()->setAbutmentBox( Box( DbU::fromLambda(0.0)
-    //                               , DbU::fromLambda(0.0)
-    //                               , DbU::fromLambda(5.0)*12000
-    //                               , DbU::fromLambda(5.0)*12000
-    //                               ) );
-	// _circuit->bounds = Coloquinte::circuit_box( Coloquinte::circuit_coordinate::Zero()
-    //                                           , Coloquinte::circuit_coordinate({12000, 12000}) );
-    _circuit->bounds = Coloquinte::circuit_box
-      ( Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMin() / DbU::fromLambda(5.0)
-                                        , getCell()->getAbutmentBox().getYMin() / DbU::fromLambda(5.0) } )
-      , Coloquinte::circuit_coordinate( { getCell()->getAbutmentBox().getXMax() / DbU::fromLambda(5.0)
-                                        , getCell()->getAbutmentBox().getYMax() / DbU::fromLambda(5.0) } ));
-
-    _circuit->selfcheck();
+    toColoquinte();
 
     cmess1 << "  o  Running Coloquinte." << endl;
     cmess1 << "     - Computing initial placement..." << endl;
     cmess2 << setfill('0') << right;
 
-    time_t  startTime = time(NULL);
-    time_t  timeDelta;
-    Coloquinte::circuit_scalar upperBound;
-    Coloquinte::circuit_scalar lowerBound;
 
-	for ( int j = 0; j < 3; j++ ) {
-		_circuit->position_overlays[0]
-          = Coloquinte::solve_quadratic_model( *_circuit
-                                             ,  _circuit->position_overlays[0]
-                                             ,  _circuit->position_overlays[0]
-                                             );
+    double         sliceHeight = getSliceHeight() / getPitch();
+    time_t         startTime   = time(NULL);
+    time_t         timeDelta;
+    ostringstream  label;
 
-        timeDelta  = time(NULL) - startTime;
-        lowerBound = B2B_wirelength( *_circuit, _circuit->position_overlays[0] );
-        cmess2 << "       Iteration "  << setw( 4) <<  (j+1)
-               <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
-               <<    "  Lower bound:"  << setw(10)
-               << lowerBound << endl;
+    cmess2 << "  o  Initial wirelength " << get_HPWL_wirelength(_circuit, _placementLB) << "." <<  endl;
+    startMeasures();
 
-        _updatePlacement( 0 );
-	}
-	
-	float strength      = 0.000001;
-    float strength_incr = 0.000002;
+    auto first_legalizer = get_rough_legalizer( _circuit, _placementLB, _surface);
+    first_legalizer.selfcheck();
 
-    cmess1 << "     - Optimizing placement..." << endl;
+    cmess1 << "  o  Simple legalization." << endl;
+    get_result( _circuit, _placementUB, first_legalizer);
 
-	_circuit->position_overlays.resize(2);
-	for ( int j = 0; j < 200; j++, strength = strength * 1.02 + strength_incr) {
-      _circuit->position_overlays[1]
-        = Coloquinte::legalize( *_circuit
-                              , 1.0
-                              , _circuit->position_overlays[0]
-                              , 1
-                              , false
-                              );
-      
-      timeDelta  = time(NULL) - startTime;
-      upperBound = B2B_wirelength( *_circuit, _circuit->position_overlays[1] );
-      cmess2 << "       Iteration "  << setw( 4) << (j+1)
-             <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
-             <<    "  UPPER bound:"  << setw(10)
-             << upperBound << endl;
+    timeDelta  = time(NULL) - startTime;
+    cmess2 << "     - Elapsed time:" << timeDelta
+           << " HPWL:" << get_HPWL_wirelength( _circuit, _placementUB )
+           << "\n     "
+           << "- Linear Disrupt.:" << get_mean_linear_disruption   ( _circuit, _placementLB, _placementLB )
+           <<   " Quad. Disrupt.:" << get_mean_quadratic_disruption( _circuit, _placementLB, _placementLB )
+           << endl;
+    _placementLB = _placementUB;
+    _placementLB.selfcheck();
 
-      _circuit->position_overlays[0]
-        = Coloquinte::solve_quadratic_model( *_circuit
-                                           ,  _circuit->position_overlays[0]
-                                           ,  _circuit->position_overlays[1]
-                                           , strength
-                                           );
-      timeDelta  = time(NULL) - startTime;
-      lowerBound = B2B_wirelength( *_circuit, _circuit->position_overlays[0] );
-      cmess2 << "                     "
-             <<    "  Elapsed time:" << setw( 5) << timeDelta << "s"
-             <<    "  Lower bound:"  << setw(10)
-             << lowerBound << endl;
-      cmess2 << "                       Spreading ratio: "
-             << ((((double)upperBound-(double)lowerBound)*100) / (double)lowerBound) << "%" << endl;
+    zero_orientations( _circuit, _placementLB );
+    _updatePlacement( _placementUB );
 
-      _updatePlacement( 0 );
-	}
+    // cerr << _idsToInsts[1266]
+    //      << " x:" << _placementLB.positions_[1095].x_
+    //      << " y:" << _placementLB.positions_[1095].y_
+    //      << endl;
 
-    _updatePlacement( 1 );
+    // Breakpoint::get()->stop( 0, "After " );
+
+  // Early topology-independent solution
+    cmess1 << "  o  Star (*) Optimization." << endl;
+    auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10000);
+    get_result( _circuit, _placementLB, solv, 200 );
+    _progressReport2( startTime, "     [--]" );
+    
+    for ( int i=0; i<10; ++i ) {
+      auto solv = get_HPWLF_linear_system( _circuit, _placementLB, 1.0, 2, 100000 );
+      get_result( _circuit, _placementLB, solv, 300 ); // number of iterations
+
+      label.str("");
+      label  << "     [" << setw(2) << setfill('0') << i << "]";
+      _progressReport2( startTime, label.str() );
+      _updatePlacement( _placementLB );
+    }
+
+    float_t pulling_force = 0.03;
+
+    cmess2 << "  o  Simple legalization." << endl;
+    for ( int i=0; i<50; ++i, pulling_force += 0.03 ) {
+    // Create a legalizer and bipartition it until we have sufficient precision
+    // (~2 to 10 standard cell widths).
+      auto legalizer = get_rough_legalizer( _circuit, _placementLB, _surface );
+        for ( int quad_part=0 ; quad_part<8 ; quad_part++ ) {
+            legalizer.x_bipartition();
+            legalizer.y_bipartition();
+            legalizer.redo_line_partitions();
+            legalizer.redo_diagonal_bipartitions();
+            legalizer.redo_line_partitions();
+            legalizer.redo_diagonal_bipartitions();
+            legalizer.selfcheck();
+        }
+        if (i < 10) {
+          spread_orientations( _circuit, _placementLB );
+        }
+      // Keep the orientation between LB and UB
+        _placementUB = _placementLB;
+
+        get_result( _circuit, _placementUB, legalizer );
+        label.str("");
+        label  << "     [" << setw(2) << setfill('0') << i << "] Bipart.";
+        _progressReport1( startTime, label.str() );
+        _updatePlacement( _placementUB );
+
+        if (i >= 30) {
+          auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
+          coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+          _progressReport1( startTime, "          Legal. " );
+          _updatePlacement( _placementUB );
+        }
+
+      // Get the system to optimize (tolerance, maximum and minimum pin counts)
+      // and the pulling forces (threshold distance)
+        auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.01, 2, 100000 ) 
+                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
+        get_result( _circuit, _placementLB, solv, 400 ); // number of iterations
+        _progressReport2( startTime, "          Linear." );
+        _updatePlacement( _placementLB );
+
+     // Optimize orientation sometimes
+     // if (i>=10 and i%5 == 0) {
+     //     optimize_exact_orientations( _circuit, _placementLB );
+     //     std::cout << "Oriented" << std::endl;
+     //   //output_progressReport(circuit, LB_pl);
+     //     _updatePlacement( _placementLB );
+     // }
+    }
+
+    cmess1 << "  o  Detailed Placement." << endl;
+    index_t legalizeIterations = 10;
+    for ( index_t i=0; i<legalizeIterations; ++i ){
+      ostringstream label;
+      label.str("");
+      label  << "     [" << setw(2) << setfill('0') << i << "]";
+
+      optimize_exact_orientations( _circuit, _placementUB );
+      _progressReport1( startTime, label.str()+" Oriented ......." );
+      _updatePlacement( _placementUB );
+
+      auto legalizer = legalize( _circuit, _placementLB, _surface, sliceHeight );
+      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+      _progressReport1( startTime, "          Legalized ......" );
+      _updatePlacement( _placementUB );
+
+      swaps_global( _circuit, legalizer, 3, 4 );
+      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+      _progressReport1( startTime, "          Global Swaps ..." );
+      _updatePlacement( _placementUB );
+
+      OSRP_convex( _circuit, legalizer );
+      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+      _progressReport1( startTime, "          Row Optimization" );
+      _updatePlacement( _placementUB );
+
+      swaps_row( _circuit, legalizer, 4 );
+      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+      _progressReport1( startTime, "          Local Swaps ...." );
+
+      if (i == legalizeIterations-1) {
+        row_compatible_orientation( _circuit, legalizer, true );
+        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        _progressReport1( startTime, "          Final Legalize ." );
+      }
+
+      _updatePlacement( _placementUB, (i==legalizeIterations-1) ? ForceUpdate : 0 );
+    }
+
+    
+    cmess1 << "  o  Adding feed cells." << endl;
+    addFeeds();
+
+    cmess1 << "  o  Placement finished." << endl;
+    stopMeasures();
+    printMeasures( "total" );
+    cmess1 << ::Dots::asString
+      ("     - HPWL", DbU::getValueString(get_HPWL_wirelength(_circuit,_placementUB )*getPitch()) ) << endl;
+    cmess1 << ::Dots::asString
+      ("     - RMST", DbU::getValueString(get_RSMT_wirelength(_circuit,_placementUB )*getPitch()) ) << endl;
+
     _flags &= ~NoPlacement;
 #else
     cerr << Warning("Coloquinte library wasn't found, Etesian is disabled.") << endl;
@@ -513,9 +710,56 @@ namespace Etesian {
   }
 
 
-  void  EtesianEngine::_updatePlacement ( unsigned int placementId )
+  void  EtesianEngine::_progressReport1 ( time_t startTime, string label ) const
   {
 #if HAVE_COLOQUINTE
+    size_t w      = label.size();
+    string indent ( w, ' ' );
+    if (not w) {
+      label  = string( 5, ' ' );
+      indent = label;
+    }
+
+    ostringstream elapsed;
+    elapsed << "  dTime:" << setw(5) << (time(NULL) - startTime) << "s ";
+
+    cmess2 << label << elapsed.str()
+           << " HPWL:" << get_HPWL_wirelength      ( _circuit, _placementUB )
+           << " RMST:" << get_RSMT_wirelength      ( _circuit, _placementUB )
+           << "\n" << indent
+           <<  "  Linear Disrupt.:" << get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
+           <<   " Quad Disrupt.:"   << get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
+           << endl;
+#endif
+  }
+
+
+  void  EtesianEngine::_progressReport2 ( time_t startTime, string label ) const
+  {
+#if HAVE_COLOQUINTE
+    size_t w      = label.size();
+    string indent ( w, ' ' );
+    if (not w) {
+      label  = string( 5, ' ' );
+      indent = label;
+    }
+
+    ostringstream elapsed;
+    elapsed << "  dTime:" << setw(5) << (time(NULL) - startTime) << "s ";
+
+    cmess2 << label << elapsed.str()
+           << " HPWL:" << get_HPWL_wirelength( _circuit, _placementLB )
+           << " RMST:" << get_RSMT_wirelength( _circuit, _placementLB )
+           << endl;
+#endif
+  }
+
+
+  void  EtesianEngine::_updatePlacement ( const coloquinte::gp::placement_t& placement, unsigned int flags )
+  {
+#if HAVE_COLOQUINTE
+    if ((not isSlowMotion()) and not (flags & ForceUpdate)) return;
+
     UpdateSession::open();
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
@@ -532,14 +776,26 @@ namespace Etesian {
       if (iid == _cellsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        instancePosition.setX( _circuit->position_overlays[placementId].x_pos[(*iid).second] * DbU::fromLambda(5.0) );
-        instancePosition.setY( _circuit->position_overlays[placementId].y_pos[(*iid).second] * DbU::fromLambda(5.0) );
+        point<float_t> position = placement.positions_[(*iid).second];
+
+        if ( isNan(position.x_) or isNan(position.y_) ) {
+          cerr << Error( "Instance <%s> is not placed yet (position == NaN)."
+                       , instanceName.c_str() ) << endl;
+          instance->setPlacementStatus( Instance::PlacementStatus::UNPLACED );
+          continue;
+        }
+
+        Transformation trans = toTransformation( position
+                                               , placement.orientations_[(*iid).second]
+                                               , instance->getMasterCell()
+                                               , getPitch()
+                                               );
 
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 
       // This is temporary as it's not trans-hierarchic: we ignore the posutions
       // of all the intermediary instances.
-        instance->setTransformation( instancePosition );
+        instance->setTransformation( trans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
       }
     }
@@ -568,7 +824,6 @@ namespace Etesian {
     Record* record = ToolEngine::_getRecord ();
                                      
     if (record) {
-    //record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
       record->add( getSlot( "_configuration",  _configuration ) );
     }
     return record;

@@ -14,6 +14,7 @@
 
 FIND_PATH(QWT_INCLUDE_DIR NAMES qwt.h PATHS
   /usr/include
+  /usr/include/qt5
   /usr/local/include
   "$ENV{LIB_DIR}/include" 
   "$ENV{INCLUDE}" 
