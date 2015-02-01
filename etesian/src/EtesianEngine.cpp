@@ -54,6 +54,7 @@ namespace {
   using coloquinte::point;
 
 
+
 #if HAVE_COLOQUINTE
   inline bool  isNan( const float_t& f ) { return (f != f); }
 
