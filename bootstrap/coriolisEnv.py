@@ -106,6 +106,9 @@ def guessOs ():
 
       print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
       print "          (using: \"%s\")" % osType
+
+    ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
+    if 'devtoolset' in ldLibraryPath: useDevtoolset2 = False
     
     return (osType,libDir,useDevtoolset2)
       
