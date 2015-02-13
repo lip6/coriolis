@@ -21,8 +21,11 @@
 
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
 
-#       add_executable ( cyclop        ${cpps} )
-        add_executable ( cyclop        ${cpps} ${mocCpps} )
+if(NOT WITH_QT5)
+                  list ( APPEND        cpps ${mocCpps} )
+endif()
+
+        add_executable ( cyclop        ${cpps} )
  target_link_libraries ( cyclop        crlcore
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}

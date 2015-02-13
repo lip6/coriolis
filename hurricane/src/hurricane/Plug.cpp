@@ -142,6 +142,10 @@ void Plug::setNet(Net* net)
         if (!getBodyHook()->getSlaveHooks().isEmpty())
             throw Error("Can't change net of plug: not empty slave hooks");
 
+        if (net == NULL) {
+          cerr << "About to disconnect " << this << endl;
+        }
+
         _setNet(net);
     }
 }

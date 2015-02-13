@@ -262,6 +262,8 @@ namespace CRL {
   // AllianceFramework::get();
   // cerr << "AllianceFramework has been allocated." << endl;
 
+  // cerr << "std::string typeid name:" << typeid(string).name() << endl;
+
   // Check for duplicated type_info initialization.
     const boptions::variable_value& value = arguments["coriolis_top"];
     if ( value.value().type() != typeid(string) ) {

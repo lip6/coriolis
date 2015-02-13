@@ -126,8 +126,6 @@ namespace CRL {
     , _parentLibrary(NULL)
     , _routingGauges()
   {
-  //cerr << "AllianceFramework::AllianceFramework()" << endl;
-
     DataBase* db = DataBase::getDB ();
     if ( not db )
       db = DataBase::create ();

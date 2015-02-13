@@ -90,7 +90,7 @@ QBrush* getBrush ( const string& pattern, int red, int green, int blue )
       cerr << "[WARNING] Invalid bitmap pattern: \"0x" << pattern << "\"." << endl;
     
     QBrush* brush = new QBrush ( QColor(red,green,blue), QBitmap::fromData(QSize(size,size),bits,QImage::Format_Mono) );
-    if (bits != NULL) delete bits;
+  //if (bits != NULL) delete bits;
 
     return brush;
   }

@@ -98,4 +98,8 @@ namespace CRL {
 
 }  // namespace CRL.
 
+
+INSPECTOR_P_SUPPORT(CRL::CellGauge);
+
+
 #endif  // CRL_CELL_GAUGE_H

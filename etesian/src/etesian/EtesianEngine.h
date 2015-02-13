@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include <unordered_map>
-#include "Coloquinte/circuit.hxx"
+#include "coloquinte/circuit.hxx"
 
 #include "hurricane/Timer.h"
 #include "hurricane/Name.h"
@@ -74,6 +74,7 @@ namespace Etesian {
               void                 startMeasures    ();
               void                 stopMeasures     ();
               void                 printMeasures    ( std::string ) const;
+              void                 setDefaultAb     ();
               void                 resetPlacement   ();
               void                 toColoquinte     ();
               void                 place            ( unsigned int flags=SlowMotion );
@@ -92,8 +93,8 @@ namespace Etesian {
              Timer                                    _timer;
              coloquinte::box<coloquinte::int_t>       _surface;
              coloquinte::netlist                      _circuit;
-             coloquinte::gp::placement_t              _placementLB;
-             coloquinte::gp::placement_t              _placementUB;
+             coloquinte::placement_t                  _placementLB;
+             coloquinte::placement_t                  _placementUB;
              std::unordered_map<string,unsigned int>  _cellsToIds;
              std::vector<Instance*>                   _idsToInsts;
              Hurricane::CellWidget*                   _cellWidget;
@@ -109,7 +110,7 @@ namespace Etesian {
                              EtesianEngine    ( const EtesianEngine& );
               EtesianEngine& operator=        ( const EtesianEngine& );
     private:
-              void           _updatePlacement ( const coloquinte::gp::placement_t&, unsigned int flags=0 );
+              void           _updatePlacement ( const coloquinte::placement_t&, unsigned int flags=0 );
               void           _progressReport1 ( time_t startTime, string label ) const;
               void           _progressReport2 ( time_t startTime, string label ) const;
   };

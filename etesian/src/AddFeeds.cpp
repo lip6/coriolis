@@ -311,6 +311,7 @@ namespace Etesian {
     bool       yspinSet    = false;
     size_t     yspinSlice0 = 0;
     SliceHoles sliceHoles  ( this );
+    Box        toCellAb    = getCell()->getAbutmentBox();
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
     {
@@ -327,6 +328,12 @@ namespace Etesian {
       Transformation instanceTransf = instance->getTransformation();
       (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
+
+      if (not toCellAb.contains(instanceAb)) {
+        cerr << Warning( "Instance %s is not fully enclosed in the top cell."
+                       , getString(instance->getName()).c_str() ) << endl;
+        continue;
+      }
 
       if (not yspinSet) {
         yspinSet = true;

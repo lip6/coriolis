@@ -134,8 +134,8 @@ SubRow* Row::getSubRowBetween(DbU::Unit x1, DbU::Unit x2)
     if (_subRowVector.size() == 1)
         return _subRowVector[0];
     
-    SubRowXMax::iterator rinf = _subRowXMax.upper_bound(x1);
-    SubRowXMax::iterator rsup = _subRowXMinInv.upper_bound(x2);
+    SubRowXMax::iterator    rinf = _subRowXMax.upper_bound(x1);
+    SubRowXMinInv::iterator rsup = _subRowXMinInv.upper_bound(x2);
     
     
     unsigned randidx = rinf->second +

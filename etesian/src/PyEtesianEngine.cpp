@@ -33,6 +33,7 @@ namespace  Etesian {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
+  using Hurricane::trace_on;
   using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;

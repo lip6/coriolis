@@ -515,6 +515,7 @@ extern "C" {
   // Module Initialization  :  "initHurricane ()"
 
   DL_EXPORT(void) initHurricane () {
+  //trace_on();
     trace << "initHurricane()" << endl;
 
     PyDebugSession_LinkPyType ();

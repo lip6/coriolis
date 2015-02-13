@@ -579,8 +579,8 @@ Bin* Surface::getBinInSurface(Bin* srcbin, double dist)
     if (upperY > getYMax())
         upperY = getYMax();
 
-    RowYMax::iterator rinf = _rowYMax.upper_bound(lowerY);
-    RowYMax::iterator rsup = _rowYMinInv.upper_bound(upperY);
+    RowYMax::iterator    rinf = _rowYMax.upper_bound(lowerY);
+    RowYMinInv::iterator rsup = _rowYMinInv.upper_bound(upperY);
 
 
     unsigned randidx = rinf->second +

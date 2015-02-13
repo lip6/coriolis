@@ -640,7 +640,8 @@ extern "C" {
   static void PY_FUNC_NAME ( PY_SELF_TYPE *self )            \
   {                                                          \
     trace << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") " \
-          << self->ACCESS_OBJECT << endl;                    \
+          << hex << (void*)(self->ACCESS_OBJECT)             \
+          << ":" << self->ACCESS_OBJECT << endl;             \
                                                              \
     if ( self->ACCESS_OBJECT ) {                             \
         trace << "C++ object := " << hex                     \
@@ -897,6 +898,7 @@ extern "C" {
                                                         \
   extern void Py##TYPE##Vector_LinkPyType();
 
+
 #define IteratorValNextMethod(TYPE)  \
   static PyObject* Py##TYPE##IteratorNext(Py##TYPE##VectorIterator* pyIterator)     \
   {                                                                                 \
@@ -992,6 +994,8 @@ extern "C" {
     if (pyObject == NULL) { return NULL; }                                     \
                                                                                \
     pyObject->ACCESS_OBJECT = object;                                          \
+    trace << "Py" #SELF_TYPE "_Link(" << hex << pyObject << ") "               \
+          << hex << (void*)object << ":" << object << endl;                    \
     HCATCH                                                                     \
                                                                                \
     return ( (PyObject*)pyObject );                                            \
@@ -1006,24 +1010,26 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                                     \
   {                                                                                        \
     HTRY                                                                                   \
-    if ( self->ACCESS_OBJECT == NULL ) {                                                   \
+    if (self->ACCESS_OBJECT == NULL) {                                                     \
       ostringstream  message;                                                              \
-      message << "applying a Delete to a Python object with no HURRICANE object attached"; \
-        PyErr_SetString ( ProxyError, message.str().c_str() );                             \
-      return ( NULL );                                                                     \
+      message << "applying a destroy() to a Python object with no Hurricane object attached"; \
+        PyErr_SetString( ProxyError, message.str().c_str() );                              \
+      return NULL;                                                                         \
     }                                                                                      \
     ProxyProperty* proxy = static_cast<ProxyProperty*>                                     \
-                           ( self->ACCESS_OBJECT->getProperty ( ProxyProperty::getPropertyName() ) ); \
+                           ( self->ACCESS_OBJECT->getProperty( ProxyProperty::getPropertyName() ) ); \
     if (proxy == NULL) {                                                                   \
       ostringstream  message;                                                              \
-      message << "Trying to Delete a Hurricane object of with no Proxy attached ";         \
-      PyErr_SetString ( ProxyError, message.str().c_str() );                               \
-      return ( NULL );                                                                     \
+      message << "Trying to destroy() a Hurricane object of with no Proxy attached ";      \
+      PyErr_SetString( ProxyError, message.str().c_str() );                                \
+      return NULL;                                                                         \
     }                                                                                      \
     self->ACCESS_OBJECT->destroy();                                                        \
+    self->ACCESS_OBJECT = NULL;                                                            \
     HCATCH                                                                                 \
     Py_RETURN_NONE;                                                                        \
   }
+
 
 // -------------------------------------------------------------------
 // Attribute Macro For BDo Link/Creation.
@@ -1050,6 +1056,8 @@ extern "C" {
       pyObject = (Py##SELF_TYPE*)proxy->getShadow ();                          \
       Py_INCREF ( ACCESS_CLASS(pyObject) );                                    \
     }                                                                          \
+    trace << "PyDbo" #SELF_TYPE "_Link(" << hex << pyObject << ") "            \
+          << hex << (void*)object << ":" << object << endl;                    \
     HCATCH                                                                     \
                                                                                \
     return ( (PyObject*)pyObject );                                            \
@@ -1062,7 +1070,7 @@ extern "C" {
   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            \
   {                                                                      \
     trace << "PyDbObject_DeAlloc(" << hex << self << ") "                \
-          << self->ACCESS_OBJECT << endl;                                \
+          << hex << (void*)(self->ACCESS_OBJECT) << ":" << self->ACCESS_OBJECT << endl; \
                                                                          \
     if ( self->ACCESS_OBJECT != NULL ) {                                 \
         ProxyProperty* proxy = static_cast<ProxyProperty*>               \
@@ -1087,7 +1095,8 @@ extern "C" {
   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )    \
   {                                                              \
     trace << "PythonOnlyObject_DeAlloc(" << hex << self << ") "  \
-          << self->ACCESS_OBJECT << endl;                        \
+          << hex << (void*)(self->ACCESS_OBJECT)                 \
+          << ":" << self->ACCESS_OBJECT << endl;                 \
     PyObject_DEL ( self );                                       \
   }
 

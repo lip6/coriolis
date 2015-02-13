@@ -113,7 +113,7 @@ def ScriptMain ( **kw ):
       etesian.destroy()
 
     ht.connectLeaf()
-    ht.prune()
+   #ht.prune()
     ht.route()
     ht.save( cell )
 

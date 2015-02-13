@@ -14,13 +14,15 @@
 // +-----------------------------------------------------------------+
 
 
+
 #include <sstream>
 #include <fstream>
 #include <iomanip>
 #if HAVE_COLOQUINTE
-#include "Coloquinte/circuit.hxx"
-#include "Coloquinte/legalizer.hxx"
+#include "coloquinte/circuit.hxx"
+#include "coloquinte/legalizer.hxx"
 #endif
+#include "vlsisapd/configuration/Configuration.h"
 #include "vlsisapd/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
@@ -50,13 +52,14 @@ namespace {
 
   using namespace std;
   using namespace Hurricane;
+  using coloquinte::int_t;
   using coloquinte::float_t;
   using coloquinte::point;
 
 
 
 #if HAVE_COLOQUINTE
-  inline bool  isNan( const float_t& f ) { return (f != f); }
+  //inline bool  isNan( const float_t& f ) { return (f != f); }
 
 
   string  extractInstanceName ( const RoutingPad* rp )
@@ -130,42 +133,53 @@ namespace {
   {
     Cell*      masterCell = rp->getOccurrence().getMasterCell();
     Component* component  = rp->_getEntityAsComponent();
+    // TODO: verify that it doesn't assume that the orientation is North
+    Box        masterBox  = masterCell->getAbutmentBox();
 
-    Point offset = masterCell->getAbutmentBox().getCenter();
+    Point offset;
     if (component) {
-      offset.setX( component->getCenter().getX() - offset.getX() );
-      offset.setY( component->getCenter().getY() - offset.getY() );
+      offset.setX( component->getCenter().getX() - masterBox.getXMin() );
+      offset.setY( component->getCenter().getY() - masterBox.getYMin() );
+    }
+    else { // Why?
+      offset = masterBox.getCenter();
     }
 
     return offset;
   }
 
 
-  Transformation  toTransformation ( point<float_t>  position
-                                   , point<float_t>  orientation
+  Transformation  toTransformation ( point<int_t>  position
+                                   , point<bool>  orientation
                                    , Cell*           model
                                    , DbU::Unit       pitch
                                    )
   {
     DbU::Unit tx         = position.x_ * pitch;
     DbU::Unit ty         = position.y_ * pitch;
-    Point     center     = model->getAbutmentBox().getCenter();
+    //Point     center     = model->getAbutmentBox().getCenter();
+    Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
 
-    if ( (orientation.x_ >= 0) and (orientation.y_ >= 0) ) {
-      tx += - center.getX();
-      ty += - center.getY();
-    } else if ( (orientation.x_ <  0) and (orientation.y_ >= 0) ) {
-      tx    +=   center.getX();
-      ty    += - center.getY();
+    // TODO offsets
+    if ( orientation.x_ and orientation.y_ ) {
+      //tx += - center.getX();
+      //ty += - center.getY();
+    } else if ( not orientation.x_ and orientation.y_) {
+      //tx    +=   center.getX();
+      tx    +=   cellBox.getWidth();
+      //ty    += - center.getY();
       orient = Transformation::Orientation::MX;
-    } else if ( (orientation.x_ >= 0) and (orientation.y_ <  0) ) {
-      tx    += - center.getX();
-      ty    +=   center.getY();
+    } else if ( orientation.x_ and not orientation.y_) {
+      //tx    += - center.getX();
+      //ty    +=   center.getY();
+      ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::MY;
-    } else if ( (orientation.x_ <  0) and (orientation.y_ <  0) ) {
-      tx    += center.getX();
-      ty    += center.getY();
+    } else if ( not orientation.x_ and not orientation.y_) {
+      //tx    += center.getX();
+      //ty    += center.getY();
+      tx    +=   cellBox.getWidth();
+      ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::R2;
     }
 
@@ -230,15 +244,7 @@ namespace Etesian {
   using coloquinte::temporary_net;
   using coloquinte::temporary_pin;
   using coloquinte::netlist;
-  using coloquinte::gp::placement_t;
-  using coloquinte::gp::get_rough_legalizer;
-  using coloquinte::gp::get_star_linear_system;
-  using coloquinte::gp::get_result;
-  using coloquinte::dp::legalize;
-  using coloquinte::dp::swaps_global;
-  using coloquinte::dp::swaps_row;
-  using coloquinte::dp::OSRP_convex;
-  using coloquinte::dp::row_compatible_orientation;
+  using coloquinte::placement_t;
 
   const char* missingEtesian =
     "%s :\n\n"
@@ -272,7 +278,8 @@ namespace Etesian {
     , _idsToInsts   ()
     , _cellWidget   (NULL)
     , _feedCells    (this)
-  { }
+  {
+  }
 
 
   void  EtesianEngine::_postCreate ()
@@ -350,6 +357,62 @@ namespace Etesian {
   }
 
 
+  void  EtesianEngine::setDefaultAb ()
+  {
+    double spaceMargin = Cfg::getParamPercentage("nimbus.spaceMargin", 10.0)->asDouble();
+    double aspectRatio = Cfg::getParamPercentage("nimbus.aspectRatio",100.0)->asDouble();
+    size_t instanceNb  = 0;
+    double cellLength  = 0;
+
+    vector<Occurrence>  feedOccurrences;
+    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    {
+      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+      string    instanceName = (*ioccurrence).getCompactString();
+
+      if (CatalogExtension::isFeed(masterCell)) {
+        cerr << Warning( "Found a feedcell %s in an unplaced design, removing."
+                       , instanceName.c_str()
+                       ) << endl;
+        feedOccurrences.push_back( *ioccurrence );
+        continue;
+      }
+
+      cellLength += DbU::toLambda( masterCell->getAbutmentBox().getWidth() );
+      instanceNb += 1;
+    }
+
+    double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
+    double rows        = sqrt( gcellLength/aspectRatio );
+    if (floor(rows) != rows) rows = floor(rows)+1.0;
+    else                     rows = floor(rows);
+
+    double columns     = gcellLength / rows;
+    if (floor(columns) != columns) columns = floor(columns)+1.0;
+    else                           columns = floor(columns);
+
+    cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
+           << "% aspect ratio:" << (aspectRatio*100.0)
+           << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
+           << ")" << endl;
+    cmess1 << "     - GCell grid: [" << (int)columns << "x" << (int)rows << "]" << endl;
+
+    UpdateSession::open();
+    for ( auto ioccurrence : feedOccurrences ) {
+      static_cast<Instance*>(ioccurrence.getEntity())->destroy();
+    }
+
+    getCell()->setAbutmentBox( Box( DbU::fromLambda(0)
+                                  , DbU::fromLambda(0)
+                                  , columns*getSliceHeight()
+                                  , rows   *getSliceHeight()
+                                  ) );
+    UpdateSession::close();
+    if (_cellWidget) _cellWidget->fitToContents();
+  }
+
+
   void  EtesianEngine::resetPlacement ()
   {
   //cerr << "EtesianEngine::resetPlacement()" << endl;
@@ -412,8 +475,8 @@ namespace Etesian {
     size_t  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
     vector<Transformation>    idsToTransf ( instancesNb );
     vector<temporary_cell>    instances   ( instancesNb );
-    vector< point<float_t> >  positions   ( instancesNb );
-    vector< point<float_t> >  orientations( instancesNb, point<float_t>(1.0,1.0) );
+    vector< point<int_t> >  positions   ( instancesNb );
+    vector< point<bool> >  orientations( instancesNb, point<bool>(true, true) );
 
     cmess1 << "     - Converting " << instancesNb << " instances" << endl;
     cout.flush();
@@ -454,15 +517,17 @@ namespace Etesian {
       (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
 
-      double xsize = instanceAb.getWidth ()        / pitch;
-      double ysize = instanceAb.getHeight()        / pitch;
-      double xpos  = instanceAb.getCenter().getX() / pitch;
-      double ypos  = instanceAb.getCenter().getY() / pitch;
+      // Upper rounded
+      int_t xsize = (instanceAb.getWidth () + pitch -1) / pitch;
+      int_t ysize = (instanceAb.getHeight() + pitch -1) / pitch;
+      // Lower rounded
+      int_t xpos  = instanceAb.getXMin() / pitch;
+      int_t ypos  = instanceAb.getYMin() / pitch;
 
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
       instances[instanceId].area       = static_cast<capacity_t>(xsize) * static_cast<capacity_t>(ysize);
-      positions[instanceId] = point<float_t>( xpos, ypos );
+      positions[instanceId] = point<int_t>( xpos, ypos );
 
       if ( not instance->isFixed() and instance->isTerminal() ) {
         instances[instanceId].attributes = coloquinte::XMovable
@@ -502,19 +567,20 @@ namespace Etesian {
 
       dots.dot();
 
-      nets[netId] = temporary_net( netId, 1.0 );
+      nets[netId] = temporary_net( netId, 1000 );
 
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
         string insName = extractInstanceName( *irp );
         Point  offset  = extractRpOffset    ( *irp );
-        double xpin    = offset.getX() / pitch;
-        double ypin    = offset.getY() / pitch;
+
+        int_t xpin    = offset.getX() / pitch;
+        int_t ypin    = offset.getY() / pitch;
 
         auto  iid = _cellsToIds.find( insName );
         if (iid == _cellsToIds.end() ) {
           cerr << Error( "Unable to lookup instance <%s>.", insName.c_str() ) << endl;
         } else {
-          pins.push_back( temporary_pin( point<float_t>(xpin,ypin), (*iid).second, netId ) );
+          pins.push_back( temporary_pin( point<int_t>(xpin,ypin), (*iid).second, netId ) );
         }
       }
 
@@ -527,11 +593,12 @@ namespace Etesian {
                          , (int_t)(getCell()->getAbutmentBox().getYMin() / pitch)
                          , (int_t)(getCell()->getAbutmentBox().getYMax() / pitch)
                          );
-    _circuit     = netlist( instances, nets, pins );
+    _circuit = netlist( instances, nets, pins );
+    _circuit.selfcheck();
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
-    cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y_ << endl;
+  //cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y_ << endl;
 
 #endif  // HAVE_COLOQUINTE
   }
@@ -539,8 +606,13 @@ namespace Etesian {
   void  EtesianEngine::place ( unsigned int flags )
   {
 #if HAVE_COLOQUINTE
+    using namespace coloquinte::gp;
+    using namespace coloquinte::dp;
+
     if (flags & SlowMotion) getConfiguration()->  setFlags( SlowMotion );
     else                    getConfiguration()->unsetFlags( SlowMotion );
+
+    if (getCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
     toColoquinte();
 
@@ -561,7 +633,7 @@ namespace Etesian {
     first_legalizer.selfcheck();
 
     cmess1 << "  o  Simple legalization." << endl;
-    get_result( _circuit, _placementUB, first_legalizer);
+    get_rough_legalization( _circuit, _placementUB, first_legalizer);
 
     timeDelta  = time(NULL) - startTime;
     cmess2 << "     - Elapsed time:" << timeDelta
@@ -573,7 +645,6 @@ namespace Etesian {
     _placementLB = _placementUB;
     _placementLB.selfcheck();
 
-    zero_orientations( _circuit, _placementLB );
     _updatePlacement( _placementUB );
 
     // cerr << _idsToInsts[1266]
@@ -583,30 +654,21 @@ namespace Etesian {
 
     // Breakpoint::get()->stop( 0, "After " );
 
-  // Early topology-independent solution
+  // Early topology-independent solution + negligible pulling forces to avoid dumb solutions
     cmess1 << "  o  Star (*) Optimization." << endl;
-    auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10000);
-    get_result( _circuit, _placementLB, solv, 200 );
+    auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10000)
+              + get_pulling_forces( _circuit, _placementUB, 1000000.0);
+    solve_linear_system( _circuit, _placementLB, solv, 200 );
     _progressReport2( startTime, "     [--]" );
     
-    for ( int i=0; i<10; ++i ) {
-      auto solv = get_HPWLF_linear_system( _circuit, _placementLB, 1.0, 2, 100000 );
-      get_result( _circuit, _placementLB, solv, 300 ); // number of iterations
-
-      label.str("");
-      label  << "     [" << setw(2) << setfill('0') << i << "]";
-      _progressReport2( startTime, label.str() );
-      _updatePlacement( _placementLB );
-    }
-
-    float_t pulling_force = 0.03;
+    float_t pulling_force = 0.01;
 
     cmess2 << "  o  Simple legalization." << endl;
     for ( int i=0; i<50; ++i, pulling_force += 0.03 ) {
     // Create a legalizer and bipartition it until we have sufficient precision
     // (~2 to 10 standard cell widths).
       auto legalizer = get_rough_legalizer( _circuit, _placementLB, _surface );
-        for ( int quad_part=0 ; quad_part<8 ; quad_part++ ) {
+        for ( int quad_part=0 ; _circuit.cell_cnt() > 10 * (1 << (quad_part*2)) ; ++quad_part ) { // Until there is about 10 standard cells per region
             legalizer.x_bipartition();
             legalizer.y_bipartition();
             legalizer.redo_line_partitions();
@@ -615,13 +677,10 @@ namespace Etesian {
             legalizer.redo_diagonal_bipartitions();
             legalizer.selfcheck();
         }
-        if (i < 10) {
-          spread_orientations( _circuit, _placementLB );
-        }
       // Keep the orientation between LB and UB
         _placementUB = _placementLB;
 
-        get_result( _circuit, _placementUB, legalizer );
+        get_rough_legalization( _circuit, _placementUB, legalizer );
         label.str("");
         label  << "     [" << setw(2) << setfill('0') << i << "] Bipart.";
         _progressReport1( startTime, label.str() );
@@ -638,21 +697,20 @@ namespace Etesian {
       // and the pulling forces (threshold distance)
         auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.01, 2, 100000 ) 
                   + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
-        get_result( _circuit, _placementLB, solv, 400 ); // number of iterations
+        solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
         _progressReport2( startTime, "          Linear." );
         _updatePlacement( _placementLB );
 
      // Optimize orientation sometimes
-     // if (i>=10 and i%5 == 0) {
-     //     optimize_exact_orientations( _circuit, _placementLB );
-     //     std::cout << "Oriented" << std::endl;
-     //   //output_progressReport(circuit, LB_pl);
-     //     _updatePlacement( _placementLB );
-     // }
+        if (i%5 == 0) {
+            optimize_exact_orientations( _circuit, _placementLB );
+            _progressReport2( startTime, "          Orient." );
+            _updatePlacement( _placementLB );
+        }
     }
 
     cmess1 << "  o  Detailed Placement." << endl;
-    index_t legalizeIterations = 10;
+    index_t legalizeIterations = 3;
     for ( index_t i=0; i<legalizeIterations; ++i ){
       ostringstream label;
       label.str("");
@@ -662,22 +720,22 @@ namespace Etesian {
       _progressReport1( startTime, label.str()+" Oriented ......." );
       _updatePlacement( _placementUB );
 
-      auto legalizer = legalize( _circuit, _placementLB, _surface, sliceHeight );
+      auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
       coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
       _progressReport1( startTime, "          Legalized ......" );
       _updatePlacement( _placementUB );
 
-      swaps_global( _circuit, legalizer, 3, 4 );
+      swaps_global_HPWL( _circuit, legalizer, 3, 4 );
       coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
       _progressReport1( startTime, "          Global Swaps ..." );
       _updatePlacement( _placementUB );
 
-      OSRP_convex( _circuit, legalizer );
+      OSRP_convex_HPWL( _circuit, legalizer );
       coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
       _progressReport1( startTime, "          Row Optimization" );
       _updatePlacement( _placementUB );
 
-      swaps_row( _circuit, legalizer, 4 );
+      swaps_row_HPWL( _circuit, legalizer, 4 );
       coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
       _progressReport1( startTime, "          Local Swaps ...." );
 
@@ -690,7 +748,6 @@ namespace Etesian {
       _updatePlacement( _placementUB, (i==legalizeIterations-1) ? ForceUpdate : 0 );
     }
 
-    
     cmess1 << "  o  Adding feed cells." << endl;
     addFeeds();
 
@@ -723,11 +780,11 @@ namespace Etesian {
     elapsed << "  dTime:" << setw(5) << (time(NULL) - startTime) << "s ";
 
     cmess2 << label << elapsed.str()
-           << " HPWL:" << get_HPWL_wirelength      ( _circuit, _placementUB )
-           << " RMST:" << get_RSMT_wirelength      ( _circuit, _placementUB )
+           << " HPWL:" << coloquinte::gp::get_HPWL_wirelength      ( _circuit, _placementUB )
+           << " RMST:" << coloquinte::gp::get_RSMT_wirelength      ( _circuit, _placementUB )
            << "\n" << indent
-           <<  "  Linear Disrupt.:" << get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
-           <<   " Quad Disrupt.:"   << get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
+           <<  "  Linear Disrupt.:" << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
+           <<   " Quad Disrupt.:"   << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
            << endl;
 #endif
   }
@@ -747,14 +804,14 @@ namespace Etesian {
     elapsed << "  dTime:" << setw(5) << (time(NULL) - startTime) << "s ";
 
     cmess2 << label << elapsed.str()
-           << " HPWL:" << get_HPWL_wirelength( _circuit, _placementLB )
-           << " RMST:" << get_RSMT_wirelength( _circuit, _placementLB )
+           << " HPWL:" << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementLB )
+           << " RMST:" << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementLB )
            << endl;
 #endif
   }
 
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::gp::placement_t& placement, unsigned int flags )
+  void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t& placement, unsigned int flags )
   {
 #if HAVE_COLOQUINTE
     if ((not isSlowMotion()) and not (flags & ForceUpdate)) return;
@@ -775,14 +832,16 @@ namespace Etesian {
       if (iid == _cellsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        point<float_t> position = placement.positions_[(*iid).second];
+        point<int_t> position = placement.positions_[(*iid).second];
 
+	/*
         if ( isNan(position.x_) or isNan(position.y_) ) {
           cerr << Error( "Instance <%s> is not placed yet (position == NaN)."
                        , instanceName.c_str() ) << endl;
           instance->setPlacementStatus( Instance::PlacementStatus::UNPLACED );
           continue;
         }
+	*/
 
         Transformation trans = toTransformation( position
                                                , placement.orientations_[(*iid).second]

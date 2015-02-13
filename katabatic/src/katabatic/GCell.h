@@ -325,7 +325,7 @@ namespace Katabatic {
     private:
       unsigned int                          _depth;
       std::set<GCell*,GCell::CompareByKey>  _set;
-      std::set<GCell*>                      _requests;
+      GCell::SetIndex                       _requests;
   };
 
 
