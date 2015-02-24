@@ -4780,10 +4780,13 @@ void Cell_HyperNetRootNetOccurrences::Locator::progress()
 {
     if (_netLocator.isValid())
     {
-        do {
-            _netLocator.progress();
-        }
-        while (_netLocator.isValid() && !isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)));
+      _netLocator.progress();
+      while ( _netLocator.isValid() ) {
+        if (   not dynamic_cast<DeepNet*>(_netLocator.getElement())
+           and isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path))) break;
+
+        _netLocator.progress();
+      }
     }
     else if (_hyperNetRootNetOccurrenceLocator.isValid())
         _hyperNetRootNetOccurrenceLocator.progress();

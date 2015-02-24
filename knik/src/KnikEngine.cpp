@@ -237,7 +237,6 @@ void KnikEngine::initGlobalRouting( const map<Name,Net*>& excludedNets )
 
     if (   inet->isGlobal()
        or  inet->isSupply()
-       or  inet->isClock()
        or (inet->getName() == obstacleNetName) ) {
       cmess2 << "     - <" << inet->getName() << "> not routed (global, supply, clock or obstacle)." << endl;
       continue;

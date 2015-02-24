@@ -68,7 +68,8 @@ class Cell : public Entity {
     public: enum Flag { BuildRings              = 0x0001
                       , BuildClockRings         = 0x0002
                       , BuildSupplyRings        = 0x0004
-                      , WarnOnUnplacedInstances = 0x0008
+                      , NoClockFlatten          = 0x0008
+                      , WarnOnUnplacedInstances = 0x0010
                       // Flags set for Observers.
                       , CellAboutToChange       = 0x0001
                       , CellChanged             = 0x0002

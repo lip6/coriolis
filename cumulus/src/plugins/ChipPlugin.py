@@ -48,6 +48,7 @@ try:
   import Nimbus
   import Metis
   import Mauka
+  import Etesian
   import Katabatic
   import Kite
   import Unicorn
@@ -140,17 +141,28 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
     if self.useClockTree and ckCore:
       ht = clocktree.ClockTree.HTree.create( self, coreCell, ckCore, coreCell.getAbutmentBox() )
       ht.addCloned( self.cell )
-      mauka  = Mauka.MaukaEngine.create( coreCell )
-      mauka.run()
-      mauka.destroy()
+      if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
+        mauka  = Mauka.MaukaEngine.create( coreCell )
+        mauka.run()
+        mauka.destroy()
+      else:
+        etesian = Etesian.EtesianEngine.create( coreCell )
+        etesian.place( Etesian.EtesianEngine.SlowMotion )
+        etesian.destroy()
+
       ht.connectLeaf()
-      ht.prune()
+     #ht.prune()
       ht.route()
       ht.save( self.cell )
     else:
-      mauka  = Mauka.MaukaEngine.create( coreCell )
-      mauka.run()
-      mauka.destroy()
+      if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
+        mauka  = Mauka.MaukaEngine.create( coreCell )
+        mauka.run()
+        mauka.destroy()
+      else:
+        etesian = Etesian.EtesianEngine.create( coreCell )
+        etesian.place( Etesian.EtesianEngine.SlowMotion )
+        etesian.destroy()
     return
 
 

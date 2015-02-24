@@ -72,6 +72,7 @@ class Occurrence {
     public: Cell* getMasterCell() const;
     public: Property* getProperty(const Name& name) const;
     public: Properties getProperties() const;
+    public: Occurrence getNetOccurrence() const;
     public: Box getBoundingBox() const;
     public: Box getBoundingBox(const BasicLayer*) const;
 

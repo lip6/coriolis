@@ -64,6 +64,7 @@ namespace Kite {
       static  KiteEngine*             create                     ( Cell* );
       static  KiteEngine*             get                        ( const Cell* );
     public:                                                      
+      inline  bool                    useClockTree               () const;
       inline  CellViewer*             getViewer                  () const;
       inline  KatabaticEngine*        base                       ();
       inline  Configuration*          getKiteConfiguration       ();
@@ -148,6 +149,7 @@ namespace Kite {
 
 
 // Inline Functions.
+  inline  bool                          KiteEngine::useClockTree            () const { return _configuration->useClockTree(); }
   inline  CellViewer*                   KiteEngine::getViewer               () const { return _viewer; }
   inline  KatabaticEngine*              KiteEngine::base                    () { return static_cast<KatabaticEngine*>(this); }
   inline  Configuration*                KiteEngine::getKiteConfiguration    () { return _configuration; }

@@ -55,7 +55,8 @@ namespace Etesian {
       enum Flag { NoPlacement=0x0001
                 , FlatDesign =0x0002
                 , ForceUpdate=0x0004
-                , SlowMotion =0x0008
+                , YSpinSet   =0x0008
+                , SlowMotion =0x0010
                 };
     public:
       static  const Name&          staticGetName    ();
@@ -79,6 +80,7 @@ namespace Etesian {
               void                 toColoquinte     ();
               void                 place            ( unsigned int flags=SlowMotion );
       inline  void                 useFeed          ( Cell* );
+              size_t               findYSpin        ();
               void                 addFeeds         ();
       virtual Record*              _getRecord       () const;
       virtual std::string          _getString       () const;
@@ -99,6 +101,7 @@ namespace Etesian {
              std::vector<Instance*>                   _idsToInsts;
              Hurricane::CellWidget*                   _cellWidget;
              FeedCells                                _feedCells;
+             size_t                                   _yspinSlice0;
 
     protected:
     // Constructors & Destructors.

@@ -304,14 +304,67 @@ namespace Etesian {
   using Hurricane::Occurrence;
 
 
+  size_t  EtesianEngine::findYSpin ()
+  {
+    _flags       &= ~YSpinSet;
+    _yspinSlice0  = 0;
+
+    Box topCellAb = getCell()->getAbutmentBox();
+
+    if (not topCellAb.isEmpty()) {
+      forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+      {
+        Instance*      instance       = static_cast<Instance*>((*ioccurrence).getEntity());
+        Cell*          masterCell     = instance->getMasterCell();
+        Box            instanceAb     = masterCell->getAbutmentBox();
+        Transformation instanceTransf = instance->getTransformation();
+  
+        (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
+        instanceTransf.applyOn( instanceAb );
+  
+        if (not topCellAb.contains(instanceAb)) continue;
+  
+        _flags |= YSpinSet;
+  
+        int islice = (instanceAb.getYMin() - getCell()->getAbutmentBox().getYMin()) / getSliceHeight();
+  
+        switch ( instanceTransf.getOrientation() ) {
+          case Transformation::Orientation::ID:
+          case Transformation::Orientation::MX:
+            _yspinSlice0 = (islice % 2);
+            break;
+          case Transformation::Orientation::R2:
+          case Transformation::Orientation::MY:
+            _yspinSlice0 = ((islice+1) % 2);
+            break;
+          case Transformation::Orientation::R1:
+          case Transformation::Orientation::R3:
+          case Transformation::Orientation::XR:
+          case Transformation::Orientation::YR:
+            cerr << Warning( "Instance %s has invalid transformation %s."
+                           , getString(instance->getName()).c_str()
+                           , getString(instanceTransf.getOrientation()).c_str()
+                           ) << endl;
+            _flags &= ~YSpinSet;
+            break;
+        }
+
+        if (_flags & YSpinSet) break;
+      }
+    }
+  
+    return _yspinSlice0;
+  }
+
+
   void  EtesianEngine::addFeeds ()
   {
     UpdateSession::open();
 
-    bool       yspinSet    = false;
-    size_t     yspinSlice0 = 0;
-    SliceHoles sliceHoles  ( this );
-    Box        toCellAb    = getCell()->getAbutmentBox();
+    SliceHoles sliceHoles ( this );
+    Box        topCellAb  = getCell()->getAbutmentBox();
+
+    sliceHoles.setSpinSlice0( _yspinSlice0 );
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
     {
@@ -329,39 +382,10 @@ namespace Etesian {
       (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
 
-      if (not toCellAb.contains(instanceAb)) {
+      if (not topCellAb.contains(instanceAb)) {
         cerr << Warning( "Instance %s is not fully enclosed in the top cell."
                        , getString(instance->getName()).c_str() ) << endl;
         continue;
-      }
-
-      if (not yspinSet) {
-        yspinSet = true;
-
-        int islice = (instanceAb.getYMin() - getCell()->getAbutmentBox().getYMin()) / getSliceHeight();
-
-        switch ( instanceTransf.getOrientation() ) {
-          case Transformation::Orientation::ID:
-          case Transformation::Orientation::MX:
-            yspinSlice0 = (islice % 2);
-            break;
-          case Transformation::Orientation::R2:
-          case Transformation::Orientation::MY:
-            yspinSlice0 = ((islice+1) % 2);
-            break;
-          case Transformation::Orientation::R1:
-          case Transformation::Orientation::R3:
-          case Transformation::Orientation::XR:
-          case Transformation::Orientation::YR:
-            cerr << Warning( "Instance %s has invalid transformation %s."
-                           , getString(instance->getName()).c_str()
-                           , getString(instanceTransf.getOrientation()).c_str()
-                           ) << endl;
-            yspinSet = false;
-            break;
-        }
-
-        sliceHoles.setSpinSlice0( yspinSlice0 );
       }
 
       sliceHoles.merge( instanceAb );

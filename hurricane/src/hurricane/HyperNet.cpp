@@ -259,29 +259,20 @@ class HyperNet_LeafPlugOccurrences : public Collection<Occurrence> {
 // ****************************************************************************************************
 
 HyperNet::HyperNet(const Occurrence& occurrence)
-// *******************************************
-:    _netOccurrence()
+// *********************************************
+  : _netOccurrence(occurrence.getNetOccurrence())
 {
-    if (occurrence.isValid()) {
-        Entity* entity = occurrence.getEntity();
-        if (dynamic_cast<Net*>(entity))
-            _netOccurrence = occurrence;
-        else {
-            if (dynamic_cast<Rubber*>(entity)) {
-                Rubber* rubber = (Rubber*)entity;
-                _netOccurrence = Occurrence(rubber->getNet(), occurrence.getPath());
-            }
-            else {
-                if (dynamic_cast<Component*>(entity)) {
-                    Component* component = (Component*)entity;
-                    _netOccurrence = Occurrence(component->getNet(), occurrence.getPath());
-                }
-                else
-                    throw Error("Can't create " + _TName("HyperNet") + " : bad occurrence entity type");
-            }
-        }
-    }
+  if (not occurrence.isValid()) 
+    throw Error("Can't create " + _TName("HyperNet") + " : bad occurrence entity type");
 }
+
+
+HyperNet::HyperNet(const HyperNet& other)
+// *********************************************
+  : _netOccurrence(other._netOccurrence)
+{
+}
+
 
 Occurrences HyperNet::getNetOccurrences(bool doExtraction, bool allowInterruption) const
 // ***********************************************************************************

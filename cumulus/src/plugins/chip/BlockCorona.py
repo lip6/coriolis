@@ -150,7 +150,7 @@ class VerticalRail ( Rail ):
                            , via[2].getY()
                            , via[2].getHeight()
                            )
-          railVias.append( via[1].getVia( self.side.getVLayer()) )
+          railVias.append( via[1].getVia(self.side.getVLayer()) )
 
         railVias.sort( key=methodcaller('getY') )
 
@@ -161,6 +161,21 @@ class VerticalRail ( Rail ):
                          , self.axis
                          , self.side.vRailWidth
                          )
+
+        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        for depth in range(self.side.verticalDepth-2,self.vias.values()[0][1]._bottomDepth,-2):
+          blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
+          pitch         = routingGauge.getLayerPitch(depth)
+
+          for i in range(1,len(railVias)):
+            Vertical.create( self.side.blockageNet
+                           , blockageLayer
+                           , self.axis
+                           , self.side.vRailWidth
+                           , railVias[i-1].getBoundingBox().getYMax() + pitch
+                           , railVias[i  ].getBoundingBox().getYMin() - pitch
+                           )
+
         return
 
     def connect ( self, contact ):
@@ -224,25 +239,31 @@ class Side ( object ):
         return
 
     @property
-    def railsNb       ( self ): return self._corona._railsNb
-    @property         
-    def innerBb       ( self ): return self._corona._innerBb
-    @property         
-    def hRailWidth    ( self ): return self._corona._hRailWidth
-    @property         
-    def hRailSpace    ( self ): return self._corona._hRailSpace
-    @property         
-    def vRailWidth    ( self ): return self._corona._vRailWidth
-    @property         
-    def vRailSpace    ( self ): return self._corona._vRailSpace
-    @property         
-    def corners       ( self ): return self._corona._corners
+    def railsNb         ( self ): return self._corona._railsNb
+    @property           
+    def innerBb         ( self ): return self._corona._innerBb
+    @property           
+    def hRailWidth      ( self ): return self._corona._hRailWidth
+    @property           
+    def hRailSpace      ( self ): return self._corona._hRailSpace
+    @property           
+    def vRailWidth      ( self ): return self._corona._vRailWidth
+    @property           
+    def vRailSpace      ( self ): return self._corona._vRailSpace
+    @property           
+    def corners         ( self ): return self._corona._corners
+    @property
+    def horizontalDepth ( self ): return self._corona.horizontalDepth
+    @property
+    def verticalDepth   ( self ): return self._corona.verticalDepth
+    @property
+    def blockageNet     ( self ): return self._corona.blockageNet
 
-    def getLayerDepth ( self, metal ): return self._corona.getLayerDepth(metal)
-    def getRail       ( self, i ):     return self._rails[i]
-    def getRailNet    ( self, i ):     return self._corona.getRailNet(i)
-    def getHLayer     ( self ):        return self._corona.getHLayer()
-    def getVLayer     ( self ):        return self._corona.getVLayer()
+    def getLayerDepth   ( self, metal ): return self._corona.getLayerDepth(metal)
+    def getRail         ( self, i ):     return self._rails[i]
+    def getRailNet      ( self, i ):     return self._corona.getRailNet(i)
+    def getHLayer       ( self ):        return self._corona.getHLayer()
+    def getVLayer       ( self ):        return self._corona.getVLayer()
 
     def getRailAxis ( self, i ):
         raise ErrorMessage( 1, 'Side.getRailAxis(): Must never be called on base class.' )
@@ -306,7 +327,7 @@ class SouthSide ( HorizontalSide ):
         return self.innerBb.getYMin() -    self.hRailWidth/2 - self.hRailSpace \
                                       - i*(self.hRailWidth   + self.hRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.SouthWest ][i]
+    def corner0 ( self, i ): return self.corners[chip.SouthWest][i]
     def corner1 ( self, i ): return self.corners[chip.SouthEast][i]
 
 
@@ -379,6 +400,8 @@ class Corona ( object ):
         self._innerBb    = self._block.bb
         self._block.path.getTransformation().applyOn( self._innerBb )
         self._innerBb.inflate( self._hRailSpace/2, self._vRailSpace/2 )
+        
+        if not self.useClockTree: self._railsNb -= 1
 
         self._southSide  = SouthSide( self )
         self._northSide  = NorthSide( self )
@@ -388,6 +411,8 @@ class Corona ( object ):
         return
 
     @property
+    def useClockTree    ( self ): return self._block.useClockTree
+    @property
     def routingGauge    ( self ): return self._block.routingGauge
     @property
     def topLayerDepth   ( self ): return self._block.topLayerDepth
@@ -395,12 +420,14 @@ class Corona ( object ):
     def horizontalDepth ( self ): return self._block.horizontalDepth
     @property
     def verticalDepth   ( self ): return self._block.verticalDepth
+    @property
+    def blockageNet     ( self ): return self._block.blockageNet
 
     def getLayerDepth ( self, metal ):
         return self.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
-        if i == self._railsNb-1: return self._block.cko
+        if self.useClockTree and i == self._railsNb-1: return self._block.cko
         if i % 2: return self._block.vssi
         return self._block.vddi
 

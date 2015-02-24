@@ -192,29 +192,29 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 void Cell::flattenNets(unsigned int flags)
 // ***************************************
 {
+  trace << "Cell::flattenNets() flags:0x" << hex << flags << endl;
+
   UpdateSession::open();
 
   _flags |= FlattenedNets;
 
+  vector<HyperNet>  hyperNets;
+  vector<HyperNet>  topHyperNets;
+
   forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
     Net* net = static_cast<Net*>((*ioccurrence).getEntity());
 
+    if (net->isClock() and (flags & NoClockFlatten)) continue;
+
     HyperNet  hyperNet ( *ioccurrence );
     if ( not (*ioccurrence).getPath().isEmpty() ) {
-      DeepNet* deepNet = DeepNet::create( hyperNet );
-      if (deepNet) deepNet->_createRoutingPads( flags );
-    } else {
-      RoutingPad* previousRp = NULL;
-      RoutingPad* currentRp  = NULL;
-      bool        buildRing  = false;
-
-      if (net->isGlobal()) {
-        if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
-        else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+      Net* duplicate = getNet( (*ioccurrence).getName() );
+      if (not duplicate) {
+        hyperNets.push_back( HyperNet(*ioccurrence) );
       } else {
-        buildRing = flags & Cell::BuildRings;
+        cerr << "Found " << duplicate << " in " << duplicate->getCell() << endl;
       }
-
+    } else {
       bool hasRoutingPads = false;
       forEach ( Component*, icomponent, net->getComponents() ) {
         RoutingPad* rp = dynamic_cast<RoutingPad*>( *icomponent );
@@ -228,51 +228,72 @@ void Cell::flattenNets(unsigned int flags)
       }
       if (hasRoutingPads) continue;
 
-      forEach ( Component*, icomponent, net->getComponents() ) {
-        Plug* primaryPlug = dynamic_cast<Plug*>( *icomponent );
-        if (primaryPlug) {
-          if ( !primaryPlug->getBodyHook()->getSlaveHooks().isEmpty() ) {
-            cerr << "[ERROR] " << primaryPlug << "\n"
-                 << "        has attached components, not managed yet." << endl;
-          } else {
-            primaryPlug->getBodyHook()->detach();
-          }
+      topHyperNets.push_back( HyperNet(*ioccurrence) );
+    }
+  }
+
+  for ( size_t i=0 ; i<hyperNets.size() ; ++i ) {
+    DeepNet* deepNet = DeepNet::create( hyperNets[i] );
+    if (deepNet) deepNet->_createRoutingPads( flags );
+  }
+
+  for ( size_t i=0 ; i<topHyperNets.size() ; ++i ) {
+    Net*        net        = static_cast<Net*>(topHyperNets[i].getNetOccurrence().getEntity());
+    RoutingPad* previousRp = NULL;
+    RoutingPad* currentRp  = NULL;
+    bool        buildRing  = false;
+
+    if (net->isGlobal()) {
+      if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
+      else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+    } else {
+      buildRing = flags & Cell::BuildRings;
+    }
+
+    forEach ( Component*, icomponent, net->getComponents() ) {
+      Plug* primaryPlug = dynamic_cast<Plug*>( *icomponent );
+      if (primaryPlug) {
+        if (not primaryPlug->getBodyHook()->getSlaveHooks().isEmpty()) {
+          cerr << "[ERROR] " << primaryPlug << "\n"
+               << "        has attached components, not managed yet." << endl;
+        } else {
+          primaryPlug->getBodyHook()->detach();
         }
       }
+    }
 
-      forEach ( Occurrence, iplugOccurrence, hyperNet.getLeafPlugOccurrences() ) {
-        currentRp = RoutingPad::create( net, *iplugOccurrence, RoutingPad::BiggestArea );
-        currentRp->materialize();
+    forEach ( Occurrence, iplugOccurrence, topHyperNets[i].getLeafPlugOccurrences() ) {
+      currentRp = RoutingPad::create( net, *iplugOccurrence, RoutingPad::BiggestArea );
+      currentRp->materialize();
 
-        if (flags & WarnOnUnplacedInstances)
-          currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
+      if (flags & WarnOnUnplacedInstances)
+        currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
 
+      if (buildRing) {
+        if (previousRp) {
+          currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
+        }
+        Plug* plug = static_cast<Plug*>( (*iplugOccurrence).getEntity() );
+        if ( (*iplugOccurrence).getPath().isEmpty() ) {
+          plug->getBodyHook()->attach( currentRp->getBodyHook() );
+          plug->getBodyHook()->detach();
+        }
+        previousRp = currentRp;
+      }
+    }
+
+    forEach ( Component*, icomponent, net->getComponents() ) {
+      Pin* pin = dynamic_cast<Pin*>( *icomponent );
+      if (pin) {
+        currentRp = RoutingPad::create( pin );
         if (buildRing) {
           if (previousRp) {
             currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
           }
-          Plug* plug = static_cast<Plug*>( (*iplugOccurrence).getEntity() );
-          if ( (*iplugOccurrence).getPath().isEmpty() ) {
-            plug->getBodyHook()->attach( currentRp->getBodyHook() );
-            plug->getBodyHook()->detach();
-          }
-          previousRp = currentRp;
+          pin->getBodyHook()->attach( currentRp->getBodyHook() );
+          pin->getBodyHook()->detach();
         }
-      }
-
-      forEach ( Component*, icomponent, net->getComponents() ) {
-        Pin* pin = dynamic_cast<Pin*>( *icomponent );
-        if (pin) {
-          currentRp = RoutingPad::create( pin );
-          if (buildRing) {
-            if (previousRp) {
-              currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
-            }
-            pin->getBodyHook()->attach( currentRp->getBodyHook() );
-            pin->getBodyHook()->detach();
-          }
-          previousRp = currentRp;
-        }
+        previousRp = currentRp;
       }
     }
   }

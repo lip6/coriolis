@@ -110,7 +110,7 @@ namespace Kite {
     : KatabaticEngine  (cell)
     , _viewer          (NULL)
     , _knik            (NULL)
-    , _blockageNet     (NULL)
+    , _blockageNet     (cell->getNet("blockagenet"))
     , _configuration   (new Configuration(getKatabaticConfiguration()))
     , _routingPlanes   ()
     , _negociateWindow (NULL)

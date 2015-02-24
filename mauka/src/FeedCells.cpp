@@ -43,7 +43,8 @@ namespace Mauka {
 
   void  FeedCells::addFeed ( Cell* cell )
   {
-    if ( cell == NULL ) return;
+    if (cell == NULL) return;
+    if (not _feedCells.size()) return;
 
     DbU::Unit pitch = _mauka->getPitch();
 

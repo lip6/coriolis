@@ -165,7 +165,7 @@ class HTree ( GaugeConfWrapper ):
     yslice = self.toYCellGrid(y)
 
     transformation = Transformation.Orientation.ID
-    if (yslice / self.cellGauge.getSliceHeight()) % 2 != 0:
+    if ((yslice-self.area.getYMin()) / self.cellGauge.getSliceHeight()) % 2 != 0:
       transformation = Transformation.Orientation.MY
       yslice        += self.cellGauge.getSliceHeight()
 
@@ -505,7 +505,7 @@ class HTreeNode ( object ):
     return
 
   def route ( self ):
-    if not self.hasLeafs(): return
+    trace( 550, '\tHTreeNode.route() %s\n' % self.sourceBuffer.getName() )
 
     leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
     rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
@@ -527,7 +527,7 @@ class HTreeNode ( object ):
 
   def connectLeafs ( self ):
     if not self.hasLeafs():
-      trace( 550, '\tHTree %s has no leafs\n' % self.sourceBuffer.getName() )
+      trace( 550, '\tHTreeNode.connectLeafs() %s has no leafs\n' % self.sourceBuffer.getName() )
 
     if self.childs:
       self.childs[0].connectLeafs()

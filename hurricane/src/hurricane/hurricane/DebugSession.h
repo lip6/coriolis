@@ -61,6 +61,7 @@ namespace Hurricane {
       static inline void          addToTrace   ( const void* symbol );
       static inline void          addToTrace   ( const Cell*, const Name& );
       static inline void          addToTrace   ( const Net* );
+      static inline void          open         ( unsigned int traceLevel );
       static inline void          open         ( const void* symbol, unsigned int traceLevel=80 );
       static inline void          close        ();
     // Singleton Access.
@@ -90,6 +91,12 @@ namespace Hurricane {
 
 
 // Inline Functions.
+
+  void  DebugSession::open ( unsigned int traceLevel )
+  {
+    _singleton->_levels.push ( ltracelevel(traceLevel) );
+  }
+
 
   void  DebugSession::open ( const void* symbol, unsigned int traceLevel )
   {

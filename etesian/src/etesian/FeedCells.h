@@ -30,6 +30,7 @@ namespace Etesian {
   class FeedCells {
     public:
       inline               FeedCells             ( EtesianEngine* );
+      inline  size_t       feedNumbers           () const;
               void         useFeed               ( Cell* );
               Cell*        getBiggestFeed        () const;
               Cell*        getSmallestFeed       () const;
@@ -48,6 +49,9 @@ namespace Etesian {
     , _feedCells()
     , _feedCount(0)
   { }
+
+
+  inline size_t  FeedCells::feedNumbers () const { return _feedCells.size(); }
 
 
 } // Etesian namespace.

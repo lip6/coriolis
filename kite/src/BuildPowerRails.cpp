@@ -16,6 +16,7 @@
 
 #include <map>
 #include <list>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -45,6 +46,7 @@ namespace {
   using Hurricane::inltrace;
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
+  using Hurricane::DebugSession;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
   using Hurricane::Error;
@@ -101,35 +103,39 @@ namespace {
 
   class GlobalNetTable {
     public:
-                   GlobalNetTable ( KiteEngine* );
-             Net*  getRootNet     ( const Net*, Path ) const;
-      inline Net*  getVdde        () const;
-      inline Net*  getVddi        () const;
-      inline Net*  getVsse        () const;
-      inline Net*  getVssi        () const;
-      inline Net*  getCk          () const;
-      inline Net*  getCki         () const;
-      inline Net*  getCko         () const;
-      inline Net*  getBlockage    () const;
-      inline void  setBlockage    ( Net* );
+      enum Flag { ClockIsRouted=0x0001 };
+    public:
+                   GlobalNetTable       ( KiteEngine* );
+             bool  isCoreClockNetRouted ( const Net* ) const;
+             Net*  getRootNet           ( const Net*, Path ) const;
+      inline Net*  getVdde              () const;
+      inline Net*  getVddi              () const;
+      inline Net*  getVsse              () const;
+      inline Net*  getVssi              () const;
+      inline Net*  getCk                () const;
+      inline Net*  getCki               () const;
+      inline Net*  getCko               () const;
+      inline Net*  getBlockage          () const;
+      inline void  setBlockage          ( Net* );
+    private:                            
+             bool  guessGlobalNet       ( const Name&, Net* );
     private:
-             bool  guessGlobalNet ( const Name&, Net* );
-    private:
-      Name  _vddePadNetName;
-      Name  _vddiPadNetName;
-      Name  _vssePadNetName;
-      Name  _vssiPadNetName;
-      Name  _ckPadNetName;
-      Name  _ckiPadNetName;
-      Name  _ckoPadNetName;
-      Net*  _vdde;
-      Net*  _vddi;
-      Net*  _vsse;
-      Net*  _vssi;
-      Net*  _ck;    // Clock net on the (external) pad.
-      Net*  _cki;   // Clock net in the pad ring.
-      Net*  _cko;   // Clock net of the core (design).
-      Net*  _blockage;
+      unsigned int  _flags;
+      Name          _vddePadNetName;
+      Name          _vddiPadNetName;
+      Name          _vssePadNetName;
+      Name          _vssiPadNetName;
+      Name          _ckPadNetName;
+      Name          _ckiPadNetName;
+      Name          _ckoPadNetName;
+      Net*          _vdde;
+      Net*          _vddi;
+      Net*          _vsse;
+      Net*          _vssi;
+      Net*          _ck;    // Clock net on the (external) pad.
+      Net*          _cki;   // Clock net in the pad ring.
+      Net*          _cko;   // Clock net of the core (design).
+      Net*          _blockage;
   };
 
 
@@ -144,7 +150,8 @@ namespace {
   inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
   GlobalNetTable::GlobalNetTable ( KiteEngine* kite )
-    : _vddePadNetName("vdde")
+    : _flags         (0)
+    , _vddePadNetName("vdde")
     , _vddiPadNetName("vddi")
     , _vssePadNetName("vsse")
     , _vssiPadNetName("vssi")
@@ -249,7 +256,7 @@ namespace {
         if (netType == Net::Type::POWER) {
           if (_vddiPadNetName.isEmpty()) {
             _vddiPadNetName =  inet->getName();
-            _vddi     = *inet;
+            _vddi           = *inet;
           } else {
             cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
                           "        (will consider only <%s>)"
@@ -276,7 +283,13 @@ namespace {
           if (_ckoPadNetName.isEmpty()) {
             cmess1 << "        - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
             _ckoPadNetName =  inet->getName();
-            _cko     = *inet;
+            _cko           = *inet;
+            if (NetRoutingExtension::isMixedPreRoute(*inet)) {
+              cmess1 << "          (core clock net is already routed)" << endl;
+              _flags |= ClockIsRouted;
+            } else {
+              cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
+            }
           } else {
             cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
                           "        (will consider only <%s>)"
@@ -332,6 +345,13 @@ namespace {
     if (name == _ckoPadNetName) {
       cmess1 << "        - Using <" << net->getName() << "> as core (internal:cko) clock net." << endl;
       _cko = net;
+
+      if (NetRoutingExtension::isMixedPreRoute(_cko)) {
+        cmess1 << "          (core clock net is already routed)" << endl;
+        _flags |= ClockIsRouted;
+      } else {
+        cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
+      }
       return true;
     }
 
@@ -359,6 +379,7 @@ namespace {
       return NULL;
     }
 
+  // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
@@ -367,10 +388,10 @@ namespace {
       Plug*      plug     = NULL;
 
       while ( true ) {
-        ltrace(300) << path << "+" << upNet << endl;
+        ltrace(300) << "      " << path << "+" << upNet << endl;
 
-        if ((upNet == NULL) or not upNet->isExternal()) return _blockage;
         if (path.isEmpty()) break;
+        if ((upNet == NULL) or not upNet->isExternal()) return _blockage;
 
         instance = path.getTailInstance();
         plug     = instance->getPlug(upNet);
@@ -386,12 +407,21 @@ namespace {
                 << " cko:" << ((_cko) ? _cko->getName() : "NULL")
                 << endl;
 
-    if ( _ck  and (upNet->getName() == _ck->getName() ) ) return _ck;
-    if ( _cki and (upNet->getName() == _cki->getName()) ) return _cki;
-    if ( _cko and (upNet->getName() == _cko->getName()) ) return _cko;
+    if (_ck  and (upNet->getName() == _ck->getName() )) return _ck;
+    if (_cki and (upNet->getName() == _cki->getName())) return _cki;
+
+    if (_cko) {
+      if (upNet->getName() == _cko->getName()) {
+        if (isCoreClockNetRouted(upNet)) return _cko;
+      }
+    }
 
     return NULL;
   }
+
+
+  bool  GlobalNetTable::isCoreClockNetRouted ( const Net* net ) const
+  { return (net == _cko) and (_flags & ClockIsRouted); }
 
 
 // -------------------------------------------------------------------
@@ -481,6 +511,7 @@ namespace {
                     PowerRailsPlanes       ( KiteEngine* );
                    ~PowerRailsPlanes       ();
       inline Net*   getRootNet             ( Net*, Path );
+      inline bool   isCoreClockNetRouted   ( const Net* ) const;
              bool   hasPlane               ( const BasicLayer* );
              bool   setActivePlane         ( const BasicLayer* );
       inline Plane* getActivePlane         () const;
@@ -661,7 +692,10 @@ namespace {
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          ltrace(300) << "  Insert in " << track << "+" << element << endl;
+          ltrace(300) << "  Insert in " << track
+                      << "+" << element
+                      << " " << (net->isExternal() ? "external" : "internal")
+                      << endl;
         }
       }
     }
@@ -905,6 +939,10 @@ namespace {
   inline Net* PowerRailsPlanes::getRootNet ( Net* net, Path path )
   { return _globalNets.getRootNet(net,path); }
 
+  
+  inline bool  PowerRailsPlanes::isCoreClockNetRouted ( const Net* net ) const
+  { return _globalNets.isCoreClockNetRouted(net); }
+
 
   bool  PowerRailsPlanes::hasPlane ( const BasicLayer* layer )
   { return (_planes.find(layer) != _planes.end()); }
@@ -1076,11 +1114,20 @@ namespace {
          and (_routingGauge->getLayerDepth(component->getLayer()) < 2) )
         return;
 
+      Net* rootNet = _kite->getBlockageNet();
+      if (not _isBlockagePlane) {
+        rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
+      }
+
+#if 0
       Net* rootNet = NULL;
       if ( not _isBlockagePlane )
         rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
-      else
+      else {
         rootNet = _kite->getBlockageNet();
+      }
+#endif
+
       if ( rootNet == NULL ) {
         ltrace(300) << "  rootNet is NULL, not taken into account." << endl;
         return;
@@ -1199,6 +1246,8 @@ namespace Kite {
 
   void  KiteEngine::buildPowerRails ()
   {
+  //DebugSession::open( 300 );
+
     if (not _blockageNet) {
       _blockageNet = getCell()->getNet("blockagenet");
       if (not _blockageNet)
@@ -1226,6 +1275,8 @@ namespace Kite {
     cmess1 << "     - " << query.getGoMatchCount() << " power rails elements found." << endl;
 
     Session::revalidate ();
+
+  //DebugSession::close();
   }
 
 

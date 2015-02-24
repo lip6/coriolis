@@ -47,6 +47,7 @@ namespace Kite {
     , _ripupLimits         ()
     , _ripupCost           (Cfg::getParamInt("kite.ripupCost"           ,      3)->asInt())
     , _eventsLimit         (Cfg::getParamInt("kite.eventsLimit"         ,4000000)->asInt())
+    , _flags               (0)
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("kite.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();

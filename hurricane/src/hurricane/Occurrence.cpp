@@ -126,6 +126,27 @@ Properties Occurrence::getProperties() const
     return Properties();
 }
 
+Occurrence Occurrence::getNetOccurrence() const
+// ********************************************
+{
+  if (isValid()) {
+    Entity* entity = getEntity();
+    if (dynamic_cast<Net*>(entity)) return *this;
+    else {
+      Rubber* rubber = dynamic_cast<Rubber*>(entity);
+      if (rubber) return Occurrence(rubber->getNet(), getPath());
+      else {
+        Component* component = dynamic_cast<Component*>(entity);
+        if (component) return Occurrence(component->getNet(), getPath());
+      }
+    }
+  }
+
+  return Occurrence();
+}
+
+
+
 Box Occurrence::getBoundingBox() const
 // **********************************
 {

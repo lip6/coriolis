@@ -55,7 +55,9 @@ namespace Hurricane {
          ,netOccurrence.getName()
          )
     , _netOccurrence(netOccurrence)
-  { }
+  {
+  //trace << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+  }
 
 
   DeepNet* DeepNet::create ( HyperNet& hyperNet )

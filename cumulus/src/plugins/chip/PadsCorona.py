@@ -181,7 +181,8 @@ class Side ( object ):
        #print 'Power pad:', pad
         self._createPowerContacts( pad, self._corona.vddi )
         self._createPowerContacts( pad, self._corona.vssi )
-        self._createPowerContacts( pad, self._corona.cko  )
+        if self._corona.useClockTree:
+            self._createPowerContacts( pad, self._corona.cko  )
       return
 
 

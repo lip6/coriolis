@@ -42,8 +42,7 @@ class HyperNet {
 // ************
 
     public: HyperNet(const Occurrence& occurrence);
-
-    private: HyperNet(const HyperNet& hyperNet); // not implemented to forbid copy construction
+    public: HyperNet(const HyperNet& hyperNet);
 
 // Operators
 // *********

@@ -121,6 +121,18 @@ class StackedVia ( object ):
       if depth > self._topDepth:    self._topDepth    = depth
       return
 
+    def getLayer ( self, fromTop ):
+      if self._topDepth-fromTop >= self._bottomDepth:
+        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        return routingGauge.getRoutingLayer(self._topDepth-fromTop)
+      return None
+
+    def getBlockageLayer ( self, fromTop ):
+      if self._topDepth-fromTop >= self._bottomDepth:
+        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        return routingGauge.getRoutingLayer(self._topDepth-fromTop).getBlockageLayer()
+      return None
+
     def getVia ( self, metal ):
       if not self._hasLayout: return None
       for via in self._vias:

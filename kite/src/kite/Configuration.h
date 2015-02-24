@@ -49,6 +49,7 @@ namespace Kite {
                        , RipupLimitsTableSize=4
                        };
       enum Constants   { MaxMetalDepth=20 };
+      enum Flag        { UseClockTree=0x0001 };
     public:
     // Constructor & Destructor.
       virtual Configuration*             clone                   () const;
@@ -58,6 +59,7 @@ namespace Kite {
     // Decorateds.                                               
       virtual bool                       isGMetal                ( const Layer* ) const;
       virtual bool                       isGContact              ( const Layer* ) const;
+      inline  bool                       useClockTree            () const;
       virtual size_t                     getDepth                () const;
       virtual size_t                     getAllowedDepth         () const;
       virtual DbU::Unit                  getSliceHeight          () const;
@@ -102,6 +104,8 @@ namespace Kite {
       inline  void                       setPostEventCb          ( PostEventCb_t );
               void                       setHTracksReservedLocal ( size_t );
               void                       setVTracksReservedLocal ( size_t );
+      inline  void                       setFlags                ( unsigned int );
+      inline  void                       unsetFlags              ( unsigned int );
       virtual Record*                    _getRecord              () const;
       virtual string                     _getString              () const;
       virtual string                     _getTypeName            () const;
@@ -114,6 +118,7 @@ namespace Kite {
              unsigned int                _ripupLimits         [RipupLimitsTableSize];
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
+             unsigned int                _flags;
     private:
                      Configuration ( const Configuration& other, Katabatic::Configuration* base=NULL );
       Configuration& operator=     ( const Configuration& );
@@ -130,6 +135,9 @@ namespace Kite {
   inline void                          Configuration::setRipupCost            ( unsigned int cost ) { _ripupCost = cost; }
   inline void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
+  inline bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
+  inline void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
+  inline void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
 
 
 

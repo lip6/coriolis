@@ -108,7 +108,8 @@ extern "C" {
   }
 
 
-  updatorFromBasicLayer    (setBlockageLayer     ,PyBasicLayer,BasicLayer)
+  updatorFromBasicLayer    (setBlockageLayer,PyBasicLayer,BasicLayer)
+  accessorLayerFromVoid    (getBlockageLayer,PyBasicLayer,BasicLayer)
   DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,"BasicLayer.setExtractNumber",PyBasicLayer,BasicLayer)
   DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,"BasicLayer.setRealName"     ,PyBasicLayer,BasicLayer)
 
@@ -125,6 +126,8 @@ extern "C" {
                              , "Create a new BasicLayer." }
     , { "getMaterial"        , (PyCFunction)PyBasicLayer_getMaterial      , METH_NOARGS
                              , "Returns the type of Material." }
+    , { "getBlockageLayer"   , (PyCFunction)PyBasicLayer_getBlockageLayer , METH_NOARGS
+                             , "Returns the associated blockage layer, if any." }
     , { "setBlockageLayer"   , (PyCFunction)PyBasicLayer_setBlockageLayer , METH_VARARGS
                              , "Sets the blockage layer associated to this one." }
     , { "setExtractNumber"   , (PyCFunction)PyBasicLayer_setExtractNumber , METH_VARARGS

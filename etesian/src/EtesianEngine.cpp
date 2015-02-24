@@ -284,10 +284,16 @@ namespace Etesian {
 
   void  EtesianEngine::_postCreate ()
   {
-  // Ugly. Direct uses of Alliance Framework.
-  // Must change toward something in the settings.
-    _feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
-    _feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
+  // Ugly: Name based detection of ISPD benchmarks.
+    if (getString(getCell()->getName()).substr(0,7) == "bigblue") {
+      cmess1 << "  o  ISPD benchmark <" << getCell()->getName()
+             << ">, no feed cells will be added." << endl;
+    } else {
+    // Ugly: Direct uses of Alliance Framework.
+    // Must change toward something in the settings.
+      _feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
+      _feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
+    }
   }
 
 
@@ -469,14 +475,14 @@ namespace Etesian {
     DbU::Unit          pitch = getPitch();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-    getCell()->flattenNets( Cell::BuildRings );
+    getCell()->flattenNets( Cell::BuildRings|Cell::NoClockFlatten );
 
   // Coloquinte circuit description data-structures.
-    size_t  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
-    vector<Transformation>    idsToTransf ( instancesNb );
-    vector<temporary_cell>    instances   ( instancesNb );
+    size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
+    vector<Transformation>  idsToTransf ( instancesNb );
+    vector<temporary_cell>  instances   ( instancesNb );
     vector< point<int_t> >  positions   ( instancesNb );
-    vector< point<bool> >  orientations( instancesNb, point<bool>(true, true) );
+    vector< point<bool> >   orientations( instancesNb, point<bool>(true, true) );
 
     cmess1 << "     - Converting " << instancesNb << " instances" << endl;
     cout.flush();
@@ -614,6 +620,7 @@ namespace Etesian {
 
     if (getCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
+    findYSpin();
     toColoquinte();
 
     cmess1 << "  o  Running Coloquinte." << endl;
@@ -740,7 +747,7 @@ namespace Etesian {
       _progressReport1( startTime, "          Local Swaps ...." );
 
       if (i == legalizeIterations-1) {
-        row_compatible_orientation( _circuit, legalizer, true );
+        row_compatible_orientation( _circuit, legalizer, (_yspinSlice0 == 0) );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
         _progressReport1( startTime, "          Final Legalize ." );
       }
@@ -822,7 +829,6 @@ namespace Etesian {
     {
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>((*ioccurrence).getEntity());
-    //Cell*     masterCell      = instance->getMasterCell();
       string    instanceName    = (*ioccurrence).getCompactString();
     // Remove the enclosing brackets...
       instanceName.erase( 0, 1 );
@@ -832,23 +838,15 @@ namespace Etesian {
       if (iid == _cellsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        point<int_t> position = placement.positions_[(*iid).second];
-
-	/*
-        if ( isNan(position.x_) or isNan(position.y_) ) {
-          cerr << Error( "Instance <%s> is not placed yet (position == NaN)."
-                       , instanceName.c_str() ) << endl;
-          instance->setPlacementStatus( Instance::PlacementStatus::UNPLACED );
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
           continue;
-        }
-	*/
 
-        Transformation trans = toTransformation( position
-                                               , placement.orientations_[(*iid).second]
-                                               , instance->getMasterCell()
-                                               , getPitch()
-                                               );
-
+        point<int_t>   position = placement.positions_[(*iid).second];
+        Transformation trans    = toTransformation( position
+                                                  , placement.orientations_[(*iid).second]
+                                                  , instance->getMasterCell()
+                                                  , getPitch()
+                                                  );
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 
       // This is temporary as it's not trans-hierarchic: we ignore the posutions

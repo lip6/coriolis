@@ -1274,6 +1274,7 @@ void Graph::Dijkstra()
       ostringstream message;
       message << "In Graph::Dijkstra():\n";
       message << "        Unable to reach target on net " << _working_net->getName() << ".";
+      for ( auto iv : _vertexes_to_route ) message << "\n        | " << iv;
       throw Error( message.str() );
     }
     assert( reachedDistance < (float)(HUGE_VAL) );

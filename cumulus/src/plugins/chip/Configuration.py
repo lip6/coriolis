@@ -17,6 +17,7 @@
 import sys
 import os.path
 import Cfg
+from   Hurricane import Breakpoint
 from   Hurricane import DbU
 from   Hurricane import Box
 from   Hurricane import Transformation
@@ -433,13 +434,14 @@ class ChipConf ( object ):
 
 
     def _guessGlobalNet ( self, name, net ):
-      if name == self._vddeName: self._vdde = net
-      if name == self._vddiName: self._vddi = net
-      if name == self._vsseName: self._vsse = net
-      if name == self._vssiName: self._vssi = net
-      if name == self._ckiName:  self._cki  = net
-      if name == self._ckoName:  self._cko  = net
-      if name == self._ckName:   self._ck   = net
+      if name == self._vddeName:     self._vdde = net
+      if name == self._vddiName:     self._vddi = net
+      if name == self._vsseName:     self._vsse = net
+      if name == self._vssiName:     self._vssi = net
+      if name == self._ckiName:      self._cki  = net
+      if name == self._ckoName:      self._cko  = net
+      if name == self._ckName:       self._ck   = net
+      if name == self._blockageName: self._blockageNet = net
       return
 
 
@@ -469,6 +471,7 @@ class ChipConf ( object ):
       self._ckiName       = "ck"
       self._ckoName       = "cko"
       self._ckName        = "pad"
+      self._blockageName  = "blockagenet"
      # Global Nets.  
       self._vdde          = None
       self._vddi          = None
@@ -477,6 +480,7 @@ class ChipConf ( object ):
       self._cki           = None
       self._cko           = None
       self._ck            = None
+      self._blockageNet   = None
                           
       self._clockPad      = None
       self._powerPad      = None
@@ -553,10 +557,10 @@ class ChipConf ( object ):
           self._guessGlobalNet( masterNet.getName(), net )
 
       if self._clockPad:
-        for plug in self._powerPad.getPlugs():
+        for plug in self._clockPad.getPlugs():
           masterNet = plug.getMasterNet()
           netType   = masterNet.getType()
-          net = plug.getNet()
+          net       = plug.getNet()
 
           if not net:
             net = self._cell.getNet( masterNet.getName() )
@@ -567,6 +571,22 @@ class ChipConf ( object ):
 
           if masterNet.getName() == self._ckName:
             self._guessGlobalNet( masterNet.getName(), net )
+
+      for netData in ( (self._vddeName,self._vdde,'pad ring external power')
+                     , (self._vddiName,self._vddi,'pad ring internal power')
+                     , (self._vsseName,self._vsse,'pad ring external ground')
+                     , (self._vssiName,self._vssi,'pad ring external ground')
+                     , (self._ckiName ,self._cki ,'pad ring inner clock')
+                     , (self._ckoName ,self._cko ,'core clock')
+                     , (self._ckName  ,self._ck  ,'external chip clock')
+                     ):
+        if not netData[1]:
+          print ErrorMessage( 1, 'Missing global net <%s> (%s) at chip level.' % (netData[0],netData[2]) )
+          self._validated = False
+
+      self._blockageNet = self._cell.getNet(self._blockageName)
+      if not self._blockageNet:
+        self._blockageNet = Net.create( self._cell, self._blockageName )
       return
 
 
@@ -653,19 +673,21 @@ class ChipConfWrapper ( GaugeConfWrapper ):
 
     # Global Nets.
     @property
-    def vdde ( self ): return self._chipConf._vdde
+    def vdde        ( self ): return self._chipConf._vdde
+    @property       
+    def vsse        ( self ): return self._chipConf._vsse
+    @property       
+    def vddi        ( self ): return self._chipConf._vddi
+    @property       
+    def vssi        ( self ): return self._chipConf._vssi
+    @property       
+    def cki         ( self ): return self._chipConf._cki
+    @property       
+    def cko         ( self ): return self._chipConf._cko
+    @property       
+    def ck          ( self ): return self._chipConf._ck
     @property
-    def vsse ( self ): return self._chipConf._vsse
-    @property
-    def vddi ( self ): return self._chipConf._vddi
-    @property
-    def vssi ( self ): return self._chipConf._vssi
-    @property
-    def cki  ( self ): return self._chipConf._cki
-    @property
-    def cko  ( self ): return self._chipConf._cko
-    @property
-    def ck   ( self ): return self._chipConf._ck
+    def blockageNet ( self ): return self._chipConf._blockageNet
 
     # Various.
     @property
