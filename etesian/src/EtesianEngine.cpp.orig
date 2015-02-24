@@ -636,9 +636,10 @@ namespace Etesian {
     cmess2 << "  o  Initial wirelength " << get_HPWL_wirelength(_circuit, _placementLB) << "." <<  endl;
     startMeasures();
 
-    cmess1 << "  o  Simple legalization." << endl;
-    auto first_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
+    auto first_legalizer = get_rough_legalizer( _circuit, _placementLB, _surface);
     first_legalizer.selfcheck();
+
+    cmess1 << "  o  Simple legalization." << endl;
     get_rough_legalization( _circuit, _placementUB, first_legalizer);
 
     timeDelta  = time(NULL) - startTime;
@@ -653,46 +654,27 @@ namespace Etesian {
 
     _updatePlacement( _placementUB );
 
-    // Early topology-independent solution + negligible pulling forces to avoid dumb solutions
+    // cerr << _idsToInsts[1266]
+    //      << " x:" << _placementLB.positions_[1095].x_
+    //      << " y:" << _placementLB.positions_[1095].y_
+    //      << endl;
+
+    // Breakpoint::get()->stop( 0, "After " );
+
+  // Early topology-independent solution + negligible pulling forces to avoid dumb solutions
     cmess1 << "  o  Star (*) Optimization." << endl;
     auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10000)
               + get_pulling_forces( _circuit, _placementUB, 1000000.0);
     solve_linear_system( _circuit, _placementLB, solv, 200 );
     _progressReport2( startTime, "     [--]" );
+    
+    float_t pulling_force = 0.01;
 
-    _updatePlacement( _placementLB );
-
-    cmess1 << "  o  Simple legalization." << endl;
-    auto snd_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
-    get_rough_legalization( _circuit, _placementUB, snd_legalizer);
-
-    _updatePlacement( _placementUB );
-
-    int nbr_iterations = 60;
-    float_t max_force = 1.5;
-    bool full_density = false;
-
-    for ( int i=0; i<nbr_iterations; ++i ) {
-        float_t pulling_force = (i+1) * max_force / nbr_iterations;
-        // Get the system to optimize (tolerance, maximum and minimum pin counts)
-        // and the pulling forces (threshold distance)
-        auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.5 * sliceHeight, 2, 100000 ) 
-                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
-        solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
-        _progressReport2( startTime, "          Linear." );
-        _updatePlacement( _placementLB );
-
-        // Optimize orientation sometimes
-        if (i%5 == 0) {
-            optimize_exact_orientations( _circuit, _placementLB );
-            _progressReport2( startTime, "          Orient." );
-            _updatePlacement( _placementLB );
-        }
-
-        // Create a legalizer and bipartition it until we have sufficient precision
-        auto legalizer = full_density ?
-            region_distribution::full_density_distribution(_surface, _circuit, _placementLB)
-          : region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
+    cmess2 << "  o  Simple legalization." << endl;
+    for ( int i=0; i<50; ++i, pulling_force += 0.03 ) {
+    // Create a legalizer and bipartition it until we have sufficient precision
+    // (~2 to 10 standard cell widths).
+      auto legalizer = get_rough_legalizer( _circuit, _placementLB, _surface );
         for ( int quad_part=0 ; _circuit.cell_cnt() > 10 * (1 << (quad_part*2)) ; ++quad_part ) { // Until there is about 10 standard cells per region
             legalizer.x_bipartition();
             legalizer.y_bipartition();
@@ -702,7 +684,7 @@ namespace Etesian {
             legalizer.redo_diagonal_bipartitions();
             legalizer.selfcheck();
         }
-        // Keep the orientation between LB and UB
+      // Keep the orientation between LB and UB
         _placementUB = _placementLB;
 
         get_rough_legalization( _circuit, _placementUB, legalizer );
@@ -711,14 +693,27 @@ namespace Etesian {
         _progressReport1( startTime, label.str() );
         _updatePlacement( _placementUB );
 
-        if (i >= 2*nbr_iterations/3) {
-            auto prec_legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
-            coloquinte::dp::get_result( _circuit, prec_legalizer, _placementUB );
-            _progressReport1( startTime, "          Legal. " );
-            _updatePlacement( _placementUB );
+        if (i >= 30) {
+          auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
+          coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+          _progressReport1( startTime, "          Legal. " );
+          _updatePlacement( _placementUB );
         }
 
+      // Get the system to optimize (tolerance, maximum and minimum pin counts)
+      // and the pulling forces (threshold distance)
+        auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.01, 2, 100000 ) 
+                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
+        solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
+        _progressReport2( startTime, "          Linear." );
+        _updatePlacement( _placementLB );
 
+     // Optimize orientation sometimes
+        if (i%5 == 0) {
+            optimize_exact_orientations( _circuit, _placementLB );
+            _progressReport2( startTime, "          Orient." );
+            _updatePlacement( _placementLB );
+        }
     }
 
     cmess1 << "  o  Detailed Placement." << endl;
@@ -754,7 +749,6 @@ namespace Etesian {
       if (i == legalizeIterations-1) {
         row_compatible_orientation( _circuit, legalizer, (_yspinSlice0 == 0) );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        verify_placement_legality( _circuit, _placementUB, _surface );
         _progressReport1( startTime, "          Final Legalize ." );
       }
 
