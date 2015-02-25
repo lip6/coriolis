@@ -121,6 +121,7 @@ if __name__ == '__main__':
       args.insert(0, 'cgt')
 
       af = CRL.AllianceFramework.get()
+      print af.getEnvironment().getPrint()
 
      #Hurricane.trace(True)
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)

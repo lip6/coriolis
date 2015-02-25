@@ -52,6 +52,15 @@ def safeImport ( moduleName, symbol=None ):
   return module
 
 
+def checkCMake ():
+    child = subprocess.Popen ( ["which", "cmake"], stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    (pid,status) = os.waitpid ( child.pid, 0 )
+    status >>= 8
+    if status != 0:
+      print '[ERROR] The <cmake> program has not been found, please install it.'
+      sys.exit(1)
+
+
 def guessOs ():
     libDir            = 'lib'
     osSlsoc7x_64      = re.compile (".*Linux.*(el7|slsoc7).*x86_64.*")
@@ -171,6 +180,7 @@ def autoLocate ():
 # CCB Main Part.
 
 autoLocate()
+checkCMake()
 
 parser = optparse.OptionParser ()  
 parser.add_option ( "-g", "--gui"         , action="store_true" ,                dest="gui"          , help="Lauch the graphical interface." )

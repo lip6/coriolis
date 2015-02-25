@@ -189,6 +189,26 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
     }
 }
 
+
+DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
+// **************************************************************
+{
+  if (not (_flags & FlattenedNets)) return NULL;
+
+  Occurrence rootNetOccurrence ( getHyperNetRootNetOccurrence(Occurrence(leafNet,path)) );
+
+  forEach ( Net*, inet, getNets() ) {
+    DeepNet* deepNet = dynamic_cast<DeepNet*>( *inet );
+    if (not deepNet) continue;
+
+    Occurrence deepNetOccurrence = deepNet->getRootNetOccurrence();
+    if (   (rootNetOccurrence.getEntity() == deepNetOccurrence.getEntity())
+       and (rootNetOccurrence.getPath  () == deepNetOccurrence.getPath  ()) )
+      return deepNet;
+  }
+  return NULL;
+}
+
 void Cell::flattenNets(unsigned int flags)
 // ***************************************
 {

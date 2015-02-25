@@ -124,7 +124,6 @@ namespace Kite {
 
           Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
           if (horizontal) {
-            cerr << horizontal << endl;
             segments.push_back( horizontal );
             isPreRouted = true;
             if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
@@ -132,7 +131,6 @@ namespace Kite {
           } else {
             Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
             if (vertical) {
-            cerr << vertical << endl;
               isPreRouted = true;
               segments.push_back( vertical );
               if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
@@ -140,7 +138,6 @@ namespace Kite {
             } else {
               Contact* contact = dynamic_cast<Contact*>(*icomponent);
               if (contact) {
-                cerr << contact << endl;
                 isPreRouted = true;
                 contacts.push_back( contact );
                 if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))

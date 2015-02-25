@@ -258,6 +258,7 @@ class Cell : public Entity {
     public: Instances getNonLeafInstances() const;
     public: Instances getNonLeafInstancesUnder(const Box& area) const;
     public: Net* getNet(const Name& name) const {return _netMap.getElement(name);};
+    public: DeepNet* getDeepNet( Path, const Net* ) const;
     public: Nets getNets() const {return _netMap.getElements();};
     public: Nets getGlobalNets() const;
     public: Nets getExternalNets() const;

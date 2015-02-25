@@ -495,10 +495,12 @@ namespace Etesian {
       Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
-    // Have to check here if the model is fully placed or not.
-      masterCell->setAbutmentBox( topAb );
-      instance->setTransformation( Transformation() ); // (0,0,ID).
-      instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+      if (masterCell->getAbutmentBox().isEmpty()) {
+      // Have to check here if the model is fully placed or not.
+        masterCell->setAbutmentBox( topAb );
+        instance->setTransformation( Transformation() ); // (0,0,ID).
+        instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+      }
     }
     UpdateSession::close();
 
@@ -533,7 +535,7 @@ namespace Etesian {
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
       instances[instanceId].area       = static_cast<capacity_t>(xsize) * static_cast<capacity_t>(ysize);
-      positions[instanceId] = point<int_t>( xpos, ypos );
+      positions[instanceId]            = point<int_t>( xpos, ypos );
 
       if ( not instance->isFixed() and instance->isTerminal() ) {
         instances[instanceId].attributes = coloquinte::XMovable

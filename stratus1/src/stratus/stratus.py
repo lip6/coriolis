@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+# Copyright (c) UPMC 2008-2014, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -16,6 +16,7 @@
 
 try:
   import sys
+  import traceback
   import Cfg
   import CRL
 
@@ -63,3 +64,44 @@ except Exception, e:
   print '        modules. Something may be wrong at Python/C API level.\n'
   print '        %s' % e
   sys.exit(2)
+
+
+DoNetlist = 0x0001
+DoLayout  = 0x0002
+DoStop    = 0x0004
+
+
+def buildModel ( name, flags ):
+    try:
+      module = __import__( name, globals(), locals(), name )
+      if not module.__dict__.has_key(name):
+          print '[ERROR] Stratus module <%s> do not contains a design of the same name.' % name
+          sys.exit(1)
+
+      print '     - Generating Stratus Model <%s>' % name
+      model = module.__dict__[name](name)
+      model.Interface()
+
+      if flags & DoNetlist: model.Netlist()
+      if flags & DoLayout:  model.Layout ()
+
+      stopLevel=0
+      if flags & DoStop: stopLevel = 1
+      model.View(stopLevel, 'Model %s' % name)
+      model.Save(LOGICAL|PHYSICAL)
+
+    except ImportError, e:
+      module = str(e).split()[-1]
+
+      print '[ERROR] The <%s> Stratus design cannot be loaded.' % module
+      print '        Please check your design hierarchy.'
+      sys.exit(1)
+    except Exception, e:
+      print '[ERROR] A strange exception occurred while loading the Stratus'
+      print '        design <%s>. Please check that module for error:\n' % name
+      traceback.print_tb(sys.exc_info()[2])
+      print '        %s' % e
+      sys.exit(2)
+
+    framework = CRL.AllianceFramework.get()
+    return framework.getCell( name, CRL.Catalog.State.Views )

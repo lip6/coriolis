@@ -53,6 +53,8 @@ namespace {
   using Hurricane::DbU;
   using Hurricane::Box;
   using Hurricane::Interval;
+  using Hurricane::Net;
+  using Hurricane::DeepNet;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
@@ -107,6 +109,7 @@ namespace {
     public:
                    GlobalNetTable       ( KiteEngine* );
              bool  isCoreClockNetRouted ( const Net* ) const;
+      inline Cell* getTopCell           () const;
              Net*  getRootNet           ( const Net*, Path ) const;
       inline Net*  getVdde              () const;
       inline Net*  getVddi              () const;
@@ -136,9 +139,11 @@ namespace {
       Net*          _cki;   // Clock net in the pad ring.
       Net*          _cko;   // Clock net of the core (design).
       Net*          _blockage;
+      Cell*         _topCell;
   };
 
 
+  inline Cell* GlobalNetTable::getTopCell  () const { return _topCell; }
   inline Net*  GlobalNetTable::getVdde     () const { return _vdde; }
   inline Net*  GlobalNetTable::getVddi     () const { return _vddi; }
   inline Net*  GlobalNetTable::getVsse     () const { return _vsse; }
@@ -166,14 +171,14 @@ namespace {
     , _cki     (NULL)
     , _cko     (NULL)
     , _blockage(NULL)
+    , _topCell (kite->getCell())
   {
-    Cell* topCell = kite->getCell();
-    if (topCell == NULL) return;
+    if (_topCell == NULL) return;
 
     AllianceFramework* af = AllianceFramework::get();
 
     bool hasPad = false;
-    forEach ( Instance*, iinstance, topCell->getInstances() ) {
+    forEach ( Instance*, iinstance, _topCell->getInstances() ) {
       if (af->isPad(iinstance->getMasterCell())) {
         if (not hasPad) {
           cmess1 << "  o  Design has pads, assuming complete chip top structure." << endl;
@@ -195,7 +200,7 @@ namespace {
 
             Net* net = iplug->getNet();
             if (not net) {
-              net = topCell->getNet( masterNet->getName() );
+              net = _topCell->getNet( masterNet->getName() );
               if (not net) {
                 cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
                 continue;
@@ -216,7 +221,7 @@ namespace {
             Net* masterNet = iplug->getMasterNet();
             Net* net       = iplug->getNet();
             if (not net) {
-              net = topCell->getNet( masterNet->getName() );
+              net = _topCell->getNet( masterNet->getName() );
               if (not net) {
                 cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
                 continue;
@@ -249,7 +254,7 @@ namespace {
       _vssiPadNetName = "";
       _ckoPadNetName  = "";
 
-      forEach ( Net*, inet, topCell->getNets() ) {
+      forEach ( Net*, inet, _topCell->getNets() ) {
         if (NetRoutingExtension::isManualGlobalRoute(*inet)) continue;
 
         Net::Type netType = inet->getType();
@@ -368,6 +373,7 @@ namespace {
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
     ltrace(300) << "    getRootNet:" << path << ":" << net << endl;
+
     if (net == _blockage) return _blockage;
 
     if (_vdde and (net->getName() == _vdde->getName())) return _vdde;
@@ -377,6 +383,17 @@ namespace {
     if (net->getType() == Net::Type::GROUND) return _vssi;
     if (net->getType() != Net::Type::CLOCK ) {
       return NULL;
+    }
+
+    DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
+    if (deepClockNet) {
+      ltrace(300) << "    Deep Clock Net:" << deepClockNet
+                  << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
+
+      return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
+    } else {
+      ltrace(300) << "    Top Clock Net:" << net
+                  << " state:" << NetRoutingExtension::getFlags(net) << endl;
     }
 
   // Track up, *only* for clocks.
