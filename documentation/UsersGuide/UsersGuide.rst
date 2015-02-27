@@ -18,15 +18,27 @@
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
 .. |RHEL6|                          replace:: :sc:`rhel6`
+.. |RHEL7|                          replace:: :sc:`rhel7`
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
+.. |SL7|                            replace:: :sc:`Scientific Linux 7`
+.. |Scientific Linux|               replace:: :sc:`Scientific Linux`
+.. |RedHat|                         replace:: :sc:`RedHat`
+.. |Fedora|                         replace:: :sc:`Fedora`
+.. |FC13|                           replace:: :sc:`fc13`
+.. |Debian|                         replace:: :sc:`Debian`
+.. |Ubuntu|                         replace:: :sc:`Ubuntu`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
 .. |Chaput|                         replace:: :sc:`Chaput`
 .. |Chu|                            replace:: :sc:`Chu`
+.. |Clement|                        replace:: :sc:`Clement`
 .. |Dupuis|                         replace:: :sc:`Dupuis`
 .. |Escassut|                       replace:: :sc:`Escassut`
+.. |Gouvine|                        replace:: :sc:`Gouvine`
 .. |Masson|                         replace:: :sc:`Masson`
+.. |Sroka|                          replace:: :sc:`Sroka`
+.. |Yifei|                          replace:: :sc:`Yifei`
 
 .. |ANSI|                           replace:: :sc:`ansi`
 .. |MIPS|                           replace:: :sc:`mips`
@@ -37,6 +49,7 @@
 .. |GenLib|                         replace:: :sc:`GenLib`
 .. |Nero|                           replace:: :sc:`Nero`
 .. |Druc|                           replace:: :cb:`Druc`
+.. |Coloquinte|                     replace:: :sc:`Coloquinte`
 .. |Coriolis|                       replace:: :sc:`Coriolis`
 .. |Coriolis1|                      replace:: :sc:`Coriolis 1`
 .. |Coriolis2|                      replace:: :sc:`Coriolis 2`
@@ -46,6 +59,7 @@
 .. |Nimbus|                         replace:: :sc:`Nimbus`
 .. |hMetis|                         replace:: :sc:`hMetis`
 .. |Mauka|                          replace:: :sc:`Mauka`
+.. |Etesian|                        replace:: :sc:`Etesian`
 .. |Knik|                           replace:: :sc:`Knik`
 .. |Katabatic|                      replace:: :sc:`Katabatic`
 .. |Kite|                           replace:: :sc:`Kite`
@@ -65,12 +79,6 @@
 .. |UTF-8|                          replace:: :sc:`utf-8`
 .. |Python|                         replace:: :sc:`Python`
 .. |Linux|                          replace:: :sc:`Linux`
-.. |Scientific Linux|               replace:: :sc:`Scientific Linux`
-.. |RedHat|                         replace:: :sc:`RedHat`
-.. |Fedora|                         replace:: :sc:`Fedora`
-.. |FC13|                           replace:: :sc:`fc13`
-.. |Debian|                         replace:: :sc:`Debian`
-.. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MacPorts|                       replace:: :sc:`MacPorts`
 .. |devtoolset2|                    replace:: :cb:`devtoolset2`
 .. |boost|                          replace:: :cb:`boost`
@@ -79,6 +87,9 @@
 .. |svn|                            replace:: :cb:`svn`
 .. |git|                            replace:: :cb:`git`
 .. |rpm|                            replace:: :cb:`rpm`
+.. |gdb|                            replace:: :cb:`gdb`
+
+.. |CTRL_L|                         replace:: :fboxtt:`CTRL+L`
 
 .. URLs
 .. _FGR:         http://vlsicad.eecs.umich.edu/BK/FGR/
@@ -154,8 +165,8 @@ Credits & License
    <span class="right">Rémy <span class="sc">Escassut</span> &amp;
                        Christian <span class="sc">Masson</span></span></p>
    <br>
-   <p class="credit"><span class="left"><span class="sc">Mauka</span></span>
-   <span class="right">Christophe <span class="sc">Alexandre</span></span></p>
+   <p class="credit"><span class="left"><span class="sc">Etesian</span></span>
+   <span class="right">Gabriel <span class="sc">Gouvine</span></span></p>
    <br>
    <p class="credit"><span class="left"><span class="sc">Stratus</span></span>
    <span class="right">Sophie <span class="sc">Belloeil</span></span></p>
@@ -174,7 +185,7 @@ Credits & License
    \begin{center}\begin{minipage}[t]{.8\textwidth}
      \noindent\DUrole{sc}{Hurricane} \dotfill Rémy       \DUrole{sc}{Escassut}  \&
                                               Christian  \DUrole{Masson}        \\
-     \noindent\DUrole{sc}{Mauka}     \dotfill Christophe \DUrole{sc}{Alexandre} \\
+     \noindent\DUrole{sc}{Etesian}   \dotfill Gabriel    \DUrole{sc}{Gouvine}   \\
      \noindent\DUrole{sc}{Stratus}   \dotfill Sophie     \DUrole{sc}{Belloeil}  \\
      \noindent\DUrole{sc}{Knik}      \dotfill Damien     \DUrole{sc}{Dupuis}    \\
      \noindent\DUrole{sc}{Kite},
@@ -184,10 +195,13 @@ Credits & License
 
 |medskip|
 
-The |Hurricane| data-base is copyright© |Bull| 2000-2014 and is
+The |Hurricane| data-base is copyright© |Bull| 2000-2015 and is
 released under the terms of the |LGPL| license. All other tools are
-copyright© |UPMC| 2008-2014 and released under the |GPL|
+copyright© |UPMC| 2008-2015 and released under the |GPL|
 license.
+
+Others important contributors to |Coriolis| are Christophe |Alexandre|,
+Hugo |Clement|, Marek |Sroka| and Wu |Yifei|.
 
 The |Knik| router makes use of the |Flute| software, which is
 copyright© Chris C. N. |Chu| from the Iowa State University
@@ -270,6 +284,21 @@ Release **v2.0.1**
    achieve a speedup factor greater than 20...
 
 
+Release **v3.0**
+~~~~~~~~~~~~~~~~
+
+#. Replace the old simulated annealing placer |Mauka| by an analytic placer
+   |Etesian|.
+#. The multiples user defined configuration files are now grouped under
+   a common hidden (dot) directory ``.coriolis2`` and the file extension
+   is back from ``.conf`` to ``.py``.
+#. Under |RHEL7| / |SL7|, there is a known bug in the graphical visualizer.
+   When shifting to the left, the right-half part of the screen gets
+   badly redrawn. Uses |CTRL_L| to refresh. It will be corrected as soon
+   as possible.
+   
+
+
 |newpage|
 
 
@@ -290,9 +319,8 @@ Main building prerequisites:
 * boost
 * libxml2
 * yacc & lex.
-* Qt 4
+* Qt 4 or Qt 5.
 * LEF/DEF (optional).
-* hMetis (optional).
 * doxygen.
 * latex
 * latex2html.
@@ -314,11 +342,15 @@ automatically created either by |ccb| or the build system.
 +--------------------------+-----------------------------------------------------------------------------+
 | | Sources root           | | ~/coriolis-2.x/src                                                        |
 | | **under git**          | | ~/coriolis-2.x/src/coriolis                                               |
+| | **under git**          | | ~/coriolis-2.x/src/importeds/Coloquinte                                   |
 +--------------------------+-----------------------------------------------------------------------------+
 | **Architecture Dependant Build**                                                                       |
 +--------------------------+-----------------------------------------------------------------------------+
+| | Linux, SL 7, 64 bits   | | ~/coriolis-2.x/Linux.el7_64/Release.Shared/build/<tool>                   |
 | | Linux, SL 6, 32 bits   | | ~/coriolis-2.x/Linux.slsoc6x/Release.Shared/build/<tool>                  |
 | | Linux, SL 6, 64 bits   | | ~/coriolis-2.x/Linux.slsoc6x_64/Release.Shared/build/<tool>               |
+| | Linux, Fedora, 64 bits | | ~/coriolis-2.x/Linux.fc_64/Release.Shared/build/<tool>                    |
+| | Linux, Fedora, 32 bits | | ~/coriolis-2.x/Linux.fc/Release.Shared/build/<tool>                       |
 | | FreeBSD 8, 32 bits     | | ~/coriolis-2.x/FreeBSD.8x.i386/Release.Shared/build/<tool>                |
 | | FreeBSD 8, 64 bits     | | ~/coriolis-2.x/FreeBSD.8x.amd64/Release.Shared/build/<tool>               |
 | | Windows 7, 32 bits     | | ~/coriolis-2.x/Cygwin.W7/Release.Shared/build/<tool>                      |
@@ -355,16 +387,27 @@ The first step is to create the source directory and pull the |git| repository: 
    dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
    dummy@lepka:~$ cd ~/coriolis-2.x/src
    dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
-   dummy@lepka:~$ cd coriolis
+   dummy@lepka:~$ mkdir importeds
+   dummy@lepka:~$ cd importeds
+   dummy@lepka:~$ git clone https://github.com/Coloquinte/Coloquinte.git
+   dummy@lepka:~$ cd ../coriolis
 
 Second and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis --make="-j4 install"
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+                                       --make="-j4 install"
    dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis --doc --make="-j1 install"
 
 We need two steps because the documentation do not support to be generated with
 a parallel build. So we compile & install in a first step in ``-j4`` (or whatever)
 then we generate the documentation in ``-j1``
+
+Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
+
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+                                       --devtoolset-2 --make="-j4 install"
+
+If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
 
 The complete list of |ccb| functionalities can be accessed with the ``--help`` argument.
 It also may be run in graphical mode (``--gui``).
@@ -383,13 +426,16 @@ In the |Coriolis| |git| repository, two branches are present:
   command just after the first step: ::
 
       dummy@lepka:~$ git checkout devel
+      dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+                                          --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce
   incompatibilites with the stable version.
 
-  Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
+  In the (unlikely) event of a crash of |cgt|, as it is a |Python| script, the right
+  command to run |gdb| on it is: ::
 
-      dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis --devtoolset-2 --make="-j4 install"
+      dummy@lepka:work$ gdb python core.XXXX 
 
 
 Additionnal Requirement under |MacOS|
@@ -513,11 +559,11 @@ file(s):
 +-------+----------------------------------+----------------------------------------------+
 | Order | Meaning                          | File                                         |
 +=======+==================================+==============================================+
-| **1** | The system setting               | :cb:`/etc/coriolis2/coriolis2_techno.conf`   |
+| **1** | The system setting               | :cb:`/etc/coriolis2/techno.conf`             |
 +-------+----------------------------------+----------------------------------------------+
-| **2** | The user's global setting        | :cb:`${HOME}/.coriolis2_techno.conf`         |
+| **2** | The user's global setting        | :cb:`${HOME}/.coriolis2/techno.py`           |
 +-------+----------------------------------+----------------------------------------------+
-| **3** | The user's local setting         | :cb:`<CWD>/.coriolis2_techno.conf`           |
+| **3** | The user's local setting         | :cb:`<CWD>/.coriolis2/techno.py`             |
 +-------+----------------------------------+----------------------------------------------+
 
 Thoses files must provides only two variables, the name of the symbolic technology
@@ -545,13 +591,13 @@ by executing, in order, the following file(s):
 +=======+==================================+==============================================+
 | **1** | The system initialization        | :cb:`/etc/coriolis2/<TECHNO>/<TOOL>.conf`    |
 +-------+----------------------------------+----------------------------------------------+
-| **2** | The user's global initialization | :cb:`${HOME}/.coriolis2.conf`                |
+| **2** | The user's global initialization | :cb:`${HOME}/.coriolis2/settings.py`         |
 +-------+----------------------------------+----------------------------------------------+
-| **3** | The user's local initialization  | :cb:`<CWD>/.coriolis2.conf`                  |
+| **3** | The user's local initialization  | :cb:`<CWD>/.coriolis2/settings.py`           |
 +-------+----------------------------------+----------------------------------------------+
 
 .. note:: *The loading policy is not hard-coded.* It is implemented
-   at Python level in :cb:`/etc/coriolis2/coriolisInit.py`, and thus may be easyly be
+   at Python level in :cb:`/etc/coriolis2/coriolisInit.py`, and thus may be easily be
    amended to whatever site policy.
 
    The truly mandatory requirement is the existence of :cb:`coriolisInit.py`
@@ -638,22 +684,22 @@ available settings. Some important remarks about thoses settings:
   directory in which the system-wide configuration files are locateds.
   For a standard installation it would be: ``/soc/coriolis2``.
 
-* Trick and naming convention about ``SYMBOLIC_TECHNOLOGY``, ``REAL_TECHNOLOGY``
-  and ``DISPLAY``. In the previous releases, thoses files where to read by
-  |XML| parsers, and still do if you triggers the |XML| compatibility mode.
-  But now, they have Python conterparts. In the configuration files, you
-  still have to name them as |XML| files, the Python file name will be
-  deduced from this one with thoses two translation rules: 
-
-  #. In the filename, all dots, except for the last (the file extention), 
-     are replaced by underscores.
-
-  #. The ``.xml`` extention is substituted by a ``.conf``.
-  
-  For the symbolic technology, it would give: ::
-
-      /soc/coriolis2/technology.symbolic.xml
-                             --> /soc/coriolis2/technology_symbolic.conf
+.. * Trick and naming convention about ``SYMBOLIC_TECHNOLOGY``, ``REAL_TECHNOLOGY``
+..   and ``DISPLAY``. In the previous releases, thoses files where to read by
+..   XML parsers, and still do if you triggers the XML compatibility mode.
+..   But now, they have Python conterparts. In the configuration files, you
+..   still have to name them as XML files, the Python file name will be
+..   deduced from this one with thoses two translation rules: 
+.. 
+..   #. In the filename, all dots, except for the last (the file extention), 
+..      are replaced by underscores.
+.. 
+..   #. The ``.xml`` extention is substituted by a ``.conf``.
+..   
+..   For the symbolic technology, it would give: ::
+.. 
+..       /soc/coriolis2/technology.symbolic.xml
+..                              --> /soc/coriolis2/technology_symbolic.conf
 
 A typical user's configuration file would be: ::
 
@@ -677,37 +723,43 @@ All the tools uses the same helper to load their configuration (a.k.a.
 configuration files are defined:
 
 * :cb:`misc.conf`: commons settings or not belonging specifically to a tool.
-* :cb:`nimbus.conf`: for the |Nimbus| tool.
-* :cb:`hMetis.conf`: for the |hMetis| wrapper.
-* :cb:`mauka.conf`: for the |Mauka| tool.
+* :cb:`etesian.conf`: for the |Etesian| tool.
 * :cb:`kite.conf`: for the |Kite| tool.
 * :cb:`stratus1.conf`: for the |stratus1| tool.
 
-Here is the contents of :cb:`mauka.conf`: ::
+Here is the contents of :cb:`etesian.conf`: ::
 
-    # Mauka parameters.
+    # Etesian parameters.
     parametersTable = \
-        ( ('mauka.annealingBinMult' , TypePercentage, 5      )
-        , ('mauka.annealingNetMult' , TypePercentage, 90     )
-        , ('mauka.annealingRowMult' , TypePercentage, 5      )
-        , ('mauka.ignorePins'       , TypeBool      , False  )
-        , ('mauka.insertFeeds'      , TypeBool      , True   )
-        , ('mauka.plotBins'         , TypeBool      , True   )
-        , ('mauka.searchRatio'      , TypePercentage, 50     )
-        , ('mauka.standardAnnealing', TypeBool      , False  )
+        ( ('etesian.aspectRatio'    , TypePercentage, 100    , { 'min':10, 'max':1000 } )
+        , ('etesian.spaceMargin'    , TypePercentage, 5      )
+        , ('etesian.uniformDensity' , TypeBool      , False  )
+        , ('etesian.routingDriven'  , TypeBool      , False  )
+        , ("etesian.effort"         , TypeEnumerate , 2
+          , { 'values':( ("Fast"    , 1)
+                       , ("Standard", 2)
+                       , ("High"    , 3)
+                       , ("Extreme" , 4) ) }
+          )
+        , ("etesian.graphics"       , TypeEnumerate , 2
+          , { 'values':( ("Show every step"  , 1)
+                       , ("Show lower bound" , 2)
+                       , ("Show result only" , 3) ) }
+          )
         )
     
     layoutTable = \
-        ( (TypeTab   , 'Mauka', 'mauka')
-        # Mauka part.
-        , (TypeOption, "mauka.standardAnnealing", "Standart Annealing"    , 0 )
-        , (TypeOption, "mauka.ignorePins"       , "Ignore Pins"           , 0 )
-        , (TypeOption, "mauka.plotBins"         , "Plot Bins"             , 0 )
-        , (TypeOption, "mauka.insertFeeds"      , "Insert Feeds"          , 0 )
-        , (TypeOption, "mauka.searchRatio"      , "Search Ratio (%)"      , 1 )
-        , (TypeOption, "mauka.annealingNetMult" , "Annealing Net Mult (%)", 1 )
-        , (TypeOption, "mauka.annealingBinMult" , "Annealing Bin Mult (%)", 1 )
-        , (TypeOption, "mauka.annealingRowMult" , "Annealing Row Mult (%)", 1 )
+        ( (TypeTab   , 'Etesian', 'etesian')
+    
+        , (TypeTitle , 'Placement area')
+        , (TypeOption, "etesian.aspectRatio"   , "Aspect Ratio, X/Y (%)", 0 )
+        , (TypeOption, "etesian.spaceMargin"   , "Space Margin"         , 1 )
+        , (TypeRule  ,)
+        , (TypeTitle , 'Etesian - Placer')
+        , (TypeOption, "etesian.uniformDensity", "Uniform density"      , 0 )
+        , (TypeOption, "etesian.routingDriven" , "Routing driven"       , 0 )
+        , (TypeOption, "etesian.effort"        , "Placement effort"     , 1 )
+        , (TypeOption, "etesian.graphics"      , "Placement view"       , 1 )
         , (TypeRule  ,)
         )
 
@@ -746,7 +798,7 @@ Hacking the Configuration Files
 
 Asides from the symbols that gets used by the configuration helpers like
 :cb:`allianceConfig` or :cb:`parametersTable`, you can put pretty much anything
-in :cb:`<CWD>/.coriolis2.conf` (that is, written in |Python|).
+in :cb:`<CWD>/.coriolis2/settings.py` (that is, written in |Python|).
 
 For example: ::
 
@@ -853,15 +905,12 @@ As for the first release, |Coriolis| can be used only for two purposes :
   state. 
 
 
-Mauka -- Placer
-~~~~~~~~~~~~~~~
+Etesian -- Placer
+~~~~~~~~~~~~~~~~~
 
-|Mauka| was originally designed to be a recursive quadri-partionner. Unfortunatly
-it is was based on the hMETIS_ library (*not* :sc:`METIS`) which is no longer
-maintained (only an old binary 32 bits version is available).
-
-So now it is only working in simulated annealing, with performances identical to
-the |Alliance| placer :cb:`ocp`. In other words, it is slow...
+The |Etesian| placer is a state of the art (as of 2015) analytical placer. This |Coriolis|
+tool is really an encapsulation of |Coloquinte| which *is* the placer. |Coloquinte|
+is provided a separate library, see the building instructions.
 
 .. note:: *Instance Duplication Problem:* a same logical instance cannot have
    two different placements. So, either you manually make a clone of it or you
@@ -1485,19 +1534,49 @@ Small example of Python/Stratus script: ::
         # ...
         return
 
-    def ScriptMain ( editor=None ):
-      if globals().has_key( "__editor" ): editor = __editor
-      if editor: setEditor( editor )
+    def ScriptMain ( **kw ):
+      editor = None
+      if kw.has_key('editor') and kw['editor']:
+        editor = kw['editor']
+        stratus.setEditor( editor )
 
       doSomething()
       return
     
     if __name__ == "__main__" :
-      ScriptMain ()
+      kw           = {}
+      success      = ScriptMain( **kw )
+      shellSuccess = 0
+      if not success: shellSuccess = 1
+      
+      sys.exit( shellSuccess )
+          ScriptMain ()
 
-This script could be run directly with Python (thanks to the two last lines)
-or through |cgt| in both text and graphical modes through the :cb:`ScriptMain()`
-function.
+This typical script can be executed in two ways:
+
+#. Run directly as a |Python| script, thanks to the ::
+
+     if __name__ == "__main__" :
+
+   part (this is standart |Python|). It is a simple adapter that will
+   calls  :cb:`ScriptMain()`.
+#. Through |cgt|, either in text or graphical mode. In that case, the
+   :cb:`ScriptMain()` is directly called trough a sub-interpreter.
+   The arguments of the script are passed through the ``**kw`` dictionnary.
+   
+   +----------------------+-----------------------------------------------+
+   | \*\*kw Dictionnary                                                   |
+   +----------------------+-----------------------------------------------+
+   | Parameter Key/Name   | Contents type                                 |
+   +======================+===============================================+
+   | ``'cell'``           | A Hurricane cell on which to work. Depending  |
+   |                      | on the context, it may be ``None``.           |
+   |                      | For example, when run from |cgt|, it the cell |
+   |                      | currently loaded in the viewer, if any.       |
+   +----------------------+-----------------------------------------------+
+   | ``'editor'``         | The viewer from which the script is run, when |
+   |                      | lauched through |cgt|.                        |
+   +----------------------+-----------------------------------------------+
 
 
 A Simple Example: AM2901

@@ -116,6 +116,7 @@ def coriolisConfigure():
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/hMetis.conf'  , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/nimbus.conf'  , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/mauka.conf'   , SystemFile|ConfigurationHelper)
+                 , (helpers.sysConfDir+'/'+symbolicTechno+'/etesian.conf' , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/kite.conf'    , SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/stratus1.conf', SystemFile|ConfigurationHelper)
                  , (helpers.sysConfDir+'/'+symbolicTechno+'/plugins.conf' , SystemFile|ConfigurationHelper)

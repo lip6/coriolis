@@ -52,24 +52,22 @@ namespace Etesian {
 
   class EtesianEngine : public CRL::ToolEngine {
     public:
-      enum Flag { NoPlacement=0x0001
-                , FlatDesign =0x0002
-                , ForceUpdate=0x0004
-                , YSpinSet   =0x0008
-                , SlowMotion =0x0010
-                };
     public:
       static  const Name&          staticGetName    ();
       static  EtesianEngine*       create           ( Cell* );
       static  EtesianEngine*       get              ( const Cell* );
     public:                                         
-      inline  bool                 isSlowMotion     () const;
       virtual Configuration*       getConfiguration ();
       virtual const Configuration* getConfiguration () const;
       virtual const Name&          getName          () const;
       inline  CellGauge*           getCellGauge     () const;
       inline  DbU::Unit            getPitch         () const;
       inline  DbU::Unit            getSliceHeight   () const;
+      inline  Effort               getPlaceEffort   () const;
+      inline  GraphicUpdate        getUpdateConf    () const;
+      inline  Density              getSpreadingConf () const;
+      inline  double               getSpaceMargin   () const;
+      inline  double               getAspectRatio   () const;
       inline  const FeedCells&     getFeedCells     () const;
       inline  void                 setCellWidget    ( Hurricane::CellWidget* );
               void                 startMeasures    ();
@@ -78,7 +76,7 @@ namespace Etesian {
               void                 setDefaultAb     ();
               void                 resetPlacement   ();
               void                 toColoquinte     ();
-              void                 place            ( unsigned int flags=SlowMotion );
+              void                 place            ();
       inline  void                 useFeed          ( Cell* );
               size_t               findYSpin        ();
               void                 addFeeds         ();
@@ -91,7 +89,9 @@ namespace Etesian {
       static Name                                     _toolName;
     protected:
              Configuration*                           _configuration;
-             unsigned int                             _flags;
+             bool                                     _placed;
+             bool                                     _ySpinSet;
+             bool                                     _flatDesign;
              Timer                                    _timer;
              coloquinte::box<coloquinte::int_t>       _surface;
              coloquinte::netlist                      _circuit;
@@ -113,20 +113,24 @@ namespace Etesian {
                              EtesianEngine    ( const EtesianEngine& );
               EtesianEngine& operator=        ( const EtesianEngine& );
     private:
-              void           _updatePlacement ( const coloquinte::placement_t&, unsigned int flags=0 );
+              void           _updatePlacement ( const coloquinte::placement_t& );
               void           _progressReport1 ( time_t startTime, string label ) const;
               void           _progressReport2 ( time_t startTime, string label ) const;
   };
 
 
 // Inline Functions.
-  inline  bool             EtesianEngine::isSlowMotion   () const { return getConfiguration()->isSlowMotion(); }
-  inline  void             EtesianEngine::setCellWidget  ( Hurricane::CellWidget* cw ) { _cellWidget = cw; }
-  inline  CellGauge*       EtesianEngine::getCellGauge   () const { return getConfiguration()->getCellGauge(); }
-  inline  DbU::Unit        EtesianEngine::getPitch       () const { return getCellGauge()->getPitch(); }
-  inline  DbU::Unit        EtesianEngine::getSliceHeight () const { return getCellGauge()->getSliceHeight(); }
-  inline  void             EtesianEngine::useFeed        ( Cell* cell ) { _feedCells.useFeed(cell); }
-  inline  const FeedCells& EtesianEngine::getFeedCells   () const { return _feedCells; }
+  inline  void             EtesianEngine::setCellWidget    ( Hurricane::CellWidget* cw ) { _cellWidget = cw; }
+  inline  CellGauge*       EtesianEngine::getCellGauge     () const { return getConfiguration()->getCellGauge(); }
+  inline  DbU::Unit        EtesianEngine::getPitch         () const { return getCellGauge()->getPitch(); }
+  inline  DbU::Unit        EtesianEngine::getSliceHeight   () const { return getCellGauge()->getSliceHeight(); }
+  inline  Effort           EtesianEngine::getPlaceEffort   () const { return getConfiguration()->getPlaceEffort(); }
+  inline  GraphicUpdate    EtesianEngine::getUpdateConf    () const { return getConfiguration()->getUpdateConf(); }
+  inline  Density          EtesianEngine::getSpreadingConf () const { return getConfiguration()->getSpreadingConf(); }
+  inline  double           EtesianEngine::getSpaceMargin   () const { return getConfiguration()->getSpaceMargin(); }
+  inline  double           EtesianEngine::getAspectRatio   () const { return getConfiguration()->getAspectRatio(); }
+  inline  void             EtesianEngine::useFeed          ( Cell* cell ) { _feedCells.useFeed(cell); }
+  inline  const FeedCells& EtesianEngine::getFeedCells     () const { return _feedCells; }
 
 
 // Variables.

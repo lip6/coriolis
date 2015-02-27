@@ -267,8 +267,9 @@ namespace Etesian {
 
   EtesianEngine::EtesianEngine ( Cell* cell )
     : ToolEngine    (cell)
-    , _configuration(new ConfigurationConcrete())
-    , _flags        (0)
+    , _configuration(new Configuration())
+    , _placed       (false)
+    , _flatDesign   (false)
     , _timer        ()
     , _surface      ()
     , _circuit      ()
@@ -365,8 +366,8 @@ namespace Etesian {
 
   void  EtesianEngine::setDefaultAb ()
   {
-    double spaceMargin = Cfg::getParamPercentage("nimbus.spaceMargin", 10.0)->asDouble();
-    double aspectRatio = Cfg::getParamPercentage("nimbus.aspectRatio",100.0)->asDouble();
+    double spaceMargin = getSpaceMargin();
+    double aspectRatio = getAspectRatio();
     size_t instanceNb  = 0;
     double cellLength  = 0;
 
@@ -390,13 +391,8 @@ namespace Etesian {
     }
 
     double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
-    double rows        = sqrt( gcellLength/aspectRatio );
-    if (floor(rows) != rows) rows = floor(rows)+1.0;
-    else                     rows = floor(rows);
-
-    double columns     = gcellLength / rows;
-    if (floor(columns) != columns) columns = floor(columns)+1.0;
-    else                           columns = floor(columns);
+    double rows        = std::ceil( sqrt( gcellLength/aspectRatio ) );
+    double columns     = std::ceil( gcellLength / rows );
 
     cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
            << "% aspect ratio:" << (aspectRatio*100.0)
@@ -423,8 +419,8 @@ namespace Etesian {
   {
   //cerr << "EtesianEngine::resetPlacement()" << endl;
 
-    if (_flags & NoPlacement) return;
-    _flags |= FlatDesign;
+    if (not _placed) return;
+    _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
 
@@ -436,8 +432,8 @@ namespace Etesian {
     {
       dots.dot();
 
-      if ((_flags & FlatDesign) and not (*ioccurrence).getPath().getTailPath().isEmpty())
-        _flags &= ~FlatDesign;
+      if ( _flatDesign and not (*ioccurrence).getPath().getTailPath().isEmpty())
+        _flatDesign = true;
 
       Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
       Cell*     masterCell   = instance->getMasterCell();
@@ -459,7 +455,7 @@ namespace Etesian {
 
     if (_cellWidget) _cellWidget->refresh();
 
-    _flags |= NoPlacement;
+    _placed = true;
   }
 
 
@@ -611,19 +607,21 @@ namespace Etesian {
 #endif  // HAVE_COLOQUINTE
   }
 
-  void  EtesianEngine::place ( unsigned int flags )
+  void  EtesianEngine::place ()
   {
 #if HAVE_COLOQUINTE
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
-    if (flags & SlowMotion) getConfiguration()->  setFlags( SlowMotion );
-    else                    getConfiguration()->unsetFlags( SlowMotion );
-
+    getConfiguration()->print( getCell() );
     if (getCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
     findYSpin();
     toColoquinte();
+
+    Effort        placementEffort = getPlaceEffort();
+    GraphicUpdate placementUpdate = getUpdateConf();
+    Density       densityConf     = getSpreadingConf();
 
     cmess1 << "  o  Running Coloquinte." << endl;
     cmess1 << "     - Computing initial placement..." << endl;
@@ -647,13 +645,14 @@ namespace Etesian {
     cmess2 << "     - Elapsed time:" << timeDelta
            << " HPWL:" << get_HPWL_wirelength( _circuit, _placementUB )
            << "\n     "
-           << "- Linear Disrupt.:" << get_mean_linear_disruption   ( _circuit, _placementLB, _placementLB )
-           <<   " Quad. Disrupt.:" << get_mean_quadratic_disruption( _circuit, _placementLB, _placementLB )
+           << "- Linear Disrupt.:" << get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
+           <<   " Quad. Disrupt.:" << get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
            << endl;
     _placementLB = _placementUB;
     _placementLB.selfcheck();
 
-    _updatePlacement( _placementUB );
+    if(placementUpdate == UpdateAll)
+        _updatePlacement( _placementUB );
 
     // Early topology-independent solution + negligible pulling forces to avoid dumb solutions
     cmess1 << "  o  Star (*) Optimization." << endl;
@@ -662,39 +661,50 @@ namespace Etesian {
     solve_linear_system( _circuit, _placementLB, solv, 200 );
     _progressReport2( startTime, "     [--]" );
 
-    _updatePlacement( _placementLB );
+    if(placementUpdate <= LowerBound)
+        _updatePlacement( _placementLB );
 
     cmess1 << "  o  Simple legalization." << endl;
     auto snd_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
     get_rough_legalization( _circuit, _placementUB, snd_legalizer);
 
-    _updatePlacement( _placementUB );
+    if(placementUpdate == UpdateAll)
+        _updatePlacement( _placementUB );
 
-    int nbr_iterations = 60;
-    float_t max_force = 1.5;
-    bool full_density = false;
+    int globalIterations;
+    if(placementEffort == Fast)
+        globalIterations = 40;
+    else if(placementEffort == Standard)
+        globalIterations = 70;
+    else if(placementEffort == High)
+        globalIterations = 120;
+    else
+        globalIterations = 250;
 
-    for ( int i=0; i<nbr_iterations; ++i ) {
-        float_t pulling_force = (i+1) * max_force / nbr_iterations;
+    float_t maxForce = 1.0;
+
+    for ( int i=0; i<globalIterations; ++i ) {
+        float_t iterProp = static_cast<float_t>(i+1)/ globalIterations;
+        float_t pulling_force = maxForce * iterProp * iterProp; // More effort at low pulling forces
         // Get the system to optimize (tolerance, maximum and minimum pin counts)
         // and the pulling forces (threshold distance)
         auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.5 * sliceHeight, 2, 100000 ) 
                   + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
         solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
         _progressReport2( startTime, "          Linear." );
-        _updatePlacement( _placementLB );
 
         // Optimize orientation sometimes
         if (i%5 == 0) {
             optimize_exact_orientations( _circuit, _placementLB );
             _progressReport2( startTime, "          Orient." );
-            _updatePlacement( _placementLB );
         }
+        if(placementUpdate <= LowerBound)
+            _updatePlacement( _placementLB );
 
         // Create a legalizer and bipartition it until we have sufficient precision
-        auto legalizer = full_density ?
-            region_distribution::full_density_distribution(_surface, _circuit, _placementLB)
-          : region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
+        auto legalizer = densityConf == ForceUniform ?
+            region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB)
+          : region_distribution::full_density_distribution(_surface, _circuit, _placementLB);
         for ( int quad_part=0 ; _circuit.cell_cnt() > 10 * (1 << (quad_part*2)) ; ++quad_part ) { // Until there is about 10 standard cells per region
             legalizer.x_bipartition();
             legalizer.y_bipartition();
@@ -711,57 +721,71 @@ namespace Etesian {
         label.str("");
         label  << "     [" << setw(2) << setfill('0') << i << "] Bipart.";
         _progressReport1( startTime, label.str() );
-        _updatePlacement( _placementUB );
 
-        if (i >= 2*nbr_iterations/3) {
+        if(placementUpdate == UpdateAll)
+            _updatePlacement( _placementUB );
+
+        if (i >= 2*globalIterations/3) {
             auto prec_legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
             coloquinte::dp::get_result( _circuit, prec_legalizer, _placementUB );
             _progressReport1( startTime, "          Legal. " );
-            _updatePlacement( _placementUB );
+            if(placementUpdate == UpdateAll)
+                _updatePlacement( _placementUB );
         }
-
-
     }
 
     cmess1 << "  o  Detailed Placement." << endl;
-    index_t legalizeIterations = 3;
-    for ( index_t i=0; i<legalizeIterations; ++i ){
-      ostringstream label;
-      label.str("");
-      label  << "     [" << setw(2) << setfill('0') << i << "]";
+    index_t detailedIterations;
+    if(placementEffort == Fast)
+        detailedIterations = 1;
+    else if(placementEffort == Standard)
+        detailedIterations = 3;
+    else if(placementEffort == High)
+        detailedIterations = 7;
+    else
+        detailedIterations = 15;
+    for ( index_t i=0; i<detailedIterations; ++i ){
+        ostringstream label;
+        label.str("");
+        label  << "     [" << setw(2) << setfill('0') << i << "]";
 
-      optimize_exact_orientations( _circuit, _placementUB );
-      _progressReport1( startTime, label.str()+" Oriented ......." );
-      _updatePlacement( _placementUB );
+        optimize_exact_orientations( _circuit, _placementUB );
+        _progressReport1( startTime, label.str()+" Oriented ......." );
+        if(placementUpdate <= LowerBound)
+            _updatePlacement( _placementUB );
 
-      auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
-      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-      _progressReport1( startTime, "          Legalized ......" );
-      _updatePlacement( _placementUB );
-
-      swaps_global_HPWL( _circuit, legalizer, 3, 4 );
-      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-      _progressReport1( startTime, "          Global Swaps ..." );
-      _updatePlacement( _placementUB );
-
-      OSRP_convex_HPWL( _circuit, legalizer );
-      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-      _progressReport1( startTime, "          Row Optimization" );
-      _updatePlacement( _placementUB );
-
-      swaps_row_HPWL( _circuit, legalizer, 4 );
-      coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-      _progressReport1( startTime, "          Local Swaps ...." );
-
-      if (i == legalizeIterations-1) {
-        row_compatible_orientation( _circuit, legalizer, (_yspinSlice0 == 0) );
+        auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        verify_placement_legality( _circuit, _placementUB, _surface );
-        _progressReport1( startTime, "          Final Legalize ." );
-      }
+        _progressReport1( startTime, "          Legalized ......" );
+        if(placementUpdate <= LowerBound)
+            _updatePlacement( _placementUB );
 
-      _updatePlacement( _placementUB, (i==legalizeIterations-1) ? ForceUpdate : 0 );
+        swaps_global_HPWL( _circuit, legalizer, 3, 4 );
+        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        _progressReport1( startTime, "          Global Swaps ..." );
+        if(placementUpdate <= LowerBound)
+            _updatePlacement( _placementUB );
+
+        OSRP_convex_HPWL( _circuit, legalizer );
+        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        _progressReport1( startTime, "          Row Optimization" );
+        if(placementUpdate == UpdateAll)
+            _updatePlacement( _placementUB );
+
+        swaps_row_HPWL( _circuit, legalizer, 4 );
+        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        _progressReport1( startTime, "          Local Swaps ...." );
+        if(placementUpdate <= LowerBound)
+            _updatePlacement( _placementUB );
+
+        if (i == detailedIterations-1) {
+          row_compatible_orientation( _circuit, legalizer, true );
+          coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+          verify_placement_legality( _circuit, _placementUB, _surface );
+          _progressReport1( startTime, "          Final Legalize ." );
+        }
     }
+    _updatePlacement( _placementUB );
 
     cmess1 << "  o  Adding feed cells." << endl;
     addFeeds();
@@ -774,7 +798,7 @@ namespace Etesian {
     cmess1 << ::Dots::asString
       ("     - RMST", DbU::getValueString(get_RSMT_wirelength(_circuit,_placementUB )*getPitch()) ) << endl;
 
-    _flags &= ~NoPlacement;
+    _placed = false;
 #else
     cerr << Warning("Coloquinte library wasn't found, Etesian is disabled.") << endl;
 #endif
@@ -826,11 +850,9 @@ namespace Etesian {
   }
 
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t& placement, unsigned int flags )
+  void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t& placement )
   {
 #if HAVE_COLOQUINTE
-    if ((not isSlowMotion()) and not (flags & ForceUpdate)) return;
-
     UpdateSession::open();
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )

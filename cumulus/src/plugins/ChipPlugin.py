@@ -147,7 +147,7 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
         mauka.destroy()
       else:
         etesian = Etesian.EtesianEngine.create( coreCell )
-        etesian.place( Etesian.EtesianEngine.SlowMotion )
+        etesian.place()
         etesian.destroy()
 
       ht.connectLeaf()
@@ -161,7 +161,7 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
         mauka.destroy()
       else:
         etesian = Etesian.EtesianEngine.create( coreCell )
-        etesian.place( Etesian.EtesianEngine.SlowMotion )
+        etesian.place()
         etesian.destroy()
     return
 

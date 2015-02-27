@@ -7,7 +7,7 @@
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
- setup_project_paths(COLOQUINTE)
+ setup_project_paths(IMPORTEDS)
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()

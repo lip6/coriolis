@@ -101,27 +101,9 @@ extern "C" {
     return PyEtesianEngine_Link(etesian);
   }
 
-
-  PyObject* PyEtesianEngine_place ( PyEtesianEngine* self, PyObject* args )
-  {
-    trace << "PyEtesianEngine_place()" << endl;
-
-    HTRY
-    METHOD_HEAD("EtesianEngine.place()")
-    unsigned int flags = 0;
-    if (PyArg_ParseTuple(args,"I:EtesianEngine.place", &flags)) {
-      etesian->place( flags );
-    } else {
-      PyErr_SetString(ConstructorError, "EtesianEngine.place(): Invalid number/bad type of parameter.");
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
   // Standart Accessors (Attributes).
+  DirectVoidMethod(EtesianEngine,etesian,place)
+
   // DirectVoidMethod(EtesianEngine,etesian,runNegociate)
   // DirectVoidMethod(EtesianEngine,etesian,printConfiguration)
   // DirectVoidMethod(EtesianEngine,etesian,saveGlobalSolution)
@@ -135,11 +117,11 @@ extern "C" {
 
   PyMethodDef PyEtesianEngine_Methods[] =
     { { "get"               , (PyCFunction)PyEtesianEngine_get               , METH_VARARGS|METH_STATIC
-                            , "Returns the Etesian engine attached to the Cell, None if there isnt't." }
+                            , "Returns the Etesian engine attached to the Cell, None if there isn't." }
     , { "create"            , (PyCFunction)PyEtesianEngine_create            , METH_VARARGS|METH_STATIC
-                            , "Create a Etesian engine on this cell." }
-    , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_VARARGS
-                            , "Run the global router (Knik)." }
+                            , "Create an Etesian engine on this cell." }
+    , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS
+                            , "Run the placer (Etesian)." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
                             , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */
@@ -165,9 +147,8 @@ extern "C" {
 
   extern void  PyEtesianEngine_postModuleInit ()
   {
-    PyObject* constant;
-
-    LoadObjectConstant(PyTypeEtesianEngine.tp_dict,EtesianEngine::SlowMotion,"SlowMotion");
+    //PyObject* constant;
+    //LoadObjectConstant(PyTypeEtesianEngine.tp_dict,EtesianEngine::SlowMotion,"SlowMotion");
   }
 
 

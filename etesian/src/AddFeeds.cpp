@@ -306,7 +306,7 @@ namespace Etesian {
 
   size_t  EtesianEngine::findYSpin ()
   {
-    _flags       &= ~YSpinSet;
+    _ySpinSet     = false;
     _yspinSlice0  = 0;
 
     Box topCellAb = getCell()->getAbutmentBox();
@@ -324,7 +324,7 @@ namespace Etesian {
   
         if (not topCellAb.contains(instanceAb)) continue;
   
-        _flags |= YSpinSet;
+        _ySpinSet = true;
   
         int islice = (instanceAb.getYMin() - getCell()->getAbutmentBox().getYMin()) / getSliceHeight();
   
@@ -345,11 +345,11 @@ namespace Etesian {
                            , getString(instance->getName()).c_str()
                            , getString(instanceTransf.getOrientation()).c_str()
                            ) << endl;
-            _flags &= ~YSpinSet;
+            _ySpinSet = false;
             break;
         }
 
-        if (_flags & YSpinSet) break;
+        if (_ySpinSet) break;
       }
     }
   

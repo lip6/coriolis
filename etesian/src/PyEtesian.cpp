@@ -88,8 +88,6 @@ extern "C" {
     PyModule_AddObject( module, "GraphicEtesianEngine", (PyObject*)&PyTypeGraphicEtesianEngine );
 
     PyEtesianEngine_postModuleInit();
-
-  //cerr << "std::string typeid name:" << typeid(string).name() << endl;
   }
 
   

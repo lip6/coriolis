@@ -52,19 +52,13 @@ namespace Etesian {
 // -------------------------------------------------------------------
 // Class  :  "Etesian::Configuration".
 
-
-  Configuration::Configuration () { }
-  Configuration::~Configuration () { }
-
-
-// -------------------------------------------------------------------
-// Class  :  "Etesian::ConfigurationConcrete".
-
-
-  ConfigurationConcrete::ConfigurationConcrete ( const CellGauge* cg )
-    : Configuration()
-    , _cg          (NULL)
-    , _flags       (0)
+  Configuration::Configuration ( const CellGauge* cg )
+    : _cg           ( NULL )
+    , _placeEffort  ( static_cast<Effort>        (Cfg::getParamEnumerate ("etesian.effort"        , Standard   )->asInt()) )
+    , _updateConf   ( static_cast<GraphicUpdate> (Cfg::getParamEnumerate ("etesian.graphics"      , LowerBound )->asInt()) )
+    , _spreadingConf(                             Cfg::getParamBool      ("etesian.uniformDensity", false      )->asBool()?ForceUniform:MaxDensity )
+    , _spaceMargin  (                             Cfg::getParamPercentage("etesian.spaceMargin"   ,  5.0)->asDouble() )
+    , _aspectRatio  (                             Cfg::getParamPercentage("etesian.aspectRatio"   ,100.0)->asDouble() )
   {
     if ( cg == NULL ) cg = AllianceFramework::get()->getCellGauge();
 
@@ -72,41 +66,45 @@ namespace Etesian {
   }
 
 
-  ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
-    : Configuration()
-    , _cg          (NULL)
-    , _flags       (other._flags)
+  Configuration::Configuration ( const Configuration& other )
+    : _cg           (NULL)
+    , _placeEffort  ( other._placeEffort   )
+    , _updateConf   ( other._updateConf    )
+    , _spreadingConf( other._spreadingConf )
+    , _spaceMargin  ( other._spaceMargin   )
+    , _aspectRatio  ( other._aspectRatio   )
   {
     if ( other._cg ) _cg = other._cg->getClone();
   }
 
 
-  ConfigurationConcrete::~ConfigurationConcrete ()
+  Configuration::~Configuration ()
   {
     ltrace(89) << "About to delete attribute _cg (CellGauge)." << endl;
     _cg->destroy ();
   }
 
 
-  ConfigurationConcrete* ConfigurationConcrete::clone        () const { return new ConfigurationConcrete(*this); }
-  CellGauge*             ConfigurationConcrete::getCellGauge () const { return _cg; }
-  bool                   ConfigurationConcrete::isSlowMotion () const { return _flags & EtesianEngine::SlowMotion; }
-  void                   ConfigurationConcrete::setFlags     ( unsigned int flags ) { _flags |=  flags; }
-  void                   ConfigurationConcrete::unsetFlags   ( unsigned int flags ) { _flags &= ~flags; }
+  Configuration* Configuration::clone () const { return new Configuration(*this); }
 
 
-  void  ConfigurationConcrete::print ( Cell* cell ) const
+  void  Configuration::print ( Cell* cell ) const
   {
     cout << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asIdentifier("     - Cell Gauge",getString(_cg->getName())) << endl;
+    cout << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cg->getName())) << endl;
+    cout << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
+    cout << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
+    cout << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
+    cout << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
+    cout << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
   }
 
 
-  string  ConfigurationConcrete::_getTypeName () const
-  { return "ConfigurationConcrete"; }
+  string  Configuration::_getTypeName () const
+  { return "Configuration"; }
 
 
-  string  ConfigurationConcrete::_getString () const
+  string  Configuration::_getString () const
   {
     ostringstream  os;
 
@@ -116,12 +114,16 @@ namespace Etesian {
   }
 
 
-  Record* ConfigurationConcrete::_getRecord () const
+  Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot           ( "_cg"              ,  _cg              ) );
-                                     
-    return ( record );
+    record->add ( getSlot( "_cg"              ,       _cg            ) );
+    record->add ( getSlot( "_placeEffort"     ,  (int)_placeEffort   ) );
+    record->add ( getSlot( "_updateConf"      ,  (int)_updateConf    ) );
+    record->add ( getSlot( "_spreadingConf"   ,  (int)_spreadingConf ) );
+    record->add ( getSlot( "_spaceMargin"     ,       _spaceMargin   ) );
+    record->add ( getSlot( "_aspectRatio"     ,       _aspectRatio   ) );
+    return record;
   }
 
 

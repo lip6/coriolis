@@ -94,8 +94,8 @@ def ScriptMain ( **kw ):
     cellGauge = framework.getCellGauge()
 
     if cell.getAbutmentBox().isEmpty():
-      spaceMargin = Cfg.getParamPercentage('nimbus.spaceMargin').asPercentage() / 100.0 + 0.02
-      aspectRatio = Cfg.getParamPercentage('nimbus.aspectRatio').asPercentage() / 100.0
+      spaceMargin = Cfg.getParamPercentage('etesian.spaceMargin').asPercentage() / 100.0 + 0.02
+      aspectRatio = Cfg.getParamPercentage('etesian.aspectRatio').asPercentage() / 100.0
       clocktree.ClockTree.computeAbutmentBox( cell, spaceMargin, aspectRatio, cellGauge )
       if editor: editor.fit()
 
@@ -109,7 +109,7 @@ def ScriptMain ( **kw ):
       mauka.destroy()
     else:
       etesian = Etesian.EtesianEngine.create( cell )
-      etesian.place( Etesian.EtesianEngine.SlowMotion )
+      etesian.place()
       etesian.destroy()
 
     ht.connectLeaf()

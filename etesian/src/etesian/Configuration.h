@@ -40,68 +40,62 @@ namespace Etesian {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Etesian::Configuration" (decorator).
+// Class  :  "Etesian::Configuration".
 
+  enum Effort        { Fast    =1
+                     , Standard=2
+                     , High    =3
+                     , Extreme =4
+                     };
+  enum GraphicUpdate { UpdateAll =1 
+                     , LowerBound=2 
+                     , FinalOnly =3 
+                     };
+  enum Density       { ForceUniform=1
+                     , MaxDensity  =2
+                     };
 
   class Configuration {
     public:
     // Constructor & Destructor.
-      virtual                   ~Configuration      ();
-      virtual Configuration*     clone              () const = 0;
-    // Methods.                                     
-      virtual CellGauge*         getCellGauge       () const = 0;
-      virtual bool               isSlowMotion       () const = 0;
-      virtual void               setFlags           ( unsigned int ) = 0;
-      virtual void               unsetFlags         ( unsigned int ) = 0;
-      virtual void               print              ( Cell* ) const = 0;
-      virtual Record*            _getRecord         () const = 0;
-      virtual string             _getString         () const = 0;
-      virtual string             _getTypeName       () const = 0;
-    protected:
-                                 Configuration      ();
-    private:
-                                 Configuration      ( const Configuration& );
-              Configuration&     operator=          ( const Configuration& );
-    private:
-      static  Configuration*     _default;
-  };
-
-
-// -------------------------------------------------------------------
-// Class  :  "Etesian::ConfigurationConcrete".
-
-
-  class ConfigurationConcrete : public Configuration {
-      friend class Configuration;
-    public:
-    // Constructor & Destructor.
-                                     ConfigurationConcrete ( const CellGauge* cg=NULL );
-      virtual                       ~ConfigurationConcrete ();
-      virtual ConfigurationConcrete* clone                 () const;
+                              Configuration    ( const CellGauge* cg=NULL );
+                             ~Configuration    ();
+             Configuration*   clone            () const;
     // Methods.
-      virtual CellGauge*             getCellGauge          () const;
-      virtual bool                   isSlowMotion          () const;
-      virtual void                   setFlags              ( unsigned int );
-      virtual void                   unsetFlags            ( unsigned int );
-      virtual void                   print                 ( Cell* ) const;
-      virtual Record*                _getRecord            () const;
-      virtual string                 _getString            () const;
-      virtual string                 _getTypeName          () const;
+      inline CellGauge*       getCellGauge     () const;
+      inline Effort           getPlaceEffort   () const;
+      inline GraphicUpdate    getUpdateConf    () const;
+      inline Density          getSpreadingConf () const;
+      inline double           getSpaceMargin   () const;
+      inline double           getAspectRatio   () const;
+             void             print            ( Cell* ) const;
+             Record*          _getRecord       () const;
+             string           _getString       () const;
+             string           _getTypeName     () const;
     protected:
     // Attributes.
-      CellGauge*    _cg;
-      unsigned int  _flags;
+      CellGauge*     _cg;
+      Effort         _placeEffort;
+      GraphicUpdate  _updateConf;
+      Density        _spreadingConf;
+      double         _spaceMargin;
+      double         _aspectRatio;
     private:
-                             ConfigurationConcrete ( const ConfigurationConcrete& );
-      ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );
+                             Configuration ( const Configuration& );
+      Configuration& operator=             ( const Configuration& );
   };
+
+
+  inline CellGauge*    Configuration::getCellGauge     () const { return _cg; }
+  inline Effort        Configuration::getPlaceEffort   () const { return _placeEffort; }
+  inline GraphicUpdate Configuration::getUpdateConf    () const { return _updateConf; }
+  inline Density       Configuration::getSpreadingConf () const { return _spreadingConf; }
+  inline double        Configuration::getSpaceMargin   () const { return _spaceMargin; }
+  inline double        Configuration::getAspectRatio   () const { return _aspectRatio; }
 
 
 } // Etesian namespace.
 
-
 INSPECTOR_P_SUPPORT(Etesian::Configuration);
-INSPECTOR_P_SUPPORT(Etesian::ConfigurationConcrete);
-
 
 #endif  // ETESIAN_CONFIGURATION_H

@@ -99,7 +99,6 @@ namespace Etesian {
     _viewer->clearToolInterrupt();
 
     EtesianEngine* etesian = getForFramework( CreateEngine );
-    etesian->getConfiguration()->setFlags( EtesianEngine::SlowMotion );
     etesian->resetPlacement();
     etesian->place();
   }
