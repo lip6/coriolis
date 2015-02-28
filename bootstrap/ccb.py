@@ -68,6 +68,8 @@ def guessOs ():
     osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
     osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
     osSLSoC5x         = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
+    osFedora_64       = re.compile (".*Linux.*fc.*x86_64.*")
+    osFedora          = re.compile (".*Linux.*fc.*")
     osLinux_64        = re.compile (".*Linux.*x86_64.*")
     osLinux           = re.compile (".*Linux.*")
     osFreeBSD8x_amd64 = re.compile (".*FreeBSD 8.*amd64.*")
@@ -95,6 +97,11 @@ def guessOs ():
         libDir = "lib64"
     elif osSLSoC5x .match(lines[0]):
         osType = "Linux.SLSoC5x"
+    elif osFedora_64.match(lines[0]):
+        osType = "Linux.fc_64"
+        libDir = "lib64"
+    elif osFedora .match(lines[0]):
+        osType = "Linux.fc"
     elif osLinux_64.match(lines[0]):
         osType = "Linux.x86_64"
         libDir = "lib64"

@@ -126,6 +126,8 @@ class Configuration ( object ):
         self._osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
         self._osSLSoC5x_64      = re.compile (".*Linux.*el5.*x86_64.*")
         self._osSLSoC5x         = re.compile (".*Linux.*(el5|2.6.23.13.*SoC).*")
+        self._osFedora_64       = re.compile (".*Linux.*fc.*x86_64.*")
+        self._osFedora          = re.compile (".*Linux.*fc.*")
         self._osLinux_64        = re.compile (".*Linux.*x86_64.*")
         self._osLinux           = re.compile (".*Linux.*")
         self._osFreeBSD8x_amd64 = re.compile (".*FreeBSD 8.*amd64.*")
@@ -151,6 +153,10 @@ class Configuration ( object ):
             self._osType    = "Linux.SLSoC5x_64"
             self._libSuffix = "64"
         elif self._osSLSoC5x   .match(lines[0]): self._osType = "Linux.SLSoC5x"
+        elif self._osFedora_64 .match(lines[0]):
+            self._osType    = "Linux.fc_64"
+            self._libSuffix = "64"
+        elif self._osFedora    .match(lines[0]): self._osType = "Linux.fc"
         elif self._osLinux_64  .match(lines[0]):
             self._osType    = "Linux.x86_64"
             self._libSuffix = "64"
