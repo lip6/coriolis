@@ -11,7 +11,6 @@
  find_package(Coloquinte REQUIRED)
  find_package(Bootstrap  REQUIRED)
  setup_project_paths(CORIOLIS)
- setup_project_paths(IMPORTEDS)
  setup_qt()
  
  set_cmake_policies()
