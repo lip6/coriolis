@@ -359,6 +359,11 @@ namespace Etesian {
 
   void  EtesianEngine::addFeeds ()
   {
+    if (not getFeedCells().feedNumbers()) {
+      cerr << Warning( "No feed cells available, skipping." ) << endl;
+      return;
+    }
+
     UpdateSession::open();
 
     SliceHoles sliceHoles ( this );

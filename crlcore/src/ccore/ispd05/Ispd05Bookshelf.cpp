@@ -73,8 +73,8 @@ namespace {
     Cell* master = af->createCell( node->getName() );
     Box  abutmentBox( DbU::fromLambda( 0.0 )
                     , DbU::fromLambda( 0.0 )
-                    , DbU::fromLambda( node->getWidth ()*pitch )
-                    , DbU::fromLambda( node->getHeight()*pitch )
+                    , node->getWidth ()*pitch
+                    , node->getHeight()*pitch
                     );
     master->setAbutmentBox( abutmentBox );
     Point cellCenter = abutmentBox.getCenter();
@@ -83,8 +83,8 @@ namespace {
 
     for ( auto ipin : node->getPins() ) {
       Bookshelf::Pin* pin = ipin.second;
-      Point pinCenter ( cellCenter.getX() + DbU::fromLambda(pin->getX()*pitch)
-                      , cellCenter.getY() + DbU::fromLambda(pin->getY()*pitch) );
+      Point pinCenter ( cellCenter.getX() + pin->getX()*pitch
+                      , cellCenter.getY() + pin->getY()*pitch );
       if (not abutmentBox.contains(pinCenter))
         cerr << Error( "Ispd05::load(): Pin <%s> of node <%s> is outside abutment box.\n"
                        "        (AB:[%dx%d], pin:(%d,%d))"
@@ -114,10 +114,10 @@ namespace {
 
   Transformation  toTransformation ( Bookshelf::Node* node )
   {
-    DbU::Unit x      = DbU::fromLambda( node->getX     ()*pitch );
-    DbU::Unit y      = DbU::fromLambda( node->getY     ()*pitch );
-    DbU::Unit width  = DbU::fromLambda( node->getWidth ()*pitch );
-    DbU::Unit height = DbU::fromLambda( node->getHeight()*pitch );
+    DbU::Unit x      = node->getX     ()*pitch;
+    DbU::Unit y      = node->getY     ()*pitch;
+    DbU::Unit width  = node->getWidth ()*pitch;
+    DbU::Unit height = node->getHeight()*pitch;
 
 
 	switch (node->getOrientation()) {
@@ -211,11 +211,7 @@ namespace CRL {
       double x2 = (irow->getSitewidth()*irow->getNumsites())*pitch + x1;
       double y2 = (irow->getHeight()      )*pitch + y1;
 
-      Box rowBox = Box( DbU::fromLambda(x1)
-                      , DbU::fromLambda(y1)
-                      , DbU::fromLambda(x2)
-                      , DbU::fromLambda(y2)
-                      );
+      Box rowBox = Box( x1, y1, x2, y2 );
       abutmentBox.merge( rowBox );
     }
     cell->setAbutmentBox( abutmentBox );
