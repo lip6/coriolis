@@ -232,7 +232,7 @@ void Cell::flattenNets(unsigned int flags)
       if (not duplicate) {
         hyperNets.push_back( HyperNet(*ioccurrence) );
       } else {
-        cerr << "Found " << duplicate << " in " << duplicate->getCell() << endl;
+        trace << "Found " << duplicate << " in " << duplicate->getCell() << endl;
       }
     } else {
       bool hasRoutingPads = false;

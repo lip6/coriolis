@@ -320,11 +320,13 @@ class HTree ( GaugeConfWrapper ):
     return
 
   def connectLeaf ( self ):
+    trace( 550, '\tConnecting leafs.\n' )
     UpdateSession.open()
     
     leafsByBuffer    = {}
     hyperMasterClock = HyperNet.create( Occurrence(self.masterClock) )
     for plugOccurrence in hyperMasterClock.getLeafPlugOccurrences():
+      trace( 550, '\tAdding leaf <%s>.\n' % plugOccurrence )
       position   = plugOccurrence.getBoundingBox().getCenter()
       self.addLeaf( position, plugOccurrence )
 
@@ -515,12 +517,12 @@ class HTreeNode ( object ):
     trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
     leftContact        = self.topTree.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
     rightContact       = self.topTree.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
-    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() )
-    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY() )
-    self.topTree.createVertical  ( leftContact       , blContact        , leftContact.getX()   )
-    self.topTree.createVertical  ( tlContact         , leftContact      , leftContact.getX()   )
-    self.topTree.createVertical  ( rightContact      , brContact        , rightContact.getX()  )
-    self.topTree.createVertical  ( trContact         , rightContact     , rightContact.getX()  )
+    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() , GaugeConf.ExpandWidth )
+    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY(), GaugeConf.ExpandWidth )
+    self.topTree.createVertical  ( leftContact       , blContact        , leftContact.getX()       , GaugeConf.ExpandWidth )
+    self.topTree.createVertical  ( tlContact         , leftContact      , leftContact.getX()       , GaugeConf.ExpandWidth )
+    self.topTree.createVertical  ( rightContact      , brContact        , rightContact.getX()      , GaugeConf.ExpandWidth )
+    self.topTree.createVertical  ( trContact         , rightContact     , rightContact.getX()      , GaugeConf.ExpandWidth )
 
     for child in self.childs: child.route()
     return

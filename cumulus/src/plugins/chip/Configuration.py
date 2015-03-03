@@ -111,11 +111,13 @@ def destroyNetComponents ( net ):
 
 class GaugeConf ( object ):
 
-    HAccess       = 0x0001
-    OffsetRight1  = 0x0002
-    OffsetTop1    = 0x0004
-    OffsetBottom1 = 0x0008
-    DeepDepth     = 0x0010
+    HAccess         = 0x0001
+    OffsetRight1    = 0x0002
+    OffsetTop1      = 0x0004
+    OffsetBottom1   = 0x0008
+    DeepDepth       = 0x0010
+    UseContactWidth = 0x0020
+    ExpandWidth     = 0x0040
 
     def __init__ ( self ):
       self._cellGauge     = None
@@ -177,12 +179,13 @@ class GaugeConf ( object ):
       if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
       else:                           depth = self._horizontalDepth
 
-      segment = Horizontal.create( source
-                                 , target
-                                 , self._routingGauge.getRoutingLayer(depth)
-                                 , y
-                                 , self._routingGauge.getLayerGauge(depth).getWireWidth()
-                                 )
+      layer = self._routingGauge.getRoutingLayer(depth)
+
+      if flags & GaugeConf.UseContactWidth: width  = source.getBoundingBox(layer.getBasicLayer()).getHeight()
+      else:                                 width  = self._routingGauge.getLayerGauge(depth).getWireWidth()
+      if flags & GaugeConf.ExpandWidth:     width += DbU.fromLambda( 1.0 )
+
+      segment = Horizontal.create( source, target, layer, y, width )
       trace( 550, segment )
       return segment
   
@@ -190,12 +193,13 @@ class GaugeConf ( object ):
       if flags & GaugeConf.DeepDepth: depth = self._verticalDeepDepth
       else:                           depth = self._verticalDepth
 
-      segment = Vertical.create( source
-                               , target
-                               , self._routingGauge.getRoutingLayer(depth)
-                               , x
-                               , self._routingGauge.getLayerGauge(depth).getWireWidth()
-                               )
+      layer = self._routingGauge.getRoutingLayer(depth)
+
+      if flags & GaugeConf.UseContactWidth: width  = source.getBoundingBox(layer.getBasicLayer()).getWidth()
+      else:                                 width  = self._routingGauge.getLayerGauge(depth).getWireWidth()
+      if flags & GaugeConf.ExpandWidth:     width += DbU.fromLambda( 1.0 )
+
+      segment = Vertical.create( source, target, layer, x, width )
       trace( 550, segment )
       return segment
   

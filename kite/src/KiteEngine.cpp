@@ -278,7 +278,8 @@ namespace Kite {
     if (not _knik) {
       unsigned int  flags = Cell::WarnOnUnplacedInstances;
       flags |= (mode & KtBuildGlobalRouting) ? Cell::BuildRings : 0;
-      if (not cell->isFlattenedNets()) cell->flattenNets( flags );
+    //if (not cell->isFlattenedNets()) cell->flattenNets( flags );
+      cell->flattenNets( flags );
 
     // Test signals from <snx2013>.
     //DebugSession::addToTrace( getCell(), "core.snx_inst.a2_x2_8_sig" );

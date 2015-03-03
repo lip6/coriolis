@@ -175,6 +175,8 @@ namespace {
   {
     if (_topCell == NULL) return;
 
+    cmess1 << "  o  Looking for powers/grounds & clocks." << endl;
+
     AllianceFramework* af = AllianceFramework::get();
 
     bool hasPad = false;
@@ -255,9 +257,33 @@ namespace {
       _ckoPadNetName  = "";
 
       forEach ( Net*, inet, _topCell->getNets() ) {
+        Net::Type netType = inet->getType();
+
+        if (netType == Net::Type::CLOCK) {
+          if (not inet->isExternal()) continue;
+
+          if (_ckoPadNetName.isEmpty()) {
+            cmess1 << "     - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
+            _ckoPadNetName =  inet->getName();
+            _cko           = *inet;
+            if (NetRoutingExtension::isMixedPreRoute(*inet)) {
+              cmess1 << "       (core clock net is already routed)" << endl;
+              _flags |= ClockIsRouted;
+            } else {
+              cmess1 << "       (core clock net will be routed as an ordinary signal)" << endl;
+            }
+          } else {
+            cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
+                          "        (will consider only <%s>)"
+                         , getString(inet ->getName()).c_str()
+                         , getString(_cko->getName()).c_str()
+                         ) << endl;
+            cerr << inet->isExternal() << endl;
+          }
+        }
+
         if (NetRoutingExtension::isManualGlobalRoute(*inet)) continue;
 
-        Net::Type netType = inet->getType();
         if (netType == Net::Type::POWER) {
           if (_vddiPadNetName.isEmpty()) {
             _vddiPadNetName =  inet->getName();
@@ -280,26 +306,6 @@ namespace {
                           "        (will consider only <%s>)"
                          , getString(inet ->getName()).c_str()
                          , getString(_vssi->getName()).c_str()
-                         ) << endl;
-          }
-        }
-
-        if (netType == Net::Type::CLOCK) {
-          if (_ckoPadNetName.isEmpty()) {
-            cmess1 << "        - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
-            _ckoPadNetName =  inet->getName();
-            _cko           = *inet;
-            if (NetRoutingExtension::isMixedPreRoute(*inet)) {
-              cmess1 << "          (core clock net is already routed)" << endl;
-              _flags |= ClockIsRouted;
-            } else {
-              cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
-            }
-          } else {
-            cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
-                          "        (will consider only <%s>)"
-                         , getString(inet ->getName()).c_str()
-                         , getString(_cko->getName()).c_str()
                          ) << endl;
           }
         }
