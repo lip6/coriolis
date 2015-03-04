@@ -701,11 +701,12 @@ namespace Etesian {
         if(placementUpdate <= LowerBound)
             _updatePlacement( _placementLB );
 
-        // Create a legalizer and bipartition it until we have sufficient precision
+      // Create a legalizer and bipartition it until we have sufficient precision
         auto legalizer = densityConf == ForceUniform ?
             region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB)
           : region_distribution::full_density_distribution(_surface, _circuit, _placementLB);
-        for ( int quad_part=0 ; _circuit.cell_cnt() > 10 * (1 << (quad_part*2)) ; ++quad_part ) { // Until there is about 10 standard cells per region
+      // Until there is about 10 standard cells per region
+        for ( int quad_part=0 ; _circuit.cell_cnt() > (index_t)(10 * (1 << (quad_part*2))) ; ++quad_part ) {
             legalizer.x_bipartition();
             legalizer.y_bipartition();
             legalizer.redo_line_partitions();
@@ -794,9 +795,9 @@ namespace Etesian {
     stopMeasures();
     printMeasures( "total" );
     cmess1 << ::Dots::asString
-      ("     - HPWL", DbU::getValueString(get_HPWL_wirelength(_circuit,_placementUB )*getPitch()) ) << endl;
+      ( "     - HPWL", DbU::getValueString( (DbU::Unit)get_HPWL_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
     cmess1 << ::Dots::asString
-      ("     - RMST", DbU::getValueString(get_RSMT_wirelength(_circuit,_placementUB )*getPitch()) ) << endl;
+      ( "     - RMST", DbU::getValueString( (DbU::Unit)get_RSMT_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
 
     _placed = false;
 #else
@@ -819,8 +820,8 @@ namespace Etesian {
     elapsed << "  dTime:" << setw(5) << (time(NULL) - startTime) << "s ";
 
     cmess2 << label << elapsed.str()
-           << " HPWL:" << coloquinte::gp::get_HPWL_wirelength      ( _circuit, _placementUB )
-           << " RMST:" << coloquinte::gp::get_RSMT_wirelength      ( _circuit, _placementUB )
+           << " HPWL:" << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementUB )
+           << " RMST:" << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementUB )
            << "\n" << indent
            <<  "  Linear Disrupt.:" << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
            <<   " Quad Disrupt.:"   << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
