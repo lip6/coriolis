@@ -27,6 +27,8 @@
 .. |FC13|                           replace:: :sc:`fc13`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
+.. |LEMON|                          replace:: :sc:`lemon`
+.. |Coin-Or|                        replace:: :sc:`coin-or`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -89,13 +91,43 @@
 .. |rpm|                            replace:: :cb:`rpm`
 .. |gdb|                            replace:: :cb:`gdb`
 
+.. |KeyUp|                          replace:: :fboxtt:`Up`
+.. |KeyDown|                        replace:: :fboxtt:`Down`
+.. |KeyLeft|                        replace:: :fboxtt:`Left`
+.. |KeyRight|                       replace:: :fboxtt:`Right`
+.. |KeyF|                           replace:: :fboxtt:`f`
+.. |KeyL|                           replace:: :fboxtt:`l`
+.. |KeyG|                           replace:: :fboxtt:`g`
+.. |KeyZ|                           replace:: :fboxtt:`z`
+.. |KeyM|                           replace:: :fboxtt:`m`
+.. |KeyI|                           replace:: :fboxtt:`i`
+.. |KeyK|                           replace:: :fboxtt:`k`
+.. |KeyP|                           replace:: :fboxtt:`p`
+.. |KeyO|                           replace:: :fboxtt:`o`
+.. |KeyW|                           replace:: :fboxtt:`w`
+.. |KeyQ|                           replace:: :fboxtt:`q`
+.. |KeyCapK|                        replace:: :fboxtt:`K`
+.. |KeyCapS|                        replace:: :fboxtt:`S`
+.. |Plus|                           replace:: :fboxtt:`+`
+.. |KeyESC|                         replace:: :fboxtt:`ESC`
+.. |CTRL|                           replace:: :fboxtt:`CTRL`
 .. |CTRL_L|                         replace:: :fboxtt:`CTRL+L`
+.. |CTRL_I|                         replace:: :fboxtt:`CTRL+I`
+.. |CTRL_P|                         replace:: :fboxtt:`CTRL+P`
+.. |CTRL_O|                         replace:: :fboxtt:`CTRL+O`
+.. |CTRL_W|                         replace:: :fboxtt:`CTRL+W`
+.. |CTRL_Q|                         replace:: :fboxtt:`CTRL+Q`
+.. |CTRL_Down|                      replace:: :fboxtt:`CTRL+Down`
+.. |CTRL_Up|                        replace:: :fboxtt:`CTRL+Up`
+.. |CTRL_Left|                      replace:: :fboxtt:`CTRL+Left`
+.. |CTRL_Right|                     replace:: :fboxtt:`CTRL+Right`
 
 .. URLs
-.. _FGR:         http://vlsicad.eecs.umich.edu/BK/FGR/
-.. _Box Router:  http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm
-.. _hMETIS:      http://glaros.dtc.umn.edu/gkhome/views/metis
-.. _Knik Thesis: http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
+.. _FGR:          http://vlsicad.eecs.umich.edu/BK/FGR/
+.. _Box Router:   http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm
+.. _hMETIS:       http://glaros.dtc.umn.edu/gkhome/views/metis
+.. _Knik Thesis:  http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
+.. _Coin Or Home: http://www.coin-or.org/index.html
 
 .. _coriolis2-1.0.2049-1.slsoc6.i686.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.i686.rpm
 .. _coriolis2-1.0.2049-1.slsoc6.x86_64.rpm:  http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.x86_64.rpm
@@ -274,8 +306,8 @@ Release `2049` is Alpha.
 #. The |cgt| main has been rewritten in Python. 
 
 
-Release **v2.0.1**
-~~~~~~~~~~~~~~~~~~
+Release v2.0.1
+~~~~~~~~~~~~~~
 
 #. Migrated the repository from |svn| to |git|, and release complete sources.
    As a consequence, we drop the distribution packaging support and give
@@ -284,7 +316,7 @@ Release **v2.0.1**
    achieve a speedup factor greater than 20...
 
 
-Release **v3.0**
+**Release v2.1**
 ~~~~~~~~~~~~~~~~
 
 #. Replace the old simulated annealing placer |Mauka| by an analytic placer
@@ -325,6 +357,17 @@ Main building prerequisites:
 * latex
 * latex2html.
 * python-docutils (for reStructuredText).
+* |Coloquinte| (https://github.com/Coloquinte/Coloquinte.git).
+
+|Coloquinte| requires the |LEMON| component from |Coin-Or| (`Coin Or Home`_).
+A repository of |Coin-Or| packages backported from |Fedora| 21 is available here:
+
+* |SL6|: `ftp://pub/linux/distributions/slsoc/slsoc/soc/addons/i386/RPMS <http://ftp.lip6.fr/pub/linux/distributions/slsoc/slsoc/soc/addons/i386/repoview>`_
+* |SL7|: `ftp://pub/linux/distributions/slsoc/soc/7/addons/x86_64/RPMS   <http://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview>`_
+
+For other distributions, refer to their own packaging system.
+
+|newpage|
 
 
 Fixed Directory Tree
@@ -378,6 +421,8 @@ automatically created either by |ccb| or the build system.
    ``Static`` do not work because I don't know yet to mix statically linked binaries
    and Python modules (which must be dynamic).
 
+|newpage|
+
 
 Building Coriolis
 ~~~~~~~~~~~~~~~~~
@@ -394,9 +439,11 @@ The first step is to create the source directory and pull the |git| repository: 
 
 Second and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
+                                       --project=coriolis \
                                        --make="-j4 install"
-   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis --doc --make="-j1 install"
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+                                       --doc --make="-j1 install"
 
 We need two steps because the documentation do not support to be generated with
 a parallel build. So we compile & install in a first step in ``-j4`` (or whatever)
@@ -404,7 +451,8 @@ then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
+                                       --project=coriolis \
                                        --devtoolset-2 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
@@ -426,7 +474,8 @@ In the |Coriolis| |git| repository, two branches are present:
   command just after the first step: ::
 
       dummy@lepka:~$ git checkout devel
-      dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds --project=coriolis \
+      dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
+                                          --project=coriolis \
                                           --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce
@@ -436,6 +485,8 @@ In the |Coriolis| |git| repository, two branches are present:
   command to run |gdb| on it is: ::
 
       dummy@lepka:work$ gdb python core.XXXX 
+
+|newpage|
 
 
 Additionnal Requirement under |MacOS|
@@ -614,6 +665,8 @@ simple assembly of tuples. The helpers are installed under the directory: ::
     <install>/etc/coriolis2/
 
 Where :cb:`<install>/` is the root of the installation.
+
+|newpage|
 
 
 .. _Alliance Helper:
@@ -909,20 +962,88 @@ Etesian -- Placer
 ~~~~~~~~~~~~~~~~~
 
 The |Etesian| placer is a state of the art (as of 2015) analytical placer. This |Coriolis|
-tool is really an encapsulation of |Coloquinte| which *is* the placer. |Coloquinte|
-is provided a separate library, see the building instructions.
+tool is actually an encapsulation of |Coloquinte| which *is* the placer. |Coloquinte|
+is provided as a separate library, see the building instructions.
 
-.. note:: *Instance Duplication Problem:* a same logical instance cannot have
+.. note:: *Instance Uniquification Unsupported:* a same logical instance cannot have
    two different placements. So, either you manually make a clone of it or you
-   supply a placement for it. This is currently a drawback of our *folded hierarchy*
-   approach.
+   supply a placement for it. We need to implement uniquification in the
+   |Hurricane| database.
 
+
+|noindent|
+**Hierarchical Placement**
+
+The placement area is defined by the top cell abutment box.
+
+When placing a complete hierarchy, the abutment boxes of the cells (models) other than
+the top cell are sets identical to the one of the top cell and their instances are
+all placed at position ``(0,0,ID)``. That is, all the abutments boxes, whatever the
+hierarchical level, defines the same area (they are exactly superposed).
+
+We choose this scheme because the placer will see all the instances as virtually
+flattened, so they can be placed anywhere inside the top-cell abutment box.
+
+|Etesian-1|
+
+
+|noindent|
+**Computing the Placement Area**
+
+The placement area is computed using the ``etesian.aspectRatio`` and ``etesian.spaceMargin``
+parameters only if the top-cell has an empty abutment box. If the top-cell abutment
+box has to be set, then it is propagated to all the instances models recursively.
+
+
+|noindent|
 **Reseting the Placement**
 
 Once a placement has been done, the placer cannot reset it (will be implemented
 later). To perform a new placement, you must restart |cgt|. In addition, if you
 have saved the placement on disk, you must erase any :cb:`.ap` file, which are
 automatically reloaded along with the netlist (:cb:`.vst`).
+
+|newpage|
+
+
+Etesian Configuration Parameters
+--------------------------------
+
++-----------------------------------+------------------+----------------------------+
+| Parameter Identifier              |   Type           |  Default                   |
++===================================+==================+============================+
+| **Etesian Parameters**                                                            |
++-----------------------------------+------------------+----------------------------+
+|``etesian.aspectRatio``            | TypePercentage   | :cb:`100`                  |
+|                                   +------------------+----------------------------+
+|                                   | Define the height on width ``H/W`` aspect     |
+|                                   | ratio, can be comprised between 10 and 1000   |
++-----------------------------------+------------------+----------------------------+
+|``etesian.spaceMargin``            | TypePercentage   | :cb:`5`                    |
+|                                   +------------------+----------------------------+
+|                                   | The extra white space added to the total area |
+|                                   | of the standard cells                         |
++-----------------------------------+------------------+----------------------------+
+|``etesian.uniformDensity``         | TypeBool         | :cb:`False`                |
+|                                   +------------------+----------------------------+
+|                                   | Whether the cells will be spread envenly      |
+|                                   | across the area or allowed to form denser     |
+|                                   | clusters                                      |
++-----------------------------------+------------------+----------------------------+
+|``etesian.effort``                 | TypeInt          | :cb:`2`                    |
+|                                   +------------------+----------------------------+
+|                                   | Sets the balance between the speed of the     |
+|                                   | placer and the solution quality               |
++-----------------------------------+------------------+----------------------------+
+|``etesian.graphics``               | TypeInt          | :cb:`2`                    |
+|                                   +------------------+----------------------------+
+|                                   | How often the display will be refreshed, more |
+|                                   | refreshing slows the placer.                  |
+|                                   |                                               |
+|                                   | * ``1`` show both upper and lower bounds      |
+|                                   | * ``2`` show only lower bound                 |
+|                                   | * ``3`` Don't show anything                   |
++-----------------------------------+-----------------------------------------------+
 
 
 Knik -- Global Router
@@ -975,8 +1096,6 @@ saturated area and increased wirelength. This is the saturation of the
 *global* router |Knik|, and you may increase/decrease by steps of ``5%``,
 which represent one track. The maximum capacity of the |SxLib| gauge is
 10 tracks in two layers, that makes 20 tracks by |Knik| edge.
-
-|newpage|
 
 Routing a design is done in four ordered steps:
 
@@ -1125,7 +1244,7 @@ Printing & Snapshots
 ~~~~~~~~~~~~~~~~~~~~
 
 Printing or saving into a |pdf| is fairly simple, just uses the **File -> Print**
-menu or the |Key_CTRL| |Plus| |Key_p| shortcut to open the dialog box.
+menu or the |CTRL_P| shortcut to open the dialog box.
 
 The print functionality uses exactly the same rendering mechanism as for the
 screen, beeing almost *WYSIWYG*. Thus, to obtain the best results it is advisable
@@ -1162,22 +1281,21 @@ The main application binary is |cgt|.
 +---------------+-------------------+-----------------------------------------------------------+
 | Category      | Keys              | Action                                                    |
 +===============+===================+===========================================================+
-| **Moves**     | | |Key_Up|,       | Shift the view in the according direction                 |
-|               |   |Key_Down|      |                                                           |
-|               | | |Key_Left|,     |                                                           |
-|               |   |Key_Right|     |                                                           |
+| **Moves**     | | |KeyUp|,        | Shift the view in the according direction                 |
+|               |   |KeyDown|       |                                                           |
+|               | | |KeyLeft|,      |                                                           |
+|               |   |KeyRight|      |                                                           |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Fit**       |   |Key_f|         | Fit to the Cell abutment box                              |
+| **Fit**       |   |KeyF|          | Fit to the Cell abutment box                              |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Refresh**   |   |Key_CTRL|      | Triggers a complete display redraw                        |
-|               |   |Plus| |Key_l|  |                                                           |
+| **Refresh**   |   |CTRL_L|        | Triggers a complete display redraw                        |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Goto**      |   |Key_g|         | *apperture* is the minimum side of the area               |
+| **Goto**      |   |KeyG|          | *apperture* is the minimum side of the area               |
 |               |                   | displayed around the point to go to. It's an              |
 |               |                   | alternative way of setting the zoom level                 |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Zoom**      |   |Key_z|,        | Respectively zoom by a 2 factor and *unzoom*              |
-|               |   |Key_m|         | by a 2 factor                                             |
+| **Zoom**      |   |KeyZ|,         | Respectively zoom by a 2 factor and *unzoom*              |
+|               |   |KeyM|          | by a 2 factor                                             |
 |               +-------------------+-----------------------------------------------------------+
 |               | | |BigMouse|      | You can perform a zoom to an area.                        |
 |               | | Area Zoom       | Define the zoom area by *holding down the left            |
@@ -1188,52 +1306,51 @@ The main application binary is |cgt|.
 |               |                   | right mouse button* while moving the mouse.               |
 |               +-------------------+-----------------------------------------------------------+
 |               | | |BigMouse|      | You can toggle the selection of one object under          |
-|               | | Toggle Selection| the mouse position by pressing |key_CTRL| and             |
+|               | | Toggle Selection| the mouse position by pressing |CTRL| and                 |
 |               |                   | pressing down *the right mouse button*. A popup           |
 |               |                   | list of what's under the position shows up into           |
 |               |                   | which you can toggle the selection state of one           |
 |               |                   | item.                                                     |
 |               +-------------------+-----------------------------------------------------------+
-|               |   |Key_S|         | Toggle  the selection visibility                          |
+|               |   |KeyCapS|       | Toggle  the selection visibility                          |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Controller**| |Key_CTRL|        | Show/hide the controller window.                          |
-|               | |Plus| |Key_i|    |                                                           |
+| **Controller**| |CTRL_I|          | Show/hide the controller window.                          |
 |               |                   |                                                           |
 |               |                   | It's the Swiss Army Knife of the viewer.                  |
 |               |                   | From it, you can fine-control the display and             |
 |               |                   | inspect almost everything in your design.                 |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Rulers**    | |Key_k|,          | One stroke on |Key_k| enters the ruler mode, in           |
-|               | |Key_ESC|         | which you can draw one ruler. You can exit the            |
-|               |                   | ruler mode by pressing |Key_ESC|. Once in ruler           |
+| **Rulers**    | |KeyK|,           | One stroke on |KeyK| enters the ruler mode, in            |
+|               | |KeyESC|          | which you can draw one ruler. You can exit the            |
+|               |                   | ruler mode by pressing |KeyESC|. Once in ruler            |
 |               |                   | mode, the first click on the *left mouse button*          |
 |               |                   | sets the ruler's starting point and the second            |
 |               |                   | click the ruler's end point. The second click             |
 |               |                   | exits automatically the ruler mode.                       |
 |               +-------------------+-----------------------------------------------------------+
-|               | |Key_K|           | Clears all the drawn rulers                               |
+|               | |KeyCapK|         | Clears all the drawn rulers                               |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Print**     | |Key_CTRL|        | Currently rather crude. It's a direct copy of             |
-|               | |Plus| |Key_p|    | what's displayed in pixels. So the resulting              |
+| **Print**     | |CTRL_P|          | Currently rather crude. It's a direct copy of             |
+|               |                   | what's displayed in pixels. So the resulting              |
 |               |                   | picture will be a little blurred due to                   |
 |               |                   | anti-aliasing mechanism.                                  |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Open/Close**| |Key_CTRL|        | Opens a new design. The design name must be               |
-|               | |Plus| |Key_o|    | given without path or extention.                          |
+| **Open/Close**| |CTRL_O|          | Opens a new design. The design name must be               |
+|               |                   | given without path or extention.                          |
 |               +-------------------+-----------------------------------------------------------+
-|               | |Key_CTRL|        | Close the current viewer window, but do not quit          |
-|               | |Plus| |Key_w|    | the application.                                          |
+|               | |CTRL_W|          | Close the current viewer window, but do not quit          |
+|               |                   | the application.                                          |
 |               +-------------------+-----------------------------------------------------------+
-|               | |Key_CTRL|        | `CTRL+Q` quit the application                             |
-|               | |Plus| |Key_q|    | (closing all windows).                                    |
+|               | |CTRL_Q|          | `CTRL+Q` quit the application                             |
+|               |                   | (closing all windows).                                    |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Hierarchy** | |Key_CTRL| |Plus| | Go one hierarchy level down. That is, if there            |
-|               | |Key_Down|        | is an *instance* under the cursor position, load          |
+| **Hierarchy** | |CTRL_Down|       | Go one hierarchy level down. That is, if there            |
+|               |                   | is an *instance* under the cursor position, load          |
 |               |                   | it's *model* Cell in place of the current one.            |
 |               +-------------------+-----------------------------------------------------------+
-|               | |Key_CTRL| |Plus| | Go one hierarchy level up. if we have entered             |
-|               | |Key_Up|          | the current model through |Key_CTRL| |Plus|               |
-|               |                   | |Key_Down|, reload the previous model (the one            |
+|               | |CTRL_Up|         | Go one hierarchy level up. if we have entered             |
+|               |                   | the current model through |CTRL_Down|                     |
+|               |                   | reload the previous model (the one                        |
 |               |                   | in which this model is instanciated).                     |
 +---------------+-------------------+-----------------------------------------------------------+
 
@@ -1347,6 +1464,9 @@ Miscellaneous Settings
 |                                       | By default, |cgt| do not dump core.           |
 |                                       | To generate one set this flag to :cb:`True`   |
 +---------------------------------------+------------------+----------------------------+
+
+|newpage|
+
 
 .. _The Controller:
 
@@ -1579,11 +1699,249 @@ This typical script can be executed in two ways:
    +----------------------+-----------------------------------------------+
 
 
+Plugins
+=======
+
+Plugins are |Python| scripts specially crafted to integrate with |cgt|.
+Their entry point is a :cb:`ScriptMain()` method as described in 
+`Python Interface to Coriolis`_. They can be called by user scripts
+through this method.
+
+
+
+Chip Placement
+~~~~~~~~~~~~~~
+
+Automatically perform the placement of a complete chip. This plugin, as well
+as the other P&R tools expect a specific top-level hierarchy for the design.
+The top-level hierarchy must contains the instances of all the I/O pads and
+**exactly one** instance of the chip's core model.
+
+|ChipStructure-1|
+
+The designer must provide a configuration file that define the rules for the
+placement of the top-level hierarchy (that is, the pads and the core).
+This file must be named after the chip's name, by appending ``_chip.py``
+(obviously, it is a |Python| file). For instance if the chip netlist file
+is called ``amd2901_crl.vst``, then the configuration file must be named
+``amd2901_crl_chip.vst``.
+
+Example of chip placement configuration file (for ``AM2901``): ::
+
+    chip = \
+      { 'pads.south'     : [ 'p_a3'     , 'p_a2'     , 'p_a1'     , 'p_r0'
+                           , 'p_vddick0', 'p_vssick0', 'p_a0'     , 'p_i6'
+                           , 'p_i8'     , 'p_i7'     , 'p_r3'     ]
+      , 'pads.east'      : [ 'p_zero'   , 'p_i0'     , 'p_i1'     , 'p_i2'
+                           , 'p_vddeck0', 'p_vsseck0', 'p_q3'     , 'p_b0'
+                           , 'p_b1'     , 'p_b2'     , 'p_b3'     ]
+      , 'pads.north'     : [ 'p_noe'    , 'p_y3'     , 'p_y2'     , 'p_y1'
+                           , 'p_y0'     , 'p_vddeck1', 'p_vsseck1', 'p_np'
+                           , 'p_ovr'    , 'p_cout'   , 'p_ng'     ]
+      , 'pads.west'      : [ 'p_cin'    , 'p_i4'     , 'p_i5'     , 'p_i3'
+                           , 'p_ck'     , 'p_d0'     , 'p_d1'     , 'p_d2'
+                           , 'p_d3'     , 'p_q0'     , 'p_f3'     ]
+      , 'core.size'      : ( 1500, 1500 )
+      , 'chip.size'      : ( 3000, 3000 )
+      , 'chip.clockTree' : True
+      }
+
+The file must contain *one dictionnary* named ``chip``.
+   
++----------------------+-------------------------------------------------------+
+| Chip Dictionnary                                                             |
++----------------------+-------------------------------------------------------+
+| Parameter Key/Name   | Value/Contents type                                   |
++======================+=======================================================+
+| ``'pad.south'``      | Ordered list (left to right) of pad instances names   |
+|                      | to put on the south side of the chip                  |
++----------------------+-------------------------------------------------------+
+| ``'pad.east'``       | Ordered list (down to up) of pad instances names      |
+|                      | to put on the east side of the chip                   |
++----------------------+-------------------------------------------------------+
+| ``'pad.north'``      | Ordered list (left to right) of pad instances names   |
+|                      | to put on the north side of the chip                  |
++----------------------+-------------------------------------------------------+
+| ``'pad.west'``       | Ordered list (down to up) of pad instances names      |
+|                      | to put on the west side of the chip                   |
++----------------------+-------------------------------------------------------+
+| ``'core.size'``      | The size of the core (to be used by the placer)       |
++----------------------+-------------------------------------------------------+
+| ``'chip.size'``      | The size of the whole chip. The sides must be great   |
+|                      | enough to accomodate all the pads                     |
++----------------------+-------------------------------------------------------+
+| ``'chip.clockTree'`` | Whether to generate a clock tree or not. This calls   |
+|                      | the ClockTree plugin                                  |
++----------------------+-------------------------------------------------------+
+
+Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plugins.conf``.
+
++-----------------------------------+------------------+----------------------------+
+| Parameter Identifier              |   Type           |  Default                   |
++===================================+==================+============================+
+| **Chip Plugin Parameters**                                                        |
++-----------------------------------+------------------+----------------------------+
+|``chip.block.rails.count``         | TypeInt          | :cb:`5`                    |
+|                                   +------------------+----------------------------+
+|                                   | The minimum number of rails around the core   |
+|                                   | block. Must be odd and suppérior to 5.        |
+|                                   | One rail for the clock and at least two pairs |
+|                                   | of power/grounds                              |
++-----------------------------------+------------------+----------------------------+
+|``chip.block.rails.hWidth``        | TypeInt          | :cb:`12`                   |
+|                                   +------------------+----------------------------+
+|                                   | The horizontal with of the rails              |
++-----------------------------------+------------------+----------------------------+
+|``chip.block.rails.vWidth``        | TypeInt          | :cb:`12`                   |
+|                                   +------------------+----------------------------+
+|                                   | The vertical with of the rails                |
++-----------------------------------+------------------+----------------------------+
+|``chip.block.rails.hSpacing``      | TypeInt          | :cb:`6`                    |
+|                                   +------------------+----------------------------+
+|                                   | The spacing, *edge to edge* of two adjacent   |
+|                                   | horizontal rails                              |
++-----------------------------------+------------------+----------------------------+
+|``chip.block.rails.vSpacing``      | TypeInt          | :cb:`6`                    |
+|                                   +------------------+----------------------------+
+|                                   | The spacing, *edge to edge* of two adjacent   |
+|                                   | vertical rails                                |
++-----------------------------------+------------------+----------------------------+
+|``chip.pad.pck``                   | TypeString       | :cb:`pck_px`               |
+|                                   +------------------+----------------------------+
+|                                   | The model name of the pad connected to the    |
+|                                   | chip external clock                           |
++-----------------------------------+------------------+----------------------------+
+|``chip.pad.pvddeck``               | TypeString       | :cb:`pvddeck_px`           |
+|                                   +------------------+----------------------------+
+|                                   | The model name of the pad connected to the    |
+|                                   | ``vdde`` (external power) and suppling it to  |
+|                                   | the core                                      |
++-----------------------------------+------------------+----------------------------+
+|``chip.pad.pvsseck``               | TypeString       | :cb:`pvsseck_px`           |
+|                                   +------------------+----------------------------+
+|                                   | The model name of the pad connected to the    |
+|                                   | ``vsse`` (external ground) and suppling it to |
+|                                   | the core                                      |
++-----------------------------------+------------------+----------------------------+
+|``chip.pad.pvddick``               | TypeString       | :cb:`pvddick_px`           |
+|                                   +------------------+----------------------------+
+|                                   | The model name of the pad connected to the    |
+|                                   | ``vddi`` (internal power) and suppling it to  |
+|                                   | the core                                      |
++-----------------------------------+------------------+----------------------------+
+|``chip.pad.pvssick``               | TypeString       | :cb:`pvssick_px`           |
+|                                   +------------------+----------------------------+
+|                                   | The model name of the pad connected to the    |
+|                                   | ``vssi`` (internal ground) and suppling it to |
+|                                   | the core                                      |
++-----------------------------------+------------------+----------------------------+
+
+.. note::
+   If no clock tree is generated, then the clock rail is *not* created.
+   So even if the requested number of rails ``chip.block.rails.count`` is, say 5,
+   only four rails (2* ``power``, 2* ``ground``) will be generateds.
+
+
+Clock Tree
+~~~~~~~~~~
+
+Insert a clock tree into a block. The clock tree uses the H strategy.
+The clock net is splitted into sub-nets, one for each branch of the
+tree.
+
+* On **chips** design, the sub-nets are createds in the model of the
+  core block (then trans-hierarchically flattened to be shown at
+  chip level).
+* On **blocks**, the sub nets are created directly in the top block.
+* The sub-nets are named according to a simple geometrical scheme.
+  A common prefix ``ck_htree``, then one postfix by level telling
+  on which quarter of plane the sub-clock is located:
+
+  #. ``_bl``: bottom left plane quarter.
+  #. ``_br``: bottom right plane quarter.
+  #. ``_tl``: top left plane quarter.
+  #. ``_tr``: top right plane quarter.
+
+  We can have ``ck_htree_bl``, ``ck_htree_bl_bl``, ``ch_htree_bl_tl`` and so on.
+
+The clock tree plugin works in four steps:
+
+#. Build the clock tree: creates the top-block abutment box, compute the
+   levels of H tree neededs and place the clock buffers.
+#. Once the clock buffers are placed, calls the placer (|etesian|) to place
+   the ordinary standart cells, whithout disturbing clock H-tree buffers.
+#. At this point we know the exact positions of all the DFFs, so we can
+   connect them to the nearest H-tree leaf clock signal.
+#. Leaf clock signals that are not connecteds to any DFFs are removed.
+
+Netlist reorganisation:
+
+* Obviously the top block or chip core model netlist is modificated to
+  contains all the clock sub-nets. The interface is *not* changed.
+* If the top block contains instances of other models *and* those models
+  contains DFFs that get re-connecteds to the clock sub-nets (from the
+  top level). Change both the model netlist and interface to propagate
+  the relevant clock sub-nets to the instanciated model. The new model
+  with the added clock signal is renamed with a ``_clocked`` suffix.
+  For example, the sub-block model ``ram.vst`` will become ``ram_clocked.vst``.
+
+.. note::
+  If you are to re-run the clock tree plugin on a netlist, be careful
+  to erase any previously generated ``_clocked`` file (both netlist and
+  layout: ``rm *.clocked.{ap,vst}``). And restart |cgt| to clear it's
+  memory cache.
+
+Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plugins.conf``.
+
++-----------------------------------+------------------+----------------------------+
+| Parameter Identifier              |   Type           |  Default                   |
++===================================+==================+============================+
+| **ClockTree Plugin Parameters**                                                   |
++-----------------------------------+------------------+----------------------------+
+|``clockTree.minimumSide``          | TypeInt          | :cb:`300`                  |
+|                                   +------------------+----------------------------+
+|                                   | The minimum size below which the clock tree   |
+|                                   | will stop to perform quadri-partitions        |
++-----------------------------------+------------------+----------------------------+
+|``clockTree.buffer``               | TypeString       | :cb:`buf_x2`               |
+|                                   +------------------+----------------------------+
+|                                   | The buffer model to use to drive sub-nets     |
++-----------------------------------+------------------+----------------------------+
+|``clockTree.placerEngine``         | TypeString       | :cb:`Etesian`              |
+|                                   +------------------+----------------------------+
+|                                   | The placer to use. Other value is ``Mauka``   |
+|                                   | the simulated annealing placer which will go  |
+|                                   | into retirement very soon                     |
++-----------------------------------+------------------+----------------------------+
+
+
+Recursive-Save (RSave)
+~~~~~~~~~~~~~~~~~~~~~~
+
+Perform a recursive top down save of all the models from the top cell
+loaded in |cgt|. Force a write of any non-terminal model. This plugin is used
+by the clock tree plugin after the netlist clock sub-nets creation.
+
+
 A Simple Example: AM2901
 ========================
 
 To illustrate the capabilities of |Coriolis| tools and |Python| scripting, a small
 example, derived from the |Alliance| :cb:`AM2901` is supplied.
 
-This example contains only the synthetized netlists and the :cb:`design.py` script
-which perform the whole P&R of the design. Just lanch |cgt| then execute :cb:`design.py`.
+This example contains only the synthetized netlists and the :cb:`doChip.py` script
+which perform the whole P&R of the design.
+
+You can generate the chip using one of the following method:
+
+#. **Command line mode:** directly run the script: ::
+
+    dummy@lepka:AM2901$ ./doChip -V --cell=amd2901
+
+#. **Graphic mode:** launch |cgt|, load chip netlist ``amd2901`` (the top cell)
+   then run the |Python| script :cb:`doChip.py`.
+
+.. note::
+   Between two consecutive run, be sure to erase the netlist/layout generateds: ::
+
+       dummy@lepka:AM2901$ rm *_clocked*.vst *.ap

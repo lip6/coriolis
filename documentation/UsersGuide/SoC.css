@@ -1,10 +1,7 @@
 
 html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
   font-size:                   96%;
-  /*
-  font-family:                 verdana, sans-serif;
-  */
-  font-family:                 "Open Sans", sans-serif;
+  font-family:                 "Open Sans", verdana, sans-serif;
 }
 
 body {
@@ -18,9 +15,13 @@ body {
   background-attachment:       fixed;
   background-repeat:           no-repeat;
   margin:                      0 0 0 0;
-  padding:                     0 0 0 0;
+  padding:                     20pt;
+  width:                       550pt;
   margin-right:                10%;
   margin-left:                 30%;
+  -moz-box-shadow:             4px 4px 5px 3px #ccc;
+  -webkit-box-shadow:          4px 4px 5px 3px #ccc;
+  box-shadow:                  4px 4px 5px 3px #ccc;
 }
 
 body.gsummary {
@@ -28,22 +29,27 @@ body.gsummary {
   margin-left:                 10%;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family:                 "Open Sans", sans-serif;
-}
+h1, h2, h3, h4, h5, h6 { font-family:    "Open Sans", verdana, sans-serif; }
+h1                     { text-align:     center;
+                         border-top:     2px solid #09550b;
+                         border-bottom:  2px solid #09550b;
+                         padding-top:    7pt;
+                         padding-bottom: 7pt;
+                       }
+h2, h3, h4, h5, h6     { text-align:  left; }
+h1, h2, h3             { font-family: "Open Sans";
+                       }
+h1                     { font-weight:  normal;     font-size: 170%; padding-top: 7pt; margin-top: 25pt; }
+h2                     { font-weight:  normal;     font-size: 140%; padding-top: 7pt; margin-top: 25pt; }
+h3                     { font-weight:  bold;       font-size: 118%; padding-top: 7pt; margin-top: 25pt; }
+h4                     { font-weight:  bold;       font-size: 100%; }
+h5                     { font-style:   italic;     font-size: 100%; }
+h6                     { font-variant: small-caps; font-size: 100%; }
+		       
+body.gsummary h1       { text-align:   center;     font-size: 220%; }
+		       
+h1 a:link              { border-bottom: 0px; }
 
-h1                 { text-align:  left; }
-h2, h3, h4, h5, h6 { text-align:  left; }
-h1, h2, h3         { font-family: "Serif";
-                   }
-h1                 { font-weight:  normal;     font-size: 170%; padding-top: 7pt; margin-top: 25pt; }
-h2                 { font-weight:  normal;     font-size: 140%; padding-top: 7pt; margin-top: 25pt; }
-h3                 { font-weight:  bold;       font-size: 118%; padding-top: 7pt; margin-top: 25pt; }
-h4                 { font-weight:  bold;       font-size: 100%; }
-h5                 { font-style:   italic;     font-size: 100%; }
-h6                 { font-variant: small-caps; font-size: 100%; }
-
-body.gsummary h1   { text-align: center;       font-size: 220%; }
 
 hr {
   color:                       #09550b;

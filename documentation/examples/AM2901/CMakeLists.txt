@@ -8,6 +8,10 @@
                                  muxe.vst
                                  muxs.vst
                                  ram.vst
-                                 design.py
-                     DESTINATION ${examplesInstallDir}/AM2901 )
+                                 amd2901_chip.py  DESTINATION ${examplesInstallDir}/AM2901 )
+           install ( FILES       doChip.py        PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+                                                              OWNER_READ    GROUP_READ    WORLD_READ
+                                                              OWNER_WRITE
+                                                  DESTINATION ${examplesInstallDir}/AM2901 )
+           install ( DIRECTORY   .coriolis2       DESTINATION ${examplesInstallDir}/AM2901 )
 

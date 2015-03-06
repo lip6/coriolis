@@ -11,26 +11,6 @@
 .. |DONE|                           replace:: :raw-latex:`\marginpar{\fbox{\small\ding{56}}}`
 
 .. For LaTeX/PDF backend.
-.. |Key_ESC|                        replace:: :raw-latex:`\key{ESC}\xspace`
-.. |Key_CTRL|                       replace:: :raw-latex:`\key{CTRL}\xspace`
-.. |Key_Up|                         replace:: :raw-latex:`\key{Up}\xspace`
-.. |Key_Down|                       replace:: :raw-latex:`\key{Down}\xspace`
-.. |Key_Left|                       replace:: :raw-latex:`\key{Left}\xspace`
-.. |Key_Right|                      replace:: :raw-latex:`\key{Right}\xspace`
-.. |Key_f|                          replace:: :raw-latex:`\key{f}\xspace`
-.. |Key_G|                          replace:: :raw-latex:`\key{G}\xspace`
-.. |Key_i|                          replace:: :raw-latex:`\key{i}\xspace`
-.. |Key_l|                          replace:: :raw-latex:`\key{l}\xspace`
-.. |Key_m|                          replace:: :raw-latex:`\key{m}\xspace`
-.. |Key_k|                          replace:: :raw-latex:`\key{k}\xspace`
-.. |Key_K|                          replace:: :raw-latex:`\key{K}\xspace`
-.. |Key_o|                          replace:: :raw-latex:`\key{o}\xspace`
-.. |Key_p|                          replace:: :raw-latex:`\key{p}\xspace`
-.. |Key_q|                          replace:: :raw-latex:`\key{q}\xspace`
-.. |Key_w|                          replace:: :raw-latex:`\key{w}\xspace`
-.. |Key_S|                          replace:: :raw-latex:`\key{S}\xspace`
-.. |Key_z|                          replace:: :raw-latex:`\key{z}\xspace`
-.. |Plus|                           replace:: :raw-latex:`$+$\xspace`
 .. |rightarrow|                     replace:: :raw-latex:`$\rightarrow$`
 .. |menu_P&R|                       replace:: :raw-latex:`\fbox{\textsf{\textbf{{P\&R}}}}`
 .. |menu_StepByStep|                replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{S}tep by Step}}}}`
@@ -55,6 +35,8 @@
 .. |ControllerInspector_3|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-3.eps}\end{center}`
 .. |ControllerSettings_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Settings-1.eps}\end{center}`
 .. |CoriolisSoftSchema|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Coriolis-Soft-Schema.eps}\end{center}`
+.. |ChipStructure-1|                replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/chip-structure-1.eps}\end{center}`
+.. |Etesian-1|                      replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/etesian-1.eps}\end{center}`
 
 .. |BigMouse|                       image:: ./images/ComputerMouse.eps
                                     :scale: 25%
@@ -64,4 +46,5 @@
 .. |noindent|                       replace:: :raw-latex:`\noindent`
 .. |medskip|                        replace:: :raw-latex:`\medskip`
 .. |newpage|                        replace:: :raw-latex:`\newpage`
+.. |br|                             replace:: :raw-latex:`\\`
 
