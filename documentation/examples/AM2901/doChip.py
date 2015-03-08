@@ -18,9 +18,12 @@ try:
   import Nimbus
   import Metis
   import Mauka
+  import Etesian
   import Katabatic
   import Kite
   import Unicorn
+  import clocktree.ClockTree
+  import plugins.ClockTreePlugin
   import plugins.ChipPlugin
   import plugins.RSavePlugin
 except ImportError, e:
@@ -43,29 +46,50 @@ except Exception, e:
   sys.exit(2)
 
 
-DoPlacement = 0x0001
-DoRouting   = 0x0002
-AllStages   = DoPlacement|DoRouting
+DoChip      = 0x0001
+DoClockTree = 0x0002
+DoPlacement = 0x0004
+DoRouting   = 0x0008
+ChipStages  = DoChip|DoPlacement|DoRouting
 
-framework = CRL.AllianceFramework.get()
+framework   = CRL.AllianceFramework.get()
 
 
 def ScriptMain ( **kw ):
   success  = False
-  doStages = AllStages
-  if kw.has_key('doStages'):
-    doStages = kw['doStages']
+  doStages = kw['doStages']
   try:
     cell, editor = plugins.kwParseMain( **kw )
   
     if doStages & DoPlacement:
-      success = plugins.ChipPlugin.ScriptMain( **kw )
-      if not success: return False
-  
+      if doStages & DoChip:
+        success = plugins.ChipPlugin.ScriptMain( **kw )
+        if not success: return False
+      else:
+        if cell.getAbutmentBox().isEmpty():
+          cellGauge   = framework.getCellGauge()
+          spaceMargin = (Cfg.getParamPercentage('etesian.spaceMargin').asPercentage()+5) / 100.0
+          aspectRatio =  Cfg.getParamPercentage('etesian.aspectRatio').asPercentage()    / 100.0
+          clocktree.ClockTree.computeAbutmentBox( cell, spaceMargin, aspectRatio, cellGauge )
+          if editor: editor.fit()
+
+        if doStages & DoClockTree:
+          success = plugins.ClockTreePlugin.ScriptMain( **kw )
+         #if not success: return False
+        else:
+          if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
+            mauka = Mauka.MaukaEngine.create( cell )
+            mauka.run()
+            mauka.destroy()
+          else:
+            etesian = Etesian.EtesianEngine.create( cell )
+            etesian.place()
+            etesian.destroy()
+      if editor: editor.refresh()
+
     if doStages & DoRouting:
       routingNets = []
       kite = Kite.KiteEngine.create( cell )
-     #kite.printConfiguration()
       
       kite.runGlobalRouter  ( Kite.KtBuildGlobalRouting )
       kite.loadGlobalRouting( Katabatic.EngineLoadGrByNet, routingNets )
@@ -93,15 +117,18 @@ if __name__ == '__main__':
   parser.add_option( '-V', '--very-verbose'         , action='store_true', dest='veryVerbose', help='Second level of verbosity.')
   parser.add_option( '-p', '--place'                , action='store_true', dest='doPlacement', help='Perform chip placement step only.')
   parser.add_option( '-r', '--route'                , action='store_true', dest='doRouting'  , help='Perform routing step only.')
+  parser.add_option( '-C', '--chip'                 , action='store_true', dest='doChip'     , help='Run place & route on a complete chip.')
+  parser.add_option( '-T', '--clock-tree'           , action='store_true', dest='doClockTree', help='In block mode, create a clock-tree.')
   (options, args) = parser.parse_args()
 
-  
   doStages = 0
   if options.verbose:     Cfg.getParamBool('misc.verboseLevel1').setBool(True)
   if options.veryVerbose: Cfg.getParamBool('misc.verboseLevel2').setBool(True)
   if options.doPlacement: doStages |= DoPlacement
   if options.doRouting:   doStages |= DoRouting
-  if not doStages:        doStages  = AllStages
+  if options.doChip:      doStages |= DoChip
+  if options.doClockTree: doStages |= DoClockTree
+  if not doStages:        doStages  = ChipStages
 
   kw = { 'doStages':doStages }
   if options.script:
