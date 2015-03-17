@@ -32,6 +32,7 @@
  find_package(Libexecinfo        REQUIRED)
  
  add_subdirectory(src)
+ add_subdirectory(python)
  add_subdirectory(etc)
  add_subdirectory(cmake_modules)
 

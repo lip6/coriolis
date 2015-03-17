@@ -254,6 +254,7 @@ namespace Cfg {
         .value("UseDefault"        ,Parameter::UseDefault)
         .value("ApplicationBuiltin",Parameter::ApplicationBuiltin)
         .value("ConfigurationFile" ,Parameter::ConfigurationFile)
+        .value("UserFile"          ,Parameter::UserFile)
         .value("CommandLine"       ,Parameter::CommandLine)
         .value("Interactive"       ,Parameter::Interactive)
         ;

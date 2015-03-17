@@ -51,8 +51,9 @@ namespace Cfg {
       enum Priority { UseDefault         = 0
                     , ApplicationBuiltin = 1
                     , ConfigurationFile  = 2
-                    , CommandLine        = 3
-                    , Interactive        = 4
+                    , UserFile           = 3
+                    , CommandLine        = 4
+                    , Interactive        = 5
                     };
       typedef boost::function< void(Parameter*) >  ParameterChangedCb_t;
     public:

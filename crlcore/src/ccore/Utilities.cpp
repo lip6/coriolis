@@ -310,12 +310,14 @@ namespace CRL {
     Utilities::Path crlcoreDir = pythonSitePackages / "crlcore";
     Utilities::Path stratusDir = pythonSitePackages / "stratus";
     Utilities::Path cumulusDir = pythonSitePackages / "cumulus";
+    Utilities::Path pharosDir  = pythonSitePackages / "pharos";
 
     Isobar::Script::addPath ( sysConfDir.string() );
     Isobar::Script::addPath ( pythonSitePackages.string() );
     Isobar::Script::addPath ( crlcoreDir.string() );
     Isobar::Script::addPath ( stratusDir.string() );
     Isobar::Script::addPath ( cumulusDir.string() );
+    Isobar::Script::addPath ( pharosDir.string() );
 
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();
@@ -475,12 +477,12 @@ namespace CRL {
     }
 
   // Delayed printing, as we known only now whether VerboseLevel1 is requested.
-    if ( cmess1.enabled() ) {
-      cmess1 << "  o  Reading Configuration. " << endl;
-      if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
-      if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
-      if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
-    }
+  //if ( cmess1.enabled() ) {
+  //  cmess1 << "  o  Reading Configuration. " << endl;
+  //  if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
+  //  if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
+  //  if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
+  //}
   }
 
 

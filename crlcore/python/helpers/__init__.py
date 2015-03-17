@@ -33,6 +33,7 @@ realTechno     = 'hcmos9'
 realDir        = None
 tab            = None
 _trace         = None
+moduleGlobals  = globals()
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
@@ -245,6 +246,37 @@ def setTraceLevel ( level ):
   return
 
 
+def initTechno ( quiet ):
+  global realDir
+  global realTechno
+  global symbolicDir
+  global symbolicTechno
+
+  technoFiles  = [ sysConfDir+'/techno.conf' ]
+  if os.getenv('HOME'):
+    technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
+  technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
+
+  technoFiles.reverse()
+  for technoFile in technoFiles:
+    if os.path.isfile(technoFile):
+      if not quiet: print '          - Loading \"%s\".' % truncPath(technoFile)
+      execfile(technoFile,moduleGlobals)
+      break
+  if moduleGlobals.has_key('symbolicTechnology'):
+    symbolicTechno = symbolicTechnology
+  else:
+    print '[ERROR] The symbolic technology name is not set. Using <cmos>.' 
+  if moduleGlobals.has_key('realTechnology'):
+    realTechno = realTechnology
+  else:
+    print '[ERROR] The real technology name is not set. Using <hcmos9gp>.' 
+
+  symbolicDir = os.path.join( sysConfDir, symbolicTechno )
+  realDir     = os.path.join( sysConfDir, realTechno )
+  if not quiet: print '          - Technologies: %s+%s.' % (symbolicTechno,realTechno)
+
+
 def staticInitialization ( quiet=False ):
   global sysConfDir
   global symbolicDir
@@ -263,7 +295,7 @@ def staticInitialization ( quiet=False ):
   for path in sys.path:
     if reSysConfDir.match(path):
       sysConfDir = path
-      if not quiet: print '     - <%s>' % sysConfDir
+     #if not quiet: print '     - <%s>' % sysConfDir
       break
   
   if not sysConfDir:
@@ -277,6 +309,5 @@ def staticInitialization ( quiet=False ):
                              , 'The path is something ending by <.../etc/coriolis2>.'] )
   
   if not quiet: print '     - <%s>' % sysConfDir
-  symbolicDir = os.path.join( sysConfDir, symbolicTechno )
-  realDir     = os.path.join( sysConfDir, realTechno )
+  initTechno( quiet )
   return

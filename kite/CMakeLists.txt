@@ -36,6 +36,7 @@
  endif(CHECK_DETERMINISM)
  
  add_subdirectory(src)
+ add_subdirectory(python)
  add_subdirectory(cmake_modules)
 
  if(BUILD_DOC)

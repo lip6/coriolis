@@ -86,41 +86,18 @@ def coriolisConfigure():
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
-  technoFiles  = [ helpers.sysConfDir+'/techno.conf' ]
-  if os.getenv('HOME'):
-    technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
-  technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
-
-  technoFiles.reverse()
-  for technoFile in technoFiles:
-    if os.path.isfile(technoFile):
-      print '          - Loading \"%s\".' % helpers.truncPath(technoFile)
-      execfile(technoFile,moduleGlobals)
-      break
-  if moduleGlobals.has_key('symbolicTechno'):
-    helpers.symbolicTechno = symbolicTechno
-    helpers.symbolicDir    = os.path.join( helpers.sysConfDir, symbolicTechno )
-  else:
-    print '[ERROR] The symbolic technology name is not set. Using <cmos>.' 
-  if moduleGlobals.has_key('realTechno'):
-    helpers.realTechno = realTechno
-    helpers.realDir    = os.path.join( helpers.sysConfDir, realTechno )
-  else:
-    print '[ERROR] The real technology name is not set. Using <hcmos9>.' 
-    
-
-  confFiles    = [ (helpers.sysConfDir+'/'+symbolicTechno+'/alliance.conf', SystemFile|AllianceHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/patterns.conf', SystemFile|PatternsHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/display.conf' , SystemFile|DisplayHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/misc.conf'    , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/hMetis.conf'  , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/nimbus.conf'  , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/mauka.conf'   , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/etesian.conf' , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/kite.conf'    , SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/stratus1.conf', SystemFile|ConfigurationHelper)
-                 , (helpers.sysConfDir+'/'+symbolicTechno+'/plugins.conf' , SystemFile|ConfigurationHelper)
-                 ]
+  confFiles = [ (helpers.symbolicDir+'/alliance.conf', SystemFile|AllianceHelper)
+              , (helpers.symbolicDir+'/patterns.conf', SystemFile|PatternsHelper)
+              , (helpers.symbolicDir+'/display.conf' , SystemFile|DisplayHelper)
+              , (helpers.symbolicDir+'/misc.conf'    , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/hMetis.conf'  , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/nimbus.conf'  , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/mauka.conf'   , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/etesian.conf' , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/kite.conf'    , SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/stratus1.conf', SystemFile|ConfigurationHelper)
+              , (helpers.symbolicDir+'/plugins.conf' , SystemFile|ConfigurationHelper)
+              ]
   if os.getenv('HOME'):
     confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.py', 0) ]
   else:
@@ -136,6 +113,8 @@ def coriolisConfigure():
     Configuration.loadCompatXml()
 
   for confFile, confFlags in confFiles:
+    if confFile.endswith('settings.py'):
+      Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.UserFile )
     try:
       if not os.path.isfile(confFile):
         if confFlags & SystemFile:
@@ -165,6 +144,9 @@ def coriolisConfigure():
               print '[ERROR] Mandatory symbol <%s> is missing in system configuration file:' % symbol
               print '        <%s>' % confFile
               print '        Trying to continue anyway...'
+
+    if confFile.endswith('settings.py'):
+      Cfg.Configuration.popDefaultPriority ()
   
   Cfg.Configuration.popDefaultPriority ()
 

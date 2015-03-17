@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2014, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -21,10 +20,7 @@
 //
 // ===================================================================
 //
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +28,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/DbU.h"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DBU__
-#define  __HURRICANE_DBU__
+#ifndef  HURRICANE_DBU_H
+#define  HURRICANE_DBU_H
 
 
 #include  <cmath>
@@ -150,13 +143,13 @@ namespace Hurricane {
 // New converter naming scheme.
   inline DbU::Unit  DbU::fromDb                  ( long value )                 { return value; }
   inline DbU::Unit  DbU::fromGrid                ( double value )               { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::fromLambda              ( double value )               { return grid(value*_gridsPerLambda); }
-  inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { return grid((value*getUnitPower(p))/_physicalsPerGrid); }
+  inline DbU::Unit  DbU::fromLambda              ( double value )               { return fromGrid(value*_gridsPerLambda); }
+  inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { return fromGrid((value*getUnitPower(p))/_physicalsPerGrid); }
   inline long       DbU::toDb                    ( DbU::Unit u )                { return u; }
   inline double     DbU::toGrid                  ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::toGrid                  ( double u )                   { return _resolution*u; }
-  inline double     DbU::toLambda                ( DbU::Unit u )                { return getGrid(u)/_gridsPerLambda; }
-  inline double     DbU::toLambda                ( double u )                   { return getGrid(u)/_gridsPerLambda; }
+  inline double     DbU::toLambda                ( DbU::Unit u )                { return toGrid(u)/_gridsPerLambda; }
+  inline double     DbU::toLambda                ( double u )                   { return toGrid(u)/_gridsPerLambda; }
   inline double     DbU::toPhysical              ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
   inline double     DbU::toPhysical              ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
 
@@ -181,4 +174,4 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-#endif  // __HURRICANE_DBU__
+#endif  // HURRICANE_DBU_H
