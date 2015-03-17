@@ -1,7 +1,7 @@
 # -*- Mode:Python; explicit-buffer-name: "Alliance.py<crlcore/helpers>" -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2012-2014, All Rights Reserved
+# Copyright (c) UPMC 2012-2015, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |

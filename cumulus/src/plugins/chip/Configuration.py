@@ -1,7 +1,7 @@
 # -*- explicit-buffer-name: "Configuration.py<cumulus/src/plugins/chip>" -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2014, All Rights Reserved
+# Copyright (c) UPMC 2014-2015, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
