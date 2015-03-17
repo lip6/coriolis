@@ -8,9 +8,6 @@ try:
   import Hurricane
   import Viewer
   import CRL
-  import Nimbus
-  import Metis
-  import Mauka
   import Etesian
   import Katabatic
   import Kite
@@ -102,9 +99,7 @@ if __name__ == '__main__':
       parser.add_option( '-L', '--log-mode'         , action='store_true', dest='logMode'        , help='Disable ANSI escape sequences in console output.')
       parser.add_option( '-t', '--text'             , action='store_true', dest='textMode'       , help='Run in command line mode.')
       parser.add_option( '-m', '--margin'           , type='float'       , dest='margin'         , help='Percentage of free area to add to the minimal placement area.')
-      parser.add_option( '-Q', '--quadri-place'     , action='store_true', dest='quadPlace'      , help='Performs a quadri-partitionnement as first placement stage.')
-      parser.add_option( '-P', '--annealing'        , action='store_true', dest='annealingPlace' , help='Place using simulated annealing.')
-      parser.add_option(       '--min-psize'        , type='int'         , dest='minPSize'       , help='Sets the size of a leaf partition (quadripartition stage).')
+      parser.add_option( '-P', '--place'            , action='store_true', dest='place'          , help='Run the analytical placer (Etesian).')
       parser.add_option( '-G', '--global-route'     , action='store_true', dest='globalRoute'    , help='Run the global router (Knik).')
       parser.add_option( '-g', '--load-global'      , action='store_true', dest='loadGlobal'     , help='Reload a global routing from disk.')
       parser.add_option(       '--save-global'      , action='store_true', dest='saveGlobal'     , help='Save the global routing solution.')
@@ -132,7 +127,7 @@ if __name__ == '__main__':
       if options.bug:             Cfg.getParamBool      ('misc.bug'          ).setBool(True)
       if options.logMode:         Cfg.getParamBool      ('misc.logMode'      ).setBool(True)
       if options.showConf:        Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
-      if options.margin:          Cfg.getParamPercentage('nimbus.spaceMargin').setPercentage(options.margin)
+      if options.margin:          Cfg.getParamPercentage('etesian.spaceMargin').setPercentage(options.margin)
       if options.minPSize:        Cfg.getParamInt       ('metis.numberOfInstancesStopCriterion').setInt(options.minPSize)
       if options.hTracksLocal:    Cfg.getParamInt       ('kite.hTracksReservedLocal').setInt(options.hTracksLocal)
       if options.vTracksLocal:    Cfg.getParamInt       ('kite.vTracksReservedLocal').setInt(options.vTracksLocal)
@@ -156,12 +151,11 @@ if __name__ == '__main__':
       elif options.cell:
           cell = af.getCell(options.cell, CRL.Catalog.State.Views)
       else:
-          quadPlace      = False
-          annealingPlace = False
-          loadGlobal     = False
-          saveGlobal     = False
-          globalRoute    = False
-          detailRoute    = False
+          place       = False
+          loadGlobal  = False
+          saveGlobal  = False
+          globalRoute = False
+          detailRoute = False
   
       if not options.textMode:
          # Run in graphic mode.
@@ -170,7 +164,6 @@ if __name__ == '__main__':
       
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
-          unicorn.registerTool        (Mauka.GraphicMaukaEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
          #unicorn.setAnonNetSelectable(False)
@@ -192,32 +185,12 @@ if __name__ == '__main__':
          # Run in command line mode.
           kiteSuccess = False
 
-          if quadPlace or annealingPlace:
-              loadGlobal  = False
-              globalRoute = True
-          if quadPlace and annealingPlace:
-              annealingPlace = False
+          runEtesianTool = place
 
-          runMaukaTool = quadPlace or annealingPlace
-
-          if runMaukaTool:
-              nimbus = Nimbus.NimbusEngine.create(cell)
-              if options.showConf: nimbus.printConfiguration()
-      
-              if annealingPlace:
-                Cfg.getParamPercentage('mauka.standardAnnealing').setBool(True);
-      
-              if quadPlace:
-                metis = Metis.MetisEngine.create(cell)
-                if options.showConf: metis.printConfiguration()
-      
-                Metis.MetisEngine.doQuadriPart(cell)
-                Mauka.MaukaEngine.regroupOverloadedGCells(cell)
-      
-              mauka = Mauka.MaukaEngine.create(cell)
-              if options.showConf: mauka.printConfiguration()
-      
-              mauka.run()
+          if runEtesianTool:
+              etesian = Nimbus.NimbusEngine.create(cell)
+             #if options.showConf: etesian.printConfiguration()
+              etesian.run()
 
           if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
           runKiteTool = loadGlobal or globalRoute or detailRoute

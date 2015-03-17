@@ -45,9 +45,9 @@ try:
   import helpers
   from   helpers   import ErrorMessage
   from   helpers   import WarningMessage
-  import Nimbus
-  import Metis
-  import Mauka
+ #import Nimbus
+ #import Metis
+ #import Mauka
   import Etesian
   import Katabatic
   import Kite

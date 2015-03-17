@@ -1327,18 +1327,18 @@ class Model :
   #############################################################################
   ############################## Place and route ##############################
   #############################################################################
-  def getCore ( self ) :
-    '''This function returns the instance "core" : the only one which is not a pad'''
+ #def getCore ( self ) :
+ #  '''This function returns the instance "core" : the only one which is not a pad'''
 
-    from placeandroute import isPad
+ #  from placeandroute import isPad
 
-    cores = []
-    for instance in self._hur_cell.getInstances():
-      if not isPad ( instance ):
-        cores.append ( instance )
+ #  cores = []
+ #  for instance in self._hur_cell.getInstances():
+ #    if not isPad ( instance ):
+ #      cores.append ( instance )
 
-    if   len(cores) == 0 : err = "\n[Stratus ERROR] getCore : No core found.\n"
-    elif len(cores)  > 1 : err = "\n[Stratus ERROR] getCore : More than one core found.\n"
-    if len(cores) != 1 : raise Exception ( err )
+ #  if   len(cores) == 0 : err = "\n[Stratus ERROR] getCore : No core found.\n"
+ #  elif len(cores)  > 1 : err = "\n[Stratus ERROR] getCore : More than one core found.\n"
+ #  if len(cores) != 1 : raise Exception ( err )
 
-    return cores[0]
+ #  return cores[0]

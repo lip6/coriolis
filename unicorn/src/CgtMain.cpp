@@ -55,14 +55,14 @@ using namespace Hurricane;
 #include "crlcore/DefExport.h"
 using namespace CRL;
 
-#include "nimbus/NimbusEngine.h"
-using namespace Nimbus;
+// #include "nimbus/NimbusEngine.h"
+// using namespace Nimbus;
 
-#include "metis/MetisEngine.h"
-using namespace Metis;
+// #include "metis/MetisEngine.h"
+// using namespace Metis;
 
-#include "mauka/GraphicMaukaEngine.h"
-using namespace Mauka;
+// #include "mauka/GraphicMaukaEngine.h"
+// using namespace Mauka;
 
 #include "etesian/GraphicEtesianEngine.h"
 using namespace Etesian;
@@ -327,7 +327,7 @@ int main ( int argc, char *argv[] )
       dbo_ptr<UnicornGui> unicorn ( UnicornGui::create() );
       unicorn->setApplicationName ( QObject::tr("cgt") );
 
-      unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
+    //unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
       unicorn->registerTool ( Etesian::GraphicEtesianEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
@@ -354,40 +354,40 @@ int main ( int argc, char *argv[] )
       if ( quadriPlace and annealingPlace )
         annealingPlace = false;
 
-      if ( not MetisEngine::isHMetisCapable() and quadriPlace ) {
-        cerr << Warning("hMETIS is not avalaible, revert to simulated annealing.") << endl;
+      // if ( not MetisEngine::isHMetisCapable() and quadriPlace ) {
+      //   cerr << Warning("hMETIS is not avalaible, revert to simulated annealing.") << endl;
         
-        annealingPlace = true;
-        quadriPlace    = false;
-      }
+      //   annealingPlace = true;
+      //   quadriPlace    = false;
+      // }
 
-      bool runMaukaTool = quadriPlace or annealingPlace;
+      // bool runMaukaTool = quadriPlace or annealingPlace;
 
-      if ( runMaukaTool ) {
-        NimbusEngine* nimbus = NULL;
-        MetisEngine*  metis  = NULL;
-        MaukaEngine*  mauka  = NULL;
+      // if ( runMaukaTool ) {
+      //   NimbusEngine* nimbus = NULL;
+      //   MetisEngine*  metis  = NULL;
+      //   MaukaEngine*  mauka  = NULL;
 
-        nimbus = NimbusEngine::create ( cell );
-        if ( showConf ) nimbus->printConfiguration();
+      //   nimbus = NimbusEngine::create ( cell );
+      //   if ( showConf ) nimbus->printConfiguration();
 
-        if ( annealingPlace ) {
-          Cfg::getParamPercentage("mauka.standardAnnealing")->setBool ( true );
-        }
+      //   if ( annealingPlace ) {
+      //     Cfg::getParamPercentage("mauka.standardAnnealing")->setBool ( true );
+      //   }
 
-        if ( quadriPlace ) {
-          metis  = MetisEngine::create ( cell );
-          if ( showConf ) metis->printConfiguration();
+      //   if ( quadriPlace ) {
+      //     metis  = MetisEngine::create ( cell );
+      //     if ( showConf ) metis->printConfiguration();
 
-          MetisEngine::doQuadriPart ( cell );
-          MaukaEngine::regroupOverloadedGCells ( cell );
-        }
+      //     MetisEngine::doQuadriPart ( cell );
+      //     MaukaEngine::regroupOverloadedGCells ( cell );
+      //   }
 
-        mauka = MaukaEngine::create ( cell );
-        if ( showConf ) mauka->printConfiguration();
+      //   mauka = MaukaEngine::create ( cell );
+      //   if ( showConf ) mauka->printConfiguration();
 
-        mauka->Run ();
-      }
+      //   mauka->Run ();
+      // }
 
       if ( detailedRoute and not (loadGlobal or globalRoute) ) globalRoute = true;
 

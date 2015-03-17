@@ -36,7 +36,7 @@ try:
   from st_net           import *
   from st_instance      import *
   from st_placement     import *
-  from st_placeAndRoute import *
+ #from st_placeAndRoute import *
   from st_ref           import *
   from st_generate      import *
   from st_const         import *
@@ -73,6 +73,7 @@ DoStop    = 0x0004
 
 def buildModel ( name, flags ):
     try:
+      print name
       module = __import__( name, globals(), locals(), name )
       if not module.__dict__.has_key(name):
           print '[ERROR] Stratus module <%s> do not contains a design of the same name.' % name
@@ -95,6 +96,7 @@ def buildModel ( name, flags ):
 
       print '[ERROR] The <%s> Stratus design cannot be loaded.' % module
       print '        Please check your design hierarchy.'
+      print e
       sys.exit(1)
     except Exception, e:
       print '[ERROR] A strange exception occurred while loading the Stratus'
