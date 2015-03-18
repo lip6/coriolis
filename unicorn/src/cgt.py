@@ -128,14 +128,11 @@ if __name__ == '__main__':
       if options.logMode:         Cfg.getParamBool      ('misc.logMode'      ).setBool(True)
       if options.showConf:        Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
       if options.margin:          Cfg.getParamPercentage('etesian.spaceMargin').setPercentage(options.margin)
-      if options.minPSize:        Cfg.getParamInt       ('metis.numberOfInstancesStopCriterion').setInt(options.minPSize)
       if options.hTracksLocal:    Cfg.getParamInt       ('kite.hTracksReservedLocal').setInt(options.hTracksLocal)
       if options.vTracksLocal:    Cfg.getParamInt       ('kite.vTracksReservedLocal').setInt(options.vTracksLocal)
       if options.eventsLimit:     Cfg.getParamInt       ('kite.eventsLimit'         ).setInt(options.eventsLimit)
       if options.topRoutingLayer: Cfg.getParamString    ('katabatic.topRoutingLayer').setString(options.topRoutingLayer)
 
-      quadPlace      = options.quadPlace
-      annealingPlace = options.annealingPlace
       loadGlobal     = options.loadGlobal
       saveGlobal     = options.saveGlobal
       globalRoute    = options.globalRoute
