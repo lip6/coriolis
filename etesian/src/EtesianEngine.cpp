@@ -671,25 +671,49 @@ namespace Etesian {
     if(placementUpdate == UpdateAll)
         _updatePlacement( _placementUB );
 
-    int globalIterations;
-    if(placementEffort == Fast)
-        globalIterations = 40;
-    else if(placementEffort == Standard)
-        globalIterations = 70;
-    else if(placementEffort == High)
-        globalIterations = 120;
-    else
-        globalIterations = 250;
+    /*
+     * Schedule the penalty during global placement to achieve uniform improvement
+     *
+     * Currently, the metric considered is the ratio legalized HPWL/optimized HPWL
+     * Other ones, like the disruption itself, may be considered
+     */
 
-    float_t maxForce = 1.0;
+    float_t minPenaltyIncrease, maxPenaltyIncrease, targetImprovement;
 
-    for ( int i=0; i<globalIterations; ++i ) {
-        float_t iterProp = static_cast<float_t>(i+1)/ globalIterations;
-        float_t pulling_force = maxForce * iterProp * iterProp; // More effort at low pulling forces
+    if(placementEffort == Fast){
+        minPenaltyIncrease = 0.005f;
+        maxPenaltyIncrease = 0.08f;
+        targetImprovement  = 0.05f; // 5/100 per iteration
+    }
+    else if(placementEffort == Standard){
+        minPenaltyIncrease = 0.003f;
+        maxPenaltyIncrease = 0.04f;
+        targetImprovement  = 0.02f; // 2/100 per iteration
+    }
+    else if(placementEffort == High){
+        minPenaltyIncrease = 0.001f;
+        maxPenaltyIncrease = 0.02f;
+        targetImprovement  = 0.01f; // 1/100 per iteration
+    }
+    else{
+        minPenaltyIncrease = 0.0002f;
+        maxPenaltyIncrease = 0.015f;
+        targetImprovement  = 0.005f; // 5/1000 per iteration
+    }
+
+    float_t pullingForce    = minPenaltyIncrease;
+    float_t penaltyIncrease = minPenaltyIncrease;
+
+    float_t linearDisruption  = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
+    float_t currentDisruption = static_cast<float_t>(get_HPWL_wirelength( _circuit, _placementLB )) / static_cast<float_t>(get_HPWL_wirelength( _circuit, _placementUB ));
+
+    index_t i=0;
+    do{
+
         // Get the system to optimize (tolerance, maximum and minimum pin counts)
         // and the pulling forces (threshold distance)
         auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.5 * sliceHeight, 2, 100000 ) 
-                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pulling_force, 40.0 );
+                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pullingForce, 2.0f * linearDisruption); 
         solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
         _progressReport2( startTime, "          Linear." );
 
@@ -726,14 +750,17 @@ namespace Etesian {
         if(placementUpdate == UpdateAll)
             _updatePlacement( _placementUB );
 
-        if (i >= 2*globalIterations/3) {
-            auto prec_legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
-            coloquinte::dp::get_result( _circuit, prec_legalizer, _placementUB );
-            _progressReport1( startTime, "          Legal. " );
-            if(placementUpdate == UpdateAll)
-                _updatePlacement( _placementUB );
-        }
-    }
+        float_t newDisruption = static_cast<float_t>(get_HPWL_wirelength( _circuit, _placementLB )) / static_cast<float_t>(get_HPWL_wirelength( _circuit, _placementUB ));
+
+        penaltyIncrease = std::min(maxPenaltyIncrease, std::max(minPenaltyIncrease,
+                penaltyIncrease * std::sqrt( targetImprovement / (newDisruption - currentDisruption) )
+            ) );
+        currentDisruption = newDisruption;
+        linearDisruption = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
+
+        pullingForce += penaltyIncrease;
+        ++i;
+    }while(linearDisruption >= 0.5 * sliceHeight and currentDisruption <= 0.95);
 
     cmess1 << "  o  Detailed Placement." << endl;
     index_t detailedIterations;
@@ -742,15 +769,15 @@ namespace Etesian {
     else if(placementEffort == Standard)
         detailedIterations = 3;
     else if(placementEffort == High)
-        detailedIterations = 7;
+        detailedIterations = 5;
     else
-        detailedIterations = 15;
+        detailedIterations = 8;
     for ( index_t i=0; i<detailedIterations; ++i ){
         ostringstream label;
         label.str("");
         label  << "     [" << setw(2) << setfill('0') << i << "]";
 
-        optimize_exact_orientations( _circuit, _placementUB );
+        optimize_x_orientations( _circuit, _placementUB ); // Don't disrupt VDD/VSS connections in a row
         _progressReport1( startTime, label.str()+" Oriented ......." );
         if(placementUpdate <= LowerBound)
             _updatePlacement( _placementUB );
@@ -761,6 +788,7 @@ namespace Etesian {
         if(placementUpdate <= LowerBound)
             _updatePlacement( _placementUB );
 
+        row_compatible_orientation( _circuit, legalizer, true );
         swaps_global_HPWL( _circuit, legalizer, 3, 4 );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
         _progressReport1( startTime, "          Global Swaps ..." );
@@ -773,13 +801,14 @@ namespace Etesian {
         if(placementUpdate == UpdateAll)
             _updatePlacement( _placementUB );
 
-        swaps_row_HPWL( _circuit, legalizer, 4 );
+        swaps_row_convex_HPWL( _circuit, legalizer, 4 );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
         _progressReport1( startTime, "          Local Swaps ...." );
         if(placementUpdate <= LowerBound)
             _updatePlacement( _placementUB );
 
         if (i == detailedIterations-1) {
+          swaps_row_convex_RSMT( _circuit, legalizer, 4 );
           row_compatible_orientation( _circuit, legalizer, true );
           coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
           verify_placement_legality( _circuit, _placementUB, _surface );

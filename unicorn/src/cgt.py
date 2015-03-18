@@ -137,28 +137,29 @@ if __name__ == '__main__':
       saveGlobal     = options.saveGlobal
       globalRoute    = options.globalRoute
       detailRoute    = options.detailRoute
+      runEtesianTool = options.place
 
       Cfg.Configuration.popDefaultPriority()
-
+      
       cell = None
       if options.acmSigdaName:
           cell = CRL.AcmSigda.load(options.acmSigdaName)
-      if options.ispd05name:
+      elif options.ispd05name:
           cell = CRL.Ispd05.load(options.ispd05name)
       elif options.cell:
           cell = af.getCell(options.cell, CRL.Catalog.State.Views)
       else:
-          place       = False
-          loadGlobal  = False
-          saveGlobal  = False
-          globalRoute = False
-          detailRoute = False
-  
+          runEtesianTool = False
+          loadGlobal     = False
+          saveGlobal     = False
+          globalRoute    = False
+          detailRoute    = False
+      
       if not options.textMode:
          # Run in graphic mode.
           ha = Viewer.HApplication.create(args)
           Viewer.Graphics.enable()
-      
+          
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
@@ -167,10 +168,10 @@ if __name__ == '__main__':
           unicorn.setLayerVisible     ("grid"          , False);
           unicorn.setLayerVisible     ("text.instance" , False);
           unicorn.setLayerVisible     ("text.component", False);
-
+          
           if options.script:
               runScript(options.script,unicorn)
-    
+          
           setCgtBanner(unicorn.getBanner())
           print unicorn.getBanner()
           print credits()
@@ -181,13 +182,11 @@ if __name__ == '__main__':
       else:
          # Run in command line mode.
           kiteSuccess = False
-
-          runEtesianTool = place
-
+          
           if runEtesianTool:
-              etesian = Nimbus.NimbusEngine.create(cell)
+              etesian = Etesian.EtesianEngine.create(cell)
              #if options.showConf: etesian.printConfiguration()
-              etesian.run()
+              etesian.place()
 
           if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
           runKiteTool = loadGlobal or globalRoute or detailRoute
