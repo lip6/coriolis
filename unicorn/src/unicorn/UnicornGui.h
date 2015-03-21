@@ -19,15 +19,17 @@
 #ifndef  UNICORN_UNICORN_H
 #define  UNICORN_UNICORN_H
 
-#include  <set>
-#include  <iostream>
-using namespace std;
-
-#include  "hurricane/viewer/CellViewer.h"
-#include  "crlcore/Banner.h"
+#include <set>
+#include <iostream>
+#include <functional>
+#include <boost/any.hpp>
+#include "hurricane/viewer/CellViewer.h"
+#include "crlcore/Banner.h"
 namespace CRL {
   class GraphicTool;
 }
+
+#include "unicorn/ImportCell.h"
 
 
 namespace Unicorn {
@@ -46,32 +48,35 @@ namespace Unicorn {
   class UnicornGui : public CellViewer {
       Q_OBJECT;
     public:
-      static        UnicornGui* create          ( QWidget* parent=NULL );
-                    void        destroy         ();
-      static inline Banner&     getBanner       ();
-      virtual       Cell*       getCellFromDb   ( const char* name );
-                    void        registerTool    ( GraphicTool* );
-      virtual       std::string _getString      () const;
-    public slots:                               
-                    void        openCell        ();
-                    void        saveCell        ();
-                    void        importCell      ();
-                    void        exportCell      ();
-    protected:                                  
-                                UnicornGui      ( QWidget* parent );
-      virtual                  ~UnicornGui      ();
-      virtual       void        _postCreate     ();
-      virtual       void        _preDestroy     ();
-                    void        _runUnicornInit ();
+      static        UnicornGui* create             ( QWidget* parent=NULL );
+                    void        destroy            ();
+      static inline Banner&     getBanner          ();
+      virtual       Cell*       getCellFromDb      ( const char* name );
+      inline        ImportCell* getImportCell      ();
+                    void        registerTool       ( GraphicTool* );
+      virtual       std::string _getString         () const;
+    public slots:                                  
+                    void        openCell           ();
+                    void        saveCell           ();
+                    void        importCell         ();
+                    void        exportCell         ();
+    protected:                                     
+                                UnicornGui         ( QWidget* parent );
+      virtual                  ~UnicornGui         ();
+      virtual       void        _postCreate        ();
+      virtual       void        _preDestroy        ();
+                    void        _runUnicornInit    ();
     protected:
       static  Banner             _banner;
               set<GraphicTool*>  _tools;
+              ImportCell         _importCell;
               ImportCellDialog*  _importDialog;
               ExportCellDialog*  _exportDialog;
   };
 
 
-  inline Banner& UnicornGui::getBanner () { return _banner; }
+  inline Banner&     UnicornGui::getBanner     () { return  _banner; }
+  inline ImportCell* UnicornGui::getImportCell () { return &_importCell; }
 
 
 } // End of Unicorn namespace.

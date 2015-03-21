@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -16,12 +16,8 @@
 
 #include <iostream>
 #include "hurricane/Error.h"
-#include "crlcore/AcmSigda.h"
-#include "crlcore/Ispd04Bookshelf.h"
-#include "crlcore/Ispd05Bookshelf.h"
-#include "crlcore/Iccad04Lefdef.h"
-#include "crlcore/DefImport.h"
 #include "unicorn/ImportCell.h"
+#include "unicorn/ImportCellDialog.h"
 
 
 namespace Unicorn {
@@ -31,34 +27,33 @@ namespace Unicorn {
   using std::string;
   using Hurricane::Error;
   using Hurricane::Cell;
-  using CRL::AcmSigda;
-  using CRL::Ispd04;
-  using CRL::Ispd05;
-  using CRL::Iccad04Lefdef;
-  using CRL::DefImport;
+
+
+  ImportCell::ImportCell ()
+    : _count (0)
+    , _lut   ()
+    , _dialog(NULL)
+  { }
+
+
+  void  ImportCell::addImporter ( std::string menuName, std::function<Cell*(std::string)> callback )
+  {
+    _lut.insert( make_pair( _count, make_pair(menuName,callback) ) );
+    _dialog->addFormat( menuName.c_str(), _count++ );
+  }
 
 
   Cell*  ImportCell::load ( const string& cellName, int format )
   {
     Cell* cell = NULL; 
 
-    switch ( format ) {
-      case AcmSigda:
-        cell = AcmSigda::load( cellName );
-        break;
-      case Ispd04:
-        cell = Ispd04::load( cellName );
-        break;
-      case Ispd05:
-        cell = Ispd05::load( cellName );
-        break;
-      case Iccad04:
-        cell = Iccad04Lefdef::load( cellName, 0 );
-        break;
-      case AllianceDef:
-        cell = DefImport::load( cellName.c_str() , DefImport::FitAbOnCells );
-        break;
+    ImportLut::iterator iimport = _lut.find( format );
+    if (iimport == _lut.end()) {
+      cerr << Error( "Importer id:%d for cell %s not found.", format, cellName.c_str() ) << endl;
+      return NULL;
     }
+
+    cell = iimport->second.second( cellName );
 
     if (not cell) {
       cerr << Error( "Cell not found: %s", cellName.c_str() ) << endl;

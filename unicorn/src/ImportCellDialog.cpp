@@ -81,11 +81,13 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
+#if 0
     _formatComboBox->addItem ( tr("ACM/SIGDA (aka MCNC, .bench)"), ImportCell::AcmSigda    );
     _formatComboBox->addItem ( tr("ISPD'04 (Bookshelf)")         , ImportCell::Ispd04      );
     _formatComboBox->addItem ( tr("ISPD'05 (Bookshelf)")         , ImportCell::Ispd05      );
     _formatComboBox->addItem ( tr("ICCAD'04 (LEF/DEF)")          , ImportCell::Iccad04     );
     _formatComboBox->addItem ( tr("Alliance compliant DEF")      , ImportCell::AllianceDef );
+#endif
     hLayout2->addWidget ( _formatComboBox );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();
@@ -102,6 +104,12 @@ namespace Unicorn {
 
     connect (     okButton, SIGNAL(clicked()), this, SLOT(accept()) );
     connect ( cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
+  }
+
+
+  void  ImportCellDialog::addFormat ( QString menuName, int index )
+  {
+    _formatComboBox->addItem( menuName, index );
   }
 
 

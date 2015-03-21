@@ -58,11 +58,11 @@
                                                   PREFIX        ""
                                                   OUTPUT_NAME   "Etesian"
                        )
+ target_link_libraries ( pyEtesian     etesian
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
 
 #       add_executable ( etesian.bin   ${etesiancpps} )
 #target_link_libraries ( etesian.bin   etesian )
- target_link_libraries ( pyEtesian     etesian
-                                       ${CORIOLIS_PYTHON_LIBRARIES}
                        )
                install ( TARGETS       etesian           DESTINATION lib${LIB_SUFFIX} )
 #              install ( TARGETS       etesian.bin       DESTINATION bin )

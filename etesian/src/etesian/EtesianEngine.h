@@ -52,7 +52,6 @@ namespace Etesian {
 
   class EtesianEngine : public CRL::ToolEngine {
     public:
-    public:
       static  const Name&          staticGetName    ();
       static  EtesianEngine*       create           ( Cell* );
       static  EtesianEngine*       get              ( const Cell* );

@@ -336,10 +336,9 @@ namespace CRL {
   ToolEngine* ToolEngine::get ( const Cell* cell, const Name& name )
   {
     ToolEnginesRelation* relation = ToolEnginesRelation::getToolEnginesRelation(cell);
-    if (!relation)
-      return NULL;
-    else
-    {
+    if (not relation) {
+      return NULL; 
+    } else {
       forEach ( ToolEngine*, itool, relation->getSlaveOwners().getSubSet<ToolEngine*>()) {
         if (itool->getName() == name)
           return *itool;

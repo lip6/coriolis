@@ -18,6 +18,8 @@
 #define  UNICORN_IMPORT_CELL_H
 
 #include <string>
+#include <map>
+#include <functional>
 
 namespace Hurricane {
   class Cell;
@@ -25,13 +27,25 @@ namespace Hurricane {
 
 namespace Unicorn {
 
+  class ImportCellDialog;
+
 
   class ImportCell {
     public:
-      enum Formats { AcmSigda=1, Ispd04, Ispd05, Iccad04, AllianceDef };
+      typedef  std::map< int, std::pair< std::string, std::function<Hurricane::Cell*(std::string)> > >  ImportLut;
     public:
-      static Hurricane::Cell* load ( const std::string&, int format );
+                              ImportCell  ();
+      inline void             setDialog   ( ImportCellDialog* );
+             Hurricane::Cell* load        ( const std::string&, int format );
+      void                    addImporter ( std::string, std::function<Hurricane::Cell*(std::string)> );
+    private:
+      int               _count;
+      ImportLut         _lut;
+      ImportCellDialog* _dialog;
   };
+
+
+  inline void  ImportCell::setDialog ( ImportCellDialog* dialog ) { _dialog = dialog; }
 
 
 }  // Unicorn namespace.

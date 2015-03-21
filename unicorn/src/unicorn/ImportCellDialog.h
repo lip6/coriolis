@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ImportCellDialog.h"                     |
+// |  C++ Header  :       "./unicorn/ImportCellDialog.h"             |
 // +-----------------------------------------------------------------+
 
 
@@ -32,6 +32,7 @@ namespace Unicorn {
 
     public:
                      ImportCellDialog ( QWidget* parent=NULL );
+      void           addFormat        ( QString menuName, int index );
       bool           runDialog        ( QString& name, int& format, bool& newViewerRequest );
       const QString  getCellName      () const;
       bool           useNewViewer     () const;

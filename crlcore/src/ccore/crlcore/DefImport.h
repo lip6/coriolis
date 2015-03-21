@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |        C a d e n c e   D E F   I m p o r t e r                  |
 // |                                                                 |
@@ -17,16 +11,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./crlcore/DefImport.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_DEF_IMPORT__
-#define  __CRL_DEF_IMPORT__
+#ifndef  CRL_DEF_IMPORT_H
+#define  CRL_DEF_IMPORT_H
 
-#include  <string>
+#include <string>
 
 namespace Hurricane {
   class Cell;
@@ -47,4 +38,4 @@ namespace CRL {
 } // End of CRL namespace.
 
 
-#endif  // __CRL_DEF_IMPORT__
+#endif  // CRL_DEF_IMPORT_H

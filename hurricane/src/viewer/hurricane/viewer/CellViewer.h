@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -144,6 +144,8 @@ namespace Hurricane {
               void                 runStressScript           ();
       inline  void                 emitCellAboutToChange     ();
       inline  void                 emitCellChanged           ();
+      inline  void                 emitCellPreModificated    ();
+      inline  void                 emitCellPostModificated   ();
     signals:                       
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
@@ -190,15 +192,17 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline bool              CellViewer::isToolInterrupted     () const { return _toolInterrupt; }
-  inline CellObserver*     CellViewer::getCellObserver       () { return &_cellObserver; }
-  inline CellWidget*       CellViewer::getCellWidget         () { return _cellWidget; }
-  inline const CellWidget* CellViewer::getCellWidget         () const { return _cellWidget; }
-  inline ControllerWidget* CellViewer::getControllerWidget   () { return _controller; }
-  inline void              CellViewer::setApplicationName    ( const QString& name ) { _applicationName = name; }
-  inline void              CellViewer::setLayerVisible       ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
-  inline void              CellViewer::emitCellAboutToChange () { _flags |=  InCellChange; emit cellPreModificated(); }
-  inline void              CellViewer::emitCellChanged       () { _flags &= ~InCellChange; emit cellPostModificated(); }
+  inline bool              CellViewer::isToolInterrupted       () const { return _toolInterrupt; }
+  inline CellObserver*     CellViewer::getCellObserver         () { return &_cellObserver; }
+  inline CellWidget*       CellViewer::getCellWidget           () { return _cellWidget; }
+  inline const CellWidget* CellViewer::getCellWidget           () const { return _cellWidget; }
+  inline ControllerWidget* CellViewer::getControllerWidget     () { return _controller; }
+  inline void              CellViewer::setApplicationName      ( const QString& name ) { _applicationName = name; }
+  inline void              CellViewer::setLayerVisible         ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
+  inline void              CellViewer::emitCellAboutToChange   () { _flags |=  InCellChange; emit cellPreModificated(); }
+  inline void              CellViewer::emitCellChanged         () { _flags &= ~InCellChange; emit cellPostModificated(); }
+  inline void              CellViewer::emitCellPreModificated  () { emit cellPreModificated(); }
+  inline void              CellViewer::emitCellPostModificated () { emit cellPostModificated(); }
 
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }

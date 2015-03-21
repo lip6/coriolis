@@ -25,6 +25,11 @@
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/GraphicToolEngine.h"
+#include "crlcore/AcmSigda.h"
+#include "crlcore/Ispd04Bookshelf.h"
+#include "crlcore/Ispd05Bookshelf.h"
+#include "crlcore/Iccad04Lefdef.h"
+#include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
 #include "crlcore/GdsDriver.h"
 #include "unicorn/ImportCell.h"
@@ -43,6 +48,11 @@ namespace Unicorn {
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
+  using CRL::AcmSigda;
+  using CRL::Ispd04;
+  using CRL::Ispd05;
+  using CRL::Iccad04Lefdef;
+  using CRL::DefImport;
   using CRL::DefExport;
   using CRL::GdsDriver;
 
@@ -61,16 +71,24 @@ namespace Unicorn {
 
 
   UnicornGui::UnicornGui ( QWidget* parent )
-    : CellViewer   (parent)
-    , _tools       ()
-    , _importDialog(new ImportCellDialog(this))
-    , _exportDialog(new ExportCellDialog(this))
+    : CellViewer      (parent)
+    , _tools          ()
+    , _importCell     ()
+    , _importDialog   (new ImportCellDialog(this))
+    , _exportDialog   (new ExportCellDialog(this))
   {
     addMenu  ( "placeAndRoute"           , "P&&R"          , CellViewer::TopMenu );
     addMenu  ( "placeAndRoute.stepByStep", "&Step by Step" );
     addToMenu( "placeAndRoute.========" );
 
     _runUnicornInit();
+
+    _importCell.setDialog( _importDialog );
+    _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
+    _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
+    _importCell.addImporter( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
+    _importCell.addImporter( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
+    _importCell.addImporter( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
   }
 
 
@@ -210,7 +228,7 @@ namespace Unicorn {
     int     format;
 
     if ( _importDialog->runDialog( cellName, format, newViewer ) ) {
-      Cell* cell = ImportCell::load( cellName.toStdString(), format ); 
+      Cell* cell = _importCell.load( cellName.toStdString(), format ); 
 
       if (cell) {
         UnicornGui* viewer = this;
