@@ -1,6 +1,6 @@
+# -*- explicit-buffer-name: "CMakeLists.txt<knik/src>" -*-
 
 #              include ( ${QT_USE_FILE} )
-
    include_directories ( ${KNIK_SOURCE_DIR}/src
                          ${KNIK_SOURCE_DIR}/src/flute-2.4/src
                          ${HURRICANE_INCLUDE_DIR} 

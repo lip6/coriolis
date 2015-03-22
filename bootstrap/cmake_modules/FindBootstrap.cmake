@@ -316,3 +316,53 @@
      set(${project}_FOUND FALSE)
    endif(${project}_INCLUDE_DIR AND ${project}_LIBRARY)
  endmacro(set_found project)
+
+
+#
+# Build a Python extention module.
+# Usage:
+#   * clibSpec:  The C/C++ shared part of the Python module.
+#                A four three list CLIB_NAME;version;soversion;
+#                - CLIB_NAME: the name of the C/C++ shared library
+#                - version:   the full version number (ex: 1.0).
+#                - soversion: the shared version major (ex: 1).
+#                If the C library must not be generated because it is
+#                already included in another one, set to IGNORE.
+#   * pymodule:  The name of the Python module (for "import PYMODULE").
+#   * deplibs:   The list of dependencies.
+#
+ macro( add_python_module pyCpps pyIncludes argClibSpec pymodule deplibs inc_install_dir )
+   set( pyDeplibs ${deplibs} )
+  # Force the argument <argClibSpec> to be parsed as a list.
+   set( clibSpec ${argClibSpec} )
+   list( GET clibSpec 0 clib )
+
+   message( STATUS ${clib} )
+   if( NOT (${clib} STREQUAL "Do_not_generate_C_library") )
+     list( LENGTH clibSpec clibLen )
+     if( NOT (clibLen EQUAL 3) )
+       message( FATAL_ERROR "python_module(): clibSpec doesnt't have exactly 3 elements (${clibSpec})." )
+     endif()
+     list( GET clibSpec 1 version )
+     list( GET clibSpec 2 soversion )
+     set( pyDeplibs ${clib} ${deplibs} )
+
+             add_library( ${clib}      ${pyCpps} ) 
+   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion} )
+   target_link_libraries( ${clib}      ${deplibs} )
+                 install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
+   endif()
+  
+                     set( pytarget     "${pymodule}_target" )
+
+             add_library( ${pytarget}  MODULE ${pyCpps} ) 
+   set_target_properties( ${pytarget}  PROPERTIES
+                                       COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
+                                       PREFIX        ""
+                                       OUTPUT_NAME   ${pymodule}
+                        )
+   target_link_libraries( ${pytarget}  ${pyDeplibs} )
+
+                 install( TARGETS      ${pytarget}    DESTINATION ${PYTHON_SITE_PACKAGES} )
+                 install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
+ endmacro( add_python_module )

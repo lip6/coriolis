@@ -35,6 +35,7 @@
 #find_package(SOLSTICE REQUIRED)
  
  add_subdirectory(src)
+ add_subdirectory(python)
  add_subdirectory(cmake_modules)
 
  if(BUILD_DOC)

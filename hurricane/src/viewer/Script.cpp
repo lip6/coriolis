@@ -14,6 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
+#if !defined(__PYTHON_MODULE__)
+
 #include  <Python.h>
 #include  <sstream>
 #include  "hurricane/Error.h"
@@ -303,3 +305,5 @@ namespace Isobar {
 
 
 } // End of Isobar namespace.
+
+#endif

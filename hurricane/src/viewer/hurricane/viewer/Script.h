@@ -14,8 +14,10 @@
 // +-----------------------------------------------------------------+
 
 
-# ifndef  ISOBAR_SCRIPT_H
-# define  ISOBAR_SCRIPT_H
+#if !defined(__PYTHON_MODULE__)
+
+#ifndef  ISOBAR_SCRIPT_H
+#define  ISOBAR_SCRIPT_H
 
 #include <vector>
 
@@ -97,7 +99,8 @@ namespace Isobar {
   { return _userModule = _importModule(_moduleName,flags); }
 
 
-} // End of Isobar namespace.
+} // Isobar namespace.
 
+#endif // ISOBAR_SCRIPT_H
 
-# endif // ISOBAR_SCRIPT_H
+#endif
