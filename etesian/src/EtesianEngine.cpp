@@ -157,27 +157,17 @@ namespace {
   {
     DbU::Unit tx         = position.x_ * pitch;
     DbU::Unit ty         = position.y_ * pitch;
-    //Point     center     = model->getAbutmentBox().getCenter();
+
     Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
 
-    // TODO offsets
-    if ( orientation.x_ and orientation.y_ ) {
-      //tx += - center.getX();
-      //ty += - center.getY();
-    } else if ( not orientation.x_ and orientation.y_) {
-      //tx    +=   center.getX();
+    if ( not orientation.x_ and orientation.y_) {
       tx    +=   cellBox.getWidth();
-      //ty    += - center.getY();
       orient = Transformation::Orientation::MX;
     } else if ( orientation.x_ and not orientation.y_) {
-      //tx    += - center.getX();
-      //ty    +=   center.getY();
       ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::MY;
     } else if ( not orientation.x_ and not orientation.y_) {
-      //tx    += center.getX();
-      //ty    += center.getY();
       tx    +=   cellBox.getWidth();
       ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::R2;
@@ -287,7 +277,7 @@ namespace Etesian {
   {
   // Ugly: Name based detection of ISPD benchmarks.
     if (getString(getCell()->getName()).substr(0,7) == "bigblue") {
-      cmess1 << "  o  ISPD benchmark <" << getCell()->getName()
+      cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
              << ">, no feed cells will be added." << endl;
     } else {
     // Ugly: Direct uses of Alliance Framework.
@@ -455,7 +445,7 @@ namespace Etesian {
 
     if (_cellWidget) _cellWidget->refresh();
 
-    _placed = true;
+    _placed = false;
   }
 
 
@@ -571,7 +561,7 @@ namespace Etesian {
 
       dots.dot();
 
-      nets[netId] = temporary_net( netId, 1000 );
+      nets[netId] = temporary_net( netId, 1 );
 
       forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
         string insName = extractInstanceName( *irp );
@@ -624,7 +614,8 @@ namespace Etesian {
     Density       densityConf     = getSpreadingConf();
 
     cmess1 << "  o  Running Coloquinte." << endl;
-    cmess1 << "     - Computing initial placement..." << endl;
+    cmess1 << "  o  Global placement." << endl;
+    cmess2 << "     - Computing initial placement..." << endl;
     cmess2 << setfill('0') << right;
 
 
@@ -636,7 +627,7 @@ namespace Etesian {
     cmess2 << "  o  Initial wirelength " << get_HPWL_wirelength(_circuit, _placementLB) << "." <<  endl;
     startMeasures();
 
-    cmess1 << "  o  Simple legalization." << endl;
+    cmess2 << "  o  Simple legalization." << endl;
     auto first_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
     first_legalizer.selfcheck();
     get_rough_legalization( _circuit, _placementUB, first_legalizer);
@@ -655,7 +646,7 @@ namespace Etesian {
         _updatePlacement( _placementUB );
 
     // Early topology-independent solution + negligible pulling forces to avoid dumb solutions
-    cmess1 << "  o  Star (*) Optimization." << endl;
+    cmess2 << "  o  Star (*) Optimization." << endl;
     auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10000)
               + get_pulling_forces( _circuit, _placementUB, 1000000.0);
     solve_linear_system( _circuit, _placementLB, solv, 200 );
@@ -664,7 +655,7 @@ namespace Etesian {
     if(placementUpdate <= LowerBound)
         _updatePlacement( _placementLB );
 
-    cmess1 << "  o  Simple legalization." << endl;
+    cmess2 << "  o  Simple legalization." << endl;
     auto snd_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
     get_rough_legalization( _circuit, _placementUB, snd_legalizer);
 
@@ -686,18 +677,18 @@ namespace Etesian {
         targetImprovement  = 0.05f; // 5/100 per iteration
     }
     else if(placementEffort == Standard){
-        minPenaltyIncrease = 0.003f;
+        minPenaltyIncrease = 0.001f;
         maxPenaltyIncrease = 0.04f;
         targetImprovement  = 0.02f; // 2/100 per iteration
     }
     else if(placementEffort == High){
-        minPenaltyIncrease = 0.001f;
+        minPenaltyIncrease = 0.0005f;
         maxPenaltyIncrease = 0.02f;
         targetImprovement  = 0.01f; // 1/100 per iteration
     }
     else{
         minPenaltyIncrease = 0.0002f;
-        maxPenaltyIncrease = 0.015f;
+        maxPenaltyIncrease = 0.01f;
         targetImprovement  = 0.005f; // 5/1000 per iteration
     }
 
@@ -713,7 +704,7 @@ namespace Etesian {
         // Get the system to optimize (tolerance, maximum and minimum pin counts)
         // and the pulling forces (threshold distance)
         auto solv = get_HPWLF_linear_system  ( _circuit, _placementLB, 0.5 * sliceHeight, 2, 100000 ) 
-                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pullingForce, 2.0f * linearDisruption); 
+                  + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pullingForce, 2.0f * linearDisruption);
         solve_linear_system( _circuit, _placementLB, solv, 400 ); // number of iterations
         _progressReport2( startTime, "          Linear." );
 
@@ -757,10 +748,11 @@ namespace Etesian {
             ) );
         currentDisruption = newDisruption;
         linearDisruption = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
+        cparanoid << "                   Pulling force: " <<  pullingForce << " Increase: " << penaltyIncrease << endl;
 
         pullingForce += penaltyIncrease;
         ++i;
-    }while(linearDisruption >= 0.5 * sliceHeight and currentDisruption <= 0.95);
+    }while(linearDisruption >= 0.5 * sliceHeight and currentDisruption <= 0.9);
 
     cmess1 << "  o  Detailed Placement." << endl;
     index_t detailedIterations;
@@ -796,12 +788,14 @@ namespace Etesian {
             _updatePlacement( _placementUB );
 
         OSRP_convex_HPWL( _circuit, legalizer );
+        //OSRP_noncvx_RSMT( _circuit, legalizer );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
         _progressReport1( startTime, "          Row Optimization" );
         if(placementUpdate == UpdateAll)
             _updatePlacement( _placementUB );
 
         swaps_row_convex_HPWL( _circuit, legalizer, 4 );
+        //swaps_row_noncvx_RSMT( _circuit, legalizer, 4 );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
         _progressReport1( startTime, "          Local Swaps ...." );
         if(placementUpdate <= LowerBound)
@@ -817,7 +811,7 @@ namespace Etesian {
     }
     _updatePlacement( _placementUB );
 
-    cmess1 << "  o  Adding feed cells." << endl;
+    cmess2 << "  o  Adding feed cells." << endl;
     addFeeds();
 
     cmess1 << "  o  Placement finished." << endl;
@@ -828,7 +822,7 @@ namespace Etesian {
     cmess1 << ::Dots::asString
       ( "     - RMST", DbU::getValueString( (DbU::Unit)get_RSMT_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
 
-    _placed = false;
+    _placed = true;
 #else
     cerr << Warning("Coloquinte library wasn't found, Etesian is disabled.") << endl;
 #endif
@@ -851,7 +845,8 @@ namespace Etesian {
     cmess2 << label << elapsed.str()
            << " HPWL:" << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementUB )
            << " RMST:" << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementUB )
-           << "\n" << indent
+           << endl;
+    cparanoid << indent
            <<  "  Linear Disrupt.:" << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
            <<   " Quad Disrupt.:"   << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
            << endl;
