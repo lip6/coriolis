@@ -44,8 +44,38 @@ using namespace CRL;
 namespace {
   using namespace std;
 
-  // ---------------------------------------------------------------
-  // Function  :  "SetNetType()".
+  void  addSupplyNets ( Cell* cell )
+  {
+    Net* vss = Net::create ( cell, "vss" );
+    vss->setExternal ( true );
+    vss->setGlobal   ( true );
+    vss->setType     ( Net::Type::GROUND );
+
+    Net* vdd = Net::create ( cell, "vdd" );
+    vdd->setExternal ( true );
+    vdd->setGlobal   ( true );
+    vdd->setType     ( Net::Type::POWER );
+  }
+
+  void  connectSupplyNets ( Instance * instance, Cell* design )
+  {
+    Cell* instcell = instance->getCell();
+    if(instcell == NULL){
+        throw Error("Instance's cell is null\n");
+    }
+    Net* vssint = instcell->getNet( "vss" );
+    Net* vddint = instcell->getNet( "vdd" );
+    cerr << "Got instance nets" << endl;
+    Net* vssext = design->getNet( "vss" );
+    Net* vddext = design->getNet( "vdd" );
+    cerr << "Got cell nets" << endl;
+    auto vssplug = instance->getPlug( vssint );
+    auto vddplug = instance->getPlug( vddint );
+    cerr << "Got plugs: " << vssplug << " and " << vddplug << endl;
+    vssplug->setNet( vssext );
+    vddplug->setNet( vddext );
+    cerr << "Updated nets" << endl;
+  }
 
   void  SetNetType ( Net* net, AllianceFramework * framework )
   {
@@ -134,13 +164,16 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
           models.back().subcircuits.push_back(subckt());
         }
         else if(token == ".names"){
-          cerr << Warning("BLIF names are ignored");
+          cerr << Warning("BLIF names are ignored\n");
           if(state == EXT)
             throw Error("Names without an enclosing model are not supported\n");
           if(state == MODEL and not hasName)
             throw Error("Model has no name\n");
           state = NAMES;
           hasName = false;
+        }
+        else if(token == ".latch"){
+          throw Error("Latch constructs are not understood by the parser\n");
         }
         else if(token == ".inputs"){
           if(state == EXT)
@@ -208,9 +241,10 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
     line.clear();
   }
   if(state != EXT){
-    cerr << Warning("End of model has not been found");
+    cerr << Warning("End of model has not been found\n");
   }
 
+  /*
   for(auto & M : models){
     cout << "Model: " << M.name << endl;
     for(auto & S : M.subcircuits){
@@ -221,47 +255,59 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
       cout << endl;
     }
   }
+  */
 
   if(models.size() > 1){
-    cerr << Warning("Several models in the file; only the first was open");
+    cerr << Warning("Several models in the file; only the last was open\n");
   }
 
-  Cell* design = framework->createCell(models[0].name);
-
-  int i=0;
-  for(auto & S : models[0].subcircuits){
-    ostringstream subckt_name;
-    subckt_name << "subckt_" << i;
-    Cell * cell = framework->getCell(S.cell, Catalog::State::Views, 0);
-    Instance* instance = Instance::create( design, subckt_name.str(), cell);
+  Cell * design = NULL;
+  for(auto M : models){
+    design = framework->createCell(M.name);
+    addSupplyNets(design);
 
     unordered_set<string> net_names;
-    for(auto const & P : S.pins){
-        net_names.insert(P.second);
+    for(auto const & S : M.subcircuits){
+      for(auto const & P : S.pins){
+          net_names.insert(P.second);
+      }
     }
-    for(auto const & P : models[0].pins){
+    for(auto const & P : M.pins){
         net_names.insert(P.first);
     }
 
     for(string const & N : net_names){
         Net* new_net = Net::create( design, N );
-        auto it = models[0].pins.find(N);
-        if(it != models[0].pins.end()){
+        auto it = M.pins.find(N);
+        if(it != M.pins.end()){
             new_net->setExternal( true );
             new_net->setDirection( it->second );
         }
     }
 
-    for(auto & P : S.pins){
-      Net* internalNet = cell->getNet( P.first );
-      Net* externalNet = design->getNet( P.second );
-      instance->getPlug( internalNet )->setNet( externalNet );
-    }
+    int i=0;
+    for(auto & S : M.subcircuits){
+      ostringstream subckt_name;
+      subckt_name << "subckt_" << i;
+      Cell * cell = framework->getCell(S.cell, Catalog::State::Views, 0);
+      if(cell == NULL){
+        cerr << Warning("Cell " + S.cell + "to instanciate hasn't been found\n");
+        continue;
+      }
+      Instance* instance = Instance::create( design, subckt_name.str(), cell);
 
-    ++i;
+      for(auto & P : S.pins){
+        Net* internalNet = cell->getNet( P.first );
+        Net* externalNet = design->getNet( P.second );
+        assert(internalNet != NULL and externalNet != NULL);
+        instance->getPlug( internalNet )->setNet( externalNet );
+      }
+      //connectSupplyNets(instance, design);
+      ++i;
+    }
   }
 
-  return cell;
+  return design;
 }
 
 }
