@@ -21,7 +21,7 @@ print os.path.join ( pathes[-2], pathes[-1] )
 	     
 	     
 Name:            coriolis2
-Summary:         Coriolis 2 VLSI CAD Sytem
+Summary:         Coriolis 2 VLSI CAD System
 Version:         %{coriolisVersion}.%{svntag}
 Release:         1%{dist}
 License:         BSD/LGPL/GPL/FLUTE
@@ -163,6 +163,7 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/include/coriolis2
 %dir %{coriolisTop}/include/coriolis2/crlcore
 %dir %{coriolisTop}/include/coriolis2/nimbus
+%dir %{coriolisTop}/include/coriolis2/etesian
 %dir %{coriolisTop}/include/coriolis2/metis
 %dir %{coriolisTop}/include/coriolis2/mauka
 %dir %{coriolisTop}/include/coriolis2/knik

@@ -8,11 +8,7 @@
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
-// | =============================================================== |
-// |  Yacc        :  "./VstParserGrammar.yy"                         |
 // |                                                                 |
-// |  This file is based on the Alliance VHDL parser written by      |
-// |       L.A. Tabusse, Vuong H.N., P. Bazargan-Sabet & D. Hommais  |
 // +-----------------------------------------------------------------+
 
 
