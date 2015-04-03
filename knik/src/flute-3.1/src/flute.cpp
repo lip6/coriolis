@@ -17,11 +17,6 @@ using CRL::AllianceFramework;
 #include <math.h>
 #include "knik/flute.h"
 
-#define max(x,y) ((x)>(y)?(x):(y))
-#define min(x,y) ((x)<(y)?(x):(y))
-#define abs(x) ((x)<0?(-x):(x))
-#define ADIFF(x,y) ((x)>(y)?(x-y):(y-x))  // Absolute difference
-
 #if D<=7
 #define MGROUP 5040/4  // Max. # of groups, 7! = 5040
 #define MPOWV 15  // Max. # of POWVs per group
@@ -37,12 +32,18 @@ int numgrp[10]={0,0,0,0,6,30,180,1260,10080,90720};
 struct csoln 
 {
     unsigned char parent;
-    unsigned char seg[11];  // add: 0..i, Sub: j..10; seg[i+1]=seg[j-1]=0
+    unsigned char seg[11];  // Add: 0..i, Sub: j..10; seg[i+1]=seg[j-1]=0
     unsigned char rowcol[D-2];  // row = rowcol[]/16, col = rowcol[]%16, 
     unsigned char neighbor[2*D-2];
 };
 struct csoln *LUT[D+1][MGROUP];  // storing 4 .. D
 int numsoln[D+1][MGROUP];
+
+struct point
+{
+    DTYPE x, y;
+    int o;
+};
 
 void readLUT();
 DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc);
@@ -56,9 +57,11 @@ FTree flutes_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 FTree dmergetree(FTree t1, FTree t2);
 FTree hmergetree(FTree t1, FTree t2, int s[]);
 FTree vmergetree(FTree t1, FTree t2);
+void local_refinement(FTree *tp, int p);
 DTYPE wirelength(FTree t);
 void printtree(FTree t);
 void plottree(FTree t);
+
 
 void readLUT()
 {
@@ -151,15 +154,13 @@ void readLUT()
     fclose ( fprt );
 }
 
+
 DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc)
 {
     DTYPE xs[MAXD], ys[MAXD], minval, l, xu, xl, yu, yl;
     int s[MAXD];
-    int i, j, /*k,*/ minidx;
-    struct point {
-        DTYPE x, y;
-        int o;
-    } pt[MAXD], *ptp[MAXD], *tmpp;
+    int i, j, k, minidx;
+    struct point pt[MAXD], *ptp[MAXD], *tmpp;
 
     if (d==2)
         l = ADIFF(x[0], x[1]) + ADIFF(y[0], y[1]);
@@ -248,7 +249,7 @@ DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc)
 // xs[] and ys[] are coords in x and y in sorted order
 // s[] is a list of nodes in increasing y direction
 //   if nodes are indexed in the order of increasing x coord
-//   i.e., s[i] = s_i in defined in paper
+//   i.e., s[i] = s_i as defined in paper
 // The points are (xs[s[i]], ys[i]) for i=0..d-1
 //             or (xs[i], ys[si[i]]) for i=0..d-1
 
@@ -405,13 +406,13 @@ DTYPE flutes_wl_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
     if (lb < 2) lb = 2;
     ub=d-1-lb;
 
-// compute scores    
+// Compute scores    
 #define AAWL 0.6
 #define BBWL 0.3
     float CCWL = 7.4/((d+10.)*(d-3.));
     float DDWL = 4.8/(d-1);
     
-    // compute penalty[]    
+    // Compute penalty[]    
     dx = CCWL*(xs[d-2]-xs[1]);
     dy = CCWL*(ys[d-2]-ys[1]);
     for (r = d/2, pnlty = 0; r>=0; r--, pnlty += dx)
@@ -422,7 +423,7 @@ DTYPE flutes_wl_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
 //    for (r=0; r<d; r++)
 //        penalty[r] = abs(d-1-r-r)*dx + abs(d-1-si[r]-si[r])*dy;
 
-    // compute distx[], disty[]
+    // Compute distx[], disty[]
     xydiff = (xs[d-1] - xs[0]) - (ys[d-1] - ys[0]);
     if (s[0] < s[1])
         mins = s[0], maxs = s[1];
@@ -568,15 +569,36 @@ DTYPE flutes_wl_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
     return minl;
 }
 
+static int orderx(const void *a, const void *b)
+{
+    struct point *pa, *pb;
+
+    pa = *(struct point**)a;
+    pb = *(struct point**)b;
+
+    if (pa->x < pb->x) return -1;
+    if (pa->x > pb->x) return 1;
+    return 0;
+}
+
+static int ordery(const void *a, const void *b)
+{
+    struct point *pa, *pb;
+
+    pa = *(struct point**)a;
+    pb = *(struct point**)b;
+
+    if (pa->y < pb->y) return -1;
+    if (pa->y > pb->y) return 1;
+    return 0;
+}
+
 FTree flute(int d, DTYPE x[], DTYPE y[], int acc)
 {
-    DTYPE xs[MAXD], ys[MAXD], minval;
-    int s[MAXD];
-    int i, j, /*k,*/ minidx;
-    struct point {
-        DTYPE x, y;
-        int o;
-    } pt[MAXD], *ptp[MAXD], *tmpp;
+    DTYPE *xs, *ys, minval;
+    int *s;
+    int i, j, k, minidx;
+    struct point *pt, **ptp, *tmpp;
     FTree t;
     
     if (d==2) {
@@ -591,27 +613,37 @@ FTree flute(int d, DTYPE x[], DTYPE y[], int acc)
         t.branch[1].n = 1;
     }
     else {
+        xs = (DTYPE *)malloc(sizeof(DTYPE)*(d));
+        ys = (DTYPE *)malloc(sizeof(DTYPE)*(d));
+        s = (int *)malloc(sizeof(int)*(d));
+        pt = (struct point *)malloc(sizeof(struct point)*(d+1));
+        ptp = (struct point **)malloc(sizeof(struct point*)*(d+1));
+
         for (i=0; i<d; i++) {
             pt[i].x = x[i];
             pt[i].y = y[i];
             ptp[i] = &pt[i];
         }
-        
+
         // sort x
-        for (i=0; i<d-1; i++) {
-            minval = ptp[i]->x;
-            minidx = i;
-            for (j=i+1; j<d; j++) {
-                if (minval > ptp[j]->x) {
-                    minval = ptp[j]->x;
-                    minidx = j;
+        if (d<200) {
+            for (i=0; i<d-1; i++) {
+                minval = ptp[i]->x;
+                minidx = i;
+                for (j=i+1; j<d; j++) {
+                    if (minval > ptp[j]->x) {
+                        minval = ptp[j]->x;
+                        minidx = j;
+                    }
                 }
+                tmpp = ptp[i];
+                ptp[i] = ptp[minidx];
+                ptp[minidx] = tmpp;
             }
-            tmpp = ptp[i];
-            ptp[i] = ptp[minidx];
-            ptp[minidx] = tmpp;
+        } else {
+            qsort(ptp, d, sizeof(struct point *), orderx);
         }
-        
+
 #if REMOVE_DUPLICATE_PIN==1
         ptp[d] = &pt[d];
         ptp[d]->x = ptp[d]->y = -999999;
@@ -632,31 +664,46 @@ FTree flute(int d, DTYPE x[], DTYPE y[], int acc)
         }
 
         // sort y to find s[]
-        for (i=0; i<d-1; i++) {
-            minval = ptp[i]->y;
-            minidx = i;
-            for (j=i+1; j<d; j++) {
-                if (minval > ptp[j]->y) {
-                    minval = ptp[j]->y;
-                    minidx = j;
+        if (d<200) {
+            for (i=0; i<d-1; i++) {
+                minval = ptp[i]->y;
+                minidx = i;
+                for (j=i+1; j<d; j++) {
+                    if (minval > ptp[j]->y) {
+                        minval = ptp[j]->y;
+                        minidx = j;
+                    }
                 }
+                ys[i] = ptp[minidx]->y;
+                s[i] = ptp[minidx]->o;
+                ptp[minidx] = ptp[i];
             }
-            ys[i] = ptp[minidx]->y;
-            s[i] = ptp[minidx]->o;
-            ptp[minidx] = ptp[i];
+            ys[d-1] = ptp[d-1]->y;
+            s[d-1] = ptp[d-1]->o;
+        } else {
+            qsort(ptp, d, sizeof(struct point *), ordery);
+            for (i=0; i<d; i++) {
+                ys[i] = ptp[i]->y;
+                s[i] = ptp[i]->o;
+            }
         }
-        ys[d-1] = ptp[d-1]->y;
-        s[d-1] = ptp[d-1]->o;
         
         t = flutes(d, xs, ys, s, acc);
+
+        free(xs);
+        free(ys);
+        free(s);
+        free(pt);
+        free(ptp);
     }
+
     return t;
 }
 
 // xs[] and ys[] are coords in x and y in sorted order
 // s[] is a list of nodes in increasing y direction
 //   if nodes are indexed in the order of increasing x coord
-//   i.e., s[i] = s_i in defined in paper
+//   i.e., s[i] = s_i as defined in paper
 // The points are (xs[s[i]], ys[i]) for i=0..d-1
 //             or (xs[i], ys[si[i]]) for i=0..d-1
 
@@ -917,13 +964,13 @@ FTree flutes_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
     if (lb < 2) lb = 2;
     ub=d-1-lb;
 
-// compute scores    
+// Compute scores    
 #define AA 0.6  // 2.0*BB
 #define BB 0.3
     float CC = 7.4/((d+10.)*(d-3.));
     float DD = 4.8/(d-1);
 
-    // compute penalty[]    
+    // Compute penalty[]    
     dx = CC*(xs[d-2]-xs[1]);
     dy = CC*(ys[d-2]-ys[1]);
     for (r = d/2, pnlty = 0; r>=2; r--, pnlty += dx)
@@ -939,7 +986,7 @@ FTree flutes_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
 //    for (r=0; r<d; r++)
 //        penalty[r] = v(r)*dx + v(si[r])*dy;
 
-    // compute distx[], disty[]
+    // Compute distx[], disty[]
     xydiff = (xs[d-1] - xs[0]) - (ys[d-1] - ys[0]);
     if (s[0] < s[1])
         mins = s[0], maxs = s[1];
@@ -1096,9 +1143,22 @@ FTree flutes_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc)
         }
     }
 
-    if (BreakInX(bestbp))
+#if LOCAL_REFINEMENT==1
+    if (BreakInX(bestbp)) {
         t = hmergetree(bestt1, bestt2, s);
-    else t = vmergetree(bestt1, bestt2);
+        local_refinement(&t, si[BreakPt(bestbp)]);
+    } else {
+        t = vmergetree(bestt1, bestt2);
+        local_refinement(&t, BreakPt(bestbp));
+    }
+#else
+    if (BreakInX(bestbp)) {
+        t = hmergetree(bestt1, bestt2, s);
+    } else {
+        t = vmergetree(bestt1, bestt2);
+    }
+#endif
+    
     free(bestt1.branch);
     free(bestt2.branch);
 
@@ -1287,6 +1347,108 @@ FTree vmergetree(FTree t1, FTree t2)
     t.branch[curr].n = prev;
 
     return t;
+}
+
+void local_refinement(FTree *tp, int p)
+{
+    int d, dd, i, ii, j, prev, curr, next, root;
+    int SteinerPin[2*MAXD], index[2*MAXD];
+    DTYPE x[MAXD], xs[D], ys[D];
+    int ss[D];
+    FTree tt;
+ 
+    d = tp->deg;
+    root = tp->branch[p].n;
+
+// Reverse edges to point to root    
+    prev = root;
+    curr = tp->branch[prev].n;
+    next = tp->branch[curr].n;
+    while (curr != next) {
+        tp->branch[curr].n = prev;
+        prev = curr;
+        curr = next;
+        next = tp->branch[curr].n;
+    }
+    tp->branch[curr].n = prev;
+    tp->branch[root].n = root;
+    
+// Find Steiner nodes that are at pins
+    for (i=d; i<=2*d-3; i++)
+        SteinerPin[i] = -1;
+    for (i=0; i<d; i++) {
+        next = tp->branch[i].n;
+        if (tp->branch[i].x == tp->branch[next].x &&
+            tp->branch[i].y == tp->branch[next].y)
+            SteinerPin[next] = i; // Steiner 'next' at Pin 'i'
+    }
+    SteinerPin[root] = p;
+
+// Find pins that are directly connected to root    
+    dd = 0;
+    for (i=0; i<d; i++) {
+        curr = tp->branch[i].n;
+        if (SteinerPin[curr] == i)
+            curr = tp->branch[curr].n;
+        while (SteinerPin[curr] < 0)
+            curr = tp->branch[curr].n;
+        if (curr == root) {
+            x[dd] = tp->branch[i].x;
+            if (SteinerPin[tp->branch[i].n] == i && tp->branch[i].n != root)
+                index[dd++] = tp->branch[i].n;  // Steiner node
+            else index[dd++] = i;  // Pin
+        }
+    }
+
+    if (4 <= dd && dd <= D) {
+// Find Steiner nodes that are directly connected to root    
+        ii=dd;
+        for (i=0; i<dd; i++) {
+            curr = tp->branch[index[i]].n;
+            while (SteinerPin[curr] < 0) {
+                index[ii++] = curr;
+                SteinerPin[curr] = INT_MAX;
+                curr = tp->branch[curr].n;
+            }
+        }
+        index[ii] = root;
+        
+        for (ii=0; ii<dd; ii++) {
+            ss[ii] = 0;
+            for (j=0; j<ii; j++)
+                if (x[j] < x[ii])
+                    ss[ii]++;
+            for (j=ii+1; j<dd; j++)
+                if (x[j] <= x[ii])
+                    ss[ii]++;
+            xs[ss[ii]] = x[ii];
+            ys[ii] = tp->branch[index[ii]].y;
+        }
+
+        tt = flutes_LD(dd, xs, ys, ss);
+
+// Find new wirelength
+        tp->length += tt.length;
+        for (ii=0; ii<2*dd-3; ii++) {
+            i = index[ii];
+            j = tp->branch[i].n;
+            tp->length -= ADIFF(tp->branch[i].x, tp->branch[j].x)
+                + ADIFF(tp->branch[i].y, tp->branch[j].y);
+        }
+        
+// Copy tt into t
+        for (ii=0; ii<dd; ii++) {
+            tp->branch[index[ii]].n = index[tt.branch[ii].n];
+        }
+        for (; ii<=2*dd-3; ii++) {
+            tp->branch[index[ii]].x = tt.branch[ii].x;
+            tp->branch[index[ii]].y = tt.branch[ii].y;
+            tp->branch[index[ii]].n = index[tt.branch[ii].n];
+        }
+        free(tt.branch);
+    }
+    
+    return;
 }
 
 DTYPE wirelength(FTree t)

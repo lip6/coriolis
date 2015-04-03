@@ -1,18 +1,42 @@
 #ifndef _KNIK_FLUTE_H
 #define _KNIK_FLUTE_H
 
-#define POWVFILE "POWV9.dat"    // LUT for POWV (Wirelength Vector)
-#define POSTFILE "POST9.dat"    // LUT for POST (Steiner FTree)
-#define MAXD 150    // max. degree of a net that can be handled
-                    // setting MAXD to more than 150 is not recommended
-#define D 9         // LUT is used for d <= D, D <= 9
-#define ROUTING 1   // 1 to construct routing, 0 to estimate WL only
-#define REMOVE_DUPLICATE_PIN 0  // remove dup. pin for flute_wl() & flute()
+/*****************************/
+/*  User-Defined Parameters  */
+/*****************************/
+#define MAXD 150    // max. degree that can be handled
 #define ACCURACY 3  // Default accuracy
+#define ROUTING 1   // 1 to construct routing, 0 to estimate WL only
+#define LOCAL_REFINEMENT 0      // Suggestion: Set to 1 if ACCURACY >= 5
+#define REMOVE_DUPLICATE_PIN 0  // Remove dup. pin for flute_wl() & flute()
 
 #ifndef DTYPE   // Data type for distance
 #define DTYPE int
 #endif
+
+
+/*****************************/
+/*  User-Callable Functions  */
+/*****************************/
+// void readLUT();
+// DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc);
+// DTYPE flutes_wl(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
+// FTree flute(int d, DTYPE x[], DTYPE y[], int acc);
+// FTree flutes(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
+// DTYPE wirelength(FTree t);
+// void printtree(FTree t);
+// void plottree(FTree t);
+
+
+/*************************************/
+/* Internal Parameters and Functions */
+/*************************************/
+#define POWVFILE "POWV9.dat"        // LUT for POWV (Wirelength Vector)
+#define POSTFILE "POST9.dat"        // LUT for POST (Steiner FTree)
+#define D 9                         // LUT is used for d <= D, D <= 9
+#define TAU(A) (8+1.3*(A))
+#define D1(A) (25+120/((A)*(A)))     // flute_mr is used for D1 < d <= D2
+#define D2(A) ((A)<=6 ? 500 : 75+5*(A))
 
 typedef struct
 {
@@ -27,7 +51,7 @@ struct FTree
     Branch *branch;   // array of tree branches
 };
 
-// Major functions
+// User-Callable Functions
 extern void readLUT();
 extern DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc);
 //Macro: DTYPE flutes_wl(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
@@ -37,13 +61,14 @@ extern DTYPE wirelength(FTree t);
 extern void printtree(FTree t);
 extern void plottree(FTree t);
 
-
 // Other useful functions
+extern void init_param();
 extern DTYPE flutes_wl_LD(int d, DTYPE xs[], DTYPE ys[], int s[]);
 extern DTYPE flutes_wl_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 extern DTYPE flutes_wl_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 extern FTree flutes_LD(int d, DTYPE xs[], DTYPE ys[], int s[]);
 extern FTree flutes_MD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
+extern FTree flutes_HD(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 extern FTree flutes_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 
 #if REMOVE_DUPLICATE_PIN==1
@@ -55,12 +80,20 @@ extern FTree flutes_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 #endif
 
 #define flutes_wl_ALLD(d, xs, ys, s, acc) flutes_wl_LMD(d, xs, ys, s, acc)
-#define flutes_ALLD(d, xs, ys, s, acc) flutes_LMD(d, xs, ys, s, acc)
-//#define flutes_ALLD(d, xs, ys, s, acc)   (d<=D ? flutes_LD(d, xs, ys, s) : (d<=D2 ? flutes_MD(d, xs, ys, s, acc) : flutes_HD(d, xs, ys, s, acc)))
+#define flutes_ALLD(d, xs, ys, s, acc) \
+    (d<=D ? flutes_LD(d, xs, ys, s) \
+          : (d<=D1(acc) ? flutes_MD(d, xs, ys, s, acc) \
+                        : flutes_HD(d, xs, ys, s, acc)))
 
 #define flutes_wl_LMD(d, xs, ys, s, acc) \
     (d<=D ? flutes_wl_LD(d, xs, ys, s) : flutes_wl_MD(d, xs, ys, s, acc))
 #define flutes_LMD(d, xs, ys, s, acc) \
     (d<=D ? flutes_LD(d, xs, ys, s) : flutes_MD(d, xs, ys, s, acc))
 
+#define max(x,y) ((x)>(y)?(x):(y))
+#define min(x,y) ((x)<(y)?(x):(y))
+#define abs(x) ((x)<0?(-x):(x))
+#define ADIFF(x,y) ((x)>(y)?(x-y):(y-x))  // Absolute difference
+
 #endif
+

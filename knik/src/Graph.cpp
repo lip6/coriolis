@@ -39,7 +39,6 @@
 #define __USE_MATRIXVERTEX__
 
 #define EPSILON 10e-4
-#define FLUTE_LIMIT 150
 #define HISTORIC_INC 1.5 // define the increment of historic cost for ripup & reroute
 
 namespace Knik {
@@ -1547,13 +1546,6 @@ void Graph::UpdateEstimateCongestion ( bool create )
 {
     if ( _vertexes_to_route.size() < 2 )
        return;
-    if ( _vertexes_to_route.size() >= FLUTE_LIMIT ) {
-      if ( create )
-        cerr << Warning( "Graph::UpdateEstimateCongestion(): %s\n"
-                        "          has more than %d vertex/terminals and cannot be handled by FLUTE."
-                       , getString(_working_net).c_str(), FLUTE_LIMIT ) << endl;
-      return;
-    }
     //cerr << "Running FLUTE for net : " << _working_net << endl;
     auto_ptr<FTree> flutetree ( createFluteTree() );
 
