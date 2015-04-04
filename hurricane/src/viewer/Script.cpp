@@ -277,7 +277,7 @@ namespace Isobar {
       }
       _initModules.clear();
 
-      Py_Finalize ();
+    //Py_Finalize ();
       
       _userModule       = NULL;
       _sysModule        = NULL;
