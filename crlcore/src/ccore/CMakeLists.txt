@@ -153,7 +153,7 @@
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
                        set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
                        set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
-                       set ( blif_cpps         blif/BlifDriver.cpp )
+                       set ( blif_cpps         blif/BlifParser.cpp )
  if ( LEFDEF_FOUND )
        include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
