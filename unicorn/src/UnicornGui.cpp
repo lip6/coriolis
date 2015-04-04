@@ -28,6 +28,7 @@
 #include "crlcore/AcmSigda.h"
 #include "crlcore/Ispd04Bookshelf.h"
 #include "crlcore/Ispd05Bookshelf.h"
+#include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
 #include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
@@ -51,6 +52,7 @@ namespace Unicorn {
   using CRL::AcmSigda;
   using CRL::Ispd04;
   using CRL::Ispd05;
+  using CRL::Blif;
   using CRL::Iccad04Lefdef;
   using CRL::DefImport;
   using CRL::DefExport;
@@ -87,6 +89,7 @@ namespace Unicorn {
     _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
+    _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
   }

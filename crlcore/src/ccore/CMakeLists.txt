@@ -22,6 +22,7 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/iccad04
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/blif
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
                              ${CRLCORE_SOURCE_DIR}/src/ccore/agds
@@ -61,6 +62,7 @@
                                                crlcore/DefImport.h
                                                crlcore/DefExport.h
                                                crlcore/LefExport.h
+                                               crlcore/Blif.h
                                                crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
                                                crlcore/Ispd04Bookshelf.h
@@ -151,6 +153,7 @@
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
                        set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
                        set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
+                       set ( blif_cpps         blif/BlifDriver.cpp )
  if ( LEFDEF_FOUND )
        include_directories ( ${LEFDEF_INCLUDE_DIR} )
  endif ( LEFDEF_FOUND )
@@ -296,6 +299,7 @@
                                         ${iccad04_cpps}
                                         ${ispd04_cpps}
                                         ${ispd05_cpps}
+                                        ${blif_cpps}
                                         ${spice_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}

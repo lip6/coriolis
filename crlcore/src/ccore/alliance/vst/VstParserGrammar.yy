@@ -905,7 +905,7 @@ association_element
       actual_port_name
         { if (not Vst::states->_firstPass) {
             if ( Vst::states->_masterNets.size() != Vst::states->_instanceNets.size() ) {
-	      ostringstream message;
+              ostringstream message;
               message <<  "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName.c_str()
                       << "> Line:" << Vst::states->_vhdLineNumber << "\n"
                       << "  Port map assignment discrepency "
