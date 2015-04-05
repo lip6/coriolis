@@ -126,7 +126,9 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
   auto framework = AllianceFramework::get ();
 
   std::ifstream ccell ( cellPath+".blif" );
-
+  if(ccell.fail()){
+    throw Error("Unable to open the file\n");
+  }
   cmess2 << "     " << tab << "+ " << cellPath << " [BLIF]" << endl;
 
   std::vector<model> models;

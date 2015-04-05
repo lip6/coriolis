@@ -242,7 +242,7 @@ void KnikEngine::initGlobalRouting( const map<Name,Net*>& excludedNets )
       continue;
     }
 
-  // We want to route nets with more at least 2 and less than MaxDegree vertexes
+  // We want to route nets with more than 2 and less than MaxDegree vertexes
     unsigned netDegree = _routingGraph->countVertexes ( *inet );
     if ( (netDegree > 1) and (netDegree < MaxDegree) ) {
       Box       bbox   = inet->getBoundingBox();

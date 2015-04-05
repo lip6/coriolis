@@ -48,6 +48,7 @@
 .. |Hurricane|                      replace:: :sc:`Hurricane`
 .. |HurricaneAMS|                   replace:: :sc:`HurricaneAMS`
 .. |Alliance|                       replace:: :sc:`Alliance`
+.. |Yosys|                          replace:: :sc:`Yosys`
 .. |GenLib|                         replace:: :sc:`GenLib`
 .. |Nero|                           replace:: :sc:`Nero`
 .. |Druc|                           replace:: :cb:`Druc`
@@ -946,8 +947,9 @@ changed we still use the |Alliance| files format, but they now really represent
 views of the same object. The point is that one must be very careful about
 view coherency when going to and from |Coriolis|.
 
-As for the first release, |Coriolis| can be used only for two purposes :
+As for the second release, |Coriolis| can be used only for three purposes :
 
+* **Placing a design**, in which case the |netlist| view must be present.
 * **Routing a design**, in that case the |netlist|
   view and the |layout| view must be present and  |layout| view must contain
   a placement. Both views must have the same name. When saving the routed design,
@@ -958,12 +960,42 @@ As for the first release, |Coriolis| can be used only for two purposes :
   state. 
 
 
+Synthetizing and loading a design
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|Coriolis| supports several file formats. It can load all file format
+from the |Alliance| toolchain (.ap for layout, behavioural and structural vhdl .vbe and .vst),
+BLIF netlist format as well as benchmark formats from the ISPD contests.
+
+It can be compiled with LEF/DEF support, although it requires acceptance of the SI2 license
+and may not be compiled in your version of the software.
+
+Synthesis under Yosys
+---------------------
+
+You can create a BLIF file from the |Yosys| synthetizer, which can be imported under Coriolis.
+Most libraries are specified as a .lib liberty file and a .lef LEF file. Although |Yosys| opens
+most .lib files with minor modifications, Coriolis may be compiled without LEF support, in
+which case you need .ap files.
+In this case, you need to export your .lef library as .ap files or compile your Coriolis version
+with LEF support. 
+
+Once you have installed a common library under |Yosys| and Coriolis, just synthetize your design
+with |Yosys| and import it (as Blif without the extension) under Coriolis to perform place&route.
+
+Synthesis under Alliance
+------------------------
+
+|Alliance| is an older toolchain but has been extensively used for years. Coriolis can import
+and write Alliance designs and libraries directly.
+
 Etesian -- Placer
 ~~~~~~~~~~~~~~~~~
 
-The |Etesian| placer is a state of the art (as of 2015) analytical placer. This |Coriolis|
-tool is actually an encapsulation of |Coloquinte| which *is* the placer. |Coloquinte|
-is provided as a separate library, see the building instructions.
+The |Etesian| placer is a state of the art (as of 2015) analytical placer. It is 
+within ``5%`` of other placers' solutions, but is normally a bit worse than ePlace.
+This |Coriolis| tool is actually an encapsulation of |Coloquinte| which *is* the placer.
+|Coloquinte| is provided as a separate library, see the building instructions.
 
 .. note:: *Instance Uniquification Unsupported:* a same logical instance cannot have
    two different placements. So, either you manually make a clone of it or you
@@ -1003,6 +1035,14 @@ later). To perform a new placement, you must restart |cgt|. In addition, if you
 have saved the placement on disk, you must erase any :cb:`.ap` file, which are
 automatically reloaded along with the netlist (:cb:`.vst`).
 
+|noindent|
+**Limitations**
+
+Etesian supports standard cells and fixed macros. As for the Coriolis 2.1 version,
+it doesn't support movable macros, and you must place every macro beforehand.
+Timing and routability analysis are not included either, and the returned placement
+may be unroutable.
+
 |newpage|
 
 
@@ -1035,14 +1075,20 @@ Etesian Configuration Parameters
 |                                   | Sets the balance between the speed of the     |
 |                                   | placer and the solution quality               |
 +-----------------------------------+------------------+----------------------------+
+|``etesian.routingDriven``          | TypeBool         | :cb:`False`                |
+|                                   +------------------+----------------------------+
+|                                   | Whether the tool will try routing iterations  |
+|                                   | and whitespace allocation to improve          |
+|                                   | routability; to be implemented                |
++-----------------------------------+------------------+----------------------------+
 |``etesian.graphics``               | TypeInt          | :cb:`2`                    |
 |                                   +------------------+----------------------------+
-|                                   | How often the display will be refreshed, more |
-|                                   | refreshing slows the placer.                  |
+|                                   | How often the display will be refreshed       |
+|                                   | More refreshing slows the placer.             |
 |                                   |                                               |
-|                                   | * ``1`` show both upper and lower bounds      |
-|                                   | * ``2`` show only lower bound                 |
-|                                   | * ``3`` Don't show anything                   |
+|                                   | * ``1`` shows both upper and lower bounds     |
+|                                   | * ``2`` only shows lower bound results        |
+|                                   | * ``3`` only shows the final results          |
 +-----------------------------------+-----------------------------------------------+
 
 
@@ -1605,7 +1651,7 @@ Once an entry point has been activated, you may recursively expore all
 it's fields using the right/left arrows.
 
 .. note:: *Do not put your fingers in the socket:* when inspecting 
-   anything, do not modify the DataBase. If the any object under inspection
+   anything, do not modify the DataBase. If any object under inspection
    is deleted, you will crash the application...
 
 .. note:: *Implementation Detail:* the inspector support is done with
@@ -1642,7 +1688,7 @@ either languages.
 A script could be run directly in text mode from the command line or through
 the graphical interface (see `Python Scripts in Cgt`_).
 
-Asides for this requirement, the python script can contains anything valid
+Asides for this requirement, the python script can contain anything valid
 in |Python|, so don't hesitate to use any package or extention.
 
 Small example of Python/Stratus script: ::
