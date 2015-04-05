@@ -22,23 +22,23 @@
 .. |menu_KiteFinalizeRoute|         replace:: :raw-latex:`\fbox{\textsf{\textbf{{\underline{F}inalize Route}}}}`
 
 .. Stand-alone images.
-.. |ViewerSnapshot_1|               replace:: :raw-latex:`\begin{center}\fbox{\includegraphics[width=.7\textwidth]{./images/Viewer-1.eps}}\end{center}`
-.. |ControllerSnapshot_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-1.eps}\end{center}`
-.. |ControllerLook_1|               replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Look-1.eps}\end{center}`
-.. |ControllerFilter_1|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Filter-1.eps}\end{center}`
-.. |ControllerLayersGos_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-LayersGos-1.eps}\end{center}`
-.. |ControllerNetlist_1|            replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Netlist-1.eps}\end{center}`
-.. |ViewerNetlist_1|                replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Viewer-Netlist-1.eps}\end{center}`
-.. |ControllerSelection_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Selection-1.eps}\end{center}`
-.. |ControllerInspector_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-1.eps}\end{center}`
-.. |ControllerInspector_2|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-2.eps}\end{center}`
-.. |ControllerInspector_3|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-3.eps}\end{center}`
-.. |ControllerSettings_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Settings-1.eps}\end{center}`
-.. |CoriolisSoftSchema|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Coriolis-Soft-Schema.eps}\end{center}`
-.. |ChipStructure-1|                replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/chip-structure-1.eps}\end{center}`
-.. |Etesian-1|                      replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/etesian-1.eps}\end{center}`
+.. |ViewerSnapshot_1|               replace:: :raw-latex:`\begin{center}\fbox{\includegraphics[width=.7\textwidth]{./images/Viewer-1.pdf}}\end{center}`
+.. |ControllerSnapshot_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-1.pdf}\end{center}`
+.. |ControllerLook_1|               replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Look-1.pdf}\end{center}`
+.. |ControllerFilter_1|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Filter-1.pdf}\end{center}`
+.. |ControllerLayersGos_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-LayersGos-1.pdf}\end{center}`
+.. |ControllerNetlist_1|            replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Netlist-1.pdf}\end{center}`
+.. |ViewerNetlist_1|                replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Viewer-Netlist-1.pdf}\end{center}`
+.. |ControllerSelection_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Selection-1.pdf}\end{center}`
+.. |ControllerInspector_1|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-1.pdf}\end{center}`
+.. |ControllerInspector_2|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-2.pdf}\end{center}`
+.. |ControllerInspector_3|          replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Inspector-3.pdf}\end{center}`
+.. |ControllerSettings_1|           replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Controller-Settings-1.pdf}\end{center}`
+.. |CoriolisSoftSchema|             replace:: :raw-latex:`\begin{center}\includegraphics[width=.7\textwidth]{./images/Coriolis-Soft-Schema.pdf}\end{center}`
+.. |ChipStructure-1|                replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/chip-structure-1.pdf}\end{center}`
+.. |Etesian-1|                      replace:: :raw-latex:`\begin{center}\includegraphics[width=.95\textwidth]{./images/etesian-1.pdf}\end{center}`
 
-.. |BigMouse|                       image:: ./images/ComputerMouse.eps
+.. |BigMouse|                       image:: ./images/ComputerMouse.pdf
                                     :scale: 25%
 
 .. Direct LaTeX commands encapsulation.

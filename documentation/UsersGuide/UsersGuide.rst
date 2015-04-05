@@ -217,7 +217,7 @@ Credits & License
 
    \begin{center}\begin{minipage}[t]{.8\textwidth}
      \noindent\DUrole{sc}{Hurricane} \dotfill Rémy       \DUrole{sc}{Escassut}  \&
-                                              Christian  \DUrole{Masson}        \\
+                                              Christian  \DUrole{sc}{Masson}    \\
      \noindent\DUrole{sc}{Etesian}   \dotfill Gabriel    \DUrole{sc}{Gouvine}   \\
      \noindent\DUrole{sc}{Stratus}   \dotfill Sophie     \DUrole{sc}{Belloeil}  \\
      \noindent\DUrole{sc}{Knik}      \dotfill Damien     \DUrole{sc}{Dupuis}    \\
@@ -325,10 +325,11 @@ Release v2.0.1
 #. The multiples user defined configuration files are now grouped under
    a common hidden (dot) directory ``.coriolis2`` and the file extension
    is back from ``.conf`` to ``.py``.
-#. Under |RHEL7| / |SL7|, there is a known bug in the graphical visualizer.
-   When shifting to the left, the right-half part of the screen gets
-   badly redrawn. Uses |CTRL_L| to refresh. It will be corrected as soon
-   as possible.
+
+.. #. Under |RHEL7| / |SL7|, there is a known bug in the graphical visualizer.
+..    When shifting to the left, the right-half part of the screen gets
+..    badly redrawn. Uses |CTRL_L| to refresh. It will be corrected as soon
+..    as possible.
    
 
 

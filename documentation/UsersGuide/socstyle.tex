@@ -2,13 +2,15 @@
  \usepackage[default,osfigures,scale=0.95]{opensans}
  \usepackage{xspace}
  \usepackage{fancyhdr}
- \usepackage{graphicx}
+ \usepackage[dvipdfm]{graphicx}
  \usepackage{enumitem}
  \usepackage[sf,bf]{titlesec}
  \usepackage{titletoc}
+ \usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,dvipdfm]{hyperref}
  \usepackage[paper=a4paper,headheight=30pt,tmargin=1.5in,bmargin=1in]{geometry}
 %\usepackage{layouts}
 
+ \urlstyle{tt} % normal text font (alternatives: same, tt, rm, sf)
  \renewlist{itemize}{itemize}{9}
  \setlist[itemize]{label=\textbullet}
 
@@ -49,7 +51,7 @@
    \begin{center}
      \sffamily
      \begin{array}[t]{m{1cm}!{\vrule width 1pt}m{.90\textwidth}}
-       \raisebox{0.0cm}{\includegraphics[scale=0.5]{./images/clipboard.eps}} &
+       \raisebox{0.0cm}{\includegraphics[scale=0.5,natwidth=48,natheight=48]{./images/clipboard.pdf}} &
        \begin{minipage}[t]{.85\textwidth} #1
        \end{minipage} \\
      \end{array}
@@ -62,7 +64,7 @@
    \begin{center}
      \sffamily
      \begin{array}[t]{m{1cm}!{\vrule width 1pt}m{.90\textwidth}}
-       \raisebox{0.0cm}{\includegraphics[scale=0.5]{./images/i-core.eps}} &
+       \raisebox{0.0cm}{\includegraphics[scale=0.5,natwidth=48,natheight=48]{./images/i-core.pdf}} &
        \begin{minipage}[t]{.85\textwidth} #1
        \end{minipage} \\
      \end{array}
