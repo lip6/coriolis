@@ -21,6 +21,7 @@
 #include <QApplication>
 #include "hurricane/Name.h"
 #include "hurricane/Exception.h"
+#include "hurricane/Warning.h"
 #include "hurricane/viewer/DisplayStyle.h"
 #include "hurricane/viewer/Graphics.h"
 
@@ -69,13 +70,18 @@ namespace Hurricane {
 
   Graphics* Graphics::getGraphics ()
   {
-    if ( !_singleton ) {
-      _singleton = new Graphics ();
-      DisplayStyle* fallback = new DisplayStyle("Fallback");
-      fallback->setDescription ( "Builtin fallback style" );
-      _singleton->_addStyle ( fallback );
+    if (not _singleton) {
+#if (QT_VERSION == QT_VERSION_CHECK(4,8,5))
+      cerr << Warning( "Graphics::getGraphics() Using buggy Qt 4.8.5.\n"
+                       "          Diagonal lines may appears...") << endl;
+#endif
 
-      Exception::setHtmlTranslator ( _singleton->_getHtmlTranslator() );
+      _singleton = new Graphics ();
+      DisplayStyle* fallback = new DisplayStyle( "Fallback" );
+      fallback->setDescription( "Builtin fallback style" );
+      _singleton->_addStyle( fallback );
+
+      Exception::setHtmlTranslator( _singleton->_getHtmlTranslator() );
     }
 
     return _singleton;

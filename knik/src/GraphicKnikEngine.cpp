@@ -73,7 +73,7 @@ namespace Knik {
         painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
       }
       painter.setBrush ( Graphics::getColorScale(ColorScale::Fire).getBrush(occupancy,widget->getDarkening()) );
-      painter.drawRect ( widget->dbuToDisplayRect(edge->getBoundingBox(), false) );
+      painter.drawRect ( widget->dbuToScreenRect(edge->getBoundingBox(), false) );
       painter.setPen(Qt::NoPen);
 
     // affichage des infos de l'arete
@@ -93,13 +93,13 @@ namespace Knik {
         if ( edge->isVertical() ) {
           painter.save();
           Box bbox = edge->getBoundingBox();
-          painter.translate (widget->dbuToDisplayPoint(bbox.getXMin(), bbox.getYMin()));
+          painter.translate (widget->dbuToScreenPoint(bbox.getXMin(), bbox.getYMin()));
           painter.rotate(-90);
-          painter.drawText (QRect(0,0,widget->dbuToDisplayLength(bbox.getHeight()),widget->dbuToDisplayLength(bbox.getWidth())), text, QTextOption(Qt::AlignCenter));
+          painter.drawText (QRect(0,0,widget->dbuToScreenLength(bbox.getHeight()),widget->dbuToScreenLength(bbox.getWidth())), text, QTextOption(Qt::AlignCenter));
         //painter.drawText (0, 0, text);
           painter.restore();
         } else
-          painter.drawText ( widget->dbuToDisplayRect ( edge->getBoundingBox(),false ), text, QTextOption (Qt::AlignCenter) );
+          painter.drawText ( widget->dbuToScreenRect ( edge->getBoundingBox(),false ), text, QTextOption (Qt::AlignCenter) );
         painter.setPen(Qt::NoPen);
       }
     }
@@ -127,7 +127,7 @@ namespace Knik {
       QPen pen (DisplayStyle::darken(color,widget->getDarkening()));
       pen.setWidth(2);
       widget->setPen(pen);
-      painter.drawEllipse ( widget->dbuToDisplayRect ( vertex->getBoundingBox(), false ) );
+      painter.drawEllipse ( widget->dbuToScreenRect ( vertex->getBoundingBox(), false ) );
 
       if ( vertex->hasInfo() ) {
         QColor color (Qt::blue);
@@ -140,7 +140,7 @@ namespace Knik {
         QString text = QString("%1 / %2").arg(vertex->getConnexID()).arg(vertex->getDistance());
       //Point center = vertex->getPosition();
         Box textBox = Box(vertex->getXMin(), vertex->getYMin(), vertex->getXMax(), vertex->getYMax());
-        painter.drawText ( widget->dbuToDisplayRect ( textBox,false ), text, QTextOption (Qt::AlignCenter) );
+        painter.drawText ( widget->dbuToScreenRect ( textBox,false ), text, QTextOption (Qt::AlignCenter) );
         painter.setPen(Qt::NoPen);
       }
     }

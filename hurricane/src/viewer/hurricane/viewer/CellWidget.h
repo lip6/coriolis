@@ -190,21 +190,14 @@ namespace Hurricane {
               void                      drawScreenPolyline         ( const QPoint*, int, int,      size_t plane=PlaneId::Working );
     // Geometric conversions.                                      
       inline  DbU::Unit                 toDbu                      ( float ) const;
-              QRect                     dbuToDisplayRect           ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool usePoint=true ) const;
-              QRect                     dbuToDisplayRect           ( const Box& box , bool usePoint=true ) const;
-              QPoint                    dbuToDisplayPoint          ( DbU::Unit x, DbU::Unit y ) const;
-              QPoint                    dbuToDisplayPoint          ( const Point& point ) const;
-      inline  int                       dbuToDisplayX              ( DbU::Unit x ) const;
-      inline  int                       dbuToDisplayY              ( DbU::Unit y ) const;
-      inline  int                       dbuToDisplayLength         ( DbU::Unit length ) const;
+              QRect                     dbuToScreenRect            ( DbU::Unit x1, DbU::Unit y1, DbU::Unit x2, DbU::Unit y2, bool usePoint=true ) const;
+              QRect                     dbuToScreenRect            ( const Box& box , bool usePoint=true ) const;
       inline  int                       dbuToScreenX               ( DbU::Unit x ) const;
       inline  int                       dbuToScreenY               ( DbU::Unit y ) const;
-              QPoint                    dbuToScreenPoint           ( DbU::Unit x, DbU::Unit y ) const;
+      inline  int                       dbuToScreenLength          ( DbU::Unit length ) const;
+      inline  QPoint                    dbuToScreenPoint           ( DbU::Unit x, DbU::Unit y ) const;
       inline  QPoint                    dbuToScreenPoint           ( const Point& point ) const;
-      inline  DbU::Unit                 displayToDbuX              ( int  x ) const;
-      inline  DbU::Unit                 displayToDbuY              ( int  y ) const;
-      inline  DbU::Unit                 displayToDbuLength         ( int  length ) const;
-      inline  Box                       displayToDbuBox            ( const QRect& rect ) const;
+      inline  DbU::Unit                 screenToDbuLength          ( int  length ) const;
       inline  DbU::Unit                 screenToDbuX               ( int  x ) const;
       inline  DbU::Unit                 screenToDbuY               ( int  y ) const;
       inline  Point                     screenToDbuPoint           ( const QPoint& point ) const;
@@ -256,7 +249,6 @@ namespace Hurricane {
       inline  void                      openRefreshSession         ();
       inline  void                      closeRefreshSession        ();
       inline  DrawingPlanes&            getDrawingPlanes           ();
-      inline  QPoint&                   getOffsetVA                ();
            // void                      select                     ( const Net* );
               void                      select                     ( Occurrence );
               bool                      isSelected                 ( Occurrence );
@@ -372,7 +364,7 @@ namespace Hurricane {
         public:
           enum Ids { Normal    = 0  // _planes[0]
                    , Selection = 1  // _planes[1]
-                   , AutoCopy  = 2  // _plabes[2]
+                   , AutoCopy  = 2  // _planes[2]
                    , Widget    = 3
                    , Printer   = 4
                    , Image     = 5
@@ -428,6 +420,7 @@ namespace Hurricane {
                  QPainter       _painters[PlaneId::Working];
                  QPen           _normalPen;
                  QPen           _linePen;
+                 QPoint         _brushOrigin;
                  size_t         _workingPlane;
                  size_t         _pushWorkingPlane;
                  bool           _lineMode;
@@ -625,15 +618,12 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static  const int                  _stripWidth;
       static  const int                  _initialSide;
               vector<Qt::CursorShape>    _cursors;
     //        MapView*                   _mapView;
               Technology*                _technology;
               PaletteWidget*             _palette;
-              Box                        _displayArea;
-              Box                        _visibleArea;
-              QPoint                     _offsetVA;
+              Box                        _screenArea;
               RedrawManager              _redrawManager;
               DrawingPlanes              _drawingPlanes;
               DrawingQuery               _drawingQuery;
@@ -818,7 +808,7 @@ namespace Hurricane {
   }
 
 
-  inline void  CellWidget::DrawingPlanes::end   ( size_t i )
+  inline void  CellWidget::DrawingPlanes::end ( size_t i )
   { _painters[(i>=PlaneId::Working)?_workingPlane:i].end (); }
 
 
@@ -1155,10 +1145,6 @@ namespace Hurricane {
   { return getOccurrencesUnder(screenToDbuBox(area)); }
 
 
-  inline  QPoint& CellWidget::getOffsetVA ()
-  { return _offsetVA; }
-
-
   inline void  CellWidget::addRuler ( const Point& origin, const Point& extremity )
   {
     _state->getRulers().insert ( shared_ptr<Ruler>( new Ruler(origin,extremity) ) );
@@ -1207,58 +1193,36 @@ namespace Hurricane {
   }
 
 
-  inline int  CellWidget::dbuToDisplayX ( DbU::Unit x ) const
-  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * getScale() ); }
-
-
-  inline int  CellWidget::dbuToDisplayY ( DbU::Unit y ) const
-  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * getScale() ); }
-
-
-  inline int  CellWidget::dbuToDisplayLength ( DbU::Unit length ) const
-  { return (int)rint ( (float)length * getScale() ); }
-
-
   inline int  CellWidget::dbuToScreenX ( DbU::Unit x ) const
-  { return (int)rint ( (float)( x - _displayArea.getXMin() ) * getScale() ) - _offsetVA.x(); }
+  { return (int)rint ( (float)( x - _screenArea.getXMin() ) * getScale() ); }
 
 
   inline int  CellWidget::dbuToScreenY ( DbU::Unit y ) const
-  { return (int)rint ( (float)( _displayArea.getYMax() - y ) * getScale() ) - _offsetVA.y(); }
+  { return (int)rint ( (float)( _screenArea.getYMax() - y ) * getScale() ); }
+
+
+  inline int  CellWidget::dbuToScreenLength ( DbU::Unit length ) const
+  { return (int)rint ( (float)length * getScale() ); }
+
+
+  inline QPoint  CellWidget::dbuToScreenPoint ( DbU::Unit x, DbU::Unit y ) const
+  { return QPoint ( dbuToScreenX(x), dbuToScreenY(y) ); }
 
 
   inline QPoint  CellWidget::dbuToScreenPoint ( const Point& point ) const
   { return QPoint ( dbuToScreenX(point.getX()), dbuToScreenY(point.getY()) ); }
 
 
-  inline DbU::Unit  CellWidget::displayToDbuX ( int x ) const
-  { return (DbU::Unit)(x/getScale()) + _displayArea.getXMin(); }
-
-
-  inline DbU::Unit  CellWidget::displayToDbuY ( int y ) const
-  { return _displayArea.getYMax() - (DbU::Unit)(y/getScale()); }
-
-
-  inline DbU::Unit  CellWidget::displayToDbuLength ( int length ) const
-  { return (int)( (float)length / getScale() ); }
-
-
-  inline Box  CellWidget::displayToDbuBox ( const QRect& rect ) const
-  {
-    return Box ( displayToDbuX(rect.x())
-               , displayToDbuY(rect.y())
-               , displayToDbuX(rect.x()+rect.width ())
-               , displayToDbuY(rect.y()+rect.height())
-               );
-  }
-
-
   inline DbU::Unit  CellWidget::screenToDbuX ( int x ) const
-  { return displayToDbuX(x+_offsetVA.x()); }
+  { return (DbU::Unit)(x/getScale()) + _screenArea.getXMin(); }
 
 
   inline DbU::Unit  CellWidget::screenToDbuY ( int y ) const
-  { return displayToDbuY(y+_offsetVA.y()); }
+  { return _screenArea.getYMax() - (DbU::Unit)(y/getScale()); }
+
+
+  inline DbU::Unit  CellWidget::screenToDbuLength ( int length ) const
+  { return (int)( (float)length / getScale() ); }
 
 
   inline Point  CellWidget::screenToDbuPoint ( const QPoint& point ) const
@@ -1276,11 +1240,11 @@ namespace Hurricane {
 
 
   inline Box& CellWidget::pixelInflate ( Box& box, int pixels ) const
-  { return box.inflate(displayToDbuLength(pixels)); }
+  { return box.inflate(screenToDbuLength(pixels)); }
 
 
   inline Point  CellWidget::getTopLeft () const
-  { return Point(_visibleArea.getXMin(),_visibleArea.getYMax()); }
+  { return Point(_screenArea.getXMin(),_screenArea.getYMax()); }
 
 
   inline Box  CellWidget::getVisibleArea () const

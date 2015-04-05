@@ -108,10 +108,10 @@ namespace Kite {
     painter.setBrush
       ( Graphics::getColorScale(ColorScale::Fire).getBrush(density,widget->getDarkening()) );
     painter.drawRect
-      ( widget->dbuToDisplayRect(gcell->getBoundingBox().inflate(0
-                                                                ,0
-                                                                ,gcell->getTopRightShrink()
-                                                                ,gcell->getTopRightShrink())) );
+      ( widget->dbuToScreenRect(gcell->getBoundingBox().inflate(0
+                                                               ,0
+                                                               ,gcell->getTopRightShrink()
+                                                               ,gcell->getTopRightShrink())) );
   }
 
 
