@@ -7,13 +7,3 @@
  install ( DIRECTORY  scmos_deep_018                    DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  scn6m_deep_09                     DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  hcmos9gp                          DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
-						     
- install ( FILES      environment.alliance.xml          DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.symbolic.xml           DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.cmos130.s2r.xml        DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.cmos65.s2r.xml         DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.ams035.s2r.xml         DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.freePDK45.s2r.xml      DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      technology.fake.s2r.xml           DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      display.xml                       DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
- install ( FILES      tools.configuration.xml           DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 

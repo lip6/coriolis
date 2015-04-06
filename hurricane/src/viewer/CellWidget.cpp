@@ -370,7 +370,7 @@ namespace Hurricane {
 
 #if (QT_VERSION == QT_VERSION_CHECK(4,8,5))
   //cerr << "CellWidget::DrawingPlanes::setPen() Buggy 4.8.5 Qt, diagonal lines may appears..." << endl;
-    _normalPen.setWidth( 0 );
+    _normalPen.setWidth( 2 );
     _linePen.setWidth( 2 );
 #else
     _linePen.setWidth( 1 );

@@ -115,7 +115,7 @@ Development files for the Coriolis 2 package.
 %defattr(-,root,root,-)
 %doc %{_datadir}/doc/coriolis2 
 %dir %{_sysconfdir}/coriolis2
-%dir %{coriolisTop}/share/coriolis2/flute-2.4
+%dir %{coriolisTop}/share/coriolis2/flute-3.1
 %dir %{coriolisTop}/bin
 %dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/%{python_sitedir}
@@ -140,7 +140,7 @@ Development files for the Coriolis 2 package.
 %config(noreplace) %{_sysconfdir}/coriolis2/*.sh
 %config(noreplace) %{_sysconfdir}/coriolis2/*.py*
 %config(noreplace) %{_sysconfdir}/coriolis2/stratus.vim
-%config(noreplace) %{coriolisTop}/share/coriolis2/flute-2.4/*.dat
+%config(noreplace) %{coriolisTop}/share/coriolis2/flute-3.1/*.dat
 
 
 %files devel
