@@ -22,11 +22,11 @@ print os.path.join ( pathes[-2], pathes[-1] )
 Name:            coriolis2
 Summary:         Coriolis 2 VLSI CAD System
 Version:         %{coriolisVersion}
-Release:         1.%{revdate}.git%{githash}%{dist}
+Release:         1.%{revdate}git%{githash}%{dist}
 License:         BSD/LGPL/GPL/FLUTE
 Group:           Applications/Engineering
-Source:          %{name}-%{version}.git%{githash}.tar.bz2
-URL:             http://www-asim.lip6.fr/
+Source:          %{name}-%{version}.%{revdate}git%{githash}.tar.bz2
+URL:             http://www-soc.lip6.fr/
 Packager:        Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>
 Requires(post):  ldconfig
 Requires:        boost >= 1.33.1
@@ -57,36 +57,34 @@ Development files for the Coriolis 2 package.
 
 
 %prep
-%setup -n %{name}-%{version}.git%{githash}
+%setup -n %{name}-%{version}.%{revdate}git%{githash}
 
 
 %build
  if [ -d %{buildroot} ]; then rm -r %{buildroot}; fi
 
-  CORIOLIS_TOP=%{coriolisTop};  export CORIOLIS_TOP
-  IMPORTEDS_TOP=%{coriolisTop}; export IMPORTEDS_TOP
+ IMPORTEDS_TOP=%{coriolisTop}; export IMPORTEDS_TOP
+ CORIOLIS_TOP=%{coriolisTop};  export CORIOLIS_TOP
 
 # Do build & install in one step, except for documentation.
- cd coriolis
- make -f bootstrap/Makefile.package \
+ make -f coriolis/bootstrap/Makefile.package \
       DESTDIR=%{buildroot} \
       BUILD_DESTDIR=%{_builddir}/%{buildsubdir}/install.dir \
       %{_smp_mflags} build
 
 
 %install
-  IMPORTEDS_TOP=%{coriolisTop}; export IMPORTEDS_TOP
-  CORIOLIS_TOP=%{coriolisTop};  export CORIOLIS_TOP
+ IMPORTEDS_TOP=%{coriolisTop}; export IMPORTEDS_TOP
+ CORIOLIS_TOP=%{coriolisTop};  export CORIOLIS_TOP
 
 # Install & build documentation, in -j1.
- cd coriolis
- make -f bootstrap/Makefile.package \
-      DESTDIR=%{buildroot} -f bootstrap/Makefile.package \
+ make -f coriolis/bootstrap/Makefile.package \
+      DESTDIR=%{buildroot} \
       BUILD_DESTDIR=%{_builddir}/%{buildsubdir}/install.dir \
       -j1 install
 
 # Copy the license from the Debian package directory.
- cp bootstrap/debian/copyright %{buildroot}%{_datadir}/doc/coriolis2/COPYRIGHT
+ cp coriolis/bootstrap/debian/copyright %{buildroot}%{_datadir}/doc/coriolis2/COPYRIGHT
 
 #%__rm -rf %{buildroot}%{coriolisTop}/share/doc/coriolis2
 
@@ -118,13 +116,17 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/%{_lib}/*.so.*
 %{coriolisTop}/%{python_sitedir}/*.so
 %{coriolisTop}/%{python_sitedir}/cumulus/*.py*
+%{coriolisTop}/%{python_sitedir}/cumulus/plugins/*.py*
+%{coriolisTop}/%{python_sitedir}/cumulus/plugins/*/*.py*
 %{coriolisTop}/%{python_sitedir}/stratus/*.py*
 %{coriolisTop}/%{python_sitedir}/crlcore/*.py*
 %{coriolisTop}/%{python_sitedir}/crlcore/helpers/*.py*
+%{coriolisTop}/%{python_sitedir}/kite/*.py*
+%{coriolisTop}/%{python_sitedir}/unicorn/*.py*
 #%config(noreplace) %{_sysconfdir}/ld.so.conf.d/*
 %config(noreplace) %{_sysconfdir}/coriolis2/*.conf
+%config(noreplace) %{_sysconfdir}/coriolis2/*/*.conf
 %config(noreplace) %{_sysconfdir}/coriolis2/*.xml
-%config(noreplace) %{_sysconfdir}/coriolis2/*.sh
 %config(noreplace) %{_sysconfdir}/coriolis2/*.py*
 %config(noreplace) %{_sysconfdir}/coriolis2/stratus.vim
 %config(noreplace) %{coriolisTop}/share/coriolis2/flute-3.1/*.dat
@@ -135,24 +137,23 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/share/cmake/Modules
 %dir %{coriolisTop}/include
+%dir %{coriolisTop}/include/coloquinte
 %dir %{coriolisTop}/include/vlsisapd
+%dir %{coriolisTop}/include/vlsisapd/utilities
 %dir %{coriolisTop}/include/vlsisapd/agds
 %dir %{coriolisTop}/include/vlsisapd/cif
 %dir %{coriolisTop}/include/vlsisapd/spice
 %dir %{coriolisTop}/include/vlsisapd/liberty
 %dir %{coriolisTop}/include/vlsisapd/bookshelf
 %dir %{coriolisTop}/include/vlsisapd/configuration
-#%dir %{coriolisTop}/include/vlsisapd/dtr
-#%dir %{coriolisTop}/include/vlsisapd/openChams
+%dir %{coriolisTop}/include/vlsisapd/dtr
+%dir %{coriolisTop}/include/vlsisapd/openChams
 %dir %{coriolisTop}/include/coriolis2/hurricane
 %dir %{coriolisTop}/include/coriolis2/hurricane/viewer
 %dir %{coriolisTop}/include/coriolis2/hurricane/isobar
 %dir %{coriolisTop}/include/coriolis2
 %dir %{coriolisTop}/include/coriolis2/crlcore
-%dir %{coriolisTop}/include/coriolis2/nimbus
 %dir %{coriolisTop}/include/coriolis2/etesian
-%dir %{coriolisTop}/include/coriolis2/metis
-%dir %{coriolisTop}/include/coriolis2/mauka
 %dir %{coriolisTop}/include/coriolis2/knik
 %dir %{coriolisTop}/include/coriolis2/katabatic
 %dir %{coriolisTop}/include/coriolis2/kite
@@ -161,21 +162,21 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/include/coriolis2/unicorn
 %{coriolisTop}/%{_lib}/*.so
 %{coriolisTop}/share/cmake/Modules/*.cmake
+%{coriolisTop}/include/coloquinte/*.hxx
+%{coriolisTop}/include/vlsisapd/utilities/*.h
 %{coriolisTop}/include/vlsisapd/agds/*.h
 %{coriolisTop}/include/vlsisapd/cif/*.h
 %{coriolisTop}/include/vlsisapd/spice/*.h
 %{coriolisTop}/include/vlsisapd/liberty/*.h
 %{coriolisTop}/include/vlsisapd/bookshelf/*.h
 %{coriolisTop}/include/vlsisapd/configuration/*.h
-#%{coriolisTop}/include/vlsisapd/dtr/*.h
-#%{coriolisTop}/include/vlsisapd/openChams/*.h
+%{coriolisTop}/include/vlsisapd/dtr/*.h
+%{coriolisTop}/include/vlsisapd/openChams/*.h
 %{coriolisTop}/include/coriolis2/hurricane/*.h
 %{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
 %{coriolisTop}/include/coriolis2/hurricane/isobar/*.h
 %{coriolisTop}/include/coriolis2/crlcore/*.h
-%{coriolisTop}/include/coriolis2/nimbus/*.h
-%{coriolisTop}/include/coriolis2/metis/*.h
-%{coriolisTop}/include/coriolis2/mauka/*.h
+%{coriolisTop}/include/coriolis2/etesian/*.h
 %{coriolisTop}/include/coriolis2/knik/*.h
 %{coriolisTop}/include/coriolis2/katabatic/*.h
 %{coriolisTop}/include/coriolis2/kite/*.h

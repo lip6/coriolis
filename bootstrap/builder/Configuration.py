@@ -98,9 +98,10 @@ class Configuration ( object ):
         self._debbuildDir  = os.path.join ( self._rootDir    , "debbuild" )
         self._tmppathDir   = os.path.join ( self._rpmbuildDir, "tmp" )
         self._tarballDir   = os.path.join ( self._rootDir    , "tarball" )
-        self._archiveDir   = os.path.join ( self._tarballDir , "%s-%s.git%s" % (self._packageName
-                                                                               ,self._packageVersion
-                                                                               ,self._gitHash) )
+        self._archiveDir   = os.path.join ( self._tarballDir , "%s-%s.%sgit%s" % (self._packageName
+                                                                                 ,self._packageVersion
+                                                                                 ,self._revDate
+                                                                                 ,self._gitHash) )
         self._sourceDir    = os.path.join ( self._rootDir    , "src" )
         self._bootstrapDir = os.path.join ( self._sourceDir  , "coriolis/bootstrap" )
         self._osDir        = os.path.join ( self._rootDir
@@ -114,8 +115,14 @@ class Configuration ( object ):
         self._debianDir      = os.path.join ( self._bootstrapDir, "debian" )
         self._debChangelogIn = os.path.join ( self._debianDir   , "changelog.in" )
         self._debChangelog   = os.path.join ( self._debianDir   , "changelog" )
-        self._sourceTarBz2   = "%s-%s.git%s.tar.bz2"              % (self._packageName,self._packageVersion,self._gitHash)
-        self._binaryTarBz2   = "%s-binary-%s.%s-1.slsoc6.tar.bz2" % (self._packageName,self._packageVersion,self._gitHash)
+        self._sourceTarBz2   = "%s-%s.%sgit%s.tar.bz2"            % (self._packageName
+                                                                    ,self._packageVersion
+                                                                    ,self._revDate
+                                                                    ,self._gitHash)
+        self._binaryTarBz2   = "%s-binary-%s.%sgit%s-1.el7.tar.bz2" % (self._packageName
+                                                                      ,self._packageVersion
+                                                                      ,self._revDate
+                                                                      ,self._gitHash)
         self._distribPatch   = os.path.join ( self._sourceDir, "bootstrap", "%s-for-distribution.patch"%self._packageName )
         return
 

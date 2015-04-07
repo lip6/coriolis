@@ -90,9 +90,9 @@ class Builder:
         return
 
 
-    def _configure ( self, fileIn, file ):
-        fdFileIn = open ( fileIn, "r" )
-        fdFile   = open ( file  , "w" )
+    def _configure ( self, fileIn, fileOut ):
+        fdFileIn  = open ( fileIn , "r" )
+        fdFileOut = open ( fileOut, "w" )
 
         for line in fdFileIn.readlines():
             stable       = False
@@ -105,10 +105,10 @@ class Builder:
                 if substituted0 == substituted1: stable = True
                 else: substituted0 = substituted1
 
-            fdFile.write ( substituted0 )
+            fdFileOut.write ( substituted0 )
 
         fdFileIn.close ()
-        fdFile.close ()
+        fdFileOut.close ()
         return
 
 
@@ -282,7 +282,7 @@ class Builder:
    #    return
 
 
-    def gitExport ( self, projectName ):
+    def gitArchive ( self, projectName ):
         rawArchive = self.tarballDir+'/'+projectName+'.tar'
 
         os.chdir ( self.sourceDir+'/'+projectName )
@@ -301,6 +301,9 @@ class Builder:
         command = [ 'tar', 'xf', rawArchive ]
         self._execute ( command, "unpacking raw archive %s" % rawArchive )
 
+        command = [ 'rm', rawArchive ]
+        self._execute ( command, "Removing raw archive %s" % rawArchive )
+
        # Hard-coded export of Coloquinte.
         coloquinteRawArchive = self.tarballDir+'/coloquinte.tar'
 
@@ -316,6 +319,17 @@ class Builder:
         os.chdir ( self.archiveDir )
         command = [ 'tar', 'xf', coloquinteRawArchive ]
         self._execute ( command, "unpacking raw archive %s" % coloquinteRawArchive )
+
+        command = [ 'rm', coloquinteRawArchive ]
+        self._execute ( command, "Removing raw archive %s" % coloquinteRawArchive )
+
+       # Adds files neededs only for packaging purpose.
+        command = [ "/bin/ln", "-s", self.archiveDir+"/coriolis/bootstrap/Makefile.package"
+                                   , self.archiveDir+"/Makefile" ]
+        self._execute ( command, "link of %s failed" % "coriolis/boostrap/Makefile.package")
+    
+        command = [ "/bin/ln", "-s", self.archiveDir+"/coriolis/bootstrap/debian", self.archiveDir ]
+        self._execute ( command, "Copying Debian/Ubuntu package control files" )
         
         absSourceTarBz2 = '%s/%s' % (self.tarballDir,self.sourceTarBz2)
         os.chdir ( self.tarballDir )
@@ -438,7 +452,7 @@ class Builder:
 
         print "Creating tarball directory: \"%s\"." % self.tarballDir
         os.makedirs ( self.tarballDir )
-        self.gitExport ( projects[0] )
+        self.gitArchive ( projects[0] )
 
    #   # Remove unpublisheds (yet) tools/files.
    #    for item in self.packageExcludes:

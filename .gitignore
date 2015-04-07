@@ -11,6 +11,8 @@ rtf/
 html/
 latex/
 
+bootstrap/coriolis2.spec
+
 documentation/UsersGuide/UsersGuide-raw.tex
 documentation/UsersGuide/UsersGuide.tex
 documentation/UsersGuide/UsersGuide.aux

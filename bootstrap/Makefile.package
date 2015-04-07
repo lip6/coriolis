@@ -2,16 +2,24 @@
 # -*- Makefile -*-
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
-         tools = bootstrap vlsisapd hurricane crlcore etesian knik katabatic kite \
-                 equinox solstice cumulus stratus1 unicorn documentation
-        prefix = /usr
-       DESTDIR =
- BUILD_DESTDIR = $(shell pwd)/install.dir
- IMPORTEDS_TOP = $(prefix)
-  CORIOLIS_TOP = $(prefix)
+define pythonSiteLocator =
+import os.path
+import distutils.sysconfig
+print distutils.sysconfig.get_python_lib()
+endef
 
-   environment = IMPORTEDS_TOP=$(IMPORTEDS_TOP); export IMPORTEDS_TOP; \
-                  CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
+
+          tools = bootstrap vlsisapd hurricane crlcore etesian knik katabatic kite \
+                  equinox solstice cumulus stratus1 unicorn documentation
+         prefix = /usr
+        DESTDIR =
+  BUILD_DESTDIR = $(shell pwd)/install.dir
+ PYTHON_SITEDIR = $(shell python -c '$(pythonSiteLocator)')
+  IMPORTEDS_TOP = $(prefix)
+   CORIOLIS_TOP = $(prefix)
+
+    environment = IMPORTEDS_TOP=$(IMPORTEDS_TOP); export IMPORTEDS_TOP; \
+                   CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
 
 .PHONY: build install FORCE
 
@@ -33,6 +41,7 @@ build: FORCE
 	esac;                                                    \
 	echo "** Building tool Coloquinte";                      \
 	mkdir -p build.dir/Coloquinte;                           \
+	cd build.dir/Coloquinte;                                 \
 	cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                 \
 	      -D BUILD_SHARED_LIBS:STRING=ON                     \
 	      -D BUILD_DOC:STRING=OFF                            \
@@ -40,6 +49,8 @@ build: FORCE
 	      -D DESTDIR:STRING=$(BUILD_DESTDIR)                 \
 	      $${cmakeArgs}                                      \
 	      ../../importeds/Coloquinte                         \
+	      || exit 1;                                         \
+	make DESTDIR=$(BUILD_DESTDIR) install                    \
 	      || exit 1;                                         \
 	cd ../..;                                                \
 	for tool in $(tools); do                                 \
@@ -52,7 +63,7 @@ build: FORCE
 	        -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)   \
 	        -D DESTDIR:STRING=$(BUILD_DESTDIR)               \
 	        $${cmakeArgs}                                    \
-	        ../../$$tool                                     \
+	        ../../coriolis/$$tool                            \
 	        || exit 1;                                       \
 	  make DESTDIR=$(BUILD_DESTDIR) install                  \
 	        || exit 1;                                       \
@@ -65,6 +76,19 @@ install: FORCE
 	  "x86_64") commonCMakeArgs="-D LIB_SUFFIX:STRING=64";;   \
 	  *)        commonCMakeArgs="";;                          \
 	esac;                                                     \
+	echo "** Installing tool Coloquinte";                     \
+	cd build.dir/Coloquinte;                                  \
+	cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                  \
+	      -D BUILD_SHARED_LIBS:STRING=ON                      \
+	      -D BUILD_DOC:STRING=ON                              \
+	      -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)      \
+	      -D DESTDIR:STRING=$(DESTDIR)                        \
+	      $${cmakeArgs}                                       \
+	      ../../importeds/Coloquinte                          \
+	      || exit 1;                                          \
+	make DESTDIR=$(DESTDIR) install                           \
+	      || exit 1;                                          \
+	cd ../..;                                                 \
 	for tool in $(tools); do                                  \
 	  echo "** Installing tool $${tool}";                     \
 	  cd build.dir/$$tool;                                    \
@@ -84,13 +108,16 @@ install: FORCE
 	        -D CMAKE_INSTALL_PREFIX:STRING=${CORIOLIS_TOP}    \
 	        -D DESTDIR:STRING=$(DESTDIR)                      \
 	        $${cmakeArgs}                                     \
-	        ../../$$tool                                      \
+	        ../../coriolis/$$tool                             \
 	        || exit 1;                                        \
 	  make DESTDIR=$(DESTDIR) -j1 $${makeArgs} install        \
 	        || exit 1;                                        \
 	  cd ../..;                                               \
 	done;                                                     \
-	rm -f $(DESTDIR)$(CORIOLIS_TOP)/bin/cx2y                  \
-	      $(DESTDIR)$(CORIOLIS_TOP)/bin/kite-text
+	rm -rf $(DESTDIR)$(CORIOLIS_TOP)/bin/ccb                  \
+	       $(DESTDIR)$(CORIOLIS_TOP)/bin/cx2y                 \
+	       $(DESTDIR)$(CORIOLIS_TOP)/bin/*.bin                \
+	       $(DESTDIR)$(PYTHON_SITEDIR)/builder                \
+	       $(DESTDIR)/usr/share/cmake/Modules/GetGitRevisionDescription.cmake.in
 
 FORCE:
