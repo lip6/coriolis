@@ -7,3 +7,4 @@
  install ( DIRECTORY  scmos_deep_018                    DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  scn6m_deep_09                     DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
  install ( DIRECTORY  hcmos9gp                          DESTINATION ${SYS_CONF_DIR}/coriolis2 ) 
+

@@ -28,16 +28,16 @@ from   Project import Project
 class Configuration ( object ):
 
     PrimaryNames = \
-        [ 'confFile', 'projects', 'standalones'
-        , 'gitHash', 'gitMethod'
-        , 'projectDir', 'rootDir'
-        , 'packageName', 'packageVersion', 'packageExcludes', 'packageProject'
-        , 'osType', 'libSuffix', 'buildMode', 'libMode', 'enableShared'
+        [ 'confFile'   , 'projects', 'standalones'
+        , 'gitHash'    , 'gitMethod', 'revDate'
+        , 'projectDir' , 'rootDir'
+        , 'packageName', 'packageVersion', 'packageExcludes', 'packageProjects'
+        , 'osType'     , 'libSuffix', 'buildMode', 'libMode', 'enableShared'
         ]
     SecondaryNames = \
         [ 'rpmbuildDir' , 'debbuildDir'   , 'tmppathDir'  , 'tarballDir'
         , 'archiveDir'  , 'sourceDir'     , 'osDir'       , 'buildDir'
-        , 'installDir'  , 'bootstrapDir'  , 'specFileIn'    , 'specFile'
+        , 'installDir'  , 'bootstrapDir'  , 'specFileIn'  , 'specFile'
         , 'debianDir'   , 'debChangelogIn', 'debChangelog', 'sourceTarBz2'
         , 'binaryTarBz2', 'distribPatch'
         ]
@@ -46,6 +46,7 @@ class Configuration ( object ):
         self._confFile         = None
         self._projects         = []
         self._standalones      = []
+        self._revDate          = datetime.date.today().strftime('%Y%m%d')
         self._gitHash          = "x"
         self._gitMethod        = None
         self._projectDir       = 'coriolis-2.x'
@@ -97,9 +98,9 @@ class Configuration ( object ):
         self._debbuildDir  = os.path.join ( self._rootDir    , "debbuild" )
         self._tmppathDir   = os.path.join ( self._rpmbuildDir, "tmp" )
         self._tarballDir   = os.path.join ( self._rootDir    , "tarball" )
-        self._archiveDir   = os.path.join ( self._tarballDir , "%s-%s.%s" % (self._packageName
-                                                                            ,self._packageVersion
-                                                                            ,self._gitHash) )
+        self._archiveDir   = os.path.join ( self._tarballDir , "%s-%s.git%s" % (self._packageName
+                                                                               ,self._packageVersion
+                                                                               ,self._gitHash) )
         self._sourceDir    = os.path.join ( self._rootDir    , "src" )
         self._bootstrapDir = os.path.join ( self._sourceDir  , "coriolis/bootstrap" )
         self._osDir        = os.path.join ( self._rootDir
@@ -113,7 +114,7 @@ class Configuration ( object ):
         self._debianDir      = os.path.join ( self._bootstrapDir, "debian" )
         self._debChangelogIn = os.path.join ( self._debianDir   , "changelog.in" )
         self._debChangelog   = os.path.join ( self._debianDir   , "changelog" )
-        self._sourceTarBz2   = "%s-%s.%s.tar.bz2"                 % (self._packageName,self._packageVersion,self._gitHash)
+        self._sourceTarBz2   = "%s-%s.git%s.tar.bz2"              % (self._packageName,self._packageVersion,self._gitHash)
         self._binaryTarBz2   = "%s-binary-%s.%s-1.slsoc6.tar.bz2" % (self._packageName,self._packageVersion,self._gitHash)
         self._distribPatch   = os.path.join ( self._sourceDir, "bootstrap", "%s-for-distribution.patch"%self._packageName )
         return
@@ -223,8 +224,6 @@ class Configuration ( object ):
             locations = [ os.path.abspath(os.path.dirname(sys.argv[0]))
                         , os.environ['HOME']+'/coriolis-2.x/src/coriolis/bootstrap'
                         , os.environ['HOME']+'/coriolis/src/coriolis/bootstrap'
-                        , os.environ['HOME']+'/chams-2.x/src/coriolis/bootstrap'
-                        , os.environ['HOME']+'/chams/src/coriolis/bootstrap'
                         , '/users/outil/coriolis/coriolis-2.x/src/coriolis/bootstrap'
                         , self._rootDir+'/src/coriolis/bootstrap'
                         ]

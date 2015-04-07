@@ -1,8 +1,8 @@
 
 %define          coriolisVersion    2.1
 %define          coriolisTop        %{_prefix}
-%define          githash            @githash@
-%define          revdate            @revdate@
+%define          githash            71e1c18
+%define          revdate            20150407
 	     
 %define          python_sitedir     %{_lib}/%(python -c '
 import os.path

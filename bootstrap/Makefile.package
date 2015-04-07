@@ -2,15 +2,15 @@
 # -*- Makefile -*-
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
-         tools = bootstrap vlsisapd hurricane crlcore nimbus metis mauka knik katabatic kite \
+         tools = bootstrap vlsisapd hurricane crlcore etesian knik katabatic kite \
                  equinox solstice cumulus stratus1 unicorn documentation
         prefix = /usr
        DESTDIR =
  BUILD_DESTDIR = $(shell pwd)/install.dir
- BOOTSTRAP_TOP = $(prefix)
+ IMPORTEDS_TOP = $(prefix)
   CORIOLIS_TOP = $(prefix)
 
-   environment = BOOTSTRAP_TOP=$(BOOTSTRAP_TOP); export BOOTSTRAP_TOP; \
+   environment = IMPORTEDS_TOP=$(IMPORTEDS_TOP); export IMPORTEDS_TOP; \
                   CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
 
 .PHONY: build install FORCE
@@ -31,6 +31,17 @@ build: FORCE
 	  "x86_64") cmakeArgs="-D LIB_SUFFIX:STRING=64";;        \
 	  *)        cmakeArgs="";;                               \
 	esac;                                                    \
+	echo "** Building tool Coloquinte";                      \
+	mkdir -p build.dir/Coloquinte;                           \
+	cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                 \
+	      -D BUILD_SHARED_LIBS:STRING=ON                     \
+	      -D BUILD_DOC:STRING=OFF                            \
+	      -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)     \
+	      -D DESTDIR:STRING=$(BUILD_DESTDIR)                 \
+	      $${cmakeArgs}                                      \
+	      ../../importeds/Coloquinte                         \
+	      || exit 1;                                         \
+	cd ../..;                                                \
 	for tool in $(tools); do                                 \
 	  echo "** Building tool $${tool}";                      \
 	  mkdir -p build.dir/$$tool;                             \

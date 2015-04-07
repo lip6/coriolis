@@ -82,24 +82,12 @@ class Builder:
         return self.__dict__[attribute]
 
 
-   #def _guessGitHash ( self, project ):
-   #    revisionPattern = re.compile ( r"^Revision:\s*(?P<revision>\d+)" )
-   #    projectSvnDir   = os.path.join ( self.svnMethod+project.getRepository() )
-   #
-   #    os.chdir(  )
-   #    command = [ 'git', 'log', '--pretty="%h"', '-n', '1']
-   #    svnInfo = subprocess.Popen ( command, stdout=subprocess.PIPE )
-   #
-   #    for line in svnInfo.stdout.readlines():
-   #        m = revisionPattern.match ( line )
-   #        if m:
-   #            self.gitHash = m.group("revision")
-   #            print "Latest revision of project %s is %s." % (project.getName(),self.gitHash)
-   #            return
-   #
-   #    print "[WARNING] Cannot guess revision for project \"%s\"." % project.getName() 
-   #    print "          (using: \"x\")"
-   #    return
+    def _guessGitHash ( self, project ):
+        self.gitHash = 'x'
+        os.chdir ( self.sourceDir+'/'+project.getName() )
+        command = [ 'git', 'log', '--pretty=format:%h', '-n', '1']
+        self.gitHash = subprocess.Popen ( command, stdout=subprocess.PIPE ).stdout.readlines()[0]
+        return
 
 
     def _configure ( self, fileIn, file ):
@@ -111,8 +99,9 @@ class Builder:
             substituted0 = line
 
             while not stable:
-                substituted1 = re.sub ( r"@svntag@"     , self.gitHash, substituted0 )
-                substituted1 = re.sub ( r"@coriolisTop@", "/opt/coriolis2" , substituted1 )
+                substituted1 = re.sub ( r"@revdate@"    , self.revDate, substituted0 )
+                substituted1 = re.sub ( r"@githash@"    , self.gitHash, substituted1 )
+                substituted1 = re.sub ( r"@coriolisTop@", "/usr"      , substituted1 )
                 if substituted0 == substituted1: stable = True
                 else: substituted0 = substituted1
 
@@ -291,37 +280,49 @@ class Builder:
    #    self._execute ( command, "svn checkout %s" % tool )
    #    print
    #    return
-   #
-   #
-   #def _svnExport ( self, tool ):
-   #    project = self._conf.getToolProject ( tool )
-   #    if not project:
-   #        print ErrorMessage( 0, "Tool \"%s\" is not part of any project."%tool
-   #                             , "Cannot guess the SVN repository.")
-   #        return
-   #    if not project.getRepository ():
-   #        print ErrorMessage( 0, "Project \"%s\" isn't associated to a repository."%project.getName() )
-   #        return
-   #    
-   #    toolSvnTrunkDir = os.path.join ( self.svnMethod+project.getRepository(), tool, "trunk" )
-   #
-   #    if not os.path.isdir ( self.archiveDir ):
-   #        os.mkdir ( self.archiveDir )
-   #    os.chdir ( self.archiveDir )
-   #
-   #    toolExportDir = os.path.join ( self.archiveDir, tool )
-   #    if os.path.isdir ( toolExportDir ):
-   #        print "Removing tool export (tarball) directory: \"%s\"." % toolExportDir
-   #        command = [ "/bin/rm", "-r", toolExportDir ]
-   #        self._execute ( command, "Removing tool export (tarball) directory" )
-   #
-   #    print "Doing a SVN export of tool: ", tool
-   #    command = [ "svn", "export", toolSvnTrunkDir, toolExportDir ]
-   #    if self.gitHash != "x":
-   #        command += [ "--revision", self.gitHash ]
-   #    self._execute ( command, "svn export %s" % toolExportDir )
-   #    print
-   #    return
+
+
+    def gitExport ( self, projectName ):
+        rawArchive = self.tarballDir+'/'+projectName+'.tar'
+
+        os.chdir ( self.sourceDir+'/'+projectName )
+        command = [ 'git'
+                  , 'archive'
+                  , '--prefix=%s/' % projectName
+                  , '--output=%s'  % rawArchive
+                  , 'devel'
+                  ]
+        self._execute ( command, "git archive of project %s" % projectName )
+
+        if not os.path.isdir ( self.archiveDir ):
+            os.mkdir ( self.archiveDir )
+
+        os.chdir ( self.archiveDir )
+        command = [ 'tar', 'xf', rawArchive ]
+        self._execute ( command, "unpacking raw archive %s" % rawArchive )
+
+       # Hard-coded export of Coloquinte.
+        coloquinteRawArchive = self.tarballDir+'/coloquinte.tar'
+
+        os.chdir ( self.sourceDir+'/importeds/Coloquinte')
+        command = [ 'git'
+                  , 'archive'
+                  , '--prefix=%s/' % 'importeds/Coloquinte/'
+                  , '--output=%s'  % coloquinteRawArchive
+                  , 'master'
+                  ]
+        self._execute ( command, "git archive of project %s" % 'Coloquinte' )
+
+        os.chdir ( self.archiveDir )
+        command = [ 'tar', 'xf', coloquinteRawArchive ]
+        self._execute ( command, "unpacking raw archive %s" % coloquinteRawArchive )
+        
+        absSourceTarBz2 = '%s/%s' % (self.tarballDir,self.sourceTarBz2)
+        os.chdir ( self.tarballDir )
+        command = [ 'tar', 'jcf', absSourceTarBz2, os.path.basename(self.archiveDir) ]
+        self._execute ( command, "Creating composite archive %s" % absSourceTarBz2 )
+
+        return
 
 
     def _setEnvironment ( self, systemVariable, userVariable ):
@@ -421,24 +422,24 @@ class Builder:
    #def svnExport ( self, tools, projects ):
    #    self._commandTemplate ( tools, projects, "_svnExport" )
    #    return
-   #
-   #
-   #def svnTarball ( self, tools, projects ):
-   #    if self.gitHash == "x":
-   #        self._guessGitHash ( self.getProject(projects[0]) )
-   #
-   #    self._doSpec ()
+
+
+    def gitTarball ( self, tools, projects ):
+        if self.gitHash == "x":
+            self._guessGitHash ( self.getProject(projects[0]) )
+
+        self._doSpec ()
    #    self._doDebChangelog ()
-   #    
-   #    if os.path.isdir(self.tarballDir):
-   #        print "Removing previous tarball directory: \"%s\"." % self.tarballDir
-   #        command = [ "/bin/rm", "-rf", self.tarballDir ]
-   #        self._execute ( command, "Removing top export (tarball) directory" )
-   #
-   #    print "Creating tarball directory: \"%s\"." % self.tarballDir
-   #    os.makedirs ( self.tarballDir )
-   #    self.svnExport ( tools, projects )
-   #
+
+        if os.path.isdir(self.tarballDir):
+            print "Removing previous tarball directory: \"%s\"." % self.tarballDir
+            command = [ "/bin/rm", "-rf", self.tarballDir ]
+            self._execute ( command, "Removing top export (tarball) directory" )
+
+        print "Creating tarball directory: \"%s\"." % self.tarballDir
+        os.makedirs ( self.tarballDir )
+        self.gitExport ( projects[0] )
+
    #   # Remove unpublisheds (yet) tools/files.
    #    for item in self.packageExcludes:
    #        command = [ "/bin/rm", "-rf", os.path.join(self.archiveDir,item) ]
@@ -471,8 +472,8 @@ class Builder:
    #    print "Cleanup SVN export tarball archive directory: \"%s\"." % self.archiveDir
    #    command = [ "/bin/rm", "-rf", self.archiveDir ]
    #    self._execute ( command, "Removing archive export (tarball) directory" )
-   #
-   #    return
+
+        return
 
 
     def userTarball ( self, tools, projects ):
@@ -501,7 +502,7 @@ class Builder:
 
 
     def doRpm ( self ):
-        self.svnTarball ( [], self.packageProjects )
+        self.gitTarball ( [], self.packageProjects )
 
         for rpmDir in [ "SOURCES", "SPECS", "BUILD", "tmp"
                       , "SRPMS", "RPMS/i386", "RPMS/i686", "RPMS/x86_64" ]:
@@ -509,25 +510,25 @@ class Builder:
             if not os.path.isdir(rpmFullDir):
                 os.makedirs ( rpmFullDir )
 
-       #rpmSpecFile   = os.path.join ( self.rpmbuildDir, "SPECS"  , "coriolis2.spec" )
+        rpmSpecFile   = os.path.join ( self.rpmbuildDir, "SPECS"  , "coriolis2.spec" )
         rpmSourceFile = os.path.join ( self.rpmbuildDir, "SOURCES", self.sourceTarBz2 )
-        sourceFile    = os.path.join ( self.tarballDir, self.sourceTarBz2 )
-
-       #if os.path.isfile ( rpmSpecFile ):
-       #    os.unlink ( rpmSpecFile )
-       #os.symlink ( self.specFile, rpmSpecFile   )
-
+        sourceFile    = os.path.join ( self.tarballDir , self.sourceTarBz2 )
+ 
+        if os.path.isfile ( rpmSpecFile ):
+            os.unlink ( rpmSpecFile )
+        os.symlink ( self.specFile, rpmSpecFile   )
+ 
         if not os.path.islink ( rpmSourceFile ):
             os.symlink ( sourceFile, rpmSourceFile )
 
         os.chdir ( self.rpmbuildDir )
-
+ 
         command = [ "/usr/bin/rpmbuild"
                   , "--define", "_topdir                 %s" % self.rpmbuildDir
                   , "--define", "_tmppath                %s" % self.tmppathDir
                   , "--define", "_enable_debug_packages  0"
-                  , "-ta", "--with", "binarytar", rpmSourceFile ]
-
+                  , "-ba", "--with", "binarytar", rpmSpecFile ]
+ 
         self._execute ( command, "Rebuild rpm packages" )
 
         return
