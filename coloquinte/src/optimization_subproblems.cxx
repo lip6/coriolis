@@ -1,6 +1,8 @@
 
 #include "coloquinte/optimization_subproblems.hxx"
 
+#include <stdexcept>
+
 namespace coloquinte{
 
 std::vector<capacity_t>  transport_1D(std::vector<t1D_elt> sources, std::vector<t1D_elt> sinks){

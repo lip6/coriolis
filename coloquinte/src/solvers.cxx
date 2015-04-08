@@ -2,6 +2,7 @@
 #include "coloquinte/solvers.hxx"
 
 #include <cassert>
+#include <stdexcept>
 
 namespace coloquinte{
 namespace gp{

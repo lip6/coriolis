@@ -1,6 +1,8 @@
 
 #include "common.hxx"
 
+#include <array>
+
 #ifndef COLOQUINTE_TOPOLOGIES
 #define COLOQUINTE_TOPOLOGIES
 

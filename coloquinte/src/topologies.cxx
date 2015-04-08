@@ -3,10 +3,10 @@
 #include "coloquinte/circuit_helper.hxx"
 #include "coloquinte/union_find.hxx"
 
-#include <array>
 #include <algorithm>
 #include <cassert>
 #include <set>
+#include <functional>
 
 namespace coloquinte{
 using edge_t = std::pair<index_t, index_t>;
