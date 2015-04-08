@@ -1,16 +1,36 @@
-# -*- explicit-buffer-name: "CMakeLists.txt<Coloquinte/src>" -*-
+# -*- explicit-buffer-name: "CMakeLists.txt<etesian>" -*-
 
- project(Coloquinte)
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+ project(COLOQUINTE)
 
- set(CMAKE_C_FLAGS_DEBUG     " -Wall -O2 -g"       CACHE STRING "C Compiler Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE   " -Wall -O3 -fopenmp" CACHE STRING "C Compiler Release options." FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   " -Wall -Og -g"   CACHE STRING "C++ Compiler Debug options."   FORCE)
- set(CMAKE_CXX_FLAGS_RELEASE " -Wall -O3 -fopenmp" CACHE STRING "C++ Compiler Release options." FORCE)
+ option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
+ 
+ cmake_minimum_required(VERSION 2.8.9)
 
- cmake_minimum_required(VERSION 2.4.0)
-
- add_definitions(-std=c++11)
-
- add_subdirectory(cmake_modules)
+ list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
+ find_package(Bootstrap  REQUIRED)
+ setup_project_paths(CORIOLIS)
+ setup_qt()
+ 
+ set_cmake_policies()
+ set_lib_link_mode()
+ setup_boost(program_options python regex)
+ 
+ find_package(LibXml2            REQUIRED)
+ find_package(PythonLibs         REQUIRED)
+ find_package(PythonSitePackages REQUIRED)
+ find_package(VLSISAPD           REQUIRED)
+ find_package(LEFDEF             REQUIRED)
+ find_package(HURRICANE          REQUIRED)
+ find_package(CORIOLIS           REQUIRED)
+ find_package(Libexecinfo        REQUIRED)
+ 
  add_subdirectory(src)
+ add_subdirectory(cmake_modules)
 
+ if(BUILD_DOC)
+   find_package(Doxygen)
+#  if(DOXYGEN_FOUND)
+#    add_subdirectory(doc)
+#  endif()
+ endif()

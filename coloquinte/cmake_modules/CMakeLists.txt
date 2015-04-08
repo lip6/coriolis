@@ -1,2 +1,2 @@
 
-install ( FILES  FindColoquinte.cmake  DESTINATION share/cmake/Modules ) 
+install ( FILES  FindCOLOQUINTE.cmake  DESTINATION share/cmake/Modules ) 

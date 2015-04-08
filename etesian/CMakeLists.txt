@@ -8,7 +8,6 @@
  cmake_minimum_required(VERSION 2.8.9)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
- find_package(Coloquinte REQUIRED)
  find_package(Bootstrap  REQUIRED)
  setup_project_paths(CORIOLIS)
  setup_qt()
@@ -24,6 +23,7 @@
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
+ find_package(COLOQUINTE         REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  
  add_subdirectory(src)
