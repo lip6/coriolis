@@ -1,9 +1,6 @@
-# -*- explicit-buffer-name: "CMakeLists.txt<Coloquinte/src>" -*-
+# -*- explicit-buffer-name: "CMakeLists.txt<coloquinte/src>" -*-
 
 include_directories( ${COLOQUINTE_SOURCE_DIR}/src
-                     ${CORIOLIS_INCLUDE_DIR} 
-                     ${HURRICANE_INCLUDE_DIR} 
-                     ${CONFIGURATION_INCLUDE_DIR} 
                    )
 
 set ( includes       coloquinte/circuit.hxx

@@ -136,8 +136,8 @@
  
    if(NOT ${library}_INCLUDE_PATH)
      set(${configname}_FOUND "NOTFOUND")
-   endif(NOT ${library}_INCLUDE_PATH)
- endmacro ( set_libraries_path )
+   endif()
+ endmacro()
 
 
 #
@@ -269,16 +269,24 @@
 #
  macro(setup_sysconfdir INSTALLDIR)
    message("-- Checking installation directory <${INSTALLDIR}>")
-   string(REGEX MATCH "^/usr$" IS_USR ${INSTALLDIR})
-   string(REGEX MATCH "^/opt$" IS_OPT ${INSTALLDIR})
-   if(IS_USR OR IS_OPT)
-     message("-- Using system-wide /etc.")
-     set(SYS_CONF_DIR "/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
-   else(IS_USR OR IS_OPT)
+   string(REGEX MATCH "^/opt/rh/devtoolset-2/root/usr$" IS_OPT_RH ${INSTALLDIR})
+   if(IS_OPT_RH)
+     message("-- Using devtoolset-2 install tree /opt/rh/devtoolset-2/root/etc.")
+     set(SYS_CONF_DIR "/opt/rh/devtoolset-2/root/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
+   else()
+     string(REGEX MATCH "^/usr$" IS_USR ${INSTALLDIR})
+     string(REGEX MATCH "^/opt$" IS_OPT ${INSTALLDIR})
+     if(IS_USR OR IS_OPT)
+       message("-- Using system-wide /etc.")
+       set(SYS_CONF_DIR "/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
+     endif()
+   endif()
+
+   if(NOT IS_OPT_RH AND NOT IS_USR AND NOT IS_OPT)
      message("-- Using install tree <prefix>/etc.")
      set(SYS_CONF_DIR "etc" CACHE STRING "System configuration directory (/etc)" FORCE)
-   endif(IS_USR OR IS_OPT)
- endmacro(setup_sysconfdir)
+   endif()
+ endmacro()
  
 
 #

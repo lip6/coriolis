@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(COLOQUINTE_INCLUDE_PATH NAMES coloquinte/netlist.hxx PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${COLOQUINTE_INCLUDE_PATH_DESCRIPTION}"
   )

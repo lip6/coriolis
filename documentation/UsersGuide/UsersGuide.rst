@@ -359,9 +359,8 @@ Main building prerequisites:
 * latex
 * latex2html.
 * python-docutils (for reStructuredText).
-* |Coloquinte| (https://github.com/Coloquinte/Coloquinte.git).
 
-|Coloquinte| requires the |LEMON| component from |Coin-Or| (`Coin Or Home`_).
+The |Coloquinte| component requires the |LEMON| component from |Coin-Or| (`Coin Or Home`_).
 A repository of |Coin-Or| packages backported from |Fedora| 21 is available here:
 
 * |SL6|: `ftp://pub/linux/distributions/slsoc/slsoc/soc/addons/i386/RPMS <http://ftp.lip6.fr/pub/linux/distributions/slsoc/slsoc/soc/addons/i386/repoview>`_
@@ -387,7 +386,6 @@ automatically created either by |ccb| or the build system.
 +--------------------------+-----------------------------------------------------------------------------+
 | | Sources root           | | ~/coriolis-2.x/src                                                        |
 | | **under git**          | | ~/coriolis-2.x/src/coriolis                                               |
-| | **under git**          | | ~/coriolis-2.x/src/importeds/Coloquinte                                   |
 +--------------------------+-----------------------------------------------------------------------------+
 | **Architecture Dependant Build**                                                                       |
 +--------------------------+-----------------------------------------------------------------------------+
@@ -434,15 +432,10 @@ The first step is to create the source directory and pull the |git| repository: 
    dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
    dummy@lepka:~$ cd ~/coriolis-2.x/src
    dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
-   dummy@lepka:~$ mkdir importeds
-   dummy@lepka:~$ cd importeds
-   dummy@lepka:~$ git clone https://github.com/Coloquinte/Coloquinte.git
-   dummy@lepka:~$ cd ../coriolis
 
 Second and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
-                                       --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
                                        --make="-j4 install"
    dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                        --doc --make="-j1 install"
@@ -453,8 +446,7 @@ then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
-                                       --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
                                        --devtoolset-2 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
@@ -996,7 +988,6 @@ Etesian -- Placer
 The |Etesian| placer is a state of the art (as of 2015) analytical placer. It is 
 within ``5%`` of other placers' solutions, but is normally a bit worse than ePlace.
 This |Coriolis| tool is actually an encapsulation of |Coloquinte| which *is* the placer.
-|Coloquinte| is provided as a separate library, see the building instructions.
 
 .. note:: *Instance Uniquification Unsupported:* a same logical instance cannot have
    two different placements. So, either you manually make a clone of it or you

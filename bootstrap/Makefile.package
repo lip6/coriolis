@@ -2,26 +2,23 @@
 # -*- Makefile -*-
 # Mimicking the behavior of a top-level autotool generated Makefile.
 
-define pythonSiteLocator =
-import os.path
-import distutils.sysconfig
-print distutils.sysconfig.get_python_lib()
-endef
+ pythonSiteLocator = "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1)"
 
+             tools = bootstrap vlsisapd hurricane crlcore coloquinte etesian knik \
+                     katabatic kite equinox solstice cumulus stratus1 unicorn documentation
+            prefix = /usr
+        rootPrefix = $(subst /usr,,$(prefix))
+           DESTDIR =
+     BUILD_DESTDIR = $(shell pwd)/install.dir
+    PYTHON_SITEDIR = $(shell python -c $(pythonSiteLocator))
+     IMPORTEDS_TOP = $(prefix)
+      CORIOLIS_TOP = $(prefix)
 
-          tools = bootstrap vlsisapd hurricane crlcore etesian knik katabatic kite \
-                  equinox solstice cumulus stratus1 unicorn documentation
-         prefix = /usr
-        DESTDIR =
-  BUILD_DESTDIR = $(shell pwd)/install.dir
- PYTHON_SITEDIR = $(shell python -c '$(pythonSiteLocator)')
-  IMPORTEDS_TOP = $(prefix)
-   CORIOLIS_TOP = $(prefix)
-
-    environment = IMPORTEDS_TOP=$(IMPORTEDS_TOP); export IMPORTEDS_TOP; \
-                   CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
+       environment = IMPORTEDS_TOP=$(IMPORTEDS_TOP); export IMPORTEDS_TOP; \
+                      CORIOLIS_TOP=$(CORIOLIS_TOP);  export  CORIOLIS_TOP
 
 .PHONY: build install FORCE
+
 
 all: build
 
@@ -39,20 +36,15 @@ build: FORCE
 	  "x86_64") cmakeArgs="-D LIB_SUFFIX:STRING=64";;        \
 	  *)        cmakeArgs="";;                               \
 	esac;                                                    \
-	echo "** Building tool Coloquinte";                      \
-	mkdir -p build.dir/Coloquinte;                           \
-	cd build.dir/Coloquinte;                                 \
-	cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                 \
-	      -D BUILD_SHARED_LIBS:STRING=ON                     \
-	      -D BUILD_DOC:STRING=OFF                            \
-	      -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)     \
-	      -D DESTDIR:STRING=$(BUILD_DESTDIR)                 \
-	      $${cmakeArgs}                                      \
-	      ../../importeds/Coloquinte                         \
-	      || exit 1;                                         \
-	make DESTDIR=$(BUILD_DESTDIR) install                    \
-	      || exit 1;                                         \
-	cd ../..;                                                \
+	case "$${X_SCLS}" in                                     \
+	  *"devtoolset"*)                                        \
+	     cmakeArgs="$${cmakeArgs} -D Boost_NO_SYSTEM_PATHS:STRING=TRUE"; \
+	     BOOST_INCLUDEDIR="/opt/rh/devtoolset-2/root/usr/include";       \
+	     BOOST_LIBRARYDIR="/opt/rh/devtoolset-2/root/usr/lib";           \
+	     export BOOST_INCLUDEDIR BOOST_LIBRARYDIR;                       \
+	     echo "** Using $${X_SCLS}.";                                    \
+	     ;;                                                              \
+	esac;                                                    \
 	for tool in $(tools); do                                 \
 	  echo "** Building tool $${tool}";                      \
 	  mkdir -p build.dir/$$tool;                             \
@@ -65,7 +57,7 @@ build: FORCE
 	        $${cmakeArgs}                                    \
 	        ../../coriolis/$$tool                            \
 	        || exit 1;                                       \
-	  make DESTDIR=$(BUILD_DESTDIR) install                  \
+	  make DESTDIR=$(BUILD_DESTDIR) $(SMP_MFLAGS) install    \
 	        || exit 1;                                       \
 	  cd ../..;                                              \
 	done
@@ -76,19 +68,6 @@ install: FORCE
 	  "x86_64") commonCMakeArgs="-D LIB_SUFFIX:STRING=64";;   \
 	  *)        commonCMakeArgs="";;                          \
 	esac;                                                     \
-	echo "** Installing tool Coloquinte";                     \
-	cd build.dir/Coloquinte;                                  \
-	cmake -D CMAKE_BUILD_TYPE:STRING=RELEASE                  \
-	      -D BUILD_SHARED_LIBS:STRING=ON                      \
-	      -D BUILD_DOC:STRING=ON                              \
-	      -D CMAKE_INSTALL_PREFIX:STRING=$(CORIOLIS_TOP)      \
-	      -D DESTDIR:STRING=$(DESTDIR)                        \
-	      $${cmakeArgs}                                       \
-	      ../../importeds/Coloquinte                          \
-	      || exit 1;                                          \
-	make DESTDIR=$(DESTDIR) install                           \
-	      || exit 1;                                          \
-	cd ../..;                                                 \
 	for tool in $(tools); do                                  \
 	  echo "** Installing tool $${tool}";                     \
 	  cd build.dir/$$tool;                                    \
@@ -114,10 +93,11 @@ install: FORCE
 	        || exit 1;                                        \
 	  cd ../..;                                               \
 	done;                                                     \
-	rm -rf $(DESTDIR)$(CORIOLIS_TOP)/bin/ccb                  \
-	       $(DESTDIR)$(CORIOLIS_TOP)/bin/cx2y                 \
-	       $(DESTDIR)$(CORIOLIS_TOP)/bin/*.bin                \
-	       $(DESTDIR)$(PYTHON_SITEDIR)/builder                \
-	       $(DESTDIR)/usr/share/cmake/Modules/GetGitRevisionDescription.cmake.in
+	rm -rfv $(DESTDIR)$(rootPrefix)/etc/coriolis2/coriolis2.sh \
+	        $(DESTDIR)$(prefix)/bin/ccb                        \
+	        $(DESTDIR)$(prefix)/bin/cx2y                       \
+	        $(DESTDIR)$(prefix)/bin/*.bin                      \
+	        $(DESTDIR)$(rootPrefix)$(PYTHON_SITEDIR)/builder   \
+	        $(DESTDIR)$(prefix)/share/cmake/Modules/GetGitRevisionDescription.cmake.in
 
 FORCE:

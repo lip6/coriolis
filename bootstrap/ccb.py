@@ -206,6 +206,7 @@ parser.add_option (       "--no-cache"    , action="store_true" ,               
 parser.add_option (       "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
 parser.add_option (       "--devtoolset-2", action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
 parser.add_option (       "--qt5"         , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
+parser.add_option (       "--openmp"      , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
 parser.add_option (       "--ninja"       , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
 parser.add_option (       "--clang"       , action="store_true" ,                dest="clang"        , help="Force use of Clang C/C++ compiler instead of system default." )
 parser.add_option (       "--make"        , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
@@ -282,6 +283,7 @@ else:
     if options.clang:            builder.clang             = True
     if options.devtoolset2:      builder.devtoolset2       = True
     if options.qt5:              builder.qt5               = True
+    if options.openmp:           builder.openmp            = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments
    #if options.svnMethod:        builder.svnMethod         = options.svnMethod
    #if options.svnTag:           builder.svnTag            = options.svnTag

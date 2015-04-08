@@ -1,4 +1,4 @@
-# -*- explicit-buffer-name: "CMakeLists.txt<etesian>" -*-
+# -*- explicit-buffer-name: "CMakeLists.txt<coloquinte>" -*-
 
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(COLOQUINTE)
@@ -14,16 +14,13 @@
  
  set_cmake_policies()
  set_lib_link_mode()
- setup_boost(program_options python regex)
+ setup_boost()
  
- find_package(LibXml2            REQUIRED)
- find_package(PythonLibs         REQUIRED)
- find_package(PythonSitePackages REQUIRED)
- find_package(VLSISAPD           REQUIRED)
- find_package(LEFDEF             REQUIRED)
- find_package(HURRICANE          REQUIRED)
- find_package(CORIOLIS           REQUIRED)
- find_package(Libexecinfo        REQUIRED)
+ find_package(Libexecinfo REQUIRED)
+
+ if(WITH_OPENMP)
+   add_definitions( -fopenmp )
+ endif()
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
