@@ -1,7 +1,7 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<etesian>" -*-
 
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
- project(ETESIAN)
+ project(COLOQUINTE)
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  
@@ -23,7 +23,6 @@
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
- find_package(COLOQUINTE         REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  
  add_subdirectory(src)
