@@ -18,10 +18,8 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
-#if HAVE_COLOQUINTE
 #include "coloquinte/circuit.hxx"
 #include "coloquinte/legalizer.hxx"
-#endif
 #include "vlsisapd/configuration/Configuration.h"
 #include "vlsisapd/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
@@ -58,7 +56,6 @@ namespace {
 
 
 
-#if HAVE_COLOQUINTE
   //inline bool  isNan( const float_t& f ) { return (f != f); }
 
 
@@ -113,22 +110,6 @@ namespace {
   }
 
 
-#if 0
-  Coloquinte::cell::pin::pin_dir  extractDirection ( const RoutingPad* rp )
-  {
-    switch ( rp->_getEntityAsComponent()->getNet()->getDirection() ) {
-      case Net::Direction::IN:       return Coloquinte::cell::pin::I;
-      default:
-      case Net::Direction::OUT:
-      case Net::Direction::TRISTATE: return Coloquinte::cell::pin::O;
-      case Net::Direction::INOUT:    return Coloquinte::cell::pin::B;
-    }
-
-    return Coloquinte::cell::pin::O;
-  }
-#endif
-
-
   Point  extractRpOffset ( const RoutingPad* rp )
   {
     Cell*      masterCell = rp->getOccurrence().getMasterCell();
@@ -175,8 +156,6 @@ namespace {
 
     return Transformation( tx, ty, orient );
   }
-#endif
-
 
 } // Anonymous namespace.
 
@@ -451,7 +430,6 @@ namespace Etesian {
 
   void  EtesianEngine::toColoquinte ()
   {
-#if HAVE_COLOQUINTE
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
 
     resetPlacement();
@@ -594,12 +572,10 @@ namespace Etesian {
     _placementUB = _placementLB;
   //cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y_ << endl;
 
-#endif  // HAVE_COLOQUINTE
   }
 
   void  EtesianEngine::place ()
   {
-#if HAVE_COLOQUINTE
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
@@ -823,15 +799,11 @@ namespace Etesian {
       ( "     - RMST", DbU::getValueString( (DbU::Unit)get_RSMT_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
 
     _placed = true;
-#else
-    cerr << Warning("Coloquinte library wasn't found, Etesian is disabled.") << endl;
-#endif
   }
 
 
   void  EtesianEngine::_progressReport1 ( time_t startTime, string label ) const
   {
-#if HAVE_COLOQUINTE
     size_t w      = label.size();
     string indent ( w, ' ' );
     if (not w) {
@@ -850,13 +822,11 @@ namespace Etesian {
            <<  "  Linear Disrupt.:" << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
            <<   " Quad Disrupt.:"   << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
            << endl;
-#endif
   }
 
 
   void  EtesianEngine::_progressReport2 ( time_t startTime, string label ) const
   {
-#if HAVE_COLOQUINTE
     size_t w      = label.size();
     string indent ( w, ' ' );
     if (not w) {
@@ -871,13 +841,11 @@ namespace Etesian {
            << " HPWL:" << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementLB )
            << " RMST:" << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementLB )
            << endl;
-#endif
   }
 
 
   void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t& placement )
   {
-#if HAVE_COLOQUINTE
     UpdateSession::open();
 
     forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
@@ -914,7 +882,6 @@ namespace Etesian {
     UpdateSession::close();
 
     if (_cellWidget) _cellWidget->refresh();
-#endif
   }
 
 
