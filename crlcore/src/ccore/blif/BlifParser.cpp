@@ -228,6 +228,7 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
             throw Error("Unexpected token after model name\n");
           else{
             models.back().name = token;
+            cmess2 << "Processing model <" << token << ">" << endl;
             hasName = true;
           }
         }
@@ -255,13 +256,11 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
   }
   */
 
-  if(models.size() > 1){
-    cerr << Warning("Several models in the file; only the last was open\n");
-  }
-
-  Cell * design = NULL;
+  // Two passes: first create the cells and their nets, then create the internals
+  std::vector<Cell*> model_cells;
   for(auto M : models){
-    design = framework->createCell(M.name);
+    Cell * design = framework->createCell(M.name);
+    model_cells.push_back(design);
     addSupplyNets(design);
 
     unordered_set<string> net_names;
@@ -282,14 +281,18 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
             new_net->setDirection( it->second );
         }
     }
-
-    int i=0;
-    for(auto & S : M.subcircuits){
+  }
+  // Second pass: every cell and its nets have already been created
+  for(int i=0; i<models.size(); ++i){
+    auto const & M = models[i];
+    Cell * design = model_cells[i];
+    for(int j=0; j<M.subcircuits.size(); ++j){
+      auto & S = M.subcircuits[j];
       ostringstream subckt_name;
-      subckt_name << "subckt_" << i;
+      subckt_name << "subckt_" << j;
       Cell * cell = framework->getCell(S.cell, Catalog::State::Views, 0);
       if(cell == NULL){
-        cerr << Warning("Cell " + S.cell + "to instanciate hasn't been found\n");
+        cerr << Error("Cell " + S.cell + " to instanciate hasn't been found\n");
         continue;
       }
       Instance* instance = Instance::create( design, subckt_name.str(), cell);
@@ -304,8 +307,14 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
       ++i;
     }
   }
-
-  return design;
+  cmess2 << "BLIF file loaded" << endl;
+  if(model_cells.empty()){
+    throw Error("No model found in the file\n");
+  }
+  else if(model_cells.size() > 1){
+    cerr << Warning("Several models found: returned the first one\n");
+  }
+  return model_cells[0];
 }
 
 }
