@@ -153,7 +153,7 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
             or current_names[2] != "1" or current_names[3] != "1"
             ){
             ostringstream mess;
-            mess << "Name statement is not an alias and will be ignored "
+            mess << ".names statement is not an alias and will be ignored "
                  << "(map to standard cells for functions and tie cells for constants)\n";
             for(string const & S: current_names){
                 mess << S << " ";
@@ -295,34 +295,38 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
   std::vector<Cell*> model_cells;
   for(auto M : models){
     Cell * design = framework->createCell(M.name);
+    if(design == NULL){
+      throw Error("Model " + M.name + " is NULL\n");
+    }
     model_cells.push_back(design);
     addSupplyNets(design);
 
     unordered_set<string> net_names;
     for(auto const & S : M.subcircuits){
       for(auto const & P : S.pins){
-          net_names.insert(P.second);
+        net_names.insert(P.second);
       }
       for(auto const & A : M.aliases){
-          net_names.insert(A.first);
-          net_names.insert(A.second);
+        net_names.insert(A.first);
+        net_names.insert(A.second);
       }
     }
     for(auto const & P : M.pins){
-        net_names.insert(P.first);
+      net_names.insert(P.first);
     }
 
     for(string const & N : net_names){
-        Net* new_net = Net::create( design, N );
-        auto it = M.pins.find(N);
-        if(it != M.pins.end()){
-            new_net->setExternal( true );
-            new_net->setDirection( it->second );
-        }
+      Net* new_net = Net::create( design, N );
+      auto it = M.pins.find(N);
+      if(it != M.pins.end()){
+        new_net->setExternal( true );
+        new_net->setDirection( it->second );
+      }
     }
   }
   // Second pass: every cell and its nets have already been created
   for(int i=0; i<models.size(); ++i){
+    cmess2 << "Handling model " << models[i].name << endl;
     auto const & M = models[i];
     Cell * design = model_cells[i];
     for(int j=0; j<M.subcircuits.size(); ++j){
@@ -331,22 +335,38 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
       subckt_name << "subckt_" << j;
       Cell * cell = framework->getCell(S.cell, Catalog::State::Views, 0);
       if(cell == NULL){
-        cerr << Error("Cell " + S.cell + " to instanciate hasn't been found\n");
-        continue;
+        throw Error("Cell <" + S.cell + "> to instanciate hasn't been found\n");
       }
+      //cmess2 << "Creating instance <" << subckt_name.str() << "> of <" << S.cell << "> in <" << models[i].name << ">" << endl;
       Instance* instance = Instance::create( design, subckt_name.str(), cell);
 
       for(auto & P : S.pins){
         Net* internalNet = cell->getNet( P.first );
         Net* externalNet = design->getNet( P.second );
-        assert(internalNet != NULL and externalNet != NULL);
+        assert(internalNet != NULL and externalNet != NULL and instance != NULL);
         instance->getPlug( internalNet )->setNet( externalNet );
       }
       //connectSupplyNets(instance, design);
-      ++i;
     }
+    // Merge the aliased nets
     for(auto alias : M.aliases){
-        design->getNet( alias.first )->merge(design->getNet( alias.second ));
+      //cmess2 << "Merging nets <" << alias.first << "> and <" << alias.second << ">" << endl;
+      Net * first_net  = design->getNet( alias.first );
+      Net * second_net = design->getNet( alias.second );
+      if(first_net == NULL or second_net == NULL){
+        ostringstream mess;
+        mess << "Trying to create an alias for non-instantiated nets:";
+        if(first_net == NULL)
+          mess << " <" << alias.first << ">";
+        if(second_net == NULL)
+          mess << " <" << alias.second << ">";
+        mess << ", will be ignored\n";
+        cerr << Warning(mess.str());
+        continue;
+      }
+      if(!first_net->isExternal())
+          swap(first_net, second_net); // If only one net is external, it needs to be the first
+      first_net->merge(second_net);
     }
   }
   cmess2 << "BLIF file loaded" << endl;
