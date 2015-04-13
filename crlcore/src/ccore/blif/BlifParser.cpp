@@ -105,6 +105,7 @@ namespace {
     string name;
     unordered_map<string, Net::Direction> pins;
     vector<subckt> subcircuits;
+    vector<pair<string, string> > aliases;
     bool operator<(model const & o) const{ return name < o.name; }
   };
 
@@ -136,15 +137,36 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
   bool hasName;
 
   string line;
+  vector<string> current_names;
   while(getline(ccell, line)){
     istringstream linestream(line);
     string before_comment;
     getline(linestream, before_comment, '#');
     istringstream tokens(before_comment);
     string token;
-    while(tokens>>token){
+    if(tokens >> token){
       assert(not token.empty());
       if(token[0] == '.'){
+        // Process finished .names statement
+        if(not current_names.empty()){
+          if( current_names.size() != 4
+            or current_names[2] != "1" or current_names[3] != "1"
+            ){
+            ostringstream mess;
+            mess << "Name statement is not an alias and will be ignored "
+                 << "(map to standard cells for functions and tie cells for constants)\n";
+            for(string const & S: current_names){
+                mess << S << " ";
+            }
+            mess << "\n";
+            cerr << Warning(mess.str());
+          }
+          else{
+            // Name statement is an alias: the second signal will map to the first
+            models.back().aliases.push_back(pair<string, string>(current_names[0], current_names[1]));
+          }
+          current_names.clear();
+        }
         if(token == ".model"){
           if(state != EXT)
             throw Error("Nested model are not supported\n");
@@ -162,13 +184,11 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
           models.back().subcircuits.push_back(subckt());
         }
         else if(token == ".names"){
-          cerr << Warning("BLIF names are ignored\n");
           if(state == EXT)
             throw Error("Names without an enclosing model are not supported\n");
           if(state == MODEL and not hasName)
             throw Error("Model has no name\n");
           state = NAMES;
-          hasName = false;
         }
         else if(token == ".latch"){
           throw Error("Latch constructs are not understood by the parser\n");
@@ -189,52 +209,67 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
           state = EXT;
         }
         else{
-          throw Error("Unexpected control token\n");
+          ostringstream mess;
+          mess << "Unknown control token <" << token << ">\n";
+          throw Error(mess.str());
         }
+
       }
-      else{ // Either a pin or an input/output definition
-        if(state == INPUTS or state == OUTPUTS){
-          auto it = models.back().pins.find(token);
-          Net::Direction D = (state == INPUTS)? Net::Direction::DirIn : Net::Direction::DirOut;
-          if(it != models.back().pins.end()){
-            it->second = static_cast<Net::Direction::Code>(D | it->second);
-          }
-          else{
-            models.back().pins.insert(pair<string, Net::Direction>(token, D));
-          }
-        }
-        else if(state == SUBCKT){
-          if(hasName){
-            // Encountered a pin: need to be processed
-            istringstream token_stream(token);
-            string before_space, after_space;
-            getline(token_stream, before_space, '=');
-            getline(token_stream, after_space, '=');
-            if(token_stream){
-                Error("Encountered more than one '=' in token");
-            }
-            models.back().subcircuits.back().pins.push_back(pair<string, string>(before_space, after_space));
-          }
-          else{
-            models.back().subcircuits.back().cell = token;
-            hasName = true;
-          }
-        }
-        else if(state == NAMES){
-            // TODO; now just ignored
-        }
-        else if(state == MODEL){
-          if(hasName)
-            throw Error("Unexpected token after model name\n");
-          else{
-            models.back().name = token;
-            cmess2 << "Processing model <" << token << ">" << endl;
-            hasName = true;
-          }
+      else if(state == NAMES){
+        // Part of a cover for a logic function
+        current_names.push_back(token);
+      }
+      else{
+        ostringstream mess;
+        mess << "Encountered a non-control token at the beginning of a line: <" << token << ">\n";
+        throw Error(mess.str());
+      }
+    }
+    // Process all tokens after the control
+    while(tokens >> token){
+      assert(not token.empty());
+      // Either a pin or an input/output definition
+      if(state == INPUTS or state == OUTPUTS){
+        auto it = models.back().pins.find(token);
+        Net::Direction D = (state == INPUTS)? Net::Direction::DirIn : Net::Direction::DirOut;
+        if(it != models.back().pins.end()){
+          it->second = static_cast<Net::Direction::Code>(D | it->second);
         }
         else{
-          throw Error("Unexpected token\n");
+          models.back().pins.insert(pair<string, Net::Direction>(token, D));
         }
+      }
+      else if(state == SUBCKT){
+        if(hasName){
+          // Encountered a pin: need to be processed
+          istringstream token_stream(token);
+          string before_space, after_space;
+          getline(token_stream, before_space, '=');
+          getline(token_stream, after_space, '=');
+          if(token_stream){
+              Error("Encountered more than one '=' in token");
+          }
+          models.back().subcircuits.back().pins.push_back(pair<string, string>(before_space, after_space));
+        }
+        else{
+          models.back().subcircuits.back().cell = token;
+          hasName = true;
+        }
+      }
+      else if(state == NAMES){
+          current_names.push_back(token);
+      }
+      else if(state == MODEL){
+        if(hasName)
+          throw Error("Unexpected token after model name\n");
+        else{
+          models.back().name = token;
+          cmess2 << "Processing model <" << token << ">" << endl;
+          hasName = true;
+        }
+      }
+      else{
+        throw Error("Unexpected token\n");
       }
     }
     line.clear();
@@ -267,6 +302,10 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
     for(auto const & S : M.subcircuits){
       for(auto const & P : S.pins){
           net_names.insert(P.second);
+      }
+      for(auto const & A : M.aliases){
+          net_names.insert(A.first);
+          net_names.insert(A.second);
       }
     }
     for(auto const & P : M.pins){
@@ -305,6 +344,9 @@ Cell * Blif::load ( string cellPath ) //, Cell *cell )
       }
       //connectSupplyNets(instance, design);
       ++i;
+    }
+    for(auto alias : M.aliases){
+        design->getNet( alias.first )->merge(design->getNet( alias.second ));
     }
   }
   cmess2 << "BLIF file loaded" << endl;
