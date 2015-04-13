@@ -177,6 +177,10 @@ if __name__ == "__main__":
     coriolisTop  = "/usr"
     sysconfDir   = scriptDir
     shellMessage = "Using system-wide Coriolis 2 (/usr)"
+  elif scriptDir.startswith("/etc/coriolis2"): 
+    coriolisTop  = "/opt/rh/devtoolset-2/root/usr"
+    sysconfDir   = scriptDir
+    shellMessage = "Using system-wide devtoolset-2 Coriolis 2 (/opt/rh/devtoolset-2/root/usr)"
   elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
         or scriptDir.startswith("/soc/coriolis2/"):
     coriolisTop  = "/soc/coriolis2"

@@ -93,6 +93,7 @@
                install( TARGETS       unicorn        DESTINATION lib${LIB_SUFFIX} )
                install( TARGETS       cgt.bin        DESTINATION bin )
                install( PROGRAMS      cgt.py         DESTINATION bin RENAME cgt )
+               install( PROGRAMS      coriolis.py    DESTINATION bin RENAME coriolis )
                install( FILES         ${includes}
                                       ${mocincludes} DESTINATION include/coriolis2/unicorn ) 
 

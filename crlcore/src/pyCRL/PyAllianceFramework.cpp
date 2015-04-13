@@ -102,77 +102,6 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_loadGraphicsFromXml ( PyAllianceFramework* self, PyObject* args )
-  {
-    trace << "PyAllianceFramework_loadGraphicsFromXml ()" << endl;
-
-    HTRY
-    METHOD_HEAD("AllianceFramework.loadGraphicsFromXml()")
-
-    bool  status = false;
-    char* name   = NULL;
-    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadGraphicsFromXml", &name)) {
-      status = GraphicsParser::load( af->getEnvironment()->getDISPLAY() );
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadGraphicsFromXml." );
-      return NULL;
-    }
-    if ( status ) Py_RETURN_TRUE;
-    
-    HCATCH
-
-    Py_RETURN_FALSE;
-  }
-
-
-  extern PyObject* PyAllianceFramework_loadSymbTechnoFromXml ( PyAllianceFramework* self, PyObject* args )
-  {
-    trace << "PyAllianceFramework_loadSymbTechnoFromXml ()" << endl;
-
-    HTRY
-    METHOD_HEAD("AllianceFramework.loadSymbTechnoFromXml()")
-
-    bool  status = false;
-    char* name   = NULL;
-    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadSymbTechnoFromXml", &name)) {
-      status = SymbolicTechnologyParser::load( DataBase::getDB()
-                                             , af->getEnvironment()->getSYMBOLIC_TECHNOLOGY() );
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadSymbTechnoFromXml." );
-      return NULL;
-    }
-    if ( status ) Py_RETURN_TRUE;
-    
-    HCATCH
-
-    Py_RETURN_FALSE;
-  }
-
-
-  extern PyObject* PyAllianceFramework_loadRealTechnoFromXml ( PyAllianceFramework* self, PyObject* args )
-  {
-    trace << "PyAllianceFramework_loadRealTechnoFromXml ()" << endl;
-
-    HTRY
-    METHOD_HEAD("AllianceFramework.loadRealTechnoFromXml()")
-
-    bool  status = false;
-    char* name   = NULL;
-    if (PyArg_ParseTuple(args,"s:AllianceFramework.loadRealTechnoFromXml", &name)) {
-      status = RealTechnologyParser::load( DataBase::getDB()
-                                         , af->getEnvironment()->getREAL_TECHNOLOGY() );
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for loadRealTechnoFromXml." );
-      return NULL;
-    }
-    if ( status ) Py_RETURN_TRUE;
-    
-    HCATCH
-
-    Py_RETURN_FALSE;
-  }
-
-
   extern PyObject* PyAllianceFramework_getLibrary ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_getLibrary ()" << endl;
@@ -373,12 +302,6 @@ extern "C" {
                                , "Gets the Alliance Framework." }                      
     , { "getEnvironment"       , (PyCFunction)PyAllianceFramework_getEnvironment       , METH_NOARGS
                                , "Gets the Alliance Environment." }
-    , { "loadGraphicsFromXml"  , (PyCFunction)PyAllianceFramework_loadGraphicsFromXml  , METH_VARARGS
-                               , "Load the legacy display XML configuration file." }
-    , { "loadSymbTechnoFromXml", (PyCFunction)PyAllianceFramework_loadSymbTechnoFromXml, METH_VARARGS
-                               , "Load the legacy symbolic technology XML configuration file." }
-    , { "loadRealTechnoFromXml", (PyCFunction)PyAllianceFramework_loadRealTechnoFromXml, METH_VARARGS
-                               , "Load the legacy real technology XML configuration file." }
     , { "getLibrary"           , (PyCFunction)PyAllianceFramework_getLibrary           , METH_VARARGS
                                , "Gets a Library, by index." }                         
     , { "getCell"              , (PyCFunction)PyAllianceFramework_getCell              , METH_VARARGS

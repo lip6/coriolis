@@ -19,7 +19,6 @@ from   CRL       import AllianceFramework
 from   helpers   import ErrorMessage
 
 
-symbolicTechno = None
 symbolicFile   = '<No symbolic file specified>'
 
 
@@ -97,7 +96,11 @@ class LayersLUT ( object ):
 layersLUT = LayersLUT()
 
 
-def loadRealLayers ( technology, basicLayersData ):
+def loadRealLayers ( realLayersTable, confFile ):
+    global symbolicFile
+    symbolicFile = confFile
+    technology   = DataBase.getDB().getTechnology()
+
     entryNo = 0
     for entry in realLayersTable:
         entryNo += 1
@@ -133,7 +136,11 @@ def loadRealLayers ( technology, basicLayersData ):
     return
 
 
-def loadSymbolicLayers ( technology, symbolicLayersData ):
+def loadSymbolicLayers ( symbolicLayersData, confFile ):
+    global symbolicFile
+    symbolicFile = confFile
+    technology   = DataBase.getDB().getTechnology()
+
     entryNo = 0
     for entry in symbolicLayersData:
         entryNo += 1
@@ -194,7 +201,11 @@ def loadSymbolicLayers ( technology, symbolicLayersData ):
     return
 
 
-def loadSymbolicRules ( technology, symbolicRulesTable ):
+def loadSymbolicRules ( symbolicRulesTable, confFile ):
+    global symbolicFile
+    symbolicFile = confFile
+    technology   = DataBase.getDB().getTechnology()
+
     entryNo = 0
     for rule in symbolicRulesTable:
         entryNo += 1
@@ -246,7 +257,11 @@ def loadSymbolicRules ( technology, symbolicRulesTable ):
     return
 
 
-def loadWorkingLayers ( technology, workingLayersTable ):
+def loadWorkingLayers ( workingLayersTable, confFile ):
+    global symbolicFile
+    symbolicFile = confFile
+    technology   = DataBase.getDB().getTechnology()
+
     entryNo = 0
     for layerName in workingLayersTable:
         entryNo += 1
@@ -259,39 +274,11 @@ def loadWorkingLayers ( technology, workingLayersTable ):
     return
 
 
-def loadViewerConfig ( technology, viewerConfig ):
+def loadViewerConfig ( viewerConfig, confFile ):
+    global symbolicFile
+    symbolicFile = confFile
     try:
         if viewerConfig.has_key('precision'): DbU.setPrecision(viewerConfig['precision'])
     except Exception, e:
         ErrorMessage.wrapPrint(e,'In %s:<viewerConfig>.')
-    return
-
-
-def load ( symbolicPath ):
-    tables = ( ('viewerConfig'       , loadViewerConfig  )
-             , ('realLayersTable'    , loadRealLayers    )
-             , ('symbolicLayersTable', loadSymbolicLayers)
-             , ('symbolicRulesTable' , loadSymbolicRules )
-             , ('workingLayersTable' , loadWorkingLayers )
-             )
-
-    global symbolicTechno
-    global symbolicFile
-    symbolicFile   = os.path.basename(symbolicPath)
-    symbolicTechno = AllianceFramework.get().getEnvironment().getSYMB_TECHNO_NAME()
-
-    confGlobals = globals()
-    execfile(symbolicPath,confGlobals)
-
-    db         = DataBase.getDB()
-    technology = db.getTechnology()
-
-    for symbol, loader in tables:
-        if not confGlobals.has_key(symbol):
-            print '[ERROR] The <%s> table is missing in the configuration file.' % symbol
-            print '        <%s>' % symbolicFile
-            print '        Attempting to continue anyway.'
-        else:
-            loader( technology, confGlobals[ symbol ])
-
     return

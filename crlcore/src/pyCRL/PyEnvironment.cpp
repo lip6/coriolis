@@ -64,49 +64,6 @@ extern "C" {
   }
 
 
-  PyObject* PyEnvironment_loadFromXml ( PyEnvironment* self, PyObject* args, PyObject* kwArgs )
-  {
-    trace << "PyEnvironment_loadFromXml()" << endl;
-
-    HTRY
-    METHOD_HEAD("Environment.loadFromXml()")
-    char*     path       = NULL;
-    PyObject* pyWarnMode = NULL;
-
-    static char* keywords[] = { "path", "warnNotFound", NULL };
-
-    if (PyArg_ParseTupleAndKeywords( args
-                                   , kwArgs
-                                   , "|si:Environment.loadFromXml"
-                                   , keywords
-                                   , &path
-                                   , &pyWarnMode )) {
-      
-      string spath;
-      bool   warnMode = (pyWarnMode == NULL) or (pyWarnMode == Py_True);
-      if ( path != NULL )
-        spath = path;
-
-      env->loadFromXml(spath, warnMode);
-    } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Environment.loadFromXml." );
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
-  static PyObject* PyEnvironment_loadFromShell ( PyEnvironment *self )
-  {
-    METHOD_HEAD("Environment.loadFromShell()")
-    env->loadFromShell();
-
-    Py_RETURN_NONE;
-  }
-
-
   PyObject* PyEnvironment_addSYSTEM_LIBRARY ( PyEnvironment* self, PyObject* args, PyObject* kwArgs )
   {
     trace << "PyEnvironment_addSYSTEM_LIBRARY()" << endl;
@@ -186,13 +143,8 @@ extern "C" {
   
   // Standart Accessors (Attributes).
   DirectGetStringAttribute(PyEnvironment_getCORIOLIS_TOP       ,getCORIOLIS_TOP       ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getSYMB_TECHNO_NAME   ,getSYMB_TECHNO_NAME   ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getREAL_TECHNO_NAME   ,getREAL_TECHNO_NAME   ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getDisplayStyle       ,getDisplayStyle       ,PyEnvironment,Environment)
   DirectGetLongAttribute  (PyEnvironment_getSCALE_X            ,getSCALE_X            ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getSYMBOLIC_TECHNOLOGY,getSYMBOLIC_TECHNOLOGY,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getREAL_TECHNOLOGY    ,getREAL_TECHNOLOGY    ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getDISPLAY            ,getDISPLAY            ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getIN_LO              ,getIN_LO              ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getIN_PH              ,getIN_PH              ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getOUT_LO             ,getOUT_LO             ,PyEnvironment,Environment)
@@ -212,13 +164,8 @@ extern "C" {
   DirectIsAFromCStringAttribute(PyEnvironment_isPad     ,isPad     ,PyEnvironment,Environment)
 
   // Standart Mutators (Attributes).
-  DirectSetCStringAttribute(PyEnvironment_setSYMB_TECHNO_NAME   ,setSYMB_TECHNO_NAME   ,"Environment.setSYMB_TECHNO_NAME"   ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setREAL_TECHNO_NAME   ,setREAL_TECHNO_NAME   ,"Environment.setSYMB_TECHNO_NAME"   ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setDisplayStyle       ,setDisplayStyle       ,"Environment.setDisplayStyle"       ,PyEnvironment,Environment)
   DirectSetLongAttribute   (PyEnvironment_setSCALE_X            ,setSCALE_X            ,"Environment.setSCALE_X"            ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setSYMBOLIC_TECHNOLOGY,setSYMBOLIC_TECHNOLOGY,"Environment.setSYMBOLIC_TECHNOLOGY",PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setREAL_TECHNOLOGY    ,setREAL_TECHNOLOGY    ,"Environment.setREAL_TECHNOLOGY"    ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setDISPLAY            ,setDISPLAY            ,"Environment.setDISPLAY"            ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setIN_LO              ,setIN_LO              ,"Environment.setIN_LO"              ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setIN_PH              ,setIN_PH              ,"Environment.setIN_PH"              ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setOUT_LO             ,setOUT_LO             ,"Environment.setOUT_LO"             ,PyEnvironment,Environment)
@@ -239,20 +186,10 @@ extern "C" {
   PyMethodDef PyEnvironment_Methods[] =
     { { "getCORIOLIS_TOP"       , (PyCFunction)PyEnvironment_getCORIOLIS_TOP       , METH_NOARGS
                                 , "Gets the symbolic technology file." }
-    , { "getSYMB_TECHNO_NAME"   , (PyCFunction)PyEnvironment_getSYMB_TECHNO_NAME   , METH_NOARGS
-                                , "Gets the symbolic technology name." }
-    , { "getREAL_TECHNO_NAME"   , (PyCFunction)PyEnvironment_getREAL_TECHNO_NAME   , METH_NOARGS
-                                , "Gets the real (target) technology name." }
     , { "getDisplayStyle"       , (PyCFunction)PyEnvironment_getDisplayStyle       , METH_NOARGS
                                 , "Gets the name of the display style currently in use." }
     , { "getSCALE_X"            , (PyCFunction)PyEnvironment_getSCALE_X            , METH_NOARGS
                                 , "Gets the SCALE_X factor (for fixed point computation)." }
-    , { "getSYMBOLIC_TECHNOLOGY", (PyCFunction)PyEnvironment_getSYMBOLIC_TECHNOLOGY, METH_NOARGS
-                                , "Gets the symbolic technology file path (deprecated)." }
-    , { "getREAL_TECHNOLOGY"    , (PyCFunction)PyEnvironment_getREAL_TECHNOLOGY    , METH_NOARGS
-                                , "Gets the real technology file path (deprecated)." }
-    , { "getDISPLAY"            , (PyCFunction)PyEnvironment_getDISPLAY            , METH_NOARGS
-                                , "Gets the display file path (deprecated)." }
     , { "getIN_LO"              , (PyCFunction)PyEnvironment_getIN_LO              , METH_NOARGS
                                 , "Gets the netlist input format." }
     , { "getIN_PH"              , (PyCFunction)PyEnvironment_getIN_PH              , METH_NOARGS
@@ -289,24 +226,10 @@ extern "C" {
                                 , "Checks if a name is a pad cell name." }
     , { "validate"              , (PyCFunction)PyEnvironment_validate              , METH_NOARGS
                                 , "Validate the coherency of the settings (raise an exception)." }
-    , { "loadFromXml"           , (PyCFunction)PyEnvironment_loadFromXml           , METH_VARARGS|METH_KEYWORDS
-                                , "Call the legacy XML Alliance environment parser." }
-    , { "loadFromShell"         , (PyCFunction)PyEnvironment_loadFromShell         , METH_NOARGS
-                                , "Read the the environment from the process UNIX context." }
-    , { "setSYMB_TECHNO_NAME"   , (PyCFunction)PyEnvironment_setSYMB_TECHNO_NAME   , METH_VARARGS
-                                , "Sets the symbolic technology name." }
-    , { "setREAL_TECHNO_NAME"   , (PyCFunction)PyEnvironment_setREAL_TECHNO_NAME   , METH_VARARGS
-                                , "Sets the real (target) technology name." }
     , { "setDisplayStyle"       , (PyCFunction)PyEnvironment_setDisplayStyle       , METH_VARARGS
                                 , "Sets the name of the display style to be used." }
     , { "setSCALE_X"            , (PyCFunction)PyEnvironment_setSCALE_X            , METH_VARARGS
                                 , "Sets the SCALE_X factor (for fixed point computation)." }
-    , { "setSYMBOLIC_TECHNOLOGY", (PyCFunction)PyEnvironment_setSYMBOLIC_TECHNOLOGY, METH_VARARGS
-                                , "Sets the symbolic technology file path (deprecated)." }
-    , { "setREAL_TECHNOLOGY"    , (PyCFunction)PyEnvironment_setREAL_TECHNOLOGY    , METH_VARARGS
-                                , "Sets the real technology file path (deprecated)." }
-    , { "setDISPLAY"            , (PyCFunction)PyEnvironment_setDISPLAY            , METH_VARARGS
-                                , "Sets the display file path (deprecated)." }
     , { "setIN_LO"              , (PyCFunction)PyEnvironment_setIN_LO              , METH_VARARGS
                                 , "Sets the netlist input format." }
     , { "setIN_PH"              , (PyCFunction)PyEnvironment_setIN_PH              , METH_VARARGS

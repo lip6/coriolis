@@ -97,10 +97,6 @@ def _loadAllianceConfig ( af, allianceConfig ):
                                      ])
 
             key, value = entry
-            if key == 'SYMB_TECHNO_NAME':    env.setSYMB_TECHNO_NAME(value)
-            if key == 'REAL_TECHNO_NAME':    env.setREAL_TECHNO_NAME(value)
-            if key == 'SYMBOLIC_TECHNOLOGY': env.setSYMBOLIC_TECHNOLOGY(value)
-            if key == 'REAL_TECHNOLOGY':     env.setREAL_TECHNOLOGY(value)
             if key == 'DISPLAY':             env.setDISPLAY(value)
             if key == 'CATALOG':             env.setCATALOG(value)
             if key == 'SCALE_X':             env.setSCALE_X(value)
@@ -215,34 +211,12 @@ def loadAllianceConfig ( table, fromFile ):
     global allianceFile
     allianceFile = fromFile
 
-    loadTechno = False
     af         = AllianceFramework.get()
     db         = DataBase.getDB()
     technology = db.getTechnology()
     if not technology:
-        loadTechno = True
-        technology = Hurricane.Technology.create(db,'Alliance')
+      technology = Hurricane.Technology.create(db,'Alliance')
 
     _loadAllianceConfig( af, table )
     env = af.getEnvironment()
-    env.loadFromShell()
-            
-    if loadTechno:
-        helpers.SymbolicTechnology.load(xmlToConf(env.getSYMBOLIC_TECHNOLOGY()))
-        helpers.RealTechnology.load    (xmlToConf(env.getREAL_TECHNOLOGY()))
-    return
-
-
-def loadCompatXml ():
-    af         = AllianceFramework.get()
-    db         = DataBase.getDB()
-    technology = Hurricane.Technology.create(db,'Alliance')
-
-    env = af.getEnvironment()
-    env.loadFromXml()
-    env.loadFromShell()
-
-    af.loadSymbTechnoFromXml(env.getSYMBOLIC_TECHNOLOGY())
-    af.loadRealTechnoFromXml(env.getREAL_TECHNOLOGY())
-    af.loadGraphicsFromXml  (env.getDISPLAY())
     return

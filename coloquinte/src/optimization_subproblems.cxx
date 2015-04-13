@@ -133,7 +133,7 @@ std::vector<capacity_t>  transport_1D(std::vector<t1D_elt> sources, std::vector<
 namespace{ // Anonymous namespace to hide the transportation structures
 
 class current_allocation{
-    static const index_t null_ind = std::numeric_limits<index_t>::max();
+    static const index_t null_ind;
 
     // Internal data structures
 
@@ -215,6 +215,8 @@ class current_allocation{
     std::vector<std::vector<capacity_t> > get_allocations() const{ return sr_allocations; }
     index_t get_iterations_cnt() const { return dijkstra_cnt; }
 };
+
+const index_t current_allocation::null_ind = std::numeric_limits<index_t>::max();
 
 void current_allocation::update_edge(index_t r1, index_t r2){
     while(not best_interregions_costs[r1][r2].empty() and sr_allocations[r1][best_interregions_costs[r1][r2].top().source] == 0){

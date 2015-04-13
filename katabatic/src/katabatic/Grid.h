@@ -206,6 +206,8 @@ namespace Katabatic {
   template<typename GCellT>
   GCellT* Grid<GCellT>::getGCell ( const Point p ) const
   {
+    if (not getBoundingBox().contains(p)) return NULL;
+
     bool  onColumn;
     bool  onRow;
 
@@ -219,6 +221,9 @@ namespace Katabatic {
   template<typename GCellT>
   GCellT* Grid<GCellT>::getGCell ( const Point p1, const Point p2 ) const
   {
+    if (not getBoundingBox().contains(p1)) return NULL;
+    if (not getBoundingBox().contains(p2)) return NULL;
+
     bool  onColumn1;
     bool  onColumn2;
     bool  onRow1;

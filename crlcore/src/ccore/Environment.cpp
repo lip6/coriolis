@@ -330,6 +330,7 @@ namespace {
 
   void  XmlEnvironmentParser::parseConfig ()
   {
+#if THIS_IS_DISABLED
     string config = readTextAsString().toStdString();
     expandVariables ( config );
     switch ( _state ) {
@@ -337,6 +338,7 @@ namespace {
       case RealTechnology:      _environment.setREAL_TECHNOLOGY     ( config.c_str() ); break;
       case Display:             _environment.setDISPLAY             ( config.c_str() ); break;
     }
+#endif
   }
 
 
@@ -506,12 +508,8 @@ namespace CRL {
 
   Environment::Environment ()
     : _CORIOLIS_TOP       (CORIOLIS_TOP)
-    , _SYMB_TECHNO_NAME   ("<notset>")
-    , _REAL_TECHNO_NAME   ("<notset>")
     , _displayStyle       ()
     , _SCALE_X            (10)
-    , _SYMBOLIC_TECHNOLOGY("")
-    , _DISPLAY            ("")
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
     , _OUT_LO             ("vst")
@@ -519,14 +517,6 @@ namespace CRL {
     , _CATALOG            ("CATAL")
     , _inConstructor      (true)
   {
-    if ( sysConfDir[0] == '/' ) {
-      _SYMBOLIC_TECHNOLOGY = sysConfDir + "/coriolis2/technology.symbolic.xml";
-      _DISPLAY             = sysConfDir + "/coriolis2/display.xml";
-    } else {
-      _SYMBOLIC_TECHNOLOGY = _CORIOLIS_TOP + "/" + sysConfDir + "/coriolis2/technology.symbolic.xml";
-      _DISPLAY             = _CORIOLIS_TOP + "/" + sysConfDir + "/coriolis2/display.xml";
-    }
-
     setPOWER    ( "vdd" );
     setGROUND   ( "vss" );
     setCLOCK    ( "^ck$" );
@@ -546,22 +536,6 @@ namespace CRL {
     regfree ( &_ClockRegex    );
     regfree ( &_BlockageRegex );
     regfree ( &_padRegex      );
-  }
-
-
-  void  Environment::loadFromXml ( const string& path, bool warnNotFound )
-  {
-    XmlEnvironmentParser::load ( *this, path, warnNotFound );
-
-    validate ();
-  }
-
-
-  void  Environment::loadFromShell ()
-  {
-    _CORIOLIS_TOP = getEnv ( "CORIOLIS_TOP", CORIOLIS_TOP );
-
-    validate ();
   }
 
 
@@ -635,42 +609,35 @@ namespace CRL {
     ostringstream s;
 
     s << "\n"
-      << "  o  Hurricane/Alliance environment.\n"
-      << "     o  Configuration files.\n"
-      << "        - Coriolis directory:\n"
-      << "            \"" << _CORIOLIS_TOP << "\"\n"
-      << "        - Symbolic Technology:\n"
-      << "            \"" << _SYMBOLIC_TECHNOLOGY << "\"\n"
-      << "        - Display configuration:\n"
-      << "            \"" << _DISPLAY << "\"\n";
+      << "  o  Hurricane/Alliance environment.\n";
 
     s << "     o  Libraries.\n"
-      << "        - Catalog          := \"" << _CATALOG << "\"\n"
+      << "        - Catalog:  \"" << _CATALOG << "\"\n"
       << "        - Working Library:\n"
-      << "             0:\"" << _LIBRARIES[0].getPath() << "\"\n"
+      << "          [ 0]:\"" << _LIBRARIES[0].getPath() << "\"\n"
       << "        - System Libraries:\n";
 
     if ( _LIBRARIES.getSize() <= 1 ) {
       s << "          <not set or empty>.\n";
     } else {
       for ( size_t i = 1; i < _LIBRARIES.getSize() ; i++ ) {
-        s << "            " << setw(2) << i << ":\"" << _LIBRARIES[i].getPath() << "\"\n";
+        s << "          [" << setw(2) << i << "]:\"" << _LIBRARIES[i].getPath() << "\"\n";
       }
     }
 
     s << "     o  I/O Formats.\n" 
-      << "        - Scale            := "   << _SCALE_X  << "\n"
-      << "        - Input, logical   := \"" << _IN_LO    << "\"\n"
-      << "        - Input, physical  := \"" << _IN_PH    << "\"\n"
-      << "        - Output, logical  := \"" << _OUT_LO   << "\"\n"
-      << "        - Output, physical := \"" << _OUT_PH   << "\"\n"
+      << Dots::asULong ( "        - Scale", _SCALE_X ) << "\n"
+      << Dots::asString( "        - Input, logical"  , _IN_LO    )  << "\n"
+      << Dots::asString( "        - Input, physical" , _IN_PH    )  << "\n"
+      << Dots::asString( "        - Output, logical" , _OUT_LO   )  << "\n"
+      << Dots::asString( "        - Output, physical", _OUT_PH   )  << "\n"
       << "     o  Special Signals.\n"
-      << "        - Power Signal     := \"" << _POWER    << "\"\n"
-      << "        - Ground Signal    := \"" << _GROUND   << "\"\n"
-      << "        - Clock Signal     := \"" << _CLOCK    << "\"\n"
-      << "        - Blockages        := \"" << _BLOCKAGE << "\"\n"
+      << Dots::asString( "        - Power Signal"    , _POWER    )  << "\n"
+      << Dots::asString( "        - Ground Signal"   , _GROUND   )  << "\n"
+      << Dots::asString( "        - Clock Signal"    , _CLOCK    )  << "\n"
+      << Dots::asString( "        - Blockages"       , _BLOCKAGE )  << "\n"
       << "     o  Special Cells.\n"
-      << "        - Pads             := \"" << _pad      << "\"\n\n";
+      << Dots::asString( "        - Pads"            , _pad      )  << "\n\n";
 
     return s.str();
   }
@@ -766,9 +733,6 @@ namespace CRL {
     record->add ( getSlot ( "_CORIOLIS_TOP"       , &_CORIOLIS_TOP        ) );
     record->add ( getSlot ( "_displayStyle"       , &_displayStyle        ) );
     record->add ( getSlot ( "_SCALE_X"            , &_SCALE_X             ) );
-    record->add ( getSlot ( "_SYMBOLIC_TECHNOLOGY", &_SYMBOLIC_TECHNOLOGY ) );
-    record->add ( getSlot ( "_REAL_TECHNOLOGY"    , &_REAL_TECHNOLOGY     ) );
-    record->add ( getSlot ( "_DISPLAY"            , &_DISPLAY             ) );
     record->add ( getSlot ( "_IN_LO"              , &_IN_LO               ) );
     record->add ( getSlot ( "_IN_PH"              , &_IN_PH               ) );
     record->add ( getSlot ( "_OUT_LO"             , &_OUT_LO              ) );

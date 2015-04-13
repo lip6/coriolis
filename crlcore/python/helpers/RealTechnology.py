@@ -15,7 +15,10 @@ from   helpers   import ErrorMessage
 realFile = '<No real file specified>'
 
 
-def loadRealLayers ( technology, basicLayersData ):
+def loadGdsLayers ( realLayersTable, confFile ):
+    realFile   = confFile
+    technology = DataBase.getDB().getTechnology()
+
     entryNo = 0
     for entry in realLayersTable:
         entryNo += 1
@@ -49,7 +52,10 @@ def loadRealLayers ( technology, basicLayersData ):
     return
 
 
-def loadTechnoConfig ( technology, technoConfig ):
+def loadTechnoConfig (  technoConfig, confFile ):
+    realFile   = confFile
+    technology = DataBase.getDB().getTechnology()
+
     gridValue = 1
     gridUnit  = DbU.UnitPowerMicro
     for key in [ 'gridUnit', 'gridValue', 'gridsPerLambda' ]:
@@ -90,29 +96,3 @@ def loadTechnoConfig ( technology, technoConfig ):
         except Exception, e:
             ErrorMessage.wrapPrint(e)
     return
-
-
-def load ( realPath ):
-    tables = ( ('technoConfig'   , loadTechnoConfig  )
-             , ('realLayersTable', loadRealLayers    )
-             )
-
-    global realFile
-    realFile = os.path.basename(realPath)
-
-    confGlobals = globals()
-    execfile(realPath,confGlobals)
-
-    technology = DataBase.getDB().getTechnology()
-
-    for symbol, loader in tables:
-        if not confGlobals.has_key(symbol):
-            print '[ERROR] The <%s> table is missing in the configuration file.' % symbol
-            print '        <%s>' % realFile
-            print '        Attempting to continue anyway.'
-        else:
-            loader( technology, confGlobals[ symbol ])
-
-    return
-
-
