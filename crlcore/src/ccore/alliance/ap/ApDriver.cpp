@@ -241,7 +241,8 @@ void DumpContacts(ofstream& ccell, Cell *cell)
     forEach ( Net*, net, cell->getNets() ) {
       forEach ( Component*, component, net->getComponents() ) {
         if ( (rp = dynamic_cast<RoutingPad*>(*component)) ) {
-          if ( !net->isExternal() ) continue;
+          if ( not net->isExternal() ) continue;
+          if ( not cell->isRouted() ) continue;
 
           external = true;
           segment  = dynamic_cast<Segment*>(rp->getOccurrence().getEntity());

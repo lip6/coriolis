@@ -76,6 +76,8 @@ class Cell : public Entity {
                       , CellChanged             = 0x0002
                       // Cell states
                       , FlattenedNets           = 0x0001
+                      , Placed                  = 0x0002
+                      , Routed                  = 0x0004
                       };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
@@ -315,6 +317,8 @@ class Cell : public Entity {
     public: bool isLeaf() const;
     public: bool isPad() const {return _isPad;};
     public: bool isFlattenedNets() const {return _flags & FlattenedNets;};
+    public: bool isPlaced() const {return _flags & Placed;};
+    public: bool isRouted() const {return _flags & Routed;};
     public: bool isNetAlias(const Name& name) const;
 
 // Updators
@@ -326,6 +330,8 @@ class Cell : public Entity {
     public: void setFlattenLeaf(bool isFlattenLeaf) {_isFlattenLeaf = isFlattenLeaf;};
     public: void setPad(bool isPad) {_isPad = isPad;};
     public: void flattenNets(unsigned int flags=BuildRings);
+    public: void setFlags(unsigned int flags) { _flags |= flags; }
+    public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
     public: void materialize();
     public: void unmaterialize();
     public: void addObserver(BaseObserver*);

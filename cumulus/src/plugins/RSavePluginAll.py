@@ -43,7 +43,9 @@ except Exception, e:
   sys.exit(2)
 
 
-# Write back layout to disk if everything has gone fine.
+# Write back netlist & layout to disk. Layout is written
+# *only* if there is an abutment box otherwise the cell is
+# considered as unplaced.
 # Must write all the sub-blocks of the core but *not* the
 # standard cell (mainly the feed-through).
 
@@ -54,7 +56,11 @@ def rsave ( cell, depth=0 ):
   if depth == 0: print '  o  Recursive Save-Cell.'
 
   print '     %s+ %s (netlist+layout).' % ( ' '*(depth*2), cell.getName() )
-  framework.saveCell( cell, CRL.Catalog.State.Views )
+  flags = CRL.Catalog.State.Logical
+  if not cell.getAbutmentBox().isEmpty():
+    flags |= CRL.Catalog.State.Physical
+
+  framework.saveCell( cell, flags )
 
   for instance in cell.getInstances():
     masterCell = instance.getMasterCell()

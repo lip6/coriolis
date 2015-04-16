@@ -799,6 +799,8 @@ namespace Etesian {
       ( "     - RMST", DbU::getValueString( (DbU::Unit)get_RSMT_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
 
     _placed = true;
+
+    getCell()->setFlags( Cell::Placed );
   }
 
 

@@ -490,80 +490,6 @@ namespace Kite {
     if (getState() >= Katabatic::EngineGlobalLoaded)
       throw Error ("KiteEngine::runGlobalRouter(): Global routing already done or loaded.");
 
-  // Test signals from <multi4_a>.
-  //DebugSession::addToTrace( getCell(), "aux34" );
-
-  // Test signals from <addaccu>.
-  //DebugSession::addToTrace( getCell(), "auxsc37" );
-  // Test signals from <amd2901_core_flat>.
-  //DebugSession::addToTrace( getCell(), "cout" );
-  //DebugSession::addToTrace( getCell(), "acc_reg_ckx" );
-  //DebugSession::addToTrace( getCell(), "acc_reg_nckx" );
-  //DebugSession::addToTrace( getCell(), "i(0)" );
-  //DebugSession::addToTrace( getCell(), "ram_nmux_0_sel0" );
-  //DebugSession::addToTrace( getCell(), "ram_adrb_14" );
-  //DebugSession::addToTrace( getCell(), "ram_adrb_9" );
-  //DebugSession::addToTrace( getCell(), "ram_adra(11)" );
-  //DebugSession::addToTrace( getCell(), "ram_adra(7)" );
-  //DebugSession::addToTrace( getCell(), "ram_adrb(8)" );
-  //DebugSession::addToTrace( getCell(), "alu_carry(1)" );
-  //DebugSession::addToTrace( getCell(), "alu_np(0)" );
-  //DebugSession::addToTrace( getCell(), "ram_q2(0)" );
-  //DebugSession::addToTrace( getCell(), "ram_q1(0)" );
-  //DebugSession::addToTrace( getCell(), "ram_i_up" );
-  // Test signals from <amd2901> (M1-VLSI).
-  //DebugSession::addToTrace( getCell(), "zero_to_pads" );
-  //DebugSession::addToTrace( getCell(), "shift_r" );
-  //DebugSession::addToTrace( getCell(), "cin_from_pads" );
-  // Test signals from <MIPS> (R3000,micro-programmed).
-  //DebugSession::addToTrace( getCell(), "scout" );
-  //DebugSession::addToTrace( getCell(), "adr_1_n" );
-  //DebugSession::addToTrace( getCell(), "codop_18" );
-  //DebugSession::addToTrace( getCell(), "frz_ctl(10)" );
-  //DebugSession::addToTrace( getCell(), "ctl_seq_mbk_not_ep_80" );
-  //DebugSession::addToTrace( getCell(), "ctl_sts_mbk_not_ctlrw_in_2" );
-  //DebugSession::addToTrace( getCell(), "dpt_wm_rf_adr4x" );
-  //DebugSession::addToTrace( getCell(), "crsrin_1" );
-  //DebugSession::addToTrace( getCell(), "ctl_seq_oa2ao222_x2_2" );
-  //DebugSession::addToTrace( getCell(), "dpt_ishifter_muxoutput_81" );
-  //DebugSession::addToTrace( getCell(), "ctl_seq_mbk_not_ep_7" );
-  //DebugSession::addToTrace( getCell(), "ctl_sts_mbk_not_adel_r" );
-  //DebugSession::addToTrace( getCell(), "ctl_seq_no2_x1_88" );
-  //DebugSession::addToTrace( getCell(), "ctl_seq_ep_31" );
-  //DebugSession::addToTrace( getCell(), "dpt_opyir16ins_mxn1" );
-  //DebugSession::addToTrace( getCell(), "dpt_ishifter_muxoutput_132" );
-  // Test signals from <MIPS> (R3000,pipeline).
-  //DebugSession::addToTrace( getCell(), "nb(0)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_data_e_sm_sel0" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_lo_rw(16)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_hi_rw(27)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_data_e_sm(25)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_nul_s_eq_z_sd_nul_3" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_shift32_rshift_se_muxoutput(143)" );
-  //DebugSession::addToTrace( getCell(), "rsdnbr_sd(19)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_res_se(14)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_res_re(0)" );
-  //DebugSession::addToTrace( getCell(), "wreg_sw(1)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_shift32_rshift_se_msb" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_mx2_x2_2_sig" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_s_mw_se_sel0" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_mux32_badr_sd_sel1" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_3_21" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_dp_addsub32_carith_se_pi_4_26" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_1m_ct_cause_rx(1)" );
-  // Test signals from <MIPS> (R3000,pipeline+chip).
-  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.banc.reada0" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.i_ri(29)" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_ct.not_opcod_re(4)" );
-  //DebugSession::addToTrace( getCell(), "d_out_i(10)" );
-  //DebugSession::addToTrace( getCell(), "dout_e_i(0)" );
-  //DebugSession::addToTrace( getCell(), "dout_e_i(1)" );
-  //DebugSession::addToTrace( getCell(), "dout_e_i(2)" );
-  //DebugSession::addToTrace( getCell(), "i_ack_i" );
-  //DebugSession::addToTrace( getCell(), "mips_r3000_core.mips_r3000_1m_dp.data_rm(7)" );
-  // Test signals from <snx2013>.
-  //DebugSession::addToTrace( getCell(), "core.snx_inst.not_v_inc_out(9)" );
-
     Session::open( this );
 
     if (mode & KtLoadGlobalRouting) {
@@ -803,6 +729,8 @@ namespace Kite {
 
     KatabaticEngine::finalizeLayout();
     ltrace(90) << "State: " << getState() << endl;
+
+    getCell()->setFlags( Cell::Routed );
 
     ltraceout(90);
   }
