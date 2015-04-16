@@ -391,6 +391,53 @@ extern "C" {
   }
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_addAlias ()"
+
+  static PyObject* PyNet_addAlias ( PyNet *self, PyObject* args )
+  {
+    trace << "PyNet_addAlias()" << endl;
+
+    HTRY
+      METHOD_HEAD ( "Net.addAlias()" )
+
+      char* name;
+      if (PyArg_ParseTuple(args,"s:Net.addAlias",args,name)) {
+        if (net->addAlias(Name(name))) Py_RETURN_TRUE;
+      } else {
+        PyErr_SetString( ConstructorError, "Bad parameters given to Net.addAlias()." );
+        return NULL;
+      }
+
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_removeAlias ()"
+
+  static PyObject* PyNet_removeAlias ( PyNet *self, PyObject* args )
+  {
+    trace << "PyNet_removeAlias()" << endl;
+
+    HTRY
+      METHOD_HEAD ( "Net.removeAlias()" )
+
+      char* name;
+      if (PyArg_ParseTuple(args,"s:Net.removeAlias",args,name)) {
+        if (net->removeAlias(Name(name))) Py_RETURN_TRUE;
+      } else {
+        PyErr_SetString( ConstructorError, "Bad parameters given to Net.removeAlias()." );
+        return NULL;
+      }
+
+    HCATCH
+
+    Py_RETURN_FALSE;
+  }
+
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyNet_setPosition ()"
@@ -429,7 +476,6 @@ extern "C" {
       PyErr_SetString (ConstructorError, "invalid number of parameters for Net.merge.");
       return NULL;
     }
-
     HCATCH
     
     Py_RETURN_NONE;
@@ -470,6 +516,8 @@ extern "C" {
     , { "setType"              , (PyCFunction)PyNet_setType                  , METH_VARARGS, "set the type of the net." }
     , { "setDirection"         , (PyCFunction)PyNet_setDirection             , METH_VARARGS, "set the direction of the net." }
     , { "setPosition"          , (PyCFunction)PyNet_setPosition              , METH_VARARGS, "set the X,Y location of the net." }
+    , { "addAlias"             , (PyCFunction)PyNet_addAlias                 , METH_VARARGS, "Add an alias name to the net." }
+    , { "removeAlias"          , (PyCFunction)PyNet_removeAlias              , METH_VARARGS, "Remove an alias name from the net." }
     , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS, "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
     , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

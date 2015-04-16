@@ -77,6 +77,7 @@ class Name {
 // **********
 
     public: bool isEmpty() const;
+    public: size_t size() const;
 
 // Others
 // ******

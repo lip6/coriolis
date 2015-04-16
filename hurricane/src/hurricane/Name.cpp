@@ -165,6 +165,12 @@ char Name::operator[](unsigned index) const
     return _sharedName->_string[index];
 }
 
+size_t Name::size() const
+// **********************
+{
+    return _sharedName->_string.size();
+}
+
 bool Name::isEmpty() const
 // ***********************
 {

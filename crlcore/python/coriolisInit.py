@@ -103,6 +103,7 @@ def coriolisConfigure():
 
   confFiles = [ (helpers.symbolicDir+'/alliance.conf'  , SystemFile|AllianceHelper)
               , (helpers.symbolicDir+'/technology.conf', SystemFile|SymbolicHelper)
+              , (helpers.realDir    +'/technology.conf', SystemFile|RealHelper)
               , (helpers.symbolicDir+'/patterns.conf'  , SystemFile|PatternsHelper)
               , (helpers.symbolicDir+'/display.conf'   , SystemFile|DisplayHelper)
               , (helpers.symbolicDir+'/misc.conf'      , SystemFile|ConfigurationHelper)
@@ -110,7 +111,6 @@ def coriolisConfigure():
               , (helpers.symbolicDir+'/kite.conf'      , SystemFile|ConfigurationHelper|KiteHelper)
               , (helpers.symbolicDir+'/stratus1.conf'  , SystemFile|ConfigurationHelper)
               , (helpers.symbolicDir+'/plugins.conf'   , SystemFile|ConfigurationHelper)
-              , (helpers.realDir    +'/technology.conf', SystemFile|RealHelper)
               ]
   if os.getenv('HOME'):
     confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.py', 0) ]

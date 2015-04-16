@@ -48,6 +48,7 @@
                                 hurricane/MultisetCollection.h
                                 hurricane/Marker.h                hurricane/Markers.h
                                 hurricane/Name.h                  hurricane/Names.h
+                                hurricane/NetAlias.h
                                 hurricane/NetExternalComponents.h
                                 hurricane/NetRoutingProperty.h
                                 hurricane/Net.h                   hurricane/Nets.h
@@ -124,6 +125,7 @@
                                 Entity.cpp
                                 Cell.cpp
                                 CellCollections.cpp
+                                NetAlias.cpp
                                 Net.cpp
                                 DeepNet.cpp
                                 HyperNet.cpp

@@ -88,6 +88,7 @@ if __name__ == '__main__':
       parser = optparse.OptionParser(usage)
       parser.add_option( '-c', '--cell'             , type='string'      , dest='cell'           , help='The name of the cell to load, whithout extension.')
       parser.add_option(       '--acm-sigda-89'     , type='string'      , dest='acmSigdaName'   , help='An ACM/SIGDA 89 bench name to load, whithout extension.')
+      parser.add_option(       '--blif'             , type='string'      , dest='blifName'       , help='A Blif (Yosys) design name to load, whithout extension.')
       parser.add_option(       '--ispd-05'          , type='string'      , dest='ispd05name'     , help='An ISPD 05 bench (placement) name to load, whithout extension.')
       parser.add_option(       '--script'           , type='string'      , dest='script'         , help='Run a Python or Stratus script.')
       parser.add_option( '-v', '--verbose'          , action='store_true', dest='verbose'        , help='First level of verbosity.')
@@ -147,6 +148,8 @@ if __name__ == '__main__':
           cell = CRL.AcmSigda.load(options.acmSigdaName)
       elif options.ispd05name:
           cell = CRL.Ispd05.load(options.ispd05name)
+      elif options.blifName:
+          cell = CRL.Blif.load(options.blifName)
       elif options.cell:
           cell = af.getCell(options.cell, CRL.Catalog.State.Views)
       else:

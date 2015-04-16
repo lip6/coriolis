@@ -387,7 +387,7 @@ namespace Kite {
 
     _eventHistory.clear();
     _eventQueue.load( _segments );
-
+    cmess2 << "        <queue:" <<  right << setw(8) << setfill('0') << _eventQueue.size() << ">" << endl;
     if (inltrace(500)) _eventQueue.dump();
 
     size_t count = 0;
@@ -396,11 +396,14 @@ namespace Kite {
       RoutingEvent* event = _eventQueue.pop();
 
       if (tty::enabled()) {
-        cmess2 << "        <event:" << tty::bold << right << setw(7) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
+        cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << _eventQueue.size()
+               << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
       } else {
-        cmess2 << "        <event:" << right << setw(7) << setfill('0')
+        cmess2 << "        <event:" << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()
@@ -428,6 +431,8 @@ namespace Kite {
       }
     }
     _eventQueue.commit();
+    cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
+           << _eventQueue.size() << ">" << endl;
 
     count = 0;
   //_eventQueue.prepareRepair();
@@ -435,11 +440,14 @@ namespace Kite {
       RoutingEvent* event = _eventQueue.pop();
 
       if (tty::enabled()) {
-        cmess2 << "        <repair.event:" << tty::bold << setw(7) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << tty::reset << ">" << tty::cr;
+        cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << _eventQueue.size() << ">"
+               << setfill(' ') << tty::reset << tty::cr;
         cmess2.flush();
       } else {
-        cmess2 << "        <repair.event:" << setw(7) << setfill('0')
+        cmess2 << "        <repair.event:" << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()

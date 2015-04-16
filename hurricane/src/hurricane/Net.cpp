@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/Warning.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -263,7 +264,8 @@ Net::Net(Cell* cell, const Name& name)
      _position(0,0),
     _componentSet(),
     _rubberSet(),
-    _nextOfCellNetMap(NULL)
+    _nextOfCellNetMap(NULL),
+    _mainName(this)
 {
     if (!_cell)
         throw Error("Can't create " + _TName("Net") + " : null cell");
@@ -504,6 +506,36 @@ void Net::setDirection(const Direction& direction)
     _direction = direction;
 }
 
+bool Net::addAlias(const Name& name )
+// **********************************
+{
+  if (getCell()->getNet(name)) {
+    cerr << Warning( "Net::addAlias(): Cannot add alias %s to net %s, already taken."
+                   , getString(name).c_str()
+                   , getString(getName()).c_str()
+                   ) << endl;
+    return false;
+  }
+
+  NetAliasName* slave = new NetAliasName ( name );
+  _mainName.attach( slave );
+  getCell()->_addNetAlias( slave );
+
+  return true;
+}
+
+bool Net::removeAlias(const Name& name )
+// *************************************
+{
+  NetAliasName* slave = _mainName.find( name );
+  if (slave) {
+    slave->detach();
+    getCell()->_removeNetAlias( slave );
+    return true;
+  }
+  return false;
+}
+
 void Net::materialize()
 // ********************
 {
@@ -600,7 +632,17 @@ void Net::merge(Net* net)
         }
     }
 
+    Name mergedName = net->getName();
+    NetAliasName* slaves = NULL;
+    if (net->_mainName.isAttached()) {
+      slaves = dynamic_cast<NetAliasName*>( net->_mainName.getNext() );
+      net->_mainName.detach();
+    }
+
     net->destroy();
+
+    if (slaves) _mainName.attach( slaves );
+    addAlias( mergedName );
 }
 
 void Net::_postCreate()
@@ -648,6 +690,7 @@ void Net::_preDestroy()
         end_for;
     }
 
+    _mainName.clear();
     _cell->_getNetMap()._remove(this);
 }
 
@@ -664,17 +707,18 @@ Record* Net::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("Cell", _cell));
-        record->add(getSlot("Name", &_name));
-        record->add(getSlot("Arity", &_arity));
-        record->add(getSlot("Global", &_isGlobal));
-        record->add(getSlot("External", &_isExternal));
-        record->add(getSlot("Automatic", &_isAutomatic));
-        record->add(getSlot("Type", &_type));
-        record->add(getSlot("Direction", &_direction));
-        record->add(getSlot("Position", &_position));
-        record->add(getSlot("Components", &_componentSet));
-        record->add(getSlot("Rubbers", &_rubberSet));
+        record->add(getSlot("_cell", _cell));
+        record->add(getSlot("_name", &_name));
+        record->add(getSlot("_arity", &_arity));
+        record->add(getSlot("_isGlobal", &_isGlobal));
+        record->add(getSlot("_isExternal", &_isExternal));
+        record->add(getSlot("_isAutomatic", &_isAutomatic));
+        record->add(getSlot("_type", &_type));
+        record->add(getSlot("_direction", &_direction));
+        record->add(getSlot("_position", &_position));
+        record->add(getSlot("_componentsSet", &_componentSet));
+        record->add(getSlot("_rubberSet", &_rubberSet));
+        record->add(getSlot("_mainName", &_mainName));
     }
     return record;
 }

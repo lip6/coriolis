@@ -36,6 +36,7 @@
 #include "hurricane/Pads.h"
 #include "hurricane/IntrusiveSet.h"
 #include "hurricane/Path.h"
+#include "hurricane/NetAlias.h"
 
 namespace Hurricane {
 
@@ -153,6 +154,7 @@ class Net : public Entity {
     private: ComponentSet _componentSet;
     private: RubberSet _rubberSet;
     private: Net* _nextOfCellNetMap;
+    private: NetMainName _mainName;
 
 // Constructors
 // ************
@@ -226,6 +228,8 @@ class Net : public Entity {
     public: void setPosition(const Point& position);
     public: void materialize();
     public: void unmaterialize();
+    public: bool addAlias(const Name& name);
+    public: bool removeAlias(const Name& name);
     public: void merge(Net* net);
 
 // Others
@@ -238,6 +242,7 @@ class Net : public Entity {
     public: virtual string _getTypeName() const {return _TName("Net");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
+    public: NetMainName& _getMainName() { return _mainName; }
     public: ComponentSet& _getComponentSet() {return _componentSet;};
     public: RubberSet& _getRubberSet() {return _rubberSet;};
     public: Net* _getNextOfCellNetMap() const {return _nextOfCellNetMap;};

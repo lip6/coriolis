@@ -161,6 +161,28 @@ bool Cell::isCalledBy(Cell* cell) const
     return false;
 }
 
+bool Cell::isNetAlias ( const Name& name ) const
+// *********************************************
+{
+  NetAliasName key(name);
+  return _netAliasSet.find(&key) != _netAliasSet.end();
+}
+
+Net* Cell::getNet ( const Name& name ) const
+//******************************************
+{
+  Net* net = _netMap.getElement(name);
+  if (net) return net;
+
+  NetAliasName key(name);
+  AliasNameSet::iterator ialias = _netAliasSet.find( &key );
+  if (ialias != _netAliasSet.end())
+    return (*ialias)->getNet();
+
+  return NULL;
+}
+
+
 void Cell::setName(const Name& name)
 // *********************************
 {
@@ -360,7 +382,11 @@ void Cell::_preDestroy()
     for_each_marker(marker, getMarkers()) marker->destroy(); end_for;
     for_each_instance(slaveInstance, getSlaveInstances()) slaveInstance->destroy(); end_for;
     for_each_instance(instance, getInstances()) instance->destroy(); end_for;
-    for_each_net(net, getNets()) net->destroy(); end_for;
+    forEach( Net*, inet, getNets() ) {
+      inet->_getMainName().detachAll();
+      inet->destroy();
+    }
+    for ( auto islave : _netAliasSet ) delete islave;
     for_each_slice(slice, getSlices()) slice->_destroy(); end_for;
     while(!_extensionSlices.empty()) _removeSlice(_extensionSlices.begin()->second);
 
@@ -382,20 +408,21 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("Library", _library));
-        record->add(getSlot("Name", &_name));
-        record->add(getSlot("Instances", &_instanceMap));
-        record->add(getSlot("QuadTree", &_quadTree));
-        record->add(getSlot("SlaveInstances", &_slaveInstanceSet));
-        record->add(getSlot("Nets", &_netMap));
-        record->add(getSlot("Pins", &_pinMap));
-        record->add(getSlot("Slices", &_sliceMap));
-        record->add(getSlot("Markers", &_markerSet));
-        record->add(getSlot("SlaveEntityMap", &_slaveEntityMap));
-        record->add(getSlot("AbutmentBox", &_abutmentBox));
-        record->add(getSlot("BoundingBox", &_boundingBox));
-        record->add(getSlot("isTerminal", &_isTerminal));
-        record->add(getSlot("isFlattenLeaf", &_isFlattenLeaf));
+        record->add(getSlot("_library", _library));
+        record->add(getSlot("_name", &_name));
+        record->add(getSlot("_instances", &_instanceMap));
+        record->add(getSlot("_quadTree", &_quadTree));
+        record->add(getSlot("_slaveInstances", &_slaveInstanceSet));
+        record->add(getSlot("_netMap", &_netMap));
+        record->add(getSlot("_netAliasSet", &_netAliasSet));
+        record->add(getSlot("_pinMap", &_pinMap));
+        record->add(getSlot("_sliceMap", &_sliceMap));
+        record->add(getSlot("_markerSet", &_markerSet));
+        record->add(getSlot("_slaveEntityMap", &_slaveEntityMap));
+        record->add(getSlot("_abutmentBox", &_abutmentBox));
+        record->add(getSlot("_boundingBox", &_boundingBox));
+        record->add(getSlot("_isTerminal", &_isTerminal));
+        record->add(getSlot("_isFlattenLeaf", &_isFlattenLeaf));
     }
     return record;
 }

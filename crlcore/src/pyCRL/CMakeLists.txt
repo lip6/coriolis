@@ -41,6 +41,7 @@
                                     PyGraphicToolEngine.cpp
                                     PyAcmSigda.cpp
                                     PyIspd05.cpp
+                                    PyBlif.cpp
                       )	    
                    set( pyIncludes  crlcore/PyBanner.h
                                     crlcore/PyCatalog.h
@@ -56,6 +57,7 @@
                                     crlcore/PyGraphicToolEngine.h
                                     crlcore/PyAcmSigda.h
                                     crlcore/PyIspd05.h
+                                    crlcore/PyBlif.h
                       )	         
                    set( depLibs     crlcore
                                     ${HURRICANE_PYTHON_LIBRARIES}

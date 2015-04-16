@@ -118,7 +118,7 @@ struct StringSort
             return (*string1 < *string2);
         if ((string1->find('(', string1OpenPar + 1) != string::npos)
                 || (string2->find('(', string2OpenPar + 1) != string::npos))
-            throw Error("malformed string, multi '('");
+          throw Error("malformed string, multi '(' in <%s>", string2->c_str());
         string::size_type string1ClosePar = string1->rfind(')');
         string::size_type string2ClosePar = string2->rfind(')');
         if ((string1ClosePar == string::npos) || (string2ClosePar == string::npos))

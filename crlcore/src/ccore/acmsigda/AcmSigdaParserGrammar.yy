@@ -335,6 +335,11 @@ namespace CRL {
       __framework->loadLibraryCells ( "sxlib" );
     }
 
+    IoFile ccell ( benchmark+".bench" );
+    ccell.open ( "r" );
+    if (not ccell.isOpen())
+      throw Error( "AcmSigda::load(): Unable to open file %s.bench.", benchmark.c_str() );
+
     Cell* cell = __framework->createCell ( benchmark );
 
     CatalogProperty *sprop =
@@ -349,8 +354,6 @@ namespace CRL {
 
     addGlobalNets ( cell );
 
-    IoFile ccell ( benchmark+".bench" );
-    ccell.open ( "r" );
     yyin = ccell.getFile ();
     if ( not firstCall ) yyrestart ( yyin );
 

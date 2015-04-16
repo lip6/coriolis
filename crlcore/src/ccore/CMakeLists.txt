@@ -128,6 +128,7 @@
                                                toolbox/ToolBox.cpp
                                                toolbox/UniqueCellOccurrences.cpp
                                                toolbox/RoutingPads.cpp
+                                               toolbox/NamingScheme.cpp
                            )
                        set ( vst_driver_cpps   alliance/vst/VstDriver.cpp )
                        set ( properties_cpps   properties/NetExtension.cpp

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -30,6 +30,7 @@
 #include "crlcore/PyToolEngineCollection.h"
 #include "crlcore/PyAcmSigda.h"
 #include "crlcore/PyIspd05.h"
+#include "crlcore/PyBlif.h"
 
 
 namespace CRL {
@@ -92,6 +93,7 @@ extern "C" {
     PyToolEngineCollection_LinkPyType ();
     PyAcmSigda_LinkPyType ();
     PyIspd05_LinkPyType ();
+    PyBlif_LinkPyType ();
 
     PYTYPE_READY ( Banner );
     PYTYPE_READY ( CatalogState );
@@ -108,6 +110,7 @@ extern "C" {
     PYTYPE_READY ( ToolEngineCollectionLocator );
     PYTYPE_READY ( AcmSigda );
     PYTYPE_READY ( Ispd05 );
+    PYTYPE_READY ( Blif );
    
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcEnv"     , &PyTypeEnvironment      , "<Environment>"      , false );
@@ -153,6 +156,8 @@ extern "C" {
     PyModule_AddObject ( module, "AcmSigda", (PyObject*)&PyTypeAcmSigda );
     Py_INCREF ( &PyTypeIspd05 );
     PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
+    Py_INCREF ( &PyTypeBlif );
+    PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();

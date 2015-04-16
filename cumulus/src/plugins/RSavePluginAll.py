@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2015, All Rights Reserved
+# Copyright (c) UPMC 2015-2015, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -10,7 +10,7 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/RSavePlugin.py"                 |
+# |  Python      :       "./plugins/RSavePluginAll.py"              |
 # +-----------------------------------------------------------------+
 
 
@@ -53,8 +53,8 @@ def rsave ( cell, depth=0 ):
   framework = CRL.AllianceFramework.get()
   if depth == 0: print '  o  Recursive Save-Cell.'
 
-  print '     %s+ %s (layout).' % ( ' '*(depth*2), cell.getName() )
-  framework.saveCell( cell, CRL.Catalog.State.Physical )
+  print '     %s+ %s (netlist+layout).' % ( ' '*(depth*2), cell.getName() )
+  framework.saveCell( cell, CRL.Catalog.State.Views )
 
   for instance in cell.getInstances():
     masterCell = instance.getMasterCell()
@@ -67,8 +67,8 @@ def rsave ( cell, depth=0 ):
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    plugins.kwUnicornHook( 'plugins.rsave'
-                         , 'R-Save Cell (layout)'
+    plugins.kwUnicornHook( 'plugins.rsaveAll'
+                         , 'R-Save Cell (All)'
                          , 'Recursively Save Top Cell and it\'s Instances'
                          , sys.modules[__name__].__file__
                          , **kw

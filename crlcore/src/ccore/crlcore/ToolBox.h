@@ -1,13 +1,7 @@
-
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -20,12 +14,13 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_TOOLBOX_H__
-#define  __CRL_TOOLBOX_H__
+#ifndef  CRL_TOOLBOX_H
+#define  CRL_TOOLBOX_H
 
-#include  "hurricane/Cell.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Component.h"
+#include <functional>
+#include "hurricane/Cell.h"
+#include "hurricane/Net.h"
+#include "hurricane/Component.h"
 
 
 namespace CRL {
@@ -40,6 +35,9 @@ namespace CRL {
   using Hurricane::Cell;
   using Hurricane::Library;
   using Hurricane::Occurrence;
+
+
+
 
   Component*      getBestExternalComponent    ( Net* );
   bool            placeNet                    ( Net* );
@@ -61,6 +59,21 @@ namespace CRL {
   size_t          getInstancesCount           ( const Cell* cell );
   void            setNetsPosition             ( Cell* );
 
-} // End of CRL namespace.
 
-#endif // __CRL_TOOLBOX_H__
+  class NamingScheme {
+    public:
+      enum Flag { NoFlags     = 0x0000
+                , Recursive   = 0x0001
+                , FromVerilog = 0x0002
+                };
+    public:
+      typedef std::function< Name(const Name&) >  converter_t;
+    public:
+      static Name  vlogToVhdl ( const Name& vlogName );
+      static void  toVhdl     ( Cell* topCell, unsigned int flags );
+  };
+
+
+} // CRL namespace.
+
+#endif // CRL_TOOLBOX_H
