@@ -75,6 +75,9 @@ namespace Etesian {
               void                 setDefaultAb     ();
               void                 resetPlacement   ();
               void                 toColoquinte     ();
+              void                 preplace         ();
+              void                 globalPlace      ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
+              void                 detailedPlace    ( int iterations, int effort, unsigned options=0 );
               void                 place            ();
       inline  void                 useFeed          ( Cell* );
               size_t               findYSpin        ();
@@ -113,8 +116,8 @@ namespace Etesian {
               EtesianEngine& operator=        ( const EtesianEngine& );
     private:
               void           _updatePlacement ( const coloquinte::placement_t& );
-              void           _progressReport1 ( time_t startTime, string label ) const;
-              void           _progressReport2 ( time_t startTime, string label ) const;
+              void           _progressReport1 ( string label ) const;
+              void           _progressReport2 ( string label ) const;
   };
 
 
