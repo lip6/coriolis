@@ -69,16 +69,24 @@ namespace Etesian {
       inline  double               getAspectRatio   () const;
       inline  const FeedCells&     getFeedCells     () const;
       inline  void                 setCellWidget    ( Hurricane::CellWidget* );
+
               void                 startMeasures    ();
               void                 stopMeasures     ();
               void                 printMeasures    ( std::string ) const;
+
               void                 setDefaultAb     ();
               void                 resetPlacement   ();
               void                 toColoquinte     ();
+
               void                 preplace         ();
+              void                 roughLegalize    ( float minDisruption );
+              void                 completeLegalize ();
               void                 globalPlace      ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
               void                 detailedPlace    ( int iterations, int effort, unsigned options=0 );
+              void                 feedRoutingBack  ();
+
               void                 place            ();
+
       inline  void                 useFeed          ( Cell* );
               size_t               findYSpin        ();
               void                 addFeeds         ();
@@ -99,6 +107,7 @@ namespace Etesian {
              coloquinte::netlist                      _circuit;
              coloquinte::placement_t                  _placementLB;
              coloquinte::placement_t                  _placementUB;
+             coloquinte::density_restrictions         _densityLimits;
              std::unordered_map<string,unsigned int>  _cellsToIds;
              std::vector<Instance*>                   _idsToInsts;
              Hurricane::CellWidget*                   _cellWidget;

@@ -543,6 +543,33 @@ namespace Katabatic {
     return (float)( _box.getWidth () / Session::getPitch(2) + 1 );
   }
 
+  float  GCell::getAverageHVDensity () const
+  {
+    // Average density of all layers mixeds together.
+    float density = 0.0;
+    for ( size_t i=0 ; i<_depth ; i++ )
+      density += _densities[i];
+    return density / ((float)(_depth-_pinDepth));
+  }
+
+  float  GCell::getMaxHVDensity () const
+  {
+    // Maximum density between all horizontal vs. all vertical layers.
+    size_t hplanes  = 0;
+    size_t vplanes  = 0;
+    float  hdensity = 0.0;
+    float  vdensity = 0.0;
+
+    for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
+      else       { vdensity += _densities[i]; ++vplanes; }
+    }
+
+    if (hplanes) hdensity /= hplanes;
+    if (vplanes) vdensity /= vplanes;
+
+    return std::max(hdensity, vdensity);
+  }
 
   float  GCell::getDensity ( unsigned int flags ) const
   {
@@ -551,29 +578,9 @@ namespace Katabatic {
     float density = 0.0;
 
     if (getGCellGrid()->getDensityMode() == GCellGrid::AverageHVDensity) {
-    // Average density of all layers mixeds together.
-      for ( size_t i=0 ; i<_depth ; i++ )
-        density += _densities[i];
-
-    //density = roundfp ( density/((float)(_depth-_pinDepth)) );
-      density = density/((float)(_depth-_pinDepth));
+      density = getAverageHVDensity();
     } else if (getGCellGrid()->getDensityMode() == GCellGrid::MaxHVDensity) {
-    // Maximum density between all horizontal vs. all vertical layers.
-      size_t hplanes  = 0;
-      size_t vplanes  = 0;
-      float  hdensity = 0.0;
-      float  vdensity = 0.0;
-
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-        if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
-        else       { vdensity += _densities[i]; ++vplanes; }
-      }
-
-      if (hplanes) hdensity /= hplanes;
-      if (vplanes) vdensity /= vplanes;
-
-    //density = roundfp ( (hdensity > vdensity) ? hdensity : vdensity );
-      density = (hdensity > vdensity) ? hdensity : vdensity;
+      density = getMaxHVDensity();
     } else if (getGCellGrid()->getDensityMode() == GCellGrid::AverageHDensity) {
     // Average density between all horizontal layers.
       size_t hplanes  = 0;

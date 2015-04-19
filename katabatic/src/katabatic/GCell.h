@@ -140,6 +140,8 @@ namespace Katabatic {
               float                       getHCapacity        () const;
               float                       getVCapacity        () const;
               float                       getDensity          ( unsigned int flags=0 ) const;
+              float                       getAverageHVDensity () const;
+              float                       getMaxHVDensity     () const;
       inline  float                       getCDensity         ( unsigned int flags=0 ) const;
       inline  float                       getWDensity         ( unsigned int depth, unsigned int flags=0  ) const;
       inline  DbU::Unit                   getBlockage         ( unsigned int depth ) const;

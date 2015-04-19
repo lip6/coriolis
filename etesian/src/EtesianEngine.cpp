@@ -39,6 +39,8 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/CellWidget.h"
+#include "katabatic/GCellGrid.h"
+#include "katabatic/KatabaticEngine.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
@@ -601,6 +603,46 @@ namespace Etesian {
     _progressReport2("     [--]" );
   }
 
+  void  EtesianEngine::feedRoutingBack(){
+    using namespace Katabatic;
+    /*
+     * If routing information is present, use it to
+     *       * artificially expand the areas given to coloquinte 
+     *       * add placement dentity constraints
+     */
+    DbU::Unit pitch = getPitch();
+    const float densityThreshold = 0.9;
+
+    KatabaticEngine* routingEngine = KatabaticEngine::get( getCell() );
+    if(routingEngine == NULL)
+      throw Error("No routing information was found when performing routing-driven placement\n");
+
+    GCellGrid * grid = routingEngine->getGCellGrid();
+    // Get information about the GCells
+    // Create different densities
+
+    _densityLimits.clear();
+    forEach(GCell*, gc, grid->getGCells()){
+        float density = (*gc)->getMaxHVDensity();
+        if(density >= densityThreshold){
+        
+            coloquinte::density_limit cur;
+            cur.box_ = coloquinte::box<int_t>(
+                (*gc)->getX()    / pitch,
+                (*gc)->getXMax() / pitch,
+                (*gc)->getY()    / pitch,
+                (*gc)->getYMax() / pitch
+            );
+            cur.density_ = densityThreshold/density;
+            _densityLimits.push_back(cur);
+        }
+    }
+
+    // TODO: Careful to keep the densities high enough
+    // Will just fail later if the densities are too high
+
+    // Expand areas: TODO
+  }
 
   void  EtesianEngine::globalPlace ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options ){
     using namespace coloquinte::gp;
@@ -616,8 +658,8 @@ namespace Etesian {
     do{
       // Create a legalizer and bipartition it until we have sufficient precision
       auto legalizer = (options & ForceUniformDensity) != 0 ?
-          region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB)
-        : region_distribution::full_density_distribution(_surface, _circuit, _placementLB);
+          region_distribution::uniform_density_distribution (_surface, _circuit, _placementLB, _densityLimits)
+        : region_distribution::full_density_distribution    (_surface, _circuit, _placementLB, _densityLimits);
       // Until there is about 10 standard cells per region
       for ( int quad_part=0 ; _circuit.cell_cnt() > (index_t)(10 * (1 << (quad_part*2))) ; ++quad_part ) {
           legalizer.x_bipartition();

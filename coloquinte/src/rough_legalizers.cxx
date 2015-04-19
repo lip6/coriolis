@@ -117,6 +117,7 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
     // The regions' capacities
     std::vector<capacity_t> region_caps(x_cnt * y_cnt, 0);
 
+    // Find the limits of the regions
     std::vector<int_t> x_reg_lims(x_cnt+1), y_reg_lims(y_cnt+1);
     for(index_t i=0; i<=x_cnt; ++i){
         x_reg_lims[i] = placement_area_.x_min_ + ( ((std::int64_t) (placement_area_.x_max_ - placement_area_.x_min_)) * i ) / x_cnt;

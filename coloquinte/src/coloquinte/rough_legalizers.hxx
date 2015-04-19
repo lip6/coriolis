@@ -18,6 +18,13 @@
  */
 
 namespace coloquinte{
+
+struct density_limit{
+    box<int_t> box_;
+    float_t density_; // from 0.0 for a macro to 1.0 if it does nothing
+};
+typedef std::vector<density_limit> density_restrictions;
+
 namespace gp{
 
 class region_distribution{
@@ -38,11 +45,6 @@ class region_distribution{
 
     // Specifies a maximum density of movable cells per usable area
     // Representing either a macroblock or a routing congestion
-    struct density_limit{
-        box<int_t> box_;
-        float_t density_; // from 0.0 for a macro to 1.0 if it does nothing
-    };
-
     private:
 
     struct region;
