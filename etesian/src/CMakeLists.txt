@@ -36,6 +36,7 @@
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
                                       ${HURRICANE_LIBRARIES}
+                                      ${KITE_LIBRARIES}
                                       ${CONFIGURATION_LIBRARY}
                                       ${BOOKSHELF_LIBRARY}
                                       ${CIF_LIBRARY}

@@ -16,14 +16,13 @@
  set_lib_link_mode()
  setup_boost(program_options python regex)
  
- find_package(LibXml2            REQUIRED)
  find_package(PythonLibs         REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD           REQUIRED)
- find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(KATABATIC          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
+ find_package(KITE               REQUIRED)
  find_package(COLOQUINTE         REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  

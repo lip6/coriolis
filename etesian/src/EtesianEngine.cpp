@@ -41,6 +41,7 @@
 #include "hurricane/viewer/CellWidget.h"
 #include "katabatic/GCellGrid.h"
 #include "katabatic/KatabaticEngine.h"
+#include "kite/KiteEngine.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
@@ -630,6 +631,7 @@ namespace Etesian {
 
   void  EtesianEngine::feedRoutingBack(){
     using namespace Katabatic;
+    using namespace Kite;
     /*
      * If routing information is present, use it to
      *       * artificially expand the areas given to coloquinte 
@@ -638,7 +640,7 @@ namespace Etesian {
     DbU::Unit pitch = getPitch();
     const float densityThreshold = 0.9;
 
-    KatabaticEngine* routingEngine = KatabaticEngine::get( getCell() );
+    KiteEngine* routingEngine = KiteEngine::get( getCell() );
     if(routingEngine == NULL)
       throw Error("No routing information was found when performing routing-driven placement\n");
 
@@ -794,6 +796,7 @@ namespace Etesian {
           _progressReport1("          Final Legalize ." );
         }
     }
+    _placementLB = _placementUB; // In case we run other passes
     _updatePlacement( _placementUB );
   }
 
@@ -867,6 +870,33 @@ namespace Etesian {
     globalPlace(minPenaltyIncrease, sliceHeight, targetImprovement, minPenaltyIncrease, maxPenaltyIncrease, globalOptions);
 
     cmess1 << "  o  Detailed Placement." << endl;
+    detailedPlace(detailedIterations, detailedEffort, detailedOptions);
+
+    using namespace Kite;
+    KiteEngine* kiteE = KiteEngine::create(_cell);
+    kiteE->runGlobalRouter(0);
+    kiteE->loadGlobalRouting(Katabatic::EngineLoadGrByNet);
+    kiteE->balanceGlobalDensity();
+    kiteE->layerAssign(Katabatic::EngineNoNetLayerAssign);
+    kiteE->runNegociate();
+    feedRoutingBack();
+    kiteE->destroy();
+
+    UpdateSession::open();
+    forEach(Net*, inet, _cell->getNets()){
+      if(NetRoutingExtension::isManualGlobalRoute(*inet))
+        continue;
+      std::vector<Contact*> pointers;
+      forEach(Component*, icom, (*inet)->getComponents()){
+        Contact * contact = dynamic_cast<Contact*>(*icom);
+        if(contact){
+          pointers.push_back(contact);
+        }
+      }
+      for(Contact* contact : pointers)
+        contact->destroy();
+    }
+    UpdateSession::close();
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
     cmess2 << "  o  Adding feed cells." << endl;
