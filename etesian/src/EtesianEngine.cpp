@@ -603,6 +603,31 @@ namespace Etesian {
     _progressReport2("     [--]" );
   }
 
+  void  EtesianEngine::roughLegalize( float minDisruption, unsigned options ){
+    using namespace coloquinte::gp;
+    // Create a legalizer and bipartition it until we have sufficient precision
+    auto legalizer = (options & ForceUniformDensity) != 0 ?
+        region_distribution::uniform_density_distribution (_surface, _circuit, _placementLB, _densityLimits)
+      : region_distribution::full_density_distribution    (_surface, _circuit, _placementLB, _densityLimits);
+    while(legalizer.region_dimensions().x_ > 2*legalizer.region_dimensions().y_)
+      legalizer.x_bipartition();
+    while(2*legalizer.region_dimensions().x_ < legalizer.region_dimensions().y_)
+      legalizer.y_bipartition();
+    while( std::max(legalizer.region_dimensions().x_, legalizer.region_dimensions().y_)*4 > minDisruption ) {
+      legalizer.x_bipartition();
+      legalizer.y_bipartition();
+      legalizer.redo_line_partitions();
+      legalizer.redo_diagonal_bipartitions();
+      legalizer.redo_line_partitions();
+      legalizer.redo_diagonal_bipartitions();
+      legalizer.selfcheck();
+    }
+    // Keep the orientation between LB and UB
+    _placementUB = _placementLB;
+    // Update UB
+    get_rough_legalization( _circuit, _placementUB, legalizer );
+  }
+
   void  EtesianEngine::feedRoutingBack(){
     using namespace Katabatic;
     /*
@@ -656,25 +681,7 @@ namespace Etesian {
 
     index_t i=0;
     do{
-      // Create a legalizer and bipartition it until we have sufficient precision
-      auto legalizer = (options & ForceUniformDensity) != 0 ?
-          region_distribution::uniform_density_distribution (_surface, _circuit, _placementLB, _densityLimits)
-        : region_distribution::full_density_distribution    (_surface, _circuit, _placementLB, _densityLimits);
-      // Until there is about 10 standard cells per region
-      for ( int quad_part=0 ; _circuit.cell_cnt() > (index_t)(10 * (1 << (quad_part*2))) ; ++quad_part ) {
-          legalizer.x_bipartition();
-          legalizer.y_bipartition();
-          legalizer.redo_line_partitions();
-          legalizer.redo_diagonal_bipartitions();
-          legalizer.redo_line_partitions();
-          legalizer.redo_diagonal_bipartitions();
-          legalizer.selfcheck();
-      }
-      // Keep the orientation between LB and UB
-      _placementUB = _placementLB;
-      // Update UB
-      get_rough_legalization( _circuit, _placementUB, legalizer );
-
+      roughLegalize(minDisruption, options);
       if(options & UpdateUB)
         _updatePlacement( _placementUB );
 
@@ -698,11 +705,6 @@ namespace Etesian {
 
       if(options & UpdateLB)
         _updatePlacement( _placementLB );
-
-      // First way to exit the loop: the legalization is close enough to the previous result
-      linearDisruption  = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
-      if(linearDisruption <= minDisruption)
-        break;
 
       // Optimize orientation sometimes
       if (i%5 == 0) {
@@ -728,9 +730,11 @@ namespace Etesian {
       pullingForce += penaltyIncrease;
       prevOptRatio = optRatio;
 
+      linearDisruption  = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
       ++i;
-      // Second way to exit the loop: UB and LB difference is <10%
-    }while(prevOptRatio <= 0.9);
+      // First way to exit the loop: UB and LB difference is <10%
+      // Second way to exit the loop: the legalization is close enough to the previous result
+    }while(linearDisruption > minDisruption and prevOptRatio <= 0.9);
     _updatePlacement( _placementUB );
   }
 
@@ -739,6 +743,7 @@ namespace Etesian {
     using namespace coloquinte::dp;
 
     int_t sliceHeight = getSliceHeight() / getPitch();
+    roughLegalize(sliceHeight, options);
 
     for ( int i=0; i<iterations; ++i ){
         ostringstream label;

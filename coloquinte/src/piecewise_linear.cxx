@@ -201,6 +201,7 @@ int_t piecewise_linear_function::last_before(int_t pos) const{
         ++it;
     }
     assert(false); // We should have found it if the bound was correct
+    return -1;
 }
 
 int_t piecewise_linear_function::value_at(int_t pos) const{

@@ -79,8 +79,7 @@ namespace Etesian {
               void                 toColoquinte     ();
 
               void                 preplace         ();
-              void                 roughLegalize    ( float minDisruption );
-              void                 completeLegalize ();
+              void                 roughLegalize    ( float minDisruption, unsigned options );
               void                 globalPlace      ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
               void                 detailedPlace    ( int iterations, int effort, unsigned options=0 );
               void                 feedRoutingBack  ();
