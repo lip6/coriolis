@@ -886,15 +886,30 @@ namespace Etesian {
     forEach(Net*, inet, _cell->getNets()){
       if(NetRoutingExtension::isManualGlobalRoute(*inet))
         continue;
-      std::vector<Contact*> pointers;
+      // First pass: destroy the contacts
+      std::vector<Contact*> contactPointers;
       forEach(Component*, icom, (*inet)->getComponents()){
         Contact * contact = dynamic_cast<Contact*>(*icom);
         if(contact){
-          pointers.push_back(contact);
+          contactPointers.push_back(contact);
         }
       }
-      for(Contact* contact : pointers)
+      for(Contact* contact : contactPointers)
         contact->destroy();
+      // Second pass: destroy unconnected segments added by Knik as blockages
+      std::vector<Component*> compPointers;
+      forEach(Component*, icom, (*inet)->getComponents()){
+        Horizontal * h = dynamic_cast<Horizontal*>(*icom);
+        if(h){
+          compPointers.push_back(h);
+        }
+        Vertical * v = dynamic_cast<Vertical*>(*icom);
+        if(v){
+          compPointers.push_back(v);
+        }
+      }
+      for(Component* comp : compPointers)
+        comp->destroy();
     }
     UpdateSession::close();
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
