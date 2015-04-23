@@ -65,6 +65,7 @@ namespace Etesian {
       inline  Effort               getPlaceEffort   () const;
       inline  GraphicUpdate        getUpdateConf    () const;
       inline  Density              getSpreadingConf () const;
+      inline  bool                 getRoutingDriven () const;
       inline  double               getSpaceMargin   () const;
       inline  double               getAspectRatio   () const;
       inline  const FeedCells&     getFeedCells     () const;
@@ -137,6 +138,7 @@ namespace Etesian {
   inline  Effort           EtesianEngine::getPlaceEffort   () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate    EtesianEngine::getUpdateConf    () const { return getConfiguration()->getUpdateConf(); }
   inline  Density          EtesianEngine::getSpreadingConf () const { return getConfiguration()->getSpreadingConf(); }
+  inline  bool             EtesianEngine::getRoutingDriven () const { return getConfiguration()->getRoutingDriven(); }
   inline  double           EtesianEngine::getSpaceMargin   () const { return getConfiguration()->getSpaceMargin(); }
   inline  double           EtesianEngine::getAspectRatio   () const { return getConfiguration()->getAspectRatio(); }
   inline  void             EtesianEngine::useFeed          ( Cell* cell ) { _feedCells.useFeed(cell); }

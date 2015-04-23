@@ -20,6 +20,7 @@
 #include <iomanip>
 #include "vlsisapd/utilities/Path.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
@@ -175,7 +176,6 @@ namespace Kite {
     return kite;
   }
 
-
   void  KiteEngine::_preDestroy ()
   {
     ltrace(90) << "KiteEngine::_preDestroy()" << endl;
@@ -207,6 +207,41 @@ namespace Kite {
     ltraceout(90);
   }
 
+  void KiteEngine::wipeOutRouting( Cell * cell ){
+    if(KiteEngine::get(cell) != NULL or KatabaticEngine::get(cell) != NULL)
+        throw Error("Trying to wipe out a routing with a routing engine\n");
+    using namespace Hurricane;
+    UpdateSession::open();
+    forEach(Net*, inet, cell->getNets()){
+      if(NetRoutingExtension::isManualGlobalRoute(*inet))
+        continue;
+      // First pass: destroy the contacts
+      std::vector<Contact*> contactPointers;
+      forEach(Component*, icom, (*inet)->getComponents()){
+        Contact * contact = dynamic_cast<Contact*>(*icom);
+        if(contact){
+          contactPointers.push_back(contact);
+        }
+      }
+      for(Contact* contact : contactPointers)
+        contact->destroy();
+      // Second pass: destroy unconnected segments added by Knik as blockages
+      std::vector<Component*> compPointers;
+      forEach(Component*, icom, (*inet)->getComponents()){
+        Horizontal * h = dynamic_cast<Horizontal*>(*icom);
+        if(h){
+          compPointers.push_back(h);
+        }
+        Vertical * v = dynamic_cast<Vertical*>(*icom);
+        if(v){
+          compPointers.push_back(v);
+        }
+      }
+      for(Component* comp : compPointers)
+        comp->destroy();
+    }
+    UpdateSession::close();
+  }
 
   KiteEngine::~KiteEngine ()
   { delete _configuration; }

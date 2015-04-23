@@ -56,7 +56,8 @@ namespace Etesian {
     : _cg           ( NULL )
     , _placeEffort  ( static_cast<Effort>        (Cfg::getParamEnumerate ("etesian.effort"        , Standard   )->asInt()) )
     , _updateConf   ( static_cast<GraphicUpdate> (Cfg::getParamEnumerate ("etesian.graphics"      , LowerBound )->asInt()) )
-    , _spreadingConf(                             Cfg::getParamBool      ("etesian.uniformDensity", false      )->asBool()?ForceUniform:MaxDensity )
+    , _spreadingConf(                             Cfg::getParamBool      ("etesian.uniformDensity", false      )->asBool()? ForceUniform : MaxDensity )
+    , _routingDriven(                             Cfg::getParamBool      ("etesian.routingDriven", false      )->asBool())
     , _spaceMargin  (                             Cfg::getParamPercentage("etesian.spaceMargin"   ,  5.0)->asDouble() )
     , _aspectRatio  (                             Cfg::getParamPercentage("etesian.aspectRatio"   ,100.0)->asDouble() )
   {
@@ -95,6 +96,7 @@ namespace Etesian {
     cout << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
     cout << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
     cout << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
+    cout << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
     cout << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
     cout << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
   }

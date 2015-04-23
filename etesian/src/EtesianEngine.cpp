@@ -811,6 +811,7 @@ namespace Etesian {
     Effort        placementEffort = getPlaceEffort();
     GraphicUpdate placementUpdate = getUpdateConf();
     Density       densityConf     = getSpreadingConf();
+    bool          routingDriven   = getRoutingDriven();
 
     startMeasures();
     double         sliceHeight = getSliceHeight() / getPitch();
@@ -872,47 +873,29 @@ namespace Etesian {
     cmess1 << "  o  Detailed Placement." << endl;
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
-    using namespace Kite;
-    KiteEngine* kiteE = KiteEngine::create(_cell);
-    kiteE->runGlobalRouter(0);
-    kiteE->loadGlobalRouting(Katabatic::EngineLoadGrByNet);
-    kiteE->balanceGlobalDensity();
-    kiteE->layerAssign(Katabatic::EngineNoNetLayerAssign);
-    kiteE->runNegociate();
-    feedRoutingBack();
-    kiteE->destroy();
-
-    UpdateSession::open();
-    forEach(Net*, inet, _cell->getNets()){
-      if(NetRoutingExtension::isManualGlobalRoute(*inet))
-        continue;
-      // First pass: destroy the contacts
-      std::vector<Contact*> contactPointers;
-      forEach(Component*, icom, (*inet)->getComponents()){
-        Contact * contact = dynamic_cast<Contact*>(*icom);
-        if(contact){
-          contactPointers.push_back(contact);
+    if(routingDriven){
+        bool success = false;
+        int routingDrivenIteration = 0;
+        using namespace Kite;
+        while(true){
+            cmess2 << "Routing-driven placement iteration " << routingDrivenIteration << endl;
+            KiteEngine* kiteE = KiteEngine::create(_cell);
+            kiteE->runGlobalRouter(0);
+            kiteE->loadGlobalRouting(Katabatic::EngineLoadGrByNet);
+            kiteE->balanceGlobalDensity();
+            kiteE->layerAssign(Katabatic::EngineNoNetLayerAssign);
+            kiteE->runNegociate();
+            success = kiteE->getToolSuccess();
+            feedRoutingBack();
+            kiteE->destroy();
+            KiteEngine::wipeOutRouting(_cell);
+            if(success){
+                cmess2 << "The design is routable; exiting" << endl;
+                break;
+            }
+            detailedPlace(detailedIterations, detailedEffort, detailedOptions);
         }
-      }
-      for(Contact* contact : contactPointers)
-        contact->destroy();
-      // Second pass: destroy unconnected segments added by Knik as blockages
-      std::vector<Component*> compPointers;
-      forEach(Component*, icom, (*inet)->getComponents()){
-        Horizontal * h = dynamic_cast<Horizontal*>(*icom);
-        if(h){
-          compPointers.push_back(h);
-        }
-        Vertical * v = dynamic_cast<Vertical*>(*icom);
-        if(v){
-          compPointers.push_back(v);
-        }
-      }
-      for(Component* comp : compPointers)
-        comp->destroy();
     }
-    UpdateSession::close();
-    detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
     cmess2 << "  o  Adding feed cells." << endl;
     addFeeds();
