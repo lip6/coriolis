@@ -1,0 +1,32 @@
+Coriolis is a free database, placement tool and routing tool for VLSI designs.
+
+Purpose
+=======
+
+Coriolis provides several tools to perform the layout of VLSI circuits.
+Its main components are the Hurricane database, the Etesian placer and the Kite router,
+but other tools can use the Hurricane database and the parsers provided.
+
+The user interface cgt is the prefered way to use Coriolis, but all
+Coriolis tools are python modules and thus scriptable.
+
+Documentation
+=============
+
+The full documentation is available [online](https://soc-extras.lip6.fr/en/coriolis/coriolis2-users-guide/) and, once built, as documentation/UsersGuide/UsersGuide.html. Basic build instructions are given below.
+
+Building and running Coriolis
+=============================
+
+To build Coriolis, ensure the prerequisites are met, including cmake, boost, bison, flex, Qt, libxml2 and a C++11 compiler.
+
+Copy the sources or clone the git repository as ~/coriolis-2.x/src/coriolis
+Then in this directory run the build command:
+
+    ./bootstrap/ccb.py --project=coriolis --make="-jN install"
+
+After the build succeeds, to run the graphical interface:
+
+    eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
+    cgt -V
+
