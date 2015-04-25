@@ -30,11 +30,13 @@
                                       PyGraphicEtesianEngine.cpp
                       )
           qtX_wrap_cpp( mocCpps       ${mocIncludes} )
-                   set( depLibs       ${CORIOLIS_PYTHON_LIBRARIES}
+                   set( depLibs       ${KATABATIC_LIBRARIES}
+                                      ${CORIOLIS_PYTHON_LIBRARIES}
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
                                       ${HURRICANE_LIBRARIES}
+                                      ${KITE_LIBRARIES}
                                       ${CONFIGURATION_LIBRARY}
                                       ${BOOKSHELF_LIBRARY}
                                       ${CIF_LIBRARY}

@@ -63,6 +63,7 @@ namespace Kite {
       static  const Name&             staticGetName              ();
       static  KiteEngine*             create                     ( Cell* );
       static  KiteEngine*             get                        ( const Cell* );
+      static  void                    wipeOutRouting             ( Cell* );
     public:                                                      
       inline  bool                    useClockTree               () const;
       inline  CellViewer*             getViewer                  () const;

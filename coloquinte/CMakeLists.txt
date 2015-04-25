@@ -19,7 +19,11 @@
  find_package(Libexecinfo REQUIRED)
 
  if(WITH_OPENMP)
-   add_definitions( -fopenmp )
+   find_package(OpenMP REQUIRED)
+   add_definitions(${OpenMP_CXX_FLAGS}) 
+   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OpenMP_CXX_FLAGS}")
+   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_CXX_FLAGS}")
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_CXX_FLAGS}")
  endif()
  
  add_subdirectory(src)

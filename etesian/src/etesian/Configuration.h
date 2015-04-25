@@ -66,6 +66,7 @@ namespace Etesian {
       inline Effort           getPlaceEffort   () const;
       inline GraphicUpdate    getUpdateConf    () const;
       inline Density          getSpreadingConf () const;
+      inline bool             getRoutingDriven  () const;
       inline double           getSpaceMargin   () const;
       inline double           getAspectRatio   () const;
              void             print            ( Cell* ) const;
@@ -78,6 +79,7 @@ namespace Etesian {
       Effort         _placeEffort;
       GraphicUpdate  _updateConf;
       Density        _spreadingConf;
+      bool           _routingDriven;
       double         _spaceMargin;
       double         _aspectRatio;
     private:
@@ -90,6 +92,7 @@ namespace Etesian {
   inline Effort        Configuration::getPlaceEffort   () const { return _placeEffort; }
   inline GraphicUpdate Configuration::getUpdateConf    () const { return _updateConf; }
   inline Density       Configuration::getSpreadingConf () const { return _spreadingConf; }
+  inline bool          Configuration::getRoutingDriven () const { return _routingDriven; }
   inline double        Configuration::getSpaceMargin   () const { return _spaceMargin; }
   inline double        Configuration::getAspectRatio   () const { return _aspectRatio; }
 

@@ -18,6 +18,13 @@
  */
 
 namespace coloquinte{
+
+struct density_limit{
+    box<int_t> box_;
+    float_t density_; // from 0.0 for a macro to 1.0 if it does nothing
+};
+typedef std::vector<density_limit> density_restrictions;
+
 namespace gp{
 
 class region_distribution{
@@ -38,11 +45,6 @@ class region_distribution{
 
     // Specifies a maximum density of movable cells per usable area
     // Representing either a macroblock or a routing congestion
-    struct density_limit{
-        box<int_t> box_;
-        float_t density_; // from 0.0 for a macro to 1.0 if it does nothing
-    };
-
     private:
 
     struct region;
@@ -128,13 +130,16 @@ class region_distribution{
     std::vector<region> prepare_regions(index_t x_cnt, index_t y_cnt) const;
 
     public:
+
+    inline box<int_t>     placement_area()    const;
+    inline point<float_t> region_dimensions() const;
+
+    inline index_t    x_regions_cnt() const;
+    inline index_t    y_regions_cnt() const;
+    inline index_t    regions_cnt()   const;
     
-    inline index_t x_regions_cnt() const;
-    inline index_t y_regions_cnt() const;
-    inline index_t regions_cnt()   const;
-    
-    inline index_t cell_cnt() const;
-    inline index_t fractional_cell_cnt() const;
+    inline index_t    cell_cnt() const;
+    inline index_t    fractional_cell_cnt() const;
     
     /*
      * Two types of export
@@ -203,6 +208,12 @@ class region_distribution{
 
 inline region_distribution::movable_cell::movable_cell(){}
 inline region_distribution::movable_cell::movable_cell(capacity_t demand, point<float_t> p, index_t ind) : demand_(demand), pos_(p), index_in_placement_(ind){}
+
+inline box<int_t> region_distribution::placement_area() const { return placement_area_; }
+inline point<float_t> region_distribution::region_dimensions() const {
+    point<int_t> s = static_cast<point<float_t> >(placement_area().dimensions());
+    return point<float_t>(s.x_/x_regions_cnt(), s.y_/y_regions_cnt());
+}
 
 inline index_t region_distribution::x_regions_cnt() const { return x_regions_cnt_; }
 inline index_t region_distribution::y_regions_cnt() const { return y_regions_cnt_; }
