@@ -116,6 +116,9 @@ def guessOs ():
 
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
     if not ldLibraryPath or 'devtoolset' in ldLibraryPath: useDevtoolset2 = False
+
+    if libDir == 'lib64' and not os.path.exists('/usr/lib64'):
+      libDir = 'lib'
     
     return (osType,libDir,useDevtoolset2)
       

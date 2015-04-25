@@ -82,7 +82,7 @@ osType = uname( ['-s'] )
 arch   = uname( ['-m'] )
 
 libDir = '/lib'
-if arch == 'x86_64': libDir = '/lib64'
+if arch == 'x86_64' and os.path.exists('/usr/lib64'): libDir = '/lib64'
 
 pythonSitePackages = os.path.join( *(distutils.sysconfig.get_python_lib(1).split('/')[-3:]) )
 

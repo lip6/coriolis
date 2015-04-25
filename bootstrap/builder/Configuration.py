@@ -191,6 +191,9 @@ class Configuration ( object ):
 
             print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
             print "          (using: \"%s\")" % self._osType
+
+        if self._libSuffix == '64' and not os.path.exists('/usr/lib64'):
+            self._libSuffix = None
         
         return
 

@@ -478,8 +478,7 @@ In the |Coriolis| |git| repository, two branches are present:
   command just after the first step: ::
 
       dummy@lepka:~$ git checkout devel
-      dummy@lepka:src$ ./bootstrap/ccp.py --project=importeds \
-                                          --project=coriolis \
+      dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
                                           --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce
