@@ -652,6 +652,41 @@ extern "C" {
     HCATCH
     Py_RETURN_NONE;
   }
+  
+  
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_uniquify ()"
+
+  static PyObject* PyCell_uniquify ( PyCell *self, PyObject* args ) {
+    trace << "PyCell_uniquify ()" << endl;
+
+    HTRY
+      METHOD_HEAD ( "Cell.uniquify()" )
+      unsigned int  depth;
+      if (not PyArg_ParseTuple(args,"I:Cell.uniquify", &depth)) {
+        PyErr_SetString(ConstructorError, "Cell.uniquify(): Invalid number/bad type of parameter.");
+        return NULL;
+      }
+      cell->uniquify( depth );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_getClone ()"
+
+  static PyObject* PyCell_getClone ( PyCell *self ) {
+    trace << "PyCell_getClone ()" << endl;
+
+    Cell* cloneCell = NULL;
+    HTRY
+      METHOD_HEAD( "Cell.getClone()" )
+      cloneCell = cell->getClone();
+    HCATCH
+
+    return PyCell_Link( cloneCell );
+  }
 
 
   // Standart Predicates (Attributes).
@@ -692,10 +727,12 @@ extern "C" {
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
     , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
     , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
-    , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS, "Returns true if the cell is bounded to the hurricane cell" }    
+    , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
     , { "setTerminal"         , (PyCFunction)PyCell_setTerminal         , METH_VARARGS, "Sets the cell terminal status." }
+    , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
+    , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS
                               , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

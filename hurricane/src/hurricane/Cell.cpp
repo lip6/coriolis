@@ -38,6 +38,72 @@
 namespace Hurricane {
 
 
+  const Name  Cell::UniquifyRelation::_name = "Cell::UniquifyRelation";
+
+
+  Cell::UniquifyRelation::UniquifyRelation ( Cell* masterOwner )
+    : Relation   (masterOwner)
+    , _duplicates(1)
+  { }
+
+
+  Cell::UniquifyRelation* Cell::UniquifyRelation::create ( Cell* masterOwner )
+  {
+    UniquifyRelation* relation = new UniquifyRelation(masterOwner);
+
+    relation->_postCreate();
+
+    return relation;
+  }
+
+
+  void  Cell::UniquifyRelation::_preDestroy ()
+  {
+    Relation::_preDestroy();
+  }
+
+
+  Cell::UniquifyRelation* Cell::UniquifyRelation::get ( const Cell* cell )
+  {
+    if (not cell)
+      throw Error( "Can't get Cell::UniquifyRelation : empty cell" );
+    Property* property = cell->getProperty( staticGetName() );
+    if (property) {
+      UniquifyRelation* relation = dynamic_cast<UniquifyRelation*>(property);
+      if (not relation )
+        throw Error ( "Bad Property type: Must be a UniquifyRelation" );
+      return relation;
+    }
+    return NULL;
+  }
+
+
+  Name    Cell::UniquifyRelation::staticGetName () { return _name; }
+  Name    Cell::UniquifyRelation::getName       () const { return _name; }
+  string  Cell::UniquifyRelation::_getTypeName  () const { return "Cell::UniquifyRelation"; }
+
+
+  Name  Cell::UniquifyRelation::getUniqueName ()
+  {
+    Cell*          owner = dynamic_cast<Cell*>( getMasterOwner() );
+    ostringstream  name;
+    
+    name << getString(owner->getName()) << "_u" << setw(2) << setfill('0') << _duplicates++;
+
+    return Name(name.str());
+  }
+
+
+  Record* Cell::UniquifyRelation::_getRecord () const
+  {
+    Record* record = Relation::_getRecord();
+    if (record) {
+      record->add( getSlot( "_duplicates", &_duplicates ) );
+    }
+    return record;
+  }
+
+
   void  Cell::_insertSlice ( ExtensionSlice* slice )
   {
     ExtensionSliceMap::iterator islice = _extensionSlices.find ( slice->getName() );
@@ -100,6 +166,7 @@ Cell::Cell(Library* library, const Name& name)
     _abutmentBox(),
     _boundingBox(),
     _isTerminal(true),
+    _isFlattenLeaf(false),
     _isPad(false),
     _nextOfLibraryCellMap(NULL),
     _nextOfSymbolCellSet(NULL),
@@ -343,6 +410,80 @@ void Cell::flattenNets(unsigned int flags)
   UpdateSession::close();
 }
 
+
+Cell* Cell::getCloneMaster() const
+// *******************************
+{
+  UniquifyRelation* uniquify = UniquifyRelation::get( this );
+  if (not uniquify) return const_cast<Cell*>(this);
+
+  uniquify = UniquifyRelation::get( this );
+  return dynamic_cast<Cell*>( uniquify->getMasterOwner() );
+}
+
+
+Cell* Cell::getClone()
+// *******************
+{
+  UpdateSession::open();
+
+  UniquifyRelation* uniquify = UniquifyRelation::get( this );
+  if (not uniquify) {
+    uniquify = UniquifyRelation::create( this );
+  }
+
+  Cell* clone = Cell::create( getLibrary(), uniquify->getUniqueName() );
+  clone->put           ( uniquify );
+  clone->setTerminal   ( isTerminal    () );
+  clone->setFlattenLeaf( isFlattenLeaf () );
+  clone->setPad        ( isPad         () );
+  clone->setAbutmentBox( getAbutmentBox() );
+
+  forEach( Net*, inet, getNets() ) {
+    if (dynamic_cast<DeepNet*>(*inet)) continue;
+    inet->getClone( clone );
+  }
+
+  bool isPlaced = true;
+  forEach( Instance*, iinstance, getInstances() ) {
+    if (iinstance->getClone(clone)->getPlacementStatus() == Instance::PlacementStatus::UNPLACED)
+      isPlaced = false;
+  }
+  if (isPlaced) clone->setFlags( Placed );
+
+  UpdateSession::close();
+
+  return clone;
+}
+
+
+void Cell::uniquify(unsigned int depth)
+// ************************************
+{
+  vector<Instance*> toUniquify;
+  set<Cell*>        masterCells;
+
+  forEach ( Instance*, iinstance, getInstances() ) {
+    Cell* masterCell = iinstance->getMasterCell();
+    if (masterCell->isTerminal()) continue;
+
+    masterCells.insert( masterCell );
+    if (masterCell->getSlaveInstances().getSize() > 1) {
+      toUniquify.push_back( *iinstance );
+    }
+  }
+
+  for ( auto iinst : toUniquify ) {
+    iinst->uniquify();
+    masterCells.insert( iinst->getMasterCell() );
+  }
+
+  if (depth > 0) {
+    for ( auto icell : masterCells )
+      icell->uniquify( depth-1 );
+  }
+}
+
 void Cell::materialize()
 // *********************
 {
@@ -508,6 +649,66 @@ void Cell::notify(unsigned flags)
 {
   _observers.notify(flags);
 }
+
+// ****************************************************************************************************
+// Cell::ClonedSet implementation
+// ****************************************************************************************************
+
+  Cell::ClonedSet::Locator::Locator ( const Cell* cell )
+    : Hurricane::Locator<Cell*>()
+    , _dboLocator              (NULL)
+  {
+    UniquifyRelation* uniquify = UniquifyRelation::get( cell );
+    if (uniquify) {
+      _dboLocator = uniquify->getSlaveOwners().getLocator();
+    }
+  }
+
+
+  Locator<Cell*>* Cell::ClonedSet::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  Cell* Cell::ClonedSet::Locator::getElement () const
+  { return (_dboLocator and _dboLocator->isValid())
+      ? dynamic_cast<Cell*>(_dboLocator->getElement()) : NULL; }
+
+
+  bool  Cell::ClonedSet::Locator::isValid () const
+  { return (_dboLocator and _dboLocator->isValid()); }
+
+
+  void  Cell::ClonedSet::Locator::progress ()
+  {
+    _dboLocator->progress();
+  }
+
+
+  string  Cell::ClonedSet::Locator::_getString () const
+  {
+    string s = "<" + _TName("Cell::ClonedSet::Locator")
+                   + getString(getElement())
+                   + ">";
+    return s;
+  }
+
+
+  Collection<Cell*>* Cell::ClonedSet::getClone   () const
+  { return new ClonedSet(*this); }
+
+
+  Locator<Cell*>* Cell::ClonedSet::getLocator () const
+  { return new Locator(_cell); }
+
+
+  string  Cell::ClonedSet::_getString () const
+  {
+    string s = "<" + _TName("Cell_ClonedSet") + " "
+                   + getString(_cell->getName())
+                   + ">";
+    return s;
+  }
+
 
 // ****************************************************************************************************
 // Cell::InstanceMap implementation

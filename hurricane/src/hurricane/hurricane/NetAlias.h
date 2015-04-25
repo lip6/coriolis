@@ -100,7 +100,7 @@ namespace Hurricane {
 
   class NetAliasName : public NetAliasHook {
     public:
-      class Less {
+      class CompareByName {
         public:
           inline bool operator() ( const NetAliasName* lhs, const NetAliasName* rhs ) const;
       };
@@ -122,12 +122,63 @@ namespace Hurricane {
   };
 
 
-  inline bool  NetAliasName::Less::operator() ( const NetAliasName* lhs
-                                              , const NetAliasName* rhs ) const
+  inline bool  NetAliasName::CompareByName::operator() ( const NetAliasName* lhs
+                                                       , const NetAliasName* rhs ) const
   { return lhs->getName() < rhs->getName(); }
 
 
-  typedef  std::set<NetAliasName*,NetAliasName::Less>  AliasNameSet;
+  typedef  std::set<NetAliasName*,NetAliasName::CompareByName>  AliasNameSet;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::AliasList" (Collection).
+
+  typedef  GenericCollection<NetAliasHook*>  Aliases;
+  typedef  GenericLocator   <NetAliasHook*>  AliasesLocator;
+  typedef  GenericFilter    <NetAliasHook*>  AliasesFilter;
+
+
+  class AliasList : public Collection<NetAliasHook*> {
+    public:
+    // Sub-Class: Locator.
+      class Locator : public Hurricane::Locator<NetAliasHook*> {
+        public:
+                                                     Locator    ( const Net* );
+          inline                                     Locator    ( const Locator& );
+          virtual NetAliasHook*                      getElement () const;
+          virtual Hurricane::Locator<NetAliasHook*>* getClone   () const;
+          virtual bool                               isValid    () const;
+          virtual void                               progress   ();
+          virtual string                             _getString () const;
+        protected:
+          NetAliasHook* _hook;
+      };
+
+    public:
+      inline                                        AliasList  ( const Net* net );
+      inline                                        AliasList  ( const AliasList& );
+      virtual Hurricane::Collection<NetAliasHook*>* getClone   () const;
+      virtual Hurricane::Locator<NetAliasHook*>*    getLocator () const;
+      virtual string                                _getString () const;
+    protected:
+      const Net* _net;
+  };
+
+
+  inline  AliasList::Locator::Locator ( const Locator& other )
+    : Hurricane::Locator<NetAliasHook*>()
+    , _hook(other._hook)
+  { }
+  
+  inline  AliasList::AliasList ( const Net* net )
+    : Hurricane::Collection<NetAliasHook*>()
+    , _net(net)
+  { }
+  
+  inline  AliasList::AliasList ( const AliasList& other )
+    : Hurricane::Collection<NetAliasHook*>()
+    , _net(other._net)
+  { }
 
 
 }  // Namespace Hurricane.

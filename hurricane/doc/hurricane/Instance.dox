@@ -163,6 +163,18 @@
   *                occurences are therefore deleted. 
   */
 
+ //! \function     void  Instance::uniquify ();
+ //!               Replace the \c <masterCell> of this instance by a cloned copy.
+ //!
+ //! \see          Cell::getClone().
+
+ //! \function     Instance* Instance::getClone ( Cell* cloneCell );
+ //!               Build a duplicate of instance (\c <this>) inside a cloned Cell \c <cloneCell>.
+ //!               The connections (Plug) on the copied instance are copied. That is,
+ //!               connected to Net with identical names in \c <cloneCell>.
+ //!
+ //! \important    In \c <cloneCell>, a copy (by name) of all the nets this instance
+ //!               is connected to must exits.
 
  //! \name         Instance Collection
  //  \{

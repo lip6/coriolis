@@ -579,6 +579,8 @@ namespace Etesian {
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
+    getCell()->uniquify();
+
     getConfiguration()->print( getCell() );
     if (getCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 

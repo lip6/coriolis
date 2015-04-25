@@ -382,6 +382,8 @@ namespace Katabatic {
     delete [] _blockages;
     delete [] _densities;
     delete [] _feedthroughs;
+    delete [] _fragmentations;
+    delete [] _globalsCount;
   //delete [] _saturateDensities;
 
     _allocateds--;

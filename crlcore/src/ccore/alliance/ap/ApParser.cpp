@@ -838,6 +838,15 @@ namespace {
 
     if (materializationState) Go::disableAutoMaterialization ();
 
+    bool isPlaced = true;
+    forEach ( Instance*, iinstance, _cell->getInstances() ) {
+      if (iinstance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) {
+        isPlaced = false;
+        break;
+      }
+    }
+    if (isPlaced) _cell->setFlags( Cell::Placed );
+
     fileStream.close ();
   }
 

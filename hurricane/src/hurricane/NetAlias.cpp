@@ -163,9 +163,9 @@ namespace Hurricane {
   Net*    NetMainName::getNet     () const { return (Net*)((ptrdiff_t)this - _offset); }
   string  NetMainName::_getString () const { return "<NetMainName " + getString(getName()) + ">"; }
   
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::NetAliasName".
-
 
   NetAliasName::NetAliasName ( Name name )
     : NetAliasHook()
@@ -209,5 +209,57 @@ namespace Hurricane {
     }
     return record;
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::AliasList" (Collection).
+
+  AliasList::Locator::Locator ( const Net* net )
+    : Hurricane::Locator<NetAliasHook*>()
+    , _hook                            (net->getMainName()->getNext())
+  { }
+
+
+  Locator<NetAliasHook*>* AliasList::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  NetAliasHook* AliasList::Locator::getElement () const
+  { return isValid() ?  _hook : NULL; }
+
+
+  bool  AliasList::Locator::isValid () const
+  { return (_hook and not _hook->isMaster()); }
+
+
+  void  AliasList::Locator::progress ()
+  { if (not _hook->isMaster()) _hook = _hook->getNext(); }
+
+
+  string  AliasList::Locator::_getString () const
+  {
+    string s = "<" + _TName("AliasList::Locator")
+                   + getString(getElement())
+                   + ">";
+    return s;
+  }
+
+
+  Collection<NetAliasHook*>* AliasList::getClone () const
+  { return new AliasList(*this); }
+
+
+  Locator<NetAliasHook*>* AliasList::getLocator () const
+  { return new Locator(_net); }
+
+
+  string  AliasList::_getString () const
+  {
+    string s = "<" + _TName("NetAliasHook") + " "
+                   + getString(_net->getName())
+                   + ">";
+    return s;
+  }
+
 
 }  // Hurricane namespace.

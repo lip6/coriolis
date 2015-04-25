@@ -291,6 +291,13 @@
   *                their occurences). 
   */
 
+ //! \function     Net* Net::getClone ( Cell* cloneCell );
+ //!               Build a duplicate of net (\c <this>) inside a cloned Cell \c <cloneCell>.
+ //!               The connectivity (Plug) or components of the original net are \b not
+ //!               copied.
+ //!
+ //! \remark       It is likely that \c <cloneCell> is a copy of this net's onwer Cell,
+ //!               but it is not mandatory.
 
  //! \name         Net Collection
  //  \{

@@ -169,6 +169,7 @@ class Net : public Entity {
     public: virtual Cell* getCell() const {return _cell;};
     public: virtual Box getBoundingBox() const;
     public: const Name& getName() const {return _name;};
+    public: const NetMainName* getMainName() const { return &_mainName; }
     public: const Arity& getArity() const {return _arity;};
     public: const Type& getType() const {return _type;};
     public: const Direction& getDirection() const {return _direction;};
@@ -188,6 +189,7 @@ class Net : public Entity {
     public: Plugs getSlavePlugs() const;
     public: Plugs getConnectedSlavePlugs() const;
     public: Plugs getUnconnectedSlavePlugs() const;
+    public: Aliases getAliases() const { return new AliasList(this); };
 
 // Filters
 // *******
@@ -231,6 +233,7 @@ class Net : public Entity {
     public: bool addAlias(const Name& name);
     public: bool removeAlias(const Name& name);
     public: void merge(Net* net);
+    public: Net* getClone(Cell* cloneCell);
 
 // Others
 // ******

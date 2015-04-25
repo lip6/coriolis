@@ -536,6 +536,19 @@ bool Net::removeAlias(const Name& name )
   return false;
 }
 
+Net* Net::getClone(Cell* clonedCell)
+// *********************************
+{
+  Net* clonedNet = Net::create( clonedCell, getName() );
+  clonedNet->setArity    ( getArity() );
+  clonedNet->setGlobal   ( isGlobal() );
+  clonedNet->setExternal ( isExternal() );
+  clonedNet->setType     ( getType() );
+  clonedNet->setDirection( getDirection() );
+
+  return clonedNet;
+}
+
 void Net::materialize()
 // ********************
 {
@@ -639,6 +652,8 @@ void Net::merge(Net* net)
       net->_mainName.detach();
     }
 
+    if (net->isExternal() and not isExternal())
+      setExternal( true );
     net->destroy();
 
     if (slaves) _mainName.attach( slaves );

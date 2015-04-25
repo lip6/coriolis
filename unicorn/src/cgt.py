@@ -48,7 +48,6 @@ def credits ():
 
     s +=  '        Coloquinte software credits (used by Etesian)\n'
     s +=  '        Author ........................................ Gabriel Gouvine\n'
-    s +=  '        URL .............. https://github.com/Coloquinte/Coloquinte.git\n\n'
 
     s +=  '        FLUTE software credits (used by Knik)\n'
     s +=  '        Author ........................................ Chris C. N. CHU\n'

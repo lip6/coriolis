@@ -304,7 +304,7 @@ namespace CRL {
         (parser->getParsCell())( _environment.getLIBRARIES().getSelected() , state->getCell() );
       } catch ( ... ) {
         if ( createCell ) 
-          state->getCell()->destroy();
+        //state->getCell()->destroy();
         throw;
       }
     }

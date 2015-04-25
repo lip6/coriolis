@@ -468,22 +468,39 @@ extern "C" {
     trace << "PyNet_merge()" << endl;
 
     HTRY
-    PyNet* pyNetToMerge;
-    METHOD_HEAD ( "Net.merge()" )
-    if (PyArg_ParseTuple(args, "O!:Net.merge", &PyTypeNet, &pyNetToMerge)) {
-      net->merge(PYNET_O(pyNetToMerge));
-    } else {
-      PyErr_SetString (ConstructorError, "invalid number of parameters for Net.merge.");
-      return NULL;
-    }
+      PyNet* pyNetToMerge;
+      METHOD_HEAD ( "Net.merge()" )
+      if (PyArg_ParseTuple(args, "O!:Net.merge", &PyTypeNet, &pyNetToMerge)) {
+        net->merge(PYNET_O(pyNetToMerge));
+      } else {
+        PyErr_SetString (ConstructorError, "invalid number of parameters for Net.merge.");
+        return NULL;
+      }
     HCATCH
-    
     Py_RETURN_NONE;
   }
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyNet_merge ()"
 
+  static PyObject* PyNet_getClone ( PyNet *self, PyObject* args ) {
+    trace << "PyNet_getClone()" << endl;
 
+    Net* cloneNet = NULL;
+    HTRY
+      PyCell* pyCloneCell;
+      METHOD_HEAD ( "Net.getClone()" )
+      if (PyArg_ParseTuple(args, "O!:Net.getClone", &PyTypeCell, &pyCloneCell)) {
+        cloneNet = net->getClone( PYCELL_O(pyCloneCell) );
+      } else {
+        PyErr_SetString (ConstructorError, "Net.getClone(): invalid number/bad type of parameter(s).");
+        return NULL;
+      }
+    HCATCH
+    
+    return PyNet_Link(cloneNet);
+  }
 
 
   // ---------------------------------------------------------------
@@ -519,8 +536,9 @@ extern "C" {
     , { "addAlias"             , (PyCFunction)PyNet_addAlias                 , METH_VARARGS, "Add an alias name to the net." }
     , { "removeAlias"          , (PyCFunction)PyNet_removeAlias              , METH_VARARGS, "Remove an alias name from the net." }
     , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS, "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }
+    , { "getClone"             , (PyCFunction)PyNet_getClone                 , METH_VARARGS, "Create a clone of this net into the cloned cell (components not cloneds)." }
     , { "destroy"              , (PyCFunction)PyNet_destroy                  , METH_NOARGS , "Destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 

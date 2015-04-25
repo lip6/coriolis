@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Relation.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,8 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_RELATION
-#define HURRICANE_RELATION
+#ifndef HURRICANE_RELATION_H
+#define HURRICANE_RELATION_H
 
 #include "hurricane/Property.h"
 

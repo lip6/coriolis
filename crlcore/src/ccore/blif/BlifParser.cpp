@@ -1,14 +1,16 @@
+// -*- C++ -*-
+//
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2014, All Rights Reserved
+// Copyright (c) UPMC 2015-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
-// |          Alliance / Hurricane  Interface                        |
-// |      Yacc Grammar for Alliance Structural VHDL                  |
+// |        Yosys & Blif / Hurricane  Interface                      |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
-// |                                                                 |
+// | =============================================================== |
+// |  C++ Module  :   "./blif/BlifParser.cpp"                        |
 // +-----------------------------------------------------------------+
 
 
@@ -16,6 +18,7 @@
 #include <string.h>
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -39,111 +42,464 @@ using namespace CRL;
 
 
 namespace {
+
   using namespace std;
 
-  void  addSupplyNets ( Cell* cell )
-  {
-    Net* vss = Net::create ( cell, "vss" );
-    vss->setExternal ( true );
-    vss->setGlobal   ( true );
-    vss->setType     ( Net::Type::GROUND );
 
-    Net* vdd = Net::create ( cell, "vdd" );
-    vdd->setExternal ( true );
-    vdd->setGlobal   ( true );
-    vdd->setType     ( Net::Type::POWER );
+  inline bool  isAbcAutomaticName ( string name )
+  { return (name.substr(0,5) == "$abc$"); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Tokenize".
+
+
+  class Tokenize {
+    public:
+      enum State { Init       = 0x00000001
+                 , Unknown    = 0x00000002
+                 , Model      = 0x00000004
+                 , End        = 0x00000008
+                 , Subckt     = 0x00000010
+                 , Latch      = 0x00000020
+                 , Inputs     = 0x00000040
+                 , Outputs    = 0x00000080
+                 , Clock      = 0x00000100
+                 , Names      = 0x00000200
+                 , CoverZero  = 0x00001000
+                 , CoverOne   = 0x00002000
+                 , CoverLogic = 0x00004000
+                 , CoverAlias = 0x00008000
+                 };
+      typedef  vector< pair<string,string> >  CoverTable;
+    public:
+                                   Tokenize   ( string blifFile );
+      inline size_t                lineno     () const;
+      inline unsigned int          state      () const;
+             const vector<string>& blifLine   () const;
+             const CoverTable&     coverTable () const;
+             bool                  readEntry  ();
+    private:                                  
+             bool                  _readline  ();
+    private:
+      size_t          _lineno;
+      unsigned int    _state;
+      ifstream        _stream;
+      vector<string>  _tokens;
+      vector<string>  _blifLine;
+      CoverTable      _coverTable;
+  };
+
+
+  Tokenize::Tokenize ( string blifFile )
+    : _lineno    (0)
+    , _state     (Init)
+    , _stream    ()
+    , _tokens    ()
+    , _blifLine  ()
+    , _coverTable()
+  { 
+    _stream.open( blifFile+".blif" );
+    if (_stream.fail())
+      throw Error( "Unable to open BLIF file %s.blif\n", blifFile.c_str() );
+
+    _readline();
   }
 
-  void  connectSupplyNets ( Instance * instance, Cell* design )
-  {
-    Cell* instcell = instance->getCell();
-    if(instcell == NULL){
-        throw Error("Instance's cell is null\n");
-    }
-    Net* vssint = instcell->getNet( "vss" );
-    Net* vddint = instcell->getNet( "vdd" );
-    Net* vssext = design->getNet( "vss" );
-    Net* vddext = design->getNet( "vdd" );
-    auto vssplug = instance->getPlug( vssint );
-    auto vddplug = instance->getPlug( vddint );
-    vssplug->setNet( vssext );
-    vddplug->setNet( vddext );
-  }
 
-  void  SetNetType ( Net* net, AllianceFramework * framework )
+  inline size_t                      Tokenize::lineno    () const { return (_lineno) ? _lineno-1 : 0; }
+  inline unsigned int                Tokenize::state     () const { return _state; }
+  inline const vector<string>&       Tokenize::blifLine  () const { return _blifLine; }
+  inline const Tokenize::CoverTable& Tokenize::coverTable() const { return _coverTable; }
+
+
+  bool  Tokenize::readEntry ()
   {
-    if ( framework->isPOWER(net->getName()) ) {
-      net->setType   ( Net::Type::POWER  );
-      net->setGlobal ( true );
-    } else if ( framework->isGROUND(net->getName()) ) {
-      net->setType   ( Net::Type::GROUND );
-      net->setGlobal ( true );
-    } else if ( framework->isCLOCK(net->getName()) ) {
-      net->setType   ( Net::Type::CLOCK );
+    _blifLine  .clear();
+    _coverTable.clear();
+    _blifLine = _tokens;
+    _state    = 0;
+
+    if (_stream.eof()) return false;
+
+    if (_tokens.front() == ".model"  ) { _state = Model;   }
+    if (_tokens.front() == ".end"    ) { _state = End;     }
+    if (_tokens.front() == ".inputs" ) { _state = Inputs;  }
+    if (_tokens.front() == ".outputs") { _state = Outputs; }
+    if (_tokens.front() == ".clock"  ) { _state = Clock;   }
+    if (_tokens.front() == ".subckt" ) { _state = Subckt;  }
+    if (_tokens.front() == ".latch"  ) { _state = Latch;   }
+    if (_tokens.front() == ".names"  ) {
+      _state = Names;
+
+      while ( _readline() and (_tokens.front()[0] != '.')) {
+        switch ( _tokens.size() ) {
+          case 0: break;
+          case 1: _coverTable.push_back( make_pair(_tokens[0],string()) ); break;
+          default: 
+          case 2: _coverTable.push_back( make_pair(_tokens[0],_tokens[1]) ); break;
+        }
+      }
+
+      if      (_coverTable.empty()) _state |= CoverZero;
+      else if (_coverTable.size () == 1) {
+        if      ( (_coverTable[0].first == "1") and (_coverTable[0].second.empty()) ) _state |= CoverOne;
+        else if ( (_coverTable[0].first == "1") and (_coverTable[0].second == "1")  ) _state |= CoverAlias;
+      } else {
+        _state |= CoverLogic;
+      }
     } else
-      net->setType ( Net::Type::LOGICAL );
+      _readline();
+
+    return true;
   }
 
-  enum ParserState{
-    EXT     = 0x00,
-    MODEL   = 0x01,
-    SUBCKT  = 0x02,
-    NAMES   = 0x04,
-    INPUTS  = 0x08,
-    OUTPUTS = 0x16
-  };
 
-  struct subckt{
-    string cell;
-    vector<pair<string, string> > pins;
-  };
+  bool  Tokenize::_readline ()
+  {
+    _tokens.clear();
 
-  struct model{
-    string name;
-    unordered_map<string, Net::Direction> pins;
-    vector<subckt> subcircuits;
-    vector<pair<string, string> > aliases;
-    bool operator<(model const & o) const{ return name < o.name; }
-  };
+    bool nextLine = true;
 
-  std::vector<std::string> tokenize(std::string const & s){
-    std::vector<std::string> ret;
-    auto b_it = s.begin();
-    while(b_it != s.end()){
-      // Remove whitespace
-      while(b_it != s.end() && (*b_it == ' ' or *b_it == '\t'))
-        ++b_it;
-      // Find the end of the token
-      auto e_it = b_it;
-      while(e_it != s.end() && *e_it != ' ' && *e_it != '\t' and *e_it != '#')
-        ++e_it;
-      // Create the token
-      if(e_it != b_it)
-        ret.push_back(std::string(b_it, e_it));
-      // Handle comments
-      if(e_it != s.end() && *e_it == '#')
-        e_it = s.end();
-      b_it = e_it;
+    while ( nextLine ) {
+      if (_stream.eof()) return false;
+
+      nextLine = false;
+      ++_lineno;
+
+      string line;
+      getline( _stream, line );
+
+      bool   comment  = false;
+      size_t tokstart = 0;
+      for ( size_t i=0 ; i<line.size() ; ++i ) {
+        size_t nextTokstart = i+1;
+  
+        switch ( line[i] ) {
+          case '\\':
+            if (i == line.size()-1) nextLine = true;
+          default:   continue;
+          case ' ':
+          case '\t': break;
+          case '#':  comment  = true; break;
+        }
+  
+        if (i > tokstart)
+          _tokens.push_back( line.substr(tokstart,i-tokstart) );
+  
+        tokstart = nextTokstart;
+
+        if (comment) break;
+      }
+
+      if ( (not comment) and (tokstart < line.size()) )
+        _tokens.push_back( line.substr(tokstart) );
+
+      if (_tokens.empty())
+        nextLine = true;
     }
-    std::reverse(ret.begin(), ret.end());
-    return ret;
+
+    return not _tokens.empty();
   }
 
-}  // End of anonymous namespace.
+
+// -------------------------------------------------------------------
+// Class  :  "::Subckt" (declaration).
+
+
+  class Model;
+
+
+  class Subckt {
+    public:
+      typedef  vector< pair<string,string> >  Connections;
+    public:
+                                Subckt          ( string modelName, string instanceName );
+      inline string             getModelName    () const;
+      inline string             getInstanceName () const;
+      inline const Connections& getConnections  () const;
+      inline size_t             getDepth        () const;
+      inline Model*             getModel        () const;
+      inline void               setModel        ( Model* );
+      inline void               addConnection   ( const pair<string,string>& );
+             void               connectSubckts  ();
+    private:
+      string       _modelName;
+      string       _instanceName;
+      Connections  _connections;
+      Model*       _model;
+  };
+
+  typedef  vector<Subckt*>  Subckts;
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Model" (declaration).
+
+
+  class Model {
+    public:
+      typedef unordered_map<string,Model*>  Lut; 
+      static  Lut                           _blifLut; 
+      static  vector<Model*>                _blifOrder; 
+    public:
+      static  Model*        find           ( string modelName );
+      static  void          orderModels    ();
+      static  void          connectModels  ();
+      static  void          toVhdlModels   ();
+      static  void          clearStatic    ();
+      static  const Lut&    getLut         ();
+    public:                                
+                            Model          ( Cell* );
+      inline               ~Model          ();
+      inline Cell*          getCell        () const;
+      inline size_t         getDepth       () const;
+      inline const Subckts& getSubckts     () const;
+             Subckt*        addSubckt      ( string modelName );
+             size_t         computeDepth   ();
+             void           connectSubckts ();
+             Net*           mergeNet       ( string name, bool isExternal, unsigned int );
+             Net*           mergeAlias     ( string name1, string name2 );
+    private:
+      Cell*    _cell;
+      Subckts  _subckts;
+      size_t   _depth;
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Subckt" (implementation).
+
+
+  Subckt::Subckt ( string modelName, string instanceName )
+    : _modelName   (modelName)
+    , _instanceName(instanceName)
+    , _connections ()
+    , _model       (NULL)
+  {
+    Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views, 0 );
+    if (cell) {
+      _model = Model::find( getString(cell->getName()) );
+      if (not _model) {
+        _model = new Model ( cell );
+      }
+    }
+  }
+
+  inline Model*     Subckt::getModel        () const { return _model; }
+  inline string     Subckt::getModelName    () const { return _modelName; }
+  inline string     Subckt::getInstanceName () const { return _instanceName; }
+  inline const Subckt::Connections&
+                    Subckt::getConnections  () const { return _connections; }
+  inline size_t     Subckt::getDepth        () const { return (_model) ? _model->getDepth() : 0; }
+  inline void       Subckt::setModel        ( Model* model ) { _model = model; }
+  inline void       Subckt::addConnection   ( const pair<string,string>& connection ) { _connections.push_back(connection); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "::Model" (implementation).
+
+
+  Model::Lut      Model::_blifLut;
+  vector<Model*>  Model::_blifOrder;
+
+
+  struct CompareByDepth {
+      inline bool  operator() ( const Model* lhs, const Model* rhs )
+      {
+        if (lhs->getDepth() != rhs->getDepth()) return lhs->getDepth() < rhs->getDepth();
+        return lhs->getCell()->getId() < rhs->getCell()->getId();
+      }
+  };
+
+
+  Model* Model::find ( string modelName )
+  {
+    Lut::iterator ibcell = _blifLut.find( modelName );
+    if (ibcell == _blifLut.end()) return NULL;
+
+    return ibcell->second;
+  }
+
+
+  void  Model::orderModels ()
+  {
+    for ( auto element : _blifLut ) {
+      element.second->computeDepth();
+      _blifOrder.push_back( element.second );
+    }
+    sort( _blifOrder.begin(), _blifOrder.end(), CompareByDepth() );
+  }
+
+
+  void  Model::connectModels ()
+  {
+    for ( Model* blifModel : _blifOrder )
+      blifModel->connectSubckts();
+  }
+
+
+  void  Model::toVhdlModels ()
+  {
+    for ( Model* model : _blifOrder )
+      CRL::NamingScheme::toVhdl( model->getCell()
+                               , CRL::NamingScheme::Recursive|CRL::NamingScheme::FromVerilog );
+  }
+
+
+  void  Model::clearStatic ()
+  {
+    for ( auto ibcell : _blifLut ) delete ibcell.second;
+    _blifLut.clear();
+    _blifOrder.clear();
+  }
+
+
+  Model::Model ( Cell* cell )
+    : _cell   (cell)
+    , _subckts()
+    , _depth  (0)
+  {
+
+    _blifLut.insert( make_pair(getString(_cell->getName()), this) );
+    if (_cell->isTerminal())
+      _depth = 1;
+    else {
+      cmess2 << "     " << tab++ << "+ " << cell->getName() << " [.model]" << endl;
+
+      Net* vss = Net::create ( _cell, "vss" );
+      vss->setExternal( true );
+      vss->setGlobal  ( true );
+      vss->setType    ( Net::Type::GROUND );
+  
+      Net* vdd = Net::create ( _cell, "vdd" );
+      vdd->setExternal( true );
+      vdd->setGlobal  ( true );
+      vdd->setType    ( Net::Type::POWER );
+    }
+  }
+
+
+  inline Model::~Model ()
+  { for ( auto subckt : _subckts ) delete subckt; }
+
+
+  inline const Model::Lut& Model::getLut     () { return _blifLut; }
+  inline Cell*             Model::getCell    () const { return _cell; }
+  inline size_t            Model::getDepth   () const { return _depth; }
+  inline const Subckts&    Model::getSubckts () const { return _subckts; }
+
+
+  Net* Model::mergeNet ( string name, bool isExternal, unsigned int direction )
+  {
+    Net* net = _cell->getNet( name );
+    if (not net) {
+      net = Net::create( _cell, name );
+      net->setExternal ( isExternal );
+      net->setDirection( (Net::Direction::Code)direction );
+    } else {
+      net->addAlias( name );
+      if (isExternal) net->setExternal( true );
+      direction |= net->getDirection();
+      net->setDirection( (Net::Direction::Code)direction );
+    }
+    return net;
+  }
+
+
+  Net* Model::mergeAlias ( string name1, string name2 )
+  {
+    Net* net1 = _cell->getNet( name1 );
+    Net* net2 = _cell->getNet( name2 );
+
+    if (net1 and (net1 == net2)) return net1;
+    if (net1 and net2) { net1->merge( net2 ); return net1; }
+    if (net2) {
+      swap( net1 , net2  );
+      swap( name1, name2 );
+    }
+
+    if (not net1) {
+      net1 = Net::create( _cell, name1 );
+      net1->setExternal ( false );
+    }
+
+    net1->addAlias( name2 );
+    return net1;
+  }
+
+
+  Subckt* Model::addSubckt ( string modelName )
+  {
+    string instanceName = "subckt_" + getString(_subckts.size()) + "_" + modelName;
+    _subckts.push_back( new Subckt( modelName, instanceName ) );
+
+    return _subckts.back();
+  }
+
+
+  size_t  Model::computeDepth ()
+  {
+    if (_depth) return _depth;
+
+    for ( auto subckt : _subckts ) {
+      Model* subcktModel = subckt->getModel();
+      if (not subcktModel) {
+        subcktModel = Model::find( subckt->getModelName() );
+        subckt->setModel( subcktModel );
+      }
+
+      size_t subcktDepth = subckt->getDepth();
+      if (not subcktDepth and subckt->getModel())
+        subcktDepth = subckt->getModel()->computeDepth();
+
+      _depth = std::max( _depth, subcktDepth );
+    }
+
+    return _depth;
+  }
+
+
+  void  Model::connectSubckts ()
+  {
+    for ( Subckt* subckt : _subckts ) {
+      Instance* instance = Instance::create( _cell
+                                           , subckt->getInstanceName()
+                                           , subckt->getModel()->getCell()
+                                           );
+
+      for ( auto connection : subckt->getConnections() ) {
+        string masterNetName = connection.first;
+        string netName       = connection.second;
+        Net*   net           = _cell->getNet( netName );
+        Plug*  plug          = instance->getPlug( instance->getMasterCell()->getNet(masterNetName) );
+        Net*   plugNet       = plug->getNet();
+
+        if (not plugNet) {
+          if (not net) net = Net::create( _cell, netName );
+          plug->setNet( net );
+          continue;
+        }
+
+        if (not net) { plugNet->addAlias( netName ); continue; }
+        if (plugNet == net) continue;
+
+        plugNet->merge( net );
+      }
+    }
+  }
+
+
+}  // Anonymous namespace.
 
 
 namespace CRL {
 
-// 
-// Can only parse simple, netlist BLIF files generated by Yosys
-// Ignores all ".names" and uses only the .subckt, .model, .input and .output 
-//
 
   Cell* Blif::load ( string cellPath )
   {
     using namespace std;
 
-    Cell*  mainModel = NULL;
     string mainName;
     string blifFile  = cellPath;
     size_t dot       = cellPath.find_first_of('.');
@@ -152,280 +508,136 @@ namespace CRL {
       mainName = cellPath.substr( dot+1 );
     }
   
-    auto framework = AllianceFramework::get ();
+    auto framework = AllianceFramework::get();
   
-    std::ifstream ccell ( blifFile+".blif" );
-    if(ccell.fail()){
-      throw Error( "Unable to open BLIF file %s.blif\n", blifFile.c_str() );
-    }
     cmess2 << "     " << tab++ << "+ " << blifFile << " [blif]" << endl;
-  
-    std::vector<model> models;
-    ParserState state = EXT;
-    bool hasName = true;
-  
-    string line;
-    vector<string> current_names;
-    while(getline(ccell, line)){
-      istringstream linestream(line);
-      vector<string> tokens = tokenize(line);
-      if(not tokens.empty()){
-        string const token = tokens.back();
-        tokens.pop_back();
-        assert(not token.empty());
-        if(token[0] == '.'){
-          // Process finished .names statement
-          if(not current_names.empty()){
-            if( current_names.size() != 4
-              or current_names[2] != "1" or current_names[3] != "1"
-              ){
-              ostringstream mess;
-              mess << "\'.names\' statement is not an alias and will be ignored.\n"
-                   << "          Map to standard cells for functions and tie cells for constants.\n"
-                   << "            ";
-              for ( size_t iname=0 ; iname<current_names.size() ; ++iname ) {
-                if (iname) mess << ", ";
-                mess << "\'" << current_names[iname] << "\'";
-              }
-              cerr << Warning(mess.str()) << endl;
-            }
-            else{
-              // Name statement is an alias: the second signal will map to the first
-              models.back().aliases.push_back(pair<string, string>(current_names[0], current_names[1]));
-            }
-            current_names.clear();
-          }
-          if(token == ".model"){
-            if(state != EXT)
-              throw Error("Nested model are not supported\n");
-            state = MODEL;
-            hasName = false;
-            models.push_back(model());
-          }
-          else if(token == ".subckt"){
-            if(state == EXT)
-              throw Error("Subcircuit without an enclosing model are not supported\n");
-            if(state == MODEL and not hasName)
-              throw Error("Model has no name\n");
-            state = SUBCKT;
-            hasName = false;
-            models.back().subcircuits.push_back(subckt());
-          }
-          else if(token == ".names"){
-            if(state == EXT)
-              throw Error("Names without an enclosing model are not supported\n");
-            if(state == MODEL and not hasName)
-              throw Error("Model has no name\n");
-            state = NAMES;
-          }
-          else if(token == ".latch"){
-            throw Error("Latch constructs are not understood by the parser\n");
-          }
-          else if(token == ".inputs"){
-            if(state == EXT)
-              throw Error("Inputs have been found without an enclosing model\n");
-            state = INPUTS;
-          }
-          else if(token == ".outputs"){
-            if(state == EXT)
-              throw Error("Outputs have been found without an enclosing model\n");
-            state = OUTPUTS;
-          }
-          else if(token == ".end"){
-            if(state == EXT)
-              throw Error("A .end has been found out of a model\n");
-            state = EXT;
-          }
-          else{
-            ostringstream mess;
-            mess << "Unknown control token <" << token << ">\n";
-            throw Error(mess.str());
-          }
-  
+
+    Cell*                 mainModel = NULL;
+    Model*                blifModel = NULL;
+    Tokenize              tokenize  ( blifFile );
+    const vector<string>& blifLine  = tokenize.blifLine();
+
+    while ( tokenize.readEntry() ) {
+      if (tokenize.state() == Tokenize::Model) {
+        if (blifModel) {
+          cerr << Error( "Blif::load() Previous \".model\" %s not closed (missing \".end\"?).\n"
+                         "                    File %s.blif at line %u."
+                       , getString(blifModel->getCell()->getName()).c_str()
+                       , blifFile.c_str()
+                       , tokenize.lineno()
+                       ) << endl;
+          blifModel = NULL;
+          --tab;
         }
-        else if(state == NAMES){
-          // Part of a cover for a logic function
-          current_names.push_back(token);
-        }
-        else{
-          ostringstream mess;
-          mess << "Encountered a non-control token at the beginning of a line: <" << token << ">\n";
-          throw Error(mess.str());
-        }
+
+        Cell* cell = framework->createCell( blifLine[1] );
+        cell->setTerminal( false );
+        blifModel = new Model ( cell );
+
+        if (not mainModel or (blifLine[1] == mainName))
+          mainModel = blifModel->getCell();
+      } 
+
+      if (tokenize.state() == Tokenize::End) {
+        if (blifModel) { blifModel = NULL; --tab; continue; }
       }
-      // Process all tokens after the control
-      while(not tokens.empty()){
-        string const token = tokens.back();
-        tokens.pop_back();
-        assert(not token.empty());
-        // Either a pin or an input/output definition
-        if(state == INPUTS or state == OUTPUTS){
-          auto it = models.back().pins.find(token);
-          Net::Direction D = (state == INPUTS)? Net::Direction::DirIn : Net::Direction::DirOut;
-          if(it != models.back().pins.end()){
-            it->second = static_cast<Net::Direction::Code>(D | it->second);
-          }
-          else{
-            models.back().pins.insert(pair<string, Net::Direction>(token, D));
-          }
-        }
-        else if(state == SUBCKT){
-          if(hasName){
-            // Encountered a pin: need to be processed
-            auto equal_pos = token.find_first_of('=');
-            if(equal_pos+1 < token.size()){
-              string before_space = token.substr(0, equal_pos);
-              string after_space  = token.substr(equal_pos+1, string::npos);
-              models.back().subcircuits.back().pins.push_back(pair<string, string>(before_space, after_space));
-            }
-            else{
-              ostringstream mess;
-              mess << "Unable to parse the subckt pin specification <"
-                   << token << ">\n";
-              Error(mess.str());
-            }
-          }
-          else{
-            models.back().subcircuits.back().cell = token;
-            hasName = true;
-          }
-        }
-        else if(state == NAMES){
-            current_names.push_back(token);
-        }
-        else if(state == MODEL){
-          if(hasName)
-            throw Error("Unexpected token after model name\n");
-          else{
-            models.back().name = token;
-            cmess2 << "     " << tab << "+ " << token << " [interface+signals]" << endl;
-            hasName = true;
-          }
-        }
-        else{
-          throw Error("Unexpected token\n");
-        }
+
+      if (tokenize.state() == Tokenize::Clock) {
+        cerr << Error( "Blif::load() \".clock\" command is not supported.\n"
+                       "                    File %s.blif at line %u."
+                     , blifFile.c_str()
+                     , tokenize.lineno()
+                     ) << endl;
+        continue;
       }
-      line.clear();
-    }
-    if(state != EXT){
-      cerr << Warning("End of model has not been found\n");
-    }
-  
-    /*
-    for(auto & M : models){
-      cout << "Model: " << M.name << endl;
-      for(auto & S : M.subcircuits){
-        cout << "\tInstance of " << S.cell;
-        for(auto & P : S.pins){
-            cout << " " << P.first << ":" << P.second;
-        }
-        cout << endl;
+
+      if (tokenize.state() == Tokenize::Latch) {
+        cerr << Error( "Blif::load() \".latch\" command is not supported.\n"
+                       "                    File %s.blif at line %u."
+                     , blifFile.c_str()
+                     , tokenize.lineno()
+                     ) << endl;
+        continue;
       }
-    }
-    */
-  
-    // Two passes: first create the cells and their nets, then create the internals
-    std::vector<Cell*> model_cells;
-    for(auto M : models){
-      Cell * design = framework->createCell(M.name);
-      if(design == NULL){
-        throw Error("Model " + M.name + " is NULL\n");
+
+      if (not blifModel) {
+        cerr << Error( "Blif::load() Unexpected command \"%s\" outside of .model definition.\n"
+                       "                    File %s.blif at line %u."
+                     , blifLine[0].c_str()
+                     , blifFile.c_str()
+                     , tokenize.lineno()
+                     ) << endl;
+        continue;
       }
-      if (M.name == mainName) mainModel = design;
-  
-      model_cells.push_back(design);
-      addSupplyNets(design);
-  
-      unordered_set<string> net_names;
-      for(auto const & S : M.subcircuits){
-        for(auto const & P : S.pins){
-          net_names.insert(P.second);
-        }
-        for(auto const & A : M.aliases){
-          net_names.insert(A.first);
-          net_names.insert(A.second);
-        }
+
+      if (tokenize.state() == Tokenize::Inputs) {
+        for ( size_t i=1 ; i<blifLine.size() ; ++i )
+          blifModel->mergeNet( blifLine[i], true, Net::Direction::IN );
       }
-  
-      for(auto const & P : M.pins){
-        net_names.insert(P.first);
+
+      if (tokenize.state() == Tokenize::Outputs) {
+        for ( size_t i=1 ; i<blifLine.size() ; ++i )
+          blifModel->mergeNet( blifLine[i], true, Net::Direction::OUT );
       }
-  
-      for(string const & N : net_names){
-        Net* new_net = Net::create( design, N );
-        auto it = M.pins.find(N);
-        if(it != M.pins.end()){
-          new_net->setExternal( true );
-          new_net->setDirection( it->second );
-        }
-      }
-    }
-  
-    // Second pass: every cell and its nets have already been created
-    for(size_t i=0; i<models.size(); ++i){
-      cmess2 << "     " << tab++ << "+ " << models[i].name << " [instances]" << endl;
-      auto const & M = models[i];
-      Cell * design = model_cells[i];
-      for(size_t j=0; j<M.subcircuits.size(); ++j){
-        auto & S = M.subcircuits[j];
-        ostringstream subckt_name;
-        subckt_name << "subckt_" << j;
-        Cell * cell = framework->getCell(S.cell, Catalog::State::Views, 0);
-        if(cell == NULL){
-          throw Error("Cell <" + S.cell + "> to instanciate hasn't been found\n");
-        }
-        //cmess2 << "Creating instance <" << subckt_name.str() << "> of <" << S.cell << "> in <" << models[i].name << ">" << endl;
-        Instance* instance = Instance::create( design, subckt_name.str(), cell);
-  
-        for(auto & P : S.pins){
-          Net* internalNet = cell->getNet( P.first );
-          Net* externalNet = design->getNet( P.second );
-          assert(internalNet != NULL and externalNet != NULL and instance != NULL);
-          instance->getPlug( internalNet )->setNet( externalNet );
-        }
-        //connectSupplyNets(instance, design);
-      }
-      // Merge the aliased nets
-      for(auto alias : M.aliases){
-        //cmess2 << "Merging nets <" << alias.first << "> and <" << alias.second << ">" << endl;
-        Net * first_net  = design->getNet( alias.first );
-        Net * second_net = design->getNet( alias.second );
-        if(first_net == NULL or second_net == NULL){
-          ostringstream mess;
-          mess << "Trying to create an alias for non-instantiated nets:";
-          if(first_net == NULL)
-            mess << " <" << alias.first << ">";
-          if(second_net == NULL)
-            mess << " <" << alias.second << ">";
-          mess << ", will be ignored\n";
-          cerr << Warning(mess.str());
+
+      if (tokenize.state() & Tokenize::Names) {
+        if (tokenize.state() & Tokenize::CoverAlias) {
+          blifModel->mergeAlias( blifLine[1], blifLine[2] );
+        } else if (tokenize.state() & Tokenize::CoverZero) {
+        } else if (tokenize.state() & Tokenize::CoverOne ) {
+        } else {
+          cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
+                         "                    File %s.blif at line %u."
+                       , blifFile.c_str()
+                       , tokenize.lineno()
+                       ) << endl;
           continue;
         }
-        if(!first_net->isExternal())
-            swap(first_net, second_net); // If only one net is external, it needs to be the first
-        first_net->merge(second_net);
       }
-      --tab;
+
+      if (tokenize.state() == Tokenize::Subckt) {
+        Subckt* subckt = blifModel->addSubckt( blifLine[1] );
+        for ( size_t i=2 ; i<blifLine.size() ; ++i ) {
+          size_t equal = blifLine[i].find('=');
+          if (equal == string::npos) {
+            cerr << Error( "Blif::load() Bad affectation in \".subckt\": %s.\n"
+                          "                    File %s.blif at line %u."
+                         , blifLine[i].c_str()
+                         , blifFile.c_str()
+                         , tokenize.lineno()
+                         ) << endl;
+            continue;
+          }
+          subckt->addConnection( make_pair(blifLine[i].substr(0,equal)
+                                          ,blifLine[i].substr(  equal+1)) );
+        }
+      }
     }
+
+    if (blifModel) {
+      cerr << Error( "Blif::load() Last \".model\" %s was not closed (missing \".end\"?).\n"
+                     "                    File %s.blif at line %u."
+                   , getString(blifModel->getCell()->getName()).c_str()
+                   , blifFile.c_str()
+                   , tokenize.lineno()
+                   ) << endl;
+      tab--;
+    }
+    tab--;
+
+    Model::orderModels();
+    Model::connectModels();
+    Model::toVhdlModels();
+    Model::clearStatic();
+
     --tab;
 
-    for ( auto model : model_cells )
-      CRL::NamingScheme::toVhdl( model, CRL::NamingScheme::Recursive|CRL::NamingScheme::FromVerilog );
-
-    if(model_cells.empty()){
-      throw Error("No model found in the file\n");
-    }
-    else if(mainModel) {
-      return mainModel;
-    }
-    else if (model_cells.size() > 1){
-      cerr << Warning( "Blif::load(): Several models found, returned the first one %s.\n"
-                     , getString(model_cells[0]->getName()).c_str()
+    if (not mainModel)
+      cerr << Warning( "Blif::load(): File %s.blif doesn't contains any \".model\".\n"
+                     , blifFile.c_str()
                      );
-    }
 
-    return model_cells[0];
+    return mainModel;
   }
 
 

@@ -54,6 +54,7 @@ namespace Kite {
   using std::cout;
   using std::cerr;
   using std::endl;
+  using std::dec;
   using std::setw;
   using std::left;
   using std::ostream;
@@ -604,6 +605,15 @@ namespace Kite {
     float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
     float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
 
+    _toolSuccess = (unrouteds.empty());
+
+    if (not unrouteds.empty()) {
+      cerr << "  o  Routing did not complete, unrouted segments:" << endl;
+      for ( size_t i=0; i<unrouteds.size() ; ++i ) {
+        cerr << "   " << dec << setw(4) << (i+1) << "| " << unrouteds[i] << endl;
+      }
+    }
+
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";
     cmess1 << Dots::asString( "     - Track Segment Completion Ratio", result.str() ) << endl;
@@ -621,15 +631,6 @@ namespace Kite {
       result.str("");
       result << setprecision(3) << expandRatio << "% [min:" << setprecision(9) << _minimumWL << "]";
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
-    }
-
-    _toolSuccess = (unrouteds.empty());
-
-    if (not unrouteds.empty()) {
-      cerr << "  o  Routing did not complete, unrouted segments:" << endl;
-      for ( size_t i=0; i<unrouteds.size() ; ++i ) {
-        cerr << "   " << setw(4) << (i+1) << "| " << unrouteds[i] << endl;
-      }
     }
 
     addMeasure<size_t>            ( getCell(), "Segs"   , routeds+unrouteds.size() );

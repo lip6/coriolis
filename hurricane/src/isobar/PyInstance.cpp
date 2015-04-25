@@ -38,25 +38,18 @@ extern "C" {
 #define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
 #define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Instance,instance,function)
 
-#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
+#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)              \
   constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
   PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
   Py_DECREF ( constant );
 
 
-// x=================================================================x
+// +=================================================================+
 // |              "PyInstance" Python Module Code Part               |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
-
-
-  // x-------------------------------------------------------------x
-  // |               "PyInstance" Local Functions                  |
-  // x-------------------------------------------------------------x
       
-  // ---------------------------------------------------------------
-  // Local Function  :  "PyInt_AsType ()"
 
   static Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object )
   {
@@ -68,13 +61,6 @@ extern "C" {
       
     return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
   }
-  
-
-
-
-  // x-------------------------------------------------------------x
-  // |              "PyInstance" Attribute Methods                 |
-  // x-------------------------------------------------------------x
 
 
   // Standart Accessors (Attributes).
@@ -82,15 +68,11 @@ extern "C" {
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyInstance_destroy,PyInstance)
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getName ()"
-
   GetNameMethod(Instance, instance)
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_create ()"
 
-  PyObject* PyInstance_create ( PyObject*, PyObject *args ) {
+  static PyObject* PyInstance_create ( PyObject*, PyObject *args )
+  {
     trace << "PyInstance_create ()" << endl;
     
     Instance* instance = NULL;
@@ -132,10 +114,9 @@ extern "C" {
     return PyInstance_Link ( instance );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getMasterCell ()"
 
-  static PyObject* PyInstance_getMasterCell ( PyInstance *self ) {
+  static PyObject* PyInstance_getMasterCell ( PyInstance *self )
+  {
     trace << "PyInstance_getMasterCell ()" << endl;
     
     Cell* cell = NULL;
@@ -148,10 +129,9 @@ extern "C" {
     return PyCell_Link ( cell );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getPlacementStatus ()"
 
-  static PyObject* PyInstance_getPlacementStatus ( PyInstance *self ) {
+  static PyObject* PyInstance_getPlacementStatus ( PyInstance *self )
+  {
     trace << "PyInstance_getPlacementStatus ()" << endl;
     
     METHOD_HEAD ( "Instance.getPlacementStatus()" );
@@ -164,10 +144,9 @@ extern "C" {
     return pyObject;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_SetPlacementStatus ()"
 
-  static PyObject* PyInstance_setPlacementStatus ( PyInstance *self, PyObject* args ) {
+  static PyObject* PyInstance_setPlacementStatus ( PyInstance *self, PyObject* args )
+  {
     trace << "PyInstance_setPlacementStatus()" << endl;
     METHOD_HEAD ( "Instance.setPlacementStatus()" )
       
@@ -181,10 +160,9 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getTransformation ()"
 
-  static PyObject* PyInstance_getTransformation ( PyInstance *self ) {
+  static PyObject* PyInstance_getTransformation ( PyInstance *self )
+  {
     trace << "PyInstance_getTransformation ()" << endl;
     METHOD_HEAD ( "Instance.getTransformation()" );
 
@@ -198,10 +176,9 @@ extern "C" {
     return ( (PyObject*)resultPyTransf );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getPlug ()"
 
-  static PyObject* PyInstance_getPlug ( PyInstance *self, PyObject* args ) {
+  static PyObject* PyInstance_getPlug ( PyInstance *self, PyObject* args )
+  {
     trace << "PyInstance_getPlug ()" << endl;
 
     Plug* plug = NULL;
@@ -218,10 +195,9 @@ extern "C" {
     return PyPlug_Link ( plug );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getPlugs()"
 
-  static PyObject* PyInstance_getPlugs(PyInstance *self ) {
+  static PyObject* PyInstance_getPlugs(PyInstance *self )
+  {
     trace << "PyInstance_getPlugs()" << endl;
 
     METHOD_HEAD ( "Instance.getPlugs()" )
@@ -243,12 +219,8 @@ extern "C" {
   }
 
 
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getConnectedPlugs()"
-
-  static PyObject* PyInstance_getConnectedPlugs(PyInstance *self) {
+  static PyObject* PyInstance_getConnectedPlugs(PyInstance *self)
+  {
     trace << "PyInstance_getConnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getConnectedPlugs()")
@@ -269,10 +241,9 @@ extern "C" {
     return (PyObject*)pyPlugCollection;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getUnconnectedPlugsLocator ()"
 
-  static PyObject* PyInstance_getUnconnectedPlugs(PyInstance *self) {
+  static PyObject* PyInstance_getUnconnectedPlugs(PyInstance *self)
+  {
     trace << "PyInstance_getUnconnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getUnconnectedPlugs()")
@@ -293,10 +264,9 @@ extern "C" {
     return (PyObject*)pyPlugCollection;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_getAbutmentBox ()"
 
-  static PyObject* PyInstance_getAbutmentBox ( PyInstance *self ) {
+  static PyObject* PyInstance_getAbutmentBox ( PyInstance *self )
+  {
     trace << "PyInstance_getAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.getAbutmentBox()" )
 
@@ -309,20 +279,46 @@ extern "C" {
 
     return ( (PyObject*)pyBox );
   }
+  
+
+  static PyObject* PyInstance_uniquify ( PyInstance *self )
+  {
+    trace << "PyInstance_uniquify ()" << endl;
+
+    HTRY
+      METHOD_HEAD ( "Instance.uniquify()" )
+      instance->uniquify();
+    HCATCH
+    Py_RETURN_NONE;
+  }
 
 
 
+  static PyObject* PyInstance_getClone ( PyInstance *self, PyObject* args )
+  {
+    trace << "PyInstance_getClone ()" << endl;
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_setName ()"
+    Instance* cloneInstance = NULL;
+    HTRY
+      METHOD_HEAD( "Instance.getClone()" )
+      PyCell* pyCloneCell;
+      if (PyArg_ParseTuple(args, "O!:Instance.getClone", &PyTypeCell, &pyCloneCell)) {
+        cloneInstance = instance->getClone( PYCELL_O(pyCloneCell) );
+      } else {
+        PyErr_SetString (ConstructorError, "Instance.getClone(): invalid number/bad type of parameter(s).");
+        return NULL;
+      }
+    HCATCH
+
+    return PyInstance_Link( cloneInstance );
+  }
+
 
   SetNameMethod(Instance, instance)
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_SetTransformation ()"
-
-  static PyObject* PyInstance_setTransformation ( PyInstance *self, PyObject* args ) {
+  static PyObject* PyInstance_setTransformation ( PyInstance *self, PyObject* args )
+  {
     trace << "PyInstance_setTransformation()" << endl;
     METHOD_HEAD ( "Instance.setTransformation()" )
 
@@ -337,12 +333,8 @@ extern "C" {
   }
 
 
-  
-  
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyInstance_SetMasterCell ()"
-
-  static PyObject* PyInstance_setMasterCell ( PyInstance *self, PyObject* args ) {
+  static PyObject* PyInstance_setMasterCell ( PyInstance *self, PyObject* args )
+  {
     trace << "Instance.setMasterCell()" << endl;
     METHOD_HEAD ( "Instance.setMasterCell()" )
 
@@ -356,12 +348,12 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyInstance_isTerminal ,isTerminal ,PyInstance,Instance)
   DirectGetBoolAttribute(PyInstance_isLeaf     ,isLeaf     ,PyInstance,Instance)
 
   GetBoundStateAttribute(PyInstance_isPyBound              ,PyInstance,Instance)
-  
 
   
   // ---------------------------------------------------------------
@@ -386,17 +378,13 @@ extern "C" {
     , { "setTransformation"         , (PyCFunction)PyInstance_setTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }
     , { "setPlacementStatus"        , (PyCFunction)PyInstance_setPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
     , { "setMasterCell"             , (PyCFunction)PyInstance_setMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
+    , { "uniquify"                  , (PyCFunction)PyInstance_uniquify                  , METH_NOARGS , "Uniquify the Instance (clone it's master Cell)." }
+    , { "getClone"                  , (PyCFunction)PyInstance_getClone                  , METH_VARARGS, "Create a clone of this Instance into the cloned Cell (placement only)." }
     , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
 
-
-
-  // x-------------------------------------------------------------x
-  // |                "PyInstance" Object Methods                  |
-  // x-------------------------------------------------------------x
-  
   DBoDeleteMethod(Instance)
   PyTypeObjectLinkPyType(Instance)
 
@@ -404,18 +392,14 @@ extern "C" {
 #else  // End of Python Module Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |             "PyInstance" Shared Library Code Part               |
-// x=================================================================x
-
+// +=================================================================+
 
 
   // Link/Creation Method.
   DBoLinkCreateMethod(Instance)
 
-
-  // ---------------------------------------------------------------
-  // PyInstance Object Definitions.
 
   PyTypeInheritedObjectDefinitions(Instance, Entity)
 
@@ -430,10 +414,6 @@ extern "C" {
 
 #endif  // End of Shared Library Code Part.
 
-
 }  // End of extern "C".
-
-
-
 
 }  // End of Isobar namespace.

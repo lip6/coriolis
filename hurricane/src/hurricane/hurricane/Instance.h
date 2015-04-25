@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Instance.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,8 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_INSTANCE
-#define HURRICANE_INSTANCE
+#ifndef HURRICANE_INSTANCE_H
+#define HURRICANE_INSTANCE_H
 
 #include "hurricane/Go.h"
 #include "hurricane/Plug.h"
@@ -161,6 +161,8 @@ class Instance : public Go {
     public: void setTransformation(const Transformation& transformation);
     public: void setPlacementStatus(const PlacementStatus& placementstatus);
     public: void setMasterCell(Cell* masterCell, bool secureFlag = true);
+    public: void uniquify();
+    public: Instance* getClone(Cell* cloneCell) const;
 
 // Others
 // ******

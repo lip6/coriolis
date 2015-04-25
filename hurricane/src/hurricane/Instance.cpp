@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Instance.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/Warning.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/SharedPath.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Cell.h"
@@ -392,6 +394,7 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 // ************************************************************
 {
     if (masterCell != _masterCell) {
+        UpdateSession::open();
 
         if (!masterCell)
             throw Error("Can't set master : null master cell");
@@ -442,7 +445,49 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
             if (!getPlug(externalNet)) Plug::_create(this, externalNet);
             end_for;
         }
+
+        UpdateSession::close();
     }
+}
+
+void Instance::uniquify()
+// **********************
+{
+  if (_masterCell->getSlaveInstances().getSize() == 1) {
+    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is already unique."
+                   , getString(_masterCell->getName()).c_str()
+                   , getString(getName()).c_str()
+                   ) << endl;
+  }
+  setMasterCell( _masterCell->getClone() );
+}
+
+Instance* Instance::getClone(Cell* cloneCell) const
+// ************************************************
+{
+  Instance* clone = Instance::create( cloneCell
+                                    , getName()
+                                    , getMasterCell()
+                                    , getPlacementStatus()
+                                    );
+
+  forEach( Plug*, iplug, getPlugs() ) {
+    if (iplug->isConnected()) {
+      Plug* clonePlug = clone->getPlug( iplug->getMasterNet() );
+      Net*  cloneNet  = cloneCell->getNet( iplug->getNet()->getName() );
+      if (cloneNet) {
+        clonePlug->setNet( cloneNet );
+      } else {
+        cerr << Warning( "Instance::getClone(): While cloning instance %s, missing net %s in cloned cell %s."
+                       , getString(getName()).c_str()
+                       , getString(iplug->getNet()->getName()).c_str()
+                       , getString(cloneCell->getName()).c_str()
+                       ) << endl;
+      }
+    }
+  }
+
+  return clone;
 }
 
 void Instance::_postCreate()

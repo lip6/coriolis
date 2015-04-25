@@ -32,19 +32,38 @@ namespace CRL {
   {
     string  vhdlName;
 
-    size_t parCount = 0;
+
+  // VHDL reserved keywords (scalar).
+    if (vlogName == Name("in"   )) return "in_v";
+    if (vlogName == Name("out"  )) return "out_v";
+    if (vlogName == Name("inout")) return "inout_v";
+
+    size_t parCount    = 0;
+    size_t posLeftPar  = 0;
+    size_t posRightPar = 0;
     for ( size_t i=0 ; i<vlogName.size() ; ++i ) {
-      if (vlogName[i] == '(') ++parCount;
-      if (vlogName[i] == '[') ++parCount;
+      if (vlogName[i] == '(') { ++parCount; posLeftPar=i; }
+      if (vlogName[i] == '[') { ++parCount; posLeftPar=i; }
+      if (vlogName[i] == ')') { posRightPar=i; }
+      if (vlogName[i] == ']') { posRightPar=i; }
     }
     char leftPar  = (parCount > 1) ? '_' : '(';
     char rightPar = (parCount > 1) ? '_' : ')';
 
+    if (parCount == 1) {
+      for ( size_t i=posLeftPar+1 ; i<posRightPar ; ++i ) {
+        if (not isdigit(vlogName[i])) {
+          leftPar = rightPar = '_';
+          break;
+        }
+      }
+    }
+
     for ( size_t i=0 ; i<vlogName.size() ; ++i ) {
       char translated = tolower( vlogName[i] );
 
-      if ( (i == 0) and (isdigit(translated)) )
-        vhdlName += 'N';
+      if ( vhdlName.empty() and (isdigit(translated)) )
+        vhdlName += 'n';
 
       if (translated == '\\') translated = '_';
       if (translated == '$' ) translated = '_';
@@ -54,13 +73,18 @@ namespace CRL {
       if (translated == ']' ) translated = rightPar;
 
       if (translated == '_') {
-        if (i == 0                ) continue;
+        if (vhdlName.empty()      ) continue;
         if (i == vlogName.size()-1) break;
         if (vhdlName.back() == '_') continue;
       }
 
       vhdlName += translated;
     }
+
+  // VHDL reserved keywords (vector).
+    if (vhdlName.substr(0,3) == "in("   ) vhdlName.insert(2,"_v");
+    if (vhdlName.substr(0,4) == "out("  ) vhdlName.insert(3,"_v");
+    if (vhdlName.substr(0,6) == "inout(") vhdlName.insert(5,"_v");
 
     return Name(vhdlName);
   }
@@ -91,7 +115,9 @@ namespace CRL {
     for ( auto inst : instances ) inst->setName( converter( inst->getName() ) );
 
     if (flags & Recursive)
-      for ( auto model : models ) toVhdl( model, flags );
+      for ( auto model : models ) {
+        if (not model->isTerminal()) toVhdl( model, flags );
+      }
   }
 
 

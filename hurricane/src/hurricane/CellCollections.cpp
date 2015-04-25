@@ -1980,6 +1980,12 @@ Cells Cell::getSubCells() const
     return Cell_SubCells(this);
 }
 
+Cells Cell::getClonedCells() const
+// *******************************
+{
+    return ClonedSet(this);
+}
+
 Components Cell::getComponents(const Layer::Mask& mask) const
 // **********************************************************
 {

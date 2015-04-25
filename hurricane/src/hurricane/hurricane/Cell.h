@@ -17,10 +17,12 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_CELL
-#define HURRICANE_CELL
+#ifndef HURRICANE_CELL_H
+#define HURRICANE_CELL_H
 
+#include <limits>
 #include "hurricane/Observer.h"
+#include "hurricane/Relation.h"
 #include "hurricane/Pathes.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Cells.h"
@@ -81,6 +83,50 @@ class Cell : public Entity {
                       };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
+
+    class UniquifyRelation : public Relation {
+      public:
+        static  UniquifyRelation*  create           ( Cell* );
+        static  UniquifyRelation*  get              ( const Cell* );
+        virtual Name               getName          () const;
+        static  Name               staticGetName    ();
+                Name               getUniqueName    ();
+        virtual string             _getTypeName     () const;
+        virtual Record*            _getRecord       () const;
+      private:
+        static const Name          _name;
+                     unsigned int  _duplicates;
+      private:
+                                   UniquifyRelation ( Cell* );
+      protected:
+        virtual void               _preDestroy      ();
+    };
+
+    class ClonedSet : public Collection<Cell*> {
+      public:
+      // Sub-Class: Locator.
+        class Locator : public Hurricane::Locator<Cell*> {
+          public:
+                                               Locator    ( const Cell* );
+            inline                             Locator    ( const Locator& );
+            virtual Cell*                      getElement () const;
+            virtual Hurricane::Locator<Cell*>* getClone   () const;
+            virtual bool                       isValid    () const;
+            virtual void                       progress   ();
+            virtual string                     _getString () const;
+          protected:
+            Hurricane::Locator<DBo*>* _dboLocator;
+        };
+  
+      public:
+        inline                                ClonedSet  ( const Cell* cell );
+        inline                                ClonedSet  ( const ClonedSet& );
+        virtual Hurricane::Collection<Cell*>* getClone   () const;
+        virtual Hurricane::Locator<Cell*>*    getLocator () const;
+        virtual string                        _getString () const;
+      protected:
+        const Cell* _cell;
+    };
 
     class InstanceMap : public IntrusiveMap<Name, Instance> {
     // ****************************************************
@@ -289,8 +335,8 @@ class Cell : public Entity {
     public: References getReferences() const;
     public: Components getComponents(const Layer::Mask& mask = ~0) const;
     public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
-    public: Occurrences getOccurrences(unsigned searchDepth = (unsigned)-1) const;
-    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = (unsigned)-1) const;
+    public: Occurrences getOccurrences(unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
+    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
     public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
     public: Occurrences getLeafInstanceOccurrences() const;
@@ -305,6 +351,8 @@ class Cell : public Entity {
     public: Gos getExtensionGosUnder ( const Box& area, const Name& name ) const;
     public: Gos getExtensionGosUnder ( const Box& area, ExtensionSlice::Mask mask = ~0 ) const;
     public: Cells getSubCells() const;
+    public: Cells getClonedCells() const;
+    public: Cell* getCloneMaster() const;
     public: Pathes getRecursiveSlavePathes() const;
     public: const Box& getAbutmentBox() const {return _abutmentBox;};
 
@@ -334,11 +382,29 @@ class Cell : public Entity {
     public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
     public: void materialize();
     public: void unmaterialize();
+    public: Cell* getClone();
+    public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
     public: void notify(unsigned flags);
 
 };
+
+
+inline  Cell::ClonedSet::Locator::Locator ( const Locator& other )
+  : Hurricane::Locator<Cell*>()
+  , _dboLocator(other._dboLocator)
+{ }
+
+inline  Cell::ClonedSet::ClonedSet ( const Cell* cell )
+  : Hurricane::Collection<Cell*>()
+  , _cell(cell)
+{ }
+
+inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
+  : Hurricane::Collection<Cell*>()
+  , _cell(other._cell)
+{ }
 
 
 } // End of Hurricane namespace.
@@ -353,7 +419,7 @@ INSPECTOR_P_SUPPORT(Hurricane::Cell::SliceMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
 
 
-#endif // HURRICANE_CELL
+#endif // HURRICANE_CELL_H
 
 
 // ****************************************************************************************************
