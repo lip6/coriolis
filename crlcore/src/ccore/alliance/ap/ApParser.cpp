@@ -518,8 +518,8 @@ namespace {
                              , WIDTH
                              );
       }
-      if (not net )       _printError( false, "Unknown net name %s."  , fields[5] );
-      if (not layerInfo ) _printError( false, "Unknown layer name %s.", fields[6] );
+      if (not net )       _printError( false, "Unknown net name <%s>."  , fields[5] );
+      if (not layerInfo ) _printError( false, "Unknown layer name <%s>.", fields[6] );
     }
   }
 
@@ -542,7 +542,7 @@ namespace {
       if ( layerInfo )
         Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA );
       else
-        _printError ( false, "Unknown layer name %s.", fields[2] );
+        _printError ( false, "Unknown layer name <%s>.", fields[2] );
     }
   }
 
@@ -572,7 +572,7 @@ namespace {
 
         Contact::create ( net, layerInfo->getLayer(), XVIA, YVIA, WIDTH-shrink, HEIGHT-shrink );
       } else
-        _printError ( false, "Unknown layer name %s.", fields[4] );
+        _printError ( false, "Unknown layer name <%s>.", fields[4] );
     }
   }
 
@@ -627,7 +627,7 @@ namespace {
         }
       }
       else
-        _printError ( false, "Unknown layer name %s.", fields[7] );
+        _printError ( false, "Unknown layer name <%s>.", fields[7] );
     }
   }
 

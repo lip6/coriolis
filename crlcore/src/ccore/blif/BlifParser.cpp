@@ -61,11 +61,13 @@ namespace {
                  , Model      = 0x00000004
                  , End        = 0x00000008
                  , Subckt     = 0x00000010
-                 , Latch      = 0x00000020
-                 , Inputs     = 0x00000040
-                 , Outputs    = 0x00000080
-                 , Clock      = 0x00000100
-                 , Names      = 0x00000200
+                 , Gate       = 0x00000020
+                 , MLatch     = 0x00000040
+                 , Latch      = 0x00000080
+                 , Inputs     = 0x00000100
+                 , Outputs    = 0x00000200
+                 , Clock      = 0x00000400
+                 , Names      = 0x00000800
                  , CoverZero  = 0x00001000
                  , CoverOne   = 0x00002000
                  , CoverLogic = 0x00004000
@@ -128,7 +130,9 @@ namespace {
     if (_tokens.front() == ".outputs") { _state = Outputs; }
     if (_tokens.front() == ".clock"  ) { _state = Clock;   }
     if (_tokens.front() == ".subckt" ) { _state = Subckt;  }
+    if (_tokens.front() == ".gate"   ) { _state = Gate;    }
     if (_tokens.front() == ".latch"  ) { _state = Latch;   }
+    if (_tokens.front() == ".mlatch" ) { _state = MLatch;  }
     if (_tokens.front() == ".names"  ) {
       _state = Names;
 
@@ -560,6 +564,15 @@ namespace CRL {
         continue;
       }
 
+      if (tokenize.state() == Tokenize::MLatch) {
+        cerr << Error( "Blif::load() \".mlatch\" command is not supported.\n"
+                       "                    File %s.blif at line %u."
+                     , blifFile.c_str()
+                     , tokenize.lineno()
+                     ) << endl;
+        continue;
+      }
+
       if (not blifModel) {
         cerr << Error( "Blif::load() Unexpected command \"%s\" outside of .model definition.\n"
                        "                    File %s.blif at line %u."
@@ -595,7 +608,7 @@ namespace CRL {
         }
       }
 
-      if (tokenize.state() == Tokenize::Subckt) {
+      if (tokenize.state() == Tokenize::Subckt or tokenize.state() == Tokenize::Gate) {
         Subckt* subckt = blifModel->addSubckt( blifLine[1] );
         for ( size_t i=2 ; i<blifLine.size() ; ++i ) {
           size_t equal = blifLine[i].find('=');
