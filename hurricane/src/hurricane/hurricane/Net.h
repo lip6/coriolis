@@ -81,9 +81,9 @@ class Net : public Entity {
     public: class Direction {
     // ********************
 
-        public: enum Code { DirUndefined = 0x0000
-                          , DirIn        = 0x0001
+        public: enum Code { DirIn        = 0x0001
                           , DirOut       = 0x0002
+                          , DirUndefined = 0x0000
                           , ConnTristate = 0x0100
                           , ConnWiredOr  = 0x0200
                           , UNDEFINED    = DirUndefined
@@ -94,6 +94,7 @@ class Net : public Entity {
                           , TRANSCV      = DirIn | DirOut | ConnTristate
                           , WOR_OUT      =         DirOut | ConnWiredOr
                           , WOR_INOUT    = DirIn | DirOut | ConnWiredOr
+                          , DirMask      = DirIn | DirOut | DirUndefined
                           };
 
         private: Code _code;
@@ -101,7 +102,8 @@ class Net : public Entity {
         public: Direction(const Code& code = UNDEFINED);
         public: Direction(const Direction& direction);
 
-        public: Direction& operator=(const Direction& direction);
+        public: Direction& operator =(const Direction& direction);
+        public: Direction& operator|=(const Direction& direction);
 
         public: operator const Code&() const {return _code;};
 

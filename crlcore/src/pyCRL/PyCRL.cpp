@@ -31,6 +31,7 @@
 #include "crlcore/PyAcmSigda.h"
 #include "crlcore/PyIspd05.h"
 #include "crlcore/PyBlif.h"
+#include "crlcore/VhdlEntity.h"
 
 
 namespace CRL {
@@ -39,25 +40,45 @@ namespace CRL {
   using std::endl;
   using Hurricane::tab;
   using Hurricane::in_trace;
+  using Hurricane::Error;
+  using Hurricane::Warning;
+  using Isobar::ProxyProperty;
+  using Isobar::ProxyError;
+  using Isobar::ConstructorError;
+  using Isobar::HurricaneError;
+  using Isobar::HurricaneWarning;
   using Isobar::__cs;
+  using Vhdl::EntityExtension;
 
 
 #if !defined(__PYTHON_MODULE__)
 
-// x=================================================================x
+// +=================================================================+
 // |                "PyCRL" Shared Library Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
 
 # else // End of PyHurricane Shared Library Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |                 "PyCRL" Python Module Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
 
 extern "C" {
+
+
+  static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
+  {
+    trace << "PyVhdl_destroyAllVHDL()" << endl;
+
+    HTRY
+      EntityExtension::destroyAll();
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
 
 
   // x-------------------------------------------------------------x
@@ -68,6 +89,8 @@ extern "C" {
   static PyMethodDef PyCRL_Methods[] =
     { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing, METH_VARARGS
                               , "Partial build of a ring" }
+    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL, METH_NOARGS
+                              , "Clear all VHDL informations on all cells." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 

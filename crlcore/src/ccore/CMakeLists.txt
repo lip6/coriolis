@@ -68,6 +68,10 @@
                                                crlcore/Ispd04Bookshelf.h
                                                crlcore/Ispd05Bookshelf.h
                                                crlcore/Ioc.h
+                                               crlcore/VhdlBit.h
+                                               crlcore/VhdlSignal.h
+                                               crlcore/VhdlEntity.h
+                                               crlcore/VhdlPortMap.h
                                                crlcore/NetExtension.h
                                                crlcore/Measures.h
                                                crlcore/RoutingGauge.h
@@ -130,7 +134,12 @@
                                                toolbox/RoutingPads.cpp
                                                toolbox/NamingScheme.cpp
                            )
-                       set ( vst_driver_cpps   alliance/vst/VstDriver.cpp )
+                       set ( vst_driver_cpps   alliance/vst/VhdlBit.cpp
+                                               alliance/vst/VhdlSignal.cpp
+                                               alliance/vst/VhdlPortMap.cpp
+                                               alliance/vst/VhdlEntity.cpp
+                                               alliance/vst/VstDriver.cpp
+                           )
                        set ( properties_cpps   properties/NetExtension.cpp
                                                properties/Measures.cpp
                            )

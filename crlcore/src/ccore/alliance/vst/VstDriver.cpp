@@ -1,52 +1,39 @@
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// -*- C++ -*-
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2004-2015, All Rights Reserved
 //
-// License-Tag
-//
-// Date   : 01/10/2004
-// Author : Christophe Alexandre  <Christophe.Alexandre@lip6.fr>
-//
-// Authors-Tag
+// +-----------------------------------------------------------------+ 
+// |                   C O R I O L I S                               |
+// |        Yosys & Blif / Hurricane  Interface                      |
+// |                                                                 |
+// |  Author      :                Christophe Alexandre              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :   "./alliance/vst/VstDriver.cpp"                 |
+// +-----------------------------------------------------------------+
 
-#include  "hurricane/Cell.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/Plug.h"
 
+#include <cstddef>
+#include "hurricane/Warning.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Net.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Plug.h"
 using namespace Hurricane;
 
-#include  "crlcore/Catalog.h"
-#include  "crlcore/NetExtension.h"
-#include  "Vst.h"
+#include "crlcore/Catalog.h"
+#include "crlcore/NetExtension.h"
+#include "crlcore/ToolBox.h"
+#include "crlcore/VhdlBit.h"
+#include "crlcore/VhdlSignal.h"
+#include "crlcore/VhdlEntity.h"
+#include "Vst.h"
+
 
 namespace {
 
-
+  using namespace std;
   using namespace CRL;
 
 
@@ -153,13 +140,16 @@ unsigned FindIndex(const string& stringtosearch, string::size_type openpar)
 
 string getNetDirection(const Net* net)
 {
-  switch ( net->getDirection() & Net::Direction::INOUT ) {
+  switch ( net->getDirection() & (Net::Direction::INOUT | Net::Direction::UNDEFINED) ) {
     case Net::Direction::UNDEFINED: return "linkage";
     case Net::Direction::IN:        return "in";
     case Net::Direction::OUT:       return "out";
     case Net::Direction::INOUT:     return "inout";
     default:
-      throw Error( "Unrecognized direction" );
+      throw Error( "Unrecognized direction for Net <%s> of Cell <%s> (code:%u)"
+                 , getString(net->getCell()->getName()).c_str()
+                 , getString(net->getName()).c_str()
+                 , (unsigned int)net->getDirection() );
   }
 }
 
@@ -606,15 +596,13 @@ void DumpConnectionList(ofstream &ccell, Instance*instance)
             string connectedNetName;
             if (plug1->isConnected())
             {
+                cerr << plug1 << "plug is connected" << endl;
                 Net* net = plug1->getNet();
-                if (net->isExternal())
-                {
-                    const Name& portName = NetExtension::getPort(net);
-                    if (!portName.isEmpty())
-                        connectedNetName = getString(portName);
-                    else
-                        connectedNetName = getString(net->getName());
-                }
+                const Name& portName = NetExtension::getPort(net);
+                if (!portName.isEmpty())
+                  connectedNetName = getString(portName);
+                else
+                  connectedNetName = getString(net->getName());
             }
             else
                 if (plug1->getMasterNet()->isGlobal()) {
@@ -659,6 +647,16 @@ namespace CRL {
 
 void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
 {
+  NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
+  Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, Vhdl::Entity::EntityMode );
+  string celltest = cellPath;
+//celltest.insert( celltest.size()-4, "_test" );
+  ::std::ofstream  ccelltest ( celltest.c_str() );
+  vhdlEntity->toEntity(ccelltest);
+  ccelltest << endl;
+  ccelltest.close();
+
+#if 0
     __globalNets.clear ();
 
     ::std::ofstream  ccell ( cellPath.c_str() );
@@ -714,6 +712,7 @@ void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
     }
     ccell << "end structural;" << endl;
     ccell.close ();
+#endif
 }
 
 }

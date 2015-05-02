@@ -32,11 +32,13 @@ namespace CRL {
   {
     string  vhdlName;
 
-
   // VHDL reserved keywords (scalar).
     if (vlogName == Name("in"   )) return "in_v";
     if (vlogName == Name("out"  )) return "out_v";
     if (vlogName == Name("inout")) return "inout_v";
+    if (vlogName == Name("true" )) return "bool_true";
+    if (vlogName == Name("false")) return "bool_false";
+    if (vlogName == Name("undef")) return "bool_undef";
 
     size_t parCount    = 0;
     size_t posLeftPar  = 0;
@@ -66,6 +68,7 @@ namespace CRL {
         vhdlName += 'n';
 
       if (translated == '\\') translated = '_';
+      if (translated == '.' ) translated = '_';
       if (translated == '$' ) translated = '_';
       if (translated == '?' ) translated = '_';
       if (translated == ':' ) translated = '_';
@@ -85,6 +88,9 @@ namespace CRL {
     if (vhdlName.substr(0,3) == "in("   ) vhdlName.insert(2,"_v");
     if (vhdlName.substr(0,4) == "out("  ) vhdlName.insert(3,"_v");
     if (vhdlName.substr(0,6) == "inout(") vhdlName.insert(5,"_v");
+    if (vhdlName             == "true"  ) vhdlName.insert(0,"value_");
+    if (vhdlName             == "false" ) vhdlName.insert(0,"value_");
+    if (vhdlName             == "undef" ) vhdlName.insert(0,"value_");
 
     return Name(vhdlName);
   }

@@ -404,6 +404,7 @@ namespace {
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
+      direction &= ~Net::Direction::UNDEFINED;
       direction |= net->getDirection();
       net->setDirection( (Net::Direction::Code)direction );
     }

@@ -68,6 +68,7 @@ class Tabulation {
 // Others
 // ******
 
+    public: unsigned getWidth() const { return _s.size()*_n; };
     public: string _getTypeName() const { return _TName("Tabulation"); };
     public: string _getString() const;
     public: Record* _getRecord() const { return NULL; };

@@ -119,7 +119,7 @@ namespace Hurricane {
   Record* NetAliasHook::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add ( getSlot("_next", &_next) );
+    record->add ( getSlot("_next", _next) );
     return record;
   }
   
@@ -169,7 +169,7 @@ namespace Hurricane {
 
   NetAliasName::NetAliasName ( Name name )
     : NetAliasHook()
-    , _name    (name)
+    , _name       (name)
   { }
 
 

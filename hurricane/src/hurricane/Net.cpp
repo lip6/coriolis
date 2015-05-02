@@ -800,6 +800,13 @@ Net::Direction& Net::Direction::operator=(const Direction& direction)
     return *this;
 }
 
+Net::Direction& Net::Direction::operator|=(const Direction& direction)
+// ******************************************************************
+{
+  _code = (Code)((unsigned int)_code | (unsigned int)direction._code);
+  return *this;
+}
+
 string Net::Direction::_getString() const
 // **************************************
 {

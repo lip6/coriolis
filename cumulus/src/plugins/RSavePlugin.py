@@ -88,6 +88,7 @@ def ScriptMain ( **kw ):
       return 0
 
     rsave( cell )
+    CRL.destroyAllVHDL()
 
   except ErrorMessage, e:
     print e; errorCode = e.code
