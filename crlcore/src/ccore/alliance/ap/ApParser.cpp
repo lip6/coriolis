@@ -249,6 +249,7 @@ namespace {
       _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
       _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
       _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
+      _layerInformations.add ( "CONT_VIA1"  , "VIA12"      , false, false );
       _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
       _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
       _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );

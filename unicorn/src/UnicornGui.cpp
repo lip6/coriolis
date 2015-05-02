@@ -86,10 +86,10 @@ namespace Unicorn {
     _runUnicornInit();
 
     _importCell.setDialog( _importDialog );
+    _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
-    _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
   }
