@@ -84,7 +84,8 @@ def guessOs ():
       libDir = "lib64"
     elif osLinux_64.match(lines[0]):
       osType = "Linux.x86_64"
-      libDir = "lib64"
+      if(os.path.exists("/usr/lib64/")):
+        libDir = "lib64"
     elif osLinux.match(lines[0]):
       osType = "Linux.i386"
     elif osFreeBSD8x_64.match(lines[0]):
