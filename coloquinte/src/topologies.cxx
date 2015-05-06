@@ -343,8 +343,54 @@ std::vector<edge_t> get_big_horizontal_topology_from_sorted(std::vector<point<in
     // Sort the tree so that it is usable when building an RSMT    
     return get_tree_topo_sort(Htopo);
 }
-
 } // End anonymous namespace
+
+std::vector<edge_t> get_RSMT_horizontal_topology(std::vector<point<int_t> > const & pins, index_t exactitude_limit){
+    if(pins.size() <= 1)
+        return std::vector<edge_t>();
+    else if(pins.size() == 2)
+        return std::vector<edge_t>(1, edge_t(0, 1));
+    else if(pins.size() == 3){
+        std::vector<indexed_pt> ipoints(pins.size());
+        for(index_t i=0; i<pins.size(); ++i){
+            ipoints[i] = indexed_pt(pins[i], i);
+        }
+        auto xpoints=ipoints;
+        std::sort(xpoints.begin(), xpoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
+        
+        return std::vector<edge_t>{{xpoints[0].index, xpoints[1].index}, {xpoints[1].index, xpoints[2].index}};
+    }
+    else{
+        std::vector<edge_t> horizontal_topology;
+
+        // Sort the pins by x coordinate
+        std::vector<indexed_pt> ipoints(pins.size());
+        for(index_t i=0; i<pins.size(); ++i){
+            ipoints[i] = indexed_pt(pins[i], i);
+        }
+        std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
+        std::vector<point<int_t> > sorted_pins(pins.size());
+        for(index_t i=0; i<pins.size(); ++i){
+            sorted_pins[i] = ipoints[i];
+        }
+
+        // Get the topology for this ordering
+        if(pins.size() <= exactitude_limit){
+            horizontal_topology = get_small_horizontal_topology_from_sorted(sorted_pins);
+        }
+        else{
+            horizontal_topology = get_big_horizontal_topology_from_sorted(sorted_pins, exactitude_limit);
+        }
+
+        // Back to the original ordering
+        for(auto & E : horizontal_topology){
+            E.first = ipoints[E.first].index;
+            E.second = ipoints[E.second].index;
+        }
+
+        return horizontal_topology;
+    }
+}
 
 std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int_t> > const & pins){
 
@@ -478,34 +524,8 @@ point<std::vector<std::pair<index_t, index_t> > > get_RSMT_topology(std::vector<
         return point<std::vector<edge_t> >{{{xpoints[0].index, xpoints[1].index}, {xpoints[1].index, xpoints[2].index}}, {{ypoints[0].index, ypoints[1].index}, {ypoints[1].index, ypoints[2].index}}};
     }
     else{
-        std::vector<edge_t> horizontal_topology;
-
-        // Sort the pins by x coordinate
-        std::vector<indexed_pt> ipoints(pins.size());
-        for(index_t i=0; i<pins.size(); ++i){
-            ipoints[i] = indexed_pt(pins[i], i);
-        }
-        std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
-        std::vector<point<int_t> > sorted_pins(pins.size());
-        for(index_t i=0; i<pins.size(); ++i){
-            sorted_pins[i] = ipoints[i];
-        }
-
-        // Get the topology for this ordering
-        if(pins.size() <= exactitude_limit){
-            horizontal_topology = get_small_horizontal_topology_from_sorted(sorted_pins);
-        }
-        else{
-            horizontal_topology = get_big_horizontal_topology_from_sorted(sorted_pins, exactitude_limit);
-        }
-
-        // Back to the original ordering
-        for(auto & E : horizontal_topology){
-            E.first = ipoints[E.first].index;
-            E.second = ipoints[E.second].index;
-        }
-
-        return point<std::vector<edge_t> >(horizontal_topology, get_vertical_topology(sorted_pins, horizontal_topology));
+        std::vector<edge_t> horizontal_topology = get_RSMT_horizontal_topology(pins, exactitude_limit);
+        return point<std::vector<edge_t> >(horizontal_topology, get_vertical_topology(pins, horizontal_topology));
     }
 }
 
