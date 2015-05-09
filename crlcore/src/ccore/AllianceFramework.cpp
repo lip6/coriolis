@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -310,7 +309,10 @@ namespace CRL {
     }
 
   // At least one view must have been loaded.
-    if ( state->getFlags(Catalog::State::Views) != 0 ) return state->getCell();
+    if ( state->getFlags(Catalog::State::Views) != 0 ) {
+      state->setFlags( Catalog::State::InMemory, true );
+      return state->getCell();
+    }
 
   // Delete the empty cell.
     if ( state->getCell() ) state->getCell()->destroy ();

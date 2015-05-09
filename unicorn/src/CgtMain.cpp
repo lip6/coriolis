@@ -186,10 +186,10 @@ int main ( int argc, char *argv[] )
       Utilities::Path userConfFile ( arguments["conf"].as<string>() );
       if ( userConfFile.exists() ) {
         Cfg::Configuration* conf = Cfg::Configuration::get ();
-        conf->readFromFile ( userConfFile.string() );
+        conf->readFromFile ( userConfFile.toString() );
       } else {
         cerr << Warning("User defined configuration file:\n  <%s> not found."
-                       ,userConfFile.string().c_str()) << endl;
+                       ,userConfFile.toString().c_str()) << endl;
       }
     }
 
@@ -207,6 +207,13 @@ int main ( int argc, char *argv[] )
     dbo_ptr<DataBase>          db   ( DataBase::create() );
     dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );
     Cell*                      cell = NULL;
+
+    Utilities::Path path = Utilities::Path::cwd();
+    vector<Utilities::Path>  cwdEntries = path.listdir();
+    cerr << "Contents of cwd:" << path.toString() << endl;
+    for ( Utilities::Path entry : cwdEntries ) {
+      cerr << "- " << entry.toString() << endl; 
+    }
 
     if ( arguments.count("cell") ) {
       cell = af->getCell (arguments["cell"].as<string>().c_str(), Catalog::State::Views );

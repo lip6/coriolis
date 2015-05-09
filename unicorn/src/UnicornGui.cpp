@@ -24,6 +24,7 @@
 #include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"
+#include "crlcore/LibraryManager.h"
 #include "crlcore/GraphicToolEngine.h"
 #include "crlcore/AcmSigda.h"
 #include "crlcore/Ispd04Bookshelf.h"
@@ -49,6 +50,7 @@ namespace Unicorn {
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
+  using CRL::LibraryManager;
   using CRL::AcmSigda;
   using CRL::Ispd04;
   using CRL::Ispd05;
@@ -73,11 +75,12 @@ namespace Unicorn {
 
 
   UnicornGui::UnicornGui ( QWidget* parent )
-    : CellViewer      (parent)
-    , _tools          ()
-    , _importCell     ()
-    , _importDialog   (new ImportCellDialog(this))
-    , _exportDialog   (new ExportCellDialog(this))
+    : CellViewer     (parent)
+    , _tools         ()
+    , _importCell    ()
+    , _importDialog  (new ImportCellDialog(this))
+    , _exportDialog  (new ExportCellDialog(this))
+    , _libraryManager(new LibraryManager  ())
   {
     addMenu  ( "placeAndRoute"           , "P&&R"          , CellViewer::TopMenu );
     addMenu  ( "placeAndRoute.stepByStep", "&Step by Step" );
@@ -92,6 +95,8 @@ namespace Unicorn {
     _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
+
+    _libraryManager->setCellViewer( this );
   }
 
 
@@ -106,16 +111,16 @@ namespace Unicorn {
     Utilities::Path systemConfFile     = systemConfDir      / "unicornInit.py";
 
     if (systemConfFile.exists()) {
-      Isobar::Script::addPath( systemConfDir.string() );
+      Isobar::Script::addPath( systemConfDir.toString() );
 
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().string() );
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().toString() );
       script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
       script->runFunction  ( "unicornConfigure", getCell() );
 
-      Isobar::Script::removePath( systemConfDir.string() );
+      Isobar::Script::removePath( systemConfDir.toString() );
     } else {
       cerr << Warning("Unicorn system configuration file:\n  <%s> not found."
-                     ,systemConfFile.string().c_str()) << endl;
+                     ,systemConfFile.toString().c_str()) << endl;
     }
   }
 
@@ -128,6 +133,10 @@ namespace Unicorn {
 
     return unicorn;
   }
+
+
+  UnicornGui* UnicornGui::vcreate () const
+  { return UnicornGui::create(); }
 
 
   void  UnicornGui::destroy ()
@@ -162,6 +171,13 @@ namespace Unicorn {
     if ( exportAction ) {
       connect ( exportAction, SIGNAL(triggered()), this, SLOT(exportCell()) );
     }
+
+    QAction* action = addToMenu( "tools.libraryManager"
+                               , tr("Library Manager")
+                               , tr("Browse through Views, Cells & Libraries")
+                               , QKeySequence(tr("CTRL+M"))
+                               );
+    connect( action, SIGNAL(triggered()), _libraryManager, SLOT(toggleShow()) );
   }
 
 

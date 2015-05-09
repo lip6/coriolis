@@ -75,17 +75,17 @@ int main ( int argc, char* argv[] )
     if ( arguments.count("conf") ) {
       Utilities::Path confPath = ( arguments["conf"].as<string>() );
       if ( confPath.exists() ) {
-        cout << "Reading configuration: <" << confPath.string() << ">." << endl;
-        conf->readFromFile ( confPath.string() );
+        cout << "Reading configuration: <" << confPath.toString() << ">." << endl;
+        conf->readFromFile ( confPath.toString() );
       } else {
-        cout << "Configuration file: <" << confPath.string() << "> doesn't exists." << endl;
+        cout << "Configuration file: <" << confPath.toString() << "> doesn't exists." << endl;
       }
     }
 
     Utilities::Path dotConfPath ( "./.coriolis2.configuration.xml" );
     if ( dotConfPath.exists() ) {
-      cout << "Reading dot configuration: <" << dotConfPath.string() << ">." << endl;
-      conf->readFromFile ( dotConfPath.string() );
+      cout << "Reading dot configuration: <" << dotConfPath.toString() << ">." << endl;
+      conf->readFromFile ( dotConfPath.toString() );
     }
 
   //cout << "misc.catchCore:   " << conf->getParameter("misc.catchCore"  )->asBool() << endl;
@@ -93,14 +93,14 @@ int main ( int argc, char* argv[] )
 
     Utilities::Path pyDotConfPath ( "./.coriolis2.configuration.py" );
     if ( pyDotConfPath.exists() ) {
-      cout << "Reading python dot configuration: <" << pyDotConfPath.string() << ">." << endl;
+      cout << "Reading python dot configuration: <" << pyDotConfPath.toString() << ">." << endl;
       Py_Initialize ();
-      FILE* fd = fopen ( pyDotConfPath.string().c_str(), "r" );
+      FILE* fd = fopen ( pyDotConfPath.toString().c_str(), "r" );
       if ( fd ) {
-        PyRun_SimpleFile ( fd, pyDotConfPath.string().c_str() );
+        PyRun_SimpleFile ( fd, pyDotConfPath.toString().c_str() );
         fclose ( fd );
       } else {
-        cout << "Cannot open Python configuration file: <" << pyDotConfPath.string() << ">." << endl;
+        cout << "Cannot open Python configuration file: <" << pyDotConfPath.toString() << ">." << endl;
       }
       Py_Finalize ();
     }

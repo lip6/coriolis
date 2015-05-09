@@ -27,6 +27,7 @@
 #include "crlcore/Banner.h"
 namespace CRL {
   class GraphicTool;
+  class LibraryManager;
 }
 
 #include "unicorn/ImportCell.h"
@@ -40,6 +41,7 @@ namespace Unicorn {
   using Hurricane::Cell;
   using CRL::Banner;
   using CRL::GraphicTool;
+  using CRL::LibraryManager;
 
   class ImportCellDialog;
   class ExportCellDialog;
@@ -54,6 +56,7 @@ namespace Unicorn {
       virtual       Cell*       getCellFromDb      ( const char* name );
       inline        ImportCell* getImportCell      ();
                     void        registerTool       ( GraphicTool* );
+      virtual       UnicornGui* vcreate            () const;
       virtual       std::string _getString         () const;
     public slots:                                  
                     void        openCell           ();
@@ -72,6 +75,7 @@ namespace Unicorn {
               ImportCell         _importCell;
               ImportCellDialog*  _importDialog;
               ExportCellDialog*  _exportDialog;
+              LibraryManager*    _libraryManager;
   };
 
 

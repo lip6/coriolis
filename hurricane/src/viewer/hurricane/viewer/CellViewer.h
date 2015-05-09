@@ -127,6 +127,7 @@ namespace Hurricane {
               void                 unselectAll               ();
       inline  void                 setLayerVisible           ( const Name& layer, bool visible );
               void                 runScript                 ( QString scriptPath );
+      virtual CellViewer*          vcreate                   () const;
       virtual std::string          _getString                () const;
     public slots:                  
               void                 doAction                  ();

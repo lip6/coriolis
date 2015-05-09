@@ -1,30 +1,26 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./crlcore/AllianceLibrary.h"                   |
 // +-----------------------------------------------------------------+
 
 
+#ifndef  CRL_ALLIANCE_LIBRARY_H
+#define  CRL_ALLIANCE_LIBRARY_H
 
-
-# ifndef  __CRL_ALLIANCE_LIBRARY_H__
-#   define  __CRL_ALLIANCE_LIBRARY_H__
-
-# include  <string>
-# include  <vector>
-
-# include  "hurricane/Name.h"
-# include  "hurricane/Slot.h"
+#include <string>
+#include <vector>
+#include "hurricane/Name.h"
+#include "hurricane/Slot.h"
 
 namespace Hurricane {
   class Library;
@@ -32,7 +28,6 @@ namespace Hurricane {
 
 
 namespace CRL {
-
 
   using std::vector;
 
@@ -79,10 +74,9 @@ namespace CRL {
   inline std::string  AllianceLibrary::_getTypeName () const { return _TName("AllianceLibrary"); }
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
 
 INSPECTOR_P_SUPPORT(CRL::AllianceLibrary);
 
-
-#endif
+#endif  // CRL_ALLIANCE_LIBRARY_H

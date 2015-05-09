@@ -82,7 +82,7 @@ namespace Bookshelf {
   bool  Parser::_openStream ( const Utilities::Path& filePath )
   {
     if ( _stream.is_open() ) _closeStream();
-    _stream.open ( filePath.string().c_str() );
+    _stream.open ( filePath.toString().c_str() );
     _lineno = 0;
 
     return _stream.is_open();
@@ -237,7 +237,7 @@ namespace Bookshelf {
 
   void  Parser::_parseNodes ( const Utilities::Path& nodesPath )
   {
-    _circuit->setNodesName ( nodesPath.string());
+    _circuit->setNodesName ( nodesPath.toString());
 
     _state = NodesFormatRevision;
     _openStream ( nodesPath );
@@ -342,7 +342,7 @@ namespace Bookshelf {
 
   void  Parser::_parseNets ( const Utilities::Path& netsPath )
   {
-    _circuit->setNetsName ( netsPath.string());
+    _circuit->setNetsName ( netsPath.toString());
 
     _state = NetsFormatRevision;
     _openStream ( netsPath );
@@ -478,7 +478,7 @@ namespace Bookshelf {
 
   void  Parser::_parseScl ( const Utilities::Path& sclPath )
   {
-    _circuit->setSclName ( sclPath.string());
+    _circuit->setSclName ( sclPath.toString());
 
     _state = SclFormatRevision;
     _openStream ( sclPath );
@@ -583,7 +583,7 @@ namespace Bookshelf {
 
   void  Parser::_parsePl ( const Utilities::Path& plPath )
   {
-    _circuit->setPlName ( plPath.string());
+    _circuit->setPlName ( plPath.toString());
 
     _state = PlFormatRevision;
     _openStream ( plPath );
@@ -610,13 +610,13 @@ namespace Bookshelf {
 
     Utilities::Path auxPath ( designName+".aux" );
     if ( not auxPath.exists() ) {
-      throw Exception ( "%s .aux file not found.", auxPath.string().c_str() );
+      throw Exception ( "%s .aux file not found.", auxPath.toString().c_str() );
     }
 
     _circuit = new Circuit ();
     _circuit->setDesignName ( designName );
 
-    std::cout << "  o  Reading Bookshelf: <" << auxPath.string() << ">." << std::endl;
+    std::cout << "  o  Reading Bookshelf: <" << auxPath.toString() << ">." << std::endl;
 
     _openStream  ( auxPath );
     _readLine    ();
@@ -669,7 +669,7 @@ namespace Bookshelf {
 
         Utilities::Path slotPath ( ordereds[iext] );
         if ( slotPath.exists() ) {
-          std::cout << "     - Reading <" << slotPath.string() << ">" << std::endl;
+          std::cout << "     - Reading <" << slotPath.toString() << ">" << std::endl;
 
           switch ( iext ) {
             case 0: _parseNodes ( slotPath ); break;
@@ -679,7 +679,7 @@ namespace Bookshelf {
             case 4: _parsePl    ( slotPath ); break;
           }
         } else {
-          Exception e ( "Bookshelf::parser(): Slot file <%s> not found", slotPath.string().c_str() );
+          Exception e ( "Bookshelf::parser(): Slot file <%s> not found", slotPath.toString().c_str() );
           if ( iext < 2 ) throw e;
           else            std::cerr << e.what() << std::endl;
         }

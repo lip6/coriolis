@@ -1,46 +1,35 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
 // | =============================================================== |
-// |  C++ Header  :       "./NetlistModel.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/NetlistModel.h"        |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_NETLIST_MODEL__
-#define  __HURRICANE_NETLIST_MODEL__
+#ifndef  HURRICANE_NETLIST_MODEL_H
+#define  HURRICANE_NETLIST_MODEL_H
 
-#include  <vector>
-
-#include  <QFont>
-#include  <QApplication>
-#include  <QAbstractTableModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/NetInformations.h"
+#include <vector>
+#include <QFont>
+#include <QApplication>
+#include <QAbstractTableModel>
+#include "hurricane/Commons.h"
+#include "hurricane/Name.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/NetInformations.h"
 
 
 namespace Hurricane {
-
 
   class Net;
   class Cell;

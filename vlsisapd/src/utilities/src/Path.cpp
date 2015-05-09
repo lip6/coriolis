@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI Stand-Alone Software.
-// Copyright (c) UPMC 2013-2013, All Rights Reserved
+// Copyright (c) UPMC 2013-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -15,18 +15,18 @@
 
 
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <dirent.h>
 #include <unistd.h>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
-using namespace std;
-
 #include "vlsisapd/utilities/Path.h"
 
 
 namespace Utilities {
+
+  using namespace std;
 
 
   int  Path::_toUnistd ( unsigned int mode )
@@ -58,10 +58,10 @@ namespace Utilities {
   }
   
   
-  void  Path::_split ( const std::string& path, vector<std::string>& elements, unsigned int& flags )
+  void  Path::_split ( const string& path, vector<string>& elements, unsigned int& flags )
   {
     if (path.empty()) return;
-  
+
     size_t begin = 0;
     if (path[0] == '/') {
       flags |= Absolute;
@@ -81,19 +81,21 @@ namespace Utilities {
   void  Path::_normalize ()
   {
     if ( (size() == 1) and (_elements[0] == ".") ) return;
+
+    _flags |= Invalidated;
   
     if (not _elements.empty() and (_elements[0] == "~")) {
       char* home = getenv( "HOME" );
       if (home) {
-        vector<std::string> vhome;
-        unsigned int        vflags = 0;
+        vector<string> vhome;
+        unsigned int   vflags = 0;
         _split( home, vhome, vflags );
         _flags |= vflags;
         _elements.insert( _elements.begin(), vhome.begin(), vhome.end() );
       }
     }
   
-    vector<std::string>::iterator ie = _elements.begin();
+    vector<string>::iterator ie = _elements.begin();
     while ( ie != _elements.end() ) {
       if ( ((*ie) == ".") or (*ie).empty()) {
         _elements.erase(ie);
@@ -112,7 +114,7 @@ namespace Utilities {
       }
     }
   
-    if (not _elements.empty() and (_elements.back().find_last_of('.') != std::string::npos))
+    if (not _elements.empty() and (_elements.back().find_last_of('.') != string::npos))
       _flags |= Extension;
   
     // cout << "_normalize(" << path << ")" << endl;
@@ -123,14 +125,14 @@ namespace Utilities {
   }
   
   
-  void  Path::_normalize ( const std::string& path )
+  void  Path::_normalize ( const string& path )
   {
     _split( path, _elements, _flags );
     _normalize();
   }
   
   
-  std::string  Path::ext () const
+  string  Path::ext () const
   {
     if (not (_flags&Extension)) return "";
     return _elements.back().substr(_elements.back().find_last_of('.')+1); 
@@ -142,19 +144,41 @@ namespace Utilities {
     int status = ::mkdir( c_str(), _toMode_T(mode) );
     return (status == 0);
   }
-  
-  
-  const std::string& Path::string () const
+
+
+  vector<Path>  Path::listdir () const
   {
-    _pathcache.clear();
-  
-    for ( size_t i=0 ; i<size() ; ++i ) {
-      if ((i != 0) or (_flags & Absolute)) {
-        _pathcache += '/';
+    vector<Path> entries;
+
+    if (isdir()) {
+      DIR*           fdir   = NULL;
+      struct dirent* fentry = NULL;
+      fdir = opendir( toString().c_str() );
+      if (fdir) {
+        while ( (fentry = readdir(fdir)) != NULL ) {
+          string name = fentry->d_name;
+          if ( (name == ".") or (name == "..") ) continue;
+          
+          entries.push_back( join(name) );
+        }
       }
-      _pathcache += _elements[i];
     }
+    return entries;
+  }
   
+  
+  const string& Path::toString () const
+  {
+    if (_flags & Invalidated) {
+      _pathcache.clear();
+  
+      for ( size_t i=0 ; i<size() ; ++i ) {
+        if ((i != 0) or (_flags & Absolute)) {
+          _pathcache += '/';
+        }
+        _pathcache += _elements[i];
+      }
+    }
     return _pathcache;
   }
   
@@ -175,17 +199,17 @@ namespace Utilities {
 
   Path  Path::stem () const
   {
-    std::string  dotext = ext();
+    string  dotext = ext();
     if (not dotext.empty()) dotext.insert( 0, "." );
     return basename(dotext);
   }
   
   
-  Path  Path::basename ( const std::string& ext ) const
+  Path  Path::basename ( const string& ext ) const
   {
     if (empty()) return Path();
   
-    std::string basename = _elements.back();
+    string basename = _elements.back();
     if (not ext.empty() and (basename.substr(basename.size()-ext.size()) == ext))
       basename = basename.substr(0,basename.size()-ext.size());
     return Path(basename);
@@ -205,7 +229,7 @@ namespace Utilities {
     struct stat  statinfos;
     int          status = 0;
   
-    status = stat( string().c_str(), &statinfos );
+    status = ::stat( toString().c_str(), &statinfos );
     if (not status) return true;
   
     return false;
@@ -216,10 +240,29 @@ namespace Utilities {
   {
     int  status = 0;
   
-    status = ::access( string().c_str(), _toUnistd(mode) );
+    status = ::access( toString().c_str(), _toUnistd(mode) );
     if (not status) return true;
   
     return false;
+  }
+
+
+  unsigned int  Path::mode () const
+  {
+    struct stat  bstat;
+    int          status = 0;
+    status = ::stat( toString().c_str(), &bstat );
+  // Should check for errno here.
+
+    return bstat.st_mode;
+  }
+
+
+  Path::Stat  Path::stat () const
+  {
+    Stat stat;
+    if (exists()) ::stat( _pathcache.c_str(), stat.c_stat() );
+    return stat;
   }
   
   
@@ -227,7 +270,6 @@ namespace Utilities {
   {
     Path result ( *this );
     result._elements.insert( result._elements.end(), tail._elements.begin(), tail._elements.end() );
-  
     result._normalize();
     return result;
   }
@@ -243,7 +285,7 @@ namespace Utilities {
   
   Path& Path::operator= ( const Path& other )
   {
-    vector<std::string>().swap( _elements );
+    vector<string>().swap( _elements );
     _elements  = other._elements;
     _flags     = other._flags;
     _pathcache = other._pathcache;

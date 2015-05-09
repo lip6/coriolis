@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,8 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_CONTROLLER_WIDGET__
-#define  __HURRICANE_CONTROLLER_WIDGET__
+#ifndef  HURRICANE_CONTROLLER_WIDGET_H
+#define  HURRICANE_CONTROLLER_WIDGET_H
 
 
 #include  <QTabWidget>

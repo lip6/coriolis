@@ -171,6 +171,10 @@ namespace Hurricane {
   }
 
 
+  CellViewer* CellViewer::vcreate () const
+  { return new CellViewer(); }
+
+
   QString  CellViewer::_getAbsWidgetPath ( const QString& relPath ) const
   {
     if (relPath.startsWith("viewer.")) return relPath;
@@ -776,14 +780,14 @@ namespace Hurricane {
     if (not userDirectory.absolute())
       userDirectory = Utilities::Path::cwd() / userDirectory;
 
-    Isobar::Script::addPath( userDirectory.string() );
+    Isobar::Script::addPath( userDirectory.toString() );
 
-    dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().string());
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().toString());
     script->addKwArgument( "cell"      , (PyObject*)PyCell_Link(getCell()) );
     script->addKwArgument( "editor"    , (PyObject*)PyCellViewer_Link(this) );
     script->runFunction  ( "ScriptMain", getCell() );
 
-    Isobar::Script::removePath( userDirectory.string() );
+    Isobar::Script::removePath( userDirectory.toString() );
   }
 
 

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,30 +15,25 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_GRAPHICS__
-#define  __HURRICANE_GRAPHICS__
+#ifndef  HURRICANE_GRAPHICS_H
+#define  HURRICANE_GRAPHICS_H
 
 
-#include  <string>
-#include  <vector>
-
-#include  "hurricane/Breakpoint.h"
-#include  "hurricane/TextTranslator.h"
-#include  "hurricane/viewer/DisplayStyle.h"
-#include  "hurricane/viewer/ColorScale.h"
-#include  "hurricane/viewer/BreakpointWidget.h"
-
-#include  <QFont>
+#include <string>
+#include <vector>
+#include <QFont>
+#include "hurricane/Breakpoint.h"
+#include "hurricane/TextTranslator.h"
+#include "hurricane/viewer/DisplayStyle.h"
+#include "hurricane/viewer/ColorScale.h"
+#include "hurricane/viewer/BreakpointWidget.h"
 
 class QColor;
 class QPen;
 class QBrush;
 
 
-
-
 namespace Hurricane {
-
 
   class Name;
 

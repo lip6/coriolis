@@ -100,7 +100,7 @@ namespace {
     if ( not stratusMappingName.absolute() ) {
       stratusMappingName = System::getPath("etc") / stratusMappingName;
     }
-    setenv ( "STRATUS_MAPPING_NAME", stratusMappingName.string().c_str(), 1 );
+    setenv ( "STRATUS_MAPPING_NAME", stratusMappingName.toString().c_str(), 1 );
   }
 
 
@@ -306,18 +306,18 @@ namespace CRL {
   // Early setting of python pathes to be able to execute configuration scripts.
     Utilities::Path pythonSitePackages ( PYTHON_SITE_PACKAGES );
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
-    _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.string()) );
+    _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.toString()) );
     Utilities::Path crlcoreDir = pythonSitePackages / "crlcore";
     Utilities::Path stratusDir = pythonSitePackages / "stratus";
     Utilities::Path cumulusDir = pythonSitePackages / "cumulus";
     Utilities::Path pharosDir  = pythonSitePackages / "pharos";
 
-    Isobar::Script::addPath ( sysConfDir.string() );
-    Isobar::Script::addPath ( pythonSitePackages.string() );
-    Isobar::Script::addPath ( crlcoreDir.string() );
-    Isobar::Script::addPath ( stratusDir.string() );
-    Isobar::Script::addPath ( cumulusDir.string() );
-    Isobar::Script::addPath ( pharosDir.string() );
+    Isobar::Script::addPath ( sysConfDir.toString() );
+    Isobar::Script::addPath ( pythonSitePackages.toString() );
+    Isobar::Script::addPath ( crlcoreDir.toString() );
+    Isobar::Script::addPath ( stratusDir.toString() );
+    Isobar::Script::addPath ( cumulusDir.toString() );
+    Isobar::Script::addPath ( pharosDir.toString() );
 
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();
@@ -453,12 +453,12 @@ namespace CRL {
     //cout << "  o  Reading python dot configuration:" << endl;
     //cout << "     - <" << systemConfFile.string() << ">." << endl;
 
-      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem().string());
+      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem().toString());
       systemScript->runFunction("coriolisConfigure",NULL,Isobar::Script::NoScriptArgs);
       systemScript->destroy();
     } else {
       cerr << Warning("System configuration file:\n  <%s> not found."
-                     ,systemConfFile.string().c_str()) << endl;
+                     ,systemConfFile.toString().c_str()) << endl;
     }
 
     bool            homeConfFound = false;
@@ -466,14 +466,14 @@ namespace CRL {
     homeConfFile /= ".coriolis2.configuration.xml";
     if ( homeConfFile.exists() ) {
       homeConfFound = true;
-      conf->readFromFile ( homeConfFile.string() );
+      conf->readFromFile ( homeConfFile.toString() );
     }
 
     bool            dotConfFound = false;
     Utilities::Path dotConfFile  = "./.coriolis2.configuration.xml";
     if ( dotConfFile.exists() ) {
       dotConfFound = true;
-      conf->readFromFile ( dotConfFile.string() );
+      conf->readFromFile ( dotConfFile.toString() );
     }
 
   // Delayed printing, as we known only now whether VerboseLevel1 is requested.

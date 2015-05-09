@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,14 +15,13 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_INSPECTOR_WIDGET__
-#define  __HURRICANE_INSPECTOR_WIDGET__
+#ifndef  HURRICANE_INSPECTOR_WIDGET_H
+#define  HURRICANE_INSPECTOR_WIDGET_H
 
 
-#include  <QWidget>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Occurrence.h"
+#include <QWidget>
+#include "hurricane/Commons.h"
+#include "hurricane/Occurrence.h"
 
 
 class QSortFilterProxyModel;

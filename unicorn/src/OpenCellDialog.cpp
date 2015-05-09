@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,29 +14,25 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-using namespace std;
-
-#include  <QLabel>
-#include  <QLineEdit>
-#include  <QPushButton>
-#include  <QRadioButton>
-#include  <QButtonGroup>
-#include  <QCheckBox>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-
-#include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Graphics.h"
-
-#include  "crlcore/Environment.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "unicorn/OpenCellDialog.h"
+#include <iostream>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include "hurricane/Warning.h"
+#include "hurricane/viewer/Graphics.h"
+#include "crlcore/Environment.h"
+#include "crlcore/AllianceFramework.h"
+#include "unicorn/OpenCellDialog.h"
 
 
 namespace Unicorn {
 
-
+  using namespace std;
   using Hurricane::Warning;
   using Hurricane::Graphics;
   using CRL::Environment;

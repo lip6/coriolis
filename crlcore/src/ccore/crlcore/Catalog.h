@@ -95,6 +95,7 @@ namespace CRL {
           inline bool          isDelete       () const;
           inline bool          isPhysical     () const;
           inline bool          isLogical      () const;
+          inline bool          isInMemory     () const;
         // Flags management.
           inline unsigned int  getFlags       ( unsigned int mask=(unsigned int)-1 ) const;
           inline bool          setFlags       ( unsigned int mask, bool value );
@@ -178,6 +179,7 @@ namespace CRL {
   inline bool              Catalog::State::isDelete         () const { return (_flags&Delete     )?1:0; }
   inline bool              Catalog::State::isPhysical       () const { return (_flags&Physical   )?1:0; }
   inline bool              Catalog::State::isLogical        () const { return (_flags&Logical    )?1:0; }
+  inline bool              Catalog::State::isInMemory       () const { return (_flags&InMemory   )?1:0; }
   inline unsigned int      Catalog::State::getFlags         ( unsigned int mask ) const { return ( _flags & mask ); }
   inline bool              Catalog::State::setFlags         ( unsigned int mask, bool value ) {
                                                               if (value) { _flags |=  mask; }
@@ -215,6 +217,8 @@ namespace CRL {
 
   class CatalogExtension {
     public:
+      static        Catalog::State*  get            ( const Cell* );
+    public:
       static inline bool             isFlattenLeaf  ( const Cell* );
       static inline bool             isFeed         ( const Cell* );
       static inline bool             isPad          ( const Cell* );
@@ -239,8 +243,6 @@ namespace CRL {
       static inline Library*         setLibrary     ( const Cell*, Library* library );
       static inline void             setDepth       ( const Cell*, unsigned int depth );
     private:
-      static        Catalog::State*  _get           ( const Cell* );
-    private:
       static const Cell*     _owner;
       static Catalog::State* _cache;
   };
@@ -248,140 +250,140 @@ namespace CRL {
 
   inline bool  CatalogExtension::isFlattenLeaf ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isFlattenLeaf();
   }
 
 
   inline bool  CatalogExtension::isFeed ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isFeed();
   }
 
 
   inline bool  CatalogExtension::isGds ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isGds();
   }
 
 
   inline bool  CatalogExtension::isPad ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isPad();
   }
 
 
   inline bool  CatalogExtension::isDelete ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isDelete();
   }
 
 
   inline bool  CatalogExtension::isPhysical ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isPhysical();
   }
 
 
   inline bool  CatalogExtension::isLogical ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->isLogical();
   }
 
 
   inline unsigned int  CatalogExtension::getFlags ( const Cell* cell, unsigned int mask )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? 0 : state->getFlags();
   }
 
 
   inline bool  CatalogExtension::setFlags ( const Cell* cell, unsigned int mask, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setFlags(mask,value);
   }
 
 
   inline bool  CatalogExtension::setFlattenLeaf ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setFlattenLeaf(value);
   }
 
 
   inline bool  CatalogExtension::setFeed ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setFeed(value);
   }
 
 
   inline bool  CatalogExtension::setPad ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setPad(value);
   }
 
 
   inline bool  CatalogExtension::setGds ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setGds(value);
   }
 
 
   inline bool  CatalogExtension::setDelete ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setDelete(value);
   }
 
 
   inline bool  CatalogExtension::setPhysical ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setPhysical(value);
   }
 
 
   inline bool  CatalogExtension::setLogical ( const Cell* cell, bool value )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? false : state->setLogical(value);
   }
 
 
   inline Library* CatalogExtension::getLibrary ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? NULL : state->getLibrary();
   }
 
 
   inline unsigned int  CatalogExtension::getDepth ( const Cell* cell )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? 0 : state->getDepth();
   }
 
 
   inline Library* CatalogExtension::setLibrary ( const Cell* cell, Library* library )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     return (state == NULL) ? NULL : state->setLibrary(library);
   }
 
 
   inline void  CatalogExtension::setDepth ( const Cell* cell, unsigned int depth )
   {
-    Catalog::State* state = _get(cell);
+    Catalog::State* state = get(cell);
     if ( state == NULL ) state->setDepth(depth);
   }
 

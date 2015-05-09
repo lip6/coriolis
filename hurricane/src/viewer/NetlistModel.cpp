@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,21 +11,17 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./NetlistModel.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QFont>
-#include  <QApplication>
-
-#include  "hurricane/Name.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/NetInformations.h"
-#include  "hurricane/viewer/NetlistModel.h"
+#include <QFont>
+#include <QApplication>
+#include "hurricane/Name.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/NetInformations.h"
+#include "hurricane/viewer/NetlistModel.h"
 
 
 namespace Hurricane {
@@ -80,7 +70,7 @@ namespace Hurricane {
   {
     if ( orientation == Qt::Vertical ) return QVariant();
 
-    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +0 );
 
     if ( role == Qt::FontRole    ) return headerFont;
     if ( role != Qt::DisplayRole ) return QVariant();

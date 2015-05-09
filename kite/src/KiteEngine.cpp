@@ -134,16 +134,16 @@ namespace Kite {
     Utilities::Path systemConfFile     = systemConfDir      / "kiteInit.py";
 
     if (systemConfFile.exists()) {
-      Isobar::Script::addPath( systemConfDir.string() );
+      Isobar::Script::addPath( systemConfDir.toString() );
 
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().string() );
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().toString() );
       script->addKwArgument( "kite"    , (PyObject*)PyKiteEngine_Link(this) );
       script->runFunction  ( "kiteHook", getCell() );
 
-      Isobar::Script::removePath( systemConfDir.string() );
+      Isobar::Script::removePath( systemConfDir.toString() );
     } else {
       cerr << Warning("Kite system configuration file:\n  <%s> not found."
-                     ,systemConfFile.string().c_str()) << endl;
+                     ,systemConfFile.toString().c_str()) << endl;
     }
   }
 

@@ -1,43 +1,33 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SelectionWidget.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QFontMetrics>
-#include  <QFrame>
-#include  <QLabel>
-#include  <QCheckBox>
-#include  <QPushButton>
-#include  <QLineEdit>
-#include  <QHeaderView>
-#include  <QKeyEvent>
-#include  <QGroupBox>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-#include  <QAction>
-
+#include <QFontMetrics>
+#include <QFrame>
+#include <QLabel>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QHeaderView>
+#include <QKeyEvent>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QAction>
 #include "hurricane/Commons.h"
 #include "hurricane/Cell.h"
-
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/SelectionModel.h"
 #include "hurricane/viewer/SelectionWidget.h"

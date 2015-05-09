@@ -2,43 +2,33 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./NetlistWidget.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/NetlistWidget.h"       |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_NETLIST_WIDGET__
-#define  __HURRICANE_NETLIST_WIDGET__
+#ifndef  HURRICANE_NETLIST_WIDGET_H
+#define  HURRICANE_NETLIST_WIDGET_H
 
 
-#include  <set>
-
-#include  <QWidget>
-#include  <QTableView>
-#include  <QItemDelegate>
-#include  <QSortFilterProxyModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Bug.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/NetlistModel.h"
-#include  "hurricane/viewer/CellWidget.h"
+#include <set>
+#include <QWidget>
+#include <QTableView>
+#include <QItemDelegate>
+#include <QSortFilterProxyModel>
+#include "hurricane/Commons.h"
+#include "hurricane/Bug.h"
+#include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/NetlistModel.h"
+#include "hurricane/viewer/CellWidget.h"
 
 
 class QSortFilterProxyModel;
@@ -204,7 +194,6 @@ namespace Hurricane {
   inline  Cell* NetlistWidget::getCell () { return _cell; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif // __HURRICANE_NETLIST_WIDGET_H__
+#endif // HURRICANE_NETLIST_WIDGET_H

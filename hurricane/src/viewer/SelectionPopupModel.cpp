@@ -155,7 +155,7 @@ namespace Hurricane {
     if ( orientation == Qt::Vertical )
       return QVariant();
 
-    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +2 );
+    static QFont headerFont = Graphics::getFixedFont ( QFont::Bold, false, false, +0 );
 
     if ( role == Qt::FontRole    ) return headerFont;
     if ( role != Qt::DisplayRole ) return QVariant();

@@ -121,7 +121,7 @@ int main ( int argc, char *argv[] )
     boptions::notify ( arguments );
 
     Utilities::Path userConfFile ( "ma/configuration" );
-    cerr << "Mark:" << userConfFile.string() << endl;
+    cerr << "Mark:" << userConfFile.toString() << endl;
 
     if ( arguments.count("help") ) {
       cout << options << endl;

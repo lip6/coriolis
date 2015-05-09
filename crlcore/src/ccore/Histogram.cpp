@@ -112,10 +112,10 @@ namespace CRL {
   void  Histogram::toGnuplot ( const string& basename )
   {
     Utilities::Path datFile ( basename+_fileExtension+".dat" );
-    toFile ( datFile.string() );
+    toFile ( datFile.toString() );
 
     Utilities::Path pltFile ( basename+_fileExtension+".plt" );
-    ofstream fd ( pltFile.string().c_str() );
+    ofstream fd ( pltFile.toString().c_str() );
 
     if ( not _mainTitle.empty() )
       fd << "set title \"" << _mainTitle << "\"\n";
@@ -142,7 +142,7 @@ namespace CRL {
 
     for ( size_t iset=0 ; iset<_sets.size() ; ++iset ) {
       fd << ((iset) ? "     " : "plot ");
-      fd << "\"" << datFile.string() << "\" using " << (iset+1);
+      fd << "\"" << datFile.toString() << "\" using " << (iset+1);
 
       if ( not _titles[iset].empty() )  fd << " title \"" << _titles[iset] << "\"";
 

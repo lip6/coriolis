@@ -55,11 +55,12 @@ namespace CRL {
   {
     string  s;
 
-    if ( isFlattenLeaf() ) s += 'C';
-    if ( isFeed()        ) s += 'F';
-    if ( isPad()         ) s += 'P';
-    if ( isGds()         ) s += 'G';
-    if ( isDelete()      ) s += 'D';
+    s += (isFlattenLeaf()) ? 'C' : '-';
+    s += (isFeed()       ) ? 'F' : '-';
+    s += (isPad()        ) ? 'P' : '-';
+    s += (isGds()        ) ? 'G' : '-';
+    s += (isDelete()     ) ? 'D' : '-';
+    s += (isInMemory()   ) ? 'm' : '-';
 
     return s;
   }
@@ -303,7 +304,7 @@ namespace CRL {
   Catalog::State* CatalogExtension::_cache = NULL;
 
 
-  Catalog::State* CatalogExtension::_get ( const Cell* cell )
+  Catalog::State* CatalogExtension::get ( const Cell* cell )
   {
     if ( cell == _owner ) return _cache;
     _owner = cell;
