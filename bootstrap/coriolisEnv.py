@@ -134,15 +134,17 @@ if __name__ == "__main__":
 
   parser = optparse.OptionParser ()  
  # Build relateds.
-  parser.add_option ( "--csh"      , action="store_true" ,                dest="csh"      )
-  parser.add_option ( "--release"  , action="store_true" ,                dest="release"  )
-  parser.add_option ( "--debug"    , action="store_true" ,                dest="debug"    )
-  parser.add_option ( "--devel"    , action="store_true" ,                dest="devel"    )
-  parser.add_option ( "--static"   , action="store_true" ,                dest="static"   )
-  parser.add_option ( "--shared"   , action="store_true" ,                dest="shared"   )
-  parser.add_option ( "--chams"    , action="store_true" ,                dest="chams"    )
-  parser.add_option ( "--no-python", action="store_true" ,                dest="nopython" )
-  parser.add_option ( "--root"     , action="store"      , type="string", dest="rootDir"  )
+  parser.add_option ( "--query-inst-root", action="store_true" ,                dest="queryInstRoot" )
+  parser.add_option ( "--query-isys-root", action="store_true" ,                dest="queryISysRoot" )
+  parser.add_option ( "--csh"            , action="store_true" ,                dest="csh"           )
+  parser.add_option ( "--release"        , action="store_true" ,                dest="release"       )
+  parser.add_option ( "--debug"          , action="store_true" ,                dest="debug"         )
+  parser.add_option ( "--devel"          , action="store_true" ,                dest="devel"         )
+  parser.add_option ( "--static"         , action="store_true" ,                dest="static"        )
+  parser.add_option ( "--shared"         , action="store_true" ,                dest="shared"        )
+  parser.add_option ( "--chams"          , action="store_true" ,                dest="chams"         )
+  parser.add_option ( "--no-python"      , action="store_true" ,                dest="nopython"      )
+  parser.add_option ( "--root"           , action="store"      , type="string", dest="rootDir"       )
   ( options, args ) = parser.parse_args ()
 
   if options.release:    buildType       = "Release"
@@ -252,5 +254,13 @@ if __name__ == "__main__":
                              }
   if useDevtoolset2:
     evalScript = '%s scl enable devtoolset-2 ${SHELL}' % evalScript
+
+  if options.queryISysRoot:
+    print '%s/%s' % (rootDir,osType)
+    sys.exit( 0 )
+
+  if options.queryInstRoot:
+    print coriolisTop
+    sys.exit( 0 )
 
   print evalScript

@@ -62,9 +62,9 @@ If you want to use the *devel* branch: ::
 
     ego@home:coriolis$ git checkout devel
 
-Then, build the tool, where ``N`` is your number of threads: ::
+Then, build the tool: ::
 
-    ego@home:coriolis$ ./bootstrap/ccb.py --project=coriolis --make="-jN install"
+    ego@home:coriolis$ make install
 
 Coriolis gets installed at the root of the following tree: ::
 
@@ -77,7 +77,16 @@ distribution.
 Using Coriolis
 ==============
 
-A helper is provided to setup the environment ``coriolisEnv.py``: ::
+The Coriolis main interface can be launched with the command: ::
+
+    ego@home:~: ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/bin/coriolis
+
+The ``coriolis`` script is tasked to guess it's location and setup appropriatly
+the UNIX environment, then lauch ``cgt`` (or *any* command, with the
+``--run=<COMMAND>`` option).
+
+Conversely, you can setup the current shell environement for Coriolis by 
+using the helper ``coriolisEnv.py``, then run any Coriolis tool: ::
 
     ego@home:~$ eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
     ego@home:~$ cgt -V
