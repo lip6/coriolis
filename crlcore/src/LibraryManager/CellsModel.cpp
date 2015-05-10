@@ -77,6 +77,14 @@ namespace CRL {
                                         , "VHDL Structural"
                                         , CellLoader::Native
                                         , Catalog::State::Logical ) );
+      loaders->addLoader( new CellLoader("vhd"
+                                        , "VHDL Structural (IEEE)"
+                                        , CellLoader::Native
+                                        , Catalog::State::Logical ) );
+      loaders->addLoader( new CellLoader("vhdl"
+                                        , "VHDL Structural (IEEE)"
+                                        , CellLoader::Native
+                                        , Catalog::State::Logical ) );
       loaders->addLoader( new CellLoader("ap"
                                         , "Alliance Physical"
                                         , CellLoader::Native

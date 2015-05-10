@@ -1,66 +1,28 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./ParserDriver.cpp"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./ParsersDrivers.cpp"                          |
+// +-----------------------------------------------------------------+
 
 
-
-#include  "hurricane/DBo.h"
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/Environment.h"
-#include  "crlcore/Catalog.h"
-#include  "crlcore/ParsersDrivers.h"
-#include  "Ap.h"
-#include  "Vst.h"
-#include  "Spice.h"
-#include  "openaccess/OpenAccess.h"
+#include "hurricane/DBo.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/Environment.h"
+#include "crlcore/Catalog.h"
+#include "crlcore/ParsersDrivers.h"
+#include "Ap.h"
+#include "Vst.h"
+#include "Spice.h"
+#include "openaccess/OpenAccess.h"
 
 
 namespace {
@@ -74,17 +36,12 @@ namespace {
                                 "    Attempt to overwrite registered parser for format \"%s\"\n"
                                 "    and extention \"%s\".\n";
 
-} // End of anonymous namespace.
 
-
+} // Anonymous namespace.
 
 
 namespace CRL {
 
-
-// x-----------------------------------------------------------------x
-// |                     Variables Definitions                       |
-// x-----------------------------------------------------------------x
 
   const char* BadParserType =
     "%s:\n\n"
@@ -104,9 +61,8 @@ namespace CRL {
     "    (neither logical or physical has been set)\n";
 
 
-// x-----------------------------------------------------------------x
-// |               Methods of Class "ParserFormatSlot"               |
-// x-----------------------------------------------------------------x
+// -------------------------------------------------------------------
+// Class  :  "ParserFormatSlot"
 
 
   bool  ParserFormatSlot::cend () {
@@ -203,18 +159,19 @@ namespace CRL {
   }
 
 
-// x-----------------------------------------------------------------x
-// |                  Methods of Class "ParsersMap"                  |
-// x-----------------------------------------------------------------x
+// -------------------------------------------------------------------
+// Class  : "ParsersMap"
 
 
   ParsersMap::ParsersMap (): map<Name,ParserFormatSlot>()
   {
     // Register the Alliance default parsers.
-    registerSlot ( "ap"   , (CellParser_t*)apParser       , "ap"  );
-    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vst" );
-    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vbe" );
-    registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi" );
+    registerSlot ( "ap"   , (CellParser_t*)apParser       , "ap"   );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vst"  );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vbe"  );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhd"  );
+    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhdl" );
+    registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi"  );
     registerSlot ( "oa"   , (CellParser_t*)OpenAccess::oaCellParser  , "oa" );
   //registerSlot ( "oa"   , (LibraryParser_t*)OpenAccess::oaLibParser, "oa" );
   }
@@ -316,9 +273,8 @@ namespace CRL {
 
 
 
-// x-----------------------------------------------------------------x
-// |                  Methods of Class "DriversMap"                  |
-// x-----------------------------------------------------------------x
+// -------------------------------------------------------------------
+// Class :  "DriversMap"
 
 
   DriversMap::DriversMap () : map<Name,DriverSlot>()

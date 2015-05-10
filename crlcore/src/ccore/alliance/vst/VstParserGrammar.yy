@@ -1,7 +1,7 @@
 %{
 
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2014, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -67,6 +67,7 @@ namespace Vst {
 
   extern void  incVhdLineNumber ();
   extern void  ClearIdentifiers ();
+         void  checkForIeee     ( bool ieeeEnabled );
 
 
   class  Constraint {
@@ -137,6 +138,8 @@ namespace Vst {
       bool             _masterPort;
       bool             _firstPass;
       bool             _behavioral;
+      bool             _ieeeVhdl;
+      bool             _ieeeWarned;
     public:
       YaccState ( const string& vhdFileName )
         : _vhdFileName    (vhdFileName)
@@ -156,6 +159,8 @@ namespace Vst {
         , _masterPort     (true)
         , _firstPass      (true) 
         , _behavioral     (false) 
+        , _ieeeVhdl       (false) 
+        , _ieeeWarned     (false) 
         { }
       bool  pushCell ( Name );
   };
@@ -314,6 +319,8 @@ namespace Vst {
 %token          SEVERITY
 %token          SIGNAL
 %token          _STABLE
+%token          STD_LOGIC
+%token          STD_LOGIC_VECTOR
 %token          STRING
 %token          SUBTYPE
 %token          THEN
@@ -366,8 +373,57 @@ namespace Vst {
 
 %%
 design_file
-    : entity_declaration
+    : ...libraries_declarations..
+      entity_declaration
       architecture_body
+    ;
+
+...libraries_declarations..
+    : /* Empty */
+    | library_or_use_statement
+      ...libraries_declarations..
+    ;
+
+library_or_use_statement
+    : library_statement
+    | use_statement
+    ;
+
+library_statement
+    : LIBRARY 
+      Identifier
+      Semicolon_ERR
+    ;
+
+use_statement
+    : USE 
+      identifier_path
+      Semicolon_ERR
+          { bool ieeeVhdl = (Vst::states->_identifiersList.size() == 3); 
+            for ( size_t i=0 ; ieeeVhdl and (i<Vst::states->_identifiersList.size()) ; ++i ) {
+	      switch ( i ) {
+                case 0: if (*(Vst::states->_identifiersList[i]) == "ieee")           continue;
+                case 1: if (*(Vst::states->_identifiersList[i]) == "std_logic_1164") continue;
+                case 2: if (*(Vst::states->_identifiersList[i]) == "all")            continue;
+              }
+              ieeeVhdl = false;
+              break;
+            }
+	    Vst::states->_ieeeVhdl |= ieeeVhdl;
+            Vst::states->_identifiersList.clear();
+          }
+    ;
+
+identifier_path
+    : path_element
+    | identifier_path
+      Dot
+      path_element
+    ;
+
+path_element
+    : Identifier { Vst::states->_identifiersList.push_back( $1 ); }
+    | ALL        { Vst::states->_identifiersList.push_back( new string("all") ); }
     ;
 
 entity_declaration
@@ -1075,19 +1131,21 @@ type_convertion
     ;
 
 type_mark
-    : BIT             { $$ = Net::Direction::UNDEFINED;    }
-    | WOR_BIT         { $$ = Net::Direction::ConnWiredOr;  }
-    | MUX_BIT         { $$ = Net::Direction::ConnTristate; }
-    | BIT_VECTOR      { $$ = Net::Direction::UNDEFINED;    }
-    | WOR_VECTOR      { $$ = Net::Direction::ConnWiredOr;  }
-    | MUX_VECTOR      { $$ = Net::Direction::ConnTristate; }
-    | INTEGER         { $$ = Net::Direction::UNDEFINED;    }
-    | NATURAL         { $$ = Net::Direction::UNDEFINED;    }
-    | NATURAL_VECTOR  { $$ = Net::Direction::UNDEFINED;    }
-    | POSITIVE        { $$ = Net::Direction::UNDEFINED;    }
-    | STRING          { $$ = Net::Direction::UNDEFINED;    }
-    | _LIST           { $$ = Net::Direction::UNDEFINED;    }
-    | ARG             { $$ = Net::Direction::UNDEFINED;    }
+    : BIT              { $$ = Net::Direction::UNDEFINED; }
+    | STD_LOGIC        { $$ = Net::Direction::UNDEFINED;    Vst::checkForIeee(true ); }
+    | STD_LOGIC_VECTOR { $$ = Net::Direction::UNDEFINED;    Vst::checkForIeee(true ); }
+    | WOR_BIT          { $$ = Net::Direction::ConnWiredOr;  Vst::checkForIeee(false); }
+    | MUX_BIT          { $$ = Net::Direction::ConnTristate; Vst::checkForIeee(false); }
+    | BIT_VECTOR       { $$ = Net::Direction::UNDEFINED;    Vst::checkForIeee(false); }
+    | WOR_VECTOR       { $$ = Net::Direction::ConnWiredOr;  Vst::checkForIeee(false); }
+    | MUX_VECTOR       { $$ = Net::Direction::ConnTristate; Vst::checkForIeee(false); }
+    | INTEGER          { $$ = Net::Direction::UNDEFINED; }
+    | NATURAL          { $$ = Net::Direction::UNDEFINED; }
+    | NATURAL_VECTOR   { $$ = Net::Direction::UNDEFINED; }
+    | POSITIVE         { $$ = Net::Direction::UNDEFINED; }
+    | STRING           { $$ = Net::Direction::UNDEFINED; }
+    | _LIST            { $$ = Net::Direction::UNDEFINED; }
+    | ARG              { $$ = Net::Direction::UNDEFINED; }
     ;
 
 .BUS.
@@ -1185,7 +1243,7 @@ namespace Vst {
 
     if ( code < 100 )
       cerr << "[ERROR] CParsVst() VHDL Parser, File:<" << states->_vhdFileName
-           << ">, Line:%d" << states->_vhdLineNumber << " Code:" << code  << " :\n  ";
+           << ">, Line:" << states->_vhdLineNumber << " Code:" << code  << " :\n  ";
     else {
       if (code < 200)
         cerr << "[ERROR] CParsVst() VHDL Parser, Code:" << code << " :\n  ";
@@ -1220,6 +1278,25 @@ namespace Vst {
       default:  cerr << "Syntax error." << endl; break;
       case 200:
         throw Hurricane::Error ( "Error(s) occured.\n" );
+    }
+  }
+
+
+  // ---------------------------------------------------------------
+  // Function  :  "checkForIeee()".
+
+  void  checkForIeee ( bool ieeeEnabled )
+  {
+    if (not states->_ieeeWarned) {
+      if (ieeeEnabled xor states->_ieeeVhdl) {
+        states->_ieeeWarned = true;
+
+        ostringstream formatted;
+        formatted << "CParsVst() - VHDL Parser, File:<" << Vst::states->_vhdFileName
+                  << ">, Line:" << Vst::states->_vhdLineNumber << "\n  "
+                  << "Mixed IEEE VHDL & Alliance VHDL dialects, you should choose one.";
+        cerr << formatted.str() << endl;
+      }
     }
   }
 
