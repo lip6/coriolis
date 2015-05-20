@@ -18,8 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -66,6 +64,9 @@ namespace Hurricane {
                        };
 
     public:
+      static        void                checkGridBound          ( double value );
+      static        void                checkLambdaBound        ( double value );
+      static        void                checkPhysicalBound      ( double value, UnitPower p );
     // User to DB Converters.
       static inline Unit                fromDb                  ( long value );
       static inline Unit                fromGrid                ( double value );
@@ -120,6 +121,8 @@ namespace Hurricane {
       static        Slot*               getValueSlot            ( const string& name, const Unit* u );
       static        void                setStringMode           ( unsigned int mode, UnitPower p=Nano );
       static        void                getStringMode           ( unsigned int& mode, UnitPower& p );
+    private:
+      static        void                _updateBounds           ();
 
     public:
     // Static Attributes: constants.
@@ -136,15 +139,18 @@ namespace Hurricane {
       static DbU::UnitPower      _stringModeUnitPower;
       static DbU::Unit           _realSnapGridStep;
       static DbU::Unit           _symbolicSnapGridStep;
+      static double              _gridMax;
+      static double              _lambdaMax;
+      static double              _physicalMax;
   };
 
 
 // Inline Functions.
 // New converter naming scheme.
   inline DbU::Unit  DbU::fromDb                  ( long value )                 { return value; }
-  inline DbU::Unit  DbU::fromGrid                ( double value )               { return (long)rint( value/_resolution ); }
-  inline DbU::Unit  DbU::fromLambda              ( double value )               { return fromGrid(value*_gridsPerLambda); }
-  inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { return fromGrid((value*getUnitPower(p))/_physicalsPerGrid); }
+  inline DbU::Unit  DbU::fromGrid                ( double value )               { checkGridBound    (value);   return (long)rint( value/_resolution ); }
+  inline DbU::Unit  DbU::fromLambda              ( double value )               { checkLambdaBound  (value);   return fromGrid(value*_gridsPerLambda); }
+  inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { checkPhysicalBound(value,p); return fromGrid((value*getUnitPower(p))/_physicalsPerGrid); }
   inline long       DbU::toDb                    ( DbU::Unit u )                { return u; }
   inline double     DbU::toGrid                  ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::toGrid                  ( double u )                   { return _resolution*u; }

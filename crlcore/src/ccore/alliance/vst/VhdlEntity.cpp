@@ -273,7 +273,7 @@ namespace Vhdl {
     
     for ( auto isignal=internalSignals.begin(); isignal!=internalSignals.end() ; ++isignal ) {
       out << tab;
-      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal );
+      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal|(_flags & Entity::IeeeMode) );
       out << ";\n";
     }
     out << "\n";
@@ -297,7 +297,7 @@ namespace Vhdl {
     size_t ioCount = 0;
     for ( auto isignal=ioSignals.begin(); isignal!=ioSignals.end() ; ++isignal ) {
       if (ioCount) out << "\n" << tab << "     ; ";
-      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal );
+      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal|(_flags & Entity::IeeeMode ) );
       ++ioCount;
     }
     out << "\n" << tab << "     );";
@@ -317,10 +317,21 @@ namespace Vhdl {
     out << "-- Coriolis Structural VHDL Driver\n";
     out << "-- Generated on " << stamp << "\n";
     out << "-- \n";
-    out << "-- To be interoperable with Alliance, it uses it's special VHDL subset.\n";
-    out << "-- (\"man vhdl\" under Alliance for more informations)\n";
+    if (isIeeeMode()) {
+      out << "-- VHDL IEEE compliant.\n";
+    } else {
+      out << "-- To be interoperable with Alliance, it uses it's special VHDL subset.\n";
+      out << "-- (\"man vhdl\" under Alliance for more informations)\n";
+    }
     out << "-- =======================================================================\n";
     out << "\n";
+
+    if (isIeeeMode()) {
+      out << "library IEEE;\n";
+      out << "use IEEE.std_logic_1164.all;\n";
+      out << "use IEEE.numeric_std.all;\n\n\n";
+    }
+
     out << tab++ << "entity " << getCell()->getName() << " is\n";
     toPort( out );
     out << --tab << "\nend " << getCell()->getName() << ";\n\n";

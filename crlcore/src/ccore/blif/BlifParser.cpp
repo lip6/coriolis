@@ -468,6 +468,10 @@ namespace {
   void  Model::connectSubckts ()
   {
     for ( Subckt* subckt : _subckts ) {
+      if(not subckt->getModel())
+        throw Error( "No .model or cell named <%s> has been found.\n"
+                   , subckt->getModelName().c_str() );
+
       Instance* instance = Instance::create( _cell
                                            , subckt->getInstanceName()
                                            , subckt->getModel()->getCell()

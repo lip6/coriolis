@@ -24,6 +24,7 @@
 #include "hurricane/Plug.h"
 #include "hurricane/Path.h"
 #include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/CellViewer.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/ToolBox.h"
 #include "etesian/EtesianEngine.h"
@@ -400,7 +401,7 @@ namespace Etesian {
 
     UpdateSession::close();
 
-    if (_cellWidget) _cellWidget->refresh();
+    if (_viewer) _viewer->getCellWidget()->refresh();
   }
 
 

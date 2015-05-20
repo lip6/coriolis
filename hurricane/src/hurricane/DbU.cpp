@@ -18,8 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -49,10 +47,13 @@ namespace Hurricane {
   double              DbU::_resolution           = 0.1;
   double              DbU::_gridsPerLambda       = 10.0;
   double              DbU::_physicalsPerGrid     = 1.0;
+  double              DbU::_gridMax              = DbU::toGrid    ( DbU::Max );
+  double              DbU::_lambdaMax            = DbU::toLambda  ( DbU::Max );
+  double              DbU::_physicalMax          = DbU::toPhysical( DbU::Max, DbU::Unity );
   unsigned int        DbU::_stringMode           = DbU::Symbolic;
   DbU::UnitPower      DbU::_stringModeUnitPower  = DbU::Nano;
-  DbU::Unit           DbU::_symbolicSnapGridStep = DbU::lambda(1.0);
-  DbU::Unit           DbU::_realSnapGridStep     = DbU::grid  (10.0);
+  DbU::Unit           DbU::_symbolicSnapGridStep = DbU::fromLambda( 1.0);
+  DbU::Unit           DbU::_realSnapGridStep     = DbU::fromGrid  (10.0);
   const DbU::Unit     DbU::Min                   = std::numeric_limits<long>::min();
   const DbU::Unit     DbU::Max                   = std::numeric_limits<long>::max();
 
@@ -95,6 +96,42 @@ namespace Hurricane {
 // Class :  "Hurricane::DbU".
 
 
+  void  DbU::_updateBounds ()
+  {
+    _gridMax     = toGrid    ( Max );
+    _lambdaMax   = toLambda  ( Max );
+    _physicalMax = toPhysical( Max, Unity );
+  }
+
+
+  void  DbU::checkGridBound ( double value )
+  {
+    if (value < 0) value = -value;
+    if (value >= _gridMax)
+      throw Error( "Grid value %.1f converts to out of range DbU value (maximum is: %.1f)."
+                 , value, _gridMax );
+  }
+
+
+  void  DbU::checkLambdaBound ( double value )
+  {
+    if (value < 0) value = -value;
+    if (value >= _lambdaMax)
+      throw Error( "Lambda value %.1f converts to out of range DbU (maximum is: %.1f)."
+                 , value, _lambdaMax );
+  }
+
+
+  void  DbU::checkPhysicalBound ( double value, UnitPower p )
+  {
+    if (value < 0) value = -value;
+    value *= getUnitPower(p);
+    if (value >= _physicalMax)
+      throw Error( "Physical value %.1fnm converts to out of range DbU (maximum is: %.1f)."
+                 , (value/1.0e-9), _physicalMax );
+  }
+
+
   unsigned int DbU::getPrecision ()
   { return _precision; }
 
@@ -126,6 +163,8 @@ namespace Hurricane {
 
     setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
     setRealSnapGridStep     ( DbU::grid  (10.0) );
+
+    _updateBounds();
   }
 
 
@@ -144,7 +183,10 @@ namespace Hurricane {
 
 
   void  DbU::setPhysicalsPerGrid ( double physicalsPerGrid, UnitPower p )
-  { _physicalsPerGrid = physicalsPerGrid * getUnitPower(p); }
+  {
+    _physicalsPerGrid = physicalsPerGrid * getUnitPower(p);
+    _updateBounds();
+  }
 
 
   double  DbU::getPhysicalsPerGrid ()
@@ -170,6 +212,8 @@ namespace Hurricane {
     DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda(1) );
+
+    _updateBounds();
   }
 
 

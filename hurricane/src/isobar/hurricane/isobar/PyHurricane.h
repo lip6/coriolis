@@ -22,6 +22,7 @@
 // #define  DEBUG  1
 
 #include "Python.h"
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -1398,15 +1399,27 @@ extern "C" {
 
 # define   HCATCH  \
     }                                                            \
-    catch ( Error& e ) {                                         \
-      std::string message = "\n" + getString(e);                 \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return ( NULL );                                           \
-    }                                                            \
     catch ( Warning& w ) {                                       \
       std::string message = "\n" + getString(w);                 \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
-    }
+    }                                                            \
+    catch ( Error& e ) {                                         \
+      std::string message = "\n" + getString(e);                 \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
+      return NULL;                                               \
+    }                                                            \
+    catch ( std::exception& e )  {                               \
+      std::string message = "\n" + std::string(e.what());        \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
+      return NULL;                                               \
+    }                                                            \
+    catch ( ... ) {                                              \
+      std::string message =                                      \
+        "\nUnmanaged exception, neither a Hurricane::Error nor"  \
+        "std::exception.";                                       \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
+      return NULL;                                               \
+    }                                                            \
 
 }  // End of extern "C".
 

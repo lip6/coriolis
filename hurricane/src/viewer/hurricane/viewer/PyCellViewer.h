@@ -49,7 +49,7 @@ extern "C" {
 
 #define  IsPyCellViewer(v)      ( (v)->ob_type == &PyTypeCellViewer )
 #define  PYCELLVIEWER(v)        ( (PyCellViewer*)(v) )
-#define  PYCELLVIEWER_O(v)      ( ISOBAR_CELL_VIEWER(v)->_object )
+#define  PYCELLVIEWER_O(v)      ( PYCELLVIEWER(v)->_object )
 
 
 }  // End of extern "C".

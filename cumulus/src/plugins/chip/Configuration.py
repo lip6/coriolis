@@ -449,12 +449,13 @@ class ChipConf ( object ):
       return
 
 
-    def __init__ ( self, chipConfigDict, cell ):
+    def __init__ ( self, chipConfigDict, cell, viewer=None ):
       if not isinstance(chipConfigDict,dict):
           raise ErrorMessage( 1, 'The "chip" variable is not a dictionnary.' )
 
       self._validated     = True
       self._cell          = cell
+      self._viewer        = viewer
      # Block Corona parameters.
       self._railsNb       = getParameter('chip','chip.block.rails.count').asInt()
       self._hRailWidth    = DbU.fromLambda( getParameter('chip','chip.block.rails.hWidth'  ).asInt() )
@@ -506,6 +507,7 @@ class ChipConf ( object ):
 
       self.checkPads()
       self.computeChipSize()
+      self.checkChipSize()
       self.findPowerAndClockNets()
       return
 
@@ -599,7 +601,7 @@ class ChipConf ( object ):
         print ErrorMessage( 1, 'There must be at least one pad of model "%s" to be used as reference.' \
                                % self._pckName )
         self._validated = False
-        return False
+        return
 
       self._padHeight = self._clockPad.getMasterCell().getAbutmentBox().getHeight()
       self._padWidth  = self._clockPad.getMasterCell().getAbutmentBox().getWidth()
@@ -608,11 +610,29 @@ class ChipConf ( object ):
       
       horizontalPads = max( len(self._southPads), len(self._northPads) )
       verticalPads   = max( len(self._eastPads ), len(self._westPads ) )
-      self._chipSize  = Box( 0
-                           , 0
-                           , self._padWidth * horizontalPads + 2*self._padHeight
-                           , self._padWidth * verticalPads   + 2*self._padHeight
-                           )
+      self._chipSize = Box( 0
+                          , 0
+                          , self._padWidth * horizontalPads + 2*self._padHeight
+                          , self._padWidth * verticalPads   + 2*self._padHeight
+                          )
+      return
+
+
+    def checkChipSize ( self ):
+     #if self._coreSize.isEmpty(): return
+     #
+     #minWidth  = self._coreSize.getWidth () + self._minCorona + 2*self._padHeight
+     #minHeight = self._coreSize.getHeight() + self._minCorona + 2*self._padHeight
+     #
+     #if self._chipSize.getWidth() < minWidth:
+     #  print ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
+     #                         % ( DbU.toLambda(minWidth), DbU.toLambda(self._chipSize.getWidth()) ) )
+     #  self._validated = False
+     #
+     #if self._chipSize.getHeight() < minHeight:
+     #  print ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
+     #                         % ( DbU.toLambda(minHeight), DbU.toLambda(self._chipSize.getHeight()) ) )
+     #  self._validated = False
       return
 
     def getSpecialNetRoot ( self, net ):
@@ -645,7 +665,9 @@ class ChipConfWrapper ( GaugeConfWrapper ):
     def getSliceStep   ( self ): return self._gaugeConf.getSliceStep()
 
     @property
-    def cell ( self ): return self._chipConf._cell
+    def cell   ( self ): return self._chipConf._cell
+    @property
+    def viewer ( self ): return self._chipConf._viewer
 
     # Global Pad names.
     @property
@@ -724,7 +746,7 @@ class ChipConfWrapper ( GaugeConfWrapper ):
     def useClockTree ( self ): return self._chipConf._useClockTree
 
 
-def loadConfiguration ( cell ):
+def loadConfiguration ( cell, viewer=None ):
     sys.path.append( os.getcwd() )
 
     confFile = cell.getName()+'_chip'
@@ -738,4 +760,4 @@ def loadConfiguration ( cell ):
                             % confFile )
 
     return ChipConfWrapper( GaugeConf()
-                          , ChipConf ( confModule.__dict__['chip'], cell ) )
+                          , ChipConf ( confModule.__dict__['chip'], cell, viewer ) )

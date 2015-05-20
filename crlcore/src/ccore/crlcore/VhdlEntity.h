@@ -58,9 +58,10 @@ namespace Vhdl {
     public:
       enum Flag { NoFlags       = 0x0000
                 , EntityMode    = 0x0001
-                , ComponentMode = 0x0002
-                , AsPortSignal  = 0x0004
-                , AsInnerSignal = 0x0008
+                , IeeeMode      = 0x0002
+                , ComponentMode = 0x0004
+                , AsPortSignal  = 0x0008
+                , AsInnerSignal = 0x0010
                 };
     public:
       static bool             parseNetName    ( const Net*, std::string& stem, size_t& index );
@@ -70,6 +71,7 @@ namespace Vhdl {
                               Entity          ( EntityProperty*, Cell*, unsigned int flags );
                              ~Entity          ();
       inline bool             isEntityMode    () const;
+      inline bool             isIeeeMode      () const;
       inline bool             isComponentMode () const;
              const Cell*      getCell         () const;
              const Signal*    getSignal       ( std::string name ) const;
@@ -92,6 +94,7 @@ namespace Vhdl {
   };
 
 
+  inline bool  Entity::isIeeeMode      () const { return _flags & IeeeMode; }
   inline bool  Entity::isEntityMode    () const { return _flags & EntityMode; }
   inline bool  Entity::isComponentMode () const { return _flags & ComponentMode; }
 

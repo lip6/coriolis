@@ -39,6 +39,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/CellViewer.h"
 #include "katabatic/GCellGrid.h"
 #include "katabatic/KatabaticEngine.h"
 #include "kite/KiteEngine.h"
@@ -257,7 +258,7 @@ namespace Etesian {
     , _placementUB  ()
     , _cellsToIds   ()
     , _idsToInsts   ()
-    , _cellWidget   (NULL)
+    , _viewer       (NULL)
     , _feedCells    (this)
   {
   }
@@ -391,7 +392,7 @@ namespace Etesian {
                                   , rows   *getSliceHeight()
                                   ) );
     UpdateSession::close();
-    if (_cellWidget) _cellWidget->fitToContents();
+    if (_viewer) _viewer->getCellWidget()->fitToContents();
   }
 
 
@@ -433,7 +434,7 @@ namespace Etesian {
 
     dots.finish( Dots::Reset );
 
-    if (_cellWidget) _cellWidget->refresh();
+    if (_viewer) _viewer->getCellWidget()->refresh();
 
     _placed = false;
   }
@@ -996,7 +997,7 @@ namespace Etesian {
 
     UpdateSession::close();
 
-    if (_cellWidget) _cellWidget->refresh();
+    if (_viewer) _viewer->getCellWidget()->refresh();
   }
 
 

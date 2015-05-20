@@ -15,7 +15,7 @@
 
 
 #include "hurricane/isobar/PyCell.h"
-#include "hurricane/viewer/CellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/Cell.h"
 #include "kite/PyKiteEngine.h"
@@ -48,6 +48,7 @@ namespace  Kite {
   using Isobar::ParseTwoArg;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
+  using Isobar::PyCellViewer;
   using CRL::PyToolEngine;
 
 
@@ -61,12 +62,15 @@ extern "C" {
   {                                                                     \
       trace << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;             \
       HTRY                                                              \
-      METHOD_HEAD(#SELF_TYPE "." #FUNC_NAME "()")                       \
-      if (SELF_OBJECT->getViewer()) {                                   \
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::FUNC_NAME,SELF_OBJECT) ); \
-      } else {                                                          \
-        SELF_OBJECT->FUNC_NAME();                                       \
-      }                                                                 \
+        METHOD_HEAD(#SELF_TYPE "." #FUNC_NAME "()")                     \
+        if (SELF_OBJECT->getViewer()) {                                 \
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::FUNC_NAME,SELF_OBJECT) )) { \
+            PyErr_SetString( HurricaneError, #FUNC_NAME "() has thrown an exception (C++)." );     \
+            return NULL;                                                \
+          }                                                             \
+        } else {                                                        \
+          SELF_OBJECT->FUNC_NAME();                                     \
+        }                                                               \
       HCATCH                                                            \
       Py_RETURN_NONE;                                                   \
   }
@@ -120,23 +124,44 @@ extern "C" {
   }
 
 
+  static PyObject* PyKiteEngine_setViewer ( PyKiteEngine* self, PyObject* args )
+  {
+    trace << "PyKiteEngine_setViewer ()" << endl;
+
+    HTRY
+      METHOD_HEAD( "KiteEngine.setViewer()" )
+  
+      PyCellViewer* pyViewer;
+      if (not ParseOneArg("KiteEngine.setViewer()",args,":cellView",(PyObject**)&pyViewer)) {
+        return NULL;
+      }
+      kite->setViewer( PYCELLVIEWER_O(pyViewer) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   PyObject* PyKiteEngine_runGlobalRouter ( PyKiteEngine* self, PyObject* args )
   {
     trace << "PyKiteEngine_runGlobalRouter()" << endl;
 
     HTRY
-    METHOD_HEAD("KiteEngine.runGlobalRouter()")
-    unsigned int flags = 0;
-    if (PyArg_ParseTuple(args,"I:KiteEngine.runGlobalRouter", &flags)) {
-      if (kite->getViewer()) {
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runGlobalRouter,kite,flags) );
+      METHOD_HEAD("KiteEngine.runGlobalRouter()")
+      unsigned int flags = 0;
+      if (PyArg_ParseTuple(args,"I:KiteEngine.runGlobalRouter", &flags)) {
+        if (kite->getViewer()) {
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runGlobalRouter,kite,flags) )) {
+            PyErr_SetString( HurricaneError, "KiteEngine::runGlobalrouter() has thrown an exception (C++)." );
+            return NULL;
+          }
+        } else {
+          kite->runGlobalRouter(flags);
+        }
       } else {
-        kite->runGlobalRouter(flags);
+        PyErr_SetString(ConstructorError, "KiteEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
+        return NULL;
       }
-    } else {
-      PyErr_SetString(ConstructorError, "KiteEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
-      return NULL;
-    }
     HCATCH
 
     Py_RETURN_NONE;
@@ -177,7 +202,10 @@ extern "C" {
       }
 
       if (kite->getViewer()) {
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::loadGlobalRouting,kite,flags/*,*routingNets*/) );
+        if (ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::loadGlobalRouting,kite,flags/*,*routingNets*/) )) {
+          PyErr_SetString( HurricaneError, "KiteEngine::loadGlobalrouting() has thrown an exception (C++)." );
+          return NULL;
+        }
       } else {
         kite->loadGlobalRouting(flags/*,*routingNets*/);
       }
@@ -201,8 +229,14 @@ extern "C" {
     if (PyArg_ParseTuple(args,"I:KiteEngine.layerAssign", &flags)) {
 
       if (kite->getViewer()) {
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::balanceGlobalDensity,kite) );
-        ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::layerAssign         ,kite,flags) );
+        bool failure = ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::balanceGlobalDensity,kite) );
+        if (not failure)
+          failure = ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::layerAssign,kite,flags) );
+
+        if (failure) {
+          PyErr_SetString( HurricaneError, "EtesianEngine::place() has thrown an exception (C++)." );
+          return NULL;
+        }
       } else {
         kite->balanceGlobalDensity();
         kite->layerAssign         (flags);
@@ -223,7 +257,10 @@ extern "C" {
     HTRY
     METHOD_HEAD("KiteEngine.runNegociatePreRouted()")
     if (kite->getViewer()) {
-      ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,Kite::KtPreRoutedStage) );
+      if (ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,Kite::KtPreRoutedStage) )) {
+        PyErr_SetString( HurricaneError, "EtesianEngine::runNegiciatePreRouted() has thrown an exception (C++)." );
+        return NULL;
+      }
     } else {
       kite->runNegociate( Kite::KtPreRoutedStage );
     }
@@ -238,7 +275,10 @@ extern "C" {
     HTRY
     METHOD_HEAD("KiteEngine.runNegociate()")
     if (kite->getViewer()) {
-      ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,0) );
+      if (ExceptionWidget::catchAllWrapper( std::bind(&KiteEngine::runNegociate,kite,0) )) {
+        PyErr_SetString( HurricaneError, "EtesianEngine::runNegociate() has thrown an exception (C++)." );
+        return NULL;
+      }
     } else {
       kite->runNegociate();
     }
@@ -263,6 +303,8 @@ extern "C" {
                                , "Returns the Kite engine attached to the Cell, None if there isnt't." }
     , { "create"               , (PyCFunction)PyKiteEngine_create               , METH_VARARGS|METH_STATIC
                                , "Create a Kite engine on this cell." }
+    , { "setViewer"            , (PyCFunction)PyKiteEngine_setViewer            , METH_VARARGS
+                               , "Associate a Viewer to this KiteEngine." }
     , { "printConfiguration"   , (PyCFunction)PyKiteEngine_printConfiguration   , METH_NOARGS
                                , "Display on the console the configuration of Kite." }
     , { "saveGlobalSolution"   , (PyCFunction)PyKiteEngine_saveGlobalSolution   , METH_NOARGS

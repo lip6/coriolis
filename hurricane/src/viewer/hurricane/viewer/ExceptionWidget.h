@@ -37,7 +37,7 @@ namespace Hurricane {
       static  void    run             ( Exception& );
       static  void    run             ( std::exception& );
       static  void    run             ( const QString&, const QString& where="" );
-      static  void    catchAllWrapper ( std::function< void() > method );
+      static  bool    catchAllWrapper ( std::function< void() > method );
     public:
                       ExceptionWidget ( QWidget* parent=NULL);
               void    setMessage      ( const QString& );

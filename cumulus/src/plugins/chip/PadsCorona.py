@@ -90,7 +90,7 @@ class Side ( object ):
 
 
     def check ( self ):
-      validated = True
+      self.validated = True
       if self._type == chip.North:
         self.validated = self._check(     self._corona.coreSize.getWidth()
                                       + 2*self._corona.minCorona
@@ -106,10 +106,10 @@ class Side ( object ):
       elif self._type == chip.South: checkName = 'south pads'
       elif self._type == chip.West:  checkName = 'west pads'
 
-      validated = self._check( len(self._pads)*self._corona.padWidth
-                                           + 2*self._corona.padHeight
-                             , checkName ) and validated
-      return validated
+      self.validated = self._check( len(self._pads) *   self._corona.padWidth
+                                                    + 2*self._corona.padHeight
+                                  , checkName ) and self.validated
+      return self.validated
 
 
     def _createPowerContacts ( self, pad, net ):

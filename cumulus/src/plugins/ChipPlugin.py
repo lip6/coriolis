@@ -147,6 +147,7 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
         mauka.destroy()
       else:
         etesian = Etesian.EtesianEngine.create( coreCell )
+        etesian.setViewer( self.viewer )
         etesian.place()
         etesian.destroy()
 
@@ -189,7 +190,7 @@ def ScriptMain ( **kw ):
 
     cell, editor = plugins.kwParseMain( **kw )
 
-    conf = chip.Configuration.loadConfiguration( cell )
+    conf = chip.Configuration.loadConfiguration( cell, editor )
     if not conf.isValid(): return
 
     padsCorona = chip.PadsCorona.Corona( conf )

@@ -93,7 +93,7 @@ extern "C" {
     __cs.addType ( "hsvr"      , &PyTypeHSVr        , "<HSVr>"        , false );
     __cs.addType ( "displaySty", &PyTypeDisplayStyle, "<DisplayStyle>", false );
     __cs.addType ( "graphics"  , &PyTypeGraphics    , "<Graphics>"    , false );
-    __cs.addType ( "cellView"  , &PyTypeCellViewer  , "<CellViewer>"  , false, "view" );
+    __cs.addType ( "cellView"  , &PyTypeCellViewer  , "<CellViewer>"  , false );
     
     PyObject* module = Py_InitModule ( "Viewer", PyViewer_Methods );
     if ( module == NULL ) {

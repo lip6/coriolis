@@ -5,6 +5,10 @@
 *.bak
 
 TAGS
+GTAGS
+GPATH
+GRTAGS
+
 
 man/
 rtf/

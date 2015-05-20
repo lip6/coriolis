@@ -59,18 +59,26 @@ namespace Vhdl {
     }
 
     if (not range.empty()) {
-      switch ( (unsigned int)direction & (Net::Direction::ConnTristate
-                                         |Net::Direction::ConnWiredOr) ) {
-        case Net::Direction::ConnTristate:  out << " mux_vector" << range << " bus"; break;
-        case Net::Direction::ConnWiredOr:   out << " wor_vector" << range << " bus"; break;
-        default:                            out << " bit_vector" << range;
+      if (flags & Entity::IeeeMode) {
+        out << " std_logic_vector" << range;
+      } else {
+        switch ( (unsigned int)direction & (Net::Direction::ConnTristate
+                                           |Net::Direction::ConnWiredOr) ) {
+          case Net::Direction::ConnTristate:  out << " mux_vector" << range << " bus"; break;
+          case Net::Direction::ConnWiredOr:   out << " wor_vector" << range << " bus"; break;
+          default:                            out << " bit_vector" << range;
+        }
       }
     } else {
-      switch ( (unsigned int)direction & (Net::Direction::ConnTristate
-                                         |Net::Direction::ConnWiredOr) ) {
-        case Net::Direction::ConnTristate: out << " mux_bit bus"; break;
-        case Net::Direction::ConnWiredOr:  out << " wor_bit bus"; break;
-        default:                           out << " bit";
+      if (flags & Entity::IeeeMode) {
+        out << " std_logic";
+      } else {
+        switch ( (unsigned int)direction & (Net::Direction::ConnTristate
+                                           |Net::Direction::ConnWiredOr) ) {
+          case Net::Direction::ConnTristate: out << " mux_bit bus"; break;
+          case Net::Direction::ConnWiredOr:  out << " wor_bit bus"; break;
+          default:                           out << " bit";
+        }
       }
     }
   }

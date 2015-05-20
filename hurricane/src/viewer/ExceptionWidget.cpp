@@ -64,10 +64,12 @@ namespace Hurricane {
   }
 
 
-  void  ExceptionWidget::catchAllWrapper ( std::function< void() > method )
+  bool  ExceptionWidget::catchAllWrapper ( std::function< void() > method )
   {
+    bool failure = true;
     try {
       method();
+      failure = false;
     }
     catch ( Error& e ) {
       ExceptionWidget::run( e );
@@ -85,6 +87,7 @@ namespace Hurricane {
 
       ExceptionWidget::run( message );
     }
+    return failure;
   }
 
 
