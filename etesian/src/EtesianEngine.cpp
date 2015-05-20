@@ -804,6 +804,10 @@ namespace Etesian {
 
   void  EtesianEngine::place ()
   {
+    if(getCell()->isPlaced()){
+        cmess2 << Warning("The cell is already placed; returning") << std::endl;
+        return;
+    }
     getCell()->uniquify();
 
     getConfiguration()->print( getCell() );
