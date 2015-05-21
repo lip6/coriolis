@@ -517,12 +517,12 @@ class HTreeNode ( object ):
     trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
     leftContact        = self.topTree.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
     rightContact       = self.topTree.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
-    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() , GaugeConf.ExpandWidth )
-    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY(), GaugeConf.ExpandWidth )
-    self.topTree.createVertical  ( leftContact       , blContact        , leftContact.getX()       , GaugeConf.ExpandWidth )
-    self.topTree.createVertical  ( tlContact         , leftContact      , leftContact.getX()       , GaugeConf.ExpandWidth )
-    self.topTree.createVertical  ( rightContact      , brContact        , rightContact.getX()      , GaugeConf.ExpandWidth )
-    self.topTree.createVertical  ( trContact         , rightContact     , rightContact.getX()      , GaugeConf.ExpandWidth )
+    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() , 0 )
+    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY(), 0 )
+    self.topTree.createVertical  ( leftContact       , blContact        , leftContact.getX()       , 0 )
+    self.topTree.createVertical  ( tlContact         , leftContact      , leftContact.getX()       , 0 )
+    self.topTree.createVertical  ( rightContact      , brContact        , rightContact.getX()      , 0 )
+    self.topTree.createVertical  ( trContact         , rightContact     , rightContact.getX()      , 0 )
 
     for child in self.childs: child.route()
     return
