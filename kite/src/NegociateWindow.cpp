@@ -117,17 +117,17 @@ namespace {
     AllianceFramework* af = AllianceFramework::get ();
     RoutingGauge*      rg = nw->getKiteEngine()->getRoutingGauge();
 
-    forEach ( Net*, inet, nw->getCell()->getNets() ) {
-      if (inet->getType() == Net::Type::POWER ) continue;
-      if (inet->getType() == Net::Type::GROUND) continue;
-      if (inet->getType() == Net::Type::CLOCK ) continue;
-      if (af->isBLOCKAGE(inet->getName())) continue;
+    for( Net* net : nw->getCell()->getNets() ) {
+      if (net->getType() == Net::Type::POWER ) continue;
+      if (net->getType() == Net::Type::GROUND) continue;
+      if (net->getType() == Net::Type::CLOCK ) continue;
+      if (af->isBLOCKAGE(net->getName())) continue;
 
-      forEach ( RoutingPad*, irp, inet->getRoutingPads() ) {
-        size_t depth = rg->getLayerDepth(irp->getLayer());
+      for( RoutingPad* rp : net->getRoutingPads() ) {
+        size_t depth = rg->getLayerDepth(rp->getLayer());
         if (depth >  0) continue;
         if (depth == 0) 
-          TrackMarker::create( *irp, 1 );
+          TrackMarker::create( rp, 1 );
       }
     }
   }
@@ -326,8 +326,8 @@ namespace Kite {
 
       const vector<AutoContact*>& contacts = _gcells[igcell]->getContacts();
       for ( size_t i=0 ; i<contacts.size() ; i++ ) {
-        forEach ( Hook*, ihook, contacts[i]->getBodyHook()->getSlaveHooks() ) {
-          Hook* sourceHook = dynamic_cast<Segment::SourceHook*>(*ihook);
+        for( Hook* hook : contacts[i]->getBodyHook()->getSlaveHooks() ) {
+          Hook* sourceHook = dynamic_cast<Segment::SourceHook*>(hook);
           if (not sourceHook) continue;
           
           segment       = dynamic_cast<Segment*>(sourceHook->getComponent());
@@ -360,8 +360,8 @@ namespace Kite {
     ltrace(149) << "AutoSegments from AutoContacts" << endl;
     const vector<AutoContact*>& contacts = gcell->getContacts();
     for ( size_t i=0 ; i<contacts.size() ; i++ ) {
-      forEach ( Component*, component, contacts[i]->getSlaveComponents() ) {
-        segment      = dynamic_cast<Segment*>(*component);
+      for( Component* component : contacts[i]->getSlaveComponents() ) {
+        segment      = dynamic_cast<Segment*>(component);
         autoSegment  = Session::base()->lookup( segment );
         ltrace(149) << autoSegment << endl;
         if (autoSegment and autoSegment->isCanonical()) {

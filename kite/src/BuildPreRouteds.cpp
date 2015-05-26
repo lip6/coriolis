@@ -91,10 +91,10 @@ namespace Kite {
   {
     cmess1 << "  o  Looking for fixed or manually global routed nets." << endl;
 
-    forEach ( Net*, inet, getCell()->getNets() ) {
-      if (*inet == _blockageNet) continue;
-      if (inet->getType() == Net::Type::POWER ) continue;
-      if (inet->getType() == Net::Type::GROUND) continue;
+    for( Net* net : getCell()->getNets() ) {
+      if (net == _blockageNet) continue;
+      if (net->getType() == Net::Type::POWER ) continue;
+      if (net->getType() == Net::Type::GROUND) continue;
     // Don't skip the clock.
 
       vector<Segment*>  segments;
@@ -104,39 +104,39 @@ namespace Kite {
       bool   isFixed     = false;
       size_t rpCount     = 0;
 
-      if (inet->isDeepNet()) {
+      if (net->isDeepNet()) {
         rpCount = 2;
 
         Net* rootNet = dynamic_cast<Net*>(
-                         dynamic_cast<DeepNet*>(*inet)->getRootNetOccurrence().getEntity() );
-        forEach ( Component*, icomponent, rootNet->getComponents() ) {
-          if (dynamic_cast<Horizontal*>(*icomponent)) { isFixed = true; break; }
-          if (dynamic_cast<Vertical*>  (*icomponent)) { isFixed = true; break; }
-          if (dynamic_cast<Contact*>   (*icomponent)) { isFixed = true; break; }
+                         dynamic_cast<DeepNet*>(net)->getRootNetOccurrence().getEntity() );
+        for( Component* component : rootNet->getComponents() ) {
+          if (dynamic_cast<Horizontal*>(component)) { isFixed = true; break; }
+          if (dynamic_cast<Vertical*>  (component)) { isFixed = true; break; }
+          if (dynamic_cast<Contact*>   (component)) { isFixed = true; break; }
         }
       } else {
-        forEach ( Component*, icomponent, inet->getComponents() ) {
-          if (dynamic_cast<Pin*>(*icomponent)) continue;
+        for( Component* component : net->getComponents() ) {
+          if (dynamic_cast<Pin*>(component)) continue;
 
-          const RegularLayer* layer = dynamic_cast<const RegularLayer*>(icomponent->getLayer());
+          const RegularLayer* layer = dynamic_cast<const RegularLayer*>(component->getLayer());
           if (layer and (layer->getBasicLayer()->getMaterial() == BasicLayer::Material::blockage))
             continue;
 
-          Horizontal* horizontal = dynamic_cast<Horizontal*>(*icomponent);
+          Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
           if (horizontal) {
             segments.push_back( horizontal );
             isPreRouted = true;
             if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
               isFixed = true;
           } else {
-            Vertical* vertical = dynamic_cast<Vertical*>(*icomponent);
+            Vertical* vertical = dynamic_cast<Vertical*>(component);
             if (vertical) {
               isPreRouted = true;
               segments.push_back( vertical );
               if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
                 isFixed = true;
             } else {
-              Contact* contact = dynamic_cast<Contact*>(*icomponent);
+              Contact* contact = dynamic_cast<Contact*>(component);
               if (contact) {
                 isPreRouted = true;
                 contacts.push_back( contact );
@@ -144,11 +144,11 @@ namespace Kite {
                    or (contact->getHeight() != Session::getViaWidth(contact->getLayer())) )
                   isFixed = true;
               } else {
-                RoutingPad* rp = dynamic_cast<RoutingPad*>(*icomponent);
+                RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
                 if (rp) {
                   ++rpCount;
                 } else {
-                  // Plug* plug = dynamic_cast<Plug*>(*icomponent);
+                  // Plug* plug = dynamic_cast<Plug*>(component);
                   // if (plug) {
                   //   cerr << "buildPreRouteds(): " << plug << endl;
                   //   ++rpCount;
@@ -161,19 +161,19 @@ namespace Kite {
       }
 
       if (isFixed or isPreRouted or (rpCount < 2)) {
-        NetRoutingState* state = getRoutingState( *inet, Katabatic::KbCreate );
+        NetRoutingState* state = getRoutingState( net, Katabatic::KbCreate );
         state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
         state->setFlags  ( NetRoutingState::ManualGlobalRoute );
         if (rpCount < 2)
           state->setFlags  ( NetRoutingState::Unconnected );
 
         if (isFixed) {
-          cmess2 << "     - <" << (*inet)->getName() << "> is fixed." << endl;
+          cmess2 << "     - <" << net->getName() << "> is fixed." << endl;
           state->unsetFlags( NetRoutingState::ManualGlobalRoute );
           state->setFlags  ( NetRoutingState::Fixed );
         } else {
           if (rpCount > 1) {
-            cmess2 << "     - <" << (*inet)->getName() << "> is manually global routed." << endl;
+            cmess2 << "     - <" << net->getName() << "> is manually global routed." << endl;
             for ( auto icontact : contacts ) {
               AutoContact::createFrom( icontact );
             }

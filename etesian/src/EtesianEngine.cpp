@@ -353,17 +353,17 @@ namespace Etesian {
     double cellLength  = 0;
 
     vector<Occurrence>  feedOccurrences;
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
-      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = (*ioccurrence).getCompactString();
+      string    instanceName = occurrence.getCompactString();
 
       if (CatalogExtension::isFeed(masterCell)) {
         cerr << Warning( "Found a feedcell %s in an unplaced design, removing."
                        , instanceName.c_str()
                        ) << endl;
-        feedOccurrences.push_back( *ioccurrence );
+        feedOccurrences.push_back( occurrence );
         continue;
       }
 
@@ -409,19 +409,19 @@ namespace Etesian {
 
     UpdateSession::open();
     vector<Occurrence>  feedOccurrences;
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
       dots.dot();
 
-      if ( _flatDesign and not (*ioccurrence).getPath().getTailPath().isEmpty())
+      if ( _flatDesign and not occurrence.getPath().getTailPath().isEmpty())
         _flatDesign = true;
 
-      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = (*ioccurrence).getCompactString();
+      string    instanceName = occurrence.getCompactString();
 
       if (CatalogExtension::isFeed(masterCell)) {
-        feedOccurrences.push_back( *ioccurrence );
+        feedOccurrences.push_back( occurrence );
       }
     }
 
@@ -466,9 +466,9 @@ namespace Etesian {
     Box topAb = getCell()->getAbutmentBox();
 
     UpdateSession::open();
-    forEach ( Occurrence, ioccurrence, getCell()->getNonLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getNonLeafInstanceOccurrences() )
     {
-      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
       if (masterCell->getAbutmentBox().isEmpty()) {
@@ -481,11 +481,11 @@ namespace Etesian {
     UpdateSession::close();
 
     index_t instanceId = 0;
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
-      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = (*ioccurrence).getCompactString();
+      string    instanceName = occurrence.getCompactString();
     // Remove the enclosing brackets...
       instanceName.erase( 0, 1 );
       instanceName.erase( instanceName.size()-1 );
@@ -498,7 +498,7 @@ namespace Etesian {
       Box instanceAb = masterCell->getAbutmentBox();
 
       Transformation instanceTransf = instance->getTransformation();
-      (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
+      occurrence.getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
 
       // Upper rounded
@@ -536,26 +536,26 @@ namespace Etesian {
     vector<temporary_pin>  pins;
 
     unsigned int netId = 0;
-    forEach ( Net*, inet, getCell()->getNets() )
+    for ( Net* net : getCell()->getNets() )
     {
       const char* excludedType = NULL;
-      if ((*inet)->getType() == Net::Type::POWER ) excludedType = "POWER";
-      if ((*inet)->getType() == Net::Type::GROUND) excludedType = "GROUND";
-      if ((*inet)->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
+      if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
+      if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
+      if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
       if (excludedType) {
         cparanoid << Warning( "%s is not a routable net (%s,excluded)."
-                            , getString(*inet).c_str(), excludedType ) << endl;
+                            , getString(net).c_str(), excludedType ) << endl;
         continue;
       }
-      if (af->isBLOCKAGE((*inet)->getName())) continue;
+      if (af->isBLOCKAGE(net->getName())) continue;
 
       dots.dot();
 
       nets[netId] = temporary_net( netId, 1 );
 
-      forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
-        string insName = extractInstanceName( *irp );
-        Point  offset  = extractRpOffset    ( *irp );
+      for ( RoutingPad* rp : net->getRoutingPads() ) {
+        string insName = extractInstanceName( rp );
+        Point  offset  = extractRpOffset    ( rp );
 
         int_t xpin    = offset.getX() / pitch;
         int_t ypin    = offset.getY() / pitch;
@@ -651,16 +651,16 @@ namespace Etesian {
     // Create different densities
 
     _densityLimits.clear();
-    forEach(GCell*, gc, grid->getGCells()){
-        float density = (*gc)->getMaxHVDensity();
+    for(GCell* gc : grid->getGCells()){
+        float density = gc->getMaxHVDensity();
         if(density >= densityThreshold){
         
             coloquinte::density_limit cur;
             cur.box_ = coloquinte::box<int_t>(
-                (*gc)->getX()    / pitch,
-                (*gc)->getXMax() / pitch,
-                (*gc)->getY()    / pitch,
-                (*gc)->getYMax() / pitch
+                gc->getX()    / pitch,
+                gc->getXMax() / pitch,
+                gc->getY()    / pitch,
+                gc->getYMax() / pitch
             );
             cur.density_ = densityThreshold/density;
             _densityLimits.push_back(cur);
@@ -964,11 +964,11 @@ namespace Etesian {
   {
     UpdateSession::open();
 
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
       Point     instancePosition;
-      Instance* instance        = static_cast<Instance*>((*ioccurrence).getEntity());
-      string    instanceName    = (*ioccurrence).getCompactString();
+      Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
+      string    instanceName    = occurrence.getCompactString();
     // Remove the enclosing brackets...
       instanceName.erase( 0, 1 );
       instanceName.erase( instanceName.size()-1 );

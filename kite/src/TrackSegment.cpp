@@ -216,16 +216,16 @@ namespace Kite {
     ltrace(148) << "getGCells(): sourceGCell: " << sourceGCell << endl;
     ltrace(148) << "getGCells(): targetGCell: " << targetGCell << endl;
 
-    forEach ( AutoSegment*, isegment, base()->getAligneds() ) {
-      ltrace(148) << "| " << *isegment << endl;
+    for( AutoSegment* segment : base()->getAligneds() ) {
+      ltrace(148) << "| " << segment << endl;
 
-      Katabatic::GCell* gcell = isegment->getAutoSource()->getGCell();
+      Katabatic::GCell* gcell = segment->getAutoSource()->getGCell();
       if (gcell->getIndex() < sourceGCell->getIndex()) {
         sourceGCell = gcell;
         ltrace(148) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
       }
 
-      gcell = isegment->getAutoTarget()->getGCell();
+      gcell = segment->getAutoTarget()->getGCell();
       if (gcell->getIndex() > targetGCell->getIndex()) {
         targetGCell = gcell;
         ltrace(148) << "getGCells(): new targetGCell: " << targetGCell << endl;
@@ -502,8 +502,8 @@ namespace Kite {
    
     unsigned int  direction = perpandicularTo( getDirection() );
     TrackElement* dogleg    = NULL;
-    forEach ( Segment*, isegment, base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
-      dogleg = Session::lookup( *isegment );
+    for( Segment* segment : base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
+      dogleg = Session::lookup( segment );
       if (dogleg and (dogleg->getDirection() == direction)) {
         ltrace(200) << "Source dogleg: " << dogleg << endl;
         return dogleg;
@@ -519,8 +519,8 @@ namespace Kite {
    
     unsigned int  direction = perpandicularTo( getDirection() );
     TrackElement* dogleg    = NULL;
-    forEach ( Segment*, isegment, base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
-      dogleg = Session::lookup( *isegment );
+    for( Segment* segment : base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
+      dogleg = Session::lookup( segment );
       if (dogleg and (dogleg->getDirection() == direction)) {
         ltrace(200) << "Target dogleg: " << dogleg << endl;
         return dogleg;

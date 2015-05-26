@@ -504,15 +504,15 @@ namespace Kite {
       and (segment->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
 
     RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
-    forEach ( Track*, itrack, Tracks_Range::get(plane,_constraint)) {
+    for( Track* track : Tracks_Range::get(plane,_constraint)) {
       unsigned int costflags = 0;
       costflags |= (segment->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
 
-      _costs.push_back ( itrack->getOverlapCost(segment,costflags) );
-      _costs.back().setAxisWeight   ( _event->getAxisWeight(itrack->getAxis()) );
-      _costs.back().incDeltaPerpand ( _data->getWiringDelta(itrack->getAxis()) );
+      _costs.push_back ( track->getOverlapCost(segment,costflags) );
+      _costs.back().setAxisWeight   ( _event->getAxisWeight(track->getAxis()) );
+      _costs.back().incDeltaPerpand ( _data->getWiringDelta(track->getAxis()) );
       if (segment->isGlobal()) {
-        ltrace(500) << "Deter| setForGlobal() on " << *itrack << endl;
+        ltrace(500) << "Deter| setForGlobal() on " << track << endl;
         _costs.back().setForGlobal();
       }
 
@@ -528,7 +528,7 @@ namespace Kite {
       if ( _fullBlocked and (not _costs.back().isBlockage() and not _costs.back().isFixed()) ) 
         _fullBlocked = false;
 
-      ltrace(149) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << (*itrack) << endl;
+      ltrace(149) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << track << endl;
     }
     ltraceout(148);
 

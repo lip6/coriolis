@@ -80,16 +80,16 @@ namespace {
 
     vector<Segment*> segments;
 
-    forEach ( Segment*, isegment, masterNet->getSegments() ) {
-      RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(isegment->getLayer());
+    for( Segment* segment : masterNet->getSegments() ) {
+      RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
       if ( plane == NULL ) continue;
 
-      if ( usedComponent == dynamic_cast<Component*>(*isegment) ) continue;
-      if ( not NetExternalComponents::isExternal(*isegment) ) continue;
+      if ( usedComponent == dynamic_cast<Component*>(segment) ) continue;
+      if ( not NetExternalComponents::isExternal(segment) ) continue;
 
     //cerr << "Looking " << (void*)*isegment << ":" << *isegment << endl;
 
-      segments.push_back ( *isegment );
+      segments.push_back ( segment );
     }
 
     for ( size_t i=0 ; i<segments.size() ; ++i ) {
@@ -159,15 +159,15 @@ namespace Kite {
   {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
-    forEach ( Net*, inet, getCell()->getNets() ) {
-      if ( (*inet)->isSupply() ) continue;
+    for( Net* net : getCell()->getNets() ) {
+      if ( net->isSupply() ) continue;
 
-      NetRoutingState* state = getRoutingState( *inet );
+      NetRoutingState* state = getRoutingState( net );
       if (state and state->isFixed()) continue;
 
       vector<RoutingPad*> rps;
-      forEach ( RoutingPad*, irp, (*inet)->getRoutingPads() ) {
-        rps.push_back ( *irp );
+      for( RoutingPad* rp : net->getRoutingPads() ) {
+        rps.push_back ( rp );
       }
 
       for ( size_t i=0 ; i<rps.size() ; ++i )
