@@ -167,7 +167,8 @@ class Configuration ( object ):
         elif self._osFedora    .match(lines[0]): self._osType = "Linux.fc"
         elif self._osLinux_64  .match(lines[0]):
             self._osType    = "Linux.x86_64"
-            self._libSuffix = "64"
+            if os.path.exists("/usr/lib64/"):
+                self._libSuffix = "64"
         elif self._osLinux     .match(lines[0]): self._osType = "Linux.i386"
         elif self._osDarwin    .match(lines[0]): self._osType = "Darwin"
         elif self._osFreeBSD8x_amd64.match(lines[0]):
