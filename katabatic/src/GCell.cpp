@@ -918,6 +918,27 @@ namespace Katabatic {
   }
 
 
+  void  GCell::truncDensities ()
+  {
+    int  hcapacity = (int)getHCapacity();
+    int  vcapacity = (int)getVCapacity();
+
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      switch ( Session::getDirection(i) ) {
+        case KbHorizontal:
+          if (_blockages[i] > hcapacity * _box.getWidth())
+            _blockages[i]  = hcapacity * _box.getWidth();
+          break;
+        case KbVertical:
+          if (_blockages[i] > vcapacity * _box.getHeight())
+            _blockages[i]  = vcapacity * _box.getHeight();
+          break;
+      }
+    }
+    _flags &= ~GCellSaturated;
+  }
+
+
   size_t  GCell::checkDensity () const
   {
     if (not isValid()) const_cast<GCell*>(this)->updateDensity ();

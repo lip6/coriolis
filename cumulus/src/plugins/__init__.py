@@ -111,6 +111,11 @@ class StackedVia ( object ):
       self._vias        = []
       return
 
+    @property
+    def topDepth    ( self ): return self._topDepth
+    @property
+    def bottomDepth ( self ): return self._bottomDepth
+
     def getNet ( self ): return self._net
 
     def mergeDepth ( self, depth ):

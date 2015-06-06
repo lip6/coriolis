@@ -239,12 +239,12 @@ namespace Katabatic {
                        ,DbU::toLambda(length),getString(*isegment).c_str()) << endl;
       } else {
         if ( isegment->isHorizontal() ) {
-          if ( isSourceHook )
+          if (isSourceHook)
             lengths[depth] += _gcell->getBoundingBox().getXMax() - isegment->getSourceX();
           else
             lengths[depth] += isegment->getTargetX() - _gcell->getBoundingBox().getXMin();
         } else {
-          if ( isSourceHook )
+          if (isSourceHook)
             lengths[depth] += _gcell->getBoundingBox().getYMax() - isegment->getSourceY();
           else
             lengths[depth] += isegment->getTargetY() - _gcell->getBoundingBox().getYMin();

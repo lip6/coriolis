@@ -209,29 +209,49 @@ namespace Katabatic {
 
 
   ChipTools::ChipTools ( Cell* cell )
-    : _cell        (cell)
-    , _core        (NULL)
-    , _referencePad(NULL)
-    , _isChip      (false)
-    , _chipBb      (cell->getBoundingBox())
-    , _leftPadsBb  ()
-    , _rightPadsBb ()
-    , _topPadsBb   ()
-    , _bottomPadsBb()
-    , _chipCorona  ()
+    : _cell         (cell)
+    , _core         (NULL)
+    , _referencePad (NULL)
+    , _isChip       (false)
+    , _chipBb       (cell->getBoundingBox())
+    , _leftPadsBb   ()
+    , _rightPadsBb  ()
+    , _topPadsBb    ()
+    , _bottomPadsBb ()
+    , _chipCorona   ()
+    , _padWidth     (0)
+    , _padHeight    (0)
+    , _padPowerWidth(0)
+    , _padClockWidth(0)
   {
     _isChip = ::isChip( _cell, _core, _referencePad );
 
     if (_isChip) {
-    // Ugly: hard-coded pads height.
-      const DbU::Unit padHeight = _referencePad->getAbutmentBox().getHeight();
+      _padHeight = _referencePad->getAbutmentBox().getHeight();
+      _padWidth  = _referencePad->getAbutmentBox().getWidth();
 
-      Box outer = _cell->getBoundingBox().inflate ( -padHeight );
+      Box outer = _cell->getBoundingBox().inflate ( -_padHeight );
       _chipCorona   = Torus ( outer, _core->getBoundingBox() );
       _leftPadsBb   = Box   ( _chipBb.getXMin()                  , _chipBb.getYMin(), _chipCorona.getOuterBox().getXMin(), _chipBb.getYMax() );
       _rightPadsBb  = Box   ( _chipCorona.getOuterBox().getXMax(), _chipBb.getYMin(), _chipBb.getXMax(),                   _chipBb.getYMax() );
       _bottomPadsBb = Box   ( _chipBb.getXMin()                  , _chipBb.getYMin(), _chipBb.getXMax(), _chipCorona.getOuterBox().getYMin() );
       _topPadsBb    = Box   ( _chipBb.getXMin(), _chipCorona.getOuterBox().getYMax(), _chipBb.getXMax(),                   _chipBb.getYMax() );
+
+      Layer* metal3 = DataBase::getDB()->getTechnology()->getLayer( "METAL3" );
+      Net*   net    = _referencePad->getNet( "ck" );
+      forEach ( Horizontal*, ihorizontal, net->getHorizontals() ) {
+        if (ihorizontal->getLayer() == metal3) {
+          _padClockWidth = ihorizontal->getWidth();
+          break;
+        }
+      }
+      net = _referencePad->getNet( "vddi" );
+      forEach ( Horizontal*, ihorizontal, net->getHorizontals() ) {
+        if (ihorizontal->getLayer() == metal3) {
+          _padPowerWidth = ihorizontal->getWidth();
+          break;
+        }
+      }
 
       cmess1 << "  o  Design is a complete chip." << endl;
       cmess1 << "     - Core:          <" << _core->getName() << ">/<"

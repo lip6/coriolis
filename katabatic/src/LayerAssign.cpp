@@ -509,9 +509,9 @@ namespace Katabatic {
 #endif
   
       Session::setKatabaticFlags( EngineWarnOnGCellOverload );
-      _gcellGrid->checkDensity();
     }
   
+    _gcellGrid->checkDensity();
     Session::close();
 
     stopMeasures();

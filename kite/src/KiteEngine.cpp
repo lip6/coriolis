@@ -177,6 +177,7 @@ namespace Kite {
     return kite;
   }
 
+
   void  KiteEngine::_preDestroy ()
   {
     ltrace(90) << "KiteEngine::_preDestroy()" << endl;
@@ -208,7 +209,9 @@ namespace Kite {
     ltraceout(90);
   }
 
-  void KiteEngine::wipeOutRouting( Cell * cell ){
+
+  void KiteEngine::wipeoutRouting ( Cell * cell )
+  {
     if(KiteEngine::get(cell) != NULL or KatabaticEngine::get(cell) != NULL)
         throw Error("Trying to wipe out a routing with a routing engine\n");
     using namespace Hurricane;
@@ -243,6 +246,7 @@ namespace Kite {
     }
     UpdateSession::close();
   }
+
 
   KiteEngine::~KiteEngine ()
   { delete _configuration; }
@@ -456,7 +460,8 @@ namespace Kite {
             }
 
             Box elementBb       = element->getBoundingBox();
-            int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
+          //int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
+            int elementCapacity = -1;
 
             ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
@@ -493,7 +498,8 @@ namespace Kite {
             }
 
             Box elementBb       = element->getBoundingBox();
-            int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
+          //int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
+            int elementCapacity = -1;
 
             ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
@@ -518,6 +524,50 @@ namespace Kite {
         }
       }
     }
+
+#if DISABLED
+    const Box& coreBox  = chipCorona.getInnerBox();
+    Katabatic::GCell* gcell     = NULL;
+    Katabatic::GCell* end       = NULL;
+    Katabatic::GCell* hneighbor = NULL;
+
+    for ( size_t i=0 ; i<6 ; ++i ) {
+      switch ( i ) {
+        case 0:
+        case 1:
+        case 2:
+          gcell = getGCellGrid()->getGCell( Point(coreBox.getXMin(),coreBox.getYMin()) );
+          end   = getGCellGrid()->getGCell( Point(coreBox.getXMin(),coreBox.getYMax()) );
+          break;
+        case 3:
+        case 4:
+        case 5:
+          gcell = getGCellGrid()->getGCell( Point(coreBox.getXMax(),coreBox.getYMin()) );
+          end   = getGCellGrid()->getGCell( Point(coreBox.getXMax(),coreBox.getYMax()) );
+          break;
+      }
+
+      if (i % 3 == 0) {
+        gcell = gcell->getLeft();
+        end   = end  ->getLeft();
+      } else if (i % 3 == 2) {
+        gcell = gcell->getRight();
+        end   = end  ->getRight();
+      }
+
+      while ( gcell and (gcell != end) ) {
+        hneighbor = (i<3) ? gcell->getLeft() : gcell->getRight();
+        if (hneighbor == NULL) break;
+        _knik->updateEdgeCapacity( gcell->getColumn()
+                                 , gcell->getRow()
+                                 , hneighbor->getColumn()
+                                 , hneighbor->getRow()
+                                 , 3 );
+        cerr << "Decrease capacity of " << gcell << " (side) by " << hEdgeCapacity << "/2" << endl; 
+        gcell = gcell->getUp();
+      }
+    }
+#endif
   }
 
 
@@ -755,6 +805,7 @@ namespace Kite {
 
   void  KiteEngine::finalizeLayout ()
   {
+
     ltrace(90) << "KiteEngine::finalizeLayout()" << endl;
     if (getState() > Katabatic::EngineDriving) return;
 

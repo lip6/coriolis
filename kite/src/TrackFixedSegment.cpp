@@ -180,7 +180,6 @@ namespace Kite {
       ltrace(200) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
 
       Session::addInsertEvent( trackFixedSegment, track );
-
     }
     return trackFixedSegment;
   }

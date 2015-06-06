@@ -182,6 +182,7 @@ namespace Katabatic {
                                                               , SetIndex&    invalidateds );
       inline  void                        invalidateCt        ();
       inline  void                        setUnderIoPad       ();
+              void                        truncDensities      ();
     // Inspector Management.                                  
               Record*                     _getRecord          () const;
               string                      _getString          () const;

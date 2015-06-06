@@ -892,7 +892,7 @@ namespace Etesian {
             success = kiteE->getToolSuccess();
             feedRoutingBack();
             kiteE->destroy();
-            KiteEngine::wipeOutRouting(_cell);
+            KiteEngine::wipeoutRouting(_cell);
             if(success){
                 cmess2 << "The design is routable; exiting" << endl;
                 break;

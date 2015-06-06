@@ -33,6 +33,8 @@
 #include "hurricane/Path.h"
 #include "hurricane/Query.h"
 #include "crlcore/AllianceFramework.h"
+#include "katabatic/GCell.h"
+#include "katabatic/GCellGrid.h"
 #include "kite/RoutingPlane.h"
 #include "kite/TrackFixedSegment.h"
 #include "kite/Track.h"
@@ -74,6 +76,7 @@ namespace {
   using Hurricane::Technology;
   using Hurricane::DataBase;
   using CRL::AllianceFramework;
+  using Katabatic::GCell;
   using Katabatic::ChipTools;
   using Katabatic::NetRoutingExtension;
   using namespace Kite;
@@ -278,7 +281,6 @@ namespace {
                          , getString(inet ->getName()).c_str()
                          , getString(_cko->getName()).c_str()
                          ) << endl;
-            cerr << inet->isExternal() << endl;
           }
         }
 
@@ -645,8 +647,14 @@ namespace {
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
   //unsigned int  type      = plane->getLayerGauge()->getType();
+    const Box&    coronaBb  = plane->getKiteEngine()->getChipTools().getCoronaBb();
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
+
+    ltrace(300) << "  delta:" << DbU::getValueString(delta)
+                << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
+                << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
+                << ")" << endl;
 
     // if ( type == Constant::PinOnly ) {
     //   ltrace(300) << "  Layer is PinOnly." << endl;
@@ -684,8 +692,12 @@ namespace {
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 
-        axisMin = _axis - _width/2 - delta;
-        axisMax = _axis + _width/2 + delta;
+        axisMin = _axis - _width/2;
+        axisMax = _axis + _width/2;
+        if (coronaBb.contains(segment->getBoundingBox())) {
+          axisMin -= delta;
+          axisMax += delta;
+        }
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
@@ -709,8 +721,12 @@ namespace {
         if ( segment and net->isExternal() )
           NetExternalComponents::setExternal ( segment );
 
-        axisMin = _axis - _width/2 - delta;
-        axisMax = _axis + _width/2 + delta;
+        axisMin = _axis - _width/2;
+        axisMax = _axis + _width/2;
+        if (coronaBb.contains(segment->getBoundingBox())) {
+          axisMin -= delta;
+          axisMax += delta;
+        }
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
@@ -730,7 +746,8 @@ namespace {
     ostringstream os;
 
     os << "<Rail " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
-       << " @" << DbU::getValueString(_axis) << " ";
+       << " @"  << DbU::getValueString(_axis)  << " "
+       << " w:" << DbU::getValueString(_width) << " ";
     list<Interval>::const_iterator ichunk = _chunks.begin();
     for ( ; ichunk != _chunks.end() ; ++ichunk ) {
       if (ichunk != _chunks.begin()) os << " ";
@@ -1134,7 +1151,8 @@ namespace {
     const Component* component = dynamic_cast<const Component*>(go);
     if ( component ) {
       if (    _framework->isPad(getMasterCell())
-         and (_routingGauge->getLayerDepth(component->getLayer()) < 2) )
+         and ( (_routingGauge->getLayerDepth(component->getLayer()) < 2)
+             or (component->getLayer()->getBasicLayers().getFirst()->getMaterial() != BasicLayer::Material::blockage) ) )
         return;
 
       Net* rootNet = _kite->getBlockageNet();
@@ -1169,10 +1187,10 @@ namespace {
         unsigned int depth = _routingGauge->getLayerDepth ( segment->getLayer() );
 
         if (    _chipTools.isChip()
-            and ((depth == 2) or (depth == 3))
-            and (segment->getWidth () == DbU::fromLambda( 12.0))
-            and (segment->getLength() >  DbU::fromLambda(200.0))
-            and (_kite->getChipTools().getCorona().contains(bb)) ) {
+           and ((depth == 2) or (depth == 3))
+           and (segment->getWidth () == _chipTools.getPadPowerWidth())
+           and (segment->getLength() >  _chipTools.getPadWidth())
+           and (_kite->getChipTools().getCorona().contains(bb)) ) {
           switch ( depth ) {
             case 2: _vRingSegments.push_back ( segment ); break; // M3 V.
             case 3: _hRingSegments.push_back ( segment ); break; // M4 H.
@@ -1203,7 +1221,6 @@ namespace {
 
   void  QueryPowerRails::ringAddToPowerRails ()
   {
-
     if ( not _hRingSegments.empty() ) {
       const RegularLayer* layer = dynamic_cast<const RegularLayer*>(_routingGauge->getRoutingLayer(3));
       setBasicLayer ( layer->getBasicLayer() );
@@ -1296,6 +1313,11 @@ namespace Kite {
     query.ringAddToPowerRails();
     query.doLayout();
     cmess1 << "     - " << query.getGoMatchCount() << " power rails elements found." << endl;
+
+    vector<GCell*>& gcells = *(getGCellGrid()->getGCellVector());
+    for ( auto gcell : gcells ) {
+      gcell->truncDensities();
+    }
 
     Session::revalidate ();
 

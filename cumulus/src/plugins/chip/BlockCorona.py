@@ -19,8 +19,9 @@ from   operator  import methodcaller
 import Cfg
 from   Hurricane import DbU
 from   Hurricane import Point
-from   Hurricane import Transformation
+from   Hurricane import Interval
 from   Hurricane import Box
+from   Hurricane import Transformation
 from   Hurricane import Path
 from   Hurricane import Occurrence
 from   Hurricane import UpdateSession
@@ -38,13 +39,50 @@ from   plugins   import StackedVia
 import chip.BlockPower
 
 
+class IntervalSet ( object ):
+
+    def __init__ ( self ):
+        self.chunks = []
+        return
+
+    def merge ( self, min, max ):
+        toMerge = Interval( min, max )
+        imerge  = len(self.chunks)
+        length  = len(self.chunks)
+        i       = 0
+
+        while i < length:
+            if imerge >= length:
+                if toMerge.getVMax() < self.chunks[i].getVMin():
+                    self.chunks.insert( i, toMerge )
+                    length += 1
+                    imerge  = 0
+                    break
+                if toMerge.intersect(self.chunks[i]):
+                    imerge = i
+                    self.chunks[imerge].merge( toMerge )
+            else:
+                if toMerge.getVMax() >= self.chunks[i].getVMin():
+                    self.chunks[imerge].merge( self.chunks[i] )
+                    del self.chunks[ i ]
+                    length -= 1
+                    continue
+                else:
+                    break
+            i += 1
+
+        if imerge >= length:
+            self.chunks.insert( length, toMerge )
+        return
+
+
 class Rail ( object ):
 
     def __init__ ( self, side, order, axis ):
         self.side  = side
         self.order = order
         self.axis  = axis
-        self.vias  = { }    # Key:pos Element: [pos,railContact,blockContact]
+        self.vias  = { }    # Key:pos Element:[pos,railContact,blockContact]
         return
 
     @property
@@ -162,19 +200,19 @@ class VerticalRail ( Rail ):
                          , self.side.vRailWidth
                          )
 
-        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
-        for depth in range(self.side.verticalDepth-2,self.vias.values()[0][1]._bottomDepth,-2):
-          blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
-          pitch         = routingGauge.getLayerPitch(depth)
-
-          for i in range(1,len(railVias)):
-            Vertical.create( self.side.blockageNet
-                           , blockageLayer
-                           , self.axis
-                           , self.side.vRailWidth
-                           , railVias[i-1].getBoundingBox().getYMax() + pitch
-                           , railVias[i  ].getBoundingBox().getYMin() - pitch
-                           )
+       #routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+       #for depth in range(self.side.verticalDepth-2,self.vias.values()[0][1]._bottomDepth,-2):
+       #  blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
+       #  pitch         = routingGauge.getLayerPitch(depth)
+       #
+       #  for i in range(1,len(railVias)):
+       #    Vertical.create( self.side.blockageNet
+       #                   , blockageLayer
+       #                   , self.axis
+       #                   , self.side.vRailWidth + 2*pitch
+       #                   , railVias[i-1].getBoundingBox().getYMax() + pitch
+       #                   , railVias[i  ].getBoundingBox().getYMin() - pitch
+       #                   )
 
         return
 
@@ -355,6 +393,30 @@ class VerticalSide ( Side ):
             self._rails.append( VerticalRail(self,i,self.getRailAxis(i)) )
         return
 
+    def addBlockages ( self, sideXMin, sideXMax ):
+        spans = IntervalSet()
+        for rail in self._rails:
+            for via in rail.vias.values():
+                if via[1].getNet() != via[2].getNet(): continue
+
+                spans.merge( via[1]._y - via[1]._height/2, via[1]._y + via[1]._height/2 )
+
+        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        for depth in range(self.getInnerRail(0).vias.values()[0][1].bottomDepth
+                          ,self.getInnerRail(0).vias.values()[0][1].topDepth ):
+          blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
+          pitch         = routingGauge.getLayerPitch(depth)
+
+          for chunk in spans.chunks:
+              Horizontal.create( self.blockageNet
+                               , blockageLayer
+                               , (chunk.getVMax()+chunk.getVMin())/2
+                               , chunk.getVMax() - chunk.getVMin() + pitch*2
+                               , sideXMin
+                               , sideXMax
+                               )
+        return
+
 
 class WestSide ( VerticalSide ):
 
@@ -369,6 +431,12 @@ class WestSide ( VerticalSide ):
     def corner0 ( self, i ): return self.corners[chip.SouthWest][i]
     def corner1 ( self, i ): return self.corners[chip.NorthWest   ][i]
 
+    def addBlockages ( self ):
+        sideXMin = self.getOuterRail(0).axis - self.vRailWidth
+        sideXMax = self.getInnerRail(0).axis + self.vRailWidth
+        VerticalSide.addBlockages( self, sideXMin, sideXMax )
+        return
+
 
 class EastSide ( VerticalSide ):
 
@@ -382,6 +450,12 @@ class EastSide ( VerticalSide ):
 
     def corner0 ( self, i ): return self.corners[chip.SouthEast][i]
     def corner1 ( self, i ): return self.corners[chip.NorthEast   ][i]
+
+    def addBlockages ( self ):
+        sideXMin = self.getInnerRail(0).axis - self.vRailWidth
+        sideXMax = self.getOuterRail(0).axis + self.vRailWidth
+        VerticalSide.addBlockages( self, sideXMin, sideXMax )
+        return
 
 
 class Corona ( object ):
@@ -505,4 +579,7 @@ class Corona ( object ):
         self._northSide.doLayout()
         self._westSide .doLayout()
         self._eastSide .doLayout()
+
+        self._westSide.addBlockages()
+        self._eastSide.addBlockages()
         return
