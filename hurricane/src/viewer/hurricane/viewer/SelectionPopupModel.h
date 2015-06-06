@@ -1,46 +1,34 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectionPopupModel.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/SelectionPopupModel.h" |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_SELECTION_POPUP_MODEL_H__
-#define  __HURRICANE_SELECTION_POPUP_MODEL_H__
+#ifndef  HURRICANE_SELECTION_POPUP_MODEL_H
+#define  HURRICANE_SELECTION_POPUP_MODEL_H
 
-#include  <vector>
-#include  <set>
-
-#include  <QFont>
-#include  <QApplication>
-#include  <QAbstractTableModel>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/Occurrences.h"
-#include  "hurricane/viewer/Graphics.h"
+#include <vector>
+#include <set>
+#include <QFont>
+#include <QApplication>
+#include <QAbstractTableModel>
+#include "hurricane/Commons.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/Occurrences.h"
+#include "hurricane/viewer/Graphics.h"
 
 
 namespace Hurricane {
-
 
   class Selector;
 
@@ -57,6 +45,7 @@ namespace Hurricane {
       void                loadOccurrences      ( Occurrences, bool showChange=false );
       void                clear                ();
       void                updateLayout         ();
+      int                 charWidth            () const;
       int                 rowCount             ( const QModelIndex& parent=QModelIndex() ) const;
       int                 columnCount          ( const QModelIndex& parent=QModelIndex() ) const;
       QVariant            data                 ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
@@ -66,6 +55,7 @@ namespace Hurricane {
     private:
       OccurrenceFilter    _filter;
       vector<Occurrence>* _occurrences;
+      int                 _charWidth;
   };
 
 

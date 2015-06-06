@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -1041,7 +1041,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  const int  CellWidget::_initialSide = 400;
+  int  CellWidget::_initialSide = 400;
 
 
   CellWidget::CellWidget ( QWidget* parent )
@@ -1085,6 +1085,9 @@ namespace Hurricane {
 
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
+
+    _initialSide = Graphics::toHighDpi( _initialSide );
+    if (Graphics::isHighDpi()) resize( _initialSide, _initialSide );
   }
 
 

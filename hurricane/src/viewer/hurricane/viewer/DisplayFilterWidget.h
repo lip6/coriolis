@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./DisplayFilterWidget.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DISPLAY_FILTER_WIDGET__
-#define  __HURRICANE_DISPLAY_FILTER_WIDGET__
+#ifndef  HURRICANE_DISPLAY_FILTER_WIDGET_H
+#define  HURRICANE_DISPLAY_FILTER_WIDGET_H
 
 
 #include  <QWidget>
@@ -84,7 +75,6 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif
+#endif  // HURRICANE_DISPLAY_FILTER_WIDGET_H 

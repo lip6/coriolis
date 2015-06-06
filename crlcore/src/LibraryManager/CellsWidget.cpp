@@ -52,10 +52,12 @@ namespace CRL {
     _view->setSelectionBehavior   ( QAbstractItemView::SelectRows );
     _view->setSortingEnabled      ( true );
     _view->setModel               ( _baseModel );
-    _view->resizeColumnToContents ( 0 );
+  //_view->resizeColumnToContents ( 1 );
 
     QHeaderView* horizontalHeader = _view->horizontalHeader();
-    horizontalHeader->setStretchLastSection( true );
+    horizontalHeader->setResizeMode        ( 0, QHeaderView::Stretch );
+    horizontalHeader->setResizeMode        ( 1, QHeaderView::ResizeToContents );
+  //horizontalHeader->setStretchLastSection( false );
 
     QHeaderView* verticalHeader = _view->verticalHeader();
     verticalHeader->setVisible( false );

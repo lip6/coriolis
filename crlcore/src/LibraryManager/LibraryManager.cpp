@@ -55,6 +55,9 @@ namespace CRL {
     splitter->addWidget( _librariesWidget );
     splitter->addWidget( _cellsWidget     );
     splitter->addWidget( _viewsWidget     );
+    splitter->setStretchFactor( 0, 1 );
+    splitter->setStretchFactor( 1, 2 );
+    splitter->setStretchFactor( 2, 0 );
 
     QFrame* separator = new QFrame ();
     separator->setFrameShape ( QFrame::HLine );
@@ -97,7 +100,7 @@ namespace CRL {
 
     _librariesWidget->initSelection();
 
-    resize( 750, 550 );
+    resize( Graphics::toHighDpi(750), Graphics::toHighDpi(550) );
   }
 
 

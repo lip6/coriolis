@@ -26,29 +26,43 @@ namespace Hurricane {
 // Class :  "Hurricane::DrawingStyleSample".
 
 
+  int  DrawingStyleSample::_side   = 20;
+  int  DrawingStyleSample::_border = 2;
+
+
   DrawingStyleSample::DrawingStyleSample ( PaletteItem* entry )
     : QWidget()
-    , _sample(QSize(20,20))
+    , _sample(NULL)
     , _entry(entry)
   {
-    setAttribute  ( Qt::WA_StaticContents );
-    setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    setFixedSize  ( 20, 20 );
+    if (Graphics::isHighDpi()) {
+      _side   = 40;
+      _border =  4;
+    }
+    _sample = new QPixmap( _side, _side );
 
-    redraw ();
+    setAttribute ( Qt::WA_StaticContents );
+    setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    setFixedSize ( _side, _side );
+
+    redraw();
   }
+
+
+  DrawingStyleSample::~DrawingStyleSample ()
+  { delete _sample; }
 
 
   void  DrawingStyleSample::redraw ()
   {
-    QPainter  painter ( &_sample );
+    QPainter  painter ( _sample );
 
-    painter.setPen        ( Qt::NoPen );
-    painter.setBackground ( Graphics::getBrush("background") );
-    painter.eraseRect     ( 0, 0, 20, 20 );
-    painter.setPen        ( Graphics::getPen  (_entry->getName()) );
-    painter.setBrush      ( Graphics::getBrush(_entry->getName()) );
-    painter.drawRect      ( 2, 2, 16, 16 );
+    painter.setPen       ( Qt::NoPen );
+    painter.setBackground( Graphics::getBrush("background") );
+    painter.eraseRect    ( 0, 0, _side, _side );
+    painter.setPen       ( Graphics::getPen  (_entry->getName()) );
+    painter.setBrush     ( Graphics::getBrush(_entry->getName()) );
+    painter.drawRect     ( _border, _border, _side-2*_border, _side-2*_border );
 
     update ();
   }
@@ -56,8 +70,8 @@ namespace Hurricane {
 
   void  DrawingStyleSample::paintEvent ( QPaintEvent* )
   {
-    QPainter painter ( this );
-    painter.drawPixmap ( 0, 0, _sample );
+    QPainter painter( this );
+    painter.drawPixmap( 0, 0, *_sample );
   }
 
 
@@ -76,7 +90,7 @@ namespace Hurricane {
   }
 
 
-  void  PaletteItem::setItemSelectable ( bool )
+    void  PaletteItem::setItemSelectable ( bool )
   { }
 
 

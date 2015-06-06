@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_GRAPHICS_WIDGET__
-#define  __HURRICANE_GRAPHICS_WIDGET__
+#ifndef  HURRICANE_GRAPHICS_WIDGET_H
+#define  HURRICANE_GRAPHICS_WIDGET_H
 
 
 #include  <QWidget>

@@ -1,35 +1,25 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PaletteItem.h"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/PaletteItem.h"         |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_PALETTE_ITEM__
-#define  __HURRICANE_PALETTE_ITEM__
+#ifndef  HURRICANE_PALETTE_ITEM_H
+#define  HURRICANE_PALETTE_ITEM_H
 
 #include  <QPixmap>
 #include  <QWidget>
 #include  <QFont>
-
 class QPaintEvent;
 class QCheckBox;
 
@@ -37,7 +27,6 @@ class QCheckBox;
 
 
 namespace Hurricane {
-
 
   class Name;
   class PaletteItem;
@@ -51,13 +40,17 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                   DrawingStyleSample ( PaletteItem* );
+                          DrawingStyleSample ( PaletteItem* );
+                         ~DrawingStyleSample ();
     protected:
-      QPixmap      _sample;
-      PaletteItem* _entry;
+             QPixmap*     _sample;
+             PaletteItem* _entry;
+    private:
+      static int          _side;
+      static int          _border;
     public slots:
-      void         redraw             ();
-      void         paintEvent         ( QPaintEvent* );
+             void         redraw             ();
+             void         paintEvent         ( QPaintEvent* );
   };
 
 
@@ -86,7 +79,6 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-# endif  // __HURRICANE_PALETTE_ITEM__
+#endif  // HURRICANE_PALETTE_ITEM_H

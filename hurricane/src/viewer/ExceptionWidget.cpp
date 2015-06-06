@@ -102,7 +102,7 @@ namespace Hurricane {
     setWindowTitle( tr("<An Exception was Caught>") );
     setToolTip    ( tr("Ben mon cochon, t'es dans le bouillon") );
 
-    _header->setMinimumWidth ( 200 );
+    _header->setMinimumWidth ( Graphics::isHighDpi() ? 400 : 200 );
     _header->setTextFormat   ( Qt::RichText );
     _header->setText         ( "<b>[ERROR]</b>" );
 
@@ -112,7 +112,7 @@ namespace Hurricane {
     _trace->setTextInteractionFlags ( Qt::TextBrowserInteraction );
     _trace->setAcceptRichText       ( true );
     _trace->setHtml                 ( "<b>No program trace sets yet.</b>" );
-    _trace->setMinimumSize          ( QSize(800,500) );
+    _trace->setMinimumSize          ( QSize( Graphics::isHighDpi() ? 1800 : 800, 500) );
     _trace->setLineWrapMode         ( QTextEdit::NoWrap );
   //_trace->setSizePolicy           ( QSizePolicy::Ignored, QSizePolicy::Ignored );
     _trace->hide                    ();

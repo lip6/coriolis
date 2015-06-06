@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,14 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./PaletteExtensionGoItem.h"               |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_PALETTE_EXTENSION_GO_ITEM__
-#define  __HURRICANE_PALETTE_EXTENSION_GO_ITEM__
+#ifndef  HURRICANE_PALETTE_EXTENSION_GO_ITEM_H
+#define  HURRICANE_PALETTE_EXTENSION_GO_ITEM_H
 
 
 class QCheckBox;
@@ -61,7 +52,6 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif  // __LAYER_PALETTE_ENTRY__
+#endif  // HURRICANE_PALETTE_EXTENSION_GO_ITEM_H

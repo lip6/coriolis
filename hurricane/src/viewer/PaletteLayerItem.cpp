@@ -48,10 +48,11 @@ namespace Hurricane {
     _visible->setText    ( label.str().c_str() );
     _visible->setFont    ( Graphics::getFixedFont() );
 
-    _selectable->setFixedWidth ( 23 );
+    if (not Graphics::isHighDpi())
+      _selectable->setFixedWidth ( 23 );
     _selectable->setChecked    ( true );
     _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
-                                 "            padding:          2px 3px 2px 3px; }" );
+                                 "            padding:          2px 2px 6px 6px; }" );
   //_selectable->setStyleSheet ( "QCheckBox::indicator {"
   //                             "  border:  2px solid red;"
   //                             "}"

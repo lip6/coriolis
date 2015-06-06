@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -44,6 +43,7 @@ namespace Hurricane {
     // Accessors.
       static  Graphics*                    getGraphics      ();
       static  bool                         isEnabled        ();
+      static  bool                         isHighDpi        ();
       static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0 );
       static  const QFont                  getNormalFont    ( bool bold=false, bool italic=false, bool underline=false );
       static  const Name&                  getGroup         ( const Name& key );
@@ -57,6 +57,7 @@ namespace Hurricane {
       static  QColor                       darken           ( const QColor& );
       static  const TextTranslator&        getHtmlTranslator();
       static  string                       toHtml           ( const string& );
+      static  int                          toHighDpi        ( int );
       static  bool                         breakpointStopCb ( const string& message );
 
     // Modifiers.
@@ -78,6 +79,7 @@ namespace Hurricane {
               RainbowColorScale            _rainbowColorScale;
               TemperatureColorScale        _temperatureColorScale;
               bool                         _qtEnabled;
+              bool                         _highDpi;
 
     // Internals - Constructors & Destructors.
                                            Graphics           ();

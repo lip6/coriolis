@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,16 +14,15 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QLabel>
-#include  <QRadioButton>
-#include  <QButtonGroup>
-#include  <QGroupBox>
-#include  <QVBoxLayout>
-#include  <QGridLayout>
-
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/DisplayStyle.h"
-#include  "hurricane/viewer/GraphicsWidget.h"
+#include <QLabel>
+#include <QRadioButton>
+#include <QButtonGroup>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/DisplayStyle.h"
+#include "hurricane/viewer/GraphicsWidget.h"
 
 
 namespace Hurricane {
@@ -65,6 +63,7 @@ namespace Hurricane {
       gLayout->addWidget ( label , istyle-hideFallback, 1 );
       group->addButton   ( button, istyle );
     }
+    if (Graphics::isHighDpi()) gLayout->setContentsMargins( 30, 30, 30, 30 );
 
     groupBox->setLayout ( gLayout );
     wLayout->addWidget  ( groupBox );

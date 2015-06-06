@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,20 +11,16 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SelectionPopupModel.cpp"                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QFont>
-
-#include  "hurricane/Path.h"
-#include  "hurricane/Entity.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/Selector.h"
-#include  "hurricane/viewer/SelectionPopupModel.h"
+#include <QFont>
+#include "hurricane/Path.h"
+#include "hurricane/Entity.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/Selector.h"
+#include "hurricane/viewer/SelectionPopupModel.h"
 
 
 namespace Hurricane {
@@ -61,6 +51,7 @@ namespace Hurricane {
     : QAbstractTableModel(parent)
     , _filter            (new Occurrence_AcceptAll())
     , _occurrences       (NULL)
+    , _charWidth         (50)
   { }
 
 
@@ -80,13 +71,21 @@ namespace Hurricane {
   { return _filter; }
 
 
+  int  SelectionPopupModel::charWidth () const
+  { return _charWidth; }
+
+
   void  SelectionPopupModel::loadOccurrences ( Occurrences occurrences, bool showChange )
   {
-    if ( !_occurrences ) _occurrences = new vector<Occurrence> ();
+    _charWidth = 50;
+    if (not _occurrences) _occurrences = new vector<Occurrence> ();
     forEach ( Occurrence, ioccurrence, occurrences.getSubSet(getFilter()) ) {
-      _occurrences->push_back ( *ioccurrence );
+      _occurrences->push_back( *ioccurrence );
+      string name = getString( (*ioccurrence).getPath().getName() ) + "::"
+                  + getString( (*ioccurrence).getEntity() );
+      _charWidth = std::max( _charWidth, (int)name.size() );
     }
-    if ( showChange ) emit layoutChanged ();
+    if (showChange) emit layoutChanged ();
   }
 
 

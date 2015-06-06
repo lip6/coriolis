@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,13 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Torus.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_TORUS__
-#define  __HURRICANE_TORUS__
+#ifndef  HURRICANE_TORUS_H
+#define  HURRICANE_TORUS_H
 
-#include  "hurricane/Box.h"
+#include "hurricane/Box.h"
 
 
 namespace Hurricane {
@@ -78,4 +69,4 @@ namespace Hurricane {
 
 INSPECTOR_PV_SUPPORT(Hurricane::Torus);
 
-#endif  // __HURRICANE_TORUS__
+#endif  // HURRICANE_TORUS_H

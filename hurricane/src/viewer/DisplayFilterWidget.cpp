@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,24 +11,20 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./DisplayFilterWidget.cpp"                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QLabel>
-#include  <QCheckBox>
-#include  <QSpinBox>
-#include  <QGroupBox>
-#include  <QButtonGroup>
-#include  <QRadioButton>
-#include  <QGridLayout>
-#include  <QVBoxLayout>
-
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/DisplayFilterWidget.h"
+#include <QLabel>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QGroupBox>
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/DisplayFilterWidget.h"
 
 
 namespace Hurricane {
@@ -114,6 +104,7 @@ namespace Hurricane {
     gLayout->addWidget ( _doComponents, 5, 0, 1, 2 );
     connect ( _doComponents, SIGNAL(stateChanged(int)), this, SLOT(setDoComponents(int)) );
 
+    if (Graphics::isHighDpi()) gLayout->setContentsMargins( 30, 30, 30, 30 );
     groupBox->setLayout ( gLayout );
     wLayout->addWidget  ( groupBox );
 
@@ -141,6 +132,7 @@ namespace Hurricane {
     group->addButton   ( _steiner );
     hLayout->addWidget ( _steiner );
 
+    if (Graphics::isHighDpi()) hLayout->setContentsMargins( 30, 30, 30, 30 );
     groupBox->setLayout ( hLayout );
     wLayout->addWidget  ( groupBox );
 
@@ -174,6 +166,7 @@ namespace Hurricane {
     group->addButton   ( _microMode );
     hLayout->addWidget ( _microMode );
 
+    if (Graphics::isHighDpi()) hLayout->setContentsMargins( 30, 30, 30, 30 );
     groupBox->setLayout ( hLayout );
     wLayout->addWidget  ( groupBox );
     wLayout->addStretch ();

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -19,6 +19,7 @@
 #include <QBrush>
 #include <QPen>
 #include <QApplication>
+#include <QDesktopWidget>
 #include "hurricane/Name.h"
 #include "hurricane/Exception.h"
 #include "hurricane/Warning.h"
@@ -40,6 +41,7 @@ namespace Hurricane {
     , _rainbowColorScale    ()
     , _temperatureColorScale()
     , _qtEnabled            (false)
+    , _highDpi              (false)
   {
     _htmlTranslator.addTranslation ( "<br>"     , "<br>"      );
     _htmlTranslator.addTranslation ( "<em>"     , "<em>"      );
@@ -123,6 +125,8 @@ namespace Hurricane {
     _rainbowColorScale.qtAllocate();
     _temperatureColorScale.qtAllocate();
 
+    _highDpi = (qApp->desktop()->logicalDpiX() > 192);
+
     Breakpoint::setStopCb ( Graphics::breakpointStopCb );
   }
 
@@ -196,15 +200,15 @@ namespace Hurricane {
 
 
   bool  Graphics::isEnabled ()
-  {
-    return getGraphics()->_qtEnabled;
-  }
+  { return getGraphics()->_qtEnabled; }
+
+
+  bool  Graphics::isHighDpi ()
+  { return getGraphics()->_highDpi; }
 
 
   void  Graphics::enable ()
-  {
-    return getGraphics()->_enable();
-  }
+  { return getGraphics()->_enable(); }
 
 
   void  Graphics::addStyle ( DisplayStyle* displayStyle )
@@ -324,6 +328,15 @@ namespace Hurricane {
     // return protect;
   }
 
+
+  int  Graphics::toHighDpi ( int value )
+  {
+    if (isHighDpi()) {
+    // For now, for high DPI, multiplies by 2.5.
+      value = value*2 + value/2;
+    }
+    return value;
+  }
 
   bool  Graphics::breakpointStopCb ( const string& message )
   {

@@ -1,38 +1,27 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectionPopup.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/SelectionPopup.h"      |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_SELECTION_POPUP_WIDGET_H__
-#define  __HURRICANE_SELECTION_POPUP_WIDGET_H__
+#ifndef  HURRICANE_SELECTION_POPUP_WIDGET_H
+#define  HURRICANE_SELECTION_POPUP_WIDGET_H
 
-
-#include  <QWidget>
-#include  <QTableView>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/Occurrences.h"
+#include <QWidget>
+#include <QTableView>
+#include "hurricane/Commons.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/Occurrences.h"
 
 
 class QModelIndex;
@@ -75,10 +64,10 @@ namespace Hurricane {
       SelectionPopupModel*  _model;
       QTableView*           _view;
       int                   _rowHeight;
+      int                   _charWidth;
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif // __HURRICANE_SELECTION_POPUP_WIDGET_H__
+#endif // HURRICANE_SELECTION_POPUP_WIDGET_H

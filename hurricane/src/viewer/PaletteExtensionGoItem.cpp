@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2008, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,17 +11,13 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PaletteExtensionGoItem.cpp"             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QCheckBox>
-#include  <QHBoxLayout>
-
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/PaletteExtensionGoItem.h"
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/PaletteExtensionGoItem.h"
 
 
 namespace Hurricane {
@@ -35,9 +25,9 @@ namespace Hurricane {
 
   PaletteExtensionGoItem::PaletteExtensionGoItem ( const Name& name )
     : PaletteItem()
-    , _visible(NULL)
+    , _visible   (NULL)
     , _selectable(NULL)
-    , _name(name)
+    , _name      (name)
   { }
 
 
@@ -52,25 +42,27 @@ namespace Hurricane {
   void  PaletteExtensionGoItem::_postCreate ()
   {
     QHBoxLayout* layout = new QHBoxLayout ();
-    layout->setContentsMargins ( 0, 0, 0, 0 );
+    layout->setContentsMargins( 0, 0, 0, 0 );
 
     _visible = new QCheckBox ( this );
-    _visible->setChecked ( false );
-    _visible->setText    ( getString(getName()).c_str() );
-    _visible->setFont    ( Graphics::getFixedFont() );
+    _visible->setChecked( false );
+    _visible->setText   ( getString(getName()).c_str() );
+    _visible->setFont   ( Graphics::getFixedFont() );
 
-    _selectable = new QCheckBox ( this );
-    _selectable->setFixedWidth ( 23 );
-    _selectable->setChecked    ( true );
-    _selectable->setStyleSheet ( "QCheckBox { background-color: red;"
-                                 "            padding:          2px 3px 2px 3px }" );
+    _selectable = new QCheckBox( this );
+    if (not Graphics::isHighDpi())
+      _selectable->setFixedWidth( 23 );
+    _selectable->setChecked   ( true );
+    _selectable->setStyleSheet( "QCheckBox { background-color: red;"
+                                 "            padding:          2px 2px 6px 6px }" );
 
     layout->addWidget ( _selectable );
     layout->addWidget ( _visible );
-    setLayout ( layout );
+    layout->addStretch( 1 );
+    setLayout( layout );
 
-    connect ( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
-    connect ( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
+    connect( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
+    connect( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
   }
 
 

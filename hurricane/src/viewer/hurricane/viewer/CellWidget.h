@@ -618,7 +618,7 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static  const int                  _initialSide;
+      static  int                        _initialSide;
               vector<Qt::CursorShape>    _cursors;
     //        MapView*                   _mapView;
               Technology*                _technology;
