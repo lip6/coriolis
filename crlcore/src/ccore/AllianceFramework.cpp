@@ -336,8 +336,8 @@ namespace CRL {
       AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags );
       if (library == NULL) break;
 
-      ostringstream oss (libName);
-      oss << "." << duplicate;
+      ostringstream oss;
+      oss << libName << "." << duplicate;
       dupLibName = oss.str();
     }
 

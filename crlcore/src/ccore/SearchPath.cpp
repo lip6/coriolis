@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,21 +11,10 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SearchPath.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "crlcore/SearchPath.h"
-
-
-namespace {
-
-  using namespace std;
-
-
-} // End of anonymous namespace.
+#include "crlcore/SearchPath.h"
 
 
 namespace CRL {
@@ -106,6 +89,10 @@ namespace CRL {
   }
 
 
+  void  SearchPath::remove ( size_t index )
+  { if (index < _paths.size()) _paths.erase( _paths.begin()+index ); }
+
+
   void  SearchPath::select ( const string& path )
   {
     for ( size_t ipath=0 ; ipath < _paths.size() ; ++ipath ) {
@@ -139,6 +126,14 @@ namespace CRL {
   {
     for ( size_t i=0 ; i < _paths.size() ; i++ )
       if ( _paths[i].getPath() == path ) return i;
+    return npos;
+  }
+
+
+  size_t  SearchPath::hasLib ( const string& name ) const
+  {
+    for ( size_t i=0 ; i < _paths.size() ; i++ )
+      if ( _paths[i].getName() == name ) return i;
     return npos;
   }
 

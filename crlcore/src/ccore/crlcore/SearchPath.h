@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,19 +14,16 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CRL_SEARCH_PATH__
-#  define  __CRL_SEARCH_PATH__
+#ifndef  CRL_SEARCH_PATH_H
+#define  CRL_SEARCH_PATH_H
 
-
-#include  <string>
-#include  <vector>
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Slot.h"
+#include <string>
+#include <vector>
+#include "hurricane/Commons.h"
+#include "hurricane/Slot.h"
 
 
 namespace CRL {
-
 
   using Hurricane::Record;
   using Hurricane::_TName;
@@ -57,6 +53,7 @@ namespace CRL {
       inline void               append         ( const std::string& path, const std::string& name="" );
              void               prepend        ( const std::string& path, const std::string& name="");
              void               replace        ( const std::string& path, const std::string&, size_t index );
+             void               remove         ( size_t index );
              size_t             locate         ( const std::string&        file
                                                ,       std::ios::openmode  mode =std::ios::in
                                                ,       int                 first=0
@@ -66,6 +63,7 @@ namespace CRL {
       inline const std::string& getSelected    () const;
       inline size_t             getIndex       () const;
       inline bool               hasSelected    () const;
+             size_t             hasLib         ( const std::string& name ) const;
              size_t             hasPath        ( const std::string& path ) const;
              const Element&     operator[]     ( size_t index ) const;
     private:
@@ -109,11 +107,11 @@ namespace CRL {
   inline std::string        SearchPath::Element::_getTypeName () const { return "SearchPath::Element"; }
 
 
-} // End of CRL namespace.
+} // CRL namespace.
 
 
 INSPECTOR_P_SUPPORT(CRL::SearchPath);
 INSPECTOR_V_SUPPORT(CRL::SearchPath::Element);
 
 
-# endif
+#endif  // CRL_SEARCH_PATH_H

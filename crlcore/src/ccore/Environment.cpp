@@ -702,8 +702,14 @@ namespace CRL {
 
   void  Environment::addSYSTEM_LIBRARY ( const char* value, const char* libName, unsigned int mode )
   {
-    if ( mode == Prepend ) { _LIBRARIES.prepend(value,libName); return; }
-    if ( mode == Append  ) { _LIBRARIES.append (value,libName); return; }
+    if ((mode == Prepend) or (mode == Append)) {
+      size_t duplicate = _LIBRARIES.hasLib(libName);
+      if (duplicate != SearchPath::npos) _LIBRARIES.remove( duplicate );
+
+      if (mode == Prepend) _LIBRARIES.prepend(value,libName);
+      if (mode == Append ) _LIBRARIES.append (value,libName);
+      return;
+    }
 
     string newLibName = libName;
     for ( size_t i=0 ; i < _LIBRARIES.getSize() ; ++i ) {
