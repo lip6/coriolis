@@ -38,43 +38,46 @@
 #                                   LEFDEF_ZLEF_LIBRARY_DEBUG
 
 
-macro ( _find_lefdef_lib varname libname )
-  find_library ( LEFDEF_${varname}_LIBRARY_RELEASE NAMES ${libname}       PATHS ${LEFDEF_LIBRARY_DIR} )
-  find_library ( LEFDEF_${varname}_LIBRARY_DEBUG   NAMES ${libname}_Debug PATHS ${LEFDEF_LIBRARY_DIR} )
+macro( _find_lefdef_lib varname libname )
+  find_library( LEFDEF_${varname}_LIBRARY_RELEASE NAMES ${libname}       PATHS ${LEFDEF_LIBRARY_DIR} )
+  find_library( LEFDEF_${varname}_LIBRARY_DEBUG   NAMES ${libname}_Debug PATHS ${LEFDEF_LIBRARY_DIR} )
 
-  if ( LEFDEF_${varname}_LIBRARY_RELEASE AND NOT LEFDEF_${varname}_LIBRARY_DEBUG )
-    set ( LEFDEF_${varname}_LIBRARY_DEBUG ${LEFDEF_${varname}_LIBRARY_RELEASE} CACHE STRING "Path to a library" FORCE )
-  endif ( LEFDEF_${varname}_LIBRARY_RELEASE AND NOT LEFDEF_${varname}_LIBRARY_DEBUG )
+  if( LEFDEF_${varname}_LIBRARY_RELEASE AND NOT LEFDEF_${varname}_LIBRARY_DEBUG )
+    set( LEFDEF_${varname}_LIBRARY_DEBUG ${LEFDEF_${varname}_LIBRARY_RELEASE} CACHE STRING "Path to a library" FORCE )
+  endif()
 
-  if ( LEFDEF_${varname}_LIBRARY_DEBUG AND NOT LEFDEF_${varname}_LIBRARY_RELEASE )
-    set ( LEFDEF_${varname}_LIBRARY_RELEASE LEFDEF_${varname}_LIBRARY_DEBUG CACHE STRING "Path to a library" FORCE )
-  endif ( LEFDEF_${varname}_LIBRARY_DEBUG AND NOT LEFDEF_${varname}_LIBRARY_RELEASE )
+  if( LEFDEF_${varname}_LIBRARY_DEBUG AND NOT LEFDEF_${varname}_LIBRARY_RELEASE )
+    set( LEFDEF_${varname}_LIBRARY_RELEASE LEFDEF_${varname}_LIBRARY_DEBUG CACHE STRING "Path to a library" FORCE )
+  endif()
 
-  if ( LEFDEF_${varname}_LIBRARY_RELEASE )
-    list ( APPEND LEFDEF_LIBRARIES "optimized" ${LEFDEF_${varname}_LIBRARY_RELEASE}
-                                   "debug"     ${LEFDEF_${varname}_LIBRARY_DEBUG} )
-    set ( LEFDEF_${varname}_LIBRARY_FOUND 1 )
-    mark_as_advanced ( LEFDEF_${varname}_LIBRARY_RELEASE
-                       LEFDEF_${varname}_LIBRARY_DEBUG )
-  else ( LEFDEF_${varname}_LIBRARY_RELEASE )
+  if( LEFDEF_${varname}_LIBRARY_RELEASE )
+    list( APPEND LEFDEF_LIBRARIES "optimized" ${LEFDEF_${varname}_LIBRARY_RELEASE}
+                                  "debug"     ${LEFDEF_${varname}_LIBRARY_DEBUG} )
+    set( LEFDEF_${varname}_LIBRARY_FOUND 1 )
+    mark_as_advanced( LEFDEF_${varname}_LIBRARY_RELEASE
+                      LEFDEF_${varname}_LIBRARY_DEBUG )
+  else()
     set ( LEFDEF_FOUND "NO" )
-  endif ( LEFDEF_${varname}_LIBRARY_RELEASE )
-endmacro ( _find_lefdef_lib )
+  endif()
+endmacro()
 
 
-set ( LEFDEF_INCLUDE_DIR_DESCRIPTION "directory containing the LEF/DEF include files. E.g /opt/lefdef-5.6/include" )
-set ( LEFDEF_LIBRARY_DIR_DESCRIPTION "directory containing the LEF/DEF library files. E.g /opt/lefdef-5.6/lib" )
-set ( LEFDEF_DIR_MESSAGE             "Set the LEFDEF_INCLUDE_DIR cmake cache entry to the ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
+set( LEFDEF_INCLUDE_DIR_DESCRIPTION "directory containing the LEF/DEF include files. E.g /opt/lefdef-5.6/include" )
+set( LEFDEF_LIBRARY_DIR_DESCRIPTION "directory containing the LEF/DEF library files. E.g /opt/lefdef-5.6/lib" )
+set( LEFDEF_DIR_MESSAGE             "Set the LEFDEF_INCLUDE_DIR cmake cache entry to the ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
 
 
 # Don't even bother under Win32
 if ( UNIX )
   set ( LEFDEF_FOUND "YES" )
-  set ( LEFDEF_SEARCH_PATH $ENV{LEFDEF_TOP}
+  set ( LEFDEF_SEARCH_PATH "$ENV{LEFDEF_TOP}"
                            "/usr"
                            "/opt/lefdef-5.6"
                            "/opt/lefdef-5.7"
-                           "/opt/lefdef")
+                           "/opt/lefdef"
+                           "$ENV{HOME}/oa/lefdef/5.7-s038"
+                           )
+  message( STATUS "LEFDEF_SEARCH_PATH: ${LEFDEF_SEARCH_PATH}" )
 
   set ( LEFDEF_LIBRARIES           "" )
   set ( LEFDEF_LIBRARY_SEARCH_PATH "" )
@@ -83,11 +86,13 @@ if ( UNIX )
                                  PATHS ${LEFDEF_SEARCH_PATH}
                                  PATH_SUFFIXES "include" "include/lefdef"
                                  DOC "The ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
+  message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
 
   find_path ( LEFDEF_LIBRARY_DIR NAMES "libdef.a" "libdef_Debug.a"
-                                 PATHS ${LEFDEF_LIBRARY_SEARCH_PATH}
+                                 PATHS ${LEFDEF_SEARCH_PATH}
                                  PATH_SUFFIXES "lib${LIB_SUFFIX}"
                                  DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
+  message( STATUS "LEFDEF_LIBRARY_DIR: ${LEFDEF_LIBRARY_DIR}" )
 
   if ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
     _find_lefdef_lib (  "CDEF" "cdef"     )
@@ -103,6 +108,7 @@ if ( UNIX )
   endif ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
 
   if ( LEFDEF_FOUND )
+    message ( STATUS "Found LEF/DEF" )
     add_definitions ( -DHAVE_LEFDEF )
     if ( NOT LEFDEF_FIND_QUIETLY )
       message ( STATUS "Found LEF/DEF" )

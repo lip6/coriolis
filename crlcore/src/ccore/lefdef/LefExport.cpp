@@ -152,7 +152,7 @@ namespace {
   {
     if ( _framework == NULL ) {
       _framework = AllianceFramework::get ();
-      CellGauge* cg = _framework->getCellGauge("sxlib");
+      CellGauge* cg = _framework->getCellGauge();
 
       _sliceHeight = cg->getSliceHeight ();
       _pitchWidth  = cg->getPitch       ();
@@ -500,7 +500,7 @@ namespace {
     LefDriver*  driver     = (LefDriver*)udata;
     Technology* technology = DataBase::getDB()->getTechnology();
     const vector<RoutingLayerGauge*>& rg
-      = driver->getFramework()->getRoutingGauge("sxlib")->getLayerGauges();
+      = driver->getFramework()->getRoutingGauge()->getLayerGauges();
 
     int status = 0;
     for ( size_t ilayer=0 ; ilayer<rg.size() ; ++ilayer ) {
@@ -613,7 +613,7 @@ namespace {
     LefDriver*  driver     = (LefDriver*)udata;
     Technology* technology = DataBase::getDB()->getTechnology();
     const vector<RoutingLayerGauge*>& rg
-      = driver->getFramework()->getRoutingGauge("sxlib")->getLayerGauges();
+      = driver->getFramework()->getRoutingGauge()->getLayerGauges();
 
     int status = 0;
     for ( size_t ilayer=1 ; ilayer<rg.size() ; ++ilayer ) {
@@ -722,7 +722,7 @@ namespace CRL {
     set<Cell*> cells;
 
     if ( cell != NULL ) {
-      libraryName = getString(cell->getName()) + "export";
+      libraryName = getString(cell->getName()) + "_export";
 
       forEach ( Instance*, iinstance, cell->getInstances() ) {
         cells.insert ( (*iinstance)->getMasterCell() );

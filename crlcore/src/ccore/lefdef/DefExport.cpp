@@ -391,7 +391,7 @@ namespace {
     Box        abutmentBox ( cell->getAbutmentBox() );
 
     const vector<RoutingLayerGauge*>& rg
-      = AllianceFramework::get()->getRoutingGauge("sxlib")->getLayerGauges();
+      = AllianceFramework::get()->getRoutingGauge()->getLayerGauges();
 
     int status = 0;
 
@@ -652,7 +652,7 @@ namespace {
   {
     FILE* defStream = NULL;
     try {
-      string designName = getString(cell->getName()) + "export";
+      string designName = getString(cell->getName()) + "_export";
       string path       = "./" + designName + ".def";
 
       cmess1 << "  o  Export DEF: <" << path << ">" << endl;
