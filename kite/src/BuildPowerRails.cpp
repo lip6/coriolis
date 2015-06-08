@@ -87,16 +87,16 @@ namespace {
 
   void  destroyRing ( Net* net )
   {
-    forEach ( RoutingPad*, irp, net->getRoutingPads() ) {
+    for( RoutingPad* rp : net->getRoutingPads() ) {
       bool          allMasters = true;
       vector<Hook*> ring;
-      forEach ( Hook*, ihook, irp->getBodyHook()->getHooks() ) {
-        if (not ihook->isMaster()) { allMasters = false; break; }
-        ring.push_back( *ihook );
+      for( Hook* hook : rp->getBodyHook()->getHooks() ) {
+        if (not hook->isMaster()) { allMasters = false; break; }
+        ring.push_back( hook );
       }
       if (allMasters) {
-        for ( auto ihook : ring ) {
-          ihook->_setNextHook( ihook );
+        for ( auto hook : ring ) {
+          hook->_setNextHook( hook );
         }
       }
     }
@@ -183,27 +183,27 @@ namespace {
     AllianceFramework* af = AllianceFramework::get();
 
     bool hasPad = false;
-    forEach ( Instance*, iinstance, _topCell->getInstances() ) {
-      if (af->isPad(iinstance->getMasterCell())) {
+    for( Instance* instance : _topCell->getInstances() ) {
+      if (af->isPad(instance->getMasterCell())) {
         if (not hasPad) {
           cmess1 << "  o  Design has pads, assuming complete chip top structure." << endl;
           hasPad = true;
         }
 
-        string padName = getString( iinstance->getMasterCell()->getName() );
+        string padName = getString( instance->getMasterCell()->getName() );
         if (padName.substr(0,8) == "pvddeck_") {
-          cmess1 << "     o  Reference power pad: " << iinstance->getName()
-                 << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
+          cmess1 << "     o  Reference power pad: " << instance->getName()
+                 << "(model:" << instance->getMasterCell()->getName() << ")." << endl;
 
         // Guessing the power, ground and clock nets from *this* pad connexions.
-          forEach ( Plug*, iplug, iinstance->getPlugs() ) {
-            Net*      masterNet = iplug->getMasterNet();
+          for( Plug* plug : instance->getPlugs() ) {
+            Net*      masterNet = plug->getMasterNet();
             Net::Type netType   = masterNet->getType();
             if (   (netType != Net::Type::POWER )
                and (netType != Net::Type::GROUND)
                and (netType != Net::Type::CLOCK ) ) continue;
 
-            Net* net = iplug->getNet();
+            Net* net = plug->getNet();
             if (not net) {
               net = _topCell->getNet( masterNet->getName() );
               if (not net) {
@@ -216,15 +216,15 @@ namespace {
           }
         }
 
-        padName = getString( iinstance->getMasterCell()->getName() );
+        padName = getString( instance->getMasterCell()->getName() );
         if (padName.substr(0,4) == "pck_") {
-          cmess1 << "     o  Reference clock pad: " << iinstance->getName()
-                 << "(model:" << iinstance->getMasterCell()->getName() << ")." << endl;
+          cmess1 << "     o  Reference clock pad: " << instance->getName()
+                 << "(model:" << instance->getMasterCell()->getName() << ")." << endl;
 
         // Guessing external clock net *only* from *this* pad connexions.
-          forEach ( Plug*, iplug, iinstance->getPlugs() ) {
-            Net* masterNet = iplug->getMasterNet();
-            Net* net       = iplug->getNet();
+          for( Plug* plug : instance->getPlugs() ) {
+            Net* masterNet = plug->getMasterNet();
+            Net* net       = plug->getNet();
             if (not net) {
               net = _topCell->getNet( masterNet->getName() );
               if (not net) {
@@ -259,17 +259,17 @@ namespace {
       _vssiPadNetName = "";
       _ckoPadNetName  = "";
 
-      forEach ( Net*, inet, _topCell->getNets() ) {
-        Net::Type netType = inet->getType();
+      for( Net* net : _topCell->getNets() ) {
+        Net::Type netType = net->getType();
 
         if (netType == Net::Type::CLOCK) {
-          if (not inet->isExternal()) continue;
+          if (not net->isExternal()) continue;
 
           if (_ckoPadNetName.isEmpty()) {
-            cmess1 << "     - Using <" << inet->getName() << "> as internal (core) clock net." << endl;
-            _ckoPadNetName =  inet->getName();
-            _cko           = *inet;
-            if (NetRoutingExtension::isMixedPreRoute(*inet)) {
+            cmess1 << "     - Using <" << net->getName() << "> as internal (core) clock net." << endl;
+            _ckoPadNetName = net->getName();
+            _cko           = net;
+            if (NetRoutingExtension::isMixedPreRoute(net)) {
               cmess1 << "       (core clock net is already routed)" << endl;
               _flags |= ClockIsRouted;
             } else {
@@ -278,22 +278,22 @@ namespace {
           } else {
             cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
                           "        (will consider only <%s>)"
-                         , getString(inet ->getName()).c_str()
+                         , getString(net ->getName()).c_str()
                          , getString(_cko->getName()).c_str()
                          ) << endl;
           }
         }
 
-        if (NetRoutingExtension::isManualGlobalRoute(*inet)) continue;
+        if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
 
         if (netType == Net::Type::POWER) {
           if (_vddiPadNetName.isEmpty()) {
-            _vddiPadNetName =  inet->getName();
-            _vddi           = *inet;
+            _vddiPadNetName = net->getName();
+            _vddi           = net;
           } else {
             cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
                           "        (will consider only <%s>)"
-                         , getString(inet ->getName()).c_str()
+                         , getString(net  ->getName()).c_str()
                          , getString(_vddi->getName()).c_str()
                          ) << endl;
           }
@@ -301,12 +301,12 @@ namespace {
 
         if (netType == Net::Type::GROUND) {
           if (_vssiPadNetName.isEmpty()) {
-            _vssiPadNetName =  inet->getName();
-            _vssi     = *inet;
+            _vssiPadNetName = net->getName();
+            _vssi           = net;
           } else {
             cerr << Error("Second power ground net <%s> net at top block level will be ignored.\n"
                           "        (will consider only <%s>)"
-                         , getString(inet ->getName()).c_str()
+                         , getString(net  ->getName()).c_str()
                          , getString(_vssi->getName()).c_str()
                          ) << endl;
           }
@@ -943,8 +943,8 @@ namespace {
     Technology*   technology = DataBase::getDB()->getTechnology();
     RoutingGauge* rg         = _kite->getConfiguration()->getRoutingGauge();
 
-    forEach ( Layer*, iLayer, technology->getLayers() ) {
-      RegularLayer* regular = dynamic_cast<RegularLayer*>(*iLayer);
+    for( Layer* layer : technology->getLayers() ) {
+      RegularLayer* regular = dynamic_cast<RegularLayer*>(layer);
       if ( not regular
          or (regular->getBasicLayer()->getMaterial() != BasicLayer::Material::metal) ) continue;
 
@@ -1300,14 +1300,14 @@ namespace Kite {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
-    forEach ( BasicLayer*, iLayer, technology->getBasicLayers() ) {
-      if (   (iLayer->getMaterial() != BasicLayer::Material::metal)
-         and (iLayer->getMaterial() != BasicLayer::Material::blockage) )
+    for( BasicLayer* layer : technology->getBasicLayers() ) {
+      if (   (layer->getMaterial() != BasicLayer::Material::metal)
+         and (layer->getMaterial() != BasicLayer::Material::blockage) )
         continue;
-      if (_configuration->isGMetal(*iLayer)) continue;
-      if (not query.hasBasicLayer(*iLayer)) continue;
+      if (_configuration->isGMetal(layer)) continue;
+      if (not query.hasBasicLayer(layer)) continue;
 
-      query.setBasicLayer( *iLayer );
+      query.setBasicLayer( layer );
       query.doQuery      ();
     }
     query.ringAddToPowerRails();

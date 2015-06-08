@@ -338,8 +338,10 @@ namespace {
 
   void  Model::connectModels ()
   {
-    for ( Model* blifModel : _blifOrder )
+    for ( Model* blifModel : _blifOrder ){
+      cmess2 << "Handling model <" << blifModel->getCell()->getName() << ">" << endl;
       blifModel->connectSubckts();
+    }
   }
 
 
@@ -480,20 +482,62 @@ namespace {
       for ( auto connection : subckt->getConnections() ) {
         string masterNetName = connection.first;
         string netName       = connection.second;
+        //cparanoid << "\tConnection "
+        //          << "plug: <" << masterNetName << ">, "
+        //          << "external: <" << netName << ">."
+        //          << endl;
         Net*   net           = _cell->getNet( netName );
-        Plug*  plug          = instance->getPlug( instance->getMasterCell()->getNet(masterNetName) );
-        Net*   plugNet       = plug->getNet();
 
-        if (not plugNet) {
-          if (not net) net = Net::create( _cell, netName );
-          plug->setNet( net );
-          continue;
+        Net*   masterNet     = instance->getMasterCell()->getNet(masterNetName);
+        if(not masterNet) {
+          ostringstream tmes;
+          tmes << "The master net <" << masterNetName << "> hasn't been found "
+               << "for instance <" << subckt->getInstanceName() << "> "
+               << "of model <" << subckt->getModelName() << ">"
+               << "in model <" << getCell()->getName() << ">"
+               << endl;
+          throw Error(tmes.str());
         }
 
-        if (not net) { plugNet->addAlias( netName ); continue; }
-        if (plugNet == net) continue;
+        Plug*  plug          = instance->getPlug( masterNet );
+        if(not plug) {
+          ostringstream tmes;
+          tmes << "The plug in net <" << netName << "> "
+               << "and master net <" << masterNetName << "> hasn't been found "
+               << "for instance <" << subckt->getInstanceName() << "> "
+               << "of model <" << subckt->getModelName() << ">"
+               << "in model <" << getCell()->getName() << ">"
+               << endl;
+          throw Error(tmes.str());
+        }
 
-        plugNet->merge( net );
+
+        Net*   plugNet       = plug->getNet();
+
+        if (not plugNet) { // Plug not connected yet
+          if (not net) net = Net::create( _cell, netName );
+          plug->setNet( net );
+          plugNet = net;
+        }
+        else if (not net) { // Net doesn't exist yet
+          plugNet->addAlias( netName );
+        }
+        else if (plugNet != net){ // Plus already connected to another net
+          plugNet->merge( net );
+        }
+
+        if( plugNet->getType() == Net::Type::POWER or plugNet->getType() == Net::Type::GROUND ){
+          ostringstream tmes;
+          string powType = plugNet->getType() == Net::Type::POWER ? "power" : "ground";
+          string plugName = plugNet->getName()._getString(); // Name of the original net
+          tmes << "Connecting instance <" << subckt->getInstanceName() << "> "
+               << "of <" << subckt->getModelName() << "> "
+               << "to the " << powType << " net <" << plugName << "> ";
+          if(netName != plugName)
+               tmes << "with the alias <" << netName << ">. ";
+          tmes << "Maybe you should use tie cells?";
+          cerr << Warning(tmes.str()) << endl;
+        }
       }
     }
   }
@@ -602,7 +646,23 @@ namespace CRL {
         if (tokenize.state() & Tokenize::CoverAlias) {
           blifModel->mergeAlias( blifLine[1], blifLine[2] );
         } else if (tokenize.state() & Tokenize::CoverZero) {
+          cerr << Warning( "Blif::load() Definition of an alias <%s> of VSS in a \".names\". Maybe you should use tie cells?\n"
+                         "                    File %s.blif at line %u."
+                       , blifLine[1].c_str()
+                       , blifFile.c_str()
+                       , tokenize.lineno()
+                       ) << endl;
+          //blifModel->mergeAlias( blifLine[1], "vss" );
+          blifModel->getCell()->getNet( "vss" )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
+          cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
+                         "                    File %s.blif at line %u."
+                       , blifLine[1].c_str()
+                       , blifFile.c_str()
+                       , tokenize.lineno()
+                       ) << endl;
+          //blifModel->mergeAlias( blifLine[1], "vdd" );
+          blifModel->getCell()->getNet( "vdd" )->addAlias( blifLine[1] );
         } else {
           cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
                          "                    File %s.blif at line %u."

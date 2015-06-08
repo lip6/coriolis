@@ -82,6 +82,7 @@ std::int64_t get_HPWL_length(netlist const & circuit, placement_t const & pl, in
 std::int64_t get_RSMT_length(netlist const & circuit, placement_t const & pl, index_t net_ind);
 
 std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int_t> > const & pins);
+std::vector<std::pair<index_t, index_t> > get_RSMT_horizontal_topology(std::vector<point<int_t> > const & pins, index_t exactitude_limits);
 point<std::vector<std::pair<index_t, index_t> > > get_RSMT_topology(std::vector<point<int_t> > const & pins, index_t exactitude_limit);
 
 } // namespace coloquinte

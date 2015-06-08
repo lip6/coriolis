@@ -716,24 +716,24 @@ namespace Kite {
         continue;
 
       canonicals.clear ();
-      forEach ( TrackElement*, isegment3
-              , segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
-        DataNegociate* data3 = isegment3->getDataNegociate();
+      for( TrackElement* segment3
+              : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
+        DataNegociate* data3 = segment3->getDataNegociate();
         if ( not data3 ) continue;
 
         RoutingEvent* event3 = data3->getRoutingEvent();
         if ( not event3 ) continue;
 
         if ( not toFree.intersect(event3->getConstraints()) ) {
-          ltrace(200) << "  . " << *isegment3 << endl;
+          ltrace(200) << "  . " << segment3 << endl;
           continue;
         }
 
-        ltrace(200) << "  | " << *isegment3 << endl;
+        ltrace(200) << "  | " << segment3 << endl;
 
         if ( shrinkRight xor shrinkLeft ) {
           if ( shrinkRight ) {
-            if ( not (success=Manipulator(*isegment3,_fsm)
+            if ( not (success=Manipulator(segment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
                            , toFree.getVMin() - getPPitch()/2
                            )) )
@@ -741,28 +741,28 @@ namespace Kite {
 
             if ( event3->getTracksFree() == 1 ) {
               ltrace(200) << "Potential left intrication with other perpandicular." << endl;
-              if ( isegment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap(getLayer()) ) {
+              if ( segment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap(getLayer()) ) {
                 leftIntrication = true;
-                leftAxisHint    = isegment3->getAxis();
+                leftAxisHint    = segment3->getAxis();
               }
             }
           }
           if ( shrinkLeft  ) {
-            if ( not (success=Manipulator(*isegment3,_fsm)
+            if ( not (success=Manipulator(segment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
                            , toFree.getVMax() + getPPitch()/2
                            )) )
               break;
             if ( event3->getTracksFree() == 1 ) {
               ltrace(200) << "Potential right intrication with other perpandicular." << endl;
-              if ( isegment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap(getLayer()) ) {
+              if ( segment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap(getLayer()) ) {
                 rightIntrication = true;
-                rightAxisHint    = isegment3->getAxis();
+                rightAxisHint    = segment3->getAxis();
               }
             }
           }
         } else {
-          if ( not (success=Manipulator(*isegment3,_fsm).ripup( SegmentAction::OtherRipup
+          if ( not (success=Manipulator(segment3,_fsm).ripup( SegmentAction::OtherRipup
                                                               | SegmentAction::EventLevel3
                                                               )) )
             break;
@@ -828,16 +828,16 @@ namespace Kite {
         continue;
 
       canonicals.clear();
-      forEach ( TrackElement*, isegment3
-              , segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
-        DataNegociate* data3 = isegment3->getDataNegociate();
+      for( TrackElement* segment3
+              : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
+        DataNegociate* data3 = segment3->getDataNegociate();
         if (not data3) continue;
 
         RoutingEvent* event3 = data3->getRoutingEvent();
         if (not event3) continue;
 
-        if (Manipulator(*isegment3,_fsm).canRipup())
-          _fsm.addAction( *isegment3, SegmentAction::OtherRipup );
+        if (Manipulator(segment3,_fsm).canRipup())
+          _fsm.addAction( segment3, SegmentAction::OtherRipup );
       }
     }
 
@@ -1008,13 +1008,13 @@ namespace Kite {
     RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(_segment->getLayer());
 
     ltracein(200);
-    forEach ( Track*, itrack, Tracks_Range::get(plane,uside)) {
+    for( Track* track : Tracks_Range::get(plane,uside)) {
       size_t begin;
       size_t end;
 
-      itrack->getOverlapBounds( _segment->getCanonicalInterval(), begin, end );
+      track->getOverlapBounds( _segment->getCanonicalInterval(), begin, end );
       for ( ; begin < end ; begin++ ) {
-        TrackElement* other = itrack->getSegment(begin);
+        TrackElement* other = track->getSegment(begin);
         ltrace(200) << "| " << other << endl;
 
         if (other->getNet() == net) continue;

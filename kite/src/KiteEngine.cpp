@@ -216,13 +216,13 @@ namespace Kite {
         throw Error("Trying to wipe out a routing with a routing engine\n");
     using namespace Hurricane;
     UpdateSession::open();
-    forEach(Net*, inet, cell->getNets()){
-      if(NetRoutingExtension::isManualGlobalRoute(*inet))
+    for(Net* net : cell->getNets()){
+      if(NetRoutingExtension::isManualGlobalRoute(net))
         continue;
       // First pass: destroy the contacts
       std::vector<Contact*> contactPointers;
-      forEach(Component*, icom, (*inet)->getComponents()){
-        Contact * contact = dynamic_cast<Contact*>(*icom);
+      for(Component* com : net->getComponents()){
+        Contact * contact = dynamic_cast<Contact*>(com);
         if(contact){
           contactPointers.push_back(contact);
         }
@@ -231,12 +231,12 @@ namespace Kite {
         contact->destroy();
       // Second pass: destroy unconnected segments added by Knik as blockages
       std::vector<Component*> compPointers;
-      forEach(Component*, icom, (*inet)->getComponents()){
-        Horizontal * h = dynamic_cast<Horizontal*>(*icom);
+      for(Component* com : net->getComponents()){
+        Horizontal * h = dynamic_cast<Horizontal*>(com);
         if(h){
           compPointers.push_back(h);
         }
-        Vertical * v = dynamic_cast<Vertical*>(*icom);
+        Vertical * v = dynamic_cast<Vertical*>(com);
         if(v){
           compPointers.push_back(v);
         }
@@ -348,12 +348,12 @@ namespace Kite {
       size_t           coreReserved   = 0;
       size_t           coronaReserved = 4;
   
-      forEach ( Knik::Vertex*, ivertex, _knik->getRoutingGraph()->getVertexes() ) {
+      for( Knik::Vertex* vertex : _knik->getRoutingGraph()->getVertexes() ) {
         for ( int i=0 ; i<2 ; ++i ) {
           Knik::Edge* edge    = NULL;
   
           if (i==0) {
-            edge = ivertex->getHEdgeOut();
+            edge = vertex->getHEdgeOut();
             if (not edge) continue;
   
             if (chipTools.hPadsEnclosed(edge->getBoundingBox())) {
@@ -362,7 +362,7 @@ namespace Kite {
             }
             coreReserved = getHTracksReservedLocal();
           } else {
-            edge = ivertex->getVEdgeOut();
+            edge = vertex->getVEdgeOut();
             if (not edge) continue;
   
             if (chipTools.vPadsEnclosed(edge->getBoundingBox())) {
@@ -782,13 +782,13 @@ namespace Kite {
       coherency = _routingPlanes[i]->_check(overlap) and coherency;
 
     Katabatic::Session* ktbtSession = Session::base ();
-    forEach ( Net*, inet, getCell()->getNets() ) {
-      forEach ( Segment*, isegment, inet->getComponents().getSubSet<Segment*>() ) {
-        AutoSegment* autoSegment = ktbtSession->lookup( *isegment );
+    for( Net* net : getCell()->getNets() ) {
+      for( Segment* segment : net->getComponents().getSubSet<Segment*>() ) {
+        AutoSegment* autoSegment = ktbtSession->lookup( segment );
         if (not autoSegment) continue;
         if (not autoSegment->isCanonical()) continue;
 
-        TrackElement* trackSegment = Session::lookup( *isegment );
+        TrackElement* trackSegment = Session::lookup( segment );
         if (not trackSegment) {
           coherency = false;
           cerr << Bug( "%p %s without Track Segment"
@@ -857,8 +857,8 @@ namespace Kite {
   {
     cerr << "     o  Checking " << net << endl;
 
-    forEach ( Segment*, isegment, net->getComponents().getSubSet<Segment*>() ) {
-      TrackElement* trackSegment = _lookup( *isegment );
+    for( Segment* segment : net->getComponents().getSubSet<Segment*>() ) {
+      TrackElement* trackSegment = _lookup( segment );
       if (trackSegment) {
         trackSegment->_check();
 

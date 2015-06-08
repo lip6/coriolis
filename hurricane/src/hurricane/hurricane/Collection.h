@@ -195,6 +195,24 @@ template<class Type> class Collection {
         return record;
     }
 
+    public:
+    class iterator{
+      Locator<Type>* _locator;
+      
+      public: iterator(Locator<Type>* l) : _locator(l) {} 
+      public: bool operator!=(iterator const & o) const { 
+        bool invalidA = (  _locator == NULL) or not(  _locator->isValid());
+        bool invalidB = (o._locator == NULL) or not(o._locator->isValid());
+        return invalidA != invalidB or (not invalidA and not invalidB and _locator != o._locator);
+      }
+      public: bool operator==(iterator const & o) const { return not(*this != o); }
+      public: iterator& operator++(){ _locator->progress(); return *this; }
+      public: Type     operator*() { return _locator->getElement(); }
+    };
+
+    public: iterator begin() { return iterator(getLocator()); }
+    public: iterator end()   { return iterator(NULL); }
+    public: bool     empty() { return begin() == end(); }
 };
 
 

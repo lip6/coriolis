@@ -49,8 +49,8 @@ namespace {
                           )
   {
     TrackElement* perpandicular;
-    forEach ( Segment*, isegment, segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( *isegment );
+    for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
+      perpandicular = Session::lookup ( osegment );
       ltrace(200) << "S " << perpandicular << endl;
 
       if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
@@ -58,8 +58,8 @@ namespace {
       perpandiculars.push_back ( perpandicular );
     }
 
-    forEach ( Segment*, isegment, segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( *isegment );
+    for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
+      perpandicular = Session::lookup ( osegment );
       ltrace(200) << "T " << perpandicular << endl;
 
       if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
@@ -74,8 +74,8 @@ namespace {
     ltrace(200) << "Find failed caging: " << rp << endl;
 
     TrackElement* parallel;
-    forEach ( Segment*, isegment, rp->getSlaveComponents().getSubSet<Segment*>() ) {
-      parallel = Session::lookup ( *isegment );
+    for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
+      parallel = Session::lookup ( osegment );
       ltrace(200) << "* " << parallel << endl;
 
       if ( parallel->isFixed () ) continue;
@@ -156,8 +156,8 @@ namespace {
       rp = dynamic_cast<RoutingPad*>(source->getAnchor());
       if (rp) {
         TrackElement* parallel;
-        forEach ( Segment*, isegment, rp->getSlaveComponents().getSubSet<Segment*>() ) {
-          parallel = Session::lookup( *isegment );
+        for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
+          parallel = Session::lookup( osegment );
           ltrace(200) << "* " << parallel << endl;
 
           if (parallel->isFixed ()) continue;
@@ -207,8 +207,8 @@ namespace {
     Katabatic::AutoContact* support = segment->base()->getAutoSource();
     RoutingPad*             rp      = dynamic_cast<RoutingPad*>(support->getAnchor());
 
-    forEach( Component*, icomponent, rp->getSlaveComponents() ) {
-      Horizontal*   baseSegment   = dynamic_cast<Horizontal*>( *icomponent );
+    for( Component* component : rp->getSlaveComponents() ) {
+      Horizontal*   baseSegment   = dynamic_cast<Horizontal*>( component );
       TrackElement* accessSegment = Session::lookup( baseSegment );
 
       if (accessSegment and not accessSegment->isFixed()) {
