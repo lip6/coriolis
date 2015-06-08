@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -49,6 +49,7 @@ namespace  Kite {
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
   using Isobar::PyCellViewer;
+  using Isobar::PyTypeCellViewer;
   using CRL::PyToolEngine;
 
 
@@ -131,11 +132,14 @@ extern "C" {
     HTRY
       METHOD_HEAD( "KiteEngine.setViewer()" )
   
-      PyCellViewer* pyViewer;
-      if (not ParseOneArg("KiteEngine.setViewer()",args,":cellView",(PyObject**)&pyViewer)) {
+      PyObject* pyViewer = NULL;
+      if (not PyArg_ParseTuple(args,"O:EtesianEngine.setViewer()",&pyViewer)) {
+        PyErr_SetString( ConstructorError, "Bad parameters given to EtesianEngine.setViewer()." );
         return NULL;
       }
-      kite->setViewer( PYCELLVIEWER_O(pyViewer) );
+      if (IsPyCellViewer(pyViewer)) {
+        kite->setViewer( PYCELLVIEWER_O(pyViewer) );
+      }
     HCATCH
 
     Py_RETURN_NONE;

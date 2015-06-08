@@ -155,12 +155,14 @@ namespace Vhdl {
   {
     if (getSignal()->isContiguous()) {
       vector<string>  mappedNames;
-      int             begin = -1;
-      int             end   = -1;
-      const Bit*      bit   = NULL;
-      const Bit*      bitp  = NULL;
-      string          name  = "UNCONNECTED";
-      string          namep = "UNCONNECTED";
+      int             begin  = -1;
+      int             end    = -1;
+      int             delta  =  0;
+      int             deltap =  0;
+      const Bit*      bit    = NULL;
+      const Bit*      bitp   = NULL;
+      string          name   = "UNCONNECTED";
+      string          namep  = "UNCONNECTED";
   
       auto imapping  = _mapping.rbegin();
       auto imappingp = _mapping.rbegin();
@@ -176,15 +178,19 @@ namespace Vhdl {
            and bitp->getSignal()->isVector()
            and bitp->getSignal()->isContiguous()
            and (name == namep)) {
-          if (begin < 0) begin = bitp->getIndex();
-          if (end   < 0) end   = bit ->getIndex();
+          delta = (int)bit->getIndex() - (int)bitp->getIndex();
+
+          if (begin  <  0) begin = bitp->getIndex();
+          if (end    <  0) end   = bitp->getIndex();
+          if (deltap == 0) deltap = delta;
   
-          int delta = (int)bit->getIndex() - (int)bitp->getIndex();
-          if ( not ((delta > 0) xor (begin < end)) ) {
+          if ( (delta == deltap) and ((delta == -1) or (delta == +1)) ) {
             end = bit->getIndex();
+            deltap = delta;
             continue;
           }
         }
+        delta = 0;
   
         if (begin != end) {
           string vdir = (begin < end) ? "to" : "downto";

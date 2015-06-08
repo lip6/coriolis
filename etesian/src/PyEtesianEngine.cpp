@@ -49,6 +49,7 @@ namespace  Etesian {
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
   using Isobar::PyCellViewer;
+  using Isobar::PyTypeCellViewer;
   using CRL::PyToolEngine;
 
 
@@ -112,11 +113,14 @@ extern "C" {
     HTRY
       METHOD_HEAD( "EtesianEngine.setViewer()" )
   
-      PyCellViewer* pyViewer;
-      if (not ParseOneArg("EtesianEngine.setViewer()",args,":cellView",(PyObject**)&pyViewer)) {
+      PyObject* pyViewer = NULL;
+      if (not PyArg_ParseTuple(args,"O:EtesianEngine.setViewer()",&pyViewer)) {
+        PyErr_SetString( ConstructorError, "Bad parameters given to EtesianEngine.setViewer()." );
         return NULL;
       }
-      etesian->setViewer( PYCELLVIEWER_O(pyViewer) );
+      if (IsPyCellViewer(pyViewer)) {
+        etesian->setViewer( PYCELLVIEWER_O(pyViewer) );
+      }
     HCATCH
 
     Py_RETURN_NONE;
