@@ -49,12 +49,6 @@
                                       ${KNIK_LIBRARIES}
                                       ${ETESIAN_GRAPHICAL_LIBRARIES}
                                       ${ETESIAN_LIBRARIES}
-                                      ${MAUKA_GRAPHICAL_LIBRARIES}
-                                      ${MAUKA_LIBRARIES}
-                                      ${METIS_LIBRARIES}
-                                      ${HMETIS_LIBRARIES}
-                                      ${NIMBUS_GRAPHICAL_LIBRARIES}
-                                      ${NIMBUS_LIBRARIES}
                                       ${CORIOLIS_PYTHON_LIBRARIES}
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}
@@ -65,7 +59,7 @@
                                       ${CIF_LIBRARY}
                                       ${UTILITIES_LIBRARY}
                                       ${CONFIGURATION_LIBRARY}
-                                      ${COLOQUINTE_LIBRARY}
+                                      ${COLOQUINTE_LIBRARIES}
                                       ${LEFDEF_LIBRARIES}
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}
