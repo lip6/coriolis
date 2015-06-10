@@ -446,10 +446,10 @@ namespace CRL {
     }
 #endif
 
-    bool            systemConfFound = false;
+  //bool            systemConfFound = false;
     Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
     if ( systemConfFile.exists() ) {
-      systemConfFound = true;
+    //systemConfFound = true;
     //cout << "  o  Reading python dot configuration:" << endl;
     //cout << "     - <" << systemConfFile.string() << ">." << endl;
 
@@ -461,18 +461,18 @@ namespace CRL {
                      ,systemConfFile.toString().c_str()) << endl;
     }
 
-    bool            homeConfFound = false;
+  //bool            homeConfFound = false;
     Utilities::Path homeConfFile  = getPath("home");
     homeConfFile /= ".coriolis2.configuration.xml";
     if ( homeConfFile.exists() ) {
-      homeConfFound = true;
+    //homeConfFound = true;
       conf->readFromFile ( homeConfFile.toString() );
     }
 
-    bool            dotConfFound = false;
+  //bool            dotConfFound = false;
     Utilities::Path dotConfFile  = "./.coriolis2.configuration.xml";
     if ( dotConfFile.exists() ) {
-      dotConfFound = true;
+    //dotConfFound = true;
       conf->readFromFile ( dotConfFile.toString() );
     }
 

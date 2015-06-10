@@ -227,7 +227,7 @@ namespace CRL {
       remove( relation );
     }
     DBo::_preDestroy();
-    _cell->notify( Cell::CellChanged );
+    _cell->notify( Cell::Flags::CellChanged );
   }
 
 

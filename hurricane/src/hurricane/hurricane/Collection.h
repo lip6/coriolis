@@ -195,24 +195,27 @@ template<class Type> class Collection {
         return record;
     }
 
-    public:
-    class iterator{
-      Locator<Type>* _locator;
-      
-      public: iterator(Locator<Type>* l) : _locator(l) {} 
-      public: bool operator!=(iterator const & o) const { 
-        bool invalidA = (  _locator == NULL) or not(  _locator->isValid());
-        bool invalidB = (o._locator == NULL) or not(o._locator->isValid());
-        return invalidA != invalidB or (not invalidA and not invalidB and _locator != o._locator);
-      }
-      public: bool operator==(iterator const & o) const { return not(*this != o); }
-      public: iterator& operator++(){ _locator->progress(); return *this; }
-      public: Type     operator*() { return _locator->getElement(); }
+  public:
+    class iterator {
+      public:
+                  iterator   ( Locator<Type>* l )        : _locator(l) {} 
+        bool      operator== ( const iterator& o) const  { return not (*this != o); }
+        iterator& operator++ ()                          { _locator->progress(); return *this; }
+        Type      operator*  ()                          { return _locator->getElement(); }
+        bool      operator!= ( const iterator& o ) const
+        { 
+          bool invalidA = (  _locator == NULL) or not (  _locator->isValid());
+          bool invalidB = (o._locator == NULL) or not (o._locator->isValid());
+          return invalidA != invalidB or (not invalidA and not invalidB and _locator != o._locator);
+        }
+      private:
+        Locator<Type>* _locator;
     };
 
-    public: iterator begin() { return iterator(getLocator()); }
-    public: iterator end()   { return iterator(NULL); }
-    public: bool     empty() { return begin() == end(); }
+  public:
+    iterator begin() { return iterator(getLocator()); }
+    iterator end()   { return iterator(NULL); }
+    bool     empty() { return begin() == end(); }
 };
 
 

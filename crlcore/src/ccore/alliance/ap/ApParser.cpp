@@ -846,7 +846,7 @@ namespace {
         break;
       }
     }
-    if (isPlaced) _cell->setFlags( Cell::Placed );
+    if (isPlaced) _cell->setFlags( Cell::Flags::Placed );
 
     fileStream.close ();
   }

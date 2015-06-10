@@ -39,7 +39,7 @@ void  allocate_nn_arrays( long  n )
     aux     = (long*)realloc( (void*)aux, (size_t)n*sizeof(long) );
     if( !nn || !sheared || !sorted || !aux )
     {
-      err_exit( "Cannot allocate memory in allocate_nn_arrays!" );
+      err_exit( (char*)"Cannot allocate memory in allocate_nn_arrays!" );
     }
     max_arrays_size = n;
   }

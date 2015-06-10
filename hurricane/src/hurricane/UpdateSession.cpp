@@ -105,7 +105,7 @@ void UpdateSession::_destroy()
   // They also should be sorted according to their hierarchical depth and
   // revalidated bottom-up (TODO).
     for ( auto icell : changedCells ) {
-      icell->notify( Cell::CellChanged );
+      icell->notify( Cell::Flags::CellChanged );
     }
 
     Inherit::_preDestroy();
@@ -179,7 +179,7 @@ void UpdateSession::onNotOwned()
       // Put the cell in the UpdateSession relation, but *do not* unmaterialize it.
       //cerr << "Notify Cell::CellAboutToChange to: " << getCell() << endl; 
         getCell()->put   ( UPDATOR_STACK->top() );
-        getCell()->notify( Cell::CellAboutToChange );
+        getCell()->notify( Cell::Flags::CellAboutToChange );
         forEach( Instance*, iinstance, getCell()->getSlaveInstances() ) {
           iinstance->invalidate( false );
         }

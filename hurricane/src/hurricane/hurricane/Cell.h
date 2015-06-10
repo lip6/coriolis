@@ -21,6 +21,7 @@
 #define HURRICANE_CELL_H
 
 #include <limits>
+#include "hurricane/Flags.h"
 #include "hurricane/Observer.h"
 #include "hurricane/Relation.h"
 #include "hurricane/Pathes.h"
@@ -68,21 +69,35 @@ class Cell : public Entity {
 // Types
 // *****
 
-    public: enum Flag { BuildRings              = 0x0001
-                      , BuildClockRings         = 0x0002
-                      , BuildSupplyRings        = 0x0004
-                      , NoClockFlatten          = 0x0008
-                      , WarnOnUnplacedInstances = 0x0010
-                      // Flags set for Observers.
-                      , CellAboutToChange       = 0x0001
-                      , CellChanged             = 0x0002
-                      // Cell states
-                      , FlattenedNets           = 0x0001
-                      , Placed                  = 0x0002
-                      , Routed                  = 0x0004
-                      };
     public: typedef Entity Inherit;
     public: typedef map<Name,ExtensionSlice*> ExtensionSliceMap;
+
+    public: class Flags : public BaseFlags {
+      public:
+        enum Flag { NoFlags                 = 0x00000000
+                  , BuildRings              = 0x00000001
+                  , BuildClockRings         = 0x00000002
+                  , BuildSupplyRings        = 0x00000004
+                  , NoClockFlatten          = 0x00000008
+                  , WarnOnUnplacedInstances = 0x00000010
+                  // Flags set for Observers.
+                  , CellAboutToChange       = 0x00000100
+                  , CellChanged             = 0x00000200
+                  // Cell states
+                  , Terminal                = 0x00001000
+                  , FlattenLeaf             = 0x00002000
+                  , Pad                     = 0x00004000
+                  , FlattenedNets           = 0x00008000
+                  , Placed                  = 0x00010000
+                  , Routed                  = 0x00020000
+                  };
+
+      public:
+                             Flags        ( unsigned int flags = NoFlags );
+        virtual             ~Flags        ();
+        virtual std::string  _getTypeName () const;
+        virtual std::string  _getString   () const;
+    };
 
     class UniquifyRelation : public Relation {
       public:
@@ -225,15 +240,12 @@ class Cell : public Entity {
     private: MarkerSet _markerSet;
     private: Box _abutmentBox;
     private: Box _boundingBox;
-    private: bool _isTerminal;
-    private: bool _isFlattenLeaf;
-    private: bool _isPad;
     private: Cell* _nextOfLibraryCellMap;
     private: Cell* _nextOfSymbolCellSet;
     private: SlaveEntityMap _slaveEntityMap;
     private: AliasNameSet _netAliasSet;
     private: Observable _observers;
-    private: unsigned int _flags;
+    private: Flags _flags;
 
 // Constructors
 // ************
@@ -250,6 +262,9 @@ class Cell : public Entity {
     public: virtual string _getTypeName() const {return _TName("Cell");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
+    public: static  string  getFlagString( unsigned int );
+    public: static  Record* getFlagRecord( unsigned int );
+    public: static  Slot* getFlagSlot( unsigned int );
 
     public: InstanceMap& _getInstanceMap() {return _instanceMap;};
     public: QuadTree* _getQuadTree() {return &_quadTree;};
@@ -360,13 +375,13 @@ class Cell : public Entity {
 // **********
 
     public: bool isCalledBy(Cell* cell) const;
-    public: bool isTerminal() const {return _isTerminal;};
-    public: bool isFlattenLeaf() const {return _isFlattenLeaf;};
+    public: bool isTerminal() const {return _flags.isset(Flags::Terminal);};
+    public: bool isFlattenLeaf() const {return _flags.isset(Flags::FlattenLeaf);};
     public: bool isLeaf() const;
-    public: bool isPad() const {return _isPad;};
-    public: bool isFlattenedNets() const {return _flags & FlattenedNets;};
-    public: bool isPlaced() const {return _flags & Placed;};
-    public: bool isRouted() const {return _flags & Routed;};
+    public: bool isPad() const {return _flags.isset(Flags::Pad);};
+    public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
+    public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
+    public: bool isRouted() const {return _flags.isset(Flags::Routed);};
     public: bool isNetAlias(const Name& name) const;
 
 // Updators
@@ -374,10 +389,10 @@ class Cell : public Entity {
 
     public: void setName(const Name& name);
     public: void setAbutmentBox(const Box& abutmentBox);
-    public: void setTerminal(bool isTerminal) {_isTerminal = isTerminal;};
-    public: void setFlattenLeaf(bool isFlattenLeaf) {_isFlattenLeaf = isFlattenLeaf;};
-    public: void setPad(bool isPad) {_isPad = isPad;};
-    public: void flattenNets(unsigned int flags=BuildRings);
+    public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
+    public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
+    public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
+    public: void flattenNets(unsigned int flags=Flags::BuildRings);
     public: void setFlags(unsigned int flags) { _flags |= flags; }
     public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
     public: void materialize();
@@ -411,6 +426,7 @@ inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Cell);
+INSPECTOR_P_SUPPORT(Hurricane::Cell::Flags);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::InstanceMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::SlaveInstanceSet);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::NetMap);

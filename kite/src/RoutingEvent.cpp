@@ -412,7 +412,7 @@ namespace Kite {
     ltrace(149) << "Level: " << getEventLevel()
                 << ", area: " << _segment->getFreedomDegree() << endl;
 
-    _preCheck( _segment );
+  //_preCheck( _segment );
     _eventLevel = 0;
 
     history.push( this );

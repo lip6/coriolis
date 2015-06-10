@@ -159,7 +159,7 @@ DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc)
 {
     DTYPE xs[MAXD], ys[MAXD], minval, l, xu, xl, yu, yl;
     int s[MAXD];
-    int i, j, k, minidx;
+    int i, j, minidx;
     struct point pt[MAXD], *ptp[MAXD], *tmpp;
 
     if (d==2)
@@ -206,17 +206,20 @@ DTYPE flute_wl(int d, DTYPE x[], DTYPE y[], int acc)
         }
 
 #if REMOVE_DUPLICATE_PIN==1
-        ptp[d] = &pt[d];
-        ptp[d]->x = ptp[d]->y = -999999;
-        j = 0;
-        for (i=0; i<d; i++) {
-            for (k=i+1; ptp[k]->x == ptp[i]->x; k++)
-                if (ptp[k]->y == ptp[i]->y)  // pins k and i are the same
-                    break;
-            if (ptp[k]->x != ptp[i]->x)
-                ptp[j++] = ptp[i];
+        {
+          int k;
+          ptp[d] = &pt[d];
+          ptp[d]->x = ptp[d]->y = -999999;
+          j = 0;
+          for (i=0; i<d; i++) {
+              for (k=i+1; ptp[k]->x == ptp[i]->x; k++)
+                  if (ptp[k]->y == ptp[i]->y)  // pins k and i are the same
+                      break;
+              if (ptp[k]->x != ptp[i]->x)
+                  ptp[j++] = ptp[i];
+          }
+          d = j;
         }
-        d = j;
 #endif
         
         for (i=0; i<d; i++) {
@@ -597,7 +600,7 @@ FTree flute(int d, DTYPE x[], DTYPE y[], int acc)
 {
     DTYPE *xs, *ys, minval;
     int *s;
-    int i, j, k, minidx;
+    int i, j, minidx;
     struct point *pt, **ptp, *tmpp;
     FTree t;
     
@@ -645,17 +648,20 @@ FTree flute(int d, DTYPE x[], DTYPE y[], int acc)
         }
 
 #if REMOVE_DUPLICATE_PIN==1
-        ptp[d] = &pt[d];
-        ptp[d]->x = ptp[d]->y = -999999;
-        j = 0;
-        for (i=0; i<d; i++) {
-            for (k=i+1; ptp[k]->x == ptp[i]->x; k++)
-                if (ptp[k]->y == ptp[i]->y)  // pins k and i are the same
-                    break;
-            if (ptp[k]->x != ptp[i]->x)
-                ptp[j++] = ptp[i];
+        {
+          int k;
+          ptp[d] = &pt[d];
+          ptp[d]->x = ptp[d]->y = -999999;
+          j = 0;
+          for (i=0; i<d; i++) {
+              for (k=i+1; ptp[k]->x == ptp[i]->x; k++)
+                  if (ptp[k]->y == ptp[i]->y)  // pins k and i are the same
+                      break;
+              if (ptp[k]->x != ptp[i]->x)
+                  ptp[j++] = ptp[i];
+          }
+          d = j;
         }
-        d = j;
 #endif
         
         for (i=0; i<d; i++) {

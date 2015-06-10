@@ -165,14 +165,11 @@ Cell::Cell(Library* library, const Name& name)
     //_viewSet(),
     _abutmentBox(),
     _boundingBox(),
-    _isTerminal(true),
-    _isFlattenLeaf(false),
-    _isPad(false),
     _nextOfLibraryCellMap(NULL),
     _nextOfSymbolCellSet(NULL),
     _slaveEntityMap(),
     _observers(),
-    _flags(0)
+    _flags(Flags::Terminal)
 {
     if (!_library)
         throw Error("Can't create " + _TName("Cell") + " : null library");
@@ -282,7 +279,7 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
 // **************************************************************
 {
-  if (not (_flags & FlattenedNets)) return NULL;
+  if (not (_flags.isset(Flags::FlattenedNets))) return NULL;
 
   Occurrence rootNetOccurrence ( getHyperNetRootNetOccurrence(Occurrence(leafNet,path)) );
 
@@ -305,7 +302,7 @@ void Cell::flattenNets(unsigned int flags)
 
   UpdateSession::open();
 
-  _flags |= FlattenedNets;
+  _flags |= Flags::FlattenedNets;
 
   vector<HyperNet>  hyperNets;
   vector<HyperNet>  topHyperNets;
@@ -313,7 +310,7 @@ void Cell::flattenNets(unsigned int flags)
   forEach ( Occurrence, ioccurrence, getHyperNetRootNetOccurrences() ) {
     Net* net = static_cast<Net*>((*ioccurrence).getEntity());
 
-    if (net->isClock() and (flags & NoClockFlatten)) continue;
+    if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;
 
     HyperNet  hyperNet ( *ioccurrence );
     if ( not (*ioccurrence).getPath().isEmpty() ) {
@@ -353,10 +350,10 @@ void Cell::flattenNets(unsigned int flags)
     bool        buildRing  = false;
 
     if (net->isGlobal()) {
-      if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
-      else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+      if      ( (flags & Cell::Flags::BuildClockRings ) and net->isClock () ) buildRing = true;
+      else if ( (flags & Cell::Flags::BuildSupplyRings) and net->isSupply() ) buildRing = true;
     } else {
-      buildRing = flags & Cell::BuildRings;
+      buildRing = flags & Cell::Flags::BuildRings;
     }
 
     forEach ( Component*, icomponent, net->getComponents() ) {
@@ -375,7 +372,7 @@ void Cell::flattenNets(unsigned int flags)
       currentRp = RoutingPad::create( net, *iplugOccurrence, RoutingPad::BiggestArea );
       currentRp->materialize();
 
-      if (flags & WarnOnUnplacedInstances)
+      if (flags & Flags::WarnOnUnplacedInstances)
         currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
 
       if (buildRing) {
@@ -439,17 +436,17 @@ Cell* Cell::getClone()
   clone->setPad        ( isPad         () );
   clone->setAbutmentBox( getAbutmentBox() );
 
-  forEach( Net*, inet, getNets() ) {
-    if (dynamic_cast<DeepNet*>(*inet)) continue;
+  for ( Net* inet : getNets() ) {
+    if (dynamic_cast<DeepNet*>(inet)) continue;
     inet->getClone( clone );
   }
 
   bool isPlaced = true;
-  forEach( Instance*, iinstance, getInstances() ) {
+  for ( Instance* iinstance : getInstances() ) {
     if (iinstance->getClone(clone)->getPlacementStatus() == Instance::PlacementStatus::UNPLACED)
       isPlaced = false;
   }
-  if (isPlaced) clone->setFlags( Placed );
+  if (isPlaced) clone->setFlags( Flags::Placed );
 
   UpdateSession::close();
 
@@ -463,13 +460,13 @@ void Cell::uniquify(unsigned int depth)
   vector<Instance*> toUniquify;
   set<Cell*>        masterCells;
 
-  forEach ( Instance*, iinstance, getInstances() ) {
+  for ( Instance* iinstance : getInstances() ) {
     Cell* masterCell = iinstance->getMasterCell();
     if (masterCell->isTerminal()) continue;
 
     masterCells.insert( masterCell );
     if (masterCell->getSlaveInstances().getSize() > 1) {
-      toUniquify.push_back( *iinstance );
+      toUniquify.push_back( iinstance );
     }
   }
 
@@ -549,21 +546,20 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("_library", _library));
-        record->add(getSlot("_name", &_name));
-        record->add(getSlot("_instances", &_instanceMap));
-        record->add(getSlot("_quadTree", &_quadTree));
-        record->add(getSlot("_slaveInstances", &_slaveInstanceSet));
-        record->add(getSlot("_netMap", &_netMap));
-        record->add(getSlot("_netAliasSet", &_netAliasSet));
-        record->add(getSlot("_pinMap", &_pinMap));
-        record->add(getSlot("_sliceMap", &_sliceMap));
-        record->add(getSlot("_markerSet", &_markerSet));
-        record->add(getSlot("_slaveEntityMap", &_slaveEntityMap));
-        record->add(getSlot("_abutmentBox", &_abutmentBox));
-        record->add(getSlot("_boundingBox", &_boundingBox));
-        record->add(getSlot("_isTerminal", &_isTerminal));
-        record->add(getSlot("_isFlattenLeaf", &_isFlattenLeaf));
+        record->add( getSlot("_library"       , _library          ) );
+        record->add( getSlot("_name"          , &_name            ) );
+        record->add( getSlot("_instances"     , &_instanceMap     ) );
+        record->add( getSlot("_quadTree"      , &_quadTree        ) );
+        record->add( getSlot("_slaveInstances", &_slaveInstanceSet) );
+        record->add( getSlot("_netMap"        , &_netMap          ) );
+        record->add( getSlot("_netAliasSet"   , &_netAliasSet     ) );
+        record->add( getSlot("_pinMap"        , &_pinMap          ) );
+        record->add( getSlot("_sliceMap"      , &_sliceMap        ) );
+        record->add( getSlot("_markerSet"     , &_markerSet       ) );
+        record->add( getSlot("_slaveEntityMap", &_slaveEntityMap  ) );
+        record->add( getSlot("_abutmentBox"   , &_abutmentBox     ) );
+        record->add( getSlot("_boundingBox"   , &_boundingBox     ) );
+        record->add( getSlot("_flags"         , &_flags           ) );
     }
     return record;
 }
@@ -575,9 +571,8 @@ void Cell::_fit(const Box& box)
     if (_boundingBox.isEmpty()) return;
     if (_boundingBox.contains(box)) return;
     _boundingBox.merge(box);
-    for_each_instance(instance, getSlaveInstances()) {
-        instance->getCell()->_fit(instance->getTransformation().getBox(box));
-        end_for;
+    for ( Instance* iinstance : getSlaveInstances() ) {
+      iinstance->getCell()->_fit(iinstance->getTransformation().getBox(box));
     }
 }
 
@@ -588,9 +583,8 @@ void Cell::_unfit(const Box& box)
     if (_boundingBox.isEmpty()) return;
     if (!_boundingBox.isConstrainedBy(box)) return;
     _boundingBox.makeEmpty();
-    for_each_instance(instance, getSlaveInstances()) {
-        instance->getCell()->_unfit(instance->getTransformation().getBox(box));
-        end_for;
+    for ( Instance* iinstance : getSlaveInstances() ) {
+        iinstance->getCell()->_unfit(iinstance->getTransformation().getBox(box));
     }
 }
 
@@ -649,6 +643,58 @@ void Cell::notify(unsigned flags)
 {
   _observers.notify(flags);
 }
+
+
+// ****************************************************************************************************
+// Cell::Flags implementation
+// ****************************************************************************************************
+
+  Cell::Flags::Flags ( unsigned int flags)
+    : BaseFlags(flags)
+  { }
+
+
+  Cell::Flags::~Flags ()
+  { }
+
+
+  string  Cell::Flags::_getTypeName () const
+  { return _TName("Cell::Flags"); }
+
+
+  string Cell::Flags::_getString () const
+  {
+    if (not _flags) return "<NoFlags>";
+
+    string s = "<";
+    if (_flags & Pad) {
+      s += "Pad";
+    }
+    if (_flags & Terminal) {
+      if (s.size() > 1) s += "|";
+      s += "Terminal";
+    }
+    if (_flags & FlattenLeaf) {
+      if (s.size() > 1) s += "|";
+      s += "FlattenLeaf";
+    }
+    if (_flags & FlattenedNets) {
+      if (s.size() > 1) s += "|";
+      s += "FlattenedNets";
+    }
+    if (_flags & Placed) {
+      if (s.size() > 1) s += "|";
+      s += "Placed";
+    }
+    if (_flags & Routed) {
+      if (s.size() > 1) s += "|";
+      s += "Routed";
+    }
+    s += ">";
+
+    return s;
+  }
+
 
 // ****************************************************************************************************
 // Cell::ClonedSet implementation

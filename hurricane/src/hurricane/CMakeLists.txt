@@ -3,6 +3,7 @@
                        ${Boost_INCLUDE_DIRS}
                      )
                  set ( includes hurricane/Mask.h
+                                hurricane/Flags.h
                                 hurricane/DebugSession.h
                                 hurricane/Backtrace.h
                                 hurricane/Observer.h
@@ -93,6 +94,7 @@
                  set ( cpps     Record.cpp
                                 Slot.cpp
                                 Commons.cpp
+                                Flags.cpp
                                 Backtrace.cpp
                                 Exception.cpp
                                 Bug.cpp

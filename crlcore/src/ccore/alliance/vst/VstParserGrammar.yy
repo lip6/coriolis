@@ -70,6 +70,14 @@ namespace Vst {
          void  checkForIeee     ( bool ieeeEnabled );
 
 
+  enum TokenConstants { VhdlTo     =  1
+                      , VhdlDownto =  2
+                      , VhdlPlus   =  3
+                      , VhdlMinus  =  4
+                      , VhdlBus    =  5
+                      };
+
+
   class  Constraint {
     private:
       int   _from;
@@ -81,7 +89,7 @@ namespace Vst {
       int   getFrom  () const { return _from; }
       int   getTo    () const { return _to; }
       bool  IsSet    () const { return _set; }
-      void  Set      ( int from, int direction, int to );
+      void  Set      ( int from, unsigned int direction, int to );
       void  UnSet    () { _set = false; }
       void  Init ( int& index ) { index = _from; };
       void  Next ( int& index );
@@ -89,7 +97,7 @@ namespace Vst {
   };
 
 
-  void  Constraint::Set ( int from, int direction, int to )
+  void  Constraint::Set ( int from, unsigned int direction, int to )
   {
     _set  = true;
     _from = from;
@@ -115,8 +123,6 @@ namespace Vst {
   typedef  vector<Net*>          PinVector;
   typedef  map<Name,PinVector>   VectorMap;
   typedef  map<Cell*,VectorMap>  CellVectorMap;
-
-
 
 
   class YaccState {
@@ -210,9 +216,9 @@ namespace Vst {
 %token          RightParen
 %token          DoubleStar
 %token          Star
-%token          Plus
+%token <_flag>  Plus
 %token          Comma
-%token          Minus
+%token <_flag>  Minus
 %token          VarAsgn
 %token          Colon
 %token          Semicolon
@@ -261,7 +267,7 @@ namespace Vst {
 %token          CONSTANT
 %token          CONVERT
 %token          DISCONNECT
-%token          DOWNTO
+%token <_value> DOWNTO
 %token          ELSE
 %token          ELSIF
 %token          _END
@@ -324,7 +330,7 @@ namespace Vst {
 %token          STRING
 %token          SUBTYPE
 %token          THEN
-%token          TO
+%token <_value> TO
 %token          TRANSPORT
 %token          _TYPE
 %token          UNITS
@@ -506,8 +512,8 @@ range
     ;
 
 direction
-    : TO
-    | DOWNTO
+    : TO       { $$ = Vst::VhdlTo; }
+    | DOWNTO   { $$ = Vst::VhdlDownto; }
     ;
 
 .port_clause.
@@ -858,9 +864,9 @@ generic_simple_expression
     ;
 
 .sign.
-    : /*empty*/
-    | Plus
-    | Minus
+    : /*empty*/  { $$ = (char)0; }
+    | Plus       { $$ = (char)Vst::VhdlPlus; }
+    | Minus      { $$ = (char)Vst::VhdlMinus; }
     ;
 
 generic_term
@@ -1092,20 +1098,20 @@ factor
 primary
     : aggregate
     | type_convertion
-    | name
+    | name             { $$ = $1; }
     ;
 
 aggregate
     : LeftParen
       expression
-      RightParen_ERR
+      RightParen_ERR  { $$ = $2; }
     ;
 
 type_convertion
     : CONVERT
       LeftParen
       expression
-      RightParen_ERR
+      RightParen_ERR  { $$ = $3; }
     ;
 
 
@@ -1149,8 +1155,8 @@ type_mark
     ;
 
 .BUS.
-    : /*empty*/
-    | BUS
+    : /*empty*/  { $$ = 0; }
+    | BUS        { $$ = Vst::VhdlBus; }
     ;
 
 identifier_list

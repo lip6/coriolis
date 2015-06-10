@@ -61,11 +61,11 @@ namespace Hurricane {
   void  CellObserver::notify ( unsigned int flags )
   {
     CellViewer* viewer = getOwner();
-    switch ( flags & (Cell::CellAboutToChange|Cell::CellChanged) ) {
-      case Cell::CellAboutToChange:
+    switch ( flags & (Cell::Flags::CellAboutToChange|Cell::Flags::CellChanged) ) {
+      case Cell::Flags::CellAboutToChange:
         viewer->emitCellAboutToChange();
         break;
-      case Cell::CellChanged:
+      case Cell::Flags::CellChanged:
         viewer->emitCellChanged();
         break;
     }
@@ -692,8 +692,7 @@ namespace Hurricane {
     QAction* historyAction = qobject_cast<QAction*> ( sender() );
     if ( historyAction ) {
       list< shared_ptr<CellWidget::State> >::iterator  istate = _cellHistory.begin();
-      size_t index = historyAction->data().toUInt();
-
+    //size_t index = historyAction->data().toUInt();
     //for ( ; index>0 ; index--, istate++ )
     //  cerr << "History: " << (*istate)->getName() << endl;
       emit stateChanged ( *istate );

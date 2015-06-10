@@ -74,7 +74,7 @@ extern "C" {
     char* libName = NULL;
     int   addMode = Environment::Append;
 
-    static char* keywords[] = { "library", "libName", "mode", NULL };
+    static char* keywords[] = { (char*)"library", (char*)"libName", (char*)"mode", NULL };
 
     if (PyArg_ParseTupleAndKeywords( args
                                    , kwArgs

@@ -250,8 +250,9 @@ namespace Utilities {
   unsigned int  Path::mode () const
   {
     struct stat  bstat;
-    int          status = 0;
-    status = ::stat( toString().c_str(), &bstat );
+  //int          status = 0;
+  //status =
+      ::stat( toString().c_str(), &bstat );
   // Should check for errno here.
 
     return bstat.st_mode;

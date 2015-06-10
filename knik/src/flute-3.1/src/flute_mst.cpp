@@ -134,8 +134,6 @@ void extract_heap(node_pair *np)
 
 void init_param()
 {
-  int i;
-
   heap = (node_pair*)malloc(sizeof(node_pair)*(max_heap_size+1));
 }
 

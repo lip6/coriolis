@@ -316,8 +316,8 @@ namespace Kite {
     Cell* cell   = getCell();
   //Box   cellBb = cell->getBoundingBox();
     if (not _knik) {
-      unsigned int  flags = Cell::WarnOnUnplacedInstances;
-      flags |= (mode & KtBuildGlobalRouting) ? Cell::BuildRings : 0;
+      unsigned int  flags = Cell::Flags::WarnOnUnplacedInstances;
+      flags |= (mode & KtBuildGlobalRouting) ? Cell::Flags::BuildRings : 0;
     //if (not cell->isFlattenedNets()) cell->flattenNets( flags );
       cell->flattenNets( flags );
 
@@ -419,7 +419,7 @@ namespace Kite {
   {
     cmess1 << "  o  Back annotate global routing graph." << endl;
 
-    const Torus& chipCorona = getChipTools().getCorona();
+  //const Torus& chipCorona = getChipTools().getCorona();
 
     int hEdgeCapacity = 0;
     int vEdgeCapacity = 0;
@@ -459,7 +459,7 @@ namespace Kite {
               continue;
             }
 
-            Box elementBb       = element->getBoundingBox();
+          //Box elementBb       = element->getBoundingBox();
           //int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
             int elementCapacity = -1;
 
@@ -497,7 +497,7 @@ namespace Kite {
               continue;
             }
 
-            Box elementBb       = element->getBoundingBox();
+          //Box elementBb       = element->getBoundingBox();
           //int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
             int elementCapacity = -1;
 
@@ -817,7 +817,7 @@ namespace Kite {
     KatabaticEngine::finalizeLayout();
     ltrace(90) << "State: " << getState() << endl;
 
-    getCell()->setFlags( Cell::Routed );
+    getCell()->setFlags( Cell::Flags::Routed );
 
     ltraceout(90);
   }

@@ -154,7 +154,7 @@ namespace Knik {
     KnikEngine* knik = KnikEngine::get ( cell );
     if ( !knik ) {
       if ( cell->getRubbers().getFirst() == NULL )
-        cell->flattenNets ( ((mode==BuildSolution)?Cell::BuildRings:0) );
+        cell->flattenNets ( ((mode==BuildSolution)?Cell::Flags::BuildRings:0) );
       knik = KnikEngine::create ( cell
                                 , _congestion
                                 , _preCongestion
@@ -178,7 +178,7 @@ namespace Knik {
 
   //emit cellPreModificated();
 
-    cell->flattenNets ( Cell::BuildRings );
+    cell->flattenNets ( Cell::Flags::BuildRings );
 
   //emit cellPostModificated();
   }

@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,17 +26,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Mask.h"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_MASK__
-#define  __HURRICANE_MASK__
+#ifndef  HURRICANE_MASK_H
+#define  HURRICANE_MASK_H
 
-#include  <iomanip>
-#include  "hurricane/Commons.h"
+#include <iomanip>
+#include "hurricane/Commons.h"
 
 
 namespace Hurricane {
@@ -198,7 +189,6 @@ namespace Hurricane {
   size_t  Mask<IntType>::_width = sizeof(IntType)<<2;
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-# endif  // __HURRICANE_MASK__
+# endif  // HURRICANE_MASK_H

@@ -89,17 +89,17 @@ namespace Hurricane {
       nbRoutingPads++;
 
       currentRp = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
-      if (flags & Cell::WarnOnUnplacedInstances)
+      if (flags & Cell::Flags::WarnOnUnplacedInstances)
         currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
         Net* net = currentRp->getNet();
 
         if (net->isGlobal()) {
-          if      ( (flags & Cell::BuildClockRings ) and net->isClock () ) buildRing = true;
-          else if ( (flags & Cell::BuildSupplyRings) and net->isSupply() ) buildRing = true;
+          if      ( (flags & Cell::Flags::BuildClockRings ) and net->isClock () ) buildRing = true;
+          else if ( (flags & Cell::Flags::BuildSupplyRings) and net->isSupply() ) buildRing = true;
         } else {
-          buildRing = flags & Cell::BuildRings;
+          buildRing = flags & Cell::Flags::BuildRings;
         }
 
       //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << buildRing << endl;

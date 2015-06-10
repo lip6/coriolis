@@ -805,10 +805,10 @@ extern "C" {
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 
-    ConstructorError = PyErr_NewException ( "hurricane.ConstructorError", NULL, NULL );
-    ProxyError       = PyErr_NewException ( "hurricane.ProxyError"      , NULL, NULL );
-    HurricaneError   = PyErr_NewException ( "hurricane.HurricaneError"  , NULL, NULL );
-    HurricaneWarning = PyErr_NewException ( "hurricane.HurricaneWarning", PyExc_Warning, NULL );
+    ConstructorError = PyErr_NewException ( (char*)"hurricane.ConstructorError", NULL, NULL );
+    ProxyError       = PyErr_NewException ( (char*)"hurricane.ProxyError"      , NULL, NULL );
+    HurricaneError   = PyErr_NewException ( (char*)"hurricane.HurricaneError"  , NULL, NULL );
+    HurricaneWarning = PyErr_NewException ( (char*)"hurricane.HurricaneWarning", PyExc_Warning, NULL );
 
     PyDict_SetItemString ( dictionnary, "ConstructorError", ConstructorError );
     PyDict_SetItemString ( dictionnary, "ProxyError"      , ProxyError );

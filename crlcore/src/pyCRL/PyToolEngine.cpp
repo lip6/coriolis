@@ -52,7 +52,7 @@ extern "C" {
     PyObject*   pyCell = NULL;
     char* name   = NULL;
 
-    static char* keywords[] = { "cell", "name", NULL };
+    static char* keywords[] = { (char*)"cell", (char*)"name", NULL };
 
     if (PyArg_ParseTupleAndKeywords( args
                                    , kwArgs

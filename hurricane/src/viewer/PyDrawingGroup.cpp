@@ -102,14 +102,20 @@ extern "C" {
 
     HTRY
     METHOD_HEAD("DrawingGroup.addDrawingStyle()")
-    char*     argKey         = "No key defined (error)";
-    char*     argPattern     = "FFFFFFFFFFFFFFFF";
-    char*     argColor       = "255,255,255";
+    char*     argKey         = (char*)"No key defined (error)";
+    char*     argPattern     = (char*)"FFFFFFFFFFFFFFFF";
+    char*     argColor       = (char*)"255,255,255";
     int       borderWidth    = 0;
     float     threshold      = 1.0;
-    char*     argGoMatched   = "true";
+    char*     argGoMatched   = (char*)"true";
 
-    static char* keywords[] = { "name", "color", "pattern", "border", "threshold", "goMatched", NULL };
+    static char* keywords[] = { (char*)"name"
+                              , (char*)"color"
+                              , (char*)"pattern"
+                              , (char*)"border"
+                              , (char*)"threshold"
+                              , (char*)"goMatched"
+                              , NULL };
 
     if (PyArg_ParseTupleAndKeywords( args
                                    , kwArgs

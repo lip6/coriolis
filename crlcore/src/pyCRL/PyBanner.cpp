@@ -63,14 +63,20 @@ extern "C" {
 
     HTRY
     if ( pyBanner ) {
-      char* name         = "";
-      char* version      = "";
-      char* purpose      = "";
-      char* date         = "";
-      char* authors      = "";
-      char* contributors = "";
+      char* name         = (char*)"";
+      char* version      = (char*)"";
+      char* purpose      = (char*)"";
+      char* date         = (char*)"";
+      char* authors      = (char*)"";
+      char* contributors = (char*)"";
 
-      static char* keywords[] = { "name", "version", "purpose", "date", "authors", "contributors", NULL };
+      static char* keywords[] = { (char*)"name"
+                                , (char*)"version"
+                                , (char*)"purpose"
+                                , (char*)"date"
+                                , (char*)"authors"
+                                , (char*)"contributors"
+                                , NULL };
 
       if (PyArg_ParseTupleAndKeywords( args
                                      , kwArgs

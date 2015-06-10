@@ -247,7 +247,7 @@ namespace Kite {
 
 # if !defined(NDEBUG)
 #   define _preCheck(segment)                                               \
-  DbU::Unit  beforeMin = segment->base()->getSourcePosition();              \
+           DbU::Unit  beforeMin = segment->base()->getSourcePosition();     \
            DbU::Unit  beforeMax = segment->base()->getTargetPosition();     \
            segment->base()->checkPositions ();                              \
            if ( Session::getSegmentStackSize() )                            \

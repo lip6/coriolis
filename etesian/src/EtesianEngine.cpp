@@ -451,7 +451,7 @@ namespace Etesian {
     DbU::Unit          pitch = getPitch();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-    getCell()->flattenNets( Cell::BuildRings|Cell::NoClockFlatten );
+    getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
 
   // Coloquinte circuit description data-structures.
     size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
@@ -918,7 +918,7 @@ namespace Etesian {
 
     _placed = true;
 
-    getCell()->setFlags( Cell::Placed );
+    getCell()->setFlags( Cell::Flags::Placed );
   }
 
 

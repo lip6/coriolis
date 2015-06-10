@@ -24,7 +24,7 @@ void  allocate_heap( long n )
     _heap = (Heap*)realloc( (void*)_heap, (size_t)(n+1)*sizeof(Heap) ); 
     if( ! _heap )
     {
-      err_exit( "Cannot reallocate memory in allocate_heap!" );
+      err_exit( (char*)"Cannot reallocate memory in allocate_heap!" );
     } 
     _max_heap_size = n;
   }

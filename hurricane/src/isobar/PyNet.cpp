@@ -401,7 +401,7 @@ extern "C" {
     HTRY
       METHOD_HEAD ( "Net.addAlias()" )
 
-      char* name;
+      char* name = NULL;
       if (PyArg_ParseTuple(args,"s:Net.addAlias",args,name)) {
         if (net->addAlias(Name(name))) Py_RETURN_TRUE;
       } else {
@@ -425,7 +425,7 @@ extern "C" {
     HTRY
       METHOD_HEAD ( "Net.removeAlias()" )
 
-      char* name;
+      char* name = NULL;
       if (PyArg_ParseTuple(args,"s:Net.removeAlias",args,name)) {
         if (net->removeAlias(Name(name))) Py_RETURN_TRUE;
       } else {
