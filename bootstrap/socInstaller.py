@@ -218,7 +218,7 @@ def sendReport ( state, installLog ):
     if state: stateText = 'SUCCESS'
 
     message = MIMEMultipart()
-    message['Subject'] = '[%s] Coriolis & Chams Nighltly build %s' % (stateText,date)
+    message['Subject'] = '[%s] Coriolis & Chams Nightly build %s' % (stateText,date)
     message['From'   ] = sender
     message['To'     ] = receiver
 
@@ -233,10 +233,17 @@ def sendReport ( state, installLog ):
     else:
       mainText += 'Build has FAILED, please have a look to the attached log file.\n'
     mainText += '\n'
+    mainText += 'Complete log file can be found here:\n'
+    mainText += '    <%s>\n' % installLog
+    mainText += '\n'
     message.attach( MIMEText(mainText) )
 
     fd = open( installLog, 'rb' )
-    message.attach( MIMEApplication(fd.read()) )
+    fd.seek( -1024*100, os.SEEK_END )
+    tailLines = ''
+    for line in fd.readlines()[1:]:
+      tailLines += line
+    message.attach( MIMEApplication(tailLines) )
     fd.close()
 
     session = smtplib.SMTP( 'localhost' )
@@ -250,13 +257,12 @@ def sendReport ( state, installLog ):
 
 
 parser = optparse.OptionParser ()  
-parser.add_option ( "-r", "--release"     , action="store_true" ,                dest="release"      , help="Build a <Release> aka optimized version." )
-parser.add_option ( "-d", "--debug"       , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
-parser.add_option (       "--nightly"     , action="store_true" ,                dest="nightly"      , help="Perform a nighly build." )
-parser.add_option (       "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove the build/install directories." )
-parser.add_option (       "--rm-source"   , action="store_true" ,                dest="rmSource"     , help="Remove the Git source repositories." )
-parser.add_option (       "--rm-all"      , action="store_true" ,                dest="rmAll"        , help="Remove everything (source+build+install)." )
-parser.add_option (       "--root"        , action="store"      , type="string", dest="rootDir"      , help="The root directory (default: <~/coriolis-2.x/>)." )
+parser.add_option ( "--debug"       , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
+parser.add_option ( "--nightly"     , action="store_true" ,                dest="nightly"      , help="Perform a nighly build." )
+parser.add_option ( "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove the build/install directories." )
+parser.add_option ( "--rm-source"   , action="store_true" ,                dest="rmSource"     , help="Remove the Git source repositories." )
+parser.add_option ( "--rm-all"      , action="store_true" ,                dest="rmAll"        , help="Remove everything (source+build+install)." )
+parser.add_option ( "--root"        , action="store"      , type="string", dest="rootDir"      , help="The root directory (default: <~/coriolis-2.x/>)." )
 (options, args) = parser.parse_args ()
 
 fdLog   = None
@@ -266,6 +272,9 @@ try:
     nightlyBuild = False
     rmSource     = False
     rmBuild      = False
+    debugArg     = ''
+
+    if options.debug:   debugArg     = '--debug' 
     if options.nightly: nightlyBuild = True
     if options.rmSource or options.rmAll: rmSource = True
     if options.rmBuild  or options.rmAll: rmBuild  = True
@@ -303,21 +312,18 @@ try:
                              , '   <%s>' % ccbBin
                              ] )
 
-    commands = \
-      [ ( 'bip', '%s --root=%s --project=coriolis --project=chams --devtoolset-2 --make="-j6 install"' \
-                  % (ccbBin,rootDir) )
-      , ( 'bip', '%s --root=%s --project=coriolis --project=chams --devtoolset-2 --make="-j1 install" --doc' \
-                  % (ccbBin,rootDir) )
-      ]
-    if not nightlyBuild:
-      commands = \
-        [ ( 'rock', '%s --root=%s --project=coriolis --project=chams --devtoolset-2 --make="-j2 install"' \
-                     % (ccbBin,rootDir) )
-        , ( 'rock', '%s --root=%s --project=coriolis --project=chams --devtoolset-2 --make="-j1 install" --doc' \
-                     % (ccbBin,rootDir) )
-        ]
+    commandFormat = '%s --root=%s --project=coriolis --project=chams --devtoolset-2 --make="-j%%d install" %%s' \
+                    % (ccbBin,rootDir)
 
-    (fdLog,logFile) = openLog( logDir )
+    commands = [ ( 'bip', commandFormat % (6,debugArg) )
+               , ( 'bip', commandFormat % (1,debugArg+' --doc') )
+               ]
+    if not nightlyBuild:
+      commands = [ ( 'rock', commandFormat % (2,debugArg) )
+                 , ( 'rock', commandFormat % (1,debugArg+' --doc') )
+                 ]
+
+    fdLog,logFile = openLog( logDir )
 
     for host,command in commands:
       Command( [ 'ssh', host, command ], fdLog ).execute()
