@@ -31,7 +31,25 @@
   *                </ul>
   *
   *
-  *  \section      secForEachMacro  The forEach Macro
+  *  \section      secIterator  STL Iterator Support
+  *
+  *                The Collections now provides a basic iterator support to allow the
+  *                C++11 \c for contruct:
+\code
+  Cell* cell = ...; // Get a Cell from somewhere.
+
+  for( Net* inet : cell->getNets() ) {
+    cout << "This is " << inet;
+    if (inet->isExternal())
+      cout << " [external net].";
+    cout << endl;
+  }
+\endcode
+  *                Although the \c forEach macro is still retained for backward compatibility,
+  *                it is advisable to use the C++11 way.
+  *
+  *
+  *  \section      secForEachMacro  The forEach Macro (obsoleted)
   *
   *                Collections are to be used in conjunction with the \c forEach macro
   *                which allows to easily iterate over the elements. Iteration is done

@@ -9,7 +9,10 @@
      cmake_policy(SET CMP0005 NEW)
      if(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
        cmake_policy(SET CMP0014 OLD)
-     endif(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+     endif()
+     if(NOT (CMAKE_VERSION VERSION_LESS 2.8.12))
+       cmake_policy(SET CMP0022 OLD)
+     endif()
    endif(COMMAND CMAKE_POLICY)
  endmacro(set_cmake_policies)
 
@@ -89,7 +92,7 @@
 # Adds to the CMAKE_MODULE_PATH directories guesseds from project
 # environment variables <PROJECT>_USER_TOP and <PROJECT>_TOP.
 #
- macro(SETUP_PROJECT_PATHS project)
+ macro(setup_project_paths project)
    if( NOT("$ENV{${project}_TOP}" STREQUAL "") )
      message("-- ${project}_TOP is set to $ENV{${project}_TOP}")
      set(PROJECT_MODULE_PATH "${DESTDIR}$ENV{${project}_TOP}/share/cmake/Modules/")
@@ -103,7 +106,7 @@
    endif( NOT("$ENV{${project}_USER_TOP}" STREQUAL "") )
  
    list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
- endmacro(SETUP_PROJECT_PATHS project)
+ endmacro(setup_project_paths project)
 
 
 #
