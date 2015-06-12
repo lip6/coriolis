@@ -78,7 +78,10 @@ if ( UNIX )
                            "$ENV{HOME}/oa/lefdef/5.7-s038"
                            "/soc/oa"
                            )
-  message( STATUS "LEFDEF_SEARCH_PATH: ${LEFDEF_SEARCH_PATH}" )
+  message("-- Components of LEFDEF_DIR_SEARCH:")
+  foreach(PATH ${LEFDEF_DIR_SEARCH})
+    message("--   ${PATH}")
+  endforeach(PATH)
 
   set ( LEFDEF_LIBRARIES           "" )
   set ( LEFDEF_LIBRARY_SEARCH_PATH "" )
