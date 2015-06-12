@@ -95,10 +95,15 @@ if scriptBinPath == '/usr/bin':
   location    = Location.BaseSystem
   coriolisTop = '/usr'
   print '     Using standard system installation scheme.'
-elif scriptBinPath == '/opt/rh/devtoolset-2/root/usr/bin':
+elif scriptBinPath == '/soc/coriolis2/bin':
   location    = Location.Devtoolset2
-  coriolisTop = '/opt/rh/devtoolset-2/root/usr'
+  coriolisTop = '/soc/coriolis2'
   print '     Using RHEL6 installation scheme.'
+  ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
+  if not 'devtoolset' in ldLibraryPath:
+    print '[ERROR] You must enable the devtoolset-2 before running Coriolis:'
+    print '        > scl enable devtoolset-2 bash'
+    sys.exit( 1 )
 else:
   location    = Location.UserDefined
   coriolisTop = truncPath( scriptBinPath, 0, -1 ) 
