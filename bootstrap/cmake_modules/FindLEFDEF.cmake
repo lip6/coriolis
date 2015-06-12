@@ -76,6 +76,7 @@ if ( UNIX )
                            "/opt/lefdef-5.7"
                            "/opt/lefdef"
                            "$ENV{HOME}/oa/lefdef/5.7-s038"
+                           "/soc/oa"
                            )
   message( STATUS "LEFDEF_SEARCH_PATH: ${LEFDEF_SEARCH_PATH}" )
 
