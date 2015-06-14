@@ -468,10 +468,11 @@ Instance* Instance::getClone(Cell* cloneCell) const
   Instance* clone = Instance::create( cloneCell
                                     , getName()
                                     , getMasterCell()
+                                    , getTransformation()
                                     , getPlacementStatus()
                                     );
 
-  forEach( Plug*, iplug, getPlugs() ) {
+  for( Plug* iplug : getPlugs() ) {
     if (iplug->isConnected()) {
       Plug* clonePlug = clone->getPlug( iplug->getMasterNet() );
       Net*  cloneNet  = cloneCell->getNet( iplug->getNet()->getName() );

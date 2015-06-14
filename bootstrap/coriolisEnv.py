@@ -116,7 +116,7 @@ def guessOs ():
       print "          (using: \"%s\")" % osType
 
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
-    if 'devtoolset' in ldLibraryPath: useDevtoolset2 = False
+    if ldLibraryPath and 'devtoolset' in ldLibraryPath: useDevtoolset2 = False
 
     if libDir == 'lib64' and not os.path.exists('/usr/lib64'):
       libDir = 'lib'
