@@ -187,7 +187,7 @@ if __name__ == "__main__":
     coriolisTop  = "/opt/rh/devtoolset-2/root/usr"
     sysconfDir   = scriptDir
     shellMessage = "Using system-wide devtoolset-2 Coriolis 2 (/opt/rh/devtoolset-2/root/usr)"
-  elif scriptDir.startswith(os.getenv["HOME"]+"/nightly/coriolis-2.x/"): 
+  elif scriptDir.startswith(os.getenv("HOME")+"/nightly/coriolis-2.x/"): 
     rootDir      = os.getenv("HOME") + "/nightly/coriolis-2.x"
     coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
     sysconfDir   = scriptDir
