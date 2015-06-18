@@ -26,6 +26,7 @@
 #include  "hurricane/Technology.h"
 #include  "hurricane/Net.h"
 #include  "hurricane/NetExternalComponents.h"
+#include  "hurricane/RoutingPad.h"
 #include  "hurricane/Horizontal.h"
 #include  "hurricane/Vertical.h"
 #include  "hurricane/Cell.h"
@@ -36,6 +37,7 @@
 #include  "crlcore/RoutingGauge.h"
 #include  "crlcore/RoutingLayerGauge.h"
 #include  "crlcore/AllianceFramework.h"
+#include  "crlcore/CellGauge.h"
 #include  "crlcore/LefExport.h"
 #include  "crlcore/DefExport.h"
 
@@ -63,6 +65,39 @@ namespace {
   }
 
 
+  string toDefName ( string name )
+  {
+    if (name.empty()) return name;
+
+    if (name[0] == '<')             name.erase ( 0, 1 );
+    if (name[name.size()-1] == '>') name.erase ( name.size()-1 );
+    for ( size_t i=0 ; i<name.size() ; ++i ) {
+      switch ( name[i] ) {
+        case ':':
+        case '.': name[i] = '_'; break;
+      }
+    }
+    return name;
+  }
+
+
+  string  extractInstanceName ( const RoutingPad* rp )
+  {
+    ostringstream name;
+
+    Occurrence occurrence = rp->getOccurrence();
+
+    name << getString(occurrence.getOwnerCell()->getName()) << '.';
+
+    if (not rp->getOccurrence().getPath().getHeadPath().isEmpty())
+      name << getString(rp->getOccurrence().getPath().getHeadPath().getName()) << ".";
+
+    name << "I." << getString(rp->getOccurrence().getPath().getTailInstance()->getName());
+
+    return toDefName(name.str());
+  }
+
+
 #define  CHECK_STATUS_CBK(status)         if ((status) != 0) return driver->checkStatus(status);
 #define  CHECK_STATUS_DRV(status)         if ((status) != 0) return checkStatus(status);
 #define  RETURN_CHECK_STATUS_CBK(status)  return driver->checkStatus(status);
@@ -75,7 +110,7 @@ namespace {
       static int           getUnits         ();
       static int           toDefUnits       ( DbU::Unit );
       static int           toDefOrient      ( Transformation::Orientation );
-      static void          toDefCoordinates ( Instance*, int& statusX, int& statusY, int& statusOrient );
+      static void          toDefCoordinates ( Instance*, Transformation, int& statusX, int& statusY, int& statusOrient );
       static DbU::Unit     getSliceHeight   ();
       static DbU::Unit     getPitchWidth    ();
                           ~DefDriver        ();
@@ -155,9 +190,9 @@ namespace {
   }
 
 
-  void  DefDriver::toDefCoordinates ( Instance* instance, int& statusX, int& statusY, int& statusOrient )
+  void  DefDriver::toDefCoordinates ( Instance* instance, Transformation transf, int& statusX, int& statusY, int& statusOrient )
   {
-    const Transformation& transf = instance->getTransformation();
+    instance->getTransformation().applyOn( transf );
     statusX      = toDefUnits ( transf.getTx() );
     statusY      = toDefUnits ( transf.getTy() );
     statusOrient = toDefOrient( transf.getOrientation() );
@@ -192,8 +227,11 @@ namespace {
     , _flags     (flags)
     , _status    (0)
   {
-    _sliceHeight = DbU::lambda(50.0);
-    _pitchWidth  = DbU::lambda( 5.0);
+    AllianceFramework* framework = AllianceFramework::get ();
+    CellGauge*         cg        = framework->getCellGauge();
+
+    _sliceHeight = cg->getSliceHeight ();
+    _pitchWidth  = cg->getPitch       ();
 
     _status = defwInitCbk ( _defStream );
     if ( _status != 0 ) return;
@@ -230,6 +268,7 @@ namespace {
 
   int  DefDriver::write ()
   {
+    _cell->flattenNets( Cell::Flags::NoFlags );
     return checkStatus ( defwWrite(_defStream,_designName.c_str(),(void*)this) );
   }
 
@@ -238,7 +277,9 @@ namespace {
   {
     if ( (_status=status) != 0 ) {
       defwPrintError ( _status );
-      cerr << Error("DefDriver::drive(): Error occured while driving <%s>.",_designName.c_str()) << endl;
+      ostringstream message;
+      message << "DefDriver::drive(): Error occured while driving <" << _designName << ">.";
+      cerr << Error(message.str()) << endl;
     }
     return _status;
   }
@@ -346,6 +387,8 @@ namespace {
     Cell*      cell        = driver->getCell();
     Box        abutmentBox ( cell->getAbutmentBox() );
 
+    if (abutmentBox.isEmpty()) return 0;
+
     int   origY     = (int)( toDefUnits(abutmentBox.getYMin()) );
     int   origX     = (int)( toDefUnits(abutmentBox.getXMin()) );
     int   stepY     = (int)( toDefUnits(DefDriver::getSliceHeight()) );
@@ -389,6 +432,8 @@ namespace {
     DefDriver* driver      = (DefDriver*)udata;
     Cell*      cell        = driver->getCell();
     Box        abutmentBox ( cell->getAbutmentBox() );
+
+    if (abutmentBox.isEmpty()) return 0;
 
     const vector<RoutingLayerGauge*>& rg
       = AllianceFramework::get()->getRoutingGauge()->getLayerGauges();
@@ -487,27 +532,33 @@ namespace {
     status = defwNewLine ();
     CHECK_STATUS_CBK(status);
 
-    status = defwStartComponents ( cell->getInstances().getSize() );
+    status = defwStartComponents ( cell->getLeafInstanceOccurrences().getSize() );
     CHECK_STATUS_CBK(status);
 
-    forEach ( Instance*, iinstance, cell->getInstances() ) {
-      string      insname      = getString((*iinstance)->getName());
+    for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+      Instance*   instance     = static_cast<Instance*>(occurrence.getEntity());
+      string      insname      = toDefName(occurrence.getCompactString());
       const char* source       = NULL;
       const char* statusS      = "UNPLACED";
       int         statusX      = 0;
       int         statusY      = 0;
       int         statusOrient = 0;
 
-      if (CatalogExtension::isFeed((*iinstance)->getMasterCell())) source = "DIST";
+      Box            instanceAb     = instance->getMasterCell()->getAbutmentBox();
+      Transformation instanceTransf = instance->getTransformation();
+      occurrence.getPath().getTransformation().applyOn( instanceTransf );
+      instanceTransf.applyOn( instanceAb );
 
-      if ((*iinstance)->getPlacementStatus() == Instance::PlacementStatus::PLACED) statusS = "PLACED";
-      if ((*iinstance)->getPlacementStatus() == Instance::PlacementStatus::FIXED ) statusS = "FIXED";
+      if (CatalogExtension::isFeed(instance->getMasterCell())) source = "DIST";
+
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) statusS = "PLACED";
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED ) statusS = "FIXED";
       if (statusS[0] != 'U') {
-        toDefCoordinates( *iinstance, statusX, statusY, statusOrient );
+        toDefCoordinates( instance, occurrence.getPath().getTransformation(), statusX, statusY, statusOrient );
       }
 
       status = defwComponent ( insname.c_str()
-                             , getString((*iinstance)->getMasterCell()->getName()).c_str()
+                             , getString((instance)->getMasterCell()->getName()).c_str()
                              , 0             // numNetNames (disabled).
                              , NULL          // netNames (disabled).
                              , NULL          // eeq (electrical equivalence).
@@ -541,24 +592,30 @@ namespace {
     Cell*      cell        = driver->getCell();
     int        netsNb      = 0;
 
-    forEach ( Net*, inet, cell->getNets() ) {
-      if ( (*inet)->isSupply() or (*inet)->isClock() ) continue;
+    for ( Net* net : cell->getNets() ) {
+      if ( net->isSupply() or net->isClock() ) continue;
       ++netsNb;
     }
 
     status = defwStartNets ( netsNb );
     if ( status != 0 ) return driver->checkStatus(status);
 
-    forEach ( Net*, inet, cell->getNets() ) {
-      if ( (*inet)->isSupply() or (*inet)->isClock() ) continue;
+    for ( Net* net : cell->getNets() ) {
+      if ( net->isSupply() or net->isClock() ) continue;
 
-      string netName = getString((*inet)->getName()) + "_net";
+      size_t pos     = string::npos;
+      string netName = getString( net->getName() );
+      if (netName[netName.size()-1] == ')') pos = netName.rfind('(');
+      if (pos == string::npos)              pos = netName.size();
+      netName.insert( pos, "_net" );
+      netName = toDefName( netName );
+
       status = defwNet ( netName.c_str() );
       if ( status != 0 ) return driver->checkStatus(status);
 
-      forEach ( Plug*, iplug, (*inet)->getPlugs() ) {
-        status = defwNetConnection ( getString((*iplug)->getInstance ()->getName()).c_str()
-                                   , getString((*iplug)->getMasterNet()->getName()).c_str()
+      for ( RoutingPad* rp : net->getRoutingPads() ) {
+        status = defwNetConnection ( extractInstanceName(rp).c_str()
+                                   , getString(static_cast<Plug*>(rp->getPlugOccurrence().getEntity())->getMasterNet()->getName()).c_str()
                                    , 0
                                    );
         if ( status != 0 ) return driver->checkStatus(status);

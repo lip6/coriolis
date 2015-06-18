@@ -59,8 +59,9 @@ namespace Hurricane {
   {
     const NetAliasHook* current = this;
     do {
-      if ( not isMaster() and (current->getName() == name) )
+      if ( not current->isMaster() and (current->getName() == name) ) {
         return const_cast<NetAliasName*>( dynamic_cast<const NetAliasName*>(current) );
+      }
 
       current = current->_next;
     } while ( current != this );

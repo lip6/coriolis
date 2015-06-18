@@ -83,7 +83,8 @@ namespace {
       inline size_t             getPitchs                () const;
       inline size_t             getSlices                () const;
       inline const Box&         getFitOnCellsDieArea     () const;
-      inline Net*               getPrebuildNet             () const;
+      inline Net*               getPrebuildNet           () const;
+      inline string             getBusBits               () const;
              Net*               lookupNet                ( const string& );
       inline vector<string>&    getErrors                ();
       inline void               pushError                ( const string& );
@@ -91,10 +92,13 @@ namespace {
       inline void               clearErrors              ();
       inline void               setPitchs                ( size_t );
       inline void               setSlices                ( size_t );
-      inline void               setPrebuildNet             ( Net* );
+      inline void               setPrebuildNet           ( Net* );
+      inline void               setBusBits               ( string );
              void               addNetLookup             ( const string& netName, Net* );
+             void               toHurricaneName          ( string& );
       inline void               mergeToFitOnCellsDieArea ( const Box& );
     private:                                         
+      static int                _busBitCbk               ( defrCallbackType_e, const char*   , defiUserData );
       static int                _designEndCbk            ( defrCallbackType_e, void*         , defiUserData );
       static int                _dieAreaCbk              ( defrCallbackType_e, defiBox*      , defiUserData );
       static int                _pinCbk                  ( defrCallbackType_e, defiPin*      , defiUserData );
@@ -110,6 +114,7 @@ namespace {
              string             _file;
              unsigned int       _flags;
              AllianceLibrary*   _library;
+             string             _busBits;
              Cell*              _cell;
              size_t             _pitchs;
              size_t             _slices;
@@ -128,6 +133,7 @@ namespace {
     : _file             (file)
     , _flags            (flags)
     , _library          (library)
+    , _busBits          ("()")
     , _cell             (NULL)
     , _pitchs           (0)
     , _slices           (0)
@@ -137,6 +143,7 @@ namespace {
     , _errors           ()
   {
     defrInit               ();
+    defrSetBusBitCbk       ( _busBitCbk );
     defrSetDesignEndCbk    ( _designEndCbk );
     defrSetDieAreaCbk      ( _dieAreaCbk );
     defrSetPinCbk          ( _pinCbk );
@@ -158,6 +165,7 @@ namespace {
   inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::lambda(_defUnits*(double)u); }
   inline bool               DefParser::hasErrors                () { return not _errors.empty(); }
   inline unsigned int       DefParser::getFlags                 () const { return _flags; }
+  inline string             DefParser::getBusBits               () const { return _busBits; }
   inline AllianceLibrary*   DefParser::getLibrary               () { return _library; }
   inline Cell*              DefParser::getCell                  () { return _cell; }
   inline size_t             DefParser::getPitchs                () const { return _pitchs; }
@@ -170,6 +178,7 @@ namespace {
   inline void               DefParser::setPitchs                ( size_t pitchs ) { _pitchs=pitchs; }
   inline void               DefParser::setSlices                ( size_t slices ) { _slices=slices; }
   inline void               DefParser::setPrebuildNet           ( Net* net ) { _prebuildNet=net; }
+  inline void               DefParser::setBusBits               ( string busbits ) { _busBits = busbits; }
   inline void               DefParser::mergeToFitOnCellsDieArea ( const Box& box ) { _fitOnCellsDieArea.merge(box); }
 
 
@@ -189,6 +198,20 @@ namespace {
       case 7: return Transformation::Orientation::YR; // FE
     }
     return Transformation::Orientation::ID;
+  }
+
+
+  void  DefParser::toHurricaneName ( string& defName )
+  {
+    if (_busBits != "()") {
+      if (defName[defName.size()-1] == _busBits[1]) {
+        size_t pos = defName.rfind( _busBits[0] );
+        if (pos != string::npos) {
+          defName[pos]              = '(';
+          defName[defName.size()-1] = ')';
+        }
+      }
+    }
   }
 
 
@@ -250,6 +273,22 @@ namespace {
   }
 
 
+  int  DefParser::_busBitCbk ( defrCallbackType_e c, const char* busbits, lefiUserData ud )
+  {
+    DefParser* parser = (DefParser*)ud;
+
+    if (strlen(busbits) == 2) {
+      parser->setBusBits( busbits );
+    } else {
+      ostringstream message;
+      message << "BUSBITCHARS is not two character long (" << busbits << ")";
+      parser->pushError( message.str() );
+    }
+
+    return 0;
+  }
+
+
   int  DefParser::_designEndCbk ( defrCallbackType_e c, void*, lefiUserData ud )
   {
     DefParser* parser = (DefParser*)ud;
@@ -283,11 +322,14 @@ namespace {
 
   //cout << "     - Pin " << pin->pinName() << ":" << pin->netName() << endl;
 
-    Net* hnet = parser->getCell()->getNet ( pin->netName() );
+    string netName = pin->netName();
+    parser->toHurricaneName( netName );
+
+    Net* hnet = parser->getCell()->getNet ( netName );
     if ( hnet == NULL ) {
-      hnet = Net::create ( parser->getCell(), pin->netName() );
-      parser->addNetLookup ( pin->netName(), hnet );
-      if ( string(pin->netName()).compare(pin->pinName()) != 0 )
+      hnet = Net::create ( parser->getCell(), netName );
+      parser->addNetLookup ( netName, hnet );
+      if ( netName.compare(pin->pinName()) != 0 )
          parser->addNetLookup ( pin->pinName(), hnet );
     }
 
@@ -351,19 +393,33 @@ namespace {
     DefParser* parser = (DefParser*)ud;
 
   //cout << "     - Net " << net->name() << endl;
+
+    string name = net->name();
+    parser->toHurricaneName( name );
     
-    Net* hnet = parser->lookupNet ( net->name() );
+    Net* hnet = parser->lookupNet ( name );
     if ( hnet == NULL )
-      hnet = Net::create ( parser->getCell(), net->name() );
+      hnet = Net::create ( parser->getCell(), name );
 
     if ( parser->getPrebuildNet() != NULL ) {
+      Name prebuildAlias = parser->getPrebuildNet()->getName();
       hnet->merge ( parser->getPrebuildNet() );
+      hnet->removeAlias ( prebuildAlias );
       parser->setPrebuildNet ( NULL );
     }
 
+    if (name.size() > 78) {
+      name.erase ( 0, name.size()-75 );
+      name.insert( 0, 3, '.' );
+    }
+    name.insert( 0, "<" );
+    name.insert( name.size(), ">" );
+    if (name.size() < 80) name.insert( name.size(), 80-name.size(), ' ' );
+
     if (tty::enabled()) {
-      cmess2 << "       " << tty::bold << setw(7) << setfill('0') << ++netCount << ":" << setfill(' ')
-             << tty::reset << setw(40) << "<" << net->name() << ">  " << tty::cr;
+      cmess2 << "          "
+             << tty::bold  << setw(7)  << setfill('0') << ++netCount << ":" << setfill(' ')
+             << tty::reset << setw(80) << name << tty::cr;
       cmess2.flush ();
     }
 
@@ -374,6 +430,7 @@ namespace {
 
     // Connect to an external pin.
       if ( instanceName.compare("PIN") == 0 ) continue;
+      parser->toHurricaneName( pinName );
 
       Instance* instance = parser->getCell()->getInstance ( instanceName );
       if ( instance == NULL ) {
@@ -402,6 +459,7 @@ namespace {
   int  DefParser::_netEndCbk ( defrCallbackType_e c, void*, lefiUserData ud )
   {
     DefParser* parser = (DefParser*)ud;
+    if (tty::enabled()) cmess2 << endl;
     return parser->flushErrors ();
   }
 

@@ -580,7 +580,7 @@ namespace {
   // The driver puts it before UNITS, which seems to displease Cadence Encounter.
   // So, as long as it doesn't prevent Encounter to works, disable it. 
     LefDriver* driver = (LefDriver*)udata;
-    return driver->checkStatus ( lefwManufacturingGrid ( LefDriver::getUnits()/10.0 ) );
+    return driver->checkStatus ( lefwManufacturingGrid ( LefDriver::toLefUnits(DbU::fromLambda(0.5)) ) );
 #else
     return 0;
 #endif
@@ -724,8 +724,9 @@ namespace CRL {
     if ( cell != NULL ) {
       libraryName = getString(cell->getName()) + "_export";
 
-      forEach ( Instance*, iinstance, cell->getInstances() ) {
-        cells.insert ( (*iinstance)->getMasterCell() );
+      for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+        Instance*   instance = static_cast<Instance*>(occurrence.getEntity());
+        cells.insert ( instance->getMasterCell() );
       }
     }
 
