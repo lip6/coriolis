@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Rubber.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,8 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_RUBBER
-#define HURRICANE_RUBBER
+#ifndef HURRICANE_RUBBER_H
+#define HURRICANE_RUBBER_H
 
 #include "hurricane/Go.h"
 #include "hurricane/Hooks.h"
@@ -27,7 +27,6 @@
 namespace Hurricane {
 
 class Net;
-
 
 
 // ****************************************************************************************************
@@ -112,9 +111,9 @@ class Rubber : public Go {
 INSPECTOR_P_SUPPORT(Hurricane::Rubber);
 
 
-#endif // HURRICANE_RUBBER
+#endif // HURRICANE_RUBBER_H
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

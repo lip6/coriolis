@@ -83,7 +83,6 @@ namespace Hurricane {
     HyperNet    hyperNet      ( _netOccurrence );
     RoutingPad* previousRp    = NULL;
     RoutingPad* currentRp     = NULL;
-    bool        buildRing     = false;
 
     forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
       nbRoutingPads++;
@@ -93,23 +92,9 @@ namespace Hurricane {
         currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
-        Net* net = currentRp->getNet();
-
-        if (net->isGlobal()) {
-          if      ( (flags & Cell::Flags::BuildClockRings ) and net->isClock () ) buildRing = true;
-          else if ( (flags & Cell::Flags::BuildSupplyRings) and net->isSupply() ) buildRing = true;
-        } else {
-          buildRing = flags & Cell::Flags::BuildRings;
-        }
-
+      //Net* net =
+        currentRp->getNet();
       //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << buildRing << endl;
-      }
-
-      if (buildRing) {
-        if (previousRp) {
-          currentRp->getBodyHook()->attach( previousRp->getBodyHook() );
-        }
-        previousRp = currentRp;
       }
     }
 
@@ -117,15 +102,15 @@ namespace Hurricane {
   }
 
 
-Net* getDeepNet ( HyperNet& hypernet )
-{
-  Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hypernet.getNetOccurrence() );
-
-//if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-//if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
-
-  return rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
-}
+  Net* getDeepNet ( HyperNet& hypernet )
+  {
+    Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hypernet.getNetOccurrence() );
+  
+  //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
+  //if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
+  
+    return rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
+  }
 
 
   Record* DeepNet::_getRecord () const

@@ -80,6 +80,7 @@ class Cell : public Entity {
                   , BuildSupplyRings        = 0x00000004
                   , NoClockFlatten          = 0x00000008
                   , WarnOnUnplacedInstances = 0x00000010
+                  , MaskRings               = BuildRings|BuildClockRings|BuildSupplyRings
                   // Flags set for Observers.
                   , CellAboutToChange       = 0x00000100
                   , CellChanged             = 0x00000200
@@ -393,6 +394,7 @@ class Cell : public Entity {
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
     public: void flattenNets(unsigned int flags=Flags::BuildRings);
+    public: void createRoutingPadRings(unsigned int flags=Flags::BuildRings);
     public: void setFlags(unsigned int flags) { _flags |= flags; }
     public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
     public: void materialize();

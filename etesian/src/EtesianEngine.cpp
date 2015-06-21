@@ -451,7 +451,8 @@ namespace Etesian {
     DbU::Unit          pitch = getPitch();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-    getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
+  //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
 
   // Coloquinte circuit description data-structures.
     size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
@@ -728,8 +729,8 @@ namespace Etesian {
       penaltyIncrease = std::min(maxInc, std::max(minInc,
               penaltyIncrease * std::sqrt( targetImprovement / (optRatio - prevOptRatio) )
           ) );
-      cparanoid << "                   L/U ratio: " << 100*optRatio << "% (previous: " << 100*prevOptRatio << "%)\n"
-                << "                   Pulling force: " <<  pullingForce << " Increase: " << penaltyIncrease << endl;
+      cparanoid << "                  L/U ratio: " << 100*optRatio << "% (previous: " << 100*prevOptRatio << "%)\n"
+                << "                  Pulling force: " <<  pullingForce << " Increase: " << penaltyIncrease << endl;
 
       pullingForce += penaltyIncrease;
       prevOptRatio = optRatio;
@@ -738,7 +739,7 @@ namespace Etesian {
       ++i;
       // First way to exit the loop: UB and LB difference is <10%
       // Second way to exit the loop: the legalization is close enough to the previous result
-    }while(linearDisruption > minDisruption and prevOptRatio <= 0.9);
+    } while (linearDisruption > minDisruption and prevOptRatio <= 0.9);
     _updatePlacement( _placementUB );
   }
 
@@ -939,8 +940,8 @@ namespace Etesian {
            << " RMST:" << setw(11) << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementUB )
            << endl;
     cparanoid << indent
-           <<  "  Linear Disrupt.:" << setw(11) << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
-           <<   " Quad Disrupt.:"   << setw(11) << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
+           <<   " L-Dsrpt:" << setw(8) << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
+           <<   " Q-Dsrpt:" << setw(8) << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
            << endl;
   }
 
