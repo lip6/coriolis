@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Primitive.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
 
 #include "Primitive.h"
@@ -605,5 +605,5 @@ void Polygon::_Draw(View* view, const Box& updateArea, const Transformation& tra
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

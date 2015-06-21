@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Symbol.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
 
 #include "Symbol.h"
@@ -340,5 +340,5 @@ void Symbol::CellSet::_SetNextElement(Cell* cell, Cell* nextCell) const
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

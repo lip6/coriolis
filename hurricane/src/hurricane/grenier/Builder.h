@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Builder.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_BUILDER
@@ -75,5 +75,5 @@ H::Builder* GetBuilder(const string& token);
 #endif // HURRICANE_BUILDER
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

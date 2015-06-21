@@ -1,7 +1,7 @@
 #ifndef HURRICANE_VISUAL_MAP
 // 
 // This file is part of the Tsunami Project.
-// Copyright (c) 2001-2004  Laboratoire LIP6 - Departement ASIM
+// Copyright (c) 2001-2015  Laboratoire LIP6 - Departement ASIM
 //                          Universite Pierre et Marie Curie.
 // 
 #define HURRICANE_VISUAL_MAP

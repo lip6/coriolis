@@ -52,5 +52,5 @@ typedef GenericFilter<VisualMap*> VisualMapFilter;
 #endif // HURRICANE_VISUAL_MAPS
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

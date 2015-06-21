@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: MainView.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
 
 #include "MainView.h"
@@ -108,5 +108,5 @@ void MainView::_SetTransformation(const Transformation& transformation)
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

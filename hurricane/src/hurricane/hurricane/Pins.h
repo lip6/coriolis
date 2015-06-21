@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Pins.h
 // Authors: Christophe Alexandre.
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -71,5 +71,5 @@ typedef GenericFilter<Pin*> PinFilter;
 #endif // HURRICANE_PINS
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

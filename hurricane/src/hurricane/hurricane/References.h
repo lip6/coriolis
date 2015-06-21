@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/References.h
 // Authors: J.-P. Chaput
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -72,5 +72,5 @@ typedef GenericFilter<Reference*> ReferenceFilter;
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Cell.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -965,5 +965,5 @@ void Cell::MarkerSet::_setNextElement(Marker* marker, Marker* nextMarker) const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

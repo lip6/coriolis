@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/IntrusiveSet.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -487,5 +487,5 @@ inline Hurricane::Record* getRecord ( Hurricane::IntrusiveSet<Type>& intrusiveSe
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

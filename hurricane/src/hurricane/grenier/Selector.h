@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Selector.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_SELECTOR
@@ -74,5 +74,5 @@ SetNestedSlotAdapter(Hurricane::Selector)
 #endif // HURRICANE_SELECTOR
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************

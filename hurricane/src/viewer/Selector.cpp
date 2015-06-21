@@ -3,7 +3,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Hurricane Software.
-// Copyright (c) BULL S.A. 2000-2004, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // ===================================================================
 //

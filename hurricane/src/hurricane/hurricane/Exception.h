@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Exception.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -81,5 +81,5 @@ class Exception {
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2009, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 // ****************************************************************************************************
