@@ -82,6 +82,23 @@ extern "C" {
 // +=================================================================+
 
 
+  static PyObject* PyKiteEngine_wipeoutRouting ( PyObject*, PyObject* args )
+  {
+    trace << "PyKiteEngine_wipeoutRouting()" << endl;
+
+    HTRY
+      PyObject* arg0;
+      if (not ParseOneArg("Kite.wipeoutRouting", args, CELL_ARG, &arg0)) {
+        PyErr_SetString( ConstructorError, "Bad parameters given to Kite.wipeoutRouting()." );
+        return NULL;
+      }
+      KiteEngine::wipeoutRouting( PYCELL_O(arg0) );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyKiteEngine_get ( PyObject*, PyObject* args )
   {
     trace << "PyKiteEngine_get()" << endl;
@@ -303,7 +320,9 @@ extern "C" {
 
 
   PyMethodDef PyKiteEngine_Methods[] =
-    { { "get"                  , (PyCFunction)PyKiteEngine_get                  , METH_VARARGS|METH_STATIC
+    { { "wipeoutRouting"       , (PyCFunction)PyKiteEngine_wipeoutRouting       , METH_VARARGS|METH_STATIC
+                               , "Remove any previous routing." }
+    , { "get"                  , (PyCFunction)PyKiteEngine_get                  , METH_VARARGS|METH_STATIC
                                , "Returns the Kite engine attached to the Cell, None if there isnt't." }
     , { "create"               , (PyCFunction)PyKiteEngine_create               , METH_VARARGS|METH_STATIC
                                , "Create a Kite engine on this cell." }

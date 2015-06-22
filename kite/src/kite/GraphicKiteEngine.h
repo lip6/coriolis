@@ -84,6 +84,7 @@ namespace Kite {
     protected:
                                  GraphicKiteEngine      ();
       virtual                   ~GraphicKiteEngine      ();
+              void               _wipeoutRouting        ();
               void               _route                 ();
               void               _loadGlobalSolution    ();
               void               _saveGlobalSolution    ();

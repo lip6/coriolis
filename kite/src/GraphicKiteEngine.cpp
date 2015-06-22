@@ -151,6 +151,15 @@ namespace Kite {
   }
 
 
+  void  GraphicKiteEngine::_wipeoutRouting ()
+  {
+    if (getCell()) {
+      KiteEngine::wipeoutRouting( getCell() );
+      _viewer->getCellWidget()->refresh();
+    }
+  }
+
+
   void  GraphicKiteEngine::_loadGlobalSolution ()
   {
     KiteEngine* kite = getForFramework( CreateEngine );
@@ -282,6 +291,11 @@ namespace Kite {
                       );
 
     _viewer->addToMenu( "placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.wipeoutRouting"
+                      , "Kite - Erase Previous Routing"
+                      , "Erase any previously routed wires"
+                      , std::bind(&GraphicKiteEngine::_wipeoutRouting,this)
+                      );
     _viewer->addToMenu( "placeAndRoute.stepByStep.detailedPreRoute"
                       , "Kite - Detailed Pre-Route"
                       , "Run the <b>Kite</b> detailed router on pre-routed nets"

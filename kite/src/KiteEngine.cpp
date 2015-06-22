@@ -65,6 +65,7 @@ namespace Kite {
   using std::vector;
   using std::make_pair;
   using Hurricane::dbo_ptr;
+  using Hurricane::UpdateSession;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::inltrace;
@@ -78,6 +79,9 @@ namespace Kite {
   using Hurricane::Box;
   using Hurricane::Torus;
   using Hurricane::Layer;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
+  using Hurricane::NetRoutingExtension;
   using Hurricane::Cell;
   using CRL::System;
   using CRL::addMeasure;
@@ -212,38 +216,38 @@ namespace Kite {
 
   void KiteEngine::wipeoutRouting ( Cell * cell )
   {
-    if(KiteEngine::get(cell) != NULL or KatabaticEngine::get(cell) != NULL)
-        throw Error("Trying to wipe out a routing with a routing engine\n");
-    using namespace Hurricane;
+    if ( (KiteEngine::get(cell) != NULL) or (KatabaticEngine::get(cell) != NULL) )
+      throw Error( "KiteEngine::wipeoutRouting(): KiteEngine still active on %s"
+                 , getString(cell->getName()).c_str() );
+
     UpdateSession::open();
-    for(Net* net : cell->getNets()){
-      if(NetRoutingExtension::isManualGlobalRoute(net))
-        continue;
-      // First pass: destroy the contacts
-      std::vector<Contact*> contactPointers;
-      for(Component* com : net->getComponents()){
-        Contact * contact = dynamic_cast<Contact*>(com);
-        if(contact){
-          contactPointers.push_back(contact);
-        }
+
+    for ( Net* net : cell->getNets() ) {
+      if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
+
+    // First pass: destroy the contacts
+      std::vector<Contact*> contacts;
+      for ( Component* component : net->getComponents() ) {
+        Contact* contact = dynamic_cast<Contact*>(component);
+        if (contact and not contact->getAnchorHook()->isAttached())
+          contacts.push_back( contact );
       }
-      for(Contact* contact : contactPointers)
+      for ( Contact* contact : contacts )
         contact->destroy();
-      // Second pass: destroy unconnected segments added by Knik as blockages
-      std::vector<Component*> compPointers;
-      for(Component* com : net->getComponents()){
-        Horizontal * h = dynamic_cast<Horizontal*>(com);
-        if(h){
-          compPointers.push_back(h);
-        }
-        Vertical * v = dynamic_cast<Vertical*>(com);
-        if(v){
-          compPointers.push_back(v);
-        }
+
+    // Second pass: destroy unconnected segments added by Knik as blockages
+      std::vector<Component*> segments;
+      for ( Component* component : net->getComponents() ) {
+        Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
+        if (horizontal) segments.push_back( horizontal );
+
+        Vertical* vertical = dynamic_cast<Vertical*>(component);
+        if (vertical) segments.push_back( vertical );
       }
-      for(Component* comp : compPointers)
-        comp->destroy();
+      for ( Component* segment : segments )
+        segment->destroy();
     }
+
     UpdateSession::close();
   }
 
