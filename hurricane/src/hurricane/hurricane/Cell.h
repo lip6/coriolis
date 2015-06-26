@@ -91,6 +91,8 @@ class Cell : public Entity {
                   , FlattenedNets           = 0x00008000
                   , Placed                  = 0x00010000
                   , Routed                  = 0x00020000
+                  , MergedQuadTree          = 0x00040000
+                  , Materialized            = 0x00080000 
                   };
 
       public:
@@ -231,12 +233,13 @@ class Cell : public Entity {
 
     private: Library* _library;
     private: Name _name;
+    private: Path _shuntedPath;
     private: InstanceMap _instanceMap;
-    private: QuadTree _quadTree;
+    private: QuadTree* _quadTree;
     private: SlaveInstanceSet _slaveInstanceSet;
     private: NetMap _netMap;
     private: PinMap _pinMap;
-    private: SliceMap _sliceMap;
+    private: SliceMap* _sliceMap;
     private: ExtensionSliceMap _extensionSlices;
     private: MarkerSet _markerSet;
     private: Box _abutmentBox;
@@ -268,11 +271,11 @@ class Cell : public Entity {
     public: static  Slot* getFlagSlot( unsigned int );
 
     public: InstanceMap& _getInstanceMap() {return _instanceMap;};
-    public: QuadTree* _getQuadTree() {return &_quadTree;};
+    public: QuadTree* _getQuadTree() {return _quadTree;};
     public: SlaveInstanceSet& _getSlaveInstanceSet() {return _slaveInstanceSet;};
     public: NetMap& _getNetMap() {return _netMap;};
     public: PinMap& _getPinMap() {return _pinMap;};
-    public: SliceMap& _getSliceMap() {return _sliceMap;};
+    public: SliceMap* _getSliceMap() {return _sliceMap;};
     public: ExtensionSliceMap& _getExtensionSliceMap() {return _extensionSlices;};
     public: MarkerSet& _getMarkerSet() {return _markerSet;};
     public: Cell* _getNextOfLibraryCellMap() const {return _nextOfLibraryCellMap;};
@@ -292,8 +295,11 @@ class Cell : public Entity {
     public: void _removeSlaveEntity(Entity* entity, Entity* slaveEntity);
     public: void _getSlaveEntities(SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
     public: void _getSlaveEntities(Entity* entity, SlaveEntityMap::iterator& begin, SlaveEntityMap::iterator& end);
-    public: void _insertSlice ( ExtensionSlice* );
-    public: void _removeSlice ( ExtensionSlice* );
+    public: void _insertSlice(ExtensionSlice*);
+    public: void _removeSlice(ExtensionSlice*);
+    public: void _slaveAbutmentBox(Cell*);
+    public: void _changeQuadTree(Cell*);
+    public: void _setShuntedPath(Path path) { _shuntedPath=path; }
 
 // Constructors
 // ************
@@ -307,6 +313,8 @@ class Cell : public Entity {
     public: virtual Box getBoundingBox() const;
     public: Library* getLibrary() const {return _library;};
     public: const Name& getName() const {return _name;};
+    public: const Flags& getFlags() const { return _flags; } 
+    public: Path getShuntedPath() const { return _shuntedPath; }
     public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
     public: Instances getInstances() const {return _instanceMap.getElements();};
     public: Instances getPlacedInstances() const;
@@ -339,7 +347,7 @@ class Cell : public Entity {
     public: Nets getGroundNets() const;
     public: Pin* getPin(const Name& name) const {return _pinMap.getElement(name);};
     public: Pins getPins() const {return _pinMap.getElements();};
-    public: Slice* getSlice(const Layer* layer) const {return _sliceMap.getElement(layer);};
+    public: Slice* getSlice(const Layer* layer) const {return _sliceMap->getElement(layer);};
     public: Slices getSlices(const Layer::Mask& mask = ~0) const;
     public: const ExtensionSliceMap& getExtensionSliceMap() const { return _extensionSlices; };
     public: ExtensionSlice* getExtensionSlice(const Name& name) const;
@@ -379,6 +387,9 @@ class Cell : public Entity {
     public: bool isTerminal() const {return _flags.isset(Flags::Terminal);};
     public: bool isFlattenLeaf() const {return _flags.isset(Flags::FlattenLeaf);};
     public: bool isLeaf() const;
+    public: bool isUnique() const;
+    public: bool isUniquified() const;
+    public: bool isUniquifyMaster() const;
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
@@ -390,6 +401,8 @@ class Cell : public Entity {
 
     public: void setName(const Name& name);
     public: void setAbutmentBox(const Box& abutmentBox);
+    public: void slaveAbutmentBox(Cell*);
+    public: void unslaveAbutmentBox(Cell*);
     public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
@@ -397,6 +410,7 @@ class Cell : public Entity {
     public: void createRoutingPadRings(unsigned int flags=Flags::BuildRings);
     public: void setFlags(unsigned int flags) { _flags |= flags; }
     public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
+    public: bool updatePlacedFlag();
     public: void materialize();
     public: void unmaterialize();
     public: Cell* getClone();

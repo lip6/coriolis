@@ -1775,7 +1775,7 @@ Instances Cell::getInstancesUnder(const Box& area) const
 // *****************************************************
 {
     // return _quadTree.getGosUnder(area).getSubSet<Instance*>();
-    return SubTypeCollection<Go*, Instance*>(_quadTree.getGosUnder(area));
+    return SubTypeCollection<Go*, Instance*>(_quadTree->getGosUnder(area));
 }
 
 Instances Cell::getSlaveInstances() const
@@ -1951,21 +1951,21 @@ Rubbers Cell::getRubbers() const
 // *****************************
 {
     // return _quadTree.getGos().getSubSet<Rubber*>();
-    return SubTypeCollection<Go*, Rubber*>(_quadTree.getGos());
+    return SubTypeCollection<Go*, Rubber*>(_quadTree->getGos());
 }
 
 Rubbers Cell::getRubbersUnder(const Box& area) const
 // *************************************************
 {
     // return (area.isEmpty()) ? Rubbers() : _quadTree.getGosUnder(area).getSubSet<Rubber*>();
-    return SubTypeCollection<Go*, Rubber*>(_quadTree.getGosUnder(area));
+    return SubTypeCollection<Go*, Rubber*>(_quadTree->getGosUnder(area));
 }
 
 Markers Cell::getMarkersUnder(const Box& area) const
 // *************************************************
 {
     // return (area.isEmpty()) ? Markers() : _quadTree.getGosUnder(area).getSubSet<Marker*>();
-    return SubTypeCollection<Go*, Marker*>(_quadTree.getGosUnder(area));
+    return SubTypeCollection<Go*, Marker*>(_quadTree->getGosUnder(area));
 }
 
 References Cell::getReferences() const
@@ -2171,7 +2171,7 @@ Cell_Slices::Locator::Locator(const Cell* cell, const Layer::Mask& mask)
     _sliceLocator()
 {
   if (_cell && !_mask.zero()) {
-        _sliceLocator = ((Cell*)_cell)->_getSliceMap().getElements().getLocator();
+        _sliceLocator = ((Cell*)_cell)->_getSliceMap()->getElements().getLocator();
         while (_sliceLocator.isValid() && !(_sliceLocator.getElement()->getLayer()->getMask() & _mask))
             _sliceLocator.progress();
     }

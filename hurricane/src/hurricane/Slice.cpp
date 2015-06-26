@@ -48,13 +48,13 @@ Slice::Slice(Cell* cell, const Layer* layer)
     if (_cell->getSlice(_layer))
         throw Error("Can't create " + _TName("Slice") + " : already exists");
 
-    _cell->_getSliceMap()._insert(this);
+    _cell->_getSliceMap()->_insert(this);
 }
 
 Slice::~Slice()
 // ************
 {
-    _cell->_getSliceMap()._remove(this);
+    _cell->_getSliceMap()->_remove(this);
 }
 
 Components Slice::getComponents() const

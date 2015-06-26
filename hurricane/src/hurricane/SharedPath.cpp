@@ -121,7 +121,13 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
         throw Error("Can't create " + _TName("SharedPath") + " : already exists");
 
     if (_tailSharedPath && (_tailSharedPath->getOwnerCell() != _headInstance->getMasterCell()))
-        throw Error("Can't create " + _TName("SharedPath") + " : incompatible tail path");
+        throw Error( "Can't create %s, incompatible tail path between:\n"
+                     "        - head owner %s\n"
+                     "        - tail owner %s\n"
+                   , _TName("SharedPath").c_str()
+                   , getString(_headInstance  ->getMasterCell()).c_str()
+                   , getString(_tailSharedPath->getOwnerCell ()).c_str()
+                   );
 
     _headInstance->_getSharedPathMap()._insert(this);
 }

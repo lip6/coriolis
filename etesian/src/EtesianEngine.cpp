@@ -472,11 +472,14 @@ namespace Etesian {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
-      if (masterCell->getAbutmentBox().isEmpty()) {
+      if ( masterCell->getAbutmentBox().isEmpty()
+         or (   (masterCell->getAbutmentBox().getHeight() == topAb.getHeight())
+            and (masterCell->getAbutmentBox().getWidth () == topAb.getWidth ()) ) ) {
       // Have to check here if the model is fully placed or not.
-        masterCell->setAbutmentBox( topAb );
-        instance->setTransformation( Transformation() ); // (0,0,ID).
-        instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+      //masterCell->setAbutmentBox( topAb );
+      //instance->setTransformation( Transformation() ); // (0,0,ID).
+      //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        instance->slaveAbutmentBox();
       }
     }
     UpdateSession::close();

@@ -137,6 +137,9 @@ class Instance : public Go {
     public: bool isFixed() const {return _placementStatus == PlacementStatus::FIXED;};
     public: bool isTerminal() const;
     public: bool isLeaf() const;
+    public: bool isUnique() const;
+    public: bool isUniquified() const;
+    public: bool isUniquifyMaster() const;
 
 // Filters
 // *******
@@ -162,6 +165,7 @@ class Instance : public Go {
     public: void setPlacementStatus(const PlacementStatus& placementstatus);
     public: void setMasterCell(Cell* masterCell, bool secureFlag = true);
     public: void uniquify();
+    public: void slaveAbutmentBox();
     public: Instance* getClone(Cell* cloneCell) const;
 
 // Others

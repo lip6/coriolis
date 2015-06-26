@@ -690,8 +690,11 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyCell_isTerminal, isTerminal ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isLeaf,         isLeaf ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminal      ,       isTerminal ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isLeaf          ,           isLeaf ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUnique        ,         isUnique ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquified    ,     isUniquified ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquifyMaster, isUniquifyMaster ,PyCell,Cell)
 
   GetBoundStateAttribute(PyCell_isPyBound              ,PyCell,Cell)
 
@@ -727,6 +730,9 @@ extern "C" {
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
     , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
     , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
+    , { "isUnique"            , (PyCFunction)PyCell_isUnique            , METH_NOARGS , "Returns true if the cell has one or less instance." }
+    , { "isUniquified"        , (PyCFunction)PyCell_isUniquified        , METH_NOARGS , "Returns true if the cell is the result of an uniquification." }
+    , { "isUniquifyMaster"    , (PyCFunction)PyCell_isUniquifyMaster    , METH_NOARGS , "Returns true if the cell is the reference for an uniquification." }
     , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }

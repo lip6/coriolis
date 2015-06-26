@@ -90,13 +90,13 @@ void UpdateSession::_destroy()
     UPDATOR_STACK->pop();
 
     vector<Cell*> changedCells;
-    forEach( DBo*, iowner, getOwners() ) {
-      Cell* cell = dynamic_cast<Cell*>(*iowner);
+    for ( DBo* owner : getOwners() ) {
+      Cell* cell = dynamic_cast<Cell*>(owner);
       if (cell) {
       //cerr << "Notify Cell::CellChanged to: " << cell << endl; 
         changedCells.push_back( cell );
       } else {
-        Go* go = dynamic_cast<Go*>(*iowner);
+        Go* go = dynamic_cast<Go*>(owner);
         if (go) go->materialize();
       }
     }
@@ -180,8 +180,8 @@ void UpdateSession::onNotOwned()
       //cerr << "Notify Cell::CellAboutToChange to: " << getCell() << endl; 
         getCell()->put   ( UPDATOR_STACK->top() );
         getCell()->notify( Cell::Flags::CellAboutToChange );
-        forEach( Instance*, iinstance, getCell()->getSlaveInstances() ) {
-          iinstance->invalidate( false );
+        for ( Instance* instance : getCell()->getSlaveInstances() ) {
+          instance->invalidate( false );
         }
       }
     }

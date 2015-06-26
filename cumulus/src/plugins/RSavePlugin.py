@@ -46,6 +46,10 @@ except Exception, e:
 # Write back layout to disk if everything has gone fine.
 # Must write all the sub-blocks of the core but *not* the
 # standard cell (mainly the feed-through).
+#
+# If the model has been uniquified, in the case of a merging
+# of abutment box for placement, the netlist view must also
+# be saved.
 
 def rsave ( cell, depth=0 ):
   if cell.isTerminal(): return
@@ -54,7 +58,9 @@ def rsave ( cell, depth=0 ):
   if depth == 0: print '  o  Recursive Save-Cell.'
 
   print '     %s+ %s (layout).' % ( ' '*(depth*2), cell.getName() )
-  framework.saveCell( cell, CRL.Catalog.State.Physical )
+  views = CRL.Catalog.State.Physical
+  if cell.isUniquified(): views |= CRL.Catalog.State.Logical
+  framework.saveCell( cell, views )
 
   for instance in cell.getInstances():
     masterCell = instance.getMasterCell()

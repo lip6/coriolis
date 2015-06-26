@@ -19,6 +19,7 @@
 
 //#define  TEST_INTRUSIVESET
 
+#include "hurricane/Warning.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/Cell.h"
 #include "hurricane/DataBase.h"
@@ -155,11 +156,12 @@ Cell::Cell(Library* library, const Name& name)
 :    Inherit(),
     _library(library),
     _name(name),
+    _shuntedPath(),
     _instanceMap(),
-    _quadTree(),
+     _quadTree(new QuadTree()),
     _slaveInstanceSet(),
     _netMap(),
-    _sliceMap(),
+     _sliceMap(new SliceMap()),
     _extensionSlices(),
     _markerSet(),
     //_viewSet(),
@@ -197,7 +199,7 @@ Box Cell::getBoundingBox() const
     if (_boundingBox.isEmpty()) {
         Box& boundingBox = (Box&)_boundingBox;
         boundingBox = _abutmentBox;
-        boundingBox.merge(_quadTree.getBoundingBox());
+        boundingBox.merge(_quadTree->getBoundingBox());
         for_each_slice(slice, getSlices()) {
             boundingBox.merge(slice->getBoundingBox());
             end_for;
@@ -230,6 +232,26 @@ bool Cell::isNetAlias ( const Name& name ) const
 {
   NetAliasName key(name);
   return _netAliasSet.find(&key) != _netAliasSet.end();
+}
+
+bool Cell::isUnique() const
+// ************************
+{
+  return getSlaveInstances().getSize() < 2;
+}
+
+bool Cell::isUniquified() const
+// ****************************
+{
+  UniquifyRelation* relation = UniquifyRelation::get( this );
+  return relation and (relation->getMasterOwner() != this);
+}
+
+bool Cell::isUniquifyMaster() const
+// ********************************
+{
+  UniquifyRelation* relation = UniquifyRelation::get( this );
+  return (not relation) or (relation->getMasterOwner() == this);
 }
 
 Net* Cell::getNet ( const Name& name ) const
@@ -266,13 +288,19 @@ void Cell::setName(const Name& name)
 void Cell::setAbutmentBox(const Box& abutmentBox)
 // **********************************************
 {
-    if (abutmentBox != _abutmentBox) {
-        if (!_abutmentBox.isEmpty() &&
-             (abutmentBox.isEmpty() || !abutmentBox.contains(_abutmentBox)))
-            _unfit(_abutmentBox);
-        _abutmentBox = abutmentBox;
-        _fit(_abutmentBox);
-    }
+  if (abutmentBox != _abutmentBox) {
+    if (not _abutmentBox.isEmpty() and
+       (abutmentBox.isEmpty() or not abutmentBox.contains(_abutmentBox)))
+      _unfit( _abutmentBox );
+    _abutmentBox = abutmentBox;
+    _fit( _abutmentBox );
+  }
+
+  for ( Instance* instance : getInstances() ) {
+    Cell* masterCell = instance->getMasterCell();
+    if (masterCell->getFlags().isset(Flags::MergedQuadTree))
+      masterCell->setAbutmentBox( abutmentBox );
+  }
 }
 
 
@@ -424,6 +452,21 @@ Cell* Cell::getCloneMaster() const
 }
 
 
+bool Cell::updatePlacedFlag()
+// **************************
+{
+  bool isPlaced = true;
+  for ( Instance* instance : getInstances() ) {
+    if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) {
+      isPlaced = false;
+      break;
+    }
+  }
+  if (isPlaced) setFlags( Cell::Flags::Placed );
+  return isPlaced;
+}
+
+
 Cell* Cell::getClone()
 // *******************
 {
@@ -462,49 +505,145 @@ Cell* Cell::getClone()
 void Cell::uniquify(unsigned int depth)
 // ************************************
 {
+//cerr << "Cell::uniquify() " << this << endl;
+
   vector<Instance*> toUniquify;
   set<Cell*>        masterCells;
 
-  for ( Instance* iinstance : getInstances() ) {
-    Cell* masterCell = iinstance->getMasterCell();
+  for ( Instance* instance : getInstances() ) {
+    Cell* masterCell = instance->getMasterCell();
     if (masterCell->isTerminal()) continue;
 
-    masterCells.insert( masterCell );
-    if (masterCell->getSlaveInstances().getSize() > 1) {
-      toUniquify.push_back( iinstance );
+    if (masterCells.find(masterCell) == masterCells.end()) {
+      masterCells.insert( masterCell );
+      masterCell->updatePlacedFlag();
+    }
+
+    if ( (masterCell->getSlaveInstances().getSize() > 1) and not masterCell->isPlaced() ) {
+      toUniquify.push_back( instance );
     }
   }
 
-  for ( auto iinst : toUniquify ) {
-    iinst->uniquify();
-    masterCells.insert( iinst->getMasterCell() );
+  for ( auto instance : toUniquify ) {
+    instance->uniquify();
+    masterCells.insert( instance->getMasterCell() );
   }
 
   if (depth > 0) {
-    for ( auto icell : masterCells )
-      icell->uniquify( depth-1 );
+    for ( auto cell : masterCells )
+      cell->uniquify( depth-1 );
   }
 }
 
 void Cell::materialize()
 // *********************
 {
-  forEach ( Instance*, iinstance, getInstances() ) {
-    if ( iinstance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED )
-      iinstance->materialize();
+  if (_flags.isset(Flags::Materialized)) return;
+
+  _flags |= Flags::Materialized;
+
+  for ( Instance* instance : getInstances() ) {
+    if ( instance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED )
+      instance->materialize();
   }
 
-  forEach ( Net*   , inet   , getNets   () ) inet   ->materialize();
-  forEach ( Marker*, imarker, getMarkers() ) imarker->materialize();
+  for ( Net*    net    : getNets   () ) net   ->materialize();
+  for ( Marker* marker : getMarkers() ) marker->materialize();
 }
 
 void Cell::unmaterialize()
 // ***********************
 {
-    for_each_instance(instance, getInstances()) instance->unmaterialize(); end_for;
-    for_each_net(net, getNets()) net->unmaterialize(); end_for;
-    for_each_marker(marker, getMarkers()) marker->unmaterialize(); end_for;
+  if (not _flags.isset(Flags::Materialized)) return;
+
+  _flags &= ~Flags::Materialized;
+
+  for ( Instance* instance : getInstances()) instance->unmaterialize();
+  for ( Net*      net      : getNets()     ) net     ->unmaterialize();
+  for ( Marker*   marker   : getMarkers()  ) marker  ->unmaterialize();
 }
+
+void Cell::slaveAbutmentBox ( Cell* topCell )
+// ******************************************
+{
+  if (_flags.isset(Flags::MergedQuadTree)) {
+    cerr << Error( "Cell::slaveAbutmentBox(): %s is already slaved, action cancelled."
+                 , getString(this).c_str() ) << endl;
+    return;
+  }
+
+  if (not isUnique()) {
+    cerr << Error( "Cell::slaveAbutmentBox(): %s is *not* unique, action cancelled."
+                 , getString(this).c_str() ) << endl;
+    return;
+  }
+
+  _slaveAbutmentBox( topCell );
+}
+
+void Cell::_slaveAbutmentBox ( Cell* topCell )
+// *******************************************
+{
+  if (not getAbutmentBox().isEmpty()) {
+    if (  (getAbutmentBox().getWidth() != topCell->getAbutmentBox().getWidth())
+       or (getAbutmentBox().getWidth() != topCell->getAbutmentBox().getWidth()) ) {
+      cerr << Warning( "Slaving abutment boxes of different sizes, fixed blocks may shift.\n"
+                       "          topCell: %s (AB:%s)\n"
+                       "          slave  : %s (AB:%s)"
+                     , getString(topCell->getName()).c_str()
+                     , getString(topCell->getAbutmentBox()).c_str()
+                     , getString(getName()).c_str()
+                     , getString(getAbutmentBox()).c_str()
+                     );
+    }
+
+    Transformation transf ( topCell->getAbutmentBox().getXMin() - getAbutmentBox().getXMin()
+                          , topCell->getAbutmentBox().getYMin() - getAbutmentBox().getYMin() );
+    
+    for ( Instance* instance : getInstances() ) {
+      if (instance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED) {
+        Transformation instanceTransf = instance->getTransformation();
+        transf.applyOn( instanceTransf );
+        instance->setTransformation( instanceTransf );
+      }
+    }
+  }
+
+  setAbutmentBox( topCell->getAbutmentBox() );
+
+  _changeQuadTree( topCell );
+
+  for ( Instance* instance : getInstances() ) {
+    Cell* masterCell = instance->getMasterCell();
+    if (masterCell->getFlags().isset(Flags::MergedQuadTree))
+      masterCell->_slaveAbutmentBox( topCell );
+  }
+}
+
+
+void Cell::_changeQuadTree ( Cell* topCell )
+// *****************************************
+{
+  bool isMaterialized = _flags.isset(Flags::Materialized);
+
+  unmaterialize();
+
+  if (topCell or _flags.isset(Flags::MergedQuadTree)) {
+    delete _sliceMap;
+    delete _quadTree;
+
+    if (topCell) {
+      _sliceMap = topCell->_getSliceMap();
+      _quadTree = topCell->_getQuadTree();
+    } else {
+      _sliceMap = new SliceMap();
+      _quadTree = new QuadTree();
+    }
+  }
+
+  if (isMaterialized) materialize();
+}
+
 
 void Cell::_postCreate()
 // *********************
@@ -517,25 +656,30 @@ void Cell::_postCreate()
 void Cell::_preDestroy()
 // ********************
 {
-    while(_slaveEntityMap.size()) {
-      _slaveEntityMap.begin()->second->destroy();
-    }
+  while ( _slaveEntityMap.size() ) {
+    _slaveEntityMap.begin()->second->destroy();
+  }
 
-    //for_each_view(view, getViews()) view->SetCell(NULL); end_for;
-    for_each_marker(marker, getMarkers()) marker->destroy(); end_for;
-    for_each_instance(slaveInstance, getSlaveInstances()) slaveInstance->destroy(); end_for;
-    for_each_instance(instance, getInstances()) instance->destroy(); end_for;
-    forEach( Net*, inet, getNets() ) {
-      inet->_getMainName().detachAll();
-      inet->destroy();
-    }
-    for ( auto islave : _netAliasSet ) delete islave;
-    for_each_slice(slice, getSlices()) slice->_destroy(); end_for;
-    while(!_extensionSlices.empty()) _removeSlice(_extensionSlices.begin()->second);
+//for ( View*     view          : getViews()          ) view->setCell( NULL );
+  for ( Marker*   marker        : getMarkers()        ) marker->destroy();
+  for ( Instance* slaveInstance : getSlaveInstances() ) slaveInstance->destroy();
+  for ( Instance* instance      : getInstances()      ) instance->destroy();
+  for ( Net*      net           : getNets() ) {
+    net->_getMainName().detachAll();
+    net->destroy();
+  }
+  for ( auto   islave : _netAliasSet ) delete islave;
+  for ( Slice* slice  : getSlices()  ) slice->_destroy();
+  while ( not _extensionSlices.empty() ) _removeSlice( _extensionSlices.begin()->second );
 
-    _library->_getCellMap()._remove(this);
+  if (not _flags.isset(Flags::MergedQuadTree)) {
+    delete _sliceMap;
+    delete _quadTree;
+  }
+ 
+  _library->_getCellMap()._remove( this );
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 }
 
 string Cell::_getString() const
@@ -554,12 +698,12 @@ Record* Cell::_getRecord() const
         record->add( getSlot("_library"       , _library          ) );
         record->add( getSlot("_name"          , &_name            ) );
         record->add( getSlot("_instances"     , &_instanceMap     ) );
-        record->add( getSlot("_quadTree"      , &_quadTree        ) );
+        record->add( getSlot("_quadTree"      ,  _quadTree        ) );
         record->add( getSlot("_slaveInstances", &_slaveInstanceSet) );
         record->add( getSlot("_netMap"        , &_netMap          ) );
         record->add( getSlot("_netAliasSet"   , &_netAliasSet     ) );
         record->add( getSlot("_pinMap"        , &_pinMap          ) );
-        record->add( getSlot("_sliceMap"      , &_sliceMap        ) );
+        record->add( getSlot("_sliceMap"      ,  _sliceMap        ) );
         record->add( getSlot("_markerSet"     , &_markerSet       ) );
         record->add( getSlot("_slaveEntityMap", &_slaveEntityMap  ) );
         record->add( getSlot("_abutmentBox"   , &_abutmentBox     ) );

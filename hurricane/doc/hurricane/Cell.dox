@@ -164,6 +164,18 @@
   *                \false.
   */
 
+ //! \function     bool  Cell::isUnique () const;
+ //!               Returns \true if the Cell has one or less instances, regardless of
+ //!               it's uniquification state.
+
+ //! \function     bool  Cell::isUniquified () const;
+ //!               Returns \true if this Cell is the result of an uniquification \b and
+ //!               is not the reference (the original) Cell.
+
+ //! \function     bool  Cell::isUniquifyMaster () const;
+ //!               Returns \true if the Cell has been uniquified and this is the original
+ //!               Cell. The original Cell can have both normal instances and uniquified
+ //!               instances.
 
  /*! \function     void  Cell::setName ( const Name& name );
   *                Allows to change the Cell Name.

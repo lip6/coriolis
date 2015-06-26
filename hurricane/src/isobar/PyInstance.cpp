@@ -293,6 +293,19 @@ extern "C" {
   }
 
 
+  static PyObject* PyInstance_slaveAbutmentBox ( PyInstance *self )
+  {
+    trace << "PyInstance_slaveAbutmentBox ()" << endl;
+    METHOD_HEAD ( "Instance.slaveAbutmentBox()" )
+
+    HTRY
+      instance->slaveAbutmentBox();
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
 
   static PyObject* PyInstance_getClone ( PyInstance *self, PyObject* args )
   {
@@ -379,6 +392,7 @@ extern "C" {
     , { "setPlacementStatus"        , (PyCFunction)PyInstance_setPlacementStatus        , METH_VARARGS, "Allows to modify the instance placement status." }
     , { "setMasterCell"             , (PyCFunction)PyInstance_setMasterCell             , METH_VARARGS, "Allows to change the cell referenced by this instance." }
     , { "uniquify"                  , (PyCFunction)PyInstance_uniquify                  , METH_NOARGS , "Uniquify the Instance (clone it's master Cell)." }
+    , { "slaveAbutmentBox"          , (PyCFunction)PyInstance_slaveAbutmentBox          , METH_NOARGS , "Bind instance's master Cell and owner Cell together." }
     , { "getClone"                  , (PyCFunction)PyInstance_getClone                  , METH_VARARGS, "Create a clone of this Instance into the cloned Cell (placement only)." }
     , { "destroy"                   , (PyCFunction)PyInstance_destroy                   , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

@@ -200,23 +200,33 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
 Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag)
 // ****************************************************************************************
 {
-    Instance* instance =
-        new Instance(cell, name, masterCell, Transformation(), PlacementStatus(), secureFlag);
+  if (not cell)
+    throw Error( "Instance::create(): NULL master Cell argument." );
 
-    instance->_postCreate();
+  // if (cell->isUniquified())
+  //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
 
-    return instance;
+  Instance* instance =
+    new Instance(cell, name, masterCell, Transformation(), PlacementStatus(), secureFlag);
+
+  instance->_postCreate();
+  return instance;
 }
 
 Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag)
-// ****************************************************************************************************
+// **********************************************************************************************************************************************************************
 {
-    Instance* instance =
-        new Instance(cell, name, masterCell, transformation, placementstatus, secureFlag);
+  if (not cell)
+    throw Error( "Instance::create(): NULL master Cell argument." );
 
-    instance->_postCreate();
+  // if (cell->isUniquified())
+  //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
 
-    return instance;
+  Instance* instance =
+    new Instance(cell, name, masterCell, transformation, placementstatus, secureFlag);
+
+  instance->_postCreate();
+  return instance;
 }
 
 Box Instance::getBoundingBox() const
@@ -260,6 +270,25 @@ bool Instance::isLeaf() const
 {
     return getMasterCell()->isLeaf();
 }
+
+bool Instance::isUnique() const
+// ****************************
+{
+  return _masterCell->isUnique();
+}
+
+bool Instance::isUniquified() const
+// ********************************
+{
+  return _masterCell->isUniquified();
+}
+
+bool Instance::isUniquifyMaster() const
+// ************************************
+{
+  return _masterCell->isUniquifyMaster();
+}
+
 
 InstanceFilter Instance::getIsUnderFilter(const Box& area)
 // *******************************************************
@@ -453,13 +482,24 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 void Instance::uniquify()
 // **********************
 {
-  if (_masterCell->getSlaveInstances().getSize() == 1) {
-    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is already unique."
+  if (_masterCell->isUniquified()) {
+    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is already uniquified, cancelled."
                    , getString(_masterCell->getName()).c_str()
                    , getString(getName()).c_str()
                    ) << endl;
+    return;
   }
   setMasterCell( _masterCell->getClone() );
+}
+
+void Instance::slaveAbutmentBox()
+// ******************************
+{
+  if (not _masterCell->isUniquified()) uniquify();
+  setTransformation( Transformation() );
+  setPlacementStatus( Instance::PlacementStatus::PLACED );
+  _masterCell->slaveAbutmentBox( getCell() );
+  _masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
 }
 
 Instance* Instance::getClone(Cell* cloneCell) const
@@ -524,6 +564,8 @@ void Instance::_preDestroy()
 
     _masterCell->_getSlaveInstanceSet()._remove(this);
     _cell->_getInstanceMap()._remove(this);
+
+    if (_masterCell->isUniquified()) _masterCell->destroy();
 }
 
 string Instance::_getString() const
@@ -552,120 +594,6 @@ Record* Instance::_getRecord() const
     }
     return record;
 }
-
-//void Instance::_DrawPhantoms(View* view, const Box& updateArea, const Transformation& transformation)
-//// **************************************************************************************************
-//{
-//    Symbol* symbol = _masterCell->getSymbol();
-//    if (!symbol) {
-//        Box masterArea = updateArea;
-//        Transformation masterTransformation = _transformation;
-//        _transformation.getInvert().ApplyOn(masterArea);
-//        transformation.ApplyOn(masterTransformation);
-//        _masterCell->_DrawPhantoms(view, masterArea, masterTransformation);
-//    }
-//}
-//
-//void Instance::_DrawBoundaries(View* view, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//    Box masterArea = updateArea;
-//    Transformation masterTransformation = _transformation;
-//    _transformation.getInvert().ApplyOn(masterArea);
-//    transformation.ApplyOn(masterTransformation);
-//    Symbol* symbol = _masterCell->getSymbol();
-//    if (!symbol)
-//        _masterCell->_DrawBoundaries(view, masterArea, masterTransformation);
-//    else
-//        _masterCell->getSymbol()->_Draw(view, masterArea, masterTransformation);
-//}
-//
-//void Instance::_DrawRubbers(View* view, const Box& updateArea, const Transformation& transformation)
-//// *************************************************************************************************
-//{
-//    Box masterArea = updateArea;
-//    Transformation masterTransformation = _transformation;
-//    _transformation.getInvert().ApplyOn(masterArea);
-//    transformation.ApplyOn(masterTransformation);
-//    _masterCell->_DrawRubbers(view, masterArea, masterTransformation);
-//}
-//
-//void Instance::_DrawMarkers(View* view, const Box& updateArea, const Transformation& transformation)
-//// *************************************************************************************************
-//{
-//    Box masterArea = updateArea;
-//    Transformation masterTransformation = _transformation;
-//    _transformation.getInvert().ApplyOn(masterArea);
-//    transformation.ApplyOn(masterTransformation);
-//    _masterCell->_DrawMarkers(view, masterArea, masterTransformation);
-//}
-//
-//void Instance::_DrawDisplaySlots(View* view, const Box& area, const Box& updateArea, const Transformation& transformation)
-//// ***********************************************************************************************************************
-//{
-//    Box masterArea = updateArea;
-//    Transformation masterTransformation = _transformation;
-//    _transformation.getInvert().ApplyOn(masterArea);
-//    transformation.ApplyOn(masterTransformation);
-//    _masterCell->_DrawDisplaySlots(view, area, masterArea, masterTransformation);
-//}
-//
-//bool Instance::_IsInterceptedBy(View* view, const Point& point, const DbU::Unit& aperture) const
-//// ****************************************************************************************
-//{
-//    Symbol* symbol = _masterCell->getSymbol();
-//    if (!symbol)
-//        return (view->PhantomsAreVisible() || view->BoundariesAreVisible()) &&
-//                 getAbutmentBox().intersect(Box(point).Inflate(aperture));
-//    else {
-//        Point masterPoint = point;
-//        _transformation.getInvert().ApplyOn(masterPoint);
-//        return (view->BoundariesAreVisible() && symbol->_IsInterceptedBy(view, masterPoint, aperture));
-//    }
-//}
-//
-//void Instance::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// ****************************************************************************************************
-//{
-//    Symbol* symbol = _masterCell->getSymbol();
-//    if (!symbol) {
-//        Box masterArea = updateArea;
-//        Transformation masterTransformation = _transformation;
-//        _transformation.getInvert().ApplyOn(masterArea);
-//        transformation.ApplyOn(masterTransformation);
-//        _masterCell->_DrawContent(view, basicLayer, masterArea, masterTransformation);
-//    }
-//}
-//
-//void Instance::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// ***********************************************************************************************
-//{
-//    Symbol* symbol = _masterCell->getSymbol();
-//    if (!symbol) {
-//        Box abutmentBox = transformation.getBox(getAbutmentBox());
-//        view->FillRectangle(abutmentBox);
-//        view->DrawRectangle(abutmentBox);
-//        
-//        if ( view->getScale() > 1 )
-//        {
-//            if ( view->IsTextVisible() )
-//            {
-//                string text = getString ( _name ) + " ("
-//                            + getString ( getValue ( abutmentBox.getXCenter () ) ) + ","
-//                            + getString ( getValue ( abutmentBox.getYCenter () ) ) + ")";
-//                view->DrawString ( text, abutmentBox.getXMin(), abutmentBox.getYMax() ); 
-//            }
-//        }
-//    }
-//    else {
-//        Box masterArea = updateArea;
-//        Transformation masterTransformation = _transformation;
-//        _transformation.getInvert().ApplyOn(masterArea);
-//        transformation.ApplyOn(masterTransformation);
-//        symbol->_Highlight(view, masterArea, masterTransformation);
-//    }
-//}
-//
 
 // ****************************************************************************************************
 // Instance::PlugMap implementation

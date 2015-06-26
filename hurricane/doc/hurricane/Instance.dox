@@ -39,6 +39,16 @@
   *  \section      secInstancePredefinedFilters  Predefined filters
   *
   *                <b>Hurricane::Instance::getIsUnderFilter</b>
+  *
+  *
+  *  \section      secInstanceDestroy  Instance Destruction
+  *
+  *                When the Instance::destroy() method is called, if the master Cell
+  *                is uniquified, that is, is unique \b and a copy of the reference
+  *                Cell, it is destroyed as well. That state means that the master
+  *                Cell has been created for the only purpose as to serve as a model
+  *                for this peculiar Instance. It is then logical that it should be
+  *                removed with it.
   */
 
 

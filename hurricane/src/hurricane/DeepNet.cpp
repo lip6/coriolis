@@ -81,7 +81,6 @@ namespace Hurricane {
   {
     size_t      nbRoutingPads = 0;
     HyperNet    hyperNet      ( _netOccurrence );
-    RoutingPad* previousRp    = NULL;
     RoutingPad* currentRp     = NULL;
 
     forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
