@@ -20,7 +20,8 @@ detailed_placement::detailed_placement(
         plt_(pl),
         cell_rows_(placement_rows),
         min_x_(min_x), max_x_(max_x),
-        y_origin_(y_origin)
+        y_origin_(y_origin),
+        row_height_(row_height)
     {
 
     assert(row_height > 0);
