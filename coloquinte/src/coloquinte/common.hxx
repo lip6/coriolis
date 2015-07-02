@@ -89,6 +89,14 @@ struct box{
             std::min(y_max_, o.y_max_)
         );
     }
+    box<T> bounding_box(box<T> const o) const{
+        return box<T>(
+            std::min(x_min_, o.x_min_),
+            std::max(x_max_, o.x_max_),
+            std::min(y_min_, o.y_min_),
+            std::max(y_max_, o.y_max_)
+        );
+    }
     point<T> dimensions() const{
         return point<T>(x_max_-x_min_, y_max_-y_min_);
     }
