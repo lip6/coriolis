@@ -88,11 +88,12 @@ class Cell : public Entity {
                   , Terminal                = 0x00001000
                   , FlattenLeaf             = 0x00002000
                   , Pad                     = 0x00004000
-                  , FlattenedNets           = 0x00008000
-                  , Placed                  = 0x00010000
-                  , Routed                  = 0x00020000
-                  , MergedQuadTree          = 0x00040000
-                  , Materialized            = 0x00080000 
+                  , Feed                    = 0x00008000
+                  , FlattenedNets           = 0x00010000
+                  , Placed                  = 0x00020000
+                  , Routed                  = 0x00040000
+                  , MergedQuadTree          = 0x00080000
+                  , Materialized            = 0x00100000 
                   };
 
       public:
@@ -391,6 +392,7 @@ class Cell : public Entity {
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
+    public: bool isFeed() const {return _flags.isset(Flags::Feed);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
@@ -406,6 +408,7 @@ class Cell : public Entity {
     public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
+    public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
     public: void flattenNets(unsigned int flags=Flags::BuildRings);
     public: void createRoutingPadRings(unsigned int flags=Flags::BuildRings);
     public: void setFlags(unsigned int flags) { _flags |= flags; }

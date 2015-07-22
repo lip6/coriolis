@@ -245,6 +245,19 @@ void Path::setNameSeparator(char nameSeparator)
     SharedPath::setNameSeparator(nameSeparator);
 }
 
+string Path::getCompactString() const
+// **********************************
+{
+  if (isEmpty()) return "<empty>";
+
+  string s = "<";
+  s += getString(getOwnerCell()->getName());
+  s += ":";
+  s += getString(_sharedPath->getName()) + ":";
+  s += getString(getMasterCell()->getName()) + ">";
+  return s;
+}
+
 string Path::_getString() const
 // ****************************
 {

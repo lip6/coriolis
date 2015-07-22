@@ -8,7 +8,7 @@
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ControllerWidget.cpp"                   |
 // +-----------------------------------------------------------------+
@@ -30,6 +30,7 @@
 #include  <hurricane/viewer/PaletteWidget.h>
 #include  <hurricane/viewer/DisplayFilterWidget.h>
 #include  <hurricane/viewer/NetlistWidget.h>
+#include  <hurricane/viewer/HierarchyWidget.h>
 #include  <hurricane/viewer/SelectionWidget.h>
 #include  <hurricane/viewer/InspectorWidget.h>
 #include  <hurricane/viewer/ControllerWidget.h>
@@ -268,6 +269,62 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabNetlist".
+
+
+  TabHierarchy::TabHierarchy ( QWidget* parent )
+    : ControllerTab         (parent)
+    , _hierarchyBrowser     (new HierarchyWidget())
+  {
+    _hierarchyBrowser->setObjectName ( "controller.tabHierarchy.hierarchyBrowser" );
+
+    QVBoxLayout* wLayout  = new QVBoxLayout ();
+    wLayout->setContentsMargins ( 10, 0, 10, 0 );
+    wLayout->setSpacing ( 0 );
+
+    QFrame* separator = new QFrame ();
+    separator->setFrameShape  ( QFrame::HLine );
+    separator->setFrameShadow ( QFrame::Sunken );
+    wLayout->addWidget ( separator );
+    wLayout->addWidget ( _hierarchyBrowser );
+
+    setLayout ( wLayout );
+  }
+
+
+  void  TabHierarchy::setCell ( Cell* cell )
+  { }
+
+
+  void  TabHierarchy::setCellWidget ( CellWidget* cellWidget )
+  {
+    if (getCellWidget() != cellWidget) {
+      ControllerTab::setCellWidget( cellWidget );
+      _hierarchyBrowser->setCellWidget( cellWidget );
+      if (getCellWidget()) {
+        connect( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
+      }
+    }
+  }
+
+
+  void  TabHierarchy::cellPreModificate ()
+  { }
+
+
+  void  TabHierarchy::cellPostModificate ()
+  {
+    CellWidget* cw      = getCellWidget();
+    Cell*       topCell = cw->getTopCell();
+    if (not topCell) topCell = cw->getCell();
+    _hierarchyBrowser->setCell( topCell );
+
+    if (not cw->getTopPath().isEmpty())
+      _hierarchyBrowser->rexpand( cw->getTopPath() );
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::TabSelection".
 
 
@@ -475,48 +532,51 @@ namespace Hurricane {
     , _tabPalette      (new TabPalette())
     , _tabDisplayFilter(new TabDisplayFilter())
     , _tabNetlist      (new TabNetlist())
+    , _tabHierarchy    (new TabHierarchy())
     , _tabSelection    (new TabSelection())
     , _tabInspector    (new TabInspector())
     , _tabSettings     (new TabSettings())
   {
-    setObjectName  ( "controller" );
-    setAttribute   ( Qt::WA_QuitOnClose, false );
-    setWindowTitle ( tr("Controller") );
+    setObjectName ( "controller" );
+    setAttribute  ( Qt::WA_QuitOnClose, false );
+    setWindowTitle( tr("Controller") );
 
   //connect ( _netlistBrowser, SIGNAL(destroyed()), this, SLOT(netlistBrowserDestroyed()) );
 
-    _tabGraphics     ->setObjectName ( "controller.graphics"      );
-    _tabPalette      ->setObjectName ( "controller.palette"       );
-    _tabDisplayFilter->setObjectName ( "controller.displayFilter" );
-    _tabNetlist      ->setObjectName ( "controller.tabNetlist"    );
-    _tabSelection    ->setObjectName ( "controller.tabSelection"  );
-    _tabInspector    ->setObjectName ( "controller.tabInspector"  );
-    _tabSettings     ->setObjectName ( "controller.tabSettings"  );
+    _tabGraphics     ->setObjectName( "controller.graphics"      );
+    _tabPalette      ->setObjectName( "controller.palette"       );
+    _tabDisplayFilter->setObjectName( "controller.displayFilter" );
+    _tabNetlist      ->setObjectName( "controller.tabNetlist"    );
+    _tabHierarchy    ->setObjectName( "controller.tabHierarchy"  );
+    _tabSelection    ->setObjectName( "controller.tabSelection"  );
+    _tabInspector    ->setObjectName( "controller.tabInspector"  );
+    _tabSettings     ->setObjectName( "controller.tabSettings"   );
 
-    addTab ( _tabGraphics      , "Look"        );
-    addTab ( _tabDisplayFilter , "Filter"      );
-    addTab ( _tabPalette       , "Layers&&Gos" );
-    addTab ( _tabNetlist       , "Netlist"     );
-    addTab ( _tabSelection     , "Selection"   );
-    addTab ( _tabInspector     , "Inspector"   );
-    addTab ( _tabSettings      , "Settings"    );
+    addTab( _tabGraphics      , "Look"        );
+    addTab( _tabDisplayFilter , "Filter"      );
+    addTab( _tabPalette       , "Layers&&Gos" );
+    addTab( _tabHierarchy     , "Hierarchy"   );
+    addTab( _tabNetlist       , "Netlist"     );
+    addTab( _tabSelection     , "Selection"   );
+    addTab( _tabInspector     , "Inspector"   );
+    addTab( _tabSettings      , "Settings"    );
 
     QAction* toggleShow = new QAction ( tr("Controller"), this );
-    toggleShow->setObjectName ( "controller.action.hideShow" );
-    toggleShow->setShortcut   ( QKeySequence(tr("CTRL+I")) );
-    addAction ( toggleShow );
+    toggleShow->setObjectName( "controller.action.hideShow" );
+    toggleShow->setShortcut  ( QKeySequence(tr("CTRL+I")) );
+    addAction( toggleShow );
 
-    connect ( toggleShow, SIGNAL(triggered())        , this, SLOT(toggleShow()) );
-    connect ( this      , SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
-    connect ( _tabSelection->getSelection(), SIGNAL(inspect(Occurrence&))
-            , _tabInspector                , SLOT  (setSelectionOccurrence(Occurrence&)) );
+    connect( toggleShow, SIGNAL(triggered())        , this, SLOT(toggleShow()) );
+    connect( this      , SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
+    connect( _tabSelection->getSelection(), SIGNAL(inspect(Occurrence&))
+           , _tabInspector                , SLOT  (setSelectionOccurrence(Occurrence&)) );
                                         
-    resize ( Graphics::toHighDpi(600), Graphics::toHighDpi(500) );
+    resize( Graphics::toHighDpi(600), Graphics::toHighDpi(500) );
   }
 
 
   void  ControllerWidget::toggleShow ()
-  { setVisible ( !isVisible() ); }
+  { setVisible( !isVisible() ); }
 
 
   void  ControllerWidget::setCellWidget ( CellWidget* cellWidget )

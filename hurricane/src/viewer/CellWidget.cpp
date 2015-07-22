@@ -977,6 +977,7 @@ namespace Hurricane {
     State* clone = new State();
 
     clone->setCell               ( getCell() );
+    clone->setTopPath            ( getTopPath() );
     clone->setCursorStep         ( getCursorStep() );
     clone->setUnitPower          ( getUnitPower() );
     clone->setDbuMode            ( getDbuMode() );
@@ -1170,6 +1171,12 @@ namespace Hurricane {
       if ( _commands[i]->getName() == name ) return _commands[i];
     }
     return NULL;
+  }
+
+
+  void  CellWidget::resetCommands ()
+  {
+    for ( size_t i=0 ; i<_commands.size() ; ++i ) _commands[i]->reset();
   }
 
 
@@ -2410,39 +2417,46 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::setCell ( Cell* cell )
+  void  CellWidget::setCell ( Cell* cell, Path topPath, unsigned int flags )
   {
   //cerr << "CellWidget::setCell() - " << cell << endl;
 
-    if ( cell == getCell() ) return;
+    if (cell == getCell()) return;
 
-    openRefreshSession ();
+    if (not topPath.isEmpty() and (topPath.getTailInstance()->getMasterCell() != cell)) {
+      cerr << Warning( "CellWidget::setCell(): Incompatible Path %s with %s."
+                     , topPath.getCompactString().c_str()
+                     , getString(cell->getName()).c_str() ) << endl;
+      topPath = Path();
+    }
 
-    shared_ptr<State>  state ( new State(cell) );
-    setState ( state );
-    if ( cell and cell->isTerminal() ) setQueryFilter ( ~0 );
+    openRefreshSession();
+
+    shared_ptr<State>  state ( new State(cell,topPath) );
+    setState( state, flags );
+    if ( cell and cell->isTerminal() ) setQueryFilter( ~0 );
   //setRealMode ();
 
-    fitToContents ( false );
+    fitToContents( false );
 
-    _state->setHistoryEnable ( true );
+    _state->setHistoryEnable( true );
 
-    closeRefreshSession ();
+    closeRefreshSession();
   }
 
 
-  void  CellWidget::setState ( shared_ptr<State>& state )
+  void  CellWidget::setState ( shared_ptr<State>& state, unsigned int flags )
   {
   //cerr << "CellWidget::setState() - " << state->getName() << endl;
 
-    if ( state == _state ) return;
+    if (state == _state) return;
 
-    openRefreshSession ();
-
-    cellPreModificate ();
-    _state->getSelection  ().clear ();
-    _state->setCellWidget ( NULL );
-    _state->setTopLeft    ( getTopLeft() ); 
+    openRefreshSession();
+    cellPreModificate();
+    if (not (flags & NoResetCommands)) resetCommands();
+    _state->getSelection ().clear ();
+    _state->setCellWidget( NULL );
+    _state->setTopLeft   ( getTopLeft() ); 
 
     _cellChanged = true;
     _state       = state;
@@ -2453,23 +2467,22 @@ namespace Hurricane {
 //          << DbU::getValueString(_state->getTopLeft().getX()) << ","
 //          << DbU::getValueString(_state->getTopLeft().getY()) << ")" << endl;
 
-    _state->setHistoryEnable ( false );
-    _state->setCellWidget ( this );
-    _drawingQuery    .setCell       ( getCell() );
-    _drawingQuery    .setStartLevel ( _state->getStartLevel() );
-    _drawingQuery    .setStopLevel  ( _state->getStopLevel() );
-    _textDrawingQuery.setCell       ( getCell() );
+    _state->setHistoryEnable( false );
+    _state->setCellWidget   ( this );
+    _drawingQuery    .setCell      ( getCell() );
+    _drawingQuery    .setStartLevel( _state->getStartLevel() );
+    _drawingQuery    .setStopLevel ( _state->getStopLevel() );
+    _textDrawingQuery.setCell      ( getCell() );
 
-    reframe ();
-    _state->setHistoryEnable ( true );
+    reframe();
+    _state->setHistoryEnable( true );
 
-    emit cellChanged        ( getCell() );
-    emit stateChanged       ( _state );
-    emit queryFilterChanged ();
+    emit cellChanged       ( getCell() );
+    emit stateChanged      ( _state );
+    emit queryFilterChanged();
 
-    cellPostModificate ();
-
-    closeRefreshSession ();
+    cellPostModificate();
+    closeRefreshSession();
   }
 
 

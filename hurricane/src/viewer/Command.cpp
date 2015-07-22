@@ -1,32 +1,22 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Command.cpp"                            |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
-
 #include <hurricane/viewer/CellWidget.h>
 #include <hurricane/viewer/Command.h>
 
@@ -68,6 +58,7 @@ namespace Hurricane {
   void  Command::mousePressEvent   ( QMouseEvent* ) { }
   void  Command::mouseReleaseEvent ( QMouseEvent* ) { }
   void  Command::draw              ()               { }
+  void  Command::reset             ()               { }
 
 
 } // End of Hurricane namespace.

@@ -112,7 +112,7 @@ namespace CRL {
           inline unsigned int  getDepth       () const;
         // Modifiers.
           inline void          merge          ( const State& other );
-          inline Cell*         setCell        ( Cell* cell );
+                 Cell*         setCell        ( Cell* cell );
           inline Library*      setLibrary     ( Library* library );
           inline void          setDepth       ( unsigned int depth );
         // Hurricane Management.
@@ -193,7 +193,6 @@ namespace CRL {
   inline bool              Catalog::State::setDelete        ( bool value ) { return setFlags(Delete     ,value); }
   inline bool              Catalog::State::setPhysical      ( bool value ) { return setFlags(Physical   ,value); }
   inline bool              Catalog::State::setLogical       ( bool value ) { return setFlags(Logical    ,value); }
-  inline Cell*             Catalog::State::setCell          ( Cell* cell ) { return _cell = cell; }
   inline Library*          Catalog::State::setLibrary       ( Library* library ) { return _library = library; }
   inline void              Catalog::State::setDepth         ( unsigned int depth ) { _depth = depth; }
   inline Cell*             Catalog::State::getCell          () const { return _cell; }

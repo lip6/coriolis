@@ -550,7 +550,10 @@ namespace Hurricane {
     list< shared_ptr<CellWidget::State> >::iterator istate = _cellHistory.begin();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       if ( istate != _cellHistory.end() ) {
-        QString entry = tr("&%1: %2").arg(i+1).arg( getString((*istate)->getName()).c_str() );
+        QString entry = tr("&%1: %2 %3")
+          .arg(i+1)
+          .arg( getString((*istate)->getName()).c_str() )
+          .arg( (*istate)->getTopPath().getCompactString().c_str() );
         _cellHistoryAction[i]->setText    ( entry );
         _cellHistoryAction[i]->setVisible ( true );
         istate++;
@@ -689,12 +692,11 @@ namespace Hurricane {
 
   void  CellViewer::openHistoryCell ()
   {
-    QAction* historyAction = qobject_cast<QAction*> ( sender() );
-    if ( historyAction ) {
+    QAction* historyAction = qobject_cast<QAction*>( sender() );
+    if (historyAction) {
       list< shared_ptr<CellWidget::State> >::iterator  istate = _cellHistory.begin();
-    //size_t index = historyAction->data().toUInt();
-    //for ( ; index>0 ; index--, istate++ )
-    //  cerr << "History: " << (*istate)->getName() << endl;
+      size_t index = historyAction->data().toUInt();
+      for ( ; index>0 ; index--, ++istate );
       emit stateChanged ( *istate );
     }
   }

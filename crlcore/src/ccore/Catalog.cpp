@@ -27,7 +27,7 @@ using namespace std;
 namespace CRL {
 
 
-  const char* MissingStateProperty   = "%s:\n\n  Missing Catalog State Property in cell \"%s\".\n";
+  const char* MissingStateProperty = "%s:\n\n  Missing Catalog State Property in cell \"%s\".\n";
 
 
 // -------------------------------------------------------------------
@@ -38,6 +38,17 @@ namespace CRL {
   {
     if ( _cell )
       _cell->removeProperty ( CatalogProperty::getPropertyName() );
+  }
+
+
+  Cell* Catalog::State::setCell ( Cell* cell )
+  {
+    _cell = cell;
+    if (_cell) {
+      if (isPad ()) _cell->setPad ( true );
+      if (isFeed()) _cell->setFeed( true );
+    }
+    return _cell;
   }
 
 
@@ -77,7 +88,6 @@ namespace CRL {
     }
     return record;
   }
-
 
 // -------------------------------------------------------------------
 // Class  :  "Catalog".

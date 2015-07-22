@@ -9,7 +9,7 @@
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./hurricane/viewer/ControllerWidget.h"    |
 // +-----------------------------------------------------------------+
@@ -42,6 +42,7 @@ namespace Hurricane {
   class GraphicsWidget;
   class DisplayFilterWidget;
   class NetlistWidget;
+  class HierarchyWidget;
   class SelectionWidget;
   class InspectorWidget;
 
@@ -168,6 +169,30 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::TabHierarchy".
+
+
+  class TabHierarchy : public ControllerTab {
+      Q_OBJECT;
+
+    public:
+                               TabHierarchy        ( QWidget* parent=NULL );
+      inline  HierarchyWidget* getHierarchyBrowser ();
+      virtual void             cellPreModificate   ();
+      virtual void             cellPostModificate  ();
+    public slots:   
+      virtual void             setCell             ( Cell* );
+      virtual void             setCellWidget       ( CellWidget* );
+
+    protected:
+      HierarchyWidget* _hierarchyBrowser;
+  };
+
+
+  inline HierarchyWidget* TabHierarchy::getHierarchyBrowser () { return _hierarchyBrowser; }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::TabSelection".
 
 
@@ -268,23 +293,24 @@ namespace Hurricane {
       Q_OBJECT;
       
     public:
-                                  ControllerWidget   ( QWidget* parent=NULL );
-      inline CellWidget*          getCellWidget      ();
-      inline GraphicsWidget*      getGraphics        ();
-      inline PaletteWidget*       getPalette         ();
-      inline DisplayFilterWidget* getDisplayFilter   ();
-      inline NetlistWidget*       getNetlistBrowser  ();
-      inline SelectionWidget*     getSelection       ();
-      inline InspectorWidget*     getInspectorWidget ();
-      inline TabSettings*         getSettings        ();
-             void                 setCellWidget      ( CellWidget* );
-    //inline int                  addSetting         ( QWidget* page, const QString& label );
-    public slots:                 
-             void                 cellPreModificate  ();
-             void                 cellPostModificate ();
-             void                 cellChanged        ( Cell* );
-             void                 updateTab          ( int index );
-             void                 toggleShow         ();
+                                  ControllerWidget    ( QWidget* parent=NULL );
+      inline CellWidget*          getCellWidget       ();
+      inline GraphicsWidget*      getGraphics         ();
+      inline PaletteWidget*       getPalette          ();
+      inline DisplayFilterWidget* getDisplayFilter    ();
+      inline NetlistWidget*       getNetlistBrowser   ();
+      inline HierarchyWidget*     getHierarchyBrowser ();
+      inline SelectionWidget*     getSelection        ();
+      inline InspectorWidget*     getInspectorWidget  ();
+      inline TabSettings*         getSettings         ();
+             void                 setCellWidget       ( CellWidget* );
+    //inline int                  addSetting          ( QWidget* page, const QString& label );
+    public slots:                                     
+             void                 cellPreModificate   ();
+             void                 cellPostModificate  ();
+             void                 cellChanged         ( Cell* );
+             void                 updateTab           ( int index );
+             void                 toggleShow          ();
 
     protected:
       CellWidget*       _cellWidget;
@@ -292,21 +318,23 @@ namespace Hurricane {
       TabPalette*       _tabPalette;
       TabDisplayFilter* _tabDisplayFilter;
       TabNetlist*       _tabNetlist;
+      TabHierarchy*     _tabHierarchy;
       TabSelection*     _tabSelection;
       TabInspector*     _tabInspector;
       TabSettings*      _tabSettings;
   };
 
 
-  inline CellWidget*          ControllerWidget::getCellWidget      () { return _cellWidget; }
-  inline GraphicsWidget*      ControllerWidget::getGraphics        () { return _tabGraphics->getGraphics(); }
-  inline PaletteWidget*       ControllerWidget::getPalette         () { return _tabPalette->getPalette(); }
-  inline DisplayFilterWidget* ControllerWidget::getDisplayFilter   () { return _tabDisplayFilter->getDisplayFilter(); }
-  inline NetlistWidget*       ControllerWidget::getNetlistBrowser  () { return _tabNetlist->getNetlistBrowser(); }
-  inline SelectionWidget*     ControllerWidget::getSelection       () { return _tabSelection->getSelection(); }
-  inline InspectorWidget*     ControllerWidget::getInspectorWidget () { return _tabInspector->getInspectorWidget(); }
-  inline TabSettings*         ControllerWidget::getSettings        () { return _tabSettings; }
-//inline int                  ControllerWidget::addSetting         ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
+  inline CellWidget*          ControllerWidget::getCellWidget       () { return _cellWidget; }
+  inline GraphicsWidget*      ControllerWidget::getGraphics         () { return _tabGraphics->getGraphics(); }
+  inline PaletteWidget*       ControllerWidget::getPalette          () { return _tabPalette->getPalette(); }
+  inline DisplayFilterWidget* ControllerWidget::getDisplayFilter    () { return _tabDisplayFilter->getDisplayFilter(); }
+  inline NetlistWidget*       ControllerWidget::getNetlistBrowser   () { return _tabNetlist->getNetlistBrowser(); }
+  inline HierarchyWidget*     ControllerWidget::getHierarchyBrowser () { return _tabHierarchy->getHierarchyBrowser(); }
+  inline SelectionWidget*     ControllerWidget::getSelection        () { return _tabSelection->getSelection(); }
+  inline InspectorWidget*     ControllerWidget::getInspectorWidget  () { return _tabInspector->getInspectorWidget(); }
+  inline TabSettings*         ControllerWidget::getSettings         () { return _tabSettings; }
+//inline int                  ControllerWidget::addSetting          ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
 
 
 }  // End of Hurricane namespace.

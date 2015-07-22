@@ -36,6 +36,8 @@
                                     hurricane/viewer/SelectionWidget.h
                                     hurricane/viewer/NetlistModel.h
                                     hurricane/viewer/NetlistWidget.h
+                                    hurricane/viewer/HierarchyModel.h
+                                    hurricane/viewer/HierarchyWidget.h
                                     hurricane/viewer/DisplayFilterWidget.h
                                     hurricane/viewer/ControllerWidget.h
                                     hurricane/viewer/ScriptWidget.h
@@ -104,6 +106,9 @@
                                     NetInformations.cpp
                                     NetlistModel.cpp
                                     NetlistWidget.cpp
+                                    HierarchyInformations.cpp
+                                    HierarchyModel.cpp
+                                    HierarchyWidget.cpp
                                     DisplayFilterWidget.cpp
                                     ControllerWidget.cpp
                                     ScriptWidget.cpp

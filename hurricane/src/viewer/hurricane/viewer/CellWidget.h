@@ -97,15 +97,18 @@ namespace Hurricane {
       typedef void ( InitExtensionGo_t )( CellWidget* );
       typedef boost::function< void(QPainter&) >  PainterCb_t;
       enum    RubberShape    { Centric=1, Barycentric, Steiner };
-      enum    TextFlag       { Bold    =0x001
-                             , BigFont =0x002
-                             , Reverse =0x004
-                             , Frame   =0x008
-                             , Rounded =0x010
-                             , Center  =0x020
-                             , Left    =0x040
-                             , Right   =0x080
-                             , Top     =0x100
+      enum    TextFlag       { Bold    =0x0001
+                             , BigFont =0x0002
+                             , Reverse =0x0004
+                             , Frame   =0x0008
+                             , Rounded =0x0010
+                             , Center  =0x0020
+                             , Left    =0x0040
+                             , Right   =0x0080
+                             , Top     =0x0100
+                             };
+      enum    Flag           { NoFlags        =0x0000
+                             , NoResetCommands=0x0001
                              };
     public:
       enum    ResolutionMode { Res_CellMode=1, Res_DesignMode=2 };
@@ -115,8 +118,10 @@ namespace Hurricane {
       virtual                          ~CellWidget                 ();
     // Accessors.                                                  
     //        MapView*                  getMapView                 () { return _mapView; };
-              void                      setCell                    ( Cell* );
+              void                      setCell                    ( Cell*, Path  topPath=Path(), unsigned int flags=NoFlags );
       inline  Cell*                     getCell                    () const;
+      inline  Cell*                     getTopCell                 () const;
+      inline  Path                      getTopPath                 () const;
       inline  shared_ptr<State>&        getState                   ();
       inline  shared_ptr<State>         getStateClone              ();
       inline  PaletteWidget*            getPalette                 ();
@@ -132,6 +137,7 @@ namespace Hurricane {
               void                      detachFromPalette          ();
               void                      bindCommand                ( Command* );
               void                      unbindCommand              ( Command* );
+              void                      resetCommands              ();
       inline  void                      setActiveCommand           ( Command* );
       inline  Command*                  getActiveCommand           () const;
               Command*                  getCommand                 ( const std::string& ) const;
@@ -245,7 +251,8 @@ namespace Hurricane {
       virtual void                      paintEvent                 ( QPaintEvent* );
     public slots:                                                
     // Qt QWidget Slots Overload & CellWidget Specifics.         
-              void                      setState                   ( shared_ptr<CellWidget::State>& );
+              void                      setState                   ( shared_ptr<CellWidget::State>&
+                                                                   , unsigned int flags=NoFlags );
       inline  void                      openRefreshSession         ();
       inline  void                      closeRefreshSession        ();
       inline  DrawingPlanes&            getDrawingPlanes           ();
@@ -534,9 +541,10 @@ namespace Hurricane {
     public:
       class State {
         public:
-          inline                     State                  ( Cell* cell=NULL );
+          inline                     State                  ( Cell* cell=NULL, Path topPath=Path() );
                  State*              clone                  () const;
           inline void                setCell                ( Cell* );
+          inline void                setTopPath             ( Path );
           inline void                setCellWidget          ( CellWidget* );
           inline void                setCursorStep          ( DbU::Unit );
           inline DbU::Unit           getCursorStep          () const;
@@ -557,6 +565,8 @@ namespace Hurricane {
                  bool                scaleHistoryUp         ();
                  bool                scaleHistoryDown       ();
           inline Cell*               getCell                () const;
+          inline Cell*               getTopCell             () const;
+          inline Path                getTopPath             () const;
                  const Name&         getName                () const;
           inline SelectorCriterions& getSelection           ();
           inline RulerSet&           getRulers              ();
@@ -590,6 +600,7 @@ namespace Hurricane {
 
         private:
           Cell*               _cell;
+          Path                _topPath;
           CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
           RulerSet            _rulers;
@@ -879,8 +890,9 @@ namespace Hurricane {
   { }
 
 
-  inline CellWidget::State::State ( Cell* cell )
+  inline CellWidget::State::State ( Cell* cell, Path topPath )
     : _cell               (cell)
+    , _topPath            (topPath)
     , _cellWidget         (NULL)
     , _selection          ()
     , _rulers             ()
@@ -920,6 +932,10 @@ namespace Hurricane {
 
   inline void  CellWidget::State::setCell ( Cell* cell )
   { _cell = cell; }
+
+
+  inline void  CellWidget::State::setTopPath ( Path topPath )
+  { _topPath = topPath; }
 
 
   inline void  CellWidget::State::setCellWidget ( CellWidget* cw )
@@ -1000,6 +1016,14 @@ namespace Hurricane {
 
   inline Cell* CellWidget::State::getCell () const
   { return _cell; }
+
+
+  inline Path  CellWidget::State::getTopPath () const
+  { return _topPath; }
+
+
+  inline Cell* CellWidget::State::getTopCell () const
+  { return (_topPath.isEmpty()) ? _cell : _topPath.getOwnerCell(); }
 
 
   inline DbU::Unit  CellWidget::State::cursorStep () const
@@ -1253,6 +1277,14 @@ namespace Hurricane {
 
   inline Cell* CellWidget::getCell () const
   { return _state->getCell(); }
+
+
+  inline Cell* CellWidget::getTopCell () const
+  { return _state->getTopCell(); }
+
+
+  inline Path  CellWidget::getTopPath () const
+  { return _state->getTopPath(); }
 
 
   inline PaletteWidget* CellWidget::getPalette ()
