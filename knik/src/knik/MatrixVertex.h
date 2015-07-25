@@ -70,6 +70,8 @@ namespace Knik {
         // Accessors
         // *********
         public:
+            DbU::Unit  getTileWidth () const { return _tileWidth; }
+            DbU::Unit  getTileHeight () const { return _tileHeight; }
             size_t getXSize () const { return _matrix[0].size(); };
             size_t getYSize () const { return _matrix.size(); };
             unsigned int getLineIndex   ( DbU::Unit y );

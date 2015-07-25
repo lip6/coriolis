@@ -1023,6 +1023,7 @@ int Graph::initRouting ( Net* net )
             }
         }
     }
+
     //cerr << "   traitement pour les contacts : OK" << endl;
     //OoOoooOoooOoO A QUOI SERT CE BOOLEEN OoOoooOoooOoO  ==>> pour le //5 le connexID ne doit pas avoir été augmenté ! ou alors connexID-1 !!
     //bool useConnexID = false;
@@ -1063,6 +1064,13 @@ int Graph::initRouting ( Net* net )
             }
         }
     }
+
+    if (_searchingArea.getHeight() <= _matrixVertex->getTileHeight())
+      _searchingArea.inflate( 0, _matrixVertex->getTileHeight() );
+
+    if (_searchingArea.getWidth() <= _matrixVertex->getTileWidth())
+      _searchingArea.inflate( _matrixVertex->getTileWidth(), 0 );
+
     // for ripup & reroute purpose
     if ( __ripupMode__ )
         _searchingArea = _cell->getAbutmentBox(); // recherche sur toute la surface : trop long pour gros circuits
@@ -1135,6 +1143,9 @@ void Graph::Dijkstra()
   ltrace(600) << "Dijkstra for net: " << _working_net << endl;
   ltracein(600);
   ltrace(600) << "Stamp:" << _netStamp << endl;
+  ltrace(600) << "Search area : " << _searchingArea
+              << " h:" << DbU::getValueString(_searchingArea.getHeight()) << endl;
+  ltrace(600) << "Matrix tile height : " << DbU::getValueString(_matrixVertex->getTileHeight()) << endl;
   ltrace(600) << "Central vertex : " << centralVertex << endl;
   ltrace(600) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
   ltracein(600);
