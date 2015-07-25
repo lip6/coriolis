@@ -112,7 +112,6 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
-    //if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0: return nameFont;
         case 1: return valueFont;

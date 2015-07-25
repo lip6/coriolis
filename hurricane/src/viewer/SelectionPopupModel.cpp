@@ -117,7 +117,6 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
-      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         default: return entityFont;
       }

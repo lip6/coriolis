@@ -176,7 +176,6 @@ namespace Hurricane {
     if ( !index.isValid() ) return QVariant ();
 
     if ( role == Qt::SizeHintRole ) {
-      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0:  return 200;
         default:

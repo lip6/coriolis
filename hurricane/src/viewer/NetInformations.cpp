@@ -1,60 +1,23 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
 // | =============================================================== |
 // |  C++ Module  :       "./NetInformations.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <QObject>
-
-#include  "hurricane/Name.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/viewer/NetInformations.h"
+#include <QObject>
+#include "hurricane/Name.h"
+#include "hurricane/Net.h"
+#include "hurricane/viewer/NetInformations.h"
 
 
 namespace Hurricane {
@@ -100,7 +63,7 @@ namespace Hurricane {
 
 
   int  SimpleNetInformations::getColumnCount ()
-  { return 2; }
+  { return 3; }
 
 
   QVariant  SimpleNetInformations::getColumnName ( int column )
@@ -108,6 +71,7 @@ namespace Hurricane {
     switch ( column ) {
       case 0: return QVariant(QObject::tr("Net"));
       case 1: return QVariant(QObject::tr("Plugs"));
+      case 2: return QVariant(QObject::tr("RoutingPads"));
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }
@@ -116,8 +80,15 @@ namespace Hurricane {
   QVariant  SimpleNetInformations::getColumn ( int column )
   {
     switch ( column ) {
-      case 0: return _columnNet;
-      case 1: return _columnPlug;
+      case 0: return _netName;
+      case 1: return (unsigned int)_plugsCount;
+      case 2:
+        if (_net->isGlobal()) {
+          if (not _rpsCount) return "N/A (global)";
+          string s = getString(_rpsCount) + " (global)";
+          return s.c_str();
+        }
+        return (unsigned int)_rpsCount;
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }
@@ -125,9 +96,9 @@ namespace Hurricane {
 
   SimpleNetInformations::SimpleNetInformations ( const Net* net )
     : NetInformations(net)
+    , _netName       (getString(getName()).c_str())
     , _plugsCount    (_net->getPlugs().getSize())
-    , _columnNet     (getString(getName()).c_str())
-    , _columnPlug    ((unsigned int)_plugsCount)
+    , _rpsCount      (_net->getRoutingPads().getSize())
   { }
 
 

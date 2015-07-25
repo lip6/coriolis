@@ -67,16 +67,17 @@ namespace Hurricane {
       static  QVariant    getColumnName         ( int column );
       virtual QVariant    getColumn             ( int column );
       inline  size_t      getPlugsCount         () const;
+      inline  size_t      getRpsCount           () const;
       
     protected:
+              QVariant    _netName;
               size_t      _plugsCount;
-              QVariant    _columnNet;
-              QVariant    _columnPlug;
+              size_t      _rpsCount;
   };
 
 
-  inline size_t  SimpleNetInformations::getPlugsCount () const
-  { return _plugsCount; }
+  inline size_t  SimpleNetInformations::getPlugsCount () const { return _plugsCount; }
+  inline size_t  SimpleNetInformations::getRpsCount   () const { return _rpsCount; }
 
 
 // -------------------------------------------------------------------

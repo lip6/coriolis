@@ -180,14 +180,17 @@ namespace Hurricane {
   void  NetlistWidget::setCell ( Cell* cell )
   {
     _cell = cell;
-    _view->selectionModel()->clear ();
-    _baseModel->setCell<InformationType> ( cell );
+    _view->setVisible( false );
+    _view->selectionModel()->clear();
+    _baseModel->setCell<InformationType>( cell );
      
     string windowTitle = "Netlist" + getString(cell);
-    setWindowTitle ( tr(windowTitle.c_str()) );
+    setWindowTitle( tr(windowTitle.c_str()) );
 
-    _view->selectRow ( 0 );
-    _view->resizeColumnToContents ( 0 );
+    _view->selectRow( 0 );
+    for ( int i=0 ; i<_baseModel->columnCount() ; ++i )
+      _view->resizeColumnToContents( i );
+    _view->setVisible( true );
   }
 
 
