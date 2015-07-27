@@ -8,7 +8,7 @@ std::int64_t get_HPWL_length(netlist const & circuit, placement_t const & pl, in
     if(circuit.get_net(net_ind).pin_cnt <= 1) return 0;
 
     auto pins = get_pins_1D(circuit, pl, net_ind);
-    auto minmaxX = std::minmax_element(pins.x_.begin(), pins.x_.end()), minmaxY = std::minmax_element(pins.y_.begin(), pins.y_.end());
+    auto minmaxX = std::minmax_element(pins.x.begin(), pins.x.end()), minmaxY = std::minmax_element(pins.y.begin(), pins.y.end());
     return ((minmaxX.second->pos - minmaxX.first->pos) + (minmaxY.second->pos - minmaxY.first->pos));
 }
 
@@ -67,12 +67,12 @@ point<linear_system> empty_linear_systems(netlist const & circuit, placement_t c
         }
 
         if( (XMovable & circuit.get_cell(i).attributes) == 0 or not found_true_net){
-            ret.x_.add_triplet(i, i, 1.0f);
-            ret.x_.add_doublet(i, pl.positions_[i].x_);
+            ret.x.add_triplet(i, i, 1.0f);
+            ret.x.add_doublet(i, pl.positions_[i].x);
         }
         if( (YMovable & circuit.get_cell(i).attributes) == 0 or not found_true_net){
-            ret.y_.add_triplet(i, i, 1.0f);
-            ret.y_.add_doublet(i, pl.positions_[i].y_);
+            ret.y.add_triplet(i, i, 1.0f);
+            ret.y.add_doublet(i, pl.positions_[i].y);
         }
     }
 
@@ -143,8 +143,8 @@ point<linear_system> get_HPWLF_linear_system (netlist const & circuit, placement
         if(pin_cnt < min_s or pin_cnt >= max_s) continue;
 
         auto pins = get_pins_1D(circuit, pl, i);
-        get_HPWLF(pins.x_, L.x_, tol);
-        get_HPWLF(pins.y_, L.y_, tol);
+        get_HPWLF(pins.x, L.x, tol);
+        get_HPWLF(pins.y, L.y, tol);
     }
     return L;
 }
@@ -157,30 +157,30 @@ point<linear_system> get_HPWLR_linear_system (netlist const & circuit, placement
         if(pin_cnt < min_s or pin_cnt >= max_s) continue;
 
         auto pins = get_pins_1D(circuit, pl, i);
-        get_HPWLR(pins.x_, L.x_, tol);
-        get_HPWLR(pins.y_, L.y_, tol);
+        get_HPWLR(pins.x, L.x, tol);
+        get_HPWLR(pins.y, L.y, tol);
     }
     return L;
 }
 
 point<linear_system> get_star_linear_system  (netlist const & circuit, placement_t const & pl, float_t tol, index_t min_s, index_t max_s){
     point<linear_system> L = empty_linear_systems(circuit, pl);
-    L.x_.add_variables(circuit.net_cnt());
-    L.y_.add_variables(circuit.net_cnt());
+    L.x.add_variables(circuit.net_cnt());
+    L.y.add_variables(circuit.net_cnt());
     for(index_t i=0; i<circuit.net_cnt(); ++i){
         // Has the net the right pin count?
         index_t pin_cnt = circuit.get_net(i).pin_cnt;
         if(pin_cnt < min_s or pin_cnt >= max_s){
             // Put a one in the intermediate variable in order to avoid non-invertible matrices
-            L.x_.add_triplet(i+circuit.cell_cnt(), i+circuit.cell_cnt(), 1.0f);
-            L.y_.add_triplet(i+circuit.cell_cnt(), i+circuit.cell_cnt(), 1.0f);
+            L.x.add_triplet(i+circuit.cell_cnt(), i+circuit.cell_cnt(), 1.0f);
+            L.y.add_triplet(i+circuit.cell_cnt(), i+circuit.cell_cnt(), 1.0f);
             continue;
         }
 
         auto pins = get_pins_1D(circuit, pl, i);
         // Provide the index of the star's central pin in the linear system
-        get_star(pins.x_, L.x_, tol, i+circuit.cell_cnt());
-        get_star(pins.y_, L.y_, tol, i+circuit.cell_cnt());
+        get_star(pins.x, L.x, tol, i+circuit.cell_cnt());
+        get_star(pins.y, L.y, tol, i+circuit.cell_cnt());
     }
     return L;
 }
@@ -193,8 +193,8 @@ point<linear_system> get_clique_linear_system (netlist const & circuit, placemen
         if(pin_cnt < min_s or pin_cnt >= max_s) continue;
 
         auto pins = get_pins_1D(circuit, pl, i);
-        get_clique(pins.x_, L.x_, tol);
-        get_clique(pins.y_, L.y_, tol);
+        get_clique(pins.x, L.x, tol);
+        get_clique(pins.y, L.y, tol);
     }
     return L;
 }
@@ -213,8 +213,8 @@ point<linear_system> get_MST_linear_system(netlist const & circuit, placement_t 
         }
         auto const edges = get_MST_topology(points);
         for(auto E : edges){
-            add_force(pins[E.first].x(), pins[E.second].x(), L.x_, tol, 1.0f);
-            add_force(pins[E.first].y(), pins[E.second].y(), L.y_, tol, 1.0f);
+            add_force(pins[E.first].x(), pins[E.second].x(), L.x, tol, 1.0f);
+            add_force(pins[E.first].y(), pins[E.second].y(), L.y, tol, 1.0f);
         }
     }
     return L;
@@ -233,11 +233,11 @@ point<linear_system> get_RSMT_linear_system(netlist const & circuit, placement_t
             points.push_back(p.pos);
         }
         auto const edges = get_RSMT_topology(points, 8);
-        for(auto E : edges.x_){
-            add_force(pins[E.first].x(), pins[E.second].x(), L.x_, tol, 1.0f);
+        for(auto E : edges.x){
+            add_force(pins[E.first].x(), pins[E.second].x(), L.x, tol, 1.0f);
         }
-        for(auto E : edges.y_){
-            add_force(pins[E.first].y(), pins[E.second].y(), L.y_, tol, 1.0f);
+        for(auto E : edges.y){
+            add_force(pins[E.first].y(), pins[E.second].y(), L.y, tol, 1.0f);
         }
     }
     return L;
@@ -278,28 +278,28 @@ void solve_linear_system(netlist const & circuit, placement_t & pl, point<linear
     std::vector<float_t> x_sol, y_sol;
     std::vector<float_t> x_guess(pl.cell_cnt()), y_guess(pl.cell_cnt());
     
-    assert(L.x_.internal_size() == x_guess.size());
-    assert(L.y_.internal_size() == y_guess.size());
+    assert(L.x.internal_size() == x_guess.size());
+    assert(L.y.internal_size() == y_guess.size());
 
     for(index_t i=0; i<pl.cell_cnt(); ++i){
-        x_guess[i] = static_cast<float_t>(pl.positions_[i].x_);
-        y_guess[i] = static_cast<float_t>(pl.positions_[i].y_);
+        x_guess[i] = static_cast<float_t>(pl.positions_[i].x);
+        y_guess[i] = static_cast<float_t>(pl.positions_[i].y);
     }
     #pragma omp parallel sections num_threads(2)
     {
     #pragma omp section
-    x_sol = L.x_.solve_CG(x_guess, nbr_iter);
+    x_sol = L.x.solve_CG(x_guess, nbr_iter);
     #pragma omp section
-    y_sol = L.y_.solve_CG(y_guess, nbr_iter);
+    y_sol = L.y.solve_CG(y_guess, nbr_iter);
     }
     for(index_t i=0; i<pl.cell_cnt(); ++i){
         if( (circuit.get_cell(i).attributes & XMovable) != 0){
             assert(std::isfinite(x_sol[i]));
-            pl.positions_[i].x_ = static_cast<int_t>(x_sol[i]);
+            pl.positions_[i].x = static_cast<int_t>(x_sol[i]);
         }
         if( (circuit.get_cell(i).attributes & YMovable) != 0){
             assert(std::isfinite(y_sol[i]));
-            pl.positions_[i].y_ = static_cast<int_t>(y_sol[i]);
+            pl.positions_[i].y = static_cast<int_t>(y_sol[i]);
         }
     }
 }
@@ -325,13 +325,13 @@ point<linear_system> get_pulling_forces (netlist const & circuit, placement_t co
     float_t typical_force = 1.0f / typical_distance;
     std::vector<float_t> scaling = get_area_scales(circuit);
     for(index_t i=0; i<pl.cell_cnt(); ++i){
-        L.x_.add_anchor(
+        L.x.add_anchor(
             typical_force * scaling[i],
-            i, pl.positions_[i].x_
+            i, pl.positions_[i].x
         );
-        L.y_.add_anchor(
+        L.y.add_anchor(
             typical_force * scaling[i],
-            i, pl.positions_[i].y_
+            i, pl.positions_[i].y
         );
     }
     
@@ -343,13 +343,13 @@ point<linear_system> get_linear_pulling_forces (netlist const & circuit, placeme
     assert(LB_pl.cell_cnt() == UB_pl.cell_cnt());
     std::vector<float_t> scaling = get_area_scales(circuit);
     for(index_t i=0; i<LB_pl.cell_cnt(); ++i){
-        L.x_.add_anchor(
-            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].x_ - LB_pl.positions_[i].x_)), min_distance)),
-            i, UB_pl.positions_[i].x_
+        L.x.add_anchor(
+            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].x - LB_pl.positions_[i].x)), min_distance)),
+            i, UB_pl.positions_[i].x
         );
-        L.y_.add_anchor(
-            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].y_ - LB_pl.positions_[i].y_)), min_distance)),
-            i, UB_pl.positions_[i].y_
+        L.y.add_anchor(
+            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].y - LB_pl.positions_[i].y)), min_distance)),
+            i, UB_pl.positions_[i].y
         );
     }
     
@@ -375,10 +375,10 @@ float_t get_mean_linear_disruption(netlist const & circuit, placement_t const & 
         float_t area = static_cast<float_t>(circuit.get_cell(i).area);
         point<int_t> diff = LB_pl.positions_[i] - UB_pl.positions_[i];
 
-        if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x_ == 0);
-        if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y_ == 0);
+        if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x == 0);
+        if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y == 0);
 
-        tot_cost += area * (std::abs(diff.x_) + std::abs(diff.y_));
+        tot_cost += area * (std::abs(diff.x) + std::abs(diff.y));
         tot_area += area;
     }
     return tot_cost / tot_area;
@@ -391,10 +391,10 @@ float_t get_mean_quadratic_disruption(netlist const & circuit, placement_t const
         float_t area = static_cast<float_t>(circuit.get_cell(i).area);
         point<int_t> diff = LB_pl.positions_[i] - UB_pl.positions_[i];
 
-        if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x_ == 0);
-        if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y_ == 0);
+        if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x == 0);
+        if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y == 0);
 
-        float_t manhattan = (std::abs(diff.x_) + std::abs(diff.y_));
+        float_t manhattan = (std::abs(diff.x) + std::abs(diff.y));
         tot_cost += area * manhattan * manhattan;
         tot_area += area;
     }

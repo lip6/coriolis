@@ -22,7 +22,7 @@ void netlist::selfcheck() const{
     assert(pin_cnt == net_indexes_.size());
 
     for(auto const p : pin_offsets_){
-        assert(std::isfinite(p.x_) and std::isfinite(p.y_));
+        assert(std::isfinite(p.x) and std::isfinite(p.y));
     }
 }
 
@@ -57,10 +57,10 @@ void verify_placement_legality(netlist const & circuit, placement_t const & pl, 
     for(index_t i=0; i<circuit.cell_cnt(); ++i){
         event b, e;
         b.cell = i; e.cell = i;
-        b.x_min = cells[i].x_min_; e.x_min = cells[i].x_min_;
-        b.x_max = cells[i].x_max_; e.x_max = cells[i].x_max_;
-        b.y = cells[i].y_min_; b.removal = false;
-        e.y = cells[i].y_max_; e.removal = true;
+        b.x_min = cells[i].x_min; e.x_min = cells[i].x_min;
+        b.x_max = cells[i].x_max; e.x_max = cells[i].x_max;
+        b.y = cells[i].y_min; b.removal = false;
+        e.y = cells[i].y_max; e.removal = true;
         if(b.x_max > b.x_min and e.y != b.y){
             all_events.push_back(b);
             all_events.push_back(e);

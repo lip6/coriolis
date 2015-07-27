@@ -24,7 +24,7 @@ struct temporary_cell{
     index_t list_index;
 
     temporary_cell(){}
-    temporary_cell(point<int_t> s, mask_t attr, index_t ind) : size(s), attributes(attr), list_index(ind){ area = static_cast<capacity_t>(s.x_) * static_cast<capacity_t>(s.y_);}
+    temporary_cell(point<int_t> s, mask_t attr, index_t ind) : size(s), attributes(attr), list_index(ind){ area = static_cast<capacity_t>(s.x) * static_cast<capacity_t>(s.y);}
 };
 
 struct temporary_net{

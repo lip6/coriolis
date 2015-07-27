@@ -50,17 +50,17 @@ void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl)
             if((circuit.get_cell(i).attributes & XMovable) != 0 and (circuit.get_cell(oi).attributes & XMovable) != 0){
                 // Two movable cells: OK
                 auto A = g.addArc(cell_nodes[oi], cell_nodes[i]);
-                constraint_arcs.push_back(arc_pair(A, -circuit.get_cell(i).size.x_));
+                constraint_arcs.push_back(arc_pair(A, -circuit.get_cell(i).size.x));
             }
             else if((circuit.get_cell( i).attributes & XMovable) != 0){
                 // The cell c is movable and constrained on the right
                 auto A = g.addArc(fixed, cell_nodes[i]);
-                constraint_arcs.push_back(arc_pair(A, pl.plt_.positions_[oi].x_ - circuit.get_cell(i).size.x_));
+                constraint_arcs.push_back(arc_pair(A, pl.plt_.positions_[oi].x - circuit.get_cell(i).size.x));
             }
             else if((circuit.get_cell(oi).attributes & XMovable) != 0){
                 // The cell oc is movable and constrained on the left
                 auto A = g.addArc(cell_nodes[oi], fixed);
-                constraint_arcs.push_back(arc_pair(A, -pl.plt_.positions_[i].x_ - circuit.get_cell(i).size.x_));
+                constraint_arcs.push_back(arc_pair(A, -pl.plt_.positions_[i].x - circuit.get_cell(i).size.x));
             }
         }
     }
@@ -77,7 +77,7 @@ void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl)
         index_t rc = pl.row_last_cells_[r];
         if(rc != null_ind and (circuit.get_cell(rc).attributes & XMovable) != 0){
             auto Ar = g.addArc(fixed, cell_nodes[rc]);
-            constraint_arcs.push_back(arc_pair(Ar, pl.max_x_ - circuit.get_cell(rc).size.x_));
+            constraint_arcs.push_back(arc_pair(Ar, pl.max_x_ - circuit.get_cell(rc).size.x));
         }
     }
     
@@ -86,7 +86,7 @@ void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl)
     for(index_t n=0; n<circuit.net_cnt(); ++n){
         for(auto p : circuit.get_net(n)){
             index_t c = p.cell_ind;
-            int_t pin_offs = (pl.plt_.orientations_[c].x_ ? p.offset.x_ : circuit.get_cell(c).size.x_ - p.offset.x_); // Offset to the beginning of the cell
+            int_t pin_offs = (pl.plt_.orientations_[c].x ? p.offset.x : circuit.get_cell(c).size.x - p.offset.x); // Offset to the beginning of the cell
             if((circuit.get_cell(c).attributes & XMovable) != 0){
                 Arc Al = g.addArc(cell_nodes[c], Lnet_nodes[n]);
                 constraint_arcs.push_back(arc_pair(Al, pin_offs));
@@ -95,9 +95,9 @@ void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl)
             }
             else{ // Fixed offset
                 auto Al = g.addArc(fixed, Lnet_nodes[n]);
-                constraint_arcs.push_back(arc_pair(Al, pl.plt_.positions_[c].x_ + pin_offs));
+                constraint_arcs.push_back(arc_pair(Al, pl.plt_.positions_[c].x + pin_offs));
                 auto Ar = g.addArc(Unet_nodes[n], fixed);
-                constraint_arcs.push_back(arc_pair(Ar, - pl.plt_.positions_[c].x_ - pin_offs));
+                constraint_arcs.push_back(arc_pair(Ar, - pl.plt_.positions_[c].x - pin_offs));
             }
         }
     }
@@ -135,7 +135,7 @@ void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl)
     // And we get the new positions as the dual values of the current solution (compared to the fixed pin) 
     for(index_t c=0; c<circuit.cell_cnt(); ++c){ // The cells
         if((circuit.get_cell(c).attributes & XMovable) != 0){
-            pl.plt_.positions_[c].x_ = ns.potential(cell_nodes[c]) - ns.potential(fixed);
+            pl.plt_.positions_[c].x = ns.potential(cell_nodes[c]) - ns.potential(fixed);
         }
     }
     pl.selfcheck();

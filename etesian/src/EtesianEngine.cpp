@@ -148,19 +148,19 @@ namespace {
                                    , DbU::Unit       pitch
                                    )
   {
-    DbU::Unit tx         = position.x_ * pitch;
-    DbU::Unit ty         = position.y_ * pitch;
+    DbU::Unit tx         = position.x * pitch;
+    DbU::Unit ty         = position.y * pitch;
 
     Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
 
-    if ( not orientation.x_ and orientation.y_) {
+    if ( not orientation.x and orientation.y) {
       tx    +=   cellBox.getWidth();
       orient = Transformation::Orientation::MX;
-    } else if ( orientation.x_ and not orientation.y_) {
+    } else if ( orientation.x and not orientation.y) {
       ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::MY;
-    } else if ( not orientation.x_ and not orientation.y_) {
+    } else if ( not orientation.x and not orientation.y) {
       tx    +=   cellBox.getWidth();
       ty    +=   cellBox.getHeight();
       orient = Transformation::Orientation::R2;
@@ -586,7 +586,7 @@ namespace Etesian {
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
-  //cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y_ << endl;
+  //cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y << endl;
 
   }
 
@@ -616,11 +616,11 @@ namespace Etesian {
     auto legalizer = (options & ForceUniformDensity) != 0 ?
         region_distribution::uniform_density_distribution (_surface, _circuit, _placementLB, _densityLimits)
       : region_distribution::full_density_distribution    (_surface, _circuit, _placementLB, _densityLimits);
-    while(legalizer.region_dimensions().x_ > 2*legalizer.region_dimensions().y_)
+    while(legalizer.region_dimensions().x > 2*legalizer.region_dimensions().y)
       legalizer.x_bipartition();
-    while(2*legalizer.region_dimensions().x_ < legalizer.region_dimensions().y_)
+    while(2*legalizer.region_dimensions().x < legalizer.region_dimensions().y)
       legalizer.y_bipartition();
-    while( std::max(legalizer.region_dimensions().x_, legalizer.region_dimensions().y_)*4 > minDisruption ) {
+    while( std::max(legalizer.region_dimensions().x, legalizer.region_dimensions().y)*4 > minDisruption ) {
       legalizer.x_bipartition();
       legalizer.y_bipartition();
       legalizer.redo_line_partitions();

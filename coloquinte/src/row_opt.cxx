@@ -180,10 +180,10 @@ Hnet_group get_B2B_netgroup(netlist const & circuit, detailed_placement const & 
 
     Hnet_group ret;
     for(index_t c : cells)
-        ret.cell_widths.push_back(circuit.get_cell(c).size.x_);
+        ret.cell_widths.push_back(circuit.get_cell(c).size.x);
 
     for(index_t n : involved_nets){
-        std::vector<pin_1D> cur_pins = get_pins_1D(circuit, pl.plt_, n).x_;
+        std::vector<pin_1D> cur_pins = get_pins_1D(circuit, pl.plt_, n).x;
         for(pin_1D & p : cur_pins){
             auto it = std::lower_bound(cells_in_row.begin(), cells_in_row.end(), p.cell_ind);
             if(it != cells_in_row.end() and it->cell_ind == p.cell_ind){
@@ -206,7 +206,7 @@ Hnet_group get_RSMT_netgroup(netlist const & circuit, detailed_placement const &
 
     Hnet_group ret;
     for(index_t c : cells)
-        ret.cell_widths.push_back(circuit.get_cell(c).size.x_);
+        ret.cell_widths.push_back(circuit.get_cell(c).size.x);
 
     for(index_t n : involved_nets){
         auto vpins = get_pins_2D(circuit, pl.plt_, n);
@@ -223,7 +223,7 @@ Hnet_group get_RSMT_netgroup(netlist const & circuit, detailed_placement const &
         std::vector<point<int_t> > pin_locations;
         for(auto p : vpins)
             pin_locations.push_back(p.pos);
-        auto const Htopo = get_RSMT_topology(pin_locations, 8).x_;
+        auto const Htopo = get_RSMT_topology(pin_locations, 8).x;
 
         // In the horizontal topology, we transform the parts of the tree that are on the row into HPWL subnets
         // Two pins sharing an edge are in the same subnet if one of them is on the row: use union-find
@@ -432,7 +432,7 @@ std::vector<std::pair<int_t, int_t> > get_cell_ranges(netlist const & circuit, d
     std::vector<std::pair<int_t, int_t> > lims;
 
     for(index_t i=0; i+1<cells.size(); ++i){
-        assert(pl.plt_.positions_[cells[i]].x_ + circuit.get_cell(cells[i]).size.x_ <= pl.plt_.positions_[cells[i+1]].x_);
+        assert(pl.plt_.positions_[cells[i]].x + circuit.get_cell(cells[i]).size.x <= pl.plt_.positions_[cells[i+1]].x);
     }
 
     // Extreme limits, except macros are allowed to be beyond the limit of the placement area
@@ -442,13 +442,13 @@ std::vector<std::pair<int_t, int_t> > get_cell_ranges(netlist const & circuit, d
     for(index_t OSRP_cell : cells){
         auto attr = circuit.get_cell(OSRP_cell).attributes;
         auto cur_lim = std::pair<int_t, int_t>(lower_lim, upper_lim);
-        int_t pos = pl.plt_.positions_[OSRP_cell].x_;
+        int_t pos = pl.plt_.positions_[OSRP_cell].x;
         if( (attr & XMovable) == 0 or pl.cell_height(OSRP_cell) != 1){
-            cur_lim = std::pair<int_t, int_t>(pos, pos + circuit.get_cell(OSRP_cell).size.x_);
+            cur_lim = std::pair<int_t, int_t>(pos, pos + circuit.get_cell(OSRP_cell).size.x);
         }
 	    else{
             assert(pos >= lower_lim);
-            assert(pos + circuit.get_cell(OSRP_cell).size.x_ <= upper_lim);
+            assert(pos + circuit.get_cell(OSRP_cell).size.x <= upper_lim);
         }
         lims.push_back(cur_lim);
     }
@@ -486,8 +486,8 @@ void OSRP_generic(netlist const & circuit, detailed_placement & pl){
                 std::vector<int> flipped;
                 optimize_noncvx_sequence(nets, no_permutation, final_positions, flipped, flippability, lims);
                 for(index_t i=0; i<cells.size(); ++i){
-                    bool old_orient = pl.plt_.orientations_[cells[i]].x_;
-                    pl.plt_.orientations_[cells[i]].x_ = flipped[i] ? not old_orient : old_orient;
+                    bool old_orient = pl.plt_.orientations_[cells[i]].x;
+                    pl.plt_.orientations_[cells[i]].x = flipped[i] ? not old_orient : old_orient;
                 }
             }
             else{
@@ -496,7 +496,7 @@ void OSRP_generic(netlist const & circuit, detailed_placement & pl){
 
             // Update the positions and orientations
             for(index_t i=0; i<cells.size(); ++i){
-                pl.plt_.positions_[cells[i]].x_ = final_positions[i];
+                pl.plt_.positions_[cells[i]].x = final_positions[i];
             }
         }
     } // Iteration on the rows
@@ -560,10 +560,10 @@ void swaps_row_generic(netlist const & circuit, detailed_placement & pl, index_t
                 for(index_t i=0; i<cells.size(); ++i){
                     index_t r_ind = best_permutation[i]; // In the row from in the Hnet_group
                     new_cell_order[r_ind] = cells[i];
-                    pl.plt_.positions_[cells[i]].x_ = best_positions[r_ind];
+                    pl.plt_.positions_[cells[i]].x = best_positions[r_ind];
                     if(NON_CONVEX){
-                        bool old_orient = pl.plt_.orientations_[cells[i]].x_;
-                        pl.plt_.orientations_[cells[i]].x_ = best_flippings[r_ind] ? not old_orient : old_orient;
+                        bool old_orient = pl.plt_.orientations_[cells[i]].x;
+                        pl.plt_.orientations_[cells[i]].x = best_flippings[r_ind] ? not old_orient : old_orient;
                     }
                 }
 

@@ -12,14 +12,14 @@ namespace dp{
 void get_result(netlist const & circuit, detailed_placement const & dpl, placement_t & gpl){
     for(index_t c=0; c<circuit.cell_cnt(); ++c){
         if( (circuit.get_cell(c).attributes & XMovable) != 0)
-            gpl.positions_[c].x_ = dpl.plt_.positions_[c].x_;
+            gpl.positions_[c].x = dpl.plt_.positions_[c].x;
         if( (circuit.get_cell(c).attributes & YMovable) != 0)
-            gpl.positions_[c].y_ = dpl.plt_.positions_[c].y_;
+            gpl.positions_[c].y = dpl.plt_.positions_[c].y;
 
         if( (circuit.get_cell(c).attributes & XFlippable) != 0)
-            gpl.orientations_[c].x_ = dpl.plt_.orientations_[c].x_;
+            gpl.orientations_[c].x = dpl.plt_.orientations_[c].x;
         if( (circuit.get_cell(c).attributes & YFlippable) != 0)
-            gpl.orientations_[c].y_ = dpl.plt_.orientations_[c].y_;
+            gpl.orientations_[c].y = dpl.plt_.orientations_[c].y;
     }
 }
 
@@ -356,8 +356,8 @@ std::vector<cell_leg_properties> good_legalize(
 detailed_placement legalize(netlist const & circuit, placement_t const & pl, box<int_t> surface, int_t row_height){
     if(row_height <= 0) throw std::runtime_error("The rows' height should be positive\n");
 
-    index_t nbr_rows = (surface.y_max_ - surface.y_min_) / row_height;
-    // The position of the ith row is surface.y_min_ + i * row_height
+    index_t nbr_rows = (surface.y_max - surface.y_min) / row_height;
+    // The position of the ith row is surface.y_min + i * row_height
 
     std::vector<std::vector<fixed_cell_interval> > row_occupation(nbr_rows);
     std::vector<cell_to_leg> cells;
@@ -372,32 +372,32 @@ detailed_placement legalize(netlist const & circuit, placement_t const & pl, box
         if( (cur.attributes & XMovable) != 0 && (cur.attributes & YMovable) != 0){
             // Just truncate the position we target
             point<int_t> target_pos = pl.positions_[i];
-            index_t cur_cell_rows = (cur.size.y_ + row_height -1) / row_height;
-            cells.push_back(cell_to_leg(target_pos.x_, target_pos.y_, i, cur.size.x_, cur_cell_rows));
+            index_t cur_cell_rows = (cur.size.y + row_height -1) / row_height;
+            cells.push_back(cell_to_leg(target_pos.x, target_pos.y, i, cur.size.x, cur_cell_rows));
             cell_heights[i] = cur_cell_rows;
         }
         else{
             // In each row, we put the index of the fixed cell and the range that is already occupied
-            int_t low_x_pos  = pl.positions_[i].x_,
-                  hgh_x_pos  = pl.positions_[i].x_ + cur.size.x_,
-                  low_y_pos  = pl.positions_[i].y_,
-                  hgh_y_pos  = pl.positions_[i].y_ + cur.size.y_;
+            int_t low_x_pos  = pl.positions_[i].x,
+                  hgh_x_pos  = pl.positions_[i].x + cur.size.x,
+                  low_y_pos  = pl.positions_[i].y,
+                  hgh_y_pos  = pl.positions_[i].y + cur.size.y;
 
             new_placement.positions_[i] = point<int_t>(low_x_pos, low_y_pos);
-            if(hgh_y_pos <= surface.y_min_ or low_y_pos >= surface.y_max_ or hgh_x_pos <= surface.x_min_ or low_x_pos >= surface.x_max_){
+            if(hgh_y_pos <= surface.y_min or low_y_pos >= surface.y_max or hgh_x_pos <= surface.x_min or low_x_pos >= surface.x_max){
                 placement_rows[i] = null_ind;
                 cell_heights[i] = 0;
             }
             else{
                 assert(low_x_pos < hgh_x_pos and low_y_pos < hgh_y_pos);
 
-                int_t rnd_hgh_x_pos = std::min(surface.x_max_, hgh_x_pos);
-                int_t rnd_hgh_y_pos = std::min(surface.y_max_, hgh_y_pos);
-                int_t rnd_low_x_pos = std::max(surface.x_min_, low_x_pos);
-                int_t rnd_low_y_pos = std::max(surface.y_min_, low_y_pos);
+                int_t rnd_hgh_x_pos = std::min(surface.x_max, hgh_x_pos);
+                int_t rnd_hgh_y_pos = std::min(surface.y_max, hgh_y_pos);
+                int_t rnd_low_x_pos = std::max(surface.x_min, low_x_pos);
+                int_t rnd_low_y_pos = std::max(surface.y_min, low_y_pos);
 
-                index_t first_row = (rnd_low_y_pos - surface.y_min_) / row_height;
-                index_t last_row = (index_t) (rnd_hgh_y_pos - surface.y_min_ + row_height - 1) / row_height; // Exclusive: if the cell spans the next row, i.e. pos % row_height >= 0, include it too
+                index_t first_row = (rnd_low_y_pos - surface.y_min) / row_height;
+                index_t last_row = (index_t) (rnd_hgh_y_pos - surface.y_min + row_height - 1) / row_height; // Exclusive: if the cell spans the next row, i.e. pos % row_height >= 0, include it too
                 assert(last_row <= nbr_rows);
 
                 placement_rows[i] = first_row;
@@ -421,12 +421,12 @@ detailed_placement legalize(netlist const & circuit, placement_t const & pl, box
     std::vector<std::vector<index_t> > cells_by_rows;
 
     auto final_cells = good_legalize(row_occupation, cells, cells_by_rows,
-        surface.x_min_, surface.x_max_, surface.y_min_,
+        surface.x_min, surface.x_max, surface.y_min,
         row_height, nbr_rows
     );
 
     for(cell_leg_properties C : final_cells){
-        new_placement.positions_[C.ind] = point<int_t>(C.x_pos, static_cast<int_t>(C.row_pos) * row_height + surface.y_min_);
+        new_placement.positions_[C.ind] = point<int_t>(C.x_pos, static_cast<int_t>(C.row_pos) * row_height + surface.y_min);
         placement_rows[C.ind] = C.row_pos;
     }
 
@@ -435,8 +435,8 @@ detailed_placement legalize(netlist const & circuit, placement_t const & pl, box
         placement_rows,
         cell_heights,
         cells_by_rows,
-        surface.x_min_, surface.x_max_,
-        surface.y_min_,
+        surface.x_min, surface.x_max,
+        surface.y_min,
         nbr_rows, row_height
     );
 }

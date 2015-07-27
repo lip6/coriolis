@@ -34,17 +34,17 @@ template<int pin_cnt>
 int_t Hconnectivity<pin_cnt>::get_wirelength(std::array<point<int_t>, pin_cnt> const sorted_points) const{
     std::array<minmax_t, pin_cnt-2> minmaxs;
     for(index_t i=0; i<pin_cnt-2; ++i){
-        minmaxs[i] = minmax_t(sorted_points[i+1].y_, sorted_points[i+1].y_);
+        minmaxs[i] = minmax_t(sorted_points[i+1].y, sorted_points[i+1].y);
     }
     std::uint8_t b_con = extremes & 15u, e_con = extremes >> 4;
-    minmaxs[b_con].merge(sorted_points.front() .y_);
-    minmaxs[e_con].merge(sorted_points.back()  .y_);
+    minmaxs[b_con].merge(sorted_points.front() .y);
+    minmaxs[e_con].merge(sorted_points.back()  .y);
     for(std::uint8_t const E : connexions){
         minmaxs[(E >> 4)].merge(minmaxs[(E & 15u)]);
     }
-    int_t cost = sorted_points.back().x_ - sorted_points.front().x_ + sorted_points[b_con+1].x_ - sorted_points[e_con+1].x_;
+    int_t cost = sorted_points.back().x - sorted_points.front().x + sorted_points[b_con+1].x - sorted_points[e_con+1].x;
     for(std::uint8_t const E : connexions){
-        cost += std::abs(sorted_points[(E >> 4) +1].x_ - sorted_points[(E & 15u) +1].x_);
+        cost += std::abs(sorted_points[(E >> 4) +1].x - sorted_points[(E & 15u) +1].x);
     }
     for(index_t i=0; i<pin_cnt-2; ++i){
         cost += (minmaxs[i].max - minmaxs[i].min);
@@ -84,14 +84,14 @@ int_t get_wirelength_from_sorted(std::vector<point<int_t> > const & pins, std::a
 std::int64_t get_wirelength_from_topo(std::vector<point<int_t> > const & points, std::vector<std::pair<index_t, index_t> > Htopo){
     std::vector<minmax_t> minmaxs(points.size());
     for(index_t i=0; i<points.size(); ++i){
-        minmaxs[i] = minmax_t(points[i].y_, points[i].y_);
+        minmaxs[i] = minmax_t(points[i].y, points[i].y);
     }
     for(auto const E : Htopo){
         minmaxs[E.second].merge(minmaxs[E.first]);
     }
     std::int64_t cost = 0;
     for(edge_t const E : Htopo){
-        cost += std::abs(points[E.first].x_ - points[E.second].x_);
+        cost += std::abs(points[E.first].x - points[E.second].x);
     }
     for(index_t i=0; i<points.size(); ++i){
         cost += (minmaxs[i].max - minmaxs[i].min);
@@ -133,7 +133,7 @@ std::vector<edge_t> get_vertical_topology(std::vector<point<int_t> > pins, std::
         ipoints[i] = indexed_pt(pins[i], i);
     }
 
-    std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.y_ < b.y_; });
+    std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.y < b.y; });
 
     // First pin with y ordering
     std::vector<index_t> min_y_pin(pins.size());
@@ -222,19 +222,19 @@ inline void northeast_octant_neighbours(std::vector<point<int_t> > pins, std::ve
     }
 
     std::sort(point_list.begin(), point_list.end(),
-                [](indexed_pt const a, indexed_pt const b){ return a.x_ + a.y_ < b.x_ + b.y_; }
+                [](indexed_pt const a, indexed_pt const b){ return a.x + a.y < b.x + b.y; }
               );
 
     // Decreasing order of x and y; multiset not necessary because no two elements have same coordinate
     std::set<indexed_pt, std::function<bool (indexed_pt const, indexed_pt const)> >
-                      active_upper_octant([](indexed_pt const a, indexed_pt const b)->bool{return a.x_ > b.x_;}),
-                      active_lower_octant([](indexed_pt const a, indexed_pt const b)->bool{return a.y_ > b.y_;});
+                      active_upper_octant([](indexed_pt const a, indexed_pt const b)->bool{return a.x > b.x;}),
+                      active_lower_octant([](indexed_pt const a, indexed_pt const b)->bool{return a.y > b.y;});
 
     for(indexed_pt const current : point_list){
         { // North to north-east region
             auto first_it = active_upper_octant.lower_bound(current); // Largest x with x <= current.x
             auto it = first_it;
-            for(; it != active_upper_octant.end() && it->x_ - it->y_ >= current.x_ - current.y_; ++it){
+            for(; it != active_upper_octant.end() && it->x - it->y >= current.x - current.y; ++it){
                 edges.push_back(std::pair<index_t, index_t>(current.index, it->index));
             }
             if(first_it != active_upper_octant.end()){ active_upper_octant.erase(first_it, it); }
@@ -243,7 +243,7 @@ inline void northeast_octant_neighbours(std::vector<point<int_t> > pins, std::ve
         { // North-east to east region
             auto first_it = active_lower_octant.lower_bound(current); // Largest y with y <= current.y
             auto it = first_it;
-            for(; it != active_lower_octant.end() && it->y_ - it->x_ >= current.y_ - current.x_; ++it){
+            for(; it != active_lower_octant.end() && it->y - it->x >= current.y - current.x; ++it){
                 edges.push_back(std::pair<index_t, index_t>(current.index, it->index));
             }
             if(first_it != active_lower_octant.end()){ active_lower_octant.erase(first_it, it); }
@@ -255,7 +255,7 @@ inline void northeast_octant_neighbours(std::vector<point<int_t> > pins, std::ve
 // Gets the nearest octant neighbour for each point in the south-east quadrant
 inline void southeast_octant_neighbours(std::vector<point<int_t> > pins, std::vector<std::pair<index_t, index_t> > & edges){
     for(auto & pin : pins){
-        pin.y_ = - pin.y_;
+        pin.y = - pin.y;
     }
     northeast_octant_neighbours(pins, edges);
 }
@@ -336,7 +336,7 @@ std::vector<edge_t> get_big_horizontal_topology_from_sorted(std::vector<point<in
 
     std::vector<point<int_t> > inverted_coords = pins;
     for(point<int_t> & pt : inverted_coords){
-        std::swap(pt.x_, pt.y_);
+        std::swap(pt.x, pt.y);
     }
     auto Htopo = get_vertical_topology(inverted_coords, Vtopo);
 
@@ -356,7 +356,7 @@ std::vector<edge_t> get_RSMT_horizontal_topology(std::vector<point<int_t> > cons
             ipoints[i] = indexed_pt(pins[i], i);
         }
         auto xpoints=ipoints;
-        std::sort(xpoints.begin(), xpoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
+        std::sort(xpoints.begin(), xpoints.end(), [](indexed_pt a , indexed_pt b){return a.x < b.x; });
         
         return std::vector<edge_t>{{xpoints[0].index, xpoints[1].index}, {xpoints[1].index, xpoints[2].index}};
     }
@@ -368,7 +368,7 @@ std::vector<edge_t> get_RSMT_horizontal_topology(std::vector<point<int_t> > cons
         for(index_t i=0; i<pins.size(); ++i){
             ipoints[i] = indexed_pt(pins[i], i);
         }
-        std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
+        std::sort(ipoints.begin(), ipoints.end(), [](indexed_pt a , indexed_pt b){return a.x < b.x; });
         std::vector<point<int_t> > sorted_pins(pins.size());
         for(index_t i=0; i<pins.size(); ++i){
             sorted_pins[i] = ipoints[i];
@@ -401,7 +401,7 @@ std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int
             edges.push_back(edge_t(0, 1));
         }
         if(pins.size() == 3){
-            auto D = [](point<int_t> a, point<int_t> b){ return std::abs(a.x_ - b.x_) + std::abs(a.y_ - b.y_); };
+            auto D = [](point<int_t> a, point<int_t> b){ return std::abs(a.x - b.x) + std::abs(a.y - b.y); };
             auto dists = std::array<int_t, 3>({D(pins[1], pins[2]), D(pins[1], pins[2]), D(pins[0], pins[1])});
             index_t mx = std::max_element(dists.begin(), dists.end()) - dists.begin();
             for(index_t i=0; i<3; ++i){
@@ -420,7 +420,7 @@ std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int
     auto edge_length = [&](edge_t E){
         point<int_t> p1 = pins[E.first],
                      p2 = pins[E.second];
-        return std::abs(p1.x_ - p2.x_) + std::abs(p1.y_ - p2.y_);
+        return std::abs(p1.x - p2.x) + std::abs(p1.y - p2.y);
     };
 	// Perform Kruskal to get the tree
 	std::sort(edges.begin(), edges.end(), [&](edge_t a, edge_t b){ return edge_length(a) < edge_length(b); });
@@ -444,8 +444,8 @@ std::int64_t MST_length(std::vector<point<int_t> > const & pins){
     auto edges = get_MST_topology(pins);
     std::int64_t sum = 0;
     for(auto E : edges){
-        sum += std::abs(pins[E.first].x_ - pins[E.second].x_);
-        sum += std::abs(pins[E.first].y_ - pins[E.second].y_);
+        sum += std::abs(pins[E.first].x - pins[E.second].x);
+        sum += std::abs(pins[E.first].y - pins[E.second].y);
     }
     return sum;
 }
@@ -454,12 +454,12 @@ std::int64_t RSMT_length(std::vector<point<int_t> > const & pins, index_t exacti
     assert(exactitude_limit <= 10 and exactitude_limit >= 3);
     if(pins.size() <= 3){
         if(pins.size() == 2){
-            return std::abs(pins[0].x_ - pins[1].x_) + std::abs(pins[0].y_ - pins[1].y_);
+            return std::abs(pins[0].x - pins[1].x) + std::abs(pins[0].y - pins[1].y);
         }
         else if(pins.size() == 3){
-            auto minmaxX = std::minmax_element(pins.begin(), pins.end(), [](point<int_t> a, point<int_t> b){ return a.x_ < b.x_; }), 
-                 minmaxY = std::minmax_element(pins.begin(), pins.end(), [](point<int_t> a, point<int_t> b){ return a.y_ < b.y_; });
-            return (minmaxX.second->x_ - minmaxX.first->x_) + (minmaxY.second->y_ - minmaxY.first->y_);
+            auto minmaxX = std::minmax_element(pins.begin(), pins.end(), [](point<int_t> a, point<int_t> b){ return a.x < b.x; }), 
+                 minmaxY = std::minmax_element(pins.begin(), pins.end(), [](point<int_t> a, point<int_t> b){ return a.y < b.y; });
+            return (minmaxX.second->x - minmaxX.first->x) + (minmaxY.second->y - minmaxY.first->y);
         }
         else{
             return 0;
@@ -467,7 +467,7 @@ std::int64_t RSMT_length(std::vector<point<int_t> > const & pins, index_t exacti
     }
     else{
         std::vector<point<int_t> > points = pins;
-        std::sort(points.begin(), points.end(), [](point<int_t> a , point<int_t> b){return a.x_ < b.x_; });
+        std::sort(points.begin(), points.end(), [](point<int_t> a , point<int_t> b){return a.x < b.x; });
 
         if(points.size() <= exactitude_limit){
             switch(points.size()){
@@ -517,9 +517,9 @@ point<std::vector<std::pair<index_t, index_t> > > get_RSMT_topology(std::vector<
             ipoints[i] = indexed_pt(pins[i], i);
         }
         auto xpoints=ipoints;
-        std::sort(xpoints.begin(), xpoints.end(), [](indexed_pt a , indexed_pt b){return a.x_ < b.x_; });
+        std::sort(xpoints.begin(), xpoints.end(), [](indexed_pt a , indexed_pt b){return a.x < b.x; });
         auto ypoints=ipoints;
-        std::sort(ypoints.begin(), ypoints.end(), [](indexed_pt a , indexed_pt b){return a.y_ < b.y_; });
+        std::sort(ypoints.begin(), ypoints.end(), [](indexed_pt a , indexed_pt b){return a.y < b.y; });
         
         return point<std::vector<edge_t> >{{{xpoints[0].index, xpoints[1].index}, {xpoints[1].index, xpoints[2].index}}, {{ypoints[0].index, ypoints[1].index}, {ypoints[1].index, ypoints[2].index}}};
     }
