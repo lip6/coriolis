@@ -313,6 +313,8 @@ namespace Katabatic {
     , _flags          (SegCreated)
     , _depth          (Session::getLayerDepth(segment->getLayer()))
     , _optimalMin     (0)
+    , _optimalMax     (0)
+    , _reduceds       (0)
     , _sourcePosition (0)
     , _targetPosition (0)
     , _userConstraints(false)
@@ -465,25 +467,29 @@ namespace Katabatic {
     unsigned int oldSpinFlags = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
-      const Layer*  contactLayer = getAutoSource()->getLayer();
+      AutoContact*  source       = getAutoSource();
+      const Layer*  contactLayer = source->getLayer();
       const Layer*  segmentLayer = getLayer();
-      ltrace(200) << "Changed source: " << getAutoSource() << endl;
+      ltrace(200) << "Changed source: " << source << endl;
 
       unsetFlags( SegSourceTop|SegSourceBottom );
-      if (contactLayer != segmentLayer) {
+      if (contactLayer != segmentLayer)
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegSourceBottom : SegSourceTop ); 
-      }
+      if (source->isTurn() and source->getPerpandicular(this)->isReduced())
+        incReduceds();
     }
 
     if (_flags & (SegInvalidatedTarget|SegCreated)) {
-      const Layer*  contactLayer = getAutoTarget()->getLayer();
+      AutoContact*  target       = getAutoTarget();
+      const Layer*  contactLayer = target->getLayer();
       const Layer*  segmentLayer = getLayer();
-      ltrace(200) << "Changed target: " << getAutoTarget() << endl;
+      ltrace(200) << "Changed target: " << target << endl;
 
       unsetFlags( SegTargetTop|SegTargetBottom );
-      if (contactLayer != segmentLayer) {
+      if (contactLayer != segmentLayer)
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegTargetBottom : SegTargetTop ); 
-      }
+      if (target->isTurn() and target->getPerpandicular(this)->isReduced())
+        incReduceds();
     }
 
     unsigned int observerFlags = Revalidate;
@@ -514,21 +520,6 @@ namespace Katabatic {
       }
     }
     return false;
-  }
-
-
-  bool  AutoSegment::isSameLayerDogleg () const
-  {
-    if (not isSpinTopOrBottom()) return false;
-
-    unsigned int perpandicularDepth = getDepth() + (isSpinTop() ? 1 : -1);
-    if (perpandicularDepth >= Session::getDepth()) {
-      cerr << this << " isSpinTop too high." << endl;
-    }
-    perpandicularDepth = Session::getDepth() - 1;
-
-    return (getLength() > (Session::getPitch(perpandicularDepth)))
-      and  (getLength() < (Session::getPitch(perpandicularDepth) * 3));
   }
 
 
@@ -706,6 +697,11 @@ namespace Katabatic {
   {
     AutoContact* source = getAutoSource();
     if (source) {
+      if (source->isTurn()) {
+        AutoSegment* perpandicular = source->getPerpandicular(this);
+        if (perpandicular and perpandicular->isReduced())
+          decReduceds();
+      }
       base()->getSourceHook()->detach();
       source->cacheDetach( this );
       unsetFlags( SegNotSourceAligned );
@@ -718,6 +714,11 @@ namespace Katabatic {
   {
     AutoContact* target = getAutoTarget();
     if (target) {
+      if (target->isTurn()) {
+        AutoSegment* perpandicular = target->getPerpandicular(this);
+        if (perpandicular and perpandicular->isReduced())
+          decReduceds();
+      }
       base()->getTargetHook()->detach();
       target->cacheDetach( this );
       unsetFlags( SegNotTargetAligned );
@@ -1149,6 +1150,72 @@ namespace Katabatic {
   }
 
 
+  bool  AutoSegment::canReduce () const
+  {
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+    if (not isSpinTopOrBottom()) return false;
+    if (_reduceds) return false;
+
+    unsigned int perpandicularDepth = getDepth();
+    if (isSpinBottom()) --perpandicularDepth;
+    else if (isSpinTop()) {
+      ++perpandicularDepth;
+      if (perpandicularDepth >= Session::getDepth()) return false;
+    } else
+      return false;
+
+    if (getLength() >= (Session::getPitch(perpandicularDepth) * 2)) return false;
+
+    return true;
+  }
+
+
+  bool  AutoSegment::reduce ()
+  {
+    if (not canReduce()) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    _flags |= SegIsReduced;
+    source->getPerpandicular( this )->incReduceds();
+    target->getPerpandicular( this )->incReduceds();
+    
+    return true;
+  }
+
+
+  bool  AutoSegment::mustRaise () const
+  {
+    if (not (_flags & SegIsReduced)) return false;
+
+    unsigned int perpandicularDepth = getDepth();
+    if      (isSpinBottom()) --perpandicularDepth;
+    else if (isSpinTop   ()) ++perpandicularDepth;
+    else return true;
+
+    return (getLength() >= (Session::getPitch(perpandicularDepth) * 2));
+  }
+
+
+  bool  AutoSegment::raise ()
+  {
+    if (not (_flags & SegIsReduced)) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    _flags &= ~SegIsReduced;
+    source->getPerpandicular( this )->decReduceds();
+    target->getPerpandicular( this )->decReduceds();
+
+    return true;
+  }
+
+
   void  AutoSegment::changeDepth ( unsigned int depth, unsigned int flags )
   {
     ltrace(200) << "changeDepth() " << depth << " - " << this << endl;
@@ -1476,6 +1543,32 @@ namespace Katabatic {
   {
   //if ( not canPivotDown(0.0,flags) ) return false;
     changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&KbPropagate );
+
+    return true;
+  }
+
+
+  bool  AutoSegment::reduceDoglegLayer ()
+  {
+    if (not isReduced()) return true;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    unsigned int perpandicularDepth = getDepth();
+    if (isSpinBottom()) --perpandicularDepth;
+    if (isSpinTop   ()) ++perpandicularDepth;
+
+    if (perpandicularDepth == getDepth()) {
+      cerr << Bug( "AutoSegment::reduceDoglegLayer(): Reduced segment spin is neither top (TT) nor bottom (BB).\n"
+                   "      %s"
+                 , getString(this).c_str() ) << endl;
+      return false;
+    }
+
+    source->setLayer( Session::getRoutingLayer(perpandicularDepth) );
+    target->setLayer( Session::getRoutingLayer(perpandicularDepth) );
+    setLayer( Session::getRoutingLayer(perpandicularDepth) );
 
     return true;
   }
@@ -1811,6 +1904,7 @@ namespace Katabatic {
     state += isWeakTerminal2 () ? "w": "-";
     state += isNotAligned    () ? "A": "-";
     state += isSlackened     () ? "S": "-";
+    state += isReduced       () ? "r": "-";
     state += isInvalidated   () ? "i": "-";
 
     if      (_flags & SegSourceTop)    state += 'T';
@@ -1968,12 +2062,28 @@ namespace Katabatic {
   AutoSegment* AutoSegment::create ( AutoContact*  source
                                    , AutoContact*  target
                                    , unsigned int  dir
+                                   , size_t        depth
                                    )
   {
-    static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
-    static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
-    static DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
+  // Hardcoded: make the assumption that,
+  //    depth=0 is terminal reserved  |  METAL1
+  //    depth=1 is horizontal         |  METAL2
+  //    depth=2 is vertical           |  METAL3
+  // Should be based on gauge informations.
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    static const Layer* vLayer = Session::getRoutingLayer( 2 );
+    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+
+    const Layer* horizontalLayer = hLayer;
+    DbU::Unit    horizontalWidth = hWidth;
+    const Layer* verticalLayer   = vLayer;
+    DbU::Unit    verticalWidth   = vWidth;
+
+    if (depth != RoutingGauge::nlayerdepth) {
+      horizontalLayer = verticalLayer = Session::getRoutingLayer( depth );
+      horizontalWidth = verticalWidth = Session::getWireWidth   ( depth );
+    }
 
     AutoSegment* segment;
     AutoContact* reference = source;

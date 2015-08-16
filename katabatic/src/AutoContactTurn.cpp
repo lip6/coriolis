@@ -88,6 +88,14 @@ namespace Katabatic {
   { return NULL; }
 
 
+  AutoSegment* AutoContactTurn::getPerpandicular ( const AutoSegment* reference ) const
+  {
+    if (reference == _horizontal1) return _vertical1;
+    if (reference == _vertical1  ) return _horizontal1;
+    return NULL;
+  }
+
+
   AutoSegment* AutoContactTurn::getSegment ( unsigned int index ) const
   {
     switch ( index ) {

@@ -95,8 +95,8 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
 
     coreAb = self.cores[0].getMasterCell().getAbutmentBox()
     if (not coreAb.isEmpty()):
-      if     coreAb.getWidth () < self.coreSize.getWidth() \
-         and coreAb.getHeight() < self.coreSize.getHeight():
+      if     coreAb.getWidth () <= self.coreSize.getWidth() \
+         and coreAb.getHeight() <= self.coreSize.getHeight():
         self.coreSize = coreAb
       else:
         print ErrorMessage( 1, [ 'Core %s already have an abutment box, bigger than the requested one:'

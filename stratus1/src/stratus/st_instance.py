@@ -322,7 +322,7 @@ class Inst :
         plug.setNet ( hurNet )
        
         # In order to see the ring
-        if str ( realNet.__class__ ) not in ALIM_NET : CRL.createPartRing ( self._st_cell._hur_cell, hurNet.getName() )
+        #if str ( realNet.__class__ ) not in ALIM_NET : CRL.createPartRing ( self._st_cell._hur_cell, hurNet.getName() )
 
     ##### Loop on each pin
     for pin in self._map :

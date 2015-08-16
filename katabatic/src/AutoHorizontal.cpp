@@ -689,9 +689,8 @@ namespace Katabatic {
 
   unsigned int  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
   {
-    ltrace(200) << "AutoHorizontal::_makeDogleg(GCell*)" << endl;
-
     DebugSession::open( getNet(), 80 );
+    ltrace(200) << "AutoHorizontal::_makeDogleg(GCell*)" << endl;
     ltracein(159);
 
   //Session::doglegReset();

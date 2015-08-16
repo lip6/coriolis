@@ -57,10 +57,10 @@ class Side ( object ):
 
 
     def getAxis ( self, i ):
-      if   self._type == chip.North: return self._corona.chipSize.getXMax() - self._corona.padHeight + self._corona._powerRails[i][2]
-      elif self._type == chip.South: return self._corona.chipSize.getXMin() + self._corona.padHeight - self._corona._powerRails[i][2]
-      elif self._type == chip.East:  return self._corona.chipSize.getYMax() - self._corona.padHeight + self._corona._powerRails[i][2]
-      elif self._type == chip.West:  return self._corona.chipSize.getYMin() + self._corona.padHeight - self._corona._powerRails[i][2]
+      if   self._type == chip.North: return self._corona.chipSize.getYMax() - self._corona.padHeight + self._corona._powerRails[i][2]
+      elif self._type == chip.South: return self._corona.chipSize.getYMin() + self._corona.padHeight - self._corona._powerRails[i][2]
+      elif self._type == chip.East:  return self._corona.chipSize.getXMax() - self._corona.padHeight + self._corona._powerRails[i][2]
+      elif self._type == chip.West:  return self._corona.chipSize.getXMin() + self._corona.padHeight - self._corona._powerRails[i][2]
       else:
         raise ErrorMessage( 1, 'PadsCorona.Side.__init__(): Invalid value for sideType (%d)' % sideType )
       return 0
@@ -224,14 +224,14 @@ class Side ( object ):
     def _routePads ( self ):
       for i in range(len(self._corona._powerRails)):
         if self._type == chip.South:
-          Horizontal.create( self._corona._corners[chip.SouthWest ][i]
+          Horizontal.create( self._corona._corners[chip.SouthWest][i]
                            , self._corona._corners[chip.SouthEast][i]
                            , self._corona._powerRails[i][1]
                            , self.getAxis( i )
                            , self._corona._powerRails[i][3]
                            )
         elif self._type == chip.North:
-          Horizontal.create( self._corona._corners[chip.NorthWest ][i]
+          Horizontal.create( self._corona._corners[chip.NorthWest][i]
                            , self._corona._corners[chip.NorthEast][i]
                            , self._corona._powerRails[i][1]
                            , self.getAxis( i )
@@ -239,14 +239,14 @@ class Side ( object ):
                            )
         elif self._type == chip.East:
           Vertical.create( self._corona._corners[chip.SouthEast][i]
-                         , self._corona._corners[chip.NorthEast   ][i]
+                         , self._corona._corners[chip.NorthEast][i]
                          , self._corona._powerRails[i][1]
                          , self.getAxis( i )
                          , self._corona._powerRails[i][3]
                          )
         elif self._type == chip.West:
           Vertical.create( self._corona._corners[chip.SouthWest][i]
-                         , self._corona._corners[chip.NorthWest   ][i]
+                         , self._corona._corners[chip.NorthWest][i]
                          , self._corona._powerRails[i][1]
                          , self.getAxis( i )
                          , self._corona._powerRails[i][3]

@@ -73,7 +73,7 @@ DoStop    = 0x0004
 
 def buildModel ( name, flags ):
     try:
-      print name
+     #print name
       module = __import__( name, globals(), locals(), name )
       if not module.__dict__.has_key(name):
           print '[ERROR] Stratus module <%s> do not contains a design of the same name.' % name

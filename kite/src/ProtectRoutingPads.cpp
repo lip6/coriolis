@@ -71,12 +71,17 @@ namespace {
 
   void  protectRoutingPad ( RoutingPad* rp )
   {
+    Name            padNetName     = "pad";
     Component*      usedComponent  = rp->_getEntityAsComponent();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
-    if ( CatalogExtension::isPad(masterNet->getCell()) ) return;
+    if ( CatalogExtension::isPad(masterNet->getCell()) ) {
+      if (   rp->getNet()->isPower()
+         or (rp->getNet()->getName() == padNetName) )
+        return;
+    }
 
     vector<Segment*> segments;
 

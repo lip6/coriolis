@@ -255,10 +255,12 @@ namespace Katabatic {
       ltracein(90);
       ltrace(90) << "Saving AutoContacts/AutoSegments." << endl;
 
-      size_t fixedSegments = 0;
+      size_t fixedSegments    = 0;
+      size_t sameLayerDoglegs = 0;
       AutoSegmentLut::const_iterator isegment = _autoSegmentLut.begin();
       for ( ; isegment != _autoSegmentLut.end() ; ++isegment ) {
-        if ((*isegment).second->isFixed()) fixedSegments++;
+        if ((*isegment).second->isFixed()) ++fixedSegments;
+        if ((*isegment).second->reduceDoglegLayer()) ++sameLayerDoglegs;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
@@ -266,6 +268,7 @@ namespace Katabatic {
       cmess1 << Dots::asSizet("     - Active AutoContacts",AutoContact::getAllocateds()-fixedSegments*2) << endl;
       cmess1 << Dots::asSizet("     - AutoSegments"       ,AutoSegment::getAllocateds()) << endl;
       cmess1 << Dots::asSizet("     - AutoContacts"       ,AutoContact::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - Same Layer doglegs" ,sameLayerDoglegs) << endl;
 
       forEach ( Net*, inet, _cell->getNets() )
         _saveNet( *inet );

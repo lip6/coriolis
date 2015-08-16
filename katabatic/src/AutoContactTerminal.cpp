@@ -44,6 +44,7 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::DebugSession;
+  using Hurricane::Transformation;
   using Hurricane::Entity;
   using Hurricane::ltracein;
   using Hurricane::ltraceout;
@@ -125,6 +126,10 @@ namespace Katabatic {
   { return NULL; }
 
 
+  AutoSegment* AutoContactTerminal::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
+
+
   AutoSegment* AutoContactTerminal::getSegment ( unsigned int index ) const
   {
     if (_segment) {
@@ -139,9 +144,13 @@ namespace Katabatic {
 
   Box  AutoContactTerminal::getNativeConstraintBox () const
   {
+    ltrace(110) << "AutoContactTerminal::getNativeConstraintBox()" << endl;
+    ltracein(110);
+
     Component* component = getAnchor();
     if (component == NULL) {
       cerr << Error( "%s is not anchored.", getString(this).c_str() ) << endl;
+      ltraceout(110);
       return _gcell->getBoundingBox ();
     }
     
@@ -154,32 +163,60 @@ namespace Katabatic {
     RoutingPad* routingPad;
 
     if ( (horizontal = dynamic_cast<Horizontal*>(component)) ) {
+      ltrace(110) << "Anchor: " << horizontal << "@" << horizontal->getSourcePosition() << endl;
       xMin = horizontal->getSourcePosition().getX();
       xMax = horizontal->getTargetPosition().getX();
       yMin = yMax
            = horizontal->getTargetPosition().getY();
     } else if ( (vertical = dynamic_cast<Vertical*>(component)) ) {
+      ltrace(110) << "Anchor: " << vertical << "@" << vertical->getSourcePosition() << endl;
       yMin = vertical->getSourcePosition().getY();
       yMax = vertical->getTargetPosition().getY();
       xMin = xMax
            = vertical->getTargetPosition().getX();
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
-      Entity* entity = routingPad->getOccurrence().getEntity();
+      Entity*         entity = routingPad->getOccurrence().getEntity();
+      Transformation  transf = routingPad->getOccurrence().getPath().getTransformation();
+      ltrace(110) << "Anchor: " << routingPad << endl;
 
-    // Assumes there is no rotation in the Transformation.
-      if ( dynamic_cast<Horizontal*>(entity) ) {
-        xMin = routingPad->getSourcePosition().getX();
-        xMax = routingPad->getTargetPosition().getX();
-        yMin = yMax
-             = routingPad->getTargetPosition().getY();
+      int rpOrient = 1;
+      switch ( transf.getOrientation() ) {
+        case Transformation::Orientation::R1:
+        case Transformation::Orientation::R3:
+        case Transformation::Orientation::XR:
+        case Transformation::Orientation::YR:
+          rpOrient = 2;
+          break;
+        default:
+          break;
+      }
+
+      if (dynamic_cast<Horizontal*>(entity)) {
+      // rpOrient *is* the rotation.
       } else if ( dynamic_cast<Vertical*>(entity) ) {
-        yMin = routingPad->getSourcePosition().getY();
-        yMax = routingPad->getTargetPosition().getY();
-        xMin = xMax
-             = routingPad->getTargetPosition().getX();
+      // rpOrient is the inverse rotation.
+        rpOrient = (rpOrient == 1) ? 2 : 1;
       } else {
-        xMin = xMax = routingPad->getPosition().getX();
-        yMin = yMax = routingPad->getPosition().getY();
+        rpOrient = 0;
+      }
+      
+      switch ( rpOrient ) {
+        case 1:
+          xMin = routingPad->getSourcePosition().getX();
+          xMax = routingPad->getTargetPosition().getX();
+          yMin = yMax
+               = routingPad->getTargetPosition().getY();
+          break;
+        case 2:
+          yMin = routingPad->getSourcePosition().getY();
+          yMax = routingPad->getTargetPosition().getY();
+          xMin = xMax
+               = routingPad->getTargetPosition().getX();
+          break;
+        default:
+          xMin = xMax = routingPad->getPosition().getX();
+          yMin = yMax = routingPad->getPosition().getY();
+          break;
       }
     } else {
       xMin = xMax = component->getPosition().getX();
@@ -189,6 +226,10 @@ namespace Katabatic {
     order( xMin, xMax );
     order( yMin, yMax );
 
+    ltrace(110) << "| Using (y): " << DbU::getValueString(yMin) << " "
+                                   << DbU::getValueString(yMax) << endl;
+
+    ltraceout(110);
     return Box( xMin, yMin, xMax, yMax );
   }
 

@@ -141,7 +141,7 @@ namespace Kite {
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
-  bool           TrackSegment::isSameLayerDogleg    () const { return _base->isSameLayerDogleg(); }
+  bool           TrackSegment::isReduced            () const { return _base->isReduced(); }
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
 // Predicates.
 // Accessors.

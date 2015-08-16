@@ -1,20 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingGauge.cpp"                       |
 // +-----------------------------------------------------------------+
 
 
-#include <climits>
+#include <limits>
 #include <sstream>
 #include <algorithm>
 #include "hurricane/Commons.h"
@@ -47,6 +47,9 @@ namespace CRL {
 
 // -------------------------------------------------------------------
 // Class  :  "RoutingGauge".
+
+
+  const size_t  RoutingGauge::nlayerdepth = std::numeric_limits<size_t>::max();
 
 
   RoutingGauge::RoutingGauge ( const char* name )
@@ -150,7 +153,7 @@ namespace CRL {
       if ( _layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask() )
         return i;
     }
-    return UINT_MAX;
+    return nlayerdepth;
   }
 
 
@@ -160,7 +163,7 @@ namespace CRL {
       if ( _layerGauges[i]->getLayer()->getMask() == layer->getMask() )
         return i;
     }
-    return UINT_MAX;
+    return nlayerdepth;
   }
 
 

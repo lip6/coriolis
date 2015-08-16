@@ -14,14 +14,14 @@
 // +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Bug.h"
-#include  "hurricane/Point.h"
-#include  "hurricane/Error.h"
-#include  "katabatic/GCellGrid.h"
-#include  "kite/Session.h"
-#include  "kite/Track.h"
-#include  "kite/TrackElement.h"
-#include  "kite/KiteEngine.h"
+#include "hurricane/Bug.h"
+#include "hurricane/Point.h"
+#include "hurricane/Error.h"
+#include "katabatic/GCellGrid.h"
+#include "kite/Session.h"
+#include "kite/Track.h"
+#include "kite/TrackElement.h"
+#include "kite/KiteEngine.h"
 
 
 namespace {
@@ -135,11 +135,8 @@ namespace Kite {
   { return _getKiteEngine()->getGCellGrid()->getGCell(Point(x,y)); };
 
 
-  size_t  Session::_revalidate ()
+  void  Session::_doRemovalEvents ()
   {
-    ltrace(90) << "Kite::Session::_revalidate()" << endl;
-    ltracein(90);
-
     set<Track*> packTracks;
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
@@ -152,6 +149,15 @@ namespace Kite {
 
     for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
       (*it)->doRemoval();
+  }
+
+
+  size_t  Session::_revalidate ()
+  {
+    ltrace(150) << "Kite::Session::_revalidate()" << endl;
+    ltracein(150);
+
+    _doRemovalEvents();
 
     for ( size_t i=0 ; i<_insertEvents.size() ; ++i ) {
       if (_insertEvents[i]._segment) {
@@ -194,10 +200,10 @@ namespace Kite {
 # if defined(CHECK_DATABASE)
     unsigned int overlaps = 0;
 # endif
-    for ( set<Track*>::iterator it=_sortEvents.begin() ; it!=_sortEvents.end() ; ++it ) {
-      (*it)->doReorder();
+    for ( Track* track : _sortEvents ) {
+      track->doReorder();
 # if defined(CHECK_DATABASE)
-      (*it)->check( overlaps, "Session::_revalidate() - track sorting." );
+      track->check( overlaps, "Session::_revalidate() - track sorting." );
 # endif
     }
 
@@ -227,7 +233,24 @@ namespace Kite {
     }
 #endif
 
-    ltraceout(90);
+  // Looking for reduced/raised segments.
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      if (revalidateds[i]->canReduce()) {
+        revalidateds[i]->reduce();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        ltrace(150) << "Session: reduce:" << revalidateds[i] << endl;
+      }
+      if (revalidateds[i]->mustRaise()) {
+        revalidateds[i]->raise();
+        lookup( revalidateds[i] )->reschedule( 0 );
+        ltrace(150) << "Session: raise:" << revalidateds[i] << endl;
+      }
+    }
+
+    _doRemovalEvents();
+
+    ltraceout(150);
     return count;
   }
 
@@ -235,11 +258,17 @@ namespace Kite {
   bool  Session::_isEmpty () const
   {
     if ( not _insertEvents.empty() or not _removeEvents.empty() or not _sortEvents.empty() ) {
-      cerr << Bug( " Session::checkEmpty() failed :\n"
-                   "        %u inserts, %u removes and %u sort events remains."
+      cerr << Bug( "Session::_isEmpty() failed :\n"
+                   "       %u inserts, %u removes and %u sort events remains."
                  , _insertEvents.size()
                  , _removeEvents.size()
                  , _sortEvents  .size() ) << endl;
+      if (not _sortEvents.empty()) {
+        cerr << "      Remaining sort events on Tracks:" << endl;
+        for ( Track* track : _sortEvents ) {
+          cerr << "      | " << track << endl;
+        }
+      }
       return false;
     }
 

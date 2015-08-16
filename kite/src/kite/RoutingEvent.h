@@ -17,10 +17,10 @@
 #ifndef  KITE_ROUTING_EVENT_H
 #define  KITE_ROUTING_EVENT_H
 
-#include  <set>
-#include  <vector>
-#include  <cstdlib>
-#include  <functional>
+#include <set>
+#include <vector>
+#include <cstdlib>
+#include <functional>
 
 #include "hurricane/Interval.h"
 namespace Hurricane {

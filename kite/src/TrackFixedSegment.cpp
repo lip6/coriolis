@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -120,12 +119,13 @@ namespace Kite {
           _sourceU = max( boundingBox.getYMin(), uside.getVMin());
           _targetU = min( boundingBox.getYMax(), uside.getVMax());
 
-          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_sourceU) );
-          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_targetU) );
-          Katabatic::GCell* up      = NULL;
-          Interval          guside  = gcell->getSide( KbVertical );
-          Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
+          Katabatic::GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_sourceU) );
           if (gcell) {
+            Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_targetU) );
+            Katabatic::GCell* up      = NULL;
+            Interval          guside  = gcell->getSide( KbVertical );
+            Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
+
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
               if (up == NULL) break;

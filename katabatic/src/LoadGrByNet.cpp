@@ -21,6 +21,8 @@
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Layer.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Net.h"
@@ -46,6 +48,9 @@
 
 
 namespace {
+
+  using  Katabatic::AutoContactTerminal;
+
 
 /*! \defgroup     LoadGlobalRouting  Global Routing Loading
  *  \brief        Translation rules to build detailed routing from global
@@ -111,6 +116,12 @@ namespace {
  *
  *  \brief        Build the wiring for a Net inside a GCell (\b internal).
  *
+ *                As this class is called to initially construct the Katabatic wiring,
+ *                it must build a \b connex wiring. That is without gaps in layer depth,
+ *                because the topology restauration mechanism (AutoContact::updateTopology())
+ *                of the AutoContact cannot work until all AutoSegments are revalidated at
+ *                least once. The topology restauration work by creating doglegs which in turn,
+ *                call the canonization, which needs all the caches to be up to date.
  */
 
 //! \function     void  GCellTopology::doRp_AutoContacts ( GCell* gcell, Component* rp, AutoContact*& source, AutoContact*& target, unsigned int flags );
@@ -171,6 +182,33 @@ namespace {
 //!
 //!               \image html  doRp_Access.png "doRp_Access()"
 
+//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( Component* rp, unsigned int flags );
+//! \param        rp      The Component onto which anchor the access contact.
+//! \param        flags   Relevant flags are:
+//!                         - HAccess, the terminal is to be accessed through an horizontal
+//!                           segment.
+//!                         - VSmall, force the terminal to be considered as small in the
+//!                           vertical direction.
+//! \return       A Katabatic::AutoContactTerminal .
+//!
+//!               The Component \c rp is a RoutingPad which belongs to a pad cell. This case
+//!               occurs when we are routing a complete chip. This method build, from the
+//!               \c rp a stack of articulated punctual segments and contacts to reach the
+//!               default H/V routing layers (usually \c METAL2 & \c METAL3). This may be
+//!               needed when the pad terminal is in \c METAL5, for instance.
+//!
+//!               The returned AutoContactTerminal is anchored on the last punctual segment
+//!               build.
+//!
+//!               The GCell into which the AutoContactTerminal is created may be under the
+//!               pads area. However, it will be right on the border of the GCell.
+//!               The global router vertexes of GCell under the pad area are marked as
+//!               blocked so will never be used for routing.
+//!
+//! \remark       The segments and contacts added to ensure the layer connexity are not
+//!               put into the Katabatic database. They are plain Hurricane objects, invisibles
+//!               from it.
+
 //! \function     void  GCellTopology::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 );
 //!
 //!               Build the wiring to connect to horizontal Component. Two cases:
@@ -187,7 +225,17 @@ namespace {
 //!
 //!               \image html  doRp_StairCaseV.png "doRp_StairCaseV()"
 
-//! \function     GCellTopology::_do_xG ();
+//! \function     void  GCellTopology::_do_xG_1Pad ();
+//!
+//!               Construct the topology, when there is only global wires and one local
+//!               terminal, but coming from a Pad. As thoses connectors will always be
+//!               on one border of the GCell they can be considered as a kind of global.
+//!
+//!               So this method mostly calls GCellTopology::doRp_AccessPad() to create
+//!               the AutoContactTerminal, then calls GCellTopology::_do_xG(), except
+//!               for straight lines which are managed directly.
+
+//! \function     void  GCellTopology::_do_xG ();
 //!
 //!               Construct the topology, when there is only global wires (no local terminals).
 //!               
@@ -594,6 +642,7 @@ namespace {
       inline GCell*        getGCell          () const;
       static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, unsigned int flags );
       static AutoContact*  doRp_Access       ( GCell*, Component*, unsigned int  flags );
+      static AutoContact*  doRp_AccessPad    ( Component*, unsigned int flags );
       static void          doRp_StairCaseH   ( GCell*, Component* rp1, Component* rp2 );
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
@@ -1132,6 +1181,135 @@ namespace {
   }
 
 
+  AutoContact* GCellTopology::doRp_AccessPad ( Component* rp, unsigned int flags )
+  {
+    ltrace(99) << "doRp_AccessPad()" << endl;
+    ltracein(99);
+    ltrace(99) << rp << endl;
+
+  // Hardcoded: H access is METAL2 (depth=1), V access is METAL3 (depth=2).
+    size_t  accessDepth = (flags & HAccess) ? 1 : 2 ;
+    size_t  padDepth    = Session::getLayerDepth(rp->getLayer());
+    if (padDepth > Session::getAllowedDepth()) {
+      cerr << Error( "GCellTopology::doRp_AccessPad(): Pad RoutingPad %s\n"
+                     "        has a layer unreachable by the router (top layer is: %s)"
+                   , getString(rp).c_str()
+                   , getString(Session::getRoutingLayer(Session::getAllowedDepth())).c_str()
+                   ) << endl;
+      padDepth = Session::getAllowedDepth();
+    }
+
+    rp->getBodyHook()->detach();
+
+    Point      position = rp->getCenter();
+    GCell*     gcell    = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+    Component* anchor   = rp;
+
+    if (padDepth != accessDepth) {
+      if (padDepth > accessDepth) {
+      // Go *down* from the pad's RoutingPad.
+        --padDepth;
+
+        Contact*   target   = NULL;
+        Contact*   source   = Contact::create ( rp
+                                              , Session::getContactLayer(padDepth)
+                                              , 0
+                                              , 0
+                                              , Session::getViaWidth(padDepth)
+                                              , Session::getViaWidth(padDepth)
+                                              );
+      
+        for ( size_t depth = padDepth ; depth >= accessDepth ; --depth ) {
+          const Layer* segmentLayer = Session::getRoutingLayer(depth);
+          const Layer* targetLayer  = (depth == accessDepth) ? segmentLayer
+                                                             : Session::getContactLayer(depth-1);
+          DbU::Unit    targetSide   = (depth == accessDepth) ? Session::getWireWidth(depth)
+                                                             : Session::getViaWidth (depth-1);
+
+          target = Contact::create( rp->getNet()
+                                  , targetLayer
+                                  , position.getX()
+                                  , position.getY()
+                                  , targetSide
+                                  , targetSide
+                                  );
+          if (Session::getDirection(depth) == KbHorizontal) {
+            anchor = Horizontal::create( source
+                                       , target
+                                       , segmentLayer
+                                       , position.getY()
+                                       , Session::getWireWidth(depth)
+                                       );
+          } else {
+            anchor = Vertical::create( source
+                                     , target
+                                     , segmentLayer
+                                     , position.getX()
+                                     , Session::getWireWidth(depth)
+                                     );
+          }
+          ltrace(99) << "Pad strap: " << anchor << endl;
+          source = target;
+        }
+      } else {
+      // Go *up* from the pad's RoutingPad.
+        Contact*   target   = NULL;
+        Contact*   source   = Contact::create ( rp
+                                              , Session::getContactLayer(padDepth)
+                                              , 0
+                                              , 0
+                                              , Session::getViaWidth(padDepth)
+                                              , Session::getViaWidth(padDepth)
+                                              );
+      
+        for ( size_t depth = padDepth ; depth <= accessDepth ; ++depth ) {
+          const Layer* segmentLayer = Session::getRoutingLayer(depth);
+          const Layer* targetLayer  = (depth == accessDepth) ? segmentLayer
+                                                             : Session::getContactLayer(depth);
+          DbU::Unit    targetSide   = (depth == accessDepth) ? Session::getWireWidth(depth)
+                                                             : Session::getViaWidth (depth);
+
+          target = Contact::create( rp->getNet()
+                                  , targetLayer
+                                  , position.getX()
+                                  , position.getY()
+                                  , targetSide
+                                  , targetSide
+                                  );
+          if (Session::getDirection(depth) == KbHorizontal) {
+            anchor = Horizontal::create( source
+                                       , target
+                                       , segmentLayer
+                                       , position.getY()
+                                       , Session::getWireWidth(depth)
+                                       );
+          } else {
+            anchor = Vertical::create( source
+                                     , target
+                                     , segmentLayer
+                                     , position.getX()
+                                     , Session::getWireWidth(depth)
+                                     );
+          }
+          ltrace(99) << "Pad strap: " << anchor << endl;
+          source = target;
+        }
+      }
+    }
+
+    AutoContact* autoSource
+      = AutoContactTerminal::create ( gcell
+                                    , anchor
+                                    , Session::getRoutingLayer(accessDepth)
+                                    , position
+                                    , Session::getWireWidth(accessDepth)
+                                    , Session::getWireWidth(accessDepth)
+                                    );
+    ltraceout(99);
+    return autoSource;
+  }
+
+
   void  GCellTopology::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 )
   {
     ltrace(99) << "doRp_StairCaseH()" << endl;
@@ -1203,6 +1381,7 @@ namespace {
   void  GCellTopology::_do_xG ()
   {
     ltrace(99) << "_do_xG()" << endl;
+    ltracein(99);
 
     if (_connexity.fields.globals == 2) {
       _southWestContact
@@ -1229,6 +1408,7 @@ namespace {
       AutoSegment::create( _southWestContact, turn, KbHorizontal );
       AutoSegment::create( turn, _northEastContact, KbVertical   );
     } 
+    ltraceout(99);
   }
 
 
@@ -1236,56 +1416,68 @@ namespace {
   {
     ltrace(99) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
     ltracein(99);
+    ltrace(99) << "_connexity.globals:" << _connexity.fields.globals << endl;
 
-    bool      eastPad     = false;
-    bool      westPad     = false;
-    bool      northPad    = false;
-    bool      southPad    = false;
-    Instance* padInstance = dynamic_cast<RoutingPad*>(_routingPads[0])->getOccurrence().getPath().getHeadInstance();
+    unsigned int  flags       = NoFlags;
+    bool          eastPad     = false;
+    bool          westPad     = false;
+    bool          northPad    = false;
+    bool          southPad    = false;
+    Instance*     padInstance = dynamic_cast<RoutingPad*>(_routingPads[0])->getOccurrence().getPath().getHeadInstance();
 
     switch ( padInstance->getTransformation().getOrientation() ) {
       case Transformation::Orientation::ID: northPad = true; break;
-      case Transformation::Orientation::YR: eastPad  = true; break;
-      case Transformation::Orientation::R3: eastPad  = true; break;
       case Transformation::Orientation::MY: southPad = true; break;
-      case Transformation::Orientation::R1: westPad  = true; break;
+      case Transformation::Orientation::YR:
+      case Transformation::Orientation::R3: eastPad  = true; flags |= HAccess; break;
+      case Transformation::Orientation::R1: westPad  = true; flags |= HAccess; break;
       default:
         cerr << Warning( "Unmanaged orientation %s for pad <%s>."
                        , getString(padInstance->getTransformation().getOrientation()).c_str()
                        , getString(padInstance).c_str() ) << endl;
         break;
     }
+    ltrace(99) << "eastPad:"  << eastPad  << ", "
+               << "westPad:"  << westPad  << ", "
+               << "northPad:" << northPad << ", "
+               << "southPad:" << southPad
+               << endl;
 
-    Point        position     = _routingPads[0]->getCenter();
-    AutoContact* source       = NULL;
-    GCell*       gcell        = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+    AutoContact* source = doRp_AccessPad( _routingPads[0], flags );
+    // Point        position     = _routingPads[0]->getCenter();
+    // AutoContact* source       = NULL;
+    // GCell*       gcell        = Session::getKatabatic()->getGCellGrid()->getGCell(position);
 
-    source = AutoContactTerminal::create ( gcell
-                                         , _routingPads[0]
-                                         , Session::getContactLayer(3)
-                                         , position
-                                         , Session::getViaWidth(3), Session::getViaWidth(3)
-                                         );
-    source->setFlags( CntFixed );
+    // source = AutoContactTerminal::create ( gcell
+    //                                      , _routingPads[0]
+    //                                      , Session::getContactLayer(3)
+    //                                      , position
+    //                                      , Session::getViaWidth(3), Session::getViaWidth(3)
+    //                                      );
+    // source->setFlags( CntFixed );
 
-    if (northPad or eastPad) {
-      _southWestContact = _northEastContact = source;
-      ltraceout(99);
-      return;
-    }
+    // if (northPad or eastPad) {
+    //   _southWestContact = _northEastContact = source;
+    //   ltraceout(99);
+    //   return;
+    // }
 
   // Check for straight lines, which are not managed by _do_xG().
     if (_connexity.fields.globals == 1) {
-      if (westPad and (_east != NULL)) {
+      if (  (westPad and (_east != NULL))
+         or (eastPad and (_west != NULL)) ) {
         AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        _northEastContact = _southWestContact
+                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
         AutoSegment::create( source, turn, KbHorizontal );
         AutoSegment::create( turn, _northEastContact, KbVertical );
         ltraceout(99);
         return;
-      } else if (southPad and (_north != NULL)) {
+      } else if (  (southPad and (_north != NULL))
+                or (northPad and (_south != NULL)) ) {
         AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        _northEastContact = _southWestContact
+                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
         AutoSegment::create( source, turn, KbVertical );
         AutoSegment::create( turn, _northEastContact, KbHorizontal );
         ltraceout(99);
@@ -1297,7 +1489,9 @@ namespace {
     --_connexity.fields.Pad;
 
     if (westPad ) _west  = source->getBodyHook();
+    if (eastPad ) _east  = source->getBodyHook();
     if (southPad) _south = source->getBodyHook();
+    if (northPad) _north = source->getBodyHook();
 
     _do_xG();
 
@@ -1305,9 +1499,17 @@ namespace {
       AutoSegment::create( source, _southWestContact, KbHorizontal );
       _west = NULL;
     }
+    if (eastPad) {
+      AutoSegment::create( source, _northEastContact, KbHorizontal );
+      _east = NULL;
+    }
     if (southPad) {
       AutoSegment::create( source, _southWestContact, KbVertical );
       _south = NULL;
+    }
+    if (northPad) {
+      AutoSegment::create( source, _northEastContact, KbVertical );
+      _north = NULL;
     }
     --_connexity.fields.globals;
 

@@ -83,6 +83,7 @@ namespace Kite {
                     Net*                _getBlockageNet     ();
                     unsigned int        _getRipupCost       ();
                     Katabatic::GCell*   _getGCellUnder      ( DbU::Unit, DbU::Unit );
+                    void                _doRemovalEvents    ();
       virtual       size_t              _revalidate         ();
                     bool                _isEmpty            () const;
                     NegociateWindow*    _getNegociateWindow ();

@@ -17,13 +17,13 @@
 #ifndef  KATABATIC_AUTOCONTACT_H
 #define  KATABATIC_AUTOCONTACT_H
 
-#include  <vector>
-#include  <map>
-#include  "hurricane/Contact.h"
-#include  "hurricane/ExtensionGo.h"
-#include  "katabatic/Constants.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/GCell.h"
+#include <vector>
+#include <map>
+#include "hurricane/Contact.h"
+#include "hurricane/ExtensionGo.h"
+#include "katabatic/Constants.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/GCell.h"
 
 
 namespace Katabatic {
@@ -124,6 +124,7 @@ namespace Katabatic {
       virtual Box              getBoundingBox             () const;
       inline  GCell*           getGCell                   () const;
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
+      virtual AutoSegment*     getPerpandicular           ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
               unsigned int     getMinDepth                () const;
               unsigned int     getMaxDepth                () const;
@@ -313,11 +314,11 @@ namespace Katabatic {
   inline void  LocatorHelper::progress ()
   {
     ltracein(80);
-    ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     ++_index;
+    ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
-      ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
       ++_index;
+      ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     }
     ltraceout(80);
   }

@@ -381,7 +381,23 @@ Vertex* MatrixVertex::getVertex ( Point point )
 // ********************************************
 {
     pair<unsigned int,unsigned int> indexes = getIJ ( point );
-    return getVertex ( indexes );
+    Vertex* vertex = getVertex ( indexes );
+    if (vertex and vertex->isBlocked()) {
+      Vertex* neighbor = NULL;
+      for ( size_t i=0; i<4 ; ++i ) {
+        neighbor = vertex->getFirstEdges(i)->getOpposite( vertex );
+        if (neighbor and not neighbor->isBlocked())
+          return neighbor;
+      }
+    }
+
+    if (not vertex) {
+      cerr << Error( "MatrixVertex::getVertex(Point): On %s,\n"
+                     "        blocked and it's neighbors are also blocked (vertex unreachable)."
+                   , getString(vertex).c_str() ) << endl;
+    }
+
+    return vertex;
 }
 
 Vertex* MatrixVertex::getVertex ( DbU::Unit x, DbU::Unit y )

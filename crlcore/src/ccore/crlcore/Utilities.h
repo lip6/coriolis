@@ -273,6 +273,7 @@ inline std::string  tty::bgcolor ( unsigned int mask )
       template<typename T> inline mstream& operator<< ( T* t );
       template<typename T> inline mstream& operator<< ( const T& t );
       template<typename T> inline mstream& operator<< ( const T* t );
+                           inline mstream& put        ( char c );
                            inline mstream& flush      ();
     // Overload for manipulators.
                            inline mstream &operator<< ( std::ostream &(*pf)(std::ostream &) );
@@ -290,6 +291,7 @@ inline std::string  tty::bgcolor ( unsigned int mask )
   inline unsigned int  mstream::getActiveMask  ()       { return  _activeMask; }
   inline void          mstream::setStreamMask  ( unsigned int mask ) { _streamMask |= mask; }
   inline void          mstream::unsetStreamMask( unsigned int mask ) { _streamMask &= ~mask; }
+  inline mstream&      mstream::put            ( char c ) { if (enabled()) static_cast<std::ostream*>(this)->put(c); return *this; }  
   inline mstream&      mstream::flush          () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
   inline mstream&      mstream::operator<<     ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
 

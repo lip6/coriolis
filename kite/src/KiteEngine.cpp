@@ -354,6 +354,11 @@ namespace Kite {
       size_t           coronaReserved = 4;
   
       for( Knik::Vertex* vertex : _knik->getRoutingGraph()->getVertexes() ) {
+        if (      chipTools.isChip()
+           and (  chipTools.hPadsEnclosed(Box(vertex->getPosition()))
+               or chipTools.vPadsEnclosed(Box(vertex->getPosition()))) )
+          vertex->setBlocked();
+
         for ( int i=0 ; i<2 ; ++i ) {
           Knik::Edge* edge    = NULL;
   
@@ -661,6 +666,7 @@ namespace Kite {
     unsigned long long     totalWireLength  = 0;
     unsigned long long     routedWireLength = 0;
     vector<TrackElement*>  unrouteds;
+    vector<TrackElement*>  reduceds;
     ostringstream          result;
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
@@ -676,20 +682,16 @@ namespace Kite {
       }
 
       if (segment->isFixed() or segment->isBlockage()) continue;
-
-      // if (segment->isSameLayerDogleg()) {
-      //   cerr << "   Same layer:" << segment << endl;
-      //   cerr << "     S: " << segment->base()->getAutoSource() << endl;
-      //   cerr << "     T: " << segment->base()->getAutoTarget() << endl;
-      // }
+      if (segment->isReduced()) reduceds.push_back( segment );
 
       totalWireLength += wl;
-      if (segment->getTrack() != NULL) {
+      if ( (segment->getTrack() != NULL) or (segment->isReduced()) ) {
         routeds++;
         routedWireLength += wl;
-      } else {
-        unrouteds.push_back( segment );
+        continue;
       }
+
+      unrouteds.push_back( segment );
     }
 
     float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
@@ -703,6 +705,13 @@ namespace Kite {
         cerr << "   " << dec << setw(4) << (i+1) << "| " << unrouteds[i] << endl;
       }
     }
+
+    // if (not reduceds.empty()) {
+    //   cerr << "  o  Reduced segments:" << endl;
+    //   for ( size_t i=0; i<reduceds.size() ; ++i ) {
+    //     cerr << "   " << dec << setw(4) << (i+1) << "| " << reduceds[i] << endl;
+    //   }
+    // }
 
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";

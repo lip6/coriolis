@@ -180,6 +180,10 @@ namespace Katabatic {
   { return new AutoSegments_CachedOnContact(this); }
 
 
+  AutoSegment* AutoContact::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
+
+
   unsigned int  AutoContact::getMinDepth () const
   {
     size_t minDepth = (size_t)-1;

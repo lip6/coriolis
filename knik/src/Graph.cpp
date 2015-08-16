@@ -369,7 +369,7 @@ Vertex* Graph::getVertex ( Point p )
 {
     Vertex* vertex;
     #ifdef __USE_MATRIXVERTEX__
-        vertex = _matrixVertex->getVertex(p);
+    vertex = _matrixVertex->getVertex(p);
         assert(vertex);
     #endif
     #ifdef __USE_SLICINGTREE__
@@ -1139,7 +1139,7 @@ void Graph::Dijkstra()
     UpdateEstimateCongestion();
 //#endif
 
-  DebugSession::open( _working_net, 600 );
+//DebugSession::open( _working_net, 600 );
   ltrace(600) << "Dijkstra for net: " << _working_net << endl;
   ltracein(600);
   ltrace(600) << "Stamp:" << _netStamp << endl;
@@ -1304,7 +1304,7 @@ void Graph::Dijkstra()
 
   ltraceout(600);
   ltraceout(600);
-  DebugSession::close();
+//DebugSession::close();
 }
 
 void Graph::Monotonic()

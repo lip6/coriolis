@@ -723,10 +723,10 @@ namespace {
 
         axisMin = _axis - _width/2;
         axisMax = _axis + _width/2;
-        if (coronaBb.contains(segment->getBoundingBox())) {
+      //if (coronaBb.contains(segment->getBoundingBox())) {
           axisMin -= delta;
           axisMax += delta;
-        }
+      //}
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {

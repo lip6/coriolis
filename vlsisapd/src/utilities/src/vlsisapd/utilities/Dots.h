@@ -64,7 +64,7 @@ namespace Utilities {
 
   inline void  Dots::_flush ( char c )
   {
-    _ostream.put( c );
+    _ostream << c;
     _ostream.flush();
   }
 

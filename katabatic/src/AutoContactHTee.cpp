@@ -91,6 +91,10 @@ namespace Katabatic {
   }
 
 
+  AutoSegment* AutoContactHTee::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
+
+
   AutoSegment* AutoContactHTee::getSegment ( unsigned int index ) const
   {
     AutoSegment* segment = NULL;
@@ -122,12 +126,25 @@ namespace Katabatic {
 
   void  AutoContactHTee::cacheDetach ( AutoSegment* segment )
   {
-    ltrace(110) << _getTypeName() << "::_cacheDetach() " << this << endl;
+    ltrace(110) << _getTypeName() << "::cacheDetach() " << this << endl;
+    ltrace(110) << "| h1:" << _horizontal1 << endl;
+    ltrace(110) << "| h2:" << _horizontal2 << endl;
+    ltrace(110) << "| v1:" << _vertical1 << endl;
 
     if      (segment == _horizontal1) _horizontal1 = NULL;
     else if (segment == _horizontal2) _horizontal2 = NULL;
     else if (segment == _vertical1)   _vertical1   = NULL;
-    else return;
+    else {
+      if (_horizontal1 or _horizontal2 or _vertical1)
+        cerr << Bug( "%s::cacheDetach() On %s,\n"
+                     "      Cannot detach %s\n"
+                     "      because it *not* attached to this contact."
+                   , _getTypeName().c_str()
+                   , getString(this).c_str()
+                   , getString(segment).c_str()
+                   ) << endl;
+      return;
+    }
 
     setFlags( CntInvalidatedCache );
   }
@@ -164,6 +181,10 @@ namespace Katabatic {
 
     if (_horizontal1 and _horizontal2 and _vertical1)
       unsetFlags( CntInvalidatedCache  );
+
+    ltrace(110) << "| h1:" << _horizontal1 << endl;
+    ltrace(110) << "| h2:" << _horizontal2 << endl;
+    ltrace(110) << "| v1:" << _vertical1 << endl;
 
     ltraceout(110);
   }

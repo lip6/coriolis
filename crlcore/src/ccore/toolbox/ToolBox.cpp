@@ -1,30 +1,29 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |           Alliance / Hurricane  Interface                       |
 // |                                                                 |
 // |  Author      :                 The Borg Collective              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ToolBox.cpp"                            |
 // +-----------------------------------------------------------------+
 
 
-#include  "hurricane/Plug.h"
-#include  "hurricane/Pin.h"
-#include  "hurricane/Library.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/Segment.h"
-#include  "hurricane/NetExternalComponents.h"
-#include  "hurricane/UpdateSession.h"
-#include  "hurricane/Warning.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Pin.h"
+#include "hurricane/Library.h"
+#include "hurricane/Net.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/Segment.h"
+#include "hurricane/NetExternalComponents.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/Warning.h"
 using namespace Hurricane;
 
 #include "crlcore/ToolBox.h"
@@ -279,6 +278,7 @@ static void AttachPlugOrPin(Net& net)
 
 }
 
+
 void createPartRing(Cell* cell, Name nom)
 {
     if (!cell)
@@ -294,6 +294,7 @@ void createPartRing(Cell* cell, Name nom)
 
     UpdateSession::close();
 }
+
 
 void createPartRing2(Net& net)
 {

@@ -43,6 +43,7 @@ namespace Katabatic {
       inline  AutoHorizontal*  getHorizontal1         () const;
       inline  AutoVertical*    getVertical1           () const;
       virtual AutoSegment*     getOpposite            ( const AutoSegment* ) const;
+      virtual AutoSegment*     getPerpandicular       ( const AutoSegment* ) const;
       virtual AutoSegment*     getSegment             ( unsigned int ) const;
       virtual void             updateGeometry         ();
       virtual void             updateTopology         ();

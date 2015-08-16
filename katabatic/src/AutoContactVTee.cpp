@@ -91,6 +91,10 @@ namespace Katabatic {
   }
 
 
+  AutoSegment* AutoContactVTee::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
+
+
   AutoSegment* AutoContactVTee::getSegment ( unsigned int index ) const
   {
     switch ( index ) {

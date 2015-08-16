@@ -514,6 +514,7 @@ namespace Kite {
       _kite->setFixedPreRouted();
     }
 
+    Session::revalidate();
     Session::get()->isEmpty();
 
 # if defined(CHECK_DATABASE)

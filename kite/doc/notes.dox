@@ -42,6 +42,14 @@
   *                 - Now that the Hurricane database is deterministic, the router
   *                   seems to be likewise.
   *
+  *                 - <b>Reduce/raise mechanism</b>. To manage <em>same layer</em> dogleg
+  *                   this mechanism has been implemented. When a candidate dogleg
+  *                   perpandicular segment length shrink below one pitch it is
+  *                   removed from any track to become <em>invisible</em>.
+  *                   Conversely, when a reduced segment length expand over one pitch
+  *                   generate a new RoutingEvent to insert it. All this is managed
+  *                   in the Session::revalidate() method.
+  *
   *
   *  \section       secPendingModifications  Pending Modifications
   *

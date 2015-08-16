@@ -31,6 +31,34 @@ namespace Kite {
 // -------------------------------------------------------------------
 // Class  :  "TrackCost".
 
+  TrackCost::TrackCost ( Track* track, Net* net )
+    : _flags          (ZeroCost)
+    , _track          (track)
+    , _begin          (Track::npos)
+    , _end            (Track::npos)
+    , _interval       ()
+    , _forGlobal      (false)
+    , _blockage       (false)
+    , _fixed          (false)
+    , _infinite       (false)
+    , _hardOverlap    (false)
+    , _overlap        (false)
+    , _leftOverlap    (false)
+    , _rightOverlap   (false)
+    , _overlapGlobal  (false)
+    , _globalEnclosed (false)
+    , _terminals      (0)
+    , _delta          (0)
+    , _deltaShared    (0)
+    , _deltaPerpand   (0)
+    , _axisWeight     (0)
+    , _distanceToFixed(2*Session::getSliceHeight())
+    , _longuestOverlap(0)
+    , _dataState      (0)
+    , _ripupCount     (0)
+  { }
+
+
   TrackCost::TrackCost (       Track*        track
                        , const Interval&     interval
                        ,       size_t        begin
@@ -93,7 +121,6 @@ namespace Kite {
       // }
     }
   }
-
 
   TrackCost::~TrackCost ()
   { }

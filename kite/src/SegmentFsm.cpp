@@ -443,23 +443,23 @@ namespace Kite {
   
 
   SegmentFsm::SegmentFsm ( RoutingEvent* event, RoutingEventQueue& queue, RoutingEventHistory& history )
-    : _event              (event)
-    , _queue              (queue)
-    , _history            (history)
-    , _state              (0)
-    , _data               (NULL)
-    , _constraint         ()
-    , _optimal            ()
-    , _costs              ()
-    , _actions            ()
-    , _fullBlocked        (true)
+    : _event      (event)
+    , _queue      (queue)
+    , _history    (history)
+    , _state      (0)
+    , _data       (NULL)
+    , _constraint ()
+    , _optimal    ()
+    , _costs      ()
+    , _actions    ()
+    , _fullBlocked(true)
   {
     TrackElement* segment = _event->getSegment();
     unsigned int  depth   = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
-    _event->setTracksFree ( 0 );
+    _event->setTracksFree( 0 );
 
     _data = segment->getDataNegociate();
-    if ( !_data ) {
+    if (not _data) {
       _state = MissingData;
       return;
     }
@@ -470,7 +470,7 @@ namespace Kite {
     _constraint = _event->getConstraints();
     _optimal    = _event->getOptimal();
 
-    const Interval& perpandicular = _event->getPerpandicularFree ();
+    const Interval& perpandicular = _event->getPerpandicularFree();
 
     ltrace(148) << "Katabatic intervals:"                  << endl;
     ltrace(148) << "* Optimal:        "  << _optimal       << endl;
@@ -478,18 +478,18 @@ namespace Kite {
     ltrace(148) << "* Perpandicular:  "  << perpandicular  << endl;
     ltrace(148) << "* AxisHint:       "  << DbU::getValueString(_event->getAxisHint()) << endl;
 
-    if ( _event->getTracksNb() ) {
-      if ( _constraint.getIntersection(perpandicular).isEmpty() ) {
+    if (_event->getTracksNb()) {
+      if (_constraint.getIntersection(perpandicular).isEmpty()) {
         ltrace(200) << "Perpandicular free is too tight." << endl;
         _state = EmptyTrackList;
       } else
-        _constraint.intersection ( perpandicular );
+        _constraint.intersection( perpandicular );
     } else {
       ltrace(200) << "No Track in perpandicular free." << endl;
       _state = EmptyTrackList;
     }
 
-    if ( _state == EmptyTrackList ) return;
+    if (_state == EmptyTrackList) return;
 
     ltrace(148) << "Negociate intervals:" << endl;
     ltrace(148) << "* Optimal:     "      << _optimal    << endl;
@@ -504,27 +504,30 @@ namespace Kite {
       and (segment->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
 
     RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(segment->getLayer());
-    for( Track* track : Tracks_Range::get(plane,_constraint)) {
+    for ( Track* track : Tracks_Range::get(plane,_constraint) ) {
       unsigned int costflags = 0;
       costflags |= (segment->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
 
-      _costs.push_back ( track->getOverlapCost(segment,costflags) );
-      _costs.back().setAxisWeight   ( _event->getAxisWeight(track->getAxis()) );
-      _costs.back().incDeltaPerpand ( _data->getWiringDelta(track->getAxis()) );
+      if (not segment->isReduced())
+        _costs.push_back( track->getOverlapCost(segment,costflags) );
+      else
+        _costs.push_back( TrackCost(track,segment->getNet()) );
+      _costs.back().setAxisWeight  ( _event->getAxisWeight(track->getAxis()) );
+      _costs.back().incDeltaPerpand( _data->getWiringDelta(track->getAxis()) );
       if (segment->isGlobal()) {
         ltrace(500) << "Deter| setForGlobal() on " << track << endl;
         _costs.back().setForGlobal();
       }
 
       if ( inLocalDepth and (_costs.back().getDataState() == DataNegociate::MaximumSlack) )
-        _costs.back().setInfinite ();
+        _costs.back().setInfinite();
 
       if ( isOneLocalTrack
          and  _costs.back().isOverlapGlobal()
          and (_costs.back().getDataState() >= DataNegociate::ConflictSolveByHistory) )
-        _costs.back().setInfinite ();
+        _costs.back().setInfinite();
 
-      _costs.back().consolidate ();
+      _costs.back().consolidate();
       if ( _fullBlocked and (not _costs.back().isBlockage() and not _costs.back().isFixed()) ) 
         _fullBlocked = false;
 
@@ -532,7 +535,7 @@ namespace Kite {
     }
     ltraceout(148);
 
-    if ( _costs.empty() ) {
+    if (_costs.empty()) {
       Track* nearest = plane->getTrackByPosition(_constraint.getCenter());
 
       if (  (nearest->getAxis() < _constraint.getVMin())
@@ -541,9 +544,9 @@ namespace Kite {
       //cerr << "[UNIMPLEMENTED] " << segment << " no Track in constraint interval "
       //     << _constraint << " " <<  "." << endl;
       } else {
-        cerr << Bug(" %s Track_Range() failed to find Tracks in %s (they exists)."
-                   ,getString(segment).c_str()
-                   ,getString(_constraint).c_str()
+        cerr << Bug( " %s Track_Range() failed to find Tracks in %s (they exists)."
+                   , getString(segment).c_str()
+                   , getString(_constraint).c_str()
                    ) << endl;
       }
       _state = EmptyTrackList;
@@ -557,11 +560,11 @@ namespace Kite {
              ? TrackCost::DiscardGlobals : 0;
     flags |= (RoutingEvent::getStage() == RoutingEvent::Repair) ? TrackCost::IgnoreSharedLength : 0;
 
-    if ( flags & TrackCost::DiscardGlobals ) {
+    if (flags & TrackCost::DiscardGlobals) {
       ltrace(200) << "TrackCost::Compare() - DiscardGlobals" << endl;
     }
 
-    sort ( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
+    sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
 
     size_t i=0;
     for ( ; (i<_costs.size()) and _costs[i].isFree() ; i++ );

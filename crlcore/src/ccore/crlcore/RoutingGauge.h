@@ -48,6 +48,8 @@ namespace CRL {
   class RoutingGauge {
 
     public:
+    // Constants.
+      static  const size_t        nlayerdepth;
     // Constructors & Destructors.
       static  RoutingGauge*       create            ( const char* name );
       virtual void                destroy           ();
