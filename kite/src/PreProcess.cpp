@@ -226,8 +226,8 @@ namespace {
     ltrace(150) << "protectCagedTerminals() " << track << endl;
     ltracein(150);
 
-    DbU::Unit     lastMovedUp = track->getMin();
-    unsigned int  moveUpCount = 0;
+    DbU::Unit      lastMovedUp   = track->getMin();
+    unsigned int   moveUpCount   = 0;
 
     Configuration* configuration = Session::getConfiguration();
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );
@@ -258,9 +258,22 @@ namespace {
             continue;
           }
 
-          Katabatic::AutoContact* support     = segment->base()->getAutoSource();
-          RoutingPad*             rp          = dynamic_cast<RoutingPad*>(support->getAnchor());
-          Track*                  metal3track = metal3plane->getTrackByPosition( rp->getSourcePosition().getX() );
+          Katabatic::AutoContact* support     = NULL;
+          Katabatic::AutoContact* turn        = NULL;
+          if (segment->base()->isSourceTerminal()) {
+            support = segment->base()->getAutoSource();
+            turn    = segment->base()->getAutoTarget();
+          } else {
+            support = segment->base()->getAutoTarget();
+            turn    = segment->base()->getAutoSource();
+          }
+
+          RoutingPad* rp          = dynamic_cast<RoutingPad*>(support->getAnchor());
+          Track*      metal3track = metal3plane->getTrackByPosition( rp->getSourcePosition().getX() );
+
+          turn->restrictConstraintBox( freeInterval.getVMin()
+                                     , freeInterval.getVMax()
+                                     , KbVertical );
 
           if (metal3track->getFreeInterval(segment->getAxis(),segment->getNet()).isEmpty()) {
             cparanoid << "[INFO]   Cannot protect caged terminal because top layer (metal3) is obstructed." << endl;
@@ -270,7 +283,7 @@ namespace {
           if (segment->getSourceU() - lastMovedUp < ppitch*4) {
             ++moveUpCount;
             if (moveUpCount % 2 == 0) {
-              moveUpCaged( segment );
+            //moveUpCaged( segment );
             }
           } else {
             moveUpCount = 0;

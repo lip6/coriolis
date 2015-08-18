@@ -91,14 +91,14 @@ namespace Etesian {
 
   void  Configuration::print ( Cell* cell ) const
   {
-    cout << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cg->getName())) << endl;
-    cout << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
-    cout << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
-    cout << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
-    cout << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
-    cout << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
-    cout << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
+    cmess1 << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
+    cmess1 << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cg->getName())) << endl;
+    cmess1 << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
+    cmess1 << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
+    cmess1 << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
+    cmess1 << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
+    cmess1 << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
+    cmess1 << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
   }
 
 

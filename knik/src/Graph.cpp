@@ -170,12 +170,12 @@ void Graph::_postCreate()
     }
 
     if (_lowerLeftVertex->getHEdgeOut())
-      cout << Dots::asUInt ("     - Global router H edges capacity"     ,_lowerLeftVertex->getHEdgeOut()->getCapacity()) << endl;
+      cmess1 << Dots::asUInt ("     - Global router H edges capacity"     ,_lowerLeftVertex->getHEdgeOut()->getCapacity()) << endl;
     else
       cerr << Warning( "Knik::Graph: Design has only one column, H edge capacity is zero." ) << endl;
 
     if (_lowerLeftVertex->getVEdgeOut())
-      cout << Dots::asUInt ("     - Global router V edges capacity"     ,_lowerLeftVertex->getVEdgeOut()->getCapacity()) << endl;
+      cmess1 << Dots::asUInt ("     - Global router V edges capacity"     ,_lowerLeftVertex->getVEdgeOut()->getCapacity()) << endl;
     else
       cerr << Warning( "Knik::Graph: Design has only one row, V edge capacity is zero." ) << endl;
     

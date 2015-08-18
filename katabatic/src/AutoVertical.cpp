@@ -668,11 +668,19 @@ namespace Katabatic {
     if (isSourceTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+      autoTarget->unsetFlags( CntWeakTerminal );
+      dlContact1->setFlags  ( CntWeakTerminal );
+      if (autoTarget->getGCell() == doglegGCell)
+        dlContact1->migrateConstraintBox( autoTarget );
     } else if (isTargetTerminal()) {
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegTargetTerminal );
+      autoSource->unsetFlags( CntWeakTerminal );
+      dlContact2->setFlags  ( CntWeakTerminal );
+      if (autoSource->getGCell() == doglegGCell)
+        dlContact2->migrateConstraintBox( autoSource );
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );

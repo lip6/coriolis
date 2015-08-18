@@ -66,6 +66,7 @@ namespace Katabatic {
                        , CntInCreationStage     = 0x00000080
                        , CntBadTopology         = 0x00000100
                        , CntIgnoreAnchor        = 0x00000200
+                       , CntWeakTerminal        = 0x00000400
                        };
 
   class AutoContact {
@@ -161,6 +162,7 @@ namespace Katabatic {
                                                           , DbU::Unit constraintMax
                                                           , unsigned int flags=KbWarnOnError );
               void             restoreNativeConstraintBox ();
+              void             migrateConstraintBox       ( AutoContact* other );
               void             destroy                    ();
     // Inspector Management.
               Record*          _getRecord                 () const;

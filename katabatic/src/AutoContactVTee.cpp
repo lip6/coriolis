@@ -262,6 +262,8 @@ namespace Katabatic {
       ltrace(110) << "maxDepth:" << maxDepth << endl;
       ltrace(110) << "delta:"    << delta << endl;
 
+      unsetFlags( CntWeakTerminal );
+
       if ( maxDepth - minDepth > 3 ) {
         showTopologyError( "Sheared VTee, layer delta exceed 3." );
         setFlags( CntBadTopology );

@@ -380,6 +380,12 @@
  //!               will not lead to an empty interval, in that case, do nothing and
  //!               return \false.
 
+ //! \function     void  AutoContact::migrateConstraintBox ( AutoContact* other );
+ //!               Transfer the user constraint box from \c other to the current
+ //!               object \c this. The constraints of \c other are restored to their
+ //!               native values. The two contacts must belong to the same GCell for
+ //!               this method to take effect.
+
 
  /*! \class        LocatorHelper
   *

@@ -500,6 +500,23 @@ namespace Katabatic {
   { return box = box.getIntersection ( getConstraintBox() ); }
 
 
+  void  AutoContact::migrateConstraintBox ( AutoContact* other )
+  {
+    if (_gcell != other->_gcell) {
+      cerr << Error( "AutoContact::migrateConstraintBox(): AutoContacts do not belongs to the same GCell:\n"
+                     "        from: %s\n"
+                     "        to:   %s"
+                   , getString(other).c_str()
+                   , getString(this ).c_str()
+                   ) << endl;
+      return;
+    }
+
+    setConstraintBox( other->getConstraintBox() );
+    other->restoreNativeConstraintBox();
+  }
+
+
   Box  AutoContact::getBoundingBox () const
   { return _gcell->getBoundingBox (); }
 

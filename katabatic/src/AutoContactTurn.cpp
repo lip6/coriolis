@@ -239,6 +239,7 @@ namespace Katabatic {
       size_t        depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
       size_t        delta        = abssub ( depthH1, depthV1 );
 
+      unsetFlags( CntWeakTerminal );
       if (delta > 3) {
         showTopologyError( "Sheared Turn, layer delta exceed 3." );
         setFlags( CntBadTopology );

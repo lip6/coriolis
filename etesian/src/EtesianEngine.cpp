@@ -404,6 +404,7 @@ namespace Etesian {
     _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
+    if (not cmess2.enabled()) dots.disable();
 
     cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
 
@@ -449,6 +450,8 @@ namespace Etesian {
     Dots               dots  ( cmess2, "       ", 80, 1000 );
     AllianceFramework* af    = AllianceFramework::get();
     DbU::Unit          pitch = getPitch();
+
+    if (not cmess2.enabled()) dots.disable();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );

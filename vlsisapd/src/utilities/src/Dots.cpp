@@ -30,7 +30,8 @@ namespace Utilities {
           CR();
         else
           _flags &= ~FirstDot;
-        _ostream << _indent;
+        if (enabled())
+          _ostream << _indent;
       }
 
       _flush( '.' );

@@ -873,9 +873,13 @@ namespace Katabatic {
     if (source->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegSourceTerminal );
+      if (not target->isTerminal())
+        target->setFlags( CntWeakTerminal );
     } else if (target->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegTargetTerminal );
+      if (not source->isTerminal())
+        source->setFlags( CntWeakTerminal );
     } else {
       unsigned int terminalFlag = 0;
       switch ( _getFlags() & SegWeakTerminal ) {
