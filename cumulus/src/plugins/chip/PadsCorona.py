@@ -120,22 +120,24 @@ class Side ( object ):
 
       trace( 550, ',+', '\t_createPowerContacts() for %s\n' % net.getName() )
 
+      components = None
       masterCell = pad.getMasterCell()
-      if net.isGlobal():
-        trace( 550, '\tLooking for global net %s\n' % net.getName() )
+      trace( 550, '\tLooking for global net %s\n' % net.getName() )
+      for plug in net.getPlugs():
+        if plug.getInstance() == pad:
+          trace( 550, '\tFound Plug on %s\n' % pad )
+          components = plug.getMasterNet().getExternalComponents()
+      if not components:
         masterNet = masterCell.getNet( net.getName() )
-        if not masterNet:
-          raise ErrorMessage( 1, [ 'PadsCorona.Side._createPowerContact():'
-                                 , 'Pad model <%s> of instance <%s> do not have global net <%s>' % (pad.getName(),masterCell.getName(),net.getName())
-                                 , 'The power/clock nets *names* in the chip must match those of the pads models.'
-                                 ] )
+        if masterNet:
+          components = masterCell.getNet(net.getName()).getExternalComponents()
+      if not components:
+        raise ErrorMessage( 1, [ 'PadsCorona.Side._createPowerContact():'
+                               , 'Pad model <%s> of instance <%s> neither have global net <%s>' % (pad.getName(),masterCell.getName(),net.getName())
+                               , 'for implicit connection nor is it explicitly connected.'
+                               , 'The power/clock nets *names* in the chip must match those of the pads models.'
+                               ] )
           
-        components = masterCell.getNet(net.getName()).getExternalComponents()
-      else:
-        for plug in net.getPlugs():
-          if plug.getInstance() == pad:
-            trace( 550, '\tFound Plug on %s\n' % pad )
-            components = plug.getMasterNet().getExternalComponents()
 
       connecteds = False
       trace( 550, '\t %s\n' % str(masterCell.getAbutmentBox()) )
