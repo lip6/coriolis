@@ -102,7 +102,7 @@ namespace Vhdl {
   { }
 
   ScalarSignal::~ScalarSignal ()
-  { }
+  { _bit->destroy(); }
 
   bool            ScalarSignal::isScalar     () const { return true; }
   bool            ScalarSignal::isVector     () const { return false; }
@@ -150,7 +150,7 @@ namespace Vhdl {
   { }
 
   VectorSignal::~VectorSignal ()
-  { for ( auto bit : _bits ) bit->getProperty()->destroy(); }
+  { for ( auto bit : _bits ) bit->destroy(); }
 
 
   bool            VectorSignal::isScalar     () const { return false; }

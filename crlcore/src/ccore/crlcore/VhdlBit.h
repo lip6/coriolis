@@ -59,6 +59,7 @@ namespace Vhdl {
              const Signal* getSignal   () const;
              std::string   getName     () const;
              size_t        getIndex    () const;
+      inline void          destroy     ();
              std::string   _getString  () const;
              Record*       _getRecord  () const;
     private:
@@ -151,6 +152,7 @@ namespace Vhdl {
 
   inline BitProperty* Bit::getProperty () const { return (BitProperty*)((ptrdiff_t)(this) - _offset); }
   inline const Net*   Bit::getNet      () const { return (const Net*)getProperty()->getOwner(); }
+  inline void         Bit::destroy     () { ((Net*)getProperty()->getOwner())->remove( getProperty() ); }
 
 
 }  // Vhdl Namespace.

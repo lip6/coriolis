@@ -111,16 +111,17 @@ namespace Vhdl {
 
     if (_flags == NoFlags) _flags = EntityMode;
 
-    forEach ( Net*, inet, cell->getNets() ) {
-      if (not inet->isExternal() and (flags & ComponentMode)) continue;
+    for ( Net* net : cell->getNets() ) {
+      if (net->isDeepNet()) continue;
+      if (not net->isExternal() and (flags & ComponentMode)) continue;
 
       string  stem;
       size_t  index  = 0;
-      if (parseNetName(*inet,stem,index)) {
-        if (inet->isGlobal()) {
+      if (parseNetName(net,stem,index)) {
+        if (net->isGlobal()) {
           cerr << Warning( "Vhdl::Entity::Entity(): Net is both vectorized and global, this is not allowed.\n"
                          "         On Net <%s> of Cell <%s>."
-                         , getString(inet->getName()).c_str()
+                         , getString(net->getName()).c_str()
                          , getString(cell->getName()).c_str()
                          ) << endl;
         }
@@ -128,12 +129,12 @@ namespace Vhdl {
         VectorSignal* signal = const_cast<VectorSignal*>( dynamic_cast<const VectorSignal*>( getSignal(stem) ) );
         if (not signal)
           signal = new VectorSignal ( stem );
-        signal->addNet( index, *inet );
+        signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        _signals.insert( new ScalarSignal(*inet) );
-        if (inet->isGlobal())
-          _globals.insert( new ScalarSignal(*inet) );
+        _signals.insert( new ScalarSignal(net) );
+        if (net->isGlobal())
+          _globals.insert( new ScalarSignal(net) );
       }
     }
 
@@ -144,6 +145,7 @@ namespace Vhdl {
   Entity::~Entity ()
   {
     for ( auto signal : _signals ) delete signal;
+    for ( auto global : _globals ) delete global;
     for ( auto ientity=_entities.begin() ; ientity!=_entities.end() ; ++ientity ) {
       if (*ientity == this) {
         _entities.erase( ientity );
@@ -210,19 +212,20 @@ namespace Vhdl {
   {
     if (isEntityMode()) return;
 
-    forEach ( Net*, inet, getCell()->getNets() ) {
-      if (inet->isExternal()) continue;
+    for ( Net* net : getCell()->getNets() ) {
+      if (net->isDeepNet()) continue;
+      if (net->isExternal()) continue;
 
       string  stem;
       size_t  index  = 0;
-      if (parseNetName(*inet,stem,index)) {
+      if (parseNetName(net,stem,index)) {
         VectorSignal* signal = const_cast<VectorSignal*>( dynamic_cast<const VectorSignal*>( getSignal(stem) ) );
         if (not signal)
           signal = new VectorSignal ( stem );
-        signal->addNet( index, *inet );
+        signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        _signals.insert( new ScalarSignal(*inet) );
+        _signals.insert( new ScalarSignal(net) );
       }
     }
   }
@@ -518,7 +521,7 @@ namespace Vhdl {
   void  EntityExtension::destroy ( Cell* cell )
   {
     Property* property = cell->getProperty( EntityProperty::getPropertyName() );
-    if (property) static_cast<EntityProperty*>(property)->destroy();
+    if (property) cell->remove( property );
 
     _owner = NULL;
     _cache = NULL;
