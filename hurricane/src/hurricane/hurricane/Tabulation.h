@@ -23,7 +23,7 @@
 #include "hurricane/Commons.h"
 
 #ifndef HURRICANE_SLOT_H
-#error "Tabulation.h must be included after Commons.h"
+#error "Tabulation.h must be included through Commons.h"
 #endif
 
 namespace Hurricane {

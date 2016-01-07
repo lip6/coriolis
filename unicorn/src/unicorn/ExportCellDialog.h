@@ -31,7 +31,7 @@ namespace Unicorn {
       Q_OBJECT;
 
     public:
-      enum Formats { AllianceDef=1, AsciiGds=2 };
+      enum Formats { AllianceDef=1, AsciiGds=2, Json=3 };
     public:
                      ExportCellDialog ( QWidget* parent=NULL );
       bool           runDialog        ( QString& name, int& format );

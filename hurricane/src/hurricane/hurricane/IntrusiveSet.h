@@ -470,6 +470,11 @@ template<class Element> class IntrusiveSet {
 };
 
 
+  template<class Element>
+  inline GenericCollection<Element*> getCollection(const IntrusiveSet<Element>& intrusiveSet)
+  // ****************************************************************************************
+  { return intrusiveSet.getElements(); }
+
 
 } // End of Hurricane namespace.
 

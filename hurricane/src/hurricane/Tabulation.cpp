@@ -17,7 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#include "hurricane/Tabulation.h"
+
+#include "hurricane/Commons.h"
 
 namespace Hurricane {
 

@@ -378,6 +378,25 @@ void Component::invalidate(bool propagateFlag)
     }
 }
 
+
+void Component::forceId(unsigned int id)
+// *************************************
+{
+  if (not inForcedIdMode())
+    throw Error( "Component::forceId(): DataBase *must* be in forced id mode to call this method." );
+
+  if (getId() == id) return;
+
+  bool materialized = isMaterialized();
+  if (materialized) unmaterialize();
+  if (_net) _net->_getComponentSet()._remove(this);
+
+  setId( id );
+
+  if (_net) _net->_getComponentSet()._insert(this);
+  if (materialized) materialize();
+}
+
 void Component::_postCreate()
 // **************************
 {
@@ -454,6 +473,20 @@ void Component::_preDestroy()
     // trace_out();
 }
 
+void Component::_toJson( JsonWriter* writer ) const
+// ************************************************
+{
+  Inherit::_toJson( writer );
+  jsonWrite( writer, "_bodyHook", _bodyHook.getNextHook()->toJson() );
+}
+
+void Component::_toJsonSignature( JsonWriter* writer ) const
+// *********************************************************
+{
+  jsonWrite( writer, "_net" , getNet()->getName() );
+  _toJson( writer );
+}
+
 string Component::_getString() const
 // *********************************
 {
@@ -523,10 +556,12 @@ Component::BodyHook::BodyHook(Component* component)
 :    Inherit()
 {
     if (!component)
-        throw Error("Can't create " + _TName("Component::BodyHook") + " : null component");
+      throw Error("Can't create " + _getTypeName() + " : null component");
 
-    if (BODY_HOOK_OFFSET == -1)
+    if (BODY_HOOK_OFFSET == -1) {
         BODY_HOOK_OFFSET = (unsigned long)this - (unsigned long)component;
+        Hook::addCompToHook(_getTypeName(),_compToHook);
+    }
 }
 
 Component* Component::BodyHook::getComponent() const
@@ -540,6 +575,11 @@ string Component::BodyHook::_getString() const
 {
     return "<" + _TName("Component::BodyHook") + " " + getString(getComponent()) + ">";
 }
+
+Hook* Component::BodyHook::_compToHook(Component* component)
+// *************************************************************
+{ return &(component->_bodyHook); }
+
 
 // ****************************************************************************************************
 // Component_Hooks implementation
@@ -941,6 +981,16 @@ double  getArea ( Component* component )
 }
 
 
+// ****************************************************************************************************
+// JsonComponent implementation
+// ****************************************************************************************************
+
+JsonComponent::JsonComponent(unsigned long flags)
+// **********************************************
+  : JsonEntity(flags)
+{
+  add( "_bodyHook", typeid(string) );
+}
 
 
 } // End of Hurricane namespace.

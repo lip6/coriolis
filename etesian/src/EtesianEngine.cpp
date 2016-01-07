@@ -453,10 +453,6 @@ namespace Etesian {
 
     if (not cmess2.enabled()) dots.disable();
 
-    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-  //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
-    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
-
   // Coloquinte circuit description data-structures.
     size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
     vector<Transformation>  idsToTransf ( instancesNb );
@@ -486,6 +482,10 @@ namespace Etesian {
       }
     }
     UpdateSession::close();
+
+    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
+  //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
 
     index_t instanceId = 0;
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
@@ -925,6 +925,14 @@ namespace Etesian {
 
     _placed = true;
 
+    UpdateSession::open();
+    for ( Net* net : getCell()->getNets() ) {
+      for ( RoutingPad* rp : net->getComponents().getSubSet<RoutingPad*>() ) {
+        rp->invalidate();
+      }
+    }
+    UpdateSession::close();
+
     getCell()->setFlags( Cell::Flags::Placed );
   }
 
@@ -999,7 +1007,7 @@ namespace Etesian {
                                                   );
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 
-      // This is temporary as it's not trans-hierarchic: we ignore the posutions
+      // This is temporary as it's not trans-hierarchic: we ignore the positions
       // of all the intermediary instances.
         instance->setTransformation( trans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );

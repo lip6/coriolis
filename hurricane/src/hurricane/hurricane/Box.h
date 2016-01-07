@@ -24,8 +24,6 @@
 
 namespace Hurricane {
 
-
-
 // ****************************************************************************************************
 // Box declaration
 // ****************************************************************************************************
@@ -35,7 +33,6 @@ class Box {
 
 // Attributes
 // **********
-
 
     private: DbU::Unit _xMin;
     private: DbU::Unit _yMin;
@@ -125,9 +122,19 @@ class Box {
     public: string _getTypeName() const { return _TName("Box"); };
     public: string _getString() const;
     public: Record* _getRecord() const;
+    public: void toJson(JsonWriter*) const;
 
 };
 
+
+class JsonBox : public JsonObject {
+// ********************************
+
+  public: JsonBox(unsigned long);
+  public: virtual string getTypeName() const;
+  public: virtual JsonBox* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 
 } // End of Hurricane namespace.

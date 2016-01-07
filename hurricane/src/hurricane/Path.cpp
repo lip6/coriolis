@@ -258,6 +258,25 @@ string Path::getCompactString() const
   return s;
 }
 
+string Path::getJsonString(unsigned long flags) const
+// **************************************************
+{
+  if (isEmpty()) return "";
+
+  string s;
+  if (flags & JsonWriter::DesignBlobMode) {
+  //s += getString(getOwnerCell()->getId()) + "::";
+    s += getString(_sharedPath->getJsonString(flags));
+  //s += "::" + getString(getMasterCell()->getId());
+  } else {
+  //s += getString(getOwnerCell()->getName()) + "::";
+    s += getString(_sharedPath->getJsonString(flags));
+  //s += "::" + getString(getMasterCell()->getName());
+  }
+
+  return s;
+}
+
 string Path::_getString() const
 // ****************************
 {
@@ -280,7 +299,6 @@ Record* Path::_getRecord() const
     }
     return record;
 }
-
 
 
 } // End of Hurricane namespace.

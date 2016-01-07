@@ -97,6 +97,19 @@ void Library::setName(const Name& name)
     }
 }
 
+string Library::getHierarchicalName () const
+// *****************************************
+{
+  string   rpath;
+  Library* library = getLibrary();
+  do {
+    rpath.insert( 0, getString(library->getName())+"." );
+
+    library = library->getLibrary();
+  } while ( library );
+
+  return rpath + getString(getName());
+}
 void Library::_postCreate()
 // ************************
 {
@@ -215,6 +228,70 @@ void Library::CellMap::_setNextElement(Cell* cell, Cell* nextCell) const
     cell->_setNextOfLibraryCellMap(nextCell);
 };
 
+void Library::_toJson(JsonWriter* w) const
+// ***************************************
+{
+  Inherit::_toJson( w );
+
+  jsonWrite( w, "_name"      , getName()      );
+  jsonWrite( w, "+cellMap"   , getCells()     );
+  jsonWrite( w, "+libraryMap", getLibraries() );
+}
+
+
+// ****************************************************************************************************
+// JsonLibrary implementation
+// ****************************************************************************************************
+
+JsonLibrary::JsonLibrary(unsigned long flags)
+// ************************************
+  : JsonDBo(flags)
+{
+  add( ".Library"   , typeid(Library*)  );
+  add( "_name"      , typeid(string)    );
+  add( "+cellMap"   , typeid(JsonArray) );
+  add( "+libraryMap", typeid(JsonArray) );
+}
+
+string JsonLibrary::getTypeName() const
+// *********************************
+{ return "Library"; }
+
+JsonLibrary* JsonLibrary::clone(unsigned long flags) const
+// *************************************************
+{ return new JsonLibrary ( flags ); }
+
+void JsonLibrary::toData(JsonStack& stack)
+// ***************************************
+{
+  check( stack, "JsonLibrary::toData" );
+
+  Name     libName ( get<string>  ( stack, "_name"    ) );
+  Library* parent  = get<Library*>( stack, ".Library" );
+  if (not parent)
+    parent  = get<Library*>( stack, "_library" );
+
+  Library* library = NULL;
+  if (parent) {
+    library = parent->getLibrary( libName );
+    if (not library)
+      library = Library::create( parent, libName );
+  } else {
+    library = DataBase::getDB()->getRootLibrary();
+    if (not library)
+      library = Library::create( DataBase::getDB(), libName );
+    else {
+      if (library->getName() != libName) {
+        throw Error( "JsonLibrary::toData(): Root library name discrepency, \"%s\" vs. \"%s\"."
+                   , getString(library->getName()).c_str()
+                   , getString(libName).c_str()
+                   );
+      }
+    }
+  }
+
+  update( stack, library );
+}
 
 } // End of Hurricane namespace.
 

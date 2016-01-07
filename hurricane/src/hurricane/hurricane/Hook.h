@@ -35,9 +35,12 @@ class Component;
 class Hook {
 // *********
 
+    typedef  Hook* (*compToHook_t)(Component*);
+
 // Attributes
 // **********
 
+    private: static map<string,compToHook_t> _compToHookMap;
     private: Hook* _nextHook;
 
 // Constructors
@@ -95,11 +98,14 @@ class Hook {
 // Others
 // ******
 
+    public: static void addCompToHook(const string&, compToHook_t );
+    public: static Hook* compToHook(const string& tname, Component* );
+    public: string toJson() const;
+    public: virtual string _getTypeName() const = 0;
     public: virtual string _getString() const = 0;
     public: virtual Record* _getRecord() const;
 
 };
-
 
 
 } // End of Hurricane namespace.

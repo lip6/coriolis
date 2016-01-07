@@ -97,6 +97,7 @@ class SharedPath {
     public: SharedPath* getHeadSharedPath() const;
     public: Instance* getTailInstance() const;
     public: string getName() const;
+    public: string getJsonString(unsigned long flags) const;
     public: Cell* getOwnerCell() const;
     public: Cell* getMasterCell() const;
     public: Instances getInstances() const;

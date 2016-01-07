@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
@@ -176,6 +178,16 @@ void Vertical::translate(const DbU::Unit& dx)
     }
 }
 
+void Vertical::_toJson(JsonWriter* writer) const
+// ********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_x"       , _x );
+  jsonWrite( writer, "_dySource", _dySource );
+  jsonWrite( writer, "_dyTarget", _dyTarget );
+}
+
 string Vertical::_getString() const
 // ********************************
 {
@@ -192,6 +204,51 @@ Record* Vertical::_getRecord() const
         record->add(DbU::getValueSlot("DyTarget", &_dyTarget));
     }
     return record;
+}
+
+
+// ****************************************************************************************************
+// JsonVertical implementation
+// ****************************************************************************************************
+
+JsonVertical::JsonVertical(unsigned long flags)
+// ********************************************
+  : JsonSegment(flags)
+{
+  add( "_x"       , typeid(uint64_t) );
+  add( "_dySource", typeid(uint64_t) );
+  add( "_dyTarget", typeid(uint64_t) );
+}
+
+string JsonVertical::getTypeName() const
+// *************************************
+{ return "Vertical"; }
+
+JsonVertical* JsonVertical::clone(unsigned long flags) const
+// *********************************************************
+{ return new JsonVertical ( flags ); }
+
+void JsonVertical::toData(JsonStack& stack)
+// ****************************************
+{
+  check( stack, "JsonVertical::toData" );
+  unsigned int jsonId = presetId( stack );
+
+  Vertical* vertical = Vertical::create
+    ( get<Net*>(stack,".Net")
+    , DataBase::getDB()->getTechnology()->getLayer( get<string>(stack,"_layer") )
+    , DbU::fromDb( get<int64_t>(stack,"_x"       ) )
+    , DbU::fromDb( get<int64_t>(stack,"_width"   ) )
+    , DbU::fromDb( get<int64_t>(stack,"_dySource") )
+    , DbU::fromDb( get<int64_t>(stack,"_dyTarget") )
+    );
+  
+  stack.addHookLink( vertical->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+  stack.addHookLink( vertical->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
+  stack.addHookLink( vertical->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+
+// Hook/Ring rebuild are done as a post-process.
+  update( stack, vertical );
 }
 
 } // End of Hurricane namespace.

@@ -18,6 +18,7 @@
 // ****************************************************************************************************
 
 #include "hurricane/DataBase.h"
+#include "hurricane/SharedPath.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Library.h"
 #include "hurricane/Error.h"
@@ -81,7 +82,7 @@ string DataBase::_getString() const
 }
 
 Record* DataBase::_getRecord() const
-// ***************************
+// *********************************
 {
     Record* record = Inherit::_getRecord();
     if (record) {
@@ -100,7 +101,55 @@ DataBase* DataBase::getDB()
     return _db;
 }
 
+Library* DataBase::getLibrary(string rpath) const
+// **********************************************
+{
+  Library* current  = getRootLibrary();
+  if (not current) return NULL;
 
+  char   separator = SharedPath::getNameSeparator();
+  Name   childName;
+  size_t dot       = rpath.find( separator );
+  if (dot != string::npos) {
+    childName = rpath.substr( 0, dot );
+    rpath     = rpath.substr( dot+1 );
+  } else
+    childName = rpath;
+
+  if (childName != current->getName())
+    return NULL;
+
+  while ( dot != string::npos ) {
+    dot = rpath.find( separator );
+    if (dot != string::npos) {
+      childName = rpath.substr( 0, dot );
+      rpath     = rpath.substr( dot+1 );
+    } else
+      childName = rpath;
+
+    current = current->getLibrary( childName );
+  }
+  return current;
+}
+
+Cell* DataBase::getCell(string rpath) const
+// ****************************************
+{
+
+  char     separator = SharedPath::getNameSeparator();
+  size_t   dot       = rpath.rfind( separator );
+  string   cellName  = rpath.substr(dot+1);
+  Library* library   = getLibrary( rpath.substr(0,dot) );
+  Cell*    cell      = NULL;
+
+  if (library)
+    cell = library->getCell( rpath.substr(dot+1) );
+
+  if (not cell and _cellLoader) return _cellLoader( rpath );
+
+  return cell;
+  
+}
 
 } // End of Hurricane namespace.
 

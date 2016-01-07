@@ -318,7 +318,7 @@ Box& Box::merge(const Box& box)
 }
 
 Box& Box::translate(const DbU::Unit& dx, const DbU::Unit& dy)
-// ************************************************
+// **********************************************************
 {
     if (!isEmpty()) {
         _xMin += dx;
@@ -353,6 +353,58 @@ Record* Box::_getRecord() const
     return record;
 }
 
+void  Box::toJson(JsonWriter* w) const
+// ***********************************
+{
+  w->startObject();
+  jsonWrite( w, "@typename", "Box" );
+  jsonWrite( w, "_xMin", getXMin() );
+  jsonWrite( w, "_yMin", getYMin() );
+  jsonWrite( w, "_xMax", getXMax() );
+  jsonWrite( w, "_yMax", getYMax() );
+  w->endObject();
+}
+
+JsonBox::JsonBox(unsigned long flags)
+// **********************************
+  : JsonObject(flags)
+{ 
+  add( "_xMin", typeid(int64_t) );
+  add( "_yMin", typeid(int64_t) );
+  add( "_xMax", typeid(int64_t) );
+  add( "_yMax", typeid(int64_t) );
+}
+
+string  JsonBox::getTypeName() const
+// *********************************
+{ return "Box"; }
+
+JsonBox* JsonBox::clone(unsigned long flags) const
+// ***********************************************
+{ return new JsonBox ( flags ); }
+
+void JsonBox::toData(JsonStack& stack)
+// ***********************************
+{
+  check( stack, "JsonBox::toData" );
+
+  DbU::Unit xMin = DbU::fromDb(get<int64_t>(stack,"_xMin"));
+  DbU::Unit yMin = DbU::fromDb(get<int64_t>(stack,"_yMin"));
+  DbU::Unit xMax = DbU::fromDb(get<int64_t>(stack,"_xMax"));
+  DbU::Unit yMax = DbU::fromDb(get<int64_t>(stack,"_yMax"));
+
+  Box box;
+  
+  if ( (xMin <= xMax) and (yMin <= yMax) )
+    box.merge( xMin, yMin, xMax, yMax ); 
+
+  ltrace(51) << "Box(" << xMin << ", "
+             <<           yMin << ", "
+             <<           xMax << ", "
+             <<           yMax << ")" << endl;
+
+  update( stack, box );
+}
 
 } // End of Hurricane namespace.
 

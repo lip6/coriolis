@@ -187,6 +187,9 @@ class Hook_SlaveHooks : public Collection<Hook*> {
 // Hook implementation
 // ****************************************************************************************************
 
+map<string,Hook::compToHook_t>  Hook::_compToHookMap;
+
+
 Hook::Hook()
 // *********
 :    _nextHook(this)
@@ -385,7 +388,30 @@ Record* Hook::_getRecord() const
     return record;
 }
 
+string Hook::toJson() const
+// ************************
+{
+  if (_nextHook == this) return "";
+  string s = _getTypeName()+"."+getString(getComponent()->getId());
+  return s;
+}
 
+void Hook::addCompToHook(const string& tname, Hook::compToHook_t converter)
+// ************************************************************************
+{
+  _compToHookMap.insert( make_pair(tname,converter) );
+}
+
+Hook* Hook::compToHook(const string& tname, Component* component)
+// **************************************************************
+{
+  map<string,compToHook_t>::const_iterator iconv = _compToHookMap.find(tname);
+  if (iconv == _compToHookMap.end()) {
+    throw Error( "Hook::fromJson(): No converter registered for type name \"%s\""
+               , tname.c_str() );
+  }
+  return (*iconv).second(component);
+}
 
 // ****************************************************************************************************
 // Hook_Hooks implementation

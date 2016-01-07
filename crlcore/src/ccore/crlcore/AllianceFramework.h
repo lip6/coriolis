@@ -85,6 +85,7 @@ namespace CRL {
              void                     addRoutingGauge          ( RoutingGauge* );
              void                     addCellGauge             ( CellGauge* );
     // Cell Management.               
+             Cell*                    cellLoader               ( const string& rpath );
              Cell*                    getCell                  ( const string& name
                                                                , unsigned int  mode
                                                                , unsigned int  depth=(unsigned int)-1 );

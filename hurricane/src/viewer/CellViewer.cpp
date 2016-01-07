@@ -32,8 +32,11 @@
 
 #include "vlsisapd/utilities/Path.h"
 #include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/Library.h"
 #include "hurricane/Cell.h"
+#include "hurricane/DesignBlob.h"
 //#include  "MapView.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/Script.h"
@@ -46,6 +49,7 @@
 #include "hurricane/viewer/ScriptWidget.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/viewer/GotoWidget.h"
+#include "hurricane/viewer/OpenBlobDialog.h"
 #include "hurricane/viewer/SelectCommand.h"
 #include "hurricane/viewer/PyCellViewer.h"
 
@@ -393,6 +397,22 @@ namespace Hurricane {
     action->setVisible( false );
     addToMenu( "file.========" );
 
+    action = addToMenu( "file.openDesignBlob"
+                      , tr("&Open Design Blob")
+                      , tr("Reload (restore) the whole Hurricane DataBase state")
+                      , QKeySequence()
+                      , QIcon(":/images/stock_open.png")
+                      );
+    connect( action, SIGNAL(triggered()), this, SLOT(openDesignBlob()) );
+    action = addToMenu( "file.saveDesignBlob"
+                      , tr("&Save Design Blob")
+                      , tr("Save (dump) the whole Hurricane DataBase state")
+                      , QKeySequence()
+                      , QIcon(":/images/stock_save.png")
+                      );
+    connect( action, SIGNAL(triggered()), this, SLOT(saveDesignBlob()) );
+    addToMenu( "file.========" );
+
     action = addToMenu( "file.importCell"
                       , tr("&Import Cell")
                       , tr("Import (convert) a new Cell")
@@ -699,6 +719,36 @@ namespace Hurricane {
       for ( ; index>0 ; index--, ++istate );
       emit stateChanged ( *istate );
     }
+  }
+
+
+  void  CellViewer::openDesignBlob ()
+  {
+    QString blobName;
+    if (OpenBlobDialog::runDialog(this,blobName)) {
+      string fileName = blobName.toStdString() + ".blob";
+      DebugSession::open( 50 );
+      Cell* topCell = jsonBlobParse( fileName );
+      DebugSession::close();
+
+      setCell ( topCell );
+    }
+  }
+
+
+  void  CellViewer::saveDesignBlob ()
+  {
+    Cell* cell = getCell();
+    if (not cell) return;
+
+    string     blobName = getString(cell->getName()) + ".blob.json";
+    DesignBlob blob     ( cell );
+
+    DebugSession::open( 50 );
+    JsonWriter writer ( blobName );
+    writer.setFlags( JsonWriter::DesignBlobMode );
+    jsonWrite( &writer, &blob );
+    DebugSession::close();
   }
 
 

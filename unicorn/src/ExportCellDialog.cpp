@@ -78,6 +78,7 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
+    _formatComboBox->addItem ( tr("JSON (experimental)")   , Json        );
     _formatComboBox->addItem ( tr("Alliance compliant DEF"), AllianceDef );
     _formatComboBox->addItem ( tr("ASCII/GDSII (AGDS)")    , AsciiGds    );
     hLayout2->addWidget ( _formatComboBox );

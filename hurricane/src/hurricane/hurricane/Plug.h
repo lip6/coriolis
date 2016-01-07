@@ -103,6 +103,7 @@ class Plug : public Component {
     protected: virtual void _preDestroy();
 
     public: virtual string getName() const;
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Plug");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
@@ -113,6 +114,25 @@ class Plug : public Component {
 
 };
 
+
+class JsonPlug : public JsonComponent {
+// ************************************
+
+  public: JsonPlug(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPlug* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
+
+class JsonPlugRef : public JsonObject {
+// ************************************
+
+  public: JsonPlugRef(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPlugRef* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 

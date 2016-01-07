@@ -738,6 +738,37 @@ Record* Net::_getRecord() const
     return record;
 }
 
+void Net::_toJson(JsonWriter* writer) const
+// ****************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_name"        , getName()      );
+  jsonWrite( writer, "_isGlobal"    , isGlobal()     );
+  jsonWrite( writer, "_isExternal"  , isExternal()   );
+  jsonWrite( writer, "_isAutomatic" , isAutomatic()  );
+  jsonWrite( writer, "_type"        , getString(getType())      );
+  jsonWrite( writer, "_direction"   , getString(getDirection()) );
+}
+
+void Net::_toJsonSignature(JsonWriter* writer) const
+// *************************************************
+{
+  jsonWrite( writer, "_name", getName() );
+}
+
+void Net::_toJsonCollections(JsonWriter* writer) const
+// ***************************************************
+{
+  jsonWrite( writer, "+aliases", getAliases() );
+  writer->setFlags( JsonWriter::UsePlugReference );
+  jsonWrite( writer, "+componentSet", getComponents() );
+  writer->resetFlags( JsonWriter::UsePlugReference );
+
+  Inherit::_toJsonCollections( writer );
+}
+
+
 // ****************************************************************************************************
 // Net::Type implementation
 // ****************************************************************************************************
@@ -745,13 +776,22 @@ Record* Net::_getRecord() const
 Net::Type::Type(const Code& code)
 // ******************************
 :    _code(code)
-{
-}
+{ }
 
 Net::Type::Type(const Type& type)
 // ******************************
 :    _code(type._code)
+{ }
+
+Net::Type::Type(string s)
+// **********************
+:    _code(UNDEFINED)
 {
+  if      (s == "UNDEFINED") _code = UNDEFINED;
+  else if (s == "LOGICAL"  ) _code = LOGICAL;
+  else if (s == "CLOCK"    ) _code = CLOCK;
+  else if (s == "POWER"    ) _code = POWER;
+  else if (s == "GROUND"   ) _code = GROUND;
 }
 
 Net::Type& Net::Type::operator=(const Type& type)
@@ -784,13 +824,23 @@ Record* Net::Type::_getRecord() const
 Net::Direction::Direction(const Code& code)
 // ****************************************
 :    _code(code)
-{
-}
+{ }
 
 Net::Direction::Direction(const Direction& direction)
 // **************************************************
 :    _code(direction._code)
+{ }
+
+Net::Direction::Direction(string s)
+// ********************************
+:    _code(UNDEFINED)
 {
+  if (s.size() > 3) {
+    if (s[0] == 'i') *this |= DirIn;
+    if (s[0] == 'o') *this |= DirOut;
+    if (s[0] == 't') *this |= ConnTristate;
+    if (s[0] == 'w') *this |= ConnWiredOr;
+  }
 }
 
 Net::Direction& Net::Direction::operator=(const Direction& direction)
@@ -1006,6 +1056,81 @@ string Net_SlavePlugs::Locator::_getString() const
     if (_net) s += " " + getString(_net);
     s += ">";
     return s;
+}
+
+
+
+// ****************************************************************************************************
+// JsonNet implementation
+// ****************************************************************************************************
+
+JsonNet::JsonNet(unsigned long flags)
+// **********************************
+  : JsonEntity      (flags)
+  , _autoMaterialize(not Go::autoMaterializationIsDisabled())
+  , _net            (NULL)
+  , _stack          (NULL)
+{
+  if (flags & JsonWriter::RegisterMode) return;
+
+  ltrace(51) << "JsonNet::JsonNet()" << endl;
+
+  add( "_name"        , typeid(string)    );
+  add( "_isGlobal"    , typeid(bool)      );
+  add( "_isExternal"  , typeid(bool)      );
+  add( "_isAutomatic" , typeid(bool)      );
+  add( "_type"        , typeid(string)    );
+  add( "_direction"   , typeid(string)    );
+  add( "+aliases"     , typeid(JsonArray) );
+  add( "+componentSet", typeid(JsonArray) );
+
+  ltrace(51) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
+  Go::disableAutoMaterialization();
+}
+
+JsonNet::~JsonNet()
+// ****************
+{
+  _stack->checkRings();
+  _stack->buildRings();
+  _stack->clearHookLinks();
+
+  _net->materialize();
+
+  if (_autoMaterialize) {
+    Go::enableAutoMaterialization();
+    ltrace(51) << "Enabling auto-materialization." << endl;
+  }
+}
+
+string  JsonNet::getTypeName() const
+// *********************************
+{ return "Net"; }
+
+JsonNet* JsonNet::clone(unsigned long flags) const
+// ***********************************************
+{ return new JsonNet ( flags ); }
+
+void JsonNet::toData(JsonStack& stack)
+// ***********************************
+{
+  ltracein(51);
+
+  _stack = &stack;
+
+  check( stack, "JsonNet::toData" );
+  presetId( stack );
+
+  _net = Net::create( get<Cell*>(stack,".Cell") , get<string>(stack,"_name") );
+  _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
+  _net->setExternal ( get<bool>(stack,"_isExternal" ) );
+  _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
+  _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
+  _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
+
+  update( stack, _net );
+
+  ltraceout(51);
 }
 
 } // End of Hurricane namespace.

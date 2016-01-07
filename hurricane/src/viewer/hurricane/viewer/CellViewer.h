@@ -136,6 +136,8 @@ namespace Hurricane {
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
               void                 openHistoryCell           ();
+              void                 openDesignBlob            ();
+              void                 saveDesignBlob            ();
               void                 printDisplay              ();
               void                 print                     ( QPrinter* );
               void                 imageDisplay              ();

@@ -1,11 +1,15 @@
 
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane 
+                       ${CONFIGURATION_INCLUDE_DIR}
                        ${Boost_INCLUDE_DIRS}
                      )
                  set ( includes hurricane/Mask.h
                                 hurricane/Flags.h
                                 hurricane/DebugSession.h
                                 hurricane/Backtrace.h
+                                hurricane/JsonWriter.h
+                                hurricane/JsonReader.h
+                                hurricane/Signature.h
                                 hurricane/Observer.h
                                 hurricane/BasicLayer.h            hurricane/BasicLayers.h
                                 hurricane/RegularLayer.h          hurricane/RegularLayers.h
@@ -90,12 +94,16 @@
                                 hurricane/Views.h
                                 hurricane/Warning.h
                                 hurricane/TextTranslator.h
+                                hurricane/DesignBlob.h
                      )
                  set ( cpps     Record.cpp
                                 Slot.cpp
                                 Commons.cpp
                                 Flags.cpp
                                 Backtrace.cpp
+                                JsonWriter.cpp
+                                JsonReader.cpp
+                                Signature.cpp
                                 Exception.cpp
                                 Bug.cpp
                                 Error.cpp
@@ -164,6 +172,7 @@
                                 Marker.cpp
                                 Timer.cpp
                                 TextTranslator.cpp
+                                DesignBlob.cpp
                  )
     
            add_library ( hurricane ${cpps} )

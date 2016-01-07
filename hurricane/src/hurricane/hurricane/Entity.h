@@ -35,26 +35,38 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::Entity".
 
-
   class Entity : public DBo
   {
     public:
       typedef DBo Inherit;
     public:
-      static  unsigned int  getIdCounter  ();
+      enum Flags { ForcedIdMode = (1<<0)
+                 , NextIdSet    = (1<<1)
+                 };
     public:
-      inline  unsigned int  getId         () const;
-      virtual Cell*         getCell       () const = 0;
-      virtual Box           getBoundingBox() const = 0;
-      virtual string        _getString    () const;
-      virtual Record*       _getRecord    () const;
-              Quark*        _getQuark     ( SharedPath* sharedPath = NULL ) const;
-    protected:             
-                            Entity        ();
-      virtual void          _preDestroy   ();
+      static  unsigned int  getIdCounter        ();
+              unsigned int  getNextId           ();
+      static  void          setNextId           ( unsigned int );
+      static  bool          inForcedIdMode      ();
+      static  void          enableForcedIdMode  ();
+      static  void          disableForcedIdMode ();
+    public:                                
+      inline  unsigned int  getId               () const;
+      virtual Cell*         getCell             () const = 0;
+      virtual Box           getBoundingBox      () const = 0;
+              void          setId               ( unsigned int );
+      virtual void          _toJson             ( JsonWriter* ) const;
+      virtual string        _getString          () const;
+      virtual Record*       _getRecord          () const;
+              Quark*        _getQuark           ( SharedPath* sharedPath = NULL ) const;
+    protected:                                  
+                            Entity              ();
+      virtual void          _preDestroy         ();
     private:
-      static  unsigned int  _idCounter;
-              unsigned int  _id;
+      static  unsigned long  _flags;
+      static  unsigned int   _nextId;
+      static  unsigned int   _idCounter;
+              unsigned int   _id;
 
     public:
       struct CompareById : public std::binary_function<const Entity*,const Entity*,bool> {
@@ -67,6 +79,24 @@ namespace Hurricane {
   inline  bool          Entity::CompareById::operator() ( const Entity* lhs, const Entity* rhs ) const
                                                         { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonEntity".
+
+  class JsonEntity : public JsonDBo {
+    public:
+                                         JsonEntity ( unsigned long flags );
+      template<typename T> inline  void  update     ( JsonStack&, T );
+};
+
+
+  template<typename T> inline void  JsonEntity::update ( JsonStack& stack, T hobject )
+  {
+    unsigned int jsonId = get<int64_t>(stack,"_id");
+
+    JsonObject::update<T>( stack, hobject );
+    stack.addEntity( jsonId, hobject );
+  }
 
 } // Hurricane namespace.
 

@@ -27,6 +27,7 @@ namespace Hurricane {
 
 template<class Type> class GenericCollection;
 template<class Type, class SubType> class SubTypeCollection;
+template<class Type, class SubType> class NotSubTypeCollection;
 template<class Type> class SubSetCollection;
 
 
@@ -111,6 +112,12 @@ template<class Type> class Collection {
     // ******************************************************************************
     {
         return getSubSet<SubType>().getSubSet(filter);
+    }
+
+    public: template<class SubType> GenericCollection<SubType> getNotSubSet() const
+    // ****************************************************************************
+    {
+        return NotSubTypeCollection<Type, SubType>(this);
     }
 
 // Predicates
@@ -627,6 +634,171 @@ template<class Type, class SubType> class SubTypeCollection : public Collection<
 };
 
 
+// ****************************************************************************************************
+// NotSubTypeCollection declaration
+// ****************************************************************************************************
+
+template<class Type, class SubType> class NotSubTypeCollection : public Collection<SubType> {
+// ******************************************************************************************
+
+// Types
+// *****
+
+    public: typedef Collection<SubType> Inherit;
+
+    public: class Locator : public Hurricane::Locator<SubType> {
+    // *******************************************************
+
+    // Types
+    // *****
+
+        public: typedef Hurricane::Locator<SubType> Inherit;
+
+    // Attributes
+    // **********
+
+        private: GenericLocator<Type> _locator;
+
+    // Constructors
+    // ************
+
+        public: Locator(const GenericCollection<Type>& collection)
+        // ********************************************************
+        :    Inherit(),
+            _locator(collection.getLocator())
+        {
+            while (_locator.isValid() && dynamic_cast<SubType>(_locator.getElement()))
+                _locator.progress();
+        }
+
+        public: Locator(const GenericLocator<Type>& genericLocator)
+        // ********************************************************
+        :    Inherit(),
+            _locator(genericLocator.getClone())
+        {
+            while (_locator.isValid() && !dynamic_cast<SubType>(_locator.getElement()))
+                _locator.progress();
+        }
+
+    // Accessors
+    // *********
+
+        public: virtual SubType getElement() const
+        // ***************************************
+        {
+            return (_locator.isValid()) ? (SubType)_locator.getElement() : SubType();
+        }
+
+        public: virtual Hurricane::Locator<SubType>* getClone() const
+        // **********************************************************
+        {
+            return new Locator(_locator);
+        }
+
+        public: virtual Hurricane::Locator<SubType>* getLocator() // 21-10-03
+            // *************************************************
+        {
+          return dynamic_cast<Hurricane::Locator<SubType>*> (
+                 _locator.getLocator()->getLocator() );
+        }
+
+
+    // Predicates
+    // **********
+
+        public: virtual bool isValid() const
+        // *********************************
+        {
+            return _locator.isValid();
+        }
+
+    // Updators
+    // ********
+
+        public: virtual void progress()
+        // ****************************
+        {
+            if (_locator.isValid()) {
+                do {
+                    _locator.progress();
+                } while (_locator.isValid() && !dynamic_cast<SubType>(_locator.getElement()));
+            }
+        }
+
+    };
+
+// Attributes
+// **********
+
+    private: GenericCollection<Type> _collection;
+
+// Constructors
+// ************
+
+    public: NotSubTypeCollection()
+    // ********************
+    :    Inherit(),
+        _collection()
+    {
+    }
+
+    public: NotSubTypeCollection(const Collection<Type>* collection)
+    // **********************************************************
+    :    Inherit(),
+        _collection(collection->getClone())
+    {
+    }
+
+    public: NotSubTypeCollection(const GenericCollection<Type>& collection)
+    // *****************************************************************
+    :    Inherit(),
+        _collection(collection)
+    {
+    }
+
+    public: NotSubTypeCollection(const NotSubTypeCollection& subTypeCollection)
+    // ******************************************************************
+    :    Inherit(),
+        _collection(subTypeCollection._collection)
+    {
+    }
+
+// Operators
+// *********
+
+    public: NotSubTypeCollection& operator=(const NotSubTypeCollection& subTypeCollection)
+    // *****************************************************************************
+    {
+        _collection = subTypeCollection._collection;
+        return *this;
+    }
+
+// Accessors
+// *********
+
+    public: virtual Collection<SubType>* getClone() const
+    // **************************************************
+    {
+        return new NotSubTypeCollection(_collection);
+    }
+
+    public: virtual Hurricane::Locator<SubType>* getLocator() const
+    // ************************************************************
+    {
+        return new Locator(_collection);
+    }
+
+// Accessors
+// *********
+
+    public: virtual string _getString() const
+    // **************************************
+    {
+        return "<" + _TName("NotSubTypeCollection") + " " + getString(_collection) + ">";
+    }
+
+};
+
 
 // ****************************************************************************************************
 // SubSetCollection implementation
@@ -909,7 +1081,6 @@ inline ForEachIterator<Element>& ForEachIterator<Element>::operator++ (int)
   for ( ForEachIterator<type> iterator(collection); iterator.isValid() ; iterator++ )
 
 
-
 } // End of Hurricane namespace.
 
 
@@ -930,6 +1101,24 @@ template<typename Type> inline Hurricane::Record* getRecord ( Hurricane::Collect
 
 template<typename Type> inline Hurricane::Record* getRecord ( const Hurricane::Collection<Type>* collection )
 { return collection->_getRecord(); }
+
+
+template<typename Type>
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::GenericCollection<Type> collection )
+{
+  if (Hurricane::inltrace(50))
+    std::cerr << Hurricane::tab
+              << "jsonWrite< GenericCollection<" << Hurricane::demangle(typeid(Type).name())
+              << "> >(w,key,coll)" << " key:\"" << key << "\"" << std::endl;
+  Hurricane::ltracein(50);
+
+  w->key( key );
+  w->startArray();
+  for ( Type element : collection ) jsonWrite( w, element );
+  w->endArray();
+
+  Hurricane::ltraceout(50);
+}
 
 
 #include "hurricane/MultisetCollection.h"

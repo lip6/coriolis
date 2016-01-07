@@ -60,6 +60,7 @@ namespace Hurricane {
               void          attach        ( NetAliasHook* );
               void          detach        ();
               void          detachAll     ();
+      inline  void          toJson        ( JsonWriter* ) const;
       virtual std::string   _getString    () const = 0;
       virtual Record*       _getRecord    () const;
     public:                 
@@ -187,5 +188,7 @@ namespace Hurricane {
 INSPECTOR_P_SUPPORT(Hurricane::NetAliasHook);
 INSPECTOR_P_SUPPORT(Hurricane::NetMainName);
 INSPECTOR_P_SUPPORT(Hurricane::NetAliasName);
+
+inline void  jsonWrite ( JsonWriter* w, const Hurricane::NetAliasHook* alias ) { jsonWrite(w,alias->getName()); }
     
 #endif  // HURRICANE_NET_ALIAS_H

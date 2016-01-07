@@ -98,6 +98,7 @@ class Path {
 // ******
 
     public: string getCompactString() const;
+    public: string getJsonString(unsigned long flags) const;
     public: string _getTypeName() const { return _TName("Occurrence"); };
     public: string _getString() const;
     public: Record* _getRecord() const;

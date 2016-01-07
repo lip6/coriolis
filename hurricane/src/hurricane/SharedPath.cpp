@@ -186,6 +186,23 @@ string SharedPath::getName() const
     return name;
 }
 
+string SharedPath::getJsonString(unsigned long flags) const
+// ********************************************************
+{
+    string      name       = "";
+    SharedPath* sharedPath = (SharedPath*)this;
+    while (sharedPath) {
+      if (flags & JsonWriter::DesignBlobMode) 
+        name += getString(sharedPath->getHeadInstance()->getId());
+      else
+        name += getString(sharedPath->getHeadInstance()->getName());
+
+      sharedPath =           sharedPath->getTailSharedPath();
+      if (sharedPath) name += getNameSeparator();
+    }
+    return name;
+}
+
 Cell* SharedPath::getOwnerCell() const
 // ***********************************
 {

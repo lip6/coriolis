@@ -38,6 +38,7 @@
 #include "hurricane/Segment.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Warning.h"
@@ -50,6 +51,9 @@ namespace Hurricane {
   using  std::ostringstream;
 
 
+// -------------------------------------------------------------------
+// Class  :  "RoutingPad".
+
   RoutingPad::RoutingPad ( Net* net, Occurrence occurrence )
     :  Inherit   (net)
     , _occurrence(occurrence)
@@ -61,18 +65,27 @@ namespace Hurricane {
     if ( not net ) throw Error ("Can't create RoutingPad : NULL net");
     if ( not occurrence.isValid() ) throw Error ("Can't create RoutingPag : Invalid occurrence");
 
-    Plug*    plug    = NULL;
-    Pin*     pin     = NULL;
-    Contact* contact = NULL;
+    Plug*       plug       = NULL;
+    Pin*        pin        = NULL;
+    Contact*    contact    = NULL;
+    Horizontal* horizontal = NULL;
+    Vertical*   vertical   = NULL;
+    Pad*        pad        = NULL;
 
     if ( (plug = dynamic_cast<Plug*>(occurrence.getEntity()) ) == NULL) {
       if ( (pin = dynamic_cast<Pin*>(occurrence.getEntity()) ) == NULL) {
-        contact = dynamic_cast<Contact*>(occurrence.getEntity());
+        if ( (contact = dynamic_cast<Contact*>(occurrence.getEntity()) ) == NULL) {
+          if ( (horizontal = dynamic_cast<Horizontal*>(occurrence.getEntity()) ) == NULL) {
+            if ( (vertical = dynamic_cast<Vertical*>(occurrence.getEntity()) ) == NULL) {
+              pad = dynamic_cast<Pad*>(occurrence.getEntity());
+            }
+          }
+        }
       }
     }
 
-    if ( (not plug) and (not pin) and (not contact) )
-      throw Error ("Can't create RoutingPad : Plug, Pin, or Contact Occurrence *required*");
+    if ( (not plug) and (not pin) and (not contact) and (not horizontal) and (not vertical) and (not pad) )
+      throw Error ("Can't create RoutingPad : Plug, Pin, Contact, Horizontal, Vertical or Pad Occurrence *required*");
 
     RoutingPad* routingPad = new RoutingPad( net, occurrence );
     routingPad->_postCreate();
@@ -156,8 +169,9 @@ namespace Hurricane {
   Box RoutingPad::getBoundingBox ( const BasicLayer* basicLayer ) const
   {
     Component* component = _getEntityAsComponent();
-    if ( component )
+    if ( component ) {
       return _occurrence.getPath().getTransformation().getBox ( component->getBoundingBox(basicLayer) );
+    }
 
     return Box(getPosition());
   }
@@ -175,8 +189,9 @@ namespace Hurricane {
   Point RoutingPad::getPosition () const
   {
     Component* component = _getEntityAsComponent();
-    if (component)
+    if (component) {
       return _occurrence.getPath().getTransformation().getPoint( component->getCenter() );
+    }
 
     return Point();
   }
@@ -232,6 +247,12 @@ namespace Hurricane {
   // trace_out();
   }
 
+
+  void  RoutingPad::_toJson ( JsonWriter* writer ) const
+  {
+    Inherit::_toJson( writer );
+    jsonWrite( writer, "_occurrence", &_occurrence );
+  }
 
   string RoutingPad::_getString () const
   {
@@ -376,6 +397,39 @@ namespace Hurricane {
     if (flags & ShowWarning) isPlacedOccurrence( flags );
 
     return bestComponent;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingPad".
+
+  JsonRoutingPad::JsonRoutingPad ( unsigned long flags )
+    : JsonComponent(flags)
+  {
+    add( "_occurrence", typeid(Occurrence) );
+  }
+
+  string  JsonRoutingPad::getTypeName () const
+  { return "RoutingPad"; }
+
+
+  JsonRoutingPad* JsonRoutingPad::clone ( unsigned long flags ) const
+  { return new JsonRoutingPad ( flags ); }
+
+
+  void JsonRoutingPad::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonRoutingPad::toData" );
+    unsigned int jsonId = presetId( stack );
+
+    RoutingPad* rp = RoutingPad::create
+      ( get<Net*>      (stack,".Net")
+      , get<Occurrence>(stack,"_occurrence")
+      );
+    
+    stack.addHookLink( rp->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+
+    update( stack, rp );
   }
 
 

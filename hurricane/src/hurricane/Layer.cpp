@@ -219,7 +219,7 @@ namespace Hurricane {
   }
 
 
-  string Layer::_getString() const
+  string Layer::_getString () const
   {
     string s = DBo::_getString();
     s.insert(s.length() - 1, " " + getString(_name));
@@ -227,7 +227,7 @@ namespace Hurricane {
   }
 
 
-  Record* Layer::_getRecord() const
+  Record* Layer::_getRecord () const
   {
     Record* record = DBo::_getRecord();
     if (record) {
@@ -241,5 +241,8 @@ namespace Hurricane {
     return record;
   }
 
+
+  const Name& Layer::_sgetName ( const Layer* layer )
+  { return layer->getName(); }
 
 } // End of Hurricane namespace.

@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2013, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -18,10 +17,6 @@
 // You should have received a copy of the Lesser  GNU  General  Public
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
-//
-// ===================================================================
-//
-// $Id$
 //
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
@@ -46,6 +41,9 @@ namespace Hurricane {
 
   class Segment;
 
+
+// -------------------------------------------------------------------
+// Class  :  "RoutingPad".
 
   class RoutingPad : public Component {
     public:
@@ -85,6 +83,7 @@ namespace Hurricane {
     // Miscellaeous.
               Component*   _getEntityAsComponent () const;
               Segment*     _getEntityAsSegment   () const;
+      virtual void         _toJson               ( JsonWriter* ) const;
       virtual std::string  _getTypeName          () const {return _TName("RoutingPad");};
       virtual std::string  _getString            () const;
       virtual Record*      _getRecord            () const;
@@ -98,6 +97,17 @@ namespace Hurricane {
       Occurrence  _occurrence;
   };
 
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingPad".
+
+  class JsonRoutingPad : public JsonComponent {
+    public:
+                              JsonRoutingPad ( unsigned long flags );
+      virtual std::string     getTypeName    () const;
+      virtual JsonRoutingPad* clone          ( unsigned long flags ) const;
+      virtual void            toData         ( JsonStack& ); 
+  };
 
 } // End of Hurricane namespace.
 

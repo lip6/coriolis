@@ -41,7 +41,6 @@
 namespace Hurricane {
 
 
-
 // ****************************************************************************************************
 // Net declaration
 // ****************************************************************************************************
@@ -65,6 +64,7 @@ class Net : public Entity {
 
         public: Type(const Code& code = UNDEFINED);
         public: Type(const Type& type);
+        public: Type(string);
 
         public: Type& operator=(const Type& type);
 
@@ -101,6 +101,7 @@ class Net : public Entity {
 
         public: Direction(const Code& code = UNDEFINED);
         public: Direction(const Direction& direction);
+        public: Direction(string);
 
         public: Direction& operator =(const Direction& direction);
         public: Direction& operator|=(const Direction& direction);
@@ -241,9 +242,11 @@ class Net : public Entity {
 // ******
 
     protected: virtual void _postCreate();
-
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: virtual void _toJsonSignature(JsonWriter*) const;
+    public: virtual void _toJsonCollections(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Net");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
@@ -256,6 +259,22 @@ class Net : public Entity {
 
 };
 
+class JsonNet : public JsonEntity {
+// ********************************
+
+  public: JsonNet(unsigned long flags);
+  public: virtual ~JsonNet();
+  public: virtual string getTypeName() const;
+  public: virtual JsonNet* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+
+// Attributes
+// **********
+
+  protected: bool _autoMaterialize;
+  protected: Net* _net;
+  protected: JsonStack* _stack;
+};
 
 } // End of Hurricane namespace.
 

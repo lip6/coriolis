@@ -261,6 +261,23 @@ string Occurrence::getCompactString() const
   return s;
 }
 
+void  Occurrence::toJson(JsonWriter* w) const
+// ******************************************
+{
+  w->startObject();
+  jsonWrite( w, "@typename", "Occurrence"         );
+  jsonWrite( w, "_path"    , getPath().getJsonString(w->getFlags()) );
+
+  w->key( "_entity" );
+  if (not w->issetFlags(JsonWriter::DesignBlobMode)) {
+    getEntity()->toJsonSignature( w );
+  } else {
+    jsonWrite( w, getEntity()->getId() );
+  }
+
+  w->endObject();
+}
+
 Record* Occurrence::_getRecord() const
 // ****************************
 {
@@ -307,6 +324,77 @@ string Occurrence::getName() const
     return description;
 }
 
+JsonOccurrence::JsonOccurrence(unsigned long flags)
+// ************************************************
+  : JsonObject(flags)
+{
+  add( ".Cell"  , typeid(Cell*)  );
+  add( "_path"  , typeid(string) );
+
+  if (issetFlags(JsonWriter::DesignBlobMode)) {
+    add( "_entity", typeid(uint64_t) );
+  } else {
+    add( "_entity", typeid(Entity*) );
+  }
+}
+
+JsonOccurrence* JsonOccurrence::clone(unsigned long flags) const
+// *************************************************************
+{ return new JsonOccurrence ( flags ); }
+
+string JsonOccurrence::getTypeName() const
+// ***************************************
+{ return "Occurrence"; }
+
+void JsonOccurrence::toData(JsonStack& stack)
+// ******************************************
+{
+  check( stack, "JsonOccurrence::toData" );
+
+  Path    path;
+  Entity* entity = NULL;
+  if (issetFlags(JsonWriter::DesignBlobMode)) {
+    entity = stack.getEntity<Entity*>( get<int64_t>(stack,"_entity") );
+
+  //Cell*         cell      = get<Cell*>( stack, ".Cell" );
+    Instance*     instance  = NULL;
+    char          separator = SharedPath::getNameSeparator();
+    string        pathIds   = get<string>( stack, "_path" );
+    unsigned long id;
+    size_t        dot       = pathIds.find( separator );
+
+    if (dot != string::npos) {
+      id      = stoul( pathIds.substr( 0, dot ) );
+      pathIds =        pathIds.substr( dot+1 );
+    } else
+      id = stol( pathIds );
+
+    instance = stack.getEntity<Instance*>(id);
+    if (not instance)
+      throw Error( "JsonOccurrence::toData(): No Instance id:lu% (or not an Instance) in stack LUT.", id );
+    path = Path( instance );
+
+    while ( dot != string::npos ) {
+      dot = pathIds.find( separator );
+      if (dot != string::npos) {
+        id      = stoul( pathIds.substr( 0, dot ) );
+        pathIds =        pathIds.substr( dot+1 );
+      } else
+        id = stol( pathIds );
+
+      instance = stack.getEntity<Instance*>(id);
+      if (not instance)
+        throw Error( "JsonOccurrence::toData(): No Instance id:lu% (or not an Instance) in stack LUT.", id );
+      path = Path( path, instance );
+    }
+  } else {
+    entity = get<Entity*>(stack,"_entity");
+    path   = Path( get<Cell*>(stack,".Cell"), get<string>(stack,"_path") );
+  }
+
+  Occurrence occurrence ( entity, path );
+  update( stack, occurrence );
+}
 
 } // End of Hurricane namespace.
 

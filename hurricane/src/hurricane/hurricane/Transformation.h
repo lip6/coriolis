@@ -25,7 +25,6 @@
 namespace Hurricane {
 
 
-
 // ****************************************************************************************************
 // Transformation declaration
 // ****************************************************************************************************
@@ -45,6 +44,7 @@ class Transformation {
 
         public: Orientation(const Code& code = ID);
         public: Orientation(const Orientation& orientation);
+        public: Orientation(const string& );
 
         public: Orientation& operator=(const Orientation& orientation);
 
@@ -135,9 +135,18 @@ class Transformation {
     public: string _getTypeName() const { return _TName("Transformation"); };
     public: string _getString() const;
     public: Record* _getRecord() const;
+    public:  void toJson(JsonWriter*) const;
 
 };
 
+class JsonTransformation : public JsonObject {
+// *******************************************
+
+  public: JsonTransformation(unsigned long);
+  public: virtual string getTypeName() const;
+  public: virtual JsonTransformation* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 
 } // End of Hurricane namespace.
@@ -202,7 +211,6 @@ inline Hurricane::Record* getRecord<Hurricane::Transformation::Orientation::Code
 INSPECTOR_PV_SUPPORT(Hurricane::Transformation);
 INSPECTOR_PV_SUPPORT(Hurricane::Transformation::Orientation);
 IOSTREAM_POINTER_SUPPORT(Hurricane::Transformation::Orientation::Code);
-
 
 #endif // HURRICANE_TRANSFORMATION
 

@@ -17,6 +17,7 @@
 #include <Python.h>
 #include <QAction>
 #include <QMenu>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/CellViewer.h"
@@ -45,8 +46,10 @@
 namespace Unicorn {
 
   using Hurricane::dbo_ptr;
+  using Hurricane::DebugSession;
   using Hurricane::Warning;
   using Hurricane::PyCellViewer_Link;
+  using Hurricane::jsonCellParse;
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
@@ -89,6 +92,7 @@ namespace Unicorn {
     _runUnicornInit();
 
     _importCell.setDialog( _importDialog );
+    _importCell.addImporter( "JSON (experimental)"         , std::bind( &jsonCellParse      , placeholders::_1 ) );
     _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
@@ -282,8 +286,16 @@ namespace Unicorn {
           DefExport::drive ( cell, DefExport::WithLEF );
           break;
         case ExportCellDialog::AsciiGds:
-          GdsDriver gdsDriver ( cell );
-          gdsDriver.save( getString(cell->getName())+".agds" );
+          { GdsDriver gdsDriver ( cell );
+            gdsDriver.save( getString(cell->getName())+".agds" );
+          }
+          break;
+        case ExportCellDialog::Json:
+          { DebugSession::open( 50 );
+            JsonWriter writer ( cellName.toStdString()+".json" );
+            jsonWrite( &writer, cell );
+            DebugSession::close();
+          }
           break;
       }
     }

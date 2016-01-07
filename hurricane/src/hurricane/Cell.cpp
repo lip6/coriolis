@@ -28,6 +28,10 @@
 #include "hurricane/Net.h"
 #include "hurricane/Pin.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Contact.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Rubber.h"
@@ -252,6 +256,91 @@ bool Cell::isUniquifyMaster() const
 {
   UniquifyRelation* relation = UniquifyRelation::get( this );
   return (not relation) or (relation->getMasterOwner() == this);
+}
+
+string Cell::getHierarchicalName () const
+// **************************************
+{
+  return getLibrary()->getHierarchicalName() + "." + getString(getName());
+}
+
+Entity* Cell::getEntity(const Signature& signature) const
+// ******************************************************
+{
+  if (  (signature.getType() == Signature::TypeContact   )
+     or (signature.getType() == Signature::TypeHorizontal)
+     or (signature.getType() == Signature::TypeVertical  )
+     or (signature.getType() == Signature::TypePad       ) ) {
+    Net* net = getNet( signature.getName() );
+    if (not net) {
+      cerr << Error( "Cell::getEntity(): Cell %s do have Net %s, signature incoherency."
+                   , getString(getName()).c_str()
+                   , signature.getName().c_str() ) << endl;
+      return NULL;
+    }
+
+    ltrace(51) << "Cell::getEntity(): <" << getName() << ">, Net:<" << net->getName() << ">" << endl;
+
+    if (signature.getType() == Signature::TypeContact) {
+      ltrace(51) << "Looking in Contacts..." << endl;
+      for ( Contact* component : getComponents().getSubSet<Contact*>() ) {
+        ltrace(51) << "| " << component << endl;
+        if (   (component->getLayer () == signature.getLayer())
+           and (component->getDx    () == signature.getDim(Signature::ContactDx))
+           and (component->getDy    () == signature.getDim(Signature::ContactDy))
+           and (component->getWidth () == signature.getDim(Signature::ContactWidth))
+           and (component->getHeight() == signature.getDim(Signature::ContactHeight)) )
+          return component;
+      }
+    }
+
+    if (signature.getType() == Signature::TypeVertical) {
+      ltrace(51) << "Looking in Verticals..." << endl;
+      for ( Vertical* component : getComponents().getSubSet<Vertical*>() ) {
+        ltrace(51) << "| " << component << endl;
+        if (   (component->getLayer   () == signature.getLayer())
+           and (component->getWidth   () == signature.getDim(Signature::VerticalWidth))
+           and (component->getX       () == signature.getDim(Signature::VerticalX))
+           and (component->getDySource() == signature.getDim(Signature::VerticalDySource))
+           and (component->getDyTarget() == signature.getDim(Signature::VerticalDyTarget)) )
+          return component;
+      }
+    }
+
+    if (signature.getType() == Signature::TypeHorizontal) {
+      ltrace(51) << "Looking in Horizontals..." << endl;
+      for ( Horizontal* component : getComponents().getSubSet<Horizontal*>() ) {
+        ltrace(51) << "| " << component << endl;
+        if (   (component->getLayer   () == signature.getLayer())
+           and (component->getWidth   () == signature.getDim(Signature::HorizontalWidth))
+           and (component->getY       () == signature.getDim(Signature::HorizontalY))
+           and (component->getDxSource() == signature.getDim(Signature::HorizontalDxSource))
+           and (component->getDxTarget() == signature.getDim(Signature::HorizontalDxTarget)) )
+          return component;
+      }
+    }
+
+    if (signature.getType() == Signature::TypePad) {
+      ltrace(51) << "Looking in Pads..." << endl;
+      for ( Pad* component : getComponents().getSubSet<Pad*>() ) {
+        ltrace(51) << "| " << component << endl;
+        if (   (component->getLayer()                 == signature.getLayer())
+           and (component->getBoundingBox().getXMin() == signature.getDim(Signature::PadXMin))
+           and (component->getBoundingBox().getYMin() == signature.getDim(Signature::PadYMin))
+           and (component->getBoundingBox().getXMax() == signature.getDim(Signature::PadXMax))
+           and (component->getBoundingBox().getYMax() == signature.getDim(Signature::PadYMax)) )
+          return component;
+      }
+    }
+
+    cerr << Error( "Cell::getEntity(): Cannot find a Component of type %d matching Signature."
+                 , signature.getType() ) << endl;
+  } else {
+    cerr << Error( "Cell::getEntity(): Signature type %d is unsupported yet."
+                 , signature.getType() ) << endl;
+  }
+
+  return NULL;
 }
 
 Net* Cell::getNet ( const Name& name ) const
@@ -793,6 +882,23 @@ void Cell::notify(unsigned flags)
   _observers.notify(flags);
 }
 
+void Cell::_toJson(JsonWriter* writer) const
+// *****************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_library"    , getLibrary()->getHierarchicalName() );
+  jsonWrite( writer, "_name"       , getName() );
+  jsonWrite( writer, "_abutmentBox", &_abutmentBox );
+}
+
+void Cell::_toJsonCollections(JsonWriter* writer) const
+// *****************************************
+{
+  jsonWrite( writer, "+instanceMap", getInstances() );
+  jsonWrite( writer, "+netMap"     , getNets() );
+  Inherit::_toJsonCollections( writer );
+}
 
 // ****************************************************************************************************
 // Cell::Flags implementation
@@ -1103,6 +1209,45 @@ void Cell::MarkerSet::_setNextElement(Marker* marker, Marker* nextMarker) const
 // ****************************************************************************
 {
     marker->_setNextOfCellMarkerSet(nextMarker);
+}
+
+
+
+// ****************************************************************************************************
+// JsonCell implementation
+// ****************************************************************************************************
+
+JsonCell::JsonCell(unsigned long flags)
+// ************************************
+  : JsonEntity(flags)
+{
+  remove( ".Cell" );
+  add( "_library"     , typeid(string)    );
+  add( "_name"        , typeid(string)    );
+  add( "_abutmentBox" , typeid(Box)       );
+  add( "+instanceMap" , typeid(JsonArray) );
+  add( "+netMap"      , typeid(JsonArray) );
+}
+
+string JsonCell::getTypeName() const
+// *********************************
+{ return "Cell"; }
+
+JsonCell* JsonCell::clone(unsigned long flags) const
+// *************************************************
+{ return new JsonCell ( flags ); }
+
+void JsonCell::toData(JsonStack& stack)
+// ************************************
+{
+  check( stack, "JsonCell::toData" );
+  presetId( stack );
+
+  Cell* cell = Cell::create( DataBase::getDB()->getLibrary( get<string>(stack,"_library") )
+                           , get<string>(stack,"_name") );
+  cell->setAbutmentBox( stack.as<Box>("_abutmentBox") );
+
+  update( stack, cell );
 }
 
 } // End of Hurricane namespace.

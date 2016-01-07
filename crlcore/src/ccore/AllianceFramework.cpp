@@ -13,32 +13,28 @@
 // |  C++ Module  :  "./AllianceFramework.cpp"                       |
 // +-----------------------------------------------------------------+
 
-
-#include  <unistd.h>
-#include  "vlsisapd/utilities/Path.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Library.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "crlcore/Utilities.h"
-#include  "crlcore/GraphicsParser.h"
-#include  "crlcore/SymbolicTechnologyParser.h"
-#include  "crlcore/RealTechnologyParser.h"
-#include  "crlcore/CellGauge.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "crlcore/RoutingLayerGauge.h"
-#include  "crlcore/AllianceFramework.h"
-
-
-
+#include <unistd.h>
+#include "vlsisapd/utilities/Path.h"
+#include "hurricane/Warning.h"
+#include "hurricane/Technology.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Library.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/viewer/Graphics.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/GraphicsParser.h"
+#include "crlcore/SymbolicTechnologyParser.h"
+#include "crlcore/RealTechnologyParser.h"
+#include "crlcore/CellGauge.h"
+#include "crlcore/RoutingGauge.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace CRL {
 
-
+  using namespace std::placeholders;
   using Hurricane::Warning;
   using Hurricane::tab;
   using Hurricane::Graphics;
@@ -133,6 +129,7 @@ namespace CRL {
       db = DataBase::create ();
 
     db->put ( AllianceFrameworkProperty::create(this) );
+    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
 
   //cmess1 << "  o  Reading Alliance Environment." << endl;
 
@@ -259,6 +256,15 @@ namespace CRL {
       if ( _libraries[ilib]->getLibrary() == library ) return _libraries[ilib];
     }
     return NULL;
+  }
+
+
+  Cell* AllianceFramework::cellLoader ( const string& rpath )
+  {
+    size_t   dot      = rpath.rfind('.');
+    string   cellName = rpath.substr(dot+1);
+
+    return getCell( cellName, Catalog::State::Views );
   }
 
 

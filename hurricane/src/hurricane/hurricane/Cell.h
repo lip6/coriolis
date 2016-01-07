@@ -23,6 +23,7 @@
 #include <limits>
 #include "hurricane/Flags.h"
 #include "hurricane/Observer.h"
+#include "hurricane/Signature.h"
 #include "hurricane/Relation.h"
 #include "hurricane/Pathes.h"
 #include "hurricane/Entity.h"
@@ -53,7 +54,6 @@ namespace Hurricane {
 
 class Library;
 class BasicLayer;
-
 
 typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 
@@ -302,6 +302,9 @@ class Cell : public Entity {
     public: void _changeQuadTree(Cell*);
     public: void _setShuntedPath(Path path) { _shuntedPath=path; }
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: virtual void _toJsonCollections(JsonWriter*) const;
+
 // Constructors
 // ************
 
@@ -313,9 +316,11 @@ class Cell : public Entity {
     public: virtual Cell* getCell() const {return (Cell*)this;};
     public: virtual Box getBoundingBox() const;
     public: Library* getLibrary() const {return _library;};
+    public: string getHierarchicalName() const;
     public: const Name& getName() const {return _name;};
     public: const Flags& getFlags() const { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
+    public: Entity* getEntity(const Signature&) const;
     public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
     public: Instances getInstances() const {return _instanceMap.getElements();};
     public: Instances getPlacedInstances() const;
@@ -440,6 +445,15 @@ inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
   , _cell(other._cell)
 { }
 
+
+class JsonCell : public JsonEntity {
+// *********************************
+
+  public: JsonCell(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonCell* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 

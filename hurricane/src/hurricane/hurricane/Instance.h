@@ -51,6 +51,7 @@ class Instance : public Go {
 
         public: PlacementStatus(const Code& code = UNPLACED);
         public: PlacementStatus(const PlacementStatus& placementstatus);
+        public: PlacementStatus(string);
 
         public: PlacementStatus& operator=(const PlacementStatus& placementstatus);
 
@@ -178,6 +179,8 @@ class Instance : public Go {
     public: virtual string _getTypeName() const {return _TName("Instance");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
+    public: virtual void _toJson(JsonWriter*) const;
+    public: virtual void _toJsonCollections(JsonWriter*) const;
     public: PlugMap& _getPlugMap() {return _plugMap;};
     public: SharedPath* _getSharedPath(const SharedPath* tailSharedPath) const {return _sharedPathMap.getElement(tailSharedPath);}
     public: SharedPathes _getSharedPathes() const {return _sharedPathMap.getElements();};
@@ -190,6 +193,15 @@ class Instance : public Go {
 
 };
 
+
+class JsonInstance : public JsonEntity {
+// *************************************
+
+  public: JsonInstance(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonInstance* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -245,6 +257,11 @@ INSPECTOR_P_SUPPORT(Hurricane::Instance::PlacementStatus);
 INSPECTOR_P_SUPPORT(Hurricane::Instance::PlugMap);
 INSPECTOR_P_SUPPORT(Hurricane::Instance::SharedPathMap);
 
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane::Instance::PlacementStatus& status )
+{
+  w->key( key );
+  w->write( getString(status.getCode()) );
+}
 
 #endif // HURRICANE_INSTANCE
 

@@ -153,11 +153,12 @@ void Plug::setNet(Net* net)
 Plug* Plug::_create(Instance* instance, Net* masterNet)
 // ****************************************************
 {
-    Plug* plug = new Plug(instance, masterNet);
+  if (Entity::inForcedIdMode()) Entity::setNextId( 0 );
 
-    plug->_postCreate();
+  Plug* plug = new Plug(instance, masterNet);
 
-    return plug;
+  plug->_postCreate();
+  return plug;
 }
 
 void Plug::_postCreate()
@@ -190,6 +191,18 @@ void Plug::_preDestroy()
 // trace_out();
 }
 
+void Plug::_toJson(JsonWriter* writer) const
+// *****************************************
+{
+  if (writer->issetFlags(JsonWriter::UsePlugReference)) {
+    jsonWrite( writer, "_id"      , getId() );
+    jsonWrite( writer, "_instance", getInstance()->getName() );
+  } else {
+    Inherit::_toJson( writer );
+    jsonWrite( writer, "_masterNet", getMasterNet()->getName() );
+  }
+}
+
 string Plug::_getString() const
 // ****************************
 {
@@ -215,6 +228,109 @@ string Plug::getName() const
     return getString(_instance->getName())
          + "."
          + getString(_masterNet->getName());
+}
+
+
+
+// ****************************************************************************************************
+// JsonPlug implementation
+// ****************************************************************************************************
+
+JsonPlug::JsonPlug(unsigned long flags)
+// ************************************
+  : JsonComponent(flags)
+{
+  add( "_masterNet", typeid(string) );
+}
+
+string JsonPlug::getTypeName() const
+// *********************************
+{ return "Plug"; }
+
+JsonPlug* JsonPlug::clone(unsigned long flags) const
+// *************************************************
+{ return new JsonPlug ( flags ); }
+
+void JsonPlug::toData(JsonStack& stack)
+// ************************************
+{
+// We are parsing an Instance.
+// Plugs are automatically createds whith the Instance.
+// Here we add the Plug to the stack's entity table that
+// associates the Json Ids to the actual Hurricane ones.
+// At the same time, we perform some coherency checking
+// (i.e. the same Plug already exists).
+    
+// For now, simply discard "_id" & "_propertySet".
+  check( stack, "JsonPlug::toData" );
+
+  Instance* instance = get<Instance*>(stack,".Instance");
+  Plug*     plug     = NULL;
+  if (instance) {
+    Net* masterNet = instance->getMasterCell()->getNet( get<string>(stack,"_masterNet") );
+    if (not masterNet) {
+      cerr << Error( "JsonPlug::toData(): Incoherency, instance %s master doesn't containt net %s."
+                   , getString(instance->getName()).c_str()
+                   , get<string>(stack,"_masterNet").c_str()
+                   ) << endl;
+    } else {
+      unsigned int jsonId = get<int64_t>(stack,"_id");
+      plug = instance->getPlug( masterNet );
+      if (issetFlags(JsonWriter::DesignBlobMode))
+        plug->forceId( jsonId );
+      stack.addHookLink( plug->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    }
+  } else {
+    cerr << Error( "JsonPlug::toData(): Cannot find \".Instance\" in stack, skipping." ) << endl;
+  }
+  ltrace(51) << "Instance Plug contents ignored for now." << endl;
+
+  update( stack, plug );
+}
+
+
+
+// ****************************************************************************************************
+// JsonPlugRef implementation
+// ****************************************************************************************************
+
+JsonPlugRef::JsonPlugRef(unsigned long flags)
+// ******************************************
+  : JsonObject(flags)
+{
+  add( ".Net"     , typeid(Net*)     );
+  add( "_id"      , typeid(uint64_t) );
+  add( "_instance", typeid(string)   );
+}
+
+string JsonPlugRef::getTypeName() const
+// ************************************
+{ return "&Plug"; }
+
+JsonPlugRef* JsonPlugRef::clone(unsigned long flags) const
+// *******************************************************
+{ return new JsonPlugRef ( flags ); }
+
+void JsonPlugRef::toData(JsonStack& stack)
+// ***************************************
+{
+  check( stack, "JsonPlugRef::toData" );
+
+// We are parsing a Net, perform only a "Plug::setNet()".
+  Net*          net      = get<Net*>(stack,".Net");
+  Instance*     instance = net->getCell()->getInstance( get<string>(stack,"_instance") );
+  unsigned int  id       = get<int64_t>(stack,"_id");
+
+  Plug* plug = stack.getEntity<Plug*>(id);
+  if (plug) {
+    plug->setNet( net );
+  } else {
+    cerr << Error( "JsonPlugRef::toData(): No Plug id:%u in instance %s, while building net %s."
+                 , id, getString(instance->getName()).c_str(), getString(net->getName()).c_str()
+                 ) << endl;
+  }
+
+  update( stack, plug );
 }
 
 } // End of Hurricane namespace.

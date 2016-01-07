@@ -18,8 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -65,7 +63,6 @@ namespace Hurricane {
   void DBo::destroy ()
   {
     _preDestroy();
-    
     delete this;
   }
 
@@ -151,6 +148,22 @@ namespace Hurricane {
   }
 
 
+  void  DBo::_toJson ( JsonWriter* writer ) const
+  { }
+
+
+  void  DBo::_toJsonSignature ( JsonWriter* writer ) const
+  { _toJson( writer ); }
+
+
+  void  DBo::_toJsonCollections ( JsonWriter* writer ) const
+  {
+    writer->key( "+propertySet" );
+    writer->startArray();
+    writer->endArray();
+  }
+
+
   string  DBo::_getTypeName () const
   {
     return "DBo";
@@ -169,6 +182,38 @@ namespace Hurricane {
     record->add ( getSlot("_propertySet", &_propertySet) );
     return record;
   }
+
+
+  void  DBo::toJsonSignature ( JsonWriter* w ) const
+  {
+    w->startObject();
+    std::string tname = "Signature." + _getTypeName();
+    jsonWrite( w, "@typename", tname );
+    _toJsonSignature( w );
+    w->endObject();
+  }
+
+
+  void  DBo::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    std::string tname = _getTypeName();
+    if (w->issetFlags(JsonWriter::UsePlugReference) and (tname == "Plug")) {
+      tname.insert( 0, "&" );
+    }
+    jsonWrite( w, "@typename", tname );
+    _toJson( w );
+    _toJsonCollections( w );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonDBo".
+
+  JsonDBo::JsonDBo ( unsigned int flags )
+    : JsonObject(flags)
+  { }
 
 
 } // End of Hurricane namespace.

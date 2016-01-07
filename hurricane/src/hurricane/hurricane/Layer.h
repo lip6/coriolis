@@ -95,6 +95,7 @@ namespace Hurricane {
       inline  void              _setExtractMask              ( const Mask& extractMask );
       inline  void              _setNextOfTechnologyLayerMap ( Layer* layer );
       virtual void              _onDbuChange                 ( float scale );
+      static  const Name&       _sgetName                    ( const Layer* );
 
     private:
     // Internal: Attributes

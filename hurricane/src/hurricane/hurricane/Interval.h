@@ -108,6 +108,15 @@ class Interval {
 } // End of Hurricane namespace.
 
 
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane::Interval* interval )
+{
+  w->key( key );
+  w->startArray();
+  w->write( &interval->getVMin() );
+  w->write( &interval->getVMax() );
+  w->endArray();
+}
+
 INSPECTOR_PV_SUPPORT(Hurricane::Interval);
 
 

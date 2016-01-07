@@ -26,7 +26,6 @@
 namespace Hurricane {
 
 
-
 // ****************************************************************************************************
 // Segment declaration
 // ****************************************************************************************************
@@ -52,8 +51,9 @@ class Segment : public Component {
 
         public: virtual bool isMaster() const {return false;};
 
-        public: virtual string _getTypeName() const { return _TName("Segment::SourceHook"); };
+        public: virtual string _getTypeName() const { return "Segment::SourceHook"; };
         public: virtual string _getString() const;
+        public: static Hook* _compToHook(Component*);
     };
 
     public: class TargetHook : public Hook {
@@ -69,8 +69,9 @@ class Segment : public Component {
 
         public: virtual bool isMaster() const {return false;};
 
-        public: virtual string _getTypeName() const { return _TName("Segment::TargetHook"); };
+        public: virtual string _getTypeName() const { return "Segment::TargetHook"; };
         public: virtual string _getString() const;
+        public: static Hook* _compToHook(Component*);
     };
 
 // Attributes
@@ -127,9 +128,21 @@ class Segment : public Component {
 
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
+};
+
+
+// ****************************************************************************************************
+// JsonSegment declaration
+// ****************************************************************************************************
+
+class JsonSegment : public JsonComponent {
+// ***************************************
+
+  public: JsonSegment(unsigned long flags);
 };
 
 

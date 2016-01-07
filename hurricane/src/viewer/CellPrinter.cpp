@@ -294,8 +294,8 @@ namespace Hurricane {
 
     _paperWidth    = _printer->width ();
     _paperHeight   = _printer->height ();
-    _drawingWidth  = _paperWidth  - (frameMargin()<<1);
-    _drawingHeight = _paperHeight - (frameMargin()<<1);
+    _drawingWidth  = _paperWidth /4 - (frameMargin()<<1);
+    _drawingHeight = _paperHeight/4 - (frameMargin()<<1);
     _xpaper        = (imageOnly) ? 0 : frameMargin();
     _ypaper        = (imageOnly) ? 0 : frameMargin();
 

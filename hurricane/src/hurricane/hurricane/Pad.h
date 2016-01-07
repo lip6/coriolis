@@ -73,12 +73,23 @@ class Pad : public Component {
 // Others
 // ******
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: static JsonObject* getJsonObject(unsigned long flags);
     public: virtual string _getTypeName() const {return _TName("Pad");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
 };
 
+
+class JsonPad : public JsonComponent {
+// ***********************************
+
+  public: JsonPad(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPad* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 

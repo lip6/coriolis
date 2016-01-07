@@ -33,7 +33,6 @@ class Rubber;
 class Layer;
 
 
-
 // ****************************************************************************************************
 // Component declaration
 // ****************************************************************************************************
@@ -59,8 +58,9 @@ class Component : public Go {
 
         public: virtual bool isMaster() const {return true;};
 
-        public: virtual string _getTypeName() const { return _TName("Component::BodyHook"); };
+        public: virtual string _getTypeName() const { return "Component::BodyHook"; };
         public: virtual string _getString() const;
+        public: static Hook* _compToHook(Component*);
 
     };
 
@@ -101,6 +101,7 @@ class Component : public Go {
     public: virtual void materialize();
     public: virtual void unmaterialize();
     public: virtual void invalidate(bool propagateFlag = true);
+    public: virtual void forceId(unsigned int id);
 
 // Filters
 // *******
@@ -114,6 +115,8 @@ class Component : public Go {
 
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson ( JsonWriter* ) const;
+    public: virtual void _toJsonSignature(JsonWriter*) const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
     public: Component* _getNextOfNetComponentSet() const {return _nextOfNetComponentSet;};
@@ -127,6 +130,12 @@ class Component : public Go {
 
 double  getArea ( Component* component );
 
+
+class JsonComponent : public JsonEntity {
+// ************************************
+
+  public: JsonComponent(unsigned long flags);
+};
 
 
 } // End of Hurricane namespace.

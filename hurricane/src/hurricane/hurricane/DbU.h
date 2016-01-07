@@ -180,4 +180,8 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
+// inline void  jsonWriteDbU ( JsonWriter* w, const std::string& key, long* value )
+// { w->key( key ); w->write( value ); }
+
+
 #endif  // HURRICANE_DBU_H

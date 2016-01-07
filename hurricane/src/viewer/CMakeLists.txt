@@ -28,6 +28,7 @@
                                     hurricane/viewer/CellViewer.h
                                     hurricane/viewer/CellPrinter.h
                                     hurricane/viewer/CellImage.h
+                                    hurricane/viewer/OpenBlobDialog.h
                                     hurricane/viewer/RecordModel.h
                                     hurricane/viewer/InspectorWidget.h
                                     hurricane/viewer/SelectionPopupModel.h
@@ -96,6 +97,7 @@
                                     CellViewer.cpp
                                     CellPrinter.cpp
                                     CellImage.cpp
+				    OpenBlobDialog.cpp
                                     RecordModel.cpp
                                     InspectorWidget.cpp
                                     SelectionPopupModel.cpp

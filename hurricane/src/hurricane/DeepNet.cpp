@@ -49,7 +49,6 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "DeepNet".
 
-
   DeepNet::DeepNet ( Occurrence& netOccurrence )
     : Net(netOccurrence.getOwnerCell()
          ,netOccurrence.getName()
@@ -119,6 +118,63 @@ namespace Hurricane {
       record->add( getSlot("_netOccurrence", &_netOccurrence) );
     }
     return record;
+  }
+
+
+  void DeepNet::_toJson( JsonWriter* writer ) const
+  {
+    Inherit::_toJson( writer );
+
+    jsonWrite( writer, "_netOccurrence", &_netOccurrence );
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonDeepNet".
+
+  JsonDeepNet::JsonDeepNet ( unsigned long flags )
+    : JsonNet(flags)
+  {
+    ltrace(51) << "JsonDeepNet::JsonDeepNet()" << endl;
+
+    add( "_netOccurrence", typeid(Occurrence) );
+  }
+
+
+  JsonDeepNet::~JsonDeepNet ()
+  { }
+
+
+  string  JsonDeepNet::getTypeName () const
+  { return "DeepNet"; }
+
+
+  JsonDeepNet* JsonDeepNet::clone ( unsigned long flags ) const
+  { return new JsonDeepNet ( flags ); }
+
+
+  void JsonDeepNet::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    _stack = &stack;
+
+    check( stack, "JsonDeepNet::toData" );
+    presetId( stack );
+
+    HyperNet hyperNet ( get<Occurrence>(stack,"_netOccurrence") );
+
+    _net = DeepNet::create( hyperNet );
+    _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
+    _net->setExternal ( get<bool>(stack,"_isExternal" ) );
+    _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
+    _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
+    _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
+    
+    setName( ".Net" );
+    update( stack, _net );
+
+    ltraceout(51);
   }
 
 

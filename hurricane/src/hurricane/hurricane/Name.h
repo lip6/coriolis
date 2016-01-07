@@ -95,6 +95,12 @@ class Name {
 
 INSPECTOR_PV_SUPPORT(Hurricane::Name);
 
+inline void  jsonWrite ( JsonWriter* w, Hurricane::Name name )
+{ w->write( getString(name).c_str() ); }
+
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::Name name )
+{ w->key( key ); w->write( getString(name).c_str() ); }
+
 
 #endif // HURRICANE_NAME
 

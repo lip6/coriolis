@@ -20,6 +20,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/SharedPath.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -28,7 +29,6 @@
 #include "hurricane/Error.h"
 
 namespace Hurricane {
-
 
 
 // ****************************************************************************************************
@@ -201,7 +201,10 @@ Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool 
 // ****************************************************************************************
 {
   if (not cell)
-    throw Error( "Instance::create(): NULL master Cell argument." );
+    throw Error( "Instance::create(): NULL owner Cell argument for %s.", getString(name).c_str() );
+
+  if (not masterCell)
+    throw Error( "Instance::create(): NULL master Cell argument for %s.", getString(name).c_str() );
 
   // if (cell->isUniquified())
   //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
@@ -217,7 +220,10 @@ Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, const
 // **********************************************************************************************************************************************************************
 {
   if (not cell)
-    throw Error( "Instance::create(): NULL master Cell argument." );
+    throw Error( "Instance::create(): NULL owner Cell argument for %s.", getString(name).c_str() );
+
+  if (not masterCell)
+    throw Error( "Instance::create(): NULL master Cell argument for %s.", getString(name).c_str() );
 
   // if (cell->isUniquified())
   //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
@@ -489,6 +495,15 @@ void Instance::uniquify()
                    ) << endl;
     return;
   }
+
+  if (not _getSharedPathMap().isEmpty()) {
+    cerr << Warning( "Instance::uniquify(): While uniquifying model %s of instance %s, SharedPathMap is not empty.\n"
+                     "          (Entity's Occurrences will still uses the original master Cell)"
+                   , getString(_masterCell->getName()).c_str()
+                   , getString(getName()).c_str()
+                   ) << endl;
+  }
+
   setMasterCell( _masterCell->getClone() );
 }
 
@@ -511,6 +526,13 @@ Instance* Instance::getClone(Cell* cloneCell) const
                                     , getTransformation()
                                     , getPlacementStatus()
                                     );
+
+  if (not clone->_getSharedPathMap().isEmpty()) {
+    cerr << Warning( "Instance::getClone(): While cloning instance %s, SharedPathMap is not empty.\n"
+                     "          (Occurrence will still uses the original instance)"
+                   , getString(getName()).c_str()
+                   ) << endl;
+  }
 
   for( Plug* iplug : getPlugs() ) {
     if (iplug->isConnected()) {
@@ -595,6 +617,24 @@ Record* Instance::_getRecord() const
     return record;
 }
 
+void Instance::_toJson( JsonWriter* writer ) const
+// ***********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_name"           , getName()        );
+  jsonWrite( writer, "_masterCell"     , _masterCell->getHierarchicalName() );
+  jsonWrite( writer, "_transformation" , &_transformation  );
+  jsonWrite( writer, "_placementStatus", _placementStatus );
+}
+
+void Instance::_toJsonCollections(JsonWriter* writer) const
+// ********************************************************
+{
+  jsonWrite( writer, "+plugMap", getPlugs() );
+  Inherit::_toJsonCollections( writer );
+}
+
 // ****************************************************************************************************
 // Instance::PlugMap implementation
 // ****************************************************************************************************
@@ -672,13 +712,20 @@ void Instance::SharedPathMap::_setNextElement(SharedPath* sharedPath, SharedPath
 Instance::PlacementStatus::PlacementStatus(const Code& code)
 // *********************************************************
 :    _code(code)
-{
-}
+{ }
 
 Instance::PlacementStatus::PlacementStatus(const PlacementStatus& placementstatus)
 // *******************************************************************************
 :    _code(placementstatus._code)
+{ }
+
+Instance::PlacementStatus::PlacementStatus(string s)
+// *************************************************
+:    _code(UNPLACED)
 {
+  if      (s == "UNPLACED") _code = UNPLACED;
+  else if (s == "PLACED"  ) _code = PLACED;
+  else if (s == "FIXED"   ) _code = FIXED;
 }
 
 Instance::PlacementStatus& Instance::PlacementStatus::operator=(const PlacementStatus& placementstatus)
@@ -700,6 +747,47 @@ Record* Instance::PlacementStatus::_getRecord() const
     Record* record = new Record(getString(this));
     record->add(getSlot("Code", &_code));
     return record;
+}
+
+
+// ****************************************************************************************************
+// JsonInstance implementation
+// ****************************************************************************************************
+
+JsonInstance::JsonInstance(unsigned long flags)
+// ********************************************
+  : JsonEntity(flags)
+{
+  add( "_name"           , typeid(string)          );
+  add( "_masterCell"     , typeid(string)          );
+  add( "_transformation" , typeid(Transformation*) );
+  add( "_placementStatus", typeid(string)          );
+  add( "+plugMap"        , typeid(JsonArray)       );
+}
+
+string JsonInstance::getTypeName() const
+// *************************************
+{ return "Instance"; }
+
+JsonInstance* JsonInstance::clone(unsigned long flags) const
+// *********************************************************
+{ return new JsonInstance ( flags ); }
+
+void JsonInstance::toData(JsonStack& stack)
+// ****************************************
+{
+  check( stack, "JsonInstance::toData" );
+  presetId( stack );
+
+  Instance* instance = Instance::create
+    ( get<Cell* >(stack,".Cell")
+    , get<string>(stack,"_name")
+    , DataBase::getDB()->getCell( get<string>(stack,"_masterCell") )
+    , get<Transformation>(stack,"_transformation") 
+    , Instance::PlacementStatus(get<string>(stack,"_placementStatus") )
+    );
+  
+  update( stack, instance );
 }
 
 } // End of Hurricane namespace.

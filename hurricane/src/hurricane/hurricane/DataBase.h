@@ -20,11 +20,13 @@
 #ifndef HURRICANE_DATA_BASE
 #define HURRICANE_DATA_BASE
 
+#include <functional>
 #include "hurricane/DBo.h"
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
 
+class Cell;
 class Library;
 class Technology;
 
@@ -37,8 +39,6 @@ class Technology;
 class DataBase : public DBo {
 // ************************
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
-
 // Types
 // *****
 
@@ -50,6 +50,7 @@ class DataBase : public DBo {
     private: static DataBase* _db;
     private: Technology* _technology;
     private: Library* _rootLibrary;
+    private: function<Hurricane::Cell*(string)> _cellLoader;
 
 // Constructors
 // ************
@@ -69,8 +70,7 @@ class DataBase : public DBo {
 
     public: void _setTechnology(Technology* technology) {_technology = technology;};
     public: void _setRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
-
-#   endif
+    public: void _setCellLoader(function<Hurricane::Cell*(string)> loader) { _cellLoader=loader; };
 
     public: static DataBase* create();
 
@@ -79,6 +79,8 @@ class DataBase : public DBo {
 
     public: Technology* getTechnology() const {return _technology;};
     public: Library* getRootLibrary() const {return _rootLibrary;};
+    public: Library* getLibrary(string) const;
+    public: Cell* getCell(string) const;
     public: static DataBase* getDB();
 
 };
