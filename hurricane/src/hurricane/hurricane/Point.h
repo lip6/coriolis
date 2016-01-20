@@ -90,6 +90,7 @@ class Point {
 class JsonPoint : public JsonObject {
 // **********************************
 
+  public: static void initialize();
   public: JsonPoint(unsigned long);
   public: virtual string getTypeName() const;
   public: virtual JsonPoint* clone(unsigned long) const;

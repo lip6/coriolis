@@ -86,6 +86,10 @@ namespace CRL {
   }
 
 
+  void  CellsWidget::updateLibrary ()
+  { _baseModel->updateLibrary(); }
+
+
   void  CellsWidget::updateSelected ()
   { if (_selected.isValid()) _baseModel->emitDataChanged(_selected); }
 

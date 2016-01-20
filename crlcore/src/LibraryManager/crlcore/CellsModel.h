@@ -60,7 +60,9 @@ namespace CRL {
   };
 
 
-  inline const AllianceLibrary*         CellsModel::getLibrary    () const { return (const AllianceLibrary*)_ilibrary->first; }
+  inline const AllianceLibrary*         CellsModel::getLibrary    () const
+  { return (_ilibrary != _libraries.end()) ? (const AllianceLibrary*)_ilibrary->first : NULL; }
+
   inline const std::vector<CellDatas*>& CellsModel::getCellsDatas () const { return _ilibrary->second; }
   inline std::vector<CellDatas*>&       CellsModel::getCellsDatas () { return _ilibrary->second; }
 

@@ -21,8 +21,8 @@
 
 #include "hurricane/Warning.h"
 #include "hurricane/SharedName.h"
-#include "hurricane/Cell.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/Cell.h"
 #include "hurricane/Library.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Net.h"
@@ -42,6 +42,10 @@
 
 namespace Hurricane {
 
+
+// ****************************************************************************************************
+// UniquifyRelation implementation
+// ****************************************************************************************************
 
   const Name  Cell::UniquifyRelation::_name = "Cell::UniquifyRelation";
 
@@ -99,6 +103,18 @@ namespace Hurricane {
   }
 
 
+  string  Cell::UniquifyRelation::getTrunkName ( Name name )
+  {
+    string trunk  = getString(name);
+    size_t suffix = trunk.rfind( "_u" );
+
+    if (suffix != string::npos)
+      trunk = trunk.substr( 0, suffix );
+
+    return trunk;
+  }
+
+
   Record* Cell::UniquifyRelation::_getRecord () const
   {
     Record* record = Relation::_getRecord();
@@ -108,6 +124,158 @@ namespace Hurricane {
     return record;
   }
 
+
+  bool  Cell::UniquifyRelation::hasJson () const
+  { return true; }
+
+
+  void  Cell::UniquifyRelation::toJson ( JsonWriter* w, const DBo* owner ) const
+  {
+    w->startObject();
+    std::string tname = getString( staticGetName() );
+    if (getMasterOwner() == owner) {
+      jsonWrite( w, "@typename"  , tname                 );
+      jsonWrite( w, "_refcount"  , getOwners().getSize() );
+      jsonWrite( w, "_duplicates", _duplicates           );
+    } else {
+      tname.insert( 0, "&" );
+      jsonWrite( w, "@typename", tname );
+
+      Cell* masterOwner = dynamic_cast<Cell*>( getMasterOwner() );
+      if (masterOwner) {
+        jsonWrite( w, "_masterOwner", masterOwner->getHierarchicalName() );
+      } else {
+        cerr << Error( "UniquifyRelation::toJson(): Master owner is not a Cell (%s)."
+                     , getString(owner).c_str()
+                     ) << endl;
+        jsonWrite( w, "_masterOwner", "" );
+      }
+    }
+    w->endObject();
+  }
+
+
+// ****************************************************************************************************
+// UniquifyRelation::JsonProperty implementation
+// ****************************************************************************************************
+
+
+  Initializer<Cell::UniquifyRelation::JsonProperty>  jsonUniquifyRelationInit ( 10 );
+
+
+  Cell::UniquifyRelation::JsonProperty::JsonProperty ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_refcount"  , typeid(int64_t)  );
+    add( "_duplicates", typeid(int64_t) );
+  }
+
+
+  string  Cell::UniquifyRelation::JsonProperty::getTypeName () const
+  { return getString(Cell::UniquifyRelation::staticGetName()); }
+
+
+  void  Cell::UniquifyRelation::JsonProperty::initialize ()
+  { JsonTypes::registerType( new Cell::UniquifyRelation::JsonProperty (JsonWriter::RegisterMode) ); }
+
+
+  Cell::UniquifyRelation::JsonProperty* Cell::UniquifyRelation::JsonProperty::clone ( unsigned long flags ) const
+  { return new Cell::UniquifyRelation::JsonProperty ( flags ); }
+
+
+  void Cell::UniquifyRelation::JsonProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "Cell::UniquifyRelation::JsonProperty::toData" );
+
+    DBo*              dbo        = stack.back_dbo();
+    unsigned int      refcount   = get<int64_t>( stack, "_refcount"   );
+    unsigned int      duplicates = get<int64_t>( stack, "_duplicates" );
+    UniquifyRelation* relation   = NULL;
+    Cell*             cell       = dynamic_cast<Cell*>( dbo );
+
+    ltrace(51) << "topDBo:" << dbo << endl;
+
+    if (cell) {
+      relation = UniquifyRelation::get( cell );
+      if (not relation) {
+        string tag = cell->getHierarchicalName()+"::"+getString(UniquifyRelation::staticGetName());
+        relation = dynamic_cast<UniquifyRelation*>( SharedProperty::getOrphaned( tag ) );
+
+        if (not relation) {
+          relation = Cell::UniquifyRelation::create( cell );
+          SharedProperty::addOrphaned( tag, relation );
+        }
+        SharedProperty::refOrphaned( tag );
+        SharedProperty::countOrphaned( tag, refcount );
+        cell->put( relation );
+      }
+      relation->_setMasterOwner( cell );
+      relation->_setDuplicates ( duplicates );
+    }
+    
+    update( stack, relation );
+  }
+
+
+// ****************************************************************************************************
+// UniquifyRelation::JsonPropertyRef implementation
+// ****************************************************************************************************
+
+
+  Initializer<Cell::UniquifyRelation::JsonPropertyRef>  jsonUniquifyRelationRefInit ( 10 );
+
+
+  Cell::UniquifyRelation::JsonPropertyRef::JsonPropertyRef ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_masterOwner", typeid(string)  );
+  }
+
+
+  string  Cell::UniquifyRelation::JsonPropertyRef::getTypeName () const
+  { return string("&")+getString(Cell::UniquifyRelation::staticGetName()); }
+
+
+  void  Cell::UniquifyRelation::JsonPropertyRef::initialize ()
+  { JsonTypes::registerType( new Cell::UniquifyRelation::JsonPropertyRef (JsonWriter::RegisterMode) ); }
+
+
+  Cell::UniquifyRelation::JsonPropertyRef* Cell::UniquifyRelation::JsonPropertyRef::clone ( unsigned long flags ) const
+  { return new Cell::UniquifyRelation::JsonPropertyRef ( flags ); }
+
+
+  void Cell::UniquifyRelation::JsonPropertyRef::toData ( JsonStack& stack )
+  {
+    check( stack, "Cell::UniquifyRelation::JsonPropertyRef::toData" );
+
+    DBo*              dbo        = stack.back_dbo();
+    string            masterName = get<string>( stack, "_masterOwner" );
+    UniquifyRelation* relation   = NULL;
+    Cell*             cell       = dynamic_cast<Cell*>( dbo );
+    string            tag        = masterName+"::"+getString(UniquifyRelation::staticGetName());
+
+    if (cell) {
+      if (not relation) {
+        relation = dynamic_cast<UniquifyRelation*>( SharedProperty::getOrphaned( tag ) );
+        if (not relation) {
+          relation = Cell::UniquifyRelation::create( cell );
+          SharedProperty::addOrphaned( tag, relation );
+        }
+      }
+
+      if (relation) {
+        cell->put( relation );
+        SharedProperty::refOrphaned( tag );
+      }
+    }
+
+    update( stack, relation );
+  }
+
+
+// ****************************************************************************************************
+// Cell Slice related implementation
+// ****************************************************************************************************
 
   void  Cell::_insertSlice ( ExtensionSlice* slice )
   {
@@ -177,14 +345,14 @@ Cell::Cell(Library* library, const Name& name)
     _observers(),
     _flags(Flags::Terminal)
 {
-    if (!_library)
-        throw Error("Can't create " + _TName("Cell") + " : null library");
+  if (!_library)
+    throw Error("Can't create " + _TName("Cell") + " : null library");
 
-    if (name.isEmpty())
-        throw Error("Can't create " + _TName("Cell") + " : empty name");
+  if (name.isEmpty())
+    throw Error("Can't create " + _TName("Cell") + " : empty name");
 
-    if (_library->getCell(_name))
-        throw Error("Can't create " + _TName("Cell") + " " + getString(_name) + " : already exists");
+  if (_library->getCell(_name))
+    throw Error("Can't create " + _TName("Cell") + " " + getString(_name) + " : already exists");
 }
 
 Cell* Cell::create(Library* library, const Name& name)
@@ -895,9 +1063,11 @@ void Cell::_toJson(JsonWriter* writer) const
 void Cell::_toJsonCollections(JsonWriter* writer) const
 // *****************************************
 {
+  writer->setFlags( JsonWriter::CellObject );
   jsonWrite( writer, "+instanceMap", getInstances() );
   jsonWrite( writer, "+netMap"     , getNets() );
   Inherit::_toJsonCollections( writer );
+  writer->resetFlags( JsonWriter::CellObject );
 }
 
 // ****************************************************************************************************
@@ -1217,6 +1387,10 @@ void Cell::MarkerSet::_setNextElement(Marker* marker, Marker* nextMarker) const
 // JsonCell implementation
 // ****************************************************************************************************
 
+
+Initializer<JsonCell>  jsonCellInitialize ( 10 );
+
+
 JsonCell::JsonCell(unsigned long flags)
 // ************************************
   : JsonEntity(flags)
@@ -1233,6 +1407,10 @@ string JsonCell::getTypeName() const
 // *********************************
 { return "Cell"; }
 
+void  JsonCell::initialize()
+// *************************
+{ JsonTypes::registerType( new JsonCell (JsonWriter::RegisterMode) ); }
+
 JsonCell* JsonCell::clone(unsigned long flags) const
 // *************************************************
 { return new JsonCell ( flags ); }
@@ -1243,8 +1421,9 @@ void JsonCell::toData(JsonStack& stack)
   check( stack, "JsonCell::toData" );
   presetId( stack );
 
-  Cell* cell = Cell::create( DataBase::getDB()->getLibrary( get<string>(stack,"_library") )
-                           , get<string>(stack,"_name") );
+  Library* library = DataBase::getDB()->getLibrary( get<string>(stack,"_library")
+                                                  , DataBase::CreateLib|DataBase::WarnCreateLib );
+  Cell*    cell    = Cell::create( library, get<string>(stack,"_name") );
   cell->setAbutmentBox( stack.as<Box>("_abutmentBox") );
 
   update( stack, cell );

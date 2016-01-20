@@ -32,6 +32,8 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/reader.h"
 // Needed for registering. May be deleted later.
+#include "hurricane/Initializer.h"
+#include "hurricane/FileReadGzStream.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/JsonReader.h"
@@ -112,14 +114,14 @@ namespace {
                             JsonReader  ( const JsonReader& );
              JsonReader&    operator=   ( const JsonReader& ) const;
     private:
-      unsigned long              _flags;
-      size_t                     _bufferSize;
-      char*                      _buffer;
-      FILE*                      _file;
-      FileReadStream*            _stream;
-      JsonStack                  _stack;
-      Reader                     _reader;
-      HurricaneHandler           _handler;
+      unsigned long     _flags;
+      size_t            _bufferSize;
+      char*             _buffer;
+      FILE*             _file;
+      FileReadGzStream* _stream;
+      JsonStack         _stack;
+      Reader            _reader;
+      HurricaneHandler  _handler;
   };
 
 
@@ -150,7 +152,8 @@ namespace {
   bool  HurricaneHandler::Null ()
   {
     if (isDummy()) return true;
-    stack().push_back<void*>( _key, NULL );
+    stack().push_back<DBo*>( _key, (DBo*)NULL );
+    _key.clear();
     return true;
   }
 
@@ -159,6 +162,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<bool>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -167,6 +171,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<int64_t>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -175,6 +180,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<int64_t>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -183,6 +189,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<int64_t>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -191,6 +198,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<int64_t>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -199,6 +207,7 @@ namespace {
   {
     if (isDummy()) return true;
     stack().push_back<double>( _key, v );
+    _key.clear();
     return true;
   }
 
@@ -211,6 +220,7 @@ namespace {
 
       if (_key != "@typename") {
         cerr << Warning("JsonReader::parse(): First field is not @typename, skipping object." ) << endl;
+        _key.clear();
         return true;
       }
 
@@ -239,10 +249,12 @@ namespace {
       }
 
       ltrace(51) << "HurricaneHandler::String() [key/typename] \"" << value << "\"." << endl;
+      _key.clear();
       return true;
     }
 
     stack().push_back<string>( _key, value );
+    _key.clear();
     return true;
   }
 
@@ -276,8 +288,9 @@ namespace {
     ltracein(50);
 
     _state |= TypenameKey;
-    _objectName = (_key == ".Array") ? "" : _key;
+    _objectName = _key;
     _objects.push_back( new JsonDummy() );
+    _key.clear();
     ltrace(51) << "_objects.push_back(NULL), size():" << _objects.size() << "." << endl;
 
     ltracein(50);
@@ -302,11 +315,12 @@ namespace {
       }
     }
 
-  //if (_objects.size() > 1) {
-      ltrace(51) << "_objects.pop_back(), size():" << _objects.size() << "." << endl;
-      delete _objects.back();
-      _objects.pop_back();
-    //}
+    ltrace(51) << "_objects.pop_back(), size():" << _objects.size() << "." << endl;
+    if (_objects.back()->issetFlags(JsonWriter::DBoObject))
+       stack().pop_back_dbo();
+
+    delete _objects.back();
+    _objects.pop_back();
 
     ltraceout(50);
     return true;
@@ -323,20 +337,16 @@ namespace {
       cerr << Warning("JsonReader::parse(): Array attributes must start by \'+\' %s.", _key.c_str() ) << endl;
       return true;
     }
+    _key.clear();
 
-    _key = ".Array";
     return true;
   }
+
 
   bool  HurricaneHandler::EndArray ( SizeType )
   {
     ltraceout(50);
     ltrace(50) << "HurricaneHandler::EndArray()" << endl;
-    ltracein(50);
-
-    _key.clear();
-
-    ltraceout(50);
     return true;
   }
 
@@ -382,9 +392,9 @@ namespace {
   {
     close();
 
-    DebugSession::open( 50 );
+  //DebugSession::open( 50 );
 
-    fileName += ".json";
+    fileName += ".json.bz2";
     _file     = fopen( fileName.c_str(), "r" );
     ltrace(50) << "_file:" << _file << ", _buffer:" << (void*)_buffer << endl;
 
@@ -393,7 +403,7 @@ namespace {
                  , fileName.c_str() );
     }
 
-    _stream = new FileReadStream ( _file, _buffer, _bufferSize );
+    _stream = new FileReadGzStream ( _file, _buffer, _bufferSize );
 
     if (issetFlags(JsonWriter::DesignBlobMode))
       Entity::enableForcedIdMode();
@@ -402,8 +412,10 @@ namespace {
     if (issetFlags(JsonWriter::DesignBlobMode))
       Entity::disableForcedIdMode();
 
-    DebugSession::close();
+  //DebugSession::close();
     close();
+
+    SharedProperty::clearOrphaneds();
   }
 
 
@@ -588,6 +600,8 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "JsonTypes".
 
+  Initializer<JsonTypes>  jsonTypesInitialize ( 10 );
+
   JsonTypes* JsonTypes::_jsonTypes = NULL;
 
 
@@ -635,29 +649,7 @@ namespace Hurricane {
 
 
   void  JsonTypes::initialize ()
-  {
-    if (_jsonTypes) return;
-
-    _jsonTypes = new JsonTypes ();
-    _jsonTypes->_registerType( new JsonPoint         (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonBox           (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonTransformation(JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonLibrary       (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonCell          (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonNet           (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonDeepNet       (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonPlugRef       (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonRoutingPad    (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonContact       (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonVertical      (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonHorizontal    (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonPad           (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonInstance      (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonPlug          (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonOccurrence    (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonSignature     (JsonWriter::RegisterMode) );
-    _jsonTypes->_registerType( new JsonDesignBlob    (JsonWriter::RegisterMode) );
-  }
+  { if (not _jsonTypes) _jsonTypes = new JsonTypes (); }
 
 
 // -------------------------------------------------------------------

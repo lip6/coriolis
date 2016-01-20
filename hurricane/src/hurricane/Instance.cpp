@@ -498,9 +498,10 @@ void Instance::uniquify()
 
   if (not _getSharedPathMap().isEmpty()) {
     cerr << Warning( "Instance::uniquify(): While uniquifying model %s of instance %s, SharedPathMap is not empty.\n"
-                     "          (Entity's Occurrences will still uses the original master Cell)"
+                     "          (%u Entity's Occurrences will still uses the original master Cell)"
                    , getString(_masterCell->getName()).c_str()
                    , getString(getName()).c_str()
+                   , _getSharedPathMap()._getSize()
                    ) << endl;
   }
 
@@ -754,6 +755,12 @@ Record* Instance::PlacementStatus::_getRecord() const
 // JsonInstance implementation
 // ****************************************************************************************************
 
+Initializer<JsonInstance>  jsonInstanceInit ( 0 );
+
+void  JsonInstance::initialize()
+// *****************************
+{ JsonTypes::registerType( new JsonInstance (JsonWriter::RegisterMode) ); }
+
 JsonInstance::JsonInstance(unsigned long flags)
 // ********************************************
   : JsonEntity(flags)
@@ -782,7 +789,7 @@ void JsonInstance::toData(JsonStack& stack)
   Instance* instance = Instance::create
     ( get<Cell* >(stack,".Cell")
     , get<string>(stack,"_name")
-    , DataBase::getDB()->getCell( get<string>(stack,"_masterCell") )
+    , DataBase::getDB()->getCell( get<string>(stack,"_masterCell"), DataBase::NoFlags )
     , get<Transformation>(stack,"_transformation") 
     , Instance::PlacementStatus(get<string>(stack,"_placementStatus") )
     );

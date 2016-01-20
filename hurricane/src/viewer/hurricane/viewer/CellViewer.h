@@ -150,6 +150,7 @@ namespace Hurricane {
       inline  void                 emitCellPreModificated    ();
       inline  void                 emitCellPostModificated   ();
     signals:                       
+              void                 cellLoadedFromDisk        ( Cell* );
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
               void                 redrawCellWidget          ();

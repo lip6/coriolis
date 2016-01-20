@@ -87,14 +87,14 @@ namespace Hurricane {
     public:
                                          JsonEntity ( unsigned long flags );
       template<typename T> inline  void  update     ( JsonStack&, T );
-};
+  };
 
 
   template<typename T> inline void  JsonEntity::update ( JsonStack& stack, T hobject )
   {
     unsigned int jsonId = get<int64_t>(stack,"_id");
 
-    JsonObject::update<T>( stack, hobject );
+    JsonDBo::update<T>( stack, hobject );
     stack.addEntity( jsonId, hobject );
   }
 

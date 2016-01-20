@@ -126,12 +126,19 @@ Record* Point::_getRecord() const
 void  Point::toJson ( JsonWriter* w ) const
 // ****************************************
 {
+
   w->startObject();
   jsonWrite( w, "@typename", "Point" );
   jsonWrite( w, "_x", getX() );
   jsonWrite( w, "_y", getY() );
   w->endObject();
 }
+
+Initializer<JsonPoint>  jsonPointInit ( 0 );
+
+void  JsonPoint::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonPoint (JsonWriter::RegisterMode) ); }
 
 JsonPoint::JsonPoint(unsigned long flags)
 // **************************************

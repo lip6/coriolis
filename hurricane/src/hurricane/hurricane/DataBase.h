@@ -21,6 +21,7 @@
 #define HURRICANE_DATA_BASE
 
 #include <functional>
+#include <map>
 #include "hurricane/DBo.h"
 #include "hurricane/DbU.h"
 
@@ -43,6 +44,9 @@ class DataBase : public DBo {
 // *****
 
     public: typedef DBo Inherit;
+  public: enum Flags { NoFlags      = 0
+                     , CreateLib    =(1<<0)
+                     , WarnCreateLib=(1<<2) };
 
 // Attributes
 // **********
@@ -64,6 +68,7 @@ class DataBase : public DBo {
 
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("DataBase");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
@@ -79,11 +84,28 @@ class DataBase : public DBo {
 
     public: Technology* getTechnology() const {return _technology;};
     public: Library* getRootLibrary() const {return _rootLibrary;};
-    public: Library* getLibrary(string) const;
-    public: Cell* getCell(string) const;
+    public: Library* getLibrary(string,unsigned int flags);
+    public: Cell* getCell(string, unsigned int flags);
     public: static DataBase* getDB();
 
 };
+
+
+
+// ****************************************************************************************************
+// JsonDataBase declaration
+// ****************************************************************************************************
+
+class JsonDataBase : public JsonDBo {
+// ********************************
+
+  public: static void initialize();
+  public: JsonDataBase(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonDataBase* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
 
 } // End of Hurricane namespace.
 

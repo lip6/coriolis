@@ -1,66 +1,37 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2015, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
-// |  Author      :                       Rémy Escassut              |
-// |  E-mail      :           Remy.Escassut@silvaco.com              |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./AllianceLibrary.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Module  :  "./AllianceLibrary.cpp"                         |
+// +-----------------------------------------------------------------+
 
 
-
-
-# include  "hurricane/Library.h"
-
-# include  "crlcore/Utilities.h"
-# include  "crlcore/AllianceLibrary.h"
-
-
+#include "hurricane/Warning.h"
+#include "hurricane/SharedPath.h"
+#include "hurricane/Library.h"
+#include "hurricane/DataBase.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/AllianceLibrary.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace CRL {
+
+  using namespace std;
+  using Hurricane::Initializer;
+  using Hurricane::JsonTypes;
+  using Hurricane::Warning;
+  using Hurricane::Name;
+  using Hurricane::SharedPath;
+  using Hurricane::DataBase;
 
 
 // -------------------------------------------------------------------
@@ -112,6 +83,89 @@ namespace CRL {
     return ( record );
   }
 
+
+  void  AllianceLibrary::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", _getTypeName() );
+    jsonWrite( w, "_path"    , _path  );
+    jsonWrite( w, "_library" , _library->getHierarchicalName() );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonAllianceLibrary".
+
+  Initializer<JsonAllianceLibrary>  jsonAllianceLibraryInit ( 0 );
+
+
+  void  JsonAllianceLibrary::initialize ()
+  { JsonTypes::registerType( new JsonAllianceLibrary (JsonWriter::RegisterMode) ); }
+
+
+  JsonAllianceLibrary::JsonAllianceLibrary ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_path"   , typeid(string) );
+    add( "_library", typeid(string) );
+  }
+
+  string  JsonAllianceLibrary::getTypeName () const
+  { return "AllianceLibrary"; }
+
+
+  JsonAllianceLibrary* JsonAllianceLibrary::clone ( unsigned long flags ) const
+  { return new JsonAllianceLibrary ( flags ); }
+
+
+  void JsonAllianceLibrary::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonAllianceLibrary::toData" );
+
+    string libDbPath = get<string>( stack,"_library" );
+    string libOsPath = get<string>( stack,"_path"    );
+
+    AllianceFramework* af       = AllianceFramework::get();
+    Library*           library  = DataBase::getDB()->getLibrary( libDbPath
+                                                               , DataBase::CreateLib|DataBase::WarnCreateLib );
+    AllianceLibrary*   aLibrary = NULL;
+
+    if (library) {
+      aLibrary = af->getAllianceLibrary( library );
+    }
+    if (not aLibrary) {
+      char     separator = SharedPath::getNameSeparator();
+      size_t   dot       = libDbPath.rfind( separator );
+      Name     libName   = libDbPath.substr(dot+1);
+      aLibrary = af->getAllianceLibrary( libName, AllianceFramework::AppendLibrary );
+
+      if (not aLibrary) {
+        aLibrary = af->getAllianceLibrary( libOsPath
+                                         , AllianceFramework::CreateLibrary
+                                         | AllianceFramework::AppendLibrary );
+      }
+      if (not library) library = aLibrary->getLibrary();
+    }
+
+    if (aLibrary->getLibrary() != library) {
+      cerr << Warning( "JsonAllianceLibrary::toData(): Underlying Hurricane Library discrepency for \"%s\".\n"
+                       "          (may be caused by a change in search path order)"
+                     , getString(library->getName()).c_str()
+                     ) << endl;
+    }
+    if (aLibrary->getPath() != Name(libOsPath)) {
+      cerr << Warning( "JsonAllianceLibrary::toData(): Underlying OS path discrepency for \"%s\":\n"
+                       "          - Blob:   %s\n"
+                       "          - System: %s"
+                     , getString(library->getName()).c_str()
+                     , libOsPath.c_str()
+                     , getString(aLibrary->getPath()).c_str()
+                     ) << endl;
+    }
+
+    update( stack, aLibrary );
+  }
 
 
 

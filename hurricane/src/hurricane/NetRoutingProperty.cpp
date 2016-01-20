@@ -14,8 +14,9 @@
 // +-----------------------------------------------------------------+
 
 
-#include  "hurricane/NetRoutingProperty.h"
-#include  "hurricane/Net.h"
+#include "hurricane/NetRoutingProperty.h"
+#include "hurricane/Initializer.h"
+#include "hurricane/Net.h"
 
 
 namespace Hurricane {
@@ -24,13 +25,18 @@ namespace Hurricane {
   using Hurricane::Property;
 
 
+// -------------------------------------------------------------------
+// Class  :  "NetRoutingState"
+
   string  NetRoutingState::_getString () const
   {
     string  s;
 
-    if (isFixed               ()) s += 'f';
-    if (isManualGlobalRoute   ()) s += 'm';
-    if (isAutomaticGlobalRoute()) s += 'a';
+    s += (isExcluded            ()) ? 'e' : '-';
+    s += (isFixed               ()) ? 'f' : '-';
+    s += (isUnconnected         ()) ? 'u' : '-';
+    s += (isManualGlobalRoute   ()) ? 'm' : '-';
+    s += (isAutomaticGlobalRoute()) ? 'a' : '-';
 
     return s;
   }
@@ -98,6 +104,88 @@ namespace Hurricane {
       record->add( getSlot("_state",&_state) );
     }
     return record;
+  }
+
+
+  bool  NetRoutingProperty::hasJson () const
+  { return true; }
+
+
+  void  NetRoutingProperty::toJson ( JsonWriter* w, const DBo* ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", _getTypeName()      );
+    jsonWrite( w, "_state"   , _state._getString() );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNetRoutingProperty"
+
+  Initializer<JsonNetRoutingProperty>  jsonNetRoutingPropertyInit ( 20 );
+
+
+  JsonNetRoutingProperty::JsonNetRoutingProperty ( unsigned long flags )
+    : JsonObject(flags)
+  { 
+    add( "_state", typeid(string) );
+  }
+
+
+  string  JsonNetRoutingProperty::getTypeName () const
+  { return "NetRoutingProperty"; }
+
+
+  void  JsonNetRoutingProperty::initialize ()
+  { JsonTypes::registerType( new JsonNetRoutingProperty (JsonWriter::RegisterMode) ); }
+
+
+  JsonNetRoutingProperty* JsonNetRoutingProperty::clone ( unsigned long flags ) const
+  { return new JsonNetRoutingProperty ( flags ); }
+
+
+  void JsonNetRoutingProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonNetRoutingProperty::toData" );
+
+    string       sflags = get<string>( stack, "_state" );
+    unsigned int flags  = 0;
+
+    flags |= (sflags[0] == 'e') ? NetRoutingState::Excluded             : 0;
+    flags |= (sflags[1] == 'f') ? NetRoutingState::Fixed                : 0;
+    flags |= (sflags[2] == 'u') ? NetRoutingState::Unconnected          : 0;
+    flags |= (sflags[3] == 'm') ? NetRoutingState::ManualGlobalRoute    : 0;
+    flags |= (sflags[4] == 'a') ? NetRoutingState::AutomaticGlobalRoute : 0;
+
+    NetRoutingProperty* property = NULL;
+    DBo*                dbo      = stack.back_dbo();
+    if (dbo) {
+      Net* net = dynamic_cast<Net*>( dbo );
+      if (net) {
+        property = dynamic_cast<NetRoutingProperty*>( net->getProperty( NetRoutingProperty::getPropertyName() ) );
+        if (property) {
+          cerr << Error( "JsonNetRoutingProperty::toData(): %s has already a NetRoutingProperty (overwrite)."
+                       , getString(net).c_str()
+                       )  << endl;
+          NetRoutingState* state = property->getState();
+          state->unsetFlags( (unsigned int)-1 );
+          state->setFlags( flags );
+        } else {
+          property = NetRoutingProperty::create( net );
+          property->getState()->setFlags( flags );
+          net->put( property );
+        }
+      } else {
+        cerr << Error( "JsonNetRoutingProperty::toData(): %s must be a Net."
+                     , getString(dbo).c_str()
+                     ) << endl;
+      }
+    } else {
+      cerr << Error( "JsonNetRoutingProperty::toData(): No DBo in stack to attach to." ) << endl;
+    }
+
+    update( stack, property );
   }
 
 

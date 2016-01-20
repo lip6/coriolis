@@ -59,6 +59,13 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "JsonSignature".
 
+  Initializer<JsonSignature>  jsonSignatureInit ( 0 );
+
+
+  void  JsonSignature::initialize ()
+  { JsonTypes::registerType( new JsonSignature (JsonWriter::RegisterMode) ); }
+
+
   JsonSignature::JsonSignature ( unsigned long flags )
     : JsonObject  (flags)
     , _subTypeName("unset")

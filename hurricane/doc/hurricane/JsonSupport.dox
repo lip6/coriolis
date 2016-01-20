@@ -1,0 +1,241 @@
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \defgroup     JsonSupport  JSON Support
+  *  \brief        JSON Import/Export of the DataBase
+  * 
+  *  \section      secJsonSupportIntro  Introduction
+  *
+  *                One key feature of the Hurricane DataBase is it's hierarchical 
+  *                managment. But unfortunatly the simple approach of saving a design
+  *                Cell by Cell, hierarchical level by hierarchical level makes it
+  *                very difficult to save the trans-hierarchical informations (mainly
+  *                is the occurrences)
+  *
+  *                One solution is to save the design and all it's levels, down and
+  *                including the standard cells. With all the levels saved, we then
+  *                can add the occurrences and all the attached trans-hierarchical
+  *                informations. We call that comprehensive saving of a design,
+  *                a <em>design blob</em>.
+  *
+  *                Instead of creating one more ad-hoc format, we just dump the
+  *                DataBase objects in a mirror like way in JSON format.
+  *
+  *                As it is a textual format, the generated files are larges.
+  *                So the files are compressed through \c gzip.
+  *
+  *
+  *  \section      secJsonSemantic  JSON Additional Semantic
+  *
+  *                To ease the work of the parser, some semantic has been added
+  *                to the JSON objects representing a Hurricane DataBase.
+  *                  -# The first key/value pair must have the key \c "@typename"
+  *                     and give the kind of JsonObject associated. The value is
+  *                     the string returned by \c JsonObject::getTypeName().
+  *                  -# Attributes keys must start by a \c '_' character.
+  *                     (yes, I know, the C++ convention has changed and it should
+  *                     be put at the end).
+  *                  -# Collections or containers must be put \e after all the 
+  *                     scalar attributes and their keys must start by a \c '+'
+  *                     character.
+  *
+\code{.json}
+{
+  "@typename": "Cell",
+  "_id": 3,
+  "_library": "RootLibrary.AllianceFramework.sxlib",
+  "_name": "o3_x2",
+  "_abutmentBox": {
+    "@typename": "Box",
+    "_xMin": 0,
+    "_yMin": 0,
+    "_xMax": 72000,
+    "_yMax": 120000
+  },
+  "+instanceMap": [],
+  "+netMap": [
+  ],
+}
+
+\endcode
+  *
+  *  \section      secJsonDriver  JSON Driver Support
+  *
+  *                The driver is implemented through overloads (template and
+  *                non-template) of the \c jsonWriter() function. For the
+  *                template overload to work, even for non-Hurricane classes,
+  *                it is defined outside the Hurricane namespace.
+  *
+  *                For POD types, four overloads of \c jsonWriter() are defined:
+  *
+\code
+void  jsonWrite ( JsonWriter* w, const int* v );
+void  jsonWrite ( JsonWriter* w,       int  v );
+void  jsonWrite ( JsonWriter* w, const std::string& key, const int* value )
+void  jsonWrite ( JsonWriter* w, const std::string& key,       int  value )
+\endcode
+  *
+  *                The first two writes the object (here: \c int) "as is" while
+  *                the two later writes a pair key/object.
+  *
+  *                For other class/object that needs to be writen in the JSON file,
+  *                they must provide a \c toJson() function. It doesn't even need
+  *                to be virtual. For Point:
+  *
+\code
+void  Point::toJson ( JsonWriter* w ) const
+{
+  w->startObject();
+  jsonWrite( w, "@typename", "Point" );
+  jsonWrite( w, "_x", getX() );
+  jsonWrite( w, "_y", getY() );
+  w->endObject();
+}
+\endcode
+  *
+  *                This function allows three templates of \c jsonWrite() to be
+  *                used with an object of class Point:
+  *
+\code
+template<typename C>
+void  jsonWrite ( JsonWriter* w, const C* object );
+
+template<typename C>
+void  jsonWrite ( JsonWriter* w, const std::string& key, C* object );
+
+template<typename C>
+void  jsonWrite ( JsonWriter* w, const std::string& key, const C* object );
+\endcode
+  *
+  *                Note that through those three overloads we only provides
+  *                support for pointers to object. The driving mechanism is
+  *                designed in such a way that passing arguments by value is
+  *                not supported for non-POD types. Trying to do so will
+  *                result in an unsupported message inside the generated
+  *                JSON file.
+  *
+  *
+  *  \subsection   secJsonDriverDBo DBos Special Case
+  *
+  *                For DBo objects, a complete parallel hierarchy of JsonObjects
+  *                mimicking the one of DBos has been implemented. The \c toJson()
+  *                function is implemented in the DBo base object, and the
+  *                derived classes must implement the following virtual functions:
+  *
+\code
+class DBo {
+  public:
+    virtual void  _toJson            ( JsonWriter* ) const;
+    virtual void  _toJsonCollections ( JsonWriter* ) const;
+    virtual void  _toJsonSignature   ( JsonWriter* ) const;
+            void  toJson             ( JsonWriter* ) const;
+            void  toJsonSignature    ( JsonWriter* ) const;
+\endcode
+  *
+  *                The JSON driver functions is splitted in two parts:
+  *                  - \c _toJson() must drive the scalar attributes.
+  *                  - \c _toJsonCollections() must drive the various collections
+  *                       or containers.
+  *                This is to ensure that all the scalars attributes are put
+  *                before the collections, event through inheritance.
+  *
+  *                The additionnal \c toJsonSignature() method provide the
+  *                signature for an Entity which is used by an occurrence.
+  *                The signature of an occurrence is needed when we create
+  *                a JSON for a Cell only. In that case we cannot directly save
+  *                the transhierarchical informations, so we need a way to
+  *                characterize the deep Entity (which is not part of the
+  *                saved Cell). Most of the time, the signature is the scalar
+  *                attributes of the occurrenced object, it is far from foolproof,
+  *                but it will do for now.
+  *
+  *
+  *  \section      secJsonParser  JSON Parser Support
+  *
+  *                To enable JSON parsing support for an object, say Point,
+  *                an associated \c JsonPoint class must be created. This
+  *                class must be derived (directly or not) from JsonObject.
+  *                It must implement one static functions and four methods,
+  *                as shown below.
+  *
+\code
+class JsonPoint : public JsonObject {
+  public:
+    static  void       initialize ();
+                       JsonPoint  (unsigned long flags);
+    virtual string     getTypeName();
+    virtual JsonPoint* clone      (unsigned long flags);
+    virtual void       toData     (JsonStack&);
+};
+\endcode
+  *
+  *                The \c initialize() static function must be present in
+  *                concrete class only. It is used to register the Json
+  *                object into the parser during the static initialization
+  *                of the program.
+  *
+\code
+#include "hurricane/Initializer.h"
+#include "hurricane/Point.h"
+
+Initializer<JsonPoint>  jsonPointInit ( 0 );
+
+void  JsonPoint::initialize ()
+{ JsonTypes::registerType( new JsonPoint (JsonWriter::RegisterMode) ); }
+
+\endcode
+  *
+  *                The constructor has to declare requirements, attributes,
+  *                and collections needed to build the DataBase object.
+  *                Note the the requirements are not part of the objects
+  *                but only needed to build it.
+  *
+\code{.cpp}
+JsonPoint::JsonPoint ( unsigned long flags )
+  : JsonObject(flags)
+{
+  add( "_x", typeid(int64_t) );
+  add( "_y", typeid(int64_t) );
+}
+\endcode
+  *
+  *                The \c getTypeName() virtual function must return the
+  *                typename used for the \c "@typename" key in the JSON
+  *                file. Most of the time it's the same name as the
+  *                object itself, but not always.
+  *
+\code{.cpp}
+string JsonPoint::getTypeName () const
+{ return "Point"; }
+\endcode
+  *
+  *                The \c clone() virtual function must return a brand new
+  *                Json object of the same type. The datas of the orignal
+  *                object \b must not be copied. The cloning is about the
+  *                class type, not the contents.
+  *
+\code
+JsonPoint* JsonPoint::clone ( unsigned long flags ) const
+{ return new JsonPoint ( flags ); }
+\endcode
+  *
+  *                The \c toData() virtual function actually gather the
+  *                attributes to recreate the DataBase object. It needs
+  *                the parser stack to pull the attributes and to push
+  *                the created object.
+  *
+\code{.cpp}
+void JsonPoint::toData ( JsonStack& stack )
+{
+  check( stack, "JsonPoint::toData" );
+  Point point ( DbU::fromDb(get<int64_t>(stack,"_x"))
+              , DbU::fromDb(get<int64_t>(stack,"_y")) );
+  update( stack, point );
+}
+\endcode
+  */
+
+
+ }  // Hurricane namespace.

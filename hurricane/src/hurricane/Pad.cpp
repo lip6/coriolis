@@ -153,6 +153,13 @@ Record* Pad::_getRecord() const
 // JsonPad implementation
 // ****************************************************************************************************
 
+Initializer<JsonPad>  jsonPadInit ( 0 );
+
+
+void  JsonPad::initialize()
+// ************************
+{ JsonTypes::registerType( new JsonPad (JsonWriter::RegisterMode) ); }
+
 JsonPad::JsonPad(unsigned long flags)
 // **********************************
   : JsonComponent(flags)

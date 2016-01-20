@@ -320,8 +320,14 @@ Record* Transformation::Orientation::_getRecord() const
 
 
 // ****************************************************************************************************
-// Transformation::Orientation implementation
+// JsonTransformation implementation
 // ****************************************************************************************************
+
+Initializer<JsonTransformation>  jsonTransformationInit ( 0 );
+
+void  JsonTransformation::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonTransformation (JsonWriter::RegisterMode) ); }
 
 JsonTransformation::JsonTransformation(unsigned long flags)
 // ********************************************************

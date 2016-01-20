@@ -130,6 +130,7 @@ class Box {
 class JsonBox : public JsonObject {
 // ********************************
 
+  public: static void initialize();
   public: JsonBox(unsigned long);
   public: virtual string getTypeName() const;
   public: virtual JsonBox* clone(unsigned long) const;

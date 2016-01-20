@@ -15,9 +15,8 @@
 
 
 #include <iostream>
-#include "hurricane/DesignBlob.h"
 #include "hurricane/DataBase.h"
-#include "hurricane/Library.h"
+#include "hurricane/Cell.h"
 #include "hurricane/DesignBlob.h"
 
 
@@ -35,7 +34,7 @@ namespace Hurricane {
     w->startObject();
     jsonWrite( w, "@typename", _getTypeName() );
     jsonWrite( w, "_topCell" , getTopCell()->getHierarchicalName() );
-    jsonWrite( w, "_library" , DataBase::getDB()->getRootLibrary() );
+    jsonWrite( w, "_database", DataBase::getDB()                   );
     w->endObject();
   }
 
@@ -43,13 +42,20 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "JsonDesignBlob".
 
+  Initializer<JsonDesignBlob>  jsonDesignBlobInit ( 0 );
+
+
+  void  JsonDesignBlob::initialize ()
+  { JsonTypes::registerType( new JsonDesignBlob (JsonWriter::RegisterMode) ); }
+
+
   JsonDesignBlob::JsonDesignBlob ( unsigned long flags )
     : JsonObject(flags)
   {
     ltrace(51) << "JsonDesignblob::JsonDesignblob()" << endl;
 
-    add( "_library", typeid(Library*) );
-    add( "_topCell", typeid(string)   );
+    add( "_topCell" , typeid(string)    );
+    add( "_database", typeid(DataBase*) );
   }
 
 
@@ -65,7 +71,8 @@ namespace Hurricane {
   {
     check( stack, "JsonDesignBlob::toData" );
 
-    DesignBlob* designBlob = new DesignBlob ( DataBase::getDB()->getCell(get<string>(stack,"_topCell")) );
+    DesignBlob* designBlob = new DesignBlob
+      ( DataBase::getDB()->getCell( get<string>(stack,"_topCell"), DataBase::NoFlags ) );
     
     update( stack, designBlob );
   }

@@ -47,13 +47,16 @@ To build Coriolis, ensure the following prerequisites are met:
 * bison & flex.
 * Qt 4 or 5.
 * libxml2.
+* RapidJSON
 * A C++11 compliant compiler.
 
 The build system relies on a fixed directory tree from the root
 of the user currently building it. Thus first step is to get a clone of
 the repository in the right place. Proceed as follow: ::
 
-   ego@home:~$ mkdir -p ~/coriolis-2.x/src
+   ego@home:~$ mkdir -p ~/coriolis-2.x/src/support
+   ego@home:~$ cd ~/coriolis-2.x/src/support
+   ego@home:~$ git clone http://github.com/miloyip/rapidjson
    ego@home:~$ cd ~/coriolis-2.x/src
    ego@home:src$ git clone https://www-soc.lip6.fr/git/coriolis.git
    ego@home:src$ cd coriolis

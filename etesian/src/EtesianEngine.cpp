@@ -478,6 +478,7 @@ namespace Etesian {
       //masterCell->setAbutmentBox( topAb );
       //instance->setTransformation( Transformation() ); // (0,0,ID).
       //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        occurrence.makeInvalid();
         instance->slaveAbutmentBox();
       }
     }

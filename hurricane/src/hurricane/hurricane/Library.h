@@ -129,6 +129,7 @@ class Library : public DBo {
 class JsonLibrary : public JsonDBo {
 // *******************************
 
+  public: static void initialize();
   public: JsonLibrary(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonLibrary* clone(unsigned long) const;

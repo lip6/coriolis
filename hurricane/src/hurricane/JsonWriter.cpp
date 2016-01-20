@@ -29,14 +29,16 @@
 // +-----------------------------------------------------------------+
 
 
-#include "rapidjson/filewritestream.h"
+//#include "rapidjson/filewritestream.h"
 #include "rapidjson/prettywriter.h"
 #include "hurricane/Commons.h"
+#include "hurricane/FileWriteGzStream.h"
 
 
 //namespace Hurricane {
 
-  typedef  rapidjson::PrettyWriter<rapidjson::FileWriteStream>  JsonOfstream;
+//typedef  rapidjson::PrettyWriter<rapidjson::FileWriteStream>  JsonOfstream;
+  typedef  rapidjson::PrettyWriter<Hurricane::FileWriteGzStream>  JsonOfstream;
 
 #define  _WRITER  reinterpret_cast<JsonOfstream*>(_writer)
 
@@ -53,7 +55,8 @@
     , _writer    (NULL)
   {
     _file   = fopen( fileName.c_str(), "w" );
-    _stream = new rapidjson::FileWriteStream ( _file, _buffer, _bufferSize );
+  //_stream = new rapidjson::FileWriteGzStream ( _file, _buffer, _bufferSize );
+    _stream = new Hurricane::FileWriteGzStream ( _file, _buffer, _bufferSize );
     _writer = new JsonOfstream ( *_stream );
     _WRITER->SetIndent( ' ', 2 );
   }

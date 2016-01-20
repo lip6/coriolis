@@ -739,6 +739,7 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 // x-----------------------------------------------------------------x
 
 #include "hurricane/Slot.h"
+#include "hurricane/Initializer.h"
 #include "hurricane/Tabulation.h"
 #include "hurricane/JsonWriter.h"
 #include "hurricane/JsonReader.h"

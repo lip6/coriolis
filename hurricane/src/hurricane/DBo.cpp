@@ -29,8 +29,9 @@
 // +-----------------------------------------------------------------+
 
 
-#include "hurricane/Property.h"
 #include "hurricane/DBo.h"
+#include "hurricane/Initializer.h"
+#include "hurricane/Property.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Error.h"
 
@@ -160,6 +161,9 @@ namespace Hurricane {
   {
     writer->key( "+propertySet" );
     writer->startArray();
+    for ( Property* property : getProperties() ) {
+      if (property->hasJson()) property->toJson( writer, this );
+    }
     writer->endArray();
   }
 
@@ -212,7 +216,7 @@ namespace Hurricane {
 // Class  :  "Hurricane::JsonDBo".
 
   JsonDBo::JsonDBo ( unsigned int flags )
-    : JsonObject(flags)
+    : JsonObject(flags | JsonWriter::DBoObject)
   { }
 
 

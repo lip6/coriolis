@@ -1,0 +1,29 @@
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Initializer
+  *  \brief        Register a static initialization function.
+  *
+  *  \section      secInitializerMechanism  Initializer Mechanism
+  *
+  *                In C++, there is currently no way to guarantee the order into
+  *                which the static initialization (variables) in various modules
+  *                will be done.
+  *
+  *                The Initializer template class provide a way to perform a static
+  *                initialization across multiple modules in an ordered fashion,
+  *                thus solving potential dependency problems between initialisation.
+  */
+
+ //! \function     Initializer::Initializer ( unsigned int order );
+ //!               Register a static initializer for the template type \c T.
+ //!               Initializer is a object that must be kept in a \c static
+ //!               variable in a compilation unit (i.e. a \c .cpp file).
+ //!
+ //!               The template type \c T (a class) must provide a static function
+ //!               named \c initialize, with exactly the following signature:
+ //!               <code>void T::initialize()</code>.
+
+ }

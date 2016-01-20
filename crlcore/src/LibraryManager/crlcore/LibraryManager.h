@@ -50,10 +50,11 @@ namespace CRL {
                          LibraryManager ( QWidget* parent=NULL );
       inline void        setCellViewer  ( CellViewer* );
       inline CellViewer* getCellViewer  () const;
-    public slots:                 
+    public slots:                       
       void               toggleShow     ();
       void               setLibrary     ( const AllianceLibrary* library );
       CellViewer*        openCell       ( Cell*, unsigned int flags );
+      void               updateLibrary  ( Cell* );
     private:
       LibrariesWidget* _librariesWidget;
       CellsWidget*     _cellsWidget;

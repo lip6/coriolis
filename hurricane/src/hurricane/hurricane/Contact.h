@@ -152,6 +152,7 @@ class Contact : public Component {
 class JsonContact : public JsonComponent {
 // ***************************************
 
+  public: static void initialize();
   public: JsonContact(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonContact* clone(unsigned long) const;

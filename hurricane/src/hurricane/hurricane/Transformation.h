@@ -142,6 +142,7 @@ class Transformation {
 class JsonTransformation : public JsonObject {
 // *******************************************
 
+  public: static void initialize();
   public: JsonTransformation(unsigned long);
   public: virtual string getTypeName() const;
   public: virtual JsonTransformation* clone(unsigned long) const;

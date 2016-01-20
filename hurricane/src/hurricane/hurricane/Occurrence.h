@@ -113,6 +113,7 @@ class Occurrence {
 class JsonOccurrence : public JsonObject {
 // **********************************
 
+  public: static void initialize();
   public: JsonOccurrence(unsigned long);
   public: virtual string getTypeName() const;
   public: virtual JsonOccurrence* clone(unsigned long) const;

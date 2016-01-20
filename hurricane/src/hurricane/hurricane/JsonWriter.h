@@ -43,6 +43,9 @@ namespace rapidjson {
   class FileWriteStream;
 }
 
+namespace Hurricane {
+  class FileWriteGzStream;
+}
 //namespace Hurricane {
 
 
@@ -55,6 +58,11 @@ namespace rapidjson {
                 , DesignBlobMode   = (1<<1)
                 , CellMode         = (1<<2)
                 , RegisterMode     = (1<<3)
+                , RegisterStatus   = (1<<4)
+                , RegisterType     = (1<<5)
+                , UnregisterType   = (1<<6)
+                , CellObject       = (1<<7)
+                , DBoObject        = (1<<8)
                 };
     public:
                     JsonWriter  ( std::string fileName );
@@ -88,12 +96,13 @@ namespace rapidjson {
                   JsonWriter  ( const JsonWriter& );
       JsonWriter& operator=   ( const JsonWriter& ) const;
     private:
-      unsigned long               _flags;
-      size_t                      _bufferSize;
-      char*                       _buffer;
-      FILE*                       _file;
-      rapidjson::FileWriteStream* _stream;
-      void*                       _writer;
+      unsigned long                 _flags;
+      size_t                        _bufferSize;
+      char*                         _buffer;
+      FILE*                         _file;
+    //rapidjson::FileWriteStream*   _stream;
+      Hurricane::FileWriteGzStream* _stream;
+      void*                         _writer;
   };
 
 
@@ -173,6 +182,15 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const std::strin
 
 
 template<typename C>
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C& )
+{
+  w->key( key );
+  std::string message = "Unsupported type " + Hurricane::demangle(typeid(C).name());
+  w->write( message.c_str() );
+}
+
+
+template<typename C>
 inline void  jsonWrite ( JsonWriter* w, const C* object )
 {
   if (Hurricane::inltrace(50))
@@ -184,6 +202,13 @@ inline void  jsonWrite ( JsonWriter* w, const C* object )
   else        jsonWrite(w);
 
   Hurricane::ltraceout(50);
+}
+
+
+template<typename C>
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, C* object )
+{
+  jsonWrite( w, key, const_cast<const C*>(object) );
 }
 
 

@@ -226,6 +226,7 @@ namespace CRL {
     Catalog*     catalog = AllianceFramework::get()->getCatalog();
     CellLoaders* loaders = CellLoaders::get();
 
+    getCellsDatas().clear();
     forEach ( Cell*, icell, library->getLibrary()->getCells() ) {
       CellDatas* datas = new CellDatas(*icell);
       getCellsDatas().push_back( datas );
@@ -245,6 +246,7 @@ namespace CRL {
       CellDatas* key      = new CellDatas( cellName );
 
       auto idatas = lower_bound( getCellsDatas().begin(), getCellsDatas().end(), key, LessCellDatas );
+
       if (  (idatas               == getCellsDatas().end())
          or ((*idatas)->getName() != cellName             ) ) {
         getCellsDatas().push_back( key );

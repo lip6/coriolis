@@ -34,23 +34,23 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 Occurrence::Occurrence(const Entity* entity)
-// *********************************
-  :    _entity(const_cast<Entity*>(entity)),
-    _sharedPath(NULL)
+// *****************************************
+  : _entity(const_cast<Entity*>(entity))
+  , _sharedPath(NULL)
 {
 }
 
 Occurrence::Occurrence(const Entity* entity, const Path& path)
-// ***************************************************
-  :    _entity(const_cast<Entity*>(entity)),
-    _sharedPath(path._getSharedPath())
+// ***********************************************************
+  : _entity(const_cast<Entity*>(entity))
+  , _sharedPath(path._getSharedPath())
 {
-    if (!_entity) {
-        throw Error("Can't create " + _TName("Occurrence") + " : null entity");
-    }
-    if (_sharedPath)
-        if (_entity->getCell() != _sharedPath->getMasterCell())
-            throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
+  if (!_entity) {
+    throw Error("Can't create " + _TName("Occurrence") + " : null entity");
+  }
+  if (_sharedPath)
+    if (_entity->getCell() != _sharedPath->getMasterCell())
+      throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
 }
 
 Occurrence::Occurrence(const Occurrence& occurrence)
@@ -323,6 +323,14 @@ string Occurrence::getName() const
 
     return description;
 }
+
+
+Initializer<JsonOccurrence>  jsonOccurrenceInit ( 0 );
+
+
+void  JsonOccurrence::initialize()
+// *******************************
+{ JsonTypes::registerType( new JsonOccurrence (JsonWriter::RegisterMode) ); }
 
 JsonOccurrence::JsonOccurrence(unsigned long flags)
 // ************************************************

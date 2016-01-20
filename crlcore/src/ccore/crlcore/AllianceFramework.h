@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -18,17 +17,19 @@
 #ifndef  CRL_ALLIANCE_FRAMEWORK_H
 #define  CRL_ALLIANCE_FRAMEWORK_H
 
-#include  <map>
-#include  <limits>
-#include  "hurricane/Cell.h"
-#include  "crlcore/Environment.h"
-#include  "crlcore/AllianceLibrary.h"
-#include  "crlcore/Catalog.h"
-#include  "crlcore/ParsersDrivers.h"
+#include <map>
+#include <limits>
+#include "hurricane/Cell.h"
+#include "crlcore/Environment.h"
+#include "crlcore/AllianceLibrary.h"
+#include "crlcore/Catalog.h"
+#include "crlcore/ParsersDrivers.h"
 
 
 namespace CRL {
 
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
   using Hurricane::Cell;
   using Hurricane::Net;
   class RoutingGauge;
@@ -37,8 +38,13 @@ namespace CRL {
 
   class AllianceFramework {
     public:
-      enum InstancesCountFlags { Recursive=0x1, IgnoreFeeds=0x2 };
-      enum LibraryFlags        { CreateLibrary=0x1, InSearchPath=0x2, HasCatalog=0x4 };
+      enum InstancesCountFlags { Recursive     = (1<<0)
+                               , IgnoreFeeds   = (1<<1)
+                               };                
+      enum LibraryFlags        { CreateLibrary = (1<<0)
+                               , AppendLibrary = (1<<1)
+                               , HasCatalog    = (1<<2)
+                               };
     public:
     // Constructors.
       static AllianceFramework*       create                   ();
@@ -72,9 +78,9 @@ namespace CRL {
       inline Library*                 getParentLibrary         ();
              Library*                 getLibrary               ( unsigned int index );
              AllianceLibrary*         getAllianceLibrary       ( unsigned int index );
-             AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int& flags );
+             AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
              AllianceLibrary*         getAllianceLibrary       ( Library* );
-             AllianceLibrary*         createLibrary            ( const string& path, unsigned int& flags, string libName="" );
+             AllianceLibrary*         createLibrary            ( const string& path, unsigned int flags, string libName="" );
       inline const AllianceLibraries& getAllianceLibraries     () const;
              void                     saveLibrary              ( Library* );
              void                     saveLibrary              ( AllianceLibrary* );
@@ -95,6 +101,7 @@ namespace CRL {
              unsigned int             loadLibraryCells         ( const Name& );
       static size_t                   getInstancesCount        ( Cell*, unsigned int flags );
     // Hurricane Managment.           
+             void                     toJson                   ( JsonWriter* ) const;
       inline string                   _getTypeName             () const;
              string                   _getString               () const;
              Record*                  _getRecord               () const;
@@ -157,6 +164,16 @@ namespace CRL {
   inline const Name   AllianceFramework::getDefaultCGPinLayerName
                                                                () const { return "CALU1"; }
   inline string       AllianceFramework::_getTypeName          () const { return "AllianceFramework"; }
+
+
+  class JsonAllianceFramework : public JsonObject {
+    public:
+      static void                    initialize           ();
+                                     JsonAllianceFramework( unsigned long );
+      virtual string                 getTypeName          () const;
+      virtual JsonAllianceFramework* clone                ( unsigned long ) const;
+      virtual void                   toData               ( JsonStack& ); 
+  };
 
 
 } // CRL namespace.

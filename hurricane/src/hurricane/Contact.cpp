@@ -541,6 +541,13 @@ string Contact_Hooks::Locator::_getString() const
 // JsonContact implementation
 // ****************************************************************************************************
 
+Initializer<JsonContact>  jsonContactInit ( 0 );
+
+
+void  JsonContact::initialize()
+// ****************************
+{ JsonTypes::registerType( new JsonContact (JsonWriter::RegisterMode) ); }
+
 JsonContact::JsonContact(unsigned long flags)
 // ******************************************
   : JsonComponent(flags)

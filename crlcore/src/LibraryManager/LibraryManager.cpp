@@ -139,5 +139,8 @@ namespace CRL {
   }
 
 
+  void  LibraryManager::updateLibrary ( Cell* )
+  { _cellsWidget->updateLibrary(); }
+
 
 }  // CRL namespace.

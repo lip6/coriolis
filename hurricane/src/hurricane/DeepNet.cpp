@@ -132,6 +132,12 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "JsonDeepNet".
 
+  Initializer<JsonDeepNet>  jsonDeepNetInit ( 0 );
+
+  void  JsonDeepNet::initialize ()
+  { JsonTypes::registerType( new JsonDeepNet (JsonWriter::RegisterMode) ); }
+
+
   JsonDeepNet::JsonDeepNet ( unsigned long flags )
     : JsonNet(flags)
   {

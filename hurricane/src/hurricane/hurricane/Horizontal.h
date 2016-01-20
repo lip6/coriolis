@@ -116,6 +116,7 @@ class Horizontal : public Segment {
 class JsonHorizontal : public JsonSegment {
 // ****************************************
 
+  public: static void initialize();
   public: JsonHorizontal(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonHorizontal* clone(unsigned long) const;

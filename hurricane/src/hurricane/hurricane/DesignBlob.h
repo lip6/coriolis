@@ -48,6 +48,7 @@ namespace Hurricane {
 
   class JsonDesignBlob : public JsonObject {
     public:
+      static  void            initialize     ();
                               JsonDesignBlob ( unsigned long flags );
       virtual std::string     getTypeName    () const;
       virtual JsonDesignBlob* clone          ( unsigned long ) const;

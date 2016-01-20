@@ -44,7 +44,7 @@ namespace Hurricane {
     setWindowTitle( tr("Open Design Blob") );
 
     QLabel* label = new QLabel ();
-    label->setText( tr("Enter the Blob name (without extention \".blob.json\")") );
+    label->setText( tr("Enter the Blob name (without extention \".blob.json.bz2\")") );
     label->setFont( Graphics::getNormalFont(true) );
 
     _lineEdit = new QLineEdit ();

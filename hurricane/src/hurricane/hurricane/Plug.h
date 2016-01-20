@@ -118,6 +118,7 @@ class Plug : public Component {
 class JsonPlug : public JsonComponent {
 // ************************************
 
+  public: static void initialize();
   public: JsonPlug(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonPlug* clone(unsigned long) const;
@@ -128,6 +129,7 @@ class JsonPlug : public JsonComponent {
 class JsonPlugRef : public JsonObject {
 // ************************************
 
+  public: static void initialize();
   public: JsonPlugRef(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonPlugRef* clone(unsigned long) const;

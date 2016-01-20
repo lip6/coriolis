@@ -71,6 +71,7 @@ namespace Hurricane {
 
   class JsonDeepNet : public JsonNet {
     public:
+      static  void         initialize  ();
                            JsonDeepNet ( unsigned long flags );
       virtual             ~JsonDeepNet ();
       virtual string       getTypeName () const;

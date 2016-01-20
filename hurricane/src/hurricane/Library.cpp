@@ -234,7 +234,7 @@ void Library::_toJson(JsonWriter* w) const
   Inherit::_toJson( w );
 
   jsonWrite( w, "_name"      , getName()      );
-  jsonWrite( w, "+cellMap"   , getCells()     );
+//jsonWrite( w, "+cellMap"   , getCells()     );
   jsonWrite( w, "+libraryMap", getLibraries() );
 }
 
@@ -243,13 +243,19 @@ void Library::_toJson(JsonWriter* w) const
 // JsonLibrary implementation
 // ****************************************************************************************************
 
+Initializer<JsonLibrary>  jsonLibraryInit ( 0 );
+
+void  JsonLibrary::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonLibrary (JsonWriter::RegisterMode) ); }
+
 JsonLibrary::JsonLibrary(unsigned long flags)
 // ************************************
   : JsonDBo(flags)
 {
-  add( ".Library"   , typeid(Library*)  );
+//add( ".Library"   , typeid(Library*)  );
   add( "_name"      , typeid(string)    );
-  add( "+cellMap"   , typeid(JsonArray) );
+//add( "+cellMap"   , typeid(JsonArray) );
   add( "+libraryMap", typeid(JsonArray) );
 }
 
@@ -267,11 +273,14 @@ void JsonLibrary::toData(JsonStack& stack)
   check( stack, "JsonLibrary::toData" );
 
   Name     libName ( get<string>  ( stack, "_name"    ) );
-  Library* parent  = get<Library*>( stack, ".Library" );
-  if (not parent)
-    parent  = get<Library*>( stack, "_library" );
-
   Library* library = NULL;
+  Library* parent  = NULL;
+
+  if (stack.rhas(".Library"))
+    parent = get<Library*>( stack, ".Library" );
+  else if (stack.rhas("_rootLibrary"))
+    parent = get<Library*>( stack, "_rootLibrary" );
+
   if (parent) {
     library = parent->getLibrary( libName );
     if (not library)

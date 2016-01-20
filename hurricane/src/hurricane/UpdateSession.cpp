@@ -36,8 +36,7 @@ stack<UpdateSession*>* UPDATOR_STACK = NULL;
 UpdateSession::UpdateSession()
 // ***************************
 :    Inherit()
-{
-}
+{ }
 
 void UpdateSession::destroy()
 // *************************
@@ -126,9 +125,9 @@ Record* UpdateSession::_getRecord() const
     return record;
 }
 
-  void UpdateSession::onCapturedBy(DBo* owner)
-  // *****************************************
-  {
+void UpdateSession::onCapturedBy(DBo* owner)
+// *****************************************
+{
     if ( not dynamic_cast<Go*>(owner) and not dynamic_cast<Cell*>(owner) )
       throw Error( "Bad update session capture : not a graphic object (Go) or a Cell" );
     
@@ -137,8 +136,7 @@ Record* UpdateSession::_getRecord() const
 
 void UpdateSession::onNotOwned()
 // *****************************
-{
-}
+{ }
 
 
 
@@ -146,9 +144,9 @@ void UpdateSession::onNotOwned()
 // Go::invalidate implementation : located here to access UPDATOR_STACK variable
 // ****************************************************************************************************
 
-  void Go::invalidate(bool propagateFlag)
-  // ************************************
-  {
+void Go::invalidate(bool propagateFlag)
+// ************************************
+{
   // trace << "invalidate(" << this << ")" << endl;
   // trace_in();
 

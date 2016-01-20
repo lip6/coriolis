@@ -236,6 +236,13 @@ string Plug::getName() const
 // JsonPlug implementation
 // ****************************************************************************************************
 
+Initializer<JsonPlug>  jsonPlugInit ( 0 );
+
+
+void  JsonPlug::initialize()
+// *************************
+{ JsonTypes::registerType( new JsonPlug (JsonWriter::RegisterMode) ); }
+
 JsonPlug::JsonPlug(unsigned long flags)
 // ************************************
   : JsonComponent(flags)
@@ -293,6 +300,12 @@ void JsonPlug::toData(JsonStack& stack)
 // ****************************************************************************************************
 // JsonPlugRef implementation
 // ****************************************************************************************************
+
+Initializer<JsonPlugRef>  jsonPlugRefInit ( 0 );
+
+void  JsonPlugRef::initialize()
+// ****************************
+{ JsonTypes::registerType( new JsonPlugRef (JsonWriter::RegisterMode) ); }
 
 JsonPlugRef::JsonPlugRef(unsigned long flags)
 // ******************************************

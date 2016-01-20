@@ -47,6 +47,7 @@ namespace CRL {
              void        selectedCell   ( CellDatas* );
     public slots:         
              void        updateSelected ();
+             void        updateLibrary  ();
              void        selectCurrent  ( const QModelIndex& index, const QModelIndex& );
              void        setLibrary     ( const AllianceLibrary* );
     private:

@@ -85,6 +85,7 @@ class Pad : public Component {
 class JsonPad : public JsonComponent {
 // ***********************************
 
+  public: static void initialize();
   public: JsonPad(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonPad* clone(unsigned long) const;

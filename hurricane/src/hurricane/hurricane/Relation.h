@@ -62,6 +62,7 @@ class Relation : public SharedProperty {
 // Others
 // ******
 
+    public: void _setMasterOwner(DBo* owner) {_masterOwner=owner; }
     protected: virtual void _postCreate();
 
     public: virtual string _getTypeName() const {return _TName("Relation");};

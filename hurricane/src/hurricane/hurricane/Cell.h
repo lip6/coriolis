@@ -110,15 +110,39 @@ class Cell : public Entity {
         virtual Name               getName          () const;
         static  Name               staticGetName    ();
                 Name               getUniqueName    ();
+        static  std::string        getTrunkName     ( Name name );
+        virtual bool               hasJson          () const;
+        virtual void               toJson           ( JsonWriter*, const DBo* ) const;
+        inline  void               _setOwner        ( Cell* );
+        inline  void               _setDuplicates   ( unsigned int );
         virtual string             _getTypeName     () const;
         virtual Record*            _getRecord       () const;
       private:
         static const Name          _name;
-                     unsigned int  _duplicates;
+               unsigned int        _duplicates;
       private:
                                    UniquifyRelation ( Cell* );
       protected:
         virtual void               _preDestroy      ();
+
+      public:
+        class JsonProperty : public JsonObject {
+          public:
+            static  void          initialize   ();
+                                  JsonProperty ( unsigned long flags );
+            virtual string        getTypeName  () const;
+            virtual JsonProperty* clone        ( unsigned long ) const;
+            virtual void          toData       ( JsonStack& ); 
+      };
+      public:
+        class JsonPropertyRef : public JsonObject {
+          public:
+            static  void             initialize      ();
+                                     JsonPropertyRef ( unsigned long flags );
+            virtual string           getTypeName     () const;
+            virtual JsonPropertyRef* clone           ( unsigned long ) const;
+            virtual void             toData          ( JsonStack& ); 
+      };
     };
 
     class ClonedSet : public Collection<Cell*> {
@@ -446,9 +470,14 @@ inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
 { }
 
 
+inline  void  Cell::UniquifyRelation::_setOwner      ( Cell*        owner )      { _setMasterOwner(owner); }
+inline  void  Cell::UniquifyRelation::_setDuplicates ( unsigned int duplicates ) { _duplicates=duplicates; }
+
+
 class JsonCell : public JsonEntity {
 // *********************************
 
+  public: static void initialize();
   public: JsonCell(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonCell* clone(unsigned long) const;

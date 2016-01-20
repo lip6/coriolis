@@ -89,8 +89,16 @@ namespace Hurricane {
 
   class JsonDBo : public JsonObject {
     public:
-      JsonDBo ( unsigned int flags );
-};
+                                         JsonDBo ( unsigned int flags );
+      template<typename T> inline  void  update  ( JsonStack&, T );
+  };
+
+
+  template<typename T> inline void  JsonDBo::update ( JsonStack& stack, T hobject )
+  {
+    JsonObject::update<T>( stack, hobject );
+    stack.push_back_dbo( dynamic_cast<DBo*>(hobject) );
+  }
 
 
 } // Hurricane namespace.

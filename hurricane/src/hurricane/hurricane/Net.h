@@ -262,6 +262,7 @@ class Net : public Entity {
 class JsonNet : public JsonEntity {
 // ********************************
 
+  public: static void initialize();
   public: JsonNet(unsigned long flags);
   public: virtual ~JsonNet();
   public: virtual string getTypeName() const;

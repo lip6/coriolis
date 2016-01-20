@@ -2,11 +2,15 @@
  include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane 
                        ${CONFIGURATION_INCLUDE_DIR}
                        ${Boost_INCLUDE_DIRS}
+                       ${BZIP2_INCLUDE_DIR}
                      )
                  set ( includes hurricane/Mask.h
                                 hurricane/Flags.h
+                                hurricane/Initializer.h
                                 hurricane/DebugSession.h
                                 hurricane/Backtrace.h
+                                hurricane/FileReadGzStream.h
+                                hurricane/FileWriteGzStream.h
                                 hurricane/JsonWriter.h
                                 hurricane/JsonReader.h
                                 hurricane/Signature.h
@@ -98,9 +102,12 @@
                      )
                  set ( cpps     Record.cpp
                                 Slot.cpp
+                                Initializer.cpp
                                 Commons.cpp
                                 Flags.cpp
                                 Backtrace.cpp
+                                FileReadGzStream.cpp
+                                FileWriteGzStream.cpp
                                 JsonWriter.cpp
                                 JsonReader.cpp
                                 Signature.cpp
@@ -176,7 +183,7 @@
                  )
     
            add_library ( hurricane ${cpps} )
- target_link_libraries ( hurricane ${Boost_LIBRARIES} )
+ target_link_libraries ( hurricane ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} )
  set_target_properties ( hurricane PROPERTIES VERSION 1.0 SOVERSION 1 )
                install ( TARGETS hurricane DESTINATION lib${LIB_SUFFIX} )
                install ( FILES ${includes} DESTINATION include/coriolis2/hurricane ) 

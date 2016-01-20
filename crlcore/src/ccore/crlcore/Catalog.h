@@ -34,6 +34,8 @@ namespace CRL {
 
   using std::string;
   using std::map;
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
   using Hurricane::_TName;
   using Hurricane::Name;
   using Hurricane::Record;
@@ -106,6 +108,7 @@ namespace CRL {
           inline bool          setDelete      ( bool value );
           inline bool          setPhysical    ( bool value );
           inline bool          setLogical     ( bool value );
+          inline bool          setInMemory    ( bool value );
         // Accessors.
           inline Cell*         getCell        () const;
           inline Library*      getLibrary     () const;
@@ -116,6 +119,7 @@ namespace CRL {
           inline Library*      setLibrary     ( Library* library );
           inline void          setDepth       ( unsigned int depth );
         // Hurricane Management.
+                 void          toJson         ( JsonWriter* w ) const;
           inline string        _getTypeName   () const;
                  string        _getString     () const;
                  Record*       _getRecord     () const;
@@ -126,7 +130,18 @@ namespace CRL {
                  unsigned int  _depth;
                  Cell*         _cell;
                  Library*      _library;
-    };
+
+        // Json Property.
+        public:
+          class JsonState : public JsonObject {
+            public:
+              static  void       initialize  ();
+                                 JsonState   ( unsigned long flags );
+              virtual string     getTypeName () const;
+              virtual JsonState* clone       ( unsigned long ) const;
+              virtual void       toData      ( JsonStack& ); 
+          };
+      };
 
     private:
     // Attributes.
@@ -142,7 +157,6 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::CatalogProperty".
 
-
   class CatalogProperty : public PrivateProperty {
 
     public:
@@ -154,6 +168,8 @@ namespace CRL {
       inline  Catalog::State*  getState        () const;
       inline  void             setState        ( Catalog::State* state );
       virtual void             onReleasedBy    ( DBo* owner );
+      virtual bool             hasJson         () const;
+      virtual void             toJson          ( JsonWriter* w, const DBo* ) const;
       virtual string           _getTypeName    () const;
       virtual string           _getString      () const;
       virtual Record*          _getRecord      () const;
@@ -165,6 +181,19 @@ namespace CRL {
     protected:
     // Constructor.
       inline  CatalogProperty ( Catalog::State* state );
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::JsonCatalogProperty".
+
+  class JsonCatalogProperty : public JsonObject {
+    public:
+      static void                  initialize          ();
+                                   JsonCatalogProperty ( unsigned long );
+      virtual string               getTypeName         () const;
+      virtual JsonCatalogProperty* clone               ( unsigned long ) const;
+      virtual void                 toData              ( JsonStack& ); 
   };
 
 
@@ -193,6 +222,7 @@ namespace CRL {
   inline bool              Catalog::State::setDelete        ( bool value ) { return setFlags(Delete     ,value); }
   inline bool              Catalog::State::setPhysical      ( bool value ) { return setFlags(Physical   ,value); }
   inline bool              Catalog::State::setLogical       ( bool value ) { return setFlags(Logical    ,value); }
+  inline bool              Catalog::State::setInMemory      ( bool value ) { return setFlags(InMemory   ,value); }
   inline Library*          Catalog::State::setLibrary       ( Library* library ) { return _library = library; }
   inline void              Catalog::State::setDepth         ( unsigned int depth ) { _depth = depth; }
   inline Cell*             Catalog::State::getCell          () const { return _cell; }

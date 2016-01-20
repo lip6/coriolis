@@ -208,6 +208,13 @@ Record* Horizontal::_getRecord() const
 // JsonHorizontal implementation
 // ****************************************************************************************************
 
+Initializer<JsonHorizontal>  jsonHorizontalInit ( 0 );
+
+
+void  JsonHorizontal::initialize()
+// *******************************
+{ JsonTypes::registerType( new JsonHorizontal (JsonWriter::RegisterMode) ); }
+
 JsonHorizontal::JsonHorizontal(unsigned long flags)
 // ************************************************
   : JsonSegment(flags)

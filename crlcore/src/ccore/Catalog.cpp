@@ -17,15 +17,25 @@
 # include <iomanip>
 using namespace std;
 
+#include "hurricane/Initializer.h"
+#include "hurricane/SharedPath.h"
 #include "hurricane/Collection.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
 #include "hurricane/Name.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace CRL {
 
+  using Hurricane::inltrace;
+  using Hurricane::tab;
+  using Hurricane::Initializer;
+  using Hurricane::JsonTypes;
+  using Hurricane::SharedPath;
+  using Hurricane::DataBase;
 
   const char* MissingStateProperty = "%s:\n\n  Missing Catalog State Property in cell \"%s\".\n";
 
@@ -88,6 +98,81 @@ namespace CRL {
     }
     return record;
   }
+
+
+  void  Catalog::State::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", _getTypeName() );
+    jsonWrite( w, "_flags"   , _getString()   );
+    jsonWrite( w, "_depth"   , _depth         );
+
+    string cellName = "";
+    if (_cell) cellName = getString( _cell->getHierarchicalName() );
+    jsonWrite( w, "_cell", cellName );
+    w->endObject();
+  }
+
+
+  Initializer<Catalog::State::JsonState>  jsonCatalogStateInit ( 20 );
+
+
+  Catalog::State::JsonState::JsonState ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_flags", typeid(string)  );
+    add( "_depth", typeid(int64_t) );
+    add( "_cell" , typeid(string)  );
+  }
+
+
+  string  Catalog::State::JsonState::getTypeName () const
+  { return "Catalog::State"; }
+
+
+  void  Catalog::State::JsonState::initialize ()
+  { JsonTypes::registerType( new JsonState (JsonWriter::RegisterMode) ); }
+
+
+  Catalog::State::JsonState* Catalog::State::JsonState::clone ( unsigned long flags ) const
+  { return new JsonState ( flags ); }
+
+
+  void Catalog::State::JsonState::toData ( JsonStack& stack )
+  {
+    check( stack, "Catalog::State::JsonState::toData" );
+
+    string       cellPath = get<string> ( stack, "_cell" );
+    string       sflags   = get<string> ( stack, "_flags" );
+    unsigned int depth    = get<int64_t>( stack, "_depth" );
+
+    char    separator   = SharedPath::getNameSeparator();
+    size_t  dot         = cellPath.rfind( separator );
+    string  cellName    = cellPath.substr(dot+1);
+    string  libraryName = cellPath.substr(0,dot);
+
+    Library* library = DataBase::getDB()->getLibrary( libraryName
+                                                    , DataBase::CreateLib|DataBase::WarnCreateLib );
+    Cell*    cell    = library->getCell( cellName );
+
+    Catalog*        catalog = AllianceFramework::get()->getCatalog();
+    Catalog::State* state   = catalog->getState( cellName );
+
+    if (not state) state = catalog->getState( cellName, true );
+    if (state->getCell   () != cell   ) state->setCell   ( cell );
+    if (state->getLibrary() != library) state->setLibrary( library );
+
+    state->setDepth( depth );
+    state->setFlattenLeaf( (sflags[0] == 'C') );
+    state->setFeed(        (sflags[1] == 'F') );
+    state->setPad(         (sflags[2] == 'P') );
+    state->setGds(         (sflags[3] == 'G') );
+    state->setDelete(      (sflags[4] == 'D') );
+    state->setInMemory(    (sflags[5] == 'm') );
+
+    update( stack, state );
+  }
+
 
 // -------------------------------------------------------------------
 // Class  :  "Catalog".
@@ -248,8 +333,7 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CatalogProperty"
 
-
-  Name  CatalogProperty::_name = "Alliance Catalog State";
+  Name  CatalogProperty::_name = "Catalog::State::Property";
 
 
   CatalogProperty* CatalogProperty::create ( Catalog::State* state )
@@ -303,6 +387,76 @@ namespace CRL {
       record->add( getSlot("_state",_state) );
     }
     return record;
+  }
+
+
+  bool  CatalogProperty::hasJson () const
+  { return true; }
+
+
+  void  CatalogProperty::toJson ( JsonWriter* w, const DBo* ) const
+  {
+    w->startObject();
+    std::string tname = getString(getPropertyName());
+    jsonWrite( w, "@typename", tname  );
+    jsonWrite( w, "_state"   , _state );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonCatalogProperty"
+
+  Initializer<JsonCatalogProperty>  jsonCatalogPropertyInit ( 20 );
+
+
+  JsonCatalogProperty::JsonCatalogProperty ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_state", typeid(Catalog::State*) );
+  }
+
+
+  string  JsonCatalogProperty::getTypeName () const
+  { return getString(CatalogProperty::getPropertyName()); }
+
+
+  void  JsonCatalogProperty::initialize ()
+  { JsonTypes::registerType( new JsonCatalogProperty (JsonWriter::RegisterMode) ); }
+
+
+  JsonCatalogProperty* JsonCatalogProperty::clone ( unsigned long flags ) const
+  { return new JsonCatalogProperty ( flags ); }
+
+
+  void JsonCatalogProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonCatalogProperty::toData" );
+
+    DBo*             dbo      = stack.back_dbo();
+    Catalog::State*  state    = get<Catalog::State*>( stack, "_state" );
+    CatalogProperty* property = NULL;
+
+    ltrace(51) << "topDBo:" << dbo << endl;
+
+    Cell* cell = dynamic_cast<Cell*>( dbo );
+    if (cell) {
+      Property* base = cell->getProperty( CatalogProperty::getPropertyName() );
+      if (base) {
+        property = static_cast<CatalogProperty*>( base );
+        if (property->getState() != state) {
+          cerr << Error( "JsonCatalogProperty::toData(): State object incoherency on Cell \"%s\"."
+                       , getString(cell->getName()).c_str()
+                       ) << endl;
+        }
+      } else {
+        property = CatalogProperty::create( state );
+        cell->put( property );
+      }
+    }
+  // NULL Cell means we are parsing the Catalog.
+    
+    update( stack, property );
   }
 
 

@@ -17,8 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#include "hurricane/Error.h"
 #include "hurricane/Box.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 
@@ -364,6 +364,13 @@ void  Box::toJson(JsonWriter* w) const
   jsonWrite( w, "_yMax", getYMax() );
   w->endObject();
 }
+
+
+Initializer<JsonBox>  jsonBoxInit ( 0 );
+
+void  JsonBox::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonBox (JsonWriter::RegisterMode) ); }
 
 JsonBox::JsonBox(unsigned long flags)
 // **********************************

@@ -211,6 +211,13 @@ Record* Vertical::_getRecord() const
 // JsonVertical implementation
 // ****************************************************************************************************
 
+Initializer<JsonVertical>  jsonVerticalInit ( 0 );
+
+
+void  JsonVertical::initialize()
+// *****************************
+{ JsonTypes::registerType( new JsonVertical (JsonWriter::RegisterMode) ); }
+
 JsonVertical::JsonVertical(unsigned long flags)
 // ********************************************
   : JsonSegment(flags)

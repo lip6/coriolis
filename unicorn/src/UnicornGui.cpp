@@ -182,6 +182,7 @@ namespace Unicorn {
                                , QKeySequence(tr("CTRL+M"))
                                );
     connect( action, SIGNAL(triggered()), _libraryManager, SLOT(toggleShow()) );
+    connect( this  , SIGNAL(cellLoadedFromDisk(Cell*)), _libraryManager, SLOT(updateLibrary(Cell*)) );
   }
 
 
@@ -238,6 +239,7 @@ namespace Unicorn {
           viewer->show ();
         }
         viewer->setCell ( cell );
+        emit cellLoadedFromDisk ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
     }
@@ -260,6 +262,7 @@ namespace Unicorn {
           viewer->show();
         }
         viewer->setCell( cell );
+        emit cellLoadedFromDisk ( cell );
       }
     }
   }
@@ -291,10 +294,10 @@ namespace Unicorn {
           }
           break;
         case ExportCellDialog::Json:
-          { DebugSession::open( 50 );
-            JsonWriter writer ( cellName.toStdString()+".json" );
+          { //DebugSession::open( 50 );
+            JsonWriter writer ( cellName.toStdString()+".json.bz2" );
             jsonWrite( &writer, cell );
-            DebugSession::close();
+          //DebugSession::close();
           }
           break;
       }

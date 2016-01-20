@@ -267,14 +267,14 @@ Net::Net(Cell* cell, const Name& name)
     _nextOfCellNetMap(NULL),
     _mainName(this)
 {
-    if (!_cell)
-        throw Error("Can't create " + _TName("Net") + " : null cell");
+  if (!_cell)
+    throw Error("Can't create " + _TName("Net") + " : null cell");
 
-    if (name.isEmpty())
-        throw Error("Can't create " + _TName("Net") + " : empty name");
+  if (name.isEmpty())
+    throw Error("Can't create " + _TName("Net") + " : empty name");
 
-    if (_cell->getNet(_name))
-        throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
+  if (_cell->getNet(_name))
+    throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
 }
 
 Net* Net::create(Cell* cell, const Name& name)
@@ -1063,6 +1063,12 @@ string Net_SlavePlugs::Locator::_getString() const
 // ****************************************************************************************************
 // JsonNet implementation
 // ****************************************************************************************************
+
+Initializer<JsonNet>  jsonNetInit ( 0 );
+
+void  JsonNet::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonNet (JsonWriter::RegisterMode) ); }
 
 JsonNet::JsonNet(unsigned long flags)
 // **********************************

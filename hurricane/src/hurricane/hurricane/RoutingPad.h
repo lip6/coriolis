@@ -103,6 +103,7 @@ namespace Hurricane {
 
   class JsonRoutingPad : public JsonComponent {
     public:
+      static  void            initialize     ();
                               JsonRoutingPad ( unsigned long flags );
       virtual std::string     getTypeName    () const;
       virtual JsonRoutingPad* clone          ( unsigned long flags ) const;

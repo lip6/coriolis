@@ -132,6 +132,7 @@ namespace Hurricane {
 
   class JsonSignature : public JsonObject {
     public:
+      static  void           initialize    ();
                              JsonSignature ( unsigned long flags );
               void           setSubType    ( const std::string& );
       virtual std::string    getTypeName   () const;

@@ -117,6 +117,7 @@ class Vertical : public Segment {
 class JsonVertical : public JsonSegment {
 // **************************************
 
+  public: static void initialize();
   public: JsonVertical(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonVertical* clone(unsigned long) const;

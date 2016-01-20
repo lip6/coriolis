@@ -403,6 +403,13 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "JsonRoutingPad".
 
+  Initializer<JsonRoutingPad>  jsonRoutingPadInit ( 0 );
+
+
+  void  JsonRoutingPad::initialize ()
+  { JsonTypes::registerType( new JsonRoutingPad (JsonWriter::RegisterMode) ); }
+
+
   JsonRoutingPad::JsonRoutingPad ( unsigned long flags )
     : JsonComponent(flags)
   {

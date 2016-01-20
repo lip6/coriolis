@@ -32,6 +32,10 @@
 #ifndef  HURRICANE_JSON_READER_H
 #define  HURRICANE_JSON_READER_H
 
+#ifndef HURRICANE_SLOT_H
+#error "JsonWriter.h must be included through Commons.h"
+#endif
+
 #include <iostream>
 #include <typeinfo>
 #include <typeindex>
@@ -45,6 +49,7 @@
 
 namespace Hurricane {
 
+  class DBo;
   class Hook;
   class Entity;
   class Cell;
@@ -86,7 +91,7 @@ namespace Hurricane {
                            virtual bool           isDummy       () const;
                            virtual std::string    getTypeName   () const = 0;
                            inline  std::string    getStackName  () const;
-                                   bool           check         ( JsonStack&, string fname ) const;
+                                   bool           check         ( JsonStack&, std::string fname ) const;
                                    void           print         ( std::ostream& ) const;
                                    bool           has           ( const std::string& key ) const;
                                    void           add           ( const std::string& key, std::type_index tid );
@@ -95,12 +100,11 @@ namespace Hurricane {
                            inline  void           copyAttrs     ( const JsonObject*, bool reset=false );
                            inline  void           clear         ();
                            inline  std::string    getName       () const;
-                           inline  void           setName       ( const string& );
+                           inline  void           setName       ( const std::string& );
       template<typename T> inline  T&             getObject     () const; 
-      template<typename T> inline  void           setObject     ( T& ) ; 
+      template<typename T> inline  void           setObject     ( T ) ; 
                            inline  bool           isBound       () const;
                            virtual JsonObject*    clone         ( unsigned long flags ) const = 0;
-      template<typename C>         void           toJson        ( JsonWriter*, C* object ) const;
                            virtual void           toData        ( JsonStack& );
                                    unsigned int   presetId      ( JsonStack& );
       template<typename T> inline  void           update        ( JsonStack&, T );
@@ -130,7 +134,7 @@ namespace Hurricane {
   template<typename T> inline T& JsonObject::getObject () const
   { return boost::any_cast<T>(_object); }
 
-  template<typename T> inline void  JsonObject::setObject ( T& t )
+  template<typename T> inline void  JsonObject::setObject ( T t )
   { _object = t; }
 
   inline void  JsonObject::copyAttrs ( const JsonObject* other, bool reset )
@@ -294,6 +298,9 @@ namespace Hurricane {
                            inline int            rhas           ( const std::string& ) const; 
       template<typename T> inline T              as             ( const std::string& ) const; 
       template<typename T> inline T              as             ( int ) const; 
+                           inline void           push_back_dbo  ( DBo* );
+                           inline void           pop_back_dbo   ();
+                           inline DBo*           back_dbo       () const;
       template<typename T> inline T              getEntity      ( unsigned int ) const;
                                   void           addEntity      ( unsigned int jsonId, Entity* );
                                   void           addHookLink    ( Hook*, unsigned int jsonId, const std::string& jsonNext );
@@ -309,18 +316,19 @@ namespace Hurricane {
     private:
       unsigned long                   _flags;
       vector<Element>                 _stack;
+      vector<DBo*>                    _dbos;
       std::map<unsigned int,Entity*>  _entities;
       HookLut                         _hooks;
   };
 
 
   inline JsonStack::JsonStack ()
-    : _flags(0), _stack(), _entities(), _hooks()
+    : _flags(0), _stack(), _dbos(), _entities(), _hooks()
   { }
 
   template<typename T> inline void  JsonStack::push_back ( const std::string& key, T t )
   {
-    ltrace(51) << "JsonStack::push_back() key:" << key << " value:" << t
+    ltrace(51) << "JsonStack::push_back(T) key:" << key << " value:" << t
                << " (" << demangle(typeid(T)) << ")." << endl;
     _stack.push_back(std::make_pair(key,boost::any(t)));
   }
@@ -333,7 +341,8 @@ namespace Hurricane {
                   << (count+1) << " elements remains to pop." << std::endl;
         break;
       }
-      ltrace(51) << "| _stack.pop_back() " << _stack.back().first << endl;
+      ltrace(51) << "| _stack.pop_back() \"" << _stack.back().first
+                 << "\", size:" << _stack.size() << ", dbos:" << _dbos.size() << endl;
       _stack.pop_back();
     }
   }
@@ -395,6 +404,7 @@ namespace Hurricane {
     return boost::any_cast<T>( _stack[i].second );
   }
 
+
   template<typename T> inline T  JsonStack::getEntity ( unsigned int id ) const
   {
     std::map<unsigned int,Entity*>::const_iterator it = _entities.find(id);
@@ -402,6 +412,9 @@ namespace Hurricane {
     return dynamic_cast<T>((*it).second);
   }
   
+  inline void       JsonStack::push_back_dbo  ( DBo* dbo ) { _dbos.push_back(dbo); }
+  inline void       JsonStack::pop_back_dbo   () { _dbos.pop_back(); }
+  inline DBo*       JsonStack::back_dbo       () const { return (_dbos.empty()) ? NULL : _dbos.back(); }
   inline void       JsonStack::clearHookLinks () { _hooks.clear(); }
   inline size_t     JsonStack::size           () const { return _stack.size(); }
   inline JsonStack* JsonStack::setFlags       ( unsigned long mask ) { _flags |= mask; return this; }
@@ -419,8 +432,10 @@ namespace Hurricane {
     return stack.as<T>( index );
   }
 
-  template<typename T> inline void  JsonObject::update ( JsonStack& stack, T hobject )
+  template<typename T>
+  inline void  JsonObject::update ( JsonStack& stack, T hobject )
   {
+    ltrace(51) << "JsonObject::update<T>()" << endl;
     stack.pop_back( _attributes.size() );
     stack.push_back<T>( getStackName(), hobject );
     setObject<T>( hobject );

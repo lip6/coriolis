@@ -732,6 +732,7 @@ namespace Hurricane {
       DebugSession::close();
 
       setCell ( topCell );
+      emit cellLoadedFromDisk( topCell );
     }
   }
 
@@ -741,14 +742,14 @@ namespace Hurricane {
     Cell* cell = getCell();
     if (not cell) return;
 
-    string     blobName = getString(cell->getName()) + ".blob.json";
+    string     blobName = getString(cell->getName()) + ".blob.json.bz2";
     DesignBlob blob     ( cell );
 
-    DebugSession::open( 50 );
+  //DebugSession::open( 50 );
     JsonWriter writer ( blobName );
     writer.setFlags( JsonWriter::DesignBlobMode );
     jsonWrite( &writer, &blob );
-    DebugSession::close();
+  //DebugSession::close();
   }
 
 

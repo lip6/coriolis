@@ -150,8 +150,9 @@ class Builder:
 
 
     def _build ( self, tool ):
-        toolSourceDir = os.path.join ( self.sourceDir, tool.getToolDir() )
-        toolBuildDir  = os.path.join ( self.buildDir , tool.name )
+        toolSourceDir   = os.path.join ( self.sourceDir, tool.getToolDir() )
+        toolBuildDir    = os.path.join ( self.buildDir , tool.name )
+        cmakeInstallDir = os.path.join ( self.installDir, "share", "cmake", "Modules" )
        # Supplied directly in the CMakeLists.txt.
        #cmakeModules  = os.path.join ( self.installDir, "share", "cmake", "Modules" )
 
@@ -170,8 +171,10 @@ class Builder:
         if self._qt5:         command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:      command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 
-        command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"  % self.buildMode
-                   , "-D", "BUILD_SHARED_LIBS:STRING=%s" % self.enableShared
+        command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"     % self.buildMode
+                   , "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
+                   , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir
+                   , "-D", "CMAKE_INSTALL_DIR:STRING=%s"    % cmakeInstallDir
                   #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
                    , toolSourceDir ]
             
@@ -191,6 +194,7 @@ class Builder:
                    , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
                    , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self.installDir
+                   , "-D", "CMAKE_INSTALL_DIR:STRING=%s"      % cmakeInstallDir
                    ]
         if self.libSuffix:
             command += [ "-D", "LIB_SUFFIX:STRING=%s" % self.libSuffix ]

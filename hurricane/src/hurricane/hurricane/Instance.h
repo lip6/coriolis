@@ -197,6 +197,7 @@ class Instance : public Go {
 class JsonInstance : public JsonEntity {
 // *************************************
 
+  public: static void initialize();
   public: JsonInstance(unsigned long flags);
   public: virtual string getTypeName() const;
   public: virtual JsonInstance* clone(unsigned long) const;

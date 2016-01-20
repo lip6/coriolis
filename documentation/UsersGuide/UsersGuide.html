@@ -41,79 +41,80 @@
 <li><a class="reference internal" href="#release-1-0-1963" id="id15">Release 1.0.1963</a></li>
 <li><a class="reference internal" href="#release-1-0-2049" id="id16">Release 1.0.2049</a></li>
 <li><a class="reference internal" href="#release-v2-0-1" id="id17">Release v2.0.1</a></li>
-<li><a class="reference internal" href="#release-v2-1" id="id18"><strong>Release v2.1</strong></a></li>
+<li><a class="reference internal" href="#release-v2-1" id="id18">Release v2.1</a></li>
+<li><a class="reference internal" href="#release-v2-2" id="id19"><strong>Release v2.2</strong></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#installation" id="id19">Installation</a><ul>
-<li><a class="reference internal" href="#fixed-directory-tree" id="id20">Fixed Directory Tree</a></li>
-<li><a class="reference internal" href="#building-coriolis" id="id21">Building Coriolis</a><ul>
-<li><a class="reference internal" href="#building-the-devel-branch" id="id22">Building the Devel Branch</a></li>
-<li><a class="reference internal" href="#additionnal-requirement-under-macos" id="id23">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+<li><a class="reference internal" href="#installation" id="id20">Installation</a><ul>
+<li><a class="reference internal" href="#fixed-directory-tree" id="id21">Fixed Directory Tree</a></li>
+<li><a class="reference internal" href="#building-coriolis" id="id22">Building Coriolis</a><ul>
+<li><a class="reference internal" href="#building-the-devel-branch" id="id23">Building the Devel Branch</a></li>
+<li><a class="reference internal" href="#additionnal-requirement-under-macos" id="id24">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#packaging-coriolis" id="id24">Packaging Coriolis</a></li>
-<li><a class="reference internal" href="#hooking-up-into-alliance" id="id25">Hooking up into <span class="sc">Alliance</span></a></li>
-<li><a class="reference internal" href="#setting-up-the-environment-coriolisenv-py" id="id26">Setting up the Environment (coriolisEnv.py)</a></li>
+<li><a class="reference internal" href="#packaging-coriolis" id="id25">Packaging Coriolis</a></li>
+<li><a class="reference internal" href="#hooking-up-into-alliance" id="id26">Hooking up into <span class="sc">Alliance</span></a></li>
+<li><a class="reference internal" href="#setting-up-the-environment-coriolisenv-py" id="id27">Setting up the Environment (coriolisEnv.py)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#documentation" id="id27">Documentation</a><ul>
-<li><a class="reference internal" href="#general-software-architecture" id="id28">General Software Architecture</a></li>
+<li><a class="reference internal" href="#documentation" id="id28">Documentation</a><ul>
+<li><a class="reference internal" href="#general-software-architecture" id="id29">General Software Architecture</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#coriolis-configuration-initialisation" id="id29">Coriolis Configuration &amp; Initialisation</a><ul>
-<li><a class="reference internal" href="#first-stage-symbolic-technology-selection" id="id30">First Stage: Symbolic Technology Selection</a></li>
-<li><a class="reference internal" href="#second-stage-technology-configuration-loading" id="id31">Second Stage: Technology Configuration Loading</a></li>
-<li><a class="reference internal" href="#configuration-helpers" id="id32">Configuration Helpers</a><ul>
-<li><a class="reference internal" href="#id1" id="id33"><span class="sc">Alliance</span> Helper</a></li>
-<li><a class="reference internal" href="#tools-configuration-helpers" id="id34">Tools Configuration Helpers</a></li>
+<li><a class="reference internal" href="#coriolis-configuration-initialisation" id="id30">Coriolis Configuration &amp; Initialisation</a><ul>
+<li><a class="reference internal" href="#first-stage-symbolic-technology-selection" id="id31">First Stage: Symbolic Technology Selection</a></li>
+<li><a class="reference internal" href="#second-stage-technology-configuration-loading" id="id32">Second Stage: Technology Configuration Loading</a></li>
+<li><a class="reference internal" href="#configuration-helpers" id="id33">Configuration Helpers</a><ul>
+<li><a class="reference internal" href="#id1" id="id34"><span class="sc">Alliance</span> Helper</a></li>
+<li><a class="reference internal" href="#tools-configuration-helpers" id="id35">Tools Configuration Helpers</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#hacking-the-configuration-files" id="id35">Hacking the Configuration Files</a></li>
+<li><a class="reference internal" href="#hacking-the-configuration-files" id="id36">Hacking the Configuration Files</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#cgt-the-graphical-interface" id="id36">CGT - The Graphical Interface</a></li>
-<li><a class="reference internal" href="#id2" id="id37">Viewer &amp; Tools</a><ul>
-<li><a class="reference internal" href="#stratus-netlist-capture" id="id38"><span class="sc">Stratus</span> Netlist Capture</a></li>
-<li><a class="reference internal" href="#the-hurricane-data-base" id="id39">The <span class="sc">Hurricane</span> Data-Base</a></li>
-<li><a class="reference internal" href="#synthetizing-and-loading-a-design" id="id40">Synthetizing and loading a design</a><ul>
-<li><a class="reference internal" href="#synthesis-under-yosys" id="id41">Synthesis under Yosys</a></li>
-<li><a class="reference internal" href="#synthesis-under-alliance" id="id42">Synthesis under Alliance</a></li>
+<li><a class="reference internal" href="#cgt-the-graphical-interface" id="id37">CGT - The Graphical Interface</a></li>
+<li><a class="reference internal" href="#id2" id="id38">Viewer &amp; Tools</a><ul>
+<li><a class="reference internal" href="#stratus-netlist-capture" id="id39"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li><a class="reference internal" href="#the-hurricane-data-base" id="id40">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li><a class="reference internal" href="#synthetizing-and-loading-a-design" id="id41">Synthetizing and loading a design</a><ul>
+<li><a class="reference internal" href="#synthesis-under-yosys" id="id42">Synthesis under Yosys</a></li>
+<li><a class="reference internal" href="#synthesis-under-alliance" id="id43">Synthesis under Alliance</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#etesian-placer" id="id43">Etesian -- Placer</a><ul>
-<li><a class="reference internal" href="#etesian-configuration-parameters" id="id44">Etesian Configuration Parameters</a></li>
+<li><a class="reference internal" href="#etesian-placer" id="id44">Etesian -- Placer</a><ul>
+<li><a class="reference internal" href="#etesian-configuration-parameters" id="id45">Etesian Configuration Parameters</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#knik-global-router" id="id45">Knik -- Global Router</a></li>
-<li><a class="reference internal" href="#kite-detailed-router" id="id46">Kite -- Detailed Router</a><ul>
-<li><a class="reference internal" href="#kite-configuration-parameters" id="id47">Kite Configuration Parameters</a></li>
+<li><a class="reference internal" href="#knik-global-router" id="id46">Knik -- Global Router</a></li>
+<li><a class="reference internal" href="#kite-detailed-router" id="id47">Kite -- Detailed Router</a><ul>
+<li><a class="reference internal" href="#kite-configuration-parameters" id="id48">Kite Configuration Parameters</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#executing-python-scripts-in-cgt" id="id48">Executing Python Scripts in Cgt</a></li>
-<li><a class="reference internal" href="#printing-snapshots" id="id49">Printing &amp; Snapshots</a></li>
-<li><a class="reference internal" href="#memento-of-shortcuts-in-graphic-mode" id="id50">Memento of Shortcuts in Graphic Mode</a></li>
-<li><a class="reference internal" href="#cgt-command-line-options" id="id51">Cgt Command Line Options</a></li>
-<li><a class="reference internal" href="#miscellaneous-settings" id="id52">Miscellaneous Settings</a></li>
+<li><a class="reference internal" href="#executing-python-scripts-in-cgt" id="id49">Executing Python Scripts in Cgt</a></li>
+<li><a class="reference internal" href="#printing-snapshots" id="id50">Printing &amp; Snapshots</a></li>
+<li><a class="reference internal" href="#memento-of-shortcuts-in-graphic-mode" id="id51">Memento of Shortcuts in Graphic Mode</a></li>
+<li><a class="reference internal" href="#cgt-command-line-options" id="id52">Cgt Command Line Options</a></li>
+<li><a class="reference internal" href="#miscellaneous-settings" id="id53">Miscellaneous Settings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id3" id="id53">The Controller</a><ul>
-<li><a class="reference internal" href="#id4" id="id54">The Look Tab</a></li>
-<li><a class="reference internal" href="#id5" id="id55">The Filter Tab</a></li>
-<li><a class="reference internal" href="#id6" id="id56">The Layers&amp;Go Tab</a></li>
-<li><a class="reference internal" href="#id7" id="id57">The Netlist Tab</a></li>
-<li><a class="reference internal" href="#id8" id="id58">The Selection Tab</a></li>
-<li><a class="reference internal" href="#id9" id="id59">The Inspector Tab</a></li>
-<li><a class="reference internal" href="#id10" id="id60">The Settings Tab</a></li>
+<li><a class="reference internal" href="#id3" id="id54">The Controller</a><ul>
+<li><a class="reference internal" href="#id4" id="id55">The Look Tab</a></li>
+<li><a class="reference internal" href="#id5" id="id56">The Filter Tab</a></li>
+<li><a class="reference internal" href="#id6" id="id57">The Layers&amp;Go Tab</a></li>
+<li><a class="reference internal" href="#id7" id="id58">The Netlist Tab</a></li>
+<li><a class="reference internal" href="#id8" id="id59">The Selection Tab</a></li>
+<li><a class="reference internal" href="#id9" id="id60">The Inspector Tab</a></li>
+<li><a class="reference internal" href="#id10" id="id61">The Settings Tab</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#python-interface-for-hurricane-coriolis" id="id61">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a></li>
-<li><a class="reference internal" href="#plugins" id="id62">Plugins</a><ul>
-<li><a class="reference internal" href="#chip-placement" id="id63">Chip Placement</a></li>
-<li><a class="reference internal" href="#clock-tree" id="id64">Clock Tree</a></li>
-<li><a class="reference internal" href="#recursive-save-rsave" id="id65">Recursive-Save (RSave)</a></li>
+<li><a class="reference internal" href="#python-interface-for-hurricane-coriolis" id="id62">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a></li>
+<li><a class="reference internal" href="#plugins" id="id63">Plugins</a><ul>
+<li><a class="reference internal" href="#chip-placement" id="id64">Chip Placement</a></li>
+<li><a class="reference internal" href="#clock-tree" id="id65">Clock Tree</a></li>
+<li><a class="reference internal" href="#recursive-save-rsave" id="id66">Recursive-Save (RSave)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#a-simple-example-am2901" id="id66">A Simple Example: AM2901</a></li>
+<li><a class="reference internal" href="#a-simple-example-am2901" id="id67">A Simple Example: AM2901</a></li>
 </ul>
 </li>
 </ul>
@@ -215,7 +216,7 @@ achieve a speedup factor greater than 20...</li>
 </ol>
 </div>
 <div class="section" id="release-v2-1">
-<h3><a class="toc-backref" href="#id18"><strong>Release v2.1</strong></a></h3>
+<h3><a class="toc-backref" href="#id18">Release v2.1</a></h3>
 <ol class="arabic simple">
 <li>Replace the old simulated annealing placer <span class="sc">Mauka</span> by the analytical placer
 <span class="sc">Etesian</span> and its legalization and detailed placement tools.</li>
@@ -229,11 +230,19 @@ is back from <tt class="docutils literal">.conf</tt> to <tt class="docutils lite
 <!-- When shifting to the left, the right-half part of the screen gets -->
 <!-- badly redrawn. Uses |CTRL_L| to refresh. It will be corrected as soon -->
 <!-- as possible. -->
+</div>
+<div class="section" id="release-v2-2">
+<h3><a class="toc-backref" href="#id19"><strong>Release v2.2</strong></a></h3>
+<ol class="arabic simple">
+<li>Added JSON import/export of the whole Hurricane DataBase. Two save mode
+are supported: <em>Cell</em> mode (standalone) or <em>Blob</em> mode, which dump the
+whole design down and including the standard cells.</li>
+</ol>
 <p><span class="raw-html"><hr></span></p>
 </div>
 </div>
 <div class="section" id="installation">
-<h2><a class="toc-backref" href="#id19">Installation</a></h2>
+<h2><a class="toc-backref" href="#id20">Installation</a></h2>
 <div class="note">
 <p class="first admonition-title">Note</p>
 <p class="last">As the sources are being released, the binary packaging is dropped.
@@ -245,9 +254,11 @@ running the <span class="cb">ccb</span> installer.</p>
 <ul class="simple">
 <li>cmake</li>
 <li>C++11-capable compiler</li>
+<li><a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a></li>
 <li>python2.7</li>
 <li>boost</li>
 <li>libxml2</li>
+<li>bzip2</li>
 <li>yacc &amp; lex</li>
 <li>Qt 4 or Qt 5</li>
 </ul>
@@ -272,7 +283,7 @@ A repository of <span class="sc">coin-or</span> packages backported from <span c
 <p>For other distributions, refer to their own packaging system.</p>
 <p><span class="raw-html"><hr></span></p>
 <div class="section" id="fixed-directory-tree">
-<h3><a class="toc-backref" href="#id20">Fixed Directory Tree</a></h3>
+<h3><a class="toc-backref" href="#id21">Fixed Directory Tree</a></h3>
 <p>In order to simplificate the work of the <span class="cb">ccb</span> installer, the source, build
 and installation tree is fixed. To successfully compile <span class="sc">Coriolis</span> you must
 follow it exactly. The tree is relative to the home directory of the user
@@ -366,23 +377,30 @@ and Python modules (which must be dynamic).</p>
 <p><span class="raw-html"><hr></span></p>
 </div>
 <div class="section" id="building-coriolis">
-<h3><a class="toc-backref" href="#id21">Building Coriolis</a></h3>
-<p>The first step is to create the source directory and pull the <span class="cb">git</span> repository:</p>
+<h3><a class="toc-backref" href="#id22">Building Coriolis</a></h3>
+<p>First step is to install the prerequisites. Currently, only <a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a>:</p>
+<pre class="literal-block">
+dummy&#64;lepka:~$ mkdir -p ~/coriolis-2.x/src/support
+dummy&#64;lepka:~$ git clone http://github.com/miloyip/rapidjson
+</pre>
+<p>The second step is to create the source directory and pull the <span class="cb">git</span> repository:</p>
 <pre class="literal-block">
 dummy&#64;lepka:~$ mkdir -p ~/coriolis-2.x/src
 dummy&#64;lepka:~$ cd ~/coriolis-2.x/src
 dummy&#64;lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
 </pre>
-<p>Second and final step, build &amp; install:</p>
+<p>Third and final step, build &amp; install:</p>
 <pre class="literal-block">
-dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=support  \
+                                    --project=coriolis \
                                     --make=&quot;-j4 install&quot;
-dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=support  \
+                                    --project=coriolis \
                                     --doc --make=&quot;-j1 install&quot;
 </pre>
-<p>We need two steps because the documentation do not support to be generated with
-a parallel build. So we compile &amp; install in a first step in <tt class="docutils literal"><span class="pre">-j4</span></tt> (or whatever)
-then we generate the documentation in <tt class="docutils literal"><span class="pre">-j1</span></tt></p>
+<p>We need to separate to perform a separate installation of the documentation because it
+do not support to be generated with a parallel build. So we compile &amp; install in a first
+stage in <tt class="docutils literal"><span class="pre">-j4</span></tt> (or whatever) then we generate the documentation in <tt class="docutils literal"><span class="pre">-j1</span></tt></p>
 <p>Under <span class="sc">rhel6</span> or clones, you must build using the <span class="cb">devtoolset2</span>:</p>
 <pre class="literal-block">
 dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=coriolis \
@@ -392,7 +410,7 @@ dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=coriolis \
 <p>The complete list of <span class="cb">ccb</span> functionalities can be accessed with the <tt class="docutils literal"><span class="pre">--help</span></tt> argument.
 It also may be run in graphical mode (<tt class="docutils literal"><span class="pre">--gui</span></tt>).</p>
 <div class="section" id="building-the-devel-branch">
-<h4><a class="toc-backref" href="#id22">Building the Devel Branch</a></h4>
+<h4><a class="toc-backref" href="#id23">Building the Devel Branch</a></h4>
 <p>In the <span class="sc">Coriolis</span> <span class="cb">git</span> repository, two branches are present:</p>
 <ul>
 <li><p class="first">The <span class="cb">master</span> branch, which contains the latest stable version. This is the
@@ -418,7 +436,7 @@ dummy&#64;lepka:work$ gdb python core.XXXX
 <p><span class="raw-html"><hr></span></p>
 </div>
 <div class="section" id="additionnal-requirement-under-macos">
-<h4><a class="toc-backref" href="#id23">Additionnal Requirement under <span class="sc">MacOS</span></a></h4>
+<h4><a class="toc-backref" href="#id24">Additionnal Requirement under <span class="sc">MacOS</span></a></h4>
 <p><span class="sc">Coriolis</span> make uses of the <span class="cb">boost::python</span> module, but the <span class="sc">MacPorts</span> <span class="cb">boost</span>
 seems unable to work with the <span class="sc">Python</span> bundled with <span class="sc">MacOS</span>. So you have to install
 both of them from <span class="sc">MacPorts</span>:</p>
@@ -433,7 +451,7 @@ the system.</p>
 </div>
 </div>
 <div class="section" id="packaging-coriolis">
-<h3><a class="toc-backref" href="#id24">Packaging Coriolis</a></h3>
+<h3><a class="toc-backref" href="#id25">Packaging Coriolis</a></h3>
 <p>Packager should not uses <span class="cb">ccb</span>, instead <tt class="docutils literal">bootstrap/Makefile.package</tt> is provided
 to emulate a top-level <tt class="docutils literal">autotool</tt> makefile. Just copy it in the root of the
 <span class="sc">Coriolis</span> git repository (<tt class="docutils literal"><span class="pre">~/corriolis-2.x/src/coriolis/</span></tt>) and build.</p>
@@ -444,7 +462,7 @@ to emulate a top-level <tt class="docutils literal">autotool</tt> makefile. Just
 </ul>
 </div>
 <div class="section" id="hooking-up-into-alliance">
-<h3><a class="toc-backref" href="#id25">Hooking up into <span class="sc">Alliance</span></a></h3>
+<h3><a class="toc-backref" href="#id26">Hooking up into <span class="sc">Alliance</span></a></h3>
 <p><span class="sc">Coriolis</span> relies on <span class="sc">Alliance</span> for the cell libraries. So after installing or
 packaging, you must configure it so that it can found those libraries.</p>
 <p>This is done by editing the one variable <span class="cb">cellsTop</span> in the <span class="sc">Alliance</span> helper
@@ -453,7 +471,7 @@ cells libraries. In a typical installation, this is generally
 <span class="cb">/usr/share/alliance/cells</span>.</p>
 </div>
 <div class="section" id="setting-up-the-environment-coriolisenv-py">
-<h3><a class="toc-backref" href="#id26">Setting up the Environment (coriolisEnv.py)</a></h3>
+<h3><a class="toc-backref" href="#id27">Setting up the Environment (coriolisEnv.py)</a></h3>
 <p>To simplify the tedious task of configuring your environment, a helper is provided
 in the <tt class="docutils literal">bootstrap</tt> source directory (also installed in the directory
 <tt class="docutils literal"><span class="pre">.../install/etc/coriolis2/</span></tt>) :</p>
@@ -479,7 +497,7 @@ alias c2r='eval &quot;`~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`&quo
 </div>
 </div>
 <div class="section" id="documentation">
-<h2><a class="toc-backref" href="#id27">Documentation</a></h2>
+<h2><a class="toc-backref" href="#id28">Documentation</a></h2>
 <p>The general index of the documentation for the various parts of Coriolis
 are avalaibles here <a class="reference external" href="file:///usr/share/doc/coriolis2/index.html">Coriolis Tools Documentation</a>.</p>
 <div class="note">
@@ -491,7 +509,7 @@ mimic <em>as closely as possible</em> the C++ interface, so the documentation
 applies to both languages with only minor syntactic changes.</p>
 </div>
 <div class="section" id="general-software-architecture">
-<h3><a class="toc-backref" href="#id28">General Software Architecture</a></h3>
+<h3><a class="toc-backref" href="#id29">General Software Architecture</a></h3>
 <p><span class="sc">Coriolis</span> has been build with respect of the classical paradigm that the
 computational instensive parts have been written in C++, and almost
 everything else in <span class="sc">Python</span>. To build the <span class="sc">Python</span> interface we used
@@ -506,7 +524,7 @@ or C++/<span class="sc">Python</span> secure bi-directional object deletion.</li
 </div>
 </div>
 <div class="section" id="coriolis-configuration-initialisation">
-<h2><a class="toc-backref" href="#id29">Coriolis Configuration &amp; Initialisation</a></h2>
+<h2><a class="toc-backref" href="#id30">Coriolis Configuration &amp; Initialisation</a></h2>
 <p>All configuration &amp; initialization files are Python scripts, despite their
 <span class="cb">.conf</span> extention. From a syntactic point of view, there is no difference
 between the system-wide configuration files and the user's configuration,
@@ -518,7 +536,7 @@ they may use the same Python helpers.
 <li>Loading the complete configuration for the given technology.</li>
 </ol>
 <div class="section" id="first-stage-symbolic-technology-selection">
-<h3><a class="toc-backref" href="#id30">First Stage: Symbolic Technology Selection</a></h3>
+<h3><a class="toc-backref" href="#id31">First Stage: Symbolic Technology Selection</a></h3>
 <p><span class="raw-html"><p class="empty"></p></span>
 The initialization process is done by executing, in order, the following
 file(s):</p>
@@ -559,7 +577,7 @@ realTechno     = 'hcmos9'
 </pre>
 </div>
 <div class="section" id="second-stage-technology-configuration-loading">
-<h3><a class="toc-backref" href="#id31">Second Stage: Technology Configuration Loading</a></h3>
+<h3><a class="toc-backref" href="#id32">Second Stage: Technology Configuration Loading</a></h3>
 <p><span class="raw-html"><p class="empty"></p></span>
 The <span class="cb">TECHNO</span> variable is set by the first stage and it's the name of the
 symbolic technology. A directory of that name, with all the configuration files,
@@ -604,7 +622,7 @@ which <em>must</em> contain a <span class="cb">coriolisConfigure()</span> functi
 </div>
 </div>
 <div class="section" id="configuration-helpers">
-<h3><a class="toc-backref" href="#id32">Configuration Helpers</a></h3>
+<h3><a class="toc-backref" href="#id33">Configuration Helpers</a></h3>
 <p>To ease the writing of configuration files, a set of small helpers
 is available. They allow to setup the configuration parameters through
 simple assembly of tuples. The helpers are installed under the directory:</p>
@@ -614,7 +632,7 @@ simple assembly of tuples. The helpers are installed under the directory:</p>
 <p>Where <span class="cb">&lt;install&gt;/</span> is the root of the installation.</p>
 <p><span class="raw-html"><hr></span></p>
 <div class="section" id="id1">
-<span id="alliance-helper"></span><h4><a class="toc-backref" href="#id33"><span class="sc">Alliance</span> Helper</a></h4>
+<span id="alliance-helper"></span><h4><a class="toc-backref" href="#id34"><span class="sc">Alliance</span> Helper</a></h4>
 <p>The configuration file must provide a <span class="cb">allianceConfig</span> tuple of
 the form:</p>
 <pre class="literal-block">
@@ -707,7 +725,7 @@ allianceConfig = \
 </pre>
 </div>
 <div class="section" id="tools-configuration-helpers">
-<h4><a class="toc-backref" href="#id34">Tools Configuration Helpers</a></h4>
+<h4><a class="toc-backref" href="#id35">Tools Configuration Helpers</a></h4>
 <p>All the tools uses the same helper to load their configuration (a.k.a.
 <em>Configuration Helper</em>). Currently the following configuration system-wide
 configuration files are defined:</p>
@@ -783,7 +801,7 @@ by the tools. The list of parameters is detailed in each tool section.</li>
 </div>
 </div>
 <div class="section" id="hacking-the-configuration-files">
-<h3><a class="toc-backref" href="#id35">Hacking the Configuration Files</a></h3>
+<h3><a class="toc-backref" href="#id36">Hacking the Configuration Files</a></h3>
 <p>Asides from the symbols that gets used by the configuration helpers like
 <span class="cb">allianceConfig</span> or <span class="cb">parametersTable</span>, you can put pretty much anything
 in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written in <span class="sc">Python</span>).</p>
@@ -818,7 +836,7 @@ for fileName in os.listdir('.'):
 </div>
 </div>
 <div class="section" id="cgt-the-graphical-interface">
-<h2><a class="toc-backref" href="#id36">CGT - The Graphical Interface</a></h2>
+<h2><a class="toc-backref" href="#id37">CGT - The Graphical Interface</a></h2>
 <p>The <span class="sc">Coriolis</span> graphical interface is split up into two windows.</p>
 <ul class="simple">
 <li>The <strong>Viewer</strong>, with the following features:<ul>
@@ -848,15 +866,15 @@ They are closely related to Configuration &amp; Initialisation.</li>
 <p><span class="raw-html"><center><img src="./images/Controller-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id2">
-<span id="viewer-tools"></span><h2><a class="toc-backref" href="#id37">Viewer &amp; Tools</a></h2>
+<span id="viewer-tools"></span><h2><a class="toc-backref" href="#id38">Viewer &amp; Tools</a></h2>
 <div class="section" id="stratus-netlist-capture">
-<h3><a class="toc-backref" href="#id38"><span class="sc">Stratus</span> Netlist Capture</a></h3>
+<h3><a class="toc-backref" href="#id39"><span class="sc">Stratus</span> Netlist Capture</a></h3>
 <p><span class="sc">Stratus</span> is the replacement for <span class="sc">GenLib</span> procedural netlist capture language.
 It is designed as a set of <span class="sc">Python</span> classes, and comes with it's own documentation
 (<a class="reference external" href="file:///usr/share/doc/coriolis2/en/html/stratus/index.html">Stratus Documentation</a>)</p>
 </div>
 <div class="section" id="the-hurricane-data-base">
-<h3><a class="toc-backref" href="#id39">The <span class="sc">Hurricane</span> Data-Base</a></h3>
+<h3><a class="toc-backref" href="#id40">The <span class="sc">Hurricane</span> Data-Base</a></h3>
 <p>The <span class="sc">Alliance</span> flow is based on the <span class="sc">mbk</span> data-base, which has one data-structure
 for each view. That is, <span class="cb">Lofig</span> for the <em>logical</em> view and <span class="cb">Phfig</span> for the <em>physical</em>
 view. The place and route tools were responsible for maintaining (or not) the
@@ -884,14 +902,14 @@ state.</li>
 </ul>
 </div>
 <div class="section" id="synthetizing-and-loading-a-design">
-<h3><a class="toc-backref" href="#id40">Synthetizing and loading a design</a></h3>
+<h3><a class="toc-backref" href="#id41">Synthetizing and loading a design</a></h3>
 <p><span class="sc">Coriolis</span> supports several file formats. It can load all file format
 from the <span class="sc">Alliance</span> toolchain (.ap for layout, behavioural and structural vhdl .vbe and .vst),
 BLIF netlist format as well as benchmark formats from the ISPD contests.</p>
 <p>It can be compiled with LEF/DEF support, although it requires acceptance of the SI2 license
 and may not be compiled in your version of the software.</p>
 <div class="section" id="synthesis-under-yosys">
-<h4><a class="toc-backref" href="#id41">Synthesis under Yosys</a></h4>
+<h4><a class="toc-backref" href="#id42">Synthesis under Yosys</a></h4>
 <p>You can create a BLIF file from the <span class="sc">Yosys</span> synthetizer, which can be imported under Coriolis.
 Most libraries are specified as a .lib liberty file and a .lef LEF file.
 <span class="sc">Yosys</span> opens most .lib files with minor modifications, but LEF support in Coriolis relies on SI2.
@@ -901,13 +919,13 @@ If Coriolis hasn't been compiled against it, the library is given in <span class
 with <span class="sc">Yosys</span> and import it (as Blif without the extension) under Coriolis to perform place&amp;route.</p>
 </div>
 <div class="section" id="synthesis-under-alliance">
-<h4><a class="toc-backref" href="#id42">Synthesis under Alliance</a></h4>
+<h4><a class="toc-backref" href="#id43">Synthesis under Alliance</a></h4>
 <p><span class="sc">Alliance</span> is an older toolchain but has been extensively used for years. Coriolis can import
 and write Alliance designs and libraries directly.</p>
 </div>
 </div>
 <div class="section" id="etesian-placer">
-<h3><a class="toc-backref" href="#id43">Etesian -- Placer</a></h3>
+<h3><a class="toc-backref" href="#id44">Etesian -- Placer</a></h3>
 <p>The <span class="sc">Etesian</span> placer is a state of the art (as of 2015) analytical placer. It is
 within <tt class="docutils literal">5%</tt> of other placers' solutions, but is normally a bit worse than ePlace.
 This <span class="sc">Coriolis</span> tool is actually an encapsulation of <span class="sc">Coloquinte</span> which <em>is</em> the placer.</p>
@@ -947,7 +965,7 @@ Timing and routability analysis are not included either, and the returned placem
 may be unroutable.</p>
 <p><span class="raw-html"><hr></span></p>
 <div class="section" id="etesian-configuration-parameters">
-<h4><a class="toc-backref" href="#id44">Etesian Configuration Parameters</a></h4>
+<h4><a class="toc-backref" href="#id45">Etesian Configuration Parameters</a></h4>
 <table border="1" class="docutils">
 <colgroup>
 <col width="43%" />
@@ -1018,7 +1036,7 @@ More refreshing slows the placer.</p>
 </div>
 </div>
 <div class="section" id="knik-global-router">
-<h3><a class="toc-backref" href="#id45">Knik -- Global Router</a></h3>
+<h3><a class="toc-backref" href="#id46">Knik -- Global Router</a></h3>
 <p>The quality of <span class="sc">Knik</span> global routing solutions are equivalent to those of <a class="reference external" href="http://vlsicad.eecs.umich.edu/BK/FGR/">FGR</a> 1.0.
 For an in-depth description of <span class="sc">Knik</span> algorithms, you may download the thesis of
 D. <span class="sc">Dupuis</span> avalaible from here~: <a class="reference external" href="http://www-soc.lip6.fr/en/users/damiendupuis/PhD/">Knik Thesis</a>.</p>
@@ -1033,7 +1051,7 @@ a global routing <em>solution</em> can be saved to disk and reloaded for later u
 </ul>
 </div>
 <div class="section" id="kite-detailed-router">
-<h3><a class="toc-backref" href="#id46">Kite -- Detailed Router</a></h3>
+<h3><a class="toc-backref" href="#id47">Kite -- Detailed Router</a></h3>
 <p><span class="sc">Kite</span> no longer suffers from the limitations of <span class="sc">Nero</span>. It can route big designs
 as its runtime and memory footprint is almost linear (with respect to the number
 of gates). It has successfully routed design of more than <cite>150K</cite> gates.
@@ -1084,7 +1102,7 @@ that step.</p>
 <span class="sc">Kite</span> (on GCells) until the routing is finalized. Special layers appears
 to that effect in the <a class="reference internal" href="#the-layers-go-tab">The Layers&amp;Go Tab</a>.</p>
 <div class="section" id="kite-configuration-parameters">
-<h4><a class="toc-backref" href="#id47">Kite Configuration Parameters</a></h4>
+<h4><a class="toc-backref" href="#id48">Kite Configuration Parameters</a></h4>
 <p>As <span class="sc">Knik</span> is only called through <span class="sc">Kite</span>, it's parameters also have
 the <span class="cb">kite.</span> prefix.</p>
 <p>The <span class="sc">Katabatic</span> parameters control the layer assignment step.</p>
@@ -1208,7 +1226,7 @@ topological modification</td>
 </div>
 </div>
 <div class="section" id="executing-python-scripts-in-cgt">
-<span id="python-scripts-in-cgt"></span><h3><a class="toc-backref" href="#id48">Executing Python Scripts in Cgt</a></h3>
+<span id="python-scripts-in-cgt"></span><h3><a class="toc-backref" href="#id49">Executing Python Scripts in Cgt</a></h3>
 <p>Python/Stratus scripts can be executed either in text or graphical mode.</p>
 <div class="note">
 <p class="first admonition-title">Note</p>
@@ -1228,7 +1246,7 @@ initializations and <em>before</em> any other argument is processed.</p>
 <p>For more explanation on Python scripts see <a class="reference internal" href="#python-interface-to-coriolis">Python Interface to Coriolis</a>.</p>
 </div>
 <div class="section" id="printing-snapshots">
-<h3><a class="toc-backref" href="#id49">Printing &amp; Snapshots</a></h3>
+<h3><a class="toc-backref" href="#id50">Printing &amp; Snapshots</a></h3>
 <p>Printing or saving into a <span class="sc">pdf</span> is fairly simple, just uses the <strong>File -&gt; Print</strong>
 menu or the <span class="fboxtt">CTRL+P</span> shortcut to open the dialog box.</p>
 <p>The print functionality uses exactly the same rendering mechanism as for the
@@ -1271,7 +1289,7 @@ or similar.</p>
 Saving into an image is subject to the same remarks as for <span class="sc">pdf</span>.</p>
 </div>
 <div class="section" id="memento-of-shortcuts-in-graphic-mode">
-<h3><a class="toc-backref" href="#id50">Memento of Shortcuts in Graphic Mode</a></h3>
+<h3><a class="toc-backref" href="#id51">Memento of Shortcuts in Graphic Mode</a></h3>
 <p>The main application binary is <span class="cb">cgt</span>.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1408,7 +1426,7 @@ in which this model is instanciated).</td>
 </table>
 </div>
 <div class="section" id="cgt-command-line-options">
-<h3><a class="toc-backref" href="#id51">Cgt Command Line Options</a></h3>
+<h3><a class="toc-backref" href="#id52">Cgt Command Line Options</a></h3>
 <p>Appart from the obvious <tt class="docutils literal"><span class="pre">--text</span></tt> options, all can be used for text and graphical mode.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1493,7 +1511,7 @@ routed design :</p>
 </ul>
 </div>
 <div class="section" id="miscellaneous-settings">
-<h3><a class="toc-backref" href="#id52">Miscellaneous Settings</a></h3>
+<h3><a class="toc-backref" href="#id53">Miscellaneous Settings</a></h3>
 <table border="1" class="docutils">
 <colgroup>
 <col width="46%" />
@@ -1566,7 +1584,7 @@ To generate one set this flag to <span class="cb">True</span></td>
 </div>
 </div>
 <div class="section" id="id3">
-<span id="the-controller"></span><h2><a class="toc-backref" href="#id53">The Controller</a></h2>
+<span id="the-controller"></span><h2><a class="toc-backref" href="#id54">The Controller</a></h2>
 <p>The <em>Controller</em> window is composed of seven tabs:</p>
 <ol class="arabic simple">
 <li><a class="reference internal" href="#the-look-tab">The Look Tab</a> to select the display style.</li>
@@ -1581,14 +1599,14 @@ the current selection.</li>
 <li><a class="reference internal" href="#the-settings-tab">The Settings Tab</a> access all the tool's configuration settings.</li>
 </ol>
 <div class="section" id="id4">
-<span id="the-look-tab"></span><h3><a class="toc-backref" href="#id54">The Look Tab</a></h3>
+<span id="the-look-tab"></span><h3><a class="toc-backref" href="#id55">The Look Tab</a></h3>
 <p>You can select how the layout will be displayed. There is a special one
 <tt class="docutils literal">Printer.Coriolis</tt> specifically designed for <a class="reference internal" href="#printing-snapshots">Printing &amp; Snapshots</a>.
 You should select it prior to calling the print or snapshot dialog boxes.</p>
 <p><span class="raw-html"><center><img src="./images/Controller-Look-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id5">
-<span id="the-filter-tab"></span><h3><a class="toc-backref" href="#id55">The Filter Tab</a></h3>
+<span id="the-filter-tab"></span><h3><a class="toc-backref" href="#id56">The Filter Tab</a></h3>
 <p>The filter tab let you select what hierarchical levels of your design will be
 displayed. Hierarchy level are numbered top-down: the level 0 correspond to
 the top-level cell, the level one to the instances of the top-level Cell and
@@ -1611,7 +1629,7 @@ They have been made <em>very</em> visibles as big violet lines...</p>
 <p><span class="raw-html"><center><img src="./images/Controller-Filter-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id6">
-<span id="the-layers-go-tab"></span><h3><a class="toc-backref" href="#id56">The Layers&amp;Go Tab</a></h3>
+<span id="the-layers-go-tab"></span><h3><a class="toc-backref" href="#id57">The Layers&amp;Go Tab</a></h3>
 <p>Control the individual display of all <em>layers</em> and <em>Gos</em>.</p>
 <ul class="simple">
 <li><em>Layers</em> correspond to a true physical layer. From a <span class="sc">Hurricane</span> point of
@@ -1629,7 +1647,7 @@ to easily locate congested areas.</li>
 <p><span class="raw-html"><center><img src="./images/Controller-LayersGos-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id7">
-<span id="the-netlist-tab"></span><h3><a class="toc-backref" href="#id57">The Netlist Tab</a></h3>
+<span id="the-netlist-tab"></span><h3><a class="toc-backref" href="#id58">The Netlist Tab</a></h3>
 <p>The <em>Netlist</em> tab shows the list of nets... By default the tab is not
 <em>synched</em> with the displayed Cell. To see the nets you must check the
 <strong>Sync Netlist</strong> checkbox. You can narrow the set of displayed nets by
@@ -1642,7 +1660,7 @@ is highlited in the <em>Viewer</em>.</p>
 <span class="raw-html"><center><img src="./images/Viewer-Netlist-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id8">
-<span id="the-selection-tab"></span><h3><a class="toc-backref" href="#id58">The Selection Tab</a></h3>
+<span id="the-selection-tab"></span><h3><a class="toc-backref" href="#id59">The Selection Tab</a></h3>
 <p>The <em>Selection</em> tab list all the components currently selecteds. They
 can be filtered thanks to the filter pattern.</p>
 <p>Used in conjunction with the <em>Netlist</em> <strong>Sync Selection</strong> you will all see
@@ -1655,7 +1673,7 @@ the <tt class="docutils literal">t</tt> key...</p>
 <p><span class="raw-html"><center><img src="./images/Controller-Selection-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id9">
-<span id="the-inspector-tab"></span><h3><a class="toc-backref" href="#id59">The Inspector Tab</a></h3>
+<span id="the-inspector-tab"></span><h3><a class="toc-backref" href="#id60">The Inspector Tab</a></h3>
 <p>This tab is very useful, but mostly for <span class="sc">Coriolis</span> developpers. It allows
 to browse through the live DataBase. The <em>Inspector</em> provide three entry points:</p>
 <ul class="simple">
@@ -1681,13 +1699,13 @@ is deleted, you will crash the application...</p>
 <span class="raw-html"><center><img src="./images/Controller-Inspector-3.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 <div class="section" id="id10">
-<span id="the-settings-tab"></span><h3><a class="toc-backref" href="#id60">The Settings Tab</a></h3>
+<span id="the-settings-tab"></span><h3><a class="toc-backref" href="#id61">The Settings Tab</a></h3>
 <p>Here comes the description of the <em>Settings</em> tab.</p>
 <p><span class="raw-html"><center><img src="./images/Controller-Settings-1.png" alt="Controller Basic Snapshot"></center></span></p>
 </div>
 </div>
 <div class="section" id="python-interface-for-hurricane-coriolis">
-<span id="python-interface-to-coriolis"></span><h2><a class="toc-backref" href="#id61">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a></h2>
+<span id="python-interface-to-coriolis"></span><h2><a class="toc-backref" href="#id62">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a></h2>
 <p>The (almost) complete interface of <span class="sc">Hurricane</span> is exported as a <span class="sc">Python</span> module
 and some part of the other components of <span class="sc">Coriolis</span> (each one in a separate
 module). The interface has been made to mirror as closely as possible the
@@ -1766,13 +1784,13 @@ lauched through <span class="cb">cgt</span>.</td>
 </ol>
 </div>
 <div class="section" id="plugins">
-<h2><a class="toc-backref" href="#id62">Plugins</a></h2>
+<h2><a class="toc-backref" href="#id63">Plugins</a></h2>
 <p>Plugins are <span class="sc">Python</span> scripts specially crafted to integrate with <span class="cb">cgt</span>.
 Their entry point is a <span class="cb">ScriptMain()</span> method as described in
 <a class="reference internal" href="#python-interface-to-coriolis">Python Interface to Coriolis</a>. They can be called by user scripts
 through this method.</p>
 <div class="section" id="chip-placement">
-<h3><a class="toc-backref" href="#id63">Chip Placement</a></h3>
+<h3><a class="toc-backref" href="#id64">Chip Placement</a></h3>
 <p>Automatically perform the placement of a complete chip. This plugin, as well
 as the other P&amp;R tools expect a specific top-level hierarchy for the design.
 The top-level hierarchy must contains the instances of all the I/O pads and
@@ -1947,7 +1965,7 @@ only four rails (2* <tt class="docutils literal">power</tt>, 2* <tt class="docut
 </div>
 </div>
 <div class="section" id="clock-tree">
-<h3><a class="toc-backref" href="#id64">Clock Tree</a></h3>
+<h3><a class="toc-backref" href="#id65">Clock Tree</a></h3>
 <p>Insert a clock tree into a block. The clock tree uses the H strategy.
 The clock net is splitted into sub-nets, one for each branch of the
 tree.</p>
@@ -2039,14 +2057,14 @@ into retirement very soon</td>
 </table>
 </div>
 <div class="section" id="recursive-save-rsave">
-<h3><a class="toc-backref" href="#id65">Recursive-Save (RSave)</a></h3>
+<h3><a class="toc-backref" href="#id66">Recursive-Save (RSave)</a></h3>
 <p>Perform a recursive top down save of all the models from the top cell
 loaded in <span class="cb">cgt</span>. Force a write of any non-terminal model. This plugin is used
 by the clock tree plugin after the netlist clock sub-nets creation.</p>
 </div>
 </div>
 <div class="section" id="a-simple-example-am2901">
-<h2><a class="toc-backref" href="#id66">A Simple Example: AM2901</a></h2>
+<h2><a class="toc-backref" href="#id67">A Simple Example: AM2901</a></h2>
 <p>To illustrate the capabilities of <span class="sc">Coriolis</span> tools and <span class="sc">Python</span> scripting, a small
 example, derived from the <span class="sc">Alliance</span> <span class="cb">AM2901</span> is supplied.</p>
 <p>This example contains only the synthetized netlists and the <span class="cb">doChip.py</span> script
