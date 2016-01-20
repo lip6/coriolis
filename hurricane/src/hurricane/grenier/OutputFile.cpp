@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: OutputFile.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************
 
 #include "OutputFile.h"
@@ -140,5 +140,5 @@ Record* OutputFile::_GetRecord() const
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: InputFile.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_INPUT_FILE
@@ -99,5 +99,5 @@ class InputFile {
 #endif // HURRICANE_INPUT_FILE
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

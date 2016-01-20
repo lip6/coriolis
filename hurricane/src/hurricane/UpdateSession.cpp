@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./UpdateSession.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -214,5 +214,5 @@ void UpdateSession::close() {
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************
