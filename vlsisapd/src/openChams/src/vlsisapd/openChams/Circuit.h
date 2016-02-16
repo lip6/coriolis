@@ -2,13 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI SAPD Software.
-// Copyright (c) UPMC/LIP6 2009-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2009-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  V L S I   S A P D                              |
 // |             OpenChams Circuit Data Base                         |
 // |                                                                 |
 // |  Author      :                       Damien Dupuis              |
+// |                                           Eric Lao              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./vlsisapd/openChams/Circuit.h"                |
@@ -27,6 +28,7 @@
 
 #include "vlsisapd/openChams/Parameters.h"
 #include "vlsisapd/openChams/SimulModel.h"
+#include "vlsisapd/openChams/SlicingTree.h"
 
 
 namespace OpenChams {
@@ -58,6 +60,7 @@ namespace OpenChams {
       inline Parameters                getParameters             ();
       inline void                      addSubCircuitPath         ( std::string );
       inline std::vector<std::string>& getSubCircuitPaths        ();
+      inline SlicingNode*              getSlicingTree            ();
     // Mutators.                                                 
              void                      addSimulModel             ( unsigned
                                                                  , SimulModel::Base
@@ -69,7 +72,9 @@ namespace OpenChams {
              Schematic*                createSchematic           ();
              Sizing*                   createSizing              ();
              Layout*                   createLayout              ();
+             void                      setSlicingTree            ( SlicingNode* slicingtree );
              void                      driveHBTree               ( std::ofstream&, Node*, unsigned );
+             void                      driveSlicingTree          ( std::ofstream&, SlicingNode*, unsigned );
              bool                      writeToFile               ( std::string filePath );
       static Circuit*                  readFromFile              ( const std::string filePath );
     
@@ -112,6 +117,17 @@ namespace OpenChams {
              void                      readHBTree                ( xmlNode*, Layout* );
              Node*                     readNodeOrBloc            ( xmlNode*, Node* parent = NULL );
              void                      setAbsolutePath           ( const std::string filePath );
+    // Slicingtree related XML methods.
+             void                      readSlicingTree             ( xmlNode* );
+             SlicingNode*              readSlicingNode             ( xmlNode* xnode, SlicingNode* slicingNode = NULL );
+             VSlicingNode*             createVerticalSlicingNode   ( xmlNode* xnode, SlicingNode* slicingNode = NULL );
+             HSlicingNode*             createHorizontalSlicingNode ( xmlNode* xnode, SlicingNode* slicingNode = NULL );
+             DSlicingNode*             createDeviceSlicingNode     ( xmlNode* xnode, SlicingNode* slicingNode = NULL );
+             RSlicingNode*             createRoutingSlicingNode    ( xmlNode* xnode, SlicingNode* slicingNode = NULL );
+             void                      addChildren                 ( xmlNode*, HVSlicingNode* );
+             void                      setHVParameters             ( xmlNode*, HVSlicingNode* );
+             void                      setHVSymmetries             ( xmlNode*, HVSlicingNode* );
+
     // Utilities methods.
              void                      check_uppercase           ( std::string& str, std::vector<std::string>& compares, std::string message );
              void                      check_lowercase           ( std::string& str, std::vector<std::string>& compares, std::string message );
@@ -127,6 +143,7 @@ namespace OpenChams {
       Layout*                          _layout;
       std::vector<std::string>         _subCircuitsPaths;
       std::map<unsigned, SimulModel*>  _simulModels;
+      SlicingNode*                     _slicingtree;
   };
     
 
@@ -142,7 +159,7 @@ namespace OpenChams {
   inline Parameters                Circuit::getParameters      () { return _params; }
   inline void                      Circuit::addSubCircuitPath  (std::string path) { _subCircuitsPaths.push_back(path); }
   inline std::vector<std::string>& Circuit::getSubCircuitPaths () { return _subCircuitsPaths; }
-
+  inline SlicingNode*              Circuit::getSlicingTree     () { return _slicingtree; }
 
   template<typename T>
   inline std::string  asString ( T value )
