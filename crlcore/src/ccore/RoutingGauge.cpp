@@ -24,6 +24,7 @@
 #include "crlcore/XmlParser.h"
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/RoutingGauge.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace {
@@ -40,9 +41,11 @@ namespace {
 
 namespace CRL {
 
-
+  using Hurricane::JsonTypes;
+  using Hurricane::JsonArray;
   using Hurricane::DataBase;
   using Hurricane::ViaLayer;
+  using Hurricane::getCollection;
 
 
 // -------------------------------------------------------------------
@@ -261,6 +264,67 @@ namespace CRL {
     record->add ( getSlot("_name"     , _name       ) );
     record->add ( getSlot("_gauges"   ,&_layerGauges) );
     return ( record );
+  }
+
+
+  void  RoutingGauge::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "RoutingGauge" );
+    jsonWrite( w, "_name"              , _name            );
+    jsonWrite( w, "+routingLayerGauges", getCollection(getLayerGauges()) );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingGauge"
+
+  Initializer<JsonRoutingGauge>  jsonRoutingGaugeInit ( 0 );
+
+
+  void  JsonRoutingGauge::initialize ()
+  { JsonTypes::registerType( new JsonRoutingGauge (JsonWriter::RegisterMode) ); }
+
+
+  JsonRoutingGauge::JsonRoutingGauge( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_name"              , typeid(string)    );
+    add( "+routingLayerGauges", typeid(JsonArray) );
+  }
+
+
+  string JsonRoutingGauge::getTypeName () const
+  { return "RoutingGauge"; }
+
+
+  JsonRoutingGauge* JsonRoutingGauge::clone ( unsigned long flags ) const
+  { return new JsonRoutingGauge ( flags ); }
+
+
+  void JsonRoutingGauge::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonRoutingGauge::toData" );
+
+    AllianceFramework* af   = get<AllianceFramework*>( stack, "_framework" );
+    string             name = get<string>            ( stack, "_name"      );
+    RoutingGauge*      rg   = NULL;
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      if (af) {
+        if (not name.empty()) {
+          rg = RoutingGauge::create( name.c_str() );
+          af->addRoutingGauge( rg );
+        }
+      } else {
+        cerr << Error( "JsonRoutingGauge::toData(): Missing \"_framework\" in stack context." ) << endl;
+      }
+    } else {
+      rg = af->getRoutingGauge( name );
+    }
+  
+    update( stack, rg );
   }
 
 

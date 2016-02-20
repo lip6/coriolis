@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./TransistorLayer.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/TransistorLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/TransistorLayer.h"
+#include "hurricane/Error.h"
 
 
 namespace {
@@ -226,6 +218,163 @@ namespace Hurricane {
       record->add(getSlot("_extentionWidths", &_extentionWidths));
     }
     return record;
+  }
+
+
+  void  TransistorLayer::_toJson ( JsonWriter* w ) const
+  {
+    Super::_toJson( w );
+
+    jsonWrite( w, "_gate"     , _basicLayers[0]->getName() );
+    jsonWrite( w, "_active"   , _basicLayers[1]->getName() );
+    jsonWrite( w, "_diffusion", _basicLayers[2]->getName() );
+    if (_basicLayers.size() == 4) jsonWrite( w, "_well"   , _basicLayers[3]->getName() );
+    else                          jsonWrite( w, "_well", "no_well_layer" );
+
+    jsonWrite( w, "_extentionCap.gate"     , _extentionCaps[0] );
+    jsonWrite( w, "_extentionCap.active"   , _extentionCaps[1] );
+    jsonWrite( w, "_extentionCap.diffusion", _extentionCaps[2] );
+    jsonWrite( w, "_extentionCap.well"     , (_basicLayers.size() == 4) ? _extentionCaps[3] : 0 );
+
+    jsonWrite( w, "_extentionWidth.gate"     , _extentionWidths[0] );
+    jsonWrite( w, "_extentionWidth.active"   , _extentionWidths[1] );
+    jsonWrite( w, "_extentionWidth.diffusion", _extentionWidths[2] );
+    jsonWrite( w, "_extentionWidth.well"   , (_basicLayers.size() == 4) ? _extentionWidths[3] : 0 );
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonTransistorLayer".
+
+  Initializer<JsonTransistorLayer>  jsonTransistorLayerInit ( 0 );
+
+
+  void  JsonTransistorLayer::initialize ()
+  { JsonTypes::registerType( new JsonTransistorLayer (JsonWriter::RegisterMode) ); }
+
+
+  JsonTransistorLayer::JsonTransistorLayer ( unsigned long flags )
+    : JsonLayer(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    ltrace(51) << "JsonTransistorLayer::JsonTransistorLayer()" << endl;
+
+    add( "_gate"                    , typeid(string)  );
+    add( "_active"                  , typeid(string)  );
+    add( "_diffusion"               , typeid(string)  );
+    add( "_well"                    , typeid(string)  );
+    add( "_extentionCap.gate"       , typeid(int64_t) );
+    add( "_extentionCap.active"     , typeid(int64_t) );
+    add( "_extentionCap.diffusion"  , typeid(int64_t) );
+    add( "_extentionCap.well"       , typeid(int64_t) );
+    add( "_extentionWidth.gate"     , typeid(int64_t) );
+    add( "_extentionWidth.active"   , typeid(int64_t) );
+    add( "_extentionWidth.diffusion", typeid(int64_t) );
+    add( "_extentionWidth.well"     , typeid(int64_t) );
+  }
+
+
+  JsonTransistorLayer::~JsonTransistorLayer ()
+  { }
+
+
+  string  JsonTransistorLayer::getTypeName () const
+  { return "TransistorLayer"; }
+
+
+  JsonTransistorLayer* JsonTransistorLayer::clone ( unsigned long flags ) const
+  { return new JsonTransistorLayer ( flags ); }
+
+
+  void JsonTransistorLayer::toData ( JsonStack& stack )
+  {
+    ltracein(51);
+
+    check( stack, "JsonTransistorLayer::toData" );
+
+    Technology*      techno = lookupTechnology( stack, "JsonTransistorLayer::toData" );
+    TransistorLayer* layer  = NULL;
+
+    if (techno) {
+      string       name             = get<string> ( stack, "_name"           );
+      string       smask            = get<string> ( stack, "_mask"           );
+    //DbU::Unit    minimalSize      = get<int64_t>( stack, "_minimalSize"    );
+    //DbU::Unit    minimalSpacing   = get<int64_t>( stack, "_minimalSpacing" );
+      bool         isWorking        = get<bool>   ( stack, "_working"        );
+                                    
+      BasicLayer*  gate             = techno->getBasicLayer( get<string>(stack,"_gate"      ) );
+      BasicLayer*  active           = techno->getBasicLayer( get<string>(stack,"_active"    ) );
+      BasicLayer*  diffusion        = techno->getBasicLayer( get<string>(stack,"_diffusion" ) );
+      BasicLayer*  well             = techno->getBasicLayer( get<string>(stack,"_well"      ) );
+      DbU::Unit    eCapGate         = get<int64_t>( stack, "_extentionCap.gate"        );
+      DbU::Unit    eCapActive       = get<int64_t>( stack, "_extentionCap.active"      );
+      DbU::Unit    eCapDiffusion    = get<int64_t>( stack, "_extentionCap.diffusion"   );
+      DbU::Unit    eCapWell         = get<int64_t>( stack, "_extentionCap.well"        );
+      DbU::Unit    eWidthGate       = get<int64_t>( stack, "_extentionWidth.gate"      );
+      DbU::Unit    eWidthActive     = get<int64_t>( stack, "_extentionWidth.active"    );
+      DbU::Unit    eWidthDiffusion  = get<int64_t>( stack, "_extentionWidth.diffusion" );
+      DbU::Unit    eWidthWell       = get<int64_t>( stack, "_extentionWidth.well"      );
+
+      Layer::Mask mask = Layer::Mask::fromString( smask );
+
+      if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      // Actual creation.
+        layer = TransistorLayer::create( techno
+                                       , name
+                                       , gate
+                                       , active
+                                       , diffusion
+                                       , well
+                                       );
+        layer->setWorking       ( isWorking );
+        layer->setExtentionCap  ( gate     , eCapGate        );
+        layer->setExtentionCap  ( active   , eCapActive      );
+        layer->setExtentionCap  ( diffusion, eCapDiffusion   );
+        layer->setExtentionWidth( gate     , eWidthGate      );
+        layer->setExtentionWidth( active   , eWidthActive    );
+        layer->setExtentionWidth( diffusion, eWidthDiffusion );
+        if (well) {
+          layer->setExtentionCap  ( well, eCapWell   );
+          layer->setExtentionWidth( well, eWidthWell );
+        }
+
+        if (layer->getMask() != mask) {
+          cerr << Error( "JsonTransistorLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"
+                         "        Blob:     %s\n"
+                         "        DataBase: %s"
+                       , name.c_str()
+                       , getString(mask).c_str()
+                       , getString(layer->getMask()).c_str()
+                       ) << endl;
+        }
+      // Add here association with blockage layer...
+      } else {
+      // Check coherency with existing layer.
+        layer = dynamic_cast<TransistorLayer*>( techno->getLayer(name) );
+        if (layer) {
+          if (layer->getMask() != mask) {
+            cerr << Error( "JsonTransistorLayer::toData(): Layer mask discrepency on \"%s\":\n"
+                           "        Blob:     %s\n"
+                           "        DataBase: %s"
+                         , name.c_str()
+                         , getString(mask).c_str()
+                         , getString(layer->getMask()).c_str()
+                         ) << endl;
+          }
+        } else {
+          cerr << Error( "JsonTransistorLayer::toData(): No TransistorLayer \"%s\" in the existing technology."
+                       , name.c_str()
+                       ) << endl;
+        }
+      }
+    } else {
+      cerr << Error( "JsonTransistorLayer::toData(): Cannot find technology, aborting TransistorLayer creation." ) << endl;
+    }
+    
+    update( stack, layer );
+
+    ltraceout(51);
   }
 
 

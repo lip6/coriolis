@@ -18,6 +18,7 @@
 // ****************************************************************************************************
 
 #include "hurricane/Warning.h"
+#include "hurricane/Error.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -30,7 +31,7 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/Pad.h"
 #include "hurricane/UpdateSession.h"
-#include "hurricane/Error.h"
+#include "hurricane/NetExternalComponents.h"
 
 namespace Hurricane {
 
@@ -765,6 +766,9 @@ void Net::_toJsonCollections(JsonWriter* writer) const
   jsonWrite( writer, "+componentSet", getComponents() );
   writer->resetFlags( JsonWriter::UsePlugReference );
 
+  writer->key( "+externalComponents" );
+  NetExternalComponents::toJson( writer, this );
+
   Inherit::_toJsonCollections( writer );
 }
 
@@ -1059,87 +1063,184 @@ string Net_SlavePlugs::Locator::_getString() const
 }
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonNet".
 
-// ****************************************************************************************************
-// JsonNet implementation
-// ****************************************************************************************************
 
-Initializer<JsonNet>  jsonNetInit ( 0 );
+  Initializer<JsonNet>  jsonNetInit ( 0 );
 
-void  JsonNet::initialize()
-// **************************
-{ JsonTypes::registerType( new JsonNet (JsonWriter::RegisterMode) ); }
 
-JsonNet::JsonNet(unsigned long flags)
-// **********************************
-  : JsonEntity      (flags)
-  , _autoMaterialize(not Go::autoMaterializationIsDisabled())
-  , _net            (NULL)
-  , _stack          (NULL)
-{
-  if (flags & JsonWriter::RegisterMode) return;
+  void  JsonNet::initialize ()
+  { JsonTypes::registerType( new JsonNet (JsonWriter::RegisterMode) ); }
 
-  ltrace(51) << "JsonNet::JsonNet()" << endl;
 
-  add( "_name"        , typeid(string)    );
-  add( "_isGlobal"    , typeid(bool)      );
-  add( "_isExternal"  , typeid(bool)      );
-  add( "_isAutomatic" , typeid(bool)      );
-  add( "_type"        , typeid(string)    );
-  add( "_direction"   , typeid(string)    );
-  add( "+aliases"     , typeid(JsonArray) );
-  add( "+componentSet", typeid(JsonArray) );
+  JsonNet::JsonNet ( unsigned long flags )
+    : JsonEntity      (flags)
+    , _autoMaterialize(not Go::autoMaterializationIsDisabled())
+    , _net            (NULL)
+    , _hooks          ()
+  {
+    if (flags & JsonWriter::RegisterMode) return;
 
-  ltrace(51) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
-  Go::disableAutoMaterialization();
-}
+    ltrace(51) << "JsonNet::JsonNet()" << endl;
 
-JsonNet::~JsonNet()
-// ****************
-{
-  _stack->checkRings();
-  _stack->buildRings();
-  _stack->clearHookLinks();
+    add( "_name"              , typeid(string)    );
+    add( "_isGlobal"          , typeid(bool)      );
+    add( "_isExternal"        , typeid(bool)      );
+    add( "_isAutomatic"       , typeid(bool)      );
+    add( "_type"              , typeid(string)    );
+    add( "_direction"         , typeid(string)    );
+    add( "+aliases"           , typeid(JsonArray) );
+    add( "+componentSet"      , typeid(JsonArray) );
+    add( "+externalComponents", typeid(JsonArray) );
 
-  _net->materialize();
-
-  if (_autoMaterialize) {
-    Go::enableAutoMaterialization();
-    ltrace(51) << "Enabling auto-materialization." << endl;
+    ltrace(51) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
+    Go::disableAutoMaterialization();
   }
-}
 
-string  JsonNet::getTypeName() const
-// *********************************
-{ return "Net"; }
 
-JsonNet* JsonNet::clone(unsigned long flags) const
-// ***********************************************
-{ return new JsonNet ( flags ); }
+  JsonNet::~JsonNet ()
+  {
+    checkRings();
+    buildRings();
+    clearHookLinks();
+    
+    _net->materialize();
 
-void JsonNet::toData(JsonStack& stack)
-// ***********************************
-{
-  ltracein(51);
+    if (_autoMaterialize) {
+      Go::enableAutoMaterialization();
+      ltrace(51) << "Enabling auto-materialization." << endl;
+    }
+  }
 
-  _stack = &stack;
 
-  check( stack, "JsonNet::toData" );
-  presetId( stack );
+  string  JsonNet::getTypeName () const
+  { return "Net"; }
 
-  _net = Net::create( get<Cell*>(stack,".Cell") , get<string>(stack,"_name") );
-  _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
-  _net->setExternal ( get<bool>(stack,"_isExternal" ) );
-  _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
-  _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
-  _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
 
-  update( stack, _net );
+  JsonNet* JsonNet::clone( unsigned long flags ) const
+  { return new JsonNet ( flags ); }
 
-  ltraceout(51);
-}
 
-} // End of Hurricane namespace.
+  void JsonNet::toData ( JsonStack& stack )
+  {
+    ltracein(51);
+
+    check( stack, "JsonNet::toData" );
+    presetId( stack );
+
+    _net = Net::create( get<Cell*>(stack,".Cell") , get<string>(stack,"_name") );
+    _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
+    _net->setExternal ( get<bool>(stack,"_isExternal" ) );
+    _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
+    _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
+    _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
+
+    update( stack, _net );
+
+    ltraceout(51);
+  }
+
+
+  void  JsonNet::addHookLink ( Hook* hook, unsigned int jsonId, const string& jsonNext )
+  {
+    if (jsonNext.empty()) return;
+
+    unsigned int id      = jsonId;
+    string       tname   = hook->_getTypeName();
+
+    auto ielement = _hooks.find( HookKey(id,tname) );
+    if (ielement == _hooks.end()) {
+      auto r = _hooks.insert( make_pair( HookKey(id,tname), HookElement(hook) ) );
+      ielement = r.first;
+      (*ielement).second.setFlags( HookElement::OpenRingStart );
+    }
+    HookElement* current = &((*ielement).second);
+    if (not current->hook()) current->setHook( hook );
+
+    hookFromString( jsonNext, id, tname );
+    ielement = _hooks.find( HookKey(id,tname) );
+    if (ielement == _hooks.end()) {
+      auto r = _hooks.insert( make_pair( HookKey(id,tname), HookElement(NULL) ) );
+      ielement = r.first;
+    } else {
+      (*ielement).second.resetFlags( HookElement::OpenRingStart );
+    }
+    current->setNext( &((*ielement).second) );
+  }
+
+
+  Hook* JsonNet::getHook ( unsigned int jsonId, const std::string& tname ) const
+  {
+    auto ihook = _hooks.find( HookKey(jsonId,tname) );
+    if (ihook == _hooks.end()) return NULL;
+
+    return (*ihook).second.hook();
+  }
+
+
+  bool  JsonNet::hookFromString ( std::string s, unsigned int& id, std::string& tname )
+  {
+    size_t dot = s.rfind('.');
+    if (dot == string::npos) return false;
+
+    tname = s.substr( 0, dot );
+    id    = stoul( s.substr(dot+1) );
+    return true;
+  }
+
+
+  bool  JsonNet::checkRings () const
+  {
+    bool status = true;
+
+    for ( auto kv : _hooks ) {
+      HookElement* ringStart = &(kv.second);
+      if (ringStart->issetFlags(HookElement::ClosedRing)) continue;
+
+      if (ringStart->issetFlags(HookElement::OpenRingStart)) {
+        cerr << Error( "JsonNet::checkRing(): Open ring found, starting with %s.\n"
+                     "        Closing the ring..."
+                     , getString(ringStart->hook()).c_str() ) << endl;
+
+        status = false;
+        HookElement* element = ringStart;
+        while ( true ) {
+          if (not element->next()) {
+          // The ring is open: close it (loop on ringStart).
+            element->setNext( ringStart );
+            element->setFlags( HookElement::ClosedRing );
+
+            cerr << Error( "Simple open ring." ) << endl;
+            break;
+          }
+          if (element->next()->issetFlags(HookElement::ClosedRing)) {
+          // The ring is half merged with itself, or another ring.
+          // (i.e. *multiple* hooks pointing the *same* next element)
+            element->setNext( ringStart );
+            element->setFlags( HookElement::ClosedRing );
+
+            cerr << Error( "Complex fault: ring partially merged (convergent)." ) << endl;
+            break;
+          }
+          element = element->next();
+        }
+      }
+    }
+
+    return status;
+  }
+
+
+  void  JsonNet::buildRings () const
+  {
+    for ( auto kv : _hooks ) {
+      kv.second.hook()->_setNextHook( kv.second.next()->hook() );
+    }
+  }
+
+
+} // Hurricane namespace.
 
 
 // ****************************************************************************************************

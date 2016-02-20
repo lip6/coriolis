@@ -75,6 +75,10 @@ namespace CRL {
   }
 
 
+  void  LibrariesWidget::update ()
+  { _baseModel->update(); }
+
+
   void  LibrariesWidget::initSelection ()
   { _view->selectRow( 0 ); }
 

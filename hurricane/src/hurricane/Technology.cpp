@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/Warning.h"
+#include "hurricane/Error.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
@@ -26,6 +28,21 @@
 #include "hurricane/ViaLayer.h"
 #include "hurricane/Error.h"
 
+
+namespace {
+
+  class CompareByMask {
+    public:
+      bool operator() ( const Hurricane::Layer* lhs, const Hurricane::Layer* rhs )
+      {
+        if (not lhs) return rhs;
+        if (not rhs) return false;
+
+        return lhs->getMask() < rhs->getMask();
+      }
+  };
+
+}  // Anonymous namespace.
 
 
 namespace Hurricane {
@@ -363,13 +380,11 @@ void Technology::_removeFromLayerMaskMap ( Layer* layer )
   }
 }
 
-
 string  Technology::_getTypeName () const
+// **************************************
 {
   return _TName("Technology");
 }
-
-
 
 string Technology::_getString() const
 // **********************************
@@ -392,6 +407,38 @@ Record* Technology::_getRecord() const
     }
     return record;
 }
+
+void Technology::_toJson(JsonWriter* writer) const
+// ***********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_name", getName() );
+}
+
+void  Technology::_toJsonCollections(JsonWriter* writer) const
+// ***********************************************************
+{
+  writer->key( "+layers" );
+  writer->startArray();
+
+  vector<BasicLayer*> basicLayers;
+  vector<Layer*>      layers;
+  for ( Layer* layer : getLayers() ) {
+    BasicLayer* basicLayer = dynamic_cast<BasicLayer*>( layer );
+    if (basicLayer) basicLayers.push_back( basicLayer );
+    else            layers     .push_back( layer );
+  }
+
+  sort( basicLayers.begin(), basicLayers.end(), CompareByMask() );
+  sort( layers     .begin(), layers     .end(), CompareByMask() );
+
+  for ( BasicLayer* basicLayer : basicLayers ) jsonWrite( writer, basicLayer );
+  for ( Layer*      layer      : layers      ) jsonWrite( writer, layer );
+
+  writer->endArray();
+}
+
 
 // ****************************************************************************************************
 // Technology::LayerMap implementation
@@ -573,6 +620,96 @@ string Technology_BasicLayers::Locator::_getString() const
     }
     s += ">";
     return s;
+}
+
+
+
+// ****************************************************************************************************
+// JsonTechnology implementation
+// ****************************************************************************************************
+
+Initializer<JsonTechnology>  jsonTechnologyInit ( 0 );
+
+void  JsonTechnology::initialize()
+// *******************************
+{ JsonTypes::registerType( new JsonTechnology (JsonWriter::RegisterMode) ); }
+
+JsonTechnology::JsonTechnology(unsigned long flags)
+// ************************************************
+  : JsonDBo      (flags)
+  , _blockagesMap()
+{
+  if (flags & JsonWriter::RegisterMode) return;
+
+  ltrace(51) << "JsonTechnology::JsonTechnology()" << endl;
+
+  add( "_name"  , typeid(string)    );
+  add( "+layers", typeid(JsonArray) );
+}
+
+JsonTechnology::~JsonTechnology()
+// ******************************
+{
+  const Technology* techno = getObject<Technology*>();
+
+  for ( auto element : _blockagesMap ) {
+    BasicLayer* blockage = techno->getBasicLayer( element.first );
+    if (blockage) {
+      for ( BasicLayer* layer : element.second ) {
+        layer->setBlockageLayer( blockage );
+      }
+    }
+  }
+}
+
+string  JsonTechnology::getTypeName() const
+// ****************************************
+{ return "Technology"; }
+
+JsonTechnology* JsonTechnology::clone(unsigned long flags) const
+// *************************************************************
+{ return new JsonTechnology ( flags ); }
+
+void JsonTechnology::addBlockageRef(const string& blockageLayer, BasicLayer* layer )
+// *********************************************************************************
+{
+  map< string, vector<BasicLayer*> >::iterator im = _blockagesMap.find( blockageLayer );
+  if (im != _blockagesMap.end()) {
+    (*im).second.push_back( layer );
+  } else {
+    _blockagesMap.insert( make_pair( blockageLayer, vector<BasicLayer*>(1,layer) ) );
+  }
+}
+
+void JsonTechnology::toData(JsonStack& stack)
+// ******************************************
+{
+  ltracein(51);
+
+  check( stack, "JsonTechnology::toData" );
+
+  string      technoName = get<string>( stack, "_name" );
+  Technology* techno     = DataBase::getDB()->getTechnology();
+
+  if (techno) {
+    if (techno->getName() == technoName) {
+      cerr << Warning( "JsonTechnology::toData(): A technology with the same name (%s) is already loaded."
+                     , technoName.c_str()
+                     ) << endl;
+    } else {
+      cerr << Error( "JsonTechnology::toData(): Try to load \"%s\", but \"%s\" is already loaded."
+                   , technoName.c_str()
+                   , getString(techno->getName()).c_str()
+                   ) << endl;
+    }
+  } else {
+    techno = Technology::create( DataBase::getDB(), technoName );
+    stack.setFlags( JsonWriter::TechnoMode );
+  }
+
+  update( stack, techno );
+
+  ltraceout(51);
 }
 
 } // End of Hurricane namespace.

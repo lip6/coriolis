@@ -69,7 +69,7 @@ namespace Hurricane {
     setCorner( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
 
     setCentralWidget( _cellWidget );
-    _palette->build ();
+    _palette->readGraphics ();
 
     _cellWidget->bindToPalette( _palette );
     _cellWidget->refresh();

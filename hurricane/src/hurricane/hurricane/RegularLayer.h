@@ -39,8 +39,12 @@
 
 namespace Hurricane {
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::RegularLayer".
 
   class RegularLayer : public Layer {
+    public:
+      typedef  Layer  Super;
 
     public:
     // Constructor.
@@ -66,6 +70,7 @@ namespace Hurricane {
       virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
+      virtual void            _toJson           ( JsonWriter* ) const;
       virtual void            _onDbuChange      ( float scale );
       virtual string          _getTypeName      () const;
       virtual string          _getString        () const;
@@ -88,6 +93,20 @@ namespace Hurricane {
 
 // Inline Functions.
   inline BasicLayer*  RegularLayer::getBasicLayer    () const { return _basicLayer; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonRegularLayer".
+
+  class JsonRegularLayer : public JsonLayer {
+    public:
+      static  void              initialize       ();
+                                JsonRegularLayer ( unsigned long flags );
+                               ~JsonRegularLayer ();
+      virtual string            getTypeName      () const;
+      virtual JsonRegularLayer* clone            ( unsigned long ) const;
+      virtual void              toData           ( JsonStack& ); 
+  };
 
 
 } // Hurricane namespace.

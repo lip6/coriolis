@@ -1,12 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2011, All Rights Reserved
-//
-// ===================================================================
-//
-// $Id$
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,13 +10,12 @@
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./LayoutDescription.h"                    |
+// |  C++ Header  :  "./vlsisapd/configuration/LayoutDescription.h"  |
 // +-----------------------------------------------------------------+
 
 
-
-#ifndef  __CFG_LAYOUT_DESCRIPTION__
-#define  __CFG_LAYOUT_DESCRIPTION__
+#ifndef  CFG_LAYOUT_DESCRIPTION_H
+#define  CFG_LAYOUT_DESCRIPTION_H
 
 #include  <string>
 #include  <vector>
@@ -39,10 +33,12 @@ namespace Cfg {
 // -------------------------------------------------------------------
 // Class  :  "Cfg::WidgetDescription".
 
-
   class WidgetDescription {
     public:
       enum Type { Title=1, Section=2, Rule=3, Parameter=4 };
+    public:
+      static std::string  typeToString ( Type );
+      static Type         stringToType ( const std::string& );
     public:
       inline static WidgetDescription* rule       ();
       inline static WidgetDescription* title      ( const std::string& title );
@@ -115,7 +111,6 @@ namespace Cfg {
 // -------------------------------------------------------------------
 // Class  :  "Cfg::TabDescription".
 
-
   class TabDescription {
     public:
       inline                                        TabDescription ( LayoutDescription*, const std::string& name, const std::string& id );
@@ -152,6 +147,8 @@ namespace Cfg {
 
   class LayoutDescription {
     public:
+      inline static size_t                       getTimestamp      ();
+    public:
       inline                                     LayoutDescription ( Configuration* );
              WidgetDescription*                  getWidget         ( const std::string& id );
              void                                addWidgetLookup   ( WidgetDescription* );
@@ -175,14 +172,17 @@ namespace Cfg {
              ConfigurationWidget*                buildWidget       ( unsigned int       flags );
              void                                writeToStream     ( std::ostream&, const std::string& ) const;
     private:
-      Configuration*                                 _configuration;
-      std::vector<TabDescription*>                   _tabs;
-      std::map<const std::string,WidgetDescription*> _widgets;
+      static size_t                                         _timestamp;
+             Configuration*                                 _configuration;
+             std::vector<TabDescription*>                   _tabs;
+             std::map<const std::string,WidgetDescription*> _widgets;
   };
 
 
 // Inline Methods.
-  inline  LayoutDescription::LayoutDescription ( Configuration* cfg )
+  inline size_t  LayoutDescription::getTimestamp () { return _timestamp; }
+
+  inline LayoutDescription::LayoutDescription ( Configuration* cfg )
     : _configuration(cfg), _tabs(), _widgets()
   { }
 

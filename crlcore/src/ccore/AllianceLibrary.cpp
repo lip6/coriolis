@@ -26,6 +26,8 @@
 namespace CRL {
 
   using namespace std;
+  using Hurricane::tab;
+  using Hurricane::inltrace;
   using Hurricane::Initializer;
   using Hurricane::JsonTypes;
   using Hurricane::Warning;
@@ -78,8 +80,8 @@ namespace CRL {
   Record* AllianceLibrary::_getRecord() const
   {
     Record* record = new Record ( getString(this) );
-    record->add ( getSlot("Path"   ,&_path   ) );
-    record->add ( getSlot("Library", _library) );
+    record->add ( getSlot("_path"   ,&_path   ) );
+    record->add ( getSlot("_library", _library) );
     return ( record );
   }
 
@@ -123,13 +125,15 @@ namespace CRL {
   {
     check( stack, "JsonAllianceLibrary::toData" );
 
-    string libDbPath = get<string>( stack,"_library" );
-    string libOsPath = get<string>( stack,"_path"    );
+    string libDbPath = get<string>( stack, "_library" );
+    string libOsPath = get<string>( stack, "_path"    );
 
     AllianceFramework* af       = AllianceFramework::get();
     Library*           library  = DataBase::getDB()->getLibrary( libDbPath
                                                                , DataBase::CreateLib|DataBase::WarnCreateLib );
     AllianceLibrary*   aLibrary = NULL;
+
+    ltrace(51) << "| " << libDbPath << " : " << library << endl;
 
     if (library) {
       aLibrary = af->getAllianceLibrary( library );
@@ -147,6 +151,8 @@ namespace CRL {
       }
       if (not library) library = aLibrary->getLibrary();
     }
+
+    ltrace(51) << "| Associates to: " << aLibrary << endl;
 
     if (aLibrary->getLibrary() != library) {
       cerr << Warning( "JsonAllianceLibrary::toData(): Underlying Hurricane Library discrepency for \"%s\".\n"

@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     if (verbose1) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
     if (verbose2) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 ); 
 
-    AllianceFramework* af = AllianceFramework::create ();
+    AllianceFramework* af = AllianceFramework::get ();
 
     Cell* cell = NULL;
 

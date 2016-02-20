@@ -132,7 +132,7 @@ int main ( int argc, char *argv[] )
     if (verbose1) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
     if (verbose2) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 ); 
 
-    dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
+    dbo_ptr<AllianceFramework> af ( AllianceFramework::get() );
 
     Technology* technology = DataBase::getDB()->getTechnology();
 //     technology->setWorkingLayer ( "cut0" );

@@ -195,6 +195,58 @@ namespace Hurricane {
   }
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonEntityRef".
+
+  Initializer<JsonEntityRef>  jsonEntityRefInit ( 0 );
+
+
+  void  JsonEntityRef::initialize ()
+  { JsonTypes::registerType( new JsonEntityRef (JsonWriter::RegisterMode) ); }
+
+
+  JsonEntityRef::JsonEntityRef ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "_id", typeid(int64_t) );
+  }
+
+
+  string  JsonEntityRef::getTypeName () const
+  { return "&Entity"; }
+
+
+  JsonEntityRef* JsonEntityRef::clone( unsigned long flags ) const
+  { return new JsonEntityRef ( flags ); }
+
+
+  void JsonEntityRef::toData ( JsonStack& stack )
+  {
+    ltracein(51);
+
+    check( stack, "JsonEntityRef::toData" );
+
+    unsigned int jsonId = get<int64_t>( stack, "_id" );
+    Entity*      entity = stack.getEntity<Entity*>( jsonId );
+
+    ltrace(51) << "jsonId:" << jsonId << " entity:" << entity << endl;
+
+    if (entity) {
+      JsonBaseArray<Entity*>* array = jget< JsonBaseArray<Entity*> >( stack );
+      if (array) array->push_back( entity );
+      else
+        cerr << Error( "JsonEntityRef::toData(): Missing JsonBaseArray in stack context." ) << endl;
+    } else {
+      cerr << Error( "JsonEntityRef::toData(): No Entity id:%u in stack LUT.", jsonId ) << endl;
+    }
+
+    update( stack, NULL );
+
+    ltraceout(51);
+  }
+
 } // End of Hurricane namespace.
 
 

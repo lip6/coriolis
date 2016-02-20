@@ -42,26 +42,28 @@ namespace Hurricane {
 
   class DbU {
     public:
-      enum UnitPower { Pico = 1
-                     , Nano
-                     , Micro
-                     , Milli
-                     , Unity
-                     , Kilo
-                     };
+      enum FunctionFlags { NoFlags        = 0
+                         , NoTechnoUpdate = (1<<0)
+                         };
+      enum UnitPower     { Pico           = 1
+                         , Nano           
+                         , Micro          
+                         , Milli          
+                         , Unity          
+                         , Kilo           
+                         };               
+      enum  StringMode   { Db             = (1<<0)
+                         , Grid           = (1<<1)
+                         , Symbolic       = (1<<2)
+                         , Physical       = (1<<3)
+                         , SmartTruncate  = (1<<4)
+                         };               
+      enum  SnapMode     { Inferior       = 1
+                         , Superior       = 2
+                         , Nearest        = 4
+                         };
     public:
       typedef  long  Unit;
-    public:
-      enum  StringMode { Db            = (1<<0)
-                       , Grid          = (1<<1)
-                       , Symbolic      = (1<<2)
-                       , Physical      = (1<<3)
-                       , SmartTruncate = (1<<4)
-                       };
-      enum  SnapMode   { Inferior      = 1
-                       , Superior      = 2
-                       , Nearest       = 4
-                       };
 
     public:
       static        void                checkGridBound          ( double value );
@@ -81,14 +83,14 @@ namespace Hurricane {
       static        unsigned int        getPrecision            ();
       static        unsigned int        getMaximalPrecision     ();
       static        double              getResolution           ();
-      static        void                setPrecision            ( unsigned int precision );
+      static        void                setPrecision            ( unsigned int precision, unsigned int flags=NoFlags );
     // Founder Grid Managment.                                  
       static        double              getUnitPower            ( UnitPower p );
       static        void                setPhysicalsPerGrid     ( double gridsPerLambda, UnitPower p );
       static        double              getPhysicalsPerGrid     ();
       static        double              physicalToGrid          ( double physical, UnitPower p );
     // Lamba Managment.                                         
-      static        void                setGridsPerLambda       ( double gridsPerLambda );
+      static        void                setGridsPerLambda       ( double gridsPerLambda, unsigned int flags=NoFlags );
       static        double              getGridsPerLambda       ();
     // Snap Grid Managment.
       static        DbU::Unit           getRealSnapGridStep     ();

@@ -1080,9 +1080,6 @@ namespace Hurricane {
     setMouseTracking ( true );
 
   //_mapView = new MapView ( this );
-    DataBase* database = DataBase::getDB();
-    if ( database )
-      _technology = database->getTechnology ();
 
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
@@ -1270,17 +1267,21 @@ namespace Hurricane {
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-    // cerr << "CellWidget::redraw() - start "
-    //      << _selectionHasChanged << " filter:"
-    //      << _state->getQueryFilter() << endl;
+  //cerr << "CellWidget::redraw() - start "
+  //     << _selectionHasChanged << " filter:"
+  //     << _state->getQueryFilter() << endl;
 
-//     static bool  timedout;
-//     static Timer timer;
+  //static bool  timedout;
+  //static Timer timer;
 
     if ( not isVisible() ) return;
 
-//     timer.start ();
-//     timedout         = false;
+    DataBase* database = DataBase::getDB();
+    if ( database ) _technology = database->getTechnology ();
+
+  //timer.start ();
+  //timedout         = false;
+
     _cellChanged     = false;
     _redrawRectCount = 0;
 
@@ -1409,26 +1410,26 @@ namespace Hurricane {
     popCursor ();
     repaint ();
 
-//     timer.stop ();
-//     cerr << "CellWidget::redraw() - " << _redrawRectCount
-//          << " in " << timer.getCombTime() << "s ("
-//          << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
-//     if ( _drawingQuery.getGoCount() )
-//       cerr << " " << _drawingQuery.getGoCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
-//     else
-//       cerr << " 0 Gos";
-//     if ( _drawingQuery.getExtensionGoCount() )
-//       cerr << " " << _drawingQuery.getExtensionGoCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
-//     else
-//       cerr << " 0 eGos";
-//     if ( _drawingQuery.getInstanceCount() )
-//       cerr << " " << _drawingQuery.getInstanceCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
-//     else
-//       cerr << " 0 Instances";
-//     cerr << endl;
+  //timer.stop ();
+  //cerr << "CellWidget::redraw() - " << _redrawRectCount
+  //     << " in " << timer.getCombTime() << "s ("
+  //     << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
+  //if ( _drawingQuery.getGoCount() )
+  //  cerr << " " << _drawingQuery.getGoCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
+  //else
+  //  cerr << " 0 Gos";
+  //if ( _drawingQuery.getExtensionGoCount() )
+  //  cerr << " " << _drawingQuery.getExtensionGoCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
+  //else
+  //  cerr << " 0 eGos";
+  //if ( _drawingQuery.getInstanceCount() )
+  //  cerr << " " << _drawingQuery.getInstanceCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
+  //else
+  //  cerr << " 0 Instances";
+  //cerr << endl;
   }
 
 

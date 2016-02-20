@@ -24,6 +24,7 @@
 
 namespace CRL {
 
+  using namespace std;
   using Hurricane::Graphics;
 
 
@@ -35,6 +36,10 @@ namespace CRL {
 
   LibrariesModel::~LibrariesModel ()
   { }
+
+
+  void  LibrariesModel::update ()
+  { emit layoutChanged(); }
 
 
   QVariant  LibrariesModel::data ( const QModelIndex& index, int role ) const

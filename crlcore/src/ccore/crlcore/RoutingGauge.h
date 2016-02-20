@@ -34,12 +34,15 @@ namespace Hurricane {
 
 namespace CRL {
 
-  using  std::string;
-  using  std::vector;
-  using  Hurricane::Name;
-  using  Hurricane::Record;
-  using  Hurricane::Layer;
-  using  Hurricane::Technology;
+  using std::string;
+  using std::vector;
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
+  using Hurricane::Initializer;
+  using Hurricane::Name;
+  using Hurricane::Record;
+  using Hurricane::Layer;
+  using Hurricane::Technology;
 
 
 // -------------------------------------------------------------------
@@ -78,6 +81,7 @@ namespace CRL {
               void                addLayerGauge     ( RoutingLayerGauge* layerGauge );
               void                checkConnexity    () const;
     // Hurricane Managment.                         
+              void                toJson            ( JsonWriter* ) const;
       virtual Record*             _getRecord        ( Record* record=NULL ) const;
       virtual string              _getString        () const;
       virtual string              _getTypeName      () const;
@@ -107,6 +111,19 @@ namespace CRL {
   inline DbU::Unit     RoutingGauge::getLayerOffset    ( size_t depth ) const { return getLayerGauge(depth)->getOffset(); }
   inline DbU::Unit     RoutingGauge::getLayerWireWidth ( size_t depth ) const { return getLayerGauge(depth)->getWireWidth(); }
   inline DbU::Unit     RoutingGauge::getViaWidth       ( size_t depth ) const { return getLayerGauge(depth)->getViaWidth(); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingGauge".
+
+  class JsonRoutingGauge : public JsonObject {
+    public:
+      static  void              initialize       ();
+                                JsonRoutingGauge ( unsigned long flags );
+      virtual string            getTypeName      () const;
+      virtual JsonRoutingGauge* clone            ( unsigned long flags ) const;
+      virtual void              toData           ( JsonStack& );
+  };
 
 
 } // CRL namespace.

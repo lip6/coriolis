@@ -1,35 +1,25 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ConfigurationWidget.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  : "./vlsisapd/configuration/ConfigurationWidget.h" |
+// +-----------------------------------------------------------------+
 
 
+#ifndef  CFG_CONFIGURATION_WIDGET_H
+#define  CFG_CONFIGURATION_WIDGET_H
 
-#ifndef  __CFG_CONFIGURATION_WIDGET__
-#define  __CFG_CONFIGURATION_WIDGET__
-
-#include  <QFont>
-#include  <QWidget>
-#include  <QVector>
+#include <QFont>
+#include <QWidget>
+#include <QVector>
 class QPushButton;
 class QTabWidget;
 
@@ -45,7 +35,6 @@ namespace Cfg {
 
 // -------------------------------------------------------------------
 // Class  :  "Cfg::ConfigurationWidget".
-
 
   class ConfigurationWidget : public QWidget {
       Q_OBJECT;
@@ -127,7 +116,6 @@ namespace Cfg {
   std::string  toXml ( const std::string& );
 
 
-} // End of Cfg namespace.
+} // Cfg namespace.
 
-
-#endif  // __CFG_CONFIGURATION_WIDGET__
+#endif  // CFG_CONFIGURATION_WIDGET_H

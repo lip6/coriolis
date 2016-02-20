@@ -433,8 +433,13 @@ namespace Hurricane {
       ( get<Net*>      (stack,".Net")
       , get<Occurrence>(stack,"_occurrence")
       );
-    
-    stack.addHookLink( rp->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+
+    JsonNet* jnet = jget<JsonNet>( stack );
+    if (jnet) {
+      jnet->addHookLink( rp->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    } else {
+      cerr << Error( "JsonRoutingPad::toData(): Missing (Json)Net in stack context." ) << endl;
+    }
 
     update( stack, rp );
   }

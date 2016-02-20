@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./DiffusionLayer.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/DiffusionLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/DiffusionLayer.h"
+#include "hurricane/Error.h"
 
 
 namespace {
@@ -95,7 +87,7 @@ namespace Hurricane {
 
     _setMask        ( activeLayer->getMask()        | diffusionLayer->getMask()        );
     _setExtractMask ( activeLayer->getExtractMask() | diffusionLayer->getExtractMask() );
-    
+
     if ( wellLayer ) {
       _basicLayers    .push_back ( wellLayer );
       _extentionCaps  .push_back ( 0 );
@@ -224,6 +216,151 @@ namespace Hurricane {
       record->add(getSlot("_extentionWidths", &_extentionWidths));
     }
     return record;
+  }
+
+
+  void  DiffusionLayer::_toJson ( JsonWriter* w ) const
+  {
+    Super::_toJson( w );
+
+    jsonWrite( w, "_active"   , _basicLayers[0]->getName() );
+    jsonWrite( w, "_diffusion", _basicLayers[1]->getName() );
+    if (_basicLayers.size() == 3) jsonWrite( w, "_well", _basicLayers[2]->getName() );
+    else                          jsonWrite( w, "_well", "no_well_layer" );
+
+    jsonWrite( w, "_extentionCap.active"   , _extentionCaps[0] );
+    jsonWrite( w, "_extentionCap.diffusion", _extentionCaps[1] );
+    jsonWrite( w, "_extentionCap.well"     , (_basicLayers.size() == 3) ? _extentionCaps[2] : 0 );
+
+    jsonWrite( w, "_extentionWidth.active"   , _extentionWidths[0] );
+    jsonWrite( w, "_extentionWidth.diffusion", _extentionWidths[1] );
+    jsonWrite( w, "_extentionWidth.well"     , (_basicLayers.size() == 3) ? _extentionWidths[2] : 0 );
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonDiffusionLayer".
+
+  Initializer<JsonDiffusionLayer>  jsonDiffusionLayerInit ( 0 );
+
+
+  void  JsonDiffusionLayer::initialize ()
+  { JsonTypes::registerType( new JsonDiffusionLayer (JsonWriter::RegisterMode) ); }
+
+
+  JsonDiffusionLayer::JsonDiffusionLayer ( unsigned long flags )
+    : JsonLayer(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    ltrace(51) << "JsonDiffusionLayer::JsonDiffusionLayer()" << endl;
+
+    add( "_active"                  , typeid(string)  );
+    add( "_diffusion"               , typeid(string)  );
+    add( "_well"                    , typeid(string)  );
+    add( "_extentionCap.active"     , typeid(int64_t) );
+    add( "_extentionCap.diffusion"  , typeid(int64_t) );
+    add( "_extentionCap.well"       , typeid(int64_t) );
+    add( "_extentionWidth.active"   , typeid(int64_t) );
+    add( "_extentionWidth.diffusion", typeid(int64_t) );
+    add( "_extentionWidth.well"     , typeid(int64_t) );
+  }
+
+
+  JsonDiffusionLayer::~JsonDiffusionLayer ()
+  { }
+
+
+  string  JsonDiffusionLayer::getTypeName () const
+  { return "DiffusionLayer"; }
+
+
+  JsonDiffusionLayer* JsonDiffusionLayer::clone ( unsigned long flags ) const
+  { return new JsonDiffusionLayer ( flags ); }
+
+
+  void JsonDiffusionLayer::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonDiffusionLayer::toData" );
+
+    Technology*     techno = lookupTechnology( stack, "JsonDiffusionLayer::toData" );
+    DiffusionLayer* layer  = NULL;
+
+    if (techno) {
+      string       name             = get<string> ( stack, "_name"           );
+      string       smask            = get<string> ( stack, "_mask"           );
+    //DbU::Unit    minimalSize      = get<int64_t>( stack, "_minimalSize"    );
+    //DbU::Unit    minimalSpacing   = get<int64_t>( stack, "_minimalSpacing" );
+      bool         isWorking        = get<bool>   ( stack, "_working"        );
+                                    
+      BasicLayer*  active           = techno->getBasicLayer( get<string>(stack,"_active"    ) );
+      BasicLayer*  diffusion        = techno->getBasicLayer( get<string>(stack,"_diffusion" ) );
+      BasicLayer*  well             = techno->getBasicLayer( get<string>(stack,"_well"      ) );
+      DbU::Unit    eCapActive       = get<int64_t>( stack, "_extentionCap.active"      );
+      DbU::Unit    eCapDiffusion    = get<int64_t>( stack, "_extentionCap.diffusion"   );
+      DbU::Unit    eCapWell         = get<int64_t>( stack, "_extentionCap.well"        );
+      DbU::Unit    eWidthActive     = get<int64_t>( stack, "_extentionWidth.active"    );
+      DbU::Unit    eWidthDiffusion  = get<int64_t>( stack, "_extentionWidth.diffusion" );
+      DbU::Unit    eWidthWell       = get<int64_t>( stack, "_extentionWidth.well"      );
+
+      Layer::Mask mask = Layer::Mask::fromString( smask );
+
+      if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      // Actual creation.
+        layer = DiffusionLayer::create( techno
+                                      , name
+                                      , active
+                                      , diffusion
+                                      , well
+                                      );
+        layer->setWorking       ( isWorking );
+        layer->setExtentionCap  ( active   , eCapActive      );
+        layer->setExtentionCap  ( diffusion, eCapDiffusion   );
+        layer->setExtentionWidth( active   , eWidthActive    );
+        layer->setExtentionWidth( diffusion, eWidthDiffusion );
+        if (well) {
+          layer->setExtentionCap  ( well, eCapWell   );
+          layer->setExtentionWidth( well, eWidthWell );
+        }
+
+        if (layer->getMask() != mask) {
+          cerr << Error( "JsonDiffusionLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"
+                         "        Blob:     %s\n"
+                         "        DataBase: %s"
+                       , name.c_str()
+                       , getString(mask).c_str()
+                       , getString(layer->getMask()).c_str()
+                       ) << endl;
+        }
+      // Add here association with blockage layer...
+      } else {
+      // Check coherency with existing layer.
+        layer = dynamic_cast<DiffusionLayer*>( techno->getLayer(name) );
+        if (layer) {
+          if (layer->getMask() != mask) {
+            cerr << Error( "JsonDiffusionLayer::toData(): Layer mask discrepency on \"%s\":\n"
+                           "        Blob:     %s\n"
+                           "        DataBase: %s"
+                         , name.c_str()
+                         , getString(mask).c_str()
+                         , getString(layer->getMask()).c_str()
+                         ) << endl;
+          }
+        } else {
+          cerr << Error( "JsonDiffusionLayer::toData(): No DiffusionLayer \"%s\" in the existing technology."
+                       , name.c_str()
+                       ) << endl;
+        }
+      }
+    } else {
+      cerr << Error( "JsonDiffusionLayer::toData(): Cannot find technology, aborting DiffusionLayer creation." ) << endl;
+    }
+    
+    update( stack, layer );
+
+    ltraceout(51);
   }
 
 

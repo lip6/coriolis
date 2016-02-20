@@ -407,6 +407,7 @@ namespace Cfg {
   ConfigurationWidget* Configuration::buildWidget ( unsigned int flags )
   { return _layout.buildWidget(flags); }
 
+
   ConfigurationDialog* Configuration::buildDialog()
   { return new ConfigurationDialog(); }
 

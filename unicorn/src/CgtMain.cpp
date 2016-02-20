@@ -204,8 +204,8 @@ int main ( int argc, char *argv[] )
 
     bool showConf = Cfg::getParamBool("misc.showConf")->asBool();
 
-    dbo_ptr<DataBase>          db   ( DataBase::create() );
-    dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );
+    dbo_ptr<DataBase>          db   ( DataBase::getDB() );
+    dbo_ptr<AllianceFramework> af   ( AllianceFramework::get() );
     Cell*                      cell = NULL;
 
     Utilities::Path path = Utilities::Path::cwd();

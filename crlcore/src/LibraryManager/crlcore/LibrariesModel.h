@@ -39,6 +39,7 @@ namespace CRL {
              QVariant               headerData     ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
              const AllianceLibrary* getLibrary     ( const QModelIndex& );
              const AllianceLibrary* getLibrary     ( size_t );
+             void                   update         ();
     private:
       const AllianceLibraries& _libraries;
   };

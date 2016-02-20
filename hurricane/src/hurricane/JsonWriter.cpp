@@ -94,6 +94,10 @@
   void           JsonWriter::write      (       unsigned int  v )    { _WRITER->Uint  ( v); }
   void           JsonWriter::write      ( const unsigned long* v )   { _WRITER->Uint64(*v); }
   void           JsonWriter::write      (       unsigned long  v )   { _WRITER->Uint64( v); }
+  void           JsonWriter::write      ( const float* v )           { _WRITER->Double((double)*v); }
+  void           JsonWriter::write      (       float  v )           { _WRITER->Double((double) v); }
+  void           JsonWriter::write      ( const double* v )          { _WRITER->Double(*v); }
+  void           JsonWriter::write      (       double  v )          { _WRITER->Double( v); }
   JsonWriter*    JsonWriter::setFlags   ( unsigned long mask ) { _flags |= mask; return this; }
   JsonWriter*    JsonWriter::resetFlags ( unsigned long mask ) { _flags &= ~mask; return this; }
   bool           JsonWriter::issetFlags ( unsigned long mask ) const { return _flags & mask; }

@@ -43,7 +43,7 @@ class DataBase : public DBo {
 // Types
 // *****
 
-    public: typedef DBo Inherit;
+  public: typedef DBo Inherit;
   public: enum Flags { NoFlags      = 0
                      , CreateLib    =(1<<0)
                      , WarnCreateLib=(1<<2) };

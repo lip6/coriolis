@@ -144,7 +144,7 @@ namespace Hurricane {
   { return _resolution; }
 
 
-  void DbU::setPrecision ( unsigned int precision )
+  void DbU::setPrecision ( unsigned int precision, unsigned int flags )
   {
     if ( _maximalPrecision < precision)
       throw Error ( "DbU::Unit::setPrecision(): Precision %ud exceed maximal precision %ud."
@@ -159,7 +159,8 @@ namespace Hurricane {
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-    DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
+    if (not (flags & NoTechnoUpdate))
+      DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
     setRealSnapGridStep     ( DbU::grid  (10.0) );
@@ -197,7 +198,7 @@ namespace Hurricane {
   { return ( physical * getUnitPower(p) ) / _physicalsPerGrid; }
 
 
-  void  DbU::setGridsPerLambda ( double gridsPerLambda )
+  void  DbU::setGridsPerLambda ( double gridsPerLambda, unsigned int flags )
   {
     if (   ( rint(gridsPerLambda) != gridsPerLambda ) 
         || ( remainder(gridsPerLambda,2.0) != 0.0   ) )
@@ -209,7 +210,8 @@ namespace Hurricane {
 
     _gridsPerLambda = gridsPerLambda;
 
-    DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
+    if (not (flags & NoTechnoUpdate))
+      DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda(1) );
 

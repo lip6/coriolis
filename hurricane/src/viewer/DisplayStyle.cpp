@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -49,6 +48,8 @@ namespace Hurricane {
   const Name  DisplayStyle::Undef         = "undef";
 
 
+// -------------------------------------------------------------------
+// Class  :  "RawDrawingStyle".
 
   RawDrawingStyle::RawDrawingStyle ( const Name&   name
                                    , const string& pattern
@@ -72,6 +73,15 @@ namespace Hurricane {
     , _goMatched  (goMatched)
   { }
 
+
+  RawDrawingStyle::~RawDrawingStyle ()
+  {
+    if ( _color ) {
+      delete _color;
+      delete _pen;
+      delete _brush;
+    }
+  }
 
 
   DrawingStyle  RawDrawingStyle::create ( const Name&   name
@@ -149,15 +159,113 @@ namespace Hurricane {
   }
 
 
-  RawDrawingStyle::~RawDrawingStyle ()
+  void  RawDrawingStyle::toJson ( JsonWriter* w ) const
   {
-    if ( _color ) {
-      delete _color;
-      delete _pen;
-      delete _brush;
-    }
+    w->startObject();
+    jsonWrite( w, "@typename", "DrawingStyle" );
+    jsonWrite( w, "_name"       , _name        );
+    jsonWrite( w, "_red"        , _red         );
+    jsonWrite( w, "_green"      , _green       );
+    jsonWrite( w, "_blue"       , _blue        );
+    jsonWrite( w, "_borderWidth", _borderWidth );
+    jsonWrite( w, "_pattern"    , _pattern     );
+    jsonWrite( w, "_threshold"  , _threshold   );
+    jsonWrite( w, "_goMatched"  , _goMatched   );
+    w->endObject();
   }
 
+
+// -------------------------------------------------------------------
+// Class :  "JsonDrawingStyle".
+
+  Initializer<JsonDrawingStyle>  jsonDrawingStyleInit ( 0 );
+
+
+  void  JsonDrawingStyle::initialize ()
+  { JsonTypes::registerType( new JsonDrawingStyle (JsonWriter::RegisterMode) ); }
+
+
+  JsonDrawingStyle::JsonDrawingStyle ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( ".DrawingGroup", typeid(DrawingGroup) );
+    add( "_name"        , typeid(string)       );
+    add( "_red"         , typeid(int64_t)      );
+    add( "_green"       , typeid(int64_t)      );
+    add( "_blue"        , typeid(int64_t)      );
+    add( "_borderWidth" , typeid(int64_t)      );
+    add( "_pattern"     , typeid(string)       );
+    add( "_threshold"   , typeid(double)       );
+    add( "_goMatched"   , typeid(bool)         );
+  }
+
+
+  JsonDrawingStyle::~JsonDrawingStyle ()
+  { }
+
+
+  string  JsonDrawingStyle::getTypeName () const
+  { return "DrawingStyle"; }
+
+
+  JsonDrawingStyle* JsonDrawingStyle::clone ( unsigned long flags ) const
+  { return new JsonDrawingStyle ( flags ); }
+
+
+  void JsonDrawingStyle::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonDrawingStyle::toData" );
+
+    DrawingGroup* dg = get<DrawingGroup*>( stack, ".DrawingGroup" );
+    DrawingStyle  ds;
+
+    if (not dg) return;
+
+    string name        = get<string> ( stack, "_name"        );
+    int    red         = get<int64_t>( stack, "_red"         );
+    int    green       = get<int64_t>( stack, "_green"       );
+    int    blue        = get<int64_t>( stack, "_blue"        );
+    int    borderWidth = get<int64_t>( stack, "_borderWidth" );
+    string pattern     = get<string> ( stack, "_pattern"     );
+    float  threshold   = get<double> ( stack, "_threshold"   );
+    bool   goMatched   = get<bool>   ( stack, "_goMatched"   );
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+    // Actual creation.
+      ds = RawDrawingStyle::create( name
+                                  , pattern
+                                  , red
+                                  , green
+                                  , blue
+                                  , borderWidth
+                                  , threshold
+                                  , goMatched
+                                  );
+      dg->addDrawingStyle( ds );
+
+      if (Graphics::isEnabled()) dg->qtAllocate();
+    } else {
+    // Check coherency with existing DrawingStyle.
+      ds = dg->find( name );
+      if (ds == nullptr) {
+        cerr << Error( "JsonDrawingStyle::toData(): No DrawingStyle \"%s\" in the existing DisplayStyle."
+                     , name.c_str()
+                     ) << endl;
+      }
+    }
+    
+    update( stack, NULL );
+
+    ltraceout(51);
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "DrawingGroup".
 
   DrawingGroup::DrawingGroup ( const Name& name )
     : _name         (name)
@@ -208,6 +316,17 @@ namespace Hurricane {
   }
 
 
+  void  DrawingGroup::addDrawingStyle ( DrawingStyle ds )
+  {
+    size_t i = findIndex ( ds->getName() );
+    if ( i != InvalidIndex ) {
+      _drawingStyles[i] = ds;
+    } else {
+      _drawingStyles.push_back ( ds );
+    }
+  }
+
+
   DrawingStyle  DrawingGroup::addDrawingStyle ( const Name&   key
                                               , const string& pattern
                                               ,       int     red
@@ -229,6 +348,91 @@ namespace Hurricane {
     return ds;
   }
 
+
+  void  DrawingGroup::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "DrawingGroup" );
+    jsonWrite( w, "_name", _name );
+
+    w->key( "+drawingStyles" );
+    w->startArray();
+    for ( DrawingStyle ds : _drawingStyles ) ds->toJson( w );
+    w->endArray();
+
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "JsonDrawingGroup".
+
+  Initializer<JsonDrawingGroup>  jsonDrawingGroupInit ( 0 );
+
+
+  void  JsonDrawingGroup::initialize ()
+  { JsonTypes::registerType( new JsonDrawingGroup (JsonWriter::RegisterMode) ); }
+
+
+  JsonDrawingGroup::JsonDrawingGroup ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( ".DisplayStyle" , typeid(DisplayStyle*) );
+    add( "_name"         , typeid(string)        );
+    add( "+drawingStyles", typeid(JsonArray)     );
+  }
+
+
+  JsonDrawingGroup::~JsonDrawingGroup ()
+  { }
+
+
+  string  JsonDrawingGroup::getTypeName () const
+  { return "DrawingGroup"; }
+
+
+  JsonDrawingGroup* JsonDrawingGroup::clone ( unsigned long flags ) const
+  { return new JsonDrawingGroup ( flags ); }
+
+
+  void JsonDrawingGroup::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonDrawingGroup::toData" );
+
+    DisplayStyle* ds = get<DisplayStyle*>( stack, ".DisplayStyle" );
+    DrawingGroup* dg = NULL;
+
+    if (not ds) return;
+
+    string name = get<string>( stack, "_name" );
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+    // Actual creation.
+      size_t gi = 0;
+      ds->findOrCreate( name, gi );
+      dg = ds->findGroup( name );
+    } else {
+    // Check coherency with existing DrawingGroup.
+      dg = ds->findGroup( name );
+      if (dg == NULL) {
+        cerr << Error( "JsonDrawingGroup::toData(): No DrawingGroup \"%s\" in the existing DisplayStyle."
+                     , name.c_str()
+                     ) << endl;
+      }
+    }
+    
+    update( stack, dg );
+
+    ltraceout(51);
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "DisplayStyle".
 
   QColor  DisplayStyle::darken ( const QColor& color, const DisplayStyle::HSVr& darkening )
   {
@@ -332,6 +536,16 @@ namespace Hurricane {
   }
 
 
+  DrawingGroup* DisplayStyle::findGroup ( const Name& groupKey )
+  {
+    for ( size_t gi=0 ; gi < _groups.size() ; gi++ ) {
+      if ( _groups[gi]->getName() == groupKey )
+        return _groups[gi];
+    }
+    return NULL;
+  }
+
+
   void  DisplayStyle::findOrCreate ( const Name& groupKey, size_t& gi )
   {
     for ( gi=0 ; gi < _groups.size() ; gi++ ) {
@@ -428,4 +642,143 @@ namespace Hurricane {
   }
 
 
-}
+  void  DisplayStyle::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "DisplayStyle" );
+    jsonWrite( w, "_name"       ,  _name        );
+    jsonWrite( w, "_description",  _description );
+    jsonWrite( w, "_darkening"  , &_darkening   );
+
+    w->key( "+groups" );
+    w->startArray();
+    for ( DrawingGroup* dg : _groups ) dg->toJson( w );
+    w->endArray();
+
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "JsonDisplayStyle".
+
+  Initializer<JsonDisplayStyle>  jsonDisplayStyleInit ( 0 );
+
+
+  void  JsonDisplayStyle::initialize ()
+  { JsonTypes::registerType( new JsonDisplayStyle (JsonWriter::RegisterMode) ); }
+
+
+  JsonDisplayStyle::JsonDisplayStyle ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "_name"       , typeid(string)             );
+    add( "_description", typeid(string)             );
+    add( "_darkening"  , typeid(DisplayStyle::HSVr) );
+    add( "+groups"     , typeid(JsonArray)          );
+  }
+
+
+  JsonDisplayStyle::~JsonDisplayStyle ()
+  { }
+
+
+  string  JsonDisplayStyle::getTypeName () const
+  { return "DisplayStyle"; }
+
+
+  JsonDisplayStyle* JsonDisplayStyle::clone ( unsigned long flags ) const
+  { return new JsonDisplayStyle ( flags ); }
+
+
+  void JsonDisplayStyle::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonDisplayStyle::toData" );
+
+    Graphics*     graphics = get<Graphics*>( stack, "_graphics" );
+    DisplayStyle* ds       = NULL;
+
+    if (not graphics) return;
+
+    string              name        = get<string>             ( stack, "_name"        );
+    string              description = get<string>             ( stack, "_description" );
+    DisplayStyle::HSVr* darkening   = get<DisplayStyle::HSVr*>( stack, "_darkening"   );
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+    // Actual creation.
+      ds = new DisplayStyle ( name );
+      ds->setDescription(  description );
+      ds->setDarkening  ( *darkening   );
+      graphics->addStyle( ds );
+    } else {
+    // Check coherency with existing DisplayStyle.
+      ds = Graphics::getStyle( name );
+      if (ds == NULL) {
+        cerr << Error( "JsonDisplayStyle::toData(): No DisplayStyle \"%s\" in the existing DisplayStyle."
+                     , name.c_str()
+                     ) << endl;
+      }
+    }
+    
+    update( stack, ds );
+
+    ltraceout(51);
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "JsonHSVr".
+
+  Initializer<JsonHSVr>  jsonHSVrInit ( 0 );
+
+
+  void  JsonHSVr::initialize ()
+  { JsonTypes::registerType( new JsonHSVr (JsonWriter::RegisterMode) ); }
+
+
+  JsonHSVr::JsonHSVr ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "_hue"       , typeid(double) );
+    add( "_saturation", typeid(double) );
+    add( "_value"     , typeid(double) );
+  }
+
+
+  JsonHSVr::~JsonHSVr ()
+  { }
+
+
+  string  JsonHSVr::getTypeName () const
+  { return "HSVr"; }
+
+
+  JsonHSVr* JsonHSVr::clone ( unsigned long flags ) const
+  { return new JsonHSVr ( flags ); }
+
+
+  void JsonHSVr::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonHSVr::toData" );
+
+    double hue        = get<double>( stack, "_hue"        );
+    double saturation = get<double>( stack, "_saturation" );
+    double value      = get<double>( stack, "_value"      );
+
+    DisplayStyle::HSVr* hsvr = new DisplayStyle::HSVr(hue,saturation,value);
+    
+    update( stack, hsvr );
+
+    ltraceout(51);
+  }
+
+
+}  // Hurricane namespace.

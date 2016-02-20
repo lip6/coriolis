@@ -259,25 +259,99 @@ class Net : public Entity {
 
 };
 
-class JsonNet : public JsonEntity {
-// ********************************
 
-  public: static void initialize();
-  public: JsonNet(unsigned long flags);
-  public: virtual ~JsonNet();
-  public: virtual string getTypeName() const;
-  public: virtual JsonNet* clone(unsigned long) const;
-  public: virtual void toData(JsonStack&); 
+// -------------------------------------------------------------------
+// Class  :  "HookKey".
 
-// Attributes
-// **********
+  class HookKey {
+    public:
+      inline                HookKey ( unsigned int id, const std::string& tname );
+      inline  unsigned int  id      () const;
+      inline  std::string   tname   () const;
+    private:
+      unsigned int  _id;
+      std::string   _tname;
+  };
 
-  protected: bool _autoMaterialize;
-  protected: Net* _net;
-  protected: JsonStack* _stack;
-};
 
-} // End of Hurricane namespace.
+  inline                HookKey::HookKey ( unsigned int id, const std::string& tname ) : _id(id), _tname(tname) { }
+  inline  unsigned int  HookKey::id      () const { return _id; }
+  inline  std::string   HookKey::tname   () const { return _tname; }
+
+  inline bool operator< ( const HookKey& lhs, const HookKey& rhs )
+  {
+    if (lhs.id() != rhs.id()) return lhs.id() < rhs.id();
+    return lhs.tname() < rhs.tname();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "HookElement".
+
+  class HookElement {
+    public:
+      enum Flags { OpenRingStart = (1<<0)
+                 , ClosedRing    = (1<<1)
+                 };
+    public:
+      inline                HookElement ( Hook*, unsigned long flags=0 );
+      inline Hook*          hook        () const;
+      inline HookElement*   next        () const;
+      inline void           setHook     ( Hook* );
+      inline void           setNext     ( HookElement* );
+      inline unsigned long  flags       () const;
+      inline HookElement&   setFlags    ( unsigned long mask );
+      inline HookElement&   resetFlags  ( unsigned long mask );
+      inline bool           issetFlags  ( unsigned long mask ) const;
+    private:
+      Hook*          _hook;
+      HookElement*   _next;
+      unsigned long  _flags;
+  };
+
+
+  inline                HookElement::HookElement ( Hook* hook, unsigned long flags ) : _hook(hook), _next(NULL), _flags(flags) { }
+  inline Hook*          HookElement::hook        () const { return _hook; }
+  inline HookElement*   HookElement::next        () const { return _next; }
+  inline void           HookElement::setHook     ( Hook* hook ) { _hook = hook; }
+  inline void           HookElement::setNext     ( HookElement* element ) { _next = element; }
+  inline unsigned long  HookElement::flags       () const { return _flags; }
+  inline HookElement&   HookElement::setFlags    ( unsigned long mask ) { _flags |=  mask; return *this; }
+  inline HookElement&   HookElement::resetFlags  ( unsigned long mask ) { _flags &= ~mask; return *this; }
+  inline bool           HookElement::issetFlags  ( unsigned long mask ) const { return _flags & mask; }
+
+
+  typedef  map<HookKey,HookElement>  HookLut;
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNet".
+
+  class JsonNet : public JsonEntity {
+    public:
+      static  bool     hookFromString ( std::string s, unsigned int& id, std::string& tname );
+      static  void     initialize     ();
+                       JsonNet        ( unsigned long flags );
+      virtual         ~JsonNet        ();
+      virtual string   getTypeName    () const;
+      virtual JsonNet* clone          ( unsigned long ) const;
+      virtual void     toData         ( JsonStack& ); 
+              void     addHookLink    ( Hook*, unsigned int jsonId, const std::string& jsonNext );
+              Hook*    getHook        ( unsigned int jsonId, const std::string& tname ) const;
+              bool     checkRings     () const;
+              void     buildRings     () const;
+      inline  void     clearHookLinks ();
+  protected:
+      bool       _autoMaterialize;
+      Net*       _net;
+      HookLut    _hooks;
+  };
+
+
+  inline void  JsonNet::clearHookLinks () { _hooks.clear(); }
+
+
+} // Hurricane namespace.
 
 
 // -------------------------------------------------------------------

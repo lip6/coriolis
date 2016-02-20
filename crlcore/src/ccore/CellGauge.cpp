@@ -1,16 +1,9 @@
-
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -18,23 +11,15 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./CellGauge.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
-
-
+// +-----------------------------------------------------------------+
 
 
 #include <sstream>
-
 #include "crlcore/CellGauge.h"
-
-
+#include "crlcore/AllianceFramework.h"
 
 
 namespace {
-
 
 // const char *missingMandatoryAttr =
 //   "CRoutingGauge::createFromXml () :\n\n"
@@ -57,18 +42,17 @@ namespace {
 //   "::createCellGaugeFromXml () :\n\n"
 //   "    cellgauge name tag attribute is empty.\n";
 
-
-}  // End of Anonymous namespace.
-
-
+}  // Anonymous namespace.
 
 
 namespace CRL {
 
+  using namespace std;
+  using Hurricane::JsonTypes;
+
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::CellGauge".
-
 
   CellGauge::CellGauge ( const char*      name
                        , const char*      pinLayerName
@@ -149,6 +133,86 @@ namespace CRL {
     record->add ( getSlot ( "sliceStep"       , _sliceStep    ) );
     return ( record );
   }
+
+
+  void  CellGauge::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename"    , "CellGauge"   );
+    jsonWrite( w, "_name"        , _name         );
+    jsonWrite( w, "_pinLayerName", _pinLayerName );
+    jsonWrite( w, "_pitch"       , _pitch        );
+    jsonWrite( w, "_sliceHeight" , _sliceHeight  );
+    jsonWrite( w, "_sliceStep"   , _sliceStep    );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonCellGauge"
+
+  Initializer<JsonCellGauge>  jsonCellGaugeInit ( 0 );
+
+
+  void  JsonCellGauge::initialize ()
+  { JsonTypes::registerType( new JsonCellGauge (JsonWriter::RegisterMode) ); }
+
+
+  JsonCellGauge::JsonCellGauge( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_name"        , typeid(string)  );
+    add( "_pinLayerName", typeid(string)  );
+    add( "_pitch"       , typeid(int64_t) );
+    add( "_sliceHeight" , typeid(int64_t) );
+    add( "_sliceStep"   , typeid(int64_t) );
+  }
+
+
+  string JsonCellGauge::getTypeName () const
+  { return "CellGauge"; }
+
+
+  JsonCellGauge* JsonCellGauge::clone ( unsigned long flags ) const
+  { return new JsonCellGauge ( flags ); }
+
+
+  void JsonCellGauge::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonCellGauge::toData" );
+
+    AllianceFramework* af           = get<AllianceFramework*>( stack, "_framework" );
+    CellGauge*         cg           = NULL;
+    string             name         = get<string> ( stack, "_name"         );
+    string             pinLayerName = get<string> ( stack, "_pinLayerName" );
+    DbU::Unit          pitch        = get<int64_t>( stack, "_pitch"        );
+    DbU::Unit          sliceHeight  = get<int64_t>( stack, "_sliceHeight"  );
+    DbU::Unit          sliceStep    = get<int64_t>( stack, "_sliceStep"    );
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      if (af) {
+        if (not name.empty()) {
+          cg = CellGauge::create( name.c_str()
+                                , pinLayerName.c_str()
+                                , pitch
+                                , sliceHeight
+                                , sliceStep
+                                );
+          af->addCellGauge( cg );
+        }
+      } else {
+        cerr << Error( "JsonCellGauge::toData(): Missing \"_framework\" in stack context." ) << endl;
+      }
+    } else {
+      if (af) {
+        cg = af->getCellGauge( name );
+      }
+    }
+  
+    update( stack, cg );
+}
+
+
 
 
 } // End of CRL namespace.

@@ -42,8 +42,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeAllianceFramework;
   extern  PyMethodDef   PyAllianceFramework_Methods[];
 
-  extern  PyObject* PyAllianceFramework_Link       ( CRL::AllianceFramework* );
-  extern  void      PyAllianceFramework_LinkPyType ();
+  extern  PyObject* PyAllianceFramework_Link           ( CRL::AllianceFramework* );
+  extern  void      PyAllianceFramework_LinkPyType     ();
+  extern  void      PyAllianceFramework_postModuleInit ();
 
 
 #define IsPyAllianceFramework(v)  ( (v)->ob_type == &PyTypeAllianceFramework )

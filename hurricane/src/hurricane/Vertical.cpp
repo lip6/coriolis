@@ -249,10 +249,15 @@ void JsonVertical::toData(JsonStack& stack)
     , DbU::fromDb( get<int64_t>(stack,"_dySource") )
     , DbU::fromDb( get<int64_t>(stack,"_dyTarget") )
     );
-  
-  stack.addHookLink( vertical->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
-  stack.addHookLink( vertical->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
-  stack.addHookLink( vertical->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( vertical->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    jnet->addHookLink( vertical->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
+    jnet->addHookLink( vertical->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+  } else {
+    cerr << Error( "JsonVertical::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
 
 // Hook/Ring rebuild are done as a post-process.
   update( stack, vertical );

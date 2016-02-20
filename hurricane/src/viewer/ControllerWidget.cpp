@@ -73,6 +73,10 @@ namespace Hurricane {
   { }
 
 
+  void  ControllerTab::graphicsUpdated ()
+  { }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::TabGraphics".
 
@@ -97,6 +101,10 @@ namespace Hurricane {
       _graphics->setCellWidget ( cellWidget );
     }
   }
+
+
+  void  TabGraphics::graphicsUpdated ()
+  { _graphics->rereadGraphics(); }
 
 
 // -------------------------------------------------------------------
@@ -135,7 +143,6 @@ namespace Hurricane {
   {
   //_palette->setOneColumn  ();
     _palette->setObjectName ( "controller.tabPalette.palette" );
-    _palette->build ();
   //_palette->setSectionVisible ( "Viewer", false );
 
     QVBoxLayout* wLayout  = new QVBoxLayout ();
@@ -157,6 +164,10 @@ namespace Hurricane {
       }
     }
   }
+
+
+  void  TabPalette::graphicsUpdated ()
+  { _palette->rereadGraphics(); }
 
 
 // -------------------------------------------------------------------
@@ -489,8 +500,9 @@ namespace Hurricane {
 
   TabSettings::TabSettings ( QWidget* parent )
     : ControllerTab (parent)
+    , _timestamp    (0)
     , _configuration(Configuration::get()->buildWidget(ConfigurationWidget::Embedded))
-  { 
+  {
     setContentsMargins ( 5, 0, 5, 5 );
 
     _configuration->setObjectName ( "controller.tabSettings.settings" );
@@ -504,6 +516,25 @@ namespace Hurricane {
 
   void  TabSettings::setCellWidget ( CellWidget* )
   { }
+
+
+  void  TabSettings::showEvent ( QShowEvent* )
+  {
+    Configuration* conf = Configuration::get();
+
+    if (_timestamp < conf->getLayout().getTimestamp()) {
+      _timestamp = conf->getLayout().getTimestamp();
+
+      QLayoutItem* child = NULL;
+      while ( (child = layout()->takeAt(0)) != 0 ) {
+        layout()->removeWidget( child->widget() );
+        delete child->widget();
+      }
+      
+      _configuration = conf->buildWidget( ConfigurationWidget::Embedded );
+      layout()->addWidget ( _configuration );
+    }
+  }
 
 
   // TabSettings::TabSettings ( QWidget* parent )
@@ -527,6 +558,7 @@ namespace Hurricane {
 
   ControllerWidget::ControllerWidget ( QWidget* parent )
     : QTabWidget       (parent)
+    , _observer        (this)
     , _cellWidget      (NULL)
     , _tabGraphics     (new TabGraphics())
     , _tabPalette      (new TabPalette())
@@ -570,6 +602,8 @@ namespace Hurricane {
     connect( this      , SIGNAL(currentChanged(int)), this, SLOT(updateTab(int)) );
     connect( _tabSelection->getSelection(), SIGNAL(inspect(Occurrence&))
            , _tabInspector                , SLOT  (setSelectionOccurrence(Occurrence&)) );
+
+    Graphics::getGraphics()->addObserver( &_observer );
                                         
     resize( Graphics::toHighDpi(600), Graphics::toHighDpi(500) );
   }
@@ -616,5 +650,23 @@ namespace Hurricane {
       (static_cast<ControllerTab*>(widget(i)))->cellPostModificate ();
   }
 
+
+  void  ControllerWidget::graphicsUpdated ()
+  {
+    for ( int i=0 ; i<count() ; ++i )
+      (static_cast<ControllerTab*>(widget(i)))->graphicsUpdated ();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "ControllerWidget::GraphicsObserver".
+
+  void  ControllerWidget::GraphicsObserver::notify ( unsigned int flags )
+  {
+    ControllerWidget* controller = getOwner();
+    if (flags & Graphics::ChangedDisplayStyles) {
+      controller->graphicsUpdated();
+    }
+  }
 
 }  // End of Hurricane namespace.

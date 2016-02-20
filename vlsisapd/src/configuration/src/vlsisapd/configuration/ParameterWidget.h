@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
@@ -17,15 +11,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./ParameterWidget.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-#ifndef  __CFG_PARAMETER_WIDGET__
-#define  __CFG_PARAMETER_WIDGET__
+#ifndef  CFG_PARAMETER_WIDGET_H
+#define  CFG_PARAMETER_WIDGET_H
 
 #include  <string>
 #include  <QObject>
@@ -42,26 +32,26 @@ namespace Cfg {
 // -------------------------------------------------------------------
 // Class  :  "Cfg::ParameterWidget".
 
-  
   class ParameterWidget : public QObject {
       Q_OBJECT;
     public:
       enum Flags { UseSpinBox=0x1, IsFileName=0x2, IsPathName=0x4 };
     public:
-                                  ParameterWidget        ( ConfTabWidget* parent, Parameter*, const std::string& label, int flags );
-      inline Parameter*           getParameter           ();
-      inline QLabel*              getLabelWidget         ();
-      inline QWidget*             getValueWidget         ();
-      inline ConfTabWidget*       getConfTabWidget       ();
-             ConfigurationWidget* getConfigurationWidget ();
-      inline int                  getFlags               () const;
-      inline bool                 hasFlags               ( int mask ) const;
-      inline void                 setFlags               ( int mask );
-      inline void                 unsetFlags             ( int mask );
-             void                 onUpdateValueCb        ( Parameter* );
+                                   ParameterWidget        ( ConfTabWidget* parent, Parameter*, const std::string& label, int flags );
+      virtual                     ~ParameterWidget        ();
+      inline  Parameter*           getParameter           ();
+      inline  QLabel*              getLabelWidget         ();
+      inline  QWidget*             getValueWidget         ();
+      inline  ConfTabWidget*       getConfTabWidget       ();
+              ConfigurationWidget* getConfigurationWidget ();
+      inline  int                  getFlags               () const;
+      inline  bool                 hasFlags               ( int mask ) const;
+      inline  void                 setFlags               ( int mask );
+      inline  void                 unsetFlags             ( int mask );
+              void                 onUpdateValueCb        ( Parameter* );
     public slots:                                        
-             void                 updateValue            ();
-             void                 enableSlaves           ( int );
+              void                 updateValue            ();
+              void                 enableSlaves           ( int );
     public:
       ConfTabWidget* _confTabWidget;
       Parameter*     _parameter;
@@ -82,6 +72,6 @@ namespace Cfg {
   inline void           ParameterWidget::unsetFlags       ( int mask )   { _flags &= ~mask; }
 
 
-}   // End of Cfg namespace.
+}  // Cfg namespace.
 
-#endif  // __CFG_PARAMETER_WIDGET__
+#endif  // CFG_PARAMETER_WIDGET_H

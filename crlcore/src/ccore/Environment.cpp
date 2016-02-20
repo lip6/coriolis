@@ -530,7 +530,7 @@ namespace CRL {
     setBLOCKAGE ( "^obs$" );
     setPad      ( "^.*_px$" );
 
-    _LIBRARIES.append ( "." );
+    _LIBRARIES.append ( ".", "working" );
 
     _inConstructor = false;
   }

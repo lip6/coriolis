@@ -94,6 +94,7 @@ if __name__ == '__main__':
       usage += '\ncgt [options]'
 
       parser = optparse.OptionParser(usage)
+      parser.add_option(       '--no-init'          , action='store_true', dest='noInit'         , help='Do not load any initialization.')
       parser.add_option( '-c', '--cell'             , type='string'      , dest='cell'           , help='The name of the cell to load, whithout extension.')
       parser.add_option(       '--acm-sigda-89'     , type='string'      , dest='acmSigdaName'   , help='An ACM/SIGDA 89 bench name to load, whithout extension.')
       parser.add_option(       '--blif'             , type='string'      , dest='blifName'       , help='A Blif (Yosys) design name to load, whithout extension.')
@@ -123,7 +124,11 @@ if __name__ == '__main__':
       (options, args) = parser.parse_args()
       args.insert(0, 'cgt')
 
-      af = CRL.AllianceFramework.get()
+      flags = 0
+      if options.noInit:
+        flags |= CRL.AllianceFramework.NoPythonInit
+
+      af = CRL.AllianceFramework.create( flags )
       print af.getEnvironment().getPrint()
 
      #Hurricane.trace(True)

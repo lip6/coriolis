@@ -28,6 +28,8 @@
 
 namespace CRL {
 
+  using Hurricane::Observable;
+  using Hurricane::BaseObserver;
   using Hurricane::JsonObject;
   using Hurricane::JsonStack;
   using Hurricane::Cell;
@@ -38,16 +40,23 @@ namespace CRL {
 
   class AllianceFramework {
     public:
-      enum InstancesCountFlags { Recursive     = (1<<0)
-                               , IgnoreFeeds   = (1<<1)
+      enum FunctionsFlags      { NoFlags        = 0
+                               , NoPythonInit   = (1<<0)
                                };                
-      enum LibraryFlags        { CreateLibrary = (1<<0)
-                               , AppendLibrary = (1<<1)
-                               , HasCatalog    = (1<<2)
+      enum InstancesCountFlags { Recursive      = (1<<0)
+                               , IgnoreFeeds    = (1<<1)
+                               };                  
+      enum LibraryFlags        { CreateLibrary  = (1<<0)
+                               , AppendLibrary  = (1<<1)
+                               , HasCatalog     = (1<<2)
+                               };                
+      enum NotifyFlags         { AddedLibrary   = (1<<0)
+                               , RemovedLibrary = (1<<1)
+                               , ConfigChanged  = (1<<2)
                                };
     public:
     // Constructors.
-      static AllianceFramework*       create                   ();
+      static AllianceFramework*       create                   ( unsigned long flags=NoFlags );
     // Destructors.                   
              void                     destroy                  ();
     // Accessors.                     
@@ -88,8 +97,13 @@ namespace CRL {
              CellGauge*               getCellGauge             ( const Name& name="" );
       inline const Name               getDefaultCGPinLayerName () const;
     // Modifiers.                     
+             RoutingGauge*            setRoutingGauge          ( const Name& name="" );
+             CellGauge*               setCellGauge             ( const Name& name="" );
              void                     addRoutingGauge          ( RoutingGauge* );
              void                     addCellGauge             ( CellGauge* );
+             void                     addObserver              ( BaseObserver* );
+             void                     removeObserver           ( BaseObserver* );
+             void                     notify                   ( unsigned int flags );
     // Cell Management.               
              Cell*                    cellLoader               ( const string& rpath );
              Cell*                    getCell                  ( const string& name
@@ -110,15 +124,16 @@ namespace CRL {
     protected:
       static const Name          _parentLibraryName;
       static AllianceFramework*  _singleton;
+             Observable          _observers;
              Environment         _environment;
              ParsersMap          _parsers;
              DriversMap          _drivers;
              Catalog             _catalog;
              AllianceLibraries   _libraries;
              Library*            _parentLibrary;
-             RoutingGauge*       _defaultRoutingGauge;
              map<const Name,RoutingGauge*>
                                  _routingGauges;
+             RoutingGauge*       _defaultRoutingGauge;
              map<const Name,CellGauge*>
                                  _cellGauges;
              CellGauge*          _defaultCellGauge;
@@ -170,9 +185,13 @@ namespace CRL {
     public:
       static void                    initialize           ();
                                      JsonAllianceFramework( unsigned long );
+      virtual                       ~JsonAllianceFramework();
       virtual string                 getTypeName          () const;
       virtual JsonAllianceFramework* clone                ( unsigned long ) const;
       virtual void                   toData               ( JsonStack& ); 
+    private:
+      std::string  _defaultRoutingGauge;
+      std::string  _defaultCellGauge;
   };
 
 

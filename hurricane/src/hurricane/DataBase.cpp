@@ -258,7 +258,11 @@ void DataBase::_toJson(JsonWriter* w) const
 {
   Inherit::_toJson( w );
 
-  jsonWrite( w, "_rootLibrary" , _rootLibrary );
+  jsonWrite( w, "_precision"       , DbU::getPrecision() );
+  jsonWrite( w, "_gridsPerLambda"  , DbU::getGridsPerLambda() );
+  jsonWrite( w, "_physicalsPerGrid", DbU::getPhysicalsPerGrid() );
+  jsonWrite( w, "_technology"      , _technology  );
+  jsonWrite( w, "_rootLibrary"     , _rootLibrary );
 
   w->key( "+cellsOrderedByDepth" );
   w->startArray();
@@ -282,7 +286,11 @@ JsonDataBase::JsonDataBase(unsigned long flags)
 // ********************************************
   : JsonDBo(flags)
 {
-  add( "_rootLibrary", typeid(Library*)  );
+  add( "_precision"       , typeid(int64_t    ) );
+  add( "_gridsPerLambda"  , typeid(double     ) );
+  add( "_physicalsPerGrid", typeid(double     ) );
+  add( "_technology"      , typeid(Technology*) );
+  add( "_rootLibrary"     , typeid(Library*   ) );
 }
 
 string JsonDataBase::getTypeName() const
@@ -303,6 +311,9 @@ void JsonDataBase::toData(JsonStack& stack)
   check( stack, "JsonDataBase::toData" );
 
   DataBase* db = DataBase::getDB();
+  DbU::setPrecision       ( get<int64_t>(stack,"_precision"       ), DbU::NoTechnoUpdate );
+  DbU::setGridsPerLambda  ( get<double >(stack,"_gridsPerLambda"  ), DbU::NoTechnoUpdate );
+  DbU::setPhysicalsPerGrid( get<double >(stack,"_physicalsPerGrid"), DbU::Unity );
 
   update( stack, db );
 }

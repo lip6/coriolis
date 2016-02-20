@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./ViaLayer.cpp"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/ViaLayer.h"
-# include  "hurricane/Technology.h"
-# include  "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/ViaLayer.h"
+#include "hurricane/Error.h"
 
 
 namespace {
@@ -64,7 +56,6 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::ViaLayer".
-
 
   ViaLayer::ViaLayer ( Technology* technology
                      , const Name& name
@@ -207,6 +198,135 @@ namespace Hurricane {
       record->add(getSlot("_enclosures" , &_enclosures ));
     }
     return record;
+  }
+
+
+  void  ViaLayer::_toJson ( JsonWriter* w ) const
+  {
+    Super::_toJson( w );
+
+    jsonWrite( w, "_bottom", _basicLayers[0]->getName() );
+    jsonWrite( w, "_cut"   , _basicLayers[1]->getName() );
+    jsonWrite( w, "_top"   , _basicLayers[2]->getName() );
+
+    jsonWrite( w, "_enclosure.bottom", _enclosures[0] );
+    jsonWrite( w, "_enclosure.cut"   , _enclosures[1] );
+    jsonWrite( w, "_enclosure.top"   , _enclosures[2] );
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonViaLayer".
+
+  Initializer<JsonViaLayer>  jsonViaLayerInit ( 0 );
+
+
+  void  JsonViaLayer::initialize ()
+  { JsonTypes::registerType( new JsonViaLayer (JsonWriter::RegisterMode) ); }
+
+
+  JsonViaLayer::JsonViaLayer ( unsigned long flags )
+    : JsonLayer(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    ltrace(51) << "JsonViaLayer::JsonViaLayer()" << endl;
+
+    add( "_bottom"          , typeid(string)  );
+    add( "_cut"             , typeid(string)  );
+    add( "_top"             , typeid(string)  );
+    add( "_enclosure.bottom", typeid(int64_t) );
+    add( "_enclosure.cut"   , typeid(int64_t) );
+    add( "_enclosure.top"   , typeid(int64_t) );
+  }
+
+
+  JsonViaLayer::~JsonViaLayer ()
+  { }
+
+
+  string  JsonViaLayer::getTypeName () const
+  { return "ViaLayer"; }
+
+
+  JsonViaLayer* JsonViaLayer::clone ( unsigned long flags ) const
+  { return new JsonViaLayer ( flags ); }
+
+
+  void JsonViaLayer::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonViaLayer::toData" );
+
+    Technology* techno = lookupTechnology( stack, "JsonViaLayer::toData" );
+    ViaLayer*   layer  = NULL;
+
+    if (techno) {
+      string       name           = get<string> ( stack, "_name"           );
+      string       smask          = get<string> ( stack, "_mask"           );
+    //DbU::Unit    minimalSize    = get<int64_t>( stack, "_minimalSize"    );
+    //DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
+      bool         isWorking      = get<bool>   ( stack, "_working"        );
+
+      BasicLayer*  bottom         = techno->getBasicLayer( get<string>(stack,"_bottom" ) );
+      BasicLayer*  cut            = techno->getBasicLayer( get<string>(stack,"_cut"    ) );
+      BasicLayer*  top            = techno->getBasicLayer( get<string>(stack,"_top"    ) );
+      DbU::Unit    bottomEncl     = get<int64_t>( stack, "_enclosure.bottom" );
+      DbU::Unit    cutEncl        = get<int64_t>( stack, "_enclosure.cut"    );
+      DbU::Unit    topEncl        = get<int64_t>( stack, "_enclosure.top"    );
+
+      Layer::Mask mask = Layer::Mask::fromString( smask );
+
+      if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      // Actual creation.
+        layer = ViaLayer::create( techno
+                                , name
+                                , bottom
+                                , cut
+                                , top
+                                );
+        layer->setWorking  ( isWorking );
+        layer->setEnclosure( bottom, bottomEncl );
+        layer->setEnclosure( cut   , cutEncl    );
+        layer->setEnclosure( top   , topEncl    );
+
+        if (layer->getMask() != mask) {
+          cerr << Error( "JsonViaLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"
+                         "        Blob:     %s\n"
+                         "        DataBase: %s"
+                       , name.c_str()
+                       , getString(mask).c_str()
+                       , getString(layer->getMask()).c_str()
+                       ) << endl;
+        }
+      // Add here association with blockage layer...
+      } else {
+      // Check coherency with existing layer.
+        layer = dynamic_cast<ViaLayer*>( techno->getLayer(name) );
+        if (layer) {
+          if (layer->getMask() != mask) {
+            cerr << Error( "JsonViaLayer::toData(): Layer mask discrepency on \"%s\":\n"
+                           "        Blob:     %s\n"
+                           "        DataBase: %s"
+                         , name.c_str()
+                         , getString(mask).c_str()
+                         , getString(layer->getMask()).c_str()
+                         ) << endl;
+          }
+        } else {
+          cerr << Error( "JsonViaLayer::toData(): No ViaLayer \"%s\" in the existing technology."
+                       , name.c_str()
+                       ) << endl;
+        }
+      }
+    } else {
+      cerr << Error( "JsonViaLayer::toData(): Cannot find technology, aborting ViaLayer creation." ) << endl;
+    }
+    
+    update( stack, layer );
+
+    ltraceout(51);
   }
 
 

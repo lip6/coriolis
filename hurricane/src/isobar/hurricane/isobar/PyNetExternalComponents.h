@@ -1,11 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -13,18 +11,11 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./PyNetExternalComponents.h"              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-
-
-# ifndef  __PY_NET_EXTERNAL_COMPONENTS__
-#   define  __PY_NET_EXTERNAL_COMPONENTS__
-
+#ifndef  PY_NET_EXTERNAL_COMPONENTS_H
+#define  PY_NET_EXTERNAL_COMPONENTS_H
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/NetExternalComponents.h"
@@ -43,8 +34,6 @@ extern "C" {
   } PyNetExternalComponents;
 
 
-
-
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.cpp".
 
@@ -59,13 +48,9 @@ extern "C" {
 #define PYNETEXTERNALCOMPONENTS_O(v)   ( PY_NET_EXTERNAL_COMPONENTS(v)->_object )
 
 
-}  // End of extern "C".
+}  // extern "C".
 
 
+}  // Isobar namespace.
 
-}  // End of Isobar namespace.
- 
-
-
-
-# endif
+#endif  // PY_NET_EXTERNAL_COMPONENTS_H

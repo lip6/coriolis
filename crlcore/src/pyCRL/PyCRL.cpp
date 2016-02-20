@@ -185,6 +185,7 @@ extern "C" {
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();
     PyRoutingLayerGauge_postModuleInit ();
+    PyAllianceFramework_postModuleInit ();
     
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
