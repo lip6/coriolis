@@ -110,6 +110,7 @@ namespace Hurricane {
       virtual bool          isSlave      () const;
       virtual Name          getName      () const;
       virtual Net*          getNet       () const;
+      virtual void          toJson       ( JsonWriter* ) const;
       virtual std::string   _getString   () const;
       virtual Record*       _getRecord   () const;
     public:
@@ -180,6 +181,19 @@ namespace Hurricane {
     : Hurricane::Collection<NetAliasHook*>()
     , _net(other._net)
   { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNetAlias".
+
+  class JsonNetAlias : public JsonObject {
+    public:
+      static  void          initialize   ();
+                            JsonNetAlias ( unsigned long flags );
+      virtual string        getTypeName  () const;
+      virtual JsonNetAlias* clone        ( unsigned long ) const;
+      virtual void          toData       ( JsonStack& ); 
+  };
 
 
 }  // Namespace Hurricane.

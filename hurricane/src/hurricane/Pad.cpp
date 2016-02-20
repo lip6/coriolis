@@ -188,7 +188,12 @@ void JsonPad::toData(JsonStack& stack)
     , get<Box>(stack,".Box")
     );
   
-  stack.addHookLink( pad->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( pad->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+  } else {
+    cerr << Error( "JsonPad::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
 
 // Hook/Ring rebuild are done as a post-process.
   update( stack, pad );

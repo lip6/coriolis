@@ -29,8 +29,9 @@
 // +-----------------------------------------------------------------+
 
 
-#include "hurricane/DBo.h"
 #include "hurricane/Initializer.h"
+#include "hurricane/DBo.h"
+#include "hurricane/Entity.h"
 #include "hurricane/Property.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Error.h"
@@ -201,13 +202,19 @@ namespace Hurricane {
   void  DBo::toJson ( JsonWriter* w ) const
   {
     w->startObject();
-    std::string tname = _getTypeName();
-    if (w->issetFlags(JsonWriter::UsePlugReference) and (tname == "Plug")) {
-      tname.insert( 0, "&" );
+    const Entity* entity = dynamic_cast<const Entity*>( this );
+    if (w->issetFlags(JsonWriter::UseEntityReference) and entity) {
+      jsonWrite( w, "@typename", "&Entity"       );
+      jsonWrite( w, "_id"      , entity->getId() );
+    } else {
+      std::string tname = _getTypeName();
+      if (w->issetFlags(JsonWriter::UsePlugReference) and (tname == "Plug")) {
+        tname.insert( 0, "&" );
+      }
+      jsonWrite( w, "@typename", tname );
+      _toJson( w );
+      _toJsonCollections( w );
     }
-    jsonWrite( w, "@typename", tname );
-    _toJson( w );
-    _toJsonCollections( w );
     w->endObject();
   }
 

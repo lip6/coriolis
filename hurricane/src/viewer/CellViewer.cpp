@@ -36,7 +36,6 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
 #include "hurricane/Cell.h"
-#include "hurricane/DesignBlob.h"
 //#include  "MapView.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/Script.h"
@@ -49,6 +48,7 @@
 #include "hurricane/viewer/ScriptWidget.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/viewer/GotoWidget.h"
+#include "hurricane/viewer/DesignBlob.h"
 #include "hurricane/viewer/OpenBlobDialog.h"
 #include "hurricane/viewer/SelectCommand.h"
 #include "hurricane/viewer/PyCellViewer.h"
@@ -727,9 +727,15 @@ namespace Hurricane {
     QString blobName;
     if (OpenBlobDialog::runDialog(this,blobName)) {
       string fileName = blobName.toStdString() + ".blob";
-      DebugSession::open( 50 );
-      Cell* topCell = jsonBlobParse( fileName );
-      DebugSession::close();
+    //DebugSession::open( 50 );
+
+      Cell*       topCell = NULL;
+      DesignBlob* blob    = DesignBlob::fromJson( fileName );
+
+      if (blob) topCell = blob->getTopCell();
+      delete blob;
+
+    //DebugSession::close();
 
       setCell ( topCell );
       emit cellLoadedFromDisk( topCell );

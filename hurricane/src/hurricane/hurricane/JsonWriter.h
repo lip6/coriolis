@@ -38,6 +38,8 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
+#include <map>
 
 namespace rapidjson {
   class FileWriteStream;
@@ -54,15 +56,17 @@ namespace Hurricane {
 
   class JsonWriter {
     public:
-      enum Mode { UsePlugReference = (1<<0)
-                , DesignBlobMode   = (1<<1)
-                , CellMode         = (1<<2)
-                , RegisterMode     = (1<<3)
-                , RegisterStatus   = (1<<4)
-                , RegisterType     = (1<<5)
-                , UnregisterType   = (1<<6)
-                , CellObject       = (1<<7)
-                , DBoObject        = (1<<8)
+      enum Mode { UsePlugReference   = (1<< 0)
+                , UseEntityReference = (1<< 1)
+                , DesignBlobMode     = (1<< 2)
+                , CellMode           = (1<< 3)
+                , TechnoMode         = (1<< 4)
+                , RegisterMode       = (1<< 5)
+                , RegisterStatus     = (1<< 6)
+                , RegisterType       = (1<< 7)
+                , UnregisterType     = (1<< 8)
+                , CellObject         = (1<< 9)
+                , DBoObject          = (1<<10)
                 };
     public:
                     JsonWriter  ( std::string fileName );
@@ -87,14 +91,18 @@ namespace Hurricane {
       void          write       ( const unsigned int* );
       void          write       (       unsigned long );
       void          write       ( const unsigned long* );
+      void          write       (       float );
+      void          write       ( const float* );
+      void          write       (       double );
+      void          write       ( const double* );
       void          close       ();
       JsonWriter*   setFlags    ( unsigned long mask );
       JsonWriter*   resetFlags  ( unsigned long mask );
       bool          issetFlags  ( unsigned long mask ) const;
       unsigned long getFlags    () const;
     private:                  
-                  JsonWriter  ( const JsonWriter& );
-      JsonWriter& operator=   ( const JsonWriter& ) const;
+                    JsonWriter  ( const JsonWriter& );
+      JsonWriter&   operator=   ( const JsonWriter& ) const;
     private:
       unsigned long                 _flags;
       size_t                        _bufferSize;
@@ -126,6 +134,10 @@ inline void  jsonWrite ( JsonWriter* w, const unsigned int* v )  { w->write(v); 
 inline void  jsonWrite ( JsonWriter* w,       unsigned int  v )  { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w, const unsigned long* v ) { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w,       unsigned long  v ) { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w, const float* v )         { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w,       float  v )         { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w, const double* v )        { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w,       double  v )        { w->write(v); }
 
 
 //template<typename Type>
@@ -181,11 +193,27 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const std::strin
 { w->key( key ); w->write( value ); }
 
 
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const float* value )
+{ w->key( key ); w->write( value ); }
+
+
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, float value )
+{ w->key( key ); w->write( value ); }
+
+
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const double* value )
+{ w->key( key ); w->write( value ); }
+
+
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, double value )
+{ w->key( key ); w->write( value ); }
+
+
 template<typename C>
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C& )
 {
   w->key( key );
-  std::string message = "Unsupported type " + Hurricane::demangle(typeid(C).name());
+  std::string message = "JSON unsupported type " + Hurricane::demangle(typeid(C).name());
   w->write( message.c_str() );
 }
 
@@ -222,8 +250,49 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C* object 
   Hurricane::ltracein(50);
 
   w->key( key );
-  if (object) object->toJson( w );
+  if (object) jsonWrite( w, object );
   else        jsonWrite(w);
+
+  Hurricane::ltraceout(50);
+}
+
+
+template<typename Element>
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const std::vector<Element>& v )
+{
+  if (Hurricane::inltrace(50))
+    std::cerr << Hurricane::tab
+              << "jsonWrite< vector<" << Hurricane::demangle(typeid(Element).name())
+              << "> >(w,key,v)" << " key:\"" << key << "\"" << std::endl;
+  Hurricane::ltracein(50);
+
+  w->key( key );
+  w->startArray();
+  for ( Element element : v ) jsonWrite( w, element );
+  w->endArray();
+
+  Hurricane::ltraceout(50);
+}
+
+
+template<typename Key, typename Element, typename Compare, typename Allocator>
+inline void  jsonWrite ( JsonWriter* w
+                       , const std::string& key
+                       , const std::map<Key,Element,Compare,Allocator>& m )
+{
+  if (Hurricane::inltrace(50))
+    std::cerr << Hurricane::tab
+              << "jsonWrite< map<"
+              << Hurricane::demangle(typeid(Key    ).name()) << ","
+              << Hurricane::demangle(typeid(Element).name()) << ","
+              << Hurricane::demangle(typeid(Compare).name())
+              << "> >(w,key,m)" << " key:\"" << key << "\"" << std::endl;
+  Hurricane::ltracein(50);
+
+  w->key( key );
+  w->startArray();
+  for ( auto mapElement : m ) jsonWrite( w, mapElement.second );
+  w->endArray();
 
   Hurricane::ltraceout(50);
 }

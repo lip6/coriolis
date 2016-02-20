@@ -34,7 +34,8 @@ namespace Hurricane {
 
 
   Graphics::Graphics ()
-    : _htmlTranslator       ()
+    : _observers            ()
+    , _htmlTranslator       ()
     , _styles               ()
     , _active               (NULL)
     , _fireColorScale       ()
@@ -68,6 +69,18 @@ namespace Hurricane {
   {
     delete _singleton;
   }
+
+
+  void  Graphics::addObserver ( BaseObserver* observer )
+  { getGraphics()->_observers.addObserver( observer ); }
+
+
+  void  Graphics::removeObserver ( BaseObserver* observer )
+  { getGraphics()->_observers.removeObserver( observer ); }
+
+
+  void  Graphics::notify ( unsigned flags )
+  { getGraphics()->_observers.notify( flags ); }
 
 
   Graphics* Graphics::getGraphics ()
@@ -351,6 +364,70 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "Graphics" );
+    jsonWrite( w, "_active"       , _active->getName() );
+
+    w->key( "+styles" );
+    w->startArray();
+    for ( DisplayStyle* ds : _styles ) ds->toJson( w );
+    w->endArray();
+
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "JsonGraphics".
+
+  Initializer<JsonGraphics>  jsonGraphicsInit ( 0 );
+
+
+  void  JsonGraphics::initialize ()
+  { JsonTypes::registerType( new JsonGraphics (JsonWriter::RegisterMode) ); }
+
+
+  JsonGraphics::JsonGraphics ( unsigned long flags )
+    : JsonObject(flags)
+    , _active   ()
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "_active", typeid(string)    );
+    add( "+groups", typeid(JsonArray) );
+  }
+
+
+  JsonGraphics::~JsonGraphics ()
+  {
+    Graphics* graphics = Graphics::getGraphics();
+    graphics->setStyle( _active );
+    graphics->notify  ( Graphics::ChangedDisplayStyles );
+  }
+
+
+  string  JsonGraphics::getTypeName () const
+  { return "Graphics"; }
+
+
+  JsonGraphics* JsonGraphics::clone ( unsigned long flags ) const
+  { return new JsonGraphics ( flags ); }
+
+
+  void JsonGraphics::toData(JsonStack& stack)
+  {
+    ltracein(51);
+
+    check( stack, "JsonGraphics::toData" );
+
+    _active = get<string>( stack, "_active" );
+    
+    update( stack, Graphics::getGraphics() );
+
+    ltraceout(51);
+  }
 
 
 } // End of Hurricane namespace.

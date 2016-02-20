@@ -32,6 +32,7 @@ namespace Hurricane {
       inline              DesignBlob   ( Cell* );
       inline Cell*        getTopCell   () const;
              void         toJson       ( JsonWriter* ) const;
+      static DesignBlob*  fromJson     ( const std::string& filename );
       inline std::string  _getTypeName () const;
     private:
       Cell* _topCell;

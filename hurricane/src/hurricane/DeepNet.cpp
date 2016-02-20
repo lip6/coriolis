@@ -163,8 +163,6 @@ namespace Hurricane {
   {
     ltracein(51);
 
-    _stack = &stack;
-
     check( stack, "JsonDeepNet::toData" );
     presetId( stack );
 

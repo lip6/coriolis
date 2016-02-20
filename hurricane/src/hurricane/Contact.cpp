@@ -583,8 +583,13 @@ void JsonContact::toData(JsonStack& stack)
     , DbU::fromDb( get<int64_t>(stack,"_height") )
     );
 
-  stack.addHookLink( contact->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
-  stack.addHookLink( contact->getAnchorHook(), jsonId, get<string>(stack,"_anchorHook") );
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( contact->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    jnet->addHookLink( contact->getAnchorHook(), jsonId, get<string>(stack,"_anchorHook") );
+  } else {
+    cerr << Error( "JsonContact::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
   
 // Hook/Ring rebuild are done as a post-process.
   update( stack, contact );

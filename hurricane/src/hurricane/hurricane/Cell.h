@@ -333,6 +333,7 @@ class Cell : public Entity {
 // ************
 
     public: static Cell* create(Library* library, const Name& name);
+    public: static Cell* fromJson(const string& filename);
 
 // Accessors
 // *********

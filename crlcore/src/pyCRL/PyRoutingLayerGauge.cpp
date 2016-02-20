@@ -107,8 +107,8 @@ extern "C" {
       }
 
       rlg = RoutingLayerGauge::create( PYLAYER_O(pyLayer)
-                                     , direction
-                                     , type
+                                     , (Constant::Direction)direction
+                                     , (Constant::LayerGaugeType)type
                                      , depth
                                      , density
                                      , offset

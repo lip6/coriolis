@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -15,9 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DISPLAYSTYLE_H__
-#define  __HURRICANE_DISPLAYSTYLE_H__
-
+#ifndef  HURRICANE_DISPLAYSTYLE_H
+#define  HURRICANE_DISPLAYSTYLE_H
 
 #include  <memory>
 #include  <string>
@@ -36,10 +34,13 @@ namespace Hurricane {
   typedef  std::vector    <DrawingStyle>     DrawingStyles;
 
 
+// -------------------------------------------------------------------
+// Class  :  "DrawingGroup".
+
   class DrawingGroup {
     public:
     // Constructors & Destructors.
-                                  DrawingGroup     ( const Name&   name );
+                                  DrawingGroup     ( const Name& name );
                                  ~DrawingGroup     ();
               DrawingGroup*       getClone         ();
               void                qtAllocate       ();
@@ -57,6 +58,8 @@ namespace Hurricane {
                                                    ,       float        threshold
                                                    ,       bool         goMatched
                                                    );
+             void                 addDrawingStyle  ( DrawingStyle );
+             void                 toJson           ( JsonWriter* ) const;
     protected:
       const Name     _name;
       DrawingStyles  _drawingStyles;
@@ -67,18 +70,37 @@ namespace Hurricane {
   };
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonDrawingGroup".
+
+  class JsonDrawingGroup : public JsonObject {
+    public:
+      static  void              initialize       ();
+                                JsonDrawingGroup ( unsigned long flags );
+                               ~JsonDrawingGroup ();
+      virtual string            getTypeName      () const;
+      virtual JsonDrawingGroup* clone            ( unsigned long ) const;
+      virtual void              toData           ( JsonStack& ); 
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "DisplayStyle".
+
   class DisplayStyle {
     public:
       class HSVr {
         public:
-          inline       HSVr          ( float hue=1.0, float saturation=1.0, float value=1.0 );
-          inline bool  isId          () const;
-          inline float getHue        () const;
-          inline float getSaturation () const;
-          inline float getValue      () const;
-          inline void  setHue        ( float );
-          inline void  setSaturation ( float );
-          inline void  setValue      ( float );
+          inline              HSVr          ( float hue=1.0, float saturation=1.0, float value=1.0 );
+          inline bool         isId          () const;
+          inline float        getHue        () const;
+          inline float        getSaturation () const;
+          inline float        getValue      () const;
+          inline void         setHue        ( float );
+          inline void         setSaturation ( float );
+          inline void         setValue      ( float );
+          inline void         toJson        ( JsonWriter* ) const;
+          inline std::string  _getString    () const;
         private:
           float  _hue;
           float  _saturation;
@@ -142,6 +164,9 @@ namespace Hurricane {
                                                                 ,       float        threshold
                                                                 ,       bool         goMatched  =true
                                                                 );
+             DrawingGroup*                     findGroup        ( const Name& groupKey );
+             void                              findOrCreate     ( const Name& groupKey, size_t& gi );
+             void                              toJson           ( JsonWriter* ) const;
                                             
     protected:                              
     // Internals - Attributes.              
@@ -151,8 +176,6 @@ namespace Hurricane {
              HSVr                              _darkening;
                                         
     // Internals - Methods.             
-             void                         findOrCreate     ( const Name& groupKey
-                                                           , size_t&     gi );
              void                         find             ( const Name& groupKey
                                                            , const Name& key
                                                            , size_t&     gi
@@ -160,6 +183,37 @@ namespace Hurricane {
 
   };
 
+
+// -------------------------------------------------------------------
+// Class  :  "JsonDisplayStyle".
+
+  class JsonDisplayStyle : public JsonObject {
+    public:
+      static  void              initialize       ();
+                                JsonDisplayStyle ( unsigned long flags );
+                               ~JsonDisplayStyle ();
+      virtual string            getTypeName      () const;
+      virtual JsonDisplayStyle* clone            ( unsigned long ) const;
+      virtual void              toData           ( JsonStack& ); 
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonHSVr".
+
+  class JsonHSVr : public JsonObject {
+    public:
+      static  void      initialize  ();
+                        JsonHSVr    ( unsigned long flags );
+                       ~JsonHSVr    ();
+      virtual string    getTypeName () const;
+      virtual JsonHSVr* clone       ( unsigned long ) const;
+      virtual void      toData      ( JsonStack& ); 
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "RawDrawingStyle".
 
   class RawDrawingStyle {
     public:
@@ -183,6 +237,7 @@ namespace Hurricane {
              QPen               getPen       ( const DisplayStyle::HSVr& ) const;
              QBrush             getBrush     ( const DisplayStyle::HSVr& ) const;
       inline float              getThreshold () const;
+             void               toJson       ( JsonWriter* ) const;
     private:
     // Internal - Attributes.
       const Name         _name;
@@ -214,7 +269,23 @@ namespace Hurricane {
   };
 
 
-  // Functions.
+// -------------------------------------------------------------------
+// Class  :  "JsonDrawingStyle".
+
+  class JsonDrawingStyle : public JsonObject {
+    public:
+      static  void              initialize       ();
+                                JsonDrawingStyle ( unsigned long flags );
+                               ~JsonDrawingStyle ();
+      virtual string            getTypeName      () const;
+      virtual JsonDrawingStyle* clone            ( unsigned long ) const;
+      virtual void              toData           ( JsonStack& ); 
+  };
+
+
+// -------------------------------------------------------------------
+// Inline Functions.
+
   inline bool                              RawDrawingStyle::isGoMatched      () const { return _goMatched; }
   inline const Name&                       RawDrawingStyle::getName          () const { return _name; }
   inline const std::string&                RawDrawingStyle::getPattern       () const { return _pattern; }
@@ -241,8 +312,28 @@ namespace Hurricane {
   inline void  DisplayStyle::HSVr::setSaturation ( float saturation ) { _saturation=saturation; }
   inline void  DisplayStyle::HSVr::setValue      ( float value ) { _value=value; }
 
+  inline std::string  DisplayStyle::HSVr::_getString () const
+  {
+    std::string s = "<HSVr " + getString(_hue)
+                       + " " + getString(_saturation)
+                       + " " + getString(_value) + ">";
+    return s;
+  }
 
-} // End of Hurricane namespace.
+  inline void  DisplayStyle::HSVr::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "HSVr" );
+    jsonWrite( w, "_hue"       , _hue        );
+    jsonWrite( w, "_saturation", _saturation );
+    jsonWrite( w, "_value"     , _value      );
+    w->endObject();
+  }
+
+} // Hurricane namespace.
 
 
-#endif  // __HURRICANE_DISPLAYSTYLE__
+GETSTRING_VALUE_SUPPORT(Hurricane::DisplayStyle::HSVr);
+
+
+#endif  // HURRICANE_DISPLAYSTYLE_H

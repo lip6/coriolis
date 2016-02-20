@@ -58,7 +58,6 @@
   "+netMap": [
   ],
 }
-
 \endcode
   *
   *  \section      secJsonDriver  JSON Driver Support
@@ -165,8 +164,8 @@ class JsonPoint : public JsonObject {
   public:
     static  void       initialize ();
                        JsonPoint  (unsigned long flags);
-    virtual string     getTypeName();
-    virtual JsonPoint* clone      (unsigned long flags);
+    virtual string     getTypeName() const;
+    virtual JsonPoint* clone      (unsigned long flags) const;
     virtual void       toData     (JsonStack&);
 };
 \endcode
@@ -235,6 +234,105 @@ void JsonPoint::toData ( JsonStack& stack )
   update( stack, point );
 }
 \endcode
+  *
+  *
+  *  \subsection   secJsonArray  JSON Array
+  *
+  *                JSON array are not translated into containers of any kind.
+  *                They are simply ignored (from the stack point of view).
+  *                Objects in array comes from a great variety of containers
+  *                including Hurricane::Collection, in almost all cases, their
+  *                very constructors are responsibles for inserting the object
+  *                in the relevant container/collection. So there is no need
+  *                to build a mechanism to keep track of all the objects in an
+  *                array through a temporary container.
+  *
+  *                The corollary is that an object in an array must be able to
+  *                extract the relevant context information from the stack.
+  *                Say, if we are in an array of components, they must belong
+  *                to a Net, which must be present in the stack with a key ".Net".
+  *
+  *
+  *  \subsection   secJsonStack  Parser Stack
+  *
+  *                While performing the parsing, the parser maintain a stack
+  *                (JsonStack) containing:
+  *                  - The stack of attributes translateds, but not consumeds
+  *                    by the parser and the objects currently openeds (that is,
+  *                    which parsing is not completed). This stack contains POD
+  *                    or Hurricane objects (value or pointer).
+  *                      It is a vector of pair \c (key,value) where the \e key
+  *                    is either the attribute name (\c _boundingBox, \c _xMin,
+  *                    \c _masterCell, ...) or the class name (\c .Net, \c .Cell, ...).
+  *                  - The stack of JSON objects currently openeds, thoses objects
+  *                    are all derived classes of JsonObject.
+  *                  - A stack of currently opened DBo*. This stack is somewhat
+  *                    redundant with the first, but is needed because
+  *                    \c boost::any_cast<> is not able to perform dynamic conversions.
+  *                    You have to know the exact for the conversion to work.
+  *                    Here, everything is DBo*, so the problem do not arises.
+  *
+  *
+  *  \subsection   secJsonCycle  JsonObject Life Cycle
+  *
+\code{.json}
+{                          # JsonDummy()  (1).
+  "_typename": "Net",      # JsonNet()  CTOR (2).
+  "_id": 14622,
+  "_name": "saccu(0)",
+  "_isGlobal": false,
+  "_isExternal": false,
+  "_isAutomatic": false,
+  "_type": "LOGICAL",
+  "_direction": "---- (UNDEFINED)",
+  "+aliases": [],          # JsonNet::toData()  (3).
+  "+componentSet": [
+    {
+      "@typename": "RoutingPad",
+      "_id": 27410,
+      "_bodyHook": "Contact::AnchorHook.46566",
+      "_occurrence": {
+        "@typename": "Occurrence",
+        "_path": "14720.14976",
+        "_entity": 3888
+      },
+      "+propertySet": []
+    },
+    {
+      "@typename": "RoutingPad",
+      "_id": 27409,
+      "_bodyHook": "Contact::AnchorHook.46574",
+      "_occurrence": {
+        "@typename": "Occurrence",
+        "_path": "14654.18564",
+        "_entity": 4529
+      },
+      "+propertySet": []
+    }
+  }
+}                          # ~JsonNet()  DTOR (4). 
+\endcode
+  *                
+  *                At \c (1) , before \c _typename is encountered, we know that a new
+  *                object is about to be created, but do not know what is type will be.
+  *                So we push on top of the stack a \c JsonDummy.
+  *
+  *                At \c (2) , the \c _typename allows us to create the right kind of
+  *                JsonObject, which will \e replace the \c JsonDummy on top of the
+  *                stack.
+  *
+  *                At \c (3) , a first non-POD attribute of JsonNet is encountered.
+  *                This triggers the call to \c JsonObject::toData(), which creates
+  *                the Hurricane object Net, and put it back on the attribute stack
+  *                with the key \c ".Net" (because it is \e not an attribute).
+  *
+  *                At \c (4) , the Json parser knows that the current JsonObject is
+  *                finished, so it removes JsonNet from the stack and destroy it.
+  *
+  *                So, if you need to perform specific post-processing that can only
+  *                take place \c after the object and all it's sub-objects has been
+  *                fully parsed, you may do it in the destructor of the JsonObject.
+  *                For example, this technique is used to rebuild the rings of a Net.
   */
 
 

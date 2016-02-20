@@ -64,18 +64,44 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
-  static PyObject* PyAllianceFramework_get ( PyObject* )
+  static PyObject* PyAllianceFramework_create ( PyObject*, PyObject* args )
+  {
+    trace << "PyAllianceFramework_create()" << endl;
+
+    AllianceFramework*   af    = NULL;
+    PyAllianceFramework* pyAf  = NULL;
+    unsigned long        flags = AllianceFramework::NoFlags;
+    
+    HTRY
+    PyObject* arg0;
+    if (ParseOneArg("AllianceFramework.create()", args, INT_ARG, &arg0)) {
+      flags = PyInt_AsUnsignedLongMask(arg0);
+    }
+
+    af = AllianceFramework::create( flags );
+
+    pyAf = PyObject_NEW( PyAllianceFramework, &PyTypeAllianceFramework );
+    if (pyAf == NULL) return NULL;
+
+    pyAf->_object = af;
+    HCATCH
+
+    return (PyObject*)pyAf;
+  }
+
+
+  static PyObject* PyAllianceFramework_get ( PyObject* args )
   {
     trace << "PyAllianceFramework_get()" << endl;
 
-    AllianceFramework*   af   = NULL;
-    PyAllianceFramework* pyAf = NULL;
+    AllianceFramework*   af    = NULL;
+    PyAllianceFramework* pyAf  = NULL;
     
     HTRY
-    af = AllianceFramework::get ();
+    af = AllianceFramework::get();
 
-    pyAf = PyObject_NEW ( PyAllianceFramework, &PyTypeAllianceFramework );
-    if ( pyAf == NULL ) return NULL;
+    pyAf = PyObject_NEW( PyAllianceFramework, &PyTypeAllianceFramework );
+    if (pyAf == NULL) return NULL;
 
     pyAf->_object = af;
     HCATCH
@@ -298,7 +324,9 @@ extern "C" {
 
 
   PyMethodDef PyAllianceFramework_Methods[] =
-    { { "get"                  , (PyCFunction)PyAllianceFramework_get                  , METH_NOARGS|METH_STATIC
+    { { "create"               , (PyCFunction)PyAllianceFramework_create               , METH_VARARGS|METH_STATIC
+                               , "Gets the Alliance Framework." }                      
+    , { "get"                  , (PyCFunction)PyAllianceFramework_get                  , METH_NOARGS|METH_STATIC
                                , "Gets the Alliance Framework." }                      
     , { "getEnvironment"       , (PyCFunction)PyAllianceFramework_getEnvironment       , METH_NOARGS
                                , "Gets the Alliance Environment." }
@@ -310,7 +338,7 @@ extern "C" {
                                , "Saves an Alliance Cell." }                           
     , { "createCell"           , (PyCFunction)PyAllianceFramework_createCell           , METH_VARARGS
                                , "Create a Cell in the Alliance framework." }
-    , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                 , METH_VARARGS
+    , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS
                                , "Tells if a cell name is a Pad." }
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
                                , "Add a new cell gauge." }
@@ -338,9 +366,16 @@ extern "C" {
 // x=================================================================x
 
 
-
   // Link/Creation Method.
   PyTypeObjectDefinitions(AllianceFramework)
+
+
+  extern void  PyAllianceFramework_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::NoPythonInit,"NoPythonInit");
+  }
 
 
 #endif  // End of Shared Library Code Part.

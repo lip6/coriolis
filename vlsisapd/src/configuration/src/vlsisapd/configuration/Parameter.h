@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,8 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __CFG_CONFIGURATION_PARAMETER__
-#define  __CFG_CONFIGURATION_PARAMETER__
+#ifndef  CFG_CONFIGURATION_PARAMETER_H
+#define  CFG_CONFIGURATION_PARAMETER_H
 
 #include  <vector>
 #include  <string>
@@ -66,6 +65,9 @@ namespace Cfg {
       };
     public:
       static std::string        typeToString        ( Type );
+      static std::string        priorityToString    ( Priority );
+      static Type               stringToType        ( const std::string& );
+      static Priority           stringToPriority    ( const std::string& );
       static Priority           pushDefaultPriority ( Priority );
       static Priority           popDefaultPriority  ();
       static Priority           getDefaultPriority  ();
@@ -82,7 +84,8 @@ namespace Cfg {
       inline bool               hasMustExist        () const;
       inline bool               hasFlags            ( int mask ) const;
       inline const std::string& getId               () const;
-      inline const Type         getType             () const;
+      inline Type               getType             () const;
+      inline Priority           getPriority         () const;
       inline const std::vector<EnumValue>&          
                                 getValues           () const;
       inline const std::vector<std::string>&        
@@ -105,6 +108,7 @@ namespace Cfg {
       inline void               setPriority         ( Priority );
       inline void               setFlags            ( int mask );
       inline void               unsetFlags          ( int mask );
+             bool               setRawString        ( const std::string& , Priority priority=UseDefault );
              bool               setString           ( const std::string&
                                                     , Priority     priority=UseDefault
                                                     , unsigned int flags   =AllRequirements
@@ -117,26 +121,28 @@ namespace Cfg {
              void               setMax              ( int   , Priority priority=UseDefault );
              void               setMin              ( double, Priority priority=UseDefault );
              void               setMax              ( double, Priority priority=UseDefault );
-      inline void               registerCb          ( ParameterChangedCb_t );
+      inline void               registerCb          ( void* tag, ParameterChangedCb_t );
+      inline void               unregisterCb        ( void* tag );
+      inline void               valueChanged        ();
     private:                                        
       inline void               _onValueChanged     ();
       inline bool               _updatePriority     ( Priority );
              bool               _doChange           ( unsigned int flags, const std::string&, bool, int, double );
     private:
     // Attributes.
-      static std::vector<Priority>       _defaultPriorities;
-      std::string                        _id;
-      Type                               _type;
-      std::string                        _value;
-      std::vector<EnumValue>             _values;
-      int                                _priority;
-      int                                _flags;
-      int                                _minInt;
-      int                                _maxInt;
-      double                             _minDouble;
-      double                             _maxDouble;
-      std::vector<std::string>           _slaves;
-      std::vector<ParameterChangedCb_t>  _callbacks;
+      static std::vector<Priority>  _defaultPriorities;
+      std::string                   _id;
+      Type                          _type;
+      std::string                   _value;
+      std::vector<EnumValue>        _values;
+      Priority                      _priority;
+      int                           _flags;
+      int                           _minInt;
+      int                           _maxInt;
+      double                        _minDouble;
+      double                        _maxDouble;
+      std::vector<std::string>      _slaves;
+      std::vector< std::pair<void*,ParameterChangedCb_t> >  _callbacks;
   };
 
 
@@ -148,7 +154,8 @@ namespace Cfg {
   inline bool                   Parameter::hasNeedRestart () const { return hasFlags(NeedRestart); };
   inline bool                   Parameter::hasMustExist   () const { return hasFlags(MustExist); };
   inline const std::string&     Parameter::getId          () const { return _id; }
-  inline const Parameter::Type  Parameter::getType        () const { return _type; }
+  inline Parameter::Type        Parameter::getType        () const { return _type; }
+  inline Parameter::Priority    Parameter::getPriority    () const { return _priority; }
   inline int                    Parameter::getFlags       () const { return _flags; }
   inline bool                   Parameter::hasFlags       ( int mask ) const { return (_flags & mask); }
   inline int                    Parameter::getMinInt      () const { return _minInt; }
@@ -159,6 +166,7 @@ namespace Cfg {
   inline void                   Parameter::setFlags       ( int mask ) { _flags |= mask; }
   inline void                   Parameter::unsetFlags     ( int mask ) { _flags &= ~mask; }
   inline void                   Parameter::setPriority    ( Priority priority ) { _priority = priority; }
+  inline void                   Parameter::valueChanged   () { _onValueChanged(); }
 
   inline bool  Parameter::checkValue ( int value ) const {
     bool ok = not (   ( (_flags&HasMin) and (value < _minInt) )
@@ -194,8 +202,17 @@ namespace Cfg {
   inline Parameter::EnumValue::EnumValue ( const std::string& label, int value )
     : _label(label), _value(value) { }
 
-  inline void  Parameter::registerCb ( ParameterChangedCb_t cb ) { _callbacks.push_back(cb); }
+  inline void  Parameter::registerCb ( void* tag, ParameterChangedCb_t cb )
+  {
+    _callbacks.push_back(make_pair(tag,cb)); cb(this);
+  }
 
+  inline void  Parameter::unregisterCb ( void* tag )
+  {
+    for ( auto icb = _callbacks.begin() ; icb != _callbacks.end() ; ++icb ) {
+      if ( (*icb).first == tag ) { _callbacks.erase( icb ); break; }
+    }
+  }
 
   inline bool  Parameter::_updatePriority ( Priority priority )
   {
@@ -206,10 +223,9 @@ namespace Cfg {
   }
 
   inline void  Parameter::_onValueChanged ()
-  { for ( size_t icb=0 ; icb<_callbacks.size() ; ++icb ) _callbacks[icb]( this ); }
+  { for ( size_t icb=0 ; icb<_callbacks.size() ; ++icb ) _callbacks[icb].second( this ); }
 
 
-}  // End of Cfg namespace.
+}  // Cfg namespace.
 
-
-#endif  // __CFG_CONFIGURATION_PARAMETER__
+#endif  // CFG_CONFIGURATION_PARAMETER_H

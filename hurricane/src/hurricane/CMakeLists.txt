@@ -12,6 +12,7 @@
                                 hurricane/FileReadGzStream.h
                                 hurricane/FileWriteGzStream.h
                                 hurricane/JsonWriter.h
+                                hurricane/JsonObject.h
                                 hurricane/JsonReader.h
                                 hurricane/Signature.h
                                 hurricane/Observer.h
@@ -98,7 +99,6 @@
                                 hurricane/Views.h
                                 hurricane/Warning.h
                                 hurricane/TextTranslator.h
-                                hurricane/DesignBlob.h
                      )
                  set ( cpps     Record.cpp
                                 Slot.cpp
@@ -109,6 +109,7 @@
                                 FileReadGzStream.cpp
                                 FileWriteGzStream.cpp
                                 JsonWriter.cpp
+                                JsonObject.cpp
                                 JsonReader.cpp
                                 Signature.cpp
                                 Exception.cpp
@@ -179,7 +180,6 @@
                                 Marker.cpp
                                 Timer.cpp
                                 TextTranslator.cpp
-                                DesignBlob.cpp
                  )
     
            add_library ( hurricane ${cpps} )

@@ -39,6 +39,7 @@
 #include "hurricane/Component.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Error.h"
+#include "hurricane/JsonReader.h"
 
 namespace Hurricane {
 
@@ -363,6 +364,22 @@ Cell* Cell::create(Library* library, const Name& name)
     cell->_postCreate();
 
     return cell;
+}
+
+Cell* Cell::fromJson(const string& filename)
+// *****************************************
+{
+  UpdateSession::open();
+
+  JsonReader reader ( JsonWriter::CellMode );
+  reader.parse( filename );
+
+  UpdateSession::close();
+
+  const JsonStack& stack = reader.getStack();
+  if (stack.rhas(".Cell")) return stack.as<Cell*>(".Cell");
+
+  return NULL;
 }
 
 Box Cell::getBoundingBox() const

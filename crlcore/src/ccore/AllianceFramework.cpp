@@ -183,12 +183,16 @@ namespace CRL {
 
 
   AllianceFramework::AllianceFramework ()
-    : _environment()
-    , _parsers()
-    , _drivers()
-    , _catalog()
-    , _parentLibrary(NULL)
-    , _routingGauges()
+    : _observers          ()
+    , _environment        ()
+    , _parsers            ()
+    , _drivers            ()
+    , _catalog            ()
+    , _parentLibrary      (NULL)
+    , _routingGauges      ()
+    , _defaultRoutingGauge(NULL)
+    , _cellGauges         ()
+    , _defaultCellGauge   (NULL)
   {
     DataBase* db = DataBase::getDB ();
     if ( not db )
@@ -255,7 +259,8 @@ namespace CRL {
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
       createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
 
-    //cmess2 << "     - \"" << LIBRARIES[i].getPath() << "\"";
+    //cmess2 << "     - " << LIBRARIES[i].getName()
+    //       << " \"" << LIBRARIES[i].getPath() << "\"" << endl;
     //cmess2.flush();
 
     //if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
@@ -264,13 +269,14 @@ namespace CRL {
   }
 
 
-  AllianceFramework* AllianceFramework::create ()
+  AllianceFramework* AllianceFramework::create ( unsigned long flags )
   {
-    if ( !_singleton ) {
+    if (not _singleton) {
     // Triggers System singleton creation.
       System::get ();
       _singleton = new AllianceFramework ();
-      System::runPythonInit();
+      if (not (flags & NoPythonInit))
+        System::runPythonInit();
       _singleton->_bindLibraries();
     }
 
@@ -280,7 +286,7 @@ namespace CRL {
 
   AllianceFramework* AllianceFramework::get ()
   {
-    return create ();
+    return create();
   }
 
 
@@ -294,6 +300,18 @@ namespace CRL {
   {
     return _environment.getPrint ();
   }
+
+
+  void AllianceFramework::addObserver ( BaseObserver* observer )
+  { _observers.addObserver( observer ); }
+
+
+  void AllianceFramework::removeObserver ( BaseObserver* observer )
+  { _observers.removeObserver( observer ); }
+
+
+  void AllianceFramework::notify ( unsigned flags )
+  { _observers.notify( flags ); }
 
 
   AllianceLibrary* AllianceFramework::getAllianceLibrary ( unsigned index )
@@ -444,7 +462,10 @@ namespace CRL {
 
     ParserFormatSlot& parser = _parsers.getParserSlot ( path, Catalog::State::Physical, _environment );
 
-    if ( not parser.loadByLib() ) return alibrary;
+    if ( not parser.loadByLib() ) {
+      notify ( AddedLibrary );
+      return alibrary;
+    }
 
   // Load the whole library.
     if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return alibrary;
@@ -452,6 +473,7 @@ namespace CRL {
   // Call the parser function.
     (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , alibrary->getLibrary() , _catalog );
 
+    notify ( AddedLibrary );
     return alibrary;
   }
   
@@ -643,6 +665,18 @@ namespace CRL {
   }
 
 
+  RoutingGauge* AllianceFramework::setRoutingGauge ( const Name& name )
+  {
+    RoutingGauge* gauge = getRoutingGauge( name );
+    if (gauge) _defaultRoutingGauge = gauge;
+    else
+      cerr << Error( "AllianceFramework::setRoutingGauge(): No gauge named \"%s\"."
+                   , getString(name).c_str() ) << endl;
+
+    return _defaultRoutingGauge;
+  }
+
+
   RoutingGauge* AllianceFramework::getRoutingGauge ( const Name& name )
   {
     if ( name.isEmpty() ) return _defaultRoutingGauge;
@@ -671,6 +705,18 @@ namespace CRL {
 
     _routingGauges [ gauge->getName() ] = gauge;
     _defaultRoutingGauge                = gauge;
+  }
+
+
+  CellGauge* AllianceFramework::setCellGauge ( const Name& name )
+  {
+    CellGauge* gauge = getCellGauge( name );
+    if (gauge) _defaultCellGauge = gauge;
+    else
+      cerr << Error( "AllianceFramework::setCellGauge(): No gauge named \"%s\"."
+                   , getString(name).c_str() ) << endl;
+
+    return _defaultCellGauge;
   }
 
 
@@ -735,13 +781,13 @@ namespace CRL {
   Record *AllianceFramework::_getRecord () const
   {
     Record* record = new Record ( "<AllianceFramework>" );
-    record->add ( getSlot ( "_environment"         , &_environment         ) );
-    record->add ( getSlot ( "_libraries"           , &_libraries           ) );
-    record->add ( getSlot ( "_catalog"             , &_catalog             ) );
-    record->add ( getSlot ( "_defaultRroutingGauge",  _defaultRoutingGauge ) );
-    record->add ( getSlot ( "_routingGauges"       ,  _routingGauges       ) );
-    record->add ( getSlot ( "_defaultCellGauge"    ,  _defaultCellGauge    ) );
-    record->add ( getSlot ( "_cellGauges"          ,  _cellGauges          ) );
+    record->add ( getSlot ( "_environment"        , &_environment         ) );
+    record->add ( getSlot ( "_libraries"          , &_libraries           ) );
+    record->add ( getSlot ( "_catalog"            , &_catalog             ) );
+    record->add ( getSlot ( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
+    record->add ( getSlot ( "_routingGauges"      ,  _routingGauges       ) );
+    record->add ( getSlot ( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
+    record->add ( getSlot ( "_cellGauges"         ,  _cellGauges          ) );
     return record;
   }
 
@@ -749,10 +795,13 @@ namespace CRL {
   void  AllianceFramework::toJson ( JsonWriter* w ) const
   {
     w->startObject();
-    jsonWrite( w, "@typename"   ,  _getTypeName() );
-    jsonWrite( w, "_environment", &_environment   );
-    jsonWrite( w, "+libraries"  ,  getCollection(getAllianceLibraries()) );
-  // Environement & Catalog...
+    jsonWrite( w, "@typename"           ,  _getTypeName() );
+    jsonWrite( w, "_environment"        , &_environment   );
+    jsonWrite( w, "_defaultRoutingGauge",  _defaultRoutingGauge->getName() );
+    jsonWrite( w, "_defaultCellGauge"   ,  _defaultCellGauge->getName() );
+    jsonWrite( w, "+libraries"          ,  getAllianceLibraries() );
+    jsonWrite( w, "+routingGauges"      ,  _routingGauges );
+    jsonWrite( w, "+cellGauges"         ,  _cellGauges );
     w->endObject();
   }
 
@@ -763,12 +812,25 @@ namespace CRL {
   Initializer<JsonAllianceFramework>  jsonFrameworkInit ( 20 );
 
 
-  JsonAllianceFramework::JsonAllianceFramework (unsigned long flags )
-    : JsonObject(flags)
+  JsonAllianceFramework::JsonAllianceFramework ( unsigned long flags )
+    : JsonObject          (flags)
+    , _defaultRoutingGauge()
+    , _defaultCellGauge   ()
   {
-  // Environement & Catalog...
-    add( "_environment", typeid(Environment*) );
-    add( "+libraries"  , typeid(JsonArray)    );
+    add( "_environment"        , typeid(Environment*) );
+    add( "_defaultRoutingGauge", typeid(string)       );
+    add( "_defaultCellGauge"   , typeid(string)       );
+    add( "+libraries"          , typeid(JsonArray)    );
+    add( "+routingGauges"      , typeid(JsonArray)    );
+    add( "+cellGauges"         , typeid(JsonArray)    );
+  }
+
+
+  JsonAllianceFramework::~JsonAllianceFramework ()
+  {
+    AllianceFramework* framework = AllianceFramework::get(); 
+    framework->setRoutingGauge( _defaultRoutingGauge );
+    framework->setCellGauge   ( _defaultCellGauge    );
   }
 
 
@@ -790,6 +852,9 @@ namespace CRL {
 
   // It's a singleton. Do not create it...
     AllianceFramework* framework = AllianceFramework::get(); 
+
+    string _defaultRoutingGauge = get<string>( stack, "_defaultRoutingGauge" );
+    string _defaultCellGauge    = get<string>( stack, "_defaultCellGauge"    );
 
     update( stack, framework );
   }

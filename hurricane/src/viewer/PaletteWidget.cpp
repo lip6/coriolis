@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -62,13 +62,16 @@ namespace {
   };
 
 
-  GridBuffer::GridBuffer ( QGridLayout* grid, size_t maxRow, size_t startRow, size_t startColumn )
-    : _grid   (grid)
-    , _rowMax (maxRow)
-    , _row    (startRow)
-    , _column (startColumn)
-    , _widgets()
-    , _aligns ()
+  GridBuffer::GridBuffer ( QGridLayout* grid
+                         , size_t maxRow
+                         , size_t startRow
+                         , size_t startColumn )
+    : _grid      (grid)
+    , _rowMax    (maxRow)
+    , _row       (startRow)
+    , _column    (startColumn)
+    , _widgets   ()
+    , _aligns    ()
   { }
 
 
@@ -122,6 +125,9 @@ namespace {
 
 namespace Hurricane {
 
+
+// -------------------------------------------------------------------
+// Class  :  "PaletteWidget".
 
   QWidget* PaletteWidget::_createGroupItem ( const Name& name )
   {
@@ -218,10 +224,12 @@ namespace Hurricane {
     vLayout->addWidget  ( _scrollArea );
 
     setLayout ( vLayout );
+
+    readGraphics ();
   }
 
 
-  void  PaletteWidget::build ()
+  void  PaletteWidget::readGraphics ()
   {
     GridBuffer gridBuffer ( _grid, _columnHeight );
 
@@ -299,19 +307,20 @@ namespace Hurricane {
 
   void  PaletteWidget::updateExtensions ( Cell* cell )
   {
-    _grid->removeWidget ( _extensionGroup );
-  //_extensionGroup->deleteLater ();
-    delete _extensionGroup;
-    _extensionGroup = NULL;
+    if (_extensionGroup) {
+      _grid->removeWidget ( _extensionGroup );
+    //_extensionGroup->deleteLater ();
+      delete _extensionGroup;
+      _extensionGroup = NULL;
 
-    PaletteItems::iterator  iextension = _extensionGoItems.begin();
-    for ( ; iextension != _extensionGoItems.end() ; ++iextension ) {
-      _grid->removeWidget ( iextension->second );
-    //iextension->second->deleteLater ();
-      delete iextension->second;
+      PaletteItems::iterator  iextension = _extensionGoItems.begin();
+      for ( ; iextension != _extensionGoItems.end() ; ++iextension ) {
+        _grid->removeWidget ( iextension->second );
+      //iextension->second->deleteLater ();
+        delete iextension->second;
+      }
+      _extensionGoItems.clear ();
     }
-    _extensionGoItems.clear ();
-
 
     GridBuffer gridBuffer ( _grid, _columnHeight, _extensionRow, _extensionColumn );
     _extensionGroup  = _createGroupItem ( "Extensions" );
@@ -325,6 +334,28 @@ namespace Hurricane {
       }
     }
     gridBuffer.flushWidgets ();
+  }
+
+
+  void  PaletteWidget::resetGraphics ()
+  {
+    QLayoutItem* child = NULL;
+    while ( (child = _grid->takeAt(0)) != 0 ) {
+      _grid->removeWidget( child->widget() );
+      delete child->widget();
+    }
+
+    _layerItems.clear();
+    _extensionGroup = NULL;
+    _extensionGoItems.clear();
+
+  }
+
+
+  void  PaletteWidget::rereadGraphics ()
+  {
+    resetGraphics();
+    readGraphics();
   }
 
 

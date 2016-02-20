@@ -6,11 +6,12 @@
  //! \addtogroup   JsonSupport
  //! \{
 
-
  /*! \class        JsonObject
   *  \brief        Support for JSON export.
   *
   */
+
+ //! \}
 
  //! \function     JsonObject::JsonObject ( unsigned long flags );
  //! \param        flags  Flags sets by derived classes.
@@ -30,6 +31,9 @@
  //!                   Their key must start with a \c '+' character. 
  //!
  //!               For adding a requirement/attribute, see JsonObject::add().
+
+ //! \function     bool JsonObject::isDummy () const;
+ //! \Return       \true if the concrete object is of type \c JsonDummy, \false otherwise.
 
  //! \function     string JsonObject::getTypeName () const;
  //! \Return       The typename of the concrete object, that is, the value
@@ -109,6 +113,16 @@
  //!                 - If an element matching the key is found, \b but it's type do not
  //!                   match \c T, an exception from \c any_cast<> will be thrown. 
 
+ //! \function     T* JsonObject::jget ( JsonStack& stack ) const;
+ //! \param        stack  The parser stack.
+ //! \Return       the first JsonObject that can be cast into type \c T*.
+ //!
+ //!               Search the JsonObject stack, from the top, the first object that
+ //!               can be cast into type \c T*. Base classes can be used here, as the
+ //!               \c dynamic_cast<> operator is used to perform the casts. 
+ //!
+ //!               This function \b always return a pointer (never a value).
+
  //! \function     void  JsonObject::copyAttrs ( const JsonObject* other, bool reset=false );
  //! \param        other  The object from which to copy attributes.
  //! \param        reset  Whether to keep or erase the original attributes of the object.
@@ -173,7 +187,7 @@
  //!               is created from them and the result is then pushed back. 
 
  //! \function     unsigned int  JsonObject::presetId ( JsonStack& stack );
- //! \param        The parser object stack.
+ //! \param        stack  The parser object stack.
  //! \Return       the <em>next id</em> that has been set.
  //!
  //! \Remark       This is a helper for JsonStack::toData().
@@ -184,7 +198,7 @@
  //!               and sets it so that the next Entity created will use it.
 
  //! \function     void  JsonObject::update ( JsonStack& stack, T hobject );
- //! \param        The      parser object stack.
+ //! \param        stack    parser object stack.
  //! \param        hobject  the newly created DataBase object.
  //!
  //! \Remark       This is a helper for JsonStack::toData().
@@ -193,6 +207,117 @@
  //!               object and bind it to the JsonObject.
 
 
+ //! \addtogroup   JsonSupport
+ //! \{
+
+ /*! \class        JsonStack
+  *  \brief        JSON Parser Stack
+  *
+  *
+  *                The JSON parser stack contains three separate stacks and a lookup
+  *                table:
+  *                  -# The \c attribute stack. Objects that have been translated from
+  *                     JSON to the Hurricane database (or POD objects).
+  *                  -# The \c dbo stack, similar to the previous one, but contains
+  *                     \b only objects whose base class is DBo.
+  *                  -# The JsonObject stack. The stack of objects currently under
+  *                     parsing.
+  *                  -# A lookup table for the Entity, between the Hurricane \c id and
+  *                     the JSON \c id.
+  */
+
  //! \}
+
+
+ //! \function     size_t  JsonStack::size () const;
+ //! \Return       The size of the attribute stack.
+
+ //! \function     void  JsonStack::push_back ( const std::string& key, T hobject );
+ //! \param        key      Key associated to \c hobject
+ //! \param        hobject  The \e attribute object.
+ //!
+ //!               Push back (on top) an element on the \e attribute stack.
+
+ //! \function     void  JsonStack::pop_back ( size_t count=1 );
+ //! \param        count   The number of element to pop.
+ //!
+ //!               Remove \c count element(s) from the top of the stack.
+
+ //! \function     int  JsonStack::rhas ( const string& key );
+ //! \param        key  The key element's to look for.
+ //! \return       the index of the element, from the top.
+ //!
+ //!               The function name's stands for "Reverse HAS".
+ //!               Search from the top of the \e attribute stack downward an
+ //!               element with \c key. Return an index from the top of the stack,
+ //!               that is, the end of the vector. The returned index is a negative
+ //!               value, for exemple the element on top of the stack has an index
+ //!               of \c -1. If no element with a matching key is found, returns 0.
+
+ //! \function     T  JsonStack::as ( const std::string& key ) const;
+ //! \param        key  The key's element to search.
+ //! \return       The element, casted as type T.
+ //!
+ //!               Search an element with key matching \c key, from the top of the
+ //!               stack. If found, returns the element casted as type \c T.
+ //!               As the cast operation uses \c boost::any_cast<>, the exact type
+ //!               \c T must be used (\b not a base class of \c T), otherwise the
+ //!               cast will fail and an exception will be thrown.
+
+ //! \function     T  JsonStack::as ( int index ) const;
+ //! \param        index  the position of the element to convert.
+ //! \return       The element, casted as type T.
+ //!
+ //!               Cast the element at \c index into type T. 
+ //!               As the cast operation uses \c boost::any_cast<>, the exact type
+ //!               \c T must be used (\b not a base class of \c T), otherwise the
+ //!               cast will fail and an exception will be thrown.
+ //!
+ //!               A positive or null index means the element must be taken from the
+ //!               bottom of the stack and a stictly negative one means from the top
+ //!               of the stack.
+
+ //! \function     void  JsonStack::push_back_dbo ( DBo* dbo );
+ //! \param        dbo   The DataBase object to push back.
+ //!
+ //!               Dedicated stack to push objects \e after they had been casted
+ //!               into the DBo* base class. We need to create this separate stack
+ //!               from the \e attribute stack due to the inability of \c boost::any_cast<>
+ //!               to use a base class.
+
+ //! \function     void  JsonStack::pop_back_dbo ();
+ //!               Remove one element from the top of the DBo* stack.
+
+ //! \function     DBo* JsonStack::back_dbo () const;
+ //! \Return       The elemet at the top of the DBo* stack.
+
+ //! \function     void  JsonStack::addEntity ( unsigned int jsonId, Entity* entity );
+ //! \param        jsonId   the \c id of the Entity, in the JSON file
+ //! \param        entity   the associated Entity.
+ //!
+ //!               When parsing a DataBase object \b not in \e blob mode, we cannot
+ //!               restore the ids of the Entities as they are in the file.
+ //!               Thus when an Entity is re-created, it comes with a different id.
+ //!               So we have to keep track of the association between this newbox
+ //!               id (in the Hurricane database) and the one in the JSON file.
+ //!
+ //!               This function adds such an association.
+
+ //! \function     T  JsonStack::getEntity ( unsigned int jsonId ) const;
+ //! \Return       The entity, casted as type \c T.
+ //!
+ //!               Find an Entity with the JSON id \c jsonId and cast it into
+ //!               type \c T.
+ //!
+ //!               Obviously, this Entity must have been registered with a call
+ //!               to addEntity() before.
+
+ //! \function     vector<JsonObject*>& JsonStack::jobjects ();
+ //! \Return       the stack of JSON objects, for direct manipulation by the involded
+ //!               parties.
+
+ //! \function     void  JsonStack::print ( std::ostream& o ) const;
+ //!               Dump the contents of the \e attribute stack int the stream \c o.
+ //!               For debugging purposes.
 
  }

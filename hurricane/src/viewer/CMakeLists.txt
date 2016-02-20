@@ -58,6 +58,8 @@
                                     hurricane/viewer/HierarchyCommand.h
                                     hurricane/viewer/SelectorCriterion.h
                                     hurricane/viewer/CellWidgets.h
+                                    hurricane/viewer/DesignBlob.h
+                                    hurricane/viewer/JsonConfiguration.h
                       )
                    set( pyIncludes  hurricane/viewer/PyHSVr.h
                                     hurricane/viewer/PyDrawingStyle.h
@@ -114,6 +116,8 @@
                                     DisplayFilterWidget.cpp
                                     ControllerWidget.cpp
                                     ScriptWidget.cpp
+                                    DesignBlob.cpp
+                                    JsonConfiguration.cpp
                       )
                    set( pyCpps      PyHSVr.cpp
                                     PyDrawingStyle.cpp

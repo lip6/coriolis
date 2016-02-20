@@ -247,9 +247,14 @@ void JsonHorizontal::toData(JsonStack& stack)
     , DbU::fromDb( get<int64_t>(stack,"_dxTarget") )
     );
   
-  stack.addHookLink( horizontal->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
-  stack.addHookLink( horizontal->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
-  stack.addHookLink( horizontal->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( horizontal->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    jnet->addHookLink( horizontal->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
+    jnet->addHookLink( horizontal->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+  } else {
+    cerr << Error( "JsonHorizontal::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
 
 // Hook/Ring rebuild are done as a post-process.
   update( stack, horizontal );

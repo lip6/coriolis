@@ -197,6 +197,7 @@ void Plug::_toJson(JsonWriter* writer) const
   if (writer->issetFlags(JsonWriter::UsePlugReference)) {
     jsonWrite( writer, "_id"      , getId() );
     jsonWrite( writer, "_instance", getInstance()->getName() );
+    jsonWrite( writer, "_bodyHook", (const_cast<Plug*>(this)->getBodyHook())->getNextHook()->toJson() );
   } else {
     Inherit::_toJson( writer );
     jsonWrite( writer, "_masterNet", getMasterNet()->getName() );
@@ -285,7 +286,6 @@ void JsonPlug::toData(JsonStack& stack)
       plug = instance->getPlug( masterNet );
       if (issetFlags(JsonWriter::DesignBlobMode))
         plug->forceId( jsonId );
-      stack.addHookLink( plug->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
     }
   } else {
     cerr << Error( "JsonPlug::toData(): Cannot find \".Instance\" in stack, skipping." ) << endl;
@@ -314,6 +314,7 @@ JsonPlugRef::JsonPlugRef(unsigned long flags)
   add( ".Net"     , typeid(Net*)     );
   add( "_id"      , typeid(uint64_t) );
   add( "_instance", typeid(string)   );
+  add( "_bodyHook", typeid(string)   );
 }
 
 string JsonPlugRef::getTypeName() const
@@ -337,6 +338,13 @@ void JsonPlugRef::toData(JsonStack& stack)
   Plug* plug = stack.getEntity<Plug*>(id);
   if (plug) {
     plug->setNet( net );
+
+    JsonNet* jnet = jget<JsonNet>( stack );
+    if (jnet) {
+      jnet->addHookLink( plug->getBodyHook  (), id, get<string>(stack,"_bodyHook"  ) );
+    } else {
+      cerr << Error( "JsonPlug::toData(): Missing (Json)Net in stack context." ) << endl;
+    }
   } else {
     cerr << Error( "JsonPlugRef::toData(): No Plug id:%u in instance %s, while building net %s."
                  , id, getString(instance->getName()).c_str(), getString(net->getName()).c_str()

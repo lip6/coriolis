@@ -36,12 +36,12 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "LibrariesWidget".
 
-
   class LibrariesWidget : public QWidget {
       Q_OBJECT;
     public:
             LibrariesWidget ( QWidget* parent=NULL );
       void  initSelection   ();
+      void  update          ();
     signals:
       void  selectedLibrary ( const AllianceLibrary* );
     public slots:

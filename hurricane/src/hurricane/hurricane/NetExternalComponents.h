@@ -38,16 +38,33 @@
 
 namespace Hurricane {
 
+// -------------------------------------------------------------------
+// Class  :  "NetExternalComponents".
 
   class NetExternalComponents {
     public:
       static Components        get         ( const Net* );
       static void              setExternal ( Component* );
       static bool              isExternal  ( Component* );
+      static void              toJson      ( JsonWriter*, const Net* );
     protected:
       static StandardRelation* getRelation ( const Net* );
     private:
       static const Name  _name;
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNetExternalComponents".
+
+  class JsonNetExternalComponents : public JsonBaseArray<Entity*> {
+    public:
+      static  void                       initialize                ();
+                                         JsonNetExternalComponents ( unsigned long flags );
+      virtual                           ~JsonNetExternalComponents ();
+      virtual string                     getTypeName               () const;
+      virtual JsonNetExternalComponents* clone                     ( unsigned long ) const;
+      virtual void                       toData                    ( JsonStack& ); 
   };
 
 

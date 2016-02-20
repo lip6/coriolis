@@ -15,9 +15,13 @@
 
 
 #include <iostream>
+#include "hurricane/JsonReader.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
-#include "hurricane/DesignBlob.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/DesignBlob.h"
+#include "hurricane/viewer/JsonParameter.h"
 
 
 namespace Hurricane {
@@ -32,12 +36,29 @@ namespace Hurricane {
   void DesignBlob::toJson( JsonWriter* w ) const
   {
     w->startObject();
-    jsonWrite( w, "@typename", _getTypeName() );
-    jsonWrite( w, "_topCell" , getTopCell()->getHierarchicalName() );
-    jsonWrite( w, "_database", DataBase::getDB()                   );
+    jsonWrite( w, "@typename"     , _getTypeName() );
+    jsonWrite( w, "_topCell"      , getTopCell()->getHierarchicalName() );
+    jsonWrite( w, "_database"     , DataBase::getDB()                   );
+    jsonWrite( w, "_graphics"     , Graphics::getGraphics()             );
+    jsonWrite( w, "_configuration", Cfg::Configuration::get()           );
     w->endObject();
   }
 
+
+  DesignBlob* DesignBlob::fromJson ( const string& filename )
+  {
+    UpdateSession::open();
+
+    JsonReader reader ( JsonWriter::DesignBlobMode );
+    reader.parse( filename );
+
+    UpdateSession::close();
+
+    const JsonStack& stack = reader.getStack();
+    if (stack.rhas(".DesignBlob")) return stack.as<DesignBlob*>(".DesignBlob");
+
+    return NULL;
+  }
 
 // -------------------------------------------------------------------
 // Class  :  "JsonDesignBlob".
@@ -54,8 +75,10 @@ namespace Hurricane {
   {
     ltrace(51) << "JsonDesignblob::JsonDesignblob()" << endl;
 
-    add( "_topCell" , typeid(string)    );
-    add( "_database", typeid(DataBase*) );
+    add( "_topCell"      , typeid(string)              );
+    add( "_database"     , typeid(DataBase*)           );
+    add( "_graphics"     , typeid(Graphics*)           );
+    add( "_configuration", typeid(Cfg::Configuration*) );
   }
 
 

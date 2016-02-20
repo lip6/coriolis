@@ -98,6 +98,20 @@ namespace Hurricane {
     stack.addEntity( jsonId, hobject );
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "JsonEntityRef".
+
+  class JsonEntityRef : public JsonObject {
+    public:
+      static  void           initialize    ();
+                             JsonEntityRef ( unsigned long flags );
+      virtual string         getTypeName   () const;
+      virtual JsonEntityRef* clone         ( unsigned long ) const;
+      virtual void           toData        ( JsonStack& ); 
+  };
+
+
 } // Hurricane namespace.
 
 

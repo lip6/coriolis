@@ -590,6 +590,7 @@ INPUT                  = Generalities.dox \
                          Initializer.dox \
                          ../../src/hurricane/hurricane/Initializer.h \
                          JsonObject.dox \
+                         ../../src/hurricane/hurricane/JsonObject.h \
                          ../../src/hurricane/hurricane/JsonReader.h \
                          Hurricane.dox \
                          ../../src/hurricane/hurricane/Commons.h \
