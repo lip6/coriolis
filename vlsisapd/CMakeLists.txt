@@ -20,6 +20,7 @@
  find_package(BISON REQUIRED)
  find_package(FLEX REQUIRED)
  find_package(Doxygen)
+ find_package(HURRICANE REQUIRED)
 
  add_subdirectory(src)
  add_subdirectory(cmake_modules)

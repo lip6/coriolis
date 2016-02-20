@@ -2,13 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI SAPD Software.
-// Copyright (c) UPMC/LIP6 2009-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2009-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  V L S I   S A P D                              |
 // |             OpenChams Circuit Data Base                         |
 // |                                                                 |
 // |  Author      :                       Damien Dupuis              |
+// |                                           Eric Lao              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Circuit.cpp"                                 |
@@ -152,6 +153,7 @@ namespace OpenChams {
   static bool readSchematicDone         = false;
   static bool readSizingDone            = false;
   static bool readLayoutDone            = false;
+  static bool readSlicingTreeDone       = false;
     
   Circuit::Circuit(const std::string& name, const std::string& techno)
     : _name        (name)
@@ -161,6 +163,7 @@ namespace OpenChams {
     , _schematic   (NULL)
     , _sizing      (NULL)
     , _layout      (NULL)
+    , _slicingtree (NULL)
   {
     readSubCircuitsPathsDone  = false;
     readCircuitParametersDone = false;
@@ -981,16 +984,16 @@ namespace OpenChams {
     
     Layout* layout = new Layout(this);
     xmlNode* child = node->children;
-    //cerr << "** L ** " << node->name << ": " << node->type << endl;
+  //cerr << "** L ** " << node->name << ": " << node->type << endl;
     for (xmlNode* node = child; node; node = node->next) {
       if (node->type == XML_ELEMENT_NODE) {
-	if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
-	  readInstanceLayout(node, layout);
-	} else if (xmlStrEqual(node->name, (xmlChar*)"hbtree")) {
-	  readHBTree(node, layout);
-	} else {
-	  cerr << "[WARNING] Only 'instance' and 'hbtree' nodes are allowed in 'layout' section, others will be ignored." << endl;
-	}
+        if (xmlStrEqual(node->name, (xmlChar*)"instance")) {
+          readInstanceLayout(node, layout);
+        } else if (xmlStrEqual(node->name, (xmlChar*)"hbtree")) {
+          readHBTree(node, layout);
+        } else {
+          cerr << "[WARNING] Only 'instance' and 'hbtree' nodes are allowed in 'layout' section, others will be ignored." << endl;
+        }
       }
     }
     readLayoutDone = true;
@@ -1010,10 +1013,10 @@ namespace OpenChams {
   }
 
   void Circuit::readHBTree(xmlNode* node, Layout* layout) {
-    // HBTree node can have only one child (group or bloc)
+  // HBTree node can have only one child (group or bloc)
     xmlNode* child = node->children;
     if (child->type == XML_ELEMENT_NODE) {
-      // create root node
+    // create root node
       //  thanks to readNodeOrBloc
       Node* root = readNodeOrBloc(child);
       // save root node in layout
@@ -1022,70 +1025,70 @@ namespace OpenChams {
   }
 
   Node* Circuit::readNodeOrBloc(xmlNode* node, Node* parent) {
-    // 1 - create Node based on xmlNode* passed as argument
+  // 1 - create Node based on xmlNode* passed as argument
     if (node->type == XML_ELEMENT_NODE) {
       bool isAGroup = xmlStrEqual(node->name, (xmlChar*)"group");
       xmlChar* nameC = xmlGetProp(node, (xmlChar*)"name");
       xmlChar* posiC = xmlGetProp(node, (xmlChar*)"position");
       if (!nameC) 
-	throw OpenChamsException("[ERROR] 'bloc' and 'group' nodes in 'hbtree' must have at least a 'name' property.");
+        throw OpenChamsException("[ERROR] 'bloc' and 'group' nodes in 'hbtree' must have at least a 'name' property.");
       Node* nodeOC = NULL;
       const std::string& name ((const char*)nameC);
       Node::Position pos = Node::NONE;
       if (posiC) {
-	string posStr ((const char*)posiC);
-	if      (posStr == "right")   pos = Node::RIGHT;
-	else if (posStr == "top")     pos = Node::TOP;
-	else throw OpenChamsException("[ERROR] 'position' property of 'bloc' and 'group' nodes must be 'right' or 'top'.");
+        string posStr ((const char*)posiC);
+        if      (posStr == "right")   pos = Node::RIGHT;
+        else if (posStr == "top")     pos = Node::TOP;
+        else throw OpenChamsException("[ERROR] 'position' property of 'bloc' and 'group' nodes must be 'right' or 'top'.");
       }
       if (isAGroup) {
-	Group* groupOC = new Group(name, pos, parent);
-	xmlChar* isolatC = xmlGetProp(node, (xmlChar*)"isolation");
-	xmlChar* alignC  = xmlGetProp(node, (xmlChar*)"align");
-	xmlChar* pairedC = xmlGetProp(node, (xmlChar*)"paired");
-	if (isolatC) {
-	  string isolation ((const char*)isolatC);
-	  if      (isolation == "true")   groupOC->setIsolated(true);
-	  else if (isolation == "false")  groupOC->setIsolated(false);
-	  else throw OpenChamsException("[ERROR] 'isolation' property of 'group' node must be 'true' or 'false'.");
-	}
-	if (alignC) {
-	  string align ((const char*)alignC);
-	  Group::Align galign = Group::NONE;
-	  if      (align == "vertical")    galign = Group::VERTICAL;
-	  else if (align == "horizontal")  galign = Group::HORIZONTAL;
-	  else throw OpenChamsException("[ERROR] 'align' property of 'group' node must be 'vertical' or 'horizontal'.");
-	  groupOC->setAlign(galign);
-	}
-	if (pairedC) {
-	  string paired ((const char*)pairedC);
-	  if      (paired == "true")   groupOC->setPaired(true);
-	  else if (paired == "false")  groupOC->setPaired(false);
-	  else throw OpenChamsException("[ERROR] 'paired' property of 'group' node must be 'true' or 'false'.");
-	}
-	nodeOC = groupOC;
+        Group* groupOC = new Group(name, pos, parent);
+        xmlChar* isolatC = xmlGetProp(node, (xmlChar*)"isolation");
+        xmlChar* alignC  = xmlGetProp(node, (xmlChar*)"align");
+        xmlChar* pairedC = xmlGetProp(node, (xmlChar*)"paired");
+        if (isolatC) {
+          string isolation ((const char*)isolatC);
+          if      (isolation == "true")   groupOC->setIsolated(true);
+          else if (isolation == "false")  groupOC->setIsolated(false);
+          else throw OpenChamsException("[ERROR] 'isolation' property of 'group' node must be 'true' or 'false'.");
+        }
+        if (alignC) {
+          string align ((const char*)alignC);
+          Group::Align galign = Group::NONE;
+          if      (align == "vertical")    galign = Group::VERTICAL;
+          else if (align == "horizontal")  galign = Group::HORIZONTAL;
+          else throw OpenChamsException("[ERROR] 'align' property of 'group' node must be 'vertical' or 'horizontal'.");
+          groupOC->setAlign(galign);
+        }
+        if (pairedC) {
+          string paired ((const char*)pairedC);
+          if      (paired == "true")   groupOC->setPaired(true);
+          else if (paired == "false")  groupOC->setPaired(false);
+          else throw OpenChamsException("[ERROR] 'paired' property of 'group' node must be 'true' or 'false'.");
+        }
+        nodeOC = groupOC;
       } else {
-	nodeOC = new Bloc(name, pos, parent);
+        nodeOC = new Bloc(name, pos, parent);
       }
-      // 2 - for each children (up to 2) readNodeOrBloc
+    // 2 - for each children (up to 2) readNodeOrBloc
       for (xmlNode* child = node->children; child; child = child->next) {
-	if (child->type == XML_ELEMENT_NODE) {
-	  Node* childOC = readNodeOrBloc(child, nodeOC);
-	  // 3 - add to returned Node* to current Node* as right or top children (based on its position)
-	  switch(childOC->getPosition()) {
-	  case Node::RIGHT:
-	    nodeOC->setRight(childOC);
-	    break;
-	  case Node::TOP:
-	    nodeOC->setTop(childOC);
-	    break;
-	  case Node::NONE:
-	    if (!isAGroup)
-	      throw OpenChamsException("[ERROR] a 'bloc' or 'group' without position is only allowed directly under a 'group'.");
-	    Group* groupOC = dynamic_cast<Group*>(nodeOC);
-	    groupOC->setRootNode(childOC);
-	  }
-	}
+        if (child->type == XML_ELEMENT_NODE) {
+          Node* childOC = readNodeOrBloc(child, nodeOC);
+        // 3 - add to returned Node* to current Node* as right or top children (based on its position)
+          switch(childOC->getPosition()) {
+            case Node::RIGHT:
+              nodeOC->setRight(childOC);
+              break;
+            case Node::TOP:
+              nodeOC->setTop(childOC);
+              break;
+            case Node::NONE:
+              if (!isAGroup)
+                throw OpenChamsException("[ERROR] a 'bloc' or 'group' without position is only allowed directly under a 'group'.");
+              Group* groupOC = dynamic_cast<Group*>(nodeOC);
+              groupOC->setRootNode(childOC);
+          }
+        }
       }
       // 4 - return current Node
       return nodeOC;
@@ -1103,6 +1106,254 @@ namespace OpenChams {
     _absolutePath = _absolutePath.substr(0, found);
   }
     
+
+  // SLICINGTREE //
+  void Circuit::readSlicingTree(xmlNode* node) {
+    if (readSlicingTreeDone) {
+      cerr << "[WARNING] Only one 'slicingtree' is allowed in circuit, others will be ignored." << endl;
+      return;
+    }
+    _slicingtree        = readSlicingNode(node);
+    readSlicingTreeDone = true;
+  }
+
+  SlicingNode* Circuit::readSlicingNode(xmlNode* xnode, SlicingNode* slicingNode) {
+    SlicingNode* snode = NULL;
+    
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      if (node->type == XML_ELEMENT_NODE) {
+        if        (xmlStrEqual(node->name , (xmlChar*)"vertical"  )) {
+          snode = createVerticalSlicingNode  (node, slicingNode);
+        } else if (xmlStrEqual(node->name , (xmlChar*)"horizontal")) {
+          snode = createHorizontalSlicingNode(node, slicingNode);
+        } else if (xmlStrEqual(node->name , (xmlChar*)"device"    )) {
+          snode = createDeviceSlicingNode    (node, slicingNode);
+        } else if (xmlStrEqual(node->name , (xmlChar*)"routing"   )) {
+          snode = createRoutingSlicingNode   (node, slicingNode);
+        } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )) {
+          cerr << "[WARNING] Unknown " << node->name << " node in 'slicingtree' section, it will be ignored." << endl;
+        }
+      }
+    }
+    return snode;
+  }
+
+  VSlicingNode* Circuit::createVerticalSlicingNode (xmlNode* xnode, SlicingNode* slicingNode) {
+    VSlicingNode* vnode = VSlicingNode::create(slicingNode);
+
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      if (xmlStrEqual(node->name       , (xmlChar*)"parameters")) {
+        setHVParameters(node, vnode);
+      } else if (xmlStrEqual(node->name, (xmlChar*)"symmetries")) {
+        setHVSymmetries(node, vnode);
+      } else if (xmlStrEqual(node->name, (xmlChar*)"children"  )) {
+        addChildren(node, vnode);
+      } else if (!xmlStrEqual(node->name,(xmlChar*)"comment"   )) {
+        cerr << "[WARNING] Unknown " << node->name << " node in 'vertical' section, it will be ignored." << endl;
+      }
+    }
+    return vnode;
+  }
+
+  HSlicingNode* Circuit::createHorizontalSlicingNode (xmlNode* xnode, SlicingNode* slicingNode) {
+    HSlicingNode* hnode = HSlicingNode::create(slicingNode);
+
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      if (xmlStrEqual(node->name, (xmlChar*)"children")) {
+        addChildren(node, hnode);
+      } else if (xmlStrEqual(node->name , (xmlChar*)"parameters")) {
+        setHVParameters(node, hnode);
+      } else if (xmlStrEqual(node->name , (xmlChar*)"symmetries")) {
+        setHVSymmetries(node, hnode);
+      } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )){
+        cerr << "[WARNING] Unknown " << node->name << " node in 'horizontal' section, it will be ignored." << endl;
+      }
+    }
+    return hnode;
+  }
+
+  void Circuit::addChildren (xmlNode* xnode, HVSlicingNode* hvnode) {
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      if (node->type == XML_ELEMENT_NODE) {
+        if        (xmlStrEqual(node->name , (xmlChar*)"vertical"  )) {
+          hvnode->push_back(createVerticalSlicingNode  (node, hvnode));
+        } else if (xmlStrEqual(node->name , (xmlChar*)"horizontal")) {
+          hvnode->push_back(createHorizontalSlicingNode(node, hvnode));
+        } else if (xmlStrEqual(node->name , (xmlChar*)"device"    )) {
+          hvnode->push_back(createDeviceSlicingNode    (node, hvnode));
+        } else if (xmlStrEqual(node->name , (xmlChar*)"routing"   )) {
+          hvnode->push_back(createRoutingSlicingNode   (node, hvnode));
+        } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )){
+          cerr << "[WARNING] Unknown " << node->name << " node in 'slicingtree' section, it will be ignored." << endl;
+        }
+      }
+    }
+  }
+
+  void Circuit::setHVParameters (xmlNode* xnode, HVSlicingNode* hvnode) {
+    bool toleranceRatioHSet = false;
+    bool toleranceRatioWSet = false;
+    bool toleranceBandHSet  = false;
+    bool toleranceBandWSet  = false;
+
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      xmlChar* typeC = xmlGetProp(node, (xmlChar*)"type");
+
+      if (typeC) {
+        string type ((const char*)typeC);
+
+        if (type == "alignment") {
+          xmlChar* alignmentC = xmlGetProp(node, (xmlChar*)"alignment");
+          if (alignmentC){
+            string alignment ((const char*)alignmentC);
+            hvnode->setAlignment(alignment);
+          }
+        } else if (type == "toleranceBandH") {
+          xmlChar* toleranceBandHC = xmlGetProp(node, (xmlChar*)"toleranceBandH");
+          if (toleranceBandHC){
+            string toleranceBandH ((const char*)toleranceBandHC);
+            hvnode->setToleranceBandH(toleranceBandH);
+            toleranceBandHSet = true;
+          }
+        } else if (type == "toleranceBandW") {
+          xmlChar* toleranceBandWC = xmlGetProp(node, (xmlChar*)"toleranceBandW");
+          if (toleranceBandWC){
+            string toleranceBandW ((const char*)toleranceBandWC);
+            hvnode->setToleranceBandW(toleranceBandW);
+            toleranceBandWSet = true;
+          }
+        } else if (type == "toleranceRatioH") {
+          xmlChar* toleranceRatioHC = xmlGetProp(node, (xmlChar*)"toleranceRatioH");
+          if (toleranceRatioHC){
+            string toleranceRatioH ((const char*)toleranceRatioHC);
+            hvnode->setToleranceRatioH(toleranceRatioH);
+            toleranceRatioHSet = true;
+          }
+        } else if (type == "toleranceRatioW") {
+          xmlChar* toleranceRatioWC = xmlGetProp(node, (xmlChar*)"toleranceRatioW");
+          if (toleranceRatioWC){
+            string toleranceRatioW ((const char*)toleranceRatioWC);
+            hvnode->setToleranceRatioW(toleranceRatioW);
+            toleranceRatioWSet = true;
+          }
+        } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )){
+          cerr << "[WARNING] Unknown " << node->name << " node in 'HVparameters' section, it will be ignored." << endl;
+        }
+      }
+    }
+    
+    if (!hvnode->isRoot()){
+      if (!toleranceRatioHSet){
+        hvnode->setToleranceRatioH(hvnode->getParent()->getToleranceRatioH());
+      }
+      if (!toleranceRatioWSet){
+        hvnode->setToleranceRatioW(hvnode->getParent()->getToleranceRatioW());
+      }
+      if (!toleranceBandHSet){
+        hvnode->setToleranceBandH(hvnode->getParent()->getToleranceBandH());
+      }
+      if (!toleranceBandWSet){
+        hvnode->setToleranceBandW(hvnode->getParent()->getToleranceBandW());
+      }
+    }
+  }
+
+  void Circuit::setHVSymmetries (xmlNode* xnode, HVSlicingNode* hvnode) {
+    xmlNode* child = xnode->children;
+    for (xmlNode* node = child; node; node = node->next) {
+      xmlChar* sourceC = xmlGetProp(node, (xmlChar*)"source");
+      xmlChar* targetC = xmlGetProp(node, (xmlChar*)"target");
+      if ((sourceC)&&(targetC)) {
+        string source ((const char*)sourceC);
+        string target ((const char*)targetC);
+        hvnode->addSymmetry(source, target);
+      } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )){
+        cerr << "[WARNING] Unknown " << node->name << " node in 'HVsymmetries' section, it will be ignored." << endl;
+      }
+    }
+  }
+
+  DSlicingNode* Circuit::createDeviceSlicingNode (xmlNode* xnode, SlicingNode* slicingNode) {
+    DSlicingNode* dnode = NULL;
+
+    xmlChar* instanceNameC = xmlGetProp(xnode, (xmlChar*)"instance");
+    if (instanceNameC){ 
+      string instanceName ((const char*)instanceNameC);
+      dnode = DSlicingNode::create( instanceName, slicingNode );
+    
+      xmlNode* child = xnode->children;
+      for (xmlNode* node = child; node; node = node->next) {
+        xmlChar* typeC = xmlGetProp(node, (xmlChar*)"type");
+        if (typeC) {
+          string type ((const char*)typeC);
+
+          if (type == "alignment") {
+            xmlChar* alignmentC = xmlGetProp(node, (xmlChar*)"alignment");
+            if (alignmentC){
+              string alignment ((const char*)alignmentC);
+              dnode->setAlignment(alignment);
+            } 
+          } else if (type == "preset") {
+            xmlChar* presetC = xmlGetProp(node, (xmlChar*)"preset");
+            if (presetC){
+              string preset ((const char*)presetC);
+              dnode->setPreset(preset);
+            }
+          } else if (type == "nfing") {
+            xmlChar* nfingC = xmlGetProp(node, (xmlChar*)"nfing");
+            if (nfingC){
+              string nfing ((const char*)nfingC);
+              dnode->setNFing(nfing);
+            }
+          } else if (type == "x") {
+            xmlChar* xC = xmlGetProp(node, (xmlChar*)"x");
+            if (xC){
+              string x ((const char*)xC);
+              dnode->setX(x);
+            }
+          } else if (type == "y") {
+            xmlChar* yC = xmlGetProp(node, (xmlChar*)"y");
+            if (yC){
+              string y ((const char*)yC);
+              dnode->setY(y);
+            }
+          } else if (type == "nodeSets") {
+            xmlChar* startC = xmlGetProp(node, (xmlChar*)"start");
+            xmlChar* stepC  = xmlGetProp(node, (xmlChar*)"step");
+            xmlChar* countC = xmlGetProp(node, (xmlChar*)"count");
+            if ( (startC) && (stepC) && (countC) ){
+              string start ((const char*)startC);
+              string step  ((const char*)stepC);
+              string count ((const char*)countC);
+              dnode->setStart(start);
+              dnode->setStep (step);
+              dnode->setCount(count);
+            } 
+          } else 
+              cerr << "[WARNING] Unknown " << type << " type in 'device/parameter' section, it will be ignored." << endl;
+        } else if (!xmlStrEqual(node->name, (xmlChar*)"comment"   )){
+          cerr << "[WARNING] Unknown " << node->name << " node in 'device' section, it will be ignored." << endl;
+        }
+      }
+    }
+    return dnode;
+  }
+
+  RSlicingNode* Circuit::createRoutingSlicingNode (xmlNode* xnode, SlicingNode* slicingNode) {
+    RSlicingNode* rnode = NULL;
+    xmlChar* valueC = xmlGetProp(xnode, (xmlChar*)"value");
+    if (valueC){
+      string value ((const char*)valueC);
+      rnode = RSlicingNode::create(value, slicingNode);
+    }
+    return rnode;
+  }
+
   Circuit* Circuit::readFromFile(const string filePath) {
     LIBXML_TEST_VERSION;
     Circuit* cir = NULL;
@@ -1112,7 +1363,7 @@ namespace OpenChams {
       string error ("[ERROR] Failed to parse: ");
       error += filePath;
       throw OpenChamsException(error);
-      //return NULL;
+    //return NULL;
     }
     xmlNode* rootElement = xmlDocGetRootElement(doc);
     if (rootElement->type == XML_ELEMENT_NODE && xmlStrEqual(rootElement->name, (xmlChar*)"circuit")) {
@@ -1120,47 +1371,50 @@ namespace OpenChams {
       xmlChar* technoNameC  = xmlGetProp(rootElement, (xmlChar*)"techno");
         
       if (circuitNameC && technoNameC) {
-	const std::string& circuitName ((const char*)circuitNameC);
-	const std::string& technoName  ((const char*)technoNameC);
-	cir = new Circuit(circuitName, technoName);
+        const std::string& circuitName ((const char*)circuitNameC);
+        const std::string& technoName  ((const char*)technoNameC);
+        cir = new Circuit(circuitName, technoName);
       } else {
-	throw OpenChamsException("[ERROR] 'circuit' node must have 'name' and 'techno' properties.");
-	return NULL;
+        throw OpenChamsException("[ERROR] 'circuit' node must have 'name' and 'techno' properties.");
+        return NULL;
       }
       cir->setAbsolutePath(filePath);
         
       xmlNode* child = rootElement->children;
       for (xmlNode* node = child; node; node = node->next) {
-	if (node->type == XML_ELEMENT_NODE) {
-	  if (xmlStrEqual(node->name, (xmlChar*)"subCircuitsPaths")) {
-	    cir->readSubCircuitsPaths(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
-	    cir->readCircuitParameters(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"simulModels")) {
-	    cir->readSimulModels(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"netlist")) {
-	    cir->readNetList(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
-	    cir->readSchematic(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
-	    cir->readSizing(node);
-	  }
-	  else if (xmlStrEqual(node->name, (xmlChar*)"layout")) {
-	    cir->readLayout(node);
-	  }
-	  else {
-	    string error("[ERROR] Unknown section ");
-	    error += string((const char*)node->name);
-	    error += " in circuit description.";
-	    throw OpenChamsException(error);
-	    return NULL;
-	  }
-	}
+        if (node->type == XML_ELEMENT_NODE) {
+          if (xmlStrEqual(node->name, (xmlChar*)"subCircuitsPaths")) {
+            cir->readSubCircuitsPaths(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"parameters")) {
+            cir->readCircuitParameters(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"simulModels")) {
+            cir->readSimulModels(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"netlist")) {
+            cir->readNetList(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"schematic")) {
+            cir->readSchematic(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"sizing")) {
+            cir->readSizing(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"layout")) {
+            cir->readLayout(node);
+          }
+          else if (xmlStrEqual(node->name, (xmlChar*)"slicingtree")) {
+            cir->readSlicingTree(node);
+          }
+          else {
+            string error("[ERROR] Unknown section ");
+            error += string((const char*)node->name);
+            error += " in circuit description.";
+            throw OpenChamsException(error);
+            return NULL;
+          }
+        }
       }
     }
     if (!readNetListDone) {
@@ -1213,6 +1467,16 @@ namespace OpenChams {
     return _layout;
   }
 
+  void Circuit::setSlicingTree( SlicingNode* slicingtree ) {
+    if (_slicingtree)
+      throw OpenChamsException("[ERROR] Cannot create two slicing trees in one circuit.");
+
+    _slicingtree = slicingtree;
+    if (!_slicingtree)
+      throw OpenChamsException("[ERROR] Cannot create slicingtree.");
+
+  }
+
   void Circuit::driveHBTree(ofstream& file, Node* node, unsigned indent) {
     if (!node) return;
     for (unsigned i = 0 ; i < indent ; i++)
@@ -1233,16 +1497,16 @@ namespace OpenChams {
     if (bloc) {
       file << "<bloc name=\"" << bloc->getName() << "\"";
       if (pos != "")
-	file << " position=\"" << pos << "\"";
+        file << " position=\"" << pos << "\"";
       if (bloc->getTop() == NULL && bloc->getRight() == NULL)
-	file << "/>" << endl;
+        file << "/>" << endl;
       else {
-	file << ">" << endl;
-	driveHBTree(file, bloc->getTop() , indent+1);
-	driveHBTree(file, bloc->getRight(), indent+1);
-	for (unsigned i = 0 ; i < indent ; i++)
-	  file << "  ";
-	file << "</bloc>" << endl;
+        file << ">" << endl;
+        driveHBTree(file, bloc->getTop() , indent+1);
+        driveHBTree(file, bloc->getRight(), indent+1);
+        for (unsigned i = 0 ; i < indent ; i++)
+          file << "  ";
+        file << "</bloc>" << endl;
       }
       return;
     }
@@ -1275,6 +1539,17 @@ namespace OpenChams {
     }
   }
 
+  void Circuit::driveSlicingTree(ofstream& file, SlicingNode* snode, unsigned indent) {
+    if (!snode) return;
+    for (unsigned i = 0 ; i < indent ; i++){ file << "  "; }
+    file << "<slicingtree>" << endl;
+
+    snode->toXML(file, indent+1);
+
+    for (unsigned i = 0 ; i < indent ; i++){ file << "  "; }
+    file << "</slicingtree>" << endl;
+  }
+
   bool Circuit::writeToFile(string filePath) {
     ofstream file;
     file.open(filePath.c_str());
@@ -1284,21 +1559,21 @@ namespace OpenChams {
       error += " for writing.";
       throw OpenChamsException(error);
     }
-    // checks before do anything
+  // checks before do anything
     if (!_netlist) {
-      //cerr << "no netlist" << endl; cerr.flush();
+    //cerr << "no netlist" << endl; cerr.flush();
       throw OpenChamsException("[ERROR] Cannot writeToFile since no netlist is defined !");
-      //return false;
+    //return false;
     }    
     if (_netlist->hasNoInstances()) {
-      //cerr << "no instances" << endl; cerr.flush();
+    //cerr << "no instances" << endl; cerr.flush();
       throw OpenChamsException("[ERROR] Cannot writeToFile since no instance is defined in netlist !");
-      //return false;
+    //return false;
     }
     if (_netlist->hasNoNets()) {
-      //cerr << "no nets" << endl; cerr.flush();
+    //cerr << "no nets" << endl; cerr.flush();
       throw OpenChamsException("[ERROR] Cannot writeToFile since no net is defined in netlist !");
-      //return false;
+    //return false;
     }
     
     file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << endl
@@ -1306,7 +1581,7 @@ namespace OpenChams {
     if (_subCircuitsPaths.size() != 0) {
       file << "  <subCircuitsPaths>"  << endl;
       for (size_t i = 0 ; i < _subCircuitsPaths.size() ; i++ ) {
-	file << "    <path path=\"" << _subCircuitsPaths[i] << "\"/>" << endl;
+        file << "    <path path=\"" << _subCircuitsPaths[i] << "\"/>" << endl;
       }
       file << "  </subCircuitsPaths>" << endl;
     }
@@ -1315,7 +1590,7 @@ namespace OpenChams {
       for (map<string,string>::const_iterator it = _params.getValues().begin() ; it != _params.getValues().end() ; ++it) {
         file << "    <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
       }
-      //cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
+    //cerr << "_params.getValues().size() = " << _params.getValues().size() << endl;
       file << "  </parameters>" << endl;
     }
     file << "  <netlist>" << endl
@@ -1326,46 +1601,46 @@ namespace OpenChams {
       Instance* inst = (*it);
       Device*   dev  = dynamic_cast<Device*>(inst);
       if (inst->hasNoConnectors()) {
-	string error("[ERROR] Cannot writeToFile since instance (");
-	error += inst->getName();
-	error += ") has no connectors !";
-	throw OpenChamsException(error);
-	//return false;
+        string error("[ERROR] Cannot writeToFile since instance (");
+        error += inst->getName();
+        error += ") has no connectors !";
+        throw OpenChamsException(error);
+      //return false;
       }
       if (dev && dev->hasNoTransistors()) {
-	string error("[ERROR] Cannot writeToFile since device instance (");
-	error += dev->getName();
-	error += ") has no transistors !";
-	throw OpenChamsException(error);
+        string error("[ERROR] Cannot writeToFile since device instance (");
+        error += dev->getName();
+        error += ") has no transistors !";
+        throw OpenChamsException(error);
       }
       if (dev) {
-	string sourceBulkStr = (dev->isSourceBulkConnected()) ? "True" : "False";
-	file << "      <instance name=\"" << dev->getName() << "\" model=\"" << dev->getModel() << "\" mostype=\"" << dev->getMosType() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\" order=\"" << dev->getOrder() << "\">" << endl;
+        string sourceBulkStr = (dev->isSourceBulkConnected()) ? "True" : "False";
+        file << "      <instance name=\"" << dev->getName() << "\" model=\"" << dev->getModel() << "\" mostype=\"" << dev->getMosType() << "\" sourceBulkConnected=\"" << sourceBulkStr << "\" order=\"" << dev->getOrder() << "\">" << endl;
       } else {
-	file << "      <instance name=\"" << inst->getName() << "\" model=\"" << inst->getModel() << "\" order=\"" << inst->getOrder() << "\">" << endl;
+        file << "      <instance name=\"" << inst->getName() << "\" model=\"" << inst->getModel() << "\" order=\"" << inst->getOrder() << "\">" << endl;
       }
       file << "        <connectors>" << endl;
       for (map<string, Net*>::const_iterator it = inst->getConnectors().begin() ; it != inst->getConnectors().end() ; ++it) {
-	file << "          <connector name=\"" << (*it).first << "\"/>" << endl;
+        file << "          <connector name=\"" << (*it).first << "\"/>" << endl;
       }
       file << "        </connectors>" << endl;
       if (dev) {
-	file << "        <transistors>" << endl;
-	for (vector<Transistor*>::const_iterator it = dev->getTransistors().begin() ; it != dev->getTransistors().end() ; ++it ) {
-	  Transistor* tr = (*it);
-	  file << "          <transistor name=\"" << tr->getName() << "\">" << endl
-	       << "            <connection gate=\"" << tr->getGate() << "\" source=\"" << tr->getSource() << "\" drain=\"" << tr->getDrain() << "\" bulk=\"" << tr->getBulk() << "\"/>" << endl
-	       << "          </transistor>" << endl;
-	}
-	file << "        </transistors>" << endl;
+        file << "        <transistors>" << endl;
+        for (vector<Transistor*>::const_iterator it = dev->getTransistors().begin() ; it != dev->getTransistors().end() ; ++it ) {
+          Transistor* tr = (*it);
+          file << "          <transistor name=\"" << tr->getName() << "\">" << endl
+               << "            <connection gate=\"" << tr->getGate() << "\" source=\"" << tr->getSource() << "\" drain=\"" << tr->getDrain() << "\" bulk=\"" << tr->getBulk() << "\"/>" << endl
+               << "          </transistor>" << endl;
+        }
+        file << "        </transistors>" << endl;
       }
       if (!inst->getParameters().isEmpty()) {
-	Parameters params = inst->getParameters();
-	file << "        <parameters>" << endl;
-	for (map<string,string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
-	  file << "          <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
-	}
-	file << "        </parameters>" << endl;
+        Parameters params = inst->getParameters();
+        file << "        <parameters>" << endl;
+        for (map<string,string>::const_iterator it = params.getValues().begin() ; it != params.getValues().end() ; ++it) {
+          file << "          <parameter name=\"" << (*it).first << "\" value=\"" << (*it).second << "\"/>" << endl;
+        }
+        file << "        </parameters>" << endl;
       }
       file << "      </instance>" << endl;
     }
@@ -1377,20 +1652,20 @@ namespace OpenChams {
     for (vector<Net*>::iterator it = nets.begin() ; it != nets.end() ; ++it) {
       Net* net = (*it);
       if (net->hasNoConnections()) {
-	string error("[ERROR] Cannot writeToFile since net (");
-	error += net->getName();
-	error += ") has no connectors !";
-	throw OpenChamsException(error);
-	//return false;
+        string error("[ERROR] Cannot writeToFile since net (");
+        error += net->getName();
+        error += ") has no connectors !";
+        throw OpenChamsException(error);
+      //return false;
       }
       if (!net->hasNoPorts() || !net->hasNoWires())
-	schematicNets = true;
+        schematicNets = true;
       string externStr = (net->isExternal()) ? "True" : "False";
       file << "      <net name=\"" << net->getName() << "\" type=\"" << net->getType() << "\" isExternal=\"" << externStr << "\">" << endl;
       vector<Net::Connection*> connections = net->getConnections();
       sort(connections.begin(), connections.end(), ConnectionsSort);
       for (vector<Net::Connection*>::iterator it = connections.begin() ; it != connections.end() ; ++it) {
-	file << "        <connector instance=\"" << (*it)->getInstanceName() << "\" name=\"" << (*it)->getConnectorName() << "\"/>" << endl;
+        file << "        <connector instance=\"" << (*it)->getInstanceName() << "\" name=\"" << (*it)->getConnectorName() << "\"/>" << endl;
       }
       file << "      </net>" << endl;
     }
@@ -1399,119 +1674,119 @@ namespace OpenChams {
     if (_schematic && !_schematic->hasNoInstances()) {
       file << "  <schematic>" << endl;
       for (map<string, Schematic::Infos*>::const_iterator it = _schematic->getInstances().begin() ; it != _schematic->getInstances().end(); ++it ) {
-	Schematic::Infos* infos = (*it).second;
-	file << "    <instance name=\"" << ((*it).first) << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" orient=\"" << infos->getOrientation() << "\"/>" << endl;
+        Schematic::Infos* infos = (*it).second;
+        file << "    <instance name=\"" << ((*it).first) << "\" x=\"" << infos->getX() << "\" y=\"" << infos->getY() << "\" orient=\"" << infos->getOrientation() << "\"/>" << endl;
       }
       if (schematicNets) {
-	for (size_t i = 0 ; i < nets.size() ; i++) {
-	  Net* net = nets[i];
-	  if (net->hasNoPorts() && net->hasNoWires())
-	    continue;
-	  file << "    <net name=\"" << net->getName() << "\">" << endl;
-	  for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
-	    Port* port = net->getPorts()[j];
-	    if (!port)
-	      continue;
-	    file << "      <port type=\"" << port->getType() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" orient=\"" << port->getOrientation() << "\"/>" << endl;
-	  }
-	  for (size_t j = 0 ; j < net->getWires().size() ; j++) {
-	    Wire* wire = net->getWires()[j];
-	    file << "      <wire>" << endl;
-	    WirePoint* start = wire->getStartPoint();
-	    WirePoint* end   = wire->getEndPoint();
-	    // start point
-	    if (dynamic_cast<InstancePoint*>(start)) {
-	      InstancePoint* iP = static_cast<InstancePoint*>(start);
-	      file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
-	    } else if (dynamic_cast<PortPoint*>(start)) {
-	      PortPoint* pP = static_cast<PortPoint*>(start);
-	      file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
-	    } else {
-	      throw OpenChamsException("[ERROR] Wire start point is nor an InstancePoint nor a PortPoint.");
-	    }
-	    // intermediate points
-	    for (size_t k = 0 ; k < wire->getIntermediatePoints().size() ; k++) {
-	      IntermediatePoint* iP = wire->getIntermediatePoints()[k];
-	      file << "        <point x=\"" << iP->getX() << "\" y=\"" << iP->getY() << "\"/>" << endl;
-	    }
-	    // end point
-	    if (dynamic_cast<InstancePoint*>(end)) {
-	      InstancePoint* iP = static_cast<InstancePoint*>(end);
-	      file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
-	    } else if (dynamic_cast<PortPoint*>(end)) {
-	      PortPoint* pP = static_cast<PortPoint*>(end);
-	      file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
-	    } else {
-	      throw OpenChamsException("[ERROR] Wire end point is nor an InstancePoint nor a PortPoint.");
-	    }
-	    file << "      </wire>" << endl;
-	  }
-	  file << "    </net>" << endl;
-	}
+        for (size_t i = 0 ; i < nets.size() ; i++) {
+          Net* net = nets[i];
+          if (net->hasNoPorts() && net->hasNoWires())
+            continue;
+          file << "    <net name=\"" << net->getName() << "\">" << endl;
+          for (size_t j = 0 ; j < net->getPorts().size() ; j++) {
+            Port* port = net->getPorts()[j];
+            if (!port)
+              continue;
+            file << "      <port type=\"" << port->getType() << "\" idx=\"" << port->getIndex() << "\" x=\"" << port->getX() << "\" y=\"" << port->getY() << "\" orient=\"" << port->getOrientation() << "\"/>" << endl;
+          }
+          for (size_t j = 0 ; j < net->getWires().size() ; j++) {
+            Wire* wire = net->getWires()[j];
+            file << "      <wire>" << endl;
+            WirePoint* start = wire->getStartPoint();
+            WirePoint* end   = wire->getEndPoint();
+          // start point
+            if (dynamic_cast<InstancePoint*>(start)) {
+              InstancePoint* iP = static_cast<InstancePoint*>(start);
+              file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
+            } else if (dynamic_cast<PortPoint*>(start)) {
+              PortPoint* pP = static_cast<PortPoint*>(start);
+              file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
+            } else {
+              throw OpenChamsException("[ERROR] Wire start point is nor an InstancePoint nor a PortPoint.");
+            }
+          // intermediate points
+            for (size_t k = 0 ; k < wire->getIntermediatePoints().size() ; k++) {
+              IntermediatePoint* iP = wire->getIntermediatePoints()[k];
+              file << "        <point x=\"" << iP->getX() << "\" y=\"" << iP->getY() << "\"/>" << endl;
+            }
+          // end point
+            if (dynamic_cast<InstancePoint*>(end)) {
+              InstancePoint* iP = static_cast<InstancePoint*>(end);
+              file << "        <connector name=\"" << iP->getName() << "\" plug=\"" << iP->getPlug() << "\"/>" << endl;
+            } else if (dynamic_cast<PortPoint*>(end)) {
+              PortPoint* pP = static_cast<PortPoint*>(end);
+              file << "        <connector idx=\"" << pP->getIndex() << "\"/>" << endl;
+            } else {
+              throw OpenChamsException("[ERROR] Wire end point is nor an InstancePoint nor a PortPoint.");
+            }
+            file << "      </wire>" << endl;
+          }
+          file << "    </net>" << endl;
+        }
       }
       file << "  </schematic>" << endl;
     }
 
-    // SIZING (modified by Farakh) ***************************************************************
+  // SIZING (modified by Farakh) ***************************************************************
     if(_sizing && (!_sizing->hasNoOperators() || !_sizing->hasNoEquations()) )
       file << "  <sizing>" << endl;
     if (_sizing && !_sizing->hasNoOperators()) {
-      //    file << "  <sizing>" << endl;
+    //    file << "  <sizing>" << endl;
       for (map<string, Operator*>::const_iterator it = _sizing->getOperators().begin() ; it != _sizing->getOperators().end() ; ++it) {
-	Operator* op = (*it).second;
-	string opName = op->getName();
-	transform(opName.begin(), opName.end(), opName.begin(), ::toupper);
-	file << "    <instance name=\"" << ((*it).first) << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel() << "\">" << endl;
-	if (!op->hasNoConstraints()) {
-	  for (map<string, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
-	    Operator::Constraint* cn = (*cit).second;
-	    const std::string& ref = cn->getRef();
-	    if (ref.empty()) {
-	      file << "      <constraint param=\"" << ((*cit).first) << "\" refEquation=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
-	    } else {
-	      file << "      <constraint param=\"" << ((*cit).first) << "\" ref=\"" << cn->getRef() << "\" refParam=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
-	    }
-	  }
-	}
-	file << "    </instance>" << endl;
+        Operator* op = (*it).second;
+        string opName = op->getName();
+        transform(opName.begin(), opName.end(), opName.begin(), ::toupper);
+        file << "    <instance name=\"" << ((*it).first) << "\" operator=\"" << opName << "\" simulModel=\"" << op->getSimulModel() << "\">" << endl;
+        if (!op->hasNoConstraints()) {
+          for (map<string, Operator::Constraint*>::const_iterator cit = op->getConstraints().begin() ; cit != op->getConstraints().end() ; ++cit) {
+            Operator::Constraint* cn = (*cit).second;
+            const std::string& ref = cn->getRef();
+            if (ref.empty()) {
+              file << "      <constraint param=\"" << ((*cit).first) << "\" refEquation=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+            } else {
+              file << "      <constraint param=\"" << ((*cit).first) << "\" ref=\"" << cn->getRef() << "\" refParam=\"" << cn->getRefParam() << "\" factor=\"" << cn->getFactor() << "\"/>" << endl;
+            }
+          }
+        }
+        file << "    </instance>" << endl;
       }
     }
-    // EQUATIONS
+  // EQUATIONS
     if (_sizing && !_sizing->hasNoEquations()) {
       file << "    <equations>" << endl;      
-      //	for (map<string, string>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it)
-      //	  file << "      <eq name=\"" << ((*it).first) << "\" equation=\"" << (*it).second << "\"/>" << endl;
+    //	for (map<string, string>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it)
+    //	  file << "      <eq name=\"" << ((*it).first) << "\" equation=\"" << (*it).second << "\"/>" << endl;
       file << "      <cstr_designer>" << endl;
       for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
-	if(dynamic_cast<DesignerCstrOC*>((*it).second))
-	  file << "        <cstr_dsg name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+        if(dynamic_cast<DesignerCstrOC*>((*it).second))
+          file << "        <cstr_dsg name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
       }
       file << "      </cstr_designer>" << endl;
       
       file << "      <cstr_circuit_level>" << endl;
       for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
-	if(dynamic_cast<HighLevelCstr*>((*it).second))
-	  file << "        <cstr_cl name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+        if(dynamic_cast<HighLevelCstr*>((*it).second))
+          file << "        <cstr_cl name=\"" << ((*it).first) << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
       }
       file << "      </cstr_circuit_level>" << endl;
       
       file << "      <nrc_cstr>" << endl;
       for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
-	if(dynamic_cast<NRCCstr*>((*it).second)) {
-	  NRCCstr* nrcCstr = (NRCCstr*)((*it).second);
-	  file << "        <nrc name=\"" << ((*it).first) << "\" param=\"" << nrcCstr->getVoltage() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
-	}
+        if(dynamic_cast<NRCCstr*>((*it).second)) {
+          NRCCstr* nrcCstr = (NRCCstr*)((*it).second);
+          file << "        <nrc name=\"" << ((*it).first) << "\" param=\"" << nrcCstr->getVoltage() << "\" equation=\"" << (*it).second->getEquationStr()[0] << "\"/>" << endl;
+        }
       }
       file << "      </nrc_cstr>" << endl;
       
       file << "      <ddps>" << endl;
       for(map<string, Equation*>::const_iterator it = _sizing->getEquations().begin() ; it != _sizing->getEquations().end() ; ++it) {
-	if(dynamic_cast<DDP*>((*it).second)) {
-	  file << "        <ddp_i name=\"" << ((*it).first) << "\">" << endl;
-	  for(map<int, string>::const_iterator it2 = (*it).second->getEquationStr().begin(); it2!=(*it).second->getEquationStr().end(); ++it2)
-	    file << "          <ddp_eq equation=\"" << (*it2).second << "\"/>" << endl;
-	  file << "        </ddp_i>" << endl;
-	}
+        if(dynamic_cast<DDP*>((*it).second)) {
+          file << "        <ddp_i name=\"" << ((*it).first) << "\">" << endl;
+          for(map<int, string>::const_iterator it2 = (*it).second->getEquationStr().begin(); it2!=(*it).second->getEquationStr().end(); ++it2)
+            file << "          <ddp_eq equation=\"" << (*it2).second << "\"/>" << endl;
+          file << "        </ddp_i>" << endl;
+        }
       }
       file << "      </ddps>" << endl;
       
@@ -1520,22 +1795,29 @@ namespace OpenChams {
     }
     if(_sizing && (!_sizing->hasNoOperators() || !_sizing->hasNoEquations()) )
       file << "  </sizing>" << endl;
-    // *******************************************************************************************
-
+  // *******************************************************************************************
     if (_layout) {
       file << "  <layout>" << endl;
       if (!_layout->hasNoInstance()) {
-	for (map<string, string>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
-	  file << "    <instance name=\"" << ((*it).first) << "\" style=\"" << ((*it).second) << "\"/>" << endl;
-	}
+        for (map<string, string>::const_iterator it = _layout->getInstances().begin() ; it != _layout->getInstances().end() ; ++it) {
+          file << "    <instance name=\"" << ((*it).first) << "\" style=\"" << ((*it).second) << "\"/>" << endl;
+        }
       }
       if (Node* root = _layout->getHBTreeRoot()) {
-	file << "    <hbtree>" << endl;
-	driveHBTree(file, root, 3);
-	file << "    </hbtree>" << endl;
+        file << "    <hbtree>" << endl;
+        driveHBTree(file, root, 3);
+        file << "    </hbtree>" << endl;
       }
       file << "  </layout>" << endl;
     }
+  // *******************************************************************************************
+
+    if (_slicingtree) {
+      driveSlicingTree(file, _slicingtree, 1);
+    }
+
+
+
     file << "</circuit>" << endl;
     file.close();
     return true;        
