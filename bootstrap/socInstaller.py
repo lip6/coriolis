@@ -197,8 +197,8 @@ class GitRepository ( object ):
 class Configuration ( object ):
 
     PrimaryNames = \
-        [ 'sender'      , 'receiver'
-        , 'coriolisRepo', 'chamsRepo' , 'benchsRepo'
+        [ 'sender'      , 'receivers'
+        , 'coriolisRepo', 'chamsRepo' , 'benchsRepo', 'supportRepos'
         , 'homeDir'     , 'masterHost'
         , 'debugArg'    , 'nightlyMode'
         , 'rmSource'    , 'rmBuild', 'doGit', 'doBuild', 'doBenchs', 'doSendReport'
@@ -210,7 +210,8 @@ class Configuration ( object ):
 
     def __init__ ( self ):
       self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
-      self._receiver     = 'Jean-Paul.Chaput@lip6.fr'
+      self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', 'Eric.Lao@lip6.fr' ]
+      self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
       self._coriolisRepo = 'https://www-soc.lip6.fr/git/coriolis.git'
       self._chamsRepo    = 'file:///users/outil/chams/chams.git'
       self._benchsRepo   = 'https://www-soc.lip6.fr/git/alliance-check-toolkit.git'
@@ -321,16 +322,17 @@ class Report ( object ):
     def __init__ ( self, conf ):
       self.conf = conf
 
-      date      = time.strftime( "%A %d %B %Y" )
-      stateText = 'FAILED'
-      modeText  = 'SoC installation'
+      commaspace = ', '
+      date       = time.strftime( "%A %d %B %Y" )
+      stateText  = 'FAILED'
+      modeText   = 'SoC installation'
       if self.conf.success:     stateText = 'SUCCESS'
       if self.conf.nightlyMode: modeText  = 'Nightly build'
 
       self.message = MIMEMultipart()
       self.message['Subject'] = '[%s] Coriolis & Chams %s %s' % (stateText,modeText,date)
       self.message['From'   ] = self.conf.sender
-      self.message['To'     ] = self.conf.receiver
+      self.message['To'     ] = commaspace.join( self.conf.receivers )
       self.attachements = []
 
       self.mainText  = '\n'
@@ -408,11 +410,18 @@ try:
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
 
+    gitSupports = []
+    for supportRepo in conf.supportRepos:
+      gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
     gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir )
     gitChams    = GitRepository( conf.chamsRepo   , conf.srcDir )
     gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir )
 
     if conf.doGit:
+      for gitSupport in gitSupports:
+        if conf.rmSource: gitSupport.removeLocalRepo()
+        gitSupport.clone()
+
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
       gitCoriolis.checkout( 'devel' )
