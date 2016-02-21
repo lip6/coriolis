@@ -374,9 +374,9 @@ class Report ( object ):
       for attachement in self.attachements:
         self.message.attach( attachement )
 
-      print "Sending mail report to <%s>" % self.conf.receiver
+      print "Sending mail report to <%s>" % self.conf.receivers
       session = smtplib.SMTP( 'localhost' )
-      session.sendmail( self.conf.sender, self.conf.receiver, self.message.as_string() )
+      session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
       session.quit()
       return
 
@@ -449,7 +449,7 @@ try:
     if conf.doBuild:  conf.openLog( 'build' )
     if conf.doBenchs: conf.openLog( 'benchs' )
 
-    buildCommand  = '%s --root=%s --project=coriolis --project=chams --make="-j%%d install" %%s' \
+    buildCommand  = '%s --root=%s --project=support --project=coriolis --project=chams --make="-j%%d install" %%s' \
                      % (ccbBin,conf.rootDir)
     benchsCommand = 'cd %s/benchs && ./bin/go.sh clean && ./bin/go.sh lvx' \
                      % (gitBenchs.localRepoDir)
