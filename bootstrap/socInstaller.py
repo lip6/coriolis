@@ -421,6 +421,8 @@ try:
       for gitSupport in gitSupports:
         if conf.rmSource: gitSupport.removeLocalRepo()
         gitSupport.clone()
+        if gitSupport.url.endswith('rapidjson'):
+          gitSupport.checkout( 'a1c4f32' )
 
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
