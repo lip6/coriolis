@@ -1399,16 +1399,16 @@ extern "C" {
 
 # define   HCATCH  \
     }                                                            \
-    catch ( Warning& w ) {                                       \
+    catch ( const Warning& w ) {                                 \
       std::string message = "\n" + getString(w);                 \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
     }                                                            \
-    catch ( Error& e ) {                                         \
+    catch ( const Error& e ) {                                   \
       std::string message = "\n" + getString(e);                 \
       PyErr_SetString ( HurricaneError, message.c_str() );       \
       return NULL;                                               \
     }                                                            \
-    catch ( std::exception& e )  {                               \
+    catch ( const std::exception& e )  {                         \
       std::string message = "\n" + std::string(e.what());        \
       PyErr_SetString ( HurricaneError, message.c_str() );       \
       return NULL;                                               \

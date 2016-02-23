@@ -936,15 +936,18 @@ void Cell::_preDestroy()
     _slaveEntityMap.begin()->second->destroy();
   }
 
-//for ( View*     view          : getViews()          ) view->setCell( NULL );
-  for ( Marker*   marker        : getMarkers()        ) marker->destroy();
-  for ( Instance* slaveInstance : getSlaveInstances() ) slaveInstance->destroy();
-  for ( Instance* instance      : getInstances()      ) instance->destroy();
-  for ( Net*      net           : getNets() ) {
+  Markers   markers   = getMarkers       (); while ( markers  .getFirst() ) markers  .getFirst()->destroy();
+  Instances instances = getSlaveInstances(); while ( instances.getFirst() ) instances.getFirst()->destroy();
+            instances = getInstances     (); while ( instances.getFirst() ) instances.getFirst()->destroy();
+
+  Nets nets = getNets();
+  while ( nets.getFirst() ) {
+    Net* net = nets.getFirst();
     net->_getMainName().detachAll();
     net->destroy();
   }
-  for ( auto   islave : _netAliasSet ) delete islave;
+  for ( auto islave : _netAliasSet ) delete islave;
+
   for ( Slice* slice  : getSlices()  ) slice->_destroy();
   while ( not _extensionSlices.empty() ) _removeSlice( _extensionSlices.begin()->second );
 
