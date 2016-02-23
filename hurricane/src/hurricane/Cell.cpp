@@ -930,6 +930,8 @@ void Cell::_postCreate()
 void Cell::_preDestroy()
 // ********************
 {
+  notify( Flags::CellDestroyed );
+
   while ( _slaveEntityMap.size() ) {
     _slaveEntityMap.begin()->second->destroy();
   }

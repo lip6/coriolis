@@ -84,6 +84,7 @@ class Cell : public Entity {
                   // Flags set for Observers.
                   , CellAboutToChange       = 0x00000100
                   , CellChanged             = 0x00000200
+                  , CellDestroyed           = 0x00000400
                   // Cell states
                   , Terminal                = 0x00001000
                   , FlattenLeaf             = 0x00002000

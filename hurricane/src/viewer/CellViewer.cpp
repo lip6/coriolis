@@ -65,11 +65,19 @@ namespace Hurricane {
   void  CellObserver::notify ( unsigned int flags )
   {
     CellViewer* viewer = getOwner();
-    switch ( flags & (Cell::Flags::CellAboutToChange|Cell::Flags::CellChanged) ) {
+    switch ( flags & (Cell::Flags::CellAboutToChange
+                     |Cell::Flags::CellChanged
+                     |Cell::Flags::CellDestroyed) ) {
       case Cell::Flags::CellAboutToChange:
         viewer->emitCellAboutToChange();
         break;
       case Cell::Flags::CellChanged:
+        viewer->emitCellChanged();
+        break;
+      case Cell::Flags::CellDestroyed:
+        viewer->emitCellAboutToChange();
+        viewer->removeHistory( viewer->getCell() );
+        viewer->setCell( NULL );
         viewer->emitCellChanged();
         break;
     }
@@ -567,6 +575,12 @@ namespace Hurricane {
       _cellHistory.pop_front ();
     _cellHistory.push_back ( activeState );
 
+    rebuildHistory ();
+  }
+
+
+  void  CellViewer::rebuildHistory ()
+  {
     list< shared_ptr<CellWidget::State> >::iterator istate = _cellHistory.begin();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       if ( istate != _cellHistory.end() ) {
@@ -580,6 +594,20 @@ namespace Hurricane {
       } else {
         _cellHistoryAction[i]->setVisible ( false );
       }
+    }
+  }
+
+
+  void  CellViewer::removeHistory ( Cell* cell )
+  {
+    Name cellName = (cell) ? cell->getName() : "empty";
+
+    list< shared_ptr<CellWidget::State> >::iterator istate
+      = find_if( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
+
+    if (istate != _cellHistory.end()) {
+      _cellHistory.remove ( *istate );
+      rebuildHistory ();
     }
   }
 
@@ -616,12 +644,14 @@ namespace Hurricane {
       = find_if( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
 
     if (istate != _cellHistory.end()) {
+      cerr << "CellViewer::setCell() " << (*istate)->getCell() << endl;
+
       (*istate)->getCell()->addObserver( getCellObserver() );
       emit stateChanged ( *istate );
       return;
     }
 
-    cell->addObserver( getCellObserver() );
+    if (cell) cell->addObserver( getCellObserver() );
     _cellWidget->setCell( cell );
   }
 

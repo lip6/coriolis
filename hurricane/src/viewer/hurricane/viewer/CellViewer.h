@@ -135,6 +135,7 @@ namespace Hurricane {
               void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
+              void                 removeHistory             ( Cell* );
               void                 openHistoryCell           ();
               void                 openDesignBlob            ();
               void                 saveDesignBlob            ();
@@ -160,6 +161,7 @@ namespace Hurricane {
               void                 createMenus               ();
               void                 refreshTitle              ();
               void                 refreshHistory            ();
+              void                 rebuildHistory            ();
     private:
               QString              _getAbsWidgetPath         ( const QString& relPath ) const;
               QMenu*               _getParentMenu            ( const QString& ) const;

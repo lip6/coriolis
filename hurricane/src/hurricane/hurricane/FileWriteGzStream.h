@@ -18,6 +18,7 @@
 #define HURRICANE_FILEWRITEGZSTREAM_H
 
 #include "rapidjson/rapidjson.h"
+#include "rapidjson/filewritestream.h"
 
 
 namespace Hurricane {

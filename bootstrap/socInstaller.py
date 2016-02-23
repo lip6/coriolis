@@ -155,8 +155,8 @@ class Command ( object ):
 class GitRepository ( object ):
 
     @staticmethod
-    def getLocalRepository ( gitRepository ):
-      localRepo = gitRepository.split( '/' )[-1]
+    def getLocalRepository ( url ):
+      localRepo = url.split( '/' )[-1]
       if localRepo.endswith('.git'):
         localRepo = localRepo[:-4]
       return localRepo
@@ -421,8 +421,8 @@ try:
       for gitSupport in gitSupports:
         if conf.rmSource: gitSupport.removeLocalRepo()
         gitSupport.clone()
-        if gitSupport.url.endswith('rapidjson'):
-          gitSupport.checkout( 'a1c4f32' )
+       #if gitSupport.url.endswith('rapidjson'):
+       #  gitSupport.checkout( 'a1c4f32' )
 
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
