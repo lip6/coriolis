@@ -351,10 +351,9 @@ void Technology::_preDestroy()
 // **************************
 {
 
-    while ( !_layerMap.isEmpty() ) {
+    while ( not _layerMap.isEmpty() ) {
       _layerMap.getElements().getFirst()->destroy();
     }
-  //for_each_layer(layer, getLayers()) layer->destroy(); end_for;
 
     _dataBase->_setTechnology(NULL);
     DBo::_preDestroy();

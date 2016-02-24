@@ -115,7 +115,6 @@ namespace Hurricane {
     for(; it != end ; it++)
       slaveEntities.push_back(it->second);
     for(; slaveEntities.size() ; slaveEntities.pop_back()) {
-      cerr << "Erasing " << slaveEntities.back() << endl;
       slaveEntities.back()->destroy();
     }
 

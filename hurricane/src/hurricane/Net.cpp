@@ -681,11 +681,13 @@ void Net::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    for_each_plug(slavePlug, getSlavePlugs()) slavePlug->_destroy(); end_for;
+    Plugs plugs = getSlavePlugs();
+    while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
     unmaterialize();
 
-    for_each_rubber(rubber, getRubbers()) rubber->_destroy(); end_for;
+    Rubbers rubbers = getRubbers();
+    while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
 
     for_each_component(component, getComponents()) {
         for_each_hook(hook, component->getHooks()) {
@@ -694,16 +696,17 @@ void Net::_preDestroy()
             //if (!hook->IsMaster()) hook->detach();
             hook->detach();
             end_for;
+            // 24/02/2016 jpc: the answer, at last... we cannot iterate
+            // over a collection as it is modificated/destroyed!
         }
         end_for;
     }
 
-    for_each_component(component, getComponents()) {
-        if (!dynamic_cast<Plug*>(component))
-            component->destroy();
-        else
-            ((Plug*)component)->setNet(NULL);
-        end_for;
+    Components components = getComponents();
+    while ( components.getFirst() ) {
+      Component* component = components.getFirst();
+      if (!dynamic_cast<Plug*>(component)) component->destroy();
+      else (static_cast<Plug*>(component))->setNet(NULL);
     }
 
     _mainName.clear();

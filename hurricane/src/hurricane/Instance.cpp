@@ -579,16 +579,17 @@ void Instance::_postCreate()
 void Instance::_preDestroy()
 // ************************
 {
-    for_each_shared_path(sharedPath, _getSharedPathes()) delete sharedPath; end_for;
+  for ( SharedPath* sharedPath : _getSharedPathes() ) delete sharedPath;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    for_each_plug(plug, getPlugs()) plug->_destroy(); end_for;
+  Plugs plugs = getPlugs();
+  while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
-    _masterCell->_getSlaveInstanceSet()._remove(this);
-    _cell->_getInstanceMap()._remove(this);
+  _masterCell->_getSlaveInstanceSet()._remove(this);
+  _cell->_getInstanceMap()._remove(this);
 
-    if (_masterCell->isUniquified()) _masterCell->destroy();
+  if (_masterCell->isUniquified()) _masterCell->destroy();
 }
 
 string Instance::_getString() const

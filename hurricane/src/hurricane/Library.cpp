@@ -126,13 +126,11 @@ void Library::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    for_each_cell(cell, getCells()) cell->destroy(); end_for;
-    for_each_library(library, getLibraries()) library->destroy(); end_for;
+    Cells     cells     = getCells    (); while (cells    .getFirst()) cells    .getFirst()->destroy();
+    Libraries libraries = getLibraries(); while (libraries.getFirst()) libraries.getFirst()->destroy();
 
-    if (!_library)
-        _dataBase->_setRootLibrary(NULL);
-    else
-        _library->_getLibraryMap()._remove(this);
+    if (not _library) _dataBase->_setRootLibrary( NULL );
+    else _library->_getLibraryMap()._remove( this );
 }
 
 string Library::_getString() const
