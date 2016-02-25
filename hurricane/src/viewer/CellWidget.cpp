@@ -1084,8 +1084,8 @@ namespace Hurricane {
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
 
-    _initialSide = Graphics::toHighDpi( _initialSide );
-    if (Graphics::isHighDpi()) resize( _initialSide, _initialSide );
+    if (Graphics::isHighDpi()) resize( Graphics::toHighDpi(_initialSide)
+                                     , Graphics::toHighDpi(_initialSide) );
   }
 
 
@@ -1196,7 +1196,7 @@ namespace Hurricane {
 
   QSize  CellWidget::minimumSizeHint () const
   {
-    return QSize(_initialSide,_initialSide);
+    return QSize(Graphics::toHighDpi(_initialSide),Graphics::toHighDpi(_initialSide));
   }
 
 
@@ -1615,7 +1615,7 @@ namespace Hurricane {
   {
     QFont  font = Graphics::getNormalFont(flags&Bold);
 
-    if ( flags & BigFont ) font.setPointSize ( 18 );
+    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
     int          width   = metrics.width  ( text );
@@ -1639,7 +1639,7 @@ namespace Hurricane {
     painter.save();
     if ( flags & Reverse ) painter.setPen ( Graphics::getPen("background") );
     if ( flags & Reverse ) painter.setBackgroundMode ( Qt::OpaqueMode );
-    if ( flags & BigFont ) font.setPointSize ( 18 );
+    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
     int          width   = metrics.width  ( text );
