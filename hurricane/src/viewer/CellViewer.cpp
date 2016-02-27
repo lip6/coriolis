@@ -112,6 +112,7 @@ namespace Hurricane {
                                              , _toolInterrupt          (false)
                                              , _flags                  (0)
                                              , _updateState            (ExternalEmit)
+                                             , _pyScriptName           ()
   {
     setObjectName( "viewer" );
     menuBar()->setObjectName ( _getAbsWidgetPath("") );
@@ -893,7 +894,7 @@ namespace Hurricane {
 
 
   void  CellViewer::runScriptWidget ()
-  { ScriptWidget::runScript( this, getCell() ); }
+  { ScriptWidget::runScript( this, _pyScriptName, getCell() ); }
 
 
   string  CellViewer::_getString () const

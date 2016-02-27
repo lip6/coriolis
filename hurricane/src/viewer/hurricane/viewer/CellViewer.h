@@ -193,7 +193,7 @@ namespace Hurricane {
              bool                     _toolInterrupt;
              unsigned int             _flags;
              UpdateState              _updateState;
-
+             QString                  _pyScriptName;
   };
 
 
