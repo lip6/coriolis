@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -98,7 +98,7 @@ namespace Kite {
     ltracein(90);
 
     for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if (_segments[i]) _segments[i]->detach();
+      if (_segments[i]) { _segments[i]->detach(); _segments[i]->destroy(); }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
       if (_markers[i]) _markers[i]->destroy();

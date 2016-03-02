@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -182,7 +182,7 @@ namespace {
 //!
 //!               \image html  doRp_Access.png "doRp_Access()"
 
-//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( Component* rp, unsigned int flags );
+//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags );
 //! \param        rp      The Component onto which anchor the access contact.
 //! \param        flags   Relevant flags are:
 //!                         - HAccess, the terminal is to be accessed through an horizontal
@@ -642,7 +642,7 @@ namespace {
       inline GCell*        getGCell          () const;
       static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, unsigned int flags );
       static AutoContact*  doRp_Access       ( GCell*, Component*, unsigned int  flags );
-      static AutoContact*  doRp_AccessPad    ( Component*, unsigned int flags );
+      static AutoContact*  doRp_AccessPad    ( RoutingPad*, unsigned int flags );
       static void          doRp_StairCaseH   ( GCell*, Component* rp1, Component* rp2 );
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
@@ -769,7 +769,7 @@ namespace {
              Hook*                 _west;
              Hook*                 _north;
              Hook*                 _south;
-             vector<Component*>    _routingPads;
+             vector<RoutingPad*>   _routingPads;
   };
 
 
@@ -878,7 +878,7 @@ namespace {
             }
 
             ltrace(99) << "| Component to connect: " << anchor << endl;
-            _routingPads.push_back( anchor );
+            _routingPads.push_back( rp );
           }
         }
       }
@@ -1181,7 +1181,7 @@ namespace {
   }
 
 
-  AutoContact* GCellTopology::doRp_AccessPad ( Component* rp, unsigned int flags )
+  AutoContact* GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags )
   {
     ltrace(99) << "doRp_AccessPad()" << endl;
     ltracein(99);
@@ -1201,9 +1201,28 @@ namespace {
 
     rp->getBodyHook()->detach();
 
-    Point      position = rp->getCenter();
-    GCell*     gcell    = Session::getKatabatic()->getGCellGrid()->getGCell(position);
-    Component* anchor   = rp;
+    Point rpPosition = rp->getCenter();
+    Point position   = rp->getCenter();
+    Box   rpbb       = rp->getBoundingBox();
+    if (  (rpbb.getWidth () > 2*Session::getWireWidth(padDepth)) 
+       or (rpbb.getHeight() > 2*Session::getWireWidth(padDepth)) ) {
+    //cerr << "doRp_AccessPad(): connecting to non-punctual connector (RoutingPad).\n"
+    //     << "                  " << rp->getNet() << "pad:" << rp->getOccurrence().getMasterCell() << endl;
+
+      Transformation transf = rp->getOccurrence().getPath().getTransformation();
+      switch ( transf.getOrientation() ) {
+        case Transformation::Orientation::ID: position.setY( rpbb.getYMin() ); break;
+        case Transformation::Orientation::MY: position.setY( rpbb.getYMax() ); break;
+        case Transformation::Orientation::YR:
+        case Transformation::Orientation::R3: position.setX( rpbb.getXMin() ); break;
+        case Transformation::Orientation::R1: position.setX( rpbb.getXMax() ); break;
+        default:
+          break;
+      }
+    }
+
+    GCell*     gcell  = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+    Component* anchor = rp;
 
     if (padDepth != accessDepth) {
       if (padDepth > accessDepth) {
@@ -1213,8 +1232,8 @@ namespace {
         Contact*   target   = NULL;
         Contact*   source   = Contact::create ( rp
                                               , Session::getContactLayer(padDepth)
-                                              , 0
-                                              , 0
+                                              , position.getX() - rpPosition.getX()
+                                              , position.getY() - rpPosition.getY()
                                               , Session::getViaWidth(padDepth)
                                               , Session::getViaWidth(padDepth)
                                               );
@@ -1423,7 +1442,7 @@ namespace {
     bool          westPad     = false;
     bool          northPad    = false;
     bool          southPad    = false;
-    Instance*     padInstance = dynamic_cast<RoutingPad*>(_routingPads[0])->getOccurrence().getPath().getHeadInstance();
+    Instance*     padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
 
     switch ( padInstance->getTransformation().getOrientation() ) {
       case Transformation::Orientation::ID: northPad = true; break;

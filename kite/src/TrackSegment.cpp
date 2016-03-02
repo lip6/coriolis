@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -18,6 +18,7 @@
 #include <limits>
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
+#include "hurricane/BasicLayer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Name.h"
 #include "hurricane/RoutingPad.h"
@@ -43,6 +44,7 @@ namespace Kite {
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::BasicLayer;
   using Hurricane::Net;
   using Hurricane::Name;
   using Hurricane::RoutingPad;
@@ -101,6 +103,22 @@ namespace Kite {
     ltrace(90) << "TrackSegment::_preDestroy() - " << (void*)this
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
+
+    DbU::Unit length = base()->getLength();
+    if ( (length > 0) and (length < getPPitch()) ) {
+      BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
+      DbU::Unit   width  = base()->getWidth();
+      Contact*    source = base()->getAutoSource()->base();
+      Contact*    target = base()->getAutoTarget()->base();
+      if (isHorizontal()) {
+        width = std::max( width, source->getBoundingBox(layer).getHeight() );
+        width = std::max( width, target->getBoundingBox(layer).getHeight() );
+      } else {
+        width = std::max( width, source->getBoundingBox(layer).getWidth() );
+        width = std::max( width, target->getBoundingBox(layer).getWidth() );
+      }
+      base()->base()->setWidth( width );
+    }
 
     base()->removeObserver( getObserver() );
     TrackElement::_preDestroy();
