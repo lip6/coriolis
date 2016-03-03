@@ -132,9 +132,10 @@ namespace Vhdl {
         signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        _signals.insert( new ScalarSignal(net) );
+        ScalarSignal* signal = new ScalarSignal(net);
+        _signals.insert( signal );
         if (net->isGlobal())
-          _globals.insert( new ScalarSignal(net) );
+          _globals.insert( signal );
       }
     }
 
@@ -145,7 +146,7 @@ namespace Vhdl {
   Entity::~Entity ()
   {
     for ( auto signal : _signals ) delete signal;
-    for ( auto global : _globals ) delete global;
+  //for ( auto global : _globals ) delete global;
     for ( auto ientity=_entities.begin() ; ientity!=_entities.end() ; ++ientity ) {
       if (*ientity == this) {
         _entities.erase( ientity );
