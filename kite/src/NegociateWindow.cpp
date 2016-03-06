@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -375,6 +375,58 @@ namespace Kite {
   }
 
 
+  void  NegociateWindow::_pack ( size_t& count, bool last )
+  {
+    unsigned long limit     = _kite->getEventsLimit();
+    unsigned int  pushStage = RoutingEvent::getStage();
+    RoutingEvent::setStage( RoutingEvent::Pack );
+
+    RoutingEventQueue  packQueue;
+  //for ( size_t i = (count > 600) ? count-600 : 0
+  //    ; (i<_eventHistory.size()-(last ? 0 : 100)) and not isInterrupted() ; i++ ) {
+    for ( size_t i=0 ; i<_eventHistory.size() ; ++i ) {
+      RoutingEvent* event = _eventHistory.getNth(i);
+
+      if ( event and not event->isCloned() ) {
+        cerr << "Cloned:" << event->isCloned()
+             << " UTurn:" << event->getSegment()->isUTurn() << " " << event->getSegment() << endl;
+      }
+          
+      if ( event and not event->isCloned() and event->getSegment()->isUTurn() ) {
+        event->reschedule( packQueue, 0 );
+      }
+    }
+    packQueue.commit();
+
+    while ( not packQueue.empty() and not isInterrupted() ) {
+      RoutingEvent* event = packQueue.pop();
+
+      if (tty::enabled()) {
+        cmess2 << "        <pack.event:" << tty::bold << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << packQueue.size() << ">"
+               << setfill(' ') << tty::reset << tty::cr;
+        cmess2.flush();
+      } else {
+        cmess2 << "        <pack.event:" << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+               << endl;
+        cmess2.flush();
+      }
+
+      event->process( packQueue, _eventHistory, _eventLoop );
+
+      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+    }
+  // Count will be wrong!
+
+    RoutingEvent::setStage( pushStage );
+  }
+
+
   size_t  NegociateWindow::_negociate ()
   {
     ltrace(500) << "Deter| NegociateWindow::_negociate()" << endl;
@@ -412,10 +464,15 @@ namespace Kite {
       }
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
-
       count++;
+
+    //if (count and not (count % 500)) {
+    //  _pack( count, false );
+    //} 
+
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
+  //_pack( count, true );
     if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
     ltrace(500) << "Deter| Repair Stage" << endl;

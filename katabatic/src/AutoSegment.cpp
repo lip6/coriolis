@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -1154,14 +1154,56 @@ namespace Katabatic {
   }
 
 
-  bool  AutoSegment::canReduce () const
+  bool  AutoSegment::isUTurn () const
   {
+    if (isGlobal()) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    cerr << "AutoSegment::isUTurn():" << endl;
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+
+    cerr << "  Turn connected" << endl;
+
+    AutoSegment* perpandicular = source->getPerpandicular( this );
+    bool onPSourceSource = (perpandicular->getAutoSource() == source);
+
+    perpandicular = target->getPerpandicular( this );
+    bool onPTargetSource = (perpandicular->getAutoSource() == target);
+
+    cerr << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
+
+    return not (onPSourceSource xor onPTargetSource);
+  }
+
+
+  bool  AutoSegment::isReduceCandidate () const
+  {
+    if (isGlobal()) return false;
+    if (not isSpinTopOrBottom()) return false;
+    if (_reduceds) return false;
+
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
     if (not source->isTurn() or not target->isTurn()) return false;
+
+    return true;
+  }
+
+
+  bool  AutoSegment::canReduce () const
+  {
+    if (isGlobal()) return false;
     if (not isSpinTopOrBottom()) return false;
     if (_reduceds) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    if (not source->isTurn() or not target->isTurn()) return false;
 
     unsigned int perpandicularDepth = getDepth();
     if (isSpinBottom()) --perpandicularDepth;

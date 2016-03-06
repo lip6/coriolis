@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -150,6 +150,7 @@ namespace Kite {
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
   bool           TrackElement::isReduced            () const { return false; }
+  bool           TrackElement::isUTurn              () const { return false; }
   bool           TrackElement::isUserDefined        () const { return false; }
 // Predicates.
   bool           TrackElement::canSlacken           () const { return false; }

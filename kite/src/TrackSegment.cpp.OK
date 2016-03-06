@@ -161,7 +161,6 @@ namespace Kite {
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
   bool           TrackSegment::isReduced            () const { return _base->isReduced(); }
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
-  bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
 // Predicates.
 // Accessors.
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }

@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Session.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -320,12 +320,12 @@ namespace Kite {
   void  Session::_addMoveEvent ( TrackElement* segment, Track* track )
   {
     if (not segment->getTrack()) {
-      cerr << Bug( " Kite::Session::addMoveEvent() : %s has no target Track."
+      cerr << Bug( " Kite::Session::addMoveEvent() : %s is not yet in a track."
                  , getString(segment).c_str() ) << endl;
-      return;
+    } else {
+      _addRemoveEvent( segment );
     }
 
-    _addRemoveEvent( segment );
     _addInsertEvent( segment, track );
   }
 

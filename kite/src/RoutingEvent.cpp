@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingEvent.cpp"                       |
 // +-----------------------------------------------------------------+
@@ -341,6 +341,8 @@ namespace Kite {
     if (getStage() == Repair) {
       fork->setMode( RoutingEvent::Repair );
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
+    } else if (getStage() == RoutingEvent::Pack) {
+      fork->setMode( RoutingEvent::Pack );
     }
 
     queue.repush( fork );
@@ -415,12 +417,13 @@ namespace Kite {
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    history.push( this );
+    if (_mode != Pack) history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       ltrace(200) << "Already processed or disabled." << endl;
     } else {
       setProcessed();
+      setTimeStamp( _processeds );
 
       switch ( _mode ) {
         case Negociate: _processNegociate( queue, history ); break;
@@ -529,10 +532,7 @@ namespace Kite {
   {
     ltrace(200) << "* Mode:Pack." << endl;
 
-    if (_segment->getTrack() != NULL) {
-      ltrace(200) << "* Cancel: already in Track." << endl;
-      return;
-    }
+    if (not _segment->isUTurn()) return;
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
@@ -543,15 +543,14 @@ namespace Kite {
       ltrace(200) << "| " << fsm.getCost(i) << endl;
     ltraceout(200);
 
-    if (fsm.getCosts().size() and fsm.getCost(0).isFree()) {
-      ltrace(200) << "Insert in free space." << endl;
-      Session::addInsertEvent( _segment, fsm.getCost(0).getTrack() );
+    if (    _segment->getTrack()
+       and  fsm.getCosts().size()
+       and  fsm.getCost(0).isFree()
+       and (fsm.getCost(0).getTrack() != _segment->getTrack()) ) {
+
+      cerr << "_processPack(): move to " << fsm.getCost(0).getTrack() << endl;
+      Session::addMoveEvent( _segment, fsm.getCost(0).getTrack() );
       fsm.setState( SegmentFsm::SelfInserted );
-    } else {
-      ltrace(200) << "Pack failed." << endl;
-      _mode = Negociate;
-      fsm.addAction( _segment, SegmentAction::SelfInsert );
-      fsm.doActions();
     }
   }
 

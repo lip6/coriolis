@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./kite/NegociateWindow.h"                      |
 // +-----------------------------------------------------------------+
@@ -116,6 +116,7 @@ namespace Kite {
              void                          run                ( unsigned int flags );
              void                          printStatistics    () const;
              void                          _createRouting     ( Katabatic::GCell* );
+             void                          _pack              ( size_t& count, bool last );
              size_t                        _negociate         ();
              Hurricane::Record*            _getRecord         () const;
              std::string                   _getString         () const;

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -59,6 +59,7 @@ namespace Kite {
     , _attractors       ()
     , _perpandiculars   ()
     , _perpandicularFree(false)
+    , _reduceRanges     { Interval(), Interval() }
   { }
 
 
@@ -73,6 +74,10 @@ namespace Kite {
       if ( _attractors[i] > axis ) attraction += _attractors[i] - axis;
       else                         attraction += axis - _attractors[i];
     }
+    for ( size_t i=0 ; i<2 ; ++i ) {
+      if (_reduceRanges[i].isEmpty()) continue;
+      if (_reduceRanges[i].contains(axis)) attraction -= 2*_trackSegment->getPitch();
+    }
     return attraction;
   }
 
@@ -85,10 +90,14 @@ namespace Kite {
     ltrace(148) << "DataNegociate::update() - " << _trackSegment << endl;
     ltracein(148);
 
+    size_t               reduceCandidates = 0;
+    DbU::Unit            pitch            = _trackSegment->getPitch();
     vector<AutoSegment*> collapseds;
     vector<AutoSegment*> perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
 
+    _reduceRanges[0].makeEmpty();
+    _reduceRanges[1].makeEmpty();
     _perpandiculars.clear();
     AutoSegment::getTopologicalInfos( _trackSegment->base()
                                     , collapseds
@@ -127,7 +136,9 @@ namespace Kite {
       if (RoutingEvent::getStage() == RoutingEvent::Repair)
         perpandicular->base()->setFlagsOnAligneds( Katabatic::SegUnbound );
 
-      interval.inflate( DbU::fromLambda(-0.5) );
+    //cerr << "perpandicular:" << perpandicular << endl;
+    //cerr << "  " << interval << endl;
+    //interval.inflate( DbU::fromLambda(-0.5) );
 
       ltrace(148) << "| perpandicular: " << perpandiculars[i] << endl;
       ltrace(148) << "| canonical:     " << perpandicular << endl;
@@ -144,6 +155,7 @@ namespace Kite {
         ltrace(148) << "Not in any track " << perpandicular << endl;
       }
 
+#if 0
       if (interval.isPonctual()) {
         ltrace(148) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
         _attractors.push_back( interval.getVMin() );
@@ -176,6 +188,20 @@ namespace Kite {
         }
         ltrace(148) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
       }
+
+      if (perpandicular->base()->isReduceCandidate()) {
+        if (reduceCandidates < 2) {
+          if (interval.getVMin()+DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
+            _reduceRanges[reduceCandidates] = Interval( interval.getVMax()-pitch
+                                                      , interval.getVMax()+pitch );
+          } else if (interval.getVMax()-DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
+            _reduceRanges[reduceCandidates] = Interval( interval.getVMin()-pitch
+                                                      , interval.getVMin()+pitch );
+          }
+          ++reduceCandidates;
+        } 
+      }
+#endif
 
       ltraceout(148);
     }

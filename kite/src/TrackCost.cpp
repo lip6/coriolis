@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -165,6 +165,19 @@ namespace Kite {
       if ( lhs._delta < rhs._delta ) return true;
       if ( lhs._delta > rhs._delta ) return false;
     }
+
+#if 0
+    DbU::Unit lhsMixedWeight = 0.5*lhs._deltaPerpand;
+    DbU::Unit rhsMixedWeight = 0.5*rhs._deltaPerpand;
+
+    if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
+      lhsMixedWeight += lhsMixedWeight;
+      rhsMixedWeight += rhsMixedWeight;
+    }
+
+    if (lhsMixedWeight < rhsMixedWeight) return true;
+    if (lhsMixedWeight > rhsMixedWeight) return false;
+#endif
 
     if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
       if ( lhs._axisWeight < rhs._axisWeight ) return true;
