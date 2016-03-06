@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2015, All Rights Reserved
+// Copyright (c) UPMC 2006-2016, All Rights Reserved
 //
 // x-----------------------------------------------------------------x
 // |                   C O R I O L I S                               |
@@ -270,6 +270,10 @@ void KnikEngine::initGlobalRouting( const map<Name,Net*>& excludedNets )
 
   _timer.stop();
   cmess2 << "     - # of Nets to route:" << _nets_to_route.size() << endl;
+
+  // for ( NetRecord record : _nets_to_route ) {
+  //   cerr << "Route: " << record._net << endl;
+  // }
   
   __initialized__ = true;
 }
