@@ -450,6 +450,7 @@ Building Coriolis
 First step is to install the prerequisites. Currently, only RapidJSON_: ::
 
    dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
+   dummy@lepka:~$ cd ~/coriolis-2.x/src/support
    dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
 
 The second step is to create the source directory and pull the |git| repository: ::
