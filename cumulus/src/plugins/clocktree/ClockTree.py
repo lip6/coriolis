@@ -132,6 +132,11 @@ class HTree ( GaugeConfWrapper ):
   def _getBufferIo ( self ):
     self.bufferCell = self.framework.getCell( Cfg.getParamString('clockTree.buffer').asString()
                                             , CRL.Catalog.State.Views )
+    if not self.bufferCell:
+      raise ErrorMessage( 3, [ 'ClockTree: Buffer cell "%s" not found in library,' \
+                               % Cfg.getParamString('clockTree.buffer').asString()
+                             , '           please check the "clockTree.buffer" configuration parameter in "plugins.conf".' ] )
+
     for net in self.bufferCell.getNets():
       if not net.isExternal(): continue
       if     net.isGlobal(): continue

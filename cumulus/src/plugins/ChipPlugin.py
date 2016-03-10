@@ -219,7 +219,8 @@ def ScriptMain ( **kw ):
 
   except ErrorMessage, e:
     print e; errorCode = e.code
-    if editor: editor.fit()
+    if     locals().has_key('editor') and editor \
+       and locals().has_key('cell'  ) and cell: editor.fit()
     rvalue = False
   except Exception, e:
     print '\n\n', e; errorCode = 1
