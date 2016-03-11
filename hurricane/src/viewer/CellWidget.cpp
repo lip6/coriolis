@@ -2499,8 +2499,8 @@ namespace Hurricane {
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
 	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      string s2 = Graphics::toHtml ( getString(getCell()) );
+      string s1 = Graphics::toHtml ( getString(getCell()) );
+      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
       throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s"
                   , s1.c_str(), s2.c_str() );
     }
@@ -2544,6 +2544,10 @@ namespace Hurricane {
     if ( criterion and (not criterion->isEnabled()) ) {
       criterion->enable();
 
+    //for ( Occurrence occurrence : getOccurrencesUnder(selectArea) ) {
+    //  cerr << "Selecting: " << occurrence << endl;
+    //}
+
       forEach ( Occurrence, ioccurrence, getOccurrencesUnder(selectArea) )
         select ( *ioccurrence );
     } else
@@ -2565,8 +2569,8 @@ namespace Hurricane {
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
 	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      string s2 = Graphics::toHtml ( getString(getCell()) );
+      string s1 = Graphics::toHtml ( getString(getCell()) );
+      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
       throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
                   , s1.c_str(), s2.c_str() );
     }

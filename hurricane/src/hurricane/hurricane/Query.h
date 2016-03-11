@@ -210,7 +210,8 @@ namespace Hurricane {
     instance->getTransformation().getInvert().applyOn ( child->_area );
     parent->_transformation.applyOn ( child->_transformation );
 
-    child->_path = Path ( Path(parent->_path,instance->getCell()->getShuntedPath()) , instance );
+  //child->_path = Path ( Path(parent->_path,instance->getCell()->getShuntedPath()) , instance );
+    child->_path = Path ( parent->_path, instance );
   }
 
 

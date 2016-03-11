@@ -410,18 +410,18 @@ void Instance::setTransformation(const Transformation& transformation)
     }
 }
 
-void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
+void Instance::setPlacementStatus(const PlacementStatus& placementStatus)
 // **********************************************************************
 {
-  if (placementstatus != _placementStatus) {
+  if (placementStatus != _placementStatus) {
     invalidate(true);
 
-    if (_placementStatus == PlacementStatus::UNPLACED) {
+    if (placementStatus & (PlacementStatus::PLACED|PlacementStatus::FIXED)) {
       materialize ();
-    } else if (placementstatus == PlacementStatus::UNPLACED)
+    } else if (placementStatus == PlacementStatus::UNPLACED)
       unmaterialize ();
 
-    _placementStatus = placementstatus;
+    _placementStatus = placementStatus;
   }
 }
 
@@ -512,10 +512,10 @@ void Instance::slaveAbutmentBox()
 // ******************************
 {
   if (not _masterCell->isUniquified()) uniquify();
+  _masterCell->slaveAbutmentBox( getCell() );
+//_masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
   setTransformation( Transformation() );
   setPlacementStatus( Instance::PlacementStatus::PLACED );
-  _masterCell->slaveAbutmentBox( getCell() );
-  _masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
 }
 
 Instance* Instance::getClone(Cell* cloneCell) const

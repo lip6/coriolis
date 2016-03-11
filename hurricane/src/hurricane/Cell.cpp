@@ -572,7 +572,7 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
 
   for ( Instance* instance : getInstances() ) {
     Cell* masterCell = instance->getMasterCell();
-    if (masterCell->getFlags().isset(Flags::MergedQuadTree))
+    if (masterCell->getFlags().isset(Flags::SlavedAb))
       masterCell->setAbutmentBox( abutmentBox );
   }
 }
@@ -840,12 +840,13 @@ void Cell::unmaterialize()
 void Cell::slaveAbutmentBox ( Cell* topCell )
 // ******************************************
 {
-  if (_flags.isset(Flags::MergedQuadTree)) {
+  if (_flags.isset(Flags::SlavedAb)) {
     cerr << Error( "Cell::slaveAbutmentBox(): %s is already slaved, action cancelled."
                  , getString(this).c_str() ) << endl;
     return;
   }
 
+  _flags.set( Flags::SlavedAb );
   if (not isUnique()) {
     cerr << Error( "Cell::slaveAbutmentBox(): %s is *not* unique, action cancelled."
                  , getString(this).c_str() ) << endl;
@@ -885,11 +886,11 @@ void Cell::_slaveAbutmentBox ( Cell* topCell )
 
   setAbutmentBox( topCell->getAbutmentBox() );
 
-  _changeQuadTree( topCell );
+//_changeQuadTree( topCell );
 
   for ( Instance* instance : getInstances() ) {
     Cell* masterCell = instance->getMasterCell();
-    if (masterCell->getFlags().isset(Flags::MergedQuadTree))
+    if (masterCell->getFlags().isset(Flags::SlavedAb))
       masterCell->_slaveAbutmentBox( topCell );
   }
 }

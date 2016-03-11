@@ -94,7 +94,8 @@ class Cell : public Entity {
                   , Placed                  = 0x00020000
                   , Routed                  = 0x00040000
                   , MergedQuadTree          = 0x00080000
-                  , Materialized            = 0x00100000 
+                  , SlavedAb                = 0x00100000
+                  , Materialized            = 0x00200000 
                   };
 
       public:
