@@ -253,6 +253,78 @@ class HyperNet_LeafPlugOccurrences : public Collection<Occurrence> {
 };
 
 
+// ****************************************************************************************************
+// HyperNet_ComponentOccurrences definition
+// ****************************************************************************************************
+
+class HyperNet_ComponentOccurrences : public Collection<Occurrence> {
+// *****************************************************************
+
+// Types
+// *****
+
+    public: typedef Collection<Occurrence> Inherit;
+
+    public: class Locator : public Hurricane::Locator<Occurrence> {
+    // *********************************************************
+
+        public: typedef Hurricane::Locator<Occurrence> Inherit;
+
+        private: bool _withLeafCells;
+        private: OccurrenceLocator _netOccurrenceLocator;
+        private: ComponentLocator _componentLocator;
+        private: Occurrence _componentOccurrence;
+
+        public: Locator();
+        public: Locator(const HyperNet* hyperNet, bool withLeafCells = false, bool doExtraction = false, bool allowInterruption = false);
+        public: Locator(const Locator& locator);
+
+        public: Locator& operator=(const Locator& locator);
+
+        public: virtual Occurrence getElement() const;
+        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
+
+        public: virtual bool isValid() const;
+
+        public: virtual void progress();
+
+        public: virtual string _getString() const;
+
+    };
+
+// Attributes
+// **********
+
+    private: const HyperNet* _hyperNet;
+    private: bool _withLeafCells;
+    private: bool _doExtraction;
+    private: bool _allowInterruption;
+
+// Constructors
+// ************
+
+    public: HyperNet_ComponentOccurrences();
+    public: HyperNet_ComponentOccurrences(const HyperNet* hyperNet, bool withLeafCells = false, bool doExtraction = false, bool allowInterruption = false);
+    public: HyperNet_ComponentOccurrences(const HyperNet_ComponentOccurrences& componentOccurrences);
+
+// Operators
+// *********
+
+    public: HyperNet_ComponentOccurrences& operator=(const HyperNet_ComponentOccurrences& componentOccurrences);
+
+// Accessors
+// *********
+
+    public: virtual Collection<Occurrence>* getClone() const;
+    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
+
+// Others
+// ******
+
+    public: virtual string _getString() const;
+
+};
+
 
 // ****************************************************************************************************
 // HyperNet implementation
@@ -290,6 +362,12 @@ Occurrences HyperNet::getLeafPlugOccurrences(bool doExtraction, bool allowInterr
 // ********************************************************************************************
 {
     return HyperNet_LeafPlugOccurrences(this, doExtraction, allowInterruption);
+}
+
+Occurrences HyperNet::getComponentOccurrences(bool doExtraction, bool allowInterruption) const
+// *******************************************************************************************
+{
+    return HyperNet_ComponentOccurrences(this, doExtraction, allowInterruption);
 }
 
 string HyperNet::_getString() const
@@ -1000,6 +1078,185 @@ string HyperNet_LeafPlugOccurrences::Locator::_getString() const
     return s;
 }
 
+
+// ****************************************************************************************************
+// HyperNet_ComponentOccurrences implementation
+// ****************************************************************************************************
+
+HyperNet_ComponentOccurrences::HyperNet_ComponentOccurrences()
+// ***********************************************************
+:     Inherit(),
+    _hyperNet(NULL),
+    _withLeafCells(false),
+    _doExtraction(false),
+    _allowInterruption(false)
+{
+}
+
+  HyperNet_ComponentOccurrences::HyperNet_ComponentOccurrences(const HyperNet* hyperNet, bool withLeafCells, bool doExtraction, bool allowInterruption)
+// ****************************************************************************************************************************************************
+:     Inherit(),
+    _hyperNet(hyperNet),
+    _withLeafCells(withLeafCells),
+    _doExtraction(doExtraction),
+    _allowInterruption(allowInterruption)
+{
+}
+
+HyperNet_ComponentOccurrences::HyperNet_ComponentOccurrences(const HyperNet_ComponentOccurrences& netOccurrences)
+// **************************************************************************************************************
+:     Inherit(),
+    _hyperNet(netOccurrences._hyperNet),
+    _withLeafCells(netOccurrences._withLeafCells),
+    _doExtraction(netOccurrences._doExtraction),
+    _allowInterruption(netOccurrences._allowInterruption)
+{
+}
+
+HyperNet_ComponentOccurrences& HyperNet_ComponentOccurrences::operator=(const HyperNet_ComponentOccurrences& netOccurrences)
+// *************************************************************************************************************************
+{
+    _hyperNet = netOccurrences._hyperNet;
+    _withLeafCells = netOccurrences._withLeafCells;
+    _doExtraction = netOccurrences._doExtraction;
+    _allowInterruption = netOccurrences._allowInterruption;
+    return *this;
+}
+
+Collection<Occurrence>* HyperNet_ComponentOccurrences::getClone() const
+// ********************************************************************
+{
+    return new HyperNet_ComponentOccurrences(*this);
+}
+
+Locator<Occurrence>* HyperNet_ComponentOccurrences::getLocator() const
+// *******************************************************************
+{
+  return new Locator(_hyperNet, _withLeafCells, _doExtraction, _allowInterruption);
+}
+
+string HyperNet_ComponentOccurrences::_getString() const
+// *****************************************************
+{
+    string s = "<" + _TName("HyperNet::ComponentOccurrences");
+    if (_hyperNet) {
+        s += " " + getString(_hyperNet);
+        if (_withLeafCells) {
+          s += " LEAFS";
+          if (_doExtraction) {
+            s += " DO_EXTRACTION";
+            if (_allowInterruption) s += " ALLOW_INTERRUPTION";
+          }
+        }
+    }
+    s += ">";
+    return s;
+}
+
+
+
+// ****************************************************************************************************
+// HyperNet_ComponentOccurrences::Locator implementation
+// ****************************************************************************************************
+
+HyperNet_ComponentOccurrences::Locator::Locator()
+// **********************************************
+:    Inherit(),
+    _netOccurrenceLocator(),
+    _componentLocator(),
+    _componentOccurrence()
+    
+{
+}
+
+HyperNet_ComponentOccurrences::Locator::Locator(const HyperNet* hyperNet, bool withLeafCells, bool doExtraction, bool allowInterruption)
+// *************************************************************************************************************************************
+:    Inherit(),
+    _withLeafCells(withLeafCells),
+    _netOccurrenceLocator(),
+    _componentLocator(),
+    _componentOccurrence()
+{
+    if (hyperNet) {
+        _netOccurrenceLocator = hyperNet->getNetOccurrences(doExtraction,allowInterruption).getLocator();
+        progress();
+    }
+}
+
+HyperNet_ComponentOccurrences::Locator::Locator(const Locator& locator)
+// ********************************************************************
+:    Inherit(),
+    _withLeafCells(locator._withLeafCells),
+    _netOccurrenceLocator(locator._netOccurrenceLocator),
+    _componentLocator(locator._componentLocator),
+    _componentOccurrence(locator._componentOccurrence)
+{
+}
+
+HyperNet_ComponentOccurrences::Locator& HyperNet_ComponentOccurrences::Locator::operator=(const Locator& locator)
+// **************************************************************************************************************
+{
+    _withLeafCells = locator._withLeafCells;
+    _netOccurrenceLocator = locator._netOccurrenceLocator;
+    _componentLocator = locator._componentLocator;
+    _componentOccurrence = locator._componentOccurrence;
+    return *this;
+}
+
+Occurrence HyperNet_ComponentOccurrences::Locator::getElement() const
+// ******************************************************************
+{
+    return _componentOccurrence;
+}
+
+Locator<Occurrence>* HyperNet_ComponentOccurrences::Locator::getClone() const
+// **************************************************************************
+{
+    return new Locator(*this);
+}
+
+bool HyperNet_ComponentOccurrences::Locator::isValid() const
+// *********************************************************
+{
+    return _componentOccurrence.isValid();
+}
+
+
+void HyperNet_ComponentOccurrences::Locator::progress()
+// ****************************************************
+{
+  _componentOccurrence = Occurrence();
+  while ( not _componentOccurrence.isValid() ) {
+    if (_componentLocator.isValid()) {
+      Path       path      = _netOccurrenceLocator.getElement().getPath();
+      Component* component = _componentLocator.getElement();
+      _componentLocator.progress();
+      
+      _componentOccurrence = Occurrence( component, path.getHeadPath() );
+    } else {
+      if (_netOccurrenceLocator.isValid()) {
+        Occurrence netOccurrence = _netOccurrenceLocator.getElement();
+        _netOccurrenceLocator.progress();
+
+        Net* net = static_cast<Net*>( netOccurrence.getEntity() );
+        if (_withLeafCells or not net->getCell()->isTerminal()) {
+          _componentLocator = net->getComponents().getLocator();
+        }
+      } else
+        break;
+    }
+  }
+}
+
+string HyperNet_ComponentOccurrences::Locator::_getString() const
+// **************************************************************
+{
+    string s = "<" + _TName("HyperNet::ComponentOccurrences::Locator");
+    s += " " + getString(_netOccurrenceLocator);
+    s += "+" + getString(_componentLocator);
+    s += ">";
+    return s;
+}
 
 } // End of Hurricane namespace.
 

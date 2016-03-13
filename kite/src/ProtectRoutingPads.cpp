@@ -98,8 +98,6 @@ namespace {
     }
 
     for ( size_t i=0 ; i<segments.size() ; ++i ) {
-    //cerr << "Protecting " << segments[i] << endl;
-
       RoutingPlane* plane     = Session::getKiteEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
       unsigned int  direction = plane->getDirection();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();

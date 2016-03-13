@@ -81,18 +81,25 @@ namespace Hurricane {
     size_t      nbRoutingPads = 0;
     HyperNet    hyperNet      ( _netOccurrence );
     RoutingPad* currentRp     = NULL;
+    bool        createRp      = true;
 
-    forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
+    for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
+      if ( dynamic_cast<RoutingPad*>(occurrence.getEntity()) ) { createRp = false; break; }
+      if ( dynamic_cast<Segment*   >(occurrence.getEntity()) ) { createRp = false; break; }
+    }
+    if (not createRp) return 0;
+
+    for ( Occurrence occurrence : hyperNet.getLeafPlugOccurrences() ) {
       nbRoutingPads++;
 
-      currentRp = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
+      currentRp = RoutingPad::create( this, occurrence, RoutingPad::BiggestArea );
       if (flags & Cell::Flags::WarnOnUnplacedInstances)
         currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
       //Net* net =
         currentRp->getNet();
-      //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << buildRing << endl;
+      //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << endl;
       }
     }
 

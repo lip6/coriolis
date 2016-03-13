@@ -617,28 +617,29 @@ void Cell::flattenNets(unsigned int flags)
 
     HyperNet  hyperNet ( occurrence );
     if ( not occurrence.getPath().isEmpty() ) {
+    //cerr << "* HyperNet: " << occurrence.getName() << endl;
       Net* duplicate = getNet( occurrence.getName() );
       if (not duplicate) {
         hyperNets.push_back( HyperNet(occurrence) );
       } else {
         trace << "Found " << duplicate << " in " << duplicate->getCell() << endl;
       }
-    } else {
-      bool hasRoutingPads = false;
-      for ( Component* component : net->getComponents() ) {
-        RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
-        if (rp) {
-        // At least one RoutingPad is present: assumes that the net is already
-        // flattened (completly).
-        //cerr << net << " has already RoutingPads, skipped " << rp << endl; 
-          hasRoutingPads = true;
-          break;
-        }
-      }
-      if (hasRoutingPads) continue;
-
-      topHyperNets.push_back( HyperNet(occurrence) );
+      continue;
     }
+
+    bool hasRoutingPads = false;
+    for ( Component* component : net->getComponents() ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
+      if (rp) {
+      // At least one RoutingPad is present: assumes that the net is already
+      // flattened (completly).
+        hasRoutingPads = true;
+        break;
+      }
+    }
+    if (hasRoutingPads) continue;
+
+    topHyperNets.push_back( HyperNet(occurrence) );
   }
 
   for ( size_t i=0 ; i<hyperNets.size() ; ++i ) {
@@ -686,10 +687,11 @@ void Cell::createRoutingPadRings(unsigned int flags)
     } else {
       buildRing = flags & Cell::Flags::BuildRings;
     }
-
     if (not buildRing) continue;
 
     for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<Segment*>(component)) { buildRing = false; break; }
+
       Plug* primaryPlug = dynamic_cast<Plug*>( component );
       if (primaryPlug) {
         if (not primaryPlug->getBodyHook()->getSlaveHooks().isEmpty()) {
@@ -700,6 +702,7 @@ void Cell::createRoutingPadRings(unsigned int flags)
         }
       }
     }
+    if (not buildRing) continue;
 
     for ( RoutingPad* rp : net->getRoutingPads() ) {
       if ( previousRp
@@ -780,6 +783,15 @@ void Cell::uniquify(unsigned int depth)
 // ************************************
 {
 //cerr << "Cell::uniquify() " << this << endl;
+
+  vector<DeepNet*>  deepNets;
+  for ( DeepNet* deepNet : getNets().getSubSet<DeepNet*>() ) {
+    deepNets.push_back( deepNet );
+  }
+  while ( not deepNets.empty() ) {
+    deepNets.back()->destroy();
+    deepNets.pop_back();
+  }
 
   vector<Instance*> toUniquify;
   set<Cell*>        masterCells;
