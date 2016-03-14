@@ -100,7 +100,8 @@ namespace Vhdl {
 
 
   Entity::Entity ( EntityProperty* property, Cell* cell, unsigned int flags )
-    : _signals()
+    : _ns     (NamingScheme::FromVerilog)
+    , _signals()
     , _globals()
     , _flags  (flags)
   {
@@ -163,7 +164,7 @@ namespace Vhdl {
   bool  Entity::parseNetName (  const Net* net, string& stem, size_t& index  )
   {
     string error;
-    string name     = getString(net->getName());
+    string name     = getString(_ns.convert(net->getName()));
     size_t leftpar  = name.find( '(' );
     size_t rightpar = name.find( ')' );
 
@@ -336,11 +337,12 @@ namespace Vhdl {
       out << "use IEEE.numeric_std.all;\n\n\n";
     }
 
-    out << tab++ << "entity " << getCell()->getName() << " is\n";
+    string cellName = getString( _ns.convert( getCell()->getName()) );
+    out << tab++ << "entity " << cellName << " is\n";
     toPort( out );
-    out << --tab << "\nend " << getCell()->getName() << ";\n\n";
+    out << --tab << "\nend " << cellName << ";\n\n";
 
-    out << "architecture structural of " <<  getCell()->getName() << " is\n\n";
+    out << "architecture structural of " <<  cellName << " is\n\n";
     ++tab;
 
     set<Cell*> masterCells;
@@ -371,7 +373,9 @@ namespace Vhdl {
 
   void Entity::toComponent ( ostream& out ) const
   {
-    out << tab++ << "component " << getCell()->getName() << "\n";
+    string cellName = getString( _ns.convert( getCell()->getName()) );
+
+    out << tab++ << "component " << cellName << "\n";
     toPort( out );
     out << "\n" << --tab << "end component;\n";
   }
@@ -379,7 +383,10 @@ namespace Vhdl {
 
   void Entity::toInstance ( ostream& out, Instance* instance ) const
   {
-    out << tab << instance->getName() << " : " << instance->getMasterCell()->getName() << "\n";
+    string instanceName = getString( _ns.convert( instance->getName() ) );
+    string masterName   = getString( _ns.convert( instance->getMasterCell()->getName() ) );
+
+    out << tab << instanceName << " : " << masterName << "\n";
     out << tab << "port map ( ";
 
     Entity* masterEntity = EntityExtension::get( instance->getMasterCell() );

@@ -127,4 +127,18 @@ namespace CRL {
   }
 
 
+  NamingScheme::NamingScheme ( unsigned int flags )
+    : _converter(nullptr)
+  {
+    if (flags & FromVerilog) _converter = vlogToVhdl;
+  }
+
+
+  Name  NamingScheme::convert ( const Name& name ) const
+  {
+    if (_converter == nullptr) return name;
+    return _converter(name);
+  }
+
+
 }  // CRL namespace.

@@ -38,7 +38,7 @@ namespace CRL {
 
   void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
   {
-    NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
+  //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell
                                                             , Vhdl::Entity::EntityMode
                                                           //| Vhdl::Entity::IeeeMode
