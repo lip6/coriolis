@@ -725,7 +725,7 @@ namespace Kite {
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
-    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0); // MARK 1
+    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0,Katabatic::KbCheckLowDensity); // MARK 1
     unsigned int          relaxFlags = Manipulator::NoDoglegReuse
                                      | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                  : Manipulator::NoExpand);
@@ -1151,7 +1151,7 @@ namespace Kite {
       case DataNegociate::ConflictSolveByPlaceds:
         ltrace(200) << "Global, SegmentFsm: ConflictSolveByHistory or ConflictSolveByPlaceds." << endl;
         if ((success = conflictSolveByPlaceds())) {
-          if (segment->canMoveUp(1.0))
+          if (segment->canMoveUp(1.0,Katabatic::KbCheckLowDensity))
             nextState = DataNegociate::MoveUp;
           else {
             if (data->getStateCount() > 3)

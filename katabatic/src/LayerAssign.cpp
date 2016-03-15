@@ -273,6 +273,100 @@ namespace Katabatic {
   }
 
 
+  bool  KatabaticEngine::moveUpNetTrunk2 ( AutoSegment* seed, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
+  {
+    Net*         net       = seed->getNet();
+    unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
+
+    DebugSession::open( net, 90 );
+    ltrace(500) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
+
+    if (not seed->canMoveUp( 1.0, KbPropagate|KbAllowTerminal|KbNoCheckLayer) ) {
+      ltrace(500) << "Deter| Reject seed move up, cannot move up." << endl;
+      DebugSession::close();
+      return false;
+    }
+    ltracein(400);
+
+    globalNets.insert( net );
+
+    vector< pair<AutoContact*,AutoSegment*> > stack;
+    vector<AutoSegment*> globals;
+    vector<AutoSegment*> locals;
+
+    stack.push_back( pair<AutoContact*,AutoSegment*>(NULL,seed) );
+    while ( not stack.empty() ) {
+      AutoContact* from    = stack.back().first;
+      AutoSegment* segment = stack.back().second;
+      stack.pop_back();
+
+      if (segment->isLocal()) {
+        if (not segment->isStrongTerminal()) locals.push_back( segment );
+        continue;
+      }
+      if ( (segment->getLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
+        locals.push_back( segment );
+        continue;
+      }
+
+    // Do something here.
+      if (not segment->canMoveUp(1.0,KbPropagate|KbAllowTerminal|KbNoCheckLayer|KbCheckLowDensity) )
+        continue;
+
+      globals.push_back( segment );
+
+      AutoContact* source = segment->getAutoSource();
+      if (source != from) {
+        for ( AutoSegment* connected : source->getAutoSegments() ) {
+          if (connected != segment) { stack.push_back( make_pair(source,connected) ); }
+        }
+      }
+      AutoContact* target = segment->getAutoTarget();
+      if (target != from) {
+        for ( AutoSegment* connected : target->getAutoSegments() ) {
+          if (connected != segment) { stack.push_back( make_pair(target,connected) ); }
+        }
+      }
+    }
+
+    for ( size_t i=0 ; i<globals.size() ; ++i ) {
+    //ltrace(500) << "Deter| Looking up G:" << globals[i] << endl;
+      unsigned int depth = Session::getRoutingGauge()->getLayerDepth( globals[i]->getLayer() );
+      globals[i]->changeDepth( depth+2, KbWithNeighbors );
+
+      vector<GCell*> gcells;
+      globals[i]->getGCells( gcells );
+      for ( size_t j=0 ; j<gcells.size() ; j++ ) {
+        invalidateds.insert( gcells[j] );
+      }
+    }
+
+    for ( size_t i=0 ; i<locals.size() ; ++i ) {
+    //ltrace(500) << "Deter| Looking up L:" << locals[i] << endl;
+
+      unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
+      if (depth > seedDepth+1) continue;
+
+      if (locals[i]->canPivotUp(2.0,KbPropagate|KbNoCheckLayer)) {
+        locals[i]->changeDepth( depth+2, KbWithNeighbors );
+
+      //ltrace(500) << "Deter| Trunk move up L:" << locals[i] << endl;
+
+        vector<GCell*> gcells;
+        locals[i]->getGCells( gcells );
+        for ( size_t j=0 ; j<gcells.size() ; j++ ) {
+          invalidateds.insert( gcells[j] );
+        }
+      }
+    }
+
+    ltraceout(400);
+    DebugSession::close();
+
+    return true;
+  }
+
+
   bool  KatabaticEngine::moveUpNetTrunk ( AutoSegment* seed, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
   {
     Net*         net       = seed->getNet();

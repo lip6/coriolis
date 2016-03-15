@@ -1501,8 +1501,9 @@ namespace Katabatic {
     ltrace(200) << "AutoSegment::canMoveUp() " << flags
                 << " (reserve:" << reserve << ")" << endl;
 
-    GCell* begin = NULL;
-    GCell* end   = NULL;
+    bool   lowDensity = true;
+    GCell* begin      = NULL;
+    GCell* end        = NULL;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isStrongTerminal() and (not (flags & KbAllowTerminal)) ) return false;
@@ -1517,6 +1518,7 @@ namespace Katabatic {
     end   = *gcells.rbegin();
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+      if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.5) ) lowDensity = false;
       if (not gcells[i]->hasFreeTrack(depth,reserve)) {
         ltrace(200) << "Not enough free track in " << gcells[i] << endl;
         return false;
@@ -1542,6 +1544,7 @@ namespace Katabatic {
         if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+          if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.6) ) lowDensity = false;
           if (not gcells[i]->hasFreeTrack(depth,reserve)) {
             ltrace(200) << "Not enough free track in " << gcells[i] << endl;
             return false;
@@ -1549,6 +1552,8 @@ namespace Katabatic {
         }
       }
     }
+
+    if (lowDensity and (flags & KbCheckLowDensity)) return false;
 
     if ( (depth >= 4) and (flags & KbWithPerpands) ) {
       float fragmentation = begin->getFragmentation( depth-1 );

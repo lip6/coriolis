@@ -47,6 +47,7 @@ namespace Katabatic {
                        , KbNoGCellShrink     = 0x01000000
                        , KbCParanoid         = 0x02000000
                        , KbCreate            = 0x04000000
+                       , KbCheckLowDensity   = 0x08000000
                        , KbDirectionMask     = KbHorizontal|KbVertical
                        };
 

@@ -146,6 +146,7 @@ namespace Katabatic {
               void                    slackenBorder             ( Box bb, Layer::Mask, unsigned int flags );
               void                    slackenBlockIos           ( Instance* core );
               bool                    moveUpNetTrunk            ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
+              bool                    moveUpNetTrunk2           ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
               void                    moveULeft                 ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
               void                    moveURight                ( AutoSegment*, set<Net*>& globalNets, GCell::SetIndex& invalidateds );
               void                    balanceGlobalDensity      ();

@@ -1259,7 +1259,7 @@ namespace Katabatic {
 
       ltrace(500) << "Deter| Move up " << (*isegment) << endl;
 
-      if ( getGCellGrid()->getKatabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds) )
+      if ( getGCellGrid()->getKatabatic()->moveUpNetTrunk2(*isegment,globalNets,invalidateds) )
         return true;
     }
 
