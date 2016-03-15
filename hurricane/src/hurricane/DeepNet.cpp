@@ -29,6 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/Warning.h"
 #include "hurricane/DeepNet.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -64,14 +65,20 @@ namespace Hurricane {
     if (not hyperNet.isValid())
       throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
 
+    if (not isHyperNetRootNetOccurrence(hyperNet.getNetOccurrence())) {
+      cerr << Warning( "DeepNet::create(): Occurrence \"%s\" is not a root one."
+                     , hyperNet.getNetOccurrence().getCompactString().c_str()
+                     ) << endl;
+    }
+
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hyperNet.getNetOccurrence() );
 
     if (rootNetOccurrence.getMasterCell()->isFlattenLeaf()) return NULL;
     if (rootNetOccurrence.getPath().isEmpty())              return NULL;
-
+    
     DeepNet* deepNet = new DeepNet( rootNetOccurrence );
     deepNet->_postCreate();
-    
+
     return deepNet;
   }
 
@@ -84,7 +91,8 @@ namespace Hurricane {
     bool        createRp      = true;
 
     for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
-      if ( dynamic_cast<RoutingPad*>(occurrence.getEntity()) ) { createRp = false; break; }
+      RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());
+      if ( rp and (rp->getCell() == getCell()) ) { createRp = false; break; }
       if ( dynamic_cast<Segment*   >(occurrence.getEntity()) ) { createRp = false; break; }
     }
     if (not createRp) return 0;
@@ -97,9 +105,7 @@ namespace Hurricane {
         currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
-      //Net* net =
         currentRp->getNet();
-      //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << endl;
       }
     }
 

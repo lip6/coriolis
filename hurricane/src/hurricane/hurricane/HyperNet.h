@@ -84,6 +84,7 @@ bool isHyperNetRootNetOccurrence(Occurrence netoccurrence);
 
 
 INSPECTOR_P_SUPPORT(Hurricane::HyperNet);
+IOSTREAM_VALUE_SUPPORT(Hurricane::HyperNet);
 
 
 

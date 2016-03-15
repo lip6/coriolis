@@ -617,12 +617,14 @@ void Cell::flattenNets(unsigned int flags)
 
     HyperNet  hyperNet ( occurrence );
     if ( not occurrence.getPath().isEmpty() ) {
-    //cerr << "* HyperNet: " << occurrence.getName() << endl;
       Net* duplicate = getNet( occurrence.getName() );
       if (not duplicate) {
         hyperNets.push_back( HyperNet(occurrence) );
       } else {
-        trace << "Found " << duplicate << " in " << duplicate->getCell() << endl;
+        cerr << Warning( "Cell::flattenNets(): Found duplicate: \"%s\" in \"%s\""
+                       , getString(duplicate).c_str()
+                       , getString(duplicate->getCell()->getName()).c_str()
+                       ) << endl;
       }
       continue;
     }
