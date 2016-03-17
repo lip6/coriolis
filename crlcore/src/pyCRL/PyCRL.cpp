@@ -40,6 +40,8 @@ namespace CRL {
   using std::endl;
   using Hurricane::tab;
   using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;

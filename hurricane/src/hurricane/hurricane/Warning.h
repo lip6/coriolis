@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +27,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Warning.h"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# ifndef  __HURRICANE_WARNING__
-# define  __HURRICANE_WARNING__
+# ifndef  HURRICANE_WARNING_H
+# define  HURRICANE_WARNING_H
 
 #include "hurricane/Exception.h"
 
@@ -76,7 +68,7 @@ namespace Hurricane {
   inline  int     Warning::getCode   () const { return _code; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 GETSTRING_POINTER_SUPPORT(Hurricane::Warning);
@@ -85,4 +77,4 @@ IOSTREAM_POINTER_SUPPORT(Hurricane::Warning);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Warning);
 
 
-# endif // __HURRICANE_WARNING__
+#endif // HURRICANE_WARNING_H

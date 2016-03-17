@@ -16,6 +16,7 @@
 
 #include  <iostream>
 #include  <iomanip>
+#include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
@@ -66,6 +67,9 @@ namespace Hurricane {
   {
     try {
       return QApplication::notify( object, event );
+    }
+    catch ( Bug& e ) {
+      ExceptionWidget::run( e );
     }
     catch ( Error& e ) {
       ExceptionWidget::run( e );

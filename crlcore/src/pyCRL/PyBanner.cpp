@@ -29,8 +29,10 @@ namespace  CRL {
   using std::ostringstream;
   using Hurricane::tab;
   using Hurricane::in_trace;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::Exception;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;

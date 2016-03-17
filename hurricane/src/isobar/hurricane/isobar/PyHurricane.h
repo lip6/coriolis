@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/isobar/ProxyProperty.h"
@@ -1408,6 +1409,16 @@ extern "C" {
       PyErr_SetString ( HurricaneError, message.c_str() );       \
       return NULL;                                               \
     }                                                            \
+    catch ( const Bug& e ) {                                     \
+      std::string message = "\n" + getString(e);                 \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
+      return NULL;                                               \
+    }                                                            \
+    catch ( const Exception& e ) {                               \
+      std::string message = "\nUnknown Hurricane::Exception";    \
+      PyErr_SetString ( HurricaneError, message.c_str() );       \
+      return NULL;                                               \
+    }                                                            \
     catch ( const std::exception& e )  {                         \
       std::string message = "\n" + std::string(e.what());        \
       PyErr_SetString ( HurricaneError, message.c_str() );       \
@@ -1416,7 +1427,7 @@ extern "C" {
     catch ( ... ) {                                              \
       std::string message =                                      \
         "\nUnmanaged exception, neither a Hurricane::Error nor"  \
-        "std::exception.";                                       \
+        " a std::exception.";                                    \
       PyErr_SetString ( HurricaneError, message.c_str() );       \
       return NULL;                                               \
     }                                                            \

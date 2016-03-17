@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCatalogState.cpp"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyCell.h"
@@ -37,6 +28,8 @@ namespace  CRL {
   using std::ostringstream;
   using Hurricane::tab;
   using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;

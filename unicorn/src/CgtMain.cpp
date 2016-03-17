@@ -29,6 +29,7 @@ namespace bopts = boost::program_options;
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
+#include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/Script.h"
@@ -434,6 +435,10 @@ int main ( int argc, char *argv[] )
 
     if ( not destroyDatabase ) exit ( 0 );
     cmess1 << "  o  Full database deletion (may be buggy)." << endl;
+  }
+  catch ( Bug& e ) {
+    cerr << e.what() << endl;
+    exit ( 1 );
   }
   catch ( Error& e ) {
     cerr << e.what() << endl;

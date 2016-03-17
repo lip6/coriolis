@@ -658,12 +658,12 @@ namespace {
              void          _do_xG_xM3        ();
 
     private:
-      enum ConnexityBits { GlobalBSize = 3
-                         , Metal1BSize = 3
-                         , Metal2BSize = 3
-                         , Metal3BSize = 3
-                         , PadsBSize   = 3
-                         , PinsBSize   = 3
+      enum ConnexityBits { GlobalBSize = 4
+                         , Metal1BSize = 4
+                         , Metal2BSize = 4
+                         , Metal3BSize = 4
+                         , PadsBSize   = 4
+                         , PinsBSize   = 4
                          };
 
 #define CONNEXITY_VALUE( Gs, M1s, M2s, M3s, pads, pins )                 \
@@ -683,6 +683,7 @@ namespace {
                          , Conn_1G_2M1      = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )
                          , Conn_1G_3M1      = CONNEXITY_VALUE( 1, 3, 0, 0, 0 , 0 )
                          , Conn_1G_4M1      = CONNEXITY_VALUE( 1, 4, 0, 0, 0 , 0 )
+                         , Conn_1G_5M1      = CONNEXITY_VALUE( 1, 5, 0, 0, 0 , 0 )
                          , Conn_1G_1M2      = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 0 )
                          , Conn_1G_2M2      = CONNEXITY_VALUE( 1, 0, 2, 0, 0 , 0 )
                          , Conn_1G_3M2      = CONNEXITY_VALUE( 1, 0, 3, 0, 0 , 0 )
@@ -823,6 +824,16 @@ namespace {
     _net = fromSegment->getNet();
 
     forEach ( Hook*, hook, fromHook->getHooks() ) {
+      ltrace(99) << "Topology [" << _connexity.connexity << "] = "
+                 << "["  << _connexity.fields.globals
+                 << "+"  << _connexity.fields.M1     
+                 << "+"  << _connexity.fields.M2     
+                 << "+"  << _connexity.fields.M3
+                 << "+"  << _connexity.fields.Pin
+                 << "+"  << _connexity.fields.Pad
+                 << "] " << _gcell
+                 << endl;
+
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
 
       if (toSegment) {
@@ -923,7 +934,8 @@ namespace {
       case Conn_1G_1M1:    _do_1G_1M1();    break;
       case Conn_1G_2M1:
       case Conn_1G_3M1:
-      case Conn_1G_4M1:  _do_1G_xM1(); break;
+      case Conn_1G_4M1:
+      case Conn_1G_5M1:  _do_1G_xM1(); break;
       case Conn_1G_1M2:
       case Conn_1G_2M2:
       case Conn_1G_3M2:

@@ -36,6 +36,8 @@ namespace  Etesian {
   using Hurricane::tab;
   using Hurricane::trace_on;
   using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::ExceptionWidget;

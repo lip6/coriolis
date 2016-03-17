@@ -28,6 +28,7 @@
 #include <QFrame>
 #include <QFont>
 #include <QFontMetrics>
+#include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Exception.h"
 #include "hurricane/viewer/Graphics.h"
@@ -70,6 +71,9 @@ namespace Hurricane {
     try {
       method();
       failure = false;
+    }
+    catch ( Bug& e ) {
+      ExceptionWidget::run( e );
     }
     catch ( Error& e ) {
       ExceptionWidget::run( e );
