@@ -57,6 +57,7 @@ the repository in the right place. Proceed as follow: ::
    ego@home:~$ mkdir -p ~/coriolis-2.x/src/support
    ego@home:~$ cd ~/coriolis-2.x/src/support
    ego@home:~$ git clone http://github.com/miloyip/rapidjson
+   ego@home:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
    ego@home:~$ cd ~/coriolis-2.x/src
    ego@home:src$ git clone https://www-soc.lip6.fr/git/coriolis.git
    ego@home:src$ cd coriolis

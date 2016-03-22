@@ -58,6 +58,7 @@ namespace Hurricane {
              bool                 Uint             ( unsigned int );
              bool                 Uint64           ( uint64_t );
              bool                 Double           ( double );
+             bool                 RawNumber        (  const char*, SizeType, bool copy );
              bool                 String           ( const char*, SizeType, bool copy );
              bool                 Key              ( const char*, SizeType, bool copy );
              bool                 StartObject      ();
@@ -168,6 +169,12 @@ namespace Hurricane {
     return true;
   }
 
+
+  bool  HurricaneHandler::RawNumber ( const char* value, SizeType, bool copy )
+  {
+    cerr << Warning( "HurricaneHandler::RawNumber(): Unmanaged (value=\"%s\").", value ) << endl;
+    return true;
+  }
 
   bool  HurricaneHandler::String ( const char* value, SizeType, bool copy )
   {

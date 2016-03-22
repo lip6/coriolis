@@ -447,11 +447,14 @@ automatically created either by |ccb| or the build system.
 Building Coriolis
 ~~~~~~~~~~~~~~~~~
 
-First step is to install the prerequisites. Currently, only RapidJSON_: ::
+First step is to install the prerequisites. Currently, only RapidJSON_.
+As RapidJSON is evolving fast, if you encounter compatibility problems,
+the exact version we compiled against is given below. ::
 
    dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
    dummy@lepka:~$ cd ~/coriolis-2.x/src/support
    dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
+   dummy@lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
 
 The second step is to create the source directory and pull the |git| repository: ::
 

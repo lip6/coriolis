@@ -378,10 +378,14 @@ and Python modules (which must be dynamic).</p>
 </div>
 <div class="section" id="building-coriolis">
 <h3><a class="toc-backref" href="#id22">Building Coriolis</a></h3>
-<p>First step is to install the prerequisites. Currently, only <a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a>:</p>
+<p>First step is to install the prerequisites. Currently, only <a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a>.
+As RapidJSON is evolving fast, if you encounter compatibility problems,
+the exact version we compiled against is given below.</p>
 <pre class="literal-block">
 dummy&#64;lepka:~$ mkdir -p ~/coriolis-2.x/src/support
+dummy&#64;lepka:~$ cd ~/coriolis-2.x/src/support
 dummy&#64;lepka:~$ git clone http://github.com/miloyip/rapidjson
+dummy&#64;lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
 </pre>
 <p>The second step is to create the source directory and pull the <span class="cb">git</span> repository:</p>
 <pre class="literal-block">
