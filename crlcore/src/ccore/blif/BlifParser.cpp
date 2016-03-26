@@ -366,7 +366,6 @@ namespace {
     , _subckts()
     , _depth  (0)
   {
-
     _blifLut.insert( make_pair(getString(_cell->getName()), this) );
     if (_cell->isTerminal())
       _depth = 1;
@@ -398,17 +397,21 @@ namespace {
 
   Net* Model::mergeNet ( string name, bool isExternal, unsigned int direction )
   {
+    bool isClock = AllianceFramework::get()->isCLOCK( name );
+
     Net* net = _cell->getNet( name );
     if (not net) {
       net = Net::create( _cell, name );
       net->setExternal ( isExternal );
       net->setDirection( (Net::Direction::Code)direction );
+      if (isClock) net->setType( Net::Type::CLOCK );
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
       direction &= ~Net::Direction::UNDEFINED;
       direction |= net->getDirection();
       net->setDirection( (Net::Direction::Code)direction );
+      if (isClock) net->setType( Net::Type::CLOCK );
     }
     return net;
   }
@@ -487,7 +490,6 @@ namespace {
         //          << "external: <" << netName << ">."
         //          << endl;
         Net*   net           = _cell->getNet( netName );
-
         Net*   masterNet     = instance->getMasterCell()->getNet(masterNetName);
         if(not masterNet) {
           ostringstream tmes;
@@ -511,8 +513,7 @@ namespace {
           throw Error(tmes.str());
         }
 
-
-        Net*   plugNet       = plug->getNet();
+        Net* plugNet = plug->getNet();
 
         if (not plugNet) { // Plug not connected yet
           if (not net) net = Net::create( _cell, netName );
@@ -526,9 +527,9 @@ namespace {
           plugNet->merge( net );
         }
 
-        if( plugNet->getType() == Net::Type::POWER or plugNet->getType() == Net::Type::GROUND ){
+        if ( plugNet->getType() == Net::Type::POWER or plugNet->getType() == Net::Type::GROUND ){
           ostringstream tmes;
-          string powType = plugNet->getType() == Net::Type::POWER ? "power" : "ground";
+          string powType  = plugNet->getType() == Net::Type::POWER ? "power" : "ground";
           string plugName = plugNet->getName()._getString(); // Name of the original net
           tmes << "Connecting instance <" << subckt->getInstanceName() << "> "
                << "of <" << subckt->getModelName() << "> "

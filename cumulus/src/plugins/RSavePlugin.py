@@ -51,21 +51,23 @@ except Exception, e:
 # of abutment box for placement, the netlist view must also
 # be saved.
 
-def rsave ( cell, depth=0 ):
+def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
   if cell.isTerminal(): return
 
   framework = CRL.AllianceFramework.get()
   if depth == 0: print '  o  Recursive Save-Cell.'
 
-  print '     %s+ %s (layout).' % ( ' '*(depth*2), cell.getName() )
-  views = CRL.Catalog.State.Physical
+  sviews = 'layout'
+  if views & CRL.Catalog.State.Logical: sviews += ',netlist'
+
+  print '     %s+ %s (%s).' % ( ' '*(depth*2), cell.getName(), sviews )
   if cell.isUniquified(): views |= CRL.Catalog.State.Logical
   framework.saveCell( cell, views )
 
   for instance in cell.getInstances():
     masterCell = instance.getMasterCell()
     if not masterCell.isTerminal():
-      rsave( masterCell, depth+1 )
+      rsave( masterCell, views, depth+1 )
   return
 
 
@@ -89,11 +91,14 @@ def ScriptMain ( **kw ):
 
     cell, editor = plugins.kwParseMain( **kw )
 
+    views = CRL.Catalog.State.Physical
+    if kw.has_key('views'): views |= kw['views']
+
     if not cell:
       print WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' )
       return 0
 
-    rsave( cell )
+    rsave( cell, views )
     CRL.destroyAllVHDL()
 
   except ErrorMessage, e:

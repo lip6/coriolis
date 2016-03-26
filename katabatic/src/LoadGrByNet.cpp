@@ -699,6 +699,7 @@ namespace {
                          , Conn_2G_2M1      = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
                          , Conn_2G_3M1      = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
                          , Conn_2G_4M1      = CONNEXITY_VALUE( 2, 4, 0, 0, 0 , 0 )
+                         , Conn_2G_5M1      = CONNEXITY_VALUE( 2, 5, 0, 0, 0 , 0 )
                          , Conn_2G_1M2      = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 0 )
                          , Conn_2G_2M2      = CONNEXITY_VALUE( 2, 0, 2, 0, 0 , 0 )
                          , Conn_2G_3M2      = CONNEXITY_VALUE( 2, 0, 3, 0, 0 , 0 )
@@ -950,6 +951,7 @@ namespace {
       case Conn_2G_2M1:
       case Conn_2G_3M1:
       case Conn_2G_4M1:
+      case Conn_2G_5M1:
       case Conn_3G_1M1:
       case Conn_3G_2M1:
       case Conn_3G_3M1:

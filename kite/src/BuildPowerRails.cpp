@@ -393,21 +393,21 @@ namespace {
       return NULL;
     }
 
-    DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
-    if (deepClockNet) {
-      ltrace(300) << "    Deep Clock Net:" << deepClockNet
-                  << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
-
-      return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
-    } else {
-      ltrace(300) << "    Top Clock Net:" << net
-                  << " state:" << NetRoutingExtension::getFlags(net) << endl;
-    }
-
   // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
+      DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
+      if (deepClockNet) {
+        ltrace(300) << "    Deep Clock Net:" << deepClockNet
+                    << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
+
+        return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
+      } else {
+        ltrace(300) << "    Top Clock Net:" << net
+                    << " state:" << NetRoutingExtension::getFlags(net) << endl;
+      }
+
       Path       upPath   = path;
       Instance*  instance = NULL;
       Plug*      plug     = NULL;
@@ -441,7 +441,7 @@ namespace {
       }
     }
 
-    return NULL;
+    return NetRoutingExtension::isFixed(upNet) ? _blockage : NULL;
   }
 
 

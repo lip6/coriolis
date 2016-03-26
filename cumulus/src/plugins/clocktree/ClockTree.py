@@ -124,7 +124,7 @@ class HTree ( GaugeConfWrapper ):
           self.masterClock = net
           break
       if not self.masterClock:
-        print '[WARNING] Cell %s has no clock net.' % cell.getName()
+        raise ErrorMessage( 3, 'ClockTree: Cell %s has no clock net.' % cell.getName() )
     self._createChildNet( self.topBuffer, 'ck_htree' )
 
     return
