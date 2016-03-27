@@ -53,20 +53,25 @@ extern "C" {
     trace << "PyDebugSession_open()" << endl;
 
     HTRY
-    PyObject*     pySymbol   = NULL;
-    unsigned int  traceLevel = 10000;
-    if (PyArg_ParseTuple( args
-                        , "OI:DebugSession.open"
-                        , &pySymbol
-                        , &traceLevel
-                        )) {
-      void* symbol = PyObject_AsHurricaneSymbol( pySymbol );
+    PyObject* arg0;
+    PyObject* arg1;
+    __cs.init ("DebugSession.open");
+
+    if (not PyArg_ParseTuple(args,"|O&O&:DebugSession.open",
+                             Converter, &arg0,
+                             Converter, &arg1)) {
+      return NULL;
+    }
+
+    if      (__cs.getObjectIds() == INT_ARG   ) { DebugSession::open( PyAny_AsLong(arg0) ); }
+    else if (__cs.getObjectIds() == ":ent:int") {
+      void* symbol = PyObject_AsHurricaneSymbol( arg0 );
       if (not symbol) {
         Py_RETURN_NONE;
       }
-      DebugSession::open( symbol, traceLevel );
+      DebugSession::open( symbol, PyAny_AsLong(arg1) );
     } else {
-      PyErr_SetString( ConstructorError, "Bad parameters given to DebugSession.open()." );
+      PyErr_SetString(ConstructorError, "invalid number of parameters for DebugSession::open()." );
       return NULL;
     }
     HCATCH

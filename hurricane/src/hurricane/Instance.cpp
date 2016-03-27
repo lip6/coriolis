@@ -428,68 +428,80 @@ void Instance::setPlacementStatus(const PlacementStatus& placementStatus)
 void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 // ************************************************************
 {
-    if (masterCell != _masterCell) {
-        UpdateSession::open();
+  ltrace(10) << "Instance::setMasterCell() on " << this << endl;
+  ltracein(10);
+  ltrace(10) << "NEW masterCell:" << masterCell << endl;
 
-        if (!masterCell)
-            throw Error("Can't set master : null master cell");
+  if (masterCell != _masterCell) {
+    UpdateSession::open();
 
-        if (secureFlag && _cell->isCalledBy(masterCell))
-            throw Error("Can't set master : cyclic construction");
+    if (!masterCell)
+      throw Error("Can't set master : null master cell");
 
-        list<Plug*> connectedPlugList;
-        list<Net*> masterNetList;
-        for_each_plug(plug, getConnectedPlugs()) {
-            Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
-            if (!masterNet || !masterNet->isExternal())
-                throw Error("Can't set master (bad master net matching)");
-            connectedPlugList.push_back(plug);
-            masterNetList.push_back(masterNet);
-            end_for;
-        }
+    if (secureFlag && _cell->isCalledBy(masterCell))
+      throw Error("Can't set master : cyclic construction");
 
-        for_each_shared_path(sharedPath, _getSharedPathes()) {
-            if (!sharedPath->getTailSharedPath())
-                // if the tail is empty the SharedPath isn't impacted by the change
-                delete sharedPath;
-            end_for;
-        }
-
-        invalidate(true);
-
-        for_each_plug(plug, getUnconnectedPlugs()) {
-            plug->_destroy();
-            end_for;
-        }
-
-        while (!connectedPlugList.empty() && !masterNetList.empty()) {
-            Plug* plug = connectedPlugList.front();
-            Net* masterNet = masterNetList.front();
-            _plugMap._remove(plug);
-            plug->_setMasterNet(masterNet);
-            _plugMap._insert(plug);
-            connectedPlugList.pop_front();
-            masterNetList.pop_front();
-        }
-
-        _masterCell->_getSlaveInstanceSet()._remove(this);
-        _masterCell = masterCell;
-        _masterCell->_getSlaveInstanceSet()._insert(this);
-
-        for_each_net(externalNet, _masterCell->getExternalNets()) {
-            if (!getPlug(externalNet)) Plug::_create(this, externalNet);
-            end_for;
-        }
-
-        UpdateSession::close();
+    list<Plug*> connectedPlugList;
+    list<Net*> masterNetList;
+    for_each_plug(plug, getConnectedPlugs()) {
+      Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
+      if (!masterNet || !masterNet->isExternal())
+        throw Error("Can't set master (bad master net matching)");
+      connectedPlugList.push_back(plug);
+      masterNetList.push_back(masterNet);
+      end_for;
     }
+
+    for_each_shared_path(sharedPath, _getSharedPathes()) {
+      if (!sharedPath->getTailSharedPath())
+      // if the tail is empty the SharedPath isn't impacted by the change
+        delete sharedPath;
+      end_for;
+    }
+
+    invalidate(true);
+
+    for_each_plug(plug, getUnconnectedPlugs()) {
+      plug->_destroy();
+      end_for;
+    }
+
+    while (!connectedPlugList.empty() && !masterNetList.empty()) {
+      Plug* plug = connectedPlugList.front();
+      Net* masterNet = masterNetList.front();
+      _plugMap._remove(plug);
+      plug->_setMasterNet(masterNet);
+      _plugMap._insert(plug);
+      connectedPlugList.pop_front();
+      masterNetList.pop_front();
+    }
+
+    ltrace(10) << "Remove " << this << " from " << _masterCell << endl;
+    _masterCell->_getSlaveInstanceSet()._remove(this);
+    _masterCell = masterCell;
+
+    ltrace(10) << "Add (before) " << this << " to " << _masterCell << endl;
+    _masterCell->isUnique();
+    _masterCell->_getSlaveInstanceSet()._insert(this);
+    ltrace(10) << "Add (after) " << this << " to " << _masterCell << endl;
+    _masterCell->isUnique();
+
+    for_each_net(externalNet, _masterCell->getExternalNets()) {
+      if (!getPlug(externalNet)) Plug::_create(this, externalNet);
+      end_for;
+    }
+
+    UpdateSession::close();
+  }
+
+  ltraceout(10);
 }
 
 void Instance::uniquify()
 // **********************
 {
-  if (_masterCell->isUniquified()) {
-    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is already uniquified, cancelled."
+  if (_masterCell->isUnique()) {
+    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is unique or already uniquified, cancelled."
                    , getString(_masterCell->getName()).c_str()
                    , getString(getName()).c_str()
                    ) << endl;
@@ -511,7 +523,7 @@ void Instance::uniquify()
 void Instance::slaveAbutmentBox()
 // ******************************
 {
-  if (not _masterCell->isUniquified()) uniquify();
+  if (not _masterCell->isUnique()) uniquify();
   _masterCell->slaveAbutmentBox( getCell() );
 //_masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
   setTransformation( Transformation() );

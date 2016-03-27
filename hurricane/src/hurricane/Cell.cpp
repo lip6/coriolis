@@ -426,6 +426,10 @@ bool Cell::isNetAlias ( const Name& name ) const
 bool Cell::isUnique() const
 // ************************
 {
+  // ltrace(10) << "Cell::isUnique() " << this << endl;
+  // for ( Instance* instance : getSlaveInstances() ) {
+  //   ltrace(10) << "| Slave instance:" << instance << endl;
+  // }
   return getSlaveInstances().getSize() < 2;
 }
 
@@ -784,7 +788,8 @@ Cell* Cell::getClone()
 void Cell::uniquify(unsigned int depth)
 // ************************************
 {
-//cerr << "Cell::uniquify() " << this << endl;
+  ltrace(10) << "Cell::uniquify() " << this << endl;
+  ltracein(10);
 
   vector<DeepNet*>  deepNets;
   for ( DeepNet* deepNet : getNets().getSubSet<DeepNet*>() ) {
@@ -800,6 +805,7 @@ void Cell::uniquify(unsigned int depth)
 
   for ( Instance* instance : getInstances() ) {
     Cell* masterCell = instance->getMasterCell();
+    ltrace(10) << "| " << instance << endl;
     if (masterCell->isTerminal()) continue;
 
     if (masterCells.find(masterCell) == masterCells.end()) {
@@ -821,6 +827,9 @@ void Cell::uniquify(unsigned int depth)
     for ( auto cell : masterCells )
       cell->uniquify( depth-1 );
   }
+
+  ltraceout(10);
+  ltrace(10) << "Cell::uniquify() END " << this << endl;
 }
 
 void Cell::materialize()
