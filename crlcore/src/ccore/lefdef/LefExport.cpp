@@ -389,7 +389,7 @@ namespace {
     CHECK_STATUS(_status);
 #endif
 
-    if ( blockageNet != 0 ) {
+    if ( blockageNet != NULL ) {
       _status = lefwStartMacroObs ();
       CHECK_STATUS(_status);
 

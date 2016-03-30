@@ -77,7 +77,7 @@ namespace {
 
     int depth = 0;
 
-    if (not cellDepth.first->isTerminal()) {
+    if (not cellDepth.first->isLeaf()) {
       for ( Instance* instance : cellDepth.first->getInstances() ) {
         Cell* masterCell = instance->getMasterCell();
         pair<Cell* const,int>& masterDepth = *(_cellMap.find( masterCell ));

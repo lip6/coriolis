@@ -275,6 +275,205 @@ namespace Hurricane {
 
 
 // ****************************************************************************************************
+// SlavedsRelation implementation
+// ****************************************************************************************************
+
+  const Name  Cell::SlavedsRelation::_name = "Cell::SlavedsRelation";
+
+
+  Cell::SlavedsRelation::SlavedsRelation ( Cell* masterOwner )
+    : Relation   (masterOwner)
+  { }
+
+
+  Cell::SlavedsRelation* Cell::SlavedsRelation::create ( Cell* masterOwner )
+  {
+    SlavedsRelation* relation = new SlavedsRelation(masterOwner);
+
+    relation->_postCreate();
+
+    return relation;
+  }
+
+
+  void  Cell::SlavedsRelation::_preDestroy ()
+  {
+    Relation::_preDestroy();
+  }
+
+
+  Cell::SlavedsRelation* Cell::SlavedsRelation::get ( const Cell* cell )
+  {
+    if (not cell)
+      throw Error( "Can't get Cell::SlavedsRelation : empty cell" );
+    Property* property = cell->getProperty( staticGetName() );
+    if (property) {
+      SlavedsRelation* relation = dynamic_cast<SlavedsRelation*>(property);
+      if (not relation )
+        throw Error ( "Bad Property type: Must be a SlavedsRelation" );
+      return relation;
+    }
+    return NULL;
+  }
+
+
+  Name    Cell::SlavedsRelation::staticGetName () { return _name; }
+  Name    Cell::SlavedsRelation::getName       () const { return _name; }
+  string  Cell::SlavedsRelation::_getTypeName  () const { return "Cell::SlavedsRelation"; }
+
+
+  Record* Cell::SlavedsRelation::_getRecord () const
+  {
+    Record* record = Relation::_getRecord();
+    return record;
+  }
+
+
+  bool  Cell::SlavedsRelation::hasJson () const
+  { return true; }
+
+
+  void  Cell::SlavedsRelation::toJson ( JsonWriter* w, const DBo* owner ) const
+  {
+    w->startObject();
+    std::string tname = getString( staticGetName() );
+    if (getMasterOwner() == owner) {
+      jsonWrite( w, "@typename"  , tname                 );
+      jsonWrite( w, "_refcount"  , getOwners().getSize() );
+    } else {
+      tname.insert( 0, "&" );
+      jsonWrite( w, "@typename", tname );
+
+      Cell* masterOwner = dynamic_cast<Cell*>( getMasterOwner() );
+      if (masterOwner) {
+        jsonWrite( w, "_masterOwner", masterOwner->getHierarchicalName() );
+      } else {
+        cerr << Error( "SlavedsRelation::toJson(): Master owner is not a Cell (%s)."
+                     , getString(owner).c_str()
+                     ) << endl;
+        jsonWrite( w, "_masterOwner", "" );
+      }
+    }
+    w->endObject();
+  }
+
+
+// ****************************************************************************************************
+// SlavedsRelation::JsonProperty implementation
+// ****************************************************************************************************
+
+
+  Initializer<Cell::SlavedsRelation::JsonProperty>  jsonSlavedsRelationInit ( 10 );
+
+
+  Cell::SlavedsRelation::JsonProperty::JsonProperty ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_refcount"  , typeid(int64_t)  );
+  }
+
+
+  string  Cell::SlavedsRelation::JsonProperty::getTypeName () const
+  { return getString(Cell::SlavedsRelation::staticGetName()); }
+
+
+  void  Cell::SlavedsRelation::JsonProperty::initialize ()
+  { JsonTypes::registerType( new Cell::SlavedsRelation::JsonProperty (JsonWriter::RegisterMode) ); }
+
+
+  Cell::SlavedsRelation::JsonProperty* Cell::SlavedsRelation::JsonProperty::clone ( unsigned long flags ) const
+  { return new Cell::SlavedsRelation::JsonProperty ( flags ); }
+
+
+  void Cell::SlavedsRelation::JsonProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "Cell::SlavedsRelation::JsonProperty::toData" );
+
+    DBo*             dbo      = stack.back_dbo();
+    unsigned int     refcount = get<int64_t>( stack, "_refcount"   );
+    SlavedsRelation* relation = NULL;
+    Cell*            cell     = dynamic_cast<Cell*>( dbo );
+
+    ltrace(51) << "topDBo:" << dbo << endl;
+
+    if (cell) {
+      relation = SlavedsRelation::get( cell );
+      if (not relation) {
+        string tag = cell->getHierarchicalName()+"::"+getString(SlavedsRelation::staticGetName());
+        relation = dynamic_cast<SlavedsRelation*>( SharedProperty::getOrphaned( tag ) );
+
+        if (not relation) {
+          relation = Cell::SlavedsRelation::create( cell );
+          SharedProperty::addOrphaned( tag, relation );
+        }
+        SharedProperty::refOrphaned( tag );
+        SharedProperty::countOrphaned( tag, refcount );
+        cell->put( relation );
+      }
+      relation->_setMasterOwner( cell );
+    }
+    
+    update( stack, relation );
+  }
+
+
+// ****************************************************************************************************
+// SlavedsRelation::JsonPropertyRef implementation
+// ****************************************************************************************************
+
+
+  Initializer<Cell::SlavedsRelation::JsonPropertyRef>  jsonSlavedsRelationRefInit ( 10 );
+
+
+  Cell::SlavedsRelation::JsonPropertyRef::JsonPropertyRef ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_masterOwner", typeid(string)  );
+  }
+
+
+  string  Cell::SlavedsRelation::JsonPropertyRef::getTypeName () const
+  { return string("&")+getString(Cell::SlavedsRelation::staticGetName()); }
+
+
+  void  Cell::SlavedsRelation::JsonPropertyRef::initialize ()
+  { JsonTypes::registerType( new Cell::SlavedsRelation::JsonPropertyRef (JsonWriter::RegisterMode) ); }
+
+
+  Cell::SlavedsRelation::JsonPropertyRef* Cell::SlavedsRelation::JsonPropertyRef::clone ( unsigned long flags ) const
+  { return new Cell::SlavedsRelation::JsonPropertyRef ( flags ); }
+
+
+  void Cell::SlavedsRelation::JsonPropertyRef::toData ( JsonStack& stack )
+  {
+    check( stack, "Cell::SlavedsRelation::JsonPropertyRef::toData" );
+
+    DBo*             dbo        = stack.back_dbo();
+    string           masterName = get<string>( stack, "_masterOwner" );
+    SlavedsRelation* relation   = NULL;
+    Cell*            cell       = dynamic_cast<Cell*>( dbo );
+    string           tag        = masterName+"::"+getString(SlavedsRelation::staticGetName());
+
+    if (cell) {
+      if (not relation) {
+        relation = dynamic_cast<SlavedsRelation*>( SharedProperty::getOrphaned( tag ) );
+        if (not relation) {
+          relation = Cell::SlavedsRelation::create( cell );
+          SharedProperty::addOrphaned( tag, relation );
+        }
+      }
+
+      if (relation) {
+        cell->put( relation );
+        SharedProperty::refOrphaned( tag );
+      }
+    }
+
+    update( stack, relation );
+  }
+
+
+// ****************************************************************************************************
 // Cell Slice related implementation
 // ****************************************************************************************************
 
@@ -564,7 +763,26 @@ void Cell::setName(const Name& name)
 }
 
 void Cell::setAbutmentBox(const Box& abutmentBox)
-// **********************************************
+// ***********************************************
+{
+  SlavedsRelation* slaveds = SlavedsRelation::get( this );
+  if (not slaveds or (this == slaveds->getMasterOwner())) {
+    _setAbutmentBox( abutmentBox ); 
+
+    if (getFlags().isset(Flags::SlavedAb)) return;
+
+    for ( Cell* slavedCell : SlavedsSet(this) )
+      slavedCell->_setAbutmentBox( abutmentBox );
+  } else {
+    cerr << Error( "Cell::setAbutmentBox(): Abutment box of \"%s\" is slaved to \"%s\"."
+                 , getString(getName()).c_str()
+                 , getString(static_cast<Cell*>(slaveds->getMasterOwner())->getName()).c_str()
+                 ) << endl;
+  }
+}
+
+void Cell::_setAbutmentBox(const Box& abutmentBox)
+// ***********************************************
 {
   if (abutmentBox != _abutmentBox) {
     if (not _abutmentBox.isEmpty() and
@@ -572,12 +790,6 @@ void Cell::setAbutmentBox(const Box& abutmentBox)
       _unfit( _abutmentBox );
     _abutmentBox = abutmentBox;
     _fit( _abutmentBox );
-  }
-
-  for ( Instance* instance : getInstances() ) {
-    Cell* masterCell = instance->getMasterCell();
-    if (masterCell->getFlags().isset(Flags::SlavedAb))
-      masterCell->setAbutmentBox( abutmentBox );
   }
 }
 
@@ -730,7 +942,6 @@ Cell* Cell::getCloneMaster() const
   UniquifyRelation* uniquify = UniquifyRelation::get( this );
   if (not uniquify) return const_cast<Cell*>(this);
 
-  uniquify = UniquifyRelation::get( this );
   return dynamic_cast<Cell*>( uniquify->getMasterOwner() );
 }
 
@@ -869,7 +1080,6 @@ void Cell::slaveAbutmentBox ( Cell* topCell )
     return;
   }
 
-  _flags.set( Flags::SlavedAb );
   if (not isUnique()) {
     cerr << Error( "Cell::slaveAbutmentBox(): %s is *not* unique, action cancelled."
                  , getString(this).c_str() ) << endl;
@@ -907,15 +1117,16 @@ void Cell::_slaveAbutmentBox ( Cell* topCell )
     }
   }
 
-  setAbutmentBox( topCell->getAbutmentBox() );
+  _setAbutmentBox( topCell->getAbutmentBox() );
+
+  SlavedsRelation* slaveds = SlavedsRelation::get( topCell );
+  if (not slaveds) {
+    slaveds = SlavedsRelation::create( topCell );
+  }
+  put( slaveds );
+  _flags.set( Flags::SlavedAb );
 
 //_changeQuadTree( topCell );
-
-  for ( Instance* instance : getInstances() ) {
-    Cell* masterCell = instance->getMasterCell();
-    if (masterCell->getFlags().isset(Flags::SlavedAb))
-      masterCell->_slaveAbutmentBox( topCell );
-  }
 }
 
 
@@ -1138,29 +1349,14 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
     if (not _flags) return "<NoFlags>";
 
     string s = "<";
-    if (_flags & Pad) {
-      s += "Pad";
-    }
-    if (_flags & Terminal) {
-      if (s.size() > 1) s += "|";
-      s += "Terminal";
-    }
-    if (_flags & FlattenLeaf) {
-      if (s.size() > 1) s += "|";
-      s += "FlattenLeaf";
-    }
-    if (_flags & FlattenedNets) {
-      if (s.size() > 1) s += "|";
-      s += "FlattenedNets";
-    }
-    if (_flags & Placed) {
-      if (s.size() > 1) s += "|";
-      s += "Placed";
-    }
-    if (_flags & Routed) {
-      if (s.size() > 1) s += "|";
-      s += "Routed";
-    }
+    if (_flags & Pad          ) { s += "Pad"; }
+    if (_flags & Terminal     ) { if (s.size() > 1) s += "|"; s += "Terminal"; }
+    if (_flags & FlattenLeaf  ) { if (s.size() > 1) s += "|"; s += "FlattenLeaf"; }
+    if (_flags & FlattenedNets) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
+    if (_flags & Placed       ) { if (s.size() > 1) s += "|"; s += "Placed"; }
+    if (_flags & Routed       ) { if (s.size() > 1) s += "|"; s += "Routed"; }
+    if (_flags & SlavedAb     ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
+    if (_flags & Materialized ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
     s += ">";
 
     return s;
@@ -1221,6 +1417,66 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
   string  Cell::ClonedSet::_getString () const
   {
     string s = "<" + _TName("Cell_ClonedSet") + " "
+                   + getString(_cell->getName())
+                   + ">";
+    return s;
+  }
+
+
+// ****************************************************************************************************
+// Cell::SlavedsSet implementation
+// ****************************************************************************************************
+
+  Cell::SlavedsSet::Locator::Locator ( const Cell* cell )
+    : Hurricane::Locator<Cell*>()
+    , _dboLocator              (NULL)
+  {
+    SlavedsRelation* slaveds = SlavedsRelation::get( cell );
+    if (slaveds) {
+      _dboLocator = slaveds->getSlaveOwners().getLocator();
+    }
+  }
+
+
+  Locator<Cell*>* Cell::SlavedsSet::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  Cell* Cell::SlavedsSet::Locator::getElement () const
+  { return (_dboLocator and _dboLocator->isValid())
+      ? dynamic_cast<Cell*>(_dboLocator->getElement()) : NULL; }
+
+
+  bool  Cell::SlavedsSet::Locator::isValid () const
+  { return (_dboLocator and _dboLocator->isValid()); }
+
+
+  void  Cell::SlavedsSet::Locator::progress ()
+  {
+    _dboLocator->progress();
+  }
+
+
+  string  Cell::SlavedsSet::Locator::_getString () const
+  {
+    string s = "<" + _TName("Cell::SlavedsSet::Locator")
+                   + getString(getElement())
+                   + ">";
+    return s;
+  }
+
+
+  Collection<Cell*>* Cell::SlavedsSet::getClone   () const
+  { return new SlavedsSet(*this); }
+
+
+  Locator<Cell*>* Cell::SlavedsSet::getLocator () const
+  { return new Locator(_cell); }
+
+
+  string  Cell::SlavedsSet::_getString () const
+  {
+    string s = "<" + _TName("Cell_SlavedsSet") + " "
                    + getString(_cell->getName())
                    + ">";
     return s;

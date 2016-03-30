@@ -98,6 +98,7 @@ extern "C" {
     LoadObjectConstant(PyTypeNetType.tp_dict,Net::Type::CLOCK    ,"CLOCK"    );
     LoadObjectConstant(PyTypeNetType.tp_dict,Net::Type::POWER    ,"POWER"    );
     LoadObjectConstant(PyTypeNetType.tp_dict,Net::Type::GROUND   ,"GROUND"   );
+    LoadObjectConstant(PyTypeNetType.tp_dict,Net::Type::BLOCKAGE ,"BLOCKAGE" );
   }
 
 

@@ -68,6 +68,7 @@ extern "C" {
       case Net::Type::CLOCK     : return ( Net::Type(Net::Type::CLOCK) );
       case Net::Type::POWER     : return ( Net::Type(Net::Type::POWER) );
       case Net::Type::GROUND    : return ( Net::Type(Net::Type::GROUND) );
+      case Net::Type::BLOCKAGE  : return ( Net::Type(Net::Type::BLOCKAGE) );
     }
 
     return ( Net::Type(Net::Type::UNDEFINED) );

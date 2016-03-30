@@ -322,14 +322,8 @@ namespace Kite {
     if (not _knik) {
       unsigned int  flags = Cell::Flags::WarnOnUnplacedInstances;
       flags |= (mode & KtBuildGlobalRouting) ? Cell::Flags::BuildRings : 0;
-    //if (not cell->isFlattenedNets()) cell->flattenNets( flags );
       cell->flattenNets( flags );
       cell->createRoutingPadRings( Cell::Flags::BuildRings );
-
-    // Test signals from <snx2013>.
-    //DebugSession::addToTrace( getCell(), "core.snx_inst.a2_x2_8_sig" );
-    //DebugSession::addToTrace( getCell(), "m_clock" );
-    //DebugSession::addToTrace( getCell(), "a2_x2_8_sig" );
   
       KatabaticEngine::chipPrep();
   

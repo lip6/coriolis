@@ -92,7 +92,13 @@ namespace Katabatic {
 
       for ( ; gcell != end ; gcell = gcell->getRight() ) {
         if ( !gcell ) {
-          cerr << Error("AutoHorizontal::create() : NULL GCell.") << endl;
+          cerr << Error( "AutoHorizontal::create() : NULL GCell under %s\n"
+                         "        begin:%s\n"
+                         "        end:  %s"
+                       , getString(this).c_str()
+                       , getString(source->getGCell()).c_str()
+                       , getString(target->getGCell()).c_str()
+                       ) << endl;
           break;
         }
         gcell->addHSegment ( this );

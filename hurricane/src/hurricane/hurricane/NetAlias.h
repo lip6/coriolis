@@ -203,6 +203,10 @@ INSPECTOR_P_SUPPORT(Hurricane::NetAliasHook);
 INSPECTOR_P_SUPPORT(Hurricane::NetMainName);
 INSPECTOR_P_SUPPORT(Hurricane::NetAliasName);
 
-inline void  jsonWrite ( JsonWriter* w, const Hurricane::NetAliasHook* alias ) { jsonWrite(w,alias->getName()); }
+inline void  jsonWrite ( JsonWriter* w, const Hurricane::NetAliasHook* alias )
+{
+  const Hurricane::NetAliasName* aliasName = dynamic_cast<const Hurricane::NetAliasName*>( alias ); 
+  if (aliasName) jsonWrite(w,aliasName);
+}
     
 #endif  // HURRICANE_NET_ALIAS_H

@@ -428,15 +428,16 @@ void createContactsRing(Cell* cell)
   void  deleteEmptyNets ( Cell* cell )
   {
     vector<Net*> nets;
-    forEach ( Net*, inet, cell->getNets() )
-      nets.push_back ( *inet );
+    for ( Net* net : cell->getNets() )
+      nets.push_back ( net );
 
-    for ( size_t i=0 ; i<nets.size() ; i++ ) {
-      if (     !nets[i]->getComponents().getFirst()
-           && ( nets[i]->getType() != Net::Type::POWER )
-           && ( nets[i]->getType() != Net::Type::GROUND )
-           && ( nets[i]->getType() != Net::Type::CLOCK  ) ) {
-        nets[i]->destroy ();
+    for ( size_t i=0 ; i<nets.size() ; ++i ) {
+      if (     not nets[i]->getComponents().getFirst()
+           and (nets[i]->getType() != Net::Type::POWER   )
+           and (nets[i]->getType() != Net::Type::GROUND  )
+           and (nets[i]->getType() != Net::Type::CLOCK   )
+           and (nets[i]->getType() != Net::Type::BLOCKAGE) ) {
+        nets[i]->destroy();
       }
     }
   }

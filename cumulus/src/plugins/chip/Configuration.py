@@ -593,6 +593,7 @@ class ChipConf ( object ):
       self._blockageNet = self._cell.getNet(self._blockageName)
       if not self._blockageNet:
         self._blockageNet = Net.create( self._cell, self._blockageName )
+        self._blockageNet.setType( Net.Type.BLOCKAGE )
       return
 
 

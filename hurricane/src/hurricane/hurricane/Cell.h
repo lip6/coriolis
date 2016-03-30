@@ -173,6 +173,70 @@ class Cell : public Entity {
         const Cell* _cell;
     };
 
+    class SlavedsRelation : public Relation {
+      public:
+        static  SlavedsRelation* create          ( Cell* );
+        static  SlavedsRelation* get             ( const Cell* );
+        virtual Name             getName         () const;
+        static  Name             staticGetName   ();
+        virtual bool             hasJson         () const;
+        virtual void             toJson          ( JsonWriter*, const DBo* ) const;
+        inline  void             _setOwner       ( Cell* );
+        virtual string           _getTypeName    () const;
+        virtual Record*          _getRecord      () const;
+      private:
+        static const Name        _name;
+      private:
+                                 SlavedsRelation ( Cell* );
+      protected:
+        virtual void             _preDestroy     ();
+
+      public:
+        class JsonProperty : public JsonObject {
+          public:
+            static  void          initialize   ();
+                                  JsonProperty ( unsigned long flags );
+            virtual string        getTypeName  () const;
+            virtual JsonProperty* clone        ( unsigned long ) const;
+            virtual void          toData       ( JsonStack& ); 
+      };
+      public:
+        class JsonPropertyRef : public JsonObject {
+          public:
+            static  void             initialize      ();
+                                     JsonPropertyRef ( unsigned long flags );
+            virtual string           getTypeName     () const;
+            virtual JsonPropertyRef* clone           ( unsigned long ) const;
+            virtual void             toData          ( JsonStack& ); 
+      };
+    };
+
+    class SlavedsSet : public Collection<Cell*> {
+      public:
+      // Sub-Class: Locator.
+        class Locator : public Hurricane::Locator<Cell*> {
+          public:
+                                               Locator    ( const Cell* );
+            inline                             Locator    ( const Locator& );
+            virtual Cell*                      getElement () const;
+            virtual Hurricane::Locator<Cell*>* getClone   () const;
+            virtual bool                       isValid    () const;
+            virtual void                       progress   ();
+            virtual string                     _getString () const;
+          protected:
+            Hurricane::Locator<DBo*>* _dboLocator;
+        };
+  
+      public:
+        inline                                SlavedsSet ( const Cell* cell );
+        inline                                SlavedsSet ( const SlavedsSet& );
+        virtual Hurricane::Collection<Cell*>* getClone   () const;
+        virtual Hurricane::Locator<Cell*>*    getLocator () const;
+        virtual string                        _getString () const;
+      protected:
+        const Cell* _cell;
+    };
+
     class InstanceMap : public IntrusiveMap<Name, Instance> {
     // ****************************************************
 
@@ -327,6 +391,7 @@ class Cell : public Entity {
     public: void _slaveAbutmentBox(Cell*);
     public: void _changeQuadTree(Cell*);
     public: void _setShuntedPath(Path path) { _shuntedPath=path; }
+    protected: void _setAbutmentBox(const Box& abutmentBox);
 
     public: virtual void _toJson(JsonWriter*) const;
     public: virtual void _toJsonCollections(JsonWriter*) const;
@@ -475,6 +540,25 @@ inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
 
 inline  void  Cell::UniquifyRelation::_setOwner      ( Cell*        owner )      { _setMasterOwner(owner); }
 inline  void  Cell::UniquifyRelation::_setDuplicates ( unsigned int duplicates ) { _duplicates=duplicates; }
+
+
+inline  Cell::SlavedsSet::Locator::Locator ( const Locator& other )
+  : Hurricane::Locator<Cell*>()
+  , _dboLocator(other._dboLocator)
+{ }
+
+inline  Cell::SlavedsSet::SlavedsSet ( const Cell* cell )
+  : Hurricane::Collection<Cell*>()
+  , _cell(cell)
+{ }
+
+inline  Cell::SlavedsSet::SlavedsSet ( const SlavedsSet& other )
+  : Hurricane::Collection<Cell*>()
+  , _cell(other._cell)
+{ }
+
+
+inline  void  Cell::SlavedsRelation::_setOwner ( Cell* owner ) { _setMasterOwner(owner); }
 
 
 class JsonCell : public JsonEntity {

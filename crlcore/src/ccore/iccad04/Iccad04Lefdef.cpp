@@ -420,6 +420,7 @@ namespace {
     DbU::Unit width =  sliceHeight * (slices-2);
 
     Net* net = Net::create ( cell, "blockageNet" );
+    net->setType( Net::Type::BLOCKAGE );
 
     Horizontal::create ( net
                        , BLOCKAGE2

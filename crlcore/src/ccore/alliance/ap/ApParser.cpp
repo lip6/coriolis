@@ -355,6 +355,9 @@ namespace {
         net->setType   ( Net::Type::CLOCK );
         net->setGlobal ( true );
       }
+      if ( _framework->isBLOCKAGE(hName) ) {
+        net->setType   ( Net::Type::BLOCKAGE );
+      }
     }
 
     return net;

@@ -334,8 +334,8 @@ namespace Hurricane {
   JsonReader::~JsonReader ()
   {
     close();
-    delete _buffer;
-    delete _handler;
+    delete [] _buffer;
+    delete    _handler;
   }
 
 

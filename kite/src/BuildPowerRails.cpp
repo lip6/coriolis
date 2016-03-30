@@ -1290,8 +1290,10 @@ namespace Kite {
 
     if (not _blockageNet) {
       _blockageNet = getCell()->getNet("blockagenet");
-      if (not _blockageNet)
+      if (not _blockageNet) {
         _blockageNet = Net::create( getCell(), "blockagenet" );
+        _blockageNet->setType( Net::Type::BLOCKAGE );
+      }
 
       NetRoutingState* state = getRoutingState( _blockageNet, Katabatic::KbCreate );
       state->setFlags( NetRoutingState::Fixed );
