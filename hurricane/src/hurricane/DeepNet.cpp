@@ -56,7 +56,7 @@ namespace Hurricane {
          )
     , _netOccurrence(netOccurrence)
   {
-  //trace << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+    trace << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
   }
 
 

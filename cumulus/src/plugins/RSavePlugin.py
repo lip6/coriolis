@@ -57,8 +57,11 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
   framework = CRL.AllianceFramework.get()
   if depth == 0: print '  o  Recursive Save-Cell.'
 
-  sviews = 'layout'
-  if views & CRL.Catalog.State.Logical: sviews += ',netlist'
+  sviews = ''
+  if views & CRL.Catalog.State.Logical:  sviews += 'netlist'
+  if views & CRL.Catalog.State.Physical:
+    if not sviews: sviews += ','
+    sviews += 'layout'
 
   print '     %s+ %s (%s).' % ( ' '*(depth*2), cell.getName(), sviews )
   if cell.isUniquified(): views |= CRL.Catalog.State.Logical
@@ -92,7 +95,7 @@ def ScriptMain ( **kw ):
     cell, editor = plugins.kwParseMain( **kw )
 
     views = CRL.Catalog.State.Physical
-    if kw.has_key('views'): views |= kw['views']
+    if kw.has_key('views'): views = kw['views']
 
     if not cell:
       print WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' )

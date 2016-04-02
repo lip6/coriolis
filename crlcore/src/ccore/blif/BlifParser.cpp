@@ -339,7 +339,7 @@ namespace {
   void  Model::connectModels ()
   {
     for ( Model* blifModel : _blifOrder ){
-      cmess2 << "Handling model <" << blifModel->getCell()->getName() << ">" << endl;
+    //cmess2 << "Handling model <" << blifModel->getCell()->getName() << ">" << endl;
       blifModel->connectSubckts();
     }
   }
@@ -648,25 +648,25 @@ namespace CRL {
           blifModel->mergeAlias( blifLine[1], blifLine[2] );
         } else if (tokenize.state() & Tokenize::CoverZero) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VSS in a \".names\". Maybe you should use tie cells?\n"
-                         "                    File %s.blif at line %u."
-                       , blifLine[1].c_str()
-                       , blifFile.c_str()
-                       , tokenize.lineno()
-                       ) << endl;
+                           "          File \"%s.blif\" at line %u."
+                         , blifLine[1].c_str()
+                         , blifFile.c_str()
+                         , tokenize.lineno()
+                         ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vss" );
           blifModel->getCell()->getNet( "vss" )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
-                         "                    File %s.blif at line %u."
-                       , blifLine[1].c_str()
-                       , blifFile.c_str()
-                       , tokenize.lineno()
-                       ) << endl;
+                           "          File \"%s.blif\" at line %u."
+                         , blifLine[1].c_str()
+                         , blifFile.c_str()
+                         , tokenize.lineno()
+                         ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vdd" );
           blifModel->getCell()->getNet( "vdd" )->addAlias( blifLine[1] );
         } else {
           cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
-                         "                    File %s.blif at line %u."
+                         "          File \"%s.blif\" at line %u."
                        , blifFile.c_str()
                        , tokenize.lineno()
                        ) << endl;

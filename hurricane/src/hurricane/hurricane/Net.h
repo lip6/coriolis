@@ -220,11 +220,12 @@ class Net : public Entity {
     public:         bool isPower    () const {return (_type == Type::POWER);};
     public:         bool isGround   () const {return (_type == Type::GROUND);};
     public:         bool isSupply   () const {return (isPower() || isGround());};
+    public:         bool hasAlias   (const Name& name) const;
 
 // Updators
 // ********
 
-    public: void setName(const Name& name);
+    public: void setName(Name name);
     public: void setArity(const Arity& arity);
     public: void setGlobal(bool isGlobal);
     public: void setExternal(bool isExternal);

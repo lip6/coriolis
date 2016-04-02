@@ -427,20 +427,27 @@ NetFilter Net::getIsGroundFilter()
     return Net_IsGroundFilter();
 }
 
-void Net::setName(const Name& name)
-// ********************************
+void Net::setName(Name name)
+// *************************
 {
-    if (name != _name) {
-        if (name.isEmpty())
-            throw Error("Can't change net name : empty name");
+  if (name != _name) {
+    if (name.isEmpty())
+      throw Error( "Net::setName(): Empty name, keep \"%s\"", getString(_name).c_str() );
 
-        if (_cell->getNet(name))
-            throw Error("Can't change net name : already exists");
+    bool swapAlias = hasAlias( name );
+    if (not swapAlias and _cell->getNet(name))
+      throw Error( "Net::setName(): On \"%s\", another net named \"%s\" already exists."
+                 , getString(_name).c_str()
+                 , getString( name).c_str() );
 
-        _cell->_getNetMap()._remove(this);
-        _name = name;
-        _cell->_getNetMap()._insert(this);
-    }
+    if (swapAlias) removeAlias(name);
+
+    _cell->_getNetMap()._remove(this);
+    std::swap( _name, name );
+    _cell->_getNetMap()._insert(this);
+
+    if (swapAlias) addAlias(name);
+  }
 }
 
 void Net::setArity(const Arity& arity)
@@ -507,9 +514,21 @@ void Net::setDirection(const Direction& direction)
     _direction = direction;
 }
 
-bool Net::addAlias(const Name& name )
-// **********************************
+bool Net::hasAlias(const Name& name) const
+// ***************************************
 {
+  if (name == _name) return true;
+  for ( NetAliasHook* alias : getAliases() ) {
+    if (alias->getName() == name) return true;
+  }
+  return false;
+}
+
+bool Net::addAlias(const Name& name)
+// *********************************
+{
+  if (hasAlias(name)) return true;
+
   if (getCell()->getNet(name)) {
     cerr << Warning( "Net::addAlias(): Cannot add alias %s to net %s, already taken."
                    , getString(name).c_str()

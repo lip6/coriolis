@@ -110,7 +110,9 @@ namespace CRL {
 
     vector<Net*> nets;
     forEach ( Net*, inet, topCell->getNets() ) nets.push_back( *inet );
-    for ( auto net : nets ) net->setName( converter( net->getName() ) );
+    for ( auto net : nets ) {
+      net->setName( converter( net->getName() ) );
+    }
       
     vector<Instance*> instances;
     set<Cell*>        models;

@@ -821,6 +821,8 @@ void Cell::flattenNets(unsigned int flags)
 
   UpdateSession::open();
 
+  bool reFlatten = _flags.isset(Flags::FlattenedNets);
+
   _flags |= Flags::FlattenedNets;
 
   vector<HyperNet>  hyperNets;
@@ -837,10 +839,12 @@ void Cell::flattenNets(unsigned int flags)
       if (not duplicate) {
         hyperNets.push_back( HyperNet(occurrence) );
       } else {
-        cerr << Warning( "Cell::flattenNets(): Found duplicate: \"%s\" in \"%s\""
-                       , getString(duplicate).c_str()
-                       , getString(duplicate->getCell()->getName()).c_str()
-                       ) << endl;
+        if (not reFlatten)
+          cerr << Warning( "Cell::flattenNets(): In \"%s\", found duplicate: %s for %s."
+                         , getString(duplicate->getCell()->getName()).c_str()
+                         , getString(duplicate).c_str()
+                         , getString(net).c_str()
+                         ) << endl;
       }
       continue;
     }
