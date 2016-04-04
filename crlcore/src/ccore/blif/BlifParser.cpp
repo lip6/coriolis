@@ -472,6 +472,12 @@ namespace {
 
   void  Model::connectSubckts ()
   {
+    auto framework = AllianceFramework::get();
+
+    unsigned int supplyCount = 0;
+    Cell*        zero        = framework->getCell( "zero_x0", Catalog::State::Views );
+    Cell*        one         = framework->getCell( "one_x0" , Catalog::State::Views);
+
     for ( Subckt* subckt : _subckts ) {
       if(not subckt->getModel())
         throw Error( "No .model or cell named <%s> has been found.\n"
@@ -489,8 +495,8 @@ namespace {
         //          << "plug: <" << masterNetName << ">, "
         //          << "external: <" << netName << ">."
         //          << endl;
-        Net*   net           = _cell->getNet( netName );
-        Net*   masterNet     = instance->getMasterCell()->getNet(masterNetName);
+        Net*   net       = _cell->getNet( netName );
+        Net*   masterNet = instance->getMasterCell()->getNet(masterNetName);
         if(not masterNet) {
           ostringstream tmes;
           tmes << "The master net <" << masterNetName << "> hasn't been found "
@@ -501,7 +507,7 @@ namespace {
           throw Error(tmes.str());
         }
 
-        Plug*  plug          = instance->getPlug( masterNet );
+        Plug*  plug = instance->getPlug( masterNet );
         if(not plug) {
           ostringstream tmes;
           tmes << "The plug in net <" << netName << "> "
@@ -524,20 +530,38 @@ namespace {
           plugNet->addAlias( netName );
         }
         else if (plugNet != net){ // Plus already connected to another net
-          plugNet->merge( net );
+          if (not plugNet->isExternal()) net->merge( plugNet );
+          else plugNet->merge( net );
         }
 
-        if ( plugNet->getType() == Net::Type::POWER or plugNet->getType() == Net::Type::GROUND ){
-          ostringstream tmes;
-          string powType  = plugNet->getType() == Net::Type::POWER ? "power" : "ground";
-          string plugName = plugNet->getName()._getString(); // Name of the original net
-          tmes << "Connecting instance <" << subckt->getInstanceName() << "> "
-               << "of <" << subckt->getModelName() << "> "
-               << "to the " << powType << " net <" << plugName << "> ";
-          if(netName != plugName)
-               tmes << "with the alias <" << netName << ">. ";
-          tmes << "Maybe you should use tie cells?";
-          cerr << Warning(tmes.str()) << endl;
+        if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
+          ostringstream message;
+          message << "In " << instance << "\n          "
+                  << "Terminal " << plug->getMasterNet()->getName()
+                  << " is connected to POWER/GROUND " << plugNet->getName()
+                  << " through the alias " << netName
+                  << ".";
+          cerr << Warning( message.str() ) << endl;
+
+          if (plugNet->isPower()) {
+            ostringstream insName; insName << "one_" << supplyCount++;
+
+            Instance* insOne = Instance::create( _cell, insName.str(), one );
+            Net*      netOne = Net::create( _cell, insName.str() );
+
+            insOne->getPlug( one->getNet("q") )->setNet( netOne );
+            plug->setNet( netOne );
+          }
+
+          if (plugNet->isGround()) {
+            ostringstream insName; insName << "zero_" << supplyCount++;
+
+            Instance* insZero = Instance::create( _cell, insName.str(), zero );
+            Net*      netZero = Net::create( _cell, insName.str() );
+
+            insZero->getPlug( zero->getNet("nq") )->setNet( netZero );
+            plug->setNet( netZero );
+          }
         }
       }
     }

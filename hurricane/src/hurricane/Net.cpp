@@ -630,10 +630,18 @@ void Net::merge(Net* net)
         throw Error("Can't merge net : itself");
 
     if (net->getCell() != _cell)
-        throw Error("Can't merge net : incompatible net");
+      throw Error( "Net::merge(): Cannot merge %s (%s) with %s (%s)."
+                 , getString(getName()).c_str()
+                 , getString(getCell()->getName()).c_str()
+                 , getString(net->getName()).c_str()
+                 , getString(net->getCell()->getName()).c_str()
+                 );
 
     if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().isEmpty())
-        throw Error("Can't merge net : incompatible net");
+        throw Error( "Net::merge(): Cannot merge external (%s) with an internal net (%s)."
+                   , getString(net->getName()).c_str()
+                   , getString(getName()).c_str()
+                   );
 
     for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
     for_each_component(component, net->getComponents()) component->_setNet(this); end_for;
