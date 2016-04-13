@@ -60,7 +60,7 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
   sviews = ''
   if views & CRL.Catalog.State.Logical:  sviews += 'netlist'
   if views & CRL.Catalog.State.Physical:
-    if not sviews: sviews += ','
+    if sviews: sviews += ','
     sviews += 'layout'
 
   print '     %s+ %s (%s).' % ( ' '*(depth*2), cell.getName(), sviews )
