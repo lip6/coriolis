@@ -76,9 +76,10 @@ extern "C" {
     long      pitch;
     long      wireWidth;
     long      viaWidth;
+    long      obsDw;
     
     if (PyArg_ParseTuple( args
-                        , "OIIIdllll:RoutingLayerGauge.create"
+                        , "OIIIdlllll:RoutingLayerGauge.create"
                         , &pyLayer
                         , &direction
                         , &type
@@ -88,6 +89,7 @@ extern "C" {
                         , &pitch
                         , &wireWidth
                         , &viaWidth
+                        , &obsDw
                         )) {
       if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
         PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingLayerGauge.create()." );
@@ -117,6 +119,7 @@ extern "C" {
                                      , pitch
                                      , wireWidth
                                      , viaWidth
+                                     , obsDw
                                      );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.create()." );
@@ -263,6 +266,7 @@ extern "C" {
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfWireWidth,getHalfWireWidth,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getViaWidth     ,getViaWidth     ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfViaWidth ,getHalfViaWidth ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetLongAttribute  (PyRoutingLayerGauge_getObstacleDw   ,getObstacleDw   ,PyRoutingLayerGauge,RoutingLayerGauge)
 
 
   // Standart Destroy (Attribute).
@@ -297,6 +301,8 @@ extern "C" {
                                 , "Returns the VIA width." }
     , { "getHalfViaWidth"       , (PyCFunction)PyRoutingLayerGauge_getHalfViaWidth , METH_NOARGS
                                 , "Returns the half VIA width." }
+    , { "getObstacleDw"         , (PyCFunction)PyRoutingLayerGauge_getObstacleDw   , METH_NOARGS
+                                , "Returns the dW to add to obstacle width." }
     , { "getTrackNumber"        , (PyCFunction)PyRoutingLayerGauge_getTrackNumber  , METH_VARARGS
                                 , "Compute the number of tracks included between <start> & <stop>." }
     , { "getTrackIndex"         , (PyCFunction)PyRoutingLayerGauge_getTrackIndex   , METH_VARARGS

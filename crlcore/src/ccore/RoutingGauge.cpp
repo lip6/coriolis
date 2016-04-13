@@ -80,7 +80,8 @@ namespace CRL {
                       , gauge._layerGauges[i]->getOffset()
                       , gauge._layerGauges[i]->getPitch()
                       , gauge._layerGauges[i]->getWireWidth()
-                      , gauge._layerGauges[i]->getViaWidth() )
+                      , gauge._layerGauges[i]->getViaWidth()
+                      , gauge._layerGauges[i]->getObstacleDw() )
                     );
   }
 

@@ -8,7 +8,7 @@
 // |               C o r e   L i b r a r y                           |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingLayerGauge.cpp"                  |
 // +-----------------------------------------------------------------+
@@ -17,7 +17,6 @@
 
 
 #include  <sstream>
-
 #include "hurricane/BasicLayer.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -110,7 +109,8 @@ namespace CRL {
                                        , DbU::Unit                 offset
                                        , DbU::Unit                 pitch
                                        , DbU::Unit                 wireWidth
-                                       , DbU::Unit                 viaWidth )
+                                       , DbU::Unit                 viaWidth
+                                       , DbU::Unit                 obsDw )
       : _layer        (layer)
       , _blockageLayer(layer->getBlockageLayer())
       , _direction    (direction)
@@ -121,6 +121,7 @@ namespace CRL {
       , _pitch        (pitch)
       , _wireWidth    (wireWidth)
       , _viaWidth     (viaWidth)
+      , _obstacleDw   (obsDw)
   { }
 
 
@@ -132,7 +133,8 @@ namespace CRL {
                                                , DbU::Unit                 offset
                                                , DbU::Unit                 pitch
                                                , DbU::Unit                 wireWidth
-                                               , DbU::Unit                 viaWidth )
+                                               , DbU::Unit                 viaWidth
+                                               , DbU::Unit                 obsDw )
   {
 //  Temporary: must write a more smart check.
 //  BasicLayer* basicLayer = dynamic_cast<BasicLayer*>(layer);
@@ -150,7 +152,8 @@ namespace CRL {
                                                      , offset
                                                      , pitch
                                                      , wireWidth
-                                                     , viaWidth );
+                                                     , viaWidth
+                                                     , obsDw );
 
     return gauge;
   }
@@ -312,12 +315,13 @@ namespace CRL {
     jsonWrite( w, "_layer"        , _layer->getName() );
     jsonWrite( w, "_direction"    , getString(&_direction) );
     jsonWrite( w, "_type"         , getString(&_type     ) );
-    jsonWrite( w, "_depth"        , _depth     );
-    jsonWrite( w, "_density"      , _density   );
-    jsonWrite( w, "_offset"       , _offset    );
-    jsonWrite( w, "_pitch"        , _pitch     );
-    jsonWrite( w, "_wireWidth"    , _wireWidth );
-    jsonWrite( w, "_viaWidth"     , _viaWidth  );
+    jsonWrite( w, "_depth"        , _depth      );
+    jsonWrite( w, "_density"      , _density    );
+    jsonWrite( w, "_offset"       , _offset     );
+    jsonWrite( w, "_pitch"        , _pitch      );
+    jsonWrite( w, "_wireWidth"    , _wireWidth  );
+    jsonWrite( w, "_viaWidth"     , _viaWidth   );
+    jsonWrite( w, "_obstacleDw"   , _obstacleDw );
     w->endObject();
   }
 
@@ -345,6 +349,7 @@ namespace CRL {
     add( "_pitch"        , typeid(int64_t) );
     add( "_wireWidth"    , typeid(int64_t) );
     add( "_viaWidth"     , typeid(int64_t) );
+    add( "_obstacleDw"   , typeid(int64_t) );
   }
 
 
@@ -360,16 +365,17 @@ namespace CRL {
   {
     check( stack, "JsonRoutingLayerGauge::toData" );
 
-    Technology*        techno    = DataBase::getDB()->getTechnology();
-    RoutingGauge*      rg        = get<RoutingGauge*>( stack, ".RoutingGauge"  );
-    RoutingLayerGauge* rlg       = NULL;
-    string             layer     = get<string>       ( stack, "_layer"         );
-    unsigned int       depth     = get<int64_t>      ( stack, "_depth"         );
-    double             density   = get<double>       ( stack, "_density"       );
-    DbU::Unit          offset    = get<int64_t>      ( stack, "_offset"        );
-    DbU::Unit          pitch     = get<int64_t>      ( stack, "_pitch"         );
-    DbU::Unit          wireWidth = get<int64_t>      ( stack, "_wireWidth"     );
-    DbU::Unit          viaWidth  = get<int64_t>      ( stack, "_viaWidth"      );
+    Technology*        techno      = DataBase::getDB()->getTechnology();
+    RoutingGauge*      rg          = get<RoutingGauge*>( stack, ".RoutingGauge"  );
+    RoutingLayerGauge* rlg         = NULL;
+    string             layer       = get<string>       ( stack, "_layer"         );
+    unsigned int       depth       = get<int64_t>      ( stack, "_depth"         );
+    double             density     = get<double>       ( stack, "_density"       );
+    DbU::Unit          offset      = get<int64_t>      ( stack, "_offset"        );
+    DbU::Unit          pitch       = get<int64_t>      ( stack, "_pitch"         );
+    DbU::Unit          wireWidth   = get<int64_t>      ( stack, "_wireWidth"     );
+    DbU::Unit          viaWidth    = get<int64_t>      ( stack, "_viaWidth"      );
+    DbU::Unit          obstacleDw = get<int64_t>       ( stack, "_obstacleDw"    );
 
     Constant::Direction       direction;
     Constant::LayerGaugeType  type;
@@ -388,6 +394,7 @@ namespace CRL {
                                          , pitch
                                          , wireWidth
                                          , viaWidth
+                                         , obstacleDw
                                          );
           rg->addLayerGauge( rlg );
         }

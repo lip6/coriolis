@@ -641,9 +641,10 @@ namespace {
     Net*          net       = getNet();
     RoutingPlane* plane     = getRoutingPlane();
     Segment*      segment   = NULL;
-    DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
-                              - plane->getLayerGauge()->getHalfWireWidth()
-                              - DbU::fromLambda(0.1);
+  //DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
+  //                          - plane->getLayerGauge()->getHalfWireWidth()
+  //                          - DbU::fromLambda(0.1);
+    DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
   //unsigned int  type      = plane->getLayerGauge()->getType();
@@ -727,6 +728,9 @@ namespace {
           axisMin -= delta;
           axisMax += delta;
       //}
+
+        ltrace(300) << "  axisMin:" << DbU::getValueString(axisMin)
+                    <<  " axisMax:" << DbU::getValueString(axisMax) << endl;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {

@@ -152,10 +152,10 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
                                          ,'Must have exactly two fields ("METAL_LAYER", (parameters_list)).'
                                          ,str(entry)
                                          ])
-                if len(entry[1]) != 8:
+                if len(entry[1]) != 9:
                     raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
-                                         ,'Parameters list must have exactly eight fields:'
-                                         ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width)'
+                                         ,'Parameters list must have exactly nine fields:'
+                                         ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width, obs_dw)'
                                          ,str(entry)
                                          ])
 
@@ -168,6 +168,7 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
                                                              , DbU.fromLambda(entry[1][5])  # Pitch.
                                                              , DbU.fromLambda(entry[1][6])  # Wire width.
                                                              , DbU.fromLambda(entry[1][7])  # Via width.
+                                                             , DbU.fromLambda(entry[1][8])  # Obstacle dW.
                                                              ) )
 
             except Exception, e:

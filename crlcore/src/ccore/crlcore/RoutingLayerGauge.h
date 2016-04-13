@@ -86,7 +86,8 @@ namespace CRL {
                                                          , DbU::Unit                 offset
                                                          , DbU::Unit                 pitch
                                                          , DbU::Unit                 wireWidth
-                                                         , DbU::Unit                 viaWidth );
+                                                         , DbU::Unit                 viaWidth
+                                                         , DbU::Unit                 obsDw );
       virtual void                      destroy          ();
     // Accessors.                       
       inline  const Layer*              getLayer         () const;
@@ -102,6 +103,7 @@ namespace CRL {
       inline  DbU::Unit                 getHalfWireWidth () const;
       inline  DbU::Unit                 getViaWidth      () const;
       inline  DbU::Unit                 getHalfViaWidth  () const;
+      inline  DbU::Unit                 getObstacleDw    () const;
               void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
               unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
               unsigned int              getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
@@ -124,6 +126,7 @@ namespace CRL {
               DbU::Unit                 _pitch;
               DbU::Unit                 _wireWidth;
               DbU::Unit                 _viaWidth;
+              DbU::Unit                 _obstacleDw;
 
     // Internal - Constructors & Destructors.
                                  RoutingLayerGauge ( const Layer*              layer
@@ -134,7 +137,8 @@ namespace CRL {
                                                    , DbU::Unit                 offset
                                                    , DbU::Unit                 pitch
                                                    , DbU::Unit                 wireWidth
-                                                   , DbU::Unit                 viaWidth );
+                                                   , DbU::Unit                 viaWidth
+                                                   , DbU::Unit                 obsDw );
       virtual                   ~RoutingLayerGauge ();
       virtual void               _preDestroy();
               RoutingLayerGauge& operator=         ( const RoutingLayerGauge& );
@@ -172,6 +176,7 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getHalfWireWidth () const { return ( _wireWidth>>1 ); }
   inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return ( _viaWidth ); }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return ( _viaWidth>>1 ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return ( _obstacleDw ); }
 
 
 // -------------------------------------------------------------------
