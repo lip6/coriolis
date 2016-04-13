@@ -715,6 +715,7 @@ namespace {
                          , Conn_3G_3M1      = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
                          , Conn_3G_4M1      = CONNEXITY_VALUE( 3, 4, 0, 0, 0 , 0 )
                          , Conn_3G_1M2      = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 0 )
+                         , Conn_3G_2M2      = CONNEXITY_VALUE( 3, 0, 2, 0, 0 , 0 )
                          , Conn_3G_1M3      = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 0 )
                          , Conn_3G_2M3      = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
                          , Conn_3G_3M3      = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
@@ -967,7 +968,8 @@ namespace {
       case Conn_2G_2M2:
       case Conn_2G_3M2:
       case Conn_2G_4M2:
-      case Conn_3G_1M2: _do_xG_xM2(); break;
+      case Conn_3G_1M2:
+      case Conn_3G_2M2: _do_xG_xM2(); break;
       case Conn_2G_1M3:
       case Conn_2G_2M3:
       case Conn_2G_3M3:

@@ -234,14 +234,17 @@ namespace Kite {
   // I guess this has been written for the case of overlapping segments from the same
   // net, we find the first one of the overlapped sets. But what if they are not overlapping
   // but still from the same net?
-    if (begin < _segments.size())
-      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet()) ; --begin );
+    size_t sameNetDelta = 0;
+    if (begin < _segments.size()) {
+      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet())
+            ; --begin, ++sameNetDelta );
+    }
 
     state = 0;
     if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
       state = BeforeFirstElement;
     } else {
-      if (begin) begin -= 1;
+      if (begin and not sameNetDelta) begin -= 1;
 
       size_t   usedBegin    = begin;
       Interval usedInterval = getOccupiedInterval( usedBegin );
@@ -272,9 +275,11 @@ namespace Kite {
     getOccupiedInterval( begin );
 
     getBeginIndex( interval.getVMax(), end, iState );
-    while ( end < _segments.size() ) {
-      if (_segments[end++]->getSourceU() >= interval.getVMax()) break;
+    for ( ; end < _segments.size() ; ++end ) {
+      if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
+
+    ltrace(190) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
   }
 
 

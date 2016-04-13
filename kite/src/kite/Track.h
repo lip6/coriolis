@@ -8,7 +8,7 @@
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./kite/Track.h"                                |
 // +-----------------------------------------------------------------+

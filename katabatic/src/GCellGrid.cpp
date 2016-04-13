@@ -140,8 +140,10 @@ namespace Katabatic {
     Interval side;
     switch ( direction ) {
       default:
-      case Constant::Horizontal: side = Interval(_boundingBox.getXMin(),_boundingBox.getXMax()); break;
-      case Constant::Vertical:   side = Interval(_boundingBox.getYMin(),_boundingBox.getYMax()); break;
+        cerr << Error( "GCellGrid::getUSide(): Unknown direction flag \"%i\""
+                     , direction ) << endl;
+      case KbHorizontal: side = Interval(_boundingBox.getXMin(),_boundingBox.getXMax()); break;
+      case KbVertical:   side = Interval(_boundingBox.getYMin(),_boundingBox.getYMax()); break;
     }
     return side;
   }
