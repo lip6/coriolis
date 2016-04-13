@@ -1140,6 +1140,7 @@ void Graph::Dijkstra()
 //#endif
 
 //DebugSession::open( _working_net, 600 );
+//DebugSession::open( 600 );
   ltrace(600) << "Dijkstra for net: " << _working_net << endl;
   ltracein(600);
   ltrace(600) << "Stamp:" << _netStamp << endl;
