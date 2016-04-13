@@ -31,6 +31,7 @@
                                     PyCatalog.cpp
                                     PyCatalogState.cpp
                                     PyEnvironment.cpp
+                                    PyAllianceLibrary.cpp
                                     PyCellGauge.cpp
                                     PyRoutingGauge.cpp
                                     PyRoutingLayerGauge.cpp
@@ -47,6 +48,7 @@
                                     crlcore/PyCatalog.h
                                     crlcore/PyCatalogState.h
                                     crlcore/PyEnvironment.h
+                                    crlcore/PyAllianceLibrary.h
                                     crlcore/PyCellGauge.h
                                     crlcore/PyRoutingGauge.h
                                     crlcore/PyRoutingLayerGauge.h

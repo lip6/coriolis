@@ -575,6 +575,17 @@ namespace CRL {
   }
 
 
+  Library* AllianceFramework::getLibrary ( const Name &libName )
+  {
+    for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
+      if ( _libraries[ilib]->getLibrary()->getName() == libName )
+        return _libraries[ilib]->getLibrary();
+    }
+
+    return NULL;
+  }
+
+
   unsigned int  AllianceFramework::loadLibraryCells ( Library *library )
   {
     cmess2 << "      " << tab++ << "+ Library: " << getString(library->getName()) << endl;

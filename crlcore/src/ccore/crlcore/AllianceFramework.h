@@ -86,6 +86,7 @@ namespace CRL {
       inline const Name&              getParentLibraryName     () const;
       inline Library*                 getParentLibrary         ();
              Library*                 getLibrary               ( unsigned int index );
+             Library*                 getLibrary               ( const Name& libName );
              AllianceLibrary*         getAllianceLibrary       ( unsigned int index );
              AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
              AllianceLibrary*         getAllianceLibrary       ( Library* );

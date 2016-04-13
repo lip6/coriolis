@@ -20,6 +20,7 @@
 #include "crlcore/PyEnvironment.h"
 #include "crlcore/PyCellGauge.h"
 #include "crlcore/PyRoutingGauge.h"
+#include "crlcore/PyAllianceLibrary.h"
 #include "crlcore/PyAllianceFramework.h"
 #include "crlcore/GraphicsParser.h"
 #include "crlcore/SymbolicTechnologyParser.h"
@@ -39,6 +40,8 @@ namespace  CRL {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::DataBase;
+  using Isobar::__cs;
+  using Isobar::Converter;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
@@ -112,7 +115,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_getEnvironment ( PyAllianceFramework* self )
+  static PyObject* PyAllianceFramework_getEnvironment ( PyAllianceFramework* self )
   {
     trace << "PyAllianceFramework_getEnvironment ()" << endl;
 
@@ -130,9 +133,9 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_getLibrary ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_getLibrary ( PyAllianceFramework* self, PyObject* args )
   {
-    trace << "PyAllianceFramework_getLibrary ()" << endl;
+    trace << "PyAllianceFramework_getLibrary()" << endl;
 
     Library* lib = NULL;
 
@@ -140,18 +143,62 @@ extern "C" {
     METHOD_HEAD("AllianceFramework.getLibrary()")
 
     PyObject* arg0;
-    if ( not ParseOneArg ( "AllianceFramework.getLibrary()", args, INT_ARG, &arg0 ) ) return NULL;
+    __cs.init ("AllianceFramework.getLibrary");
+    if (not PyArg_ParseTuple( args, "O&:AllianceFramework.getLibrary", Converter, &arg0)) {
+      PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.getLibrary()." );
+      return NULL;
+    }
 
-    lib = af->getLibrary ( PyAny_AsLong(arg0) );
-    
-    if ( lib == NULL ) Py_RETURN_NONE;
+    if      (__cs.getObjectIds() == STRING_ARG) lib = af->getLibrary( Name(PyString_AsString(arg0)) );
+    else if (__cs.getObjectIds() == INT_ARG   ) lib = af->getLibrary( PyAny_AsLong(arg0) );
+    else {
+      PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.getLibrary()." );
+      return NULL;
+    }
+
+    if (lib == NULL) Py_RETURN_NONE;
     HCATCH
 
     return PyLibrary_Link(lib);
   }
 
 
-  extern PyObject* PyAllianceFramework_getCell ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_getAllianceLibrary ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_getAllianceLibrary()" << endl;
+
+    AllianceLibrary* alib = NULL;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.getAllianceLibrary()")
+
+    PyObject* arg0;
+    PyObject* arg1;
+    __cs.init ("AllianceFramework.getAllianceLibrary");
+    if (not PyArg_ParseTuple( args
+                            , "O&|O&:AllianceFramework.getAllianceLibrary"
+                            , Converter, &arg0
+                            , Converter, &arg1)) {
+      PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.getLibrary()." );
+      return NULL;
+    }
+
+    if      (__cs.getObjectIds() == INT_ARG      ) alib = af->getAllianceLibrary( PyAny_AsLong(arg0) );
+    else if (__cs.getObjectIds() == ":string:int") alib = af->getAllianceLibrary( Name(PyString_AsString(arg0)), PyAny_AsLong(arg1) );
+    else if (__cs.getObjectIds() == ":library"   ) alib = af->getAllianceLibrary( PYLIBRARY_O(arg0) );
+    else {
+      PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.getAllianceLibrary()." );
+      return NULL;
+    }
+
+    if (alib == NULL) Py_RETURN_NONE;
+    HCATCH
+
+    return PyAllianceLibrary_Link(alib);
+  }
+
+
+  static PyObject* PyAllianceFramework_getCell ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_getCell ()" << endl;
 
@@ -174,7 +221,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_saveCell ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_saveCell ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_saveCell ()" << endl;
 
@@ -195,7 +242,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_createCell ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_createCell ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_createCell ()" << endl;
 
@@ -214,6 +261,45 @@ extern "C" {
     HCATCH
 
     return PyCell_Link(cell);
+  }
+
+
+  static PyObject* PyAllianceFramework_createLibrary ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_createLibrary()" << endl;
+
+    AllianceLibrary* alib    = NULL;
+    string           libName = "";
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.createLibrary()")
+
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    __cs.init ("AllianceFramework.createLibrary");
+    if (not PyArg_ParseTuple( args
+                            , "O&O&|O&:AllianceFramework.createLibrary"
+                            , Converter, &arg0
+                            , Converter, &arg1
+                            , Converter, &arg2
+                            )) {
+      PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.createLibrary()." );
+      return NULL;
+    }
+
+    if      (__cs.getObjectIds() == ":string:int"       ) { }
+    else if (__cs.getObjectIds() == ":strint:int:string") libName = PyString_AsString(arg2);
+    else {
+      PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.createLibrary()." );
+      return NULL;
+    }
+
+    alib = af->createLibrary( PyString_AsString(arg0), PyAny_AsLong(arg1), libName );
+    if (alib == NULL) Py_RETURN_NONE;
+    HCATCH
+
+    return PyAllianceLibrary_Link(alib);
   }
 
 
@@ -238,7 +324,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_addRoutingGauge ()" << endl;
 
@@ -254,7 +340,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_getRoutingGauge ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_getRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_getRoutingGauge ()" << endl;
 
@@ -278,7 +364,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_addCellGauge ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_addCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_addCellGauge ()" << endl;
 
@@ -294,7 +380,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyAllianceFramework_getCellGauge ( PyAllianceFramework* self, PyObject* args )
+  static PyObject* PyAllianceFramework_getCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
     trace << "PyAllianceFramework_getCellGauge ()" << endl;
 
@@ -317,6 +403,35 @@ extern "C" {
     return PyCellGauge_Link(rg);
   }
 
+
+  static PyObject* PyAllianceFramework_loadLibraryCells ( PyAllianceFramework* self, PyObject* args )
+  {
+    trace << "PyAllianceFramework_loadLibraryCells()" << endl;
+
+    unsigned int count = 0;
+
+    HTRY
+    METHOD_HEAD("AllianceFramework.loadLibraryCells()")
+
+    PyObject* arg0;
+    __cs.init ("AllianceFramework.loadLibraryCells");
+    if (not PyArg_ParseTuple( args, "O&:AllianceFramework.loadLibraryCells", Converter, &arg0)) {
+      PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.loadLibraryCells()." );
+      return NULL;
+    }
+
+    if      (__cs.getObjectIds() == STRING_ARG) count = af->loadLibraryCells( Name(PyString_AsString(arg0)) );
+    else if (__cs.getObjectIds() == ":library") count = af->loadLibraryCells( PYLIBRARY_O(arg0) );
+    else {
+      PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.loadLibraryCells()." );
+      return NULL;
+    }
+
+    HCATCH
+
+    return Py_BuildValue( "I", count );
+  }
+
   
   // Standart Accessors (Attributes).
 
@@ -334,12 +449,18 @@ extern "C" {
                                , "Gets the Alliance Environment." }
     , { "getLibrary"           , (PyCFunction)PyAllianceFramework_getLibrary           , METH_VARARGS
                                , "Gets a Library, by index." }                         
+    , { "getAllianceLibrary"   , (PyCFunction)PyAllianceFramework_getAllianceLibrary   , METH_VARARGS
+                               , "Gets an AllianceLibrary, by index, name or Hurricane Library." }                         
     , { "getCell"              , (PyCFunction)PyAllianceFramework_getCell              , METH_VARARGS
                                , "Gets an Alliance Cell." }                            
     , { "saveCell"             , (PyCFunction)PyAllianceFramework_saveCell             , METH_VARARGS
                                , "Saves an Alliance Cell." }                           
     , { "createCell"           , (PyCFunction)PyAllianceFramework_createCell           , METH_VARARGS
                                , "Create a Cell in the Alliance framework." }
+    , { "createLibrary"        , (PyCFunction)PyAllianceFramework_createLibrary        , METH_VARARGS
+                               , "Create a Library in the Alliance framework." }
+    , { "loadLibraryCells"     , (PyCFunction)PyAllianceFramework_loadLibraryCells     , METH_VARARGS
+                               , "Load in memory all Cells from an Alliance Library." }                           
     , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS
                                , "Tells if a cell name is a Pad." }
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
@@ -376,7 +497,10 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::NoPythonInit,"NoPythonInit");
+    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::NoPythonInit ,"NoPythonInit" );
+    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::CreateLibrary,"CreateLibrary");
+    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::AppendLibrary,"AppendLibrary");
+    LoadObjectConstant(PyTypeAllianceFramework.tp_dict,AllianceFramework::HasCatalog   ,"HasCatalog"   );
   }
 
 
