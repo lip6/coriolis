@@ -194,13 +194,13 @@ extern "C" {
 
 #define GENERIC_METHOD_HEAD(SELF_TYPE,SELF_OBJECT,function)                \
     if ( self->ACCESS_OBJECT == NULL ) {                                   \
-      PyErr_SetString ( ProxyError, "Attempt to call " function " on an unbound hurricane object" ); \
-      return ( NULL );                                                     \
+      PyErr_SetString( ProxyError, "Attempt to call " function " on an unbound hurricane object" ); \
+      return NULL;                                                         \
     }                                                                      \
     SELF_TYPE* SELF_OBJECT = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);\
-    if ( self->ACCESS_OBJECT == NULL ) {                                   \
-      PyErr_SetString ( ProxyError, "Invalid dynamic_cast while calling " function "" ); \
-      return ( NULL );                                                     \
+    if ( SELF_OBJECT == NULL ) {                                           \
+      PyErr_SetString( ProxyError, "Invalid dynamic_cast<> while calling " function "" ); \
+      return NULL;                                                         \
     }
 
 
