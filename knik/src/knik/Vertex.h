@@ -37,7 +37,6 @@ namespace Knik {
                    unsigned      _netStamp;
                    DbU::Unit     _halfWidth;     // this corresponds to the half width of dual bin of the vertex
                    DbU::Unit     _halfHeight;    // this corresponds to the half height of dual bin of the vertex
-                   Box           _boundingBox;
                    unsigned int  _flags;
                  
         // Constructors & Destructors

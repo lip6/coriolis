@@ -382,7 +382,11 @@ Vertex* MatrixVertex::getVertex ( Point point )
 {
     pair<unsigned int,unsigned int> indexes = getIJ ( point );
     Vertex* vertex = getVertex ( indexes );
+
+    ltrace(600) << "MatrixVertex::getVertex(): " << vertex << endl;
+
     if (vertex and vertex->isBlocked()) {
+      ltrace(600) << "Vertex is blocked, looking for neighbor." << endl;
       Vertex* neighbor = NULL;
       for ( size_t i=0; i<4 ; ++i ) {
         neighbor = vertex->getFirstEdges(i)->getOpposite( vertex );

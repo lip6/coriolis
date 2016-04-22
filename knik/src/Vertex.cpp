@@ -106,6 +106,7 @@ Vertex::Vertex ( Graph* routingGraph, Point position, DbU::Unit halfWidth, DbU::
     , _netStamp (0)
     , _halfWidth  (halfWidth)
     , _halfHeight (halfHeight)
+    , _flags(0)
 {
     _firstEdges[0] = NULL;
     _firstEdges[1] = NULL;

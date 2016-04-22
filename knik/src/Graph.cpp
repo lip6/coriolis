@@ -981,6 +981,10 @@ int Graph::initRouting ( Net* net )
     //editor->Refresh();
     //editor->Stop ("Going to init");
 
+  //if (_working_net->getName() == "read0") DebugSession::open( 600 );
+    ltrace(600) << "Graph::initRouting() " << _working_net << endl;
+    ltracein(600);
+
     int currentConnexID = 0;
     vector<Contact*> vContacts;
     vector<RoutingPad*> vRoutingPads;
@@ -1029,9 +1033,9 @@ int Graph::initRouting ( Net* net )
     //bool useConnexID = false;
     for ( unsigned index = 0 ; index < vRoutingPads.size() ; index ++ ) {
         RoutingPad* routingPad = vRoutingPads[index];
-        //cerr << "        [0;34mRoutingPad :[0m" << routingPad << endl;
+        ltrace(600) << routingPad << endl;
         Vertex*  rpVertex = getVertex ( routingPad->getCenter() );
-        //cerr << "            [0;34mVertex :[0m" << rpVertex << endl;
+        ltrace(600) << rpVertex << endl;
         Contact* rpContact = rpVertex->getContact();
         if ( rpContact && (rpContact->getNet() == routingPad->getNet()) ) {
             // s'il existe deja un contact pour ce vertex pour ce net, on s'y attache
@@ -1113,6 +1117,10 @@ int Graph::initRouting ( Net* net )
     
     //cerr << "net " << net << " has " << _vertexes_to_route.size() << " vertexes to route." << endl;
     //}
+
+    ltraceout(600);
+  //DebugSession::close();
+
     return _vertexes_to_route.size();
 }
 
@@ -1140,7 +1148,8 @@ void Graph::Dijkstra()
 //#endif
 
 //DebugSession::open( _working_net, 600 );
-//DebugSession::open( 600 );
+//if (_working_net->getName() == "read0") DebugSession::open( 600 );
+
   ltrace(600) << "Dijkstra for net: " << _working_net << endl;
   ltracein(600);
   ltrace(600) << "Stamp:" << _netStamp << endl;
