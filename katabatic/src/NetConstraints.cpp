@@ -103,7 +103,7 @@ namespace {
               ltrace(99) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
-                                            , KbHorizontal );
+                                            , KbHorizontal|KbWarnOnError );
             }
             contact = ialigned->getAutoSource();
             ltrace(99) << "contact: " << contact << endl;
@@ -111,7 +111,7 @@ namespace {
               ltrace(99) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
-                                            , KbHorizontal );
+                                            , KbHorizontal|KbWarnOnError );
             }
           }
         } 
@@ -128,14 +128,14 @@ namespace {
               ltrace(99) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
-                                            , KbVertical );
+                                            , KbVertical|KbWarnOnError );
             }
             contact = ialigned->getAutoSource();
             if (contact) {
               ltrace(99) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
-                                            , KbVertical );
+                                            , KbVertical|KbWarnOnError );
             }
           } 
         }

@@ -189,14 +189,19 @@ namespace Katabatic {
     constraintMax = min ( constraintMax, contact->getCBYMax() );
 
     ltrace(148) << "Merge with target constraints: " << contact << " ["
-                << DbU::getValueString(constraintMin) << ":"
-                << DbU::getValueString(constraintMax) << "]"
+                << DbU::getValueString(contact->getCBYMin()) << ":"
+                << DbU::getValueString(contact->getCBYMax()) << "]"
                 << endl;
 
     constraintMin = max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = min ( constraintMax, getUserConstraints().getVMax() );
 
     ltrace(148) << "Merge with user constraints: " << getUserConstraints() << " ["
+                << DbU::getValueString(getUserConstraints().getVMin()) << ":"
+                << DbU::getValueString(getUserConstraints().getVMax()) << "]"
+                << endl;
+
+    ltrace(148) << "Resulting constraints: " << " ["
                 << DbU::getValueString(constraintMin) << ":"
                 << DbU::getValueString(constraintMax) << "]"
                 << endl;
@@ -323,8 +328,11 @@ namespace Katabatic {
         success = true;
 
         if (isMetal2Source) {
-          ltrace(200) << "Fixing on source terminal contact." << endl;
-          doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntFixed );
+          ltrace(200) << "Fixing on source terminal contact."
+                      << doglegs[doglegs.size()-2]->getAutoSource() << endl;
+        //doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntFixed );
+          doglegs[doglegs.size()-2]->getAutoSource()->setConstraintBox( source->getConstraintBox() );
+          doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntUserNativeConstraints );
         }
 
         parallel = doglegs[ doglegs.size()-1 ];
@@ -365,8 +373,11 @@ namespace Katabatic {
         success = true;
 
         if (isMetal2Target) {
-          ltrace(200) << "Fixing on target terminal contact." << endl;
-          doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntFixed );
+          ltrace(200) << "Fixing on target terminal contact: "
+                      << doglegs[doglegs.size()-2]->getAutoTarget() << endl;
+        //doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntFixed );
+          doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( target->getConstraintBox() );
+          doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntUserNativeConstraints );
         }
       }
     }
@@ -750,14 +761,14 @@ namespace Katabatic {
     segment2->setFlags( (isSlackened()?SegSlackened:0) );
     Session::dogleg( segment2 );
 
-    if (isSourceTerminal()) {
+    if (autoSource->isTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
       autoTarget->unsetFlags( CntWeakTerminal );
       dlContact1->setFlags  ( CntWeakTerminal );
       if (autoTarget->getGCell() == doglegGCell)
         dlContact1->migrateConstraintBox( autoTarget );
-    } else if (isTargetTerminal()) {
+    } else if (autoTarget->isTerminal()) {
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
       segment1->setFlags( SegWeakTerminal1 );

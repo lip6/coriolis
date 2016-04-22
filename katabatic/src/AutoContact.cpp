@@ -259,7 +259,11 @@ namespace Katabatic {
 
 
   Box  AutoContact::getNativeConstraintBox () const
-  { return isFixed() ? Box(_contact->getPosition()) : _gcell->getBoundingBox(); }
+  {
+    if (isUserNativeConstraints()) return getConstraintBox();
+    if (isFixed()) return Box(_contact->getPosition());
+    return _gcell->getBoundingBox();
+  }
 
 
   Interval  AutoContact::getNativeUConstraints ( unsigned int direction ) const
@@ -438,8 +442,8 @@ namespace Katabatic {
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    ltrace(110) << "setConstraintBox() - " << this << " " << getConstraintBox() << endl;
-    ltrace(110) << "* " << _gcell << endl;
+    ltrace(200) << "setConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    ltrace(200) << "* " << _gcell << endl;
   }
 
 
@@ -448,6 +452,7 @@ namespace Katabatic {
                                            , unsigned int flags
                                            )
   {
+    ltrace(200) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
     if (flags & KbHorizontal) {
       if ( (constraintMin > getCBYMax()) or (constraintMax < getCBYMin()) ) {
         if ( Session::isInDemoMode() or not (flags & KbWarnOnError) ) return false;
@@ -487,7 +492,7 @@ namespace Katabatic {
       setCBXMin ( std::max(getCBXMin(),constraintMin) );
       setCBXMax ( std::min(getCBXMax(),constraintMax) );
     }
-    ltrace(110) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    ltrace(200) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
     return true;
   }
 
@@ -609,6 +614,8 @@ namespace Katabatic {
     s.insert( s.size()-1, (isVTee            ())? "v": "-" );
     s.insert( s.size()-1, (isInvalidated     ())? "i": "-" );
     s.insert( s.size()-1, (isInvalidatedCache())? "c": "-" );
+
+  //s.insert( s.size()-1, getString(getConstraintBox()));
     return s;
   }
 

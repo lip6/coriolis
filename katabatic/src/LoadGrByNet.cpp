@@ -653,6 +653,7 @@ namespace {
              void          _do_1G_xM1        ();
              void          _do_xG_xM1_xM3    ();
              void          _do_xG_1M1_1M2    ();
+             void          _do_4G_1M2        ();
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
@@ -725,6 +726,7 @@ namespace {
                          , Conn_4G_2M1      = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
                          , Conn_4G_3M1      = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
                          , Conn_4G_4M1      = CONNEXITY_VALUE( 4, 4, 0, 0, 0 , 0 )
+                         , Conn_4G_1M2      = CONNEXITY_VALUE( 4, 0, 1, 0, 0 , 0 )
                          , Conn_4G_1M3      = CONNEXITY_VALUE( 4, 0, 0, 1, 0 , 0 )
                          , Conn_1G_1Pad     = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
                          , Conn_2G_1Pad     = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
@@ -964,6 +966,7 @@ namespace {
       case Conn_4G_2M1:
       case Conn_4G_3M1:
       case Conn_4G_4M1: _do_xG_xM1_xM3(); break;
+      case Conn_4G_1M2: _do_4G_1M2(); break;
       case Conn_2G_1M2:
       case Conn_2G_2M2:
       case Conn_2G_3M2:
@@ -1798,6 +1801,28 @@ namespace {
     ltraceout(99);
   }
 
+
+  void  GCellTopology::_do_4G_1M2 ()
+  {
+    ltrace(99) << "_do_4G_1M2() [Managed Configuration]" << endl;
+    ltracein(99);
+
+    Component* rpL2 = _routingPads[0];
+    ltrace(99) << "rpL2 := " << rpL2 << endl;
+
+    AutoContact* rpL2ContactSource = NULL;
+    AutoContact* rpL2ContactTarget = NULL;
+
+    doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, DoSourceContact|DoTargetContact );
+
+    _southWestContact = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+    _northEastContact = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+
+    AutoSegment::create( _southWestContact, rpL2ContactSource, KbHorizontal );
+    AutoSegment::create( rpL2ContactTarget, _northEastContact, KbHorizontal );
+
+    ltraceout(99);
+  }
 
   void  GCellTopology::_do_xG_xM2 ()
   {
