@@ -1180,7 +1180,8 @@ class  top_rf1 ( Model ) :
     
     hbuf = 2   # hauteur des buffers (2 ou 4 slices)  : non utilise
 
-    HCELL = 50
+   #HCELL = 50
+    HCELL = DbU.toLambda( self.In[0]._hur_masterCell.getAbutmentBox().getHeight() )
       
     ## Placement des lignes de bit en dessous des buffers ##
     bottom       = 0
@@ -1352,7 +1353,7 @@ class  top_rf1 ( Model ) :
       # Sixieme ligne
       bottom = ( nbit + nbitu + hbuf + 5 ) * HCELL
       
-      Place ( self.Pr[nword - 1] , SYMXY, XY ( 50, bottom ) )
+      Place ( self.Pr[nword - 1] , SYMXY, XY ( HCELL, bottom ) )
       
       for j in range ( 1, half ) : PlaceRight ( self.Pr[nword - 1 - j], SYM_Y )
   
