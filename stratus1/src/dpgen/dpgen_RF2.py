@@ -939,7 +939,8 @@ class top_rf2 ( Model ) :
   def Layout ( self, nbit, nword, type ) :
     global adrange
 
-    HCELL = 50
+   #HCELL = 50
+    HCELL = DbU.toLambda( self.In[0]._hur_masterCell.getAbutmentBox().getHeight() )
 
     # placement des lignes de bit en dessous des buffers  
     bottom = 0
