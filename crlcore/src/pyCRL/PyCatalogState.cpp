@@ -66,12 +66,12 @@ extern "C" {
   DirectGetBoolAttribute(PyCatalogState_isPhysical   ,isPhysical   ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isLogical    ,isFlattenLeaf,PyCatalogState,Catalog::State)
 
-  DirectSetBoolAttribute(PyCatalogState_setFlattenLeaf,setFlattenLeaf,"Catalog::State::setFlatenLeaf",PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setFeed       ,setFeed       ,"Catalog::State::setFeed"      ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setGds        ,setGds        ,"Catalog::State::setGds"       ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setDelete     ,setDelete     ,"Catalog::State::setDelete"    ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setPhysical   ,setPhysical   ,"Catalog::State::setPhysical"  ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setLogical    ,setFlattenLeaf,"Catalog::State::setLogical"   ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setFlattenLeaf,setFlattenLeaf,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setFeed       ,setFeed       ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setGds        ,setGds        ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setDelete     ,setDelete     ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setPhysical   ,setPhysical   ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setLogical    ,setFlattenLeaf,PyCatalogState,Catalog::State)
 
 
   // Standart Destroy (Attribute).

@@ -110,8 +110,8 @@ extern "C" {
 
   updatorFromBasicLayer    (setBlockageLayer,PyBasicLayer,BasicLayer)
   accessorLayerFromVoid    (getBlockageLayer,PyBasicLayer,BasicLayer)
-  DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,"BasicLayer.setExtractNumber",PyBasicLayer,BasicLayer)
-  DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,"BasicLayer.setRealName"     ,PyBasicLayer,BasicLayer)
+  DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,PyBasicLayer,BasicLayer)
+  DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,PyBasicLayer,BasicLayer)
 
 
   // Standart destroy (Attribute).

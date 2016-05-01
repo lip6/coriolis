@@ -52,12 +52,12 @@ extern "C" {
   DirectGetLongAttribute(PyContact_getDx, getDx, PyContact,Contact)
   DirectGetLongAttribute(PyContact_getDy, getDy, PyContact,Contact)
 
-  DirectSetLongAttribute(PyContact_setX     ,setX     ,"Contact.setX"     ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setY     ,setY     ,"Contact.setY"     ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDx    ,setDx    ,"Contact.setDx"    ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDy    ,setDy    ,"Contact.setDy"    ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setWidth ,setWidth ,"Contact.setWidth" ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setHeight,setHeight,"Contact.setHeight",PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setX     ,setX     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setY     ,setY     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDx    ,setDx    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDy    ,setDy    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setWidth ,setWidth ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setHeight,setHeight,PyContact,Contact)
   accessorHook(getAnchorHook,PyContact,Contact)
 
   

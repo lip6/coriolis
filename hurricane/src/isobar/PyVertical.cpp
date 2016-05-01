@@ -47,9 +47,9 @@ extern "C" {
   DirectGetLongAttribute(PyVertical_getX       ,getX       ,PyVertical,Vertical)
   DirectGetLongAttribute(PyVertical_getDySource,getDySource,PyVertical,Vertical)
   DirectGetLongAttribute(PyVertical_getDyTarget,getDyTarget,PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setX,setX,"Vertical.setX",PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setDySource,setDySource,"Vertical.setDySource",PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setDyTarget,setDyTarget,"Vertical.setDyTarget",PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setX       ,setX       ,PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDySource,setDySource,PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDyTarget,setDyTarget,PyVertical,Vertical)
 
   // Standard destroy (Attribute).
   DBoDestroyAttribute(PyVertical_destroy, PyVertical)

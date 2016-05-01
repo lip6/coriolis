@@ -53,8 +53,8 @@ extern "C" {
   DirectGetLongAttribute(PyRoutingPad_getSourceY ,getSourceY ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetX ,getTargetX ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetY ,getTargetY ,PyRoutingPad,RoutingPad)
-  // DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,"RoutingPad.setX",PyRoutingPad,RoutingPad)
-  // DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,"RoutingPad.setY",PyRoutingPad,RoutingPad)
+  //DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,PyRoutingPad,RoutingPad)
+  //DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,PyRoutingPad,RoutingPad)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyRoutingPad_destroy, PyRoutingPad)

@@ -129,13 +129,13 @@ extern "C" {
   DirectGetUIntAttribute  (PyBanner_getScreenWidth ,getScreenWidth ,PyBanner,Banner)
 
   // Standart Mutators (Attributes).
-  DirectSetCStringAttribute(PyBanner_setName        ,setName        ,"Banner.setName"        ,PyBanner,Banner)
-  DirectSetCStringAttribute(PyBanner_setVersion     ,setVersion     ,"Banner.setVersion"     ,PyBanner,Banner)
-  DirectSetCStringAttribute(PyBanner_setPurpose     ,setPurpose     ,"Banner.setPurpose"     ,PyBanner,Banner)
-  DirectSetCStringAttribute(PyBanner_setDate        ,setDate        ,"Banner.setDate"        ,PyBanner,Banner)
-  DirectSetCStringAttribute(PyBanner_setContributors,setContributors,"Banner.setContributors",PyBanner,Banner)
-  DirectSetCStringAttribute(PyBanner_setAuthors     ,setAuthors     ,"Banner.setAuthors"     ,PyBanner,Banner)
-  DirectSetLongAttribute   (PyBanner_setScreenWidth ,setScreenWidth ,"Banner.setScreenWidth" ,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setName        ,setName        ,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setVersion     ,setVersion     ,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setPurpose     ,setPurpose     ,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setDate        ,setDate        ,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setContributors,setContributors,PyBanner,Banner)
+  DirectSetCStringAttribute(PyBanner_setAuthors     ,setAuthors     ,PyBanner,Banner)
+  DirectSetLongAttribute   (PyBanner_setScreenWidth ,setScreenWidth ,PyBanner,Banner)
 
 
   // Standart Destroy (Attribute).

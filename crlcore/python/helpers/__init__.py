@@ -8,7 +8,7 @@
 # |    C o r i o l i s  /  C h a m s   B u i l d e r                |
 # |                                                                 |
 # |  Author      :                    Jean-Paul Chaput              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :   "./crlcore/__init__.py"                        |
 # +-----------------------------------------------------------------+

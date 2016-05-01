@@ -107,6 +107,7 @@ using namespace std;
   extern ConverterState             __cs;
   extern int                        __objectOffset;
 
+  int   PyAny_AsInt  ( PyObject* object );
   long  PyAny_AsLong ( PyObject* object );
 
 
@@ -257,7 +258,7 @@ extern "C" {
 # define  DirectGetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetBoolAttribute()")           \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
     if (cobject->FUNC_NAME())                                                   \
       Py_RETURN_TRUE;                                                           \
     Py_RETURN_FALSE;                                                            \
@@ -272,7 +273,7 @@ extern "C" {
 # define  DirectIsAFromCStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectIsAFromCStringAttribute()")    \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
     HTRY                                                                        \
     char* value = NULL;                                                         \
     if ( !PyArg_ParseTuple(args, "s:", &value) )                                \
@@ -287,13 +288,13 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
-// Attribute Method Macro For Long.
+// Attribute Method Macro For Int.
 
-# define  DirectGetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+# define  DirectGetIntAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)  \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetLongAttribute()")           \
-    return ( PyLong_FromLong(cobject->FUNC_NAME()) );                           \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
+    return Py_BuildValue("i", cobject->FUNC_NAME());                            \
   }
 
 
@@ -303,8 +304,19 @@ extern "C" {
 # define  DirectGetUIntAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetUIntAttribute()")           \
-    return ( Py_BuildValue ("I",cobject->FUNC_NAME()) );                        \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
+    return Py_BuildValue ("I",cobject->FUNC_NAME());                            \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For Long.
+
+# define  DirectGetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
+  {                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
+    return Py_BuildValue("l", cobject->FUNC_NAME());                            \
   }
 
 
@@ -314,8 +326,8 @@ extern "C" {
 # define  DirectGetDoubleAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )            \
   {                                                                               \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetDoubleAttribute()")           \
-    return ( Py_BuildValue ("d",cobject->FUNC_NAME()) );                          \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                         \
+    return Py_BuildValue ("d",cobject->FUNC_NAME());                              \
   }
 
 
@@ -325,8 +337,19 @@ extern "C" {
 # define  DirectGetStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                            \
   {                                                                               \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectGetStringAttribute()")           \
-      return ( Py_BuildValue ("s",cobject->FUNC_NAME().c_str()) );                \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                         \
+    return Py_BuildValue ("s",cobject->FUNC_NAME().c_str());                      \
+  }
+
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For Name.
+
+# define  DirectGetNameAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                          \
+  {                                                                             \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
+    return Py_BuildValue ("s",getString(cobject->FUNC_NAME()).c_str());         \
   }
 
 
@@ -515,15 +538,17 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method Macro For Booleans.
 
-#define  DirectSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,STR_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+#define  DirectSetBoolAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,STR_FUNC_NAME "()")                   \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME "()")                      \
                                                                                 \
     HTRY                                                                        \
     PyObject* arg0;                                                             \
-    if ( not PyArg_ParseTuple ( args, "O:" STR_FUNC_NAME, &arg0 ) or PyBool_Check(arg0) ) \
+    if (not PyArg_ParseTuple( args, "O:" #FUNC_NAME, &arg0 ) or not PyBool_Check(arg0) ) {  \
+      PyErr_SetString(ConstructorError, #SELF_TYPE"."#FUNC_NAME"(): Argument is not a boolean."); \
       return NULL;                                                              \
+    }                                                                           \
                                                                                 \
     (PyObject_IsTrue(arg0)) ? cobject->FUNC_NAME (true) : cobject->FUNC_NAME (false); \
     HCATCH                                                                      \
@@ -533,18 +558,18 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
-// Attribute Method Macro For Long.
+// Attribute Method Macro For Int.
 
-#define  DirectSetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+#define  DirectSetIntAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
   {                                                                    \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetLongAttribute()")  \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")              \
                                                                        \
     HTRY                                                               \
     PyObject* arg0;                                                    \
-    if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )          \
+    if ( ! PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
       return ( NULL );                                                 \
-    cobject->FUNC_NAME ( Isobar::PyAny_AsLong(arg0) );                 \
+    cobject->FUNC_NAME ( Isobar::PyAny_AsInt(arg0) );                 \
     HCATCH                                                             \
                                                                        \
     Py_RETURN_NONE;                                                    \
@@ -552,16 +577,35 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
+// Attribute Method Macro For Long.
+
+#define  DirectSetLongAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
+  {                                                                    \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")              \
+                                                                       \
+    HTRY                                                               \
+    PyObject* arg0;                                                    \
+    if ( ! PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
+      return ( NULL );                                                 \
+    cobject->FUNC_NAME ( Isobar::PyAny_AsLong(arg0) );                 \
+    HCATCH                                                             \
+                                                                       \
+    Py_RETURN_NONE;                                                    \
+  }
+
+  
+// -------------------------------------------------------------------
 // Attribute Method Macro For Double.
 
-#define  DirectSetDoubleAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+#define  DirectSetDoubleAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )   \
   {                                                                      \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetDoubleAttribute()")  \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                \
                                                                          \
     HTRY                                                                 \
     PyObject* arg0;                                                      \
-    if ( ! PyArg_ParseTuple ( args, "O:" PY_FORMAT, &arg0 ) )            \
+    if ( ! PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
       return ( NULL );                                                   \
     cobject->FUNC_NAME ( PyFloat_AsDouble(arg0) );                       \
     HCATCH                                                               \
@@ -573,14 +617,14 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method Macro For C String (char*).
 
-#define  DirectSetCStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_FORMAT,PY_SELF_TYPE,SELF_TYPE) \
+#define  DirectSetCStringAttribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )    \
   {                                                                       \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,"DirectSetCStringAttribute()")  \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                 \
                                                                           \
     HTRY                                                                  \
     char* value = NULL;                                                   \
-    if ( !PyArg_ParseTuple(args, "s:" PY_FORMAT, &value) )                \
+    if ( !PyArg_ParseTuple(args, "s:" #SELF_TYPE"."#FUNC_NAME"()", &value) ) \
       return NULL;                                                        \
     cobject->FUNC_NAME ( value );                                         \
     HCATCH                                                                \

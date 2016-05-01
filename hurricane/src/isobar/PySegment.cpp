@@ -55,7 +55,7 @@ extern "C" {
   DirectGetLongAttribute(PySegment_getTargetX,getTargetX,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getTargetY,getTargetY,PySegment,Segment)
   DirectGetLongAttribute(PySegment_getWidth  ,getWidth  ,PySegment,Segment)
-  DirectSetLongAttribute(PySegment_setWidth  ,setWidth  ,"Segment.setWidth",PySegment,Segment)
+  DirectSetLongAttribute(PySegment_setWidth  ,setWidth  ,PySegment,Segment)
   DirectVoidMethod(Segment,segment,invert)
   accessorHook(getSourceHook,PySegment,Segment)
   accessorHook(getTargetHook,PySegment,Segment)

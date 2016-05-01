@@ -129,6 +129,16 @@ using namespace Hurricane;
 // +-----------------------------------------------------------------+
 
 
+  int  PyAny_AsInt ( PyObject* object )
+  {
+    long  value = 0;
+
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return (int)value;
+  }
+
+
   long  PyAny_AsLong ( PyObject* object )
   {
     long  value = 0;

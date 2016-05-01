@@ -135,7 +135,7 @@ extern "C" {
 
 
   PyMethodDef PyLibrary_Methods[] =
-    { { "create"    , (PyCFunction)PyLibrary_create       , METH_NOARGS|METH_STATIC
+    { { "create"    , (PyCFunction)PyLibrary_create       , METH_VARARGS|METH_STATIC
                     , "Creates a new library." }
     , { "getName"   , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
     , { "getLibrary", (PyCFunction)PyLibrary_getSubLibrary, METH_VARARGS, "Get the sub-library named <name>" }

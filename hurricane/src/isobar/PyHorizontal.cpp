@@ -49,9 +49,9 @@ extern "C" {
   DirectGetLongAttribute(PyHorizontal_getY       ,getY       ,PyHorizontal,Horizontal)
   DirectGetLongAttribute(PyHorizontal_getDxSource,getDxSource,PyHorizontal,Horizontal)
   DirectGetLongAttribute(PyHorizontal_getDxTarget,getDxTarget,PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setY       ,setY       ,"Horizontal.setY",PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setDxSource,setDxSource,"Horizontal.setDxSource",PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setDxTarget,setDxTarget,"Horizontal.setDxTarget",PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setY       ,setY       ,PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxSource,setDxSource,PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxTarget,setDxTarget,PyHorizontal,Horizontal)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyHorizontal_destroy, PyHorizontal)

@@ -114,8 +114,8 @@ extern "C" {
   // Standart Accessors (Attributes).
   DirectGetLongAttribute(PyPoint_getX,getX,PyPoint,Point)
   DirectGetLongAttribute(PyPoint_getY,getY,PyPoint,Point)
-  DirectSetLongAttribute(PyPoint_SetX,setX,"Point.setX",PyPoint,Point)
-  DirectSetLongAttribute(PyPoint_SetY,setY,"Point.setY",PyPoint,Point)
+  DirectSetLongAttribute(PyPoint_SetX,setX,PyPoint,Point)
+  DirectSetLongAttribute(PyPoint_SetY,setY,PyPoint,Point)
 
 
   // Standart destroy (Attribute).

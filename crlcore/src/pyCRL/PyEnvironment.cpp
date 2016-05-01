@@ -166,19 +166,19 @@ extern "C" {
   DirectIsAFromCStringAttribute(PyEnvironment_isPad     ,isPad     ,PyEnvironment,Environment)
 
   // Standart Mutators (Attributes).
-  DirectSetCStringAttribute(PyEnvironment_setDisplayStyle       ,setDisplayStyle       ,"Environment.setDisplayStyle"       ,PyEnvironment,Environment)
-  DirectSetLongAttribute   (PyEnvironment_setSCALE_X            ,setSCALE_X            ,"Environment.setSCALE_X"            ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setIN_LO              ,setIN_LO              ,"Environment.setIN_LO"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setIN_PH              ,setIN_PH              ,"Environment.setIN_PH"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setOUT_LO             ,setOUT_LO             ,"Environment.setOUT_LO"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setOUT_PH             ,setOUT_PH             ,"Environment.setOUT_PH"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setPOWER              ,setPOWER              ,"Environment.setPOWER"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setGROUND             ,setGROUND             ,"Environment.setGROUND"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setCLOCK              ,setCLOCK              ,"Environment.setCLOCK"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setBLOCKAGE           ,setBLOCKAGE           ,"Environment.setBLOCKAGE"           ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setPad                ,setPad                ,"Environment.setPad"                ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setCATALOG            ,setCATALOG            ,"Environment.setCATALOG"            ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setWORKING_LIBRARY    ,setWORKING_LIBRARY    ,"Environment.setWORKING_LIBRARY"    ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setDisplayStyle   ,setDisplayStyle   ,PyEnvironment,Environment)
+  DirectSetLongAttribute   (PyEnvironment_setSCALE_X        ,setSCALE_X        ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setIN_LO          ,setIN_LO          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setIN_PH          ,setIN_PH          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setOUT_LO         ,setOUT_LO         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setOUT_PH         ,setOUT_PH         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setPOWER          ,setPOWER          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setGROUND         ,setGROUND         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setCLOCK          ,setCLOCK          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setBLOCKAGE       ,setBLOCKAGE       ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setPad            ,setPad            ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setCATALOG        ,setCATALOG        ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setWORKING_LIBRARY,setWORKING_LIBRARY,PyEnvironment,Environment)
 
 
   // Standart Destroy (Attribute).

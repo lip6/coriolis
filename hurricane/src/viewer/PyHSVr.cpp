@@ -95,9 +95,9 @@ extern "C" {
   DirectGetDoubleAttribute(PyHSVr_GetHue       ,getHue       ,PyHSVr,DisplayStyle::HSVr)
   DirectGetDoubleAttribute(PyHSVr_GetSaturation,getSaturation,PyHSVr,DisplayStyle::HSVr)
   DirectGetDoubleAttribute(PyHSVr_GetValue     ,getValue     ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,"HSVr.setHue"       ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,"HSVr.setSaturation",PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,"HSVr.setValue"     ,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,PyHSVr,DisplayStyle::HSVr)
 
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyHSVr_IsId,isId,PyHSVr,DisplayStyle::HSVr)
