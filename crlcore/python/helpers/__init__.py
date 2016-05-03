@@ -26,9 +26,10 @@ import traceback
 import Hurricane
 
 sysConfDir     = None
+ndaConfDir     = None
 symbolicTechno = 'cmos'
 symbolicDir    = None
-realTechno     = 'hcmos9gp'
+realTechno     = '130/hcmos9gp'
 realDir        = None
 tab            = None
 _trace         = None
@@ -246,6 +247,7 @@ def setTraceLevel ( level ):
 
 
 def initTechno ( quiet ):
+  global ndaConfDir
   global realDir
   global realTechno
   global symbolicDir
@@ -265,14 +267,19 @@ def initTechno ( quiet ):
   if moduleGlobals.has_key('symbolicTechnology'):
     symbolicTechno = symbolicTechnology
   else:
-    print '[WARNING] The symbolic technology name is not set. Using <cmos>.' 
+    print '[WARNING] The symbolic technology name is not set. Using <%s>.' % symbolicTechnology 
   if moduleGlobals.has_key('realTechnology'):
     realTechno = realTechnology
   else:
-    print '[WARNING] The real technology name is not set. Using <hcmos9gp>.' 
+    print '[WARNING] The real technology name is not set. Using <%s>.' % realTechnology
+
+  if moduleGlobals.has_key('NdaDirectory'):
+    ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
+  else:
+    ndaConfDir = sysConfDir
 
   symbolicDir = os.path.join( sysConfDir, symbolicTechno )
-  realDir     = os.path.join( sysConfDir, realTechno )
+  realDir     = os.path.join( ndaConfDir, realTechno )
   if not quiet: print '          - Technologies: %s+%s.' % (symbolicTechno,realTechno)
 
 
