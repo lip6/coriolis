@@ -172,16 +172,18 @@ if __name__ == "__main__":
     'PATH="%(PATH)s";'                                             \
     'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";'                           \
     'CORIOLIS_TOP="%(CORIOLIS_TOP)s";'                             \
-    'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
     'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;'
+
+#   'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
 
   shellScriptCsh = \
     'echo "%(MESSAGE)s";'                              \
     'echo "Switching to Coriolis 2.x (%(buildDir)s)";' \
     'setenv PATH "%(PATH)s";'                          \
     'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";'        \
-    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'          \
-    'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";'
+    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'
+
+#   'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";' \
 
   buildDir  = buildType + "." + linkType
   scriptDir = os.path.dirname ( os.path.abspath(__file__) )

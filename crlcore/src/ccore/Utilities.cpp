@@ -330,7 +330,7 @@ namespace CRL {
     Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( this, bugChanged );
     Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( this, logModeChanged );
     Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( this, traceLevelChanged );
-    Cfg::getParamString("stratus1.mappingName","./stratus2sxlib.xml")->registerCb ( this, stratus1MappingNameChanged );
+    Cfg::getParamString("stratus1.mappingName","not_set")->registerCb ( this, stratus1MappingNameChanged );
 
   // Immediate update from the configuration.
   //catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );

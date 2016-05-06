@@ -160,4 +160,14 @@ def coriolisConfigure():
 
  #sys.stdout.write(CRL.AllianceFramework.get().getEnvironment().getPrint())
 
+  if Cfg.getParamString('stratus1.mappingName').asString() == 'not_set':
+    vendorTech  = helpers.realTechno.split('/')[-1]
+    mappingFile = os.path.join( helpers.realDir, 'stratus.xml' )
+    if not os.path.isfile(mappingFile): 
+      mappingFile = os.path.join( helpers.sysConfDir, 'stratus2sxlib.xml' )
+
+    parameter = Cfg.getParamString('stratus1.mappingName')
+    parameter.setString( mappingFile )
+    parameter.flags = Cfg.Parameter.Flags.NeedRestart|Cfg.Parameter.Flags.MustExist 
+
   return
