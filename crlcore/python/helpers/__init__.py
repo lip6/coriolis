@@ -267,11 +267,11 @@ def initTechno ( quiet ):
   if moduleGlobals.has_key('symbolicTechnology'):
     symbolicTechno = symbolicTechnology
   else:
-    print '[WARNING] The symbolic technology name is not set. Using <%s>.' % symbolicTechnology 
+    print '[WARNING] The symbolic technology name is not set. Using <%s>.' % symbolicTechno
   if moduleGlobals.has_key('realTechnology'):
     realTechno = realTechnology
   else:
-    print '[WARNING] The real technology name is not set. Using <%s>.' % realTechnology
+    print '[WARNING] The real technology name is not set. Using <%s>.' % realTechno
 
   if moduleGlobals.has_key('NdaDirectory'):
     ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
