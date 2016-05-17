@@ -892,7 +892,8 @@ For example: ::
         , ('misc.logMode'             , TypeBool      , True   )
         , ('misc.verboseLevel1'       , TypeBool      , False  )
         , ('misc.verboseLevel2'       , TypeBool      , True   )
-        , ('misc.traceLevel'          , TypeInt       , 1000   )
+        , ('misc.minTraceLevel'       , TypeInt       , 0      )
+        , ('misc.maxTraceLevel'       , TypeInt       , 0      )
         )
     
     # Some ordinary Python script...
@@ -1521,10 +1522,12 @@ Miscellaneous Settings
 +---------------------------------------+------------------+----------------------------+
 | **Development/Debug Parameters**                                                      |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.traceLevel``                   | TypeInt          | :cb:`0`                    |
+| ``misc.minTraceLevel``                | TypeInt          | :cb:`0`                    |
++---------------------------------------+------------------+----------------------------+
+| ``misc.maxTraceLevel``                | TypeInt          | :cb:`0`                    |
 |                                       +------------------+----------------------------+
-|                                       | Display trace information *below* that level  |
-|                                       | (:cb:`ltrace` stream)                         | 
+|                                       | Display trace information *between* those two |
+|                                       | levels (:cb:`cdebug` stream)                  | 
 +---------------------------------------+------------------+----------------------------+
 | ``misc.catchCore``                    | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
