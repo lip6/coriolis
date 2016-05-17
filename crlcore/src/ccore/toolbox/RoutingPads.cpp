@@ -208,10 +208,10 @@ void createPlacedRoutingPadsAndPinsRing ( Cell* top_cell )
             netOccurrence = Occurrence(net);
             for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getLeafPlugOccurrences() )
             {
-                ltrace(58) << "Creating Routing Pad " << plugOccurrence << endl;ltracein(58);
-                cerr << RoutingPad::create ( net, plugOccurrence, RoutingPad::BiggestArea ) << endl;
-                //ltraceout(58);
-                end_for;
+              cdebug.log(109,1) << "Creating Routing Pad " << plugOccurrence << endl;
+              cerr << RoutingPad::create ( net, plugOccurrence, RoutingPad::BiggestArea ) << endl;
+            //ltraceout(58);
+              end_for;
             }
             vector<Pin*> pins;
             for_each_pin ( pin, net->getPins() ) {

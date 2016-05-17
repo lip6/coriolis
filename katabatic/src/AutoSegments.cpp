@@ -24,9 +24,6 @@ namespace Katabatic {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::_TName;
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
@@ -39,7 +36,7 @@ namespace Katabatic {
 
   void  AutoSegmentStack::push ( AutoContact* contact, AutoSegment* segment )
   {
-    ltrace(80) << "Stacking " << contact << " + " << segment << endl;
+    cdebug.log(145) << "Stacking " << contact << " + " << segment << endl;
     push_back( make_pair(contact,segment) );
   }
 
@@ -71,7 +68,7 @@ namespace Katabatic {
 
   void  AutoSegments_OnContact::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_OnContact::Locator::progress()" << endl;
+    cdebug.log(145) << "AutoSegments_OnContact::Locator::progress()" << endl;
 
     while (_hook and not _hook->isMaster()) {
       _hook    = _hook->getNextHook(); 
@@ -127,7 +124,7 @@ namespace Katabatic {
     if (not _master) return;
     _flags |= (_master->isHorizontal()) ? KbHorizontal : KbVertical;
 
-    ltrace(80) << "AutoSegments_Aligneds::Locator::Locator() - _flags:" << _flags << endl;
+    cdebug.log(145) << "AutoSegments_Aligneds::Locator::Locator() - _flags:" << _flags << endl;
 
     AutoContact* contact = segment->getAutoSource();
     if (contact) _stack.push( contact, segment );
@@ -149,7 +146,7 @@ namespace Katabatic {
 
   void  AutoSegments_Aligneds::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_Aligneds::Locator::progress()" << endl;
+    cdebug.log(145) << "AutoSegments_Aligneds::Locator::progress()" << endl;
 
     while (not _stack.isEmpty()) {
       AutoContact* sourceContact = _stack.getAutoContact ();
@@ -160,7 +157,7 @@ namespace Katabatic {
       LocatorHelper helper (sourceContact, _flags);
       for ( ; helper.isValid() ; helper.progress() ) {
         AutoSegment* currentSegment = helper.getSegment();
-        ltrace(80) << "Looking at: " << currentSegment << endl;
+        cdebug.log(145) << "Looking at: " << currentSegment << endl;
 
         if (currentSegment == sourceSegment) continue;
 
@@ -222,8 +219,8 @@ namespace Katabatic {
     , _stack         ()
     , _perpandiculars()
   {
-    ltrace(80) << "AutoSegments_Perpandiculars::Locator::Locator()" << endl;
-    ltrace(80) << "  " << _master << endl;
+    cdebug.log(145) << "AutoSegments_Perpandiculars::Locator::Locator()" << endl;
+    cdebug.log(145) << "  " << _master << endl;
 
     if (not _master) return;
     if (_master->isHorizontal()) _flags |= KbHorizontal;
@@ -248,7 +245,7 @@ namespace Katabatic {
 
   void  AutoSegments_Perpandiculars::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
+    cdebug.log(145) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
 
     if (not _perpandiculars.empty()) _perpandiculars.pop_back();
     if (not _perpandiculars.empty()) return;
@@ -278,7 +275,7 @@ namespace Katabatic {
                 continue;
               }
 
-              ltrace(80) << "Stacking target. " << endl;
+              cdebug.log(145) << "Stacking target. " << endl;
               _stack.push( targetContact, currentSegment );
             }
           }
@@ -357,18 +354,17 @@ namespace Katabatic {
 
   void  AutoSegments_AnchorOnGCell::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_AnchorOnGCell::Locator::progress()" << endl;
-    ltracein(79);
+    cdebug.log(145,1) << "AutoSegments_AnchorOnGCell::Locator::progress()" << endl;
 
     while ( true ) {
       if (_hookLocator == NULL) {
         if (_itContact == _itEnd) {
-          ltrace(79) << "No more AutoContacts" << endl;
-          ltraceout(79);
+          cdebug.log(145) << "No more AutoContacts" << endl;
+          cdebug.tabw(145,-1);
           return;
         }
 
-        ltrace(79) << *_itContact << endl;
+        cdebug.log(145) << *_itContact << endl;
 
         _hookLocator = (*_itContact)->getBodyHook()->getSlaveHooks().getLocator();
         _itContact++;
@@ -377,7 +373,7 @@ namespace Katabatic {
       }
 
       while ( _hookLocator->isValid() ) {
-        ltrace(79) << _hookLocator->getElement() << endl;
+        cdebug.log(145) << _hookLocator->getElement() << endl;
         Hook* hook = dynamic_cast<Segment::SourceHook*>(_hookLocator->getElement());
         if (hook) {
           if (  ((_flags & KbSource) and (dynamic_cast<Segment::SourceHook*>(hook)))
@@ -385,9 +381,9 @@ namespace Katabatic {
             _element = Session::lookup( static_cast<Segment*>(hook->getComponent()) );
 
             if (_element->isHorizontal()) {
-              if (_flags & KbHorizontal) { ltraceout(79); return; }
+              if (_flags & KbHorizontal) { cdebug.tabw(145,-1); return; }
             } else
-              if (_flags & KbVertical) { ltraceout(79); return; }
+              if (_flags & KbVertical) { cdebug.tabw(145,-1); return; }
           }
         }
         _hookLocator->progress();
@@ -396,7 +392,7 @@ namespace Katabatic {
       _element     = NULL;
     }
 
-    ltraceout(79);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -451,7 +447,7 @@ namespace Katabatic {
 
   void  AutoSegments_CachedOnContact::Locator::progress ()
   {
-    ltrace(80) << "AutoSegments_CachedOnContact::Locator::progress()" << endl;
+    cdebug.log(145) << "AutoSegments_CachedOnContact::Locator::progress()" << endl;
     _helper->progress();
   }
 

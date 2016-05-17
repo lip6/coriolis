@@ -26,7 +26,6 @@ namespace Etesian {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Isobar::__cs;
   using CRL::PyTypeToolEngine;
   using CRL::PyTypeGraphicTool;
@@ -66,7 +65,7 @@ extern "C" {
   // Module Initialization  :  "initEtesian ()"
 
   DL_EXPORT(void) initEtesian () {
-    trace << "initEtesian()" << endl;
+    cdebug.log(34) << "initEtesian()" << endl;
 
     PyEtesianEngine_LinkPyType();
     PyGraphicEtesianEngine_LinkPyType();

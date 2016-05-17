@@ -294,7 +294,10 @@ namespace Unicorn {
           }
           break;
         case ExportCellDialog::Json:
-          { //DebugSession::open( 50 );
+          { //DebugSession::open( 19, 20 );
+            cerr << "cdebug (" << cdebug.getMinLevel() << "," << cdebug.getMaxLevel() 
+                 << ") level:" << cdebug.getLevel() << " enabled:" << cdebug.enabled() << endl;
+
             JsonWriter writer ( cellName.toStdString()+".json.bz2" );
             jsonWrite( &writer, cell );
           //DebugSession::close();

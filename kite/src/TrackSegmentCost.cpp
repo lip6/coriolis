@@ -37,9 +37,6 @@ namespace Kite {
   using std::ostringstream;
   using Hurricane::Bug;
   using Hurricane::DebugSession;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
 
 
@@ -76,10 +73,9 @@ namespace Kite {
 
   void  TrackSegmentCost::update ( TrackElement* trackSegment )
   {
-    DebugSession::open ( trackSegment->getNet(), 148 );
+    DebugSession::open ( trackSegment->getNet(), 150, 160 );
 
-    ltrace(148) << "TrackSegmentCost::update() - " << trackSegment << endl;
-    ltracein(148);
+    cdebug.log(159,1) << "TrackSegmentCost::update() - " << trackSegment << endl;
 
     vector<AutoSegment*>  collapseds;
     vector<AutoSegment*>  perpandiculars;
@@ -118,15 +114,14 @@ namespace Kite {
       }
       interval.inflate ( DbU::lambda(-1.5) );
 
-      ltrace(148) << "| perpandicular: " << perpandiculars[i] << endl;
-      ltrace(148) << "| canonical:     " << perpandicular << endl;
-      ltracein(148);
-      ltrace(148) << "interval: " << interval << endl;
+      cdebug.log(159)   << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug.log(159,1) << "| canonical:     " << perpandicular << endl;
+      cdebug.log(159)   << "interval: " << interval << endl;
 
       if ( interval.isPonctual() ) {
-        ltrace(148) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug.log(159) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
         _attractors.push_back ( interval.getVMin() );
-        ltraceout(148);
+        cdebug.tabw(159,-1);
         continue;
       }
 
@@ -141,7 +136,7 @@ namespace Kite {
         } else {
           iattractor->second -= 1;
         }
-        ltrace(148) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug.log(159) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
       }
 
       if (  ( interval.getVMax() != trackSegment->getAxis() )
@@ -155,10 +150,10 @@ namespace Kite {
         } else {
           iattractor->second += 1;
         }
-        ltrace(148) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
+        cdebug.log(159) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
       }
 
-      ltraceout(148);
+      cdebug.tabw(159,-1);
     }
 
     map<DbU::Unit,int>::iterator iattractor = attractorSpins.begin();
@@ -174,10 +169,10 @@ namespace Kite {
       s << DbU::getValueString(_attractors[i]);
     }
     s << "]";
-    ltrace(148) << s.str() << endl;
+    cdebug.log(159) << s.str() << endl;
 
 
-    ltraceout(148);
+    cdebug.tabw(159,-1);
     DebugSession::close ();
   }
 

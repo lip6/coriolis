@@ -24,7 +24,6 @@ namespace  Isobar {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -73,7 +72,7 @@ extern "C" {
   DirectHashMethod(PyPlacementStatus_Hash, PyPlacementStatus)
 
   extern void  PyPlacementStatus_LinkPyType() {
-    trace << "PyPlacementStatus_LinkType()" << endl;
+    cdebug.log(20) << "PyPlacementStatus_LinkType()" << endl;
     PyTypePlacementStatus.tp_dealloc = (destructor) PyPlacementStatus_DeAlloc;
     PyTypePlacementStatus.tp_compare = (cmpfunc)    PyPlacementStatus_Cmp;
     PyTypePlacementStatus.tp_repr    = (reprfunc)   PyPlacementStatus_Repr;

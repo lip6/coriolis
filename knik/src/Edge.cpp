@@ -104,7 +104,7 @@ void Edge::increaseCapacity ( int capacity )
 //cerr << "Increasing capacity to " << _capacity << " on " << this << endl;
 
   if ( _capacity == 0 )
-    ltrace(300) << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
+    cdebug.log(139) << Warning("%s has reached NULL capacity.",getString(this).c_str()) << endl;
 }
 
 void Edge::incOccupancy ()

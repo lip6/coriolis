@@ -73,8 +73,6 @@ namespace Hurricane {
   JsonDesignBlob::JsonDesignBlob ( unsigned long flags )
     : JsonObject(flags)
   {
-    ltrace(51) << "JsonDesignblob::JsonDesignblob()" << endl;
-
     add( "_topCell"      , typeid(string)              );
     add( "_database"     , typeid(DataBase*)           );
     add( "_graphics"     , typeid(Graphics*)           );

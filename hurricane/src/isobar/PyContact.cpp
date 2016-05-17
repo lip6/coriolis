@@ -66,7 +66,7 @@ extern "C" {
   
 
   static PyObject* PyContact_create ( PyObject*, PyObject *args ) {
-    trace << "PyContact_create()" << endl;
+    cdebug.log(20) << "PyContact_create()" << endl;
 
     Contact* contact = NULL;
 
@@ -99,7 +99,7 @@ extern "C" {
 
 
   static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
-    trace << "PyContact_translate ()" << endl;
+    cdebug.log(20) << "PyContact_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Contact.translate()" )

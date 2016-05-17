@@ -24,7 +24,6 @@ namespace  Isobar {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -69,7 +68,7 @@ extern "C" {
   DirectHashMethod(PyNetDirection_Hash, PyNetDirection)
 
   extern void  PyNetDirection_LinkPyType() {
-    trace << "PyNetDirection_LinkType()" << endl;
+    cdebug.log(20) << "PyNetDirection_LinkType()" << endl;
     PyTypeNetDirection.tp_dealloc = (destructor) PyNetDirection_DeAlloc;
     PyTypeNetDirection.tp_compare = (cmpfunc)    PyNetDirection_Cmp;
     PyTypeNetDirection.tp_repr    = (reprfunc)   PyNetDirection_Repr;

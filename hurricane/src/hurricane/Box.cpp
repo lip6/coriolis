@@ -405,10 +405,10 @@ void JsonBox::toData(JsonStack& stack)
   if ( (xMin <= xMax) and (yMin <= yMax) )
     box.merge( xMin, yMin, xMax, yMax ); 
 
-  ltrace(51) << "Box(" << xMin << ", "
-             <<           yMin << ", "
-             <<           xMax << ", "
-             <<           yMax << ")" << endl;
+  cdebug.log(19) << "Box(" << xMin << ", "
+                 <<           yMin << ", "
+                 <<           xMax << ", "
+                 <<           yMax << ")" << endl;
 
   update( stack, box );
 }

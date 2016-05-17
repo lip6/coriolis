@@ -23,7 +23,6 @@ namespace Unicorn {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::CellViewer;
   using Hurricane::PyTypeCellViewer;
   using Isobar::__cs;
@@ -58,7 +57,7 @@ extern "C" {
   // Module Initialization  :  "initUnicorn ()"
 
   DL_EXPORT(void) initUnicorn () {
-    trace << "initUnicorn()" << endl;
+    cdebug.log(46) << "initUnicorn()" << endl;
 
     PyUnicornGui_LinkPyType ();
 

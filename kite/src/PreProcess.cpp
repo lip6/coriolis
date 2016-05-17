@@ -51,7 +51,7 @@ namespace {
     TrackElement* perpandicular;
     for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
       perpandicular = Session::lookup ( osegment );
-      ltrace(200) << "S " << perpandicular << endl;
+      cdebug.log(159) << "S " << perpandicular << endl;
 
       if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
 
@@ -60,7 +60,7 @@ namespace {
 
     for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
       perpandicular = Session::lookup ( osegment );
-      ltrace(200) << "T " << perpandicular << endl;
+      cdebug.log(159) << "T " << perpandicular << endl;
 
       if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
 
@@ -71,12 +71,12 @@ namespace {
 
   void  findFailedPerpandiculars ( RoutingPad* rp, unsigned int direction, set<TrackElement*>& faileds )
   {
-    ltrace(200) << "Find failed caging: " << rp << endl;
+    cdebug.log(159) << "Find failed caging: " << rp << endl;
 
     TrackElement* parallel;
     for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
       parallel = Session::lookup ( osegment );
-      ltrace(200) << "* " << parallel << endl;
+      cdebug.log(159) << "* " << parallel << endl;
 
       if ( parallel->isFixed () ) continue;
       if ( parallel->getDirection() != direction ) continue;
@@ -97,7 +97,7 @@ namespace {
   {
     if (not segment->isFixed()) return;
 
-    ltrace(200) << "Propagate caging: " << segment << endl;
+    cdebug.log(159) << "Propagate caging: " << segment << endl;
 
     Track*                  track         = segment->getTrack();
   //unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
@@ -124,7 +124,7 @@ namespace {
       if (parallel->getNet() == segment->getNet()) continue;
       if (not parallel->isFixed()) continue;
 
-      ltrace(200) << "Min Constraint from: " << parallel << endl;
+      cdebug.log(159) << "Min Constraint from: " << parallel << endl;
       minConstraint = max( minConstraint, parallel->getTargetU() );
     }
 
@@ -136,7 +136,7 @@ namespace {
       if (parallel->getNet() == segment->getNet()) continue;
       if (not parallel->isFixed()) continue;
 
-      ltrace(200) << "Max Constraint from: " << parallel << endl;
+      cdebug.log(159) << "Max Constraint from: " << parallel << endl;
       maxConstraint = min( maxConstraint, parallel->getSourceU() );
     }
 
@@ -145,7 +145,7 @@ namespace {
       return;
     }
     if ( (minConstraint <= uside.getVMin()) and (maxConstraint >= uside.getVMax()) ) {
-      ltrace(200) << "No constraints [" << DbU::getValueString(minConstraint)
+      cdebug.log(159) << "No constraints [" << DbU::getValueString(minConstraint)
                   << ":"                << DbU::getValueString(maxConstraint)
                   << " vs. " << uside << endl;
       return;
@@ -158,7 +158,7 @@ namespace {
         TrackElement* parallel;
         for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
           parallel = Session::lookup( osegment );
-          ltrace(200) << "* " << parallel << endl;
+          cdebug.log(159) << "* " << parallel << endl;
 
           if (parallel->isFixed ()) continue;
           if (parallel->isGlobal()) continue;
@@ -173,32 +173,31 @@ namespace {
     }
 
   // Apply caging constraints to perpandiculars.
-    ltracein(200);
+    cdebug.tabw(159,1);
     if (perpandiculars.size() == 0) {
-      ltrace(200) << "No perpandiculars to " << segment << endl;
-      ltraceout(200);
+      cdebug.log(159) << "No perpandiculars to " << segment << endl;
+      cdebug.tabw(159,-1);
       return;
     }
 
     Interval constraints ( minConstraint, maxConstraint );
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
-      ltrace(200) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
+      cdebug.log(159) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
       if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
-        ltrace(200) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
+        cdebug.log(159) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
         findFailedPerpandiculars( rp, direction, faileds );
       }
     }
 
-    ltraceout(200);
+    cdebug.tabw(159,-1);
   }
 
 
   void  moveUpCaged ( TrackElement* segment )
   {
-    DebugSession::open( segment->getNet(), 150 );
-    ltrace(150) << "::moveUpCaged() " << segment << endl;
-    ltracein(150);
+    DebugSession::open( segment->getNet(), 150, 160 );
+    cdebug.log(159,1) << "::moveUpCaged() " << segment << endl;
 
   //Configuration* configuration = Session::getConfiguration();
   //const Layer*   metal2        = configuration->getRoutingLayer( 1 );
@@ -216,15 +215,14 @@ namespace {
       }
     }
 
-    ltraceout(150);
+    cdebug.tabw(159,-1);
     DebugSession::close();
   }
 
 
   void  protectCagedTerminals ( Track* track )
   {
-    ltrace(150) << "protectCagedTerminals() " << track << endl;
-    ltracein(150);
+    cdebug.log(159,1) << "protectCagedTerminals() " << track << endl;
 
     DbU::Unit      lastMovedUp   = track->getMin();
     unsigned int   moveUpCount   = 0;
@@ -236,7 +234,7 @@ namespace {
     RoutingPlane*  metal3plane   = track->getRoutingPlane()->getTop();
 
     if (track->getLayer() != metal2) {
-      ltraceout(150);
+      cdebug.tabw(159,-1);
       return;
     }
 
@@ -317,7 +315,7 @@ namespace {
       }
     }
 
-    ltraceout(150);
+    cdebug.tabw(159,-1);
   }
 
 
@@ -358,7 +356,7 @@ namespace Kite {
       segment = _lookup( isegment->second );
       if (not segment or not segment->isFixed()) continue;
 
-      DebugSession::open( segment->getNet() );
+      DebugSession::open( segment->getNet(), 150, 160 );
       propagateCagedConstraints( segment, faileds );
       DebugSession::close();
     }

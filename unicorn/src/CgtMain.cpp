@@ -96,7 +96,6 @@ int main ( int argc, char *argv[] )
     bool          destroyDatabase;
     float         edgeCapacity;
     unsigned long eventsLimit;
-    unsigned int  traceLevel;
     bool          textMode;
     double        margin;
     bool          quadriPlace;
@@ -115,9 +114,6 @@ int main ( int argc, char *argv[] )
       ( "help,h"             , "Print this help." )
       ( "destroy-db"         , bopts::bool_switch(&destroyDatabase)->default_value(false)
                              , "Perform a complete deletion of the database (may be buggy).")
-      ( "trace-level,l"      , bopts::value<unsigned int>(&traceLevel)
-                             , "Set the level of trace, trace messages with a level superior to "
-                               "<arg> will be printed on <stderr>." )
       ( "verbose,v"          , bopts::bool_switch()
                              , "First level of verbosity.")
       ( "very-verbose,V"     , bopts::bool_switch()
@@ -200,9 +196,6 @@ int main ( int argc, char *argv[] )
     if (arguments["info"        ].as<bool>()) Cfg::getParamBool("misc.info"         )->setBool ( true , Cfg::Parameter::CommandLine );
     if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool ( true , Cfg::Parameter::CommandLine );
     if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool ( true , Cfg::Parameter::CommandLine );
-
-    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt ( traceLevel, Cfg::Parameter::CommandLine );
-
     bool showConf = Cfg::getParamBool("misc.showConf")->asBool();
 
     dbo_ptr<DataBase>          db   ( DataBase::getDB() );

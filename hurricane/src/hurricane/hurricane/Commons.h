@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
@@ -18,10 +17,6 @@
 // You should have received a copy of the Lesser  GNU  General  Public
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
-//
-// ===================================================================
-//
-// $Id$
 //
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
@@ -65,28 +60,6 @@ namespace Hurricane {
 
 
   // +-------------------------------------------------------------+
-  // |                 Tracing/Debugging Utilites                  |
-  // +-------------------------------------------------------------+
-
-
-  bool          in_trace    ();
-  void          trace_on    ();
-  void          trace_off   ();
-  void          trace_in    ();
-  void          trace_out   ();
-  bool          inltrace    ( unsigned int level );
-  unsigned int  ltracelevel ();
-  unsigned int  ltracelevel ( unsigned int level );
-  void          ltracein    ( unsigned int level, unsigned int count=1 );
-  void          ltraceout   ( unsigned int level, unsigned int count=1 );
-
-#define        trace            if (in_trace()     ) cerr << tab
-#define        ltrace(level)    if (inltrace(level)) cerr << tab
-
-
-
-
-  // +-------------------------------------------------------------+
   // |                shared_ptr<> support for DBo                 |
   // +-------------------------------------------------------------+
 
@@ -120,6 +93,13 @@ namespace Hurricane {
 
          string  demangle ( const char*      symbol );
   inline string  demangle ( const type_info& info   ) { return demangle(info.name()); }
+
+  template<typename Element>
+  inline void  erase_element ( vector<Element*>& v, const Element* e )
+  {
+    for ( auto ielement = v.begin() ; ielement != v.end() ; ++ielement )
+      if (*ielement == e) { v.erase( ielement ); return; }
+  }
 
 
 #if DEPRECATED
@@ -733,6 +713,107 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   IOSTREAM_VALUE_SUPPORT(Data)
 
 
+#include "hurricane/Tabulation.h"
+
+
+// -------------------------------------------------------------------
+// Class  :  "::cdebug()".
+//
+// Wrapper around the STL ostream which to print debugging messages.
+
+class tstream : public std::ostream {
+  public:
+    inline int       getMinLevel () const;
+    inline int       getMaxLevel () const;
+    inline int       setMinLevel ( int );
+    inline int       setMaxLevel ( int );
+    inline int       getLevel    () const;
+    inline int       setLevel    ( int );
+    inline bool      enabled     () const;
+    inline bool      enabled     ( int ) const;
+    inline tstream&  log         ( int level, int count=0 );
+    inline tstream&  tabw        ( int level, int count );
+    inline           tstream     ( std::ostream & );
+  private:
+    inline tstream&  _tab        ();
+    inline tstream&  _tabw       ( int count );
+  public:
+  // Overload for formatted outputs.
+  //template<typename T> inline tstream& operator<< ( T  t );
+    template<typename T> inline tstream& operator<< ( T* t );
+    template<typename T> inline tstream& operator<< ( const T  t );
+    template<typename T> inline tstream& operator<< ( const T* t );
+                         inline tstream& put        ( char c );
+                         inline tstream& flush      ();
+  // Overload for manipulators.
+                         inline tstream &operator<< ( std::ostream &(*pf)(std::ostream &) );
+  private:
+    int                    _minLevel;
+    int                    _maxLevel;
+    int                    _level;
+    Hurricane::Tabulation  _tabulation;
+};
+
+
+inline tstream::tstream ( std::ostream& s )
+  : std::ostream(s.rdbuf())
+  , _minLevel(0)
+  , _maxLevel(0)
+  , _level(0)
+  , _tabulation("  ")
+{ }  
+
+inline int      tstream::getMinLevel () const { return _minLevel; }
+inline int      tstream::getMaxLevel () const { return _maxLevel; }
+inline int      tstream::setMinLevel ( int l ) { int pl=_minLevel; _minLevel=l; return pl; }
+inline int      tstream::setMaxLevel ( int l ) { int pl=_maxLevel; _maxLevel=l; return pl; }
+inline int      tstream::getLevel    () const { return _level; }
+inline int      tstream::setLevel    ( int l ) { int pl=_level; _level=l; return pl; }
+inline bool     tstream::enabled     () const { return (_level >= _minLevel) and (_level < _maxLevel); }
+inline bool     tstream::enabled     ( int l ) const { return (l >= _minLevel) and (l < _maxLevel); }
+inline tstream& tstream::tabw        ( int level, int count ) { setLevel(level); return _tabw(count); }
+inline tstream& tstream::put         ( char c ) { if (enabled()) static_cast<std::ostream*>(this)->put(c); return *this; }  
+inline tstream& tstream::flush       () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
+inline tstream& tstream::operator<<  ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
+
+
+inline tstream&  tstream::_tab  () { if (enabled()) (*this) << _tabulation; return *this; }  
+inline tstream&  tstream::_tabw ( int count )
+{
+  if (enabled()) {
+    if      (count > 0) while(count--) _tabulation++;
+    else if (count < 0) while(count++) _tabulation--;
+  }
+  return *this;
+}
+
+inline tstream& tstream::log ( int level, int count )
+{ setLevel(level); _tab(); return _tabw(count); }
+
+// For POD Types.
+// template<typename T>
+// inline tstream& tstream::operator<< ( T& t )
+// { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+
+template<typename T>
+inline tstream& tstream::operator<< ( T* t )
+{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+
+template<typename T>
+inline tstream& tstream::operator<< ( const T t )
+{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+
+template<typename T>
+inline tstream& tstream::operator<< ( const T* t )
+{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
+
+// For STL Types.
+inline tstream& operator<< ( tstream& o, const std::string& s )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
+
+
+extern tstream  cdebug;
+
 
 // x-----------------------------------------------------------------x
 // |            Classes Neededs in All Hurricane Modules             |
@@ -740,7 +821,6 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 
 #include "hurricane/Slot.h"
 #include "hurricane/Initializer.h"
-#include "hurricane/Tabulation.h"
 #include "hurricane/JsonWriter.h"
 #include "hurricane/JsonObject.h"
 

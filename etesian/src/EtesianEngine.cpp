@@ -191,9 +191,6 @@ namespace Etesian {
   using Utilities::Dots;
   using Hurricane::DebugSession;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -290,13 +287,12 @@ namespace Etesian {
 
   void  EtesianEngine::_preDestroy ()
   {
-    ltrace(90) << "EtesianEngine::_preDestroy()" << endl;
-    ltracein(90);
+    cdebug.log(129,1) << "EtesianEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << getCell()->getName() << ">" << endl;
 
-    ltraceout(90);
+    cdebug.log(129,-1);
   }
 
 

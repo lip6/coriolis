@@ -230,7 +230,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    ltrace(51) << "JsonViaLayer::JsonViaLayer()" << endl;
+    cdebug.log(19) << "JsonViaLayer::JsonViaLayer()" << endl;
 
     add( "_bottom"          , typeid(string)  );
     add( "_cut"             , typeid(string)  );
@@ -255,7 +255,7 @@ namespace Hurricane {
 
   void JsonViaLayer::toData(JsonStack& stack)
   {
-    ltracein(51);
+    cdebug.tabw(19,1);
 
     check( stack, "JsonViaLayer::toData" );
 
@@ -326,7 +326,7 @@ namespace Hurricane {
     
     update( stack, layer );
 
-    ltraceout(51);
+    cdebug.tabw(19,-1);
   }
 
 

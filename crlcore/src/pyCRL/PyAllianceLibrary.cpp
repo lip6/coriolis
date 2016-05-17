@@ -28,7 +28,6 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Exception;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -60,7 +59,7 @@ extern "C" {
 
   static PyObject* PyAllianceLibrary_getLibrary ( PyAllianceLibrary* self, PyObject* args )
   {
-    trace << "PyAllianceLibrary_getLibrary()" << endl;
+    cdebug.log(30) << "PyAllianceLibrary_getLibrary()" << endl;
 
     Library* lib = NULL;
 
@@ -75,7 +74,7 @@ extern "C" {
 
   static PyObject* PyAllianceLibrary_getPath ( PyAllianceLibrary* self, PyObject* args )
   {
-    trace << "PyAllianceLibrary_getPath()" << endl;
+    cdebug.log(30) << "PyAllianceLibrary_getPath()" << endl;
 
     HTRY
     METHOD_HEAD("AllianceLibrary.getPath()")
@@ -115,7 +114,7 @@ extern "C" {
   DirectHashMethod(PyAllianceLibrary_Hash, PyAllianceLibrary)
 
   extern void  PyAllianceLibrary_LinkPyType() {
-    trace << "PyAllianceLibrary_LinkType()" << endl;
+    cdebug.log(30) << "PyAllianceLibrary_LinkType()" << endl;
 
     PyTypeAllianceLibrary.tp_dealloc = (destructor) PyAllianceLibrary_DeAlloc;
     PyTypeAllianceLibrary.tp_repr    = (reprfunc)   PyAllianceLibrary_Repr;

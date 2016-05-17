@@ -79,7 +79,7 @@ extern "C" {
     
     HTRY
 
-    trace << "PyPin_create()" << endl;
+    cdebug.log(20) << "PyPin_create()" << endl;
     PyObject* arg0;
     PyObject* arg1;
     PyObject* arg2;
@@ -152,7 +152,7 @@ extern "C" {
   // Standart Accessors (Attributes).
   
   PyObject* PyPin_getAccessDirection( PyPin* self ) {
-      trace << "PyNet_getAccessDirection ()" << endl;
+      cdebug.log(20) << "PyNet_getAccessDirection ()" << endl;
 
       METHOD_HEAD ( "Net.getAccessDirection()" )
   

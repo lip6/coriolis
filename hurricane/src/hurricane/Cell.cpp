@@ -194,7 +194,7 @@ namespace Hurricane {
     UniquifyRelation* relation   = NULL;
     Cell*             cell       = dynamic_cast<Cell*>( dbo );
 
-    ltrace(51) << "topDBo:" << dbo << endl;
+    cdebug.log(19) << "topDBo:" << dbo << endl;
 
     if (cell) {
       relation = UniquifyRelation::get( cell );
@@ -394,7 +394,7 @@ namespace Hurricane {
     SlavedsRelation* relation = NULL;
     Cell*            cell     = dynamic_cast<Cell*>( dbo );
 
-    ltrace(51) << "topDBo:" << dbo << endl;
+    cdebug.log(19) << "topDBo:" << dbo << endl;
 
     if (cell) {
       relation = SlavedsRelation::get( cell );
@@ -667,12 +667,12 @@ Entity* Cell::getEntity(const Signature& signature) const
       return NULL;
     }
 
-    ltrace(51) << "Cell::getEntity(): <" << getName() << ">, Net:<" << net->getName() << ">" << endl;
+    cdebug.log(18) << "Cell::getEntity(): <" << getName() << ">, Net:<" << net->getName() << ">" << endl;
 
     if (signature.getType() == Signature::TypeContact) {
-      ltrace(51) << "Looking in Contacts..." << endl;
+      cdebug.log(18) << "Looking in Contacts..." << endl;
       for ( Contact* component : getComponents().getSubSet<Contact*>() ) {
-        ltrace(51) << "| " << component << endl;
+        cdebug.log(18) << "| " << component << endl;
         if (   (component->getLayer () == signature.getLayer())
            and (component->getDx    () == signature.getDim(Signature::ContactDx))
            and (component->getDy    () == signature.getDim(Signature::ContactDy))
@@ -683,9 +683,9 @@ Entity* Cell::getEntity(const Signature& signature) const
     }
 
     if (signature.getType() == Signature::TypeVertical) {
-      ltrace(51) << "Looking in Verticals..." << endl;
+      cdebug.log(18) << "Looking in Verticals..." << endl;
       for ( Vertical* component : getComponents().getSubSet<Vertical*>() ) {
-        ltrace(51) << "| " << component << endl;
+        cdebug.log(18) << "| " << component << endl;
         if (   (component->getLayer   () == signature.getLayer())
            and (component->getWidth   () == signature.getDim(Signature::VerticalWidth))
            and (component->getX       () == signature.getDim(Signature::VerticalX))
@@ -696,9 +696,9 @@ Entity* Cell::getEntity(const Signature& signature) const
     }
 
     if (signature.getType() == Signature::TypeHorizontal) {
-      ltrace(51) << "Looking in Horizontals..." << endl;
+      cdebug.log(18) << "Looking in Horizontals..." << endl;
       for ( Horizontal* component : getComponents().getSubSet<Horizontal*>() ) {
-        ltrace(51) << "| " << component << endl;
+        cdebug.log(18) << "| " << component << endl;
         if (   (component->getLayer   () == signature.getLayer())
            and (component->getWidth   () == signature.getDim(Signature::HorizontalWidth))
            and (component->getY       () == signature.getDim(Signature::HorizontalY))
@@ -709,9 +709,9 @@ Entity* Cell::getEntity(const Signature& signature) const
     }
 
     if (signature.getType() == Signature::TypePad) {
-      ltrace(51) << "Looking in Pads..." << endl;
+      cdebug.log(18) << "Looking in Pads..." << endl;
       for ( Pad* component : getComponents().getSubSet<Pad*>() ) {
-        ltrace(51) << "| " << component << endl;
+        cdebug.log(18) << "| " << component << endl;
         if (   (component->getLayer()                 == signature.getLayer())
            and (component->getBoundingBox().getXMin() == signature.getDim(Signature::PadXMin))
            and (component->getBoundingBox().getYMin() == signature.getDim(Signature::PadYMin))
@@ -817,7 +817,7 @@ DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
 void Cell::flattenNets(unsigned int flags)
 // ***************************************
 {
-  trace << "Cell::flattenNets() flags:0x" << hex << flags << endl;
+  cdebug.log(18) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
 
   UpdateSession::open();
 
@@ -1003,8 +1003,7 @@ Cell* Cell::getClone()
 void Cell::uniquify(unsigned int depth)
 // ************************************
 {
-  ltrace(10) << "Cell::uniquify() " << this << endl;
-  ltracein(10);
+  cdebug.log(18,1) << "Cell::uniquify() " << this << endl;
 
   vector<DeepNet*>  deepNets;
   for ( DeepNet* deepNet : getNets().getSubSet<DeepNet*>() ) {
@@ -1020,7 +1019,7 @@ void Cell::uniquify(unsigned int depth)
 
   for ( Instance* instance : getInstances() ) {
     Cell* masterCell = instance->getMasterCell();
-    ltrace(10) << "| " << instance << endl;
+    cdebug.log(18) << "| " << instance << endl;
     if (masterCell->isTerminal()) continue;
 
     if (masterCells.find(masterCell) == masterCells.end()) {
@@ -1043,8 +1042,8 @@ void Cell::uniquify(unsigned int depth)
       cell->uniquify( depth-1 );
   }
 
-  ltraceout(10);
-  ltrace(10) << "Cell::uniquify() END " << this << endl;
+  cdebug.tabw(18,-1);
+  cdebug.log(18) << "Cell::uniquify() END " << this << endl;
 }
 
 void Cell::materialize()

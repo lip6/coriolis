@@ -41,8 +41,6 @@
 #include "hurricane/Commons.h"
 
 
-
-
 namespace Hurricane {
 
 

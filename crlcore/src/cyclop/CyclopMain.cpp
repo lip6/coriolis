@@ -93,11 +93,10 @@ int main ( int argc, char *argv[] )
   int  returnCode = 0;
 
   try {
-    unsigned int  traceLevel;
-    bool          verbose1;
-    bool          verbose2;
-    bool          coreDump;
-    bool          textMode;
+    bool verbose1;
+    bool verbose2;
+    bool coreDump;
+    bool textMode;
 
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
@@ -110,9 +109,6 @@ int main ( int argc, char *argv[] )
                         , "Enable core dumping.")
       ( "text,t"        , boptions::bool_switch(&textMode)->default_value(false)
                         , "Run in pure text mode.")
-      ( "trace-level,l" , boptions::value<unsigned int>(&traceLevel)->default_value(1000)
-                        , "Set the level of trace, trace messages with a level superior to "
-                          "<arg> will be printed on <stderr>." )
       ( "cell,c"        , boptions::value<string>()
                         , "The name of the cell to load, whithout extension." );
 

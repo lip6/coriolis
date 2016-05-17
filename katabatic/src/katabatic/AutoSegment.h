@@ -46,7 +46,6 @@ namespace Katabatic {
   using std::endl;
   using std::binary_function;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::Interval;
   using Hurricane::Layer;
   using Hurricane::Components;
@@ -522,7 +521,7 @@ namespace Katabatic {
 
   inline int  AutoSegment::getTerminalCount ( AutoSegment* seed )
   {
-    ltrace(80) << "getTerminalCount() - " << seed << endl;
+    cdebug.log(145) << "getTerminalCount() - " << seed << endl;
 
     vector<AutoSegment*>  collapseds;
     vector<AutoSegment*>  perpandiculars;

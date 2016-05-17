@@ -46,7 +46,7 @@ extern "C" {
 
   static PyObject* PyToolEngine_get ( PyObject*, PyObject* args, PyObject* kwArgs )
   {
-    trace << "PyToolEngine_get()" << endl;
+    cdebug.log(30) << "PyToolEngine_get()" << endl;
     
     HTRY
     PyObject*   pyCell = NULL;
@@ -98,7 +98,7 @@ extern "C" {
 
   static PyObject* PyToolEngine_destroyAll ( PyObject* )
   {
-    trace << "PyToolEngine_destroyAll()" << endl;
+    cdebug.log(30) << "PyToolEngine_destroyAll()" << endl;
     
     HTRY
     ToolEngine::destroyAll();
@@ -110,7 +110,7 @@ extern "C" {
 
   static PyObject* PyToolEngine_getCell ( PyToolEngine* self )
   {
-    trace << "PyToolEngine_getCell ()" << endl;
+    cdebug.log(30) << "PyToolEngine_getCell ()" << endl;
 
     Cell* cell = NULL;
     

@@ -586,6 +586,8 @@ WARN_LOGFILE           = doxygen.warn.log
 # with spaces.
 
 INPUT                  = Generalities.dox \
+                         ../../src/hurricane/hurricane/DebugSession.h \
+                         DebugSession.dox \
                          JsonSupport.dox \
                          Initializer.dox \
                          ../../src/hurricane/hurricane/Initializer.h \

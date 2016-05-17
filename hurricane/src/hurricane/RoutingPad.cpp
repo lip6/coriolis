@@ -236,15 +236,14 @@ namespace Hurricane {
 
   void RoutingPad::_preDestroy ()
   {
-  // trace << "entering RoutingPad::preDestroy: " << this << endl;
-  // trace_in();
+    cdebug.log(18,1) << "entering RoutingPad::preDestroy: " << this << endl;
 
     if ( not _occurrence.getPath().isEmpty() )
       _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
     Inherit::_preDestroy();
 
-  // trace << "exiting RoutingPad::preDestroy:" << endl;
-  // trace_out();
+    cdebug.log(18) << "exiting RoutingPad::preDestroy:" << endl;
+    cdebug.tabw(18,-1);
   }
 
 

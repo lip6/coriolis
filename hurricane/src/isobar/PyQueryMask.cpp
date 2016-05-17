@@ -106,7 +106,7 @@ extern "C" {
 
   static PyObject* PyQueryMask_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    trace << "PyQueryMask_new()" << endl;
+    cdebug.log(20) << "PyQueryMask_new()" << endl;
 
     PyQueryMask* pyMask = (PyQueryMask*)type->tp_alloc(type,0);
 
@@ -287,7 +287,7 @@ extern "C" {
 
   static void PyQueryMask_DeAlloc ( PyQueryMask *self )
   {
-    trace << "PyQueryMask_DeAlloc(" << hex << self << ") " << self->_object << endl;
+    cdebug.log(20) << "PyQueryMask_DeAlloc(" << hex << self << ") " << self->_object << endl;
     PyObject_DEL ( self );
   }
 
@@ -312,7 +312,7 @@ extern "C" {
 
   extern void  PyQueryMask_LinkPyType()
   {
-    trace << "PyQueryMask_LinkType()" << endl;
+    cdebug.log(20) << "PyQueryMask_LinkType()" << endl;
 
     PyTypeQueryMask.tp_new       =              PyQueryMask_new;
     PyTypeQueryMask.tp_dealloc   = (destructor) PyQueryMask_DeAlloc;

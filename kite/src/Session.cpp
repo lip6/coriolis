@@ -42,9 +42,6 @@ namespace Kite {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Error;
   using Hurricane::Bug;
   using Hurricane::Point;
@@ -78,7 +75,7 @@ namespace Kite {
 
   Session* Session::open ( KiteEngine* kite )
   {
-    ltrace(110) << "Kite::Session::open()" << endl;
+    cdebug.log(159) << "Kite::Session::open()" << endl;
 
     Session* session = Session::get();
     if (session) {
@@ -154,8 +151,7 @@ namespace Kite {
 
   size_t  Session::_revalidate ()
   {
-    ltrace(150) << "Kite::Session::_revalidate()" << endl;
-    ltracein(150);
+    cdebug.log(159,1) << "Kite::Session::_revalidate()" << endl;
 
     _doRemovalEvents();
 
@@ -172,7 +168,7 @@ namespace Kite {
     set<AutoSegment*>::const_iterator idestroyed = destroyeds.begin();
     for ( ; idestroyed != destroyeds.end() ; ++idestroyed ) {
       if (lookup(*idestroyed)) {
-        ltraceout(90);
+        cdebug.tabw(155,-1);
         throw Error( "Destroyed AutoSegment is associated with a TrackSegment\n"
                      "        (%s)"
                    , getString(*idestroyed).c_str());
@@ -239,18 +235,18 @@ namespace Kite {
         revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
-        ltrace(150) << "Session: reduce:" << revalidateds[i] << endl;
+        cdebug.log(159) << "Session: reduce:" << revalidateds[i] << endl;
       }
       if (revalidateds[i]->mustRaise()) {
         revalidateds[i]->raise();
         lookup( revalidateds[i] )->reschedule( 0 );
-        ltrace(150) << "Session: raise:" << revalidateds[i] << endl;
+        cdebug.log(159) << "Session: raise:" << revalidateds[i] << endl;
       }
     }
 
     _doRemovalEvents();
 
-    ltraceout(150);
+    cdebug.tabw(159,-1);
     return count;
   }
 
@@ -285,7 +281,7 @@ namespace Kite {
 
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track )
   {
-    ltrace(200) <<  "addInsertEvent() " << segment
+    cdebug.log(159) <<  "addInsertEvent() " << segment
                 << "\n               @" << track << endl;
 
     if ( segment->getTrack() != NULL ) {
@@ -311,7 +307,7 @@ namespace Kite {
       return;
     }
 
-    ltrace(200) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
+    cdebug.log(159) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
     _removeEvents.push_back( Event(segment,segment->getTrack()) );
     _addSortEvent( segment->getTrack(), true );
   }

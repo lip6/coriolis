@@ -43,7 +43,6 @@ namespace Katabatic {
   using  std::ostringstream;
   using  std::vector;
   using  Hurricane::tab;
-  using  Hurricane::inltrace;
   using  Hurricane::Warning;
   using  Hurricane::Error;
   using  Hurricane::Technology;
@@ -144,7 +143,7 @@ namespace Katabatic {
 
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
-    ltrace(89) << "About to delete attribute _rg (RoutingGauge)." << endl;
+    cdebug.log(145) << "About to delete attribute _rg (RoutingGauge)." << endl;
     _cg->destroy ();
     _rg->destroy ();
   }

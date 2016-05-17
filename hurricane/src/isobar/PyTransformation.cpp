@@ -71,7 +71,7 @@ extern "C" {
   // Attribute Method  :  "PyTransformation_NEW ()"
 
   static PyObject* PyTransformation_NEW (PyObject *module, PyObject *args) {
-    trace << "PyTransformation_NEW()" << endl;
+    cdebug.log(20) << "PyTransformation_NEW()" << endl;
 
     Transformation* transf;
     PyObject* arg0;
@@ -106,9 +106,7 @@ extern "C" {
     PyTransformation* pyTransformation = PyObject_NEW(PyTransformation, &PyTypeTransformation);
     if (pyTransformation == NULL) { return NULL; }
     
-    trace_in ();
-    trace << "new PyTransformation [" << hex << pyTransformation << "]" << endl;
-    trace_out ();
+    cdebug.log(20) << "new PyTransformation [" << hex << pyTransformation << "]" << endl;
     
     HTRY
 
@@ -122,7 +120,7 @@ extern "C" {
 
   static int  PyTransformation_Init ( PyTransformation* self, PyObject* args, PyObject* kwargs )
   {
-    trace << "PyTransformation_Init(): " << (void*)self << endl;
+    cdebug.log(20) << "PyTransformation_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -131,16 +129,14 @@ extern "C" {
   // Attribute Method  :  "PyBox_getTranslation ()"
 
   static PyObject* PyTransformation_getTranslation ( PyTransformation *self ) {
-    trace << "PyBox_getTranslation ()" << endl;
+    cdebug.log(20) << "PyBox_getTranslation ()" << endl;
     
     METHOD_HEAD ( "Translation.getTranslation()" )
 
     PyPoint* pyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
     if (pyPoint == NULL) { return NULL; }
     
-    trace_in ();
-    trace <<  "new PyPoint [" << hex << pyPoint << "]" << endl;
-    trace_out ();
+    cdebug.log(20) <<  "new PyPoint [" << hex << pyPoint << "]" << endl;
 
     HTRY
 
@@ -158,7 +154,7 @@ extern "C" {
   // Attribute Method  :  "PyTransformation_getOrientation ()"
 
   static PyObject* PyTransformation_getOrientation ( PyTransformation *self ) {
-    trace << "PyTransformation_getOrientation ()" << endl;
+    cdebug.log(20) << "PyTransformation_getOrientation ()" << endl;
     
     METHOD_HEAD ( "Translation.getOrientation()" )
 
@@ -173,7 +169,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getX ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getX ()" << endl;
+    cdebug.log(20) << "PyTransformation_getX ()" << endl;
     
     METHOD_HEAD ( "Transformation.getX()" )
 
@@ -208,7 +204,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getY ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getY ()" << endl;
+    cdebug.log(20) << "PyTransformation_getY ()" << endl;
     
     METHOD_HEAD ( "Transformation.getY()" )
 
@@ -243,7 +239,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getDx ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getDx ()" << endl;
+    cdebug.log(20) << "PyTransformation_getDx ()" << endl;
     
     METHOD_HEAD ( "Transformation.getDx()" )
 
@@ -269,7 +265,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getDy ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getDy ()" << endl;
+    cdebug.log(20) << "PyTransformation_getDy ()" << endl;
     
     METHOD_HEAD ( "Transformation.getDy()" )
 
@@ -295,7 +291,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getTransformation ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getTransformation ()" << endl;
+    cdebug.log(20) << "PyTransformation_getTransformation ()" << endl;
     
     METHOD_HEAD ( "Transformation.getTransformation()" )
 
@@ -308,9 +304,7 @@ extern "C" {
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
     if ( resultPyTransf == NULL ) { return NULL; }
     
-    trace_in ();
-    trace << "new PyTransformation [" << hex << resultPyTransf << "]" << endl;
-    trace_out ();
+    cdebug.log(20) << "new PyTransformation [" << hex << resultPyTransf << "]" << endl;
 
     HTRY
 
@@ -329,7 +323,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getPoint ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getPoint ()" << endl;
+    cdebug.log(20) << "PyTransformation_getPoint ()" << endl;
     
     METHOD_HEAD ( "Transformation.getPoint()" )
 
@@ -352,9 +346,7 @@ extern "C" {
     PyPoint* resultPyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
     if ( resultPyPoint == NULL ) { return NULL; }
     
-    trace_in ();
-    trace << "new PyPoint [" << hex << resultPyPoint << "]" << endl;
-    trace_out ();
+    cdebug.log(20) << "new PyPoint [" << hex << resultPyPoint << "]" << endl;
     
     HTRY
     
@@ -373,7 +365,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getBox ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_getBox ()" << endl;
+    cdebug.log(20) << "PyTransformation_getBox ()" << endl;
     
     METHOD_HEAD ( "Transformation.getBox()" )
 
@@ -406,9 +398,7 @@ extern "C" {
     PyBox* resultPyBox = PyObject_NEW ( PyBox, &PyTypeBox );
     if ( resultPyBox == NULL ) { return NULL; }
 
-    trace_in ();
-    trace << "new PyBox [" << hex << resultPyBox << "]" << endl;
-    trace_out ();
+    cdebug.log(20) << "new PyBox [" << hex << resultPyBox << "]" << endl;
     
     HTRY
 
@@ -427,7 +417,7 @@ extern "C" {
 
   static PyObject* PyTransformation_getInvert ( PyTransformation *self )
   {
-    trace << "PyTransformation_getInvert ()" << endl;
+    cdebug.log(20) << "PyTransformation_getInvert ()" << endl;
     
     METHOD_HEAD ( "Transformation.getInvert()" )
 
@@ -436,9 +426,7 @@ extern "C" {
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
     if ( resultPyTransf == NULL ) { return NULL; }
     
-    trace_in ();
-    trace << "new PyTransformation [" << hex << resultPyTransf << "]" << endl;
-    trace_out ();
+    cdebug.log(20) << "new PyTransformation [" << hex << resultPyTransf << "]" << endl;
 
     HTRY
 
@@ -457,7 +445,7 @@ extern "C" {
 
   static PyObject* PyTransformation_Invert ( PyTransformation *self )
   {
-    trace << "PyTransformation_Invert ()" << endl;
+    cdebug.log(20) << "PyTransformation_Invert ()" << endl;
     
     METHOD_HEAD ( "Transformation.Invert()" )
 
@@ -479,7 +467,7 @@ extern "C" {
 
   static PyObject* PyTransformation_ApplyOn ( PyTransformation *self, PyObject* args )
   {
-    trace << "PyTransformation_ApplyOn ()" << endl;
+    cdebug.log(20) << "PyTransformation_ApplyOn ()" << endl;
     
     METHOD_HEAD ( "Transformation.ApplyOn()" )
 

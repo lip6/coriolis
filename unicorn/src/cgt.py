@@ -9,6 +9,7 @@ try:
   import Hurricane
   import Viewer
   import CRL
+  import Anabatic
   import Etesian
   import Katabatic
   import Kite
@@ -131,7 +132,6 @@ if __name__ == '__main__':
       af = CRL.AllianceFramework.create( flags )
       print af.getEnvironment().getPrint()
 
-     #Hurricane.trace(True)
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)
 
       if options.coreDump:        Cfg.getParamBool      ('misc.catchCore'    ).setBool(False)
@@ -179,6 +179,7 @@ if __name__ == '__main__':
           
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
+          unicorn.registerTool        (Anabatic.GraphicAnabaticEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
          #unicorn.setAnonNetSelectable(False)

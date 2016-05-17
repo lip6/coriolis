@@ -50,7 +50,7 @@ extern "C" {
 
   static PyObject* PyGraphics_get ( PyObject* )
   {
-    trace << "PyGraphics_get()" << endl;
+    cdebug.log(20) << "PyGraphics_get()" << endl;
 
     Graphics*   graphics   = NULL;
     PyGraphics* pyGraphics = NULL;
@@ -70,7 +70,7 @@ extern "C" {
 
   static PyObject* PyGraphics_setStyle ( PyObject*, PyObject* args )
   {
-    trace << "PyGraphics_setStyle()" << endl;
+    cdebug.log(20) << "PyGraphics_setStyle()" << endl;
 
     HTRY
     Graphics* graphics = Graphics::getGraphics ();
@@ -90,7 +90,7 @@ extern "C" {
 
   PyObject* PyGraphics_getPattern ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_getPattern()" << endl;
+    cdebug.log(20) << "PyGraphics_getPattern()" << endl;
 
     const char* pattern = NULL;
 
@@ -111,7 +111,7 @@ extern "C" {
 
   PyObject* PyGraphics_getStyle ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_getStyle()" << endl;
+    cdebug.log(20) << "PyGraphics_getStyle()" << endl;
 
     DisplayStyle* style = NULL;
 
@@ -133,7 +133,7 @@ extern "C" {
 
   PyObject* PyGraphics_getGroup ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_getGroup()" << endl;
+    cdebug.log(20) << "PyGraphics_getGroup()" << endl;
 
     const char* group = "NoGroup";
 
@@ -154,7 +154,7 @@ extern "C" {
 
   PyObject* PyGraphics_getThreshold ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_getThreshold()" << endl;
+    cdebug.log(20) << "PyGraphics_getThreshold()" << endl;
 
     float threshold = 0.0;
 
@@ -175,7 +175,7 @@ extern "C" {
 
   PyObject* PyGraphics_getDarkening ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_getDarkening()" << endl;
+    cdebug.log(20) << "PyGraphics_getDarkening()" << endl;
 
     DisplayStyle::HSVr* darkening = new DisplayStyle::HSVr();
 
@@ -190,7 +190,7 @@ extern "C" {
 
   PyObject* PyGraphics_toHtml ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_toHtml()" << endl;
+    cdebug.log(20) << "PyGraphics_toHtml()" << endl;
 
     string htmlText = "";
 
@@ -211,7 +211,7 @@ extern "C" {
 
   PyObject* PyGraphics_breakpointStopCb ( PyGraphics* , PyObject* args )
   {
-    trace << "PyGraphics_breakpointStopCb()" << endl;
+    cdebug.log(20) << "PyGraphics_breakpointStopCb()" << endl;
 
     bool rvalue = false;
 
@@ -233,7 +233,7 @@ extern "C" {
 
   static PyObject* PyGraphics_addStyle ( PyObject*, PyObject* args )
   {
-    trace << "PyGraphics_addStyle()" << endl;
+    cdebug.log(20) << "PyGraphics_addStyle()" << endl;
 
     HTRY
     Graphics* graphics = Graphics::getGraphics ();
@@ -252,7 +252,7 @@ extern "C" {
 
   static PyObject* PyGraphics_enable ( PyObject*, PyObject* args )
   {
-    trace << "PyGraphics_enable()" << endl;
+    cdebug.log(20) << "PyGraphics_enable()" << endl;
 
     HTRY
     Graphics::getGraphics()->enable();
@@ -268,7 +268,7 @@ extern "C" {
 
   static PyObject* PyGraphics_getStyles ( PyObject* )
   {
-    trace << "PyGraphics_getStyles()" << endl;
+    cdebug.log(20) << "PyGraphics_getStyles()" << endl;
 
     PyDisplayStyleVector* pyVector = NULL;
 

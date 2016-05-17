@@ -464,7 +464,7 @@ The second step is to create the source directory and pull the |git| repository:
 
 Third and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=support  \
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
                                        --project=coriolis \
                                        --make="-j4 install"
    dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
@@ -477,7 +477,7 @@ stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                        --devtoolset-2 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
@@ -499,7 +499,7 @@ In the |Coriolis| |git| repository, two branches are present:
   command just after the first step: ::
 
       dummy@lepka:~$ git checkout devel
-      dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+      dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                           --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce

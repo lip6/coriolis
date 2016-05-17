@@ -284,8 +284,8 @@ namespace Hurricane {
 
   template<typename T> inline void  JsonStack::push_back ( const std::string& key, T t )
   {
-    ltrace(51) << "JsonStack::push_back(T) key:" << key << " value:" << t
-               << " (" << demangle(typeid(T)) << ")." << endl;
+    cdebug.log(19) << "JsonStack::push_back(T) key:" << key << " value:" << t
+                   << " (" << demangle(typeid(T)) << ")." << endl;
     _stack.push_back(std::make_pair(key,boost::any(t)));
   }
 
@@ -297,8 +297,8 @@ namespace Hurricane {
                   << (count+1) << " elements remains to pop." << std::endl;
         break;
       }
-      ltrace(51) << "| _stack.pop_back() \"" << _stack.back().first
-                 << "\", size:" << _stack.size() << ", dbos:" << _dbos.size() << endl;
+      cdebug.log(19) << "| _stack.pop_back() \"" << _stack.back().first
+                     << "\", size:" << _stack.size() << ", dbos:" << _dbos.size() << endl;
       _stack.pop_back();
     }
   }
@@ -316,17 +316,17 @@ namespace Hurricane {
     int i = _stack.size()-1;
     do {
       if (_stack[i].first == key) {
-        ltrace(51) << "JsonStack::rhas(): key \"" << key << "\" found at index:"
-                   << (i-(int)_stack.size()) << " (i:" << i << ") "
-                   << "(" << demangle(_stack[i].second.type().name()) << ")."
-                   << endl;
+        cdebug.log(19) << "JsonStack::rhas(): key \"" << key << "\" found at index:"
+                       << (i-(int)_stack.size()) << " (i:" << i << ") "
+                       << "(" << demangle(_stack[i].second.type().name()) << ")."
+                       << endl;
         return i-(int)_stack.size();
       }
       if (i == 0) break;
       --i;
     } while ( true );
 
-    ltrace(51) << "JsonStack::rhas(): key \"" << key << "\" not found (returning index: 0)." << endl;
+    cdebug.log(19) << "JsonStack::rhas(): key \"" << key << "\" not found (returning index: 0)." << endl;
     return 0;
   }
 
@@ -336,8 +336,8 @@ namespace Hurricane {
       int i = _stack.size()-1;
       do {
         if (_stack[i].first == key) {
-          ltrace(51) << "JsonStack::as<T>() k:" << key
-                     << " value:" << demangle(_stack[i].second.type().name()) << std::endl;
+          cdebug.log(19) << "JsonStack::as<T>() k:" << key
+                         << " value:" << demangle(_stack[i].second.type().name()) << std::endl;
           return boost::any_cast<T>( _stack[i].second );
         }
         if (i == 0) break;
@@ -405,7 +405,7 @@ namespace Hurricane {
   template<typename T>
   inline void  JsonObject::update ( JsonStack& stack, T hobject )
   {
-    ltrace(51) << "JsonObject::update<T>()" << endl;
+    cdebug.log(19) << "JsonObject::update<T>()" << endl;
     stack.pop_back( _attributes.size() );
     stack.push_back<T>( getStackName(), hobject );
     setObject<T>( hobject );

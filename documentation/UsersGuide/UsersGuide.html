@@ -395,7 +395,7 @@ dummy&#64;lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
 </pre>
 <p>Third and final step, build &amp; install:</p>
 <pre class="literal-block">
-dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=support  \
+dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=support  \
                                     --project=coriolis \
                                     --make=&quot;-j4 install&quot;
 dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=support  \
@@ -407,7 +407,7 @@ do not support to be generated with a parallel build. So we compile &amp; instal
 stage in <tt class="docutils literal"><span class="pre">-j4</span></tt> (or whatever) then we generate the documentation in <tt class="docutils literal"><span class="pre">-j1</span></tt></p>
 <p>Under <span class="sc">rhel6</span> or clones, you must build using the <span class="cb">devtoolset2</span>:</p>
 <pre class="literal-block">
-dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                     --devtoolset-2 --make=&quot;-j4 install&quot;
 </pre>
 <p>If you want to uses Qt 5 instead of Qt 4, you may add the <tt class="docutils literal"><span class="pre">--qt5</span></tt> argument.</p>
@@ -425,7 +425,7 @@ development team. To use it instead of the <span class="cb">master</span> one, d
 command just after the first step:</p>
 <pre class="literal-block">
 dummy&#64;lepka:~$ git checkout devel
-dummy&#64;lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+dummy&#64;lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                     --make=&quot;-j4 install&quot; --debug
 </pre>
 <p>Be aware that it may requires newer versions of the dependencies and may introduce

@@ -294,16 +294,15 @@ void Segment::invert()
 void Segment::_preDestroy()
 // ***********************
 {
-// trace << "entering Segment::_preDestroy: " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Segment::_preDestroy: " << this << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    _sourceHook.detach();
-    _targetHook.detach();
+  _sourceHook.detach();
+  _targetHook.detach();
 
-// trace << "exiting Segment::_preDestroy:" << endl;
-// trace_out();
+  cdebug.log(18) << "exiting Segment::_preDestroy:" << endl;
+  cdebug.tabw(18,-1);
 }
 
 void Segment::_toJson(JsonWriter* writer) const

@@ -62,7 +62,7 @@ extern "C" {
   // Class Method  :  "PyBox_NEW ()"
 
   static PyObject* PyBox_NEW (PyObject *module, PyObject *args) {
-    trace << "PyBox_NEW()" << endl;
+    cdebug.log(20) << "PyBox_NEW()" << endl;
 
     Box* box = NULL;
     PyBox* pyBox = NULL;
@@ -106,13 +106,13 @@ extern "C" {
 
   static int  PyBox_Init ( PyBox* self, PyObject* args, PyObject* kwargs )
   {
-    trace << "PyBox_Init(): " << (void*)self << endl;
+    cdebug.log(20) << "PyBox_Init(): " << (void*)self << endl;
     return 0;
   }
 
 
   static PyObject* PyBox_getCenter ( PyBox *self ) {
-    trace << "PyBox_getCenter()" << endl;
+    cdebug.log(20) << "PyBox_getCenter()" << endl;
 
     METHOD_HEAD ( "Box.Center()" )
 
@@ -128,7 +128,7 @@ extern "C" {
 
 
   static PyObject* PyBox_getUnion ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_getUnion()" << endl;
+    cdebug.log(20) << "PyBox_getUnion()" << endl;
 
     METHOD_HEAD ( "Box.getUnion()" )
 
@@ -154,7 +154,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_getIntersection ()"
 
   static PyObject* PyBox_getIntersection ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_getIntersection()" << endl;
+    cdebug.log(20) << "PyBox_getIntersection()" << endl;
 
     METHOD_HEAD ( "Box.getIntersection()" )
 
@@ -179,7 +179,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_contains ()"
 
   static PyObject* PyBox_contains ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_contains ()" << endl;
+    cdebug.log(20) << "PyBox_contains ()" << endl;
 
     METHOD_HEAD ( "Box.contains()" )
 
@@ -214,7 +214,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_intersect ()"
 
   static PyObject* PyBox_intersect ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_intersect ()" << endl;
+    cdebug.log(20) << "PyBox_intersect ()" << endl;
     
     bool result = false;
     HTRY
@@ -244,7 +244,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_isConstrainedBy ()"
 
   static PyObject* PyBox_isConstrainedBy ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_isConstrainedBy ()" << endl;
+    cdebug.log(20) << "PyBox_isConstrainedBy ()" << endl;
     
     bool result = false;
     HTRY
@@ -273,7 +273,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_makeEmpty ()"
 
   static PyObject* PyBox_makeEmpty ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_makeEmpty ()" << endl;
+    cdebug.log(20) << "PyBox_makeEmpty ()" << endl;
 
     HTRY
     METHOD_HEAD ( "Box.makeEmpty()" )
@@ -289,7 +289,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_inflate ()"
 
   static PyObject* PyBox_inflate ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_inflate ()" << endl;
+    cdebug.log(20) << "PyBox_inflate ()" << endl;
 
     METHOD_HEAD ( "Box.inflate()" )
 
@@ -326,7 +326,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_merge ()"
 
   static PyObject* PyBox_merge ( PyBox *self, PyObject* args ) {
-    trace << "Box_merge()" << endl;
+    cdebug.log(20) << "Box_merge()" << endl;
 
     METHOD_HEAD ( "Box.merge()" )
 
@@ -364,7 +364,7 @@ extern "C" {
   // Attribute Method  :  "PyBox_translate ()"
 
   static PyObject* PyBox_translate ( PyBox *self, PyObject* args ) {
-    trace << "PyBox_translate ()" << endl;
+    cdebug.log(20) << "PyBox_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Box.translate()" )

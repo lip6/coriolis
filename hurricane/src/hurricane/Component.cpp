@@ -330,37 +330,37 @@ ComponentFilter Component::getIsUnderFilter(const Box& area)
 void Component::materialize()
 // **************************
 {
-// trace << "materialize() - " << this << endl;
+  cdebug.log(18) << "Component::materialize() - " << this << endl;
 
-    if (!isMaterialized()) {
-        Cell*  cell  = getCell();
-        const Layer* layer = getLayer();
-        if (cell && layer) {
-            Slice* slice = cell->getSlice(layer);
-            if (!slice) slice = Slice::_create(cell, layer);
-            QuadTree* quadTree = slice->_getQuadTree();
-            quadTree->insert(this);
-            cell->_fit(quadTree->getBoundingBox());
-        } else {
-          //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
-        }
+  if (!isMaterialized()) {
+    Cell*  cell  = getCell();
+    const Layer* layer = getLayer();
+    if (cell && layer) {
+      Slice* slice = cell->getSlice(layer);
+      if (!slice) slice = Slice::_create(cell, layer);
+      QuadTree* quadTree = slice->_getQuadTree();
+      quadTree->insert(this);
+      cell->_fit(quadTree->getBoundingBox());
+    } else {
+    //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
     }
+  }
 }
 
 void Component::unmaterialize()
 // ****************************
 {
-// trace << "Unmaterializing " << this << endl;
+  cdebug.log(18) << "Component::unmaterialize() " << this << endl;
 
-    if (isMaterialized()) {
-        Cell* cell = getCell();
-        Slice* slice = cell->getSlice(getLayer());
-        if (slice) {
-            cell->_unfit(getBoundingBox());
-            slice->_getQuadTree()->remove(this);
-            if (slice->isEmpty()) slice->_destroy();
-        }
+  if (isMaterialized()) {
+    Cell* cell = getCell();
+    Slice* slice = cell->getSlice(getLayer());
+    if (slice) {
+      cell->_unfit(getBoundingBox());
+      slice->_getQuadTree()->remove(this);
+      if (slice->isEmpty()) slice->_destroy();
     }
+  }
 }
 
 void Component::invalidate(bool propagateFlag)
@@ -408,8 +408,7 @@ void Component::_postCreate()
 void Component::_preDestroy()
 // *************************
 {
-// trace << "entering Component::_Predestroy: " << this << endl;
-// trace_in();
+    cdebug.log(18,1) << "entering Component::_Predestroy: " << this << endl;
 
     clearProperties();
 
@@ -469,8 +468,8 @@ void Component::_preDestroy()
     if (_net) _net->_getComponentSet()._remove(this);
 
 
-    // trace << "exiting Component::_Predestroy:" << endl;
-    // trace_out();
+    cdebug.log(18) << "exiting Component::_Predestroy:" << endl;
+    cdebug.tabw(18,-1);
 }
 
 void Component::_toJson( JsonWriter* writer ) const

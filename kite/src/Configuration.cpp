@@ -29,7 +29,6 @@ namespace Kite {
   using std::endl;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::Error;
   using Hurricane::Technology;
 

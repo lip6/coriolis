@@ -37,9 +37,6 @@
 namespace Kite {
 
   using namespace std;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
@@ -69,8 +66,8 @@ namespace Kite {
     , _data         (NULL)
     , _dogLegLevel  (0)
   {
-    ltrace(99) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
-    ltrace(99) << "             over " << (void*)segment << ":" << segment << endl;
+    cdebug.log(155) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
+    cdebug.log(155) << "             over " << (void*)segment << ":" << segment << endl;
 
     setFlags( TElemCreated|TElemLocked );
     if (segment) {
@@ -100,7 +97,7 @@ namespace Kite {
 
   void  TrackSegment::_preDestroy ()
   {
-    ltrace(90) << "TrackSegment::_preDestroy() - " << (void*)this
+    cdebug.log(155) << "TrackSegment::_preDestroy() - " << (void*)this
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
 
@@ -137,7 +134,7 @@ namespace Kite {
       
       trackSegment->invalidate();
 
-      ltrace(200) << "TrackSegment::create(): " << trackSegment << endl;
+      cdebug.log(159) << "TrackSegment::create(): " << trackSegment << endl;
       trackElement = trackSegment;
     }
 
@@ -232,22 +229,22 @@ namespace Kite {
     Katabatic::GCell* sourceGCell = base()->getAutoSource()->getGCell();
     Katabatic::GCell* targetGCell = base()->getAutoTarget()->getGCell();
 
-    ltrace(148) << "getGCells(): sourceGCell: " << sourceGCell << endl;
-    ltrace(148) << "getGCells(): targetGCell: " << targetGCell << endl;
+    cdebug.log(159) << "getGCells(): sourceGCell: " << sourceGCell << endl;
+    cdebug.log(159) << "getGCells(): targetGCell: " << targetGCell << endl;
 
     for( AutoSegment* segment : base()->getAligneds() ) {
-      ltrace(148) << "| " << segment << endl;
+      cdebug.log(159) << "| " << segment << endl;
 
       Katabatic::GCell* gcell = segment->getAutoSource()->getGCell();
       if (gcell->getIndex() < sourceGCell->getIndex()) {
         sourceGCell = gcell;
-        ltrace(148) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
+        cdebug.log(159) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
       }
 
       gcell = segment->getAutoTarget()->getGCell();
       if (gcell->getIndex() > targetGCell->getIndex()) {
         targetGCell = gcell;
-        ltrace(148) << "getGCells(): new targetGCell: " << targetGCell << endl;
+        cdebug.log(159) << "getGCells(): new targetGCell: " << targetGCell << endl;
       }
     }
 
@@ -323,7 +320,7 @@ namespace Kite {
 
   void  TrackSegment::detach ()
   {
-    ltrace(200) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
+    cdebug.log(159) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
 
     setTrack( NULL );
     setIndex( (size_t)-1 );
@@ -334,7 +331,7 @@ namespace Kite {
   void  TrackSegment::revalidate ()
   {
     unsetFlags( TElemCreated ); 
-    ltrace(148) << "revalidate() - " << this << endl;
+    cdebug.log(159) << "revalidate() - " << this << endl;
 
     _base->getCanonical( _sourceU, _targetU );
 
@@ -354,7 +351,7 @@ namespace Kite {
   {
     if (not other) return;
 
-    ltrace(200) << "TrackSegment::swapTrack()" << endl;
+    cdebug.log(159) << "TrackSegment::swapTrack()" << endl;
 
     size_t  thisIndex   = getIndex ();
     Track*  thisTrack   = getTrack ();
@@ -387,15 +384,14 @@ namespace Kite {
     if (thisEvent ) thisEvent ->setSegment( other );
     if (otherEvent) otherEvent->setSegment( this );
 
-    ltrace(200) << "| this:  " << this << endl;
-    ltrace(200) << "| other: " << other << endl;
+    cdebug.log(159) << "| this:  " << this << endl;
+    cdebug.log(159) << "| other: " << other << endl;
   }
 
 
   void  TrackSegment::reschedule ( unsigned int level )
   {
-    ltrace(200) << "TrackSegment::reschedule() - " << this << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::reschedule() - " << this << endl;
 
     if (not _data or not _data->hasRoutingEvent())
       Session::getNegociateWindow()->addRoutingEvent( this, level );
@@ -405,7 +401,7 @@ namespace Kite {
       Session::getNegociateWindow()->rescheduleEvent( _data->getRoutingEvent(), level );
     }
 
-    ltraceout(200);
+    cdebug.tabw(159,-1);
   }
 
 
@@ -427,13 +423,13 @@ namespace Kite {
 
   bool  TrackSegment::canSlacken () const
   {
-    ltrace(200) << "TrackSegment::canSlacken() doglegLevel:" << getDoglegLevel() << endl;
+    cdebug.log(159) << "TrackSegment::canSlacken() doglegLevel:" << getDoglegLevel() << endl;
     return (not isSlackened() and (getDoglegLevel() <= 3)) ? _base->canSlacken(KbPropagate) : false;
   }
 
   bool  TrackSegment::slacken ( unsigned int flags )
   {
-    ltrace(200) << "TrackSegment::slacken()" << endl;
+    cdebug.log(159) << "TrackSegment::slacken()" << endl;
 
     bool success = false;
 
@@ -441,12 +437,12 @@ namespace Kite {
       TrackElement* perpandicular = NULL;
       TrackElement* parallel      = NULL;
 
-      ltracein(200);
+      cdebug.tabw(159,1);
 
       success = base()->slacken( flags|KbPropagate );
       _postDoglegs( perpandicular, parallel );
       
-      ltraceout(200);
+      cdebug.tabw(159,-1);
       return success;
     } else
       cerr << Bug("TrackSegment::slacken(): NULL base or already slackened.") << endl;
@@ -459,8 +455,7 @@ namespace Kite {
   {
     bool success = false;
 
-    ltrace(200) << "TrackSegment::moveUp() " << flags << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::moveUp() " << flags << endl;
 
     success = base()->moveUp( flags );
     if (success) {
@@ -471,7 +466,7 @@ namespace Kite {
       _postDoglegs( perpandicular, parallel );
     }
       
-    ltraceout(200);
+    cdebug.tabw(159,-1);
 
     return success;
   }
@@ -481,8 +476,7 @@ namespace Kite {
   {
     bool success = false;
 
-    ltrace(200) << "TrackSegment::moveDown() " << flags << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::moveDown() " << flags << endl;
 
     success = base()->moveDown( flags );
     if (success) {
@@ -493,7 +487,7 @@ namespace Kite {
       _postDoglegs( perpandicular, parallel );
     }
       
-    ltraceout(200);
+    cdebug.tabw(159,-1);
 
     return success;
   }
@@ -503,13 +497,12 @@ namespace Kite {
   {
     bool success = true;
 
-    ltrace(200) << "TrackSegment::moveAside() - "
-                << ((flags&KtMoveToLeft )?"left" :"")
-                << ((flags&KtMoveToRight)?"rigth":"") << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::moveAside() - "
+                      << ((flags&KtMoveToLeft )?"left" :"")
+                      << ((flags&KtMoveToRight)?"rigth":"") << endl;
     if (flags & KtMoveToLeft ) base()->moveULeft ();
     if (flags & KtMoveToRight) base()->moveURight();
-    ltraceout(200);
+    cdebug.tabw(159,-1);
 
     return success;
   }
@@ -524,7 +517,7 @@ namespace Kite {
     for( Segment* segment : base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
       dogleg = Session::lookup( segment );
       if (dogleg and (dogleg->getDirection() == direction)) {
-        ltrace(200) << "Source dogleg: " << dogleg << endl;
+        cdebug.log(159) << "Source dogleg: " << dogleg << endl;
         return dogleg;
       }
     }
@@ -541,7 +534,7 @@ namespace Kite {
     for( Segment* segment : base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
       dogleg = Session::lookup( segment );
       if (dogleg and (dogleg->getDirection() == direction)) {
-        ltrace(200) << "Target dogleg: " << dogleg << endl;
+        cdebug.log(159) << "Target dogleg: " << dogleg << endl;
         return dogleg;
       }
     }
@@ -551,35 +544,35 @@ namespace Kite {
 
   bool  TrackSegment::canDogleg ()
   {
-    ltrace(200) << "TrackSegment::canDogleg()" << endl;
+    cdebug.log(159) << "TrackSegment::canDogleg()" << endl;
 
     if (not isLocal()) {
-      ltrace(200) << "Failed: is not local." << endl;
+      cdebug.log(159) << "Failed: is not local." << endl;
       return false;
     }
 
     if (isFixed()) {
-      ltrace(200) << "Failed: is fixed." << endl;
+      cdebug.log(159) << "Failed: is fixed." << endl;
       return false;
     }
 
     if (isRouted()) {
-      ltrace(200) << "Failed: belongs to an already routed net." << endl;
+      cdebug.log(159) << "Failed: belongs to an already routed net." << endl;
       return false;
     }
 
     if (isSlackened()) {
-      ltrace(200) << "Failed: is local & slackened." << endl;
+      cdebug.log(159) << "Failed: is local & slackened." << endl;
       return false;
     }
 
     if (hasSourceDogleg() or hasTargetDogleg()) {
-      ltrace(200) << "Failed: already has source or target dogleg." << endl;
+      cdebug.log(159) << "Failed: already has source or target dogleg." << endl;
       return false;
     }
 
     if (getDoglegLevel() > 3) {
-      ltrace(200) << "Failed: maximum dogleg level reached (4)." << endl;
+      cdebug.log(159) << "Failed: maximum dogleg level reached (4)." << endl;
       return false;
     }
 
@@ -589,51 +582,50 @@ namespace Kite {
 
   bool  TrackSegment::canDogleg ( Katabatic::GCell* doglegGCell, unsigned int flags )
   {
-    ltrace(200) << "TrackSegment::canDogleg(GCell*) " << doglegGCell << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::canDogleg(GCell*) " << doglegGCell << endl;
 
     if (doglegGCell->isUnderIoPad()) {
-      ltrace(200) << "false: Cannot dogleg in a GCell under an I/O Pad." << endl;
-      ltraceout(200);
+      cdebug.log(159) << "false: Cannot dogleg in a GCell under an I/O Pad." << endl;
+      cdebug.tabw(159,-1);
       return false;
     }
 
     if (isFixed()) {
-      ltrace(200) << "false: Cannot dogleg a fixed segment." << endl;
-      ltraceout(200);
+      cdebug.log(159) << "false: Cannot dogleg a fixed segment." << endl;
+      cdebug.tabw(159,-1);
       return false;
     }
 
     if (isRouted()) {
-      ltrace(200) << "false: Cannot dogleg a segment belonging to an already routed net." << endl;
-      ltraceout(200);
+      cdebug.log(159) << "false: Cannot dogleg a segment belonging to an already routed net." << endl;
+      cdebug.tabw(159,-1);
       return false;
     }
 
     if (isLocal()) {
       if (hasSourceDogleg() or hasTargetDogleg()) {
-        ltrace(200) << "false: Cannot dogleg again a local segment." << endl;
-        ltraceout(200);
+        cdebug.log(159) << "false: Cannot dogleg again a local segment." << endl;
+        cdebug.tabw(159,-1);
         return false;
       }
       if (isSlackened()) {
-        ltrace(200) << "false: Cannot dogleg a local slackened segment." << endl;
-        ltraceout(200);
+        cdebug.log(159) << "false: Cannot dogleg a local slackened segment." << endl;
+        cdebug.tabw(159,-1);
         return false;
       }
     }
 
     if (getDoglegLevel() > 3) {
-      ltrace(200) << "Failed: maximum dogleg level reached (4)." << endl;
-      ltraceout(200);
+      cdebug.log(159) << "Failed: maximum dogleg level reached (4)." << endl;
+      cdebug.tabw(159,-1);
       return false;
     }
 
     vector<Katabatic::GCell*> gcells;
     getGCells( gcells );
 
-    ltrace(190) << "Source: " << *gcells.begin () << endl;
-    ltrace(190) << "Target: " << *gcells.rbegin() << endl;
+    cdebug.log(159) << "Source: " << *gcells.begin () << endl;
+    cdebug.log(159) << "Target: " << *gcells.rbegin() << endl;
 
     bool isGCellInside = false;
     for ( size_t igcell=0 ; igcell<gcells.size() ; ++igcell ) {
@@ -644,21 +636,21 @@ namespace Kite {
         if (hasSourceDogleg()) {
           if (flags & KtAllowDoglegReuse) return true;
 
-          ltrace(200) << "false: Cannot dogleg again in source GCell." << endl;
-          ltraceout(200);
+          cdebug.log(159) << "false: Cannot dogleg again in source GCell." << endl;
+          cdebug.tabw(159,-1);
           return false;
         }
       }
 
       if (hasTargetDogleg() and (igcell == gcells.size()-1)) {
         if (flags & KtAllowDoglegReuse) {
-          ltrace(200) << "true" << endl;
-          ltraceout(200);
+          cdebug.log(159) << "true" << endl;
+          cdebug.tabw(159,-1);
           return true;
         }
 
-        ltrace(200) << "false: Cannot dogleg again in target GCell." << endl;
-        ltraceout(200);
+        cdebug.log(159) << "false: Cannot dogleg again in target GCell." << endl;
+        cdebug.tabw(159,-1);
         return false;
       }
 
@@ -666,43 +658,43 @@ namespace Kite {
     }
 
     if (not isGCellInside) {
-      ltrace(200) << "false: dogleg GCell is outside segment support (go outside GCell active)." << endl;
-      ltraceout(200);
+      cdebug.log(159) << "false: dogleg GCell is outside segment support (go outside GCell active)." << endl;
+      cdebug.tabw(159,-1);
       return false;
     }
 
-    ltrace(200) << "true" << endl;
-    ltraceout(200);
+    cdebug.log(159) << "true" << endl;
+    cdebug.tabw(159,-1);
     return true;
   }
 
 
   bool  TrackSegment::canDogleg ( Interval interval )
   {
-    ltrace(200) << "TrackSegment::canDogleg(Interval) " << interval << endl;
+    cdebug.log(159) << "TrackSegment::canDogleg(Interval) " << interval << endl;
 
     if (isFixed()) {
-      ltrace(200) << "Failed: is fixed" << endl;
+      cdebug.log(159) << "Failed: is fixed" << endl;
       return false;
     }
 
     if (isRouted()) {
-      ltrace(200) << "Failed: belongs to an already routed net" << endl;
+      cdebug.log(159) << "Failed: belongs to an already routed net" << endl;
       return false;
     }
 
     if (not isLocal()) {
-      ltrace(200) << "Failed: is not local" << endl;
+      cdebug.log(159) << "Failed: is not local" << endl;
       return false;
     }
 
     if (hasSourceDogleg() or hasTargetDogleg() or isSlackened()) {
-      ltrace(200) << "Failed: already has source and/or target dogleg or slackened." << endl;
+      cdebug.log(159) << "Failed: already has source and/or target dogleg or slackened." << endl;
       return false;
     }
 
     if (getDoglegLevel() > 3) {
-      ltrace(200) << "Failed: maximum dogleg level reached (4)." << endl;
+      cdebug.log(159) << "Failed: maximum dogleg level reached (4)." << endl;
       return false;
     }
 
@@ -727,7 +719,7 @@ namespace Kite {
 
         DbU::Unit axis = (_base->isHorizontal()) ? source->getX() : source->getY();
 
-        ltrace(200) << "Setting dogleg axis @" << DbU::getValueString(axis) << endl;
+        cdebug.log(159) << "Setting dogleg axis @" << DbU::getValueString(axis) << endl;
         dogleg->setAxis( axis );
       }
     }
@@ -740,8 +732,8 @@ namespace Kite {
                                          , TrackElement*&    parallel
                                          )
   {
-    ltrace(200) << "TrackSegment::makeDogleg(GCell*)" << endl;
-    ltrace(200) << "Break in: " << dogLegGCell << endl;
+    cdebug.log(159) << "TrackSegment::makeDogleg(GCell*)" << endl;
+    cdebug.log(159) << "Break in: " << dogLegGCell << endl;
 
     base()->makeDogleg( dogLegGCell );
     _postDoglegs( perpandicular, parallel );
@@ -755,7 +747,7 @@ namespace Kite {
     TrackElement* perpandicular = NULL;
     TrackElement* parallel      = NULL;
 
-    ltrace(200) << "TrackSegment::makeDogleg(Interval)" << endl;
+    cdebug.log(159) << "TrackSegment::makeDogleg(Interval)" << endl;
     flags = base()->makeDogleg( interval );
     _postDoglegs( perpandicular, parallel );
 
@@ -765,8 +757,7 @@ namespace Kite {
 
   void  TrackSegment::_postDoglegs ( TrackElement*& perpandicular, TrackElement*& parallel )
   {
-    ltrace(200) << "TrackSegment::_postDoglegs()" << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "TrackSegment::_postDoglegs()" << endl;
 
     unsigned int                doglegLevel = 0;
     const vector<AutoSegment*>& doglegs = Session::getDoglegs();
@@ -778,7 +769,7 @@ namespace Kite {
                      , doglegs.size() ) << endl;
 
       for ( size_t i=0 ; i<doglegs.size() ; i+=3 ) {
-        ltrace(200) << "Looking up original:     " << doglegs[i] << endl;
+        cdebug.log(159) << "Looking up original:     " << doglegs[i] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i],0) );
         segments[i+0]->setFlags( TElemTargetDogleg );
         segments[i+0]->getDataNegociate()->resetRipupCount();
@@ -787,12 +778,12 @@ namespace Kite {
         doglegLevel = segments[i+0]->getDoglegLevel();
         segments[i+0]->setDoglegLevel( doglegLevel + (segments[i]->isLocal()?1:0) );
 
-        ltrace(200) << "Looking up new perpand:  " << doglegs[i+1] << endl;
+        cdebug.log(159) << "Looking up new perpand:  " << doglegs[i+1] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
         segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
         segments[i+1]->setDoglegLevel( doglegLevel + 1 );
 
-        ltrace(200) << "Looking up new parallel: " << doglegs[i+2] << endl;
+        cdebug.log(159) << "Looking up new parallel: " << doglegs[i+2] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
         segments[i+2]->setFlags( TElemSourceDogleg );
         segments[i+2]->getDataNegociate()->resetStateCount();
@@ -818,14 +809,14 @@ namespace Kite {
           case 1: segPart = "perpand  "; break;
           case 2: segPart = "new paral"; break;
         }
-        ltrace(200) << "[" << (i/3) << ":" << i << "] " << segPart << ": "
+        cdebug.log(159) << "[" << (i/3) << ":" << i << "] " << segPart << ": "
                     << segments[i] << endl;
       }
     } else {
       reschedule( 1 );
     }      
 
-    ltraceout(200);
+    cdebug.tabw(159,-1);
 
     Session::doglegReset();
   }

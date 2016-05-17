@@ -253,7 +253,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    ltrace(51) << "JsonDiffusionLayer::JsonDiffusionLayer()" << endl;
+    cdebug.log(19) << "JsonDiffusionLayer::JsonDiffusionLayer()" << endl;
 
     add( "_active"                  , typeid(string)  );
     add( "_diffusion"               , typeid(string)  );
@@ -281,7 +281,7 @@ namespace Hurricane {
 
   void JsonDiffusionLayer::toData(JsonStack& stack)
   {
-    ltracein(51);
+    cdebug.tabw(19,1);
 
     check( stack, "JsonDiffusionLayer::toData" );
 
@@ -360,7 +360,7 @@ namespace Hurricane {
     
     update( stack, layer );
 
-    ltraceout(51);
+    cdebug.tabw(19,-1);
   }
 
 

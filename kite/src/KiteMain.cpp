@@ -58,18 +58,17 @@ int main ( int argc, char *argv[] )
                  , ""
                  );
 
-    unsigned int  traceLevel;
-    bool          verbose1;
-    bool          verbose2;
-    bool          showConf;
-    bool          info;
-    bool          bug;
-    bool          coreDump;
-    bool          logMode;
-    bool          loadGlobal;
-    bool          dumpMeasures;
-    bool          saveGlobal;
-    bool          destroyDatabase;
+    bool  verbose1;
+    bool  verbose2;
+    bool  showConf;
+    bool  info;
+    bool  bug;
+    bool  coreDump;
+    bool  logMode;
+    bool  loadGlobal;
+    bool  dumpMeasures;
+    bool  saveGlobal;
+    bool  destroyDatabase;
 
     bopts::options_description options ("Command line arguments & options");
     options.add_options()
@@ -86,9 +85,6 @@ int main ( int argc, char *argv[] )
                          , "Display bug related messages.")
       ( "log-mode,L"     , bopts::bool_switch(&logMode)->default_value(false)
                          , "Disable ANSI escape sequences displaying.")
-      ( "trace-level,l"  , bopts::value<unsigned int>(&traceLevel)->default_value(1000)
-                         , "Set the level of trace, trace messages with a level superior to "
-                           "<arg> will be printed on <stderr>." )
       ( "core-dump,D"    , bopts::bool_switch(&coreDump)->default_value(false)
                          , "Enable core dumping.")
       ( "load-global,g"  , bopts::bool_switch(&loadGlobal)->default_value(false)
@@ -122,8 +118,6 @@ int main ( int argc, char *argv[] )
     if (arguments["bug"         ].as<bool>()) Cfg::getParamBool("misc.bug"          )->setBool( true  );
     if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool( true  );
     if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool( true  );
-
-    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt( traceLevel );
     Cfg::Configuration::popDefaultPriority();
 
     cmess1 << banner << endl;

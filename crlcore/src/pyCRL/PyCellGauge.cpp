@@ -27,7 +27,6 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Exception;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -62,7 +61,7 @@ extern "C" {
 
   static PyObject* PyCellGauge_create ( PyObject*, PyObject* args )
   {
-    trace << "PyCellGauge_create()" << endl;
+    cdebug.log(30) << "PyCellGauge_create()" << endl;
 
     CellGauge*   cg   = NULL;
     PyCellGauge* pyCg = NULL;

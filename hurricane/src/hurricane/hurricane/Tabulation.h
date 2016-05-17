@@ -20,9 +20,7 @@
 #ifndef HURRICANE_TABULATION_H
 #define HURRICANE_TABULATION_H
 
-#include "hurricane/Commons.h"
-
-#ifndef HURRICANE_SLOT_H
+#ifndef HURRICANE_COMMONS_H
 #error "Tabulation.h must be included through Commons.h"
 #endif
 

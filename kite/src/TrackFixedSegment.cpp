@@ -40,9 +40,6 @@
 namespace Kite {
 
   using namespace std;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Hurricane::Warning;
   using Hurricane::ForEachIterator;
@@ -162,7 +159,7 @@ namespace Kite {
 
   void  TrackFixedSegment::_preDestroy ()
   {
-    ltrace(90) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
+    cdebug.log(155) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
     TrackElement::_preDestroy();
   }
 
@@ -176,8 +173,8 @@ namespace Kite {
       trackFixedSegment = new TrackFixedSegment ( track, segment );
       trackFixedSegment->_postCreate();
 
-      ltrace(190) << "Adding: " << segment << " on " << track << endl;
-      ltrace(200) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
+      cdebug.log(159) << "Adding: " << segment << " on " << track << endl;
+      cdebug.log(159) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
 
       Session::addInsertEvent( trackFixedSegment, track );
     }

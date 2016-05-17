@@ -7,6 +7,43 @@
  /*! \class        UpdateSession
   *  \brief        UpdateSession description (\b API)
   *
+  *  \section      secUpdateSessionMechanism  Update Session Mechanism
+  *
+  *                Here is only an outline of the UpdateSession mechanism. The classes
+  *                involved are:
+  *                - Go (Graphical Objects and their sub-classes).
+  *                - Cell and it's QuadTree(s). Note that the Cell is \e not a Go.
+  *                - UpdateSession.
+  *
+  *                When a Go is to be displayed, it has to be inserted inside one
+  *                of the QuadTree of it's owner Cell. QuadTree allows fast geometric
+  *                queries which are used extensively to perform the display.
+  *                If a Go is \b not inserted in a QuadTree it will \b not be displayed
+  *                at all or be included in any geometric query. When we insert a Go
+  *                in a QuadTree, we talk about \b materialization. So a Go can be in
+  *                two states: \b materialized or \b unmaterialized. The default behavior
+  *                is to materialize a Go as soon as it is created.
+  *
+  *                Now comes the UpdateSession mechanism. When the characteristics
+  *                of a Go are changed, it may be needed to update it's position inside
+  *                the QuadTree, or even to change of QuadTree (in case of a Layer change).
+  *                Basically, the mechanism proceed in three stages:
+  *
+  *                - Start a new UpdateSession (it's a SharedProperty).
+  *
+  *                - When a Go is changed, the \c invalidate() method is called, that
+  *                  \e unmaterialize() it, then adds it to the current UpdateSession.
+  *                  This is done by adding the UpdateSession, as a property, to the Go.
+  *                  The Go owner (it's Cell) is also notified a \c Cell::Flags::CellAboutToChange.
+  * 
+  *                - On closing the UpdateSession, all the stored Gos are \b materialized
+  *                  again. The owner Cell and their instances are then send a
+  *                  notification \c Cell::Flags::CellChanged.
+  *
+  *                It is very important to notice that the Cells gets change notifications
+  *                only when a Go is \e changed, not when it is \e created. If we want the
+  *                Cell to be notified, we must invalidate it manually. This is particularly
+  *                critical when working with ExtensionGo.
   */
 
  }

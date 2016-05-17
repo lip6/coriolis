@@ -43,9 +43,6 @@
 
 namespace Knik {
 
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
 
@@ -788,14 +785,14 @@ void Graph::increaseVTuplePriority ( VTuple* vtuple, float distance )
 void Graph::printVTuplePriorityQueue()
 // ***********************************
 {
-  ltracein(600);
-  ltrace(600) << "VTuplePriorityQueue:" << endl;
+  cdebug.tabw(139,1);
+  cdebug.log(139) << "VTuplePriorityQueue:" << endl;
   unsigned int i=0;
   for ( auto iv : _vtuplePriorityQueue ) {
-    ltrace(600) << setw(3) << i << "| " << iv->getVertex() << " : " << iv->getDistance() << endl;
+    cdebug.log(139) << setw(3) << i << "| " << iv->getVertex() << " : " << iv->getDistance() << endl;
     ++i;
   }
-  ltraceout(600);
+  cdebug.tabw(139,-1);
 }
 
 void Graph::clearPriorityQueue()
@@ -981,9 +978,8 @@ int Graph::initRouting ( Net* net )
     //editor->Refresh();
     //editor->Stop ("Going to init");
 
-  //if (_working_net->getName() == "read0") DebugSession::open( 600 );
-    ltrace(600) << "Graph::initRouting() " << _working_net << endl;
-    ltracein(600);
+  //if (_working_net->getName() == "read0") DebugSession::open( 130, 140 );
+    cdebug.log(139,1) << "Graph::initRouting() " << _working_net << endl;
 
     int currentConnexID = 0;
     vector<Contact*> vContacts;
@@ -1033,9 +1029,9 @@ int Graph::initRouting ( Net* net )
     //bool useConnexID = false;
     for ( unsigned index = 0 ; index < vRoutingPads.size() ; index ++ ) {
         RoutingPad* routingPad = vRoutingPads[index];
-        ltrace(600) << routingPad << endl;
+        cdebug.log(139) << routingPad << endl;
         Vertex*  rpVertex = getVertex ( routingPad->getCenter() );
-        ltrace(600) << rpVertex << endl;
+        cdebug.log(139) << rpVertex << endl;
         Contact* rpContact = rpVertex->getContact();
         if ( rpContact && (rpContact->getNet() == routingPad->getNet()) ) {
             // s'il existe deja un contact pour ce vertex pour ce net, on s'y attache
@@ -1118,7 +1114,7 @@ int Graph::initRouting ( Net* net )
     //cerr << "net " << net << " has " << _vertexes_to_route.size() << " vertexes to route." << endl;
     //}
 
-    ltraceout(600);
+    cdebug.tabw(139,-1);
   //DebugSession::close();
 
     return _vertexes_to_route.size();
@@ -1147,18 +1143,16 @@ void Graph::Dijkstra()
     UpdateEstimateCongestion();
 //#endif
 
-//DebugSession::open( _working_net, 600 );
-//if (_working_net->getName() == "read0") DebugSession::open( 600 );
+//DebugSession::open( _working_net, 130, 140 );
+//if (_working_net->getName() == "read0") DebugSession::open( 130, 140 );
 
-  ltrace(600) << "Dijkstra for net: " << _working_net << endl;
-  ltracein(600);
-  ltrace(600) << "Stamp:" << _netStamp << endl;
-  ltrace(600) << "Search area : " << _searchingArea
-              << " h:" << DbU::getValueString(_searchingArea.getHeight()) << endl;
-  ltrace(600) << "Matrix tile height : " << DbU::getValueString(_matrixVertex->getTileHeight()) << endl;
-  ltrace(600) << "Central vertex : " << centralVertex << endl;
-  ltrace(600) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
-  ltracein(600);
+  cdebug.log(139,1) << "Dijkstra for net: " << _working_net << endl;
+  cdebug.log(139)   << "Stamp:" << _netStamp << endl;
+  cdebug.log(139)   << "Search area : " << _searchingArea
+                    << " h:" << DbU::getValueString(_searchingArea.getHeight()) << endl;
+  cdebug.log(139)   << "Matrix tile height : " << DbU::getValueString(_matrixVertex->getTileHeight()) << endl;
+  cdebug.log(139)   << "Central vertex : " << centralVertex << endl;
+  cdebug.log(139,1) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
 //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
 
   while ( _vertexes_to_route.size() > 1 ) {
@@ -1167,13 +1161,13 @@ void Graph::Dijkstra()
     float      reachedDistance = (float)(HUGE_VAL);
 
   //checkGraphConsistency();
-    if (ltracelevel() >= 600) {
-      ltrace(600) << "_vertexes_to_route:" << endl;
+    if (cdebug.enabled(139)) {
+      cdebug.log(139) << "_vertexes_to_route:" << endl;
       for ( auto iv : _vertexes_to_route )
-        ltrace(600) << "| " << iv << endl;
+        cdebug.log(139) << "| " << iv << endl;
     }
 
-    ltrace(600) << "Source component" << endl;
+    cdebug.log(139) << "Source component" << endl;
     printVTuplePriorityQueue();
   //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>source connexe component</center>");
 
@@ -1194,7 +1188,7 @@ void Graph::Dijkstra()
         reachedDistance = currentVertex->getDistance();
         reachedVertexes.clear();
         reachedVertexes.push_back ( currentVertex );
-        ltrace(600) << "Re-init reachedVertexes with " << currentVertex << endl;
+        cdebug.log(139) << "Re-init reachedVertexes with " << currentVertex << endl;
         break;
       }
 
@@ -1234,21 +1228,21 @@ void Graph::Dijkstra()
 
           VTuple* oppositeVTuple = oppositeVertex->getVTuple();
           if (oppositeVTuple) {
-            ltrace(600) << "Increasing priority for:" << endl;
-            ltrace(600) << "* " << oppositeVertex << endl;
-            ltrace(600) << "* " << oppositeVTuple << endl;
+            cdebug.log(139) << "Increasing priority for:" << endl;
+            cdebug.log(139) << "* " << oppositeVertex << endl;
+            cdebug.log(139) << "* " << oppositeVTuple << endl;
             increaseVTuplePriority( oppositeVTuple, newDistance );
           // Du fait de la reinit ce n'est plus seulement un increase!
           // Non, c'est bon si on garde le CleanRoutingState (avec clearPriorityQueue)
           } else {
             VTuple* newOppositeVTuple = VTuple::create ( oppositeVertex, newDistance );
-            ltrace(600) << "Creating New VTuple for Vertex:" << endl;
-            ltrace(600) << "* " << oppositeVertex    << ":" << newDistance << endl;
-            ltrace(600) << "* " << newOppositeVTuple << endl;
+            cdebug.log(139) << "Creating New VTuple for Vertex:" << endl;
+            cdebug.log(139) << "* " << oppositeVertex    << ":" << newDistance << endl;
+            cdebug.log(139) << "* " << newOppositeVTuple << endl;
             addVTupleToPriorityQueue( newOppositeVTuple );
           }
 
-          ltrace(600) << "Updated distance " << newDistance << " on: " << (*iedge) << endl;
+          cdebug.log(139) << "Updated distance " << newDistance << " on: " << (*iedge) << endl;
           printVTuplePriorityQueue();
         //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
         }
@@ -1262,7 +1256,7 @@ void Graph::Dijkstra()
             reachedDistance = newDistance;
             reachedVertexes.clear();
             reachedVertexes.push_back( oppositeVertex );
-            ltrace(600) << "Re-init (< distance) reachedVertexes with " << oppositeVertex << endl;
+            cdebug.log(139) << "Re-init (< distance) reachedVertexes with " << oppositeVertex << endl;
           } else if (newDistance == reachedDistance) {
           // on pourrait simplifier grandement tout ca : 1 seul vertex atteint sauvergardé!
           // Conclusion qu'il ait le meme connexID ou pas, on ne fait rien, on en a deja atteint
@@ -1279,7 +1273,7 @@ void Graph::Dijkstra()
             }
             if (not foundVertex) {
               reachedVertexes.push_back( oppositeVertex );
-              ltrace(600) << "Re-init (== distance) reachedVertexes with " << oppositeVertex << endl;
+              cdebug.log(139) << "Re-init (== distance) reachedVertexes with " << oppositeVertex << endl;
             }
           } else {
           // Nothing to do?
@@ -1299,9 +1293,9 @@ void Graph::Dijkstra()
     }
     assert( reachedDistance < (float)(HUGE_VAL) );
 
-    ltrace(600) << "Updating two connex components:" << endl;
-    ltrace(600) << "1. " << (*(reachedVertexes.begin())) << endl;
-    ltrace(600) << "2. " << firstVertex << endl;
+    cdebug.log(139) << "Updating two connex components:" << endl;
+    cdebug.log(139) << "1. " << (*(reachedVertexes.begin())) << endl;
+    cdebug.log(139) << "2. " << firstVertex << endl;
     UpdateConnexComp( reachedVertexes, firstVertex );
   }
 
@@ -1312,8 +1306,7 @@ void Graph::Dijkstra()
 //_vertexes_to_route.clear();   // no more useful
 //_vertexes_to_route = copy_vertex ;
 
-  ltraceout(600);
-  ltraceout(600);
+  cdebug.tabw(139,-2);
 //DebugSession::close();
 }
 

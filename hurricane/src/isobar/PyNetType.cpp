@@ -24,7 +24,6 @@ namespace  Isobar {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -68,7 +67,7 @@ extern "C" {
   DirectHashMethod(PyNetType_Hash, PyNetType)
 
   extern void  PyNetType_LinkPyType() {
-    trace << "PyNetType_LinkType()" << endl;
+    cdebug.log(20) << "PyNetType_LinkType()" << endl;
     PyTypeNetType.tp_dealloc = (destructor) PyNetType_DeAlloc;
     PyTypeNetType.tp_compare = (cmpfunc)    PyNetType_Cmp;
     PyTypeNetType.tp_repr    = (reprfunc)   PyNetType_Repr;

@@ -40,9 +40,9 @@ namespace Hurricane {
     public:
       typedef DBo Inherit;
     public:
-      enum Flags { ForcedIdMode = (1<<0)
-                 , NextIdSet    = (1<<1)
-                 };
+      enum EntityFlags { ForcedIdMode = (1<<0)
+                       , NextIdSet    = (1<<1)
+                       };
     public:
       static  unsigned int  getIdCounter        ();
               unsigned int  getNextId           ();

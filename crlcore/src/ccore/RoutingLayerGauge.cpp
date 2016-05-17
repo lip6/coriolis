@@ -90,9 +90,6 @@ namespace CRL {
   using Hurricane::JsonTypes;
   using Hurricane::Tabulation;
   using Hurricane::BasicLayer;
-  using Hurricane::trace_in;
-  using Hurricane::trace_out;
-  using Hurricane::in_trace;
   using Hurricane::tab;
   using Hurricane::DataBase;
   using Hurricane::Technology;
@@ -210,18 +207,17 @@ namespace CRL {
 
   unsigned  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
   {
-    trace << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
-    trace_in ();
+    cdebug.log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
 
     long  modulo;
     long  depth;
 
     divide ( position-start, depth, modulo );
 
-    trace << "depth := " << depth << endl;
+    cdebug.log(100) << "depth := " << depth << endl;
 
     if ( depth < 0 ) {
-      trace_out ();
+      cdebug.tabw(100,-1);
       return 0;
 
       // throw Error ( negativeIndex
@@ -243,7 +239,7 @@ namespace CRL {
 
     unsigned int tracksNumber = getTrackNumber(start,stop);
     if ( (unsigned)depth >= tracksNumber ) {
-      trace_out ();
+      cdebug.tabw(100,-1);
       return (tracksNumber > 0) ? tracksNumber-1 : 0;
       // throw Error ( overflowIndex
       //             , getString(this).c_str()
@@ -253,7 +249,7 @@ namespace CRL {
       //             );
     }
 
-    trace_out ();
+    cdebug.tabw(100,-1);
 
     return depth;
   }

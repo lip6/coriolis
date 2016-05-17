@@ -130,7 +130,7 @@ namespace Hurricane {
 
   void  Occurrences_GetNets::Locator::progress ()
   {
-    ltrace(80) << "Occurrences_GetNets::Locator::progress()" << endl;
+    cdebug.log(18) << "Occurrences_GetNets::Locator::progress()" << endl;
 
   //boost::regex   pattern ( "onymous" );
   //boost::smatch  match;

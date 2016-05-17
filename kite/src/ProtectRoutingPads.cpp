@@ -44,7 +44,6 @@ namespace {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::ForEachIterator;
   using Hurricane::DbU;
   using Hurricane::Box;

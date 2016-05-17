@@ -52,9 +52,6 @@ namespace {
 
 namespace Kite {
 
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Hurricane::Bug;
   using Hurricane::Net;
@@ -104,7 +101,7 @@ namespace Kite {
     TrackElement* segment = getOwner();
     if (flags & AutoSegment::Invalidate) {
       if (not segment->isInvalidated()) {
-        ltrace(200) << "::notify() <Invalidate> on " << segment << endl;
+        cdebug.log(159) << "::notify() <Invalidate> on " << segment << endl;
         segment->invalidate();
       }
     }
@@ -112,7 +109,7 @@ namespace Kite {
     if (flags & AutoSegment::Revalidate) {
     // Revalidation must be delayed until *all* the AutoSegments have been revalidated.
     // if (segment->isInvalidated()) {
-    //   ltrace(200) << "::notify() <Revalidate> on " << segment << endl;
+    //   cdebug.log(159) << "::notify() <Revalidate> on " << segment << endl;
     //   segment->revalidate( true );
     // }
     }

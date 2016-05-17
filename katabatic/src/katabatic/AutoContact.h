@@ -32,9 +32,6 @@ namespace Katabatic {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Name;
   using Hurricane::Net;
   using Hurricane::Component;
@@ -292,13 +289,13 @@ namespace Katabatic {
   inline LocatorHelper::LocatorHelper ( AutoContact* contact, unsigned int flags )
     : _flags(flags), _index(_min()), _contact(contact)
   {
-    ltracein(80);
-    ltrace(80) << "CTOR LocatorHelper " << contact->_getString() << endl;
-    ltrace(80) << "+ _min():" << _min() << endl;
-    ltrace(80) << "+ _max():" << _max() << endl;
-    ltrace(80) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
+    cdebug.tabw(145,1);
+    cdebug.log(145) << "CTOR LocatorHelper " << contact->_getString() << endl;
+    cdebug.log(145) << "+ _min():" << _min() << endl;
+    cdebug.log(145) << "+ _max():" << _max() << endl;
+    cdebug.log(145) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
     if (not _contact->getSegment(_index)) progress();
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
   inline bool  LocatorHelper::isValid () const
@@ -312,20 +309,20 @@ namespace Katabatic {
 
   inline AutoSegment* LocatorHelper::getSegment () const
   {
-    ltrace(80) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
+    cdebug.log(145) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
     return (_index < _max()) ? _contact->getSegment(_index) : NULL;
   }
 
   inline void  LocatorHelper::progress ()
   {
-    ltracein(80);
+    cdebug.tabw(145,1);
     ++_index;
-    ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+    cdebug.log(145) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
       ++_index;
-      ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+      cdebug.log(145) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     }
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
 

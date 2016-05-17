@@ -30,7 +30,6 @@ using namespace std;
 
 namespace CRL {
 
-  using Hurricane::inltrace;
   using Hurricane::tab;
   using Hurricane::Initializer;
   using Hurricane::JsonTypes;
@@ -437,7 +436,7 @@ namespace CRL {
     Catalog::State*  state    = get<Catalog::State*>( stack, "_state" );
     CatalogProperty* property = NULL;
 
-    ltrace(51) << "topDBo:" << dbo << endl;
+    cdebug.log(19) << "topDBo:" << dbo << endl;
 
     Cell* cell = dynamic_cast<Cell*>( dbo );
     if (cell) {

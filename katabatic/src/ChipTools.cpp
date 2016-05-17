@@ -74,14 +74,14 @@ namespace {
   void  breakSegments ( GCell* begin, GCell* end, Layer::Mask mask, unsigned int flags )
   {
     for ( GCell* gcell=begin ; gcell != NULL ; ) {
-      ltrace(200) << "Pre-break in " << gcell << endl;
+      cdebug.log(149) << "Pre-break in " << gcell << endl;
 
       if ( (flags & KbHorizontal) and (flags & KbGlobalSegment) ) {
         const vector<AutoSegment*>& hsegments = gcell->getHSegments();
         for ( size_t i=0 ; i<hsegments.size() ; ++i ) {
           if ( not (hsegments[i]->getLayer()->getMask() & mask) ) continue;
           
-          ltrace(200) << "Pre-break: " << hsegments[i] << " @" << gcell << endl;
+          cdebug.log(149) << "Pre-break: " << hsegments[i] << " @" << gcell << endl;
 #ifdef THIS_IS_DISABLED
           hsegments[i]->makeDogLeg ( gcell, true );
 #endif
@@ -96,7 +96,7 @@ namespace {
         for ( size_t i=0 ; i<vsegments.size() ; ++i ) {
           if ( not (vsegments[i]->getLayer()->getMask() & mask) ) continue;
           
-          ltrace(200) << "Pre-break: " << vsegments[i] << " @" << gcell << endl;
+          cdebug.log(149) << "Pre-break: " << vsegments[i] << " @" << gcell << endl;
 #if THIS_IS_DISABLED
           vsegments[i]->makeDogLeg ( gcell, true );
 #endif
@@ -120,7 +120,7 @@ namespace {
         }
 
         for ( size_t i=0 ; i<segments.size() ; ++i ) {
-          ltrace(200) << "Pre-break: "
+          cdebug.log(149) << "Pre-break: "
                       << segments[i]->getDirection() << "&" << flags
                       << " " << segments[i] << endl;
 #if THIS_IS_DISABLED

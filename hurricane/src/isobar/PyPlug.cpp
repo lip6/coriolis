@@ -94,7 +94,7 @@ extern "C" {
 
   static PyObject* PyPlug_getInstance ( PyPlug *self )
   {
-    trace << "PyPlug_getInstance ()" << endl;
+    cdebug.log(20) << "PyPlug_getInstance ()" << endl;
     
     Instance* instance = NULL;
 
@@ -112,7 +112,7 @@ extern "C" {
 
   static PyObject* PyPlug_getMasterNet ( PyPlug *self )
   {
-    trace << "PyPlug_getMasterNet ()" << endl;
+    cdebug.log(20) << "PyPlug_getMasterNet ()" << endl;
     
     Net* net = NULL;
 
@@ -130,7 +130,7 @@ extern "C" {
   // Attribute Method  :  "PyPlug_getNet ()"
 
   static PyObject* PyPlug_getNet ( PyPlug *self ) {
-    trace << "PyPlug_getNet ()" << endl;
+    cdebug.log(20) << "PyPlug_getNet ()" << endl;
     
     Net* net = NULL;
 
@@ -149,7 +149,7 @@ extern "C" {
   // Attribute Method  :  "PyPlug_setNet ()"
 
   static PyObject* PyPlug_setNet ( PyPlug *self, PyObject* args ) {
-    trace << "PyPlug_setNet()" << endl;
+    cdebug.log(20) << "PyPlug_setNet()" << endl;
 
     HTRY
     

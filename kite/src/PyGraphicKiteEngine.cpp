@@ -48,7 +48,7 @@ extern "C" {
 
   static PyObject* PyGraphicKiteEngine_grab ( PyObject* )
   {
-    trace << "PyGraphicKiteEngine_grab()" << endl;
+    cdebug.log(40) << "PyGraphicKiteEngine_grab()" << endl;
     PyGraphicKiteEngine* pyGraphicKiteEngine = NULL;
 
     HTRY
@@ -64,7 +64,7 @@ extern "C" {
 
   static PyObject* PyGraphicKiteEngine_getCell ( PyGraphicKiteEngine* self )
   {
-    trace << "PyGraphicKiteEngine_getCell ()" << endl;
+    cdebug.log(40) << "PyGraphicKiteEngine_getCell ()" << endl;
 
     Cell* cell = NULL;
     

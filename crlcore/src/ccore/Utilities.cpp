@@ -88,9 +88,17 @@ namespace {
   }
 
 
-  void  traceLevelChanged ( Cfg::Parameter* p )
+  void  minTraceLevelChanged ( Cfg::Parameter* p )
   {
-    ltracelevel ( p->asInt() );
+  //cerr << "minTraceLevelChanged:" << p->asInt() << endl;
+    cdebug.setMinLevel( p->asInt() );
+  }
+
+
+  void  maxTraceLevelChanged ( Cfg::Parameter* p )
+  {
+  //cerr << "maxTraceLevelChanged:" << p->asInt() << endl;
+    cdebug.setMaxLevel( p->asInt() );
   }
 
 
@@ -329,7 +337,8 @@ namespace CRL {
     Cfg::getParamBool  ("misc.paranoid"       ,false)->registerCb ( this, paranoidChanged );
     Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( this, bugChanged );
     Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( this, logModeChanged );
-    Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( this, traceLevelChanged );
+    Cfg::getParamInt   ("misc.minTraceLevel"  ,0    )->registerCb ( this, minTraceLevelChanged );
+    Cfg::getParamInt   ("misc.maxTraceLevel"  ,0    )->registerCb ( this, maxTraceLevelChanged );
     Cfg::getParamString("stratus1.mappingName","not_set")->registerCb ( this, stratus1MappingNameChanged );
 
   // Immediate update from the configuration.

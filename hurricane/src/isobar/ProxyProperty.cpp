@@ -80,12 +80,12 @@ ProxyProperty* ProxyProperty::create ( void* shadow ) {
 void  ProxyProperty::_preDestroy () {
   if ( _owner ) _owner->_onDestroyed ( this );
 
-  trace << "ProxyProperty::_owner := " << hex << (void*)_owner << endl;
+  cdebug.log(20) << "ProxyProperty::_owner := " << hex << (void*)_owner << endl;
 
   if ( _offset > 0 ) {
     void** shadowMember = ( (void**)( (unsigned long)_shadow + _offset ) );
 
-    trace << "ProxyProperty::_shadowMember := " << hex << *shadowMember << endl;
+    cdebug.log(20) << "ProxyProperty::_shadowMember := " << hex << *shadowMember << endl;
 
     *shadowMember = NULL;
   }

@@ -51,7 +51,7 @@ extern "C" {
 
   static PyObject* PyHSVr_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    trace << "PyHSVr_new()" << endl;
+    cdebug.log(20) << "PyHSVr_new()" << endl;
 
     DisplayStyle::HSVr* hsvr   = NULL;
     PyHSVr*             pyHSVr = (PyHSVr*)type->tp_alloc(type,0);
@@ -119,7 +119,7 @@ extern "C" {
   DirectHashMethod(PyHSVr_Hash, PyHSVr)
 
   extern void  PyHSVr_LinkPyType() {
-    trace << "PyHSVr_LinkType()" << endl;
+    cdebug.log(20) << "PyHSVr_LinkType()" << endl;
 
     PyTypeHSVr.tp_new     =              PyHSVr_new;
     PyTypeHSVr.tp_dealloc = (destructor) PyHSVr_DeAlloc;

@@ -39,13 +39,13 @@ extern "C" {
 
   static void PyNetExternalComponents_DeAlloc ( PyNetExternalComponents* self )
   {
-    trace << "PySingletonObject_DeAlloc(" << hex << self << ")" << endl;
+    cdebug.log(20) << "PySingletonObject_DeAlloc(" << hex << self << ")" << endl;
   }
   
 
   static PyObject* PyNetExternalComponents_isExternal ( PyObject*, PyObject *args )
   {
-    trace << "PyNetExternalComponents_isExternal()" << endl;
+    cdebug.log(20) << "PyNetExternalComponents_isExternal()" << endl;
 
     bool isExternal = false;
 
@@ -63,7 +63,7 @@ extern "C" {
 
   static PyObject* PyNetExternalComponents_setExternal ( PyObject*, PyObject *args )
   {
-    trace << "PyNetExternalComponents_setExternal()" << endl;
+    cdebug.log(20) << "PyNetExternalComponents_setExternal()" << endl;
 
     HTRY
     PyObject* pyComponent;
@@ -85,7 +85,7 @@ extern "C" {
 
   static PyObject* PyNetExternalComponents_get ( PyObject*, PyObject* args )
   {
-    trace << "PyNetExternalComponents_getExternalComponents()" << endl;
+    cdebug.log(20) << "PyNetExternalComponents_getExternalComponents()" << endl;
 
     PyObject* arg0;
 
@@ -123,7 +123,7 @@ extern "C" {
 
   // extern void  PyNetExternalComponents_LinkPyType()
   // {
-  //   trace << "PyNetExternalComponents_LinkType()" << endl;
+  //   cdebug.log(20) << "PyNetExternalComponents_LinkType()" << endl;
 
   //   PyTypeNetExternalComponents.tp_new     = (newfunc)   PyType_GenericNew;
   //   PyTypeNetExternalComponents.tp_dealloc = (destructor)PyNetExternalComponents_DeAlloc;

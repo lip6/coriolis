@@ -107,7 +107,7 @@ namespace Hurricane {
 
   void JsonSignature::toData ( JsonStack& stack )
   {
-    ltrace(51) << (void*)this << " _subTypeName:" << _subTypeName << endl;
+    cdebug.log(19) << (void*)this << " _subTypeName:" << _subTypeName << endl;
 
     check( stack, "JsonSignature::toData" );
 

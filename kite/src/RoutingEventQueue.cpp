@@ -36,9 +36,6 @@ namespace Kite {
   using std::pop_heap;
 
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Bug;
 
 
@@ -92,8 +89,7 @@ namespace Kite {
 
   void  RoutingEventQueue::commit ()
   {
-    ltrace(200) << "RoutingEventQueue::commit()" << endl;
-    ltracein(200);
+    cdebug.log(159,1) << "RoutingEventQueue::commit()" << endl;
 
     size_t addeds = _pushRequests.size();
     size_t before = _events.size();
@@ -105,7 +101,7 @@ namespace Kite {
       _topEventLevel = max( _topEventLevel, (*ipushEvent)->getEventLevel() );
       _events.insert( (*ipushEvent) );
 
-      ltrace(200) << "| " << (*ipushEvent) << endl;
+      cdebug.log(159) << "| " << (*ipushEvent) << endl;
     }
     _pushRequests.clear();
 #if defined(CHECK_ROUTINGEVENT_QUEUE)
@@ -117,7 +113,7 @@ namespace Kite {
                  , addeds,(after-before) ) << endl;
     }
 
-    ltraceout(200);
+    cdebug.tabw(159,-1);
   }
 
 

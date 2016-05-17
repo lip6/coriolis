@@ -51,9 +51,6 @@ namespace Kite {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
   using Hurricane::Error;

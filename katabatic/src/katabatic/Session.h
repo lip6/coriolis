@@ -48,7 +48,6 @@ namespace Katabatic {
   using std::map;
   using std::make_pair;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::_TName;
   using Hurricane::Record;
   using Hurricane::Layer;

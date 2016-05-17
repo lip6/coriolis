@@ -28,7 +28,6 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
@@ -58,7 +57,7 @@ extern "C" {
 
   static PyObject* PyBanner_new ( PyTypeObject* type, PyObject* args, PyObject* kwArgs )
   {
-    trace << "PyBanner_new()" << endl;
+    cdebug.log(30) << "PyBanner_new()" << endl;
 
     Banner*   banner   = NULL;
     PyBanner* pyBanner = (PyBanner*)type->tp_alloc(type,0);
@@ -181,7 +180,7 @@ extern "C" {
   DirectHashMethod(PyBanner_Hash, PyBanner)
 
   extern void  PyBanner_LinkPyType() {
-    trace << "PyBanner_LinkType()" << endl;
+    cdebug.log(30) << "PyBanner_LinkType()" << endl;
 
     PyTypeBanner.tp_new     =             PyBanner_new;
     PyTypeBanner.tp_dealloc = (destructor)PyBanner_DeAlloc;

@@ -127,7 +127,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_create ()"
 
   static PyObject* PyNet_create ( PyObject*, PyObject *args ) {
-    trace << "PyNet_create()" << endl;
+    cdebug.log(20) << "PyNet_create()" << endl;
 
     char* name = NULL;
     PyCell* pyCell = NULL;
@@ -151,7 +151,7 @@ extern "C" {
 
   static PyObject* PyNet_getType ( PyNet *self )
   {
-    trace << "PyNet_getType ()" << endl;
+    cdebug.log(20) << "PyNet_getType ()" << endl;
     
     METHOD_HEAD ( "Net.getType()" )
 
@@ -165,7 +165,7 @@ extern "C" {
 
   static PyObject* PyNet_getDirection ( PyNet *self )
   {
-    trace << "PyNet_getDirection ()" << endl;
+    cdebug.log(20) << "PyNet_getDirection ()" << endl;
    
     METHOD_HEAD ( "Net.getDirection()" )
 
@@ -177,7 +177,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_getPlugs()"
 
   static PyObject* PyNet_getPlugs(PyNet *self) {
-    trace << "PyNet_getPlugs()" << endl;
+    cdebug.log(20) << "PyNet_getPlugs()" << endl;
 
     METHOD_HEAD("Net.getPlugs()")
         
@@ -202,7 +202,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_getSegments()"
 
   static PyObject* PyNet_getSegments(PyNet *self) {
-    trace << "PyNet_getSegments()" << endl;
+    cdebug.log(20) << "PyNet_getSegments()" << endl;
 
     METHOD_HEAD ("Net.getSegments()")
 
@@ -227,7 +227,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_getPins()"
 
   static PyObject* PyNet_getPins(PyNet *self) {
-    trace << "PyNet_getPins()" << endl;
+    cdebug.log(20) << "PyNet_getPins()" << endl;
 
     METHOD_HEAD ("Net.getPins()")
 
@@ -252,7 +252,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_getComponents()"
 
   static PyObject* PyNet_getComponents(PyNet *self) {
-    trace << "PyNet_getComponents()" << endl;
+    cdebug.log(20) << "PyNet_getComponents()" << endl;
 
     METHOD_HEAD ( "Net.getComponents()" )
 
@@ -275,7 +275,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_getExternalComponents()"
 
   static PyObject* PyNet_getExternalComponents(PyNet *self) {
-    trace << "PyNet_getExternalComponents()" << endl;
+    cdebug.log(20) << "PyNet_getExternalComponents()" << endl;
 
     METHOD_HEAD ( "Net.getExternalcomponents()" )
 
@@ -304,7 +304,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_setGlobal ()"
 
   static PyObject* PyNet_setGlobal ( PyNet *self, PyObject* args ) {
-    trace << "PyNet_setGlobal()" << endl;
+    cdebug.log(20) << "PyNet_setGlobal()" << endl;
 
     HTRY
     METHOD_HEAD ( "Net.setGlobal()" )
@@ -326,7 +326,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_setExternal ()"
 
   static PyObject* PyNet_setExternal ( PyNet *self, PyObject* args ) {
-    trace << "PyNet_setExternal()" << endl;
+    cdebug.log(20) << "PyNet_setExternal()" << endl;
 
     HTRY
     METHOD_HEAD ( "Net.setExternal()" )
@@ -349,7 +349,7 @@ extern "C" {
 
   static PyObject* PyNet_setType ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_setType()" << endl;
+    cdebug.log(20) << "PyNet_setType()" << endl;
 
     HTRY
 
@@ -375,7 +375,7 @@ extern "C" {
 
   static PyObject* PyNet_setDirection ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_setDirection()" << endl;
+    cdebug.log(20) << "PyNet_setDirection()" << endl;
 
     HTRY
 
@@ -397,7 +397,7 @@ extern "C" {
 
   static PyObject* PyNet_addAlias ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_addAlias()" << endl;
+    cdebug.log(20) << "PyNet_addAlias()" << endl;
 
     HTRY
       METHOD_HEAD ( "Net.addAlias()" )
@@ -421,7 +421,7 @@ extern "C" {
 
   static PyObject* PyNet_removeAlias ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_removeAlias()" << endl;
+    cdebug.log(20) << "PyNet_removeAlias()" << endl;
 
     HTRY
       METHOD_HEAD ( "Net.removeAlias()" )
@@ -445,7 +445,7 @@ extern "C" {
 
   static PyObject* PyNet_setPosition ( PyNet *self, PyObject* args )
   {
-    trace << "PyNet_setPosition()" << endl;
+    cdebug.log(20) << "PyNet_setPosition()" << endl;
 
     HTRY
 
@@ -466,7 +466,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_merge ()"
 
   static PyObject* PyNet_merge ( PyNet *self, PyObject* args ) {
-    trace << "PyNet_merge()" << endl;
+    cdebug.log(20) << "PyNet_merge()" << endl;
 
     HTRY
       PyNet* pyNetToMerge;
@@ -486,7 +486,7 @@ extern "C" {
   // Attribute Method  :  "PyNet_merge ()"
 
   static PyObject* PyNet_getClone ( PyNet *self, PyObject* args ) {
-    trace << "PyNet_getClone()" << endl;
+    cdebug.log(20) << "PyNet_getClone()" << endl;
 
     Net* cloneNet = NULL;
     HTRY

@@ -212,7 +212,7 @@ namespace Hurricane {
         }
       }
 
-      ltrace(51) << "HurricaneHandler::String() [key/typename] \"" << value << "\"." << endl;
+      cdebug.log(19) << "HurricaneHandler::String() [key/typename] \"" << value << "\"." << endl;
       _key.clear();
       return true;
     }
@@ -230,14 +230,14 @@ namespace Hurricane {
     _key = key;
     if (_state & TypenameKey) return true;
 
-  //ltrace(51) << "HurricaneHandler::Key() key:" << _key << " objects().size():" << objects().size() << endl;
+  //cdebug.log(19) << "HurricaneHandler::Key() key:" << _key << " objects().size():" << objects().size() << endl;
 
     if (objects().back()) {
       if ( doCallToData() and not _key.empty() and (_key[0] != '_') ) {
       // The key is no longer a simple attribute of the object.
       // Triggers it's creation in the Json stack.
-        ltrace(51) << "HurricaneHandler::key() Calling "
-                   << objects().back()->getTypeName() << "::toData(JsonStack&)." << endl;
+        cdebug.log(19) << "HurricaneHandler::key() Calling "
+                       << objects().back()->getTypeName() << "::toData(JsonStack&)." << endl;
         objects().back()->toData( stack() );
       }
     }
@@ -248,30 +248,28 @@ namespace Hurricane {
 
   bool  HurricaneHandler::StartObject ()
   {
-    ltrace(50) << "Hurricane::StartObject()" << endl;
-    ltracein(50);
+    cdebug.log(19,1) << "Hurricane::StartObject()" << endl;
 
     _state |= TypenameKey;
     _objectName = _key;
     objects().push_back( new JsonDummy() );
     _key.clear();
-    ltrace(51) << "objects().push_back(NULL), size():" << objects().size() << "." << endl;
-
-    ltracein(50);
+    cdebug.log(19) << "objects().push_back(NULL), size():" << objects().size() << "." << endl;
+    cdebug.tabw(19,1);
     return true;
   }
 
 
   bool  HurricaneHandler::EndObject ( SizeType )
   {
-    ltraceout(50,2);
-    ltrace(50) << "HurricaneHandler::EndObject()" << endl;
-    ltracein(50);
+    cdebug.tabw(19,-2);
+    cdebug.log(19) << "HurricaneHandler::EndObject()" << endl;
+    cdebug.tabw(19,1);
 
     _objectName.clear();
     if (not isDummy()) {
       if (doCallToData()) {
-        ltrace(51) << "Calling " << objects().back()->getTypeName() << "::toData(JsonStack&)." << endl;
+        cdebug.log(19) << "Calling " << objects().back()->getTypeName() << "::toData(JsonStack&)." << endl;
         objects().back()->toData( stack() );
       }
       if (stack().size() > 1) {
@@ -279,22 +277,21 @@ namespace Hurricane {
       }
     }
 
-    ltrace(51) << "objects().pop_back(), size():" << objects().size() << "." << endl;
+    cdebug.log(19) << "objects().pop_back(), size():" << objects().size() << "." << endl;
     if (objects().back()->issetFlags(JsonWriter::DBoObject))
        stack().pop_back_dbo();
 
     delete objects().back();
     objects().pop_back();
 
-    ltraceout(50);
+    cdebug.tabw(19,-1);
     return true;
   }
 
 
   bool  HurricaneHandler::StartArray()
   {
-    ltrace(50) << "HurricaneHandler::StartArray() key:\"" << _key << "\"." << endl;
-    ltracein(50);
+    cdebug.log(19,1) << "HurricaneHandler::StartArray() key:\"" << _key << "\"." << endl;
 
     _objectName.clear();
     if (_key[0] != '+') {
@@ -309,8 +306,8 @@ namespace Hurricane {
 
   bool  HurricaneHandler::EndArray ( SizeType )
   {
-    ltraceout(50);
-    ltrace(50) << "HurricaneHandler::EndArray()" << endl;
+    cdebug.tabw(19,-1);
+    cdebug.log(19) << "HurricaneHandler::EndArray()" << endl;
     return true;
   }
 
@@ -350,11 +347,11 @@ namespace Hurricane {
   {
     close();
 
-  //DebugSession::open( 50 );
+  //DebugSession::open( 19, 20 );
 
     fileName += ".json.bz2";
     _file     = fopen( fileName.c_str(), "r" );
-    ltrace(50) << "_file:" << _file << ", _buffer:" << (void*)_buffer << endl;
+    cdebug.log(19) << "_file:" << _file << ", _buffer:" << (void*)_buffer << endl;
 
     if (not _file) {
       throw Error( "JsonReader::parse(): Cannot open file \"%s\"."

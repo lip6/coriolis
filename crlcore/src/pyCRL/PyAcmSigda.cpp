@@ -28,7 +28,6 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Exception;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -56,7 +55,7 @@ extern "C" {
 
   static PyObject* PyAcmSigda_load ( PyObject*, PyObject* args )
   {
-    trace << "PyAcmSigda_load()" << endl;
+    cdebug.log(30) << "PyAcmSigda_load()" << endl;
 
     Cell* cell = NULL;
     

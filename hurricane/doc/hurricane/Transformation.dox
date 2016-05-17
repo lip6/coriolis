@@ -42,50 +42,52 @@
   * This enumeration defines the orientation associated to a 
   * transformation object.
   *
-  * <table>
-  *   <caption>Orientation codes and associated transformation matrix</caption>
-  *   <tr>
-  *     <td><center>Name</center>
-  *     <td><center>Aspect</center>
-  *     <td><center>Code</center>
-  *     <td><center>Signification</center>
-  *     <td width="6%"><center>a</center>
-  *     <td width="6%"><center>b</center>
-  *     <td width="6%"><center>c</center>
-  *     <td width="6%"><center>d</center>
-  *   <tr>
-  *     <td><center><b>ID</b></center> <td>\image html transf-ID.png ""
-  *     <td> <center><b>0</b></center> <td> Identity
-  *     <td> <center>1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>1</center>
-  *   <tr>
-  *     <td><center><b>R1</b></center> <td>\image html transf-R1.png ""
-  *     <td> <center><b>1</b></center> <td> Simple rotation (90°)
-  *     <td> <center>0</center> <td> <center>-1</center> <td> <center>1</center> <td> <center>0</center>
-  *   <tr>
-  *     <td><center><b>R2</b></center> <td>\image html transf-R2.png ""
-  *     <td> <center><b>2</b></center> <td> Double rotation (180°)
-  *     <td> <center>-1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>-1</center> 
-  *   <tr>
-  *     <td><center><b>R3</b></center> <td>\image html transf-R3.png ""
-  *     <td><center><b>3</b></center><td>Triple rotation (270°)
-  *     <td><center>0</center><td><center>1</center><td><center>-1</center><td><center>0</center>
-  *   <tr>
-  *     <td><center><b>MX</b></center> <td>\image html transf-MX.png ""
-  *     <td> <center><b>4</b></center> <td>Horizontal symetry (Mirror X)
-  *     <td> <center>-1 </center><td> <center>0 </center><td> <center>0 </center><td> <center>1</center>
-  *   <tr>
-  *     <td><center><b>XR</b></center> <td>\image html transf-XR.png ""
-  *     <td><center><b>5</b></center><td>Horizontal symetry followed by a 90° rotation
-  *     <td> <center>0</center> <td> <center>-1</center> <td> <center>-1</center> <td> <center>0</center>
-  *   <tr>
-  *     <td><center><b>MY</b></center><td>\image html transf-MY.png ""
-  *     <td><center><b>6</b></center><td>Vertical symetry (Mirror Y)
-  *     <td> <center>1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>-1</center>
-  *   <tr>
-  *     <td><center><b>YR</b></center> <td>\image html transf-YR.png ""
-  *     <td><center><b>7</b></center><td>Vertical symetry followed by a 90° rotation
-  *     <td> <center>0</center> <td> <center>1</center> <td> <center>1</center> <td> <center>0</center>
-  * </table>
+  * <center>
+  *   <table class="UserDefined">
+  *     <caption>Orientation codes and associated transformation matrix</caption>
+  *     <tr>
+  *       <th><center>Name</center>
+  *       <th><center>Aspect</center>
+  *       <th><center>Code</center>
+  *       <th><center>Signification</center>
+  *       <th width="6%"><center>a</center>
+  *       <th width="6%"><center>b</center>
+  *       <th width="6%"><center>c</center>
+  *       <th width="6%"><center>d</center>
+  *     <tr>
+  *       <td><center><b>ID</b></center> <td>\image html transf-ID.png ""
+  *       <td> <center><b>0</b></center> <td> Identity
+  *       <td> <center>1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>1</center>
+  *     <tr>
+  *       <td><center><b>R1</b></center> <td>\image html transf-R1.png ""
+  *       <td> <center><b>1</b></center> <td> Simple rotation (90°)
+  *       <td> <center>0</center> <td> <center>-1</center> <td> <center>1</center> <td> <center>0</center>
+  *     <tr>
+  *       <td><center><b>R2</b></center> <td>\image html transf-R2.png ""
+  *       <td> <center><b>2</b></center> <td> Double rotation (180°)
+  *       <td> <center>-1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>-1</center> 
+  *     <tr>
+  *       <td><center><b>R3</b></center> <td>\image html transf-R3.png ""
+  *       <td><center><b>3</b></center><td>Triple rotation (270°)
+  *       <td><center>0</center><td><center>1</center><td><center>-1</center><td><center>0</center>
+  *     <tr>
+  *       <td><center><b>MX</b></center> <td>\image html transf-MX.png ""
+  *       <td> <center><b>4</b></center> <td>Horizontal symetry (Mirror X)
+  *       <td> <center>-1 </center><td> <center>0 </center><td> <center>0 </center><td> <center>1</center>
+  *     <tr>
+  *       <td><center><b>XR</b></center> <td>\image html transf-XR.png ""
+  *       <td><center><b>5</b></center><td>Horizontal symetry followed by a 90° rotation
+  *       <td> <center>0</center> <td> <center>-1</center> <td> <center>-1</center> <td> <center>0</center>
+  *     <tr>
+  *       <td><center><b>MY</b></center><td>\image html transf-MY.png ""
+  *       <td><center><b>6</b></center><td>Vertical symetry (Mirror Y)
+  *       <td> <center>1</center> <td> <center>0</center> <td> <center>0</center> <td> <center>-1</center>
+  *     <tr>
+  *       <td><center><b>YR</b></center> <td>\image html transf-YR.png ""
+  *       <td><center><b>7</b></center><td>Vertical symetry followed by a 90° rotation
+  *       <td> <center>0</center> <td> <center>1</center> <td> <center>1</center> <td> <center>0</center>
+  *   </table>
+  * </center>
   *
   *                The transformation formula is given by:
                    \f[

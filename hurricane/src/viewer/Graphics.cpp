@@ -418,7 +418,7 @@ namespace Hurricane {
 
   void JsonGraphics::toData(JsonStack& stack)
   {
-    ltracein(51);
+    cdebug.tabw(19,1);
 
     check( stack, "JsonGraphics::toData" );
 
@@ -426,7 +426,7 @@ namespace Hurricane {
     
     update( stack, Graphics::getGraphics() );
 
-    ltraceout(51);
+    cdebug.tabw(19,-1);
   }
 
 

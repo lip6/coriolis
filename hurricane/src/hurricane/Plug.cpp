@@ -180,15 +180,14 @@ void Plug::_destroy()
 void Plug::_preDestroy()
 // ********************
 {
-// trace << "entering Plug::_preDestroy: " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Plug::_preDestroy: " << this << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    _instance->_getPlugMap()._remove(this);
+  _instance->_getPlugMap()._remove(this);
 
-// trace << "exiting Plug::_preDestroy:" << endl;
-// trace_out();
+  cdebug.log(18) << "exiting Plug::_preDestroy:" << endl;
+  cdebug.tabw(18,-1);
 }
 
 void Plug::_toJson(JsonWriter* writer) const
@@ -290,7 +289,7 @@ void JsonPlug::toData(JsonStack& stack)
   } else {
     cerr << Error( "JsonPlug::toData(): Cannot find \".Instance\" in stack, skipping." ) << endl;
   }
-  ltrace(51) << "Instance Plug contents ignored for now." << endl;
+  cdebug.log(19) << "Instance Plug contents ignored for now." << endl;
 
   update( stack, plug );
 }

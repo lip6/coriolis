@@ -49,7 +49,7 @@ extern "C" {
 
   static PyObject* PyGraphicEtesianEngine_grab ( PyObject* )
   {
-    trace << "PyGraphicEtesianEngine_grab()" << endl;
+    cdebug.log(34) << "PyGraphicEtesianEngine_grab()" << endl;
     PyGraphicEtesianEngine* pyGraphicEtesianEngine = NULL;
 
     HTRY
@@ -65,7 +65,7 @@ extern "C" {
 
   static PyObject* PyGraphicEtesianEngine_getCell ( PyGraphicEtesianEngine* self )
   {
-    trace << "PyGraphicEtesianEngine_getCell ()" << endl;
+    cdebug.log(34) << "PyGraphicEtesianEngine_getCell ()" << endl;
 
     Cell* cell = NULL;
     

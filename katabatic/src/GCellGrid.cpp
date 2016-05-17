@@ -27,9 +27,6 @@ namespace Katabatic {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
-  using Hurricane::inltrace;
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
   using Knik::KnikEngine;
@@ -76,10 +73,9 @@ namespace Katabatic {
 
     _rawSize = _columns * _rows;
 
-    ltrace(80) << "Katabatic GCell Matrix [" << getColumns() << "x" << getRows() << "]" << endl;
-    ltracein(80);
-    ltrace(80) << "_xGraduations := " << _xGraduations._print() << endl;
-    ltrace(80) << "_yGraduations := " << _yGraduations._print() << endl;
+    cdebug.log(145,1) << "Katabatic GCell Matrix [" << getColumns() << "x" << getRows() << "]" << endl;
+    cdebug.log(145)   << "_xGraduations := " << _xGraduations._print() << endl;
+    cdebug.log(145)   << "_yGraduations := " << _yGraduations._print() << endl;
 
     for ( unsigned int row=0 ; row < getRows() ; row++ ) {
       for ( unsigned int column=0; column<getColumns() ; column++ ) {
@@ -91,7 +87,7 @@ namespace Katabatic {
 
         _gcells.push_back ( GCell::create ( this, _gcells.size(), boundingBox ) );
   
-        ltrace(80) << "GCell [" << column << "," << row << "] "
+        cdebug.log(145) << "GCell [" << column << "," << row << "] "
                    << _gcells[_gcells.size()-1] << endl;
       }
     }
@@ -100,7 +96,7 @@ namespace Katabatic {
            << getColumns() << "x" << getRows() << "] "
            << "(" << (getColumns()*getRows()) << ")." << endl;
 
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -118,14 +114,13 @@ namespace Katabatic {
 
   void  GCellGrid::_preDestroy ()
   {
-    ltrace(90) << "GCellGrid::_preDestroy()" << endl;
-    ltracein(90);
+    cdebug.log(145,1) << "GCellGrid::_preDestroy()" << endl;
 
     vector<GCell*>::iterator   it = _gcells.begin();
     vector<GCell*>::iterator  end = _gcells.end  ();
     for ( ; it != end ; it++ ) (*it)->destroy ();
 
-    ltraceout(90);
+    cdebug.tabw(145,-1);
   }
 
 

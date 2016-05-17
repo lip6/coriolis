@@ -1,5 +1,72 @@
-
  // -*- C++ -*-
+
+
+ /*! \class    tstream
+  *  \brief    Trace & indentation enabled stream.
+  *
+  *            Traced \e stream are a derived class of std::ostream that provides
+  *            integrated indentation and selective printing according to a
+  *            verbosity level. Only messages comprised between \c minLevel and
+  *            \c maxLevel are to be printed:
+               \f[
+                  minLevel \leq level < maxLevel
+               \f]
+  *
+  *            The cdebug instance of this class, in conjunction with Hurricane::DebugSession
+  *            is provided to create tailored program traces. cdebug is a global
+  *            variable which is put in the root namespace (not the Hurricane namespace).
+  */
+
+//! \function  int  tstream::getMinLevel () const;
+//! \Return    The current mimimum level for the messages to be printeds  
+//!            (equal or superior).
+
+//! \function  int  tstream::getMaxLevel () const;
+//! \Return    The current maximum level for the messages to be printeds
+//!            (strictly inferior).
+
+//! \function  int  tstream::setMinLevel ( int level );
+//!            Sets the minimum level, returns the \e previous value of the level.
+
+//! \function  int  tstream::setMaxLevel ( int level );
+//!            Sets the maximum level, returns the \e previous value of the level.
+
+//! \function  int  tstream::getLevel () const;
+//! \Return    The level of the latest message that was submitted to the stream.
+//!            It is automatically set up after any call to tstream::log() or
+//!            tstream::tabw().
+
+//! \function  int  tstream::setLevel ( int level );
+//!            Sets the current level, returns the \e previous value of the level.
+//!            This is the level of the latest message that was submitted to the
+//!            stream.
+
+//! \function  bool  tstream::enabled () const;
+//! \Return    \true if the currently memorised level is inside the current valid range.
+
+//! \function  bool  tstream::enabled ( int level ) const;
+//! \Return    \true if this level is inside the current valid range.
+
+//! \function  tstream& tstream::log ( int level, int count=0 ) const;
+//! \param     level   The level into which to print.
+//! \param     count   Increment/decrement the number of tabulations to print
+//!                    at the beginning of a line.
+//! \return    A reference to the stream so the operator \c << can be used. 
+//!
+//!            Send a message into the stream, that will be displayed if \c level
+//!            is enabled. The number of tabulations printed at the beginning of
+//!            the line will be changed \e after this message has been printed
+//!            (or discarted).
+
+//! \function  tstream& tstream::tabw ( int level, int count=0 ) const;
+//! \param     level   The level into which to print.
+//! \param     count   Increment/decrement the number of tabulations to print
+//!                    at the beginning of a line.
+//! \return    A reference to the stream.
+//!
+//!            This function is dedicated to change the indentation level, but
+//!            not print something on the stream (event if it returns a reference
+//!            to it).
 
 
  namespace Hurricane {

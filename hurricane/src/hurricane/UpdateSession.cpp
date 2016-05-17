@@ -147,15 +147,15 @@ void UpdateSession::onNotOwned()
 void Go::invalidate(bool propagateFlag)
 // ************************************
 {
-  // trace << "invalidate(" << this << ")" << endl;
-  // trace_in();
+  cdebug.log(18,1) << "Go::invalidate(" << this << ")" << endl;
 
-    if (not UPDATOR_STACK or UPDATOR_STACK->empty())
-      throw Error( "Can't invalidate go: empty update session stack" );
+  if (not UPDATOR_STACK or UPDATOR_STACK->empty())
+    throw Error( "Can't invalidate go: empty update session stack" );
 
-    Property* property = getProperty( UpdateSession::getPropertyName() );
+  Property* property = getProperty( UpdateSession::getPropertyName() );
 
-    if (property) {
+  if (property) {
+
       if (not dynamic_cast<UpdateSession*>(property))
         throw Error( "Can't invalidate go : bad update session type" );
     } else {
@@ -183,29 +183,31 @@ void Go::invalidate(bool propagateFlag)
         }
       }
     }
-// trace << "done" << endl;
-// trace_out();
+
+  cdebug.log(18) << "Go::invalidate(" << this << ") - Completed." << endl;
+  cdebug.tabw(18,-1);
 }
 
-void UpdateSession::open() {
-// trace << "OpenUpdateSession()" << endl;
-// trace_in();
-    UpdateSession::_create();
+void UpdateSession::open()
+// ***********************
+{
+  cdebug.log(18,1) << "UpdateSession::open()" << endl;
+  UpdateSession::_create();
 }
 
-void UpdateSession::close() {
-// trace << "CloseUpdateSession()" << endl;
-// trace_in();
+void UpdateSession::close()
+// ************************
+{
+  cdebug.tabw(18,-1);
+  cdebug.log(18,1) << "UpdateSession::close() - Start materialization." << endl;
 
-    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-        throw Error("Can't end update : empty update session stack");
+  if (!UPDATOR_STACK || UPDATOR_STACK->empty())
+    throw Error("Can't end update : empty update session stack");
 
-    UPDATOR_STACK->top()->_destroy();
+  UPDATOR_STACK->top()->_destroy();
 
-// trace << "done" << endl;
-// trace_out();
-// trace << "done" << endl;
-// trace_out();
+  cdebug.tabw(18,-1);
+  cdebug.log(18) << "UpdateSession::close() - Materialization completed." << endl;
 }
 
 

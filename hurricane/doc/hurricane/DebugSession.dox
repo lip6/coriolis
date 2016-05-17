@@ -1,0 +1,117 @@
+// -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class    DebugSession
+  *  \brief    Enable/Disable trace information (\c API).
+  * 
+  *            DebugSession provide a way to control what and when text send through the
+  *            cdebug stream is printed. cdebug display selectively the trace/debug messages
+  *            between a \c minLevel and a \c maxLevel :
+               \f[
+                  minLevel \leq level < maxLevel
+               \f]
+  *
+  *            DebugSession manage a stack of \c (min,max) pairs so multiple session
+  *            can be opened. On opening a new session the \c (min,max) pair is
+  *            pushed on the top of the stack and define the active range of trace
+  *            levels. On closing, the pair is removed from the top and the previous
+  *            range became active again. Do not forget to match any opening with a
+  *            closing.
+  *
+  *            In addition to the levels, a DebugSession also can be triggered by a
+  *            \e symbol (i.e. a \c (void*) pointer). The DebugSession has contains
+  *            a user managed table of symbols. When, in opening a session, you give
+  *            a symbol, the session will actually changes the trace levels only if
+  *            the symbol is in the internal table. Otherwise a session is still
+  *            opened \e but it will keep the current trace levels. So, in any case
+  *            the session must be closed.
+  *            
+  *
+  *  \section  secTraceLevels  Trace Levels 
+  * 
+  * 
+  *            To avoid mixing messages between different parts of the software,
+  *            the following allotments have been done: 
+  * 
+  *            <center>
+  *              <table class="UserDefined" width="50%">
+  *                <caption>Trace/Debug level allotments (provisional)</caption>
+  *                <tr> <th colspan=3>\b C++ / Coriolis
+  *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
+  *                <tr> <td>Hurricane           <td>\c       0 <td>\c      19
+  *                <tr> <td>CRL Core            <td>\c     100 <td>\c     110
+  *                <tr> <td>Anabatic            <td>\c     110 <td>\c     120
+  *                <tr> <td>Etesian             <td>\c     120 <td>\c     130
+  *                <tr> <td>Knik                <td>\c     130 <td>\c     140
+  *                <tr> <td>Katabatic           <td>\c     140 <td>\c     150
+  *                <tr> <td>Kite                <td>\c     150 <td>\c     160
+  *                <tr> <td>Solstice            <td>\c     160 <td>\c     170
+  *                <tr> <td>Equinox             <td>\c     170 <td>\c     180
+  *                <tr> <td>Unicorn             <td>\c     180 <td>\c     190
+  *                <tr> <th colspan=3>\b C++ / CHAMS
+  *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
+  *                <tr> <td>HurricaneAMS        <td>\c     500 <td>\c     510
+  *                <tr> <td>amsCore             <td>\c     510 <td>\c     520
+  *                <tr> <td>Pharos              <td>\c     520 <td>\c     530
+  *                <tr> <td>Isis                <td>\c     530 <td>\c     540
+  *                <tr> <td>Horus               <td>\c     530 <td>\c     540
+  *                <tr> <th colspan=3>\b Python Wrappers / Coriolis
+  *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
+  *                <tr> <td>Isobar              <td>\c      20 <td>\c      30
+  *                <tr> <td>CRL Core/Python     <td>\c      30 <td>\c      32
+  *                <tr> <td>Anabatic/Python     <td>\c      32 <td>\c      34
+  *                <tr> <td>Etesian/Python      <td>\c      34 <td>\c      36
+  *                <tr> <td>Knik/Python         <td>\c      36 <td>\c      38
+  *                <tr> <td>Katabatic/Python    <td>\c      38 <td>\c      40
+  *                <tr> <td>Kite/Python         <td>\c      40 <td>\c      42
+  *                <tr> <td>Solstice/Python     <td>\c      42 <td>\c      44
+  *                <tr> <td>Equinox/Python      <td>\c      44 <td>\c      46
+  *                <tr> <td>Unicorn/Python      <td>\c      46 <td>\c      48
+  *                <tr> <th colspan=3>\b Python Wrappers / CHAMS
+  *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
+  *                <tr> <td>isobarAMS           <td>\c      48 <td>\c      50
+  *                <tr> <td>amsCore             <td>\c      50 <td>\c      51
+  *                <tr> <td>Pharos/Python       <td>\c      52 <td>\c      60
+  *                <tr> <td>Isis/Python         <td>\c      60 <td>\c      61
+  *                <tr> <td>Horus/Python        <td>\c      61 <td>\c      62
+  *                <tr> <th colspan=3>\b Special levels
+  *                <tr> <td>Determinim check    <td>\c    9000 <td>\c    9001
+  *                <tr> <td>JSON parsers/drivers<td>\c      19 <td>\c      20
+  *              </table>
+  *            </center>
+  */
+
+ //! \function  void  DebugSession::open ( int minLevel, int maxLevel );
+ //! \param     minLevel  minimum debug/tracelevel (>=).
+ //! \param     maxLevel  maximum debug/tracelevel (<).
+ //!
+ //!            Change the current debug level to (minLevel,maxLevel).
+ //!            The previous range is stacked and will be restored when this
+ //!            session will be closed.
+
+ //! \function  void  DebugSession::open ( const void* symbol, int minLevel, int maxLevel );
+ //! \param     symbol    symbol to match.
+ //! \param     minLevel  minimum debug/tracelevel (>=).
+ //! \param     maxLevel  maximum debug/tracelevel (<).
+ //!
+ //!            Change the current debug level to (minLevel,maxLevel) only if
+ //!            \c symbol is traced. If the \c symbol is traced, then the new levels pair
+ //!            is stacked, otherwise the current level are stacked (we duplicate the
+ //!            top of the stack). This session, successful or not, must be closed as
+ //!            any other.
+
+ //! \function  void  DebugSession::close ();
+ //!            Close a DebugSession and restore the previous trace levels.
+
+ //! \function  bool  DebugSession::isTraced ( const void* symbol );
+ //! \Returns   \true if the \c symbol is in the DebugSession symbol table.
+
+ //! \function  void  DebugSession::addToTrace ( const void* symbol );
+ //!            Adds the \c symbol to the table of traced symbols.
+
+ //! \function  void  DebugSession::addToTrace ( const Cell* cell, const Name& name );
+ //!            Adds the Net \c name from \c Cell to the table of traced symbols.
+
+ }  // Hurricane namespace.

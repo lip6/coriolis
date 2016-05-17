@@ -225,7 +225,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    ltrace(51) << "JsonContactLayer::JsonContactLayer()" << endl;
+    cdebug.log(19) << "JsonContactLayer::JsonContactLayer()" << endl;
 
     add( "_metal"              , typeid(string)  );
     add( "_cut"                , typeid(string)  );
@@ -254,7 +254,7 @@ namespace Hurricane {
 
   void JsonContactLayer::toData(JsonStack& stack)
   {
-    ltracein(51);
+    cdebug.tabw(19,1);
 
     check( stack, "JsonContactLayer::toData" );
 
@@ -333,7 +333,7 @@ namespace Hurricane {
     
     update( stack, layer );
 
-    ltraceout(51);
+    cdebug.tabw(19,-1);
   }
 
 

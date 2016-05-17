@@ -758,7 +758,7 @@ namespace Hurricane {
     QString blobName;
     if (OpenBlobDialog::runDialog(this,blobName)) {
       string fileName = blobName.toStdString() + ".blob";
-    //DebugSession::open( 50 );
+    //DebugSession::open( 0, 500 );
 
       Cell*       topCell = NULL;
       DesignBlob* blob    = DesignBlob::fromJson( fileName );
@@ -782,7 +782,7 @@ namespace Hurricane {
     string     blobName = getString(cell->getName()) + ".blob.json.bz2";
     DesignBlob blob     ( cell );
 
-  //DebugSession::open( 50 );
+  //DebugSession::open( 0, 500 );
     JsonWriter writer ( blobName );
     writer.setFlags( JsonWriter::DesignBlobMode );
     jsonWrite( &writer, &blob );

@@ -39,8 +39,6 @@
 namespace Katabatic {
 
   using Hurricane::DebugSession;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
 
@@ -72,11 +70,11 @@ namespace Katabatic {
       std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = queue.getGCells().begin();
       size_t i = 0;
       for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
-        ltrace(400) << "_desaturate: [" << depth << "]:"
+        cdebug.log(149) << "_desaturate: [" << depth << "]:"
                     << (*igcell)->getDensity(depth) << " " << *igcell << endl;
 
         if (not (*igcell)->isSaturated(depth)) {
-          ltrace(400) << "STOP desaturated: @" << i << " " << *igcell << endl;
+          cdebug.log(149) << "STOP desaturated: @" << i << " " << *igcell << endl;
           for ( ; igcell!=queue.getGCells().end() ; ++igcell ) {
             if ( (*igcell)->isSaturated( depth ) ) {
               cparanoid << "[ERROR] Still saturated: @" << i << " " << *igcell << endl;
@@ -100,10 +98,10 @@ namespace Katabatic {
 
   void  KatabaticEngine::_layerAssignByLength ( Net* net, unsigned long& total, unsigned long& global, set<Net*>& globalNets )
   {
-    DebugSession::open ( net, 90 );
+    DebugSession::open ( net, 140, 150 );
 
-    ltrace(100) << "Katabatic::_layerAssignByLength( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::_layerAssignByLength( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     bool               isGlobal = false;
     set<AutoContact*>  globalContacts;
@@ -122,7 +120,7 @@ namespace Katabatic {
       }
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     DebugSession::close();
   }
@@ -142,10 +140,10 @@ namespace Katabatic {
 
   void  KatabaticEngine::_layerAssignByTrunk ( Net* net, set<Net*>& globalNets, unsigned long& total, unsigned long& global )
   {
-    DebugSession::open( net, 90 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(100) << "Katabatic::_layerAssignByTrunk ( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::_layerAssignByTrunk ( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     bool               isGlobal  = false;
     unsigned long      netGlobal = 0;
@@ -171,7 +169,7 @@ namespace Katabatic {
         if ( autoSegment and not autoSegment->isStrongTerminal() ) {
           netGlobal++;
 
-          ltrace(99) << "Migrate to M4/M5: " << autoSegment << endl;
+          cdebug.log(145) << "Migrate to M4/M5: " << autoSegment << endl;
           if (autoSegment->isHorizontal()) autoSegment->setLayer( Session::getRoutingLayer(3) );
           if (autoSegment->isVertical  ()) autoSegment->setLayer( Session::getRoutingLayer(4) );
         }
@@ -181,7 +179,7 @@ namespace Katabatic {
     total  += netTotal;
     global += netGlobal;
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     DebugSession::close();
   }
@@ -202,9 +200,9 @@ namespace Katabatic {
   void  KatabaticEngine::moveULeft ( AutoSegment* seed, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 90 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(500) << "Deter| Move left: " << seed << endl;
+    cdebug.log(9000) << "Deter| Move left: " << seed << endl;
 
     seed->moveULeft();
     globalNets.insert( net );
@@ -239,9 +237,9 @@ namespace Katabatic {
   void  KatabaticEngine::moveURight ( AutoSegment* seed, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 90 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(500) << "Deter| Move right: " << seed << endl;
+    cdebug.log(9000) << "Deter| Move right: " << seed << endl;
 
     seed->moveURight();
     globalNets.insert( net );
@@ -278,15 +276,15 @@ namespace Katabatic {
     Net*         net       = seed->getNet();
     unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
 
-    DebugSession::open( net, 90 );
-    ltrace(500) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
+    DebugSession::open( net, 140, 150 );
+    cdebug.log(9000) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
     if (not seed->canMoveUp( 1.0, KbPropagate|KbAllowTerminal|KbNoCheckLayer) ) {
-      ltrace(500) << "Deter| Reject seed move up, cannot move up." << endl;
+      cdebug.log(9000) << "Deter| Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;
     }
-    ltracein(400);
+    cdebug.tabw(149,1);
 
     globalNets.insert( net );
 
@@ -330,7 +328,7 @@ namespace Katabatic {
     }
 
     for ( size_t i=0 ; i<globals.size() ; ++i ) {
-    //ltrace(500) << "Deter| Looking up G:" << globals[i] << endl;
+    //cdebug.log(9000) << "Deter| Looking up G:" << globals[i] << endl;
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth( globals[i]->getLayer() );
       globals[i]->changeDepth( depth+2, KbWithNeighbors );
 
@@ -342,7 +340,7 @@ namespace Katabatic {
     }
 
     for ( size_t i=0 ; i<locals.size() ; ++i ) {
-    //ltrace(500) << "Deter| Looking up L:" << locals[i] << endl;
+    //cdebug.log(9000) << "Deter| Looking up L:" << locals[i] << endl;
 
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
       if (depth > seedDepth+1) continue;
@@ -350,7 +348,7 @@ namespace Katabatic {
       if (locals[i]->canPivotUp(2.0,KbPropagate|KbNoCheckLayer)) {
         locals[i]->changeDepth( depth+2, KbWithNeighbors );
 
-      //ltrace(500) << "Deter| Trunk move up L:" << locals[i] << endl;
+      //cdebug.log(9000) << "Deter| Trunk move up L:" << locals[i] << endl;
 
         vector<GCell*> gcells;
         locals[i]->getGCells( gcells );
@@ -360,7 +358,7 @@ namespace Katabatic {
       }
     }
 
-    ltraceout(400);
+    cdebug.tabw(149,-1);
     DebugSession::close();
 
     return true;
@@ -372,15 +370,15 @@ namespace Katabatic {
     Net*         net       = seed->getNet();
     unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
 
-    DebugSession::open( net, 90 );
-    ltrace(500) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
+    DebugSession::open( net, 140, 150 );
+    cdebug.log(9000) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
     if (not seed->canMoveUp( 1.0, KbPropagate|KbAllowTerminal|KbNoCheckLayer) ) {
-      ltrace(500) << "Deter| Reject seed move up, cannot move up." << endl;
+      cdebug.log(9000) << "Deter| Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;
     }
-    ltracein(400);
+    cdebug.tabw(149,1);
 
     globalNets.insert( net );
 
@@ -390,7 +388,7 @@ namespace Katabatic {
     forEach ( Segment*, isegment, net->getSegments() ) {
       AutoSegment* autoSegment = Session::lookup( *isegment );
 
-    //ltrace(500) << "Deter| Loop " << autoSegment << endl;
+    //cdebug.log(9000) << "Deter| Loop " << autoSegment << endl;
 
       if (not autoSegment) continue;
       if (autoSegment->isLocal()) {
@@ -409,7 +407,7 @@ namespace Katabatic {
     sort(  locals.begin(),  locals.end(), AutoSegment::CompareId() );
 
     for ( size_t i=0 ; i<globals.size() ; ++i ) {
-    //ltrace(500) << "Deter| Looking up G:" << globals[i] << endl;
+    //cdebug.log(9000) << "Deter| Looking up G:" << globals[i] << endl;
 
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth( globals[i]->getLayer() );
       if (depth > seedDepth+1) continue;
@@ -419,7 +417,7 @@ namespace Katabatic {
       if ( globals[i]->canMoveUp(1.0,KbPropagate|KbAllowTerminal|KbNoCheckLayer) ) {
         globals[i]->changeDepth( depth+2, KbWithNeighbors );
 
-      //ltrace(500) << "Deter| Trunk move up G:" << globals[i] << endl;
+      //cdebug.log(9000) << "Deter| Trunk move up G:" << globals[i] << endl;
 
         vector<GCell*> gcells;
         globals[i]->getGCells( gcells );
@@ -427,12 +425,12 @@ namespace Katabatic {
           invalidateds.insert( gcells[j] );
         }
       } else {
-      //ltrace(500) << "Deter| Reject Trunk move up G:" << globals[i] << endl;
+      //cdebug.log(9000) << "Deter| Reject Trunk move up G:" << globals[i] << endl;
       }
     }
 
     for ( size_t i=0 ; i<locals.size() ; ++i ) {
-    //ltrace(500) << "Deter| Looking up L:" << locals[i] << endl;
+    //cdebug.log(9000) << "Deter| Looking up L:" << locals[i] << endl;
 
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
       if (depth > seedDepth+1) continue;
@@ -440,7 +438,7 @@ namespace Katabatic {
       if (locals[i]->canPivotUp(2.0,KbPropagate|KbNoCheckLayer)) {
         locals[i]->changeDepth( depth+2, KbWithNeighbors );
 
-      //ltrace(500) << "Deter| Trunk move up L:" << locals[i] << endl;
+      //cdebug.log(9000) << "Deter| Trunk move up L:" << locals[i] << endl;
 
         vector<GCell*> gcells;
         locals[i]->getGCells( gcells );
@@ -450,7 +448,7 @@ namespace Katabatic {
       }
     }
 
-    ltraceout(400);
+    cdebug.tabw(149,-1);
     DebugSession::close();
 
     return true;
@@ -477,11 +475,11 @@ namespace Katabatic {
       std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = queue.getGCells().begin();
       size_t i = 0;
       for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
-        ltrace(400) << "_balance: [" << depth << "]:"
+        cdebug.log(149) << "_balance: [" << depth << "]:"
                     << (*igcell)->getDensity(depth) << " " << *igcell << endl;
 
         if (not (*igcell)->isSaturated(depth)) {
-          ltrace(400) << "STOP desaturated: @" << i << " " << *igcell << endl;
+          cdebug.log(149) << "STOP desaturated: @" << i << " " << *igcell << endl;
           for ( ; igcell!=queue.getGCells().end() ; ++igcell ) {
             if ((*igcell)->isSaturated(depth)) {
               cparanoid << Error( "Still saturated: @%d %s", i, getString(*igcell).c_str() ) << endl;
@@ -510,7 +508,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::balanceGlobalDensity ()
   {
-    ltrace(500) << "Deter| Balance Global Density" << endl;
+    cdebug.log(9000) << "Deter| Balance Global Density" << endl;
 
   //_balanceGlobalDensity( 1 ); // metal2
   //_balanceGlobalDensity( 2 ); // metal3
@@ -556,7 +554,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::layerAssign ( unsigned int method )
   {
-    ltrace(500) << "Deter| Layer Assignment" << endl;
+    cdebug.log(9000) << "Deter| Layer Assignment" << endl;
 
     set<Net*> globalNets;
 

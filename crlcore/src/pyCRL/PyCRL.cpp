@@ -40,7 +40,6 @@ namespace CRL {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Exception;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -74,7 +73,7 @@ extern "C" {
 
   static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
   {
-    trace << "PyVhdl_destroyAllVHDL()" << endl;
+    cdebug.log(30) << "PyVhdl_destroyAllVHDL()" << endl;
 
     HTRY
       EntityExtension::destroyAll();
@@ -104,7 +103,7 @@ extern "C" {
   // Module Initialization  :  "initCRL ()"
 
   DL_EXPORT(void) initCRL () {
-    trace << "initCRL()" << endl;
+    cdebug.log(30) << "initCRL()" << endl;
 
     PyBanner_LinkPyType ();
     PyCatalogState_LinkPyType ();
@@ -198,7 +197,7 @@ extern "C" {
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
 
-    trace << "CRL.so loaded " << (void*)&typeid(string) << endl;
+    cdebug.log(30) << "CRL.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

@@ -55,7 +55,7 @@ extern "C" {
   // Attribute Method  :  "PyReference_create ()"
 
   PyObject* PyReference_create ( PyObject*, PyObject *args ) {
-    trace << "PyReference_create()" << endl;
+    cdebug.log(20) << "PyReference_create()" << endl;
     Reference*  reference = NULL;
 
     PyObject* arg0;
@@ -99,7 +99,7 @@ extern "C" {
 
   static PyObject* PyReference_getPoint ( PyReference *self )
   {
-    trace << "PyReference_getPoint()" << endl;
+    cdebug.log(20) << "PyReference_getPoint()" << endl;
 
     METHOD_HEAD ( "Reference.getPoint()" )
 
@@ -118,7 +118,7 @@ extern "C" {
   // Attribute Method  :  "PyReference_getBoundingBox ()"
 
   static PyObject* PyReference_getBoundingBox( PyReference *self ) {
-    trace << "PyReference_getBoundingBox()" << endl;
+    cdebug.log(20) << "PyReference_getBoundingBox()" << endl;
 
     METHOD_HEAD ( "Reference.BoundingBox()" )
 
@@ -138,7 +138,7 @@ extern "C" {
   // Attribute Method  :  "PyReference_translate ()"
 
   static PyObject* PyReference_translate ( PyReference *self, PyObject* args ) {
-    trace << "PyReference_translate ()" << endl;
+    cdebug.log(20) << "PyReference_translate ()" << endl;
     
     METHOD_HEAD ( "Reference.translate()" )
 

@@ -59,7 +59,7 @@ extern "C" {
   // Attribute Method  :  "PyVertical_create ()"
 
   static PyObject* PyVertical_create ( PyObject*, PyObject *args ) {
-    trace << "PyVertical_create()" << endl;
+    cdebug.log(20) << "PyVertical_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -149,7 +149,7 @@ extern "C" {
   // Attribute Method  :  "PyVertical_translate ()"
 
   static PyObject* PyVertical_translate ( PyVertical *self, PyObject* args ) {
-    trace << "PyVertical_translate ()" << endl;
+    cdebug.log(20) << "PyVertical_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Vertical.translate()" )

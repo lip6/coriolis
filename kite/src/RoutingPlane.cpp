@@ -40,9 +40,6 @@ namespace Kite {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Error;
   using Hurricane::Box;
   using Hurricane::Cell;
@@ -79,16 +76,15 @@ namespace Kite {
 
   void  RoutingPlane::destroy ()
   {
-    ltrace(90) << "RoutingPlane::destroy() - "
-               << (void*)this << " " << this << endl;
-    ltracein(90);
+    cdebug.log(155,1) << "RoutingPlane::destroy() - "
+                      << (void*)this << " " << this << endl;
 
     for ( size_t index=0 ; index<_tracks.size() ; ++index )
       _tracks[index]->destroy();
 
     delete this;
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 

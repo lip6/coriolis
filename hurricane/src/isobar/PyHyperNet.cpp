@@ -43,7 +43,7 @@ extern "C" {
 
 
   static PyObject* PyHyperNet_create ( PyObject*, PyObject *args ) {
-    trace << "PyHyperNet_create()" << endl;
+    cdebug.log(20) << "PyHyperNet_create()" << endl;
 
     HyperNet* hyperNet = NULL;
     PyObject* arg0;
@@ -69,7 +69,7 @@ extern "C" {
 
   static PyObject* PyHyperNet_getNetOccurrences(PyHyperNet *self)
   {
-    trace << "PyHyperNet_getNetOccurrences()" << endl;
+    cdebug.log(20) << "PyHyperNet_getNetOccurrences()" << endl;
 
     METHOD_HEAD ( "HyperNet.getNetOccurrences()" )
 
@@ -92,7 +92,7 @@ extern "C" {
 
   static PyObject* PyHyperNet_getLeafPlugOccurrences(PyHyperNet *self)
   {
-    trace << "PyHyperNet_getLeafPlugOccurrences()" << endl;
+    cdebug.log(20) << "PyHyperNet_getLeafPlugOccurrences()" << endl;
 
     METHOD_HEAD ( "HyperNet.getLeafPlugOccurrences()" )
 
@@ -115,7 +115,7 @@ extern "C" {
     
   static PyObject* PyHyperNet_getCell ( PyHyperNet *self )
   {
-    trace << "PyHyperNet_getCell ()" << endl;
+    cdebug.log(20) << "PyHyperNet_getCell ()" << endl;
 
     Cell* cell = NULL;
     

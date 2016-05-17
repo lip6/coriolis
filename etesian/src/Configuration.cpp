@@ -41,7 +41,6 @@ namespace Etesian {
   using  std::ostringstream;
   using  std::vector;
   using  Hurricane::tab;
-  using  Hurricane::inltrace;
   using  Hurricane::Warning;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
@@ -81,7 +80,7 @@ namespace Etesian {
 
   Configuration::~Configuration ()
   {
-    ltrace(89) << "About to delete attribute _cg (CellGauge)." << endl;
+    cdebug.log(129) << "About to delete attribute _cg (CellGauge)." << endl;
     _cg->destroy ();
   }
 
