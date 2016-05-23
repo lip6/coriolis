@@ -29,8 +29,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_EXTENSION_GO__
-#define  __HURRICANE_EXTENSION_GO__
+#ifndef  HURRICANE_EXTENSION_GO_H
+#define  HURRICANE_EXTENSION_GO_H
 
 #include  "hurricane/Name.h"
 #include  "hurricane/Go.h"
@@ -67,6 +67,6 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-#endif // __HURRICANE_EXTENSION_GO__
+#endif // HURRICANE_EXTENSION_GO_H
 
 

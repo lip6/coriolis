@@ -57,15 +57,15 @@ namespace Hurricane {
 
   void  ExtensionGo::materialize ()
   {
-    if ( !isMaterialized() ) {
-      if ( _cell ) {
-        ExtensionSlice* slice = _cell->getExtensionSlice ( getName() );
-        if ( !slice ) slice = ExtensionSlice::_create ( _cell, getName() );
-        QuadTree* quadTree = slice->_getQuadTree ();
-        quadTree->insert ( this );
-        _cell->_fit ( quadTree->getBoundingBox() );
+    if (not isMaterialized()) {
+      if (_cell) {
+        ExtensionSlice* slice = _cell->getExtensionSlice( getName() );
+        if (not slice) slice = ExtensionSlice::_create( _cell, getName() );
+        QuadTree* quadTree = slice->_getQuadTree();
+        quadTree->insert( this );
+        _cell->_fit( quadTree->getBoundingBox() );
       } else {
-        cerr << Warning("%s not inserted into QuadTree.",getString(this).c_str()) << endl;
+        cerr << Warning( "%s not inserted into QuadTree.", getString(this).c_str() ) << endl;
       }
     }
   }
@@ -73,20 +73,19 @@ namespace Hurricane {
 
   void ExtensionGo::unmaterialize ()
   {
-  //ltrace(9) << "ExtensionGo::unmaterialize() - " << (void*)this << endl;
-  //ltracein(9);
+    cdebug.log(18,1) << "ExtensionGo::unmaterialize() - start" << (void*)this << endl;
 
     if ( isMaterialized() ) {
-      ExtensionSlice* slice = _cell->getExtensionSlice ( getName() );
-      if ( slice ) {
-        _cell->_unfit ( getBoundingBox() );
-        slice->_getQuadTree()->remove ( this );
-        if ( slice->isEmpty() ) slice->_destroy ();
+      ExtensionSlice* slice = _cell->getExtensionSlice( getName() );
+      if (slice) {
+        _cell->_unfit( getBoundingBox() );
+        slice->_getQuadTree()->remove( this );
+        if (slice->isEmpty()) slice->_destroy();
       }
     }
 
-  //ltrace(9) << "ExtensionGo::unmaterialize() - exit" << endl;
-  //ltraceout(9);
+    cdebug.tabw(18,-1);
+    cdebug.log(18) << "ExtensionGo::unmaterialize() - completed" << endl;
   }
 
 
@@ -105,7 +104,7 @@ namespace Hurricane {
   string ExtensionGo::_getString () const
   {
     string s = Go::_getString();
-    s.insert ( s.length() - 1, " " + getString(getName()) );
+  //s.insert ( s.length() - 1, " " + getString(getName()) );
     return s;
   }
 

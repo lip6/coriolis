@@ -302,7 +302,7 @@ inline Hurricane::Record* getRecord ( std::vector<Element>* v )
   Hurricane::Record* record = NULL;
   if ( !v->empty() ) {
     record = new Hurricane::Record ( "std::vector<Element>" );
-    unsigned n = 1;
+    unsigned n = 0;
     typename std::vector<Element>::iterator iterator = v->begin();
     while ( iterator != v->end() ) {
       record->add ( getSlot<Element>(getString(n++), *iterator) );
@@ -327,7 +327,7 @@ inline Hurricane::Record* getRecord ( const std::vector<Element>* v )
   Hurricane::Record* record = NULL;
   if ( !v->empty() ) {
     record = new Hurricane::Record ( "const std::vector<Element>" );
-    unsigned n = 1;
+    unsigned n = 0;
     typename std::vector<Element>::const_iterator iterator = v->begin();
     while ( iterator != v->end() ) {
       record->add ( getSlot<const Element>(getString(n++), *iterator) );
