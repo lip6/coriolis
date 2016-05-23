@@ -9,7 +9,7 @@ try:
   import Hurricane
   import Viewer
   import CRL
- #import Anabatic
+  import Anabatic
   import Etesian
   import Katabatic
   import Kite
