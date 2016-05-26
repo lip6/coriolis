@@ -268,7 +268,7 @@ namespace OpenChams {
   }
 
   
-  list<pair <int,int> > SlicingNode::getSymmetries () const
+  const list<pair <int,int> > SlicingNode::getSymmetries () const
   {
     cerr << "Error(list<pair <int,int> > SlicingNode::getSymmetries () const): Symmetries are used in Horizontal or Vertical Node only." << endl;
     return list<pair<int,int > >();

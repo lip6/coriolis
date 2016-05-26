@@ -88,8 +88,8 @@ namespace OpenChams {
       virtual void                 setStep          ( double step   );
       virtual void                 setCount         ( double count  );
 
-      virtual const std::vector<SlicingNode*> getChildren       () const;
-      virtual std::list<std::pair <int,int> > getSymmetries     () const;
+      virtual const std::vector<SlicingNode*>       getChildren       () const;
+      virtual const std::list<std::pair <int,int> > getSymmetries     () const;
 
       virtual double               getToleranceRatioH() const;
       virtual double               getToleranceRatioW() const;
@@ -253,8 +253,9 @@ namespace OpenChams {
       inline double                          getToleranceRatioW() const;
       inline double                          getToleranceBandH () const;
       inline double                          getToleranceBandW () const;
-      inline const std::vector<SlicingNode*> getChildren       () const;
-      inline std::list<std::pair <int,int> > getSymmetries     () const;
+
+      inline const std::vector<SlicingNode*>       getChildren  () const;
+      inline const std::list<std::pair <int,int> > getSymmetries() const;
 
              void                            setToleranceRatioH( std::string value );
              void                            setToleranceRatioW( std::string value );
@@ -299,8 +300,9 @@ namespace OpenChams {
   inline double                          HVSlicingNode::getToleranceRatioW() const { return _toleranceRatioW; }
   inline double                          HVSlicingNode::getToleranceBandH () const { return _toleranceBandH ; }
   inline double                          HVSlicingNode::getToleranceBandW () const { return _toleranceBandW ; }
-  inline const std::vector<SlicingNode*> HVSlicingNode::getChildren       () const { return _children       ; }
-  inline std::list<std::pair<int,int> >  HVSlicingNode::getSymmetries     () const { return _symmetries     ; }
+
+  inline const std::vector<SlicingNode*>      HVSlicingNode::getChildren  () const { return _children       ; }
+  inline const std::list<std::pair<int,int> > HVSlicingNode::getSymmetries() const { return _symmetries     ; }
   
   inline std::string                     HVSlicingNode::toleranceRatioHToString() const { return std::to_string(_toleranceRatioH); } 
   inline std::string                     HVSlicingNode::toleranceRatioWToString() const { return std::to_string(_toleranceRatioW); } 
