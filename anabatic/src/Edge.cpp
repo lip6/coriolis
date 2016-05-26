@@ -177,7 +177,7 @@ namespace Anabatic {
   {
     Interval side = getSide();
     _axis     = side.getCenter();
-    _capacity = getAnabatic()->getCapacity( side.inflate(0,-1), _flags );
+    _capacity = getAnabatic()->getCapacity( side, _flags );
 
     _flags.reset( Flags::Invalidated );
     cdebug.log(110) << "Edge::_revalidate() " << this << endl;

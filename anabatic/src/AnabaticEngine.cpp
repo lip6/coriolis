@@ -124,6 +124,9 @@ namespace Anabatic {
     Box           ab       = getCell()->getAbutmentBox();
     RoutingGauge* rg       = _configuration->getRoutingGauge();
 
+    span.inflate( 0, -1 );
+    if (span.isEmpty()) return 0;
+
     const vector<RoutingLayerGauge*>& layerGauges = rg->getLayerGauges();
     for ( size_t depth=0 ; depth <= _configuration->getAllowedDepth() ; ++depth ) {
       if (layerGauges[depth]->getType() != Constant::Default) continue;
