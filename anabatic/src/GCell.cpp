@@ -75,22 +75,20 @@ namespace Anabatic {
   { }
 
 
-  void  GCell::_preDestroy ()
+  void  GCell::_destroyEdges ()
   {
-    for ( Edge* edge : _westEdges  ) edge->destroy();
-    for ( Edge* edge : _eastEdges  ) edge->destroy();
-    for ( Edge* edge : _southEdges ) edge->destroy();
-    for ( Edge* edge : _northEdges ) edge->destroy();
-
-    _anabatic->_remove( this );
-    Super::_preDestroy();
+    while (not  _westEdges.empty()) (* _westEdges.rbegin())->destroy();
+    while (not  _eastEdges.empty()) (* _eastEdges.rbegin())->destroy();
+    while (not _southEdges.empty()) (*_southEdges.rbegin())->destroy();
+    while (not _northEdges.empty()) (*_northEdges.rbegin())->destroy();
   }
 
 
-  void  GCell::destroy ()
+  void  GCell::_preDestroy ()
   {
-    _preDestroy();
-    delete this;
+    _destroyEdges();
+    _anabatic->_remove( this );
+    Super::_preDestroy();
   }
 
 
@@ -139,7 +137,7 @@ namespace Anabatic {
 
           _southEdges.insert( iedge, edge );
           for ( auto iedge2=_southEdges.begin() ; iedge2 != _southEdges.end() ; ++iedge2 )
-            cdebug.log(110) << "| @" <<  DbU::getValueString((*iedge)->getAxisMin()) << " " << *iedge2 << endl;
+            cdebug.log(110) << "| @" <<  DbU::getValueString((*iedge2)->getAxisMin()) << " " << *iedge2 << endl;
           cdebug.tabw(110,-1);
           return;
         }
@@ -270,7 +268,7 @@ namespace Anabatic {
     GCell* chunk = _create( x, getYMin() );
     cdebug.log(110) << "New chunk:" << chunk << endl;
 
-    _moveEdges( chunk, 0, Flags::EastSide|Flags::MoveSide );
+    _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
 
     if (not _southEdges.empty()) {
@@ -322,7 +320,7 @@ namespace Anabatic {
     GCell* chunk = _create( getXMin(), y );
     cdebug.log(110) << "New chunk:" << chunk << endl;
 
-    _moveEdges( chunk, 0, Flags::NorthSide|Flags::MoveSide );
+    _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
 
     if (not _westEdges.empty()) {

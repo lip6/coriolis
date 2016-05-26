@@ -53,7 +53,6 @@ namespace Anabatic {
       static        Box             getBorder            ( const GCell*, const GCell* );
     public:                         
       static        GCell*          create               ( AnabaticEngine* );
-      virtual       void            destroy              ();
     public:
       inline        bool            isHFlat              () const;
       inline        bool            isVFlat              () const;
@@ -81,6 +80,7 @@ namespace Anabatic {
       inline        Flags&          flags                ();
                     void            _add                 ( Edge* edge, Flags side );
                     void            _remove              ( Edge* edge, Flags side=Flags::AllSides );
+                    void            _destroyEdges        ();
     private:                        
                     void            _revalidate          ();
                     void            _moveEdges           ( GCell* dest, size_t ibegin, Flags flags );

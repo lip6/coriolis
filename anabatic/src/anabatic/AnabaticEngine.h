@@ -18,6 +18,7 @@
 #define  ANABATIC_ANABATIC_ENGINE_H
 
 #include <string>
+#include <vector>
 
 namespace Hurricane {
   class Name;
@@ -35,6 +36,7 @@ namespace Hurricane {
 namespace Anabatic {
 
   using std::string;
+  using std::vector;
   using Hurricane::Name;
   using Hurricane::Record;
   using Hurricane::Interval;
@@ -58,10 +60,13 @@ namespace Anabatic {
       inline        GCell*          getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*          getGCellUnder     ( Point ) const;
                     int             getCapacity       ( Interval, Flags ) const;
+      inline const  Flags&          flags             () const;
+      inline        Flags&          flags             ();
+                    void            reset             ();
       inline        void            _add              ( GCell* );
       inline        void            _remove           ( GCell* );
       inline        void            _updateLookup     ( GCell* );
-                    void            _runTest          ();
+      inline        bool            _inDestroy        () const;
     // Inspector support.                             
       virtual       Record*         _getRecord        () const;
       virtual       string          _getString        () const;
@@ -71,6 +76,7 @@ namespace Anabatic {
       virtual                       ~AnabaticEngine   ();
       virtual       void             _postCreate      ();
       virtual       void             _preDestroy      ();
+                    void             _clear           ();
     private:                                          
                                      AnabaticEngine   ( const AnabaticEngine& );
                     AnabaticEngine&  operator=        ( const AnabaticEngine& );
@@ -78,20 +84,37 @@ namespace Anabatic {
       static Name           _toolName;
              Configuration* _configuration;
              Matrix         _matrix;
-             GCellSet       _gcells;
+             vector<GCell*> _gcells;
              CellViewer*    _viewer;
+             Flags          _flags;
   };
 
 
-  inline CellViewer* AnabaticEngine::getViewer         () const { return _viewer; }
-  inline void        AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
-  inline GCell*      AnabaticEngine::getSouthWestGCell () const { return *(_gcells.begin()); }
-  inline GCell*      AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
-  inline GCell*      AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
-  inline void        AnabaticEngine::_add              ( GCell* gcell ) { _gcells.insert(gcell); }
-  inline void        AnabaticEngine::_remove           ( GCell* gcell ) { _gcells.erase(gcell); }
-  inline void        AnabaticEngine::_updateLookup     ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline CellViewer*   AnabaticEngine::getViewer         () const { return _viewer; }
+  inline void          AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
+  inline GCell*        AnabaticEngine::getSouthWestGCell () const { return _gcells[0]; }
+  inline GCell*        AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
+  inline GCell*        AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
+  inline const Flags&  AnabaticEngine::flags             () const { return _flags; }
+  inline Flags&        AnabaticEngine::flags             () { return _flags; }
+  inline void          AnabaticEngine::_updateLookup     ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline bool          AnabaticEngine::_inDestroy        () const { return _flags & Flags::Destroy; }
   
+  inline void  AnabaticEngine::_add ( GCell* gcell )
+  {
+    _gcells.push_back( gcell );
+    std::sort( _gcells.begin(), _gcells.end(), Entity::CompareById() );
+  }
+
+  inline void  AnabaticEngine::_remove ( GCell* gcell )
+  {
+    for ( auto igcell = _gcells.begin() ; igcell != _gcells.end() ; ++igcell )
+      if (*igcell == gcell) {
+        if (_inDestroy()) (*igcell) = NULL;
+        else              _gcells.erase(igcell);
+        break;
+      }
+  }
 
 }  // Anabatic namespace.
 

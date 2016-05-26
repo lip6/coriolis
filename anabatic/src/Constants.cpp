@@ -39,7 +39,7 @@ namespace Anabatic {
     s += (_flags & SourceGCell) ? 's' : '-';
     s += (_flags & TargetGCell) ? 't' : '-';
     s += (_flags & Invalidated) ? 'i' : '-';
-    s += (_flags & MoveSide   ) ? 'M' : '-';
+    s += (_flags & Destroy    ) ? 'D' : '-';
     s += (_flags & PitchAbove ) ? 'A' : '-';
     s += (_flags & PitchBelow ) ? 'B' : '-';
 

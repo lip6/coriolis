@@ -145,6 +145,7 @@ extern "C" {
   }
 
 
+#if 0
   PyObject* PyAnabaticEngine_runTest ( PyAnabaticEngine* self, PyObject* args )
   {
     cdebug.log(32) << "PyAnabaticEngine_runTest()" << endl;
@@ -169,6 +170,7 @@ extern "C" {
 
     Py_RETURN_NONE;
   }
+#endif
 
 
   // Standart Accessors (Attributes).
@@ -184,8 +186,10 @@ extern "C" {
                                , "Create a Anabatic engine on this cell." }
     , { "setViewer"            , (PyCFunction)PyAnabaticEngine_setViewer            , METH_VARARGS
                                , "Associate a Viewer to this AnabaticEngine." }
+#if 0
     , { "runTest"              , (PyCFunction)PyAnabaticEngine_runTest              , METH_VARARGS
                                , "Run the test procedure." }
+#endif
     , { "destroy"              , (PyCFunction)PyAnabaticEngine_destroy              , METH_NOARGS
                                , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */

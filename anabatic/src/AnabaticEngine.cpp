@@ -61,6 +61,9 @@ namespace Anabatic {
     : Super(cell)
     , _configuration (new ConfigurationConcrete())
     , _matrix        ()
+    , _gcells        ()
+    , _viewer        (NULL)
+    , _flags         (Flags::NoFlags)
   {
     _matrix.setCell( cell, _configuration->getSliceHeight()*2 );
   }
@@ -90,17 +93,24 @@ namespace Anabatic {
 
   AnabaticEngine::~AnabaticEngine ()
   {
-    while ( not _gcells.empty() ) (*_gcells.rbegin())->destroy();
     delete _configuration;
   }
 
 
   void  AnabaticEngine::_preDestroy ()
   {
-  // To be done: destroy the whole set of GCells.
-  // Must be stored in some way before destruction (in a set<> ?).
-
+    _clear();
     Super::_preDestroy();
+  }
+
+
+  void  AnabaticEngine::_clear ()
+  {
+    _flags |= Flags::Destroy;
+
+    for ( GCell* gcell : _gcells ) gcell->_destroyEdges();
+    for ( GCell* gcell : _gcells ) gcell->destroy();
+    _gcells.clear();
   }
 
 
@@ -137,9 +147,14 @@ namespace Anabatic {
   }
 
 
-  void  AnabaticEngine::_runTest ()
+  void  AnabaticEngine::reset ()
   {
-    cerr << "AnabaticEngine::_runTest() called." << endl;
+    _clear();
+    _flags.reset( Flags::Destroy );
+
+    UpdateSession::open();
+    GCell::create( this );
+    UpdateSession::close();
   }
 
 
@@ -161,6 +176,7 @@ namespace Anabatic {
     record->add( getSlot("_configuration",  _configuration) );
     record->add( getSlot("_gcells"       , &_gcells       ) );
     record->add( getSlot("_matrix"       , &_matrix       ) );
+    record->add( getSlot("_flags"        , &_flags        ) );
     return record;
   }
 

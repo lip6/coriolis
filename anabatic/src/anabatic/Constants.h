@@ -29,8 +29,8 @@ namespace Anabatic {
                 , Vertical       = (1<<1)
                 , SourceGCell    = (1<<2)
                 , TargetGCell    = (1<<3)
-                , MoveSide       = (1<<4)
-                , Invalidated    = (1<<5)
+                , Invalidated    = (1<<4)
+                , Destroy        = (1<<5)
                 , WestSide       = Horizontal|TargetGCell
                 , EastSide       = Horizontal|SourceGCell
                 , SouthSide      = Vertical  |TargetGCell

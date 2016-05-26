@@ -56,7 +56,75 @@ namespace Anabatic {
   using Hurricane::ExceptionWidget;
   using CRL::Catalog;
   using CRL::AllianceFramework;
+    
 
+// -------------------------------------------------------------------
+// Test functions.
+
+  void  anabaticTest_1 ( AnabaticEngine* engine )
+  {
+    engine->getSouthWestGCell()->doGrid();
+
+    Point  position ( DbU::fromLambda(100.0), DbU::fromLambda(100.0) );
+    GCell* gcell    = engine->getGCellUnder( position );
+
+    cerr << "Gcell under:" << position << " is " << gcell << endl;
+  }
+    
+
+  void  anabaticTest_2 ( AnabaticEngine* engine )
+  {
+    GCell*    row0    = engine->getSouthWestGCell();
+    DbU::Unit xcorner = engine->getCell()->getAbutmentBox().getXMin();
+    DbU::Unit ycorner = engine->getCell()->getAbutmentBox().getYMin();
+
+    cdebug.log(119,1) << "row0: " << row0 << endl;
+
+    GCell* row1 = row0->hcut( ycorner+DbU::fromLambda(50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row1: " << row1 << endl;
+
+    GCell* row2 = row1->hcut( ycorner+DbU::fromLambda(2*50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row2: " << row2 << endl;
+
+    row0 = row0->vcut( xcorner+DbU::fromLambda(50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row0+1: " << row0 << endl;
+
+    row0 = row0->vcut( xcorner+DbU::fromLambda(3*50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row0+2: " << row0 << endl;
+
+    row0 = row0->vcut( xcorner+DbU::fromLambda(5*50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row0+3: " << row0 << endl;
+    
+    row1 = row1->vcut( xcorner+DbU::fromLambda(2*50.0) );
+    cdebug.tabw(119,-1);
+    cdebug.log(119,1) << "row1+1: " << row1 << endl;
+
+    cdebug.tabw(119,-1);
+  }
+    
+
+  void  anabaticTest_3 ( AnabaticEngine* engine )
+  {
+    for ( int i=0 ; i<4 ; ++i ) {
+      cdebug.log(110,1) << "Running test 3, loop:" << i << " ..." << endl;
+
+      if ( i%2) anabaticTest_1( engine );
+      else      anabaticTest_2( engine );
+
+      engine->reset();
+      cdebug.log(110,1) << "Test 3, loop:" << i << " completed." << endl;
+      cdebug.tabw(110,-1);
+    }
+  }
+    
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::GraphicAnabaticEngine".
 
   size_t                 GraphicAnabaticEngine::_references = 0;
   GraphicAnabaticEngine* GraphicAnabaticEngine::_singleton  = NULL;
@@ -184,62 +252,9 @@ namespace Anabatic {
     if (_viewer) _viewer->emitCellAboutToChange();
     AnabaticEngine* engine = getForFramework( CreateEngine );
 
-#define  TEST_2  1
-
-#ifdef TEST_1
-    engine->getSouthWestGCell()->doGrid();
-
-    Point  position ( DbU::fromLambda(100.0), DbU::fromLambda(100.0) );
-    GCell* gcell    = engine->getGCellUnder( position );
-
-    cerr << "Gcell under:" << position << " is " << gcell << endl;
-#endif
-
-#ifdef TEST_2
-  GCell*    row0    = engine->getSouthWestGCell();
-  DbU::Unit xcorner = getCell()->getAbutmentBox().getXMin();
-  DbU::Unit ycorner = getCell()->getAbutmentBox().getYMin();
-
-  cdebug.log(119,1) << "row0: " << row0 << endl;
-
-  GCell* row1 = row0->hcut( ycorner+DbU::fromLambda(50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row1: " << row1 << endl;
-
-  GCell* row2 = row1->hcut( ycorner+DbU::fromLambda(2*50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row2: " << row2 << endl;
-
-  row0 = row0->vcut( xcorner+DbU::fromLambda(50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row0+1: " << row0 << endl;
-
-  row0 = row0->vcut( xcorner+DbU::fromLambda(3*50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row0+2: " << row0 << endl;
-
-  row0 = row0->vcut( xcorner+DbU::fromLambda(5*50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row0+3: " << row0 << endl;
-    
-  row1 = row1->vcut( xcorner+DbU::fromLambda(2*50.0) );
-  cdebug.tabw(119,-1);
-  cdebug.log(119,1) << "row1+1: " << row1 << endl;
-
-
-  cdebug.tabw(119,-1);
-#endif
-
-  // gcell = gcell->hcut( ycut+DbU::fromLambda(50.0) );
-  // cerr << "New GCell: " << gcell << endl;
-    
-  // DbU::Unit ycut  = getCell()->getAbutmentBox().getYMin() + DbU::fromLambda(50.0);
-  // for ( ; ycut < getCell()->getAbutmentBox().getYMax() ; ycut += DbU::fromLambda(50.0) ) {
-  //   cdebug.log(119,2) << "H cut line (y coordinate): " << DbU::getValueString(ycut) << endl;
-  //   gcell = gcell->hcut( ycut );
-  //   cerr << gcell << endl;
-  //   cdebug.tabw(119,-2);
-  // }
+  //anabaticTest_1( engine );
+  //anabaticTest_2( engine );
+    anabaticTest_3( engine );
 
     if (_viewer) _viewer->emitCellChanged();
   }
