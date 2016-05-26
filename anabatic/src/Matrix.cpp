@@ -66,9 +66,15 @@ namespace Anabatic {
   }
 
 
+  GCell*  Matrix::getUnder ( DbU::Unit x, DbU::Unit y ) const
+  { int index = xy2index(x,y); return (index < 0) ? NULL : _gcells[index]->getUnder(x,y); }
+
+
   void  Matrix::updateLookup ( GCell* gcell )
   {
-    cdebug.log(110,1) << "Matrix::updateLookup(): " << gcell << endl;
+  //cdebug.log(110,1) << "Matrix::updateLookup(): " << gcell << endl;
+
+    if (gcell->isFlat()) return;
 
     Box gcellBb    = gcell->getBoundingBox();
     Box updateArea = _area.getIntersection( gcellBb );
@@ -80,22 +86,22 @@ namespace Anabatic {
                    ) << endl;
     }
 
-    Index  indexMin = Index( this, updateArea.getXMin()  , updateArea.getYMin()   );
-    Index  indexMax = Index( this, updateArea.getXMax()-1, updateArea.getYMax()-1 );
+    Index  indexMin = Index( this, updateArea.getXMin(), updateArea.getYMin() );
+    Index  indexMax = Index( this, updateArea.getXMax(), updateArea.getYMax() );
     int    xspan    = indexMax.i() - indexMin.i();
 
-    cdebug.log(110) << "indexMin:" << indexMin << endl;
-    cdebug.log(110) << "indexMax:" << indexMax << endl;
+  //cdebug.log(110) << "indexMin:" << indexMin << endl;
+  //cdebug.log(110) << "indexMax:" << indexMax << endl;
 
     int index = indexMin.index();
     while ( index <= indexMax.index() ) {
-      _gcells[index] = gcell;
+      if (updateArea.contains(getGridPoint(index))) _gcells[index] = gcell;
 
       if (index <= indexMax.j()) ++index;
       else                         index += _imax - xspan;
     }
 
-    cdebug.tabw(110,-1);
+  //cdebug.tabw(110,-1);
   }
 
 

@@ -81,6 +81,8 @@ namespace Anabatic {
       virtual DbU::Unit          getExtensionCap    ( const Layer* ) const = 0;
       virtual Flags              getDirection       ( const Layer* ) const = 0;
       virtual void               setAllowedDepth    ( size_t ) = 0;
+      virtual DbU::Unit          getEdgeLength      () const = 0;
+      virtual DbU::Unit          getEdgeWidth       () const = 0;
       virtual void               print              ( Cell* ) const = 0;
       virtual Record*            _getRecord         () const = 0;
       virtual string             _getString         () const = 0;
@@ -129,6 +131,8 @@ namespace Anabatic {
       virtual DbU::Unit              getExtensionCap       ( const Layer* ) const;
       virtual Flags                  getDirection          ( const Layer* ) const;
       virtual void                   setAllowedDepth       ( size_t );
+      virtual DbU::Unit              getEdgeLength         () const;
+      virtual DbU::Unit              getEdgeWidth          () const;
       virtual void                   print                 ( Cell* ) const;
       virtual Record*                _getRecord            () const;
       virtual string                 _getString            () const;
@@ -142,6 +146,8 @@ namespace Anabatic {
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
       size_t                  _allowedDepth;
+      DbU::Unit               _edgeLength;
+      DbU::Unit               _edgeWidth;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

@@ -1563,9 +1563,11 @@ namespace Hurricane {
 
   bool  CellWidget::isDrawableExtension ( const Name& extensionName )
   {
-    PaletteItem* item = (_palette) ? _palette->find(extensionName) : NULL;
+    PaletteItem* item  = (_palette) ? _palette->find(extensionName) : NULL;
+    DbU::Unit    unity = DbU::lambda(1.0);
 
-    return (!item || item->isItemVisible());
+    return (!item || item->isItemVisible())
+      && ( Graphics::getThreshold(extensionName) < getScale()*unity );
   }
 
 

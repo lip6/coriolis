@@ -18,6 +18,7 @@
 #include "hurricane/Error.h"
 #include "anabatic/Edge.h"
 #include "anabatic/GCell.h"
+#include "anabatic/AnabaticEngine.h"
 
 
 namespace Anabatic {
@@ -84,8 +85,8 @@ namespace Anabatic {
     edge->_postCreate();
 
     cdebug.log(110,1) << "Edge::create(): " << (void*)edge << ":" << edge << endl;  
-    cdebug.log(110) << "source:" << edge->getSource() << endl;
-    cdebug.log(110) << "target:" << edge->getTarget() << endl;
+    cdebug.log(110) << "source:" << (void*)source << ":" << edge->getSource() << endl;
+    cdebug.log(110) << "target:" << (void*)target << ":" << edge->getTarget() << endl;
     cdebug.tabw(110,-1);
     return edge;
   }
@@ -109,6 +110,10 @@ namespace Anabatic {
     _preDestroy();
     delete this;
   }
+
+
+  AnabaticEngine* Edge::getAnabatic () const
+  { return (_source) ? _source->getAnabatic() : NULL; }
 
 
   DbU::Unit  Edge::getAxisMin () const
@@ -170,9 +175,11 @@ namespace Anabatic {
 
   void  Edge::_revalidate ()
   {
-    _axis = getSide().getCenter();
-    _flags.reset( Flags::Invalidated );
+    Interval side = getSide();
+    _axis     = side.getCenter();
+    _capacity = getAnabatic()->getCapacity( side.inflate(0,-1), _flags );
 
+    _flags.reset( Flags::Invalidated );
     cdebug.log(110) << "Edge::_revalidate() " << this << endl;
   }
 
@@ -183,8 +190,8 @@ namespace Anabatic {
 
   Box  Edge::getBoundingBox () const
   {
-    static DbU::Unit halfThickness = DbU::fromLambda(  2.0 );
-    static DbU::Unit halfLength    = DbU::fromLambda( 12.0 );
+    static DbU::Unit halfThickness = getAnabatic()->getConfiguration()->getEdgeWidth () / 2;
+    static DbU::Unit halfLength    = getAnabatic()->getConfiguration()->getEdgeLength() / 2;
 
     if (_flags.isset(Flags::Horizontal))
       return Box( _target->getXMin() - halfLength, _axis - halfThickness

@@ -51,6 +51,7 @@ namespace Anabatic {
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
   using Hurricane::DisplayStyle;
+  using Hurricane::DrawingStyle;
   using Hurricane::ControllerWidget;
   using Hurricane::ExceptionWidget;
   using CRL::Catalog;
@@ -78,8 +79,8 @@ namespace Anabatic {
 
     QPainter& painter = widget->getPainter();
 
-    painter.setPen  ( Graphics::getPen  ("gcell",widget->getDarkening()) );
-    painter.setBrush( Graphics::getBrush("gcell",widget->getDarkening()) );
+    painter.setPen  ( Graphics::getPen  ("Anabatic::GCell",widget->getDarkening()) );
+    painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
     painter.drawRect( widget->dbuToScreenRect(gcell->getBoundingBox()) );
   }
 
@@ -100,6 +101,7 @@ namespace Anabatic {
     const Edge* edge = static_cast<const Edge*>(go);
 
     if (edge) {
+      Box          bb        = edge->getBoundingBox();
       unsigned int occupancy = 255;
       if (edge->getRealOccupancy() < edge->getCapacity())
         occupancy = (unsigned int)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
@@ -116,7 +118,30 @@ namespace Anabatic {
 
       painter.setPen( Qt::NoPen );
       painter.setBrush( brush );
-      painter.drawRect( widget->dbuToScreenRect(edge->getBoundingBox(), false) );
+      painter.drawRect( widget->dbuToScreenRect( bb, false) );
+
+      QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+      QColor  color ( Qt::white );
+      QFont   font  = Graphics::getFixedFont( QFont::Bold );
+      painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
+      painter.setFont(font);
+
+      if (edge->isVertical()) {
+        painter.save     ();
+        painter.translate( widget->dbuToScreenPoint(bb.getXMin(), bb.getYMin()) );
+        painter.rotate   ( -90 );
+        painter.drawText (QRect( 0
+                               , 0
+                               , widget->dbuToScreenLength(bb.getHeight())
+                               , widget->dbuToScreenLength(bb.getWidth ()))
+                         , text
+                         , QTextOption(Qt::AlignCenter)
+                         );
+        painter.restore  ();
+      } else
+        painter.drawText( widget->dbuToScreenRect(bb,false ), text, QTextOption(Qt::AlignCenter) );
+
+      painter.setPen( Qt::NoPen );
     }
   }
 
@@ -159,40 +184,51 @@ namespace Anabatic {
     if (_viewer) _viewer->emitCellAboutToChange();
     AnabaticEngine* engine = getForFramework( CreateEngine );
 
+#define  TEST_2  1
+
+#ifdef TEST_1
     engine->getSouthWestGCell()->doGrid();
 
-  // GCell*    row0    = getSouthWestGCell();
-  // DbU::Unit xcorner = getCell()->getAbutmentBox().getXMin();
-  // DbU::Unit ycorner = getCell()->getAbutmentBox().getYMin();
+    Point  position ( DbU::fromLambda(100.0), DbU::fromLambda(100.0) );
+    GCell* gcell    = engine->getGCellUnder( position );
 
-  // cdebug.log(119,1) << "row0: " << row0 << endl;
+    cerr << "Gcell under:" << position << " is " << gcell << endl;
+#endif
 
-  // GCell* row1 = row0->hcut( ycorner+DbU::fromLambda(50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row1: " << row1 << endl;
+#ifdef TEST_2
+  GCell*    row0    = engine->getSouthWestGCell();
+  DbU::Unit xcorner = getCell()->getAbutmentBox().getXMin();
+  DbU::Unit ycorner = getCell()->getAbutmentBox().getYMin();
 
-  // GCell* row2 = row1->hcut( ycorner+DbU::fromLambda(2*50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row2: " << row2 << endl;
+  cdebug.log(119,1) << "row0: " << row0 << endl;
 
-  // row0 = row0->vcut( xcorner+DbU::fromLambda(50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row0+1: " << row0 << endl;
+  GCell* row1 = row0->hcut( ycorner+DbU::fromLambda(50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row1: " << row1 << endl;
 
-  // row0 = row0->vcut( xcorner+DbU::fromLambda(3*50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row0+2: " << row0 << endl;
+  GCell* row2 = row1->hcut( ycorner+DbU::fromLambda(2*50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row2: " << row2 << endl;
 
-  // row0 = row0->vcut( xcorner+DbU::fromLambda(5*50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row0+3: " << row0 << endl;
+  row0 = row0->vcut( xcorner+DbU::fromLambda(50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row0+1: " << row0 << endl;
+
+  row0 = row0->vcut( xcorner+DbU::fromLambda(3*50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row0+2: " << row0 << endl;
+
+  row0 = row0->vcut( xcorner+DbU::fromLambda(5*50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row0+3: " << row0 << endl;
     
-  // row1 = row1->vcut( xcorner+DbU::fromLambda(2*50.0) );
-  // cdebug.tabw(119,-1);
-  // cdebug.log(119,1) << "row1+1: " << row1 << endl;
+  row1 = row1->vcut( xcorner+DbU::fromLambda(2*50.0) );
+  cdebug.tabw(119,-1);
+  cdebug.log(119,1) << "row1+1: " << row1 << endl;
 
 
-  // cdebug.tabw(119,-1);
+  cdebug.tabw(119,-1);
+#endif
 
   // gcell = gcell->hcut( ycut+DbU::fromLambda(50.0) );
   // cerr << "New GCell: " << gcell << endl;
@@ -205,7 +241,7 @@ namespace Anabatic {
   //   cdebug.tabw(119,-2);
   // }
 
-  // if (_viewer) _viewer->emitCellChanged();
+    if (_viewer) _viewer->emitCellChanged();
   }
 
 

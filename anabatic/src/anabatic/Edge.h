@@ -37,38 +37,42 @@ namespace Anabatic {
   using Hurricane::ExtensionGo;
 
   class GCell;
+  class AnabaticEngine;
 
 
   class Edge : public ExtensionGo {
     public:
       typedef ExtensionGo  Super;
     public:
-      static        Edge*         create               ( GCell* source, GCell* target, Flags flags=Flags::NoFlags );
-      virtual       void          destroy              ();
-    public:                                
-      inline        unsigned int  getCapacity          () const;
-      inline        unsigned int  getRealOccupancy     () const;
-      inline        unsigned int  getEstimateOccupancy () const;
-      inline        GCell*        getSource            () const;
-      inline        GCell*        getTarget            () const;
-                    GCell*        getOpposite          ( const GCell* ) const;
-      inline        DbU::Unit     getAxis              () const;
-                    DbU::Unit     getAxisMin           () const;
-                    Interval      getSide              () const;
-      inline const  Flags&        flags                () const;
-      inline        Flags&        flags                ();
-      inline        void          invalidate           ();
-      inline        void          revalidate           () const;
-                    void          _setSource           ( GCell* );
-                    void          _setTarget           ( GCell* );
-    private:
-                    void          _revalidate          ();
-    public:                                
-    // ExtensionGo support.                
-      inline  const Name&         staticGetName        (); 
-      virtual const Name&         getName              () const;
-      virtual       void          translate            ( const DbU::Unit&, const DbU::Unit& );
-      virtual       Box           getBoundingBox       () const;
+      static        Edge*           create               ( GCell* source, GCell* target, Flags flags=Flags::NoFlags );
+      virtual       void            destroy              ();
+    public:                                  
+      inline        bool            isVertical           () const;
+      inline        bool            isHorizontal         () const;
+      inline        unsigned int    getCapacity          () const;
+      inline        unsigned int    getRealOccupancy     () const;
+      inline        unsigned int    getEstimateOccupancy () const;
+      inline        GCell*          getSource            () const;
+      inline        GCell*          getTarget            () const;
+                    GCell*          getOpposite          ( const GCell* ) const;
+                    AnabaticEngine* getAnabatic          () const;
+      inline        DbU::Unit       getAxis              () const;
+                    DbU::Unit       getAxisMin           () const;
+                    Interval        getSide              () const;
+      inline const  Flags&          flags                () const;
+      inline        Flags&          flags                ();
+      inline        void            invalidate           ();
+      inline        void            revalidate           () const;
+                    void            _setSource           ( GCell* );
+                    void            _setTarget           ( GCell* );
+    private:                        
+                    void            _revalidate          ();
+    public:                                  
+    // ExtensionGo support.                  
+      inline  const Name&           staticGetName        (); 
+      virtual const Name&           getName              () const;
+      virtual       void            translate            ( const DbU::Unit&, const DbU::Unit& );
+      virtual       Box             getBoundingBox       () const;
     public:                                            
     // Inspector support.                              
       virtual       string        _getTypeName         () const;
@@ -95,6 +99,8 @@ namespace Anabatic {
 
 
   inline const Name&   Edge::staticGetName        () { return _extensionName; }
+  inline bool          Edge::isVertical           () const { return _flags.isset(Flags::Vertical); }
+  inline bool          Edge::isHorizontal         () const { return _flags.isset(Flags::Horizontal); }
   inline unsigned int  Edge::getCapacity          () const { return _capacity; }
   inline unsigned int  Edge::getRealOccupancy     () const { return _realOccupancy; }
   inline unsigned int  Edge::getEstimateOccupancy () const { return _estimateOccupancy; }

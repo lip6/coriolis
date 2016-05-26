@@ -45,6 +45,7 @@ namespace Anabatic {
   void  GCell::_postCreate ()
   {
     Super::_postCreate();
+    _anabatic->_add( this );
   }
 
 
@@ -81,6 +82,7 @@ namespace Anabatic {
     for ( Edge* edge : _southEdges ) edge->destroy();
     for ( Edge* edge : _northEdges ) edge->destroy();
 
+    _anabatic->_remove( this );
     Super::_preDestroy();
   }
 
@@ -159,6 +161,69 @@ namespace Anabatic {
   }
 
 
+  GCell* GCell::getWest  ( DbU::Unit y ) const
+  {
+    for ( Edge* edge : _westEdges ) {
+      GCell* side = edge->getOpposite(this);
+      if (y < side->getYMax()) return side;
+    }
+    return NULL;
+  }
+
+
+  GCell* GCell::getEast  ( DbU::Unit y ) const
+  {
+    for ( Edge* edge : _eastEdges ) {
+      GCell* side = edge->getOpposite(this);
+      cerr << "east @Y: " << DbU::getValueString(y) << " " << side << endl;
+      if (y < side->getYMax()) return side;
+    }
+    return NULL;
+  }
+
+
+  GCell* GCell::getSouth ( DbU::Unit x ) const
+  {
+    for ( Edge* edge : _southEdges ) {
+      GCell* side = edge->getOpposite(this);
+      if (x < side->getXMax()) return side;
+    }
+    return NULL;
+  }
+
+
+  GCell* GCell::getNorth ( DbU::Unit x ) const
+  {
+    for ( Edge* edge : _northEdges ) {
+      GCell* side = edge->getOpposite(this);
+      if (x < side->getXMax()) return side;
+    }
+    return NULL;
+  }
+
+
+  GCell* GCell::getUnder ( DbU::Unit x, DbU::Unit y ) const
+  {
+    const GCell* current = this;
+
+    while ( current ) {
+      cerr << "current:" << current << endl;
+      if (not current->isFlat() and current->getBoundingBox().contains(x,y)) break;
+
+      if (x >= current->getXMax()) { current = current->getEast (); continue; }
+      if (y >= current->getYMax()) { current = current->getNorth(); continue; }
+
+      cerr << Error( "GCell::getUnder(): No GCell under (%s,%s), this must *never* happen."
+                   , DbU::getValueString(x).c_str()
+                   , DbU::getValueString(y).c_str()
+                   ) << endl;
+      current = NULL; break;
+    }
+    
+    return const_cast<GCell*>( current );
+  }
+
+
   Box  GCell::getBorder ( const GCell* s, const GCell* t )
   {
     Flags flags = Flags::NoFlags;
@@ -203,6 +268,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( x, getYMin() );
+    cdebug.log(110) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::EastSide|Flags::MoveSide );
     Edge::create( this, chunk, Flags::Horizontal );
@@ -254,6 +320,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( getXMin(), y );
+    cdebug.log(110) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::NorthSide|Flags::MoveSide );
     Edge::create( this, chunk, Flags::Vertical );
@@ -339,6 +406,11 @@ namespace Anabatic {
     cdebug.log(110,1) << "South side." << endl; for ( Edge* edge : _southEdges ) edge->revalidate(); cdebug.tabw(110,-1);
     cdebug.log(110,1) << "North side." << endl; for ( Edge* edge : _northEdges ) edge->revalidate(); cdebug.tabw(110,-1);
 
+    if (_xmin > getXMax()+1)
+      cerr << Error( "GCell::_revalidate(): %s, X Min is greater than Max.", getString(this).c_str() );
+    if (_ymin > getYMax()+1)
+      cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
+
     _anabatic->_updateLookup( this );
     cdebug.tabw(110,-1);
   }
@@ -357,8 +429,7 @@ namespace Anabatic {
 
       if (iclear < _southEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _southEdges.size()) ; ++iedge ) {
-          if (flags & Flags::MoveSide) _southEdges[iedge]->_setSource( dest );
-          else                         _southEdges[iedge]->_setTarget( dest );
+          _southEdges[iedge]->_setTarget( dest );
           dest->_southEdges.push_back( _southEdges[iedge] );
         }
         _southEdges.resize( iclear );
@@ -378,8 +449,7 @@ namespace Anabatic {
 
       if (iclear < _northEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _northEdges.size()) ; ++iedge ) {
-          if (flags & Flags::MoveSide) _northEdges[iedge]->_setTarget( dest );
-          else                         _northEdges[iedge]->_setSource( dest );
+          _northEdges[iedge]->_setSource( dest );
           dest->_northEdges.push_back( _northEdges[iedge] );
         }
         _northEdges.resize( iclear );
@@ -399,8 +469,7 @@ namespace Anabatic {
 
       if (iclear < _westEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _westEdges.size()) ; ++iedge ) {
-          if (flags & Flags::MoveSide) _westEdges[iedge]->_setSource( dest );
-          else                         _westEdges[iedge]->_setTarget( dest );
+          _westEdges[iedge]->_setTarget( dest );
           dest->_westEdges.push_back( _westEdges[iedge] );
         }
         _westEdges.resize( iclear );
@@ -420,8 +489,7 @@ namespace Anabatic {
 
       if (iclear < _eastEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _eastEdges.size()) ; ++iedge ) {
-          if (flags & Flags::MoveSide) _eastEdges[iedge]->_setTarget( dest );
-          else                         _eastEdges[iedge]->_setSource( dest );
+          _eastEdges[iedge]->_setSource( dest );
           dest->_eastEdges.push_back( _eastEdges[iedge] );
         }
         _eastEdges.resize( iclear );
@@ -446,7 +514,7 @@ namespace Anabatic {
 
   Box  GCell::getBoundingBox () const
   {
-    return Box( getXMin(), getYMin(), getXMax(), getYMax() );
+    return Box( getXMin(), getYMin(), getXMax(1), getYMax(1) );
   }
 
 

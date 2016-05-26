@@ -68,6 +68,9 @@ namespace Anabatic {
                         ~Matrix       ();
       inline  Box        getArea      () const;
       inline  DbU::Unit  getSide      () const;
+      inline  Point      getGridPoint ( int i, int j ) const;
+      inline  Point      getGridPoint ( int index ) const;
+      inline  Point      getGridPoint ( const Index& ) const;
       inline  int        getIMax      () const;
       inline  int        getJMax      () const;
       inline  int        index2i      (       int    ) const;
@@ -81,7 +84,7 @@ namespace Anabatic {
       inline  Index&     east         ( Index& ) const;
       inline  Index&     south        ( Index& ) const;
       inline  Index&     north        ( Index& ) const;
-      inline  GCell*     getUnder     ( DbU::Unit x, DbU::Unit y ) const;
+              GCell*     getUnder     ( DbU::Unit x, DbU::Unit y ) const;
       inline  GCell*     getUnder     ( Point ) const;
               void       setCell      ( Cell*, DbU::Unit side );
               void       updateLookup ( GCell* );
@@ -169,12 +172,17 @@ namespace Anabatic {
     return index;
   }
 
-  inline GCell*  Matrix::getUnder ( DbU::Unit x, DbU::Unit y ) const
-  { int index = xy2index(x,y); return (index < 0) ? NULL : _gcells[index]; }
-
   inline GCell*  Matrix::getUnder ( Point p ) const
   { return getUnder( p.getX(), p.getY() ); }
 
+  inline Point  Matrix::getGridPoint ( int i, int j ) const
+  { return Point( _area.getXMin() + _side*i, _area.getYMin() + _side*j ); }
+
+  inline Point  Matrix::getGridPoint ( int index ) const
+  { return getGridPoint( index2i(index), index2j(index) ); }
+
+  inline Point  Matrix::getGridPoint ( const Index& index ) const
+  { return getGridPoint( index.i(), index.j() ); }
 
 // Matrix::Index inline functions.
 

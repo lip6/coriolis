@@ -29,6 +29,7 @@ namespace Hurricane {
 #include "crlcore/ToolEngine.h"
 #include "anabatic/Configuration.h"
 #include "anabatic/Matrix.h"
+#include "anabatic/GCell.h"
 
 
 namespace Anabatic {
@@ -36,11 +37,10 @@ namespace Anabatic {
   using std::string;
   using Hurricane::Name;
   using Hurricane::Record;
+  using Hurricane::Interval;
   using Hurricane::Cell;
   using Hurricane::CellViewer;
   using CRL::ToolEngine;
-
-  class GCell;
 
 
   class AnabaticEngine : public ToolEngine {
@@ -55,6 +55,11 @@ namespace Anabatic {
       inline        CellViewer*     getViewer         () const;
       inline        void            setViewer         ( CellViewer* );
       inline        GCell*          getSouthWestGCell () const;
+      inline        GCell*          getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const;
+      inline        GCell*          getGCellUnder     ( Point ) const;
+                    int             getCapacity       ( Interval, Flags ) const;
+      inline        void            _add              ( GCell* );
+      inline        void            _remove           ( GCell* );
       inline        void            _updateLookup     ( GCell* );
                     void            _runTest          ();
     // Inspector support.                             
@@ -73,14 +78,18 @@ namespace Anabatic {
       static Name           _toolName;
              Configuration* _configuration;
              Matrix         _matrix;
-             GCell*         _southWestGCell;
+             GCellSet       _gcells;
              CellViewer*    _viewer;
   };
 
 
   inline CellViewer* AnabaticEngine::getViewer         () const { return _viewer; }
   inline void        AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
-  inline GCell*      AnabaticEngine::getSouthWestGCell () const { return _southWestGCell; }
+  inline GCell*      AnabaticEngine::getSouthWestGCell () const { return *(_gcells.begin()); }
+  inline GCell*      AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
+  inline GCell*      AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
+  inline void        AnabaticEngine::_add              ( GCell* gcell ) { _gcells.insert(gcell); }
+  inline void        AnabaticEngine::_remove           ( GCell* gcell ) { _gcells.erase(gcell); }
   inline void        AnabaticEngine::_updateLookup     ( GCell* gcell ) { _matrix.updateLookup(gcell); }
   
 

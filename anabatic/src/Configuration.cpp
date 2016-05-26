@@ -71,6 +71,8 @@ namespace Anabatic {
     , _rg             (NULL)
     , _extensionCaps  ()
     , _allowedDepth   (0)
+    , _edgeLength     (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
+    , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
   {
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
@@ -264,6 +266,15 @@ namespace Anabatic {
                  , getString(_rg->getName()).c_str()
                  , getString(name).c_str() ) << endl;
   }
+
+
+  DbU::Unit  ConfigurationConcrete::getEdgeLength () const
+  { return _edgeLength; }
+
+
+  DbU::Unit  ConfigurationConcrete::getEdgeWidth () const
+  { return _edgeWidth; }
+
 
 
   void  ConfigurationConcrete::print ( Cell* cell ) const

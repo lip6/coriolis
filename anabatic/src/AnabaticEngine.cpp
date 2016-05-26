@@ -17,8 +17,10 @@
 #include <sstream>
 #include <iostream>
 #include "hurricane/Error.h"
+#include "hurricane/RegularLayer.h"
 #include "hurricane/Cell.h"
 #include "hurricane/UpdateSession.h"
+#include "crlcore/RoutingGauge.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
 
@@ -30,8 +32,11 @@ namespace Anabatic {
   using std::endl;
   using std::ostringstream;
   using Hurricane::Error;
+  using Hurricane::RegularLayer;
   using Hurricane::Cell;
   using Hurricane::UpdateSession;
+  using CRL::RoutingGauge;
+  using CRL::RoutingLayerGauge;
 
 
 // -------------------------------------------------------------------
@@ -56,9 +61,8 @@ namespace Anabatic {
     : Super(cell)
     , _configuration (new ConfigurationConcrete())
     , _matrix        ()
-    , _southWestGCell(NULL)
   {
-    _matrix.setCell( cell, _configuration->getSliceHeight() );
+    _matrix.setCell( cell, _configuration->getSliceHeight()*2 );
   }
 
 
@@ -66,12 +70,8 @@ namespace Anabatic {
   {
     Super::_postCreate();
 
-  //cdebug.setMinLevel(110);
-  //cdebug.setMaxLevel(120);
-
     UpdateSession::open();
-    _southWestGCell = GCell::create( this );
-
+    GCell::create( this );
     UpdateSession::close();
   }
 
@@ -90,6 +90,7 @@ namespace Anabatic {
 
   AnabaticEngine::~AnabaticEngine ()
   {
+    while ( not _gcells.empty() ) (*_gcells.rbegin())->destroy();
     delete _configuration;
   }
 
@@ -105,6 +106,35 @@ namespace Anabatic {
 
   Configuration* AnabaticEngine::getConfiguration ()
   { return _configuration; }
+
+
+  int  AnabaticEngine::getCapacity ( Interval span, Flags flags ) const
+  {
+    int           capacity = 0;
+    Box           ab       = getCell()->getAbutmentBox();
+    RoutingGauge* rg       = _configuration->getRoutingGauge();
+
+    const vector<RoutingLayerGauge*>& layerGauges = rg->getLayerGauges();
+    for ( size_t depth=0 ; depth <= _configuration->getAllowedDepth() ; ++depth ) {
+      if (layerGauges[depth]->getType() != Constant::Default) continue;
+
+      if (flags & Flags::Horizontal) {
+        if (layerGauges[depth]->getDirection() != Constant::Horizontal) continue;
+        capacity += layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getYMin()
+                                                      , span.getVMax() - ab.getYMin() );
+      //cdebug.log(110) << "Horizontal edge capacity:" << capacity << endl;
+      }
+
+      if (flags & Flags::Vertical) {
+        if (layerGauges[depth]->getDirection() != Constant::Vertical) continue;
+        capacity += layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getXMin()
+                                                      , span.getVMax() - ab.getXMin() );
+      //cdebug.log(110) << "Vertical edge capacity:" << capacity << endl;
+      }
+    }
+
+    return capacity;
+  }
 
 
   void  AnabaticEngine::_runTest ()
@@ -128,9 +158,9 @@ namespace Anabatic {
   Record* AnabaticEngine::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot("_configuration" ,  _configuration ) );
-    record->add( getSlot("_southWestGCell",  _southWestGCell) );
-    record->add( getSlot("_matrix"        , &_matrix        ) );
+    record->add( getSlot("_configuration",  _configuration) );
+    record->add( getSlot("_gcells"       , &_gcells       ) );
+    record->add( getSlot("_matrix"       , &_matrix       ) );
     return record;
   }
 

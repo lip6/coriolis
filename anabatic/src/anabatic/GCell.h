@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 #include "hurricane/Name.h"
 #include "hurricane/Box.h"
 #include "hurricane/Cell.h"
@@ -36,10 +37,14 @@ namespace Anabatic {
   using Hurricane::Point;
   using Hurricane::Interval;
   using Hurricane::Box;
+  using Hurricane::Entity;
   using Hurricane::Cell;
 
   class AnabaticEngine;
 
+
+// -------------------------------------------------------------------
+// Class  :  "GCell".
 
   class GCell : public ExtensionGo {
     public:
@@ -50,13 +55,25 @@ namespace Anabatic {
       static        GCell*          create               ( AnabaticEngine* );
       virtual       void            destroy              ();
     public:
+      inline        bool            isHFlat              () const;
+      inline        bool            isVFlat              () const;
+      inline        bool            isFlat               () const;
       inline        AnabaticEngine* getAnabatic          () const;
       inline        DbU::Unit       getXMin              () const;
       inline        DbU::Unit       getYMin              () const;
-      inline        DbU::Unit       getXMax              () const;
-      inline        DbU::Unit       getYMax              () const;
+      inline        DbU::Unit       getXMax              ( int shrink=0 ) const;
+      inline        DbU::Unit       getYMax              ( int shrink=0 ) const;
       inline        Interval        getSide              ( Flags direction ) const;
       inline        Point           getCenter            () const;
+      inline        GCell*          getWest              () const;
+      inline        GCell*          getEast              () const;
+      inline        GCell*          getSouth             () const;
+      inline        GCell*          getNorth             () const;
+                    GCell*          getWest              ( DbU::Unit y ) const;
+                    GCell*          getEast              ( DbU::Unit y ) const;
+                    GCell*          getSouth             ( DbU::Unit x ) const;
+                    GCell*          getNorth             ( DbU::Unit x ) const;
+                    GCell*          getUnder             ( DbU::Unit x, DbU::Unit y ) const;
                     GCell*          hcut                 ( DbU::Unit y );
                     GCell*          vcut                 ( DbU::Unit x );
                     bool            doGrid               ();
@@ -100,19 +117,26 @@ namespace Anabatic {
   };
 
 
-  inline AnabaticEngine* GCell::getAnabatic          () const { return _anabatic; }
-  inline DbU::Unit       GCell::getXMin              () const { return _xmin; }
-  inline DbU::Unit       GCell::getYMin              () const { return _ymin; }
-  inline const Flags&    GCell::flags                () const { return _flags; }
-  inline Flags&          GCell::flags                () { return _flags; }
+  inline bool            GCell::isHFlat     () const { return getYMin() == getYMax(); }
+  inline bool            GCell::isVFlat     () const { return getXMin() == getXMax(); }
+  inline bool            GCell::isFlat      () const { return isHFlat() or isVFlat(); }
+  inline AnabaticEngine* GCell::getAnabatic () const { return _anabatic; }
+  inline DbU::Unit       GCell::getXMin     () const { return _xmin; }
+  inline DbU::Unit       GCell::getYMin     () const { return _ymin; }
+  inline GCell*          GCell::getWest     () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
+  inline GCell*          GCell::getEast     () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
+  inline GCell*          GCell::getSouth    () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
+  inline GCell*          GCell::getNorth    () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
+  inline const Flags&    GCell::flags       () const { return _flags; }
+  inline Flags&          GCell::flags       () { return _flags; }
 
-  inline DbU::Unit  GCell::getXMax () const
-  { return _eastEdges.empty() ? getCell()->getAbutmentBox().getXMax()
-                              : _eastEdges[0]->getOpposite(this)->getXMin(); }
+  inline DbU::Unit  GCell::getXMax ( int shrink ) const
+  { return _eastEdges.empty() ?       getCell()->getAbutmentBox().getXMax() - shrink
+                              : _eastEdges[0]->getOpposite(this)->getXMin() - shrink; }
 
-  inline DbU::Unit  GCell::getYMax () const
-  { return _northEdges.empty() ? getCell()->getAbutmentBox().getYMax()
-                               : _northEdges[0]->getOpposite(this)->getYMin(); }
+  inline DbU::Unit  GCell::getYMax ( int shrink ) const
+  { return _northEdges.empty() ?        getCell()->getAbutmentBox().getYMax() - shrink 
+                               : _northEdges[0]->getOpposite(this)->getYMin() - shrink; }
 
   inline Point  GCell::getCenter () const
   { return Point( (getXMin()+getXMax())/2, (getYMin()+getYMax())/2); }
@@ -122,6 +146,12 @@ namespace Anabatic {
     if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getYMax() );
     return Interval( getXMin(), getXMax() );
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "GCellSet".
+
+  typedef  std::set< GCell*, Entity::CompareById >  GCellSet;
 
 
 }  // Anabatic namespace.
