@@ -426,7 +426,7 @@ try:
 
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
-      gitCoriolis.checkout( 'devel' )
+      gitCoriolis.checkout( 'devel_anabatic' )
       
       if conf.rmSource: gitChams.removeLocalRepo()
       gitChams.clone   ()
