@@ -98,8 +98,8 @@ namespace Hurricane {
 
   inline void  Observable::notify ( unsigned int flags )
   {
-    for ( auto iobserver : _observers ) {
-      iobserver->notify( flags );
+    for ( BaseObserver* iobserver : _observers ) {
+      if (iobserver) iobserver->notify( flags );
     }
   }
 

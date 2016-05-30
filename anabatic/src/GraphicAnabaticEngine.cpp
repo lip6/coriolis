@@ -35,6 +35,7 @@
 #include <crlcore/AllianceFramework.h>
 #include "anabatic/GCell.h"
 #include "anabatic/GraphicAnabaticEngine.h"
+#include "anabatic/Dijkstra.h"
 
 
 namespace Anabatic {
@@ -119,6 +120,24 @@ namespace Anabatic {
       engine->reset();
       cdebug.log(110,1) << "Test 3, loop:" << i << " completed." << endl;
       cdebug.tabw(110,-1);
+    }
+  }
+    
+
+  void  anabaticTest_4 ( AnabaticEngine* engine )
+  {
+    Cell* cell = engine->getCell();
+    cell->flattenNets( Cell::Flags::BuildRings );
+    cell->createRoutingPadRings( Cell::Flags::BuildRings );
+
+    engine->getSouthWestGCell()->doGrid();
+
+    Net* net = cell->getNet( "ialu.inv_x2_3_sig" ); 
+    if (net) {
+      Dijkstra* dijkstra = new Dijkstra ( engine );
+      dijkstra->load( net );
+      dijkstra->run();
+      delete dijkstra;
     }
   }
     
@@ -254,7 +273,8 @@ namespace Anabatic {
 
   //anabaticTest_1( engine );
   //anabaticTest_2( engine );
-    anabaticTest_3( engine );
+  //anabaticTest_3( engine );
+    anabaticTest_4( engine );
 
     if (_viewer) _viewer->emitCellChanged();
   }

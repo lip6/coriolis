@@ -23,6 +23,7 @@
 #include "hurricane/Box.h"
 #include "hurricane/ExtensionGo.h"
 #include "anabatic/Constants.h"
+#include "anabatic/Edges.h"
 
 
 namespace Anabatic {
@@ -44,6 +45,8 @@ namespace Anabatic {
     public:
       typedef ExtensionGo  Super;
     public:
+      static  DbU::Unit    unity;
+    public:
       static        Edge*           create               ( GCell* source, GCell* target, Flags flags=Flags::NoFlags );
       virtual       void            destroy              ();
     public:                                  
@@ -52,6 +55,7 @@ namespace Anabatic {
       inline        unsigned int    getCapacity          () const;
       inline        unsigned int    getRealOccupancy     () const;
       inline        unsigned int    getEstimateOccupancy () const;
+                    float           getDistance          () const;
       inline        GCell*          getSource            () const;
       inline        GCell*          getTarget            () const;
                     GCell*          getOpposite          ( const GCell* ) const;

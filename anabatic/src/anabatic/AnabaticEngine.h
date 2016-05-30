@@ -56,10 +56,15 @@ namespace Anabatic {
       virtual       Configuration*  getConfiguration  ();
       inline        CellViewer*     getViewer         () const;
       inline        void            setViewer         ( CellViewer* );
+      inline  const vector<GCell*>& getGCells         () const;
       inline        GCell*          getSouthWestGCell () const;
       inline        GCell*          getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*          getGCellUnder     ( Point ) const;
                     int             getCapacity       ( Interval, Flags ) const;
+    // Dijkstra related functions.
+      inline        int             getStamp          () const;
+      inline        int             incStamp          ();
+    // Misc. functions.
       inline const  Flags&          flags             () const;
       inline        Flags&          flags             ();
                     void            reset             ();
@@ -87,18 +92,20 @@ namespace Anabatic {
              vector<GCell*> _gcells;
              CellViewer*    _viewer;
              Flags          _flags;
+             int            _stamp;
   };
 
 
-  inline CellViewer*   AnabaticEngine::getViewer         () const { return _viewer; }
-  inline void          AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
-  inline GCell*        AnabaticEngine::getSouthWestGCell () const { return _gcells[0]; }
-  inline GCell*        AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
-  inline GCell*        AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
-  inline const Flags&  AnabaticEngine::flags             () const { return _flags; }
-  inline Flags&        AnabaticEngine::flags             () { return _flags; }
-  inline void          AnabaticEngine::_updateLookup     ( GCell* gcell ) { _matrix.updateLookup(gcell); }
-  inline bool          AnabaticEngine::_inDestroy        () const { return _flags & Flags::Destroy; }
+  inline CellViewer*           AnabaticEngine::getViewer         () const { return _viewer; }
+  inline void                  AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
+  inline const vector<GCell*>& AnabaticEngine::getGCells         () const { return _gcells; }
+  inline GCell*                AnabaticEngine::getSouthWestGCell () const { return _gcells[0]; }
+  inline GCell*                AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
+  inline GCell*                AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
+  inline const Flags&          AnabaticEngine::flags             () const { return _flags; }
+  inline Flags&                AnabaticEngine::flags             () { return _flags; }
+  inline void                  AnabaticEngine::_updateLookup     ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline bool                  AnabaticEngine::_inDestroy        () const { return _flags & Flags::Destroy; }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
   {
@@ -115,6 +122,9 @@ namespace Anabatic {
         break;
       }
   }
+
+  inline int  AnabaticEngine::getStamp () const { return _stamp; }
+  inline int  AnabaticEngine::incStamp () { return ++_stamp; }
 
 }  // Anabatic namespace.
 

@@ -64,8 +64,10 @@ namespace Anabatic {
     , _gcells        ()
     , _viewer        (NULL)
     , _flags         (Flags::NoFlags)
+    , _stamp         (-1)
   {
-    _matrix.setCell( cell, _configuration->getSliceHeight()*2 );
+    _matrix.setCell( cell, _configuration->getSliceHeight() );
+    Edge::unity = _configuration->getSliceHeight();
   }
 
 

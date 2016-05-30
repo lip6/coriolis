@@ -55,43 +55,46 @@ namespace Anabatic {
   class Configuration {
     public:
     // Constructor & Destructor.
-      virtual                   ~Configuration      ();
-      virtual Configuration*     clone              () const = 0;
-    // Methods.                                     
-      virtual bool               isGMetal           ( const Layer* ) const = 0;
-      virtual bool               isGContact         ( const Layer* ) const = 0;
-      virtual size_t             getDepth           () const = 0;
-      virtual size_t             getAllowedDepth    () const = 0;
-      virtual size_t             getLayerDepth      ( const Layer* ) const = 0;
-      virtual CellGauge*         getCellGauge       () const = 0;
-      virtual RoutingGauge*      getRoutingGauge    () const = 0;
-      virtual RoutingLayerGauge* getLayerGauge      ( size_t depth ) const = 0;
-      virtual const Layer*       getRoutingLayer    ( size_t depth ) const = 0;
-      virtual Layer*             getContactLayer    ( size_t depth ) const = 0;
-      virtual DbU::Unit          getSliceHeight     () const = 0;
-      virtual DbU::Unit          getSliceStep       () const = 0;
-      virtual DbU::Unit          getPitch           ( size_t depth, Flags flags ) const = 0;
-      virtual DbU::Unit          getOffset          ( size_t depth ) const = 0;
-      virtual DbU::Unit          getWireWidth       ( size_t depth ) const = 0;
-      virtual DbU::Unit          getExtensionCap    ( size_t depth ) const = 0;
-      virtual Flags              getDirection       ( size_t depth ) const = 0;
-      virtual DbU::Unit          getPitch           ( const Layer*, Flags flags ) const = 0;
-      virtual DbU::Unit          getOffset          ( const Layer* ) const = 0;
-      virtual DbU::Unit          getWireWidth       ( const Layer* ) const = 0;
-      virtual DbU::Unit          getExtensionCap    ( const Layer* ) const = 0;
-      virtual Flags              getDirection       ( const Layer* ) const = 0;
-      virtual void               setAllowedDepth    ( size_t ) = 0;
-      virtual DbU::Unit          getEdgeLength      () const = 0;
-      virtual DbU::Unit          getEdgeWidth       () const = 0;
-      virtual void               print              ( Cell* ) const = 0;
-      virtual Record*            _getRecord         () const = 0;
-      virtual string             _getString         () const = 0;
-      virtual string             _getTypeName       () const = 0;
-    protected:
-                                 Configuration      ();
-    private:
-                                 Configuration      ( const Configuration& );
-              Configuration&     operator=          ( const Configuration& );
+      virtual                   ~Configuration       ();
+      virtual Configuration*     clone               () const = 0;
+    // Methods.                                      
+      virtual bool               isGMetal            ( const Layer* ) const = 0;
+      virtual bool               isGContact          ( const Layer* ) const = 0;
+      virtual const Layer*       getGContactLayer    () const = 0;
+      virtual const Layer*       getGHorizontalLayer () const = 0;
+      virtual const Layer*       getGVerticalLayer   () const = 0;
+      virtual size_t             getDepth            () const = 0;
+      virtual size_t             getAllowedDepth     () const = 0;
+      virtual size_t             getLayerDepth       ( const Layer* ) const = 0;
+      virtual CellGauge*         getCellGauge        () const = 0;
+      virtual RoutingGauge*      getRoutingGauge     () const = 0;
+      virtual RoutingLayerGauge* getLayerGauge       ( size_t depth ) const = 0;
+      virtual const Layer*       getRoutingLayer     ( size_t depth ) const = 0;
+      virtual Layer*             getContactLayer     ( size_t depth ) const = 0;
+      virtual DbU::Unit          getSliceHeight      () const = 0;
+      virtual DbU::Unit          getSliceStep        () const = 0;
+      virtual DbU::Unit          getPitch            ( size_t depth, Flags flags ) const = 0;
+      virtual DbU::Unit          getOffset           ( size_t depth ) const = 0;
+      virtual DbU::Unit          getWireWidth        ( size_t depth ) const = 0;
+      virtual DbU::Unit          getExtensionCap     ( size_t depth ) const = 0;
+      virtual Flags              getDirection        ( size_t depth ) const = 0;
+      virtual DbU::Unit          getPitch            ( const Layer*, Flags flags ) const = 0;
+      virtual DbU::Unit          getOffset           ( const Layer* ) const = 0;
+      virtual DbU::Unit          getWireWidth        ( const Layer* ) const = 0;
+      virtual DbU::Unit          getExtensionCap     ( const Layer* ) const = 0;
+      virtual Flags              getDirection        ( const Layer* ) const = 0;
+      virtual void               setAllowedDepth     ( size_t ) = 0;
+      virtual DbU::Unit          getEdgeLength       () const = 0;
+      virtual DbU::Unit          getEdgeWidth        () const = 0;
+      virtual void               print               ( Cell* ) const = 0;
+      virtual Record*            _getRecord          () const = 0;
+      virtual string             _getString          () const = 0;
+      virtual string             _getTypeName        () const = 0;
+    protected:                                       
+                                 Configuration       ();
+    private:                                         
+                                 Configuration       ( const Configuration& );
+              Configuration&     operator=           ( const Configuration& );
     private:
       static  Configuration*     _default;
   };
@@ -110,6 +113,9 @@ namespace Anabatic {
     // Methods.
       virtual bool                   isGMetal              ( const Layer* ) const;
       virtual bool                   isGContact            ( const Layer* ) const;
+      virtual const Layer*           getGContactLayer      () const;
+      virtual const Layer*           getGHorizontalLayer   () const;
+      virtual const Layer*           getGVerticalLayer     () const;
       virtual size_t                 getDepth              () const;
       virtual size_t                 getAllowedDepth       () const;
       virtual size_t                 getLayerDepth         ( const Layer* ) const;

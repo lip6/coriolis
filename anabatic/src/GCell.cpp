@@ -15,6 +15,7 @@
 
 
 #include <iostream>
+#include "hurricane/Contact.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
 
@@ -39,6 +40,8 @@ namespace Anabatic {
     , _northEdges()
     , _xmin      (xmin)
     , _ymin      (ymin)
+    , _contacts  ()
+    , _lookup    (NULL)
   { }
 
 
@@ -503,6 +506,23 @@ namespace Anabatic {
     }
 
     cdebug.tabw(110,-1);
+  }
+
+
+  Contact* GCell::getGContact ( Net* net )
+  {
+    for ( Contact* contact : _contacts ) {
+      if (contact->getNet() == net) return contact;
+    }
+
+    Point center = getBoundingBox().getCenter();
+    return Contact::create( net
+                          , _anabatic->getConfiguration()->getGContactLayer()
+                          , center.getX()
+                          , center.getY()
+                          , DbU::fromLambda(2.0)
+                          , DbU::fromLambda(2.0)
+                          );
   }
 
 

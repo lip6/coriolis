@@ -28,7 +28,8 @@ namespace Anabatic {
   using Hurricane::Error;
 
 
-  Name  Edge::_extensionName = "Anabatic::Edge";
+  Name       Edge::_extensionName = "Anabatic::Edge";
+  DbU::Unit  Edge::unity          = 1;
 
 
   Edge::Edge ( GCell* source, GCell* target, Flags flags )
@@ -152,6 +153,16 @@ namespace Anabatic {
                      , std::min(_source->getYMax(),_target->getYMax()) );
 
     return side;
+  }
+
+
+  float  Edge::getDistance () const
+  {
+    Point sourceCenter = getSource()->getBoundingBox().getCenter();
+    Point targetCenter = getTarget()->getBoundingBox().getCenter();
+
+    return ( (targetCenter.getX() - sourceCenter.getX())
+           + (targetCenter.getY() - sourceCenter.getY()) ) / unity;
   }
 
 

@@ -113,13 +113,13 @@ namespace Anabatic {
 
   ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
     : Configuration()
-    , _gmetalh           (other._gmetalh)
-    , _gmetalv           (other._gmetalv)
-    , _gcontact          (other._gcontact)
-    , _cg                (NULL)
-    , _rg                (NULL)
-    , _extensionCaps     (other._extensionCaps)
-    , _allowedDepth      (other._allowedDepth)
+    , _gmetalh      (other._gmetalh)
+    , _gmetalv      (other._gmetalv)
+    , _gcontact     (other._gcontact)
+    , _cg           (NULL)
+    , _rg           (NULL)
+    , _extensionCaps(other._extensionCaps)
+    , _allowedDepth (other._allowedDepth)
   {
     if (other._cg) _cg = other._cg->getClone();
     if (other._rg) _rg = other._rg->getClone();
@@ -145,6 +145,14 @@ namespace Anabatic {
   bool  ConfigurationConcrete::isGContact ( const Layer* layer ) const
   { return (layer and (layer == _gcontact)); }
 
+  const Layer* ConfigurationConcrete::getGContactLayer () const
+  { return _gcontact; }
+
+  const Layer* ConfigurationConcrete::getGHorizontalLayer () const
+  { return _gmetalh; }
+
+  const Layer* ConfigurationConcrete::getGVerticalLayer () const
+  { return _gmetalv; }
 
   size_t  ConfigurationConcrete::getDepth () const
   { return _rg->getDepth(); }

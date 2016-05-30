@@ -15,10 +15,11 @@ endif ( CHECK_DETERMINISM )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
                                      anabatic/Matrix.h
-                                     anabatic/Edge.h
+                                     anabatic/Edge.h                 anabatic/Edges.h
                                      anabatic/GCell.h               #anabatic/GCells.h
                                      anabatic/AnabaticEngine.h
                                      anabatic/GraphicAnabaticEngine.h
+                                     anabatic/Dijkstra.h
                       )
                    set( mocIncludes  anabatic/GraphicAnabaticEngine.h )
                    set( pyIncludes   anabatic/PyAnabaticEngine.h
@@ -28,9 +29,11 @@ endif ( CHECK_DETERMINISM )
                                      Configuration.cpp
                                      Matrix.cpp
                                      Edge.cpp
+                                     Edges.cpp
                                      GCell.cpp
                                      AnabaticEngine.cpp
                                      GraphicAnabaticEngine.cpp
+                                     Dijkstra.cpp
                       )
                    set( pyCpps       PyAnabaticEngine.cpp
                                      PyGraphicAnabaticEngine.cpp
