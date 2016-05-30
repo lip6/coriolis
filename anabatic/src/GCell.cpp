@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include "hurricane/Contact.h"
+#include "hurricane/UpdateSession.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
 
@@ -25,6 +26,7 @@ namespace Anabatic {
   using std::cerr;
   using std::endl;
   using Hurricane::Error;
+  using Hurricane::UpdateSession;
 
 
   Name  GCell::_extensionName = "Anabatic::GCell";
@@ -208,7 +210,6 @@ namespace Anabatic {
     const GCell* current = this;
 
     while ( current ) {
-      cerr << "current:" << current << endl;
       if (not current->isFlat() and current->getBoundingBox().contains(x,y)) break;
 
       if (x >= current->getXMax()) { current = current->getEast (); continue; }
@@ -378,6 +379,8 @@ namespace Anabatic {
       return false;
     }
 
+    UpdateSession::open();
+
     GCell*    row    = this;
     GCell*    column = NULL;
     DbU::Unit ycut   = vspan.getVMin()+side;
@@ -394,6 +397,8 @@ namespace Anabatic {
     for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
       column = column->vcut( xcut );
     }
+
+    UpdateSession::close();
 
     return true;
   }
@@ -511,18 +516,24 @@ namespace Anabatic {
 
   Contact* GCell::getGContact ( Net* net )
   {
+
     for ( Contact* contact : _contacts ) {
-      if (contact->getNet() == net) return contact;
+      if (contact->getNet() == net) {
+        cdebug.log(111) << "GCell::getGContact(): " << contact << endl;
+        return contact;
+      }
     }
 
-    Point center = getBoundingBox().getCenter();
-    return Contact::create( net
-                          , _anabatic->getConfiguration()->getGContactLayer()
-                          , center.getX()
-                          , center.getY()
-                          , DbU::fromLambda(2.0)
-                          , DbU::fromLambda(2.0)
-                          );
+    Point    center  = getBoundingBox().getCenter();
+    Contact* contact = Contact::create( net
+                                      , _anabatic->getConfiguration()->getGContactLayer()
+                                      , center.getX()
+                                      , center.getY()
+                                      , DbU::fromLambda(2.0)
+                                      , DbU::fromLambda(2.0)
+                                      );
+    cdebug.log(111) << "GCell::getGContact(): " << contact << endl;
+    return contact;
   }
 
 

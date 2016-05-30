@@ -49,6 +49,16 @@ namespace Anabatic {
   { return _stamp == getAnabatic()->getStamp(); }
 
 
+  string  Vertex::_getString () const
+  {
+    string s = "<Vertex " + getString(_id)
+             + " connexId:" + getString(_connexId)
+             + " d:" + ((_distance == unreached) ? "unreached" : getString(_distance) )
+             + ">";
+    return s;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::Dijkstra".
 
@@ -79,12 +89,17 @@ namespace Anabatic {
 
   void  Dijkstra::load ( Net* net )
   {
+    _net = net;
+
+    cdebug.log(111,1) << "Dijkstra::load() " << _net << endl;
     UpdateSession::open();
 
+    _sources.clear();
+    _targets.clear();
     _searchArea.makeEmpty();
     _stamp = _anabatic->incStamp();
 
-    for ( Component* component : net->getRoutingPads() ) {
+    for ( Component* component : _net->getRoutingPads() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
       if (rp) {
         Box    rpBb   = rp->getBoundingBox();
@@ -94,8 +109,8 @@ namespace Anabatic {
         if (not gcell) {
           cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
                          "        It will be ignored ans the routing will be incomplete."
-                       , getString(rp ).c_str()
-                       , getString(net).c_str()
+                       , getString(rp  ).c_str()
+                       , getString(_net).c_str()
                        ) << endl;
           continue;
         }
@@ -104,22 +119,27 @@ namespace Anabatic {
 
         Vertex* vertex = gcell->lookup<Vertex>();
         if (vertex->getConnexId() < 0) {
+          cdebug.log(111) << "Add Vertex: " << vertex << endl;
+
           vertex->setStamp   ( _stamp );
           vertex->setConnexId( _targets.size() );
-          vertex->getGContact( _net );
+          Contact* gcontact = vertex->getGContact( _net );
+          rp->getBodyHook()->detach();
+          rp->getBodyHook()->attach( gcontact->getBodyHook() );
           _targets.insert( vertex );
         }
       }
     }
 
     UpdateSession::close();
+    cdebug.tabw(111,-1);
   } 
 
 
   void  Dijkstra::selectFirstSource ()
   {
     if (_targets.empty()) {
-      cerr << Error( "Dijkstra::selectFirstSource(): %s has no vertexes to route, ignored.\n"
+      cerr << Error( "Dijkstra::selectFirstSource(): %s has no vertexes to route, ignored."
                    , getString(_net).c_str()
                    ) << endl;
       return;
@@ -137,74 +157,125 @@ namespace Anabatic {
       }
     }
 
-    _targets.erase( firstSource );
+    _targets.erase ( firstSource );
+    _sources.insert( firstSource );
+
+    cdebug.log(111) << "Dijkstra::selectFirstSource() " << *_sources.begin() << endl;
   }
 
 
-  void  Dijkstra::propagate ()
+  bool  Dijkstra::propagate ()
   {
+    cdebug.log(111,1) << "Dijkstra::propagate() " << _net << endl;
+
     while ( not _queue.empty() ) {
+      _queue.dump();
+
       Vertex* current = _queue.top();
       _queue.pop();
 
+      cdebug.log(111) << "Pop: (size:" << _queue.size() << ") " << current << endl;
+
       if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
         for ( Edge* edge : current->getGCell()->getEdges() ) {
+
           if (edge == current->getFrom()) continue;
           
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->lookup<Vertex>();
 
+          cdebug.log(111) << "Neighbor: " << vneighbor << endl;
+
           if (vneighbor->getConnexId() == _connectedsId) continue;
 
           float distance = current->getDistance() + edge->getDistance();
-          if (distance < current->getDistance()) {
+
+          if (distance < vneighbor->getDistance()) {
             if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
             else                                               vneighbor->setStamp( _stamp );
 
             vneighbor->setDistance( distance );
+            vneighbor->setFrom    ( edge );
             _queue.push( vneighbor );
+
+            cdebug.log(111) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
           }
         }
+
+        continue;
       }
 
     // We did reach another target (different <connexId>).
     // Tag back the path.
+      cdebug.log(111) << "Trace back" << endl;
       _targets.erase( current );
       while ( current ) {
+        cdebug.log(111) << "| " << current << endl;
+
         _sources.insert( current );
         current->setDistance( 0.0 );
         current->setConnexId( _connectedsId );
         current = current->getPredecessor();
       }
 
-      break;
+      cdebug.tabw(111,-1);
+      return true;
     }
+
+    cerr << Error( "Dijkstra::propagate(): %s has unreachable targets."
+                 , getString(_net).c_str()
+                 ) << endl;
+
+    cdebug.tabw(111,-1);
+    return false;
   }
 
 
   void  Dijkstra::run ()
   {
-    if (_sources.empty()) return;
+    cdebug.log(111,1) << "Dijkstra::run() on " << _net << endl;
+
+    selectFirstSource();
+    if (_sources.empty()) {
+      cdebug.log(111) << "No source to start, not routed." << endl;
+      cdebug.tabw(111,-1);
+      return;
+    }
 
     UpdateSession::open();
 
+    Vertex* source = *_sources.begin();
     _queue.clear();
-    _queue.push( *_sources.begin() );
-    _connectedsId = (*_sources.begin())->getConnexId();
+    _queue.push( source );
+    _connectedsId = source->getConnexId();
+    source->setDistance( 0.0 );
 
-    while ( not _targets.empty() ) propagate();
+    cdebug.log(111) << "Push source: (size:" << _queue.size() << ") "
+                    << source
+                    << " _connectedsId:" << _connectedsId << endl;
+
+    while ( not _targets.empty() and propagate() );
 
     toWires();
+    _queue.clear();
 
     UpdateSession::close();
+    cdebug.tabw(111,-1);
   }
 
 
   void  Dijkstra::toWires ()
   {
+    cdebug.log(111,1) << "Dijkstra::toWires() " << _net << endl;
+
     for ( Vertex* vertex : _sources ) {
       Edge* from = vertex->getFrom();
       if (not from) continue;
+
+
+      cdebug.log(111) << "| " << vertex << endl;
+
+      from->incRealOccupancy( 1 );
 
       Vertex* source = vertex;
       Vertex* target = source->getPredecessor();
@@ -214,7 +285,7 @@ namespace Anabatic {
         std::swap( source, target );
 
       Contact* sourceContact = source->getGContact( _net );
-      Contact* targetContact = source->getGContact( _net );
+      Contact* targetContact = target->getGContact( _net );
 
       if (from->isHorizontal()) {
         Horizontal::create( sourceContact
@@ -232,6 +303,8 @@ namespace Anabatic {
                         );
       }
     }
+
+    cdebug.tabw(111,-1);
   }
 
 

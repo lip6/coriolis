@@ -88,7 +88,9 @@ namespace Anabatic {
     , _gcell(locator._gcell)
     , _flags(locator._flags)
     , _iedge(locator._iedge)
-  { }
+  {
+    cdebug.log(110) << "GCell_Edges::Locator::Locator(const Locator&)" << std::endl;
+  }
 
 
   inline GCell_Edges::GCell_Edges ( const GCell* gcell )
@@ -103,6 +105,12 @@ namespace Anabatic {
   { }
 
 
-}   // Anabatic namespace.
+}  // Anabatic namespace.
+
+
+GETSTRING_POINTER_SUPPORT(Anabatic::GCell_Edges);
+GETSTRING_POINTER_SUPPORT(Anabatic::GCell_Edges::Locator);
+IOSTREAM_POINTER_SUPPORT(Anabatic::GCell_Edges);
+IOSTREAM_POINTER_SUPPORT(Anabatic::GCell_Edges::Locator);
 
 #endif  // ANABATIC_EDGES_H

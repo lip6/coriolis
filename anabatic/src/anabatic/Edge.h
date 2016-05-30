@@ -63,6 +63,7 @@ namespace Anabatic {
       inline        DbU::Unit       getAxis              () const;
                     DbU::Unit       getAxisMin           () const;
                     Interval        getSide              () const;
+      inline        void            incRealOccupancy     ( unsigned int );
       inline const  Flags&          flags                () const;
       inline        Flags&          flags                ();
       inline        void            invalidate           ();
@@ -111,6 +112,7 @@ namespace Anabatic {
   inline GCell*        Edge::getSource            () const { return _source; }
   inline GCell*        Edge::getTarget            () const { return _target; }
   inline DbU::Unit     Edge::getAxis              () const { return _axis; }
+  inline void          Edge::incRealOccupancy     ( unsigned int delta ) { _realOccupancy+=delta; }
   inline const Flags&  Edge::flags                () const { return _flags; }
   inline Flags&        Edge::flags                () { return _flags; }
   inline void          Edge::invalidate           () { _flags |= Flags::Invalidated; }

@@ -18,6 +18,7 @@
 #define  ANABATIC_DIJKSTRA_H
 
 #include <set>
+#include <iomanip>
 namespace Hurricane {
   class Net;
 }
@@ -27,6 +28,7 @@ namespace Hurricane {
 namespace Anabatic {
 
   using std::set;
+  using std::multiset;
   using Hurricane::Net;
   class AnabaticEngine;
 
@@ -41,29 +43,31 @@ namespace Anabatic {
           inline bool  operator() ( const Vertex* lhs, const Vertex* rhs );
       };
     public:
-      static        float           unreached;
-    public:                        
-             inline                 Vertex         ( GCell* );
-             inline                 Vertex         ( size_t id );
-             inline                ~Vertex         ();
-             inline unsigned int    getId          () const;
-             inline GCell*          getGCell       () const;
-             inline AnabaticEngine* getAnabatic    () const;
-             inline Contact*        getGContact    ( Net* );
-                    bool            hasValidStamp  () const;
-             inline Point           getCenter      () const;
-             inline float           getDistance    () const;
-             inline int             getStamp       () const;
-             inline int             getConnexId    () const;
-             inline Edge*           getFrom        () const;
-             inline Vertex*         getPredecessor () const;
-             inline void            setDistance    ( float );
-             inline void            setStamp       ( int );
-             inline void            setConnexId    ( int );
-             inline void            setFrom        ( Edge* );
+      static         float           unreached;
+    public:                         
+             inline                  Vertex         ( GCell* );
+             inline                  Vertex         ( size_t id );
+             inline                 ~Vertex         ();
+             inline  unsigned int    getId          () const;
+             inline  GCell*          getGCell       () const;
+             inline  AnabaticEngine* getAnabatic    () const;
+             inline  Contact*        getGContact    ( Net* );
+                     bool            hasValidStamp  () const;
+             inline  Point           getCenter      () const;
+             inline  float           getDistance    () const;
+             inline  int             getStamp       () const;
+             inline  int             getConnexId    () const;
+             inline  Edge*           getFrom        () const;
+             inline  Vertex*         getPredecessor () const;
+             inline  void            setDistance    ( float );
+             inline  void            setStamp       ( int );
+             inline  void            setConnexId    ( int );
+             inline  void            setFrom        ( Edge* );
+    // Inspector support. 
+                     string          _getString     () const;
     private:                        
-                                    Vertex         ( const Vertex& );
-             Vertex&                operator=      ( const Vertex& );
+                                     Vertex         ( const Vertex& );
+                     Vertex&         operator=      ( const Vertex& );
     private:
       size_t  _id;
       GCell*  _gcell;
@@ -132,13 +136,14 @@ namespace Anabatic {
       inline  Vertex* top           ();
       inline  void    pop           ();
       inline  void    clear         ();
+      inline  void    dump          () const;
     private:
       class CompareByDistance {
         public:
           inline bool operator() ( const Vertex* lhs, const Vertex* rhs );
       };
     private:
-      set<Vertex*,CompareByDistance>  _queue;
+      multiset<Vertex*,CompareByDistance>  _queue;
   };
 
 
@@ -146,15 +151,26 @@ namespace Anabatic {
   { return lhs->getDistance() < rhs->getDistance(); }
 
 
-  inline          PriorityQueue::PriorityQueue  () : _queue() { }
-  inline          PriorityQueue::~PriorityQueue () { }
-  inline  bool    PriorityQueue::empty          () const { return _queue.empty(); }
-  inline  size_t  PriorityQueue::size           () const { return _queue.size(); }
-  inline  void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
-  inline  void    PriorityQueue::erase          ( Vertex* v ) { _queue.erase(v); }
-  inline  Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
-  inline  void    PriorityQueue::pop            () { _queue.erase(_queue.begin()); }
-  inline  void    PriorityQueue::clear          () { _queue.clear(); }
+  inline         PriorityQueue::PriorityQueue  () : _queue() { }
+  inline         PriorityQueue::~PriorityQueue () { }
+  inline bool    PriorityQueue::empty          () const { return _queue.empty(); }
+  inline size_t  PriorityQueue::size           () const { return _queue.size(); }
+  inline void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
+  inline void    PriorityQueue::erase          ( Vertex* v ) { _queue.erase(v); }
+  inline Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
+  inline void    PriorityQueue::pop            () { _queue.erase(_queue.begin()); }
+  inline void    PriorityQueue::clear          () { _queue.clear(); }
+
+  inline void  PriorityQueue::dump () const
+  {
+    if (cdebug.enabled(111)) {
+      cdebug.log(111,1) << "PriorityQueue::dump() size:" << size() << std::endl;
+      size_t order = 0;
+      for ( Vertex* v : _queue )
+        cdebug.log(111) << "[" << std::setw(3) << order++ << "] " << v << std::endl;
+      cdebug.tabw(111,-1);
+    }
+  }
 
 
 // -------------------------------------------------------------------
@@ -167,7 +183,7 @@ namespace Anabatic {
     public:
       void      load              ( Net* );
       void      run               ();
-      void      propagate         ();
+      bool      propagate         ();
       void      selectFirstSource ();
       void      toWires           ();
     private:
@@ -187,5 +203,9 @@ namespace Anabatic {
 
 
 }  // Anabatic namespace.
+
+
+GETSTRING_POINTER_SUPPORT(Anabatic::Vertex);
+IOSTREAM_POINTER_SUPPORT(Anabatic::Vertex);
 
 #endif  // ANABATIC_DIJKSTRA_H

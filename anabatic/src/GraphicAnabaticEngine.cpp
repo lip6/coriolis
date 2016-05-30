@@ -23,6 +23,7 @@
 #include <hurricane/Error.h>
 #include <hurricane/Breakpoint.h>
 #include <hurricane/DebugSession.h>
+#include <hurricane/UpdateSession.h>
 #include <hurricane/Go.h>
 #include <hurricane/Net.h>
 #include <hurricane/Cell.h>
@@ -46,6 +47,7 @@ namespace Anabatic {
   using Hurricane::Exception;
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
+  using Hurricane::UpdateSession;
   using Hurricane::Point;
   using Hurricane::Entity;
   using Hurricane::Net;
@@ -75,6 +77,8 @@ namespace Anabatic {
 
   void  anabaticTest_2 ( AnabaticEngine* engine )
   {
+    UpdateSession::open();
+
     GCell*    row0    = engine->getSouthWestGCell();
     DbU::Unit xcorner = engine->getCell()->getAbutmentBox().getXMin();
     DbU::Unit ycorner = engine->getCell()->getAbutmentBox().getYMin();
@@ -106,6 +110,8 @@ namespace Anabatic {
     cdebug.log(119,1) << "row1+1: " << row1 << endl;
 
     cdebug.tabw(119,-1);
+
+    UpdateSession::close();
   }
     
 
@@ -132,13 +138,17 @@ namespace Anabatic {
 
     engine->getSouthWestGCell()->doGrid();
 
-    Net* net = cell->getNet( "ialu.inv_x2_3_sig" ); 
-    if (net) {
-      Dijkstra* dijkstra = new Dijkstra ( engine );
+    vector<Net*> nets;
+    nets.push_back( cell->getNet( "ialu.inv_x2_3_sig"  ) ); 
+    nets.push_back( cell->getNet( "iram.na3_x1_13_sig" ) ); 
+    nets.push_back( cell->getNet( "iram.ram_idx_7(1)"  ) ); 
+
+    Dijkstra* dijkstra = new Dijkstra ( engine );
+    for ( Net* net : nets ) {
       dijkstra->load( net );
       dijkstra->run();
-      delete dijkstra;
     }
+    delete dijkstra;
   }
     
 

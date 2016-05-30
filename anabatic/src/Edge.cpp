@@ -190,6 +190,7 @@ namespace Anabatic {
     _axis     = side.getCenter();
     _capacity = getAnabatic()->getCapacity( side, _flags );
 
+    Super::invalidate( false );
     _flags.reset( Flags::Invalidated );
     cdebug.log(110) << "Edge::_revalidate() " << this << endl;
   }

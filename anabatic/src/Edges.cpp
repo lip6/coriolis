@@ -32,66 +32,87 @@ namespace Anabatic {
     , _flags(Flags::EastSide)
     , _iedge(0)
   {
+    cdebug.log(110) << "GCell_Edges::Locator::Locator() " << isValid() << endl;
     if (_gcell->getEastEdges().empty()) progress();
   }
 
 
   EdgesHL* GCell_Edges::Locator::getClone () const
-  { return new Locator (*this); }
+  {
+    cdebug.log(110) << "GCell_Edges::Locator::getClone()" << endl;
+    return new Locator (*this);
+  }
 
 
   Edge* GCell_Edges::Locator::getElement () const
   { 
-    if (_flags & Flags::EastSide ) return _gcell->getEastEdges ()[_iedge];
-    if (_flags & Flags::NorthSide) return _gcell->getNorthEdges()[_iedge];
-    if (_flags & Flags::WestSide ) return _gcell->getWestEdges ()[_iedge];
-    if (_flags & Flags::SouthSide) return _gcell->getSouthEdges()[_iedge];
+    if (_flags.contains(Flags::EastSide )) return _gcell->getEastEdges ()[_iedge];
+    if (_flags.contains(Flags::NorthSide)) return _gcell->getNorthEdges()[_iedge];
+    if (_flags.contains(Flags::WestSide )) return _gcell->getWestEdges ()[_iedge];
+    if (_flags.contains(Flags::SouthSide)) return _gcell->getSouthEdges()[_iedge];
     return NULL;
   }
 
 
   bool  GCell_Edges::Locator::isValid () const
-  { return not _flags; }
+  { return _flags; }
 
 
   void  GCell_Edges::Locator::progress ()
   {
-    cdebug.log(110) << "GCell_Edges::Locator::progress()" << endl;
+    cdebug.log(110) << "GCell_Edges::Locator::progress() [from] " << _flags << " iedge:" << _iedge << endl;
+    cdebug.log(110) << "  East:"  << _gcell->getEastEdges().size()
+                    << "  North:" << _gcell->getNorthEdges().size()
+                    << "  West:"  << _gcell->getWestEdges().size()
+                    << "  South:" << _gcell->getSouthEdges().size() << endl;
+    cdebug.log(110) << this << endl;
 
     ++_iedge;
     while (_flags) {
-      if (_flags & Flags::EastSide) {
+      if (_flags.contains(Flags::EastSide)) {
         if (_iedge < _gcell->getEastEdges().size()) break;
+        cdebug.log(110) << "Switching to North side." << endl;
         _flags = Flags::NorthSide;
         _iedge = 0;
+        cdebug.log(110) << this << endl;
+        continue;
       }
-      if (_flags & Flags::NorthSide)  {
+      if (_flags.contains(Flags::NorthSide))  {
         if (_iedge < _gcell->getNorthEdges().size()) break;
+        cdebug.log(110) << "Switching to West side." << endl;
         _flags = Flags::WestSide;
         _iedge = 0;
+        cdebug.log(110) << this << endl;
+        continue;
       }
-      if (_flags & Flags::WestSide)  {
+      if (_flags.contains(Flags::WestSide))  {
         if (_iedge < _gcell->getWestEdges().size()) break;
+        cdebug.log(110) << "Switching to South side." << endl;
         _flags = Flags::SouthSide;
         _iedge = 0;
+        continue;
       }
-      if (_flags & Flags::SouthSide)  {
+      if (_flags.contains(Flags::SouthSide))  {
         if (_iedge < _gcell->getSouthEdges().size()) break;
+        cdebug.log(110) << "All edges done." << endl;
         _flags = 0;
         _iedge = 0;
+        break;;
       }
     }
+
+    cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _flags << " iedge:" << _iedge << endl;
   }
 
 
   string  GCell_Edges::Locator::_getString () const
   {
     string s = "<GCell_Edges::Locator";
-    if (_flags & Flags::EastSide ) s += "East["  + getString(_iedge) + "]";
-    if (_flags & Flags::NorthSide) s += "North[" + getString(_iedge) + "]";
-    if (_flags & Flags::WestSide ) s += "West["  + getString(_iedge) + "]";
-    if (_flags & Flags::SouthSide) s += "South[" + getString(_iedge) + "]";
-    if (_flags == 0)               s += "invalid";
+    if (_flags.contains(Flags::EastSide )) s += " East["  + getString(_iedge) + "]";
+    if (_flags.contains(Flags::NorthSide)) s += " North[" + getString(_iedge) + "]";
+    if (_flags.contains(Flags::WestSide )) s += " West["  + getString(_iedge) + "]";
+    if (_flags.contains(Flags::SouthSide)) s += " South[" + getString(_iedge) + "]";
+    if (_flags == 0)                       s += " invalid";
     s += ">";
     return s;
   }
