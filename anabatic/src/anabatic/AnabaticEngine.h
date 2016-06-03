@@ -56,6 +56,7 @@ namespace Anabatic {
       virtual       Configuration*  getConfiguration  ();
       inline        CellViewer*     getViewer         () const;
       inline        void            setViewer         ( CellViewer* );
+      inline  const Matrix*         getMatrix         () const;
       inline  const vector<GCell*>& getGCells         () const;
       inline        GCell*          getSouthWestGCell () const;
       inline        GCell*          getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const;
@@ -98,6 +99,7 @@ namespace Anabatic {
 
   inline CellViewer*           AnabaticEngine::getViewer         () const { return _viewer; }
   inline void                  AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
+  inline const Matrix*         AnabaticEngine::getMatrix         () const { return &_matrix; }
   inline const vector<GCell*>& AnabaticEngine::getGCells         () const { return _gcells; }
   inline GCell*                AnabaticEngine::getSouthWestGCell () const { return _gcells[0]; }
   inline GCell*                AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }

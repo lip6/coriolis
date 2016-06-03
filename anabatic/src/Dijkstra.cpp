@@ -54,8 +54,18 @@ namespace Anabatic {
     string s = "<Vertex " + getString(_id)
              + " connexId:" + getString(_connexId)
              + " d:" + ((_distance == unreached) ? "unreached" : getString(_distance) )
+             + " stamp:" + (hasValidStamp() ? "valid" : "outdated")
+             + " from:" + ((_from) ? "set" : "NULL")
              + ">";
     return s;
+  }
+
+
+  void  Vertex::notify ( Vertex* vertex, unsigned int flags )
+  {
+  //Vertex* vertex = getOwner();
+    cdebug.log(111) << "Vertex::notify() " << vertex << endl;
+  // Take into account the GCell modification here.
   }
 
 
@@ -117,12 +127,13 @@ namespace Anabatic {
 
         _searchArea.merge( rpBb );
 
-        Vertex* vertex = gcell->lookup<Vertex>();
+        Vertex* vertex = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
         if (vertex->getConnexId() < 0) {
           cdebug.log(111) << "Add Vertex: " << vertex << endl;
 
           vertex->setStamp   ( _stamp );
           vertex->setConnexId( _targets.size() );
+          vertex->setFrom    ( NULL );
           Contact* gcontact = vertex->getGContact( _net );
           rp->getBodyHook()->detach();
           rp->getBodyHook()->attach( gcontact->getBodyHook() );
@@ -182,7 +193,7 @@ namespace Anabatic {
           if (edge == current->getFrom()) continue;
           
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
-          Vertex* vneighbor = gneighbor->lookup<Vertex>();
+          Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
 
           cdebug.log(111) << "Neighbor: " << vneighbor << endl;
 
@@ -212,10 +223,21 @@ namespace Anabatic {
       while ( current ) {
         cdebug.log(111) << "| " << current << endl;
 
+        if ( (current->getConnexId() == _connectedsId) and (current->getFrom()) ) {
+          cerr << Error( "Dijkstra::propagate(): There is a loop in the traceback path\n"
+                         "        while routing %s."
+                       , getString(_net).c_str()
+                       ) <<endl;
+          break;
+        }
+
         _sources.insert( current );
         current->setDistance( 0.0 );
         current->setConnexId( _connectedsId );
-        current = current->getPredecessor();
+
+        Vertex* predecessor = current->getPredecessor();
+        current->setFrom( NULL );
+        current = predecessor;
       }
 
       cdebug.tabw(111,-1);

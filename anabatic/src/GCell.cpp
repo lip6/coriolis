@@ -34,6 +34,7 @@ namespace Anabatic {
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
     : Super(anabatic->getCell())
+    , _observable()
     , _anabatic  (anabatic)
     , _flags     (Flags::NoFlags)
     , _westEdges ()
@@ -43,7 +44,6 @@ namespace Anabatic {
     , _xmin      (xmin)
     , _ymin      (ymin)
     , _contacts  ()
-    , _lookup    (NULL)
   { }
 
 
@@ -418,6 +418,7 @@ namespace Anabatic {
       cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
 
     _anabatic->_updateLookup( this );
+    _anabatic->getMatrix()->show();
     cdebug.tabw(110,-1);
   }
 

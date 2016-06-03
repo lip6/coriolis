@@ -34,6 +34,8 @@ namespace Anabatic {
 
   using std::string;
   using std::vector;
+  using Hurricane::StaticObservable;
+  using Hurricane::BaseObserver;
   using Hurricane::Name;
   using Hurricane::Record;
   using Hurricane::DbU;
@@ -54,6 +56,17 @@ namespace Anabatic {
   class GCell : public ExtensionGo {
     public:
       typedef ExtensionGo  Super;
+    public:
+      class Observable : public StaticObservable<1> {
+        public:
+          enum Indexes { Vertex = 0
+                       };
+        public:
+          inline             Observable ();
+        private:
+                             Observable ( const StaticObservable& );
+                 Observable& operator=  ( const StaticObservable& );
+      };
     public:
       static        Box             getBorder            ( const GCell*, const GCell* );
     public:                         
@@ -88,10 +101,6 @@ namespace Anabatic {
                     GCell*          vcut                 ( DbU::Unit x );
                     bool            doGrid               ();
                     Contact*        getGContact          ( Net* );
-      template<typename Type>
-      inline        void            setLookup            ( Type* decorator );
-      template<typename Type>
-      inline        Type*           lookup               () const;
     // Misc. functions.
       inline const  Flags&          flags                () const;
       inline        Flags&          flags                ();
@@ -102,27 +111,33 @@ namespace Anabatic {
                     void            _revalidate          ();
                     void            _moveEdges           ( GCell* dest, size_t ibegin, Flags flags );
     public:                                
+    // Observers.
+      inline        void            setObserver          ( size_t slot, BaseObserver* );
+      template<typename OwnerT>
+      inline        OwnerT*         getObserver          ( size_t slot );
+      inline        void            notify               ( unsigned int flags );
     // ExtensionGo support.                
-      inline  const Name&         staticGetName        (); 
-      virtual const Name&         getName              () const;
-      virtual       void          translate            ( const DbU::Unit&, const DbU::Unit& );
-      virtual       Box           getBoundingBox       () const;
-    public:                                            
-    // Inspector support.                              
-      virtual       string        _getTypeName         () const;
-      virtual       string        _getString           () const;
-      virtual       Record*       _getRecord           () const;
-    protected:                                         
-                                  GCell                ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
-      virtual                    ~GCell                ();
-                    GCell*        _create              ( DbU::Unit xmin, DbU::Unit ymin );
-      virtual       void          _postCreate          ();
-      virtual       void          _preDestroy          ();
-    private:
-                                  GCell                ( const GCell& );
-                    GCell&        operator=            ( const GCell& );
+      inline  const Name&           staticGetName        (); 
+      virtual const Name&           getName              () const;
+      virtual       void            translate            ( const DbU::Unit&, const DbU::Unit& );
+      virtual       Box             getBoundingBox       () const;
+    public:                                              
+    // Inspector support.                                
+      virtual       string          _getTypeName         () const;
+      virtual       string          _getString           () const;
+      virtual       Record*         _getRecord           () const;
+    protected:                                           
+                                    GCell                ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
+      virtual                      ~GCell                ();
+                    GCell*          _create              ( DbU::Unit xmin, DbU::Unit ymin );
+      virtual       void            _postCreate          ();
+      virtual       void            _preDestroy          ();
+    private:                        
+                                    GCell                ( const GCell& );
+                    GCell&          operator=            ( const GCell& );
     private:
       static  Name             _extensionName;
+              Observable       _observable;
               AnabaticEngine*  _anabatic;
               Flags            _flags;
               vector<Edge*>    _westEdges;
@@ -132,7 +147,6 @@ namespace Anabatic {
               DbU::Unit        _xmin;
               DbU::Unit        _ymin;
               vector<Contact*> _contacts;
-              void*            _lookup;
   };
 
 
@@ -172,11 +186,17 @@ namespace Anabatic {
     return Interval( getXMin(), getXMax() );
   }
 
-  template<typename Type>
-  inline void  GCell::setLookup ( Type* decorator ) { _lookup=reinterpret_cast<void*>(decorator); }
+  inline void  GCell::setObserver ( size_t slot, BaseObserver* observer )
+  { _observable.setObserver( slot, observer ); }
 
-  template<typename Type>
-  inline Type* GCell::lookup () const { return reinterpret_cast<Type*>( _lookup ); }
+  template<typename OwnerT>
+  inline OwnerT* GCell::getObserver ( size_t slot )
+  { return _observable.getObserver<OwnerT>(slot); }
+
+  inline void  GCell::notify ( unsigned int flags )
+  { _observable.notify( flags ); }
+
+  inline GCell::Observable::Observable () : StaticObservable<1>() { }
 
 
 // -------------------------------------------------------------------

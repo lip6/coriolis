@@ -19,6 +19,7 @@
 
 #include <set>
 #include <iomanip>
+#include "hurricane/Observer.h"
 namespace Hurricane {
   class Net;
 }
@@ -29,6 +30,7 @@ namespace Anabatic {
 
   using std::set;
   using std::multiset;
+  using Hurricane::Observer;
   using Hurricane::Net;
   class AnabaticEngine;
 
@@ -44,6 +46,8 @@ namespace Anabatic {
       };
     public:
       static         float           unreached;
+    public:                         
+      static         void            notify         ( Vertex*, unsigned flags );
     public:                         
              inline                  Vertex         ( GCell* );
              inline                  Vertex         ( size_t id );
@@ -69,29 +73,33 @@ namespace Anabatic {
                                      Vertex         ( const Vertex& );
                      Vertex&         operator=      ( const Vertex& );
     private:
-      size_t  _id;
-      GCell*  _gcell;
-      int     _connexId;
-      int     _stamp;
-      float   _distance;
-      Edge*   _from;
+      size_t            _id;
+      GCell*            _gcell;
+      Observer<Vertex>  _observer;
+      int               _connexId;
+      int               _stamp;
+      float             _distance;
+      Edge*             _from;
   };
 
 
   inline Vertex::Vertex ( GCell* gcell )
     : _id      (gcell->getId())
     , _gcell   (gcell)
+    , _observer(this)
     , _connexId(-1)
     , _stamp   (-1)
     , _distance(unreached)
     , _from    (NULL)
   {
-    gcell->setLookup<Vertex>( this );
+  //gcell->setLookup<Vertex>( this );
+    gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
 
   inline Vertex::Vertex ( size_t id )
     : _id      (id)
     , _gcell   (NULL)
+    , _observer((Vertex*)0x1)  // To trick the NULL detection.
     , _connexId(-1)
     , _stamp   (-1)
     , _distance(unreached)
@@ -114,10 +122,11 @@ namespace Anabatic {
   inline void             Vertex::setConnexId    ( int id ) { _connexId=id; }
 
   inline Vertex* Vertex::getPredecessor () const
-  { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->lookup<Vertex>() : NULL; }
+  { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
 
   inline bool  Vertex::CompareById::operator() ( const Vertex* lhs, const Vertex* rhs )
   { return lhs->getId() < rhs->getId(); }
+
 
   typedef  set<Vertex*,Vertex::CompareById>  VertexSet;
 

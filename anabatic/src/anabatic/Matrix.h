@@ -44,10 +44,13 @@ namespace Anabatic {
     public:
       class Index {
         public:
+          static inline Matrix::Index  asMin ( Matrix*, DbU::Unit x, DbU::Unit y );
+          static inline Matrix::Index  asMax ( Matrix*, DbU::Unit x, DbU::Unit y );
+          static inline Matrix::Index  asMin ( Matrix*, Point position );
+          static inline Matrix::Index  asMax ( Matrix*, Point position );
+        public:
           inline               Index  ( Matrix*, int index );
           inline               Index  ( Matrix*, int i, int j );
-          inline               Index  ( Matrix*, DbU::Unit x, DbU::Unit y );
-          inline               Index  ( Matrix*, Point position );
           inline       Matrix* matrix () const;
           inline const int&    index  () const;
           inline       int&    index  ();
@@ -78,8 +81,10 @@ namespace Anabatic {
       inline  int        index2i      ( const Index& ) const;
       inline  int        index2j      ( const Index& ) const;
       inline  int        ij2index     ( int i, int j ) const;
-      inline  int        xy2index     ( DbU::Unit x, DbU::Unit y ) const;
-      inline  int        xy2index     ( Point ) const;
+      inline  int        xy2minIndex  ( DbU::Unit x, DbU::Unit y ) const;
+      inline  int        xy2minIndex  ( Point ) const;
+      inline  int        xy2maxIndex  ( DbU::Unit x, DbU::Unit y ) const;
+      inline  int        xy2maxIndex  ( Point ) const;
       inline  Index&     west         ( Index& ) const;
       inline  Index&     east         ( Index& ) const;
       inline  Index&     south        ( Index& ) const;
@@ -88,6 +93,7 @@ namespace Anabatic {
       inline  GCell*     getUnder     ( Point ) const;
               void       setCell      ( Cell*, DbU::Unit side );
               void       updateLookup ( GCell* );
+              void       show         () const;
     // Inspector support.                            
       virtual Record*    _getRecord   () const;
       virtual string     _getString   () const;
@@ -127,14 +133,29 @@ namespace Anabatic {
   {
     if ((i < 0) or (i >= _imax)) return -1;
     if ((j < 0) or (j >= _jmax)) return -1;
-    return j*_jmax + i;
+    return j*_imax + i;
   }
 
-  inline int  Matrix::xy2index ( DbU::Unit x, DbU::Unit y ) const
-  { return ij2index( (x - _area.getXMin()) / _side, (y - _area.getYMin()) / _side ); }
+  inline int  Matrix::xy2minIndex ( DbU::Unit x, DbU::Unit y ) const
+  {
+    DbU::Unit dx = x - _area.getXMin();
+    DbU::Unit dy = y - _area.getYMin();
+    return ij2index( dx / _side + ((dx%_side) ? 1 : 0)
+                   , dy / _side + ((dy%_side) ? 1 : 0) );
+  }
 
-  inline int  Matrix::xy2index ( Point p ) const
-  { return xy2index( p.getX(), p.getY() ); }
+  inline int  Matrix::xy2minIndex ( Point p ) const
+  { return xy2minIndex( p.getX(), p.getY() ); }
+
+  inline int  Matrix::xy2maxIndex ( DbU::Unit x, DbU::Unit y ) const
+  {
+    DbU::Unit dx = x - _area.getXMin();
+    DbU::Unit dy = y - _area.getYMin();
+    return ij2index( dx / _side, dy / _side );
+  }
+
+  inline int  Matrix::xy2maxIndex ( Point p ) const
+  { return xy2maxIndex( p.getX(), p.getY() ); }
 
   inline Matrix::Index& Matrix::west ( Matrix::Index& index ) const
   {
@@ -186,11 +207,13 @@ namespace Anabatic {
 
 // Matrix::Index inline functions.
 
-  inline  Matrix::Index::Index ( Matrix* m, int index )                : _matrix(m), _index(index) { }
-  inline  Matrix::Index::Index ( Matrix* m, int i, int j )             : _matrix(m), _index(m->ij2index(i,j)) { }
-  inline  Matrix::Index::Index ( Matrix* m, DbU::Unit x, DbU::Unit y ) : _matrix(m), _index(m->xy2index(x,y)) { }
-  inline  Matrix::Index::Index ( Matrix* m, Point position )           : _matrix(m), _index(m->xy2index(position)) { }
+  inline  Matrix::Index::Index ( Matrix* m, int index )    : _matrix(m), _index(index) { }
+  inline  Matrix::Index::Index ( Matrix* m, int i, int j ) : _matrix(m), _index(m->ij2index(i,j)) { }
 
+  inline       Matrix::Index   Matrix::Index::asMin  ( Matrix* m, DbU::Unit x, DbU::Unit y ) { return Index( m, m->xy2minIndex(x,y) ); }
+  inline       Matrix::Index   Matrix::Index::asMin  ( Matrix* m, Point position )           { return Index( m, m->xy2minIndex(position) ); }
+  inline       Matrix::Index   Matrix::Index::asMax  ( Matrix* m, DbU::Unit x, DbU::Unit y ) { return Index( m, m->xy2maxIndex(x,y) ); }
+  inline       Matrix::Index   Matrix::Index::asMax  ( Matrix* m, Point position )           { return Index( m, m->xy2maxIndex(position) ); }
   inline       Matrix*         Matrix::Index::matrix () const { return _matrix; }
   inline const int&            Matrix::Index::index  () const { return _index; }
   inline       int&            Matrix::Index::index  ()       { return _index; }

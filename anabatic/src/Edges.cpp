@@ -32,14 +32,14 @@ namespace Anabatic {
     , _flags(Flags::EastSide)
     , _iedge(0)
   {
-    cdebug.log(110) << "GCell_Edges::Locator::Locator() " << isValid() << endl;
+    // cdebug.log(110) << "GCell_Edges::Locator::Locator() " << isValid() << endl;
     if (_gcell->getEastEdges().empty()) progress();
   }
 
 
   EdgesHL* GCell_Edges::Locator::getClone () const
   {
-    cdebug.log(110) << "GCell_Edges::Locator::getClone()" << endl;
+    // cdebug.log(110) << "GCell_Edges::Locator::getClone()" << endl;
     return new Locator (*this);
   }
 
@@ -60,48 +60,48 @@ namespace Anabatic {
 
   void  GCell_Edges::Locator::progress ()
   {
-    cdebug.log(110) << "GCell_Edges::Locator::progress() [from] " << _flags << " iedge:" << _iedge << endl;
-    cdebug.log(110) << "  East:"  << _gcell->getEastEdges().size()
-                    << "  North:" << _gcell->getNorthEdges().size()
-                    << "  West:"  << _gcell->getWestEdges().size()
-                    << "  South:" << _gcell->getSouthEdges().size() << endl;
-    cdebug.log(110) << this << endl;
+    // cdebug.log(110) << "GCell_Edges::Locator::progress() [from] " << _flags << " iedge:" << _iedge << endl;
+    // cdebug.log(110) << "  East:"  << _gcell->getEastEdges().size()
+    //                 << "  North:" << _gcell->getNorthEdges().size()
+    //                 << "  West:"  << _gcell->getWestEdges().size()
+    //                 << "  South:" << _gcell->getSouthEdges().size() << endl;
+    // cdebug.log(110) << this << endl;
 
     ++_iedge;
     while (_flags) {
       if (_flags.contains(Flags::EastSide)) {
         if (_iedge < _gcell->getEastEdges().size()) break;
-        cdebug.log(110) << "Switching to North side." << endl;
+        // cdebug.log(110) << "Switching to North side." << endl;
         _flags = Flags::NorthSide;
         _iedge = 0;
-        cdebug.log(110) << this << endl;
+        // cdebug.log(110) << this << endl;
         continue;
       }
       if (_flags.contains(Flags::NorthSide))  {
         if (_iedge < _gcell->getNorthEdges().size()) break;
-        cdebug.log(110) << "Switching to West side." << endl;
+        // cdebug.log(110) << "Switching to West side." << endl;
         _flags = Flags::WestSide;
         _iedge = 0;
-        cdebug.log(110) << this << endl;
+        // cdebug.log(110) << this << endl;
         continue;
       }
       if (_flags.contains(Flags::WestSide))  {
         if (_iedge < _gcell->getWestEdges().size()) break;
-        cdebug.log(110) << "Switching to South side." << endl;
+        // cdebug.log(110) << "Switching to South side." << endl;
         _flags = Flags::SouthSide;
         _iedge = 0;
         continue;
       }
       if (_flags.contains(Flags::SouthSide))  {
         if (_iedge < _gcell->getSouthEdges().size()) break;
-        cdebug.log(110) << "All edges done." << endl;
+        // cdebug.log(110) << "All edges done." << endl;
         _flags = 0;
         _iedge = 0;
         break;;
       }
     }
 
-    cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _flags << " iedge:" << _iedge << endl;
+    // cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _flags << " iedge:" << _iedge << endl;
   }
 
 
