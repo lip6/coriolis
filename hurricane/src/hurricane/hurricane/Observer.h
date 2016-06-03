@@ -30,44 +30,44 @@ namespace Hurricane {
   class BaseObserver {
     public:
       virtual void  notify ( unsigned int flags );
-      template< typename T >
-      inline  T*    as     ();
   };
 
 
-  template< typename T>
-  inline T* BaseObserver::as () { return dynamic_cast<T*>(this); }
-
-
-  template< typename T>
+  template< typename OwnerT>
   class Observer : public BaseObserver {
     public:
-      inline     Observer ( const T* owner );
-      inline  T* getOwner () const;
+      inline            Observer  ( const OwnerT* owner );
+      inline  OwnerT*   getOwner  () const;
+      virtual void      notify    ( unsigned int flags );
     private:
-                 Observer ( const Observer& );
+                       Observer  ( const Observer& );
+             Observer& operator= ( const Observer& );
     private:
       static int  _ownerOffset;
   };
 
 
-  template< typename T>
-  int  Observer<T>::_ownerOffset = -1;
+  template< typename OwnerT>
+  int  Observer<OwnerT>::_ownerOffset = -1;
 
-  template< typename T>
-  inline Observer<T>::Observer ( const T* owner )
+  template< typename OwnerT>
+  inline Observer<OwnerT>::Observer ( const OwnerT* owner )
     : BaseObserver()
   {
     if (owner == NULL)
-      throw Hurricane::Error( "Observer::Observer(), attempt to create with NULL owner." );
+      throw Error( "Observer::Observer(), attempt to create with NULL owner." );
 
-    if (_ownerOffset < 0)
-      _ownerOffset = (unsigned long)this - (unsigned long)owner;
+    if (_ownerOffset < 0) _ownerOffset = (unsigned long)this - (unsigned long)owner;
   }
 
 
-  template< typename T>
-  inline T* Observer<T>::getOwner () const { return reinterpret_cast<T*>((unsigned long)this - _ownerOffset); }
+  template< typename OwnerT>
+  inline OwnerT* Observer<OwnerT>::getOwner () const
+  { return reinterpret_cast<OwnerT*>((unsigned long)this - _ownerOffset); }
+
+  template< typename OwnerT>
+  void  Observer<OwnerT>::notify ( unsigned int flags )
+  { OwnerT::notify( getOwner(), flags ); }
 
 
 // -------------------------------------------------------------------
@@ -102,6 +102,65 @@ namespace Hurricane {
       if (iobserver) iobserver->notify( flags );
     }
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "StaticObservable".
+
+  template<size_t slotsNb>
+  class StaticObservable {
+    public:
+      inline            StaticObservable ();
+      inline  const     std::array<BaseObserver*,slotsNb>&
+                        getObservers     () const;
+      inline  void      setObserver      ( size_t slot, BaseObserver* );
+      inline  void      notify           ( unsigned int flags );
+      template<typename OwnerT>
+      inline  OwnerT*   getObserver      ( size_t slot ) const;
+    private:
+                        StaticObservable ( const StaticObservable& );
+      StaticObservable& operator=        ( const StaticObservable& );
+    private:
+      std::array<BaseObserver*,slotsNb>  _observers;
+  };
+
+
+  template<size_t slotsNb>
+  inline StaticObservable<slotsNb>::StaticObservable ()
+    : _observers()
+  { }
+
+
+  template<size_t slotsNb>
+  inline const std::array<BaseObserver*,slotsNb>& StaticObservable<slotsNb>::getObservers () const
+  { return _observers; }
+
+
+  template<size_t slotsNb>
+  inline void  StaticObservable<slotsNb>::notify ( unsigned int flags )
+  {
+    for ( BaseObserver* iobserver : _observers ) {
+      if (iobserver) iobserver->notify( flags );
+    }
+  }
+
+
+  template<size_t slotsNb>
+  inline void  StaticObservable<slotsNb>::setObserver ( size_t slot, BaseObserver* observer )
+  {
+    if (slot < _observers.size()) _observers[slot] = observer;
+    else
+      throw Error( "StaticObserver::setObserver(): Trying to access out of range slot %u (size:%u)."
+                 , slot, _observers.size()
+                 );
+  }
+
+
+  template<size_t slotsNb>
+  template<typename OwnerT>
+  inline OwnerT* StaticObservable<slotsNb>::getObserver ( size_t slot ) const
+  { return (slot < _observers.size()) ? static_cast< Observer<OwnerT>* >(_observers[slot])->getOwner() : NULL; }
+
 
 
 } // Hurricane namespace.

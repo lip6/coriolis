@@ -44,28 +44,13 @@ namespace CRL {
 
 
 // -------------------------------------------------------------------
-// Class  :  "FrameworkObserver".
-
-  class FrameworkObserver : public Observer<LibraryManager> {
-    public:
-      inline        FrameworkObserver ( LibraryManager* );
-      virtual void  notify            ( unsigned int flags );
-    private:
-                    FrameworkObserver ( const FrameworkObserver& );
-  };
-
-
-  inline  FrameworkObserver::FrameworkObserver ( LibraryManager* owner )
-    : Observer<LibraryManager>(owner)
-  { }
-
-
-// -------------------------------------------------------------------
 // Class  :  "LibraryManager".
 
 
   class LibraryManager : public QWidget {
       Q_OBJECT;
+    public:
+      static  void             notify             ( LibraryManager*, unsigned int flags );
     public:
                                LibraryManager     ( QWidget* parent=NULL );
                               ~LibraryManager     ();
@@ -78,12 +63,12 @@ namespace CRL {
       CellViewer*              openCell           ( Cell*, unsigned int flags );
       void                     updateLibrary      ( Cell* );
     private:
-      FrameworkObserver  _frameworkObserver;
-      LibrariesWidget*   _librariesWidget;
-      CellsWidget*       _cellsWidget;
-      ViewsWidget*       _viewsWidget;
-      CellViewer*        _cellViewer;
-      QLabel*            _libPath;
+      Observer<LibraryManager>  _frameworkObserver;
+      LibrariesWidget*          _librariesWidget;
+      CellsWidget*              _cellsWidget;
+      ViewsWidget*              _viewsWidget;
+      CellViewer*               _cellViewer;
+      QLabel*                   _libPath;
   };
 
 

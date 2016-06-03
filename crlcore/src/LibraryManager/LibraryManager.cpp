@@ -43,9 +43,10 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "FrameworkObserver".
 
-  void  FrameworkObserver::notify ( unsigned int flags )
+//void  FrameworkObserver::notify ( unsigned int flags )
+  void  LibraryManager::notify ( LibraryManager* manager, unsigned int flags )
   {
-    LibraryManager* manager = getOwner();
+  //LibraryManager* manager = getOwner();
     if (flags & (AllianceFramework::AddedLibrary
                 |AllianceFramework::RemovedLibrary)) {
       manager->getLibrariesWidget()->update();

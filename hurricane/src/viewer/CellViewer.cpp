@@ -62,9 +62,12 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "CellObserver".
 
-  void  CellObserver::notify ( unsigned int flags )
+//  void  CellObserver::notify ( unsigned int flags )
+  void  CellViewer::notify ( CellViewer* viewer, unsigned int flags )
   {
-    CellViewer* viewer = getOwner();
+    cdebug.log(111) << "CellViewer::notify() " << viewer << endl;
+
+  //CellViewer* viewer = getOwner();
     switch ( flags & (Cell::Flags::CellAboutToChange
                      |Cell::Flags::CellChanged
                      |Cell::Flags::CellDestroyed) ) {

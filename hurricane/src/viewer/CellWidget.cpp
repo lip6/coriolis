@@ -1042,7 +1042,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 250;
+  int  CellWidget::_initialSide = 500;
 
 
   CellWidget::CellWidget ( QWidget* parent )

@@ -57,18 +57,18 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "CellObserver".
 
-  class CellObserver : public Observer<CellViewer> {
-    public:
-      inline        CellObserver ( CellViewer* );
-      virtual void  notify       ( unsigned int flags );
-    private:
-                    CellObserver ( const CellObserver& );
-  };
+  // class CellObserver : public Observer<CellViewer> {
+  //   public:
+  //     inline        CellObserver ( CellViewer* );
+  //     virtual void  notify       ( unsigned int flags );
+  //   private:
+  //                   CellObserver ( const CellObserver& );
+  // };
 
 
-  inline  CellObserver::CellObserver ( CellViewer* owner )
-    : Observer<CellViewer>(owner)
-  { }
+  // inline  CellObserver::CellObserver ( CellViewer* owner )
+  //   : Observer<CellViewer>(owner)
+  // { }
 
 
 // -------------------------------------------------------------------
@@ -86,90 +86,92 @@ namespace Hurricane {
       typedef  std::map< const QString, boost::any >  ActionLut;
       typedef  bool (QWidget::* SlotMethod)();
     public:
-                                   CellViewer                ( QWidget* parent=NULL );
-      virtual                     ~CellViewer                ();
-      inline  bool                 isToolInterrupted         () const;
-              QMenu*               createDebugMenu           ();
-              bool                 hasMenu                   ( const QString& path ) const;
-              bool                 hasMenuAction             ( const QString& path ) const;
-              QMenu*               addMenu                   ( const QString& path
-                                                             , std::string text
-                                                             , unsigned int flags=NoFlags
-                                                             );
-              bool                 addToMenu                 ( const QString& path );
-              QAction*             addToMenu                 ( const QString& path
-                                                             , std::string  text
-                                                             , std::string  textTip
-                                                             , std::function< void() >
-                                                             , QIcon        icon=QIcon() );
-              QAction*             addToMenu                 ( const QString& path
-                                                             , std::string  text
-                                                             , std::string  textTip
-                                                             , std::string  scriptPath );
-              QAction*             addToMenu                 ( QString             path
-                                                             , QString             text
-                                                             , QString             textTip
-                                                             , const QKeySequence& shortCut 
-                                                             , QIcon               icon    =QIcon());
-      inline  void                 setEnableRedrawInterrupt  ( bool );
-      inline  void                 setApplicationName        ( const QString& );
-      inline  CellObserver*        getCellObserver           ();
-              Cell*                getCell                   () const;
-      virtual void                 setCell                   ( Cell* );
-              void                 renameCell                ( const char* );
-      virtual Cell*                getCellFromDb             ( const char* );
-      inline  CellWidget*          getCellWidget             ();
-      inline  const CellWidget*    getCellWidget             () const;
-      inline  ControllerWidget*    getControllerWidget       ();
-              void                 setAnonNetSelectable      ( bool );
-              void                 select                    ( Occurrence& );
-              void                 unselect                  ( Occurrence& );
-              void                 unselectAll               ();
-      inline  void                 setLayerVisible           ( const Name& layer, bool visible );
-              void                 runScript                 ( QString scriptPath );
-      virtual CellViewer*          vcreate                   () const;
-      virtual std::string          _getString                () const;
-    public slots:                  
-              void                 doAction                  ();
-              void                 doGoto                    ();
-              void                 changeSelectionMode       ();
-              void                 setShowSelection          ( bool );
-              void                 setState                  ( shared_ptr<CellWidget::State>& );
-              void                 removeHistory             ( Cell* );
-              void                 openHistoryCell           ();
-              void                 openDesignBlob            ();
-              void                 saveDesignBlob            ();
-              void                 printDisplay              ();
-              void                 print                     ( QPrinter* );
-              void                 imageDisplay              ();
-              void                 raiseToolInterrupt        ();
-              void                 clearToolInterrupt        ();
-              void                 runScriptWidget           ();
-              void                 runStressScript           ();
-      inline  void                 emitCellAboutToChange     ();
-      inline  void                 emitCellChanged           ();
-      inline  void                 emitCellPreModificated    ();
-      inline  void                 emitCellPostModificated   ();
-    signals:                       
-              void                 cellLoadedFromDisk        ( Cell* );
-              void                 showSelectionToggled      ( bool );
-              void                 stateChanged              ( shared_ptr<CellWidget::State>& );
-              void                 redrawCellWidget          ();
-              void                 cellPreModificated        ();
-              void                 cellPostModificated       ();
-    protected:                     
-              void                 createMenus               ();
-              void                 refreshTitle              ();
-              void                 refreshHistory            ();
-              void                 rebuildHistory            ();
-    private:
-              QString              _getAbsWidgetPath         ( const QString& relPath ) const;
-              QMenu*               _getParentMenu            ( const QString& ) const;
-              void                 _runScript                ( QString scriptPath );
+      static  void                  notify                    ( CellViewer*, unsigned int flags );
+    public:
+                                    CellViewer                ( QWidget* parent=NULL );
+      virtual                      ~CellViewer                ();
+      inline  bool                  isToolInterrupted         () const;
+              QMenu*                createDebugMenu           ();
+              bool                  hasMenu                   ( const QString& path ) const;
+              bool                  hasMenuAction             ( const QString& path ) const;
+              QMenu*                addMenu                   ( const QString& path
+                                                              , std::string text
+                                                              , unsigned int flags=NoFlags
+                                                              );
+              bool                  addToMenu                 ( const QString& path );
+              QAction*              addToMenu                 ( const QString& path
+                                                              , std::string  text
+                                                              , std::string  textTip
+                                                              , std::function< void() >
+                                                              , QIcon        icon=QIcon() );
+              QAction*              addToMenu                 ( const QString& path
+                                                              , std::string  text
+                                                              , std::string  textTip
+                                                              , std::string  scriptPath );
+              QAction*              addToMenu                 ( QString             path
+                                                              , QString             text
+                                                              , QString             textTip
+                                                              , const QKeySequence& shortCut 
+                                                              , QIcon               icon    =QIcon());
+      inline  void                  setEnableRedrawInterrupt  ( bool );
+      inline  void                  setApplicationName        ( const QString& );
+      inline  Observer<CellViewer>* getCellObserver           ();
+              Cell*                 getCell                   () const;
+      virtual void                  setCell                   ( Cell* );
+              void                  renameCell                ( const char* );
+      virtual Cell*                 getCellFromDb             ( const char* );
+      inline  CellWidget*           getCellWidget             ();
+      inline  const CellWidget*     getCellWidget             () const;
+      inline  ControllerWidget*     getControllerWidget       ();
+              void                  setAnonNetSelectable      ( bool );
+              void                  select                    ( Occurrence& );
+              void                  unselect                  ( Occurrence& );
+              void                  unselectAll               ();
+      inline  void                  setLayerVisible           ( const Name& layer, bool visible );
+              void                  runScript                 ( QString scriptPath );
+      virtual CellViewer*           vcreate                   () const;
+      virtual std::string           _getString                () const;
+    public slots:                   
+              void                  doAction                  ();
+              void                  doGoto                    ();
+              void                  changeSelectionMode       ();
+              void                  setShowSelection          ( bool );
+              void                  setState                  ( shared_ptr<CellWidget::State>& );
+              void                  removeHistory             ( Cell* );
+              void                  openHistoryCell           ();
+              void                  openDesignBlob            ();
+              void                  saveDesignBlob            ();
+              void                  printDisplay              ();
+              void                  print                     ( QPrinter* );
+              void                  imageDisplay              ();
+              void                  raiseToolInterrupt        ();
+              void                  clearToolInterrupt        ();
+              void                  runScriptWidget           ();
+              void                  runStressScript           ();
+      inline  void                  emitCellAboutToChange     ();
+      inline  void                  emitCellChanged           ();
+      inline  void                  emitCellPreModificated    ();
+      inline  void                  emitCellPostModificated   ();
+    signals:                        
+              void                  cellLoadedFromDisk        ( Cell* );
+              void                  showSelectionToggled      ( bool );
+              void                  stateChanged              ( shared_ptr<CellWidget::State>& );
+              void                  redrawCellWidget          ();
+              void                  cellPreModificated        ();
+              void                  cellPostModificated       ();
+    protected:                      
+              void                  createMenus               ();
+              void                  refreshTitle              ();
+              void                  refreshHistory            ();
+              void                  rebuildHistory            ();
+    private:                        
+              QString               _getAbsWidgetPath         ( const QString& relPath ) const;
+              QMenu*                _getParentMenu            ( const QString& ) const;
+              void                  _runScript                ( QString scriptPath );
 
     protected:                     
       static QString                  _prefixWPath;
-             CellObserver             _cellObserver;
+             Observer<CellViewer>     _cellObserver;
              QString                  _applicationName;
              QAction*                 _openAction;
              QAction*                 _cellHistoryAction[CellHistorySize];
@@ -198,17 +200,17 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline bool              CellViewer::isToolInterrupted       () const { return _toolInterrupt; }
-  inline CellObserver*     CellViewer::getCellObserver         () { return &_cellObserver; }
-  inline CellWidget*       CellViewer::getCellWidget           () { return _cellWidget; }
-  inline const CellWidget* CellViewer::getCellWidget           () const { return _cellWidget; }
-  inline ControllerWidget* CellViewer::getControllerWidget     () { return _controller; }
-  inline void              CellViewer::setApplicationName      ( const QString& name ) { _applicationName = name; }
-  inline void              CellViewer::setLayerVisible         ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
-  inline void              CellViewer::emitCellAboutToChange   () { _flags |=  InCellChange; emit cellPreModificated(); }
-  inline void              CellViewer::emitCellChanged         () { _flags &= ~InCellChange; emit cellPostModificated(); }
-  inline void              CellViewer::emitCellPreModificated  () { emit cellPreModificated(); }
-  inline void              CellViewer::emitCellPostModificated () { emit cellPostModificated(); }
+  inline bool                  CellViewer::isToolInterrupted       () const { return _toolInterrupt; }
+  inline Observer<CellViewer>* CellViewer::getCellObserver         () { return &_cellObserver; }
+  inline CellWidget*           CellViewer::getCellWidget           () { return _cellWidget; }
+  inline const CellWidget*     CellViewer::getCellWidget           () const { return _cellWidget; }
+  inline ControllerWidget*     CellViewer::getControllerWidget     () { return _controller; }
+  inline void                  CellViewer::setApplicationName      ( const QString& name ) { _applicationName = name; }
+  inline void                  CellViewer::setLayerVisible         ( const Name& layer, bool visible ) { _cellWidget->setLayerVisible(layer,visible); }
+  inline void                  CellViewer::emitCellAboutToChange   () { _flags |=  InCellChange; emit cellPreModificated(); }
+  inline void                  CellViewer::emitCellChanged         () { _flags &= ~InCellChange; emit cellPostModificated(); }
+  inline void                  CellViewer::emitCellPreModificated  () { emit cellPreModificated(); }
+  inline void                  CellViewer::emitCellPostModificated () { emit cellPostModificated(); }
 
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }

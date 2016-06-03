@@ -661,9 +661,11 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "ControllerWidget::GraphicsObserver".
 
-  void  ControllerWidget::GraphicsObserver::notify ( unsigned int flags )
+//void  ControllerWidget::GraphicsObserver::notify ( unsigned int flags )
+  void  ControllerWidget::notify ( ControllerWidget* controller, unsigned int flags )
   {
-    ControllerWidget* controller = getOwner();
+    cdebug.log(111) << "ControllerWidget::notify()" << endl;
+  //ControllerWidget* controller = getOwner();
     if (flags & Graphics::ChangedDisplayStyles) {
       controller->graphicsUpdated();
     }

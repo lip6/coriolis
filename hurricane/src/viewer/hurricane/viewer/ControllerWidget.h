@@ -296,16 +296,9 @@ namespace Hurricane {
 
   class ControllerWidget : public QTabWidget {
       Q_OBJECT;
-
-    public:
-      class GraphicsObserver : public Observer<ControllerWidget> {
-        public:
-          inline        GraphicsObserver ( ControllerWidget* );
-          virtual void  notify           ( unsigned int flags );
-        private:
-          GraphicsObserver ( const GraphicsObserver& );
-      };
       
+    public:
+      static void                 notify              ( ControllerWidget*, unsigned int flags );
     public:
                                   ControllerWidget    ( QWidget* parent=NULL );
       inline CellWidget*          getCellWidget       ();
@@ -328,16 +321,16 @@ namespace Hurricane {
              void                 toggleShow          ();
 
     protected:
-      GraphicsObserver  _observer;
-      CellWidget*       _cellWidget;
-      TabGraphics*      _tabGraphics;
-      TabPalette*       _tabPalette;
-      TabDisplayFilter* _tabDisplayFilter;
-      TabNetlist*       _tabNetlist;
-      TabHierarchy*     _tabHierarchy;
-      TabSelection*     _tabSelection;
-      TabInspector*     _tabInspector;
-      TabSettings*      _tabSettings;
+      Observer<ControllerWidget>  _observer;
+      CellWidget*                 _cellWidget;
+      TabGraphics*                _tabGraphics;
+      TabPalette*                 _tabPalette;
+      TabDisplayFilter*           _tabDisplayFilter;
+      TabNetlist*                 _tabNetlist;
+      TabHierarchy*               _tabHierarchy;
+      TabSelection*               _tabSelection;
+      TabInspector*               _tabInspector;
+      TabSettings*                _tabSettings;
   };
 
 
@@ -351,11 +344,6 @@ namespace Hurricane {
   inline InspectorWidget*     ControllerWidget::getInspectorWidget  () { return _tabInspector->getInspectorWidget(); }
   inline TabSettings*         ControllerWidget::getSettings         () { return _tabSettings; }
 //inline int                  ControllerWidget::addSetting          ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
-      
-
-  inline  ControllerWidget::GraphicsObserver::GraphicsObserver ( ControllerWidget* owner )
-    : Observer<ControllerWidget>(owner)
-  { }
 
 
 }  // End of Hurricane namespace.
