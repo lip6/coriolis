@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -977,6 +977,7 @@ namespace Hurricane {
     State* clone = new State();
 
     clone->setCell               ( getCell() );
+    clone->setTopPath            ( getTopPath() );
     clone->setCursorStep         ( getCursorStep() );
     clone->setUnitPower          ( getUnitPower() );
     clone->setDbuMode            ( getDbuMode() );
@@ -1041,7 +1042,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 400;
+  int  CellWidget::_initialSide = 250;
 
 
   CellWidget::CellWidget ( QWidget* parent )
@@ -1079,15 +1080,12 @@ namespace Hurricane {
     setMouseTracking ( true );
 
   //_mapView = new MapView ( this );
-    DataBase* database = DataBase::getDB();
-    if ( database )
-      _technology = database->getTechnology ();
 
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
 
-    _initialSide = Graphics::toHighDpi( _initialSide );
-    if (Graphics::isHighDpi()) resize( _initialSide, _initialSide );
+    if (Graphics::isHighDpi()) resize( Graphics::toHighDpi(_initialSide)
+                                     , Graphics::toHighDpi(_initialSide) );
   }
 
 
@@ -1173,6 +1171,12 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::resetCommands ()
+  {
+    for ( size_t i=0 ; i<_commands.size() ; ++i ) _commands[i]->reset();
+  }
+
+
   void  CellWidget::pushCursor ( Qt::CursorShape cursor )
   {
     setCursor ( cursor );
@@ -1192,7 +1196,7 @@ namespace Hurricane {
 
   QSize  CellWidget::minimumSizeHint () const
   {
-    return QSize(_initialSide,_initialSide);
+    return QSize(Graphics::toHighDpi(_initialSide),Graphics::toHighDpi(_initialSide));
   }
 
 
@@ -1263,17 +1267,21 @@ namespace Hurricane {
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-    // cerr << "CellWidget::redraw() - start "
-    //      << _selectionHasChanged << " filter:"
-    //      << _state->getQueryFilter() << endl;
+  //cerr << "CellWidget::redraw() - start "
+  //     << _selectionHasChanged << " filter:"
+  //     << _state->getQueryFilter() << endl;
 
-//     static bool  timedout;
-//     static Timer timer;
+  //static bool  timedout;
+  //static Timer timer;
 
     if ( not isVisible() ) return;
 
-//     timer.start ();
-//     timedout         = false;
+    DataBase* database = DataBase::getDB();
+    if ( database ) _technology = database->getTechnology ();
+
+  //timer.start ();
+  //timedout         = false;
+
     _cellChanged     = false;
     _redrawRectCount = 0;
 
@@ -1402,26 +1410,26 @@ namespace Hurricane {
     popCursor ();
     repaint ();
 
-//     timer.stop ();
-//     cerr << "CellWidget::redraw() - " << _redrawRectCount
-//          << " in " << timer.getCombTime() << "s ("
-//          << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
-//     if ( _drawingQuery.getGoCount() )
-//       cerr << " " << _drawingQuery.getGoCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
-//     else
-//       cerr << " 0 Gos";
-//     if ( _drawingQuery.getExtensionGoCount() )
-//       cerr << " " << _drawingQuery.getExtensionGoCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
-//     else
-//       cerr << " 0 eGos";
-//     if ( _drawingQuery.getInstanceCount() )
-//       cerr << " " << _drawingQuery.getInstanceCount()
-//            << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
-//     else
-//       cerr << " 0 Instances";
-//     cerr << endl;
+  //timer.stop ();
+  //cerr << "CellWidget::redraw() - " << _redrawRectCount
+  //     << " in " << timer.getCombTime() << "s ("
+  //     << setprecision(3) << (timer.getCombTime()/_redrawRectCount) << " s/r)";
+  //if ( _drawingQuery.getGoCount() )
+  //  cerr << " " << _drawingQuery.getGoCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getGoCount()) << " s/go)";
+  //else
+  //  cerr << " 0 Gos";
+  //if ( _drawingQuery.getExtensionGoCount() )
+  //  cerr << " " << _drawingQuery.getExtensionGoCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getExtensionGoCount()) << " s/ego)";
+  //else
+  //  cerr << " 0 eGos";
+  //if ( _drawingQuery.getInstanceCount() )
+  //  cerr << " " << _drawingQuery.getInstanceCount()
+  //       << " (" << setprecision(3) << (timer.getCombTime()/_drawingQuery.getInstanceCount()) << " s/inst)";
+  //else
+  //  cerr << " 0 Instances";
+  //cerr << endl;
   }
 
 
@@ -1607,7 +1615,7 @@ namespace Hurricane {
   {
     QFont  font = Graphics::getNormalFont(flags&Bold);
 
-    if ( flags & BigFont ) font.setPointSize ( 18 );
+    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
     int          width   = metrics.width  ( text );
@@ -1631,7 +1639,7 @@ namespace Hurricane {
     painter.save();
     if ( flags & Reverse ) painter.setPen ( Graphics::getPen("background") );
     if ( flags & Reverse ) painter.setBackgroundMode ( Qt::OpaqueMode );
-    if ( flags & BigFont ) font.setPointSize ( 18 );
+    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
     int          width   = metrics.width  ( text );
@@ -2410,39 +2418,46 @@ namespace Hurricane {
   }
 
 
-  void  CellWidget::setCell ( Cell* cell )
+  void  CellWidget::setCell ( Cell* cell, Path topPath, unsigned int flags )
   {
   //cerr << "CellWidget::setCell() - " << cell << endl;
 
-    if ( cell == getCell() ) return;
+    if (cell == getCell()) return;
 
-    openRefreshSession ();
+    if (not topPath.isEmpty() and (topPath.getTailInstance()->getMasterCell() != cell)) {
+      cerr << Warning( "CellWidget::setCell(): Incompatible Path %s with %s."
+                     , topPath.getCompactString().c_str()
+                     , getString(cell->getName()).c_str() ) << endl;
+      topPath = Path();
+    }
 
-    shared_ptr<State>  state ( new State(cell) );
-    setState ( state );
-    if ( cell and cell->isTerminal() ) setQueryFilter ( ~0 );
+    openRefreshSession();
+
+    shared_ptr<State>  state ( new State(cell,topPath) );
+    setState( state, flags );
+    if ( cell and cell->isTerminal() ) setQueryFilter( ~0 );
   //setRealMode ();
 
-    fitToContents ( false );
+    fitToContents( false );
 
-    _state->setHistoryEnable ( true );
+    _state->setHistoryEnable( true );
 
-    closeRefreshSession ();
+    closeRefreshSession();
   }
 
 
-  void  CellWidget::setState ( shared_ptr<State>& state )
+  void  CellWidget::setState ( shared_ptr<State>& state, unsigned int flags )
   {
   //cerr << "CellWidget::setState() - " << state->getName() << endl;
 
-    if ( state == _state ) return;
+    if (state == _state) return;
 
-    openRefreshSession ();
-
-    cellPreModificate ();
-    _state->getSelection  ().clear ();
-    _state->setCellWidget ( NULL );
-    _state->setTopLeft    ( getTopLeft() ); 
+    openRefreshSession();
+    cellPreModificate();
+    if (not (flags & NoResetCommands)) resetCommands();
+    _state->getSelection ().clear ();
+    _state->setCellWidget( NULL );
+    _state->setTopLeft   ( getTopLeft() ); 
 
     _cellChanged = true;
     _state       = state;
@@ -2453,23 +2468,22 @@ namespace Hurricane {
 //          << DbU::getValueString(_state->getTopLeft().getX()) << ","
 //          << DbU::getValueString(_state->getTopLeft().getY()) << ")" << endl;
 
-    _state->setHistoryEnable ( false );
-    _state->setCellWidget ( this );
-    _drawingQuery    .setCell       ( getCell() );
-    _drawingQuery    .setStartLevel ( _state->getStartLevel() );
-    _drawingQuery    .setStopLevel  ( _state->getStopLevel() );
-    _textDrawingQuery.setCell       ( getCell() );
+    _state->setHistoryEnable( false );
+    _state->setCellWidget   ( this );
+    _drawingQuery    .setCell      ( getCell() );
+    _drawingQuery    .setStartLevel( _state->getStartLevel() );
+    _drawingQuery    .setStopLevel ( _state->getStopLevel() );
+    _textDrawingQuery.setCell      ( getCell() );
 
-    reframe ();
-    _state->setHistoryEnable ( true );
+    reframe();
+    _state->setHistoryEnable( true );
 
-    emit cellChanged        ( getCell() );
-    emit stateChanged       ( _state );
-    emit queryFilterChanged ();
+    emit cellChanged       ( getCell() );
+    emit stateChanged      ( _state );
+    emit queryFilterChanged();
 
-    cellPostModificate ();
-
-    closeRefreshSession ();
+    cellPostModificate();
+    closeRefreshSession();
   }
 
 
@@ -2485,8 +2499,8 @@ namespace Hurricane {
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
 	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      string s2 = Graphics::toHtml ( getString(getCell()) );
+      string s1 = Graphics::toHtml ( getString(getCell()) );
+      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
       throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s"
                   , s1.c_str(), s2.c_str() );
     }
@@ -2530,6 +2544,10 @@ namespace Hurricane {
     if ( criterion and (not criterion->isEnabled()) ) {
       criterion->enable();
 
+    //for ( Occurrence occurrence : getOccurrencesUnder(selectArea) ) {
+    //  cerr << "Selecting: " << occurrence << endl;
+    //}
+
       forEach ( Occurrence, ioccurrence, getOccurrencesUnder(selectArea) )
         select ( *ioccurrence );
     } else
@@ -2551,8 +2569,8 @@ namespace Hurricane {
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
 	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      string s2 = Graphics::toHtml ( getString(getCell()) );
+      string s1 = Graphics::toHtml ( getString(getCell()) );
+      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
       throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
                   , s1.c_str(), s2.c_str() );
     }

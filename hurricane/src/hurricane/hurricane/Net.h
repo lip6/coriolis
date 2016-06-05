@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Net.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -41,7 +41,6 @@
 namespace Hurricane {
 
 
-
 // ****************************************************************************************************
 // Net declaration
 // ****************************************************************************************************
@@ -59,12 +58,13 @@ class Net : public Entity {
     public: class Type {
     // ***************
 
-        public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4};
+        public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4, BLOCKAGE=5};
 
         private: Code _code;
 
         public: Type(const Code& code = UNDEFINED);
         public: Type(const Type& type);
+        public: Type(string);
 
         public: Type& operator=(const Type& type);
 
@@ -101,6 +101,7 @@ class Net : public Entity {
 
         public: Direction(const Code& code = UNDEFINED);
         public: Direction(const Direction& direction);
+        public: Direction(string);
 
         public: Direction& operator =(const Direction& direction);
         public: Direction& operator|=(const Direction& direction);
@@ -213,16 +214,18 @@ class Net : public Entity {
     public:         bool isGlobal   () const {return _isGlobal;};
     public:         bool isExternal () const {return _isExternal;};
     public:         bool isAutomatic() const {return _isAutomatic;};
+    public:         bool isBlockage () const {return (_type == Type::BLOCKAGE);};
     public:         bool isLogical  () const {return (_type == Type::LOGICAL);};
     public:         bool isClock    () const {return (_type == Type::CLOCK);};
     public:         bool isPower    () const {return (_type == Type::POWER);};
     public:         bool isGround   () const {return (_type == Type::GROUND);};
     public:         bool isSupply   () const {return (isPower() || isGround());};
+    public:         bool hasAlias   (const Name& name) const;
 
 // Updators
 // ********
 
-    public: void setName(const Name& name);
+    public: void setName(Name name);
     public: void setArity(const Arity& arity);
     public: void setGlobal(bool isGlobal);
     public: void setExternal(bool isExternal);
@@ -241,9 +244,11 @@ class Net : public Entity {
 // ******
 
     protected: virtual void _postCreate();
-
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: virtual void _toJsonSignature(JsonWriter*) const;
+    public: virtual void _toJsonCollections(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Net");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
@@ -257,7 +262,98 @@ class Net : public Entity {
 };
 
 
-} // End of Hurricane namespace.
+// -------------------------------------------------------------------
+// Class  :  "HookKey".
+
+  class HookKey {
+    public:
+      inline                HookKey ( unsigned int id, const std::string& tname );
+      inline  unsigned int  id      () const;
+      inline  std::string   tname   () const;
+    private:
+      unsigned int  _id;
+      std::string   _tname;
+  };
+
+
+  inline                HookKey::HookKey ( unsigned int id, const std::string& tname ) : _id(id), _tname(tname) { }
+  inline  unsigned int  HookKey::id      () const { return _id; }
+  inline  std::string   HookKey::tname   () const { return _tname; }
+
+  inline bool operator< ( const HookKey& lhs, const HookKey& rhs )
+  {
+    if (lhs.id() != rhs.id()) return lhs.id() < rhs.id();
+    return lhs.tname() < rhs.tname();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "HookElement".
+
+  class HookElement {
+    public:
+      enum Flags { OpenRingStart = (1<<0)
+                 , ClosedRing    = (1<<1)
+                 };
+    public:
+      inline                HookElement ( Hook*, unsigned long flags=0 );
+      inline Hook*          hook        () const;
+      inline HookElement*   next        () const;
+      inline void           setHook     ( Hook* );
+      inline void           setNext     ( HookElement* );
+      inline unsigned long  flags       () const;
+      inline HookElement&   setFlags    ( unsigned long mask );
+      inline HookElement&   resetFlags  ( unsigned long mask );
+      inline bool           issetFlags  ( unsigned long mask ) const;
+    private:
+      Hook*          _hook;
+      HookElement*   _next;
+      unsigned long  _flags;
+  };
+
+
+  inline                HookElement::HookElement ( Hook* hook, unsigned long flags ) : _hook(hook), _next(NULL), _flags(flags) { }
+  inline Hook*          HookElement::hook        () const { return _hook; }
+  inline HookElement*   HookElement::next        () const { return _next; }
+  inline void           HookElement::setHook     ( Hook* hook ) { _hook = hook; }
+  inline void           HookElement::setNext     ( HookElement* element ) { _next = element; }
+  inline unsigned long  HookElement::flags       () const { return _flags; }
+  inline HookElement&   HookElement::setFlags    ( unsigned long mask ) { _flags |=  mask; return *this; }
+  inline HookElement&   HookElement::resetFlags  ( unsigned long mask ) { _flags &= ~mask; return *this; }
+  inline bool           HookElement::issetFlags  ( unsigned long mask ) const { return _flags & mask; }
+
+
+  typedef  map<HookKey,HookElement>  HookLut;
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNet".
+
+  class JsonNet : public JsonEntity {
+    public:
+      static  bool     hookFromString ( std::string s, unsigned int& id, std::string& tname );
+      static  void     initialize     ();
+                       JsonNet        ( unsigned long flags );
+      virtual         ~JsonNet        ();
+      virtual string   getTypeName    () const;
+      virtual JsonNet* clone          ( unsigned long ) const;
+      virtual void     toData         ( JsonStack& ); 
+              void     addHookLink    ( Hook*, unsigned int jsonId, const std::string& jsonNext );
+              Hook*    getHook        ( unsigned int jsonId, const std::string& tname ) const;
+              bool     checkRings     () const;
+              void     buildRings     () const;
+      inline  void     clearHookLinks ();
+  protected:
+      bool       _autoMaterialize;
+      Net*       _net;
+      HookLut    _hooks;
+  };
+
+
+  inline void  JsonNet::clearHookLinks () { _hooks.clear(); }
+
+
+} // Hurricane namespace.
 
 
 // -------------------------------------------------------------------
@@ -273,6 +369,7 @@ inline std::string  getString<const Hurricane::Net::Type::Code*>
                                  case Hurricane::Net::Type::CLOCK:     return "CLOCK";
                                  case Hurricane::Net::Type::POWER:     return "POWER";
                                  case Hurricane::Net::Type::GROUND:    return "GROUND";
+                                 case Hurricane::Net::Type::BLOCKAGE:  return "BLOCKAGE";
                                }
                                return "ABNORMAL";
                              }
@@ -346,5 +443,5 @@ namespace Hurricane {
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

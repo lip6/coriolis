@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -17,6 +17,7 @@
 #include <Python.h>
 #include <QAction>
 #include <QMenu>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/CellViewer.h"
@@ -45,8 +46,10 @@
 namespace Unicorn {
 
   using Hurricane::dbo_ptr;
+  using Hurricane::DebugSession;
   using Hurricane::Warning;
   using Hurricane::PyCellViewer_Link;
+  using Hurricane::jsonCellParse;
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
@@ -89,6 +92,7 @@ namespace Unicorn {
     _runUnicornInit();
 
     _importCell.setDialog( _importDialog );
+    _importCell.addImporter( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
     _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
     _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
@@ -178,6 +182,7 @@ namespace Unicorn {
                                , QKeySequence(tr("CTRL+M"))
                                );
     connect( action, SIGNAL(triggered()), _libraryManager, SLOT(toggleShow()) );
+    connect( this  , SIGNAL(cellLoadedFromDisk(Cell*)), _libraryManager, SLOT(updateLibrary(Cell*)) );
   }
 
 
@@ -234,6 +239,7 @@ namespace Unicorn {
           viewer->show ();
         }
         viewer->setCell ( cell );
+        emit cellLoadedFromDisk ( cell );
       } else
         cerr << "[ERROR] Cell not found: " << cellName.toStdString() << endl;
     }
@@ -256,6 +262,7 @@ namespace Unicorn {
           viewer->show();
         }
         viewer->setCell( cell );
+        emit cellLoadedFromDisk ( cell );
       }
     }
   }
@@ -282,8 +289,19 @@ namespace Unicorn {
           DefExport::drive ( cell, DefExport::WithLEF );
           break;
         case ExportCellDialog::AsciiGds:
-          GdsDriver gdsDriver ( cell );
-          gdsDriver.save( getString(cell->getName())+".agds" );
+          { GdsDriver gdsDriver ( cell );
+            gdsDriver.save( getString(cell->getName())+".agds" );
+          }
+          break;
+        case ExportCellDialog::Json:
+          { //DebugSession::open( 19, 20 );
+            cerr << "cdebug (" << cdebug.getMinLevel() << "," << cdebug.getMaxLevel() 
+                 << ") level:" << cdebug.getLevel() << " enabled:" << cdebug.enabled() << endl;
+
+            JsonWriter writer ( cellName.toStdString()+".json.bz2" );
+            jsonWrite( &writer, cell );
+          //DebugSession::close();
+          }
           break;
       }
     }

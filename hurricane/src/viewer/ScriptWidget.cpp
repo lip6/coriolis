@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -91,11 +91,19 @@ namespace Hurricane {
   }
 
 
-  void  ScriptWidget::runScript ( QWidget* parent, Cell* cell )
+  void  ScriptWidget::setScriptName ( QString scriptName )
+  {
+    return _lineEdit->setText( scriptName );
+  }
+
+
+  void  ScriptWidget::runScript ( QWidget* parent, QString& scriptName, Cell* cell )
   {
     ScriptWidget* dialog      = new ScriptWidget ( parent );
-    bool          doRunScript = (dialog->exec() == Accepted);
-    QString       scriptName  = dialog->getScriptName ();
+    dialog->setScriptName( scriptName );
+
+    bool doRunScript = (dialog->exec() == Accepted);
+    scriptName  = dialog->getScriptName ();
 
     delete dialog;
     if (not doRunScript) return;

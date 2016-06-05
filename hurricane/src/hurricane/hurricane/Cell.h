@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Cell.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,6 +23,7 @@
 #include <limits>
 #include "hurricane/Flags.h"
 #include "hurricane/Observer.h"
+#include "hurricane/Signature.h"
 #include "hurricane/Relation.h"
 #include "hurricane/Pathes.h"
 #include "hurricane/Entity.h"
@@ -54,7 +55,6 @@ namespace Hurricane {
 class Library;
 class BasicLayer;
 
-
 typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 
 
@@ -84,15 +84,18 @@ class Cell : public Entity {
                   // Flags set for Observers.
                   , CellAboutToChange       = 0x00000100
                   , CellChanged             = 0x00000200
+                  , CellDestroyed           = 0x00000400
                   // Cell states
                   , Terminal                = 0x00001000
                   , FlattenLeaf             = 0x00002000
                   , Pad                     = 0x00004000
-                  , FlattenedNets           = 0x00008000
-                  , Placed                  = 0x00010000
-                  , Routed                  = 0x00020000
-                  , MergedQuadTree          = 0x00040000
-                  , Materialized            = 0x00080000 
+                  , Feed                    = 0x00008000
+                  , FlattenedNets           = 0x00010000
+                  , Placed                  = 0x00020000
+                  , Routed                  = 0x00040000
+                  , MergedQuadTree          = 0x00080000
+                  , SlavedAb                = 0x00100000
+                  , Materialized            = 0x00200000 
                   };
 
       public:
@@ -109,15 +112,39 @@ class Cell : public Entity {
         virtual Name               getName          () const;
         static  Name               staticGetName    ();
                 Name               getUniqueName    ();
+        static  std::string        getTrunkName     ( Name name );
+        virtual bool               hasJson          () const;
+        virtual void               toJson           ( JsonWriter*, const DBo* ) const;
+        inline  void               _setOwner        ( Cell* );
+        inline  void               _setDuplicates   ( unsigned int );
         virtual string             _getTypeName     () const;
         virtual Record*            _getRecord       () const;
       private:
         static const Name          _name;
-                     unsigned int  _duplicates;
+               unsigned int        _duplicates;
       private:
                                    UniquifyRelation ( Cell* );
       protected:
         virtual void               _preDestroy      ();
+
+      public:
+        class JsonProperty : public JsonObject {
+          public:
+            static  void          initialize   ();
+                                  JsonProperty ( unsigned long flags );
+            virtual string        getTypeName  () const;
+            virtual JsonProperty* clone        ( unsigned long ) const;
+            virtual void          toData       ( JsonStack& ); 
+      };
+      public:
+        class JsonPropertyRef : public JsonObject {
+          public:
+            static  void             initialize      ();
+                                     JsonPropertyRef ( unsigned long flags );
+            virtual string           getTypeName     () const;
+            virtual JsonPropertyRef* clone           ( unsigned long ) const;
+            virtual void             toData          ( JsonStack& ); 
+      };
     };
 
     class ClonedSet : public Collection<Cell*> {
@@ -139,6 +166,70 @@ class Cell : public Entity {
       public:
         inline                                ClonedSet  ( const Cell* cell );
         inline                                ClonedSet  ( const ClonedSet& );
+        virtual Hurricane::Collection<Cell*>* getClone   () const;
+        virtual Hurricane::Locator<Cell*>*    getLocator () const;
+        virtual string                        _getString () const;
+      protected:
+        const Cell* _cell;
+    };
+
+    class SlavedsRelation : public Relation {
+      public:
+        static  SlavedsRelation* create          ( Cell* );
+        static  SlavedsRelation* get             ( const Cell* );
+        virtual Name             getName         () const;
+        static  Name             staticGetName   ();
+        virtual bool             hasJson         () const;
+        virtual void             toJson          ( JsonWriter*, const DBo* ) const;
+        inline  void             _setOwner       ( Cell* );
+        virtual string           _getTypeName    () const;
+        virtual Record*          _getRecord      () const;
+      private:
+        static const Name        _name;
+      private:
+                                 SlavedsRelation ( Cell* );
+      protected:
+        virtual void             _preDestroy     ();
+
+      public:
+        class JsonProperty : public JsonObject {
+          public:
+            static  void          initialize   ();
+                                  JsonProperty ( unsigned long flags );
+            virtual string        getTypeName  () const;
+            virtual JsonProperty* clone        ( unsigned long ) const;
+            virtual void          toData       ( JsonStack& ); 
+      };
+      public:
+        class JsonPropertyRef : public JsonObject {
+          public:
+            static  void             initialize      ();
+                                     JsonPropertyRef ( unsigned long flags );
+            virtual string           getTypeName     () const;
+            virtual JsonPropertyRef* clone           ( unsigned long ) const;
+            virtual void             toData          ( JsonStack& ); 
+      };
+    };
+
+    class SlavedsSet : public Collection<Cell*> {
+      public:
+      // Sub-Class: Locator.
+        class Locator : public Hurricane::Locator<Cell*> {
+          public:
+                                               Locator    ( const Cell* );
+            inline                             Locator    ( const Locator& );
+            virtual Cell*                      getElement () const;
+            virtual Hurricane::Locator<Cell*>* getClone   () const;
+            virtual bool                       isValid    () const;
+            virtual void                       progress   ();
+            virtual string                     _getString () const;
+          protected:
+            Hurricane::Locator<DBo*>* _dboLocator;
+        };
+  
+      public:
+        inline                                SlavedsSet ( const Cell* cell );
+        inline                                SlavedsSet ( const SlavedsSet& );
         virtual Hurricane::Collection<Cell*>* getClone   () const;
         virtual Hurricane::Locator<Cell*>*    getLocator () const;
         virtual string                        _getString () const;
@@ -300,11 +391,16 @@ class Cell : public Entity {
     public: void _slaveAbutmentBox(Cell*);
     public: void _changeQuadTree(Cell*);
     public: void _setShuntedPath(Path path) { _shuntedPath=path; }
+    protected: void _setAbutmentBox(const Box& abutmentBox);
+
+    public: virtual void _toJson(JsonWriter*) const;
+    public: virtual void _toJsonCollections(JsonWriter*) const;
 
 // Constructors
 // ************
 
     public: static Cell* create(Library* library, const Name& name);
+    public: static Cell* fromJson(const string& filename);
 
 // Accessors
 // *********
@@ -312,9 +408,11 @@ class Cell : public Entity {
     public: virtual Cell* getCell() const {return (Cell*)this;};
     public: virtual Box getBoundingBox() const;
     public: Library* getLibrary() const {return _library;};
+    public: string getHierarchicalName() const;
     public: const Name& getName() const {return _name;};
     public: const Flags& getFlags() const { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
+    public: Entity* getEntity(const Signature&) const;
     public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
     public: Instances getInstances() const {return _instanceMap.getElements();};
     public: Instances getPlacedInstances() const;
@@ -391,6 +489,7 @@ class Cell : public Entity {
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
+    public: bool isFeed() const {return _flags.isset(Flags::Feed);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
@@ -406,6 +505,7 @@ class Cell : public Entity {
     public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
+    public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
     public: void flattenNets(unsigned int flags=Flags::BuildRings);
     public: void createRoutingPadRings(unsigned int flags=Flags::BuildRings);
     public: void setFlags(unsigned int flags) { _flags |= flags; }
@@ -438,6 +538,39 @@ inline  Cell::ClonedSet::ClonedSet ( const ClonedSet& other )
 { }
 
 
+inline  void  Cell::UniquifyRelation::_setOwner      ( Cell*        owner )      { _setMasterOwner(owner); }
+inline  void  Cell::UniquifyRelation::_setDuplicates ( unsigned int duplicates ) { _duplicates=duplicates; }
+
+
+inline  Cell::SlavedsSet::Locator::Locator ( const Locator& other )
+  : Hurricane::Locator<Cell*>()
+  , _dboLocator(other._dboLocator)
+{ }
+
+inline  Cell::SlavedsSet::SlavedsSet ( const Cell* cell )
+  : Hurricane::Collection<Cell*>()
+  , _cell(cell)
+{ }
+
+inline  Cell::SlavedsSet::SlavedsSet ( const SlavedsSet& other )
+  : Hurricane::Collection<Cell*>()
+  , _cell(other._cell)
+{ }
+
+
+inline  void  Cell::SlavedsRelation::_setOwner ( Cell* owner ) { _setMasterOwner(owner); }
+
+
+class JsonCell : public JsonEntity {
+// *********************************
+
+  public: static void initialize();
+  public: JsonCell(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonCell* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
 } // End of Hurricane namespace.
 
 
@@ -455,5 +588,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

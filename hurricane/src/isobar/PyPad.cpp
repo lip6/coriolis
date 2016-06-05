@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2015, All Rights Reserved
+// Copyright (c) UPMC 2006-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -57,7 +57,7 @@ extern "C" {
   // Attribute Method  :  "PyPad_create ()"
 
   static PyObject* PyPad_create ( PyObject*, PyObject *args ) {
-    trace << "PyPad_create()" << endl;
+    cdebug.log(20) << "PyPad_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -91,7 +91,7 @@ extern "C" {
   // Attribute Method  :  "PyPad_getBoundingBox ()"
 
   static PyObject* PyPad_getBoundingBox( PyPad *self ) {
-    trace << "PyPad_getBoundingBox()" << endl;
+    cdebug.log(20) << "PyPad_getBoundingBox()" << endl;
 
     METHOD_HEAD ( "Pad.BoundingBox()" )
 
@@ -109,7 +109,7 @@ extern "C" {
   // Attribute Method  :  "PyPad_setBoudingBox()"
 
   static PyObject* PyPad_setBoundingBox(PyPad *self, PyObject* args) {
-    trace << "Pad.setBoudingBox()" << endl;
+    cdebug.log(20) << "Pad.setBoudingBox()" << endl;
 
     HTRY
     METHOD_HEAD ( "Pad.setBoudingBox()" )
@@ -129,7 +129,7 @@ extern "C" {
   // Attribute Method  :  "PyPad_translate ()"
 
   static PyObject* PyPad_translate ( PyPad *self, PyObject* args ) {
-    trace << "PyPad_translate ()" << endl;
+    cdebug.log(20) << "PyPad_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Pad.translate()" )

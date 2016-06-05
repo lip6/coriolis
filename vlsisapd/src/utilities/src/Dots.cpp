@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI Stand-Alone Software.
-// Copyright (c) UPMC 2013-2015, All Rights Reserved
+// Copyright (c) UPMC 2013-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -30,7 +30,8 @@ namespace Utilities {
           CR();
         else
           _flags &= ~FirstDot;
-        _ostream << _indent;
+        if (enabled())
+          _ostream << _indent;
       }
 
       _flush( '.' );

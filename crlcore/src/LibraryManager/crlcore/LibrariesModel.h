@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -39,6 +39,7 @@ namespace CRL {
              QVariant               headerData     ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
              const AllianceLibrary* getLibrary     ( const QModelIndex& );
              const AllianceLibrary* getLibrary     ( size_t );
+             void                   update         ();
     private:
       const AllianceLibraries& _libraries;
   };

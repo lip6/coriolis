@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2015, All Rights Reserved
+# Copyright (c) UPMC 2014-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -57,10 +57,10 @@ class Side ( object ):
 
 
     def getAxis ( self, i ):
-      if   self._type == chip.North: return self._corona.chipSize.getXMax() - self._corona.padHeight + self._corona._powerRails[i][2]
-      elif self._type == chip.South: return self._corona.chipSize.getXMin() + self._corona.padHeight - self._corona._powerRails[i][2]
-      elif self._type == chip.East:  return self._corona.chipSize.getYMax() - self._corona.padHeight + self._corona._powerRails[i][2]
-      elif self._type == chip.West:  return self._corona.chipSize.getYMin() + self._corona.padHeight - self._corona._powerRails[i][2]
+      if   self._type == chip.North: return self._corona.chipSize.getYMax() - self._corona.padHeight + self._corona._powerRails[i][2]
+      elif self._type == chip.South: return self._corona.chipSize.getYMin() + self._corona.padHeight - self._corona._powerRails[i][2]
+      elif self._type == chip.East:  return self._corona.chipSize.getXMax() - self._corona.padHeight + self._corona._powerRails[i][2]
+      elif self._type == chip.West:  return self._corona.chipSize.getXMin() + self._corona.padHeight - self._corona._powerRails[i][2]
       else:
         raise ErrorMessage( 1, 'PadsCorona.Side.__init__(): Invalid value for sideType (%d)' % sideType )
       return 0
@@ -120,22 +120,24 @@ class Side ( object ):
 
       trace( 550, ',+', '\t_createPowerContacts() for %s\n' % net.getName() )
 
+      components = None
       masterCell = pad.getMasterCell()
-      if net.isGlobal():
-        trace( 550, '\tLooking for global net %s\n' % net.getName() )
+      trace( 550, '\tLooking for global net %s\n' % net.getName() )
+      for plug in net.getPlugs():
+        if plug.getInstance() == pad:
+          trace( 550, '\tFound Plug on %s\n' % pad )
+          components = plug.getMasterNet().getExternalComponents()
+      if not components:
         masterNet = masterCell.getNet( net.getName() )
-        if not masterNet:
-          raise ErrorMessage( 1, [ 'PadsCorona.Side._createPowerContact():'
-                                 , 'Pad model <%s> of instance <%s> do not have global net <%s>' % (pad.getName(),masterCell.getName(),net.getName())
-                                 , 'The power/clock nets *names* in the chip must match those of the pads models.'
-                                 ] )
+        if masterNet:
+          components = masterCell.getNet(net.getName()).getExternalComponents()
+      if not components:
+        raise ErrorMessage( 1, [ 'PadsCorona.Side._createPowerContact():'
+                               , 'Pad model <%s> of instance <%s> neither have global net <%s>' % (pad.getName(),masterCell.getName(),net.getName())
+                               , 'for implicit connection nor is it explicitly connected.'
+                               , 'The power/clock nets *names* in the chip must match those of the pads models.'
+                               ] )
           
-        components = masterCell.getNet(net.getName()).getExternalComponents()
-      else:
-        for plug in net.getPlugs():
-          if plug.getInstance() == pad:
-            trace( 550, '\tFound Plug on %s\n' % pad )
-            components = plug.getMasterNet().getExternalComponents()
 
       connecteds = False
       trace( 550, '\t %s\n' % str(masterCell.getAbutmentBox()) )
@@ -224,14 +226,14 @@ class Side ( object ):
     def _routePads ( self ):
       for i in range(len(self._corona._powerRails)):
         if self._type == chip.South:
-          Horizontal.create( self._corona._corners[chip.SouthWest ][i]
+          Horizontal.create( self._corona._corners[chip.SouthWest][i]
                            , self._corona._corners[chip.SouthEast][i]
                            , self._corona._powerRails[i][1]
                            , self.getAxis( i )
                            , self._corona._powerRails[i][3]
                            )
         elif self._type == chip.North:
-          Horizontal.create( self._corona._corners[chip.NorthWest ][i]
+          Horizontal.create( self._corona._corners[chip.NorthWest][i]
                            , self._corona._corners[chip.NorthEast][i]
                            , self._corona._powerRails[i][1]
                            , self.getAxis( i )
@@ -239,14 +241,14 @@ class Side ( object ):
                            )
         elif self._type == chip.East:
           Vertical.create( self._corona._corners[chip.SouthEast][i]
-                         , self._corona._corners[chip.NorthEast   ][i]
+                         , self._corona._corners[chip.NorthEast][i]
                          , self._corona._powerRails[i][1]
                          , self.getAxis( i )
                          , self._corona._powerRails[i][3]
                          )
         elif self._type == chip.West:
           Vertical.create( self._corona._corners[chip.SouthWest][i]
-                         , self._corona._corners[chip.NorthWest   ][i]
+                         , self._corona._corners[chip.NorthWest][i]
                          , self._corona._powerRails[i][1]
                          , self.getAxis( i )
                          , self._corona._powerRails[i][3]

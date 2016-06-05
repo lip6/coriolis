@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -57,7 +57,7 @@ extern "C" {
 
   PyObject* PyRawDrawingStyle_getPattern ( PyRawDrawingStyle* self, PyObject* args )
   {
-    trace << "PyDrawingStyle_getPattern()" << endl;
+    cdebug.log(20) << "PyDrawingStyle_getPattern()" << endl;
 
     const char* pattern = NULL;
 
@@ -72,7 +72,7 @@ extern "C" {
 
   PyObject* PyRawDrawingStyle_getThreshold ( PyRawDrawingStyle* self, PyObject* args )
   {
-    trace << "PyRawDrawingStyle_getThreshold()" << endl;
+    cdebug.log(20) << "PyRawDrawingStyle_getThreshold()" << endl;
 
     float threshold = 0.0;
 

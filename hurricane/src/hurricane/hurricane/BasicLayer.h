@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -42,6 +42,8 @@ namespace Hurricane {
 
 
   class BasicLayer : public Layer {
+    public:
+      typedef  Layer  Super;
 
     public:
     // Subclass: Material.
@@ -66,6 +68,7 @@ namespace Hurricane {
                  Material&   operator=            ( const Material& material );
           inline             operator const Code& () const;
           inline const Code& getCode              () const;
+          static Material    fromString           ( const string& );
           inline string      _getTypeName         () const;
                  string      _getString           () const;
                  Record*     _getRecord           () const;
@@ -95,6 +98,7 @@ namespace Hurricane {
       inline  void            setExtractNumber       ( unsigned int );
       inline  void            setRealName            ( const char* realName);
     // Hurricane Managment.
+      virtual void            _toJson                ( JsonWriter* writer ) const;
       virtual BasicLayer*     _getSymbolicBasicLayer ();
       virtual string          _getTypeName           () const;
       virtual string          _getString             () const;
@@ -133,6 +137,20 @@ namespace Hurricane {
   inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; }
   inline void            BasicLayer::setExtractNumber               ( unsigned int number ) { _extractNumber=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonBasicLayer".
+
+  class JsonBasicLayer : public JsonLayer {
+    public:
+      static  void            initialize     ();
+                              JsonBasicLayer ( unsigned long flags );
+                             ~JsonBasicLayer ();
+      virtual string          getTypeName    () const;
+      virtual JsonBasicLayer* clone          ( unsigned long ) const;
+      virtual void            toData         ( JsonStack& ); 
+  };
 
 
 } // End of Hurricane namespace.

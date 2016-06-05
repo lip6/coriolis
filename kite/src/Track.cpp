@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -54,9 +54,6 @@ namespace Kite {
   using std::sort;
   using Hurricane::dbo_ptr;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::Layer;
@@ -89,27 +86,26 @@ namespace Kite {
 
 
   Track::~Track ()
-  { ltrace(90) << "Track::~Track() - " << (void*)this << endl; }
+  { cdebug.log(155) << "Track::~Track() - " << (void*)this << endl; }
 
 
   void  Track::_preDestroy ()
   {
-    ltrace(90) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
-    ltracein(90);
+    cdebug.log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if (_segments[i]) _segments[i]->detach();
+      if (_segments[i]) { _segments[i]->detach(); _segments[i]->destroy(); }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
       if (_markers[i]) _markers[i]->destroy();
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 
   void  Track::destroy ()
   {
-    ltrace(90) << "Track::destroy() - " << (void*)this << " " << this << endl;
+    cdebug.log(155) << "Track::destroy() - " << (void*)this << " " << this << endl;
 
     Track::_preDestroy();
     delete this;
@@ -176,7 +172,7 @@ namespace Kite {
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
     for ( index-- ; index != npos ; index-- ) {
-      if (inltrace(148)) {
+      if (cdebug.enabled()) {
         cerr << tab << index << ":"; cerr.flush();
         cerr << _segments[index] << endl;
       }
@@ -234,14 +230,17 @@ namespace Kite {
   // I guess this has been written for the case of overlapping segments from the same
   // net, we find the first one of the overlapped sets. But what if they are not overlapping
   // but still from the same net?
-    if (begin < _segments.size())
-      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet()) ; --begin );
+    size_t sameNetDelta = 0;
+    if (begin < _segments.size()) {
+      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet())
+            ; --begin, ++sameNetDelta );
+    }
 
     state = 0;
     if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
       state = BeforeFirstElement;
     } else {
-      if (begin) begin -= 1;
+      if (begin and not sameNetDelta) begin -= 1;
 
       size_t   usedBegin    = begin;
       Interval usedInterval = getOccupiedInterval( usedBegin );
@@ -272,9 +271,11 @@ namespace Kite {
     getOccupiedInterval( begin );
 
     getBeginIndex( interval.getVMax(), end, iState );
-    while ( end < _segments.size() ) {
-      if (_segments[end++]->getSourceU() >= interval.getVMax()) break;
+    for ( ; end < _segments.size() ; ++end ) {
+      if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
+
+    cdebug.log(159) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
   }
 
 
@@ -286,13 +287,11 @@ namespace Kite {
   {
     TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
 
-    ltrace(190) << "getOverlapCost() @" << DbU::getValueString(_axis)
-                << " [" << DbU::getValueString(interval.getVMin())
-                << ":"  << DbU::getValueString(interval.getVMax())
-                << "] <-> [" << begin << ":"  << end << "]"
-                << endl;
-
-    ltracein(148);
+    cdebug.log(159,1) << "getOverlapCost() @" << DbU::getValueString(_axis)
+                      << " [" << DbU::getValueString(interval.getVMin())
+                      << ":"  << DbU::getValueString(interval.getVMax())
+                      << "] <-> [" << begin << ":"  << end << "]"
+                      << endl;
 
     vector<TrackMarker*>::const_iterator lowerBound
       = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarker::Compare() );
@@ -300,16 +299,16 @@ namespace Kite {
 
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
-      ltrace(148) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
+      cdebug.log(159) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
       if ( _markers[mbegin]->getNet() != net ) {
-        ltrace(148) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+        cdebug.log(159) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
       }
     }
 
     if (begin == npos) {
-      ltrace(148) << "  begin == npos (after last TrackElement)." << endl;
-      ltraceout(148);
+      cdebug.log(159) << "  begin == npos (after last TrackElement)." << endl;
+      cdebug.tabw(159,-1);
       return cost;
     }
 
@@ -318,12 +317,12 @@ namespace Kite {
       if ( _segments[begin]->getNet() == net ) {
         cost.incDeltaShared ( overlap.getSize() );
       }
-      ltrace(190) << "| overlap: " << _segments[begin] << endl;
+      cdebug.log(159) << "| overlap: " << _segments[begin] << endl;
       _segments[begin]->incOverlapCost( net, cost );
       if (cost.isInfinite()) break;
     }
 
-    ltraceout(148);
+    cdebug.tabw(159,-1);
 
     return cost;
   }
@@ -346,9 +345,8 @@ namespace Kite {
 
   void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const
   {
-    ltrace(148) << "getTerminalWeight() @" << DbU::getValueString(_axis)
-                << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
-    ltracein(148);
+    cdebug.log(159,1) << "getTerminalWeight() @" << DbU::getValueString(_axis)
+                      << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
 
   //count  = 0;
   //weight = 0;
@@ -359,14 +357,14 @@ namespace Kite {
 
     for ( ;    (mbegin < _markers.size())
             && (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
-      ltrace(148) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
+      cdebug.log(159) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
       if ( _markers[mbegin]->getNet() == net ) {
-        ltrace(200) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+        cdebug.log(159) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         weight += _markers[mbegin]->getWeight(this);
         ++count;
       }
     }
-    ltraceout(148);
+    cdebug.tabw(159,-1);
   }
 
 
@@ -452,9 +450,9 @@ namespace Kite {
 
   void  Track::insert ( TrackElement* segment )
   {
-    // ltrace(500) << "Deter| Track::insert() " << getLayer()->getName()
+    // cdebug.log(9000) << "Deter| Track::insert() " << getLayer()->getName()
     //             << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
-    ltrace(200) << "Track::insert() " << getLayer()->getName()
+    cdebug.log(159) << "Track::insert() " << getLayer()->getName()
                 << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
 
     if (   (getLayer()->getMask()         != segment->getLayer()->getMask())
@@ -484,7 +482,7 @@ namespace Kite {
     bool holes     = false;
 
     if (message) cerr << "     o  Checking Track - " << message << endl;
-    ltrace(90) << (void*)this << ":" << this << endl;
+    cdebug.log(155) << (void*)this << ":" << this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
       if (_segments[i]) {
@@ -625,8 +623,7 @@ namespace Kite {
 
   size_t  Track::doRemoval ()
   {
-    ltrace(148) << "Track::doRemoval() - " << this << endl;
-    ltracein(148);
+    cdebug.log(159,1) << "Track::doRemoval() - " << this << endl;
 
     size_t  size = _segments.size();
 
@@ -635,8 +632,8 @@ namespace Kite {
 
     _segments.erase( beginRemove, _segments.end() );
 
-    ltrace(148) << "After doRemoval " << this << endl;
-    ltraceout(148);
+    cdebug.log(159) << "After doRemoval " << this << endl;
+    cdebug.tabw(159,-1);
 
     return size - _segments.size();
   }
@@ -644,7 +641,7 @@ namespace Kite {
 
   void  Track::doReorder ()
   {
-    ltrace(200) << "Track::doReorder() " << this << endl;
+    cdebug.log(159) << "Track::doReorder() " << this << endl;
 
     if (not _segmentsValid ) {
       std::sort ( _segments.begin(), _segments.end(), SegmentCompare() );

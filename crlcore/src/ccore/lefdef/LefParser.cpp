@@ -1,42 +1,9 @@
-
 // -*- C++ -*-
 //
-// This file is part of the Coriolis Project.
-// Copyright (C) Laboratoire LIP6 - Departement ASIM
-// Universite Pierre et Marie Curie
+// This file is part of the Coriolis Software.
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// Main contributors :
-//        Christophe Alexandre   <Christophe.Alexandre@lip6.fr>
-//        Sophie Belloeil             <Sophie.Belloeil@lip6.fr>
-//        Hugo Clément                   <Hugo.Clement@lip6.fr>
-//        Jean-Paul Chaput           <Jean-Paul.Chaput@lip6.fr>
-//        Damien Dupuis                 <Damien.Dupuis@lip6.fr>
-//        Christian Masson           <Christian.Masson@lip6.fr>
-//        Marek Sroka                     <Marek.Sroka@lip6.fr>
-// 
-// The  Coriolis Project  is  free software;  you  can redistribute it
-// and/or modify it under the  terms of the GNU General Public License
-// as published by  the Free Software Foundation; either  version 2 of
-// the License, or (at your option) any later version.
-// 
-// The  Coriolis Project is  distributed in  the hope that it  will be
-// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY  or FITNESS FOR  A PARTICULAR PURPOSE.   See the
-// GNU General Public License for more details.
-// 
-// You should have  received a copy of the  GNU General Public License
-// along with the Coriolis Project; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA
-//
-// License-Tag
-// Authors-Tag
-// ===================================================================
-//
-// $Id: CParsLEF.cpp,v 1.28 2007/07/29 15:27:25 jpc Exp $
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -44,30 +11,24 @@
 // |  E-mail      :        Christophe.Alexandre@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./LefParser.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-
-# include  "hurricane/Warning.h"
-# include  "hurricane/DataBase.h"
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/ViaLayer.h"
-# include  "hurricane/Net.h"
-# include  "hurricane/Pad.h"
-# include  "hurricane/Vertical.h"
-# include  "hurricane/Horizontal.h"
-# include  "hurricane/NetExternalComponents.h"
-# include  "hurricane/Cell.h"
-
-# include  "crlcore/AllianceFramework.h"
-# include  "LefDef.h"
-
-# if  HAVE_LEFDEF && defined(LEF_ENABLED)
-#   include  "lefrReader.hpp"
-# endif
+#include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/ViaLayer.h"
+#include "hurricane/Net.h"
+#include "hurricane/Pad.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/NetExternalComponents.h"
+#include "hurricane/Cell.h"
+#include "crlcore/AllianceFramework.h"
+#include "LefDef.h"
+#if  HAVE_LEFDEF && defined(LEF_ENABLED)
+#  include "lefrReader.hpp"
+#endif
 
 
 # define       ONLY_PAD_PINS        1
@@ -110,8 +71,10 @@ namespace {
     if (!layer)
       throw Error("No layer for blockage");
 
-    if ( blockageNet == NULL )
+    if ( blockageNet == NULL ) {
       blockageNet = Net::create ( cell, "blockagenet" );
+      blockageNet->setType ( Net::Type::BLOCKAGE );
+    }
 
     Pad::create ( blockageNet, layer, bb );
   }

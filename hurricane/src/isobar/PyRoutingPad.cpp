@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2013-2015, All Rights Reserved
+// Copyright (c) UPMC 2013-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -53,8 +53,8 @@ extern "C" {
   DirectGetLongAttribute(PyRoutingPad_getSourceY ,getSourceY ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetX ,getTargetX ,PyRoutingPad,RoutingPad)
   DirectGetLongAttribute(PyRoutingPad_getTargetY ,getTargetY ,PyRoutingPad,RoutingPad)
-  // DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,"RoutingPad.setX",PyRoutingPad,RoutingPad)
-  // DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,"RoutingPad.setY",PyRoutingPad,RoutingPad)
+  //DirectSetLongAttribute(PyRoutingPad_setX       ,setX       ,PyRoutingPad,RoutingPad)
+  //DirectSetLongAttribute(PyRoutingPad_setY       ,setY       ,PyRoutingPad,RoutingPad)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyRoutingPad_destroy, PyRoutingPad)
@@ -62,7 +62,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_create ( PyObject*, PyObject* args )
   {
-    trace << "PyRoutingPad_create()" << endl;
+    cdebug.log(20) << "PyRoutingPad_create()" << endl;
 
     PyObject*     arg0 = NULL;
     PyObject*     arg1 = NULL;
@@ -96,7 +96,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_getOccurrence ( PyRoutingPad *self )
   {
-    trace << "PyRoutingPad_getOccurrence ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_getOccurrence ()" << endl;
     METHOD_HEAD( "Component.getOccurrence()" )
 
     PyOccurrence* pyOccurrence = PyObject_NEW(PyOccurrence, &PyTypeOccurrence);
@@ -112,7 +112,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_getPlugOccurrence ( PyRoutingPad *self )
   {
-    trace << "PyRoutingPad_getPlugOccurrence ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_getPlugOccurrence ()" << endl;
     METHOD_HEAD( "Component.getPlugOccurrence()" )
 
     PyOccurrence* pyOccurrence = PyObject_NEW(PyOccurrence, &PyTypeOccurrence);
@@ -128,7 +128,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_getSourcePosition ( PyRoutingPad *self )
   {
-    trace << "PyRoutingPad_getSourcePosition ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_getSourcePosition ()" << endl;
     METHOD_HEAD( "Component.getSourcePosition()" )
 
     PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
@@ -144,7 +144,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_getTargetPosition ( PyRoutingPad *self )
   {
-    trace << "PyRoutingPad_getTargetPosition ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_getTargetPosition ()" << endl;
     METHOD_HEAD( "Component.getTargetPosition()" )
 
     PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
@@ -160,7 +160,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_translate ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_translate ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "RoutingPad.translate()" )
@@ -181,7 +181,7 @@ extern "C" {
 #if THIS_IS_DEPRECATED
   static PyObject* PyRoutingPad_setPosition ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_setPosition ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_setPosition ()" << endl;
     
     HTRY
     METHOD_HEAD ( "RoutingPad.setPosition()" )
@@ -213,7 +213,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_setOffset ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_setOffset ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_setOffset ()" << endl;
     
     HTRY
     METHOD_HEAD ( "RoutingPad.setOffset()" )
@@ -234,7 +234,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_setExternalComponent ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_setExternalComponent ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_setExternalComponent ()" << endl;
     
     HTRY
     METHOD_HEAD ( "RoutingPad.setExternalComponent()" )
@@ -257,7 +257,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_setOnBestComponent ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_setOnBestComponent ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_setOnBestComponent ()" << endl;
     
     Component* selected = NULL;
 
@@ -278,7 +278,7 @@ extern "C" {
 
   static PyObject* PyRoutingPad_restorePlugOccurrence ( PyRoutingPad *self, PyObject* args )
   {
-    trace << "PyRoutingPad_restorePlugOccurrence ()" << endl;
+    cdebug.log(20) << "PyRoutingPad_restorePlugOccurrence ()" << endl;
     
     HTRY
     METHOD_HEAD ( "RoutingPad.restorePlugOccurrence()" )

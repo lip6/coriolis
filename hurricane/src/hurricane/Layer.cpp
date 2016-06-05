@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,14 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Layer.cpp"                                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "hurricane/Layer.h"
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/Technology.h"
-# include  "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Layer.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Error.h"
 
 
 namespace Hurricane {
@@ -49,7 +41,6 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class :  "Hurricane::Layer".
-
 
   Layer::Layer ( Technology* technology
                , const Name& name
@@ -219,7 +210,7 @@ namespace Hurricane {
   }
 
 
-  string Layer::_getString() const
+  string Layer::_getString () const
   {
     string s = DBo::_getString();
     s.insert(s.length() - 1, " " + getString(_name));
@@ -227,7 +218,7 @@ namespace Hurricane {
   }
 
 
-  Record* Layer::_getRecord() const
+  Record* Layer::_getRecord () const
   {
     Record* record = DBo::_getRecord();
     if (record) {
@@ -242,4 +233,49 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+  const Name& Layer::_sgetName ( const Layer* layer )
+  { return layer->getName(); }
+
+
+  void  Layer::_toJson ( JsonWriter* writer ) const
+  {
+    Super::_toJson( writer );
+
+    jsonWrite( writer, "_name"          , getName()               );
+    jsonWrite( writer, "_mask"          , getString(_mask)        );
+    jsonWrite( writer, "_extractMask"   , getString(_extractMask) );
+    jsonWrite( writer, "_minimalSize"   , _minimalSize            );
+    jsonWrite( writer, "_minimalSpacing", _minimalSpacing         );
+    jsonWrite( writer, "_working"       , _working                );
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonLayer".
+
+  JsonLayer::JsonLayer ( unsigned long flags )
+    : JsonDBo(flags)
+  {
+    add( "_name"          , typeid(string)   );
+    add( "_mask"          , typeid(string)   );
+    add( "_extractMask"   , typeid(string)   );
+    add( "_minimalSize"   , typeid(uint64_t) );
+    add( "_minimalSpacing", typeid(uint64_t) );
+    add( "_working"       , typeid(uint64_t) );
+  }
+
+
+  Technology* JsonLayer::lookupTechnology ( JsonStack& stack, const string& fname ) const
+  {
+    Technology* techno = get<Technology*>( stack, ".Technology" );
+    if (not techno) {
+      techno = get<Technology*>( stack, "_technology" );
+    }
+    if (not techno) {
+      cerr << Error( "%s(): .Technology/_technology missing in the stack.", fname.c_str() ) << endl;
+      techno = DataBase::getDB()->getTechnology();
+    }
+    return techno;
+  }
+
+} // Hurricane namespace.

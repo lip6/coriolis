@@ -1,0 +1,323 @@
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ //! \addtogroup   JsonSupport
+ //! \{
+
+ /*! \class        JsonObject
+  *  \brief        Support for JSON export.
+  *
+  */
+
+ //! \}
+
+ //! \function     JsonObject::JsonObject ( unsigned long flags );
+ //! \param        flags  Flags sets by derived classes.
+ //!
+ //!               Base object to be used by all JSON parsers. Provides
+ //!               helpers functions. Store three separated lists of
+ //!               requirements/attributes needes to build the object.
+ //!                 - \c stackeds : thoses are \b not attributes of the
+ //!                   current object, but other objects that are expected
+ //!                   to be already in the stack. They are needed to build the
+ //!                   current object. Their key must start with a \c '.'
+ //!                   character.
+ //!                 - \c attributes : the simple attributes of the object.
+ //!                   Their key must start with a \c '_'.
+ //!                 - \c collections : any container, collection or whatever
+ //!                   set of other objects part of the current object.
+ //!                   Their key must start with a \c '+' character. 
+ //!
+ //!               For adding a requirement/attribute, see JsonObject::add().
+
+ //! \function     bool JsonObject::isDummy () const;
+ //! \Return       \true if the concrete object is of type \c JsonDummy, \false otherwise.
+
+ //! \function     string JsonObject::getTypeName () const;
+ //! \Return       The typename of the concrete object, that is, the value
+ //!               of the \c @typename key of the JSON object.
+
+ //! \function     string JsonObject::getStackName () const;
+ //! \Return       The key with which the DataBase object will be pushed on
+ //!               the parser stack.
+ //!
+ //!               If the current object is associated to an attribute (that
+ //!               is, a key in JSON), then the \c name attribute of the JsonObject
+ //!               should have been set, and it will be returned here.
+ //!
+ //!               If the \c name attribute has not been set (for example,
+ //!               because we are in an array). Then the typename (JsonObject::getTypeName()),
+ //!               prefixed by a \c '.' character will be returned.
+ //!
+ //!               If the JsonObject is, for instance, a JsonBox (typename: \c "Box") :
+ //!                 - If \c name is set to \c "_abutmentBox", the box will be stacked
+ //!                   with that key.
+ //!                 - If \c name is \b not set, then the key will be \c ".Box".
+
+ //! \function     JsonObject* JsonObject::setFlags ( unsigned long mask );
+ //! \param        mask  Flag(s) to be raised.
+ //! \return       The current object.
+
+ //! \function     JsonObject* JsonObject::resetFlags ( unsigned long mask );
+ //! \param        mask  Flag(s) to be lowered.
+ //! \return       The current object.
+
+ //! \function     bool  JsonObject::issetFlags ( unsigned long mask ) const;
+ //! \param        mask  The combination of flags to be checked.
+ //! \return       \true if \b all the flags given in \c mask are sets.
+
+ //! \function     bool JsonObject::check ( JsonStack& stack, string fname ) const;
+ //! \param        stack  Where the objects already parsed are stored.
+ //! \param        fname  The function name on behalf of which the check is
+ //!               performed.
+ //! \return       \true if the check is successful.
+ //!
+ //!               Check that the \c stack actually contains all the objects (i.e. attributes)
+ //!               needed to build the current object. The list of \e attributes is built
+ //!               using the JsonObject::add() function. If an attribute is missing, a warning
+ //!               is issued, but the parser will try to continue.
+
+ //! \function     bool JsonObject::has ( const string& key ) const;
+ //! \param        key  The key name to search for.
+ //! \return       \true if the object possess such a key.
+
+ //! \function     void JsonObject::add ( const string& key, type_index tid );
+ //! \param        key  The requirement/attribute to add.
+ //! \param        tid  The type index of the attribute.
+ //!
+ //!               Adds a new requirement or attribute to the object. The first character
+ //!               of the key tells which kind it is:
+ //!                 - \c '.' : a requirement (not part of the object) that must be present
+ //!                   in the stack.
+ //!                 - \c '_' : a simple attribute of the object.
+ //!                 - \c '+' : belongs to a collection or container.
+ //!
+ //!               A more detailed description could be found in JsonObject::JsonObject().
+ 
+ //! \function     void JsonObject::remove ( const string& key );
+ //! \param        key  The key of the requirement/attribute to remove.
+ //!
+ //!               Removes an attribute from the current object.
+
+ //! \function     T  JsonObject::get ( JsonStack& stack, const string& key ) const;
+ //! \param        stack  The object stack of the parser.
+ //! \param        key    The key of the requested object.
+ //! \return       The first object associated with \c key, starting <em>from the top</em>
+ //!               of the stack.
+ //!
+ //!               Retrieve requirements or attributes from the parser stack.
+ //!                 - If no element with a corresponding key is found, an empty element
+ //!                   of type \c T is returned (by calling the default \c T constructor).
+ //!                 - If an element matching the key is found, \b but it's type do not
+ //!                   match \c T, an exception from \c any_cast<> will be thrown. 
+
+ //! \function     T* JsonObject::jget ( JsonStack& stack ) const;
+ //! \param        stack  The parser stack.
+ //! \Return       the first JsonObject that can be cast into type \c T*.
+ //!
+ //!               Search the JsonObject stack, from the top, the first object that
+ //!               can be cast into type \c T*. Base classes can be used here, as the
+ //!               \c dynamic_cast<> operator is used to perform the casts. 
+ //!
+ //!               This function \b always return a pointer (never a value).
+
+ //! \function     void  JsonObject::copyAttrs ( const JsonObject* other, bool reset=false );
+ //! \param        other  The object from which to copy attributes.
+ //! \param        reset  Whether to keep or erase the original attributes of the object.
+ //!
+ //!               Copy the attributes from \c other into the current object. \b Only the
+ //!               \b attributes are copied. Neither the requirements, nor the collections.
+ //!               By default, the attributes are added to the existing one of the object,
+ //!               but if \c reset is \true, the original ones will be suppresseds.
+
+ //! \function     void  JsonObject::clear ();
+ //!               Removes all requirements/attributes/collections of the object.
+ //!               Also unbind it from any generated DataBase object.
+
+ //! \function     string  JsonObject::getName () const;
+ //! \Return       The name of the whole object as attribute.
+ //!
+ //!               During the parsing of the JSON structure, excepted when in an array,
+ //!               an object is associated with a key. This is the string returned by
+ //!               this function. It is called \c getName() instead of \c getKey() to
+ //!               avoid confusing with the attributes keys.
+
+ //! \function     void  JsonObject::setName ( const string& name );
+ //! \param        name  Set the key associated to this object.
+ //!
+ //!               See JsonObject::getName() for the meaning of the name (key).
+
+ //! \function     T&  JsonObject::getObject () const;
+ //! \Return       The associated DataBase object.
+ //!
+ //!               Once all the attributes have been gathered, the creation of the
+ //!               DataBase object is triggered by calling JsonObject::toData().
+ //!               We keep track of that DataBase object by storing it (or a pointer
+ //!               to it) in an \c boost::any field of the JsonObject.
+
+ //! \function     void  JsonObject::setObject ( T );
+ //! \param        T  The DataBase object.
+ //!
+ //!               Associate the constructed DataBase object \c T to the JSON
+ //!               object (for later access).
+
+ //! \function     bool  JsonObject::isBound () const;
+ //! \Return       \true if a DataBase object is associated to the JSON object
+ //!               (see JsonObject::setObject()).
+
+ //! \function     JsonObject* JsonObject::clone ( unsigned long flags ) const;
+ //! \Return       a new \b empty object <em>of the same dynamic type</em>
+ //!               as the source one.
+ //!
+ //!               This is not a true clone operation in the sense that the datas
+ //!               of the original object are not copied. The cloning is about the
+ //!               type, and is the result of a call to the \c new operator.
+ //!
+ //! \Important    This method must be overloaded in each concrete derived class.
+ 
+ //! \function     void  JsonObject::toData ( JsonStack& stack );
+ //! \param        The parser object stack.
+ //!
+ //! \Important    This method must be overloaded in each concrete derived class.
+ //!
+ //!               Creates the DataBase object. The requirements and attributes
+ //!               must be on top of the stack, they are popped, the DataBase object
+ //!               is created from them and the result is then pushed back. 
+
+ //! \function     unsigned int  JsonObject::presetId ( JsonStack& stack );
+ //! \param        stack  The parser object stack.
+ //! \Return       the <em>next id</em> that has been set.
+ //!
+ //! \Remark       This is a helper for JsonStack::toData().
+ //!
+ //!               In blob mode, the DataBase must be restored <em>as is</em>,
+ //!               including the \c ids of all the Entities (see Entity).
+ //!               This function read from the stack the \c _id attribute
+ //!               and sets it so that the next Entity created will use it.
+
+ //! \function     void  JsonObject::update ( JsonStack& stack, T hobject );
+ //! \param        stack    parser object stack.
+ //! \param        hobject  the newly created DataBase object.
+ //!
+ //! \Remark       This is a helper for JsonStack::toData().
+ //!
+ //!               Pop the attributes from the stack. Push the newly created
+ //!               object and bind it to the JsonObject.
+
+
+ //! \addtogroup   JsonSupport
+ //! \{
+
+ /*! \class        JsonStack
+  *  \brief        JSON Parser Stack
+  *
+  *
+  *                The JSON parser stack contains three separate stacks and a lookup
+  *                table:
+  *                  -# The \c attribute stack. Objects that have been translated from
+  *                     JSON to the Hurricane database (or POD objects).
+  *                  -# The \c dbo stack, similar to the previous one, but contains
+  *                     \b only objects whose base class is DBo.
+  *                  -# The JsonObject stack. The stack of objects currently under
+  *                     parsing.
+  *                  -# A lookup table for the Entity, between the Hurricane \c id and
+  *                     the JSON \c id.
+  */
+
+ //! \}
+
+
+ //! \function     size_t  JsonStack::size () const;
+ //! \Return       The size of the attribute stack.
+
+ //! \function     void  JsonStack::push_back ( const std::string& key, T hobject );
+ //! \param        key      Key associated to \c hobject
+ //! \param        hobject  The \e attribute object.
+ //!
+ //!               Push back (on top) an element on the \e attribute stack.
+
+ //! \function     void  JsonStack::pop_back ( size_t count=1 );
+ //! \param        count   The number of element to pop.
+ //!
+ //!               Remove \c count element(s) from the top of the stack.
+
+ //! \function     int  JsonStack::rhas ( const string& key );
+ //! \param        key  The key element's to look for.
+ //! \return       the index of the element, from the top.
+ //!
+ //!               The function name's stands for "Reverse HAS".
+ //!               Search from the top of the \e attribute stack downward an
+ //!               element with \c key. Return an index from the top of the stack,
+ //!               that is, the end of the vector. The returned index is a negative
+ //!               value, for exemple the element on top of the stack has an index
+ //!               of \c -1. If no element with a matching key is found, returns 0.
+
+ //! \function     T  JsonStack::as ( const std::string& key ) const;
+ //! \param        key  The key's element to search.
+ //! \return       The element, casted as type T.
+ //!
+ //!               Search an element with key matching \c key, from the top of the
+ //!               stack. If found, returns the element casted as type \c T.
+ //!               As the cast operation uses \c boost::any_cast<>, the exact type
+ //!               \c T must be used (\b not a base class of \c T), otherwise the
+ //!               cast will fail and an exception will be thrown.
+
+ //! \function     T  JsonStack::as ( int index ) const;
+ //! \param        index  the position of the element to convert.
+ //! \return       The element, casted as type T.
+ //!
+ //!               Cast the element at \c index into type T. 
+ //!               As the cast operation uses \c boost::any_cast<>, the exact type
+ //!               \c T must be used (\b not a base class of \c T), otherwise the
+ //!               cast will fail and an exception will be thrown.
+ //!
+ //!               A positive or null index means the element must be taken from the
+ //!               bottom of the stack and a stictly negative one means from the top
+ //!               of the stack.
+
+ //! \function     void  JsonStack::push_back_dbo ( DBo* dbo );
+ //! \param        dbo   The DataBase object to push back.
+ //!
+ //!               Dedicated stack to push objects \e after they had been casted
+ //!               into the DBo* base class. We need to create this separate stack
+ //!               from the \e attribute stack due to the inability of \c boost::any_cast<>
+ //!               to use a base class.
+
+ //! \function     void  JsonStack::pop_back_dbo ();
+ //!               Remove one element from the top of the DBo* stack.
+
+ //! \function     DBo* JsonStack::back_dbo () const;
+ //! \Return       The elemet at the top of the DBo* stack.
+
+ //! \function     void  JsonStack::addEntity ( unsigned int jsonId, Entity* entity );
+ //! \param        jsonId   the \c id of the Entity, in the JSON file
+ //! \param        entity   the associated Entity.
+ //!
+ //!               When parsing a DataBase object \b not in \e blob mode, we cannot
+ //!               restore the ids of the Entities as they are in the file.
+ //!               Thus when an Entity is re-created, it comes with a different id.
+ //!               So we have to keep track of the association between this newbox
+ //!               id (in the Hurricane database) and the one in the JSON file.
+ //!
+ //!               This function adds such an association.
+
+ //! \function     T  JsonStack::getEntity ( unsigned int jsonId ) const;
+ //! \Return       The entity, casted as type \c T.
+ //!
+ //!               Find an Entity with the JSON id \c jsonId and cast it into
+ //!               type \c T.
+ //!
+ //!               Obviously, this Entity must have been registered with a call
+ //!               to addEntity() before.
+
+ //! \function     vector<JsonObject*>& JsonStack::jobjects ();
+ //! \Return       the stack of JSON objects, for direct manipulation by the involded
+ //!               parties.
+
+ //! \function     void  JsonStack::print ( std::ostream& o ) const;
+ //!               Dump the contents of the \e attribute stack int the stream \c o.
+ //!               For debugging purposes.
+
+ }

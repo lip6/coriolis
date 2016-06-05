@@ -1,7 +1,7 @@
 #include "Error.h"
 // 
 // This file is part of the Tsunami Project.
-// Copyright (c) 2001-2015  Laboratoire LIP6 - Departement ASIM
+// Copyright (c) 2001-2016  Laboratoire LIP6 - Departement ASIM
 //                          Universite Pierre et Marie Curie.
 // 
 #include "Relation.h"

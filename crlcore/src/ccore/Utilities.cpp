@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -88,9 +88,17 @@ namespace {
   }
 
 
-  void  traceLevelChanged ( Cfg::Parameter* p )
+  void  minTraceLevelChanged ( Cfg::Parameter* p )
   {
-    ltracelevel ( p->asInt() );
+  //cerr << "minTraceLevelChanged:" << p->asInt() << endl;
+    cdebug.setMinLevel( p->asInt() );
+  }
+
+
+  void  maxTraceLevelChanged ( Cfg::Parameter* p )
+  {
+  //cerr << "maxTraceLevelChanged:" << p->asInt() << endl;
+    cdebug.setMaxLevel( p->asInt() );
   }
 
 
@@ -322,25 +330,26 @@ namespace CRL {
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();
 
-    Cfg::getParamBool  ("misc.catchCore"      ,true )->registerCb ( catchCoreChanged );
-    Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( verboseLevel1Changed );
-    Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( verboseLevel2Changed );
-    Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( infoChanged );
-    Cfg::getParamBool  ("misc.paranoid"       ,false)->registerCb ( paranoidChanged );
-    Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( bugChanged );
-    Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( logModeChanged );
-    Cfg::getParamInt   ("misc.traceLevel"     ,1000 )->registerCb ( traceLevelChanged );
-    Cfg::getParamString("stratus1.mappingName","./stratus2sxlib.xml")->registerCb ( stratus1MappingNameChanged );
+    Cfg::getParamBool  ("misc.catchCore"      ,false)->registerCb ( this, catchCoreChanged );
+    Cfg::getParamBool  ("misc.verboseLevel1"  ,true )->registerCb ( this, verboseLevel1Changed );
+    Cfg::getParamBool  ("misc.verboseLevel2"  ,true )->registerCb ( this, verboseLevel2Changed );
+    Cfg::getParamBool  ("misc.info"           ,false)->registerCb ( this, infoChanged );
+    Cfg::getParamBool  ("misc.paranoid"       ,false)->registerCb ( this, paranoidChanged );
+    Cfg::getParamBool  ("misc.bug"            ,false)->registerCb ( this, bugChanged );
+    Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( this, logModeChanged );
+    Cfg::getParamInt   ("misc.minTraceLevel"  ,0    )->registerCb ( this, minTraceLevelChanged );
+    Cfg::getParamInt   ("misc.maxTraceLevel"  ,0    )->registerCb ( this, maxTraceLevelChanged );
+    Cfg::getParamString("stratus1.mappingName","not_set")->registerCb ( this, stratus1MappingNameChanged );
 
   // Immediate update from the configuration.
-    catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
-    verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
-    verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
-    infoChanged          ( Cfg::getParamBool("misc.info"         ) );
-    paranoidChanged      ( Cfg::getParamBool("misc.paranoid"     ) );
-    bugChanged           ( Cfg::getParamBool("misc.bug"          ) );
-    logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
-    traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
+  //catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
+  //verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
+  //verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
+  //infoChanged          ( Cfg::getParamBool("misc.info"         ) );
+  //paranoidChanged      ( Cfg::getParamBool("misc.paranoid"     ) );
+  //bugChanged           ( Cfg::getParamBool("misc.bug"          ) );
+  //logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
+  //traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
 
     Utilities::Path stratusMappingName;
     if ( arguments.count("stratus_mapping_name") ) {

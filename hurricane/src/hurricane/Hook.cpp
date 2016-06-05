@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Hook.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -186,6 +186,9 @@ class Hook_SlaveHooks : public Collection<Hook*> {
 // ****************************************************************************************************
 // Hook implementation
 // ****************************************************************************************************
+
+map<string,Hook::compToHook_t>  Hook::_compToHookMap;
+
 
 Hook::Hook()
 // *********
@@ -385,7 +388,30 @@ Record* Hook::_getRecord() const
     return record;
 }
 
+string Hook::toJson() const
+// ************************
+{
+  if (_nextHook == this) return "";
+  string s = _getTypeName()+"."+getString(getComponent()->getId());
+  return s;
+}
 
+void Hook::addCompToHook(const string& tname, Hook::compToHook_t converter)
+// ************************************************************************
+{
+  _compToHookMap.insert( make_pair(tname,converter) );
+}
+
+Hook* Hook::compToHook(const string& tname, Component* component)
+// **************************************************************
+{
+  map<string,compToHook_t>::const_iterator iconv = _compToHookMap.find(tname);
+  if (iconv == _compToHookMap.end()) {
+    throw Error( "Hook::fromJson(): No converter registered for type name \"%s\""
+               , tname.c_str() );
+  }
+  return (*iconv).second(component);
+}
 
 // ****************************************************************************************************
 // Hook_Hooks implementation
@@ -628,5 +654,5 @@ string Hook_SlaveHooks::Locator::_getString() const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

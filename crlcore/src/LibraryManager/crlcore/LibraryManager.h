@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -18,6 +18,7 @@
 #define  CRL_LIBRARY_MANAGER_H
 
 #include <QWidget>
+#include "hurricane/Observer.h"
 
 class QLabel;
 class QModelIndex;
@@ -34,10 +35,29 @@ namespace CRL {
 
   using Hurricane::Cell;
   using Hurricane::CellViewer;
+  using Hurricane::Observer;
   class AllianceLibrary;
   class ViewsWidget;
   class CellsWidget;
   class LibrariesWidget;
+  class LibraryManager;
+
+
+// -------------------------------------------------------------------
+// Class  :  "FrameworkObserver".
+
+  class FrameworkObserver : public Observer<LibraryManager> {
+    public:
+      inline        FrameworkObserver ( LibraryManager* );
+      virtual void  notify            ( unsigned int flags );
+    private:
+                    FrameworkObserver ( const FrameworkObserver& );
+  };
+
+
+  inline  FrameworkObserver::FrameworkObserver ( LibraryManager* owner )
+    : Observer<LibraryManager>(owner)
+  { }
 
 
 // -------------------------------------------------------------------
@@ -47,24 +67,29 @@ namespace CRL {
   class LibraryManager : public QWidget {
       Q_OBJECT;
     public:
-                         LibraryManager ( QWidget* parent=NULL );
-      inline void        setCellViewer  ( CellViewer* );
-      inline CellViewer* getCellViewer  () const;
-    public slots:                 
-      void               toggleShow     ();
-      void               setLibrary     ( const AllianceLibrary* library );
-      CellViewer*        openCell       ( Cell*, unsigned int flags );
+                               LibraryManager     ( QWidget* parent=NULL );
+                              ~LibraryManager     ();
+      inline  void             setCellViewer      ( CellViewer* );
+      inline  CellViewer*      getCellViewer      () const;
+      inline  LibrariesWidget* getLibrariesWidget () const;
+    public slots:                       
+      void                     toggleShow         ();
+      void                     setLibrary         ( const AllianceLibrary* library );
+      CellViewer*              openCell           ( Cell*, unsigned int flags );
+      void                     updateLibrary      ( Cell* );
     private:
-      LibrariesWidget* _librariesWidget;
-      CellsWidget*     _cellsWidget;
-      ViewsWidget*     _viewsWidget;
-      CellViewer*      _cellViewer;
-      QLabel*          _libPath;
+      FrameworkObserver  _frameworkObserver;
+      LibrariesWidget*   _librariesWidget;
+      CellsWidget*       _cellsWidget;
+      ViewsWidget*       _viewsWidget;
+      CellViewer*        _cellViewer;
+      QLabel*            _libPath;
   };
 
 
-  inline void        LibraryManager::setCellViewer ( CellViewer* cw ) { _cellViewer=cw; }
-  inline CellViewer* LibraryManager::getCellViewer () const { return _cellViewer; }
+  inline void             LibraryManager::setCellViewer      ( CellViewer* cw ) { _cellViewer=cw; }
+  inline CellViewer*      LibraryManager::getCellViewer      () const { return _cellViewer; }
+  inline LibrariesWidget* LibraryManager::getLibrariesWidget () const { return _librariesWidget; }
 
 
 }  // CRL namespace.

@@ -77,7 +77,7 @@ extern "C" {
 
   static PyObject* PyRegularLayer_create ( PyObject*, PyObject* args )
   {
-    trace << "PyRegularLayer_create()" << endl;
+    cdebug.log(20) << "PyRegularLayer_create()" << endl;
 
     RegularLayer*   regularLayer     = NULL;
     

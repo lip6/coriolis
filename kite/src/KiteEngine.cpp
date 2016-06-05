@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -68,9 +68,6 @@ namespace Kite {
   using Hurricane::UpdateSession;
   using Hurricane::DebugSession;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -154,8 +151,7 @@ namespace Kite {
 
   void  KiteEngine::_initDataBase ()
   {
-    ltrace(90) << "KiteEngine::_initDataBase()" << endl;
-    ltracein(90);
+    cdebug.log(155,1) << "KiteEngine::_initDataBase()" << endl;
 
     Session::open( this );
     createGlobalGraph( KtNoFlags );
@@ -167,7 +163,7 @@ namespace Kite {
     Session::close();
     _runKiteInit();
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 
@@ -184,8 +180,7 @@ namespace Kite {
 
   void  KiteEngine::_preDestroy ()
   {
-    ltrace(90) << "KiteEngine::_preDestroy()" << endl;
-    ltracein(90);
+    cdebug.log(155,1) << "KiteEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
@@ -210,7 +205,7 @@ namespace Kite {
       _knik->destroy();
     }
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 
@@ -322,14 +317,8 @@ namespace Kite {
     if (not _knik) {
       unsigned int  flags = Cell::Flags::WarnOnUnplacedInstances;
       flags |= (mode & KtBuildGlobalRouting) ? Cell::Flags::BuildRings : 0;
-    //if (not cell->isFlattenedNets()) cell->flattenNets( flags );
       cell->flattenNets( flags );
       cell->createRoutingPadRings( Cell::Flags::BuildRings );
-
-    // Test signals from <snx2013>.
-    //DebugSession::addToTrace( getCell(), "core.snx_inst.a2_x2_8_sig" );
-    //DebugSession::addToTrace( getCell(), "m_clock" );
-    //DebugSession::addToTrace( getCell(), "a2_x2_8_sig" );
   
       KatabaticEngine::chipPrep();
   
@@ -354,6 +343,11 @@ namespace Kite {
       size_t           coronaReserved = 4;
   
       for( Knik::Vertex* vertex : _knik->getRoutingGraph()->getVertexes() ) {
+        if (      chipTools.isChip()
+           and (  chipTools.hPadsEnclosed(Box(vertex->getPosition()))
+               or chipTools.vPadsEnclosed(Box(vertex->getPosition()))) )
+          vertex->setBlocked();
+
         for ( int i=0 ; i<2 ; ++i ) {
           Knik::Edge* edge    = NULL;
   
@@ -446,21 +440,21 @@ namespace Kite {
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
         Track*        track   = rp->getTrackByIndex ( itrack );
 
-        ltrace(300) << "Capacity from: " << track << endl;
+        cdebug.log(159) << "Capacity from: " << track << endl;
 
         if (track->getDirection() == KbHorizontal) {
           for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
             TrackElement* element = track->getSegment( ielement );
          
             if (element->getNet() == NULL) {
-              ltrace(300) << "Reject capacity from (not Net): " << element << endl;
+              cdebug.log(159) << "Reject capacity from (not Net): " << element << endl;
               continue;
             }
             if (   (not element->isFixed())
                and (not element->isBlockage())
                and (not element->isUserDefined()) ) {
               cmess2 << "Reject capacity from (neither fixed, blockage nor user defined): " << element << endl;
-            //ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
+            //cdebug.log(159) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
               continue;
             }
 
@@ -468,7 +462,7 @@ namespace Kite {
           //int elementCapacity = (chipCorona.contains(elementBb)) ? -hEdgeCapacity : -1;
             int elementCapacity = -1;
 
-            ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
+            cdebug.log(159) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
             Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(element->getSourceU(),track->getAxis()) );
             Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(element->getTargetU(),track->getAxis()) );
@@ -494,11 +488,11 @@ namespace Kite {
             TrackElement* element = track->getSegment( ielement );
 
             if (element->getNet() == NULL) {
-              ltrace(300) << "Reject capacity from (not Net): " << element << endl;
+              cdebug.log(159) << "Reject capacity from (not Net): " << element << endl;
               continue;
             }
             if ( (not element->isFixed()) and not (element->isBlockage()) ) {
-              ltrace(300) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
+              cdebug.log(159) << "Reject capacity from (neither fixed nor blockage): " << element << endl;
               continue;
             }
 
@@ -506,7 +500,7 @@ namespace Kite {
           //int elementCapacity = (chipCorona.contains(elementBb)) ? -vEdgeCapacity : -1;
             int elementCapacity = -1;
 
-            ltrace(300) << "Capacity from: " << element << ":" << elementCapacity << endl;
+            cdebug.log(159) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
             Katabatic::GCell* gcell = getGCellGrid()->getGCell( Point(track->getAxis(),element->getSourceU()) );
             Katabatic::GCell* end   = getGCellGrid()->getGCell( Point(track->getAxis(),element->getTargetU()) );
@@ -661,6 +655,7 @@ namespace Kite {
     unsigned long long     totalWireLength  = 0;
     unsigned long long     routedWireLength = 0;
     vector<TrackElement*>  unrouteds;
+    vector<TrackElement*>  reduceds;
     ostringstream          result;
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
@@ -676,20 +671,16 @@ namespace Kite {
       }
 
       if (segment->isFixed() or segment->isBlockage()) continue;
-
-      // if (segment->isSameLayerDogleg()) {
-      //   cerr << "   Same layer:" << segment << endl;
-      //   cerr << "     S: " << segment->base()->getAutoSource() << endl;
-      //   cerr << "     T: " << segment->base()->getAutoTarget() << endl;
-      // }
+      if (segment->isReduced()) reduceds.push_back( segment );
 
       totalWireLength += wl;
-      if (segment->getTrack() != NULL) {
+      if ( (segment->getTrack() != NULL) or (segment->isReduced()) ) {
         routeds++;
         routedWireLength += wl;
-      } else {
-        unrouteds.push_back( segment );
+        continue;
       }
+
+      unrouteds.push_back( segment );
     }
 
     float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
@@ -703,6 +694,13 @@ namespace Kite {
         cerr << "   " << dec << setw(4) << (i+1) << "| " << unrouteds[i] << endl;
       }
     }
+
+    // if (not reduceds.empty()) {
+    //   cerr << "  o  Reduced segments:" << endl;
+    //   for ( size_t i=0; i<reduceds.size() ; ++i ) {
+    //     cerr << "   " << dec << setw(4) << (i+1) << "| " << reduceds[i] << endl;
+    //   }
+    // }
 
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";
@@ -811,28 +809,27 @@ namespace Kite {
   void  KiteEngine::finalizeLayout ()
   {
 
-    ltrace(90) << "KiteEngine::finalizeLayout()" << endl;
+    cdebug.log(155) << "KiteEngine::finalizeLayout()" << endl;
     if (getState() > Katabatic::EngineDriving) return;
 
-    ltracein(90);
+    cdebug.tabw(155,1);
 
     setState( Katabatic::EngineDriving );
     _gutKite();
 
     KatabaticEngine::finalizeLayout();
-    ltrace(90) << "State: " << getState() << endl;
+    cdebug.log(155) << "State: " << getState() << endl;
 
     getCell()->setFlags( Cell::Flags::Routed );
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 
   void  KiteEngine::_gutKite ()
   {
-    ltrace(90) << "KiteEngine::_gutKite()" << endl;
-    ltracein(90);
-    ltrace(90) << "State: " << getState() << endl;
+    cdebug.log(155,1) << "KiteEngine::_gutKite()" << endl;
+    cdebug.log(155)   << "State: " << getState() << endl;
 
     if (getState() < Katabatic::EngineGutted) {
       Session::open( this );
@@ -845,7 +842,7 @@ namespace Kite {
       Session::close();
     }
 
-    ltraceout(90);
+    cdebug.tabw(155,-1);
   }
 
 

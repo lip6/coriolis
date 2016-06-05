@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -40,10 +39,11 @@ namespace Kite {
  
   class TrackCost {
     public:
-      enum Flags { IgnoreAxisWeight   = 0x1
-                 , DiscardGlobals     = 0x2
-                 , IgnoreSharedLength = 0x4
-                 , LocalAndTopDepth   = 0x1
+      enum Flags { IgnoreAxisWeight   = 0x0001
+                 , DiscardGlobals     = 0x0002
+                 , IgnoreSharedLength = 0x0004
+                 , LocalAndTopDepth   = 0x0008
+                 , ZeroCost           = 0x0010
                  };
 
     public:
@@ -61,6 +61,9 @@ namespace Kite {
       };
 
     public:
+                                 TrackCost          (       Track*        track
+                                                    ,       Net*          net
+                                                    );
                                  TrackCost          (       Track*        track
                                                     , const Interval&     interval
                                                     ,       size_t        begin

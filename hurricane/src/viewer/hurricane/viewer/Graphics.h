@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <QFont>
+#include "hurricane/Observer.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/TextTranslator.h"
 #include "hurricane/viewer/DisplayStyle.h"
@@ -37,11 +38,18 @@ namespace Hurricane {
   class Name;
 
 
-  class Graphics {
+// -------------------------------------------------------------------
+// Class  :  "Graphics".
 
+  class Graphics {
+    public:
+      enum NotifyFlags { ChangedDisplayStyles = (1<<0) };
     public:
     // Accessors.
       static  Graphics*                    getGraphics      ();
+      static  void                         addObserver      ( BaseObserver* );
+      static  void                         removeObserver   ( BaseObserver* );
+      static  void                         notify           ( unsigned int flags );
       static  bool                         isEnabled        ();
       static  bool                         isHighDpi        ();
       static  const QFont                  getFixedFont     ( int weight=QFont::Normal, bool italic=false, bool underline=false, int scale=0 );
@@ -59,7 +67,6 @@ namespace Hurricane {
       static  string                       toHtml           ( const string& );
       static  int                          toHighDpi        ( int );
       static  bool                         breakpointStopCb ( const string& message );
-
     // Modifiers.
       static  void                         addStyle         ( DisplayStyle* displayStyle );
       static  void                         setStyle         ( const Name& key );
@@ -68,10 +75,11 @@ namespace Hurricane {
       static  DisplayStyle*                getStyle         ();
       static  const vector<DisplayStyle*>& getStyles        ();
       static  void                         enable           ();
-
+              void                         toJson           ( JsonWriter* ) const;
     // Internals - Attributes.
     protected:
       static  Graphics*                    _singleton;
+              Observable                   _observers;
               TextTranslator               _htmlTranslator;
               vector<DisplayStyle*>        _styles;
               DisplayStyle*                _active;
@@ -86,7 +94,6 @@ namespace Hurricane {
                                            Graphics           ( const Graphics& );
               Graphics&                    operator=          ( const Graphics& );
                                           ~Graphics           ();
-                                                              
     // Internals - Methods.                                   
               size_t                       _findStyle         ( const Name& key ) const;
               void                         _addStyle          ( DisplayStyle* displayStyle );
@@ -105,7 +112,6 @@ namespace Hurricane {
       inline  const ColorScale&            _getColorScale     ( ColorScale::ScaleType ) const;
       inline  void                         _enable            ();
       inline  const TextTranslator&        _getHtmlTranslator () const;
-
   };
 
 
@@ -157,6 +163,20 @@ namespace Hurricane {
   { return _htmlTranslator; }
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonGraphics".
+
+  class JsonGraphics : public JsonObject {
+    public:
+      static  void          initialize   ();
+                            JsonGraphics ( unsigned long flags );
+                           ~JsonGraphics ();
+      virtual string        getTypeName  () const;
+      virtual JsonGraphics* clone        ( unsigned long ) const;
+      virtual void          toData       ( JsonStack& ); 
+    private:
+      std::string  _active;
+  };
 
 
 } // End of Hurricane namespace.

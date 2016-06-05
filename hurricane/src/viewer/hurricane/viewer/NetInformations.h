@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -67,16 +67,17 @@ namespace Hurricane {
       static  QVariant    getColumnName         ( int column );
       virtual QVariant    getColumn             ( int column );
       inline  size_t      getPlugsCount         () const;
+      inline  size_t      getRpsCount           () const;
       
     protected:
+              QVariant    _netName;
               size_t      _plugsCount;
-              QVariant    _columnNet;
-              QVariant    _columnPlug;
+              size_t      _rpsCount;
   };
 
 
-  inline size_t  SimpleNetInformations::getPlugsCount () const
-  { return _plugsCount; }
+  inline size_t  SimpleNetInformations::getPlugsCount () const { return _plugsCount; }
+  inline size_t  SimpleNetInformations::getRpsCount   () const { return _rpsCount; }
 
 
 // -------------------------------------------------------------------

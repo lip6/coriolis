@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI Stand-Alone Software.
-// Copyright (c) UPMC 2013-2015, All Rights Reserved
+// Copyright (c) UPMC 2013-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |      V L S I  Stand - Alone  Parsers / Drivers                  |
@@ -26,7 +26,7 @@ namespace Utilities {
 
   class Dots {
     public:
-      enum Flag { NoFlags=0x00, FirstDot=0x01, Reset=0x02 };
+      enum Flag { NoFlags=0x00, FirstDot=0x01, Reset=0x02, Disabled=0x04 };
     public:
       inline        Dots       ( std::ostream&
                                , const std::string& indent
@@ -38,6 +38,9 @@ namespace Utilities {
       inline  void  CR         ();
               void  dot        ();
               void  finish     ( unsigned int flags );
+      inline  bool  enabled    ();
+      inline  void  enable     ();
+      inline  void  disable    ();
     private:
       inline  void  _flush     ( char );
     private:
@@ -61,10 +64,15 @@ namespace Utilities {
 
   inline  void  Dots::setWidth   ( unsigned int w ) { _width=w; }
   inline  void  Dots::setDivider ( unsigned int d ) { _divider=d; }
+  inline  bool  Dots::enabled    () { return not (_flags & Disabled); }
+  inline  void  Dots::enable     () { _flags &= ~Disabled; }
+  inline  void  Dots::disable    () { _flags |=  Disabled; }
 
   inline void  Dots::_flush ( char c )
   {
-    _ostream.put( c );
+    if (not enabled()) return;
+
+    _ostream << c;
     _ostream.flush();
   }
 
@@ -75,7 +83,7 @@ namespace Utilities {
 
   inline void  Dots::reset ( unsigned int flags )
   {
-    _flags = flags;
+    _flags = flags | ((not enabled()) ? Disabled : NoFlags);
     _count = 0;
   }
 

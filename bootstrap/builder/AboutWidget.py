@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2015, All Rights Reserved
+# Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -54,7 +54,7 @@ class AboutWidget ( QWidget ):
     subTitle.setFont( QFont('Courier',10,QFont.Bold) )
 
     authors  = QLabel( 'Coriolis CAD System 1.0 . . . . . . . .  ccb 1.0\n'
-                       'Copyright (c) 2008-2015 . . . . . . . . . . UPMC\n'
+                       'Copyright (c) 2008-2016 . . . . . . . . . . UPMC\n'
                        'Authors . . . . . . . . . . . . .  Damien Dupuis\n'
                        '        . . . . . . . . . . . . Jean-Paul Chaput\n'
                        'E-Mail  . . . . . . . . Jean-Paul.Chaput@lip6.fr'

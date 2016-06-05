@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -57,7 +57,7 @@ extern "C" {
     static char**         argv = NULL;
            vector<char*>  vargv;
 
-    trace << "PyHApplication_create()" << endl;
+    cdebug.log(20) << "PyHApplication_create()" << endl;
 
     HApplication*   ha             = NULL;
     PyHApplication* pyHApplication = NULL;
@@ -116,7 +116,7 @@ extern "C" {
 
   static PyObject* PyHApplication_qtExec ( PyHApplication* self, PyObject* args )
   {
-    trace << "PyHApplication_qtExec()" << endl;
+    cdebug.log(20) << "PyHApplication_qtExec()" << endl;
 
     int returnCode = 0;
 

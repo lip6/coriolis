@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2015-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2015-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -212,6 +212,15 @@ namespace Hurricane {
   }
 
 
+  void  NetAliasName::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "NetAlias" );
+    jsonWrite( w, "_name"    , _name      );
+    w->endObject();
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::AliasList" (Collection).
 
@@ -262,5 +271,48 @@ namespace Hurricane {
     return s;
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonNetAlias".
+
+  Initializer<JsonNetAlias>  jsonNetAliasInit ( 0 );
+
+
+  void  JsonNetAlias::initialize ()
+  { JsonTypes::registerType( new JsonNetAlias (JsonWriter::RegisterMode) ); }
+
+
+  JsonNetAlias::JsonNetAlias( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( ".Net" , typeid(Net*)   );
+    add( "_name", typeid(string) );
+  }
+
+
+  string JsonNetAlias::getTypeName () const
+  { return "NetAlias"; }
+
+
+  JsonNetAlias* JsonNetAlias::clone ( unsigned long flags ) const
+  { return new JsonNetAlias ( flags ); }
+
+
+  void JsonNetAlias::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonNetAlias::toData" );
+
+    Net* net = get<Net*>( stack, ".Net" );
+    if (net) {
+      string name = get<string>( stack, "_name" );
+      if (not name.empty()) {
+        net->addAlias( name );
+      }
+    } else {
+      cerr << Error( "JsonNetAlias::toData(): Missing \".Net\" in stack context." ) << endl;
+    }
+  
+    update( stack, NULL );
+}
 
 }  // Hurricane namespace.

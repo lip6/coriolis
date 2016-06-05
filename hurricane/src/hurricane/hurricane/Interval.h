@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Interval.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -108,6 +108,15 @@ class Interval {
 } // End of Hurricane namespace.
 
 
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane::Interval* interval )
+{
+  w->key( key );
+  w->startArray();
+  w->write( &interval->getVMin() );
+  w->write( &interval->getVMax() );
+  w->endArray();
+}
+
 INSPECTOR_PV_SUPPORT(Hurricane::Interval);
 
 
@@ -115,5 +124,5 @@ INSPECTOR_PV_SUPPORT(Hurricane::Interval);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

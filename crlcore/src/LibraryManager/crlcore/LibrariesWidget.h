@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -36,12 +36,12 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "LibrariesWidget".
 
-
   class LibrariesWidget : public QWidget {
       Q_OBJECT;
     public:
             LibrariesWidget ( QWidget* parent=NULL );
       void  initSelection   ();
+      void  update          ();
     signals:
       void  selectedLibrary ( const AllianceLibrary* );
     public slots:

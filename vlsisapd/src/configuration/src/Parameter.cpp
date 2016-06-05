@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -68,6 +67,46 @@ namespace Cfg {
       case Enumerate:  return "enumerate";
     }
     return "unsupported";
+  }
+
+
+  Parameter::Type  Parameter::stringToType ( const std::string& stype )
+  {
+    if      (stype == "string"    ) return String;
+    else if (stype == "int"       ) return Int;
+    else if (stype == "double"    ) return Double;
+    else if (stype == "bool"      ) return Bool;
+    else if (stype == "percentage") return Percentage;
+    else if (stype == "enumerate" ) return Enumerate;
+
+    return Unknown;
+  }
+
+
+  string  Parameter::priorityToString  ( Parameter::Priority priority )
+  {
+    switch ( priority ) {
+      case UseDefault:         return "UseDefault";
+      case ApplicationBuiltin: return "ApplicationBuiltin";
+      case ConfigurationFile:  return "ConfigurationFile";
+      case UserFile:           return "UserFile";
+      case CommandLine:        return "CommandLine";
+      case Interactive:        return "Interactive";
+    }
+    return "UseDefault";
+  }
+
+
+  Parameter::Priority  Parameter::stringToPriority ( const std::string& spriority )
+  {
+    if      (spriority == "UseDefault"        ) return UseDefault;
+    else if (spriority == "ApplicationBuiltin") return ApplicationBuiltin;
+    else if (spriority == "ConfigurationFile" ) return ConfigurationFile;
+    else if (spriority == "UserFile"          ) return UserFile;
+    else if (spriority == "CommandLine"       ) return CommandLine;
+    else if (spriority == "Interactive"       ) return Interactive;
+
+    return UseDefault;
   }
 
 
@@ -153,6 +192,13 @@ namespace Cfg {
            << "> as " << Parameter::typeToString(Percentage)<< " (type mismatch)." << endl;
 
     std::istringstream s ( _value ); double r; s >> r; return r*100.0;
+  }
+
+
+  bool  Parameter::setRawString ( const string& s, Priority priority )
+  {
+    if ( not _updatePriority(priority) ) return false;
+    return _doChange ( _flags|FromString, s, false, 0, 0.0 );
   }
 
 

@@ -1,27 +1,24 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/viewer/Command.h"                  |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_COMMAND_H__
-#define  __HURRICANE_COMMAND_H__
+#ifndef  HURRICANE_COMMAND_H
+#define  HURRICANE_COMMAND_H
 
-
-#include  <string>
-#include  <map>
-
+#include <string>
+#include <map>
 
 class QKeyEvent;
 class QMouseEvent;
@@ -54,6 +51,7 @@ namespace Hurricane {
       virtual void          mousePressEvent   ( QMouseEvent* );
       virtual void          mouseReleaseEvent ( QMouseEvent* );
       virtual void          draw              ();
+      virtual void          reset             ();
     private:
                             Command           ( const Command& );
               Command&      operator=         ( const Command& );

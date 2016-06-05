@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +26,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./NetExternalComponents.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/Error.h"
@@ -45,6 +36,8 @@
 
 namespace Hurricane {
 
+// -------------------------------------------------------------------
+// Class  :  "NetExternalComponents".
 
   const Name NetExternalComponents::_name = "ExternalComponentsRelation";
 
@@ -93,6 +86,75 @@ namespace Hurricane {
     if (!net->isExternal()) return false;
 
     return component->getProperty(_name) != NULL;
+  }
+
+
+  void  NetExternalComponents::toJson ( JsonWriter* w, const Net* net )
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "NetExternalComponents" );
+
+    w->setFlags( JsonWriter::UseEntityReference );
+    if (net->isExternal()) {
+      jsonWrite( w, "+entities", get(net) );
+    } else {
+      w->key( "+entities" );
+      w->startArray();
+      w->endArray();
+    }
+    w->resetFlags( JsonWriter::UseEntityReference );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNetExternalComponents".
+
+  Initializer<JsonNetExternalComponents>  jsonNetExternalComponentsInit ( 0 );
+
+
+  void  JsonNetExternalComponents::initialize ()
+  { JsonTypes::registerType( new JsonNetExternalComponents (JsonWriter::RegisterMode) ); }
+
+
+  JsonNetExternalComponents::JsonNetExternalComponents ( unsigned long flags )
+    : JsonBaseArray<Entity*>(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "+entities", typeid(JsonArray) );
+  }
+
+
+  JsonNetExternalComponents::~JsonNetExternalComponents ()
+  {
+    for ( Entity* entity : array() ) {
+      Component* component = dynamic_cast<Component*>( entity );
+      if (component) NetExternalComponents::setExternal( component );
+      else {
+        cerr << Error( "JsonNetExternalComponents(): %s in not a Component."
+                     , getString(entity).c_str() ) << endl;
+      }
+    }
+  }
+
+
+  string  JsonNetExternalComponents::getTypeName () const
+  { return "NetExternalComponents"; }
+
+
+  JsonNetExternalComponents* JsonNetExternalComponents::clone( unsigned long flags ) const
+  { return new JsonNetExternalComponents ( flags ); }
+
+
+  void JsonNetExternalComponents::toData ( JsonStack& stack )
+  {
+    cdebug.tabw(19,1);
+
+    check ( stack, "JsonNetExternalComponents::toData" );
+    update( stack, NULL );
+
+    cdebug.tabw(19,-1);
   }
 
 

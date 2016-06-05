@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Horizontal.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
@@ -173,6 +175,16 @@ void Horizontal::translate(const DbU::Unit& dy)
     }
 }
 
+void Horizontal::_toJson(JsonWriter* writer) const
+// ***********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_y"       , _y );
+  jsonWrite( writer, "_dxSource", _dxSource );
+  jsonWrite( writer, "_dxTarget", _dxTarget );
+}
+
 string Horizontal::_getString() const
 // **********************************
 {
@@ -191,9 +203,66 @@ Record* Horizontal::_getRecord() const
     return record;
 }
 
+
+// ****************************************************************************************************
+// JsonHorizontal implementation
+// ****************************************************************************************************
+
+Initializer<JsonHorizontal>  jsonHorizontalInit ( 0 );
+
+
+void  JsonHorizontal::initialize()
+// *******************************
+{ JsonTypes::registerType( new JsonHorizontal (JsonWriter::RegisterMode) ); }
+
+JsonHorizontal::JsonHorizontal(unsigned long flags)
+// ************************************************
+  : JsonSegment(flags)
+{
+  add( "_y"       , typeid(uint64_t) );
+  add( "_dxSource", typeid(uint64_t) );
+  add( "_dxTarget", typeid(uint64_t) );
+}
+
+string JsonHorizontal::getTypeName() const
+// ***************************************
+{ return "Horizontal"; }
+
+JsonHorizontal* JsonHorizontal::clone(unsigned long flags) const
+// *************************************************************
+{ return new JsonHorizontal ( flags ); }
+
+void JsonHorizontal::toData(JsonStack& stack)
+// ******************************************
+{
+  check( stack, "JsonHorizontal::toData" );
+  unsigned int jsonId = presetId( stack );
+
+  Horizontal* horizontal = Horizontal::create
+    ( get<Net*>(stack,".Net")
+    , DataBase::getDB()->getTechnology()->getLayer( get<string>(stack,"_layer") )
+    , DbU::fromDb( get<int64_t>(stack,"_y"       ) )
+    , DbU::fromDb( get<int64_t>(stack,"_width"   ) )
+    , DbU::fromDb( get<int64_t>(stack,"_dxSource") )
+    , DbU::fromDb( get<int64_t>(stack,"_dxTarget") )
+    );
+  
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( horizontal->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    jnet->addHookLink( horizontal->getSourceHook(), jsonId, get<string>(stack,"_sourceHook") );
+    jnet->addHookLink( horizontal->getTargetHook(), jsonId, get<string>(stack,"_targetHook") );
+  } else {
+    cerr << Error( "JsonHorizontal::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
+
+// Hook/Ring rebuild are done as a post-process.
+  update( stack, horizontal );
+}
+
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

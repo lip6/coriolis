@@ -52,6 +52,8 @@ def guessOs ():
     osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*i686.*")
     osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3].*x86_64.*")
     osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*i686.*")
+    osCygwinW10_64    = re.compile (".*CYGWIN_NT-10\.[0-3].*x86_64.*")
+    osCygwinW10       = re.compile (".*CYGWIN_NT-10\.[0-3].*i686.*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -108,6 +110,11 @@ def guessOs ():
       libDir = "lib64"
     elif osCygwinW8.match(lines[0]):
       osType = "Cygwin.W8"
+    elif osCygwinW10_64.match(lines[0]):
+      osType = "Cygwin.W10_64"
+      libDir = "lib64"
+    elif osCygwinW10.match(lines[0]):
+      osType = "Cygwin.W10"
     else:
       uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
       osType = uname.stdout.readlines()[0][:-1]
@@ -165,16 +172,18 @@ if __name__ == "__main__":
     'PATH="%(PATH)s";'                                             \
     'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";'                           \
     'CORIOLIS_TOP="%(CORIOLIS_TOP)s";'                             \
-    'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
     'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;'
+
+#   'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
 
   shellScriptCsh = \
     'echo "%(MESSAGE)s";'                              \
     'echo "Switching to Coriolis 2.x (%(buildDir)s)";' \
     'setenv PATH "%(PATH)s";'                          \
     'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";'        \
-    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'          \
-    'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";'
+    'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'
+
+#   'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";' \
 
   buildDir  = buildType + "." + linkType
   scriptDir = os.path.dirname ( os.path.abspath(__file__) )

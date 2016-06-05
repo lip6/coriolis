@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Pad.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -73,12 +73,24 @@ class Pad : public Component {
 // Others
 // ******
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: static JsonObject* getJsonObject(unsigned long flags);
     public: virtual string _getTypeName() const {return _TName("Pad");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
 };
 
+
+class JsonPad : public JsonComponent {
+// ***********************************
+
+  public: static void initialize();
+  public: JsonPad(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPad* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -90,5 +102,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Pad);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

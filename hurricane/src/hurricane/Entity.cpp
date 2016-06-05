@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Entity.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -28,22 +28,73 @@
 namespace Hurricane {
 
 
-
 // ****************************************************************************************************
 // Entity implementation
 // ****************************************************************************************************
 
 
-  unsigned int  Entity::_idCounter = 0;
+  unsigned long  Entity::_flags     = 0;
+  unsigned int   Entity::_nextId    = 0;
+  unsigned int   Entity::_idCounter = 1;
 
 
   unsigned int  Entity::getIdCounter ()
   { return _idCounter; }
 
 
+  bool  Entity::inForcedIdMode ()
+  { return _flags & ForcedIdMode; }
+
+
+  void  Entity::enableForcedIdMode ()
+  {
+    if (_flags & ForcedIdMode) return;
+    if (_idCounter != 1) {
+      throw Error( "Entity::enableForcedIdMode(): DataBase must be reset before forcind ids." );
+    }
+    _flags |= ForcedIdMode;
+  }
+
+
+  void  Entity::disableForcedIdMode ()
+  {
+    if (not (_flags & ForcedIdMode)) return;
+    _flags &= ~ForcedIdMode;
+  }
+
+
+  void  Entity::setNextId ( unsigned int nid )
+  {
+    if (not (_flags & ForcedIdMode)) {
+      cerr << Error("Entity::setNextId(): Not in forced id mode, ignored.") << endl;
+      return;
+    }
+    _nextId = nid;
+    if (nid > _idCounter) _idCounter = nid;
+    _flags |= NextIdSet;
+  }
+
+
+  unsigned int  Entity::getNextId ()
+  {
+    if (_flags & ForcedIdMode) {
+      if (_flags & NextIdSet) {
+        _flags &= ~NextIdSet;
+        cdebug.log(18) << demangle(typeid(*this).name())
+                   << "::getNextId(): Consuming the preset id:" << _nextId << endl;
+        return _nextId;
+      } else {
+        throw Error("Entity::getNextId(): Next id is not set, while in forced id mode.");
+      }
+    }
+
+    return _idCounter++;
+  }
+
+
   Entity::Entity()
     : Inherit()
-    , _id(_idCounter++)
+    , _id    (getNextId())
   {
     if (_idCounter == std::numeric_limits<unsigned int>::max()) {
       throw Error( "Entity::Entity(): Identifier counter has reached it's limit (%d bits)."
@@ -64,7 +115,6 @@ namespace Hurricane {
     for(; it != end ; it++)
       slaveEntities.push_back(it->second);
     for(; slaveEntities.size() ; slaveEntities.pop_back()) {
-      cerr << "Erasing " << slaveEntities.back() << endl;
       slaveEntities.back()->destroy();
     }
 
@@ -96,32 +146,109 @@ namespace Hurricane {
   //ltraceout(10);
   }
 
-string Entity::_getString() const
-// ******************************
-{
-    string s = Inherit::_getString();
-    s.insert(1, "id:"+getString(_id)+" ");
-    return s;
-}
 
-Record* Entity::_getRecord() const
-// *************************
-{
+  void  Entity::setId ( unsigned int id )
+  {
+    if (_flags & ForcedIdMode) {
+      _id = id;
+      if (_id > _idCounter) _idCounter = _id;
+    } else {
+      throw Error("Entity::setId(): Attempt to set id while not in forced id mode.");
+    }
+  }
+
+
+  void  Entity::_toJson ( JsonWriter* writer ) const
+  {
+    Inherit::_toJson( writer );
+
+    jsonWrite( writer, "_id", getId() );
+  }
+
+
+  string Entity::_getString() const
+  {
+    string s = Inherit::_getString();
+    s.insert( 1, "id:"+getString(_id)+" " );
+    return s;
+  }
+
+
+  Record* Entity::_getRecord() const
+  {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("_id", _id));
-        Occurrence occurrence = Occurrence(this);
-        if (occurrence.hasProperty())
-            record->add(getSlot("Occurrence", occurrence));
+      record->add( getSlot("_id", _id) );
+      Occurrence occurrence = Occurrence(this);
+      if (occurrence.hasProperty())
+        record->add( getSlot("Occurrence", occurrence) );
     }
     return record;
-}
+  }
 
 
+  JsonEntity::JsonEntity (unsigned long flags)
+    : JsonDBo(flags)
+  {
+    add( "_id", typeid(uint64_t) );
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonEntityRef".
+
+  Initializer<JsonEntityRef>  jsonEntityRefInit ( 0 );
+
+
+  void  JsonEntityRef::initialize ()
+  { JsonTypes::registerType( new JsonEntityRef (JsonWriter::RegisterMode) ); }
+
+
+  JsonEntityRef::JsonEntityRef ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    add( "_id", typeid(int64_t) );
+  }
+
+
+  string  JsonEntityRef::getTypeName () const
+  { return "&Entity"; }
+
+
+  JsonEntityRef* JsonEntityRef::clone( unsigned long flags ) const
+  { return new JsonEntityRef ( flags ); }
+
+
+  void JsonEntityRef::toData ( JsonStack& stack )
+  {
+    cdebug.tabw(19,1);
+
+    check( stack, "JsonEntityRef::toData" );
+
+    unsigned int jsonId = get<int64_t>( stack, "_id" );
+    Entity*      entity = stack.getEntity<Entity*>( jsonId );
+
+    cdebug.log(19) << "jsonId:" << jsonId << " entity:" << entity << endl;
+
+    if (entity) {
+      JsonBaseArray<Entity*>* array = jget< JsonBaseArray<Entity*> >( stack );
+      if (array) array->push_back( entity );
+      else
+        cerr << Error( "JsonEntityRef::toData(): Missing JsonBaseArray in stack context." ) << endl;
+    } else {
+      cerr << Error( "JsonEntityRef::toData(): No Entity id:%u in stack LUT.", jsonId ) << endl;
+    }
+
+    update( stack, NULL );
+
+    cdebug.tabw(19,-1);
+  }
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -52,12 +52,12 @@ extern "C" {
   DirectGetLongAttribute(PyContact_getDx, getDx, PyContact,Contact)
   DirectGetLongAttribute(PyContact_getDy, getDy, PyContact,Contact)
 
-  DirectSetLongAttribute(PyContact_setX     ,setX     ,"Contact.setX"     ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setY     ,setY     ,"Contact.setY"     ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDx    ,setDx    ,"Contact.setDx"    ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setDy    ,setDy    ,"Contact.setDy"    ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setWidth ,setWidth ,"Contact.setWidth" ,PyContact,Contact)
-  DirectSetLongAttribute(PyContact_setHeight,setHeight,"Contact.setHeight",PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setX     ,setX     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setY     ,setY     ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDx    ,setDx    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setDy    ,setDy    ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setWidth ,setWidth ,PyContact,Contact)
+  DirectSetLongAttribute(PyContact_setHeight,setHeight,PyContact,Contact)
   accessorHook(getAnchorHook,PyContact,Contact)
 
   
@@ -66,7 +66,7 @@ extern "C" {
   
 
   static PyObject* PyContact_create ( PyObject*, PyObject *args ) {
-    trace << "PyContact_create()" << endl;
+    cdebug.log(20) << "PyContact_create()" << endl;
 
     Contact* contact = NULL;
 
@@ -99,7 +99,7 @@ extern "C" {
 
 
   static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
-    trace << "PyContact_translate ()" << endl;
+    cdebug.log(20) << "PyContact_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Contact.translate()" )

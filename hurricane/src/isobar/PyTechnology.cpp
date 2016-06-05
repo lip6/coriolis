@@ -80,7 +80,7 @@ extern "C" {
 
   static PyObject* PyTechnology_create ( PyTechnology*, PyObject* args )
   {
-    trace << "Technology.create()" << endl;
+    cdebug.log(20) << "Technology.create()" << endl;
 
     Technology* technology = NULL;
 
@@ -105,7 +105,7 @@ extern "C" {
 
   static PyObject* PyTechnology_getDataBase ( PyTechnology* self )
   {
-    trace << "PyTechnology_getDataBase()" << endl;
+    cdebug.log(20) << "PyTechnology_getDataBase()" << endl;
 
     DataBase* db = NULL;
 
@@ -121,7 +121,7 @@ extern "C" {
 
   static PyObject* PyTechnology_getLayer ( PyTechnology *self, PyObject* args )
   {
-    trace << "Technology.getLayer()" << endl;
+    cdebug.log(20) << "Technology.getLayer()" << endl;
 
     METHOD_HEAD("Technology.getLayer()")
 
@@ -152,7 +152,7 @@ extern "C" {
 
   static PyObject* PyTechnology_getBasicLayers ( PyTechnology* self, PyObject* args )
   {
-    trace << "PyTechnology_getBasicLayers()" << endl;
+    cdebug.log(20) << "PyTechnology_getBasicLayers()" << endl;
 
     PyBasicLayerCollection* pyObjects = NULL;
 
@@ -189,7 +189,7 @@ extern "C" {
 
 
   static PyObject* PyTechnology_setWorkingLayer ( PyTechnology *self, PyObject* args ) {
-    trace << "Technology.setWorkingLayer()" << endl;
+    cdebug.log(20) << "Technology.setWorkingLayer()" << endl;
 
     METHOD_HEAD("Technology.setWorkingLayer()")
 

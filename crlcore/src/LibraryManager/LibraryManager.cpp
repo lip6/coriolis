@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -23,6 +23,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/CellViewer.h"
+#include "crlcore/AllianceFramework.h"
 #include "crlcore/LibraryManager.h"
 #include "crlcore/LibrariesWidget.h"
 #include "crlcore/CellsWidget.h"
@@ -39,13 +40,30 @@ namespace CRL {
   using Hurricane::Graphics;
 
 
+// -------------------------------------------------------------------
+// Class  :  "FrameworkObserver".
+
+  void  FrameworkObserver::notify ( unsigned int flags )
+  {
+    LibraryManager* manager = getOwner();
+    if (flags & (AllianceFramework::AddedLibrary
+                |AllianceFramework::RemovedLibrary)) {
+      manager->getLibrariesWidget()->update();
+    }
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "LibraryManager".
+
   LibraryManager::LibraryManager ( QWidget* parent )
-    : QWidget         (parent)
-    , _librariesWidget(new LibrariesWidget())
-    , _cellsWidget    (new CellsWidget())
-    , _viewsWidget    (new ViewsWidget())
-    , _cellViewer     (NULL)
-    , _libPath        (NULL)
+    : QWidget           (parent)
+    , _frameworkObserver(this)
+    , _librariesWidget  (new LibrariesWidget())
+    , _cellsWidget      (new CellsWidget())
+    , _viewsWidget      (new ViewsWidget())
+    , _cellViewer       (NULL)
+    , _libPath          (NULL)
   {
     setObjectName ( "libraryManager" );
     setAttribute  ( Qt::WA_QuitOnClose, false );
@@ -100,7 +118,15 @@ namespace CRL {
 
     _librariesWidget->initSelection();
 
+    AllianceFramework::get()->addObserver( &_frameworkObserver );
+
     resize( Graphics::toHighDpi(750), Graphics::toHighDpi(550) );
+  }
+
+
+  LibraryManager::~LibraryManager ()
+  {
+    AllianceFramework::get()->removeObserver( &_frameworkObserver );
   }
 
 
@@ -138,6 +164,9 @@ namespace CRL {
     return viewer;
   }
 
+
+  void  LibraryManager::updateLibrary ( Cell* )
+  { _cellsWidget->updateLibrary(); }
 
 
 }  // CRL namespace.

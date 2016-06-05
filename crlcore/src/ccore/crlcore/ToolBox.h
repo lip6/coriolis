@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -69,8 +69,12 @@ namespace CRL {
     public:
       typedef std::function< Name(const Name&) >  converter_t;
     public:
-      static Name  vlogToVhdl ( const Name& vlogName );
-      static void  toVhdl     ( Cell* topCell, unsigned int flags );
+      static Name  vlogToVhdl   ( const Name& vlogName );
+      static void  toVhdl       ( Cell* topCell, unsigned int flags );
+                   NamingScheme ( unsigned int flags );
+             Name  convert      ( const Name& ) const;
+    private:
+      converter_t  _converter;
   };
 
 

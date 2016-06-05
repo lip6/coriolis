@@ -56,17 +56,23 @@
   *                  - Process all insert events. <b>This is the time TrackSegment
   *                    are moved into their new Track (physical displacement)</b>.
   *                    It is at this point that the invalidation of both AutoSegment
-  *                    and TrackSEgment is done.
+  *                    and TrackSegment is done.
   *                  - Call the Katabatic::Session::revalidate() method which
   *                    will recompute the correct contact extensions and topologies.
   *                    \e After this step the Katabatic data-base is up to date,
-  *                    but \e not the Kite one. AutoSEgment are revalidated.
+  *                    but \e not the Kite one. AutoSegment are revalidated.
   *                  - Recompute the canonical position of source and target
   *                    of all invalidateds TrackSegment (take account of
   *                    extention modifications). The set of invalidated TrackSegment
   *                    is computed from the revalidated AutoSegment, that is
   *                    AutoSegment that are canonical.
   *                  - Perform a sort() on all Track that have been modifieds.
+  *                  - Now that the size of the segments have been accurately computed,
+  *                    look for revalidateds TrackSegment that:
+  *                      -# Can be reduced, generate a track remove event.
+  *                      -# Must be raised, generate a routing event (put into the
+  *                         queue).
+  *                  - Process the additional track remove events.
   *
   *                <b>Note:</b> We cannot use the Observer mechanism to automatically
   *                update TrackSegment from an AutoSegment, because we must wait for all

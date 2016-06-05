@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./CellCollections.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -4704,7 +4704,7 @@ string Cell_HyperNetRootNetOccurrences::_getString() const
 // ****************************************************************************************************
 
 Cell_HyperNetRootNetOccurrences::Locator::Locator()
-// ***********************************
+// ************************************************
 :    Inherit(),
     _path(),
     _netLocator(),
@@ -4714,22 +4714,24 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator()
 }
 
 Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
-// **************************************************************
+// ***************************************************************************
 :    Inherit(),
     _path(path),
     _netLocator(),
     _instanceLocator(),
     _hyperNetRootNetOccurrenceLocator()
 {
-    _netLocator=cell->getNets().getLocator();
+    _netLocator      = cell->getNets().getLocator();
+    _instanceLocator = cell->getInstances().getLocator();
 
-    _instanceLocator=cell->getInstances().getLocator();
-
-    while (_netLocator.isValid() && !isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path)))
+    while ( _netLocator.isValid()
+          and (      dynamic_cast<DeepNet*>(_netLocator.getElement())
+              or     _netLocator.getElement()->isAutomatic()
+              or not isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path))) )
         _netLocator.progress();
 
-    if (!_netLocator.isValid())
-        while (!_hyperNetRootNetOccurrenceLocator.isValid() && _instanceLocator.isValid())
+    if (not _netLocator.isValid())
+        while (not _hyperNetRootNetOccurrenceLocator.isValid() and _instanceLocator.isValid())
         {
             Instance* instance = _instanceLocator.getElement();
             _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
@@ -4738,7 +4740,7 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
 }
 
 Cell_HyperNetRootNetOccurrences::Locator::Locator(const Locator& locator)
-// *********************************************************
+// **********************************************************************
 :    Inherit(),
     _path(locator._path),
     _netLocator(locator._netLocator),
@@ -4748,7 +4750,7 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Locator& locator)
 }
 
 Cell_HyperNetRootNetOccurrences::Locator& Cell_HyperNetRootNetOccurrences::Locator::operator=(const Locator& locator)
-// ****************************************************************************************
+// ******************************************************************************************************************
 {
     _path = locator._path;
     _netLocator = locator._netLocator;
@@ -4758,7 +4760,7 @@ Cell_HyperNetRootNetOccurrences::Locator& Cell_HyperNetRootNetOccurrences::Locat
 }
 
 Occurrence Cell_HyperNetRootNetOccurrences::Locator::getElement() const
-// ******************************************************
+// ********************************************************************
 {
     if (_netLocator.isValid())
         return Occurrence(_netLocator.getElement(),_path);
@@ -4770,25 +4772,26 @@ Occurrence Cell_HyperNetRootNetOccurrences::Locator::getElement() const
 }
 
 Locator<Occurrence>* Cell_HyperNetRootNetOccurrences::Locator::getClone() const
-// **************************************************************
+// ****************************************************************************
 {
     return new Locator(*this);
 }
 
 bool Cell_HyperNetRootNetOccurrences::Locator::isValid() const
-// **********************************************
+// ***********************************************************
 {
     return (_netLocator.isValid() || (_hyperNetRootNetOccurrenceLocator.isValid()));
 }
 
 void Cell_HyperNetRootNetOccurrences::Locator::progress()
-// *****************************************
+// ******************************************************
 {
     if (_netLocator.isValid())
     {
       _netLocator.progress();
       while ( _netLocator.isValid() ) {
         if (   not dynamic_cast<DeepNet*>(_netLocator.getElement())
+           and not _netLocator.getElement()->isAutomatic()
            and isHyperNetRootNetOccurrence(Occurrence(_netLocator.getElement(),_path))) break;
 
         _netLocator.progress();
@@ -4808,7 +4811,7 @@ void Cell_HyperNetRootNetOccurrences::Locator::progress()
 }
 
 string Cell_HyperNetRootNetOccurrences::Locator::_getString() const
-// ***************************************************
+// ****************************************************************
 {
     string s = "<" + _TName("Cell::HyperNetRootNetOccurrences::Locator");
     if (!_path.isEmpty())
@@ -5075,5 +5078,5 @@ string  Cell_RecursiveSlavePathes::_getString () const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

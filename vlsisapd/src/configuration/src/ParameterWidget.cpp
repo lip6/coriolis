@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |    C o n f i g u r a t i o n   D a t a - B a s e                |
 // |                                                                 |
@@ -17,25 +11,22 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ParameterWidget.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  "boost/bind.hpp"
-#include  <QLabel>
-#include  <QSpinBox>
-#include  <QCheckBox>
-#include  <QComboBox>
-#include  <QLineEdit>
-#include  <QIntValidator>
-#include  <QDoubleValidator>
-#include  "vlsisapd/configuration/Parameter.h"
-#include  "vlsisapd/configuration/FilePathEdit.h"
-#include  "vlsisapd/configuration/ParameterWidget.h"
-#include  "vlsisapd/configuration/ConfTabWidget.h"
-#include  "vlsisapd/configuration/ConfigurationWidget.h"
+#include "boost/bind.hpp"
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include "vlsisapd/configuration/Parameter.h"
+#include "vlsisapd/configuration/FilePathEdit.h"
+#include "vlsisapd/configuration/ParameterWidget.h"
+#include "vlsisapd/configuration/ConfTabWidget.h"
+#include "vlsisapd/configuration/ConfigurationWidget.h"
 
 
 namespace Cfg {
@@ -175,8 +166,12 @@ namespace Cfg {
     string valueId = _parameter->getId() + ".edit";
     _valueWidget->setObjectName ( valueId.c_str() );
 
-    _parameter->registerCb ( boost::bind(&ParameterWidget::onUpdateValueCb,this,_1) );
+    _parameter->registerCb ( this, boost::bind(&ParameterWidget::onUpdateValueCb,this,_1) );
   }
+
+
+  ParameterWidget::~ParameterWidget ()
+  { _parameter->unregisterCb ( this ); }
 
 
   void  ParameterWidget::updateValue ()

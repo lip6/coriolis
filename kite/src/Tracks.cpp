@@ -26,9 +26,6 @@ namespace Kite {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
 
 
 // -------------------------------------------------------------------
@@ -41,15 +38,15 @@ namespace Kite {
     : Hurricane::Locator<Track*>()
     , _constraints (constraints)
   {
-    ltrace(147) << "Tracks_Range::Locator()" << endl;
-    ltrace(147) << "* Constraints: " << _constraints << endl;
+    cdebug.log(159) << "Tracks_Range::Locator()" << endl;
+    cdebug.log(159) << "* Constraints: " << _constraints << endl;
 
     _track = routingPlane->getTrackByPosition ( _constraints.getVMin() );
 
     if ( _track and (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNextTrack();
     if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
 
-    ltrace(147) << "_track: " << _track << endl;;
+    cdebug.log(159) << "_track: " << _track << endl;;
   }
 
 
@@ -150,9 +147,9 @@ namespace Kite {
     , _inMinOptimal(true)
     , _inMaxOptimal(true)
   {
-    ltrace(147) << "Tracks_Spiral::Locator()" << endl;
-    ltrace(147) << "* Optimal:     " << _optimal     << endl;
-    ltrace(147) << "* Constraints: " << _constraints << endl;
+    cdebug.log(159) << "Tracks_Spiral::Locator()" << endl;
+    cdebug.log(159) << "* Optimal:     " << _optimal     << endl;
+    cdebug.log(159) << "* Constraints: " << _constraints << endl;
 
     _minTrack = _maxTrack = routingPlane->getTrackByPosition ( _optimal.getCenter() );
 
@@ -172,8 +169,8 @@ namespace Kite {
     if ( _minTrack && (_minTrack->getAxis() < _optimal.getVMin()) ) _inMinOptimal = false;
     if ( _maxTrack && (_maxTrack->getAxis() > _optimal.getVMax()) ) _inMaxOptimal = false;
 
-    ltrace(147) << "_minTrack: " << _minTrack << endl;;
-    ltrace(147) << "_maxTrack: " << _maxTrack << endl;;
+    cdebug.log(159) << "_minTrack: " << _minTrack << endl;;
+    cdebug.log(159) << "_maxTrack: " << _maxTrack << endl;;
   }
 
 
@@ -213,14 +210,13 @@ namespace Kite {
 
   void  Tracks_Spiral::Locator::progress ()
   {
-    ltrace(147) << "Track_Spiral::progress() - State:" << endl;
-    ltracein(147);
-    ltrace(147) << _onMin
-                << " " << _minTrack
-                << " " << _maxTrack << endl;
+    cdebug.log(159,1) << "Track_Spiral::progress() - State:" << endl;
+    cdebug.log(159)   << _onMin
+                      << " " << _minTrack
+                      << " " << _maxTrack << endl;
 
     if ( !isValid() ) {
-      ltraceout(147);
+      cdebug.tabw(159,-1);
       return;
     }
 
@@ -249,10 +245,10 @@ namespace Kite {
       }
     }
 
-    ltrace(147) << _onMin
+    cdebug.log(159) << _onMin
                 << " " << _minTrack
                 << " " << _maxTrack << endl;
-    ltraceout(147);
+    cdebug.tabw(159,-1);
   }
 
 

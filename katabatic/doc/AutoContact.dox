@@ -236,10 +236,15 @@
  //! \function     GCell* AutoContact::getGCell () const;
  //! \sreturn      The GCell into which the AutoContact is located.
 
- //! \function     AutoSegment* AutoContact::getOpposite ( const AutoSegment* segment ) const;
- //! \sreturn      The AutoSegment other the same direction as \c segment, this is
- //!               only meaningful on AutoContactHTee or AutoContactVTee. It there is
+ //! \function     AutoSegment* AutoContact::getOpposite ( const AutoSegment* reference ) const;
+ //! \sreturn      The other AutoSegment the \e same direction as \c reference, this is
+ //!               only meaningful on AutoContactHTee or AutoContactVTee. If there is
  //!               no opposite, \c NULL is returned.
+
+ //! \function     AutoSegment* AutoContact::getPerpandicular ( const AutoSegment* reference ) const;
+ //! \sreturn      The AutoSegment in the \e perpandicular direction to \c reference, this is
+ //!               only meaningful on AutoContacTurn. It there is no unique perpandicular,
+ //!               \c NULL is returned.
 
  //! \function     AutoSegment* AutoContact::getSegment ( unsigned int index ) const;
  //! \sreturn      The nth anchored AutoSegment. The index is significant:
@@ -374,6 +379,12 @@
  //!               Restrict the current constraint box but check if the restriction 
  //!               will not lead to an empty interval, in that case, do nothing and
  //!               return \false.
+
+ //! \function     void  AutoContact::migrateConstraintBox ( AutoContact* other );
+ //!               Transfer the user constraint box from \c other to the current
+ //!               object \c this. The constraints of \c other are restored to their
+ //!               native values. The two contacts must belong to the same GCell for
+ //!               this method to take effect.
 
 
  /*! \class        LocatorHelper

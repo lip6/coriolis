@@ -27,7 +27,7 @@
   *                The associated DataNegociate and RoutingEvent are \b not updated.
   *                  - The RoutingEvent will be updated when it's key is updated,
   *                    typically during a requeueing operation \b and in the
-  *                    SegmentFsm constructor. This should be optimzed in the future.
+  *                    SegmentFsm constructor. This should be optimized in the future.
   *                  - The DataNegociate is updated \e only in the SegmentFsm
   *                    constructor. This is the most costly of the two updates as
   *                    it perform a perpandicular & parallel connexity exploration.
@@ -51,9 +51,9 @@
   *
   *                Figure 2 below, shows an example of dogleg creation:
   *                  - At the Katabatic level, AutoSegment \c id:12 is broken. Thus
-  *                    the creation of AutoSegments \c id:20 and \c id:21. As per
-  *                    specification, the orignal segment \c id:10 remains on the
-  *                    left side (source) of the break.
+  *                    the creation of AutoSegments \c id:20 and \c id:21. The orignal
+  *                    TrackSegment (canonical AutoSegment \c id:10) remains on the
+  *                    right side (target) of the break.
   *                  - But, because the canonical of the former aligned AutoSegment
   *                    set \c (10,11,12,13,14) was on the \e right side of the break,
   *                    the new parallel TrackSegment will be created on the \c left

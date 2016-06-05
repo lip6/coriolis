@@ -220,6 +220,18 @@
    font-size:                   110%;
  }
 
+ table.UserDefined {
+   border:                      1px solid;
+ }
+
+ table.UserDefined th {
+   border:                      1px solid;
+ }
+
+ table.UserDefined td {
+   padding:                     0px 5px;
+ }
+
  table.DoxUser td, table.DoxUser th {
    padding:                    0px 5px;
    border:                     0px;

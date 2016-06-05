@@ -25,9 +25,6 @@ namespace Kite {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Interval;
   using Hurricane::Bug;
@@ -42,8 +39,8 @@ namespace Kite {
     , _locator       (segment->base())
     , _element       (NULL)
   {
-    ltrace(80) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
-    ltrace(80) << "  " << segment << endl;
+    cdebug.log(155) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
+    cdebug.log(155) << "  " << segment << endl;
 
     Interval bounds;
     if ( _locator.isValid() ) {
@@ -62,7 +59,7 @@ namespace Kite {
 
   void  TrackElements_Perpandiculars::Locator::progress ()
   {
-    ltrace(80) << "TrackElements_Perpandiculars::Locator::progress()" << endl;
+    cdebug.log(155) << "TrackElements_Perpandiculars::Locator::progress()" << endl;
 
     Interval bounds;
     while ( _locator.isValid() ) {

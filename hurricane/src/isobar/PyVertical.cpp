@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2007-2015, All Rights Reserved
+// Copyright (c) UPMC 2007-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -47,9 +47,9 @@ extern "C" {
   DirectGetLongAttribute(PyVertical_getX       ,getX       ,PyVertical,Vertical)
   DirectGetLongAttribute(PyVertical_getDySource,getDySource,PyVertical,Vertical)
   DirectGetLongAttribute(PyVertical_getDyTarget,getDyTarget,PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setX,setX,"Vertical.setX",PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setDySource,setDySource,"Vertical.setDySource",PyVertical,Vertical)
-  DirectSetLongAttribute(PyVertical_setDyTarget,setDyTarget,"Vertical.setDyTarget",PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setX       ,setX       ,PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDySource,setDySource,PyVertical,Vertical)
+  DirectSetLongAttribute(PyVertical_setDyTarget,setDyTarget,PyVertical,Vertical)
 
   // Standard destroy (Attribute).
   DBoDestroyAttribute(PyVertical_destroy, PyVertical)
@@ -59,7 +59,7 @@ extern "C" {
   // Attribute Method  :  "PyVertical_create ()"
 
   static PyObject* PyVertical_create ( PyObject*, PyObject *args ) {
-    trace << "PyVertical_create()" << endl;
+    cdebug.log(20) << "PyVertical_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -149,7 +149,7 @@ extern "C" {
   // Attribute Method  :  "PyVertical_translate ()"
 
   static PyObject* PyVertical_translate ( PyVertical *self, PyObject* args ) {
-    trace << "PyVertical_translate ()" << endl;
+    cdebug.log(20) << "PyVertical_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Vertical.translate()" )

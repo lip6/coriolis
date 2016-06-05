@@ -16,7 +16,6 @@ using namespace CRL;
 int main(int argc, char *argv[]) {
     
   try {
-    unsigned int  traceLevel;
     bool          verbose1;
     bool          verbose2;
     bool          coreDump;
@@ -30,9 +29,6 @@ int main(int argc, char *argv[]) {
                         , "Second level of verbosity.")
       ( "core-dump,D"   , poptions::bool_switch(&coreDump)->default_value(false)
                         , "Enable core dumping.")
-      ( "trace-level,l" , poptions::value<unsigned int>(&traceLevel)->default_value(1000)
-                        , "Set the level of trace, trace messages with a level superior to "
-                          "<arg> will be printed on <stderr>." )
       ( "cell,c"        , poptions::value<string>()
                         , "The name of the cell to load, whithout extension." );
 
@@ -49,7 +45,7 @@ int main(int argc, char *argv[]) {
     if (verbose1) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
     if (verbose2) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 ); 
 
-    AllianceFramework* af = AllianceFramework::create ();
+    AllianceFramework* af = AllianceFramework::get ();
 
     Cell* cell = NULL;
 

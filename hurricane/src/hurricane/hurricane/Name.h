@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Name.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -95,10 +95,16 @@ class Name {
 
 INSPECTOR_PV_SUPPORT(Hurricane::Name);
 
+inline void  jsonWrite ( JsonWriter* w, Hurricane::Name name )
+{ w->write( getString(name).c_str() ); }
+
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::Name name )
+{ w->key( key ); w->write( getString(name).c_str() ); }
+
 
 #endif // HURRICANE_NAME
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

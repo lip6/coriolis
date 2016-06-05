@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Transformation.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -255,6 +255,16 @@ Record* Transformation::_getRecord() const
     return record;
 }
 
+void  Transformation::toJson ( JsonWriter* w ) const
+// *************************************************
+{
+  w->startObject();
+  jsonWrite( w, "@typename", "Transformation" );
+  jsonWrite( w, "_tx", getTx() );
+  jsonWrite( w, "_ty", getTy() );
+  jsonWrite( w, "_orientation", getString( &(getOrientation().getCode()) ) );
+  w->endObject();
+}
 
 
 // ****************************************************************************************************
@@ -271,6 +281,20 @@ Transformation::Orientation::Orientation(const Orientation& orientation)
 // *********************************************************************
 :    _code(orientation._code)
 {
+}
+
+Transformation::Orientation::Orientation(const string& s)
+// ******************************************************
+:    _code(ID)
+{
+  if      (s == "ID") _code = ID;
+  else if (s == "R1") _code = R1;
+  else if (s == "R2") _code = R2;
+  else if (s == "R3") _code = R3;
+  else if (s == "MX") _code = MX;
+  else if (s == "XR") _code = XR;
+  else if (s == "MY") _code = MY;
+  else if (s == "YR") _code = YR;
 }
 
 Transformation::Orientation& Transformation::Orientation::operator=(const Orientation& orientation)
@@ -295,10 +319,48 @@ Record* Transformation::Orientation::_getRecord() const
 }
 
 
+// ****************************************************************************************************
+// JsonTransformation implementation
+// ****************************************************************************************************
+
+Initializer<JsonTransformation>  jsonTransformationInit ( 0 );
+
+void  JsonTransformation::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonTransformation (JsonWriter::RegisterMode) ); }
+
+JsonTransformation::JsonTransformation(unsigned long flags)
+// ********************************************************
+  : JsonObject(flags)
+{
+  add( "_tx"         , typeid(int64_t) );
+  add( "_ty"         , typeid(int64_t) );
+  add( "_orientation", typeid(string)  );
+}
+
+string JsonTransformation::getTypeName() const
+// *******************************************
+{ return "Transformation"; }
+
+JsonTransformation* JsonTransformation::clone(unsigned long flags) const
+// *********************************************************************
+{ return new JsonTransformation ( flags ); }
+
+void JsonTransformation::toData(JsonStack& stack)
+// **********************************************
+{
+  check( stack, "JsonTransformation::toData" );
+
+  Transformation transf ( get<int64_t>(stack,"_tx")
+                        , get<int64_t>(stack,"_ty")
+                        , Transformation::Orientation(get<string>(stack,"_orientation")) );
+
+  update( stack, transf );
+}
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

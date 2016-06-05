@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -176,7 +176,6 @@ namespace Hurricane {
     if ( !index.isValid() ) return QVariant ();
 
     if ( role == Qt::SizeHintRole ) {
-      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         case 0:  return 200;
         default:

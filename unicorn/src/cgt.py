@@ -9,6 +9,7 @@ try:
   import Hurricane
   import Viewer
   import CRL
+ #import Anabatic
   import Etesian
   import Katabatic
   import Kite
@@ -57,25 +58,34 @@ def credits ():
 
 
 def runScript ( scriptPath, editor ):
-    try:
-        script = __import__(scriptPath)
-    except Exception, e:
+  try:
+      kw = { 'editor':editor }
+      sys.path.append(os.path.dirname(scriptPath))
+    
+      module = __import__( os.path.basename(scriptPath), globals(), locals() )
+      if not module.__dict__.has_key('ScriptMain'):
+          print '[ERROR] Script module is missing function ScriptMain().'
+          print '        <%s>' % scriptPath
+          return
+      if not callable( module.__dict__['ScriptMain'] ):
+          print '[ERROR] Script module symbol ScriptMain is not callable (not a function?).'
+          print '        <%s>' % scriptPath
+          return
+    
+      module.__dict__['ScriptMain']( **kw )
+
+  except ImportError, e:
+      module = str(e).split()[-1]
+      print '[ERROR] The <%s> script cannot be loaded.' % module
+      print '        Please check your design hierarchy.'
+  except Exception, e:
       print '[ERROR] An exception occured while loading the Stratus script module:'
       print '        <%s>\n' % (scriptPath)
       print '        You should check for simple python errors in this module.'
       print '        Error was:'
       print '          %s\n' % e
       print '        Trying to continue anyway...'
-      return
-
-    if not hasattr(script,'ScriptMain'):
-        print '[ERROR] Script module is missing function ScriptMain().'
-        print '        <%s>' % scriptPath
-        return
-
-    script.ScriptMain(editor)
-
-    return
+  return
 
 
 if __name__ == '__main__':
@@ -85,6 +95,7 @@ if __name__ == '__main__':
       usage += '\ncgt [options]'
 
       parser = optparse.OptionParser(usage)
+      parser.add_option(       '--no-init'          , action='store_true', dest='noInit'         , help='Do not load any initialization.')
       parser.add_option( '-c', '--cell'             , type='string'      , dest='cell'           , help='The name of the cell to load, whithout extension.')
       parser.add_option(       '--acm-sigda-89'     , type='string'      , dest='acmSigdaName'   , help='An ACM/SIGDA 89 bench name to load, whithout extension.')
       parser.add_option(       '--blif'             , type='string'      , dest='blifName'       , help='A Blif (Yosys) design name to load, whithout extension.')
@@ -114,10 +125,13 @@ if __name__ == '__main__':
       (options, args) = parser.parse_args()
       args.insert(0, 'cgt')
 
-      af = CRL.AllianceFramework.get()
+      flags = 0
+      if options.noInit:
+        flags |= CRL.AllianceFramework.NoPythonInit
+
+      af = CRL.AllianceFramework.create( flags )
       print af.getEnvironment().getPrint()
 
-     #Hurricane.trace(True)
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)
 
       if options.coreDump:        Cfg.getParamBool      ('misc.catchCore'    ).setBool(False)
@@ -165,6 +179,7 @@ if __name__ == '__main__':
           
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
+          unicorn.registerTool        (Anabatic.GraphicAnabaticEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
          #unicorn.setAnonNetSelectable(False)

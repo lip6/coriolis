@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -22,6 +22,7 @@
 #include "crlcore/Utilities.h"
 #include "crlcore/XmlParser.h"
 #include "crlcore/Environment.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace {
@@ -505,6 +506,12 @@ namespace {
 
 namespace CRL {
 
+  using Hurricane::Initializer;
+  using Hurricane::JsonTypes;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Environment".
 
   Environment::Environment ()
     : _CORIOLIS_TOP       (CORIOLIS_TOP)
@@ -523,7 +530,7 @@ namespace CRL {
     setBLOCKAGE ( "^obs$" );
     setPad      ( "^.*_px$" );
 
-    _LIBRARIES.append ( "." );
+    _LIBRARIES.append ( ".", "working" );
 
     _inConstructor = false;
   }
@@ -750,6 +757,85 @@ namespace CRL {
     record->add ( getSlot ( "_pad"                , &_pad                 ) );
     record->add ( getSlot ( "_LIBRARIES"          , &_LIBRARIES           ) );
     return record;
+  }
+
+
+  void  Environment::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename"    , _getTypeName() );
+    jsonWrite( w, "_CORIOLIS_TOP", _CORIOLIS_TOP  );
+    jsonWrite( w, "_displayStyle", _displayStyle  );
+    jsonWrite( w, "_SCALE_X"     , _SCALE_X       );
+    jsonWrite( w, "_IN_LO"       , _IN_LO         );
+    jsonWrite( w, "_IN_PH"       , _IN_PH         );
+    jsonWrite( w, "_OUT_LO"      , _OUT_LO        );
+    jsonWrite( w, "_OUT_PH"      , _OUT_PH        );
+    jsonWrite( w, "_POWER"       , _POWER         );
+    jsonWrite( w, "_GROUND"      , _GROUND        );
+    jsonWrite( w, "_CLOCK"       , _CLOCK         );
+    jsonWrite( w, "_BLOCKAGE"    , _BLOCKAGE      );
+    jsonWrite( w, "_pad"         , _pad           );
+    jsonWrite( w, "_CATALOG"     , _CATALOG       );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonEnvironment".
+
+  Initializer<JsonEnvironment>  jsonEnvironmentInit ( 0 );
+
+
+  void  JsonEnvironment::initialize ()
+  { JsonTypes::registerType( new JsonEnvironment (JsonWriter::RegisterMode) ); }
+
+
+  JsonEnvironment::JsonEnvironment ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_CORIOLIS_TOP", typeid(string)  );
+    add( "_displayStyle", typeid(string)  );
+    add( "_SCALE_X"     , typeid(int64_t) );
+    add( "_IN_LO"       , typeid(string)  );
+    add( "_IN_PH"       , typeid(string)  );
+    add( "_OUT_LO"      , typeid(string)  );
+    add( "_OUT_PH"      , typeid(string)  );
+    add( "_POWER"       , typeid(string)  );
+    add( "_GROUND"      , typeid(string)  );
+    add( "_BLOCKAGE"    , typeid(string)  );
+    add( "_pad"         , typeid(string)  );
+    add( "_CATALOG"     , typeid(string)  );
+    add( "_CLOCK"       , typeid(string)  );
+  }
+
+  string  JsonEnvironment::getTypeName () const
+  { return "Environment"; }
+
+
+  JsonEnvironment* JsonEnvironment::clone ( unsigned long flags ) const
+  { return new JsonEnvironment ( flags ); }
+
+
+  void JsonEnvironment::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonEnvironment::toData" );
+
+    Environment* environement = AllianceFramework::get()->getEnvironment();
+    environement->setDisplayStyle( get<string> (stack,"_displayStyle").c_str() );
+    environement->setSCALE_X     ( get<int64_t>(stack,"_SCALE_X"     )         );
+    environement->setIN_LO       ( get<string> (stack,"_IN_LO"       ).c_str() );
+    environement->setIN_PH       ( get<string> (stack,"_IN_PH"       ).c_str() );
+    environement->setOUT_LO      ( get<string> (stack,"_OUT_LO"      ).c_str() );
+    environement->setOUT_PH      ( get<string> (stack,"_OUT_PH"      ).c_str() );
+    environement->setPOWER       ( get<string> (stack,"_POWER"       ).c_str() );
+    environement->setGROUND      ( get<string> (stack,"_GROUND"      ).c_str() );
+    environement->setCLOCK       ( get<string> (stack,"_CLOCK"       ).c_str() );
+    environement->setBLOCKAGE    ( get<string> (stack,"_BLOCKAGE"    ).c_str() );
+    environement->setPad         ( get<string> (stack,"_pad"         ).c_str() );
+    environement->setCATALOG     ( get<string> (stack,"_CATALOG"     ).c_str() );
+
+    update( stack, environement );
   }
 
 

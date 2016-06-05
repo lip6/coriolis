@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2015, All Rights Reserved
+// Copyright (c) UPMC 2006-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -58,7 +58,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_NEW ()"
 
   static PyObject* PyPath_NEW ( PyObject *module, PyObject *args ) {
-    trace << "PyPath_NEW()" << endl;
+    cdebug.log(20) << "PyPath_NEW()" << endl;
 
     Path*     path   = NULL;
     PyObject* arg0   = NULL;
@@ -102,7 +102,7 @@ extern "C" {
 
   static int  PyPath_Init ( PyPath* self, PyObject* args, PyObject* kwargs )
   {
-    trace << "PyPath_Init(): " << (void*)self << endl;
+    cdebug.log(20) << "PyPath_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -111,7 +111,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getHeadInstance ()"
 
   static PyObject* PyPath_getHeadInstance ( PyPath *self ) {
-    trace << "PyPath_getHeadInstance()" << endl;
+    cdebug.log(20) << "PyPath_getHeadInstance()" << endl;
 
     METHOD_HEAD ( "Path.getHeadInstance()" )
 
@@ -129,7 +129,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getTailInstance ()"
 
   static PyObject* PyPath_getTailInstance ( PyPath *self ) {
-    trace << "PyPath_getTailInstance()" << endl;
+    cdebug.log(20) << "PyPath_getTailInstance()" << endl;
 
     METHOD_HEAD ( "Path.getTailInstance()" )
 
@@ -147,7 +147,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getOwnerCell ()"
 
   static PyObject* PyPath_getOwnerCell ( PyPath *self ) {
-    trace << "PyPath_getOwnerCell()" << endl;
+    cdebug.log(20) << "PyPath_getOwnerCell()" << endl;
 
     METHOD_HEAD ( "Path.getOwnerCell()" )
 
@@ -165,7 +165,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getMasterCell ()"
 
   static PyObject* PyPath_getMasterCell ( PyPath *self ) {
-    trace << "PyPath_getMasterCell()" << endl;
+    cdebug.log(20) << "PyPath_getMasterCell()" << endl;
 
     METHOD_HEAD ( "Path.getMasterCell()" )
 
@@ -190,7 +190,7 @@ extern "C" {
 
   static PyObject* PyPath_getHeadPath ( PyPath *self ) {
 
-    trace << "PyPath_getHeadPath ()" << endl;
+    cdebug.log(20) << "PyPath_getHeadPath ()" << endl;
     
     METHOD_HEAD ( "Path.getHeadPath()" )
 
@@ -211,7 +211,7 @@ extern "C" {
   static PyObject* PyPath_getTailPath ( PyPath *self )
   {
 
-    trace << "PyPath_getTailPath ()" << endl;
+    cdebug.log(20) << "PyPath_getTailPath ()" << endl;
     
     METHOD_HEAD ( "Path.getTailPath()" )
 
@@ -231,7 +231,7 @@ extern "C" {
 
   static PyObject* PyPath_getTransformation ( PyPath *self, PyObject* args )
   {
-    trace << "PyPath_getTransformation ()" << endl;
+    cdebug.log(20) << "PyPath_getTransformation ()" << endl;
     
     METHOD_HEAD ( "Instance.getTransformation()" );
 
@@ -263,7 +263,7 @@ extern "C" {
 
   static PyObject* PyPath_getInstances(PyPath *self) {
 
-    trace << "PyPath_getInstances()" << endl;
+    cdebug.log(20) << "PyPath_getInstances()" << endl;
 
     METHOD_HEAD ( "Path.getInstances()" )
 

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -60,7 +60,9 @@ namespace CRL {
   };
 
 
-  inline const AllianceLibrary*         CellsModel::getLibrary    () const { return (const AllianceLibrary*)_ilibrary->first; }
+  inline const AllianceLibrary*         CellsModel::getLibrary    () const
+  { return (_ilibrary != _libraries.end()) ? (const AllianceLibrary*)_ilibrary->first : NULL; }
+
   inline const std::vector<CellDatas*>& CellsModel::getCellsDatas () const { return _ilibrary->second; }
   inline std::vector<CellDatas*>&       CellsModel::getCellsDatas () { return _ilibrary->second; }
 

@@ -48,6 +48,7 @@
 
 
 
+from Hurricane import DbU
 from stratus import *
 
 class DpgenRam ( Model ) :
@@ -589,7 +590,8 @@ class DpgenRam ( Model ) :
   ############################
   def Layout ( self ) :
 
-    HCELL = 50
+    #HCELL = 50
+    HCELL = DbU.toLambda( self.Prech[0]._hur_masterCell.getAbutmentBox().getHeight() )
   
     # Lignes de bit
     bottom = 0

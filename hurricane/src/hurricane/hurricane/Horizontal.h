@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Horizontal.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -104,12 +104,24 @@ class Horizontal : public Segment {
 // Others
 // ******
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: static JsonObject* getJsonObject(unsigned long flags);
     public: virtual string _getTypeName() const {return _TName("Horizontal");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
 };
 
+
+class JsonHorizontal : public JsonSegment {
+// ****************************************
+
+  public: static void initialize();
+  public: JsonHorizontal(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonHorizontal* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -121,5 +133,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Horizontal);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

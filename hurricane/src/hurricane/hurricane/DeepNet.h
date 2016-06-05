@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -36,45 +36,48 @@
 #include "hurricane/HyperNet.h"
 #include "hurricane/Occurrence.h"
 
-
 namespace Hurricane {
 
-  class DeepNet : public Net {
 
-    // Attributes.
+// -------------------------------------------------------------------
+// Class  :  "DeepNet".
+
+  class DeepNet : public Net {
+    public:
+      typedef  Net  Inherit;
+    public:
+      static  DeepNet*    create               ( HyperNet& hyperNet );
+      inline  Occurrence  getRootNetOccurrence () const;
+      virtual bool        isDeepNet            () const { return true; };
+              size_t      _createRoutingPads   ( unsigned int flags=0 );
+      virtual Record*     _getRecord           () const;
+      virtual string      _getTypeName         () const { return "DeepNet"; };
+      virtual void        _toJson              ( JsonWriter* ) const;
+    protected:
+                          DeepNet              ( Occurrence& netOccurrence );
     protected:
       Occurrence  _netOccurrence;
 
-    // Constructors.
-    protected:
-      DeepNet ( Occurrence& netOccurrence );
+  };
 
-    // Inspector Management.
+
+  inline Occurrence  DeepNet::getRootNetOccurrence() const { return _netOccurrence; }
+
+  Net* getDeepNet(HyperNet& hyperNet);
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonDeepNet".
+
+  class JsonDeepNet : public JsonNet {
     public:
-      virtual Record* _getRecord  () const;
-      virtual string  _getTypeName() const { return "DeepNet"; };
-
-    // Constructors.
-    public:
-      static  DeepNet* create      ( HyperNet& hyperNet );
-
-    // Accessors.
-    public:
-      inline  Occurrence  getRootNetOccurrence () const;
-
-    // Predicates.
-    public:
-      virtual bool isDeepNet () const { return true; };
-
-    // Internal Modifiers.
-    public:
-      size_t  _createRoutingPads ( unsigned int flags=0 );
-
-};
-
-inline Occurrence  DeepNet::getRootNetOccurrence() const { return _netOccurrence; }
-
-Net* getDeepNet(HyperNet& hyperNet);
+      static  void         initialize  ();
+                           JsonDeepNet ( unsigned long flags );
+      virtual             ~JsonDeepNet ();
+      virtual string       getTypeName () const;
+      virtual JsonDeepNet* clone       ( unsigned long ) const;
+      virtual void         toData      ( JsonStack&); 
+  };
 
 
 } // Hurricane namespace.

@@ -1,15 +1,14 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TrackFixedSegment.cpp"                  |
 // +-----------------------------------------------------------------+
@@ -41,9 +40,6 @@
 namespace Kite {
 
   using namespace std;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Hurricane::Warning;
   using Hurricane::ForEachIterator;
@@ -120,12 +116,13 @@ namespace Kite {
           _sourceU = max( boundingBox.getYMin(), uside.getVMin());
           _targetU = min( boundingBox.getYMax(), uside.getVMax());
 
-          Katabatic::GCell* gcell   = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_sourceU) );
-          Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_targetU) );
-          Katabatic::GCell* up      = NULL;
-          Interval          guside  = gcell->getSide( KbVertical );
-          Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
+          Katabatic::GCell* gcell = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_sourceU) );
           if (gcell) {
+            Katabatic::GCell* end     = track->getKiteEngine()->getGCellGrid()->getGCell( Point(track->getAxis(),_targetU) );
+            Katabatic::GCell* up      = NULL;
+            Interval          guside  = gcell->getSide( KbVertical );
+            Interval          segside ( boundingBox.getYMin(), boundingBox.getYMax() );
+
             while ( gcell and (gcell != end) ) {
               up = gcell->getUp();
               if (up == NULL) break;
@@ -162,7 +159,7 @@ namespace Kite {
 
   void  TrackFixedSegment::_preDestroy ()
   {
-    ltrace(90) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
+    cdebug.log(155) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
     TrackElement::_preDestroy();
   }
 
@@ -176,8 +173,8 @@ namespace Kite {
       trackFixedSegment = new TrackFixedSegment ( track, segment );
       trackFixedSegment->_postCreate();
 
-      ltrace(190) << "Adding: " << segment << " on " << track << endl;
-      ltrace(200) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
+      cdebug.log(159) << "Adding: " << segment << " on " << track << endl;
+      cdebug.log(159) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
 
       Session::addInsertEvent( trackFixedSegment, track );
     }

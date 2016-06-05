@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -45,9 +45,6 @@ namespace {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::DebugSession;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
@@ -380,7 +377,7 @@ namespace {
 
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
-    ltrace(300) << "    getRootNet:" << path << ":" << net << endl;
+    cdebug.log(159) << "    getRootNet:" << path << ":" << net << endl;
 
     if (net == _blockage) return _blockage;
 
@@ -393,27 +390,27 @@ namespace {
       return NULL;
     }
 
-    DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
-    if (deepClockNet) {
-      ltrace(300) << "    Deep Clock Net:" << deepClockNet
-                  << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
-
-      return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
-    } else {
-      ltrace(300) << "    Top Clock Net:" << net
-                  << " state:" << NetRoutingExtension::getFlags(net) << endl;
-    }
-
   // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
+      DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
+      if (deepClockNet) {
+        cdebug.log(159) << "    Deep Clock Net:" << deepClockNet
+                    << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
+
+        return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
+      } else {
+        cdebug.log(159) << "    Top Clock Net:" << net
+                    << " state:" << NetRoutingExtension::getFlags(net) << endl;
+      }
+
       Path       upPath   = path;
       Instance*  instance = NULL;
       Plug*      plug     = NULL;
 
       while ( true ) {
-        ltrace(300) << "      " << path << "+" << upNet << endl;
+        cdebug.log(159) << "      " << path << "+" << upNet << endl;
 
         if (path.isEmpty()) break;
         if ((upNet == NULL) or not upNet->isExternal()) return _blockage;
@@ -427,7 +424,7 @@ namespace {
       }
     }
 
-    ltrace(300) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
+    cdebug.log(159) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
                 << " cki:" << ((_cki) ? _cki->getName() : "NULL")
                 << " cko:" << ((_cko) ? _cko->getName() : "NULL")
                 << endl;
@@ -441,7 +438,7 @@ namespace {
       }
     }
 
-    return NULL;
+    return NetRoutingExtension::isFixed(upNet) ? _blockage : NULL;
   }
 
 
@@ -558,7 +555,7 @@ namespace {
     , _width (width)
     , _chunks()
   {
-    ltrace(300) << "    new Rail "
+    cdebug.log(159) << "    new Rail "
                 << " @" << DbU::getValueString(axis)
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << getRails()->getNet()
@@ -576,10 +573,10 @@ namespace {
   void  PowerRailsPlanes::Rail::merge ( DbU::Unit source, DbU::Unit target )
   {
     Interval chunkToMerge ( source, target );
-    ltrace(300) << "    Rail::merge() "
+    cdebug.log(159) << "    Rail::merge() "
                 << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " " << chunkToMerge << endl;
-    ltrace(300) << "    | " << _getString() << endl;
+    cdebug.log(159) << "    | " << _getString() << endl;
 
     list<Interval>::iterator imerge = _chunks.end();
     list<Interval>::iterator ichunk = _chunks.begin();
@@ -587,20 +584,20 @@ namespace {
     while ( ichunk != _chunks.end() ) {
       if (imerge == _chunks.end()) {
         if (chunkToMerge.getVMax() < (*ichunk).getVMin()) {
-          ltrace(300) << "    | Insert before " << *ichunk << endl;
+          cdebug.log(159) << "    | Insert before " << *ichunk << endl;
           imerge = _chunks.insert( ichunk, chunkToMerge );
           break;
         }
 
         if (chunkToMerge.intersect(*ichunk)) {
-          ltrace(300) << "    | Merge with " << *ichunk << endl;
+          cdebug.log(159) << "    | Merge with " << *ichunk << endl;
           imerge = ichunk;
           (*imerge).merge( chunkToMerge );
         }
       } else {
         if (chunkToMerge.getVMax() >= (*ichunk).getVMin()) {
           (*imerge).merge( *ichunk );
-          ltrace(300) << "    | Absorb (erase) " << *ichunk << endl;
+          cdebug.log(159) << "    | Absorb (erase) " << *ichunk << endl;
           ichunk = _chunks.erase( ichunk );
           continue;
         } else
@@ -609,12 +606,12 @@ namespace {
 
       // if (chunkToMerge.intersect(*ichunk)) {
       //   if (imerge == _chunks.end()) {
-      //     ltrace(300) << "    | Merge with " << *ichunk << endl;
+      //     cdebug.log(159) << "    | Merge with " << *ichunk << endl;
       //     imerge = ichunk;
       //     (*imerge).merge( chunkToMerge );
       //   } else {
       //     (*imerge).merge( *ichunk );
-      //     ltrace(300) << "    | Absorb (erase) " << *ichunk << endl;
+      //     cdebug.log(159) << "    | Absorb (erase) " << *ichunk << endl;
       //     ichunk = _chunks.erase( ichunk );
       //     continue;
       //   }
@@ -624,26 +621,27 @@ namespace {
 
     if (imerge == _chunks.end()) {
       _chunks.insert( ichunk, chunkToMerge );
-      ltrace(300) << "    | Insert at end " << DbU::getValueString(_axis) << " " << chunkToMerge << endl;
-      ltrace(300) << "    | " << _getString() << endl;
+      cdebug.log(159) << "    | Insert at end " << DbU::getValueString(_axis) << " " << chunkToMerge << endl;
+      cdebug.log(159) << "    | " << _getString() << endl;
     }
   }
 
 
   void  PowerRailsPlanes::Rail::doLayout ( const Layer* layer )
   {
-    ltrace(300) << "Doing layout of rail: "
+    cdebug.log(159) << "Doing layout of rail: "
                 << " " << layer->getName()
                 << " " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " @" << DbU::getValueString(_axis) << endl;
-    ltrace(300) << _getString() << endl;
+    cdebug.log(159) << _getString() << endl;
 
     Net*          net       = getNet();
     RoutingPlane* plane     = getRoutingPlane();
     Segment*      segment   = NULL;
-    DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
-                              - plane->getLayerGauge()->getHalfWireWidth()
-                              - DbU::fromLambda(0.1);
+  //DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
+  //                          - plane->getLayerGauge()->getHalfWireWidth()
+  //                          - DbU::fromLambda(0.1);
+    DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
   //unsigned int  type      = plane->getLayerGauge()->getType();
@@ -651,13 +649,13 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
-    ltrace(300) << "  delta:" << DbU::getValueString(delta)
+    cdebug.log(159) << "  delta:" << DbU::getValueString(delta)
                 << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
                 << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
                 << ")" << endl;
 
     // if ( type == Constant::PinOnly ) {
-    //   ltrace(300) << "  Layer is PinOnly." << endl;
+    //   cdebug.log(159) << "  Layer is PinOnly." << endl;
     //   return;
     // }
 
@@ -679,7 +677,7 @@ namespace {
                          ) << endl;
         }
         
-        ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
+        cdebug.log(159) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Horizontal::create ( net
@@ -702,13 +700,13 @@ namespace {
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          ltrace(300) << "  Insert in " << track << "+" << element << endl;
+          cdebug.log(159) << "  Insert in " << track << "+" << element << endl;
         }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
-        ltrace(300) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
+        cdebug.log(159) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Vertical::create ( net
@@ -723,15 +721,18 @@ namespace {
 
         axisMin = _axis - _width/2;
         axisMax = _axis + _width/2;
-        if (coronaBb.contains(segment->getBoundingBox())) {
+      //if (coronaBb.contains(segment->getBoundingBox())) {
           axisMin -= delta;
           axisMax += delta;
-        }
+      //}
+
+        cdebug.log(159) << "  axisMin:" << DbU::getValueString(axisMin)
+                    <<  " axisMax:" << DbU::getValueString(axisMax) << endl;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          ltrace(300) << "  Insert in " << track
+          cdebug.log(159) << "  Insert in " << track
                       << "+" << element
                       << " " << (net->isExternal() ? "external" : "internal")
                       << endl;
@@ -783,7 +784,7 @@ namespace {
     , _net           (net)
     , _rails         ()
   {
-    ltrace(300) << "  new Rails @"
+    cdebug.log(159) << "  new Rails @"
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << net
                 << " " << ((getDirection()==KbHorizontal) ? "Horizontal": "Vertical") << endl;
@@ -841,7 +842,7 @@ namespace {
 
   void  PowerRailsPlanes::Rails::doLayout ( const Layer* layer )
   {
-    ltrace(300) << "Doing layout of rails: " << layer->getName()
+    cdebug.log(159) << "Doing layout of rails: " << layer->getName()
                 << " " << ((_direction==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " " << _net->getName() << endl;
 
@@ -857,7 +858,7 @@ namespace {
     , _verticalRails        ()
     , _powerDirection       (routingPlane->getDirection())
   {
-    ltrace(300) << "New Plane " << _layer->getName() << " " << _routingPlane << endl;
+    cdebug.log(159) << "New Plane " << _layer->getName() << " " << _routingPlane << endl;
 
   // Hard-coded SxLib gauge.
     if (_routingPlane->getDepth() == 0) _powerDirection = KbHorizontal;
@@ -887,7 +888,7 @@ namespace {
   {
     Rails* rails = NULL;
 
-    ltrace(300) << "    Plane::merge() " << net->getName() << " " << bb << endl;
+    cdebug.log(159) << "    Plane::merge() " << net->getName() << " " << bb << endl;
 
     unsigned int direction = getDirection();
     if ( (net->getType() == Net::Type::POWER) or (net->getType() == Net::Type::GROUND) )
@@ -910,7 +911,7 @@ namespace {
       } else
         rails = (*irails).second;
 
-      ltrace(300) << "    Vertical Merging" << endl; 
+      cdebug.log(159) << "    Vertical Merging" << endl; 
       rails->merge ( bb );
     }
   }
@@ -918,7 +919,7 @@ namespace {
 
   void  PowerRailsPlanes::Plane::doLayout ()
   {
-    ltrace(300) << "Doing layout of plane: " << _layer->getName() << endl;
+    cdebug.log(159) << "Doing layout of plane: " << _layer->getName() << endl;
 
     RailsMap::iterator irails = _horizontalRails.begin();
     for ( ; irails != _horizontalRails.end() ; ++irails ) {
@@ -951,10 +952,10 @@ namespace {
       RoutingLayerGauge* lg = rg->getLayerGauge(regular);
       if ( not lg ) continue;
 
-      ltrace(300) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
+      cdebug.log(159) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
 
       RoutingPlane* rp = _kite->getRoutingPlaneByIndex(lg->getDepth());
-      ltrace(300) << "Plane:"  << rp << endl;
+      cdebug.log(159) << "Plane:"  << rp << endl;
 
       _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
 
@@ -1019,7 +1020,7 @@ namespace {
 
     Net* topGlobalNet = _globalNets.getRootNet( net, Path() );
     if (topGlobalNet == NULL) {
-      ltrace(300) << "Not a global net: " << net << endl;
+      cdebug.log(159) << "Not a global net: " << net << endl;
       return;
     }
 
@@ -1170,17 +1171,17 @@ namespace {
 #endif
 
       if ( rootNet == NULL ) {
-        ltrace(300) << "  rootNet is NULL, not taken into account." << endl;
+        cdebug.log(159) << "  rootNet is NULL, not taken into account." << endl;
         return;
       }
 
-      ltrace(300) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
+      cdebug.log(159) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
                   << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
         _goMatchCount++;
-        ltrace(300) << "  Merging PowerRail element: " << segment << endl;
+        cdebug.log(159) << "  Merging PowerRail element: " << segment << endl;
 
         Box bb = segment->getBoundingBox ( basicLayer );
 
@@ -1209,7 +1210,7 @@ namespace {
           Box bb = contact->getBoundingBox ( basicLayer );
           transformation.applyOn ( bb );
 
-          ltrace(300) << "  Merging PowerRail element: " << contact << " bb:" << bb
+          cdebug.log(159) << "  Merging PowerRail element: " << contact << " bb:" << bb
                       << " " << basicLayer << endl;
           
           _powerRailsPlanes.merge ( bb, rootNet );
@@ -1286,12 +1287,14 @@ namespace Kite {
 
   void  KiteEngine::buildPowerRails ()
   {
-  //DebugSession::open( 300 );
+  //DebugSession::open( 150, 160 );
 
     if (not _blockageNet) {
       _blockageNet = getCell()->getNet("blockagenet");
-      if (not _blockageNet)
+      if (not _blockageNet) {
         _blockageNet = Net::create( getCell(), "blockagenet" );
+        _blockageNet->setType( Net::Type::BLOCKAGE );
+      }
 
       NetRoutingState* state = getRoutingState( _blockageNet, Katabatic::KbCreate );
       state->setFlags( NetRoutingState::Fixed );

@@ -129,6 +129,7 @@
 .. _hMETIS:       http://glaros.dtc.umn.edu/gkhome/views/metis
 .. _Knik Thesis:  http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
 .. _Coin Or Home: http://www.coin-or.org/index.html
+.. _RapidJSON:    http://miloyip.github.io/rapidjson/
 
 .. _coriolis2-1.0.2049-1.slsoc6.i686.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.i686.rpm
 .. _coriolis2-1.0.2049-1.slsoc6.x86_64.rpm:  http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.x86_64.rpm
@@ -228,9 +229,9 @@ Credits & License
 
 |medskip|
 
-The |Hurricane| data-base is copyright© |Bull| 2000-2015 and is
+The |Hurricane| data-base is copyright© |Bull| 2000-2016 and is
 released under the terms of the |LGPL| license. All other tools are
-copyright© |UPMC| 2008-2015 and released under the |GPL|
+copyright© |UPMC| 2008-2016 and released under the |GPL|
 license.
 
 Others important contributors to |Coriolis| are Christophe |Alexandre|,
@@ -317,8 +318,8 @@ Release v2.0.1
    achieve a speedup factor greater than 20...
 
 
-**Release v2.1**
-~~~~~~~~~~~~~~~~
+Release v2.1
+~~~~~~~~~~~~
 
 #. Replace the old simulated annealing placer |Mauka| by the analytical placer
    |Etesian| and its legalization and detailed placement tools.
@@ -332,7 +333,14 @@ Release v2.0.1
 ..    When shifting to the left, the right-half part of the screen gets
 ..    badly redrawn. Uses |CTRL_L| to refresh. It will be corrected as soon
 ..    as possible.
-   
+
+
+**Release v2.2**
+~~~~~~~~~~~~~~~~
+
+#. Added JSON import/export of the whole Hurricane DataBase. Two save mode
+   are supported: *Cell* mode (standalone) or *Blob* mode, which dump the
+   whole design down and including the standard cells.
 
 
 |newpage|
@@ -352,9 +360,11 @@ Main building prerequisites:
 
 * cmake
 * C++11-capable compiler
+* RapidJSON_
 * python2.7
 * boost
 * libxml2
+* bzip2
 * yacc & lex
 * Qt 4 or Qt 5
 
@@ -437,26 +447,37 @@ automatically created either by |ccb| or the build system.
 Building Coriolis
 ~~~~~~~~~~~~~~~~~
 
-The first step is to create the source directory and pull the |git| repository: ::
+First step is to install the prerequisites. Currently, only RapidJSON_.
+As RapidJSON is evolving fast, if you encounter compatibility problems,
+the exact version we compiled against is given below. ::
+
+   dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
+   dummy@lepka:~$ cd ~/coriolis-2.x/src/support
+   dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
+   dummy@lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
+
+The second step is to create the source directory and pull the |git| repository: ::
 
    dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
    dummy@lepka:~$ cd ~/coriolis-2.x/src
    dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
 
-Second and final step, build & install: ::
+Third and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+                                       --project=coriolis \
                                        --make="-j4 install"
-   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+                                       --project=coriolis \
                                        --doc --make="-j1 install"
 
-We need two steps because the documentation do not support to be generated with
-a parallel build. So we compile & install in a first step in ``-j4`` (or whatever)
-then we generate the documentation in ``-j1``
+We need to separate to perform a separate installation of the documentation because it
+do not support to be generated with a parallel build. So we compile & install in a first
+stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
 
-   dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                        --devtoolset-2 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
@@ -478,7 +499,7 @@ In the |Coriolis| |git| repository, two branches are present:
   command just after the first step: ::
 
       dummy@lepka:~$ git checkout devel
-      dummy@lepka:src$ ./bootstrap/ccp.py --project=coriolis \
+      dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
                                           --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce
@@ -871,7 +892,8 @@ For example: ::
         , ('misc.logMode'             , TypeBool      , True   )
         , ('misc.verboseLevel1'       , TypeBool      , False  )
         , ('misc.verboseLevel2'       , TypeBool      , True   )
-        , ('misc.traceLevel'          , TypeInt       , 1000   )
+        , ('misc.minTraceLevel'       , TypeInt       , 0      )
+        , ('misc.maxTraceLevel'       , TypeInt       , 0      )
         )
     
     # Some ordinary Python script...
@@ -1500,10 +1522,12 @@ Miscellaneous Settings
 +---------------------------------------+------------------+----------------------------+
 | **Development/Debug Parameters**                                                      |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.traceLevel``                   | TypeInt          | :cb:`0`                    |
+| ``misc.minTraceLevel``                | TypeInt          | :cb:`0`                    |
++---------------------------------------+------------------+----------------------------+
+| ``misc.maxTraceLevel``                | TypeInt          | :cb:`0`                    |
 |                                       +------------------+----------------------------+
-|                                       | Display trace information *below* that level  |
-|                                       | (:cb:`ltrace` stream)                         | 
+|                                       | Display trace information *between* those two |
+|                                       | levels (:cb:`cdebug` stream)                  | 
 +---------------------------------------+------------------+----------------------------+
 | ``misc.catchCore``                    | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+

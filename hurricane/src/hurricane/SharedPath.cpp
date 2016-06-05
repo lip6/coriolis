@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./SharedPath.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -122,9 +122,13 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
 
     if (_tailSharedPath && (_tailSharedPath->getOwnerCell() != _headInstance->getMasterCell()))
         throw Error( "Can't create %s, incompatible tail path between:\n"
+                     "        - head instance %s\n"
+                     "        - tail path %s\n"
                      "        - head owner %s\n"
                      "        - tail owner %s\n"
                    , _TName("SharedPath").c_str()
+                   , getString(_headInstance  ).c_str()
+                   , getString(_tailSharedPath).c_str()
                    , getString(_headInstance  ->getMasterCell()).c_str()
                    , getString(_tailSharedPath->getOwnerCell ()).c_str()
                    );
@@ -182,6 +186,23 @@ string SharedPath::getName() const
         name += nameSeparator + getString(sharedPath->getHeadInstance()->getName());
         nameSeparator = getString(getNameSeparator());
         sharedPath = sharedPath->getTailSharedPath();
+    }
+    return name;
+}
+
+string SharedPath::getJsonString(unsigned long flags) const
+// ********************************************************
+{
+    string      name       = "";
+    SharedPath* sharedPath = (SharedPath*)this;
+    while (sharedPath) {
+      if (flags & JsonWriter::DesignBlobMode) 
+        name += getString(sharedPath->getHeadInstance()->getId());
+      else
+        name += getString(sharedPath->getHeadInstance()->getName());
+
+      sharedPath =           sharedPath->getTailSharedPath();
+      if (sharedPath) name += getNameSeparator();
     }
     return name;
 }
@@ -398,5 +419,5 @@ string SharedPath_Instances::Locator::_getString() const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -256,9 +256,6 @@ namespace Katabatic {
   using namespace std;
   using Hurricane::roundfp;
   using Hurricane::tab;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
-  using Hurricane::inltrace;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
   using Hurricane::Bug;
@@ -350,12 +347,11 @@ namespace Katabatic {
 
   void  GCell::_postCreate ()
   {
-    ltrace(90) << "GCell::_postCreate() - " << (void*)this << " " << this << endl;
-    ltracein(90);
+    cdebug.log(145,1) << "GCell::_postCreate() - " << (void*)this << " " << this << endl;
 
     ExtensionGo::_postCreate ();
 
-    ltraceout(90);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -366,7 +362,7 @@ namespace Katabatic {
     DbU::Unit  trShrink = (  gcellGrid->isOnTopBorder  (index)
                           or gcellGrid->isOnRightBorder(index)) ? 0 : _topRightShrink;
 
-    ltrace(90) << "Gcell::create()" << endl;
+    cdebug.log(145) << "Gcell::create()" << endl;
     GCell* gcell = new GCell ( gcellGrid, index, box.inflate( 0 ,0 ,-trShrink ,-trShrink ) );
 
     gcell->_postCreate ();
@@ -377,7 +373,7 @@ namespace Katabatic {
 
   GCell::~GCell ()
   {
-    ltrace(90) << "GCell::~GCell()" << endl;
+    cdebug.log(145) << "GCell::~GCell()" << endl;
 
     delete [] _blockages;
     delete [] _densities;
@@ -392,7 +388,7 @@ namespace Katabatic {
 
   void  GCell::_preDestroy ()
   {
-    ltrace(90) << "GCell::_preDestroy() - " << (void*)this << " " << this << endl;
+    cdebug.log(145) << "GCell::_preDestroy() - " << (void*)this << " " << this << endl;
     ExtensionGo::_preDestroy ();
   }
 
@@ -407,14 +403,14 @@ namespace Katabatic {
     float difference = roundfp ( getDensity() - threshold );
     
   //int difference = floatDifference(getDensity(),threshold,10000);
-    ltrace(190) << "GCell:isAboveDensity() " << threshold << " diff:" << difference << endl;
+    cdebug.log(149) << "GCell:isAboveDensity() " << threshold << " diff:" << difference << endl;
     return (difference >= 0.0);
   }
 
 
   bool  GCell::areDensityConnex ( GCell* a, GCell* b )
   {
-    ltrace(190) << "GCell:areDensityConnex()" << endl;
+    cdebug.log(149) << "GCell:areDensityConnex()" << endl;
 
     for ( unsigned int i=1 ; i<a->getDepth() ; i++ ) { // Ugly: hard-coded skip METAL1.
     //int highDiffa = floatDifference(a->_densities[i],0.6,10000);
@@ -422,12 +418,12 @@ namespace Katabatic {
 
       float highDiffa = roundfp ( a->_densities[i] - 0.6 );
       float highDiffb = roundfp ( b->_densities[i] - 0.6 );
-      ltrace(190) << "Compare depth " << i
+      cdebug.log(149) << "Compare depth " << i
                   << " "   << a->_densities[i] << "," << highDiffa
                   << " & " << b->_densities[i] << "," << highDiffb << endl;
 
       if ( (highDiffa > 0) and (highDiffb > 0) ) {
-        ltrace(190) << "GCell::areDensityConnex() Neighboring high saturated GCell (depth:" << i
+        cdebug.log(149) << "GCell::areDensityConnex() Neighboring high saturated GCell (depth:" << i
                     << " " << a->_densities[i] << " & " << b->_densities[i] << ")" << endl;
         return true;
       }
@@ -653,7 +649,7 @@ namespace Katabatic {
     //   }
     // }
 
-    ltrace(300) << "GCell:addBlockage() " << this << " "
+    cdebug.log(149) << "GCell:addBlockage() " << this << " "
                 << depth << ":" << DbU::getValueString(_blockages[depth]) << endl;
   }
 
@@ -672,7 +668,7 @@ namespace Katabatic {
     }
 
     if (found) {
-      ltrace(200) << "remove " << ac << " from " << this << endl;
+      cdebug.log(149) << "remove " << ac << " from " << this << endl;
       _contacts.pop_back();
     } else {
       cerr << Bug("%p:%s do not belong to %s."
@@ -910,7 +906,7 @@ namespace Katabatic {
   //for ( size_t i=0 ; i<_depth ; i++ ) { _densities[i] = roundfp ( _densities[i] ); }
   //_cDensity = roundfp (_cDensity );
 
-  //ltrace(190) << "updateDensity: " << this << endl;
+  //cdebug.log(149) << "updateDensity: " << this << endl;
 
     checkDensity();
 
@@ -1024,7 +1020,7 @@ namespace Katabatic {
       case KbVertical:   capacity = getVCapacity(); break;
     }
 
-    ltrace(200) << "  | hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
+    cdebug.log(149) << "  | hasFreeTrack [" << getIndex() << "] depth:" << depth << " "
                 << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
               //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
                 << " " << _feedthroughs[depth] << " vs. " << capacity
@@ -1126,7 +1122,7 @@ namespace Katabatic {
 
     AutoSegment* segment;
     while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,KbForceMove) ) {
-      ltrace(200) << "Moved up: " << segment << endl;
+      cdebug.log(149) << "Moved up: " << segment << endl;
     }
   }
 
@@ -1137,7 +1133,7 @@ namespace Katabatic {
                               , unsigned int  flags
                               )
   {
-    ltrace(500) << "Deter| GCell::stepDesaturate() [" << getIndex() << "] depth:" << depth << endl;
+    cdebug.log(9000) << "Deter| GCell::stepDesaturate() [" << getIndex() << "] depth:" << depth << endl;
 
     updateDensity ();
     moved = NULL;
@@ -1168,7 +1164,7 @@ namespace Katabatic {
       if ( segmentDepth > depth ) break;
 
       globalNets.insert ( (*isegment)->getNet() );
-      ltrace(500) << "Deter| Move up " << (*isegment) << endl;
+      cdebug.log(9000) << "Deter| Move up " << (*isegment) << endl;
 
 #if THIS_IS_DISABLED
       (*isegment)->changeDepth ( depth+2, false, false );
@@ -1184,7 +1180,7 @@ namespace Katabatic {
 
   bool  GCell::stepBalance ( unsigned int depth, GCell::SetIndex& invalidateds )
   {
-    ltrace(200) << "stepBalance() - " << this << endl;
+    cdebug.log(149) << "stepBalance() - " << this << endl;
 
     updateDensity ();
 
@@ -1229,8 +1225,8 @@ namespace Katabatic {
 
   bool  GCell::stepNetDesaturate ( unsigned int depth, set<Net*>& globalNets, GCell::SetIndex& invalidateds )
   {
-    ltrace(500) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
-    ltrace(500) << "Deter| " << this << endl;
+    cdebug.log(9000) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
+    cdebug.log(9000) << "Deter| " << this << endl;
 
     updateDensity ();
 
@@ -1257,9 +1253,9 @@ namespace Katabatic {
       if ( segmentDepth < depth ) continue;
       if ( segmentDepth > depth ) break;
 
-      ltrace(500) << "Deter| Move up " << (*isegment) << endl;
+      cdebug.log(9000) << "Deter| Move up " << (*isegment) << endl;
 
-      if ( getGCellGrid()->getKatabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds) )
+      if ( getGCellGrid()->getKatabatic()->moveUpNetTrunk2(*isegment,globalNets,invalidateds) )
         return true;
     }
 
@@ -1393,7 +1389,7 @@ namespace Katabatic {
 
   void  GCellDensitySet::requeue ()
   {
-    ltrace(190) << "GCellDensitySet::requeue()" << endl;
+    cdebug.log(149) << "GCellDensitySet::requeue()" << endl;
 
     std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
     GCell::SetIndex::iterator                      igcell    = _requests.begin();

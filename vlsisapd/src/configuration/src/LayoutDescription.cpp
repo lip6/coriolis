@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VSLSI Stand-Alone Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -14,10 +14,10 @@
 // +-----------------------------------------------------------------+
 
 
-#include  "vlsisapd/configuration/LayoutDescription.h"
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "vlsisapd/configuration/ParameterWidget.h"
-#include  "vlsisapd/configuration/ConfigurationWidget.h"
+#include "vlsisapd/configuration/LayoutDescription.h"
+#include "vlsisapd/configuration/Configuration.h"
+#include "vlsisapd/configuration/ParameterWidget.h"
+#include "vlsisapd/configuration/ConfigurationWidget.h"
 
 
 namespace Cfg {
@@ -32,11 +32,44 @@ namespace Cfg {
   using std::ostream;
 
 
+// -------------------------------------------------------------------
+// Class  :  "Cfg::WidgetDescription".
+
+  string  WidgetDescription::typeToString ( WidgetDescription::Type type )
+  {
+    switch ( type ) {
+      case Title:     return "Title";
+      case Section:   return "Section";
+      case Rule:      return "Rule";
+      case Parameter: return "Parameter";
+    }
+    return "Rule";
+  }
+
+
+  WidgetDescription::Type  WidgetDescription::stringToType ( const string& s )
+  {
+    if (s == "Title"    ) return Title;
+    if (s == "Section"  ) return Section;
+    if (s == "Parameter") return Parameter;
+    return Rule;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Cfg::TabDescription".
+
   void  TabDescription::addWidget ( WidgetDescription* widget )
   {
     _widgets.push_back(widget);
     _layout->addWidgetLookup(widget);
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Cfg::LayoutDescription".
+
+  size_t  LayoutDescription::_timestamp = 0;
 
 
   WidgetDescription* LayoutDescription::getWidget ( const string& id )
@@ -69,6 +102,7 @@ namespace Cfg {
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::rule() );
+    ++_timestamp;
   }
 
 
@@ -76,6 +110,7 @@ namespace Cfg {
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::title(title) );
+    ++_timestamp;
   }
 
 
@@ -83,6 +118,7 @@ namespace Cfg {
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::section(section,column) );
+    ++_timestamp;
   }
 
 
@@ -97,6 +133,7 @@ namespace Cfg {
     WidgetDescription* widget = WidgetDescription::parameter(id,label,column,span,flags);
 
     tab->addWidget ( widget );
+    ++_timestamp;
   }
   
 

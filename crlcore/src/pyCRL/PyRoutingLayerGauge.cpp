@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2015, All Rights Reserved
+// Copyright (c) UPMC 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -28,7 +28,8 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -59,7 +60,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_create ( PyObject*, PyObject* args )
   {
-    trace << "PyRoutingLayerGauge_create()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_create()" << endl;
 
     RoutingLayerGauge*   rlg   = NULL;
     PyRoutingLayerGauge* pyRlg = NULL;
@@ -74,9 +75,10 @@ extern "C" {
     long      pitch;
     long      wireWidth;
     long      viaWidth;
+    long      obsDw;
     
     if (PyArg_ParseTuple( args
-                        , "OIIIdllll:RoutingLayerGauge.create"
+                        , "OIIIdlllll:RoutingLayerGauge.create"
                         , &pyLayer
                         , &direction
                         , &type
@@ -86,6 +88,7 @@ extern "C" {
                         , &pitch
                         , &wireWidth
                         , &viaWidth
+                        , &obsDw
                         )) {
       if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
         PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingLayerGauge.create()." );
@@ -107,14 +110,15 @@ extern "C" {
       }
 
       rlg = RoutingLayerGauge::create( PYLAYER_O(pyLayer)
-                                     , direction
-                                     , type
+                                     , (Constant::Direction)direction
+                                     , (Constant::LayerGaugeType)type
                                      , depth
                                      , density
                                      , offset
                                      , pitch
                                      , wireWidth
                                      , viaWidth
+                                     , obsDw
                                      );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.create()." );
@@ -136,7 +140,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getLayer ( PyRoutingLayerGauge* self )
   {
-    trace << "PyRoutingLayerGauge_getLayer()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_getLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -151,7 +155,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getBlockageLayer ( PyRoutingLayerGauge* self )
   {
-    trace << "PyRoutingLayerGauge_getBlockageLayer()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_getBlockageLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -166,7 +170,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackNumber ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    trace << "PyRoutingLayerGauge_getTrackNumber()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_getTrackNumber()" << endl;
 
     unsigned int  trackNumber = 0;
 
@@ -190,7 +194,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackIndex ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    trace << "PyRoutingLayerGauge_getTrackIndex()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_getTrackIndex()" << endl;
 
     unsigned int  trackIndex = 0;
 
@@ -228,7 +232,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackPosition ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    trace << "PyRoutingLayerGauge_getTrackPosition()" << endl;
+    cdebug.log(30) << "PyRoutingLayerGauge_getTrackPosition()" << endl;
 
     DbU::Unit  trackPosition = 0;
 
@@ -261,6 +265,7 @@ extern "C" {
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfWireWidth,getHalfWireWidth,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getViaWidth     ,getViaWidth     ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfViaWidth ,getHalfViaWidth ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetLongAttribute  (PyRoutingLayerGauge_getObstacleDw   ,getObstacleDw   ,PyRoutingLayerGauge,RoutingLayerGauge)
 
 
   // Standart Destroy (Attribute).
@@ -295,6 +300,8 @@ extern "C" {
                                 , "Returns the VIA width." }
     , { "getHalfViaWidth"       , (PyCFunction)PyRoutingLayerGauge_getHalfViaWidth , METH_NOARGS
                                 , "Returns the half VIA width." }
+    , { "getObstacleDw"         , (PyCFunction)PyRoutingLayerGauge_getObstacleDw   , METH_NOARGS
+                                , "Returns the dW to add to obstacle width." }
     , { "getTrackNumber"        , (PyCFunction)PyRoutingLayerGauge_getTrackNumber  , METH_VARARGS
                                 , "Compute the number of tracks included between <start> & <stop>." }
     , { "getTrackIndex"         , (PyCFunction)PyRoutingLayerGauge_getTrackIndex   , METH_VARARGS

@@ -3,7 +3,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2008-2015, All Rights Reserved
+# Copyright (c) UPMC 2008-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -80,6 +80,8 @@ def guessOs ():
     osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*i686.*")
     osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3].*x86_64.*")
     osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*i686.*")
+    osCygwinW10_64    = re.compile (".*CYGWIN_NT-10\.[0-3].*x86_64.*")
+    osCygwinW10       = re.compile (".*CYGWIN_NT-10\.[0-3].*i686.*")
 
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
@@ -127,6 +129,11 @@ def guessOs ():
         libDir = "lib64"
     elif osCygwinW8.match(lines[0]):
         osType = "Cygwin.W8"
+    elif osCygwinW10_64.match(lines[0]):
+        osType = "Cygwin.W10_64"
+        libDir = "lib64"
+    elif osCygwinW10.match(lines[0]):
+        osType = "Cygwin.W10"
     else:
         uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
         osType = uname.stdout.readlines()[0][:-1]

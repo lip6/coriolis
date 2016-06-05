@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: GtkUtils.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_GTK_UTILS
@@ -46,5 +46,5 @@ string  GdkKeyvalName ( int keyval );
 #endif // HURRICANE_GTK_UTILS
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

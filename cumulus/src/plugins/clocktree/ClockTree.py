@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2015, All Rights Reserved
+# Copyright (c) UPMC 2014-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -124,7 +124,7 @@ class HTree ( GaugeConfWrapper ):
           self.masterClock = net
           break
       if not self.masterClock:
-        print '[WARNING] Cell %s has no clock net.' % cell.getName()
+        raise ErrorMessage( 3, 'ClockTree: Cell %s has no clock net.' % cell.getName() )
     self._createChildNet( self.topBuffer, 'ck_htree' )
 
     return
@@ -132,6 +132,11 @@ class HTree ( GaugeConfWrapper ):
   def _getBufferIo ( self ):
     self.bufferCell = self.framework.getCell( Cfg.getParamString('clockTree.buffer').asString()
                                             , CRL.Catalog.State.Views )
+    if not self.bufferCell:
+      raise ErrorMessage( 3, [ 'ClockTree: Buffer cell "%s" not found in library,' \
+                               % Cfg.getParamString('clockTree.buffer').asString()
+                             , '           please check the "clockTree.buffer" configuration parameter in "plugins.conf".' ] )
+
     for net in self.bufferCell.getNets():
       if not net.isExternal(): continue
       if     net.isGlobal(): continue

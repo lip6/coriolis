@@ -41,13 +41,13 @@ extern "C" {
 
   static void PyUpdateSession_DeAlloc ( PyUpdateSession* self )
   {
-    trace << "PyUpdateSession_DeAlloc(" << hex << self << ")" << endl;
+    cdebug.log(20) << "PyUpdateSession_DeAlloc(" << hex << self << ")" << endl;
   }
   
 
   static PyObject* PyUpdateSession_open ( PyObject* )
   {
-    trace << "PyUpdateSession_open()" << endl;
+    cdebug.log(20) << "PyUpdateSession_open()" << endl;
 
     HTRY
     UpdateSession::open ();
@@ -59,7 +59,7 @@ extern "C" {
 
   static PyObject* PyUpdateSession_close ( PyObject* )
   {
-    trace << "PyUpdateSession_close()" << endl;
+    cdebug.log(20) << "PyUpdateSession_close()" << endl;
 
     HTRY
     UpdateSession::close ();

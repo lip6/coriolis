@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -35,7 +35,8 @@ namespace  Kite {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::ExceptionWidget;
@@ -61,7 +62,7 @@ extern "C" {
 #define DirectVoidToolMethod(SELF_TYPE, SELF_OBJECT, FUNC_NAME)         \
   static PyObject* Py##SELF_TYPE##_##FUNC_NAME(Py##SELF_TYPE* self)     \
   {                                                                     \
-      trace << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;             \
+      cdebug.log(40) << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;    \
       HTRY                                                              \
         METHOD_HEAD(#SELF_TYPE "." #FUNC_NAME "()")                     \
         if (SELF_OBJECT->getViewer()) {                                 \
@@ -84,7 +85,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_wipeoutRouting ( PyObject*, PyObject* args )
   {
-    trace << "PyKiteEngine_wipeoutRouting()" << endl;
+    cdebug.log(40) << "PyKiteEngine_wipeoutRouting()" << endl;
 
     HTRY
       PyObject* arg0;
@@ -101,7 +102,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_get ( PyObject*, PyObject* args )
   {
-    trace << "PyKiteEngine_get()" << endl;
+    cdebug.log(40) << "PyKiteEngine_get()" << endl;
 
     KiteEngine* kite = NULL;
     
@@ -118,7 +119,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_create ( PyObject*, PyObject* args )
   {
-    trace << "PyKiteEngine_create()" << endl;
+    cdebug.log(40) << "PyKiteEngine_create()" << endl;
 
     KiteEngine* kite = NULL;
     
@@ -144,7 +145,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_setViewer ( PyKiteEngine* self, PyObject* args )
   {
-    trace << "PyKiteEngine_setViewer ()" << endl;
+    cdebug.log(40) << "PyKiteEngine_setViewer ()" << endl;
 
     HTRY
       METHOD_HEAD( "KiteEngine.setViewer()" )
@@ -165,7 +166,7 @@ extern "C" {
 
   PyObject* PyKiteEngine_runGlobalRouter ( PyKiteEngine* self, PyObject* args )
   {
-    trace << "PyKiteEngine_runGlobalRouter()" << endl;
+    cdebug.log(40) << "PyKiteEngine_runGlobalRouter()" << endl;
 
     HTRY
       METHOD_HEAD("KiteEngine.runGlobalRouter()")
@@ -191,7 +192,7 @@ extern "C" {
 
   PyObject* PyKiteEngine_loadGlobalRouting ( PyKiteEngine* self, PyObject* args )
   {
-    trace << "PyKiteEngine_loadGlobalRouting()" << endl;
+    cdebug.log(40) << "PyKiteEngine_loadGlobalRouting()" << endl;
 
     HTRY
     METHOD_HEAD("KiteEngine.loadGlobalRouting()")
@@ -242,7 +243,7 @@ extern "C" {
 
   PyObject* PyKiteEngine_layerAssign ( PyKiteEngine* self, PyObject* args )
   {
-    trace << "PyKiteEngine_layerAssign()" << endl;
+    cdebug.log(40) << "PyKiteEngine_layerAssign()" << endl;
 
     HTRY
     METHOD_HEAD("KiteEngine.layerAssign()")
@@ -274,7 +275,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_runNegociatePreRouted ( PyKiteEngine* self )
   {
-    trace << "PyKiteEngine_runNegociatePreRouted()" << endl;
+    cdebug.log(40) << "PyKiteEngine_runNegociatePreRouted()" << endl;
     HTRY
     METHOD_HEAD("KiteEngine.runNegociatePreRouted()")
     if (kite->getViewer()) {
@@ -292,7 +293,7 @@ extern "C" {
 
   static PyObject* PyKiteEngine_runNegociate ( PyKiteEngine* self )
   {
-    trace << "PyKiteEngine_runNegociate()" << endl;
+    cdebug.log(40) << "PyKiteEngine_runNegociate()" << endl;
     HTRY
     METHOD_HEAD("KiteEngine.runNegociate()")
     if (kite->getViewer()) {

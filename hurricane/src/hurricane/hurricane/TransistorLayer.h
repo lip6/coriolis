@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,27 +18,19 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/TransistorLayer.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/TransistorLayer.h"                 |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_TRANSISTOR_LAYER__
-#define  __HURRICANE_TRANSISTOR_LAYER__
+#ifndef  HURRICANE_TRANSISTOR_LAYER_H
+#define  HURRICANE_TRANSISTOR_LAYER_H
 
 #include  <vector>
 
@@ -49,8 +40,12 @@
 
 namespace Hurricane {
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::TransistorLayer".
 
   class TransistorLayer : public Layer {
+    public:
+      typedef  Layer  Super;
 
     public:
     // Constructor.
@@ -71,6 +66,7 @@ namespace Hurricane {
       virtual void                 setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void                 setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
+      virtual void                 _toJson           ( JsonWriter* ) const;
       virtual void                 _onDbuChange      ( float scale );
       virtual string               _getTypeName      () const;
       virtual string               _getString        () const;
@@ -93,6 +89,20 @@ namespace Hurricane {
                                                      , BasicLayer* diffusionLayer
                                                      , BasicLayer* wellLayer
                                                      );
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonTransistorLayer".
+
+  class JsonTransistorLayer : public JsonLayer {
+    public:
+      static  void                 initialize          ();
+                                   JsonTransistorLayer ( unsigned long flags );
+                                  ~JsonTransistorLayer ();
+      virtual string               getTypeName         () const;
+      virtual JsonTransistorLayer* clone               ( unsigned long ) const;
+      virtual void                 toData              ( JsonStack& ); 
   };
 
 

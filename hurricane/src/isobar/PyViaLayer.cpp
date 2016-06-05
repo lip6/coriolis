@@ -76,7 +76,7 @@ extern "C" {
 
   static PyObject* PyViaLayer_create ( PyObject*, PyObject* args )
   {
-    trace << "PyViaLayer_create()" << endl;
+    cdebug.log(20) << "PyViaLayer_create()" << endl;
 
     ViaLayer*   viaLayer     = NULL;
     

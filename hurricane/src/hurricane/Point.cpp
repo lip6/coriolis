@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Point.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -123,11 +123,51 @@ Record* Point::_getRecord() const
     return record;
 }
 
+void  Point::toJson ( JsonWriter* w ) const
+// ****************************************
+{
 
+  w->startObject();
+  jsonWrite( w, "@typename", "Point" );
+  jsonWrite( w, "_x", getX() );
+  jsonWrite( w, "_y", getY() );
+  w->endObject();
+}
+
+Initializer<JsonPoint>  jsonPointInit ( 0 );
+
+void  JsonPoint::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonPoint (JsonWriter::RegisterMode) ); }
+
+JsonPoint::JsonPoint(unsigned long flags)
+// **************************************
+  : JsonObject(flags)
+{
+  add( "_x", typeid(int64_t) );
+  add( "_y", typeid(int64_t) );
+}
+
+JsonPoint* JsonPoint::clone(unsigned long flags) const
+// ***************************************************
+{ return new JsonPoint ( flags ); }
+
+string JsonPoint::getTypeName() const
+// **********************************
+{ return "Point"; }
+
+void JsonPoint::toData(JsonStack& stack)
+// *************************************
+{
+  check( stack, "JsonPoint::toData" );
+  Point point ( DbU::fromDb(get<int64_t>(stack,"_x"))
+              , DbU::fromDb(get<int64_t>(stack,"_y")) );
+  update( stack, point );
+}
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

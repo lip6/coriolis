@@ -1,87 +1,55 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./HierarchyCommand.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_HIERARCHY_COMMAND__
-#define  __HURRICANE_HIERARCHY_COMMAND__
+#ifndef  HURRICANE_HIERARCHY_COMMAND_H
+#define  HURRICANE_HIERARCHY_COMMAND_H
 
-#include  <set>
-
-#include  <QObject>
-#include  <QPoint>
-
+#include <set>
+#include <QObject>
+#include <QPoint>
 class QAction;
 
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/Command.h"
-#include  "hurricane/viewer/CellWidget.h"
-
-
-using namespace std;
+#include "hurricane/Occurrence.h"
+#include "hurricane/viewer/Command.h"
+#include "hurricane/viewer/CellWidget.h"
 
 
 namespace Hurricane {
-
 
   class Cell;
 
 
   class HierarchyCommand : public Command {
     public:
-                                HierarchyCommand  ();
-      virtual                  ~HierarchyCommand  ();
-      virtual const string&     getName           () const;
-      virtual void              keyReleaseEvent   ( QKeyEvent* );
+                                  HierarchyCommand  ();
+      virtual                    ~HierarchyCommand  ();
+      virtual const std::string&  getName           () const;
+      virtual void                reset             ();
+      virtual void                keyReleaseEvent   ( QKeyEvent* );
     private:                  
-                                HierarchyCommand  ( const HierarchyCommand& );
-              HierarchyCommand& operator=         ( const HierarchyCommand& );
+                                  HierarchyCommand  ( const HierarchyCommand& );
+              HierarchyCommand&   operator=         ( const HierarchyCommand& );
 
     private:
-      class HistoryEntry {
-        public:
-          inline HistoryEntry ( Instance*, shared_ptr<CellWidget::State> );
-        public:
-          Instance*                      _instance;
-          shared_ptr<CellWidget::State>  _state;
-      };
-    private:
-      static string         _name;
-      vector<HistoryEntry>  _history;
-      size_t                _historyIndex;
+      static std::string                                 _name;
+      std::vector< std::shared_ptr<CellWidget::State> >  _history;
+      size_t                                             _historyIndex;
   };
 
 
-// Inline Functions.
-  inline HierarchyCommand::HistoryEntry::HistoryEntry  ( Instance*                     instance
-                                                       , shared_ptr<CellWidget::State> state
-                                                       )
-    : _instance(instance)
-    , _state   (state)
-  { }
+} // Hurricane namespace.
 
-
-} // End of Hurricane namespace.
-
-
-#endif
+#endif  // HURRICANE_HIERARCHY_COMMAND_H

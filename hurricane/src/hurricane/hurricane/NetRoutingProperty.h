@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -46,8 +46,9 @@ namespace Hurricane {
                  , MixedPreRoute        = Fixed|ManualGlobalRoute
                  };
     public:
-      inline  bool          isUnconnected          () const;
+      inline  bool          isExcluded             () const;
       inline  bool          isFixed                () const;
+      inline  bool          isUnconnected          () const;
       inline  bool          isManualGlobalRoute    () const;
       inline  bool          isAutomaticGlobalRoute () const;
       inline  bool          isMixedPreRoute        () const;
@@ -69,8 +70,9 @@ namespace Hurricane {
 
   inline NetRoutingState::NetRoutingState ( Net* net, unsigned int flags ) : _net(net), _flags(flags) { }
 
-  inline bool          NetRoutingState::isUnconnected          () const { return _flags & Unconnected; };
+  inline bool          NetRoutingState::isExcluded             () const { return _flags & Excluded; };
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
+  inline bool          NetRoutingState::isUnconnected          () const { return _flags & Unconnected; };
   inline bool          NetRoutingState::isManualGlobalRoute    () const { return _flags & ManualGlobalRoute; };
   inline bool          NetRoutingState::isAutomaticGlobalRoute () const { return _flags & AutomaticGlobalRoute; };
   inline bool          NetRoutingState::isMixedPreRoute        () const { return _flags & MixedPreRoute; };
@@ -94,6 +96,8 @@ namespace Hurricane {
       virtual Name                getName         () const;
       inline  NetRoutingState*    getState        ();
       virtual void                onReleasedBy    ( DBo* owner );
+      virtual bool                hasJson         () const;
+      virtual void                toJson          ( JsonWriter*, const DBo* ) const;
       virtual std::string         _getTypeName    () const;
       virtual std::string         _getString      () const;
       virtual Record*             _getRecord      () const;
@@ -109,6 +113,19 @@ namespace Hurricane {
 
   inline                     NetRoutingProperty::NetRoutingProperty ( Net* owner ) : PrivateProperty(), _state(owner) { }
   inline NetRoutingState*    NetRoutingProperty::getState           () { return &_state; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonNetRoutingProperty".
+
+  class JsonNetRoutingProperty : public JsonObject {
+    public:
+      static  void                    initialize             ();
+                                      JsonNetRoutingProperty ( unsigned long );
+      virtual std::string             getTypeName            () const;
+      virtual JsonNetRoutingProperty* clone                  ( unsigned long ) const;
+      virtual void                    toData                 ( JsonStack& ); 
+  };
 
 
 // -------------------------------------------------------------------

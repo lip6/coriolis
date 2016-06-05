@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -135,7 +135,10 @@ namespace Hurricane {
               void                 changeSelectionMode       ();
               void                 setShowSelection          ( bool );
               void                 setState                  ( shared_ptr<CellWidget::State>& );
+              void                 removeHistory             ( Cell* );
               void                 openHistoryCell           ();
+              void                 openDesignBlob            ();
+              void                 saveDesignBlob            ();
               void                 printDisplay              ();
               void                 print                     ( QPrinter* );
               void                 imageDisplay              ();
@@ -148,6 +151,7 @@ namespace Hurricane {
       inline  void                 emitCellPreModificated    ();
       inline  void                 emitCellPostModificated   ();
     signals:                       
+              void                 cellLoadedFromDisk        ( Cell* );
               void                 showSelectionToggled      ( bool );
               void                 stateChanged              ( shared_ptr<CellWidget::State>& );
               void                 redrawCellWidget          ();
@@ -157,6 +161,7 @@ namespace Hurricane {
               void                 createMenus               ();
               void                 refreshTitle              ();
               void                 refreshHistory            ();
+              void                 rebuildHistory            ();
     private:
               QString              _getAbsWidgetPath         ( const QString& relPath ) const;
               QMenu*               _getParentMenu            ( const QString& ) const;
@@ -188,7 +193,7 @@ namespace Hurricane {
              bool                     _toolInterrupt;
              unsigned int             _flags;
              UpdateState              _updateState;
-
+             QString                  _pyScriptName;
   };
 
 

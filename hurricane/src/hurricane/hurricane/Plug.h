@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Plug.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -103,6 +103,7 @@ class Plug : public Component {
     protected: virtual void _preDestroy();
 
     public: virtual string getName() const;
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Plug");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
@@ -114,6 +115,27 @@ class Plug : public Component {
 };
 
 
+class JsonPlug : public JsonComponent {
+// ************************************
+
+  public: static void initialize();
+  public: JsonPlug(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPlug* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
+
+class JsonPlugRef : public JsonObject {
+// ************************************
+
+  public: static void initialize();
+  public: JsonPlugRef(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPlugRef* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
 } // End of Hurricane namespace.
 
 
@@ -124,5 +146,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Plug);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

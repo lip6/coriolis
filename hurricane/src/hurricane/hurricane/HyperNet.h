@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/HyperNet.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -58,6 +58,7 @@ class HyperNet {
     public: Occurrences getNetOccurrencesUnder(Box area, bool doExtraction = false,
                                                             bool allowInterruption = false) const;
     public: Occurrences getLeafPlugOccurrences(bool doExtraction = false , bool allowInterruption = false) const;
+    public: Occurrences getComponentOccurrences(bool doExtraction = false , bool allowInterruption = false) const;
 
 // Predicates
 // **********
@@ -83,6 +84,7 @@ bool isHyperNetRootNetOccurrence(Occurrence netoccurrence);
 
 
 INSPECTOR_P_SUPPORT(Hurricane::HyperNet);
+IOSTREAM_VALUE_SUPPORT(Hurricane::HyperNet);
 
 
 
@@ -95,5 +97,5 @@ INSPECTOR_P_SUPPORT(Hurricane::HyperNet);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

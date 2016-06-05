@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -58,22 +58,27 @@ namespace Hurricane {
 
     _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
 
-    _sortModel->setSourceModel       ( _baseModel );
-    _sortModel->setDynamicSortFilter ( true );
-    _sortModel->setFilterKeyColumn   ( 0 );
+    _sortModel->setSourceModel      ( _baseModel );
+    _sortModel->setDynamicSortFilter( true );
+    _sortModel->setFilterKeyColumn  ( 0 );
 
-    _view->setShowGrid             ( false );
-    _view->setAlternatingRowColors ( true );
-    _view->setSelectionBehavior    ( QAbstractItemView::SelectRows );
-    _view->setSortingEnabled       ( true );
-    _view->setModel                ( _sortModel );
+    _view->setShowGrid            ( false );
+    _view->setAlternatingRowColors( true );
+    _view->setSelectionBehavior   ( QAbstractItemView::SelectRows );
+    _view->setSortingEnabled      ( true );
+    _view->setModel               ( _sortModel );
 
-    QHeaderView* horizontalHeader = _view->horizontalHeader ();
-    horizontalHeader->setStretchLastSection ( true );
+    QHeaderView* horizontalHeader = _view->horizontalHeader();
+    horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
+    horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 300 : 150 );
+    horizontalHeader->setResizeMode        ( 0, QHeaderView::Interactive );
+    horizontalHeader->setResizeMode        ( 1, QHeaderView::Interactive );
+    horizontalHeader->setResizeMode        ( 2, QHeaderView::Interactive );
+    horizontalHeader->setStretchLastSection( true );
 
-    QHeaderView* verticalHeader = _view->verticalHeader ();
-    verticalHeader->setVisible ( false );
-    verticalHeader->setDefaultSectionSize ( _rowHeight );
+    QHeaderView* verticalHeader = _view->verticalHeader();
+    verticalHeader->setVisible( false );
+    verticalHeader->setDefaultSectionSize( _rowHeight );
 
     // verticalHeader->setStyleSheet( "QHeaderView::section {"
     //                                  "padding-bottom: 0px;"
@@ -84,29 +89,29 @@ namespace Hurricane {
     //                                "}"
     //                              );
 
-    _filterPatternLineEdit = new QLineEdit(this);
-    QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
-    filterPatternLabel->setBuddy(_filterPatternLineEdit);
+    _filterPatternLineEdit = new QLineEdit( this );
+    QLabel* filterPatternLabel = new QLabel( tr("&Filter pattern:"), this );
+    filterPatternLabel->setBuddy( _filterPatternLineEdit );
 
     QGridLayout* gLayout = new QGridLayout();
-    gLayout->addWidget(_view                 , 1, 0, 1, 2);
-    gLayout->addWidget(filterPatternLabel    , 2, 0);
-    gLayout->addWidget(_filterPatternLineEdit, 2, 1);
+    gLayout->addWidget( _view                 , 1, 0, 1, 2 );
+    gLayout->addWidget( filterPatternLabel    , 2, 0 );
+    gLayout->addWidget( _filterPatternLineEdit, 2, 1 );
 
-    setLayout ( gLayout );
+    setLayout( gLayout );
 
-    QAction* fitAction = new QAction  ( tr("&Fit to Net"), this );
-    fitAction->setShortcut   ( QKeySequence(tr("CTRL+F")) );
-    fitAction->setStatusTip  ( tr("Fit the view to the Net's bounding box") );
-    addAction ( fitAction );
+    QAction* fitAction = new QAction( tr("&Fit to Net"), this );
+    fitAction->setShortcut ( QKeySequence(tr("CTRL+F")) );
+    fitAction->setStatusTip( tr("Fit the view to the Net's bounding box") );
+    addAction( fitAction );
 
-    connect ( _filterPatternLineEdit , SIGNAL(textChanged(const QString &))
-            , this                   , SLOT  (textFilterChanged()) );                       
-    connect ( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
-            , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
-    connect ( fitAction , SIGNAL(triggered    ()), this, SLOT(fitToNet      ()) );
+    connect( _filterPatternLineEdit , SIGNAL(textChanged(const QString &))
+           , this                   , SLOT  (textFilterChanged()) );                       
+    connect( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
+           , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
+    connect( fitAction , SIGNAL(triggered    ()), this, SLOT(fitToNet      ()) );
 
-    resize(300, 300);
+    resize( 300, 300 );
   }
 
 

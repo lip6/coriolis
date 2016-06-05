@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -21,6 +21,8 @@
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Layer.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Net.h"
@@ -46,6 +48,9 @@
 
 
 namespace {
+
+  using  Katabatic::AutoContactTerminal;
+
 
 /*! \defgroup     LoadGlobalRouting  Global Routing Loading
  *  \brief        Translation rules to build detailed routing from global
@@ -111,6 +116,12 @@ namespace {
  *
  *  \brief        Build the wiring for a Net inside a GCell (\b internal).
  *
+ *                As this class is called to initially construct the Katabatic wiring,
+ *                it must build a \b connex wiring. That is without gaps in layer depth,
+ *                because the topology restauration mechanism (AutoContact::updateTopology())
+ *                of the AutoContact cannot work until all AutoSegments are revalidated at
+ *                least once. The topology restauration work by creating doglegs which in turn,
+ *                call the canonization, which needs all the caches to be up to date.
  */
 
 //! \function     void  GCellTopology::doRp_AutoContacts ( GCell* gcell, Component* rp, AutoContact*& source, AutoContact*& target, unsigned int flags );
@@ -171,6 +182,33 @@ namespace {
 //!
 //!               \image html  doRp_Access.png "doRp_Access()"
 
+//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags );
+//! \param        rp      The Component onto which anchor the access contact.
+//! \param        flags   Relevant flags are:
+//!                         - HAccess, the terminal is to be accessed through an horizontal
+//!                           segment.
+//!                         - VSmall, force the terminal to be considered as small in the
+//!                           vertical direction.
+//! \return       A Katabatic::AutoContactTerminal .
+//!
+//!               The Component \c rp is a RoutingPad which belongs to a pad cell. This case
+//!               occurs when we are routing a complete chip. This method build, from the
+//!               \c rp a stack of articulated punctual segments and contacts to reach the
+//!               default H/V routing layers (usually \c METAL2 & \c METAL3). This may be
+//!               needed when the pad terminal is in \c METAL5, for instance.
+//!
+//!               The returned AutoContactTerminal is anchored on the last punctual segment
+//!               build.
+//!
+//!               The GCell into which the AutoContactTerminal is created may be under the
+//!               pads area. However, it will be right on the border of the GCell.
+//!               The global router vertexes of GCell under the pad area are marked as
+//!               blocked so will never be used for routing.
+//!
+//! \remark       The segments and contacts added to ensure the layer connexity are not
+//!               put into the Katabatic database. They are plain Hurricane objects, invisibles
+//!               from it.
+
 //! \function     void  GCellTopology::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 );
 //!
 //!               Build the wiring to connect to horizontal Component. Two cases:
@@ -187,7 +225,17 @@ namespace {
 //!
 //!               \image html  doRp_StairCaseV.png "doRp_StairCaseV()"
 
-//! \function     GCellTopology::_do_xG ();
+//! \function     void  GCellTopology::_do_xG_1Pad ();
+//!
+//!               Construct the topology, when there is only global wires and one local
+//!               terminal, but coming from a Pad. As thoses connectors will always be
+//!               on one border of the GCell they can be considered as a kind of global.
+//!
+//!               So this method mostly calls GCellTopology::doRp_AccessPad() to create
+//!               the AutoContactTerminal, then calls GCellTopology::_do_xG(), except
+//!               for straight lines which are managed directly.
+
+//! \function     void  GCellTopology::_do_xG ();
 //!
 //!               Construct the topology, when there is only global wires (no local terminals).
 //!               
@@ -450,7 +498,7 @@ namespace {
     flags |= (height < 3*Session::getPitch(anchorDepth)) ? VSmall   : 0;
     flags |= ((width == 0) && (height == 0))             ? Punctual : 0;
 
-    ltrace(99) << "::checkRoutingPadSize(): pitch[" << anchorDepth << "]:"
+    cdebug.log(145) << "::checkRoutingPadSize(): pitch[" << anchorDepth << "]:"
                << DbU::toLambda(Session::getPitch(anchorDepth)) << " "
                << ((flags & HSmall) ? "HSmall " : " ")
                << ((flags & VSmall) ? "VSmall " : " ")
@@ -575,7 +623,7 @@ namespace {
 
   inline void  ForkStack::push ( Hook* from, AutoContact* contact )
   {
-    ltrace(80) << "    Stacking " << from << " + " << contact << endl;
+    cdebug.log(145) << "    Stacking " << from << " + " << contact << endl;
     _stack.push_back( Element(from,contact) );
   }
 
@@ -594,6 +642,7 @@ namespace {
       inline GCell*        getGCell          () const;
       static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, unsigned int flags );
       static AutoContact*  doRp_Access       ( GCell*, Component*, unsigned int  flags );
+      static AutoContact*  doRp_AccessPad    ( RoutingPad*, unsigned int flags );
       static void          doRp_StairCaseH   ( GCell*, Component* rp1, Component* rp2 );
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
@@ -604,17 +653,18 @@ namespace {
              void          _do_1G_xM1        ();
              void          _do_xG_xM1_xM3    ();
              void          _do_xG_1M1_1M2    ();
+             void          _do_4G_1M2        ();
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
 
     private:
-      enum ConnexityBits { GlobalBSize = 3
-                         , Metal1BSize = 3
-                         , Metal2BSize = 3
-                         , Metal3BSize = 3
-                         , PadsBSize   = 3
-                         , PinsBSize   = 3
+      enum ConnexityBits { GlobalBSize = 4
+                         , Metal1BSize = 4
+                         , Metal2BSize = 4
+                         , Metal3BSize = 4
+                         , PadsBSize   = 4
+                         , PinsBSize   = 4
                          };
 
 #define CONNEXITY_VALUE( Gs, M1s, M2s, M3s, pads, pins )                 \
@@ -634,6 +684,7 @@ namespace {
                          , Conn_1G_2M1      = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )
                          , Conn_1G_3M1      = CONNEXITY_VALUE( 1, 3, 0, 0, 0 , 0 )
                          , Conn_1G_4M1      = CONNEXITY_VALUE( 1, 4, 0, 0, 0 , 0 )
+                         , Conn_1G_5M1      = CONNEXITY_VALUE( 1, 5, 0, 0, 0 , 0 )
                          , Conn_1G_1M2      = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 0 )
                          , Conn_1G_2M2      = CONNEXITY_VALUE( 1, 0, 2, 0, 0 , 0 )
                          , Conn_1G_3M2      = CONNEXITY_VALUE( 1, 0, 3, 0, 0 , 0 )
@@ -649,6 +700,7 @@ namespace {
                          , Conn_2G_2M1      = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
                          , Conn_2G_3M1      = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
                          , Conn_2G_4M1      = CONNEXITY_VALUE( 2, 4, 0, 0, 0 , 0 )
+                         , Conn_2G_5M1      = CONNEXITY_VALUE( 2, 5, 0, 0, 0 , 0 )
                          , Conn_2G_1M2      = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 0 )
                          , Conn_2G_2M2      = CONNEXITY_VALUE( 2, 0, 2, 0, 0 , 0 )
                          , Conn_2G_3M2      = CONNEXITY_VALUE( 2, 0, 3, 0, 0 , 0 )
@@ -664,6 +716,7 @@ namespace {
                          , Conn_3G_3M1      = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
                          , Conn_3G_4M1      = CONNEXITY_VALUE( 3, 4, 0, 0, 0 , 0 )
                          , Conn_3G_1M2      = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 0 )
+                         , Conn_3G_2M2      = CONNEXITY_VALUE( 3, 0, 2, 0, 0 , 0 )
                          , Conn_3G_1M3      = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 0 )
                          , Conn_3G_2M3      = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
                          , Conn_3G_3M3      = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
@@ -673,6 +726,7 @@ namespace {
                          , Conn_4G_2M1      = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
                          , Conn_4G_3M1      = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
                          , Conn_4G_4M1      = CONNEXITY_VALUE( 4, 4, 0, 0, 0 , 0 )
+                         , Conn_4G_1M2      = CONNEXITY_VALUE( 4, 0, 1, 0, 0 , 0 )
                          , Conn_4G_1M3      = CONNEXITY_VALUE( 4, 0, 0, 1, 0 , 0 )
                          , Conn_1G_1Pad     = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
                          , Conn_2G_1Pad     = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
@@ -720,7 +774,7 @@ namespace {
              Hook*                 _west;
              Hook*                 _north;
              Hook*                 _south;
-             vector<Component*>    _routingPads;
+             vector<RoutingPad*>   _routingPads;
   };
 
 
@@ -765,15 +819,24 @@ namespace {
   {
     _connexity.connexity = 0;
 
-    ltrace(99) << "GCellTopology::GCellTopology()" << endl;
-    ltracein(99);
-    ltrace(99) << getString(fromHook) << endl;
-    ltrace(99) << sourceContact << endl;
+    cdebug.log(145,1) << "GCellTopology::GCellTopology()" << endl;
+    cdebug.log(145) << getString(fromHook) << endl;
+    cdebug.log(145) << sourceContact << endl;
 
     Segment* fromSegment = static_cast<Segment*>( _fromHook->getComponent() );
     _net = fromSegment->getNet();
 
     forEach ( Hook*, hook, fromHook->getHooks() ) {
+      cdebug.log(145) << "Topology [" << _connexity.connexity << "] = "
+                 << "["  << _connexity.fields.globals
+                 << "+"  << _connexity.fields.M1     
+                 << "+"  << _connexity.fields.M2     
+                 << "+"  << _connexity.fields.M3
+                 << "+"  << _connexity.fields.Pin
+                 << "+"  << _connexity.fields.Pad
+                 << "] " << _gcell
+                 << endl;
+
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
 
       if (toSegment) {
@@ -789,7 +852,7 @@ namespace {
         Component*  anchor = hook->getComponent();
         RoutingPad* rp     = dynamic_cast<RoutingPad*>( anchor );
 
-        ltrace(99) << "| Looking for Anchor:" << anchor << " rp:" << rp << endl;
+        cdebug.log(145) << "| Looking for Anchor:" << anchor << " rp:" << rp << endl;
 
         if (anchor) {
           Contact* contact = dynamic_cast<Contact*>( anchor );
@@ -798,8 +861,8 @@ namespace {
                  or Session::getKatabatic()->isGMetal  ( anchor->getLayer() )) ) {
           // Global routing articulation contact are in <gmetalh> not <gcut> ?
             GCell* gcell = gcellGrid->getGCell( contact->getCenter() );
-            ltrace(99) << "* Global Routing Articulation: " << contact << endl;
-            ltrace(99) << "| " << gcell << endl;
+            cdebug.log(145) << "* Global Routing Articulation: " << contact << endl;
+            cdebug.log(145) << "| " << gcell << endl;
             if (gcell == NULL)
               throw Error( invalidGCell );
             if (_gcell == NULL) _gcell = gcell;
@@ -828,16 +891,16 @@ namespace {
               if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) _connexity.fields.Pin++; 
             }
 
-            ltrace(99) << "| Component to connect: " << anchor << endl;
-            _routingPads.push_back( anchor );
+            cdebug.log(145) << "| Component to connect: " << anchor << endl;
+            _routingPads.push_back( rp );
           }
         }
       }
     }
-    ltrace(99) << "east: " << _east  << endl;
-    ltrace(99) << "west: " << _west  << endl;
-    ltrace(99) << "north:" << _north << endl;
-    ltrace(99) << "south:" << _south << endl;
+    cdebug.log(145) << "east: " << _east  << endl;
+    cdebug.log(145) << "west: " << _west  << endl;
+    cdebug.log(145) << "north:" << _north << endl;
+    cdebug.log(145) << "south:" << _south << endl;
 
     if (_connexity.fields.globals == 1) {
       if ( _north or _south ) _topology |= Global_Vertical_End;
@@ -850,7 +913,7 @@ namespace {
       _topology |= Global_Fork;
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     if (_gcell == NULL) throw Error( missingGCell );
   }
@@ -858,8 +921,7 @@ namespace {
 
   void  GCellTopology::construct ( ForkStack& forks )
   {
-    ltrace(99) << "GCellTopology::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "GCellTopology::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
 
     _southWestContact = NULL;
     _northEastContact = NULL;
@@ -874,7 +936,8 @@ namespace {
       case Conn_1G_1M1:    _do_1G_1M1();    break;
       case Conn_1G_2M1:
       case Conn_1G_3M1:
-      case Conn_1G_4M1:  _do_1G_xM1(); break;
+      case Conn_1G_4M1:
+      case Conn_1G_5M1:  _do_1G_xM1(); break;
       case Conn_1G_1M2:
       case Conn_1G_2M2:
       case Conn_1G_3M2:
@@ -889,6 +952,7 @@ namespace {
       case Conn_2G_2M1:
       case Conn_2G_3M1:
       case Conn_2G_4M1:
+      case Conn_2G_5M1:
       case Conn_3G_1M1:
       case Conn_3G_2M1:
       case Conn_3G_3M1:
@@ -900,11 +964,13 @@ namespace {
       case Conn_4G_2M1:
       case Conn_4G_3M1:
       case Conn_4G_4M1: _do_xG_xM1_xM3(); break;
+      case Conn_4G_1M2: _do_4G_1M2(); break;
       case Conn_2G_1M2:
       case Conn_2G_2M2:
       case Conn_2G_3M2:
       case Conn_2G_4M2:
-      case Conn_3G_1M2: _do_xG_xM2(); break;
+      case Conn_3G_1M2:
+      case Conn_3G_2M2: _do_xG_xM2(); break;
       case Conn_2G_1M3:
       case Conn_2G_2M3:
       case Conn_2G_3M3:
@@ -954,16 +1020,16 @@ namespace {
                                                         );
         globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
         
-        ltrace(99) << "Create global segment: " << globalSegment << endl;
+        cdebug.log(145) << "Create global segment: " << globalSegment << endl;
 
 #if THIS_IS_DEPRECATED
         if ( globalSegment->isHorizontal()
            and (  (Session::getRoutingGauge()->getLayerDepth(_sourceContact->getLayer()->getBottom()) > 1)
                or (Session::getRoutingGauge()->getLayerDepth(targetContact ->getLayer()->getBottom()) > 1)) ) {
           globalSegment->setLayer ( Session::getRoutingLayer(3) );
-          ltrace(99) << "Source:" << _sourceContact << endl;
-          ltrace(99) << "Target:" << targetContact << endl;
-          ltrace(99) << "Moving up global:" << globalSegment << endl;
+          cdebug.log(145) << "Source:" << _sourceContact << endl;
+          cdebug.log(145) << "Target:" << targetContact << endl;
+          cdebug.log(145) << "Moving up global:" << globalSegment << endl;
         }
 #endif
       // HARDCODED VALUE.
@@ -971,7 +1037,7 @@ namespace {
           _toFixSegments.push_back( globalSegment );
         
         if (_connexity.fields.globals < 2) {
-          ltraceout(99);
+          cdebug.tabw(145,-1);
           return;
         }
       } else
@@ -980,30 +1046,30 @@ namespace {
 
     if ( _east and (_fromHook != _east) ) {
       Hook* toHook = getSegmentOppositeHook( _east );
-      ltrace(99) << "Pushing East (to)   " << getString(toHook) << endl;
-      ltrace(99) << "Pushing East (from) " << _northEastContact << endl;
+      cdebug.log(145) << "Pushing East (to)   " << getString(toHook) << endl;
+      cdebug.log(145) << "Pushing East (from) " << _northEastContact << endl;
       forks.push( toHook, _northEastContact );
     }
     if ( _west and (_fromHook != _west) ) {
       Hook* toHook = getSegmentOppositeHook( _west );
-      ltrace(99) << "Pushing West (to)   " << getString(toHook) << endl;
-      ltrace(99) << "Pushing West (from) " << _southWestContact << endl;
+      cdebug.log(145) << "Pushing West (to)   " << getString(toHook) << endl;
+      cdebug.log(145) << "Pushing West (from) " << _southWestContact << endl;
       forks.push( toHook, _southWestContact );
     }
     if ( _north and (_fromHook != _north) ) {
       Hook* toHook = getSegmentOppositeHook( _north );
-      ltrace(99) << "Pushing North (to)   " << getString(toHook) << endl;
-      ltrace(99) << "Pushing North (from) " << _northEastContact << endl;
+      cdebug.log(145) << "Pushing North (to)   " << getString(toHook) << endl;
+      cdebug.log(145) << "Pushing North (from) " << _northEastContact << endl;
       forks.push( toHook, _northEastContact );
     }
     if ( _south and (_fromHook != _south) ) {
       Hook* toHook = getSegmentOppositeHook( _south );
-      ltrace(99) << "Pushing South (to)   " << getString(toHook) << endl;
-      ltrace(99) << "Pushing South (from) " << _southWestContact << endl;
+      cdebug.log(145) << "Pushing South (to)   " << getString(toHook) << endl;
+      cdebug.log(145) << "Pushing South (from) " << _southWestContact << endl;
       forks.push( toHook, _southWestContact );
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -1014,9 +1080,8 @@ namespace {
                                          , unsigned int  flags
                                          )
   {
-    ltrace(99) << "doRp_AutoContacts()" << endl;
-    ltracein(99);
-    ltrace(99) << rp << endl;
+    cdebug.log(145,1) << "doRp_AutoContacts()" << endl;
+    cdebug.log(145)   << rp << endl;
 
     source = target = NULL;
 
@@ -1093,15 +1158,14 @@ namespace {
                                                    );
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
     return;
   }
 
 
   AutoContact* GCellTopology::doRp_Access ( GCell* gcell, Component* rp, unsigned int flags )
   {
-    ltrace(99) << "doRp_Access() - flags:" << flags << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "doRp_Access() - flags:" << flags << endl;
 
     AutoContact* rpContactSource;
     AutoContact* rpContactTarget;
@@ -1126,15 +1190,162 @@ namespace {
       }
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     return rpContactSource;
   }
 
 
+  AutoContact* GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags )
+  {
+    cdebug.log(145,1) << "doRp_AccessPad()" << endl;
+    cdebug.log(145)   << rp << endl;
+
+  // Hardcoded: H access is METAL2 (depth=1), V access is METAL3 (depth=2).
+    size_t  accessDepth = (flags & HAccess) ? 1 : 2 ;
+    size_t  padDepth    = Session::getLayerDepth(rp->getLayer());
+    if (padDepth > Session::getAllowedDepth()) {
+      cerr << Error( "GCellTopology::doRp_AccessPad(): Pad RoutingPad %s\n"
+                     "        has a layer unreachable by the router (top layer is: %s)"
+                   , getString(rp).c_str()
+                   , getString(Session::getRoutingLayer(Session::getAllowedDepth())).c_str()
+                   ) << endl;
+      padDepth = Session::getAllowedDepth();
+    }
+
+    rp->getBodyHook()->detach();
+
+    Point rpPosition = rp->getCenter();
+    Point position   = rp->getCenter();
+    Box   rpbb       = rp->getBoundingBox();
+    if (  (rpbb.getWidth () > 2*Session::getWireWidth(padDepth)) 
+       or (rpbb.getHeight() > 2*Session::getWireWidth(padDepth)) ) {
+    //cerr << "doRp_AccessPad(): connecting to non-punctual connector (RoutingPad).\n"
+    //     << "                  " << rp->getNet() << "pad:" << rp->getOccurrence().getMasterCell() << endl;
+
+      Transformation transf = rp->getOccurrence().getPath().getTransformation();
+      switch ( transf.getOrientation() ) {
+        case Transformation::Orientation::ID: position.setY( rpbb.getYMin() ); break;
+        case Transformation::Orientation::MY: position.setY( rpbb.getYMax() ); break;
+        case Transformation::Orientation::YR:
+        case Transformation::Orientation::R3: position.setX( rpbb.getXMin() ); break;
+        case Transformation::Orientation::R1: position.setX( rpbb.getXMax() ); break;
+        default:
+          break;
+      }
+    }
+
+    GCell*     gcell  = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+    Component* anchor = rp;
+
+    if (padDepth != accessDepth) {
+      if (padDepth > accessDepth) {
+      // Go *down* from the pad's RoutingPad.
+        --padDepth;
+
+        Contact*   target   = NULL;
+        Contact*   source   = Contact::create ( rp
+                                              , Session::getContactLayer(padDepth)
+                                              , position.getX() - rpPosition.getX()
+                                              , position.getY() - rpPosition.getY()
+                                              , Session::getViaWidth(padDepth)
+                                              , Session::getViaWidth(padDepth)
+                                              );
+      
+        for ( size_t depth = padDepth ; depth >= accessDepth ; --depth ) {
+          const Layer* segmentLayer = Session::getRoutingLayer(depth);
+          const Layer* targetLayer  = (depth == accessDepth) ? segmentLayer
+                                                             : Session::getContactLayer(depth-1);
+          DbU::Unit    targetSide   = (depth == accessDepth) ? Session::getWireWidth(depth)
+                                                             : Session::getViaWidth (depth-1);
+
+          target = Contact::create( rp->getNet()
+                                  , targetLayer
+                                  , position.getX()
+                                  , position.getY()
+                                  , targetSide
+                                  , targetSide
+                                  );
+          if (Session::getDirection(depth) == KbHorizontal) {
+            anchor = Horizontal::create( source
+                                       , target
+                                       , segmentLayer
+                                       , position.getY()
+                                       , Session::getWireWidth(depth)
+                                       );
+          } else {
+            anchor = Vertical::create( source
+                                     , target
+                                     , segmentLayer
+                                     , position.getX()
+                                     , Session::getWireWidth(depth)
+                                     );
+          }
+          cdebug.log(145) << "Pad strap: " << anchor << endl;
+          source = target;
+        }
+      } else {
+      // Go *up* from the pad's RoutingPad.
+        Contact*   target   = NULL;
+        Contact*   source   = Contact::create ( rp
+                                              , Session::getContactLayer(padDepth)
+                                              , 0
+                                              , 0
+                                              , Session::getViaWidth(padDepth)
+                                              , Session::getViaWidth(padDepth)
+                                              );
+      
+        for ( size_t depth = padDepth ; depth <= accessDepth ; ++depth ) {
+          const Layer* segmentLayer = Session::getRoutingLayer(depth);
+          const Layer* targetLayer  = (depth == accessDepth) ? segmentLayer
+                                                             : Session::getContactLayer(depth);
+          DbU::Unit    targetSide   = (depth == accessDepth) ? Session::getWireWidth(depth)
+                                                             : Session::getViaWidth (depth);
+
+          target = Contact::create( rp->getNet()
+                                  , targetLayer
+                                  , position.getX()
+                                  , position.getY()
+                                  , targetSide
+                                  , targetSide
+                                  );
+          if (Session::getDirection(depth) == KbHorizontal) {
+            anchor = Horizontal::create( source
+                                       , target
+                                       , segmentLayer
+                                       , position.getY()
+                                       , Session::getWireWidth(depth)
+                                       );
+          } else {
+            anchor = Vertical::create( source
+                                     , target
+                                     , segmentLayer
+                                     , position.getX()
+                                     , Session::getWireWidth(depth)
+                                     );
+          }
+          cdebug.log(145) << "Pad strap: " << anchor << endl;
+          source = target;
+        }
+      }
+    }
+
+    AutoContact* autoSource
+      = AutoContactTerminal::create ( gcell
+                                    , anchor
+                                    , Session::getRoutingLayer(accessDepth)
+                                    , position
+                                    , Session::getWireWidth(accessDepth)
+                                    , Session::getWireWidth(accessDepth)
+                                    );
+    cdebug.tabw(145,-1);
+    return autoSource;
+  }
+
+
   void  GCellTopology::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 )
   {
-    ltrace(99) << "doRp_StairCaseH()" << endl;
+    cdebug.log(145) << "doRp_StairCaseH()" << endl;
 
     if (rp1->getCenter().getX() > rp2->getCenter().getX()) swap( rp1, rp2 );
 
@@ -1148,7 +1359,7 @@ namespace {
     doRp_AutoContacts( gcell, rp2, rp2ContactSource, rp2ContactTarget, DoSourceContact );
 
     if (rp1ContactTarget->getY() == rp2ContactSource->getY()) {
-      ltrace(99) << "Aligned horizontal routing pads : straight wire" << endl;
+      cdebug.log(145) << "Aligned horizontal routing pads : straight wire" << endl;
 
       viaLayer = rp1->getLayer();
       AutoSegment::create( rp1ContactTarget, rp2ContactSource, KbHorizontal );
@@ -1168,7 +1379,7 @@ namespace {
 
   void  GCellTopology::doRp_StairCaseV ( GCell* gcell, Component* rp1, Component* rp2 )
   {
-    ltrace(99) << "doRp_StairCaseV()" << endl;
+    cdebug.log(145) << "doRp_StairCaseV()" << endl;
 
     if (rp1->getCenter().getY() > rp2->getCenter().getY()) swap( rp1, rp2 );
 
@@ -1182,7 +1393,7 @@ namespace {
     doRp_AutoContacts( gcell, rp2, rp2ContactSource, rp2ContactTarget, DoSourceContact );
 
     if (rp1ContactTarget->getX() == rp2ContactSource->getX()) {
-      ltrace(99) << "Aligned vertical routing pads : straight wire" << endl;
+      cdebug.log(145) << "Aligned vertical routing pads : straight wire" << endl;
 
       viaLayer = rp1->getLayer();
       AutoSegment::create( rp1ContactTarget, rp2ContactSource, KbVertical );
@@ -1202,7 +1413,7 @@ namespace {
 
   void  GCellTopology::_do_xG ()
   {
-    ltrace(99) << "_do_xG()" << endl;
+    cdebug.log(145,1) << "_do_xG()" << endl;
 
     if (_connexity.fields.globals == 2) {
       _southWestContact
@@ -1229,66 +1440,78 @@ namespace {
       AutoSegment::create( _southWestContact, turn, KbHorizontal );
       AutoSegment::create( turn, _northEastContact, KbVertical   );
     } 
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_xG_1Pad ()
   {
-    ltrace(99) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
+    cdebug.log(145)   << "_connexity.globals:" << _connexity.fields.globals << endl;
 
-    bool      eastPad     = false;
-    bool      westPad     = false;
-    bool      northPad    = false;
-    bool      southPad    = false;
-    Instance* padInstance = dynamic_cast<RoutingPad*>(_routingPads[0])->getOccurrence().getPath().getHeadInstance();
+    unsigned int  flags       = NoFlags;
+    bool          eastPad     = false;
+    bool          westPad     = false;
+    bool          northPad    = false;
+    bool          southPad    = false;
+    Instance*     padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
 
     switch ( padInstance->getTransformation().getOrientation() ) {
       case Transformation::Orientation::ID: northPad = true; break;
-      case Transformation::Orientation::YR: eastPad  = true; break;
-      case Transformation::Orientation::R3: eastPad  = true; break;
       case Transformation::Orientation::MY: southPad = true; break;
-      case Transformation::Orientation::R1: westPad  = true; break;
+      case Transformation::Orientation::YR:
+      case Transformation::Orientation::R3: eastPad  = true; flags |= HAccess; break;
+      case Transformation::Orientation::R1: westPad  = true; flags |= HAccess; break;
       default:
         cerr << Warning( "Unmanaged orientation %s for pad <%s>."
                        , getString(padInstance->getTransformation().getOrientation()).c_str()
                        , getString(padInstance).c_str() ) << endl;
         break;
     }
+    cdebug.log(145) << "eastPad:"  << eastPad  << ", "
+               << "westPad:"  << westPad  << ", "
+               << "northPad:" << northPad << ", "
+               << "southPad:" << southPad
+               << endl;
 
-    Point        position     = _routingPads[0]->getCenter();
-    AutoContact* source       = NULL;
-    GCell*       gcell        = Session::getKatabatic()->getGCellGrid()->getGCell(position);
+    AutoContact* source = doRp_AccessPad( _routingPads[0], flags );
+    // Point        position     = _routingPads[0]->getCenter();
+    // AutoContact* source       = NULL;
+    // GCell*       gcell        = Session::getKatabatic()->getGCellGrid()->getGCell(position);
 
-    source = AutoContactTerminal::create ( gcell
-                                         , _routingPads[0]
-                                         , Session::getContactLayer(3)
-                                         , position
-                                         , Session::getViaWidth(3), Session::getViaWidth(3)
-                                         );
-    source->setFlags( CntFixed );
+    // source = AutoContactTerminal::create ( gcell
+    //                                      , _routingPads[0]
+    //                                      , Session::getContactLayer(3)
+    //                                      , position
+    //                                      , Session::getViaWidth(3), Session::getViaWidth(3)
+    //                                      );
+    // source->setFlags( CntFixed );
 
-    if (northPad or eastPad) {
-      _southWestContact = _northEastContact = source;
-      ltraceout(99);
-      return;
-    }
+    // if (northPad or eastPad) {
+    //   _southWestContact = _northEastContact = source;
+    //   cdebug.tabw(145,-1);
+    //   return;
+    // }
 
   // Check for straight lines, which are not managed by _do_xG().
     if (_connexity.fields.globals == 1) {
-      if (westPad and (_east != NULL)) {
+      if (  (westPad and (_east != NULL))
+         or (eastPad and (_west != NULL)) ) {
         AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        _northEastContact = _southWestContact
+                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
         AutoSegment::create( source, turn, KbHorizontal );
         AutoSegment::create( turn, _northEastContact, KbVertical );
-        ltraceout(99);
+        cdebug.tabw(145,-1);
         return;
-      } else if (southPad and (_north != NULL)) {
+      } else if (  (southPad and (_north != NULL))
+                or (northPad and (_south != NULL)) ) {
         AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        _northEastContact = _southWestContact
+                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
         AutoSegment::create( source, turn, KbVertical );
         AutoSegment::create( turn, _northEastContact, KbHorizontal );
-        ltraceout(99);
+        cdebug.tabw(145,-1);
         return;
       }
     }
@@ -1297,7 +1520,9 @@ namespace {
     --_connexity.fields.Pad;
 
     if (westPad ) _west  = source->getBodyHook();
+    if (eastPad ) _east  = source->getBodyHook();
     if (southPad) _south = source->getBodyHook();
+    if (northPad) _north = source->getBodyHook();
 
     _do_xG();
 
@@ -1305,20 +1530,27 @@ namespace {
       AutoSegment::create( source, _southWestContact, KbHorizontal );
       _west = NULL;
     }
+    if (eastPad) {
+      AutoSegment::create( source, _northEastContact, KbHorizontal );
+      _east = NULL;
+    }
     if (southPad) {
       AutoSegment::create( source, _southWestContact, KbVertical );
       _south = NULL;
     }
+    if (northPad) {
+      AutoSegment::create( source, _northEastContact, KbVertical );
+      _north = NULL;
+    }
     --_connexity.fields.globals;
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_1G_1PinM2 ()
   {
-    ltrace(99) << "_do_1G_1PinM2() [Managed Configuration - Optimized] " << _topology << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_1G_1PinM2() [Managed Configuration - Optimized] " << _topology << endl;
 
     AutoContact* rpContact = doRp_Access( _gcell, _routingPads[0], NoFlags );
     AutoContact* turn1     = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
@@ -1331,14 +1563,13 @@ namespace {
     }
     _southWestContact = _northEastContact = turn1;
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_1G_1M1 ()
   {
-    ltrace(99) << "_do_1G_1M1() [Managed Configuration - Optimized] " << _topology << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_1G_1M1() [Managed Configuration - Optimized] " << _topology << endl;
 
     unsigned int  flags      = NoFlags;
     if      (_east ) { flags |= HAccess; }
@@ -1348,14 +1579,13 @@ namespace {
 
     _southWestContact = _northEastContact = doRp_Access( _gcell, _routingPads[0], flags );
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_1G_xM1 ()
   {
-    ltrace(99) << "_do_1G_" << _connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_1G_" << _connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1370,10 +1600,10 @@ namespace {
     else {
       globalRp = _routingPads[0];
 
-      ltrace(99) << "| Initial N/S Global RP: " << globalRp << endl;
+      cdebug.log(145) << "| Initial N/S Global RP: " << globalRp << endl;
       for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
         if (_routingPads[i]->getBoundingBox().getHeight() > globalRp->getBoundingBox().getHeight()) {
-          ltrace(99) << "| Better RP: " << globalRp << endl;
+          cdebug.log(145) << "| Better RP: " << globalRp << endl;
           globalRp = _routingPads[i];
         }
       }
@@ -1389,14 +1619,13 @@ namespace {
 
     _northEastContact = _southWestContact = globalContact;
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_xG_1M1_1M2 ()
   {
-    ltrace(99) << "_do_xG_1M1_1M2() [Managed Configuration]" << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_xG_1M1_1M2() [Managed Configuration]" << endl;
 
     Component* rpL1;
     Component* rpL2;
@@ -1407,8 +1636,8 @@ namespace {
       rpL1 = _routingPads[1];
       rpL2 = _routingPads[0];
     }
-    ltrace(99) << "rpL1 := " << rpL1 << endl;
-    ltrace(99) << "rpL2 := " << rpL2 << endl;
+    cdebug.log(145) << "rpL1 := " << rpL1 << endl;
+    cdebug.log(145) << "rpL2 := " << rpL2 << endl;
 
     AutoContact* rpL1ContactSource = NULL;
     AutoContact* rpL1ContactTarget = NULL;
@@ -1452,21 +1681,20 @@ namespace {
       }
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_xG_xM1_xM3 ()
   {
-    ltrace(99) << "_do_xG_"  << _connexity.fields.M1
-               << "M1_"      << _connexity.fields.M3
-               << "M3() [G:" << _connexity.fields.globals << " Managed Configuration]" << endl;
-    ltracein(99);
-    ltrace(99) << "_connexity: " << _connexity.connexity << endl;
-    ltrace(99) << "_north:     " << _north << endl;
-    ltrace(99) << "_south:     " << _south << endl;
-    ltrace(99) << "_east:      " << _east << endl;
-    ltrace(99) << "_west:      " << _west << endl;
+    cdebug.log(145,1) << "_do_xG_"  << _connexity.fields.M1
+                      << "M1_"      << _connexity.fields.M3
+                      << "M3() [G:" << _connexity.fields.globals << " Managed Configuration]" << endl;
+    cdebug.log(145) << "_connexity: " << _connexity.connexity << endl;
+    cdebug.log(145) << "_north:     " << _north << endl;
+    cdebug.log(145) << "_south:     " << _south << endl;
+    cdebug.log(145) << "_east:      " << _east << endl;
+    cdebug.log(145) << "_west:      " << _west << endl;
 
     Component* rpM3 = NULL;
     if (_routingPads[0]->getLayer() == Session::getRoutingLayer(2))
@@ -1510,11 +1738,11 @@ namespace {
     } else {
     // All RoutingPad are M1.
       Component* southWestRp = _routingPads[0];
-      ltrace(99) << "| Initial S-W Global RP: " << southWestRp << endl;
+      cdebug.log(145) << "| Initial S-W Global RP: " << southWestRp << endl;
       for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
         if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
         if (_routingPads[i]->getBoundingBox().getHeight() > southWestRp->getBoundingBox().getHeight()) {
-          ltrace(99) << "| Better RP: " << southWestRp << endl;
+          cdebug.log(145) << "| Better RP: " << southWestRp << endl;
           southWestRp = _routingPads[i];
         }
       }
@@ -1532,14 +1760,14 @@ namespace {
       }
 
       Component* northEastRp = _routingPads[_routingPads.size()-1];
-      ltrace(99) << "| Initial N-E Global RP: " << northEastRp << endl;
+      cdebug.log(145) << "| Initial N-E Global RP: " << northEastRp << endl;
 
       if (_routingPads.size() > 1) {
         for ( unsigned int i=_routingPads.size()-1; i != 0 ; ) {
           i -= 1;
           if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
           if (_routingPads[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
-            ltrace(99) << "| Better RP: " << northEastRp << endl;
+            cdebug.log(145) << "| Better RP: " << northEastRp << endl;
             northEastRp = _routingPads[i];
           }
         } 
@@ -1558,16 +1786,36 @@ namespace {
       }
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
+  void  GCellTopology::_do_4G_1M2 ()
+  {
+    cdebug.log(145,1) << "_do_4G_1M2() [Managed Configuration]" << endl;
+
+    Component* rpL2 = _routingPads[0];
+    cdebug.log(145) << "rpL2 := " << rpL2 << endl;
+
+    AutoContact* rpL2ContactSource = NULL;
+    AutoContact* rpL2ContactTarget = NULL;
+
+    doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, DoSourceContact|DoTargetContact );
+
+    _southWestContact = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+    _northEastContact = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+
+    AutoSegment::create( _southWestContact, rpL2ContactSource, KbHorizontal );
+    AutoSegment::create( rpL2ContactTarget, _northEastContact, KbHorizontal );
+
+    cdebug.tabw(145,-1);
+  }
+
   void  GCellTopology::_do_xG_xM2 ()
   {
-    ltrace(99) << "_do_"
-               << _connexity.fields.globals << "G_"
-               << _connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_"
+                      << _connexity.fields.globals << "G_"
+                      << _connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
     Component* biggestRp = _routingPads[0];
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1598,14 +1846,13 @@ namespace {
       AutoSegment::create( rpContact, _northEastContact, KbVertical );
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_1G_1M3 ()
   {
-    ltrace(99) << "_do_1G_1M3() [Optimised Configuration]" << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "_do_1G_1M3() [Optimised Configuration]" << endl;
 
     unsigned int flags = (_east or _west) ? HAccess : NoFlags;
     flags |= (_north) ? DoTargetContact : NoFlags;
@@ -1620,8 +1867,8 @@ namespace {
     if (not _southWestContact) _southWestContact = _northEastContact;
     if (not _northEastContact) _northEastContact = _southWestContact;
 
-    ltrace(99) << "_southWest: " << _southWestContact << endl;
-    ltrace(99) << "_northEast: " << _northEastContact << endl;
+    cdebug.log(145) << "_southWest: " << _southWestContact << endl;
+    cdebug.log(145) << "_northEast: " << _northEastContact << endl;
 
     if (flags & HAccess) {
     // HARDCODED VALUE.
@@ -1642,19 +1889,18 @@ namespace {
         }
       }
     }
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  GCellTopology::_do_xG_xM3 ()
   {
-    ltrace(99) << "_do_xG_" << _connexity.fields.M3
-               << "M3() [Managed Configuration]" << endl;
-    ltracein(99);
-    ltrace(99) << "_west:"  << _west  << endl;
-    ltrace(99) << "_east:"  << _east  << endl;
-    ltrace(99) << "_south:" << _south << endl;
-    ltrace(99) << "_north:" << _north << endl;
+    cdebug.log(145,1) << "_do_xG_" << _connexity.fields.M3
+                      << "M3() [Managed Configuration]" << endl;
+    cdebug.log(145) << "_west:"  << _west  << endl;
+    cdebug.log(145) << "_east:"  << _east  << endl;
+    cdebug.log(145) << "_south:" << _south << endl;
+    cdebug.log(145) << "_north:" << _north << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByY(NoFlags) ); // increasing Y.
     for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
@@ -1670,7 +1916,7 @@ namespace {
       doRp_AutoContacts( _gcell, rp, _southWestContact, unusedContact, DoSourceContact );
       if (_sourceContact) {
         if (_sourceContact->getX() != _southWestContact->getX()) {
-          ltrace(200) << "Misaligned South: _source:" << DbU::getValueString(_sourceContact->getX())
+          cdebug.log(149) << "Misaligned South: _source:" << DbU::getValueString(_sourceContact->getX())
                       << "_southWest:"                << DbU::getValueString(_southWestContact->getX()) << endl;
 
           AutoContactTurn* turn1 = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
@@ -1694,7 +1940,7 @@ namespace {
       doRp_AutoContacts( _gcell, rp, unusedContact, _northEastContact, DoTargetContact );
       if (_sourceContact) {
         if (_sourceContact->getX() != _northEastContact->getX()) {
-          ltrace(200) << "Misaligned North: _source:" << DbU::getValueString(_sourceContact->getX())
+          cdebug.log(149) << "Misaligned North: _source:" << DbU::getValueString(_sourceContact->getX())
                       << "_southWest:"                << DbU::getValueString(_northEastContact->getX()) << endl;
 
           AutoContactTurn* turn1 = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
@@ -1711,14 +1957,13 @@ namespace {
       AutoSegment::create( rpContact, _northEastContact, KbVertical );
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
   void  singleGCell ( KatabaticEngine* ktbt, Net* net )
   {
-    ltrace(99) << "singleGCell() " << net << endl;
-    ltracein(99);
+    cdebug.log(145,1) << "singleGCell() " << net << endl;
 
     vector<Component*>  rpM1s;
     Component*          rpM2 = NULL;
@@ -1734,7 +1979,7 @@ namespace {
       cerr << Error( "For %s, less than two Plugs/Pins (%d)."
                    , getString(net).c_str()
                    , rpM1s.size() ) << endl;
-      ltraceout(99);
+      cdebug.tabw(145,-1);
       return;
     }
 
@@ -1745,11 +1990,11 @@ namespace {
 
     if (not gcell) {
       cerr << Error( "No GCell under %s.", getString(rpM1s[0]).c_str() ) << endl;
-      ltraceout(99);
+      cdebug.tabw(145,-1);
       return;
     }
 
-    ltrace(80) << "singleGCell " << gcell << endl;
+    cdebug.log(145) << "singleGCell " << gcell << endl;
 
     AutoContact* turn   = NULL;
     AutoContact* source = NULL;
@@ -1769,7 +2014,7 @@ namespace {
       AutoSegment::create( turn  , target, KbVertical );
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -1780,9 +2025,6 @@ namespace {
 
 namespace Katabatic {
 
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
-  using Hurricane::ltracelevel;
   using Hurricane::Name;
   using Hurricane::DebugSession;
   using Hurricane::Error;
@@ -1802,7 +2044,7 @@ namespace Katabatic {
 
     forEach ( Net*, inet, getCell()->getNets() ) {
       if (NetRoutingExtension::isAutomaticGlobalRoute(*inet)) {
-        DebugSession::open( *inet, 80 );
+        DebugSession::open( *inet, 140, 150 );
         _loadNetGlobalRouting( *inet );
         Session::revalidate();
         DebugSession::close();
@@ -1826,8 +2068,8 @@ namespace Katabatic {
 
   void  KatabaticEngine::_loadNetGlobalRouting ( Net* net )
   {
-    ltrace(100) << "Katabatic::_loadNetGlobalRouting( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::_loadNetGlobalRouting( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     ForkStack    forks;
     Hook*        sourceHook    = NULL;
@@ -1841,7 +2083,7 @@ namespace Katabatic {
     if (degree == 0) {
         cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
                          ,getString(net->getName()).c_str()) << endl;
-      ltraceout(99);
+      cdebug.tabw(145,-1);
       return;
     }
     if (degree < 2) {
@@ -1850,11 +2092,11 @@ namespace Katabatic {
         cmess2 << Warning("Net \"%s\" have less than 2 plugs/pins (ignored)."
                          ,getString(net->getName()).c_str()) << endl;
 #endif
-      ltraceout(99);
+      cdebug.tabw(145,-1);
       return;
     }
 
-    ltracein(99);
+    cdebug.tabw(145,1);
     Hook*  startHook    = NULL;
     GCell* lowestGCell  = NULL;
     size_t unconnecteds = 0;
@@ -1862,12 +2104,12 @@ namespace Katabatic {
 
     GCellTopology::init( degree );
 
-    ltrace(99) << "Start RoutingPad Ring" << endl;
+    cdebug.log(145) << "Start RoutingPad Ring" << endl;
     forEach ( RoutingPad*, startRp, routingPads ) {
       bool segmentFound = false;
 
       forEach ( Hook*, ihook, startRp->getBodyHook()->getHooks() ) {
-        ltrace(99) << "Component " << ihook->getComponent() << endl;
+        cdebug.log(145) << "Component " << ihook->getComponent() << endl;
         Segment* segment = dynamic_cast<Segment*>( ihook->getComponent() );
 
         if (segment) {
@@ -1877,7 +2119,7 @@ namespace Katabatic {
           GCellTopology  gcellConf ( getGCellGrid(), *ihook, NULL );
           if (gcellConf.getStateG() == 1) {
             if ( (lowestGCell == NULL) or (lowestGCell->getIndex() > gcellConf.getGCell()->getIndex()) ) {
-              ltrace(99) << "Starting from GCell " << gcellConf.getGCell() << endl;
+              cdebug.log(145) << "Starting from GCell " << gcellConf.getGCell() << endl;
               lowestGCell = gcellConf.getGCell();
               startHook   = *ihook;
             }
@@ -1893,16 +2135,16 @@ namespace Katabatic {
 
         NetRoutingExtension::create( net )->setFlags  ( NetRoutingState::Excluded );
         NetRoutingExtension::create( net )->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
-        ltraceout(99);
+        cdebug.tabw(145,-1);
         return;
       }
     // Uncomment the next line to disable the lowest GCell search.
     // (takes first GCell with exactly one global).
     //if (startHook) break;
     }
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
-    if (startHook == NULL) { singleGCell( this, net ); ltraceout(99); return; }
+    if (startHook == NULL) { singleGCell( this, net ); cdebug.tabw(145,-1); return; }
 
     GCellTopology  startGCellConf ( getGCellGrid(), startHook, NULL );
     startGCellConf.construct( forks );
@@ -1919,8 +2161,8 @@ namespace Katabatic {
       sourceContact = forks.getContact();
       forks.pop();
 
-      ltrace(99) << "Popping (from) " << sourceHook << endl;
-      ltrace(99) << "Popping (to)   " << sourceContact << endl;
+      cdebug.log(145) << "Popping (from) " << sourceHook << endl;
+      cdebug.log(145) << "Popping (to)   " << sourceContact << endl;
     }
 
     lookupClear();
@@ -1935,7 +2177,7 @@ namespace Katabatic {
 
     Session::revalidate();
     GCellTopology::fixSegments();
-    ltraceout(99);
+    cdebug.tabw(145,-1);
   }
 
 

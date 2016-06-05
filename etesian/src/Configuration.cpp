@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<etesian>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -41,7 +41,6 @@ namespace Etesian {
   using  std::ostringstream;
   using  std::vector;
   using  Hurricane::tab;
-  using  Hurricane::inltrace;
   using  Hurricane::Warning;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
@@ -81,7 +80,7 @@ namespace Etesian {
 
   Configuration::~Configuration ()
   {
-    ltrace(89) << "About to delete attribute _cg (CellGauge)." << endl;
+    cdebug.log(129) << "About to delete attribute _cg (CellGauge)." << endl;
     _cg->destroy ();
   }
 
@@ -91,14 +90,14 @@ namespace Etesian {
 
   void  Configuration::print ( Cell* cell ) const
   {
-    cout << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cg->getName())) << endl;
-    cout << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
-    cout << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
-    cout << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
-    cout << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
-    cout << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
-    cout << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
+    cmess1 << "  o  Configuration of ToolEngine<Etesian> for Cell <" << cell->getName() << ">" << endl;
+    cmess1 << Dots::asIdentifier("     - Cell Gauge"    ,getString(_cg->getName())) << endl;
+    cmess1 << Dots::asInt       ("     - Place Effort"  ,_placeEffort  ) << endl;
+    cmess1 << Dots::asInt       ("     - Update Conf"   ,_updateConf   ) << endl;
+    cmess1 << Dots::asInt       ("     - Spreading Conf",_spreadingConf) << endl;
+    cmess1 << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
+    cmess1 << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
+    cmess1 << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
   }
 
 

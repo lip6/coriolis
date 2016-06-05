@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -17,10 +17,10 @@
 #ifndef  KITE_ROUTING_EVENT_H
 #define  KITE_ROUTING_EVENT_H
 
-#include  <set>
-#include  <vector>
-#include  <cstdlib>
-#include  <functional>
+#include <set>
+#include <vector>
+#include <cstdlib>
+#include <functional>
 
 #include "hurricane/Interval.h"
 namespace Hurricane {
@@ -75,7 +75,7 @@ namespace Kite {
           DbU::Unit      _sourceU;
           Net*           _net;
           unsigned long  _id;
-        friend class Compare;
+       friend class Compare;
       };
 
     public:
@@ -115,6 +115,7 @@ namespace Kite {
       inline  bool                         isRipedByLocal        () const;
       inline  bool                         isOverConstrained     () const;
       inline  unsigned int                 getId                 () const;
+      inline  unsigned int                 getTimeStamp          () const;
       inline  bool                         getMode               () const;
       inline  bool                         canMinimize           () const;
               unsigned int                 getState              () const;
@@ -142,6 +143,7 @@ namespace Kite {
               RoutingEvent*                reschedule            ( RoutingEventQueue&, unsigned int eventLevel );
               void                         setMode               ( unsigned int );
               void                         setState              ( unsigned int );
+      inline  void                         setTimeStamp          ( unsigned int );
       inline  void                         setProcessed          ( bool state=true );
       inline  void                         setDisabled           ( bool state=true );
       inline  void                         setMinimized          ( bool state=true );
@@ -178,6 +180,7 @@ namespace Kite {
       bool                  _forceToHint;
       bool                  _ripedByLocal;
       unsigned int          _id;
+      unsigned int          _timeStamp;
       TrackElement*         _segment;
       DataNegociate*        _dataNegociate;
       DbU::Unit             _axisHistory;
@@ -205,8 +208,9 @@ namespace Kite {
   inline bool                          RoutingEvent::isRipedByLocal          () const { return _ripedByLocal; }
   inline bool                          RoutingEvent::isOverConstrained       () const { return _overConstrained; }
   inline unsigned int                  RoutingEvent::getId                   () const { return _id; }
+  inline unsigned int                  RoutingEvent::getTimeStamp            () const { return _timeStamp; }
   inline bool                          RoutingEvent::getMode                 () const { return _mode; }
-  inline bool                          RoutingEvent::canMinimize             () const { return !_minimized; }
+  inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }
   inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _dataNegociate->getPerpandiculars(); }
@@ -223,6 +227,7 @@ namespace Kite {
   inline unsigned int                  RoutingEvent::getTracksNb             () const { return _tracksNb; }
   inline unsigned int                  RoutingEvent::getTracksFree           () const { return _tracksFree; }
   inline unsigned int                  RoutingEvent::getInsertState          () const { return _insertState; }
+  inline void                          RoutingEvent::setTimeStamp            ( unsigned int stamp ) { _timeStamp = stamp; }
   inline void                          RoutingEvent::setProcessed            ( bool state ) { _processed  = state; }
   inline void                          RoutingEvent::setDisabled             ( bool state ) { _disabled = state; }
   inline void                          RoutingEvent::setMinimized            ( bool state ) { _minimized = state; }
@@ -255,7 +260,7 @@ namespace Kite {
                   << Session::getSegmentStackSize() << ")." << endl;
 
 #   define _postCheck(segment)                                                              \
-           ltrace(149) << "Bounds := ["                                                     \
+           cdebug.log(159) << "Bounds := ["                                                     \
                        << DbU::getValueString(segment->base()->getSourcePosition()) << ":"  \
                        << DbU::getValueString(segment->base()->getTargetPosition()) << "] " \
                        << DbU::getValueString(segment->getAxis()) << " "                    \

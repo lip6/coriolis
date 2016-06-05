@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -110,7 +110,9 @@ namespace CRL {
 
     vector<Net*> nets;
     forEach ( Net*, inet, topCell->getNets() ) nets.push_back( *inet );
-    for ( auto net : nets ) net->setName( converter( net->getName() ) );
+    for ( auto net : nets ) {
+      net->setName( converter( net->getName() ) );
+    }
       
     vector<Instance*> instances;
     set<Cell*>        models;
@@ -124,6 +126,20 @@ namespace CRL {
       for ( auto model : models ) {
         if (not model->isTerminal()) toVhdl( model, flags );
       }
+  }
+
+
+  NamingScheme::NamingScheme ( unsigned int flags )
+    : _converter(nullptr)
+  {
+    if (flags & FromVerilog) _converter = vlogToVhdl;
+  }
+
+
+  Name  NamingScheme::convert ( const Name& name ) const
+  {
+    if (_converter == nullptr) return name;
+    return _converter(name);
   }
 
 

@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Constants.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2013-2015, All Rights Reserved
+// Copyright (c) UPMC 2013-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -47,6 +47,7 @@ namespace Katabatic {
                        , KbNoGCellShrink     = 0x01000000
                        , KbCParanoid         = 0x02000000
                        , KbCreate            = 0x04000000
+                       , KbCheckLowDensity   = 0x08000000
                        , KbDirectionMask     = KbHorizontal|KbVertical
                        };
 

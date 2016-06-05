@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/DataBase.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -20,11 +20,14 @@
 #ifndef HURRICANE_DATA_BASE
 #define HURRICANE_DATA_BASE
 
+#include <functional>
+#include <map>
 #include "hurricane/DBo.h"
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
 
+class Cell;
 class Library;
 class Technology;
 
@@ -37,12 +40,13 @@ class Technology;
 class DataBase : public DBo {
 // ************************
 
-#   if !defined(__DOXYGEN_PROCESSOR__)
-
 // Types
 // *****
 
-    public: typedef DBo Inherit;
+  public: typedef DBo Inherit;
+  public: enum Flags { NoFlags      = 0
+                     , CreateLib    =(1<<0)
+                     , WarnCreateLib=(1<<2) };
 
 // Attributes
 // **********
@@ -50,6 +54,7 @@ class DataBase : public DBo {
     private: static DataBase* _db;
     private: Technology* _technology;
     private: Library* _rootLibrary;
+    private: function<Hurricane::Cell*(string)> _cellLoader;
 
 // Constructors
 // ************
@@ -63,14 +68,14 @@ class DataBase : public DBo {
 
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("DataBase");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
     public: void _setTechnology(Technology* technology) {_technology = technology;};
     public: void _setRootLibrary(Library* rootLibrary) {_rootLibrary = rootLibrary;};
-
-#   endif
+    public: void _setCellLoader(function<Hurricane::Cell*(string)> loader) { _cellLoader=loader; };
 
     public: static DataBase* create();
 
@@ -79,9 +84,28 @@ class DataBase : public DBo {
 
     public: Technology* getTechnology() const {return _technology;};
     public: Library* getRootLibrary() const {return _rootLibrary;};
+    public: Library* getLibrary(string,unsigned int flags);
+    public: Cell* getCell(string, unsigned int flags);
     public: static DataBase* getDB();
 
 };
+
+
+
+// ****************************************************************************************************
+// JsonDataBase declaration
+// ****************************************************************************************************
+
+class JsonDataBase : public JsonDBo {
+// ********************************
+
+  public: static void initialize();
+  public: JsonDataBase(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonDataBase* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
 
 } // End of Hurricane namespace.
 
@@ -93,5 +117,5 @@ INSPECTOR_P_SUPPORT(Hurricane::DataBase);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

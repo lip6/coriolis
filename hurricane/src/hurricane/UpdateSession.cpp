@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./UpdateSession.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -36,8 +36,7 @@ stack<UpdateSession*>* UPDATOR_STACK = NULL;
 UpdateSession::UpdateSession()
 // ***************************
 :    Inherit()
-{
-}
+{ }
 
 void UpdateSession::destroy()
 // *************************
@@ -126,9 +125,9 @@ Record* UpdateSession::_getRecord() const
     return record;
 }
 
-  void UpdateSession::onCapturedBy(DBo* owner)
-  // *****************************************
-  {
+void UpdateSession::onCapturedBy(DBo* owner)
+// *****************************************
+{
     if ( not dynamic_cast<Go*>(owner) and not dynamic_cast<Cell*>(owner) )
       throw Error( "Bad update session capture : not a graphic object (Go) or a Cell" );
     
@@ -137,8 +136,7 @@ Record* UpdateSession::_getRecord() const
 
 void UpdateSession::onNotOwned()
 // *****************************
-{
-}
+{ }
 
 
 
@@ -146,18 +144,18 @@ void UpdateSession::onNotOwned()
 // Go::invalidate implementation : located here to access UPDATOR_STACK variable
 // ****************************************************************************************************
 
-  void Go::invalidate(bool propagateFlag)
-  // ************************************
-  {
-  // trace << "invalidate(" << this << ")" << endl;
-  // trace_in();
+void Go::invalidate(bool propagateFlag)
+// ************************************
+{
+  cdebug.log(18,1) << "Go::invalidate(" << this << ")" << endl;
 
-    if (not UPDATOR_STACK or UPDATOR_STACK->empty())
-      throw Error( "Can't invalidate go: empty update session stack" );
+  if (not UPDATOR_STACK or UPDATOR_STACK->empty())
+    throw Error( "Can't invalidate go: empty update session stack" );
 
-    Property* property = getProperty( UpdateSession::getPropertyName() );
+  Property* property = getProperty( UpdateSession::getPropertyName() );
 
-    if (property) {
+  if (property) {
+
       if (not dynamic_cast<UpdateSession*>(property))
         throw Error( "Can't invalidate go : bad update session type" );
     } else {
@@ -185,29 +183,31 @@ void UpdateSession::onNotOwned()
         }
       }
     }
-// trace << "done" << endl;
-// trace_out();
+
+  cdebug.log(18) << "Go::invalidate(" << this << ") - Completed." << endl;
+  cdebug.tabw(18,-1);
 }
 
-void UpdateSession::open() {
-// trace << "OpenUpdateSession()" << endl;
-// trace_in();
-    UpdateSession::_create();
+void UpdateSession::open()
+// ***********************
+{
+  cdebug.log(18,1) << "UpdateSession::open()" << endl;
+  UpdateSession::_create();
 }
 
-void UpdateSession::close() {
-// trace << "CloseUpdateSession()" << endl;
-// trace_in();
+void UpdateSession::close()
+// ************************
+{
+  cdebug.tabw(18,-1);
+  cdebug.log(18,1) << "UpdateSession::close() - Start materialization." << endl;
 
-    if (!UPDATOR_STACK || UPDATOR_STACK->empty())
-        throw Error("Can't end update : empty update session stack");
+  if (!UPDATOR_STACK || UPDATOR_STACK->empty())
+    throw Error("Can't end update : empty update session stack");
 
-    UPDATOR_STACK->top()->_destroy();
+  UPDATOR_STACK->top()->_destroy();
 
-// trace << "done" << endl;
-// trace_out();
-// trace << "done" << endl;
-// trace_out();
+  cdebug.tabw(18,-1);
+  cdebug.log(18) << "UpdateSession::close() - Materialization completed." << endl;
 }
 
 
@@ -216,5 +216,5 @@ void UpdateSession::close() {
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

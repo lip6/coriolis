@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -55,6 +55,11 @@ namespace Hurricane {
       inline  BaseFlags    operator bitand       ( BaseFlags ) const;
       inline  BaseFlags    operator bitor        ( BaseFlags ) const;
       inline  BaseFlags    operator xor          ( BaseFlags ) const;
+      inline  BaseFlags    operator bitand       ( int ) const;
+      inline  BaseFlags    operator bitor        ( int ) const;
+      inline  BaseFlags    operator xor          ( int ) const;
+      inline  BaseFlags    lshift                ( int ) const;
+      inline  BaseFlags    rshift                ( int ) const;
       inline  BaseFlags    operator bitand       ( unsigned int ) const;
       inline  BaseFlags    operator bitor        ( unsigned int ) const;
       inline  BaseFlags    operator xor          ( unsigned int ) const;
@@ -66,13 +71,20 @@ namespace Hurricane {
       inline  bool         operator !=           ( BaseFlags ) const;
       inline  bool         operator <            ( BaseFlags ) const;
       inline  bool         operator >            ( BaseFlags ) const;
+      inline  BaseFlags&   operator |=           ( int );
+      inline  BaseFlags&   operator &=           ( int );
+      inline  bool         operator ==           ( int ) const;
+      inline  bool         operator !=           ( int ) const;
+      inline  bool         operator <            ( int ) const;
+      inline  bool         operator >            ( int ) const;
       inline  BaseFlags&   operator |=           ( unsigned int );
       inline  BaseFlags&   operator &=           ( unsigned int );
       inline  bool         operator ==           ( unsigned int ) const;
       inline  bool         operator !=           ( unsigned int ) const;
       inline  bool         operator <            ( unsigned int ) const;
       inline  bool         operator >            ( unsigned int ) const;
-      inline               operator unsigned int () const;
+      inline               operator bool         () const;
+    //inline               operator unsigned int () const;
     // Hurricane Managment.
       virtual std::string  _getTypeName          () const;
       virtual std::string  _getString            () const;
@@ -88,12 +100,18 @@ namespace Hurricane {
   inline bool       BaseFlags::zero            () const                        { return _flags == 0; }
   inline BaseFlags& BaseFlags::reset           ( BaseFlags flags )             { _flags &= ~flags._flags; return *this; }
   inline bool       BaseFlags::isset           ( BaseFlags flags ) const       { return _flags & flags._flags; }
-  inline bool       BaseFlags::contains        ( BaseFlags flags ) const       { return (_flags & flags._flags) && !(~_flags & flags._flags); }
+//inline bool       BaseFlags::contains        ( BaseFlags flags ) const       { return (_flags & flags._flags) && !(~_flags & flags._flags); }
+  inline bool       BaseFlags::contains        ( BaseFlags flags ) const       { return (_flags & flags._flags) == flags._flags; }
   inline bool       BaseFlags::intersect       ( BaseFlags flags ) const       { return _flags & flags._flags; }
   inline BaseFlags  BaseFlags::operator compl  () const                        { return ~_flags; }
   inline BaseFlags  BaseFlags::operator bitand ( BaseFlags flags ) const       { return _flags & flags._flags; }
   inline BaseFlags  BaseFlags::operator bitor  ( BaseFlags flags ) const       { return _flags | flags._flags; }
   inline BaseFlags  BaseFlags::operator xor    ( BaseFlags flags ) const       { return _flags ^ flags._flags; }
+  inline BaseFlags  BaseFlags::operator bitand ( int flags ) const             { return _flags & (unsigned int)flags; }
+  inline BaseFlags  BaseFlags::operator bitor  ( int flags ) const             { return _flags | (unsigned int)flags; }
+  inline BaseFlags  BaseFlags::operator xor    ( int flags ) const             { return _flags ^ (unsigned int)flags; }
+  inline BaseFlags  BaseFlags::lshift          ( int s ) const                 { return _flags << (unsigned int)s; }
+  inline BaseFlags  BaseFlags::rshift          ( int s ) const                 { return _flags >> (unsigned int)s; }
   inline BaseFlags  BaseFlags::operator bitand ( unsigned int flags ) const    { return _flags & flags; }
   inline BaseFlags  BaseFlags::operator bitor  ( unsigned int flags ) const    { return _flags | flags; }
   inline BaseFlags  BaseFlags::operator xor    ( unsigned int flags ) const    { return _flags ^ flags; }
@@ -105,13 +123,21 @@ namespace Hurricane {
   inline bool       BaseFlags::operator !=     ( BaseFlags flags ) const       { return _flags != flags._flags; } 
   inline bool       BaseFlags::operator <      ( BaseFlags flags ) const       { return _flags <  flags._flags; } 
   inline bool       BaseFlags::operator >      ( BaseFlags flags ) const       { return _flags >  flags._flags; } 
+  inline BaseFlags& BaseFlags::operator |=     ( int flags )                   { _flags |= (unsigned int)flags; return *this; } 
+  inline BaseFlags& BaseFlags::operator &=     ( int flags )                   { _flags &= (unsigned int)flags; return *this; } 
+  inline bool       BaseFlags::operator ==     ( int flags ) const             { return _flags == (unsigned int)flags; } 
+  inline bool       BaseFlags::operator !=     ( int flags ) const             { return _flags != (unsigned int)flags; } 
+  inline bool       BaseFlags::operator <      ( int flags ) const             { return _flags <  (unsigned int)flags; } 
+  inline bool       BaseFlags::operator >      ( int flags ) const             { return _flags >  (unsigned int)flags; } 
   inline BaseFlags& BaseFlags::operator |=     ( unsigned int flags )          { _flags |= flags; return *this; } 
   inline BaseFlags& BaseFlags::operator &=     ( unsigned int flags )          { _flags &= flags; return *this; } 
   inline bool       BaseFlags::operator ==     ( unsigned int flags ) const    { return _flags == flags; } 
   inline bool       BaseFlags::operator !=     ( unsigned int flags ) const    { return _flags != flags; } 
   inline bool       BaseFlags::operator <      ( unsigned int flags ) const    { return _flags <  flags; } 
   inline bool       BaseFlags::operator >      ( unsigned int flags ) const    { return _flags >  flags; } 
-  inline            BaseFlags::operator unsigned int () const { return _flags; }
+  inline            BaseFlags::operator bool   () const { return _flags != 0; }
+//inline            BaseFlags::operator unsigned int () const { return _flags; }
+//inline            BaseFlags::operator unsigned int () const { return _flags; }
 
   inline BaseFlags& BaseFlags::set ( BaseFlags flags, bool state )
   {

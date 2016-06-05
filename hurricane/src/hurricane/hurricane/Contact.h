@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Contact.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -24,7 +24,6 @@
 #include "hurricane/Contacts.h"
 
 namespace Hurricane {
-
 
 
 // ****************************************************************************************************
@@ -52,8 +51,9 @@ class Contact : public Component {
 
         public: virtual bool isMaster() const {return false;};
 
-        public: virtual string _getTypeName() const { return _TName("Contact::AnchorHook"); };
+        public: virtual string _getTypeName() const { return "Contact::AnchorHook"; };
         public: virtual string _getString() const;
+        public: static Hook* _compToHook(Component*);
     };
 
 // Attributes
@@ -141,12 +141,23 @@ class Contact : public Component {
 
     protected: virtual void _preDestroy();
 
+    public: virtual void _toJson(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Contact");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
 };
 
+
+class JsonContact : public JsonComponent {
+// ***************************************
+
+  public: static void initialize();
+  public: JsonContact(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonContact* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -159,5 +170,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Contact::AnchorHook);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

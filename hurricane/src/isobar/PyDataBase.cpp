@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -38,7 +38,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_create ( PyObject* ) {
-    trace << "PyDataBase_create()" << endl;
+    cdebug.log(20) << "PyDataBase_create()" << endl;
 
     DataBase* db = NULL;
     
@@ -51,7 +51,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_getDB ( PyObject* ) {
-    trace << "PyDataBase_getDB()" << endl;
+    cdebug.log(20) << "PyDataBase_getDB()" << endl;
 
     DataBase* db = NULL;
 
@@ -66,7 +66,7 @@ extern "C" {
 
 
   PyObject* PyDataBase_getTechnology ( PyDataBase* self ) {
-    trace << "PyDataBase_getTechnology()" << endl;
+    cdebug.log(20) << "PyDataBase_getTechnology()" << endl;
 
     Technology* techno = NULL;
 
@@ -84,7 +84,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_getRootLibrary ( PyDataBase *self ) {
-    trace << "PyDataBase_getRootLibrary ()" << endl;
+    cdebug.log(20) << "PyDataBase_getRootLibrary ()" << endl;
 
     Library* library = NULL;
 

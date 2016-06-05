@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Component.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -330,37 +330,37 @@ ComponentFilter Component::getIsUnderFilter(const Box& area)
 void Component::materialize()
 // **************************
 {
-// trace << "materialize() - " << this << endl;
+  cdebug.log(18) << "Component::materialize() - " << this << endl;
 
-    if (!isMaterialized()) {
-        Cell*  cell  = getCell();
-        const Layer* layer = getLayer();
-        if (cell && layer) {
-            Slice* slice = cell->getSlice(layer);
-            if (!slice) slice = Slice::_create(cell, layer);
-            QuadTree* quadTree = slice->_getQuadTree();
-            quadTree->insert(this);
-            cell->_fit(quadTree->getBoundingBox());
-        } else {
-          //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
-        }
+  if (!isMaterialized()) {
+    Cell*  cell  = getCell();
+    const Layer* layer = getLayer();
+    if (cell && layer) {
+      Slice* slice = cell->getSlice(layer);
+      if (!slice) slice = Slice::_create(cell, layer);
+      QuadTree* quadTree = slice->_getQuadTree();
+      quadTree->insert(this);
+      cell->_fit(quadTree->getBoundingBox());
+    } else {
+    //cerr << "[WARNING] " << this << " not inserted into QuadTree." << endl;
     }
+  }
 }
 
 void Component::unmaterialize()
 // ****************************
 {
-// trace << "Unmaterializing " << this << endl;
+  cdebug.log(18) << "Component::unmaterialize() " << this << endl;
 
-    if (isMaterialized()) {
-        Cell* cell = getCell();
-        Slice* slice = cell->getSlice(getLayer());
-        if (slice) {
-            cell->_unfit(getBoundingBox());
-            slice->_getQuadTree()->remove(this);
-            if (slice->isEmpty()) slice->_destroy();
-        }
+  if (isMaterialized()) {
+    Cell* cell = getCell();
+    Slice* slice = cell->getSlice(getLayer());
+    if (slice) {
+      cell->_unfit(getBoundingBox());
+      slice->_getQuadTree()->remove(this);
+      if (slice->isEmpty()) slice->_destroy();
     }
+  }
 }
 
 void Component::invalidate(bool propagateFlag)
@@ -378,6 +378,25 @@ void Component::invalidate(bool propagateFlag)
     }
 }
 
+
+void Component::forceId(unsigned int id)
+// *************************************
+{
+  if (not inForcedIdMode())
+    throw Error( "Component::forceId(): DataBase *must* be in forced id mode to call this method." );
+
+  if (getId() == id) return;
+
+  bool materialized = isMaterialized();
+  if (materialized) unmaterialize();
+  if (_net) _net->_getComponentSet()._remove(this);
+
+  setId( id );
+
+  if (_net) _net->_getComponentSet()._insert(this);
+  if (materialized) materialize();
+}
+
 void Component::_postCreate()
 // **************************
 {
@@ -389,8 +408,7 @@ void Component::_postCreate()
 void Component::_preDestroy()
 // *************************
 {
-// trace << "entering Component::_Predestroy: " << this << endl;
-// trace_in();
+    cdebug.log(18,1) << "entering Component::_Predestroy: " << this << endl;
 
     clearProperties();
 
@@ -450,8 +468,22 @@ void Component::_preDestroy()
     if (_net) _net->_getComponentSet()._remove(this);
 
 
-    // trace << "exiting Component::_Predestroy:" << endl;
-    // trace_out();
+    cdebug.log(18) << "exiting Component::_Predestroy:" << endl;
+    cdebug.tabw(18,-1);
+}
+
+void Component::_toJson( JsonWriter* writer ) const
+// ************************************************
+{
+  Inherit::_toJson( writer );
+  jsonWrite( writer, "_bodyHook", _bodyHook.getNextHook()->toJson() );
+}
+
+void Component::_toJsonSignature( JsonWriter* writer ) const
+// *********************************************************
+{
+  jsonWrite( writer, "_net" , getNet()->getName() );
+  _toJson( writer );
 }
 
 string Component::_getString() const
@@ -523,10 +555,12 @@ Component::BodyHook::BodyHook(Component* component)
 :    Inherit()
 {
     if (!component)
-        throw Error("Can't create " + _TName("Component::BodyHook") + " : null component");
+      throw Error("Can't create " + _getTypeName() + " : null component");
 
-    if (BODY_HOOK_OFFSET == -1)
+    if (BODY_HOOK_OFFSET == -1) {
         BODY_HOOK_OFFSET = (unsigned long)this - (unsigned long)component;
+        Hook::addCompToHook(_getTypeName(),_compToHook);
+    }
 }
 
 Component* Component::BodyHook::getComponent() const
@@ -540,6 +574,11 @@ string Component::BodyHook::_getString() const
 {
     return "<" + _TName("Component::BodyHook") + " " + getString(getComponent()) + ">";
 }
+
+Hook* Component::BodyHook::_compToHook(Component* component)
+// *************************************************************
+{ return &(component->_bodyHook); }
+
 
 // ****************************************************************************************************
 // Component_Hooks implementation
@@ -941,11 +980,21 @@ double  getArea ( Component* component )
 }
 
 
+// ****************************************************************************************************
+// JsonComponent implementation
+// ****************************************************************************************************
+
+JsonComponent::JsonComponent(unsigned long flags)
+// **********************************************
+  : JsonEntity(flags)
+{
+  add( "_bodyHook", typeid(string) );
+}
 
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

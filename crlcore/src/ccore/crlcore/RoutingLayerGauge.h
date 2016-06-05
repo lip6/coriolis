@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -20,6 +20,7 @@
 
 #include <map>
 #include "hurricane/Commons.h"
+#include "hurricane/Error.h"
 #include "hurricane/DbU.h"
 #include "hurricane/Collection.h"
 #include "hurricane/Slot.h"
@@ -32,9 +33,9 @@ namespace Hurricane {
 
 namespace Constant {
 
-  enum Direction       { Horizontal  = (1<<0)
-                       , Vertical    = (1<<1)
-                       };
+  enum Direction      { Horizontal   = (1<<0)
+                      , Vertical     = (1<<1)
+                      };
 
   enum LayerGaugeType { Default      = (1<<0)
                       , PinOnly      = (1<<1)
@@ -54,9 +55,10 @@ namespace Constant {
 
 namespace CRL {
 
-
   using std::map;
-
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
+  using Hurricane::Initializer;
   using Hurricane::GenericCollection;
   using Hurricane::GenericLocator;
   using Hurricane::GenericFilter;
@@ -76,62 +78,67 @@ namespace CRL {
 
     public:
     // Constructors & Destructors.
-      static  RoutingLayerGauge* create           ( const Layer*  layer
-                                                  , unsigned int  direction
-                                                  , unsigned int  type
-                                                  , unsigned int  depth
-                                                  , double        density
-                                                  , DbU::Unit     offset
-                                                  , DbU::Unit     pitch
-                                                  , DbU::Unit     wireWidth
-                                                  , DbU::Unit     viaWidth );
-      virtual void               destroy          ();
-    // Accessors.
-      inline  const Layer*       getLayer         () const;
-      inline  const Layer*       getBlockageLayer () const;
-      inline  unsigned int       getDepth         () const;
-      inline  unsigned int       getDirection     () const;
-      inline  unsigned int       getType          () const;
-      inline  double             getDensity       () const;
-      inline  DbU::Unit          getOffset        () const;
-      inline  DbU::Unit          getPitch         () const;
-      inline  DbU::Unit          getHalfPitch     () const;
-      inline  DbU::Unit          getWireWidth     () const;
-      inline  DbU::Unit          getHalfWireWidth () const;
-      inline  DbU::Unit          getViaWidth      () const;
-      inline  DbU::Unit          getHalfViaWidth  () const;
-              void               divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
-              unsigned int       getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
-              unsigned int       getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
-              DbU::Unit          getTrackPosition ( DbU::Unit start, unsigned depth ) const;
-    // Hurricane Managment.
-      virtual string             _getTypeName     () const;
-      virtual string             _getString       () const;
-      virtual Record*            _getRecord       () const;
+      static  RoutingLayerGauge*        create           ( const Layer*              layer
+                                                         , Constant::Direction       direction
+                                                         , Constant::LayerGaugeType  type
+                                                         , unsigned int              depth
+                                                         , double                    density
+                                                         , DbU::Unit                 offset
+                                                         , DbU::Unit                 pitch
+                                                         , DbU::Unit                 wireWidth
+                                                         , DbU::Unit                 viaWidth
+                                                         , DbU::Unit                 obsDw );
+      virtual void                      destroy          ();
+    // Accessors.                       
+      inline  const Layer*              getLayer         () const;
+      inline  const Layer*              getBlockageLayer () const;
+      inline  unsigned int              getDepth         () const;
+      inline  Constant::Direction       getDirection     () const;
+      inline  Constant::LayerGaugeType  getType          () const;
+      inline  double                    getDensity       () const;
+      inline  DbU::Unit                 getOffset        () const;
+      inline  DbU::Unit                 getPitch         () const;
+      inline  DbU::Unit                 getHalfPitch     () const;
+      inline  DbU::Unit                 getWireWidth     () const;
+      inline  DbU::Unit                 getHalfWireWidth () const;
+      inline  DbU::Unit                 getViaWidth      () const;
+      inline  DbU::Unit                 getHalfViaWidth  () const;
+      inline  DbU::Unit                 getObstacleDw    () const;
+              void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
+              unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
+              unsigned int              getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
+              DbU::Unit                 getTrackPosition ( DbU::Unit start, unsigned depth ) const;
+    // Hurricane Managment.             
+              void                      toJson           ( JsonWriter* ) const;
+      virtual string                    _getTypeName     () const;
+      virtual string                    _getString       () const;
+      virtual Record*                   _getRecord       () const;
 
     protected:
     // Internal - Attributes.
-              const Layer*       _layer;
-              const Layer*       _blockageLayer;
-              unsigned int       _direction;
-              unsigned int       _type;
-              unsigned int       _depth;
-              double             _density;
-              DbU::Unit          _offset;
-              DbU::Unit          _pitch;
-              DbU::Unit          _wireWidth;
-              DbU::Unit          _viaWidth;
+              const Layer*              _layer;
+              const Layer*              _blockageLayer;
+              Constant::Direction       _direction;
+              Constant::LayerGaugeType  _type;
+              unsigned int              _depth;
+              double                    _density;
+              DbU::Unit                 _offset;
+              DbU::Unit                 _pitch;
+              DbU::Unit                 _wireWidth;
+              DbU::Unit                 _viaWidth;
+              DbU::Unit                 _obstacleDw;
 
     // Internal - Constructors & Destructors.
-                                 RoutingLayerGauge ( const Layer*  layer
-                                                   , unsigned int  direction
-                                                   , unsigned int  type
-                                                   , unsigned int  depth
-                                                   , double        density
-                                                   , DbU::Unit     offset
-                                                   , DbU::Unit     pitch
-                                                   , DbU::Unit     wireWidth
-                                                   , DbU::Unit     viaWidth );
+                                 RoutingLayerGauge ( const Layer*              layer
+                                                   , Constant::Direction       direction
+                                                   , Constant::LayerGaugeType  type
+                                                   , unsigned int              depth
+                                                   , double                    density
+                                                   , DbU::Unit                 offset
+                                                   , DbU::Unit                 pitch
+                                                   , DbU::Unit                 wireWidth
+                                                   , DbU::Unit                 viaWidth
+                                                   , DbU::Unit                 obsDw );
       virtual                   ~RoutingLayerGauge ();
       virtual void               _preDestroy();
               RoutingLayerGauge& operator=         ( const RoutingLayerGauge& );
@@ -156,23 +163,36 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Inline Functions.
 
-  inline  const Layer*  RoutingLayerGauge::getLayer         () const { return ( _layer ); }
-  inline  const Layer*  RoutingLayerGauge::getBlockageLayer () const { return ( _blockageLayer ); }
-  inline  unsigned int  RoutingLayerGauge::getDirection     () const { return ( _direction ); }
-  inline  unsigned int  RoutingLayerGauge::getType          () const { return ( _type ); }
-  inline  unsigned int  RoutingLayerGauge::getDepth         () const { return ( _depth ); }
-  inline  double        RoutingLayerGauge::getDensity       () const { return ( _density ); }
-  inline  DbU::Unit     RoutingLayerGauge::getOffset        () const { return ( _offset ); }
-  inline  DbU::Unit     RoutingLayerGauge::getPitch         () const { return ( _pitch ); }
-  inline  DbU::Unit     RoutingLayerGauge::getHalfPitch     () const { return ( _pitch>>1 ); }
-  inline  DbU::Unit     RoutingLayerGauge::getWireWidth     () const { return ( _wireWidth ); }
-  inline  DbU::Unit     RoutingLayerGauge::getHalfWireWidth () const { return ( _wireWidth>>1 ); }
-  inline  DbU::Unit     RoutingLayerGauge::getViaWidth      () const { return ( _viaWidth ); }
-  inline  DbU::Unit     RoutingLayerGauge::getHalfViaWidth  () const { return ( _viaWidth>>1 ); }
+  inline  const Layer*              RoutingLayerGauge::getLayer         () const { return ( _layer ); }
+  inline  const Layer*              RoutingLayerGauge::getBlockageLayer () const { return ( _blockageLayer ); }
+  inline  Constant::Direction       RoutingLayerGauge::getDirection     () const { return ( _direction ); }
+  inline  Constant::LayerGaugeType  RoutingLayerGauge::getType          () const { return ( _type ); }
+  inline  unsigned int              RoutingLayerGauge::getDepth         () const { return ( _depth ); }
+  inline  double                    RoutingLayerGauge::getDensity       () const { return ( _density ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getOffset        () const { return ( _offset ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getPitch         () const { return ( _pitch ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfPitch     () const { return ( _pitch>>1 ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getWireWidth     () const { return ( _wireWidth ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfWireWidth () const { return ( _wireWidth>>1 ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return ( _viaWidth ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return ( _viaWidth>>1 ); }
+  inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return ( _obstacleDw ); }
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingLayerGauge".
 
-} // End of CRL namespace.
+  class JsonRoutingLayerGauge : public JsonObject {
+    public:
+      static  void                   initialize            ();
+                                     JsonRoutingLayerGauge ( unsigned long flags );
+      virtual string                 getTypeName           () const;
+      virtual JsonRoutingLayerGauge* clone                 ( unsigned long flags ) const;
+      virtual void                   toData                ( JsonStack& );
+  };
+
+
+} // CRL namespace.
 
 
 INSPECTOR_P_SUPPORT(CRL::RoutingLayerGauge);
@@ -180,6 +200,18 @@ INSPECTOR_P_SUPPORT(CRL::RoutingLayerGauge);
 
 // -------------------------------------------------------------------
 // Inspector Support for  :  "const ::Constant::Direction*".
+
+
+inline void  from ( Constant::Direction& direction, const std::string& s )
+{
+  if (s == "Vertical") direction = Constant::Vertical;
+  else {
+    if (s != "Horizontal")
+      std::cerr << Hurricane::Error( "::from(Direction&,string&): Unknown value \"%s\"."
+                                   , s.c_str() ) << std::endl;
+    direction = Constant::Horizontal;
+  }
+}
 
 
 template<>
@@ -190,7 +222,7 @@ inline std::string  getString<const Constant::Direction*>
     case Constant::Horizontal: return "Horizontal";
     case Constant::Vertical:   return "Vertical";
   }
-  return ( "Unknown Constant::Direction" );
+  return "Unknown Constant::Direction";
 }
 
 
@@ -202,7 +234,7 @@ inline std::string  getString<Constant::Direction>
     case Constant::Horizontal: return "Horizontal";
     case Constant::Vertical:   return "Vertical";
   }
-  return ( "Unknown Constant::Direction" );
+  return "Unknown Constant::Direction";
 }
 
 
@@ -213,19 +245,43 @@ IOSTREAM_POINTER_SUPPORT(Constant::Direction);
 // Inspector Support for  :  "const Constant::LayerGaugeType*".
 
 
+inline void  from ( Constant::LayerGaugeType& type, const std::string& s )
+{
+  if (s == "PinOnly") type = Constant::PinOnly;
+  else {
+    if (s != "Default")
+      std::cerr << Hurricane::Error( "::from(LayerGaugeType&,string&): Unknown value \"%s\"."
+                                   , s.c_str() ) << std::endl;
+    type = Constant::Default;
+  }
+}
+
+
 template<>
 inline std::string  getString<const Constant::LayerGaugeType*>
                             ( const Constant::LayerGaugeType* layerGaugeType )
 {
   switch ( *layerGaugeType ) {
-    case Constant::Horizontal: return "Horizontal";
-    case Constant::Vertical:   return "Vertical";
+    case Constant::Default: return "Default";
+    case Constant::PinOnly: return "PinOnly";
   }
-  return ( "Unknown Constant::LayerGaugeType" );
+  return "Unknown Constant::LayerGaugeType";
+}
+
+
+template<>
+inline std::string  getString<const Constant::LayerGaugeType>
+                            ( const Constant::LayerGaugeType layerGaugeType )
+{
+  switch ( layerGaugeType ) {
+    case Constant::Default: return "Default";
+    case Constant::PinOnly: return "PinOnly";
+  }
+  return "Unknown Constant::LayerGaugeType";
 }
 
 
 IOSTREAM_POINTER_SUPPORT(Constant::LayerGaugeType);
 
 
-# endif  // __CRL_ROUTING_LAYER_GAUGE_H__
+#endif  // CRL_ROUTING_LAYER_GAUGE_H

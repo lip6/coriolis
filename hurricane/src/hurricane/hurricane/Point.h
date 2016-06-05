@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Point.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -23,7 +23,6 @@
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
-
 
 
 // ****************************************************************************************************
@@ -83,13 +82,23 @@ class Point {
     public: string _getTypeName() const { return _TName("Point"); };
     public: string _getString() const;
     public: Record* _getRecord() const;
+    public: void toJson(JsonWriter*) const;
 
 };
 
 
+class JsonPoint : public JsonObject {
+// **********************************
+
+  public: static void initialize();
+  public: JsonPoint(unsigned long);
+  public: virtual string getTypeName() const;
+  public: virtual JsonPoint* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
+
 
 } // End of Hurricane namespace.
-
 
 INSPECTOR_PV_SUPPORT(Hurricane::Point);
 
@@ -98,5 +107,5 @@ INSPECTOR_PV_SUPPORT(Hurricane::Point);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

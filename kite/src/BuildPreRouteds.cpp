@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -51,9 +51,6 @@ namespace Kite {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Warning;
   using Hurricane::Error;

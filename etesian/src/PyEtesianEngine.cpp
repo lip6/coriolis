@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2014-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -34,8 +34,8 @@ namespace  Etesian {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::trace_on;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::ExceptionWidget;
@@ -65,7 +65,7 @@ extern "C" {
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
   {
-    trace << "PyEtesianEngine_get()" << endl;
+    cdebug.log(34) << "PyEtesianEngine_get()" << endl;
 
     EtesianEngine* etesian = NULL;
     
@@ -82,7 +82,7 @@ extern "C" {
 
   static PyObject* PyEtesianEngine_create ( PyObject*, PyObject* args )
   {
-    trace << "PyEtesianEngine_create()" << endl;
+    cdebug.log(34) << "PyEtesianEngine_create()" << endl;
 
     EtesianEngine* etesian = NULL;
     
@@ -108,7 +108,7 @@ extern "C" {
 
   static PyObject* PyEtesianEngine_setViewer ( PyEtesianEngine* self, PyObject* args )
   {
-    trace << "PyEtesianEngine_setViewer ()" << endl;
+    cdebug.log(34) << "PyEtesianEngine_setViewer ()" << endl;
 
     HTRY
       METHOD_HEAD( "EtesianEngine.setViewer()" )
@@ -129,7 +129,7 @@ extern "C" {
 
   static PyObject* PyEtesianEngine_place ( PyEtesianEngine* self )
   {
-    trace << "PyEtesianEngine_place()" << endl;
+    cdebug.log(34) << "PyEtesianEngine_place()" << endl;
     HTRY
     METHOD_HEAD("EtesianEngine.place()")
     if (etesian->getViewer()) {

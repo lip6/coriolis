@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,6 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/Warning.h"
 #include "hurricane/DeepNet.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -49,14 +50,13 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "DeepNet".
 
-
   DeepNet::DeepNet ( Occurrence& netOccurrence )
     : Net(netOccurrence.getOwnerCell()
          ,netOccurrence.getName()
          )
     , _netOccurrence(netOccurrence)
   {
-  //trace << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+    cdebug.log(18) << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
   }
 
 
@@ -65,14 +65,20 @@ namespace Hurricane {
     if (not hyperNet.isValid())
       throw Error ( "Can't create " + _TName("DeepNet") + ": occurence is invalid." );
 
+    if (not isHyperNetRootNetOccurrence(hyperNet.getNetOccurrence())) {
+      cerr << Warning( "DeepNet::create(): Occurrence \"%s\" is not a root one."
+                     , hyperNet.getNetOccurrence().getCompactString().c_str()
+                     ) << endl;
+    }
+
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hyperNet.getNetOccurrence() );
 
     if (rootNetOccurrence.getMasterCell()->isFlattenLeaf()) return NULL;
     if (rootNetOccurrence.getPath().isEmpty())              return NULL;
-
+    
     DeepNet* deepNet = new DeepNet( rootNetOccurrence );
     deepNet->_postCreate();
-    
+
     return deepNet;
   }
 
@@ -82,18 +88,24 @@ namespace Hurricane {
     size_t      nbRoutingPads = 0;
     HyperNet    hyperNet      ( _netOccurrence );
     RoutingPad* currentRp     = NULL;
+    bool        createRp      = true;
 
-    forEach ( Occurrence, ioccurrence, hyperNet.getLeafPlugOccurrences() ) {
+    for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());
+      if ( rp and (rp->getCell() == getCell()) ) { createRp = false; break; }
+      if ( dynamic_cast<Segment*   >(occurrence.getEntity()) ) { createRp = false; break; }
+    }
+    if (not createRp) return 0;
+
+    for ( Occurrence occurrence : hyperNet.getLeafPlugOccurrences() ) {
       nbRoutingPads++;
 
-      currentRp = RoutingPad::create( this, *ioccurrence, RoutingPad::BiggestArea );
+      currentRp = RoutingPad::create( this, occurrence, RoutingPad::BiggestArea );
       if (flags & Cell::Flags::WarnOnUnplacedInstances)
         currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
-      //Net* net =
         currentRp->getNet();
-      //cerr << "_createRoutingPads on " << net->getName() << " buildRing:" << buildRing << endl;
       }
     }
 
@@ -119,6 +131,67 @@ namespace Hurricane {
       record->add( getSlot("_netOccurrence", &_netOccurrence) );
     }
     return record;
+  }
+
+
+  void DeepNet::_toJson( JsonWriter* writer ) const
+  {
+    Inherit::_toJson( writer );
+
+    jsonWrite( writer, "_netOccurrence", &_netOccurrence );
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonDeepNet".
+
+  Initializer<JsonDeepNet>  jsonDeepNetInit ( 0 );
+
+  void  JsonDeepNet::initialize ()
+  { JsonTypes::registerType( new JsonDeepNet (JsonWriter::RegisterMode) ); }
+
+
+  JsonDeepNet::JsonDeepNet ( unsigned long flags )
+    : JsonNet(flags)
+  {
+    cdebug.log(19) << "JsonDeepNet::JsonDeepNet()" << endl;
+
+    add( "_netOccurrence", typeid(Occurrence) );
+  }
+
+
+  JsonDeepNet::~JsonDeepNet ()
+  { }
+
+
+  string  JsonDeepNet::getTypeName () const
+  { return "DeepNet"; }
+
+
+  JsonDeepNet* JsonDeepNet::clone ( unsigned long flags ) const
+  { return new JsonDeepNet ( flags ); }
+
+
+  void JsonDeepNet::toData(JsonStack& stack)
+  {
+    cdebug.tabw(19,1);
+
+    check( stack, "JsonDeepNet::toData" );
+    presetId( stack );
+
+    HyperNet hyperNet ( get<Occurrence>(stack,"_netOccurrence") );
+
+    _net = DeepNet::create( hyperNet );
+    _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
+    _net->setExternal ( get<bool>(stack,"_isExternal" ) );
+    _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
+    _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
+    _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
+    
+    setName( ".Net" );
+    update( stack, _net );
+
+    cdebug.tabw(19,-1);
   }
 
 

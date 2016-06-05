@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -46,8 +46,7 @@ namespace {
 #if 0
   bool  isTopAndBottomConnected ( Segment* segment, set<const Layer*>& layers )
   {
-    ltrace(88) << "* Potential Null Length: " << segment << endl;
-    ltracein(88);
+    cdebug.log(145,1) << "* Potential Null Length: " << segment << endl;
 
     Contact* source = dynamic_cast<Contact*>(segment->getSource());
     Contact* target = dynamic_cast<Contact*>(segment->getTarget());
@@ -56,7 +55,7 @@ namespace {
 
     if (source != NULL) {
       forEach ( Hook*, ihook, source->getBodyHook()->getSlaveHooks() ) {
-        ltrace(88) << "* Slave: " << (*ihook)->getComponent() << endl;
+        cdebug.log(145) << "* Slave: " << (*ihook)->getComponent() << endl;
         if ((*ihook)->getComponent() == segment) continue;
         layers.insert( (*ihook)->getComponent()->getLayer() );
       }
@@ -64,7 +63,7 @@ namespace {
 
     if (target != NULL) {
       forEach ( Hook*, ihook, target->getBodyHook()->getSlaveHooks() ) {
-        ltrace(88) << "* Slave: " << (*ihook)->getComponent() << endl;
+        cdebug.log(145) << "* Slave: " << (*ihook)->getComponent() << endl;
         if ((*ihook)->getComponent() == segment) continue;
         layers.insert( (*ihook)->getComponent()->getLayer() );
       }
@@ -74,7 +73,7 @@ namespace {
     if ( (source->getAnchor() != NULL) or (target->getAnchor() != NULL) ) supplemental++;
 
 
-    ltraceout(88);
+    cdebug.tabw(145,-1);
 
     return layers.size()+supplemental > 2;
   }
@@ -90,9 +89,6 @@ namespace Katabatic {
   using  namespace std;
 
   using  Hurricane::tab;
-  using  Hurricane::ltracein;
-  using  Hurricane::ltraceout;
-  using  Hurricane::inltrace;
   using  Hurricane::DebugSession;
   using  Hurricane::ForEachIterator;
   using  Hurricane::Bug;
@@ -183,22 +179,22 @@ namespace Katabatic {
       for ( unsigned int depth=0 ; depth<8 ; ++depth ) {
       // West.
         forEach( GCell*, igcell, _gcellGrid->getGCellsColumn(depth,0,rows-1)) {
-          ltrace(89) << "Setting as West Pad:" << (*igcell) << endl;
+          cdebug.log(145) << "Setting as West Pad:" << (*igcell) << endl;
           igcell->setUnderIoPad();
         }
       // East.
         forEach( GCell*, igcell, _gcellGrid->getGCellsColumn(columns-1-depth,0,rows-1)) {
-          ltrace(89) << "Setting as East Pad:" << (*igcell) << endl;
+          cdebug.log(145) << "Setting as East Pad:" << (*igcell) << endl;
           igcell->setUnderIoPad();
         }
       // South.
         forEach( GCell*, igcell, _gcellGrid->getGCellsRow(depth,0,columns-1)) {
-          ltrace(89) << "Setting as South Pad:" << (*igcell) << endl;
+          cdebug.log(145) << "Setting as South Pad:" << (*igcell) << endl;
           igcell->setUnderIoPad();
         }
       // North.
         forEach( GCell*, igcell, _gcellGrid->getGCellsRow(rows-1-depth,0,columns-1)) {
-          ltrace(89) << "Setting as North Pad:" << (*igcell) << endl;
+          cdebug.log(145) << "Setting as North Pad:" << (*igcell) << endl;
           igcell->setUnderIoPad();
         }
       }
@@ -208,7 +204,7 @@ namespace Katabatic {
 
   KatabaticEngine* KatabaticEngine::create ( Cell* cell )
   {
-    ltrace(90) << "KatabaticEngine::create() - " << cell << endl;
+    cdebug.log(145) << "KatabaticEngine::create() - " << cell << endl;
 
     KatabaticEngine* katabatic = new KatabaticEngine( cell );
 
@@ -224,8 +220,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::_preDestroy ()
   {
-    ltrace(90) << "Katabatic::_preDestroy ()" << endl;
-    ltracein(90);
+    cdebug.log(145,1) << "Katabatic::_preDestroy ()" << endl;
 
     if (getState() < Katabatic::EngineGutted)
       setState( Katabatic::EnginePreDestroying );
@@ -233,11 +228,11 @@ namespace Katabatic {
     _gutKatabatic();
     _state = EngineGutted;
 
-    ltrace(89) << "About to delete base class ToolEngine." << endl;
+    cdebug.log(145) << "About to delete base class ToolEngine." << endl;
     ToolEngine::_preDestroy();
 
-    ltrace(89) << "Exiting Katabatic::_preDestroy()." << endl;
-    ltraceout(90);
+    cdebug.log(145) << "Exiting Katabatic::_preDestroy()." << endl;
+    cdebug.tabw(145,-1);
 
     cmess2 << "     - GCells        := " << GCell::getAllocateds() << endl;
     cmess2 << "     - AutoContacts  := " << AutoContact::getAllocateds() << endl;
@@ -252,13 +247,14 @@ namespace Katabatic {
     unsetFlags( EngineDestroyBaseContact|EngineDestroyBaseSegment );
 
     if (_state == EngineDriving) {
-      ltracein(90);
-      ltrace(90) << "Saving AutoContacts/AutoSegments." << endl;
+      cdebug.log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
-      size_t fixedSegments = 0;
+      size_t fixedSegments    = 0;
+      size_t sameLayerDoglegs = 0;
       AutoSegmentLut::const_iterator isegment = _autoSegmentLut.begin();
       for ( ; isegment != _autoSegmentLut.end() ; ++isegment ) {
-        if ((*isegment).second->isFixed()) fixedSegments++;
+        if ((*isegment).second->isFixed()) ++fixedSegments;
+        if ((*isegment).second->reduceDoglegLayer()) ++sameLayerDoglegs;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
@@ -266,17 +262,18 @@ namespace Katabatic {
       cmess1 << Dots::asSizet("     - Active AutoContacts",AutoContact::getAllocateds()-fixedSegments*2) << endl;
       cmess1 << Dots::asSizet("     - AutoSegments"       ,AutoSegment::getAllocateds()) << endl;
       cmess1 << Dots::asSizet("     - AutoContacts"       ,AutoContact::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - Same Layer doglegs" ,sameLayerDoglegs) << endl;
 
       forEach ( Net*, inet, _cell->getNets() )
         _saveNet( *inet );
 
     //_autoContactLut.clear ();
 
-      ltraceout(90);
+      cdebug.tabw(145,-1);
     }
 
     if (_state < EngineGutted ) {
-      ltrace(90) << "Gutting Katabatic." << endl;
+      cdebug.log(145) << "Gutting Katabatic." << endl;
       _state = EngineGutted;
       setFlags( EngineDestroyBaseContact );
 
@@ -429,7 +426,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::_destroyAutoSegments ()
   {
-    ltrace(90) << "Katabatic::_destroyAutoSegments ()" << endl;
+    cdebug.log(145) << "Katabatic::_destroyAutoSegments ()" << endl;
 
     size_t  expandeds = 0;
 
@@ -448,7 +445,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::_destroyAutoContacts ()
   {
-    ltrace(90) << "Katabatic::_destroyAutoContacts ()" << endl;
+    cdebug.log(145) << "Katabatic::_destroyAutoContacts ()" << endl;
 
     AutoContactLut::iterator  it = _autoContactLut.begin();
     AutoContactLut::iterator end = _autoContactLut.end  ();
@@ -538,7 +535,7 @@ namespace Katabatic {
 
   void  KatabaticEngine::finalizeLayout ()
   {
-    ltrace(90) << "Katabatic::finalizeLayout()" << endl;
+    cdebug.log(145) << "Katabatic::finalizeLayout()" << endl;
     if (_state > EngineDriving) return;
 
     _state = EngineDriving;
@@ -554,10 +551,10 @@ namespace Katabatic {
 
   void  KatabaticEngine::_alignate ( Net* net )
   {
-    DebugSession::open( net, 99 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(100) << "Katabatic::_alignate( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::_alignate( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
   //cmess2 << "     - " << getString(net) << endl;
 
@@ -578,33 +575,33 @@ namespace Katabatic {
       AutoSegment* seedSegment = unexploreds[i];
 
       if (exploredSegments.find(seedSegment->base()) == exploredSegments.end()) {
-        ltrace(99) << "New chunk from: " << seedSegment << endl;
+        cdebug.log(145) << "New chunk from: " << seedSegment << endl;
         aligneds.push_back( seedSegment );
 
         forEach ( AutoSegment*, collapsed, seedSegment->getAligneds() ) {
-          ltrace(99) << "Aligned: " << *collapsed << endl;
+          cdebug.log(145) << "Aligned: " << *collapsed << endl;
           aligneds.push_back( *collapsed );
           exploredSegments.insert( collapsed->base() );
         }
 
-        ltracein(99);
+        cdebug.tabw(145,1);
         sort( aligneds.begin(), aligneds.end(), AutoSegment::CompareId() );
 
-        ltrace(99) << "Seed: " << (void*)aligneds[0]->base() << " " << aligneds[0] << endl;
+        cdebug.log(145) << "Seed: " << (void*)aligneds[0]->base() << " " << aligneds[0] << endl;
         for ( size_t j=1 ; j<aligneds.size() ; j++ ) {
-          ltrace(99) << "Secondary: " << (void*)(aligneds[j]->base()) << " " << aligneds[j] << endl;
+          cdebug.log(145) << "Secondary: " << (void*)(aligneds[j]->base()) << " " << aligneds[j] << endl;
         }
 
-        ltrace(159) << "Align on " << aligneds[0]
+        cdebug.log(149) << "Align on " << aligneds[0]
                     << " " << DbU::toLambda(aligneds[0]->getAxis()) << endl;
         aligneds[0]->setAxis( aligneds[0]->getAxis(), KbRealignate );
         aligneds.clear();
 
-        ltraceout(99);
+        cdebug.tabw(145,-1);
       }
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     DebugSession::close();
   }
@@ -612,10 +609,10 @@ namespace Katabatic {
 
   void  KatabaticEngine::updateNetTopology ( Net* net )
   {
-    DebugSession::open( net );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(100) << "Katabatic::updateNetTopology( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::updateNetTopology( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     vector<AutoContact*>  contacts;
     forEach ( Component*, icomponent, net->getComponents() ) {
@@ -630,17 +627,17 @@ namespace Katabatic {
     for ( size_t i=0 ; i<contacts.size() ; ++i )
       contacts[i]->updateTopology();
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  KatabaticEngine::_computeNetTerminals ( Net* net )
   {
-    DebugSession::open( net, 88 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(100) << "Katabatic::_computeNetTerminals( " << net << " )" << endl;
-    ltracein(99);
+    cdebug.log(149) << "Katabatic::_computeNetTerminals( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
@@ -649,7 +646,7 @@ namespace Katabatic {
       if (autoSegment->isInvalidated()) autoSegment->computeTerminal();
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
 
     DebugSession::close();
   }
@@ -657,13 +654,13 @@ namespace Katabatic {
 
   void  KatabaticEngine::_saveNet ( Net* net )
   {
-    DebugSession::open( net, 88 );
+    DebugSession::open( net, 140, 150 );
 
-    ltrace(90) << "Katabatic::_saveNet() " << net << endl;
-    ltracein(90);
+    cdebug.log(145) << "Katabatic::_saveNet() " << net << endl;
+    cdebug.tabw(145,1);
 
 #if 0
-    ltrace(90) << "Deleting zero-length segments." << endl;
+    cdebug.log(145) << "Deleting zero-length segments." << endl;
 
     vector<Segment*>   nullSegments;
     set<const Layer*>  connectedLayers;
@@ -677,13 +674,13 @@ namespace Katabatic {
       }
     
       if (Session::lookup(*segment) == NULL) {
-        ltrace(90) << "* Not associated to an AutoSegment: " << *segment << endl;
+        cdebug.log(145) << "* Not associated to an AutoSegment: " << *segment << endl;
         continue;
       }
 
       if (not isTopAndBottomConnected(*segment,connectedLayers)) {
         nullSegments.push_back( *segment );
-        ltrace(90) << "* Null Length: " << *segment << endl;
+        cdebug.log(145) << "* Null Length: " << *segment << endl;
       }
     }
     
@@ -706,20 +703,20 @@ namespace Katabatic {
           swap( source, target );
       }
 
-      ltrace(90) << "Deleting: " << nullSegments[i] << endl;
+      cdebug.log(145) << "Deleting: " << nullSegments[i] << endl;
       if (isTopAndBottomConnected(nullSegments[i],connectedLayers)) {
-        ltrace(90) << "Deletion cancelled, no longer top or bottom connected." << endl;
+        cdebug.log(145) << "Deletion cancelled, no longer top or bottom connected." << endl;
         continue;
       }
 
-      ltrace(90) << "* Source: " << (void*)source << " " << source << endl;
-      ltrace(90) << "* Target: " << (void*)target << " " << target << endl;
+      cdebug.log(145) << "* Source: " << (void*)source << " " << source << endl;
+      cdebug.log(145) << "* Target: " << (void*)target << " " << target << endl;
 
       const Layer* layer = DataBase::getDB()->getTechnology()
         ->getViaBetween( *connectedLayers.begin(), *connectedLayers.rbegin() );
 
-      ltrace(90) << *connectedLayers.begin() << " + " << *connectedLayers.rbegin() << endl;
-      ltrace(90) << "* Shrink layer: " << layer << endl;
+      cdebug.log(145) << *connectedLayers.begin() << " + " << *connectedLayers.rbegin() << endl;
+      cdebug.log(145) << "* Shrink layer: " << layer << endl;
       if ( !layer ) {
         cerr << Error("NULL contact layer while deleting %s."
                      ,getString(nullSegments[i]).c_str()) << endl;
@@ -733,7 +730,7 @@ namespace Katabatic {
 
       while ( masterHook->getNextHook() != source->getBodyHook() ) {
         slaveHooks.push_back( masterHook->getNextHook() );
-        ltrace(90) << "* detach: "
+        cdebug.log(145) << "* detach: "
                    << (void*)masterHook->getNextHook()->getComponent()
                    << " " << masterHook->getNextHook()->getComponent() << endl;
         masterHook->getNextHook()->detach();
@@ -745,35 +742,34 @@ namespace Katabatic {
         slaveHooks[j]->attach( masterHook );
       }
 
-      ltrace(90) << (void*)target << " " << target << " setLayer: " << layer << endl;
+      cdebug.log(145) << (void*)target << " " << target << " setLayer: " << layer << endl;
       target->setLayer( layer );
     }
     unsetFlags( EngineDestroyBaseSegment );
 #endif
 
-    ltraceout(90);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  KatabaticEngine::_check ( Net* net ) const
   {
-    ltrace(200) << "Checking " << net << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "Checking " << net << endl;
     forEach ( Segment*, isegment, net->getComponents().getSubSet<Segment*>() ) {
       AutoSegment* autoSegment = _lookup ( *isegment );
-      ltrace(200) << autoSegment << endl;
+      cdebug.log(149) << autoSegment << endl;
       if ( autoSegment ) {
         AutoContact* autoContact = autoSegment->getAutoSource();
-        ltrace(200) << autoContact << endl;
+        cdebug.log(149) << autoContact << endl;
         if ( autoContact ) autoContact->checkTopology ();
 
         autoContact = autoSegment->getAutoTarget();
-        ltrace(200) << autoContact << endl;
+        cdebug.log(149) << autoContact << endl;
         if ( autoContact ) autoContact->checkTopology ();
       }
     }
-    ltraceout(200);
+    cdebug.tabw(149,-1);
   }
 
 

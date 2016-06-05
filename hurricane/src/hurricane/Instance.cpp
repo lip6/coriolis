@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Instance.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -20,6 +20,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/SharedPath.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -28,7 +29,6 @@
 #include "hurricane/Error.h"
 
 namespace Hurricane {
-
 
 
 // ****************************************************************************************************
@@ -201,7 +201,10 @@ Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool 
 // ****************************************************************************************
 {
   if (not cell)
-    throw Error( "Instance::create(): NULL master Cell argument." );
+    throw Error( "Instance::create(): NULL owner Cell argument for %s.", getString(name).c_str() );
+
+  if (not masterCell)
+    throw Error( "Instance::create(): NULL master Cell argument for %s.", getString(name).c_str() );
 
   // if (cell->isUniquified())
   //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
@@ -217,7 +220,10 @@ Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, const
 // **********************************************************************************************************************************************************************
 {
   if (not cell)
-    throw Error( "Instance::create(): NULL master Cell argument." );
+    throw Error( "Instance::create(): NULL owner Cell argument for %s.", getString(name).c_str() );
+
+  if (not masterCell)
+    throw Error( "Instance::create(): NULL master Cell argument for %s.", getString(name).c_str() );
 
   // if (cell->isUniquified())
   //   throw Error( "Instance::create(): %s master Cell is an uniquified copy.", getString(cell).c_str() );
@@ -404,102 +410,123 @@ void Instance::setTransformation(const Transformation& transformation)
     }
 }
 
-void Instance::setPlacementStatus(const PlacementStatus& placementstatus)
+void Instance::setPlacementStatus(const PlacementStatus& placementStatus)
 // **********************************************************************
 {
-  if (placementstatus != _placementStatus) {
+  if (placementStatus != _placementStatus) {
     invalidate(true);
 
-    if (_placementStatus == PlacementStatus::UNPLACED) {
+    if (placementStatus & (PlacementStatus::PLACED|PlacementStatus::FIXED)) {
       materialize ();
-    } else if (placementstatus == PlacementStatus::UNPLACED)
+    } else if (placementStatus == PlacementStatus::UNPLACED)
       unmaterialize ();
 
-    _placementStatus = placementstatus;
+    _placementStatus = placementStatus;
   }
 }
 
 void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 // ************************************************************
 {
-    if (masterCell != _masterCell) {
-        UpdateSession::open();
+  cdebug.log(18,1) << "Instance::setMasterCell() on " << this << endl;
+  cdebug.log(18) << "NEW masterCell:" << masterCell << endl;
 
-        if (!masterCell)
-            throw Error("Can't set master : null master cell");
+  if (masterCell != _masterCell) {
+    UpdateSession::open();
 
-        if (secureFlag && _cell->isCalledBy(masterCell))
-            throw Error("Can't set master : cyclic construction");
+    if (!masterCell)
+      throw Error("Can't set master : null master cell");
 
-        list<Plug*> connectedPlugList;
-        list<Net*> masterNetList;
-        for_each_plug(plug, getConnectedPlugs()) {
-            Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
-            if (!masterNet || !masterNet->isExternal())
-                throw Error("Can't set master (bad master net matching)");
-            connectedPlugList.push_back(plug);
-            masterNetList.push_back(masterNet);
-            end_for;
-        }
+    if (secureFlag && _cell->isCalledBy(masterCell))
+      throw Error("Can't set master : cyclic construction");
 
-        for_each_shared_path(sharedPath, _getSharedPathes()) {
-            if (!sharedPath->getTailSharedPath())
-                // if the tail is empty the SharedPath isn't impacted by the change
-                delete sharedPath;
-            end_for;
-        }
-
-        invalidate(true);
-
-        for_each_plug(plug, getUnconnectedPlugs()) {
-            plug->_destroy();
-            end_for;
-        }
-
-        while (!connectedPlugList.empty() && !masterNetList.empty()) {
-            Plug* plug = connectedPlugList.front();
-            Net* masterNet = masterNetList.front();
-            _plugMap._remove(plug);
-            plug->_setMasterNet(masterNet);
-            _plugMap._insert(plug);
-            connectedPlugList.pop_front();
-            masterNetList.pop_front();
-        }
-
-        _masterCell->_getSlaveInstanceSet()._remove(this);
-        _masterCell = masterCell;
-        _masterCell->_getSlaveInstanceSet()._insert(this);
-
-        for_each_net(externalNet, _masterCell->getExternalNets()) {
-            if (!getPlug(externalNet)) Plug::_create(this, externalNet);
-            end_for;
-        }
-
-        UpdateSession::close();
+    list<Plug*> connectedPlugList;
+    list<Net*> masterNetList;
+    for_each_plug(plug, getConnectedPlugs()) {
+      Net* masterNet = masterCell->getNet(plug->getMasterNet()->getName());
+      if (!masterNet || !masterNet->isExternal())
+        throw Error("Can't set master (bad master net matching)");
+      connectedPlugList.push_back(plug);
+      masterNetList.push_back(masterNet);
+      end_for;
     }
+
+    for_each_shared_path(sharedPath, _getSharedPathes()) {
+      if (!sharedPath->getTailSharedPath())
+      // if the tail is empty the SharedPath isn't impacted by the change
+        delete sharedPath;
+      end_for;
+    }
+
+    invalidate(true);
+
+    for_each_plug(plug, getUnconnectedPlugs()) {
+      plug->_destroy();
+      end_for;
+    }
+
+    while (!connectedPlugList.empty() && !masterNetList.empty()) {
+      Plug* plug = connectedPlugList.front();
+      Net* masterNet = masterNetList.front();
+      _plugMap._remove(plug);
+      plug->_setMasterNet(masterNet);
+      _plugMap._insert(plug);
+      connectedPlugList.pop_front();
+      masterNetList.pop_front();
+    }
+
+    cdebug.log(18) << "Remove " << this << " from " << _masterCell << endl;
+    _masterCell->_getSlaveInstanceSet()._remove(this);
+    _masterCell = masterCell;
+
+    cdebug.log(18) << "Add (before) " << this << " to " << _masterCell << endl;
+    _masterCell->isUnique();
+    _masterCell->_getSlaveInstanceSet()._insert(this);
+    cdebug.log(18) << "Add (after) " << this << " to " << _masterCell << endl;
+    _masterCell->isUnique();
+
+    for_each_net(externalNet, _masterCell->getExternalNets()) {
+      if (!getPlug(externalNet)) Plug::_create(this, externalNet);
+      end_for;
+    }
+
+    UpdateSession::close();
+  }
+
+  cdebug.tabw(19,-1);
 }
 
 void Instance::uniquify()
 // **********************
 {
-  if (_masterCell->isUniquified()) {
-    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is already uniquified, cancelled."
+  if (_masterCell->isUnique()) {
+    cerr << Warning( "Instance::uniquify(): Master Cell %s of %s is unique or already uniquified, cancelled."
                    , getString(_masterCell->getName()).c_str()
                    , getString(getName()).c_str()
                    ) << endl;
     return;
   }
+
+  if (not _getSharedPathMap().isEmpty()) {
+    cerr << Warning( "Instance::uniquify(): While uniquifying model %s of instance %s, SharedPathMap is not empty.\n"
+                     "          (%u Entity's Occurrences will still uses the original master Cell)"
+                   , getString(_masterCell->getName()).c_str()
+                   , getString(getName()).c_str()
+                   , _getSharedPathMap()._getSize()
+                   ) << endl;
+  }
+
   setMasterCell( _masterCell->getClone() );
 }
 
 void Instance::slaveAbutmentBox()
 // ******************************
 {
-  if (not _masterCell->isUniquified()) uniquify();
+  if (not _masterCell->isUnique()) uniquify();
+  _masterCell->slaveAbutmentBox( getCell() );
+//_masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
   setTransformation( Transformation() );
   setPlacementStatus( Instance::PlacementStatus::PLACED );
-  _masterCell->slaveAbutmentBox( getCell() );
-  _masterCell->_setShuntedPath( Path(getCell()->getShuntedPath(),this) );
 }
 
 Instance* Instance::getClone(Cell* cloneCell) const
@@ -511,6 +538,13 @@ Instance* Instance::getClone(Cell* cloneCell) const
                                     , getTransformation()
                                     , getPlacementStatus()
                                     );
+
+  if (not clone->_getSharedPathMap().isEmpty()) {
+    cerr << Warning( "Instance::getClone(): While cloning instance %s, SharedPathMap is not empty.\n"
+                     "          (Occurrence will still uses the original instance)"
+                   , getString(getName()).c_str()
+                   ) << endl;
+  }
 
   for( Plug* iplug : getPlugs() ) {
     if (iplug->isConnected()) {
@@ -556,16 +590,17 @@ void Instance::_postCreate()
 void Instance::_preDestroy()
 // ************************
 {
-    for_each_shared_path(sharedPath, _getSharedPathes()) delete sharedPath; end_for;
+  for ( SharedPath* sharedPath : _getSharedPathes() ) delete sharedPath;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    for_each_plug(plug, getPlugs()) plug->_destroy(); end_for;
+  Plugs plugs = getPlugs();
+  while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
-    _masterCell->_getSlaveInstanceSet()._remove(this);
-    _cell->_getInstanceMap()._remove(this);
+  _masterCell->_getSlaveInstanceSet()._remove(this);
+  _cell->_getInstanceMap()._remove(this);
 
-    if (_masterCell->isUniquified()) _masterCell->destroy();
+  if (_masterCell->isUniquified()) _masterCell->destroy();
 }
 
 string Instance::_getString() const
@@ -593,6 +628,24 @@ Record* Instance::_getRecord() const
         record->add(getSlot("SharedPathes", &_sharedPathMap));
     }
     return record;
+}
+
+void Instance::_toJson( JsonWriter* writer ) const
+// ***********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_name"           , getName()        );
+  jsonWrite( writer, "_masterCell"     , _masterCell->getHierarchicalName() );
+  jsonWrite( writer, "_transformation" , &_transformation  );
+  jsonWrite( writer, "_placementStatus", _placementStatus );
+}
+
+void Instance::_toJsonCollections(JsonWriter* writer) const
+// ********************************************************
+{
+  jsonWrite( writer, "+plugMap", getPlugs() );
+  Inherit::_toJsonCollections( writer );
 }
 
 // ****************************************************************************************************
@@ -672,13 +725,20 @@ void Instance::SharedPathMap::_setNextElement(SharedPath* sharedPath, SharedPath
 Instance::PlacementStatus::PlacementStatus(const Code& code)
 // *********************************************************
 :    _code(code)
-{
-}
+{ }
 
 Instance::PlacementStatus::PlacementStatus(const PlacementStatus& placementstatus)
 // *******************************************************************************
 :    _code(placementstatus._code)
+{ }
+
+Instance::PlacementStatus::PlacementStatus(string s)
+// *************************************************
+:    _code(UNPLACED)
 {
+  if      (s == "UNPLACED") _code = UNPLACED;
+  else if (s == "PLACED"  ) _code = PLACED;
+  else if (s == "FIXED"   ) _code = FIXED;
 }
 
 Instance::PlacementStatus& Instance::PlacementStatus::operator=(const PlacementStatus& placementstatus)
@@ -702,9 +762,56 @@ Record* Instance::PlacementStatus::_getRecord() const
     return record;
 }
 
+
+// ****************************************************************************************************
+// JsonInstance implementation
+// ****************************************************************************************************
+
+Initializer<JsonInstance>  jsonInstanceInit ( 0 );
+
+void  JsonInstance::initialize()
+// *****************************
+{ JsonTypes::registerType( new JsonInstance (JsonWriter::RegisterMode) ); }
+
+JsonInstance::JsonInstance(unsigned long flags)
+// ********************************************
+  : JsonEntity(flags)
+{
+  add( "_name"           , typeid(string)          );
+  add( "_masterCell"     , typeid(string)          );
+  add( "_transformation" , typeid(Transformation*) );
+  add( "_placementStatus", typeid(string)          );
+  add( "+plugMap"        , typeid(JsonArray)       );
+}
+
+string JsonInstance::getTypeName() const
+// *************************************
+{ return "Instance"; }
+
+JsonInstance* JsonInstance::clone(unsigned long flags) const
+// *********************************************************
+{ return new JsonInstance ( flags ); }
+
+void JsonInstance::toData(JsonStack& stack)
+// ****************************************
+{
+  check( stack, "JsonInstance::toData" );
+  presetId( stack );
+
+  Instance* instance = Instance::create
+    ( get<Cell* >(stack,".Cell")
+    , get<string>(stack,"_name")
+    , DataBase::getDB()->getCell( get<string>(stack,"_masterCell"), DataBase::NoFlags )
+    , get<Transformation>(stack,"_transformation") 
+    , Instance::PlacementStatus(get<string>(stack,"_placementStatus") )
+    );
+  
+  update( stack, instance );
+}
+
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

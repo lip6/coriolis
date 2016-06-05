@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +27,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Bug.h"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# ifndef  __HURRICANE_BUG__
-# define  __HURRICANE_BUG__
+#ifndef  HURRICANE_BUG_H
+#define  HURRICANE_BUG_H
 
 # include  "hurricane/Exception.h"
 
@@ -75,7 +67,7 @@ namespace Hurricane {
   inline  int     Bug::getCode   () const { return _code; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 GETSTRING_POINTER_SUPPORT(Hurricane::Bug);
@@ -84,4 +76,4 @@ IOSTREAM_POINTER_SUPPORT(Hurricane::Bug);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Bug);
 
 
-# endif // __HURRICANE_BUG__
+#endif // HURRICANE_BUG_H

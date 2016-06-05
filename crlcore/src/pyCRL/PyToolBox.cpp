@@ -35,7 +35,8 @@ namespace  CRL {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -69,7 +70,7 @@ extern "C" {
 
   extern PyObject* PyToolBox_createPartRing ( PyObject* module, PyObject* args )
   { 
-    trace << "PyToolBox_createPartRing ()" << endl;
+    cdebug.log(30) << "PyToolBox_createPartRing ()" << endl;
 
     HTRY
     PyObject* arg0;

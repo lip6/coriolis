@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Technology.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_TECHNOLOGY__
-#define  __HURRICANE_TECHNOLOGY__
+#ifndef  HURRICANE_TECHNOLOGY_H
+#define  HURRICANE_TECHNOLOGY_H
 
 #include  <map>
 #include  "hurricane/Mask.h"
@@ -63,7 +54,6 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::Technology".
-
 
   class Technology : public DBo {
 
@@ -120,6 +110,8 @@ namespace Hurricane {
       inline  Layer::Mask&   _getMetalMask           ();
               void           _onDbuChange            ( float scale );
     // Hurricane Managment.
+      virtual void           _toJson                 ( JsonWriter* ) const;
+      virtual void           _toJsonCollections      ( JsonWriter* ) const;
       virtual string         _getTypeName            () const;
       virtual string         _getString              () const;
       virtual Record*        _getRecord              () const;
@@ -153,10 +145,27 @@ namespace Hurricane {
   inline  Layer::Mask&              Technology::_getMetalMask    () { return _metalMask; }
 
 
-} // End of Hurricane namespace.
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonTechnology".
+
+  class JsonTechnology : public JsonDBo {
+    public:
+      static  void            initialize     ();
+                              JsonTechnology ( unsigned long flags );
+      virtual                ~JsonTechnology ();
+      virtual string          getTypeName    () const;
+      virtual JsonTechnology* clone          ( unsigned long ) const;
+      virtual void            toData         ( JsonStack& ); 
+              void            addBlockageRef ( const std::string&, BasicLayer* );
+    private:
+      std::map< string, vector<BasicLayer*> >  _blockagesMap;
+  };
+
+
+}  // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Technology);
 
 
-#endif  // __HURRICANE_TECHNOLOGY__
+#endif  // HURRICANE_TECHNOLOGY_H

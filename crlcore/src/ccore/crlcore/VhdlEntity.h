@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -25,6 +25,7 @@ namespace Hurricane {
   class Net;
   class Instance;
 }
+#include "crlcore/ToolBox.h"
 #include "crlcore/VhdlSignal.h"
 
 
@@ -38,6 +39,7 @@ namespace Vhdl {
   using Hurricane::Cell;
   using Hurricane::Instance;
   using Hurricane::PrivateProperty;
+  using CRL::NamingScheme;
 
   class Signal;
   class ScalarSignal;
@@ -64,7 +66,6 @@ namespace Vhdl {
                 , AsInnerSignal = 0x0010
                 };
     public:
-      static bool             parseNetName    ( const Net*, std::string& stem, size_t& index );
       static std::vector<Entity*>&
                               getAllEntities  ();
     public:           
@@ -83,11 +84,13 @@ namespace Vhdl {
              void             toComponent     ( std::ostream& ) const;
              void             toInstance      ( std::ostream&, Instance* ) const;
              void             toEntity        ( std::ostream& ) const;
+             bool             parseNetName    ( const Net*, std::string& stem, size_t& index );
              std::string      _getString      () const;
              Record*          _getRecord      () const;
     private:
       static std::vector<Entity*>  _entities;
       static std::ptrdiff_t        _offset;
+             NamingScheme          _ns;
              SignalSet             _signals;
              SignalSet             _globals;
              unsigned int          _flags;

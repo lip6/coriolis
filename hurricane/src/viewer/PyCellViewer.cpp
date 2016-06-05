@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -42,7 +42,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_hasMenu ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_hasMenu()" << endl;
+    cdebug.log(20) << "PyCellViewer_hasMenu()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.hasMenu()")
@@ -62,7 +62,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_hasMenuAction ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_hasMenuAction()" << endl;
+    cdebug.log(20) << "PyCellViewer_hasMenuAction()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.hasMenuAction()")
@@ -82,7 +82,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_addMenu ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_addMenu()" << endl;
+    cdebug.log(20) << "PyCellViewer_addMenu()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.addMenu()")
@@ -104,7 +104,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_addToMenu ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_addToMenu()" << endl;
+    cdebug.log(20) << "PyCellViewer_addToMenu()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.addToMenu()")
@@ -131,7 +131,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_getCell ( PyCellViewer* self )
   {
-    trace << "PyCellViewer_getCell ()" << endl;
+    cdebug.log(20) << "PyCellViewer_getCell ()" << endl;
 
     Cell* cell = NULL;
     
@@ -149,7 +149,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_setCell ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_setCell ()" << endl;
+    cdebug.log(20) << "PyCellViewer_setCell ()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.setCell()")
@@ -168,7 +168,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_setApplicationName ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_setApplicationName ()" << endl;
+    cdebug.log(20) << "PyCellViewer_setApplicationName ()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.setApplicationName()")
@@ -188,7 +188,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_setLayerVisible ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_setLayerVisible ()" << endl;
+    cdebug.log(20) << "PyCellViewer_setLayerVisible ()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.setLayerVisible()")
@@ -209,7 +209,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_setAnonNetSelectable ( PyCellViewer* self, PyObject* args )
   {
-    trace << "PyCellViewer_setAnonNetSelectable ()" << endl;
+    cdebug.log(20) << "PyCellViewer_setAnonNetSelectable ()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.setAnonNetSelectable()")
@@ -230,7 +230,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_fit ( PyCellViewer* self )
   {
-    trace << "PyCellViewer_fit()" << endl;
+    cdebug.log(20) << "PyCellViewer_fit()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.fit()")
@@ -243,7 +243,7 @@ extern "C" {
 
   static PyObject* PyCellViewer_refresh ( PyCellViewer* self )
   {
-    trace << "PyCellViewer_refresh()" << endl;
+    cdebug.log(20) << "PyCellViewer_refresh()" << endl;
 
     HTRY
     METHOD_HEAD("CellViewer.refresh()")

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2015-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2015-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -60,6 +60,7 @@ namespace Hurricane {
               void          attach        ( NetAliasHook* );
               void          detach        ();
               void          detachAll     ();
+      inline  void          toJson        ( JsonWriter* ) const;
       virtual std::string   _getString    () const = 0;
       virtual Record*       _getRecord    () const;
     public:                 
@@ -109,6 +110,7 @@ namespace Hurricane {
       virtual bool          isSlave      () const;
       virtual Name          getName      () const;
       virtual Net*          getNet       () const;
+      virtual void          toJson       ( JsonWriter* ) const;
       virtual std::string   _getString   () const;
       virtual Record*       _getRecord   () const;
     public:
@@ -181,11 +183,30 @@ namespace Hurricane {
   { }
 
 
+// -------------------------------------------------------------------
+// Class  :  "JsonNetAlias".
+
+  class JsonNetAlias : public JsonObject {
+    public:
+      static  void          initialize   ();
+                            JsonNetAlias ( unsigned long flags );
+      virtual string        getTypeName  () const;
+      virtual JsonNetAlias* clone        ( unsigned long ) const;
+      virtual void          toData       ( JsonStack& ); 
+  };
+
+
 }  // Namespace Hurricane.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::NetAliasHook);
 INSPECTOR_P_SUPPORT(Hurricane::NetMainName);
 INSPECTOR_P_SUPPORT(Hurricane::NetAliasName);
+
+inline void  jsonWrite ( JsonWriter* w, const Hurricane::NetAliasHook* alias )
+{
+  const Hurricane::NetAliasName* aliasName = dynamic_cast<const Hurricane::NetAliasName*>( alias ); 
+  if (aliasName) jsonWrite(w,aliasName);
+}
     
 #endif  // HURRICANE_NET_ALIAS_H

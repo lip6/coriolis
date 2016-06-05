@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2004-2015, All Rights Reserved
+// Copyright (c) UPMC 2004-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -38,7 +38,7 @@ namespace CRL {
 
   void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
   {
-    NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
+  //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell
                                                             , Vhdl::Entity::EntityMode
                                                           //| Vhdl::Entity::IeeeMode

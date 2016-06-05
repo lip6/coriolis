@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -117,7 +117,6 @@ namespace Hurricane {
     }
 
     if ( role == Qt::FontRole ) {
-      if ( index.row() == 0 ) return QVariant();
       switch (index.column()) {
         default: return entityFont;
       }

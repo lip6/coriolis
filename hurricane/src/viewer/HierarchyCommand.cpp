@@ -1,26 +1,17 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./HierarchyCommand.cpp"                   |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 # include <QMouseEvent>
@@ -58,41 +49,53 @@ namespace Hurricane {
   { return _name; }
 
 
+  void  HierarchyCommand::reset ()
+  {
+    _history.clear();
+    _historyIndex = 0;
+  }
+
+
   void  HierarchyCommand::keyReleaseEvent ( QKeyEvent* event )
   {
     bool  control = (event->modifiers() & Qt::ControlModifier);
     bool  shift   = (event->modifiers() & Qt::ShiftModifier  );
 
-    if ( !shift && !control ) return;
-    if ( !_cellWidget->getCell() ) return;
+    if (not shift and not control) return;
+    if (not _cellWidget->getCell()) return;
 
     QPoint position ( _cellWidget->mapFromGlobal(QCursor::pos()) );
     Box    pointBox ( _cellWidget->screenToDbuBox(QRect(position,QSize(1,1))) );
 
     switch ( event->key() ) {
       case Qt::Key_Up:
-        if ( ( _historyIndex > 0 ) && (shift || control) ) {
-          _cellWidget->setState ( _history[--_historyIndex]._state );
+        if ( (_historyIndex > 0) and (shift or control) ) {
+          _cellWidget->setState ( _history[--_historyIndex], CellWidget::NoResetCommands );
         }
         break;
       case Qt::Key_Down:
         {
-          if ( control ) {
-            if ( _history.empty() )
-              _history.push_back ( HistoryEntry ( NULL, _cellWidget->getState() ) );
+          if (control) {
+            Path topPath;
+            if (_history.empty()) {
+              _history.push_back( _cellWidget->getState() );
+              topPath = _cellWidget->getState()->getTopPath();
+            } else if (_historyIndex > 0) {
+              topPath = _history[_historyIndex-1]->getTopPath();
+            }
 
-            Instances instances = _cellWidget->getCell()->getInstancesUnder ( pointBox );
-            if ( !instances.isEmpty() ) {
-              _history.erase ( _history.begin()+_historyIndex+1, _history.end() );
+            Instances instances = _cellWidget->getCell()->getInstancesUnder( pointBox );
+            if (not instances.isEmpty()) {
+              _history.erase( _history.begin()+_historyIndex+1, _history.end() );
 
-              Instance* instance = instances.getFirst ();
-              _cellWidget->setCell ( instance->getMasterCell() );
-              _history.push_back ( HistoryEntry ( instance, _cellWidget->getState() ) );
+              topPath = Path( topPath, instances.getFirst() );
+              _cellWidget->setCell( topPath.getMasterCell(), topPath, CellWidget::NoResetCommands );
+              _history.push_back( _cellWidget->getState() );
               _historyIndex++;
             }
-          } else if ( shift ) {
-            if ( _historyIndex+1 < _history.size() ) {
-              _cellWidget->setState ( _history[++_historyIndex]._state );
+          } else if (shift) {
+            if (_historyIndex+1 < _history.size()) {
+              _cellWidget->setState( _history[++_historyIndex], CellWidget::NoResetCommands );
             }
           }
         }

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -24,7 +24,6 @@ namespace  Isobar {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -73,7 +72,7 @@ extern "C" {
   DirectHashMethod(PyOrientation_Hash, PyOrientation)
 
   extern void  PyOrientation_LinkPyType() {
-    trace << "PyOrientation_LinkType()" << endl;
+    cdebug.log(20) << "PyOrientation_LinkType()" << endl;
     PyTypeOrientation.tp_dealloc = (destructor) PyOrientation_DeAlloc;
     PyTypeOrientation.tp_compare = (cmpfunc)    PyOrientation_Cmp;
     PyTypeOrientation.tp_repr    = (reprfunc)   PyOrientation_Repr;

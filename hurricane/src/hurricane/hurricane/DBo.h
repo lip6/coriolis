@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/DBo.h"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DBO__
-#define  __HURRICANE_DBO__
+#ifndef  HURRICANE_DBO_H
+#define  HURRICANE_DBO_H
 
 #include  "hurricane/DBos.h"
 #include  "hurricane/Name.h"
@@ -52,40 +43,39 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::DBo".
 
-
   class DBo {
-
     public:
-    // Methods.
-      virtual void            destroy();
-      inline  set<Property*>& _getPropertySet ();
-              void            _onDestroyed    ( Property* property );
-              Property*       getProperty     ( const Name& ) const;
-              Properties      getProperties   () const;
-      inline  bool            hasProperty     () const;
-              void            put             ( Property* );
-              void            remove          ( Property* );
-              void            removeProperty  ( const Name& );
-              void            clearProperties ();
-    // Hurricane Managment.  
-      virtual string          _getTypeName    () const;
-      virtual string          _getString      () const;
-      virtual Record*         _getRecord      () const;
-
-    private:
-    // Internal: Attributes.
-      mutable set<Property*>   _propertySet;
-
-    protected:
-    // Internal: Constructors & Destructors.
-                             DBo             ();
-      virtual               ~DBo             ();
-      virtual void           _postCreate     ();
-      virtual void           _preDestroy     ();
-    private:
-    // Forbidden: Copies.
-                             DBo             ( const DBo& );
-              DBo&           operator=       ( const DBo& );
+      virtual void               destroy            ();
+      inline  set<Property*>&    _getPropertySet    ();
+              void               _onDestroyed       ( Property* property );
+              Property*          getProperty        ( const Name& ) const;
+              Properties         getProperties      () const;
+      inline  bool               hasProperty        () const;
+              void               put                ( Property* );
+              void               remove             ( Property* );
+              void               removeProperty     ( const Name& );
+              void               clearProperties    ();
+      virtual string             _getTypeName       () const;
+      virtual string             _getString         () const;
+      virtual Record*            _getRecord         () const;
+      virtual void               _toJson            ( JsonWriter* ) const;
+      virtual void               _toJsonCollections ( JsonWriter* ) const;
+      virtual void               _toJsonSignature   ( JsonWriter* ) const;
+              void               toJson             ( JsonWriter* ) const;
+              void               toJsonSignature    ( JsonWriter* ) const;
+                                 
+    private:                     
+      mutable set<Property*>     _propertySet;
+                                 
+    protected:                   
+                                 DBo               ();
+      virtual                   ~DBo               ();
+      virtual void               _postCreate       ();
+      virtual void               _preDestroy       ();
+                           
+    private:               
+                                 DBo               ( const DBo& );
+              DBo&               operator=         ( const DBo& );
   };
 
 
@@ -94,10 +84,25 @@ namespace Hurricane {
   inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
 
 
-} // End of Hurricane namespace.
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonDBo".
 
+  class JsonDBo : public JsonObject {
+    public:
+                                         JsonDBo ( unsigned int flags );
+      template<typename T> inline  void  update  ( JsonStack&, T );
+  };
+
+
+  template<typename T> inline void  JsonDBo::update ( JsonStack& stack, T hobject )
+  {
+    JsonObject::update<T>( stack, hobject );
+    stack.push_back_dbo( dynamic_cast<DBo*>(hobject) );
+  }
+
+
+} // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::DBo);
 
-
-#endif // __HURRICANE_DBO__
+#endif // HURRICANE_DBO_H

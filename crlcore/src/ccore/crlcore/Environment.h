@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -19,11 +19,18 @@
 
 #include <regex.h>
 #include <string>
-#include <crlcore/SearchPath.h>
+#include "hurricane/Commons.h"
+#include "crlcore/SearchPath.h"
 
 
 namespace CRL {
 
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Environment".
 
   class Environment {
     public:
@@ -76,6 +83,7 @@ namespace CRL {
              void               addSYSTEM_LIBRARY      ( const char* value, const char* libName, unsigned int mode=Append );
     // Methods.
              std::string        getPrint               () const;
+             void               toJson                 ( JsonWriter* ) const;
       inline std::string        _getTypeName           () const;
              std::string        _getString             () const;
              Record*            _getRecord             () const;
@@ -132,6 +140,19 @@ namespace CRL {
   inline void                   Environment::setCATALOG             ( const char* value ) { _CATALOG = value; }
   inline void                   Environment::setWORKING_LIBRARY     ( const char* value ) { _LIBRARIES.replace(value,"working",0); }
   inline std::string            Environment::_getTypeName           () const { return "Environment"; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonEnvironment".
+
+  class JsonEnvironment : public JsonObject {
+    public:
+      static  void             initialize      ();
+                               JsonEnvironment ( unsigned long flags );
+      virtual std::string      getTypeName     () const;
+      virtual JsonEnvironment* clone           ( unsigned long flags ) const;
+      virtual void             toData          ( JsonStack& ); 
+  };
 
 
 } // CRL namespace.

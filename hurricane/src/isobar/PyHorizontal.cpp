@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2007-2015, All Rights Reserved
+// Copyright (c) UPMC 2007-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -49,9 +49,9 @@ extern "C" {
   DirectGetLongAttribute(PyHorizontal_getY       ,getY       ,PyHorizontal,Horizontal)
   DirectGetLongAttribute(PyHorizontal_getDxSource,getDxSource,PyHorizontal,Horizontal)
   DirectGetLongAttribute(PyHorizontal_getDxTarget,getDxTarget,PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setY       ,setY       ,"Horizontal.setY",PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setDxSource,setDxSource,"Horizontal.setDxSource",PyHorizontal,Horizontal)
-  DirectSetLongAttribute(PyHorizontal_setDxTarget,setDxTarget,"Horizontal.setDxTarget",PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setY       ,setY       ,PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxSource,setDxSource,PyHorizontal,Horizontal)
+  DirectSetLongAttribute(PyHorizontal_setDxTarget,setDxTarget,PyHorizontal,Horizontal)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyHorizontal_destroy, PyHorizontal)
@@ -61,7 +61,7 @@ extern "C" {
   // Attribute Method  :  "PyHorizontal_create ()"
 
   static PyObject* PyHorizontal_create ( PyObject*, PyObject *args ) {
-    trace << "PyHorizontal_create()" << endl;
+    cdebug.log(20) << "PyHorizontal_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -152,7 +152,7 @@ extern "C" {
   // Attribute Method  :  "PyHorizontal_translate ()"
 
   static PyObject* PyHorizontal_translate ( PyHorizontal *self, PyObject* args ) {
-    trace << "PyHorizontal_translate ()" << endl;
+    cdebug.log(20) << "PyHorizontal_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Horizontal.translate()" )

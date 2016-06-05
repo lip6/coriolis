@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -93,11 +93,10 @@ int main ( int argc, char *argv[] )
   int  returnCode = 0;
 
   try {
-    unsigned int  traceLevel;
-    bool          verbose1;
-    bool          verbose2;
-    bool          coreDump;
-    bool          textMode;
+    bool verbose1;
+    bool verbose2;
+    bool coreDump;
+    bool textMode;
 
     boptions::options_description options ("Command line arguments & options");
     options.add_options()
@@ -110,9 +109,6 @@ int main ( int argc, char *argv[] )
                         , "Enable core dumping.")
       ( "text,t"        , boptions::bool_switch(&textMode)->default_value(false)
                         , "Run in pure text mode.")
-      ( "trace-level,l" , boptions::value<unsigned int>(&traceLevel)->default_value(1000)
-                        , "Set the level of trace, trace messages with a level superior to "
-                          "<arg> will be printed on <stderr>." )
       ( "cell,c"        , boptions::value<string>()
                         , "The name of the cell to load, whithout extension." );
 
@@ -132,7 +128,7 @@ int main ( int argc, char *argv[] )
     if (verbose1) mstream::enable ( mstream::Verbose0|mstream::Verbose1 );
     if (verbose2) mstream::enable ( mstream::Verbose0|mstream::Verbose1|mstream::Verbose2 ); 
 
-    dbo_ptr<AllianceFramework> af ( AllianceFramework::create() );
+    dbo_ptr<AllianceFramework> af ( AllianceFramework::get() );
 
     Technology* technology = DataBase::getDB()->getTechnology();
 //     technology->setWorkingLayer ( "cut0" );

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -111,7 +111,7 @@ namespace {
     } else {
       if ( autoSegment->isGlobal() ) return false;
 
-      ltrace(88) << "Examining " << autoSegment << " " << fromContact << endl;
+      cdebug.log(145) << "Examining " << autoSegment << " " << fromContact << endl;
 
       if ( autoSegment->getSource() == autoSegment->getTarget() ) {
         cerr << Error("Source & Target are the same :\n"
@@ -146,7 +146,7 @@ namespace {
           return false;
         }
       } else {
-        ltrace(88) << "Terminal is " << terminalContact << endl;
+        cdebug.log(145) << "Terminal is " << terminalContact << endl;
 
         Box constraintBox = terminalContact->getConstraintBox();
         if ( isHorizontal ) {
@@ -198,7 +198,7 @@ namespace {
     _attractors[position]++;
     _attractorsCount++;
 
-    ltrace(88) << "add Attractor @" << DbU::toLambda(position)
+    cdebug.log(145) << "add Attractor @" << DbU::toLambda(position)
                << " [" << _attractors[position] << "]" << endl;
   }
 
@@ -313,6 +313,8 @@ namespace Katabatic {
     , _flags          (SegCreated)
     , _depth          (Session::getLayerDepth(segment->getLayer()))
     , _optimalMin     (0)
+    , _optimalMax     (0)
+    , _reduceds       (0)
     , _sourcePosition (0)
     , _targetPosition (0)
     , _userConstraints(false)
@@ -365,13 +367,13 @@ namespace Katabatic {
 
   void  AutoSegment::_preDestroy ()
   {
-    ltrace(200) << "AutoSegment::_preDestroy() - " << (void*)this << endl;
-    ltracein(90);
+    cdebug.log(149) << "AutoSegment::_preDestroy() - " << (void*)this << endl;
+    cdebug.tabw(145,1);
 
     _observers.notify( Destroy );
 
     Session::unlink( this );
-    ltraceout(90);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -418,8 +420,8 @@ namespace Katabatic {
     if (flags & KbTarget) setFlags( SegInvalidatedTarget );
     if (isInvalidated()) return;
 
-    ltrace(200) << "AutoSegment::invalidate() " << flags << " " << this << endl;
-    ltracein(200);
+    cdebug.log(149) << "AutoSegment::invalidate() " << flags << " " << this << endl;
+    cdebug.tabw(149,1);
 
     _invalidate();
 
@@ -428,14 +430,14 @@ namespace Katabatic {
         isegment->_invalidate();
       }
     }
-    ltraceout(200);
+    cdebug.tabw(149,-1);
   }
 
 
   void  AutoSegment::_invalidate ()
   {
     if (isInvalidated()) return;
-    ltrace(110) << "AutoSegment::_invalidate() " << this << endl;
+    cdebug.log(145) << "AutoSegment::_invalidate() " << this << endl;
 
     setFlags( SegInvalidated );
     Session::invalidate( this );
@@ -454,10 +456,10 @@ namespace Katabatic {
 
   void  AutoSegment::revalidate ()
   {
-    ltrace(200) << "AutoSegment::revalidate() " << this << endl;
+    cdebug.log(149) << "AutoSegment::revalidate() " << this << endl;
     if (not isInvalidated()) return;
 
-    ltracein(200);
+    cdebug.tabw(149,1);
 
     updateOrient   ();
     updatePositions();
@@ -465,25 +467,29 @@ namespace Katabatic {
     unsigned int oldSpinFlags = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
-      const Layer*  contactLayer = getAutoSource()->getLayer();
+      AutoContact*  source       = getAutoSource();
+      const Layer*  contactLayer = source->getLayer();
       const Layer*  segmentLayer = getLayer();
-      ltrace(200) << "Changed source: " << getAutoSource() << endl;
+      cdebug.log(149) << "Changed source: " << source << endl;
 
       unsetFlags( SegSourceTop|SegSourceBottom );
-      if (contactLayer != segmentLayer) {
+      if (contactLayer != segmentLayer)
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegSourceBottom : SegSourceTop ); 
-      }
+      if (source->isTurn() and source->getPerpandicular(this)->isReduced())
+        incReduceds();
     }
 
     if (_flags & (SegInvalidatedTarget|SegCreated)) {
-      const Layer*  contactLayer = getAutoTarget()->getLayer();
+      AutoContact*  target       = getAutoTarget();
+      const Layer*  contactLayer = target->getLayer();
       const Layer*  segmentLayer = getLayer();
-      ltrace(200) << "Changed target: " << getAutoTarget() << endl;
+      cdebug.log(149) << "Changed target: " << target << endl;
 
       unsetFlags( SegTargetTop|SegTargetBottom );
-      if (contactLayer != segmentLayer) {
+      if (contactLayer != segmentLayer)
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegTargetBottom : SegTargetTop ); 
-      }
+      if (target->isTurn() and target->getPerpandicular(this)->isReduced())
+        incReduceds();
     }
 
     unsigned int observerFlags = Revalidate;
@@ -499,8 +505,8 @@ namespace Katabatic {
 
     _observers.notify( observerFlags );
 
-    ltrace(200) << "Updated: " << this << endl;
-    ltraceout(200);
+    cdebug.log(149) << "Updated: " << this << endl;
+    cdebug.tabw(149,-1);
   }
 
 
@@ -514,21 +520,6 @@ namespace Katabatic {
       }
     }
     return false;
-  }
-
-
-  bool  AutoSegment::isSameLayerDogleg () const
-  {
-    if (not isSpinTopOrBottom()) return false;
-
-    unsigned int perpandicularDepth = getDepth() + (isSpinTop() ? 1 : -1);
-    if (perpandicularDepth >= Session::getDepth()) {
-      cerr << this << " isSpinTop too high." << endl;
-    }
-    perpandicularDepth = Session::getDepth() - 1;
-
-    return (getLength() > (Session::getPitch(perpandicularDepth)))
-      and  (getLength() < (Session::getPitch(perpandicularDepth) * 3));
   }
 
 
@@ -567,14 +558,14 @@ namespace Katabatic {
 
   AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max )
   {
-    ltrace(89) << "AutoSegment::getCanonical() - " << this << endl;
+    cdebug.log(145) << "AutoSegment::getCanonical() - " << this << endl;
 
     min = getSourcePosition ();
     max = getTargetPosition ();
 
     if (max < min) swap( min, max );
 
-  //ltrace(89) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
+  //cdebug.log(145) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
 
     AutoSegment* canonical    = this;
     size_t       canonicals   = isCanonical();
@@ -597,8 +588,8 @@ namespace Katabatic {
         
         aligneds++;
       }
-    //ltrace(89) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
-      ltrace(89) << "Canonical: " << canonical << endl;
+    //cdebug.log(145) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
+      cdebug.log(145) << "Canonical: " << canonical << endl;
 
       if ( (canonicals > 1) or ( not canonicals and (aligneds > 2) ) ) {
         cerr << Bug("AutoSegment::getCanonical(): %p:%s"
@@ -640,7 +631,7 @@ namespace Katabatic {
 
   AutoSegments  AutoSegment::getAligneds ( unsigned int flags )
   {
-    ltrace(89) << "AutoSegment::getAligneds() - flags:" << flags << endl;
+    cdebug.log(145) << "AutoSegment::getAligneds() - flags:" << flags << endl;
     return AutoSegments_Aligneds( this, flags );
   }
 
@@ -706,6 +697,11 @@ namespace Katabatic {
   {
     AutoContact* source = getAutoSource();
     if (source) {
+      if (source->isTurn()) {
+        AutoSegment* perpandicular = source->getPerpandicular(this);
+        if (perpandicular and perpandicular->isReduced())
+          decReduceds();
+      }
       base()->getSourceHook()->detach();
       source->cacheDetach( this );
       unsetFlags( SegNotSourceAligned );
@@ -718,6 +714,11 @@ namespace Katabatic {
   {
     AutoContact* target = getAutoTarget();
     if (target) {
+      if (target->isTurn()) {
+        AutoSegment* perpandicular = target->getPerpandicular(this);
+        if (perpandicular and perpandicular->isReduced())
+          decReduceds();
+      }
       base()->getTargetHook()->detach();
       target->cacheDetach( this );
       unsetFlags( SegNotTargetAligned );
@@ -756,18 +757,17 @@ namespace Katabatic {
 
   void  AutoSegment::mergeUserConstraints ( const Interval& constraints )
   {
-    ltrace(200) << "mergeUserConstraints() " << this << endl;
-    ltrace(200) << "| " << constraints << " merged with " << _userConstraints << endl;
+    cdebug.log(149) << "mergeUserConstraints() " << this << endl;
+    cdebug.log(149) << "| " << constraints << " merged with " << _userConstraints << endl;
     _userConstraints.intersection(constraints);
   }
 
 
   bool  AutoSegment::toConstraintAxis ( unsigned int flags )
   {
-    ltrace(200) << "toConstraintAxis() " << this << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "toConstraintAxis() " << this << endl;
 
-    if (not isCanonical()) { ltraceout(200); return false; }
+    if (not isCanonical()) { cdebug.tabw(149,-1); return false; }
 
     DbU::Unit constraintMin;
     DbU::Unit constraintMax;
@@ -775,7 +775,7 @@ namespace Katabatic {
     getConstraints( constraintMin, constraintMax );
 
   // Empty constraint interval: ignore.
-    if (constraintMin > constraintMax) { ltraceout(200); return false; }
+    if (constraintMin > constraintMax) { cdebug.tabw(149,-1); return false; }
 
     if (isDogleg()) {
       DbU::Unit halfSideLength = getAutoSource()->getGCell()->getSide
@@ -786,27 +786,26 @@ namespace Katabatic {
 
     if (getAxis() < constraintMin) {
       setAxis( constraintMin, flags );
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return true;
     }
 
     if (getAxis() > constraintMax) {
       setAxis( constraintMax, flags );
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return true;
     }
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
     return false;
   }
 
 
   bool  AutoSegment::toOptimalAxis ( unsigned int flags )
   {
-    ltrace(200) << "toOptimalAxis() " << this << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "toOptimalAxis() " << this << endl;
 
-    if (not isCanonical()) { ltraceout(200); return false; }
+    if (not isCanonical()) { cdebug.tabw(149,-1); return false; }
 
     DbU::Unit constraintMin;
     DbU::Unit constraintMax;
@@ -818,19 +817,19 @@ namespace Katabatic {
 
     if (getAxis() < optimalMin) {
       setAxis( optimalMin, flags );
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return true;
     }
 
     if (getAxis() > optimalMax) {
       setAxis( optimalMax, flags );
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return true;
     }
 
     if (flags & KbRealignate) setAxis( getAxis(), flags );
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
     return false;
   }
 
@@ -841,10 +840,10 @@ namespace Katabatic {
 
     if ( (axis == getAxis()) and not (flags & KbRealignate) ) return;
 
-    ltrace(200) << "setAxis() @"
+    cdebug.log(149) << "setAxis() @"
                 << ((isHorizontal())?"Y ":"X ") << DbU::toLambda(getAxis())
                 << " to " << DbU::toLambda(axis) << " on " << this << endl;
-    ltracein(80);
+    cdebug.tabw(145,1);
 
     _setAxis( axis );
 
@@ -853,10 +852,10 @@ namespace Katabatic {
         isegment->_setAxis( getAxis() );
       }
     } else {
-      ltrace(200) << "No need to process parallels." << endl;
+      cdebug.log(149) << "No need to process parallels." << endl;
     }
 
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
 
@@ -865,16 +864,20 @@ namespace Katabatic {
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
-    ltrace(99) << "computeTerminal() S:" << source->isTerminal()
+    cdebug.log(145) << "computeTerminal() S:" << source->isTerminal()
                << " T:" << target->isTerminal()
                << " " << this << endl;
 
     if (source->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegSourceTerminal );
+      if (not target->isTerminal())
+        target->setFlags( CntWeakTerminal );
     } else if (target->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegTargetTerminal );
+      if (not source->isTerminal())
+        source->setFlags( CntWeakTerminal );
     } else {
       unsigned int terminalFlag = 0;
       switch ( _getFlags() & SegWeakTerminal ) {
@@ -899,8 +902,7 @@ namespace Katabatic {
 
   void  AutoSegment::computeOptimal ( set<AutoSegment*>& processeds )
   {
-    ltrace(89) << "computeOptimal() - " << this << endl;
-    ltracein(89);
+    cdebug.log(145,1) << "computeOptimal() - " << this << endl;
 
     DbU::Unit  optimalMin;
     DbU::Unit  optimalMax;
@@ -951,10 +953,9 @@ namespace Katabatic {
       }
   
       forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
-        ltrace(89) << "Perpandicular " << *autoSegment << endl;
-        ltracein(89);
+        cdebug.log(145,1) << "Perpandicular " << *autoSegment << endl;
         if (autoSegment->isLocal()) {
-          if (not autoSegment->isStrongTerminal()) { ltraceout(89); continue; }
+          if (not autoSegment->isStrongTerminal()) { cdebug.tabw(145,-1); continue; }
   
           DbU::Unit  terminalMin;
           DbU::Unit  terminalMax;
@@ -978,12 +979,12 @@ namespace Katabatic {
             isMin = false;
           attractors.addAttractor( (isMin) ? minGCell : maxGCell );
         }
-        ltraceout(89);
+        cdebug.tabw(145,-1);
       }
   
       if (attractors.getAttractorsCount()) {
-        ltrace(89) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
-        ltrace(89) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
+        cdebug.log(145) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
+        cdebug.log(145) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
   
         optimalMin = attractors.getLowerMedian();
         optimalMax = attractors.getUpperMedian();
@@ -997,29 +998,29 @@ namespace Katabatic {
     setInBound( constraintMin, constraintMax, optimalMin );
     setInBound( constraintMin, constraintMax, optimalMax );
 
-    ltrace(89) << "Applying constraint on: " << this << endl;
+    cdebug.log(145) << "Applying constraint on: " << this << endl;
     setOptimalMin( optimalMin );
     setOptimalMax( optimalMax );
     processeds.insert( this );
     if (not isNotAligned()) {
       forEach ( AutoSegment*, autoSegment, getAligneds() ) {
-        ltrace(89) << "Applying constraint on: " << *autoSegment << endl;
+        cdebug.log(145) << "Applying constraint on: " << *autoSegment << endl;
         autoSegment->setOptimalMin( optimalMin );
         autoSegment->setOptimalMax( optimalMax );
         processeds.insert( (*autoSegment) );
       }
     }
 
-    ltraceout(89);
+    cdebug.tabw(145,-1);
   }
 
 
   AutoSegment* AutoSegment::canonize ( unsigned int flags )
   {
-    ltrace(159) << "canonize() - " << this << endl;
+    cdebug.log(149) << "canonize() - " << this << endl;
 
     // if (isCanonical() and isGlobal()) {
-    //   ltrace(159) << "* " << this << " canonical" << endl;
+    //   cdebug.log(149) << "* " << this << " canonical" << endl;
     //   return this;
     // }
 
@@ -1037,7 +1038,7 @@ namespace Katabatic {
 
         if (not hasCanonical) {
           if (isegment->isCanonical()) {
-            ltrace(159) << "* " << *isegment << " canonical already set" << endl;
+            cdebug.log(149) << "* " << *isegment << " canonical already set" << endl;
             canonical    = *isegment;
             hasCanonical = true;
           }
@@ -1058,10 +1059,10 @@ namespace Katabatic {
       }
       if (segments.empty()) setFlags( SegNotAligned );
 
-      if (isCanonical()) { ltrace(159) << "* " << this << " canonical" << endl; }
+      if (isCanonical()) { cdebug.log(149) << "* " << this << " canonical" << endl; }
       else {
-        ltrace(159) << "* " << this << " not canonical" << endl;
-        ltrace(159) << "* " << canonical << " *is* the canonical" << endl;
+        cdebug.log(149) << "* " << this << " not canonical" << endl;
+        cdebug.log(149) << "* " << canonical << " *is* the canonical" << endl;
       }
     } else {
       setFlags  ( SegCanonical  );
@@ -1149,10 +1150,117 @@ namespace Katabatic {
   }
 
 
+  bool  AutoSegment::isUTurn () const
+  {
+    if (isGlobal()) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    cerr << "AutoSegment::isUTurn():" << endl;
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+
+    cerr << "  Turn connected" << endl;
+
+    AutoSegment* perpandicular = source->getPerpandicular( this );
+    bool onPSourceSource = (perpandicular->getAutoSource() == source);
+
+    perpandicular = target->getPerpandicular( this );
+    bool onPTargetSource = (perpandicular->getAutoSource() == target);
+
+    cerr << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
+
+    return not (onPSourceSource xor onPTargetSource);
+  }
+
+
+  bool  AutoSegment::isReduceCandidate () const
+  {
+    if (isGlobal()) return false;
+    if (not isSpinTopOrBottom()) return false;
+    if (_reduceds) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+
+    return true;
+  }
+
+
+  bool  AutoSegment::canReduce () const
+  {
+    if (isGlobal()) return false;
+    if (not isSpinTopOrBottom()) return false;
+    if (_reduceds) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+
+    unsigned int perpandicularDepth = getDepth();
+    if (isSpinBottom()) --perpandicularDepth;
+    else if (isSpinTop()) {
+      ++perpandicularDepth;
+      if (perpandicularDepth >= Session::getDepth()) return false;
+    } else
+      return false;
+
+    if (getLength() >= (Session::getPitch(perpandicularDepth) * 2)) return false;
+
+    return true;
+  }
+
+
+  bool  AutoSegment::reduce ()
+  {
+    if (not canReduce()) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    _flags |= SegIsReduced;
+    source->getPerpandicular( this )->incReduceds();
+    target->getPerpandicular( this )->incReduceds();
+    
+    return true;
+  }
+
+
+  bool  AutoSegment::mustRaise () const
+  {
+    if (not (_flags & SegIsReduced)) return false;
+
+    unsigned int perpandicularDepth = getDepth();
+    if      (isSpinBottom()) --perpandicularDepth;
+    else if (isSpinTop   ()) ++perpandicularDepth;
+    else return true;
+
+    return (getLength() >= (Session::getPitch(perpandicularDepth) * 2));
+  }
+
+
+  bool  AutoSegment::raise ()
+  {
+    if (not (_flags & SegIsReduced)) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    _flags &= ~SegIsReduced;
+    source->getPerpandicular( this )->decReduceds();
+    target->getPerpandicular( this )->decReduceds();
+
+    return true;
+  }
+
+
   void  AutoSegment::changeDepth ( unsigned int depth, unsigned int flags )
   {
-    ltrace(200) << "changeDepth() " << depth << " - " << this << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "changeDepth() " << depth << " - " << this << endl;
     Session::invalidate( getNet() );
 
     _changeDepth( depth, flags & ~KbPropagate );
@@ -1163,14 +1271,13 @@ namespace Katabatic {
       }
     }
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
   }
 
 
   void  AutoSegment::_changeDepth ( unsigned int depth, unsigned int flags )
   {
-    ltrace(200) << "_changeDepth() - " << this << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "_changeDepth() - " << this << endl;
 
     invalidate( KbNoFlags );
     setFlags( SegInvalidatedLayer|SegInvalidatedSource|SegInvalidatedTarget );
@@ -1184,7 +1291,7 @@ namespace Katabatic {
     }
 
     if (not (flags & KbWithNeighbors)) {
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return;
     }
 
@@ -1215,13 +1322,13 @@ namespace Katabatic {
     for ( size_t i=0 ; i<gcells.size() ; ++i )
       gcells[i]->invalidate();
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
   }
 
 
   bool  AutoSegment::canSlacken ( unsigned int flags ) const
   {
-    ltrace(200) << "AutoSegment::canSlacken()" << endl;
+    cdebug.log(149) << "AutoSegment::canSlacken()" << endl;
 
     if (not isGlobal() and not (flags & KbPropagate)) return false;
 
@@ -1254,7 +1361,7 @@ namespace Katabatic {
 
   float  AutoSegment::getMaxUnderDensity ( unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::getMaxUnderDensity() " << endl;
+    cdebug.log(149) << "AutoSegment::getMaxUnderDensity() " << endl;
 
     GCell* begin = NULL;
     GCell* end   = NULL;
@@ -1290,7 +1397,7 @@ namespace Katabatic {
 
   bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags ) const
   {
-    ltrace(200) << "AutoSegment::canPivotUp() - " << flags
+    cdebug.log(149) << "AutoSegment::canPivotUp() - " << flags
                 << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange()    or isFixed() ) return false;
@@ -1306,9 +1413,9 @@ namespace Katabatic {
     }
 
     if ( not (flags&KbIgnoreContacts) ) {
-      ltrace(200) << getAutoSource() << endl;
-      ltrace(200) << getAutoTarget() << endl;
-      ltrace(200) << "min depths, Segment:" << depth
+      cdebug.log(149) << getAutoSource() << endl;
+      cdebug.log(149) << getAutoTarget() << endl;
+      cdebug.log(149) << "min depths, Segment:" << depth
                   <<            " S:" << getAutoSource()->getMinDepth()
                   <<            " T:" << getAutoTarget()->getMinDepth() << endl;
 
@@ -1326,11 +1433,11 @@ namespace Katabatic {
         if (isegment->getAutoTarget()->getMinDepth() < depth) return false;
       }
     } else {
-      ltrace(200) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
+      cdebug.log(149) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
       return true;
     }
 
-    ltrace(200) << "AutoSegment::canPivotUp() - true [propagate]" << endl;
+    cdebug.log(149) << "AutoSegment::canPivotUp() - true [propagate]" << endl;
 
     return true;
   }
@@ -1338,7 +1445,7 @@ namespace Katabatic {
 
   bool  AutoSegment::canPivotDown ( float reserve, unsigned int flags ) const
   {
-    ltrace(200) << "AutoSegment::canPivotDown()"
+    cdebug.log(149) << "AutoSegment::canPivotDown()"
                 << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange()    or isFixed() ) return false;
@@ -1353,16 +1460,16 @@ namespace Katabatic {
       if (not gcells[i]->hasFreeTrack(depth-2,reserve)) return false;
     }
 
-    ltrace(200) << getAutoSource() << endl;
-    ltrace(200) << getAutoTarget() << endl;
-    ltrace(200) << "max depths, Segment:" << depth
+    cdebug.log(149) << getAutoSource() << endl;
+    cdebug.log(149) << getAutoTarget() << endl;
+    cdebug.log(149) << "max depths, Segment:" << depth
                 <<            " S:" << getAutoSource()->getMaxDepth()
                 <<            " T:" << getAutoTarget()->getMaxDepth() << endl;
 
     if (getAutoSource()->getMaxDepth() > depth) return false;
     if (getAutoTarget()->getMaxDepth() > depth) return false;
     if (not (flags & KbPropagate)) {
-      ltrace(200) << "AutoSegment::canPivotDown() - true [no propagate]" << endl;
+      cdebug.log(149) << "AutoSegment::canPivotDown() - true [no propagate]" << endl;
       return true;
     }
 
@@ -1377,7 +1484,7 @@ namespace Katabatic {
       }
     }
 
-    ltrace(200) << "AutoSegment::canPivotDown() - true [propagate]" << endl;
+    cdebug.log(149) << "AutoSegment::canPivotDown() - true [propagate]" << endl;
 
     return true;
   }
@@ -1385,11 +1492,12 @@ namespace Katabatic {
 
   bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags ) const
   {
-    ltrace(200) << "AutoSegment::canMoveUp() " << flags
+    cdebug.log(149) << "AutoSegment::canMoveUp() " << flags
                 << " (reserve:" << reserve << ")" << endl;
 
-    GCell* begin = NULL;
-    GCell* end   = NULL;
+    bool   lowDensity = true;
+    GCell* begin      = NULL;
+    GCell* end        = NULL;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isStrongTerminal() and (not (flags & KbAllowTerminal)) ) return false;
@@ -1404,13 +1512,14 @@ namespace Katabatic {
     end   = *gcells.rbegin();
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+      if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.5) ) lowDensity = false;
       if (not gcells[i]->hasFreeTrack(depth,reserve)) {
-        ltrace(200) << "Not enough free track in " << gcells[i] << endl;
+        cdebug.log(149) << "Not enough free track in " << gcells[i] << endl;
         return false;
       }
     }
 
-    ltrace(200) << "Enough free track under canonical segment." << endl;
+    cdebug.log(149) << "Enough free track under canonical segment." << endl;
 
     if ( isLocal() and not (flags & KbPropagate) ) {
       if (not getAutoSource()->canMoveUp(this)) return false;
@@ -1429,30 +1538,33 @@ namespace Katabatic {
         if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+          if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.6) ) lowDensity = false;
           if (not gcells[i]->hasFreeTrack(depth,reserve)) {
-            ltrace(200) << "Not enough free track in " << gcells[i] << endl;
+            cdebug.log(149) << "Not enough free track in " << gcells[i] << endl;
             return false;
           }
         }
       }
     }
 
+    if (lowDensity and (flags & KbCheckLowDensity)) return false;
+
     if ( (depth >= 4) and (flags & KbWithPerpands) ) {
       float fragmentation = begin->getFragmentation( depth-1 );
-      ltrace(200) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
+      cdebug.log(149) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
 
       if (fragmentation < 0.5) {
-        ltrace(200) << "Not enough free track for perpandicular in begin GCell "
+        cdebug.log(149) << "Not enough free track for perpandicular in begin GCell "
                     << "(frag:" << fragmentation << ")."
                     << endl;
         return false;
       }
 
       fragmentation = end->getFragmentation( depth-1 );
-      ltrace(200) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
+      cdebug.log(149) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
 
       if (fragmentation < 0.5) {
-        ltrace(200) << "Not enough free track for perpandicular in end GCell "
+        cdebug.log(149) << "Not enough free track for perpandicular in end GCell "
                     << "(frag:" << fragmentation << ")."
                     << endl;
         return false;
@@ -1481,12 +1593,38 @@ namespace Katabatic {
   }
 
 
+  bool  AutoSegment::reduceDoglegLayer ()
+  {
+    if (not isReduced()) return true;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    unsigned int perpandicularDepth = getDepth();
+    if (isSpinBottom()) --perpandicularDepth;
+    if (isSpinTop   ()) ++perpandicularDepth;
+
+    if (perpandicularDepth == getDepth()) {
+      cerr << Bug( "AutoSegment::reduceDoglegLayer(): Reduced segment spin is neither top (TT) nor bottom (BB).\n"
+                   "      %s"
+                 , getString(this).c_str() ) << endl;
+      return false;
+    }
+
+    source->setLayer( Session::getRoutingLayer(perpandicularDepth) );
+    target->setLayer( Session::getRoutingLayer(perpandicularDepth) );
+    setLayer( Session::getRoutingLayer(perpandicularDepth) );
+
+    return true;
+  }
+
+
 #if THIS_IS_DISABLED
 
 
   bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::shearUp() " << this << endl;
+    cdebug.log(149) << "AutoSegment::shearUp() " << this << endl;
 
     movedUp = NULL;
 
@@ -1513,7 +1651,7 @@ namespace Katabatic {
     GCell* rightShear = NULL;
     for ( size_t i=iupGCell ; i<gcells.size() ; i++ ) {
       if ( not gcells[i]->hasFreeTrack(upDepth,reserve) ) {
-        ltrace(200) << "Right shearing @ " << gcells[i] << endl;
+        cdebug.log(149) << "Right shearing @ " << gcells[i] << endl;
         rightShear = gcells[i];
       }
     }
@@ -1524,7 +1662,7 @@ namespace Katabatic {
       do {
         --i;
         if ( not gcells[i]->hasFreeTrack(upDepth,reserve) ) {
-          ltrace(200) << "Left shearing @ " << gcells[i] << endl;
+          cdebug.log(149) << "Left shearing @ " << gcells[i] << endl;
           leftShear = gcells[i];
         }
       } while (i > 0);
@@ -1557,7 +1695,7 @@ namespace Katabatic {
 
   unsigned int  AutoSegment::canDogleg ( Interval interval )
   {
-    ltrace(200) << "AutoSegment::canDogleg(Interval) " << interval << endl;
+    cdebug.log(149) << "AutoSegment::canDogleg(Interval) " << interval << endl;
 
     size_t  leftDogleg  = 0;
     size_t  rightDogleg = 0;
@@ -1580,7 +1718,7 @@ namespace Katabatic {
     if ( (leftDogleg == 1) and (rightDogleg <= 1) ) return KbDoglegOnLeft;
     if ( (leftDogleg <= 1) and (rightDogleg == 1) ) return KbDoglegOnRight;
 
-    ltrace(200) << "leftCount:" << leftDogleg << " rightCount:" << rightDogleg << endl;
+    cdebug.log(149) << "leftCount:" << leftDogleg << " rightCount:" << rightDogleg << endl;
 
     return 0;
   }
@@ -1588,9 +1726,8 @@ namespace Katabatic {
 
   AutoSegment* AutoSegment::makeDogleg ( AutoContact* from )
   {
-    ltrace(200) << "AutoSegment::makeDogleg(AutoContact*) " << from << endl;
-    ltracein(200);
-    ltrace(200) << this << endl;
+    cdebug.log(149,1) << "AutoSegment::makeDogleg(AutoContact*) " << from << endl;
+    cdebug.log(149)   << this << endl;
 
     RoutingGauge*               rg           = Session::getRoutingGauge();
     size_t                      segmentDepth = rg->getLayerDepth( getLayer() );
@@ -1598,72 +1735,71 @@ namespace Katabatic {
     size_t                      index        = doglegs.size();
     bool                        isSource     = (getAutoSource() == from);
 
-    ltrace(200) << "isSource:" << isSource << endl;
+    cdebug.log(149) << "isSource:" << isSource << endl;
 
     makeDogleg( from->getGCell(), KbNoCheckLayer );
     if (doglegs.size() == index) {
-      ltraceout(200);
+      cdebug.tabw(149,-1);
       return NULL;
     }
     doglegs[ index+1 ]->setAxis( isHorizontal() ? from->getX() : from->getY() );
 
     if (not from->getLayer()->contains(getLayer())) {
-      ltrace(200) << "Contact layer do not contains Segment layer, adjust layers" << endl;
+      cdebug.log(149) << "Contact layer do not contains Segment layer, adjust layers" << endl;
 
       if (getLayer()->above(from->getLayer())) {
-        ltrace(200) << "Go Down from depth " << segmentDepth << endl;
+        cdebug.log(149) << "Go Down from depth " << segmentDepth << endl;
 
         doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth-1) );
-        ltrace(200) << "doglegs[i+1]: " << doglegs[index+1] << endl;
+        cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1] << endl;
 
         if (isSource) {
           doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-1) );
-          ltrace(200) << "doglegs[i+0]: " << doglegs[index+0] << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          cdebug.log(149) << "doglegs[i+0]: " << doglegs[index+0] << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
           doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-1) );
-          ltrace(200) << "doglegs[i+2]: " << doglegs[index+2] << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          cdebug.log(149) << "doglegs[i+2]: " << doglegs[index+2] << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
         }
       } else {
-        ltrace(200) << "Go Up from depth " << segmentDepth << endl;
+        cdebug.log(149) << "Go Up from depth " << segmentDepth << endl;
 
         doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth+1) );
-        ltrace(200) << "doglegs[i+1]: " << doglegs[index+1] << endl;
+        cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1] << endl;
 
         if (isSource) {
           doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth+1) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth  ) );
-          ltrace(200) << "doglegs[i+0]: " << doglegs[index+0] << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          cdebug.log(149) << "doglegs[i+0]: " << doglegs[index+0] << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
           doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth+1) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth  ) );
-          ltrace(200) << "doglegs[i+2]: " << doglegs[index+2] << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
-          ltrace(200) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
+          cdebug.log(149) << "doglegs[i+2]: " << doglegs[index+2] << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
+          cdebug.log(149) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
         }
       }
     }
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
     return doglegs[ index + (isSource?0:2) ];
   }
 
 
   unsigned int  AutoSegment::makeDogleg ( Interval interval, unsigned int flags )
   {
-    ltrace(200) << "AutoSegment::makeDogleg(Interval) - " << interval << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "AutoSegment::makeDogleg(Interval) - " << interval << endl;
 
     bool         leftDogleg       = true;
     unsigned int rflags           = 0;
@@ -1682,7 +1818,7 @@ namespace Katabatic {
       }
     }
 
-    if ( (leftDoglegCount != 1) and (rightDoglegCount != 1) )  { ltraceout(200); return 0; }
+    if ( (leftDoglegCount != 1) and (rightDoglegCount != 1) )  { cdebug.tabw(149,-1); return 0; }
     if (not leftDoglegCount) {
       leftDogleg     = false;
       leftCandidate  = rightCandidate;
@@ -1690,8 +1826,8 @@ namespace Katabatic {
     }
     
     if (leftCandidate and rightCandidate) {
-      ltrace(200) << "Left  Constraint: " << leftCandidate->getSourceConstraints(KbNativeConstraints) << endl;
-      ltrace(200) << "Right Constraint: " << rightCandidate->getTargetConstraints(KbNativeConstraints) << endl;
+      cdebug.log(149) << "Left  Constraint: " << leftCandidate->getSourceConstraints(KbNativeConstraints) << endl;
+      cdebug.log(149) << "Right Constraint: " << rightCandidate->getTargetConstraints(KbNativeConstraints) << endl;
 
       if ( leftCandidate ->getTargetConstraints(KbNativeConstraints).getSize()
          < rightCandidate->getSourceConstraints(KbNativeConstraints).getSize() ) {
@@ -1711,7 +1847,7 @@ namespace Katabatic {
       if (leftDogleg) axis = interval.getVMin() - getPitch();
       else            axis = interval.getVMax() + getPitch();
 
-      ltrace(200) << "Break @" << DbU::getValueString(axis) << " " << leftCandidate << endl;
+      cdebug.log(149) << "Break @" << DbU::getValueString(axis) << " " << leftCandidate << endl;
 
       unsigned int direction = getDirection();
       GCell*       gcell     = leftCandidate->getAutoSource()->getGCell();
@@ -1721,26 +1857,26 @@ namespace Katabatic {
         gcell = (direction == KbHorizontal) ? gcell->getRight() : gcell->getUp();
       }
 
-      ltrace(200) << "In " << gcell << endl;
+      cdebug.log(149) << "In " << gcell << endl;
       rflags = leftCandidate->_makeDogleg( gcell, flags );
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (doglegs.size() >= 2) {
-        ltrace(200) << "AutoSegment::makeDogleg(): @" << DbU::getValueString(axis) << endl;
+        cdebug.log(149) << "AutoSegment::makeDogleg(): @" << DbU::getValueString(axis) << endl;
         doglegs[1]->setAxis( axis );
       }
     }
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
     return rflags | (leftDogleg ? KbDoglegOnLeft : KbDoglegOnRight);
   }
 
 
   unsigned int  AutoSegment::makeDogleg ( GCell* doglegGCell, unsigned int flags )
   {
-    ltrace(500) << "Deter| AutoSegment::makeDogleg(GCell*) " << doglegGCell << endl;
-    ltrace(500) << "Deter| in " << this << endl;
-    ltracein(160);
+    cdebug.log(9000) << "Deter| AutoSegment::makeDogleg(GCell*) " << doglegGCell << endl;
+    cdebug.log(9000) << "Deter| in " << this << endl;
+    cdebug.tabw(149,1);
 
     unsigned int  rflags = 0;
 
@@ -1760,17 +1896,17 @@ namespace Katabatic {
     }
 
     if (doglegGCell->getSide(getDirection()).intersect(getSpanU())) {
-      ltrace(159) << "Dogleg in " << this << endl;
+      cdebug.log(149) << "Dogleg in " << this << endl;
       rflags = _makeDogleg( doglegGCell, flags );
     } else {
-      ltrace(159) << "Looking in aligneds." << endl;
+      cdebug.log(149) << "Looking in aligneds." << endl;
       if (not isNotAligned()) {
         forEach ( AutoSegment*, aligned, getAligneds(flags) ) {
-          ltrace(159) << "| Try in " << *aligned << endl;
+          cdebug.log(149) << "| Try in " << *aligned << endl;
           if (doglegGCell->getSide(getDirection()).intersect(aligned->getSpanU())) {
-            ltrace(159) << "Dogleg in " << *aligned << endl;
+            cdebug.log(149) << "Dogleg in " << *aligned << endl;
             rflags = aligned->_makeDogleg( doglegGCell, flags );
-            ltraceout(160);
+            cdebug.tabw(149,-1);
             return 0;
           }
         }
@@ -1778,7 +1914,7 @@ namespace Katabatic {
       cerr << Bug("Cannot make a dogleg in %s at %s"
                  ,_getString().c_str(), getString(doglegGCell).c_str()) << endl;
     }
-    ltraceout(160);
+    cdebug.tabw(149,-1);
 
     return rflags;
   }
@@ -1811,6 +1947,7 @@ namespace Katabatic {
     state += isWeakTerminal2 () ? "w": "-";
     state += isNotAligned    () ? "A": "-";
     state += isSlackened     () ? "S": "-";
+    state += isReduced       () ? "r": "-";
     state += isInvalidated   () ? "i": "-";
 
     if      (_flags & SegSourceTop)    state += 'T';
@@ -1865,8 +2002,8 @@ namespace Katabatic {
     Vertical*    vertical   = dynamic_cast<Vertical*  >( hurricaneSegment );
     AutoContact* reference = source;
 
-    ltrace(159) << "Source:" << source << endl;
-    ltrace(159) << "Target:" << target << endl;
+    cdebug.log(149) << "Source:" << source << endl;
+    cdebug.log(149) << "Target:" << target << endl;
 
     if (target->isFixed()) {
       if (source->isFixed()) {
@@ -1968,18 +2105,34 @@ namespace Katabatic {
   AutoSegment* AutoSegment::create ( AutoContact*  source
                                    , AutoContact*  target
                                    , unsigned int  dir
+                                   , size_t        depth
                                    )
   {
-    static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
-    static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
-    static DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
+  // Hardcoded: make the assumption that,
+  //    depth=0 is terminal reserved  |  METAL1
+  //    depth=1 is horizontal         |  METAL2
+  //    depth=2 is vertical           |  METAL3
+  // Should be based on gauge informations.
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    static const Layer* vLayer = Session::getRoutingLayer( 2 );
+    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+
+    const Layer* horizontalLayer = hLayer;
+    DbU::Unit    horizontalWidth = hWidth;
+    const Layer* verticalLayer   = vLayer;
+    DbU::Unit    verticalWidth   = vWidth;
+
+    if (depth != RoutingGauge::nlayerdepth) {
+      horizontalLayer = verticalLayer = Session::getRoutingLayer( depth );
+      horizontalWidth = verticalWidth = Session::getWireWidth   ( depth );
+    }
 
     AutoSegment* segment;
     AutoContact* reference = source;
 
-    ltrace(159) << "Source:" << source << endl;
-    ltrace(159) << "Target:" << target << endl;
+    cdebug.log(149) << "Source:" << source << endl;
+    cdebug.log(149) << "Target:" << target << endl;
 
     if (target->isFixed()) {
       if (source->isFixed()) {
@@ -2034,8 +2187,7 @@ namespace Katabatic {
 
   bool  AutoSegment::isTopologicalBound ( AutoSegment* seed, unsigned int flags )
   {
-    ltrace(80) << "isTopologicalBound() - " << seed << endl;
-    ltracein(80);
+    cdebug.log(145,1) << "isTopologicalBound() - " << seed << endl;
 
     set<AutoContact*>     exploreds;
     vector<AutoContact*>  stack;
@@ -2044,7 +2196,7 @@ namespace Katabatic {
     if (flags & KbSuperior) axis = seed->getTargetU();
     else                    axis = seed->getSourceU();
 
-    ltrace(80) << "check for bound " << DbU::getValueString(axis) << endl;
+    cdebug.log(145) << "check for bound " << DbU::getValueString(axis) << endl;
 
     exploreds.insert( seed->getAutoSource() );
     exploreds.insert( seed->getAutoTarget() );
@@ -2061,11 +2213,11 @@ namespace Katabatic {
       AutoContact* currentContact = stack.back();
       stack.pop_back();
 
-      ltrace(80) << "Exploring: " << (void*)currentContact << " " << currentContact << endl;
+      cdebug.log(145) << "Exploring: " << (void*)currentContact << " " << currentContact << endl;
 
       exploreds.insert( currentContact );
 
-      if (currentContact->getAnchor()) { ltraceout(80); return true; }
+      if (currentContact->getAnchor()) { cdebug.tabw(145,-1); return true; }
 
       forEach ( Component*, component, currentContact->getSlaveComponents() ) {
         Segment* segment = dynamic_cast<Segment*>( *component );
@@ -2092,17 +2244,17 @@ namespace Katabatic {
 
         if (autoSegment->isHorizontal() xor (flags & KbHorizontal)) continue;
 
-        ltrace(80) << "| " << autoSegment << endl;
+        cdebug.log(145) << "| " << autoSegment << endl;
 
         if (flags & KbSuperior) {
-          if (autoSegment->getTargetU() > axis) { ltraceout(80); return true; }
+          if (autoSegment->getTargetU() > axis) { cdebug.tabw(145,-1); return true; }
         } else {
-          if (autoSegment->getSourceU() < axis) { ltraceout(80); return true; }
+          if (autoSegment->getSourceU() < axis) { cdebug.tabw(145,-1); return true; }
         }
       }
     }
 
-    ltraceout(80);
+    cdebug.tabw(145,-1);
     return false;
   }
 
@@ -2152,8 +2304,7 @@ namespace Katabatic {
                                          , DbU::Unit&            rightBound
                                          )
   {
-    ltrace(80) << "getTopologicalInfos() - " << seed << endl;
-    ltracein(80);
+    cdebug.log(145,1) << "getTopologicalInfos() - " << seed << endl;
 
     leftBound  = DbU::Max;
     rightBound = DbU::Min;
@@ -2179,11 +2330,11 @@ namespace Katabatic {
       else                      constraint = sourceContact->getCBYMin();
       if (constraint > rightBound) rightBound = constraint;
 
-      ltrace(200) << "Segments of: " << sourceContact << endl;
+      cdebug.log(149) << "Segments of: " << sourceContact << endl;
       LocatorHelper helper (sourceContact, KbHorizontal|KbWithPerpands);
       for ( ; helper.isValid() ; helper.progress() ) {
         AutoSegment* currentSegment = helper.getSegment();
-        ltrace(200) << "Looking for: " << currentSegment << endl;
+        cdebug.log(149) << "Looking for: " << currentSegment << endl;
         if (currentSegment == sourceSegment) continue;
 
         if (AutoSegment::areAlignedsAndDiffLayer(currentSegment,seed)) {
@@ -2199,28 +2350,28 @@ namespace Katabatic {
           aligneds.push_back( currentSegment );
 
           AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
-          ltrace(200) << "Target: " << targetContact << endl;
+          cdebug.log(149) << "Target: " << targetContact << endl;
           if (targetContact) {
             if (  (seed->isHorizontal() and sourceContact->isHTee())
                or (seed->isVertical  () and sourceContact->isVTee()) ) {
-              ltrace(200) << "Stacking target. " << endl;
+              cdebug.log(149) << "Stacking target. " << endl;
               stack.push( targetContact, currentSegment );
             }
           }
         } else {
-          ltrace(200) << "| perpandicular " << currentSegment << endl; 
+          cdebug.log(149) << "| perpandicular " << currentSegment << endl; 
           perpandiculars.push_back( currentSegment );
         }
       }
     }
 
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
 
   int  AutoSegment::getTerminalCount ( AutoSegment* seed, vector<AutoSegment*>& collapseds )
   {
-    ltrace(80) << "getTerminalCount() - " << seed << " (+collapseds)" << endl;
+    cdebug.log(145) << "getTerminalCount() - " << seed << " (+collapseds)" << endl;
 
     int  count = 0;
     for ( size_t i=0 ; i < collapseds.size() ; i++ ) {

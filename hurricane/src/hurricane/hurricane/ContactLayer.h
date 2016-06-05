@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/ContactLayer.h"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_CONTACT_LAYER__
-#define  __HURRICANE_CONTACT_LAYER__
+#ifndef  HURRICANE_CONTACT_LAYER_H
+#define  HURRICANE_CONTACT_LAYER_H
 
 #include  <vector>
 
@@ -49,7 +40,12 @@
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::ContactLayer".
+
   class ContactLayer : public Layer {
+    public:
+      typedef  Layer  Super;
 
     public:
     // Constructor.
@@ -68,6 +64,7 @@ namespace Hurricane {
     // Updators.
       virtual void          setEnclosure   ( const BasicLayer* layer, DbU::Unit enclosure );
     // Hurricane Managment.
+      virtual void          _toJson        ( JsonWriter* ) const;
       virtual void          _onDbuChange   ( float scale );
       virtual string        _getTypeName   () const;
       virtual string        _getString     () const;
@@ -88,6 +85,20 @@ namespace Hurricane {
                    , BasicLayer* diffusionLayer
                    , BasicLayer* wellLayer
                    );
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonContactLayer".
+
+  class JsonContactLayer : public JsonLayer {
+    public:
+      static  void              initialize       ();
+                                JsonContactLayer ( unsigned long flags );
+                               ~JsonContactLayer ();
+      virtual string            getTypeName      () const;
+      virtual JsonContactLayer* clone            ( unsigned long ) const;
+      virtual void              toData           ( JsonStack& ); 
   };
 
 

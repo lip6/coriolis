@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -30,7 +30,8 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -66,7 +67,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_create ( PyObject*, PyObject* args )
   {
-    trace << "PyRoutingGauge_create()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_create()" << endl;
 
     RoutingGauge*   rg   = NULL;
     PyRoutingGauge* pyRg = NULL;
@@ -95,7 +96,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getTechnology ( PyRoutingGauge* self )
   {
-    trace << "PyRoutingGauge_getTechnology()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getTechnology()" << endl;
 
     Technology* technology = NULL;
 
@@ -110,7 +111,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getDepth ( PyRoutingGauge* self )
   {
-    trace << "PyRoutingGauge_getDepth()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getDepth()" << endl;
 
     size_t depth = 0;
 
@@ -125,7 +126,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerDepth ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getLayerDepth()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getLayerDepth()" << endl;
 
     size_t depth = 0;
 
@@ -152,7 +153,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getLayerGauge()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getLayerGauge()" << endl;
 
     RoutingLayerGauge* rlg = NULL;
 
@@ -187,7 +188,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerDirection ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getLayerDirection()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getLayerDirection()" << endl;
 
     unsigned int direction = 0;
 
@@ -218,7 +219,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerPitch ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getLayerPitch()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getLayerPitch()" << endl;
 
     DbU::Unit pitch = 0;
 
@@ -249,7 +250,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getRoutingLayer ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getRoutingLayer()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getRoutingLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -276,7 +277,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getContactLayer ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_getContactLayer()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_getContactLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -303,7 +304,7 @@ extern "C" {
 
   PyObject* PyRoutingGauge_addLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
-    trace << "PyRoutingGauge_addLayerGauge()" << endl;
+    cdebug.log(30) << "PyRoutingGauge_addLayerGauge()" << endl;
 
     HTRY
     METHOD_HEAD("RoutingGauge.addLayerGauge()")

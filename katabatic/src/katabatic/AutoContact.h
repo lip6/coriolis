@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -17,13 +17,13 @@
 #ifndef  KATABATIC_AUTOCONTACT_H
 #define  KATABATIC_AUTOCONTACT_H
 
-#include  <vector>
-#include  <map>
-#include  "hurricane/Contact.h"
-#include  "hurricane/ExtensionGo.h"
-#include  "katabatic/Constants.h"
-#include  "katabatic/AutoSegment.h"
-#include  "katabatic/GCell.h"
+#include <vector>
+#include <map>
+#include "hurricane/Contact.h"
+#include "hurricane/ExtensionGo.h"
+#include "katabatic/Constants.h"
+#include "katabatic/AutoSegment.h"
+#include "katabatic/GCell.h"
 
 
 namespace Katabatic {
@@ -32,9 +32,6 @@ namespace Katabatic {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Name;
   using Hurricane::Net;
   using Hurricane::Component;
@@ -56,16 +53,18 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "Katabatic::AutoContact".
 
-  enum AutoContactFlag { CntFixed               = 0x00000001
-                       , CntTerminal            = 0x00000002
-                       , CntTurn                = 0x00000004
-                       , CntHTee                = 0x00000008
-                       , CntVTee                = 0x00000010
-                       , CntInvalidated         = 0x00000020
-                       , CntInvalidatedCache    = 0x00000040
-                       , CntInCreationStage     = 0x00000080
-                       , CntBadTopology         = 0x00000100
-                       , CntIgnoreAnchor        = 0x00000200
+  enum AutoContactFlag { CntFixed                 = 0x00000001
+                       , CntTerminal              = 0x00000002
+                       , CntTurn                  = 0x00000004
+                       , CntHTee                  = 0x00000008
+                       , CntVTee                  = 0x00000010
+                       , CntInvalidated           = 0x00000020
+                       , CntInvalidatedCache      = 0x00000040
+                       , CntInCreationStage       = 0x00000080
+                       , CntBadTopology           = 0x00000100
+                       , CntIgnoreAnchor          = 0x00000200
+                       , CntWeakTerminal          = 0x00000400
+                       , CntUserNativeConstraints = 0x00000800
                        };
 
   class AutoContact {
@@ -112,6 +111,7 @@ namespace Katabatic {
       inline  bool             isHTee                     () const;
       inline  bool             isVTee                     () const;
       inline  bool             isFixed                    () const;
+      inline  bool             isUserNativeConstraints    () const;
       inline  bool             hasBadTopology             () const;
               bool             canDestroy                 ( unsigned int flags=0 ) const;
               bool             canMoveUp                  ( const AutoSegment* moved ) const;
@@ -124,6 +124,7 @@ namespace Katabatic {
       virtual Box              getBoundingBox             () const;
       inline  GCell*           getGCell                   () const;
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
+      virtual AutoSegment*     getPerpandicular           ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
               unsigned int     getMinDepth                () const;
               unsigned int     getMaxDepth                () const;
@@ -160,6 +161,7 @@ namespace Katabatic {
                                                           , DbU::Unit constraintMax
                                                           , unsigned int flags=KbWarnOnError );
               void             restoreNativeConstraintBox ();
+              void             migrateConstraintBox       ( AutoContact* other );
               void             destroy                    ();
     // Inspector Management.
               Record*          _getRecord                 () const;
@@ -202,55 +204,56 @@ namespace Katabatic {
 
 
 // Wrapped Contact Inline Functions.
-  inline Hook*          AutoContact::getBodyHook           () { return _contact->getBodyHook(); }
-  inline Hook*          AutoContact::getAnchorHook         () { return _contact->getAnchorHook(); }
-  inline Component*     AutoContact::getAnchor             () const { return _contact->getAnchor(); }
-  inline Net*           AutoContact::getNet                () const { return _contact->getNet(); }
-  inline const Layer*   AutoContact::getLayer              () const { return _contact->getLayer(); }
-  inline DbU::Unit      AutoContact::getX                  () const { return _contact->getX(); }
-  inline DbU::Unit      AutoContact::getY                  () const { return _contact->getY(); }
-  inline DbU::Unit      AutoContact::getDx                 () const { return _contact->getDx(); }
-  inline DbU::Unit      AutoContact::getDy                 () const { return _contact->getDy(); }
-  inline Point          AutoContact::getCenter             () const { return _contact->getCenter(); }
-  inline Point          AutoContact::getPosition           () const { return _contact->getPosition(); }
-  inline DbU::Unit      AutoContact::getWidth              () const { return _contact->getWidth(); }
-  inline DbU::Unit      AutoContact::getHalfWidth          () const { return _contact->getHalfWidth(); }
-  inline DbU::Unit      AutoContact::getHeight             () const { return _contact->getHeight(); }
-  inline DbU::Unit      AutoContact::getHalfHeight         () const { return _contact->getHalfHeight(); }
-  inline Components     AutoContact::getSlaveComponents    () const { return _contact->getSlaveComponents(); }
-  inline void           AutoContact::setLayer              ( const Layer* layer ) { return _contact->setLayer(layer); }
-  inline void           AutoContact::setWidth              ( DbU::Unit w ) { return _contact->setWidth(w); }
-  inline void           AutoContact::setHeight             ( DbU::Unit h ) { return _contact->setHeight(h); }
-  inline void           AutoContact::setSizes              ( DbU::Unit w, DbU::Unit h ) { return _contact->setSizes(w,h); }
-  inline void           AutoContact::setX                  ( DbU::Unit x ) { return _contact->setX(x); }
-  inline void           AutoContact::setY                  ( DbU::Unit y ) { return _contact->setY(y); }
-  inline void           AutoContact::setPosition           ( DbU::Unit x, DbU::Unit y ) { return _contact->setPosition(x,y); }
-  inline void           AutoContact::setPosition           ( const Point& p ) { return _contact->setPosition(p); }
-  inline void           AutoContact::setDx                 ( DbU::Unit dx ) { return _contact->setDx(dx); }
-  inline void           AutoContact::setDy                 ( DbU::Unit dy ) { return _contact->setDy(dy); }
-  inline void           AutoContact::setOffset             ( DbU::Unit dx, DbU::Unit dy ) { return _contact->setOffset(dx,dy); }
-// AutoContact Inline Functions.                                       
-  inline bool          AutoContact::isInCreationStage      () const { return _flags&CntInCreationStage; }
-  inline bool          AutoContact::isInvalidated          () const { return _flags&CntInvalidated; }
-  inline bool          AutoContact::isInvalidatedCache     () const { return _flags&CntInvalidatedCache; }
-  inline bool          AutoContact::isTurn                 () const { return _flags&CntTurn; }
-  inline bool          AutoContact::isFixed                () const { return _flags&CntFixed; }
-  inline bool          AutoContact::isTerminal             () const { return _flags&CntTerminal; }
-  inline bool          AutoContact::isHTee                 () const { return _flags&CntHTee; }
-  inline bool          AutoContact::isVTee                 () const { return _flags&CntVTee; }
-  inline bool          AutoContact::hasBadTopology         () const { return _flags&CntBadTopology; }
-  inline size_t        AutoContact::getId                  () const { return _id; }
-  inline Contact*      AutoContact::base                   () const { return _contact; }
-  inline GCell*        AutoContact::getGCell               () const { return _gcell; }
-  inline Box           AutoContact::getConstraintBox       () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }
-  inline void          AutoContact::setCBXMin              ( DbU::Unit xMin ) { _dxMin = _getDeltaMin(xMin,_gcell->getX()); }
-  inline void          AutoContact::setCBXMax              ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getX(),_gcell->getXMax()); }
-  inline void          AutoContact::setCBYMin              ( DbU::Unit yMin ) { _dyMin = _getDeltaMin(yMin,_gcell->getY()); }
-  inline void          AutoContact::setCBYMax              ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getY(),_gcell->getYMax()); }
-  inline void          AutoContact::setFlags               ( unsigned int flags ) { _flags|= flags; }
-  inline void          AutoContact::unsetFlags             ( unsigned int flags ) { _flags&=~flags; }
-  inline int           AutoContact::_getDeltaMin           ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::toLambda(x-xMin); }
-  inline int           AutoContact::_getDeltaMax           ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax ) { if (x>xMax) x=xMax; return (int)DbU::toLambda(x-xMin); }
+  inline Hook*          AutoContact::getBodyHook            () { return _contact->getBodyHook(); }
+  inline Hook*          AutoContact::getAnchorHook          () { return _contact->getAnchorHook(); }
+  inline Component*     AutoContact::getAnchor              () const { return _contact->getAnchor(); }
+  inline Net*           AutoContact::getNet                 () const { return _contact->getNet(); }
+  inline const Layer*   AutoContact::getLayer               () const { return _contact->getLayer(); }
+  inline DbU::Unit      AutoContact::getX                   () const { return _contact->getX(); }
+  inline DbU::Unit      AutoContact::getY                   () const { return _contact->getY(); }
+  inline DbU::Unit      AutoContact::getDx                  () const { return _contact->getDx(); }
+  inline DbU::Unit      AutoContact::getDy                  () const { return _contact->getDy(); }
+  inline Point          AutoContact::getCenter              () const { return _contact->getCenter(); }
+  inline Point          AutoContact::getPosition            () const { return _contact->getPosition(); }
+  inline DbU::Unit      AutoContact::getWidth               () const { return _contact->getWidth(); }
+  inline DbU::Unit      AutoContact::getHalfWidth           () const { return _contact->getHalfWidth(); }
+  inline DbU::Unit      AutoContact::getHeight              () const { return _contact->getHeight(); }
+  inline DbU::Unit      AutoContact::getHalfHeight          () const { return _contact->getHalfHeight(); }
+  inline Components     AutoContact::getSlaveComponents     () const { return _contact->getSlaveComponents(); }
+  inline void           AutoContact::setLayer               ( const Layer* layer ) { _contact->setLayer(layer); }
+  inline void           AutoContact::setWidth               ( DbU::Unit w ) { _contact->setWidth(w); }
+  inline void           AutoContact::setHeight              ( DbU::Unit h ) { _contact->setHeight(h); }
+  inline void           AutoContact::setSizes               ( DbU::Unit w, DbU::Unit h ) { _contact->setSizes(w,h); }
+  inline void           AutoContact::setX                   ( DbU::Unit x ) { _contact->setX(x); }
+  inline void           AutoContact::setY                   ( DbU::Unit y ) { _contact->setY(y); }
+  inline void           AutoContact::setPosition            ( DbU::Unit x, DbU::Unit y ) { _contact->setPosition(x,y); }
+  inline void           AutoContact::setPosition            ( const Point& p ) { _contact->setPosition(p); }
+  inline void           AutoContact::setDx                  ( DbU::Unit dx ) { _contact->setDx(dx); }
+  inline void           AutoContact::setDy                  ( DbU::Unit dy ) { _contact->setDy(dy); }
+  inline void           AutoContact::setOffset              ( DbU::Unit dx, DbU::Unit dy ) { _contact->setOffset(dx,dy); }
+// AutoContact Inline Functions.                                        
+  inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
+  inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
+  inline bool          AutoContact::isInvalidatedCache      () const { return _flags&CntInvalidatedCache; }
+  inline bool          AutoContact::isTurn                  () const { return _flags&CntTurn; }
+  inline bool          AutoContact::isFixed                 () const { return _flags&CntFixed; }
+  inline bool          AutoContact::isUserNativeConstraints () const { return _flags&CntUserNativeConstraints; }
+  inline bool          AutoContact::isTerminal              () const { return _flags&CntTerminal; }
+  inline bool          AutoContact::isHTee                  () const { return _flags&CntHTee; }
+  inline bool          AutoContact::isVTee                  () const { return _flags&CntVTee; }
+  inline bool          AutoContact::hasBadTopology          () const { return _flags&CntBadTopology; }
+  inline size_t        AutoContact::getId                   () const { return _id; }
+  inline Contact*      AutoContact::base                    () const { return _contact; }
+  inline GCell*        AutoContact::getGCell                () const { return _gcell; }
+  inline Box           AutoContact::getConstraintBox        () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }
+  inline void          AutoContact::setCBXMin               ( DbU::Unit xMin ) { _dxMin = _getDeltaMin(xMin,_gcell->getX()); }
+  inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getX(),_gcell->getXMax()); }
+  inline void          AutoContact::setCBYMin               ( DbU::Unit yMin ) { _dyMin = _getDeltaMin(yMin,_gcell->getY()); }
+  inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getY(),_gcell->getYMax()); }
+  inline void          AutoContact::setFlags                ( unsigned int flags ) { _flags|= flags; }
+  inline void          AutoContact::unsetFlags              ( unsigned int flags ) { _flags&=~flags; }
+  inline int           AutoContact::_getDeltaMin            ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::toLambda(x-xMin); }
+  inline int           AutoContact::_getDeltaMax            ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax ) { if (x>xMax) x=xMax; return (int)DbU::toLambda(x-xMin); }
 
   inline DbU::Unit AutoContact::getCBXMin () const
   { return isFixed() ? _contact->getX() : DbU::fromLambda(_dxMin) + _gcell->getX(); }
@@ -286,13 +289,13 @@ namespace Katabatic {
   inline LocatorHelper::LocatorHelper ( AutoContact* contact, unsigned int flags )
     : _flags(flags), _index(_min()), _contact(contact)
   {
-    ltracein(80);
-    ltrace(80) << "CTOR LocatorHelper " << contact->_getString() << endl;
-    ltrace(80) << "+ _min():" << _min() << endl;
-    ltrace(80) << "+ _max():" << _max() << endl;
-    ltrace(80) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
+    cdebug.tabw(145,1);
+    cdebug.log(145) << "CTOR LocatorHelper " << contact->_getString() << endl;
+    cdebug.log(145) << "+ _min():" << _min() << endl;
+    cdebug.log(145) << "+ _max():" << _max() << endl;
+    cdebug.log(145) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
     if (not _contact->getSegment(_index)) progress();
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
   inline bool  LocatorHelper::isValid () const
@@ -306,20 +309,20 @@ namespace Katabatic {
 
   inline AutoSegment* LocatorHelper::getSegment () const
   {
-    ltrace(80) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
+    cdebug.log(145) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
     return (_index < _max()) ? _contact->getSegment(_index) : NULL;
   }
 
   inline void  LocatorHelper::progress ()
   {
-    ltracein(80);
-    ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+    cdebug.tabw(145,1);
     ++_index;
+    cdebug.log(145) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
-      ltrace(80) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
       ++_index;
+      cdebug.log(145) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     }
-    ltraceout(80);
+    cdebug.tabw(145,-1);
   }
 
 

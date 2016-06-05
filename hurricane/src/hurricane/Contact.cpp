@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Contact.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Net.h"
 #include "hurricane/Layer.h"
@@ -323,15 +325,27 @@ void Contact::setOffset(const DbU::Unit& dx, const DbU::Unit& dy)
 void Contact::_preDestroy()
 // ***********************
 {
-// trace << "entering Contact::PreDestroy " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Contact::PreDestroy " << this << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    _anchorHook.detach();
+  _anchorHook.detach();
 
-// trace << "exiting Contact::PreDestroy" << endl;
-// trace_out();
+  cdebug.log(19) << "exiting Contact::PreDestroy" << endl;
+  cdebug.tabw(18,-1);
+}
+
+void Contact::_toJson(JsonWriter* writer) const
+// ********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_anchorHook", _anchorHook.getNextHook()->toJson() );
+  jsonWrite( writer, "_layer"     , _layer->getName() );
+  jsonWrite( writer, "_dx"        , _dx );
+  jsonWrite( writer, "_dy"        , _dy );
+  jsonWrite( writer, "_width"     , _width );
+  jsonWrite( writer, "_height"    , _height );
 }
 
 string Contact::_getString() const
@@ -373,10 +387,12 @@ Contact::AnchorHook::AnchorHook(Contact* contact)
 :    Inherit()
 {
     if (!contact)
-        throw Error("Can't create " + _TName("Contact::AnchorHook") + " : null contact");
+      throw Error("Can't create " + _getTypeName() + " : null contact");
 
-        if (ANCHOR_HOOK_OFFSET == -1)
-        ANCHOR_HOOK_OFFSET = (unsigned long)this - (unsigned long)contact;
+    if (ANCHOR_HOOK_OFFSET == -1) {
+      ANCHOR_HOOK_OFFSET = (unsigned long)this - (unsigned long)contact;
+      Hook::addCompToHook(_getTypeName(),_compToHook);
+    }
 }
 
 Component* Contact::AnchorHook::getComponent() const
@@ -391,6 +407,16 @@ string Contact::AnchorHook::_getString() const
     return "<" + _TName("Contact::AnchorHook") + " " + getString(getComponent()) + ">";
 }
 
+Hook* Contact::AnchorHook::_compToHook(Component* component)
+// ***************************************************************
+{
+  Contact* contact = dynamic_cast<Contact*>(component);
+  if (not contact) {
+    throw Error( "AnchorHook::_compToAnchorhook(): Unable to cast %s into Contact*."
+               , getString(component).c_str() );
+  }
+  return &(contact->_anchorHook);
+}
 
 
 // ****************************************************************************************************
@@ -508,9 +534,69 @@ string Contact_Hooks::Locator::_getString() const
     return s;
 }
 
+
+
+// ****************************************************************************************************
+// JsonContact implementation
+// ****************************************************************************************************
+
+Initializer<JsonContact>  jsonContactInit ( 0 );
+
+
+void  JsonContact::initialize()
+// ****************************
+{ JsonTypes::registerType( new JsonContact (JsonWriter::RegisterMode) ); }
+
+JsonContact::JsonContact(unsigned long flags)
+// ******************************************
+  : JsonComponent(flags)
+{
+  add( "_anchorHook", typeid(string)  );
+  add( "_layer"     , typeid(string)  );
+  add( "_dx"        , typeid(int64_t) );
+  add( "_dy"        , typeid(int64_t) );
+  add( "_width"     , typeid(int64_t) );
+  add( "_height"    , typeid(int64_t) );
+}
+
+string JsonContact::getTypeName() const
+// ************************************
+{ return "Contact"; }
+
+JsonContact* JsonContact::clone(unsigned long flags) const
+// *******************************************************
+{ return new JsonContact ( flags ); }
+
+void JsonContact::toData(JsonStack& stack)
+// ***************************************
+{
+  check( stack, "JsonContact::toData" );
+  unsigned int jsonId = presetId( stack );
+
+  Contact* contact = Contact::create
+    ( get<Net*>(stack,".Net")
+    , DataBase::getDB()->getTechnology()->getLayer( get<string>(stack,"_layer") )
+    , DbU::fromDb( get<int64_t>(stack,"_dx"    ) )
+    , DbU::fromDb( get<int64_t>(stack,"_dy"    ) )
+    , DbU::fromDb( get<int64_t>(stack,"_width" ) )
+    , DbU::fromDb( get<int64_t>(stack,"_height") )
+    );
+
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( contact->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+    jnet->addHookLink( contact->getAnchorHook(), jsonId, get<string>(stack,"_anchorHook") );
+  } else {
+    cerr << Error( "JsonContact::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
+  
+// Hook/Ring rebuild are done as a post-process.
+  update( stack, contact );
+}
+
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -18,8 +18,6 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
@@ -31,8 +29,10 @@
 // +-----------------------------------------------------------------+
 
 
-#include "hurricane/Property.h"
+#include "hurricane/Initializer.h"
 #include "hurricane/DBo.h"
+#include "hurricane/Entity.h"
+#include "hurricane/Property.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Error.h"
 
@@ -65,7 +65,6 @@ namespace Hurricane {
   void DBo::destroy ()
   {
     _preDestroy();
-    
     delete this;
   }
 
@@ -151,6 +150,25 @@ namespace Hurricane {
   }
 
 
+  void  DBo::_toJson ( JsonWriter* writer ) const
+  { }
+
+
+  void  DBo::_toJsonSignature ( JsonWriter* writer ) const
+  { _toJson( writer ); }
+
+
+  void  DBo::_toJsonCollections ( JsonWriter* writer ) const
+  {
+    writer->key( "+propertySet" );
+    writer->startArray();
+    for ( Property* property : getProperties() ) {
+      if (property->hasJson()) property->toJson( writer, this );
+    }
+    writer->endArray();
+  }
+
+
   string  DBo::_getTypeName () const
   {
     return "DBo";
@@ -169,6 +187,44 @@ namespace Hurricane {
     record->add ( getSlot("_propertySet", &_propertySet) );
     return record;
   }
+
+
+  void  DBo::toJsonSignature ( JsonWriter* w ) const
+  {
+    w->startObject();
+    std::string tname = "Signature." + _getTypeName();
+    jsonWrite( w, "@typename", tname );
+    _toJsonSignature( w );
+    w->endObject();
+  }
+
+
+  void  DBo::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    const Entity* entity = dynamic_cast<const Entity*>( this );
+    if (w->issetFlags(JsonWriter::UseEntityReference) and entity) {
+      jsonWrite( w, "@typename", "&Entity"       );
+      jsonWrite( w, "_id"      , entity->getId() );
+    } else {
+      std::string tname = _getTypeName();
+      if (w->issetFlags(JsonWriter::UsePlugReference) and (tname == "Plug")) {
+        tname.insert( 0, "&" );
+      }
+      jsonWrite( w, "@typename", tname );
+      _toJson( w );
+      _toJsonCollections( w );
+    }
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonDBo".
+
+  JsonDBo::JsonDBo ( unsigned int flags )
+    : JsonObject(flags | JsonWriter::DBoObject)
+  { }
 
 
 } // End of Hurricane namespace.

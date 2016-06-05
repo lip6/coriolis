@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -27,7 +27,8 @@ namespace  CRL {
   using std::string;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -66,7 +67,7 @@ extern "C" {
 
   PyObject* PyEnvironment_addSYSTEM_LIBRARY ( PyEnvironment* self, PyObject* args, PyObject* kwArgs )
   {
-    trace << "PyEnvironment_addSYSTEM_LIBRARY()" << endl;
+    cdebug.log(30) << "PyEnvironment_addSYSTEM_LIBRARY()" << endl;
 
     HTRY
     METHOD_HEAD("Environment.addSYSTEM_LIBRARY()")
@@ -112,7 +113,7 @@ extern "C" {
 
   PyObject* PyEnvironment_getLIBRARYPath ( PyEnvironment* self, PyObject* args )
   {
-    trace << "PyEnvironment_getLIBRARYPath()" << endl;
+    cdebug.log(30) << "PyEnvironment_getLIBRARYPath()" << endl;
 
     HTRY
     METHOD_HEAD("Environment.getLIBRARYPath()")
@@ -164,19 +165,19 @@ extern "C" {
   DirectIsAFromCStringAttribute(PyEnvironment_isPad     ,isPad     ,PyEnvironment,Environment)
 
   // Standart Mutators (Attributes).
-  DirectSetCStringAttribute(PyEnvironment_setDisplayStyle       ,setDisplayStyle       ,"Environment.setDisplayStyle"       ,PyEnvironment,Environment)
-  DirectSetLongAttribute   (PyEnvironment_setSCALE_X            ,setSCALE_X            ,"Environment.setSCALE_X"            ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setIN_LO              ,setIN_LO              ,"Environment.setIN_LO"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setIN_PH              ,setIN_PH              ,"Environment.setIN_PH"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setOUT_LO             ,setOUT_LO             ,"Environment.setOUT_LO"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setOUT_PH             ,setOUT_PH             ,"Environment.setOUT_PH"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setPOWER              ,setPOWER              ,"Environment.setPOWER"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setGROUND             ,setGROUND             ,"Environment.setGROUND"             ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setCLOCK              ,setCLOCK              ,"Environment.setCLOCK"              ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setBLOCKAGE           ,setBLOCKAGE           ,"Environment.setBLOCKAGE"           ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setPad                ,setPad                ,"Environment.setPad"                ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setCATALOG            ,setCATALOG            ,"Environment.setCATALOG"            ,PyEnvironment,Environment)
-  DirectSetCStringAttribute(PyEnvironment_setWORKING_LIBRARY    ,setWORKING_LIBRARY    ,"Environment.setWORKING_LIBRARY"    ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setDisplayStyle   ,setDisplayStyle   ,PyEnvironment,Environment)
+  DirectSetLongAttribute   (PyEnvironment_setSCALE_X        ,setSCALE_X        ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setIN_LO          ,setIN_LO          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setIN_PH          ,setIN_PH          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setOUT_LO         ,setOUT_LO         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setOUT_PH         ,setOUT_PH         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setPOWER          ,setPOWER          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setGROUND         ,setGROUND         ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setCLOCK          ,setCLOCK          ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setBLOCKAGE       ,setBLOCKAGE       ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setPad            ,setPad            ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setCATALOG        ,setCATALOG        ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setWORKING_LIBRARY,setWORKING_LIBRARY,PyEnvironment,Environment)
 
 
   // Standart Destroy (Attribute).
@@ -264,7 +265,7 @@ extern "C" {
   DirectHashMethod(PyEnvironment_Hash, PyEnvironment)
 
   extern void  PyEnvironment_LinkPyType() {
-    trace << "PyEnvironment_LinkType()" << endl;
+    cdebug.log(30) << "PyEnvironment_LinkType()" << endl;
 
     PyTypeEnvironment.tp_dealloc = (destructor) PyEnvironment_DeAlloc;
     PyTypeEnvironment.tp_repr    = (reprfunc)   PyEnvironment_Repr;

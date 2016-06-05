@@ -49,8 +49,12 @@
 
 
 from Hurricane   import *
-
+from st_net      import *
 from util_Place  import *
+
+global nbCkBuf
+nbCkBuf = 0
+
 
 ###########
 def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
@@ -535,3 +539,63 @@ def gauche ( sym ) :
   
 def droite ( sym ) :
   return sym == Transformation.Orientation.R2 or sym == Transformation.Orientation.MX or sym == Transformation.Orientation.R1 or sym == Transformation.Orientation.XR
+
+
+#################
+## ClockBuffer ##
+#################
+class ClockBuffer :
+  def __init__ ( self, netname ) :
+    global CELLS
+    from st_model import CELLS
+    global nbCkBuf
+    self.cell = CELLS[-1]
+    
+    self.net = self.cell._hur_cell.getNet ( netname )
+    self.ck_b = Signal ( "ck_b%d"%nbCkBuf, 1 )
+
+    modelMasterCell = CRL.AllianceFramework.get().getCell ( "buf_x2", CRL.Catalog.State.Views )
+    if not modelMasterCell :
+      err = "Stratus Error : ClockBuffer : Cannot find model cell : buf_x2 in database !\n"
+      raise Exception ( err )
+
+    inst = Instance.create ( self.cell._hur_cell, "ck_buffer%d"%nbCkBuf, modelMasterCell )
+    nbCkBuf += 1
+  
+    ##### Connection #####
+    plugI = inst.getPlug ( modelMasterCell.getNet ( "i" ) )
+    plugI.setNet ( self.net )
+    
+    plugQ = inst.getPlug ( modelMasterCell.getNet ( "q" ) )
+    plugQ.setNet ( self.ck_b._hur_net[0] )
+    
+    plugGround = inst.getPlug ( iter(modelMasterCell.getGroundNets()).next() )
+    plugGround.setNet ( iter(self.cell._hur_cell.getGroundNets()).next() )
+
+    plugPower = inst.getPlug ( iter(modelMasterCell.getPowerNets()).next() )
+    plugPower.setNet ( iter(self.cell._hur_cell.getPowerNets()).next() )
+
+  def AddFF ( self, netname ) :
+    net = self.cell._hur_cell.getNet ( netname )
+    if not net :
+        err = "AddFF Error net : " + netname + " not found"
+        raise Exception ( err )
+
+    instDrive = None
+    for plug in net.getPlugs():
+      if plug.getMasterNet().getDirection() == Net.Direction.OUT :
+        instDrive = plug.getInstance()
+        break
+
+    if instDrive == None :
+      err = "AddFF Error no drive instance found for net " + netname + ".\n"
+      raise Exception ( err )
+    
+    masterCell = instDrive.getMasterCell()
+    ## ici il vaudrait mieux faire une recherche sur l'ensemble des plugs de l'instDrive et trouver celle accrochee au self.net ##
+    netCk = masterCell.getNet ( "ck" )
+    if instDrive.getPlug ( netCk ).getNet() != self.net :
+      err = "Stratus Error : AddFF : driver Instance of net " + netname + " is not connected to signal " + str ( self.net.getName() ) + ".\n"
+      raise Exception ( err )
+
+    instDrive.getPlug ( netCk ).setNet ( self.ck_b._hur_net[0] )

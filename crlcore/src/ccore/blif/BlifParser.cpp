@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -339,7 +339,7 @@ namespace {
   void  Model::connectModels ()
   {
     for ( Model* blifModel : _blifOrder ){
-      cmess2 << "Handling model <" << blifModel->getCell()->getName() << ">" << endl;
+    //cmess2 << "Handling model <" << blifModel->getCell()->getName() << ">" << endl;
       blifModel->connectSubckts();
     }
   }
@@ -366,7 +366,6 @@ namespace {
     , _subckts()
     , _depth  (0)
   {
-
     _blifLut.insert( make_pair(getString(_cell->getName()), this) );
     if (_cell->isTerminal())
       _depth = 1;
@@ -398,17 +397,21 @@ namespace {
 
   Net* Model::mergeNet ( string name, bool isExternal, unsigned int direction )
   {
+    bool isClock = AllianceFramework::get()->isCLOCK( name );
+
     Net* net = _cell->getNet( name );
     if (not net) {
       net = Net::create( _cell, name );
       net->setExternal ( isExternal );
       net->setDirection( (Net::Direction::Code)direction );
+      if (isClock) net->setType( Net::Type::CLOCK );
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
       direction &= ~Net::Direction::UNDEFINED;
       direction |= net->getDirection();
       net->setDirection( (Net::Direction::Code)direction );
+      if (isClock) net->setType( Net::Type::CLOCK );
     }
     return net;
   }
@@ -469,6 +472,12 @@ namespace {
 
   void  Model::connectSubckts ()
   {
+    auto framework = AllianceFramework::get();
+
+    unsigned int supplyCount = 0;
+    Cell*        zero        = framework->getCell( "zero_x0", Catalog::State::Views );
+    Cell*        one         = framework->getCell( "one_x0" , Catalog::State::Views);
+
     for ( Subckt* subckt : _subckts ) {
       if(not subckt->getModel())
         throw Error( "No .model or cell named <%s> has been found.\n"
@@ -486,9 +495,8 @@ namespace {
         //          << "plug: <" << masterNetName << ">, "
         //          << "external: <" << netName << ">."
         //          << endl;
-        Net*   net           = _cell->getNet( netName );
-
-        Net*   masterNet     = instance->getMasterCell()->getNet(masterNetName);
+        Net*   net       = _cell->getNet( netName );
+        Net*   masterNet = instance->getMasterCell()->getNet(masterNetName);
         if(not masterNet) {
           ostringstream tmes;
           tmes << "The master net <" << masterNetName << "> hasn't been found "
@@ -499,7 +507,7 @@ namespace {
           throw Error(tmes.str());
         }
 
-        Plug*  plug          = instance->getPlug( masterNet );
+        Plug*  plug = instance->getPlug( masterNet );
         if(not plug) {
           ostringstream tmes;
           tmes << "The plug in net <" << netName << "> "
@@ -511,8 +519,7 @@ namespace {
           throw Error(tmes.str());
         }
 
-
-        Net*   plugNet       = plug->getNet();
+        Net* plugNet = plug->getNet();
 
         if (not plugNet) { // Plug not connected yet
           if (not net) net = Net::create( _cell, netName );
@@ -523,20 +530,38 @@ namespace {
           plugNet->addAlias( netName );
         }
         else if (plugNet != net){ // Plus already connected to another net
-          plugNet->merge( net );
+          if (not plugNet->isExternal()) net->merge( plugNet );
+          else plugNet->merge( net );
         }
 
-        if( plugNet->getType() == Net::Type::POWER or plugNet->getType() == Net::Type::GROUND ){
-          ostringstream tmes;
-          string powType = plugNet->getType() == Net::Type::POWER ? "power" : "ground";
-          string plugName = plugNet->getName()._getString(); // Name of the original net
-          tmes << "Connecting instance <" << subckt->getInstanceName() << "> "
-               << "of <" << subckt->getModelName() << "> "
-               << "to the " << powType << " net <" << plugName << "> ";
-          if(netName != plugName)
-               tmes << "with the alias <" << netName << ">. ";
-          tmes << "Maybe you should use tie cells?";
-          cerr << Warning(tmes.str()) << endl;
+        if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
+          ostringstream message;
+          message << "In " << instance << "\n          "
+                  << "Terminal " << plug->getMasterNet()->getName()
+                  << " is connected to POWER/GROUND " << plugNet->getName()
+                  << " through the alias " << netName
+                  << ".";
+          cerr << Warning( message.str() ) << endl;
+
+          if (plugNet->isPower()) {
+            ostringstream insName; insName << "one_" << supplyCount++;
+
+            Instance* insOne = Instance::create( _cell, insName.str(), one );
+            Net*      netOne = Net::create( _cell, insName.str() );
+
+            insOne->getPlug( one->getNet("q") )->setNet( netOne );
+            plug->setNet( netOne );
+          }
+
+          if (plugNet->isGround()) {
+            ostringstream insName; insName << "zero_" << supplyCount++;
+
+            Instance* insZero = Instance::create( _cell, insName.str(), zero );
+            Net*      netZero = Net::create( _cell, insName.str() );
+
+            insZero->getPlug( zero->getNet("nq") )->setNet( netZero );
+            plug->setNet( netZero );
+          }
         }
       }
     }
@@ -647,25 +672,25 @@ namespace CRL {
           blifModel->mergeAlias( blifLine[1], blifLine[2] );
         } else if (tokenize.state() & Tokenize::CoverZero) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VSS in a \".names\". Maybe you should use tie cells?\n"
-                         "                    File %s.blif at line %u."
-                       , blifLine[1].c_str()
-                       , blifFile.c_str()
-                       , tokenize.lineno()
-                       ) << endl;
+                           "          File \"%s.blif\" at line %u."
+                         , blifLine[1].c_str()
+                         , blifFile.c_str()
+                         , tokenize.lineno()
+                         ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vss" );
           blifModel->getCell()->getNet( "vss" )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
-                         "                    File %s.blif at line %u."
-                       , blifLine[1].c_str()
-                       , blifFile.c_str()
-                       , tokenize.lineno()
-                       ) << endl;
+                           "          File \"%s.blif\" at line %u."
+                         , blifLine[1].c_str()
+                         , blifFile.c_str()
+                         , tokenize.lineno()
+                         ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vdd" );
           blifModel->getCell()->getNet( "vdd" )->addAlias( blifLine[1] );
         } else {
           cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
-                         "                    File %s.blif at line %u."
+                         "          File \"%s.blif\" at line %u."
                        , blifFile.c_str()
                        , tokenize.lineno()
                        ) << endl;

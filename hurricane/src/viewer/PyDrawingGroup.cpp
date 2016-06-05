@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2015, All Rights Reserved
+// Copyright (c) UPMC 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -77,7 +77,7 @@ extern "C" {
 
   PyObject* PyDrawingGroup_find ( PyDrawingGroup* self, PyObject* args )
   {
-    trace << "PyDrawingGroup_find()" << endl;
+    cdebug.log(20) << "PyDrawingGroup_find()" << endl;
 
     DrawingStyle drawingStyle;
 
@@ -98,7 +98,7 @@ extern "C" {
 
   PyObject* PyDrawingGroup_addDrawingStyle ( PyDrawingGroup* self, PyObject* args, PyObject* kwArgs )
   {
-    trace << "PyDrawingGroup_addDrawingStyle()" << endl;
+    cdebug.log(20) << "PyDrawingGroup_addDrawingStyle()" << endl;
 
     HTRY
     METHOD_HEAD("DrawingGroup.addDrawingStyle()")
@@ -192,7 +192,7 @@ extern "C" {
   DirectHashMethod(PyDrawingGroup_Hash, PyDrawingGroup)
 
   extern void  PyDrawingGroup_LinkPyType() {
-    trace << "PyDrawingGroup_LinkType()" << endl;
+    cdebug.log(20) << "PyDrawingGroup_LinkType()" << endl;
 
     PyTypeDrawingGroup.tp_dealloc = (destructor) PyDrawingGroup_DeAlloc;
     PyTypeDrawingGroup.tp_repr    = (reprfunc)   PyDrawingGroup_Repr;

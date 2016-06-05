@@ -37,7 +37,6 @@ namespace  CRL {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;

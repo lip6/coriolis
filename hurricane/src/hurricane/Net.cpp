@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Net.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -18,6 +18,7 @@
 // ****************************************************************************************************
 
 #include "hurricane/Warning.h"
+#include "hurricane/Error.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -30,7 +31,7 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/Pad.h"
 #include "hurricane/UpdateSession.h"
-#include "hurricane/Error.h"
+#include "hurricane/NetExternalComponents.h"
 
 namespace Hurricane {
 
@@ -267,14 +268,14 @@ Net::Net(Cell* cell, const Name& name)
     _nextOfCellNetMap(NULL),
     _mainName(this)
 {
-    if (!_cell)
-        throw Error("Can't create " + _TName("Net") + " : null cell");
+  if (!_cell)
+    throw Error("Can't create " + _TName("Net") + " : null cell");
 
-    if (name.isEmpty())
-        throw Error("Can't create " + _TName("Net") + " : empty name");
+  if (name.isEmpty())
+    throw Error("Can't create " + _TName("Net") + " : empty name");
 
-    if (_cell->getNet(_name))
-        throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
+  if (_cell->getNet(_name))
+    throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
 }
 
 Net* Net::create(Cell* cell, const Name& name)
@@ -426,20 +427,27 @@ NetFilter Net::getIsGroundFilter()
     return Net_IsGroundFilter();
 }
 
-void Net::setName(const Name& name)
-// ********************************
+void Net::setName(Name name)
+// *************************
 {
-    if (name != _name) {
-        if (name.isEmpty())
-            throw Error("Can't change net name : empty name");
+  if (name != _name) {
+    if (name.isEmpty())
+      throw Error( "Net::setName(): Empty name, keep \"%s\"", getString(_name).c_str() );
 
-        if (_cell->getNet(name))
-            throw Error("Can't change net name : already exists");
+    bool swapAlias = hasAlias( name );
+    if (not swapAlias and _cell->getNet(name))
+      throw Error( "Net::setName(): On \"%s\", another net named \"%s\" already exists."
+                 , getString(_name).c_str()
+                 , getString( name).c_str() );
 
-        _cell->_getNetMap()._remove(this);
-        _name = name;
-        _cell->_getNetMap()._insert(this);
-    }
+    if (swapAlias) removeAlias(name);
+
+    _cell->_getNetMap()._remove(this);
+    std::swap( _name, name );
+    _cell->_getNetMap()._insert(this);
+
+    if (swapAlias) addAlias(name);
+  }
 }
 
 void Net::setArity(const Arity& arity)
@@ -506,9 +514,21 @@ void Net::setDirection(const Direction& direction)
     _direction = direction;
 }
 
-bool Net::addAlias(const Name& name )
-// **********************************
+bool Net::hasAlias(const Name& name) const
+// ***************************************
 {
+  if (name == _name) return true;
+  for ( NetAliasHook* alias : getAliases() ) {
+    if (alias->getName() == name) return true;
+  }
+  return false;
+}
+
+bool Net::addAlias(const Name& name)
+// *********************************
+{
+  if (hasAlias(name)) return true;
+
   if (getCell()->getNet(name)) {
     cerr << Warning( "Net::addAlias(): Cannot add alias %s to net %s, already taken."
                    , getString(name).c_str()
@@ -610,10 +630,18 @@ void Net::merge(Net* net)
         throw Error("Can't merge net : itself");
 
     if (net->getCell() != _cell)
-        throw Error("Can't merge net : incompatible net");
+      throw Error( "Net::merge(): Cannot merge %s (%s) with %s (%s)."
+                 , getString(getName()).c_str()
+                 , getString(getCell()->getName()).c_str()
+                 , getString(net->getName()).c_str()
+                 , getString(net->getCell()->getName()).c_str()
+                 );
 
     if (!isExternal() && net->isExternal() && !net->getConnectedSlavePlugs().isEmpty())
-        throw Error("Can't merge net : incompatible net");
+        throw Error( "Net::merge(): Cannot merge external (%s) with an internal net (%s)."
+                   , getString(net->getName()).c_str()
+                   , getString(getName()).c_str()
+                   );
 
     for_each_rubber(rubber, net->getRubbers()) rubber->_setNet(this); end_for;
     for_each_component(component, net->getComponents()) component->_setNet(this); end_for;
@@ -680,11 +708,13 @@ void Net::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    for_each_plug(slavePlug, getSlavePlugs()) slavePlug->_destroy(); end_for;
+    Plugs plugs = getSlavePlugs();
+    while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
     unmaterialize();
 
-    for_each_rubber(rubber, getRubbers()) rubber->_destroy(); end_for;
+    Rubbers rubbers = getRubbers();
+    while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
 
     for_each_component(component, getComponents()) {
         for_each_hook(hook, component->getHooks()) {
@@ -693,16 +723,17 @@ void Net::_preDestroy()
             //if (!hook->IsMaster()) hook->detach();
             hook->detach();
             end_for;
+            // 24/02/2016 jpc: the answer, at last... we cannot iterate
+            // over a collection as it is modificated/destroyed!
         }
         end_for;
     }
 
-    for_each_component(component, getComponents()) {
-        if (!dynamic_cast<Plug*>(component))
-            component->destroy();
-        else
-            ((Plug*)component)->setNet(NULL);
-        end_for;
+    Components components = getComponents();
+    while ( components.getFirst() ) {
+      Component* component = components.getFirst();
+      if (!dynamic_cast<Plug*>(component)) component->destroy();
+      else (static_cast<Plug*>(component))->setNet(NULL);
     }
 
     _mainName.clear();
@@ -738,6 +769,40 @@ Record* Net::_getRecord() const
     return record;
 }
 
+void Net::_toJson(JsonWriter* writer) const
+// ****************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_name"        , getName()      );
+  jsonWrite( writer, "_isGlobal"    , isGlobal()     );
+  jsonWrite( writer, "_isExternal"  , isExternal()   );
+  jsonWrite( writer, "_isAutomatic" , isAutomatic()  );
+  jsonWrite( writer, "_type"        , getString(getType())      );
+  jsonWrite( writer, "_direction"   , getString(getDirection()) );
+}
+
+void Net::_toJsonSignature(JsonWriter* writer) const
+// *************************************************
+{
+  jsonWrite( writer, "_name", getName() );
+}
+
+void Net::_toJsonCollections(JsonWriter* writer) const
+// ***************************************************
+{
+  jsonWrite( writer, "+aliases", getAliases() );
+  writer->setFlags( JsonWriter::UsePlugReference );
+  jsonWrite( writer, "+componentSet", getComponents() );
+  writer->resetFlags( JsonWriter::UsePlugReference );
+
+  writer->key( "+externalComponents" );
+  NetExternalComponents::toJson( writer, this );
+
+  Inherit::_toJsonCollections( writer );
+}
+
+
 // ****************************************************************************************************
 // Net::Type implementation
 // ****************************************************************************************************
@@ -745,13 +810,23 @@ Record* Net::_getRecord() const
 Net::Type::Type(const Code& code)
 // ******************************
 :    _code(code)
-{
-}
+{ }
 
 Net::Type::Type(const Type& type)
 // ******************************
 :    _code(type._code)
+{ }
+
+Net::Type::Type(string s)
+// **********************
+:    _code(UNDEFINED)
 {
+  if      (s == "UNDEFINED") _code = UNDEFINED;
+  else if (s == "LOGICAL"  ) _code = LOGICAL;
+  else if (s == "CLOCK"    ) _code = CLOCK;
+  else if (s == "POWER"    ) _code = POWER;
+  else if (s == "GROUND"   ) _code = GROUND;
+  else if (s == "BLOCKAGE" ) _code = BLOCKAGE;
 }
 
 Net::Type& Net::Type::operator=(const Type& type)
@@ -784,13 +859,23 @@ Record* Net::Type::_getRecord() const
 Net::Direction::Direction(const Code& code)
 // ****************************************
 :    _code(code)
-{
-}
+{ }
 
 Net::Direction::Direction(const Direction& direction)
 // **************************************************
 :    _code(direction._code)
+{ }
+
+Net::Direction::Direction(string s)
+// ********************************
+:    _code(UNDEFINED)
 {
+  if (s.size() > 3) {
+    if (s[0] == 'i') *this |= DirIn;
+    if (s[0] == 'o') *this |= DirOut;
+    if (s[0] == 't') *this |= ConnTristate;
+    if (s[0] == 'w') *this |= ConnWiredOr;
+  }
 }
 
 Net::Direction& Net::Direction::operator=(const Direction& direction)
@@ -1008,9 +1093,187 @@ string Net_SlavePlugs::Locator::_getString() const
     return s;
 }
 
-} // End of Hurricane namespace.
+
+// -------------------------------------------------------------------
+// Class  :  "JsonNet".
+
+
+  Initializer<JsonNet>  jsonNetInit ( 0 );
+
+
+  void  JsonNet::initialize ()
+  { JsonTypes::registerType( new JsonNet (JsonWriter::RegisterMode) ); }
+
+
+  JsonNet::JsonNet ( unsigned long flags )
+    : JsonEntity      (flags)
+    , _autoMaterialize(not Go::autoMaterializationIsDisabled())
+    , _net            (NULL)
+    , _hooks          ()
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    cdebug.log(19) << "JsonNet::JsonNet()" << endl;
+
+    add( "_name"              , typeid(string)    );
+    add( "_isGlobal"          , typeid(bool)      );
+    add( "_isExternal"        , typeid(bool)      );
+    add( "_isAutomatic"       , typeid(bool)      );
+    add( "_type"              , typeid(string)    );
+    add( "_direction"         , typeid(string)    );
+    add( "+aliases"           , typeid(JsonArray) );
+    add( "+componentSet"      , typeid(JsonArray) );
+    add( "+externalComponents", typeid(JsonArray) );
+
+    cdebug.log(19) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
+    Go::disableAutoMaterialization();
+  }
+
+
+  JsonNet::~JsonNet ()
+  {
+    checkRings();
+    buildRings();
+    clearHookLinks();
+    
+    _net->materialize();
+
+    if (_autoMaterialize) {
+      Go::enableAutoMaterialization();
+      cdebug.log(18) << "Enabling auto-materialization." << endl;
+    }
+  }
+
+
+  string  JsonNet::getTypeName () const
+  { return "Net"; }
+
+
+  JsonNet* JsonNet::clone( unsigned long flags ) const
+  { return new JsonNet ( flags ); }
+
+
+  void JsonNet::toData ( JsonStack& stack )
+  {
+    cdebug.tabw(19,1);
+
+    check( stack, "JsonNet::toData" );
+    presetId( stack );
+
+    _net = Net::create( get<Cell*>(stack,".Cell") , get<string>(stack,"_name") );
+    _net->setGlobal   ( get<bool>(stack,"_isGlobal"   ) );
+    _net->setExternal ( get<bool>(stack,"_isExternal" ) );
+    _net->setAutomatic( get<bool>(stack,"_isAutomatic") );
+    _net->setType     ( Net::Type     (get<string>(stack,"_type")) );
+    _net->setDirection( Net::Direction(get<string>(stack,"_direction")) );
+
+    update( stack, _net );
+
+    cdebug.tabw(19,-1);
+  }
+
+
+  void  JsonNet::addHookLink ( Hook* hook, unsigned int jsonId, const string& jsonNext )
+  {
+    if (jsonNext.empty()) return;
+
+    unsigned int id      = jsonId;
+    string       tname   = hook->_getTypeName();
+
+    auto ielement = _hooks.find( HookKey(id,tname) );
+    if (ielement == _hooks.end()) {
+      auto r = _hooks.insert( make_pair( HookKey(id,tname), HookElement(hook) ) );
+      ielement = r.first;
+      (*ielement).second.setFlags( HookElement::OpenRingStart );
+    }
+    HookElement* current = &((*ielement).second);
+    if (not current->hook()) current->setHook( hook );
+
+    hookFromString( jsonNext, id, tname );
+    ielement = _hooks.find( HookKey(id,tname) );
+    if (ielement == _hooks.end()) {
+      auto r = _hooks.insert( make_pair( HookKey(id,tname), HookElement(NULL) ) );
+      ielement = r.first;
+    } else {
+      (*ielement).second.resetFlags( HookElement::OpenRingStart );
+    }
+    current->setNext( &((*ielement).second) );
+  }
+
+
+  Hook* JsonNet::getHook ( unsigned int jsonId, const std::string& tname ) const
+  {
+    auto ihook = _hooks.find( HookKey(jsonId,tname) );
+    if (ihook == _hooks.end()) return NULL;
+
+    return (*ihook).second.hook();
+  }
+
+
+  bool  JsonNet::hookFromString ( std::string s, unsigned int& id, std::string& tname )
+  {
+    size_t dot = s.rfind('.');
+    if (dot == string::npos) return false;
+
+    tname = s.substr( 0, dot );
+    id    = stoul( s.substr(dot+1) );
+    return true;
+  }
+
+
+  bool  JsonNet::checkRings () const
+  {
+    bool status = true;
+
+    for ( auto kv : _hooks ) {
+      HookElement* ringStart = &(kv.second);
+      if (ringStart->issetFlags(HookElement::ClosedRing)) continue;
+
+      if (ringStart->issetFlags(HookElement::OpenRingStart)) {
+        cerr << Error( "JsonNet::checkRing(): Open ring found, starting with %s.\n"
+                     "        Closing the ring..."
+                     , getString(ringStart->hook()).c_str() ) << endl;
+
+        status = false;
+        HookElement* element = ringStart;
+        while ( true ) {
+          if (not element->next()) {
+          // The ring is open: close it (loop on ringStart).
+            element->setNext( ringStart );
+            element->setFlags( HookElement::ClosedRing );
+
+            cerr << Error( "Simple open ring." ) << endl;
+            break;
+          }
+          if (element->next()->issetFlags(HookElement::ClosedRing)) {
+          // The ring is half merged with itself, or another ring.
+          // (i.e. *multiple* hooks pointing the *same* next element)
+            element->setNext( ringStart );
+            element->setFlags( HookElement::ClosedRing );
+
+            cerr << Error( "Complex fault: ring partially merged (convergent)." ) << endl;
+            break;
+          }
+          element = element->next();
+        }
+      }
+    }
+
+    return status;
+  }
+
+
+  void  JsonNet::buildRings () const
+  {
+    for ( auto kv : _hooks ) {
+      kv.second.hook()->_setNextHook( kv.second.next()->hook() );
+    }
+  }
+
+
+} // Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

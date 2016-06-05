@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/IntrusiveMap.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -449,6 +449,13 @@ template<class Key, class Element> class IntrusiveMap {
 };
 
 
+  template<class Key, class Element>
+  inline GenericCollection<Element*> getCollection(const IntrusiveMap<Key,Element>& intrusiveMap)
+  // ********************************************************************************************
+  {
+    return intrusiveMap.getElements();
+  }
+
 
 } // End of Hurricane namespace.
 
@@ -470,9 +477,18 @@ inline Hurricane::Record* getRecord ( const Hurricane::IntrusiveMap<Key,Element>
                                     { return intrusiveMap->_getRecord(); }
 
 
+template<typename Key, typename Element>
+inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::IntrusiveMap<Key,Element>* intrusiveMap )
+{
+  w->key( key );
+  w->startArray();
+  for ( Element* element : intrusiveMap->getElements() ) jsonWrite( w, element );
+  w->endArray();
+}
+
 #endif // HURRICANE_INTRUSIVE_MAP
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

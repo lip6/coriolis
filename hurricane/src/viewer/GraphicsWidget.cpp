@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -35,19 +35,34 @@ namespace Hurricane {
   GraphicsWidget::GraphicsWidget ( QWidget* parent )
     : QWidget     (parent)
     , _cellWidget (NULL)
+    , _stylesGrid (new QGridLayout())
+    , _stylesGroup(new QButtonGroup())
     , _updateState(ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Styles") );
     setFont        ( Graphics::getNormalFont(true) );
 
-    QButtonGroup* group    = new QButtonGroup ();
     QGroupBox*    groupBox = new QGroupBox    ( tr("Display Styles") );
-    QGridLayout*  gLayout  = new QGridLayout  ();
     QVBoxLayout*  wLayout  = new QVBoxLayout  ();
 
-    const vector<DisplayStyle*>& styles = Graphics::getStyles ();
-    DisplayStyle* activeStyle = Graphics::getStyle ();
+    if (Graphics::isHighDpi()) _stylesGrid->setContentsMargins( 30, 30, 30, 30 );
+
+    groupBox->setLayout ( _stylesGrid );
+    wLayout->addWidget  ( groupBox );
+    wLayout->addStretch ();
+    setLayout ( wLayout );
+
+    connect ( _stylesGroup, SIGNAL(buttonClicked(int)), this, SLOT(setStyle(int)) );
+
+    readGraphics ();
+  }
+
+
+  void  GraphicsWidget::readGraphics ()
+  {
+    const vector<DisplayStyle*>& styles      = Graphics::getStyles ();
+    DisplayStyle*                activeStyle = Graphics::getStyle ();
 
     size_t hideFallback = (styles.size() > 1) ? 1 : 0;
     for ( size_t istyle=hideFallback ; istyle < styles.size() ; istyle++ ) {
@@ -59,18 +74,10 @@ namespace Hurricane {
       label->setText ( styles[istyle]->getDescription().c_str() );
       label->setFont ( Graphics::getNormalFont() );
 
-      gLayout->addWidget ( button, istyle-hideFallback, 0 );
-      gLayout->addWidget ( label , istyle-hideFallback, 1 );
-      group->addButton   ( button, istyle );
+      _stylesGrid ->addWidget ( button, istyle-hideFallback, 0 );
+      _stylesGrid ->addWidget ( label , istyle-hideFallback, 1 );
+      _stylesGroup->addButton ( button, istyle );
     }
-    if (Graphics::isHighDpi()) gLayout->setContentsMargins( 30, 30, 30, 30 );
-
-    groupBox->setLayout ( gLayout );
-    wLayout->addWidget  ( groupBox );
-    wLayout->addStretch ();
-    setLayout ( wLayout );
-
-    connect ( group, SIGNAL(buttonClicked(int)), this, SLOT(setStyle(int)) );
   }
 
 
@@ -109,5 +116,22 @@ namespace Hurricane {
   }
 
 
+  void  GraphicsWidget::resetGraphics ()
+  {
+    QLayoutItem* child = NULL;
+    while ( (child = _stylesGrid->takeAt(0)) != 0 ) {
+      _stylesGrid->removeWidget( child->widget() );
+      delete child->widget();
+    }
+  }
 
-}
+
+  void  GraphicsWidget::rereadGraphics ()
+  {
+    resetGraphics();
+    readGraphics();
+  //setStyle( 0 );
+  }
+
+
+}  // Hurricane namespace.

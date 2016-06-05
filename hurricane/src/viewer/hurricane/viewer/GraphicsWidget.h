@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -19,6 +19,8 @@
 
 
 #include  <QWidget>
+class QGridLayout;
+class QButtonGroup;
 
 #include  "hurricane/viewer/CellWidget.h"
 
@@ -32,17 +34,21 @@ namespace Hurricane {
     public:
             GraphicsWidget ( QWidget* parent=NULL );
       void  setCellWidget  ( CellWidget* );
+      void  readGraphics   ();
+      void  resetGraphics  ();
+      void  rereadGraphics ();
     public slots:
       void  changeStyle    ();
       void  setStyle       ( int id );
 
     protected:
-      CellWidget*  _cellWidget;
-      UpdateState  _updateState;
+      CellWidget*   _cellWidget;
+      QGridLayout*  _stylesGrid;
+      QButtonGroup* _stylesGroup;
+      UpdateState   _updateState;
   };
 
 
-} // End of Hurricane namespace.
-
+} // Hurricane namespace.
 
 #endif

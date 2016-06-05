@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Vertical.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -105,12 +105,24 @@ class Vertical : public Segment {
 // Others
 // ******
 
+    public: virtual void _toJson(JsonWriter*) const;
+    public: static JsonObject* getJsonObject(unsigned long flags);
     public: virtual string _getTypeName() const {return _TName("Vertical");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
 
 };
 
+
+class JsonVertical : public JsonSegment {
+// **************************************
+
+  public: static void initialize();
+  public: JsonVertical(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonVertical* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -122,5 +134,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Vertical);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

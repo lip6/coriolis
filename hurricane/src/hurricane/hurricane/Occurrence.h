@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Occurrence.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -32,9 +32,8 @@ class Quark;
 class BasicLayer;
 
 
-
 // ****************************************************************************************************
-// Occurente declaration
+// Occurrence declaration
 // ****************************************************************************************************
 
 class Occurrence {
@@ -98,6 +97,7 @@ class Occurrence {
     public: string _getTypeName() const { return _TName("Occurrence"); };
     public: string _getString() const;
     public: string getCompactString() const;
+    public: void toJson(JsonWriter*) const;
     public: Record* _getRecord() const;
     public: SharedPath* _getSharedPath() const {return _sharedPath;};
     public: Quark* _getQuark() const;
@@ -105,6 +105,20 @@ class Occurrence {
 };
 
 
+// ****************************************************************************************************
+// JsonOccurrence declaration
+// ****************************************************************************************************
+
+
+class JsonOccurrence : public JsonObject {
+// **********************************
+
+  public: static void initialize();
+  public: JsonOccurrence(unsigned long);
+  public: virtual string getTypeName() const;
+  public: virtual JsonOccurrence* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 } // End of Hurricane namespace.
 
@@ -116,5 +130,5 @@ INSPECTOR_PV_SUPPORT(Hurricane::Occurrence);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

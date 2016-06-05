@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Library.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -97,6 +97,19 @@ void Library::setName(const Name& name)
     }
 }
 
+string Library::getHierarchicalName () const
+// *****************************************
+{
+  string   rpath;
+  Library* library = getLibrary();
+  do {
+    rpath.insert( 0, getString(library->getName())+"." );
+
+    library = library->getLibrary();
+  } while ( library );
+
+  return rpath + getString(getName());
+}
 void Library::_postCreate()
 // ************************
 {
@@ -113,13 +126,11 @@ void Library::_preDestroy()
 {
     Inherit::_preDestroy();
 
-    for_each_cell(cell, getCells()) cell->destroy(); end_for;
-    for_each_library(library, getLibraries()) library->destroy(); end_for;
+    Cells     cells     = getCells    (); while (cells    .getFirst()) cells    .getFirst()->destroy();
+    Libraries libraries = getLibraries(); while (libraries.getFirst()) libraries.getFirst()->destroy();
 
-    if (!_library)
-        _dataBase->_setRootLibrary(NULL);
-    else
-        _library->_getLibraryMap()._remove(this);
+    if (not _library) _dataBase->_setRootLibrary( NULL );
+    else _library->_getLibraryMap()._remove( this );
 }
 
 string Library::_getString() const
@@ -215,10 +226,83 @@ void Library::CellMap::_setNextElement(Cell* cell, Cell* nextCell) const
     cell->_setNextOfLibraryCellMap(nextCell);
 };
 
+void Library::_toJson(JsonWriter* w) const
+// ***************************************
+{
+  Inherit::_toJson( w );
+
+  jsonWrite( w, "_name"      , getName()      );
+//jsonWrite( w, "+cellMap"   , getCells()     );
+  jsonWrite( w, "+libraryMap", getLibraries() );
+}
+
+
+// ****************************************************************************************************
+// JsonLibrary implementation
+// ****************************************************************************************************
+
+Initializer<JsonLibrary>  jsonLibraryInit ( 0 );
+
+void  JsonLibrary::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonLibrary (JsonWriter::RegisterMode) ); }
+
+JsonLibrary::JsonLibrary(unsigned long flags)
+// ************************************
+  : JsonDBo(flags)
+{
+//add( ".Library"   , typeid(Library*)  );
+  add( "_name"      , typeid(string)    );
+//add( "+cellMap"   , typeid(JsonArray) );
+  add( "+libraryMap", typeid(JsonArray) );
+}
+
+string JsonLibrary::getTypeName() const
+// *********************************
+{ return "Library"; }
+
+JsonLibrary* JsonLibrary::clone(unsigned long flags) const
+// *************************************************
+{ return new JsonLibrary ( flags ); }
+
+void JsonLibrary::toData(JsonStack& stack)
+// ***************************************
+{
+  check( stack, "JsonLibrary::toData" );
+
+  Name     libName ( get<string>  ( stack, "_name"    ) );
+  Library* library = NULL;
+  Library* parent  = NULL;
+
+  if (stack.rhas(".Library"))
+    parent = get<Library*>( stack, ".Library" );
+  else if (stack.rhas("_rootLibrary"))
+    parent = get<Library*>( stack, "_rootLibrary" );
+
+  if (parent) {
+    library = parent->getLibrary( libName );
+    if (not library)
+      library = Library::create( parent, libName );
+  } else {
+    library = DataBase::getDB()->getRootLibrary();
+    if (not library)
+      library = Library::create( DataBase::getDB(), libName );
+    else {
+      if (library->getName() != libName) {
+        throw Error( "JsonLibrary::toData(): Root library name discrepency, \"%s\" vs. \"%s\"."
+                   , getString(library->getName()).c_str()
+                   , getString(libName).c_str()
+                   );
+      }
+    }
+  }
+
+  update( stack, library );
+}
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

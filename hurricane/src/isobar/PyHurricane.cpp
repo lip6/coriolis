@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -129,6 +129,16 @@ using namespace Hurricane;
 // +-----------------------------------------------------------------+
 
 
+  int  PyAny_AsInt ( PyObject* object )
+  {
+    long  value = 0;
+
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return (int)value;
+  }
+
+
   long  PyAny_AsLong ( PyObject* object )
   {
     long  value = 0;
@@ -199,7 +209,7 @@ using namespace Hurricane;
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) ) {
         //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification so Pharos can run several scripts during one execution
-        trace << objectTypeRedefinition << endl; 
+        cdebug.log(20) << objectTypeRedefinition << endl; 
         return;
       }
     }
@@ -486,8 +496,8 @@ extern "C" {
     HTRY
     PyObject* state = NULL;
     if (PyArg_ParseTuple(args , "O:Hurricane.trace()", &state)) {
-      if (PyObject_IsTrue(state)) trace_on ();
-      else                  trace_off();
+      if (PyObject_IsTrue(state)) { } /*trace_on ();*/
+      else                        { } /*trace_off();*/
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to BasicLayer.create()." );
       return NULL;
@@ -516,7 +526,7 @@ extern "C" {
 
   DL_EXPORT(void) initHurricane () {
   //trace_on();
-    trace << "initHurricane()" << endl;
+    cdebug.log(20) << "initHurricane()" << endl;
 
     PyDebugSession_LinkPyType ();
     PyUpdateSession_LinkPyType ();
@@ -826,7 +836,7 @@ extern "C" {
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 
-    trace << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
+    cdebug.log(20) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

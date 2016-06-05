@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Session.h<katabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -17,17 +17,17 @@
 #ifndef  KATABATIC_SESSION_H
 #define  KATABATIC_SESSION_H
 
-#include  <string>
-#include  <vector>
-#include  <set>
-#include  <map>
-#include  <boost/function.hpp>
-#include  "hurricane/Commons.h"
-#include  "hurricane/DbU.h"
-#include  "crlcore/CellGauge.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "katabatic/Constants.h"
-#include  "katabatic/Configuration.h"
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+#include <boost/function.hpp>
+#include "hurricane/Commons.h"
+#include "hurricane/DbU.h"
+#include "crlcore/CellGauge.h"
+#include "crlcore/RoutingGauge.h"
+#include "katabatic/Constants.h"
+#include "katabatic/Configuration.h"
 
 namespace Hurricane {
   class Layer;
@@ -48,7 +48,6 @@ namespace Katabatic {
   using std::map;
   using std::make_pair;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::_TName;
   using Hurricane::Record;
   using Hurricane::Layer;

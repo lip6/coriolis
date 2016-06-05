@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,15 +26,13 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./BasicLayer.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "hurricane/BasicLayer.h"
-# include  "hurricane/Technology.h"
-# include  "hurricane/Error.h"
+#include "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/BasicLayer.h"
 
 
 namespace Hurricane {
@@ -272,10 +264,26 @@ namespace Hurricane {
   {
     Record* record = Layer::_getRecord();
     if (record) {
-      record->add(getSlot("Material", &_material));
-      record->add(getSlot("RealName", &_realName));
+      record->add(getSlot("_material"     , &_material));
+      record->add(getSlot("_realName"     , &_realName));
+      record->add(getSlot("_blockageLayer",  _blockageLayer));
     }
     return record;
+  }
+
+
+  void  BasicLayer::_toJson ( JsonWriter* writer ) const
+  {
+    Super::_toJson( writer );
+
+    jsonWrite( writer, "_material"     , getString(&_material) );
+    jsonWrite( writer, "_extractNumber", _extractNumber        );
+    jsonWrite( writer, "_realName"     , _realName             );
+    if (_blockageLayer) {
+      jsonWrite( writer, "_blockageLayer", _blockageLayer->getName() );
+    } else {
+      jsonWrite( writer, "_blockageLayer", "no_blockage_layer" );
+    }
   }
 
 
@@ -300,6 +308,23 @@ namespace Hurricane {
   }
 
 
+  BasicLayer::Material  BasicLayer::Material::fromString ( const string& s )
+  {
+    Code code = other;
+    if      (s == "nWell"   ) code = nWell;
+    else if (s == "pWell"   ) code = pWell;
+    else if (s == "nImplant") code = nImplant;
+    else if (s == "pImplant") code = pImplant;
+    else if (s == "active"  ) code = active;
+    else if (s == "poly"    ) code = poly;
+    else if (s == "cut"     ) code = cut;
+    else if (s == "metal"   ) code = metal;
+    else if (s == "blockage") code = blockage;
+
+    return Material(code);
+  }
+
+
   string BasicLayer::Material::_getString () const
   { return getString(&_code); }
 
@@ -312,4 +337,120 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonBasicLayer".
+
+  Initializer<JsonBasicLayer>  jsonBasicLayerInit ( 0 );
+
+
+  void  JsonBasicLayer::initialize ()
+  { JsonTypes::registerType( new JsonBasicLayer (JsonWriter::RegisterMode) ); }
+
+
+  JsonBasicLayer::JsonBasicLayer ( unsigned long flags )
+    : JsonLayer(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    cdebug.log(19) << "JsonBasicLayer::JsonBasicLayer()" << endl;
+
+    add( "_material"     , typeid(string) );
+    add( "_extractNumber", typeid(string) );
+    add( "_blockageLayer", typeid(string) );
+    add( "_realName"     , typeid(string) );
+  }
+
+
+  JsonBasicLayer::~JsonBasicLayer ()
+  { }
+
+
+  string  JsonBasicLayer::getTypeName () const
+  { return "BasicLayer"; }
+
+
+  JsonBasicLayer* JsonBasicLayer::clone ( unsigned long flags ) const
+  { return new JsonBasicLayer ( flags ); }
+
+
+  void JsonBasicLayer::toData(JsonStack& stack)
+  {
+    cdebug.tabw(19,1);
+
+    check( stack, "JsonBasicLayer::toData" );
+
+    Technology* techno     = lookupTechnology( stack, "JsonBasicLayer::toData" );
+    BasicLayer* basicLayer = NULL;
+
+    if (techno) {
+      string       name           = get<string> ( stack, "_name"           );
+      string       smask          = get<string> ( stack, "_mask"           );
+      DbU::Unit    minimalSize    = get<int64_t>( stack, "_minimalSize"    );
+      DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
+      bool         isWorking      = get<bool>   ( stack, "_working"        );
+      string       materialName   = get<string> ( stack, "_material"       );
+      unsigned int extractNumber  = get<int64_t>( stack, "_extractNumber"  );
+      string       blockageLayer  = get<string> ( stack, "_blockageLayer"  );
+      string       realName       = get<string> ( stack, "_realName"       );
+
+      BasicLayer::Material material = BasicLayer::Material::fromString(materialName);
+      Layer::Mask          mask     = Layer::Mask::fromString(smask);
+
+      if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      // Actual creation.
+        basicLayer = BasicLayer::create( techno
+                                       , name
+                                       , material
+                                       , extractNumber
+                                       , minimalSize
+                                       , minimalSpacing
+                                       );
+        basicLayer->setWorking( isWorking );
+
+        if (blockageLayer != "no_blockage_layer") {
+          JsonTechnology* jtechno = jget<JsonTechnology>( stack );
+          if (jtechno) {
+            jtechno->addBlockageRef( blockageLayer, basicLayer );
+          }
+        }
+
+        if (basicLayer->getMask() != mask) {
+          cerr << Error( "JsonBasicLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"
+                         "        Blob:     %s\n"
+                         "        DataBase: %s"
+                       , name.c_str()
+                       , getString(mask).c_str()
+                       , getString(basicLayer->getMask()).c_str()
+                       ) << endl;
+        }
+      // Add here association with blockage layer...
+      } else {
+      // Check coherency with existing layer.
+        basicLayer = dynamic_cast<BasicLayer*>( techno->getLayer(name) );
+        if (basicLayer) {
+          if (basicLayer->getMask() != mask) {
+            cerr << Error( "JsonBasicLayer::toData(): Layer mask discrepency on \"%s\":\n"
+                           "        Blob:     %s\n"
+                           "        DataBase: %s"
+                         , name.c_str()
+                         , getString(mask).c_str()
+                         , getString(basicLayer->getMask()).c_str()
+                         ) << endl;
+          }
+        } else {
+          cerr << Error( "JsonBasicLayer::toData(): No BasicLayer \"%s\" in the existing technology."
+                       , name.c_str()
+                       ) << endl;
+        }
+      }
+    } else {
+      cerr << Error( "JsonBasicLayer::toData(): Cannot find technology, aborting BasicLayer creation." ) << endl;
+    }
+    
+    update( stack, basicLayer );
+
+    cdebug.tabw(19,-1);
+  }
+
+
+} // Hurricane namespace.

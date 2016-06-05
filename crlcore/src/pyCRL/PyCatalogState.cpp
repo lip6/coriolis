@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCatalogState.cpp"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyCell.h"
@@ -36,7 +27,8 @@ namespace  CRL {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -73,12 +65,12 @@ extern "C" {
   DirectGetBoolAttribute(PyCatalogState_isPhysical   ,isPhysical   ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isLogical    ,isFlattenLeaf,PyCatalogState,Catalog::State)
 
-  DirectSetBoolAttribute(PyCatalogState_setFlattenLeaf,setFlattenLeaf,"Catalog::State::setFlatenLeaf",PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setFeed       ,setFeed       ,"Catalog::State::setFeed"      ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setGds        ,setGds        ,"Catalog::State::setGds"       ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setDelete     ,setDelete     ,"Catalog::State::setDelete"    ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setPhysical   ,setPhysical   ,"Catalog::State::setPhysical"  ,PyCatalogState,Catalog::State)
-  DirectSetBoolAttribute(PyCatalogState_setLogical    ,setFlattenLeaf,"Catalog::State::setLogical"   ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setFlattenLeaf,setFlattenLeaf,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setFeed       ,setFeed       ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setGds        ,setGds        ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setDelete     ,setDelete     ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setPhysical   ,setPhysical   ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setLogical    ,setFlattenLeaf,PyCatalogState,Catalog::State)
 
 
   // Standart Destroy (Attribute).
@@ -122,7 +114,7 @@ extern "C" {
   DirectHashMethod(PyCatalogState_Hash, PyCatalogState)
 
   extern void  PyCatalogState_LinkPyType() {
-    trace << "PyCatalogState_LinkType()" << endl;
+    cdebug.log(30) << "PyCatalogState_LinkType()" << endl;
     PyTypeCatalogState.tp_dealloc = (destructor) PyCatalogState_DeAlloc;
     PyTypeCatalogState.tp_compare = (cmpfunc)    PyCatalogState_Cmp;
     PyTypeCatalogState.tp_repr    = (reprfunc)   PyCatalogState_Repr;

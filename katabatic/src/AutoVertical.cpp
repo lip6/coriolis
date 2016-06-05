@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -29,8 +29,6 @@ namespace Katabatic {
 
   using std::min;
   using std::max;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::Error;
   using Hurricane::Bug;
 
@@ -56,8 +54,8 @@ namespace Katabatic {
     : AutoSegment(vertical)
     , _vertical(vertical)
   {
-    ltrace(99) << "CTOR AutoVertical " << this << endl;
-    ltrace(99) << "             over " << vertical << endl;
+    cdebug.log(145) << "CTOR AutoVertical " << this << endl;
+    cdebug.log(145) << "             over " << vertical << endl;
   }
 
 
@@ -97,9 +95,8 @@ namespace Katabatic {
 
   void  AutoVertical::_preDestroy ()
   {
-    ltrace(200) << "AutoVertical::_preDestroy() - <id:" << getId() << "> " << endl;
-    ltrace(200) << "  " << _getString() << endl;
-    ltracein(90);
+    cdebug.log(149,1) << "AutoVertical::_preDestroy() - <id:" << getId() << "> " << endl;
+    cdebug.log(149)   << _getString() << endl;
 
     if ( not Session::doDestroyTool() ) {
       AutoContact* source = getAutoSource();
@@ -127,14 +124,14 @@ namespace Katabatic {
     }
 
     AutoSegment::_preDestroy ();
-    ltraceout(90);
+    cdebug.tabw(145,-1);
   }
 
 
   AutoVertical::~AutoVertical ()
   {
     if ( Session::doDestroyBaseSegment() and not Session::doDestroyTool() ) {
-      ltrace(200) << "~AutoVertical() - " << endl;
+      cdebug.log(149) << "~AutoVertical() - " << endl;
       _vertical->destroy ();
     }
   }
@@ -166,7 +163,7 @@ namespace Katabatic {
     constraintMin = contact->getCBXMin();
     constraintMax = contact->getCBXMax();
 
-    ltrace(148) << "Source constraints: " << contact << " ["
+    cdebug.log(149) << "Source constraints: " << contact << " ["
                 << DbU::getValueString(constraintMin) << ":"
                 << DbU::getValueString(constraintMax) << "]"
                 << endl;
@@ -175,7 +172,7 @@ namespace Katabatic {
     constraintMin = max ( constraintMin, contact->getCBXMin() );
     constraintMax = min ( constraintMax, contact->getCBXMax() );
 
-    ltrace(148) << "Merge with target constraints: " << contact << " ["
+    cdebug.log(149) << "Merge with target constraints: " << contact << " ["
                 << DbU::getValueString(constraintMin) << ":"
                 << DbU::getValueString(constraintMax) << "]"
                 << endl;
@@ -183,7 +180,7 @@ namespace Katabatic {
     constraintMin = max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = min ( constraintMax, getUserConstraints().getVMax() );
 
-    ltrace(148) << "Merge with user constraints: " << getUserConstraints() << " ["
+    cdebug.log(149) << "Merge with user constraints: " << getUserConstraints() << " ["
                 << DbU::getValueString(constraintMin) << ":"
                 << DbU::getValueString(constraintMax) << "]"
                 << endl;
@@ -217,7 +214,7 @@ namespace Katabatic {
 
   bool  AutoVertical::_canSlacken () const
   {
-    ltraceout(200);
+    cdebug.tabw(149,-1);
 
     Interval sourceSide        = getAutoSource()->getGCell()->getSide( KbHorizontal );
     Interval targetSide        = getAutoTarget()->getGCell()->getSide( KbHorizontal );
@@ -228,26 +225,25 @@ namespace Katabatic {
     sourceConstraints.inflate( 1 );
     targetConstraints.inflate( 1 );
 
-    if (not sourceConstraints.contains(sourceSide)) { ltraceout(200); return true; }
-    if (not targetConstraints.contains(targetSide)) { ltraceout(200); return true; }
+    if (not sourceConstraints.contains(sourceSide)) { cdebug.tabw(149,-1); return true; }
+    if (not targetConstraints.contains(targetSide)) { cdebug.tabw(149,-1); return true; }
 
-    ltraceout(200);
+    cdebug.tabw(149,-1);
     return false;
   }
 
 
   bool  AutoVertical::_slacken ( unsigned int flags )
   {
-    ltrace(200) << "AutoVertical::_slacken() " << this << endl;
-    ltracein(200);
+    cdebug.log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
     if (   not isStrongTerminal()
        or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
-      { ltraceout(200); return false; }
+      { cdebug.tabw(149,-1); return false; }
 
-    ltrace(200) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
-    ltrace(200) << "test:" << (getLength() < getPitch()*5) << endl;
-    ltrace(200) << "length:" << DbU::getValueString(getLength()) << endl;
+    cdebug.log(149) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
+    cdebug.log(149) << "test:" << (getLength() < getPitch()*5) << endl;
+    cdebug.log(149) << "length:" << DbU::getValueString(getLength()) << endl;
 
     bool         success       = false;
     bool         slackened     = false;
@@ -272,7 +268,7 @@ namespace Katabatic {
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (doglegs.size() >= 2) {
-        ltrace(200) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
+        cdebug.log(149) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
         doglegs[doglegs.size()-2]->_setAxis( getSourcePosition() );
         success = true;
 
@@ -303,7 +299,7 @@ namespace Katabatic {
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (doglegs.size() >= 2) {
-        ltrace(200) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getTargetPosition()) << endl;
+        cdebug.log(149) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getTargetPosition()) << endl;
         doglegs[doglegs.size()-2]->_setAxis( getTargetPosition() );
         success = true;
       }
@@ -315,7 +311,7 @@ namespace Katabatic {
       setFlags  ( SegSlackened );
       unsetFlags( SegHalfSlackened );
     }
-    ltraceout(200);
+    cdebug.tabw(149,-1);
 
     return success;
   }
@@ -327,7 +323,7 @@ namespace Katabatic {
 
     if (_vertical->getX() == axis) return;
 
-    ltrace(159) << "_setAxis() @X " << DbU::toLambda(axis) << " " << this << endl;
+    cdebug.log(149) << "_setAxis() @X " << DbU::toLambda(axis) << " " << this << endl;
 
     _vertical->setX( axis );
     invalidate();
@@ -345,7 +341,7 @@ namespace Katabatic {
   void  AutoVertical::updateOrient ()
   {
     if (_vertical->getTargetY() < _vertical->getSourceY()) {
-      ltrace(80) << "updateOrient() " << this << " (before S/T swap)" << endl;
+      cdebug.log(145) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _vertical->invert();
 
       unsigned int spinFlags = _flags & SegDepthSpin;
@@ -549,7 +545,7 @@ namespace Katabatic {
 
   bool  AutoVertical::moveURight ()
   {
-    ltrace(200) << "AutoVertical::moveURight()" << endl;
+    cdebug.log(149) << "AutoVertical::moveURight()" << endl;
 
     if (not getAutoSource()->isTurn() or not getAutoTarget()->isTurn()) return true;
     if (not getAutoSource()->getGCell()->getRight()) return true;
@@ -604,7 +600,7 @@ namespace Katabatic {
     DbU::Unit x = begin->getSide( KbHorizontal ).getVMin();
     setAxis( x );
 
-    ltrace(200) << "Moved to axis: " << DbU::getValueString(x) << endl;
+    cdebug.log(149) << "Moved to axis: " << DbU::getValueString(x) << endl;
 
     return true;
   }
@@ -612,7 +608,7 @@ namespace Katabatic {
 
   unsigned int  AutoVertical::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
   {
-    ltrace(200) << "AutoVertical::_makeDogleg(GCell*)" << endl;
+    cdebug.log(149) << "AutoVertical::_makeDogleg(GCell*)" << endl;
 
     AutoContact*  autoSource = getAutoSource();
     AutoContact*  autoTarget = getAutoTarget();
@@ -645,16 +641,16 @@ namespace Katabatic {
     invalidate( KbTopology );
     autoTarget->invalidate( KbTopology );
     AutoContact* dlContact1 = AutoContactTurn::create( doglegGCell, _vertical->getNet(), contactLayer );
-    ltrace(200) << dlContact1 << endl;
+    cdebug.log(149) << dlContact1 << endl;
     AutoContact* dlContact2 = AutoContactTurn::create( doglegGCell, _vertical->getNet(), contactLayer );
-    ltrace(200) << dlContact2 << endl;
+    cdebug.log(149) << dlContact2 << endl;
     AutoSegment* segment1   = AutoSegment::create( dlContact1 , dlContact2, KbHorizontal );
-    ltrace(200) << segment1 << endl;
+    cdebug.log(149) << segment1 << endl;
     segment1->setLayer( doglegLayer );
     segment1->_setAxis( doglegAxis );
     segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
-    ltrace(200) << "New " << dlContact1->base() << "." << endl;
-    ltrace(200) << "New " << dlContact2->base() << "." << endl;
+    cdebug.log(149) << "New " << dlContact1->base() << "." << endl;
+    cdebug.log(149) << "New " << dlContact2->base() << "." << endl;
     Session::dogleg( segment1 );
 
     targetAttach( dlContact1 );
@@ -668,19 +664,27 @@ namespace Katabatic {
     if (isSourceTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+      autoTarget->unsetFlags( CntWeakTerminal );
+      dlContact1->setFlags  ( CntWeakTerminal );
+      if (autoTarget->getGCell() == doglegGCell)
+        dlContact1->migrateConstraintBox( autoTarget );
     } else if (isTargetTerminal()) {
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegTargetTerminal );
+      autoSource->unsetFlags( CntWeakTerminal );
+      dlContact2->setFlags  ( CntWeakTerminal );
+      if (autoSource->getGCell() == doglegGCell)
+        dlContact2->migrateConstraintBox( autoSource );
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
     }
 
-    ltrace(200) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
-    ltrace(200) << "Session::dogleg[x+2] new paral: " << segment2 << endl;
-    ltrace(200) << "Session::dogleg[x+0] original:  " << this << endl;
+    cdebug.log(149) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
+    cdebug.log(149) << "Session::dogleg[x+2] new paral: " << segment2 << endl;
+    cdebug.log(149) << "Session::dogleg[x+0] original:  " << this << endl;
 
     dlContact1->updateCache();
     dlContact2->updateCache();

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -42,8 +42,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeAllianceFramework;
   extern  PyMethodDef   PyAllianceFramework_Methods[];
 
-  extern  PyObject* PyAllianceFramework_Link       ( CRL::AllianceFramework* );
-  extern  void      PyAllianceFramework_LinkPyType ();
+  extern  PyObject* PyAllianceFramework_Link           ( CRL::AllianceFramework* );
+  extern  void      PyAllianceFramework_LinkPyType     ();
+  extern  void      PyAllianceFramework_postModuleInit ();
 
 
 #define IsPyAllianceFramework(v)  ( (v)->ob_type == &PyTypeAllianceFramework )

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,6 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Technology.h"
@@ -322,5 +323,124 @@ namespace Hurricane {
     return record;
   }
 
+
+  void  RegularLayer::_toJson ( JsonWriter* writer ) const
+  {
+    Super::_toJson( writer );
+
+    jsonWrite( writer, "_basicLayer"     , _basicLayer->getName() );
+    jsonWrite( writer, "_enclosure"      , _enclosure             );
+    jsonWrite( writer, "_extentionCap"   , _extentionCap          );
+    jsonWrite( writer, "_extentionWidth" , _extentionWidth        );
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "Hurricane::JsonRegularLayer".
+
+  Initializer<JsonRegularLayer>  jsonRegularLayerInit ( 0 );
+
+
+  void  JsonRegularLayer::initialize ()
+  { JsonTypes::registerType( new JsonRegularLayer (JsonWriter::RegisterMode) ); }
+
+
+  JsonRegularLayer::JsonRegularLayer ( unsigned long flags )
+    : JsonLayer(flags)
+  {
+    if (flags & JsonWriter::RegisterMode) return;
+
+    cdebug.log(19) << "JsonRegularLayer::JsonRegularLayer()" << endl;
+
+    add( "_basicLayer"    , typeid(string)  );
+    add( "_enclosure"     , typeid(int64_t) );
+    add( "_extentionCap"  , typeid(int64_t) );
+    add( "_extentionWidth", typeid(int64_t) );
+  }
+
+
+  JsonRegularLayer::~JsonRegularLayer ()
+  { }
+
+
+  string  JsonRegularLayer::getTypeName () const
+  { return "RegularLayer"; }
+
+
+  JsonRegularLayer* JsonRegularLayer::clone ( unsigned long flags ) const
+  { return new JsonRegularLayer ( flags ); }
+
+
+  void JsonRegularLayer::toData( JsonStack& stack )
+  {
+    cdebug.tabw(19,1);
+
+    check( stack, "JsonRegularLayer::toData" );
+
+    Technology*   techno = lookupTechnology( stack, "JsonRegularLayer::toData" );
+    RegularLayer* layer  = NULL;
+
+    if (techno) {
+      string       name           = get<string> ( stack, "_name"           );
+      string       smask          = get<string> ( stack, "_mask"           );
+      DbU::Unit    minimalSize    = get<int64_t>( stack, "_minimalSize"    );
+      DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
+      bool         isWorking      = get<bool>   ( stack, "_working"        );
+
+      BasicLayer*  basicLayer     = techno->getBasicLayer( get<string>(stack,"_basicLayer" ) );
+      DbU::Unit    enclosure      = get<int64_t>( stack, "_enclosure"      );
+      DbU::Unit    extensionCap   = get<int64_t>( stack, "_extentionCap"   );
+      DbU::Unit    extensionWidth = get<int64_t>( stack, "_extentionWidth" );
+
+      Layer::Mask mask = Layer::Mask::fromString( smask );
+
+      if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      // Actual creation.
+        layer = RegularLayer::create( techno, name );
+        layer->setBasicLayer    ( basicLayer );
+        layer->setWorking       ( isWorking );
+        layer->setMinimalSize   ( minimalSize );
+        layer->setMinimalSpacing( minimalSpacing );
+        layer->setEnclosure     ( basicLayer, enclosure      );
+        layer->setExtentionCap  ( basicLayer, extensionCap   );
+        layer->setExtentionWidth( basicLayer, extensionWidth );
+
+        if (layer->getMask() != mask) {
+          cerr << Error( "JsonRegularLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"
+                         "        Blob:     %s\n"
+                         "        DataBase: %s"
+                       , name.c_str()
+                       , getString(mask).c_str()
+                       , getString(layer->getMask()).c_str()
+                       ) << endl;
+        }
+      // Add here association with blockage layer...
+      } else {
+      // Check coherency with existing layer.
+        layer = dynamic_cast<RegularLayer*>( techno->getLayer(name) );
+        if (layer) {
+          if (layer->getMask() != mask) {
+            cerr << Error( "JsonRegularLayer::toData(): Layer mask discrepency on \"%s\":\n"
+                           "        Blob:     %s\n"
+                           "        DataBase: %s"
+                         , name.c_str()
+                         , getString(mask).c_str()
+                         , getString(layer->getMask()).c_str()
+                         ) << endl;
+          }
+        } else {
+          cerr << Error( "JsonRegularLayer::toData(): No RegularLayer \"%s\" in the existing technology."
+                       , name.c_str()
+                       ) << endl;
+        }
+      }
+    } else {
+      cerr << Error( "JsonRegularLayer::toData(): Cannot find technology, aborting RegularLayer creation." ) << endl;
+    }
+    
+    update( stack, layer );
+
+    cdebug.tabw(19,-1);
+  }
 
 } // Hurricane namespace.

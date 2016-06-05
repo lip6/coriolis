@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Rubber.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -179,22 +179,21 @@ void Rubber::_destroy()
 void Rubber::_preDestroy()
 // **********************
 {
-// trace << "entering Rubber::_preDestroy: " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Rubber::_preDestroy: " << this << endl;
 
-        Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-        _count = (unsigned)-1; // to avoid a new destruction
+  _count = (unsigned)-1; // to avoid a new destruction
 
-        for_each_hook(hook, getHooks()) {
-                hook->getComponent()->_setRubber(NULL);
-                end_for;
-        }
+  for_each_hook(hook, getHooks()) {
+    hook->getComponent()->_setRubber(NULL);
+    end_for;
+  }
 
-        _net->_getRubberSet()._remove(this);
+  _net->_getRubberSet()._remove(this);
 
-// trace << "exiting Rubber::_preDestroy:" << endl;
-// trace_out();
+  cdebug.log(18) << "exiting Rubber::_preDestroy:" << endl;
+  cdebug.tabw(18,-1);
 }
 
 string Rubber::_getString() const
@@ -270,5 +269,5 @@ typedef struct pcmp_s {
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

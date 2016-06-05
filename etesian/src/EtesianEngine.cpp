@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -191,9 +191,6 @@ namespace Etesian {
   using Utilities::Dots;
   using Hurricane::DebugSession;
   using Hurricane::tab;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
   using Hurricane::Error;
@@ -290,13 +287,12 @@ namespace Etesian {
 
   void  EtesianEngine::_preDestroy ()
   {
-    ltrace(90) << "EtesianEngine::_preDestroy()" << endl;
-    ltracein(90);
+    cdebug.log(129,1) << "EtesianEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << getCell()->getName() << ">" << endl;
 
-    ltraceout(90);
+    cdebug.log(129,-1);
   }
 
 
@@ -404,6 +400,7 @@ namespace Etesian {
     _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
+    if (not cmess2.enabled()) dots.disable();
 
     cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
 
@@ -450,9 +447,7 @@ namespace Etesian {
     AllianceFramework* af    = AllianceFramework::get();
     DbU::Unit          pitch = getPitch();
 
-    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
-  //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
-    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
+    if (not cmess2.enabled()) dots.disable();
 
   // Coloquinte circuit description data-structures.
     size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
@@ -479,10 +474,15 @@ namespace Etesian {
       //masterCell->setAbutmentBox( topAb );
       //instance->setTransformation( Transformation() ); // (0,0,ID).
       //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        occurrence.makeInvalid();
         instance->slaveAbutmentBox();
       }
     }
     UpdateSession::close();
+
+    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
+  //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
 
     index_t instanceId = 0;
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
@@ -922,6 +922,14 @@ namespace Etesian {
 
     _placed = true;
 
+    UpdateSession::open();
+    for ( Net* net : getCell()->getNets() ) {
+      for ( RoutingPad* rp : net->getComponents().getSubSet<RoutingPad*>() ) {
+        rp->invalidate();
+      }
+    }
+    UpdateSession::close();
+
     getCell()->setFlags( Cell::Flags::Placed );
   }
 
@@ -996,7 +1004,7 @@ namespace Etesian {
                                                   );
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 
-      // This is temporary as it's not trans-hierarchic: we ignore the posutions
+      // This is temporary as it's not trans-hierarchic: we ignore the positions
       // of all the intermediary instances.
         instance->setTransformation( trans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );

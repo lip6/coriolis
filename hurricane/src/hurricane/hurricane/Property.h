@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Property.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_PROPERTY__
-#define  __HURRICANE_PROPERTY__
+#ifndef  HURRICANE_PROPERTY_H
+#define  HURRICANE_PROPERTY_H
 
 #include  "hurricane/Name.h"
 #include  "hurricane/Properties.h"
@@ -51,6 +42,13 @@ namespace Hurricane {
 
 
   extern const char* propertyTypeNameError;
+
+
+// -------------------------------------------------------------------
+// Classes  :  template enable/disable Json support.
+
+  struct JsonEnabled  { enum State { enabled=1 }; };
+  struct JsonDisabled { enum State { enabled=0 }; };
 
 
 // -------------------------------------------------------------------
@@ -76,6 +74,8 @@ namespace Hurricane {
       virtual void             onCapturedBy  ( DBo* owner ) = 0;
       virtual void             onReleasedBy  ( DBo* owner ) = 0;
     // Hurricane Managment.
+      virtual bool             hasJson       () const;
+      virtual void             toJson        ( JsonWriter*, const DBo* ) const;
       virtual string           _getTypeName  () const = 0;
       virtual string           _getString    () const;
       virtual Record*          _getRecord    () const;
@@ -160,8 +160,8 @@ namespace Hurricane {
 // Template Class  :  "Hurricane::StandardPrivateProperty".
 
 
-  template<typename Value> class StandardPrivateProperty : public PrivateProperty {
-
+  template<typename Value, typename JsonState=JsonDisabled>
+  class StandardPrivateProperty : public PrivateProperty {
     public:
       static  Name                     staticGetName  ();
       static  Value*                   staticGetValue ( const DBo* );
@@ -173,49 +173,99 @@ namespace Hurricane {
       virtual Name                     getName        () const;
               Value&                   getValue       () const;
               void                     setValue       ( const Value& );
+      virtual bool                     hasJson        () const;
+      virtual void                     toJson         ( JsonWriter*, const DBo* ) const;
       virtual string                   _getTypeName   () const;
       virtual string                   _getString     () const;
       virtual Record*                  _getRecord     () const;
-
     private:
     // Internal: Attributes.
       static  Name                     _name;
       static  DBo*                     _owner;
       static  StandardPrivateProperty* _cache;
       mutable Value                    _value;
-
     protected:
     // Internal: Constructor.
       StandardPrivateProperty ();
       StandardPrivateProperty ( const Value& );
+    public:
+      class JsonProperty : public JsonObject {
+        public:
+          static  void          initialize   ();
+                                JsonProperty ( unsigned long flags );
+          virtual string        getTypeName  () const;
+          virtual JsonProperty* clone        ( unsigned long ) const;
+          virtual void          toData       ( JsonStack& ); 
+      };
   };
 
 
-  template<typename Value>
-  DBo* StandardPrivateProperty<Value>::_owner = NULL;
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>::JsonProperty::JsonProperty ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    if (flags & JsonWriter::RegisterMode)
+      cerr << "Registering JsonProperty" << endl;
+    add( "_value", typeid(Value) );
+  }
 
 
-  template<typename Value>
-  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::_cache = NULL;
+  template<typename Value, typename JsonState>
+  string  StandardPrivateProperty<Value,JsonState>::JsonProperty::getTypeName () const
+  { return getString(StandardPrivateProperty<Value,JsonState>::staticGetName()); }
 
 
-  template<typename Value>
-  Name  StandardPrivateProperty<Value>::staticGetName ()
+  template<typename Value, typename JsonState>
+  void  StandardPrivateProperty<Value,JsonState>::JsonProperty::initialize ()
+  { JsonTypes::registerType( new JsonProperty (JsonWriter::RegisterMode) ); }
+
+
+  template<typename Value, typename JsonState>
+  typename StandardPrivateProperty<Value,JsonState>::JsonProperty*
+  StandardPrivateProperty<Value,JsonState>::JsonProperty::clone ( unsigned long flags ) const
+  { return new JsonProperty ( flags ); }
+
+
+  template<typename Value, typename JsonState>
+  void StandardPrivateProperty<Value,JsonState>::JsonProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonProperty::toData" );
+
+    DBo*   dbo   = stack.back_dbo();
+    Value  value = get<string>(stack,"_value");
+    StandardPrivateProperty<Value,JsonState>* property
+                 = StandardPrivateProperty<Value,JsonState>::create(value);
+    if (dbo) dbo->put( property );
+    
+    update( stack, property );
+  }
+
+
+  template<typename Value, typename JsonState>
+  DBo* StandardPrivateProperty<Value,JsonState>::_owner = NULL;
+
+
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>* StandardPrivateProperty<Value,JsonState>::_cache = NULL;
+
+
+  template<typename Value, typename JsonState>
+  Name  StandardPrivateProperty<Value,JsonState>::staticGetName ()
   {
     return _name;
   }
 
 
-  template<typename Value>
-  Value* StandardPrivateProperty<Value>::staticGetValue ( const DBo* object )
+  template<typename Value, typename JsonState>
+  Value* StandardPrivateProperty<Value,JsonState>::staticGetValue ( const DBo* object )
   {
     if ( ( object == _owner ) || get(object) ) return _cache->getValue();
     return NULL;
   }
 
 
-  template<typename Value>
-  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ()
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>* StandardPrivateProperty<Value,JsonState>::create ()
   {
     _cache = new StandardPrivateProperty<Value>();
     _cache->_postCreate();
@@ -223,8 +273,8 @@ namespace Hurricane {
   }
 
 
-  template<typename Value>
-  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::create ( const Value& value )
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>* StandardPrivateProperty<Value,JsonState>::create ( const Value& value )
   {
     _cache = new StandardPrivateProperty<Value>(value);
     _cache->_postCreate();
@@ -232,8 +282,8 @@ namespace Hurricane {
   }
 
 
-  template<typename Value>
-  StandardPrivateProperty<Value>* StandardPrivateProperty<Value>::get ( const DBo* object, bool create )
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>* StandardPrivateProperty<Value,JsonState>::get ( const DBo* object, bool create )
   {
     if ( object == _owner ) return _cache;
 
@@ -253,60 +303,79 @@ namespace Hurricane {
   }
   
 
-  template<typename Value>
-  StandardPrivateProperty<Value>::StandardPrivateProperty ()
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>::StandardPrivateProperty ()
     : PrivateProperty(), _value()
   { }
 
 
-  template<typename Value>
-  StandardPrivateProperty<Value>::StandardPrivateProperty ( const Value& value )
+  template<typename Value, typename JsonState>
+  StandardPrivateProperty<Value,JsonState>::StandardPrivateProperty ( const Value& value )
     : PrivateProperty(), _value(value)
   { }
 
 
-  template<typename Value>
-  Name StandardPrivateProperty<Value>::getName() const
+  template<typename Value, typename JsonState>
+  Name StandardPrivateProperty<Value,JsonState>::getName() const
   {
     return staticGetName();
   }
 
 
-  template<typename Value>
-  Value& StandardPrivateProperty<Value>::getValue () const
+  template<typename Value, typename JsonState>
+  Value& StandardPrivateProperty<Value,JsonState>::getValue () const
   {
     return _value;
   }
 
 
-  template<typename Value>
-  void StandardPrivateProperty<Value>::setValue ( const Value& value )
+  template<typename Value, typename JsonState>
+  void StandardPrivateProperty<Value,JsonState>::setValue ( const Value& value )
   {
     _value = value;
   }
 
 
-  template<typename Value>
-  string  StandardPrivateProperty<Value>::_getTypeName () const
+  template<typename Value, typename JsonState>
+  bool  StandardPrivateProperty<Value,JsonState>::hasJson () const
+  {
+    return JsonState::enabled;
+  }
+
+
+  template<typename Value, typename JsonState>
+  void  StandardPrivateProperty<Value,JsonState>::toJson ( JsonWriter* w, const DBo* ) const
+  {
+    w->startObject();
+    std::string tname = getString(staticGetName());
+    jsonWrite( w, "@typename", tname  );
+    jsonWrite( w, "_value", _value );
+    w->endObject();
+  }
+
+
+  template<typename Value, typename JsonState>
+  string  StandardPrivateProperty<Value,JsonState>::_getTypeName () const
   {
     return _TName("StandardPrivateProperty");
   }
 
-  template<typename Value>
-  string  StandardPrivateProperty<Value>::_getString () const
+  template<typename Value, typename JsonState>
+  string  StandardPrivateProperty<Value,JsonState>::_getString () const
   {
     string s = PrivateProperty::_getString();
     s.insert(s.length() - 1, " " + getString(_value));
     return s;
   }
 
-  template<typename Value>
-  Record* StandardPrivateProperty<Value>::_getRecord () const
+  template<typename Value, typename JsonState>
+  Record* StandardPrivateProperty<Value,JsonState>::_getRecord () const
   {
     Record* record = PrivateProperty::_getRecord();
     if (record) {
-      record->add ( getSlot("Name" , staticGetName()) );
-      record->add ( getSlot("Value",&_value)          );
+      record->add ( getSlot("_name"       , staticGetName())    );
+      record->add ( getSlot("_value"      ,&_value)             );
+      record->add ( getSlot("JSON support", JsonState::enabled) );
     }
     return record;
   }
@@ -317,33 +386,51 @@ namespace Hurricane {
 
 
   class SharedProperty : public Property {
-
-    public:
-    // Types.
-      typedef set<DBo*>  DBoSet;
-    // Methods.
-      inline  DBos       getOwners      () const;
-      virtual void       onCapturedBy   ( DBo* owner );
-      virtual void       onReleasedBy   ( DBo* owner );
-      virtual void       onNotOwned     ();
-      inline  DBoSet&    _getOwnerSet   ();
-      virtual string     _getString     () const;
-      virtual Record*    _getRecord     () const;
-
     private:
-    // Internal: Attributes.
-              DBoSet     _ownerSet;
-
+      class Orphaned {
+        public:
+          inline Orphaned ( SharedProperty* );
+        public:
+          SharedProperty* _property;
+          unsigned int    _refcount;
+          unsigned int    _count;
+      };
+    public:
+      typedef set<DBo*>             DBoSet;
+      typedef map<string,Orphaned>  OrphanedMap;
+    public:
+      static  const OrphanedMap& getOrphaneds   ();
+      static  SharedProperty*    getOrphaned    ( const string& );
+      static  void               addOrphaned    ( const string&, SharedProperty* );
+      static  void               refOrphaned    ( const string& );
+      static  void               countOrphaned  ( const string&, unsigned int );
+      static  void               removeOrphaned ( const string& );
+      static  void               clearOrphaneds ();
+    public:                      
+      inline  DBos               getOwners      () const;
+      virtual void               onCapturedBy   ( DBo* owner );
+      virtual void               onReleasedBy   ( DBo* owner );
+      virtual void               onNotOwned     ();
+      inline  DBoSet&            _getOwnerSet   ();
+      virtual string             _getString     () const;
+      virtual Record*            _getRecord     () const;
+    private:
+      static  OrphanedMap  _orphaneds;
+    private:
+              DBoSet       _ownerSet;
     protected:
-    // Internal: Constructor & Destructor.
                          SharedProperty ();
       virtual void       _preDestroy    ();
   };
 
 
 // Inline Functions.
-  DBos                     SharedProperty::getOwners    () const { return getCollection(_ownerSet); }
-  SharedProperty::DBoSet&  SharedProperty::_getOwnerSet () { return _ownerSet; }
+  inline  SharedProperty::Orphaned::Orphaned ( SharedProperty* property )
+    : _property(property), _refcount(0), _count(0)
+  { }
+
+  inline DBos                     SharedProperty::getOwners    () const { return getCollection(_ownerSet); }
+  inline SharedProperty::DBoSet&  SharedProperty::_getOwnerSet () { return _ownerSet; }
 
 
 // -------------------------------------------------------------------
@@ -505,10 +592,10 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Property);
 
 
-#endif // __HURRICANE_PROPERTY__
+#endif // HURRICANE_PROPERTY_H

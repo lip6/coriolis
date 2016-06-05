@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -32,7 +32,9 @@
 
 #include "vlsisapd/utilities/Path.h"
 #include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/Library.h"
 #include "hurricane/Cell.h"
 //#include  "MapView.h"
 #include "hurricane/isobar/PyCell.h"
@@ -46,6 +48,8 @@
 #include "hurricane/viewer/ScriptWidget.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/viewer/GotoWidget.h"
+#include "hurricane/viewer/DesignBlob.h"
+#include "hurricane/viewer/OpenBlobDialog.h"
 #include "hurricane/viewer/SelectCommand.h"
 #include "hurricane/viewer/PyCellViewer.h"
 
@@ -61,11 +65,19 @@ namespace Hurricane {
   void  CellObserver::notify ( unsigned int flags )
   {
     CellViewer* viewer = getOwner();
-    switch ( flags & (Cell::Flags::CellAboutToChange|Cell::Flags::CellChanged) ) {
+    switch ( flags & (Cell::Flags::CellAboutToChange
+                     |Cell::Flags::CellChanged
+                     |Cell::Flags::CellDestroyed) ) {
       case Cell::Flags::CellAboutToChange:
         viewer->emitCellAboutToChange();
         break;
       case Cell::Flags::CellChanged:
+        viewer->emitCellChanged();
+        break;
+      case Cell::Flags::CellDestroyed:
+        viewer->emitCellAboutToChange();
+        viewer->removeHistory( viewer->getCell() );
+        viewer->setCell( NULL );
         viewer->emitCellChanged();
         break;
     }
@@ -100,6 +112,7 @@ namespace Hurricane {
                                              , _toolInterrupt          (false)
                                              , _flags                  (0)
                                              , _updateState            (ExternalEmit)
+                                             , _pyScriptName           ()
   {
     setObjectName( "viewer" );
     menuBar()->setObjectName ( _getAbsWidgetPath("") );
@@ -393,6 +406,22 @@ namespace Hurricane {
     action->setVisible( false );
     addToMenu( "file.========" );
 
+    action = addToMenu( "file.openDesignBlob"
+                      , tr("&Open Design Blob")
+                      , tr("Reload (restore) the whole Hurricane DataBase state")
+                      , QKeySequence()
+                      , QIcon(":/images/stock_open.png")
+                      );
+    connect( action, SIGNAL(triggered()), this, SLOT(openDesignBlob()) );
+    action = addToMenu( "file.saveDesignBlob"
+                      , tr("&Save Design Blob")
+                      , tr("Save (dump) the whole Hurricane DataBase state")
+                      , QKeySequence()
+                      , QIcon(":/images/stock_save.png")
+                      );
+    connect( action, SIGNAL(triggered()), this, SLOT(saveDesignBlob()) );
+    addToMenu( "file.========" );
+
     action = addToMenu( "file.importCell"
                       , tr("&Import Cell")
                       , tr("Import (convert) a new Cell")
@@ -547,16 +576,39 @@ namespace Hurricane {
       _cellHistory.pop_front ();
     _cellHistory.push_back ( activeState );
 
+    rebuildHistory ();
+  }
+
+
+  void  CellViewer::rebuildHistory ()
+  {
     list< shared_ptr<CellWidget::State> >::iterator istate = _cellHistory.begin();
     for ( size_t i=0 ; i<CellHistorySize ; i++ ) {
       if ( istate != _cellHistory.end() ) {
-        QString entry = tr("&%1: %2").arg(i+1).arg( getString((*istate)->getName()).c_str() );
+        QString entry = tr("&%1: %2 %3")
+          .arg(i+1)
+          .arg( getString((*istate)->getName()).c_str() )
+          .arg( (*istate)->getTopPath().getCompactString().c_str() );
         _cellHistoryAction[i]->setText    ( entry );
         _cellHistoryAction[i]->setVisible ( true );
         istate++;
       } else {
         _cellHistoryAction[i]->setVisible ( false );
       }
+    }
+  }
+
+
+  void  CellViewer::removeHistory ( Cell* cell )
+  {
+    Name cellName = (cell) ? cell->getName() : "empty";
+
+    list< shared_ptr<CellWidget::State> >::iterator istate
+      = find_if( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
+
+    if (istate != _cellHistory.end()) {
+      _cellHistory.remove ( *istate );
+      rebuildHistory ();
     }
   }
 
@@ -593,12 +645,14 @@ namespace Hurricane {
       = find_if( _cellHistory.begin(), _cellHistory.end(), CellWidget::FindStateName(cellName) );
 
     if (istate != _cellHistory.end()) {
+      cerr << "CellViewer::setCell() " << (*istate)->getCell() << endl;
+
       (*istate)->getCell()->addObserver( getCellObserver() );
       emit stateChanged ( *istate );
       return;
     }
 
-    cell->addObserver( getCellObserver() );
+    if (cell) cell->addObserver( getCellObserver() );
     _cellWidget->setCell( cell );
   }
 
@@ -689,14 +743,50 @@ namespace Hurricane {
 
   void  CellViewer::openHistoryCell ()
   {
-    QAction* historyAction = qobject_cast<QAction*> ( sender() );
-    if ( historyAction ) {
+    QAction* historyAction = qobject_cast<QAction*>( sender() );
+    if (historyAction) {
       list< shared_ptr<CellWidget::State> >::iterator  istate = _cellHistory.begin();
-    //size_t index = historyAction->data().toUInt();
-    //for ( ; index>0 ; index--, istate++ )
-    //  cerr << "History: " << (*istate)->getName() << endl;
+      size_t index = historyAction->data().toUInt();
+      for ( ; index>0 ; index--, ++istate );
       emit stateChanged ( *istate );
     }
+  }
+
+
+  void  CellViewer::openDesignBlob ()
+  {
+    QString blobName;
+    if (OpenBlobDialog::runDialog(this,blobName)) {
+      string fileName = blobName.toStdString() + ".blob";
+    //DebugSession::open( 0, 500 );
+
+      Cell*       topCell = NULL;
+      DesignBlob* blob    = DesignBlob::fromJson( fileName );
+
+      if (blob) topCell = blob->getTopCell();
+      delete blob;
+
+    //DebugSession::close();
+
+      setCell ( topCell );
+      emit cellLoadedFromDisk( topCell );
+    }
+  }
+
+
+  void  CellViewer::saveDesignBlob ()
+  {
+    Cell* cell = getCell();
+    if (not cell) return;
+
+    string     blobName = getString(cell->getName()) + ".blob.json.bz2";
+    DesignBlob blob     ( cell );
+
+  //DebugSession::open( 0, 500 );
+    JsonWriter writer ( blobName );
+    writer.setFlags( JsonWriter::DesignBlobMode );
+    jsonWrite( &writer, &blob );
+  //DebugSession::close();
   }
 
 
@@ -804,7 +894,7 @@ namespace Hurricane {
 
 
   void  CellViewer::runScriptWidget ()
-  { ScriptWidget::runScript( this, getCell() ); }
+  { ScriptWidget::runScript( this, _pyScriptName, getCell() ); }
 
 
   string  CellViewer::_getString () const

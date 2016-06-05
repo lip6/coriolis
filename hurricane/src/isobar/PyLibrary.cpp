@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -40,7 +40,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_create ( PyObject *, PyObject *args ) {
-      trace << "PyLibrary_create()" << endl;
+      cdebug.log(20) << "PyLibrary_create()" << endl;
 
       PyObject* arg0;
       PyObject* arg1;
@@ -69,7 +69,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getSubLibrary ( PyLibrary *self, PyObject* args ) {
-    trace << "PyLibrary_getLibrary ()" << endl;
+    cdebug.log(20) << "PyLibrary_getLibrary ()" << endl;
 
     Library* subLibrary = NULL;
 
@@ -89,7 +89,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getCell ( PyLibrary* self, PyObject* args ) {
-      trace << "PyLibrary_getCell ()" << endl;
+      cdebug.log(20) << "PyLibrary_getCell ()" << endl;
       
       Cell* cell = NULL;
 
@@ -109,7 +109,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getCells(PyLibrary *self) {
-    trace << "PyLibrary_getCells()" << endl;
+    cdebug.log(20) << "PyLibrary_getCells()" << endl;
 
     METHOD_HEAD ( "Library.getCells()" )
 
@@ -135,7 +135,7 @@ extern "C" {
 
 
   PyMethodDef PyLibrary_Methods[] =
-    { { "create"    , (PyCFunction)PyLibrary_create       , METH_NOARGS|METH_STATIC
+    { { "create"    , (PyCFunction)PyLibrary_create       , METH_VARARGS|METH_STATIC
                     , "Creates a new library." }
     , { "getName"   , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
     , { "getLibrary", (PyCFunction)PyLibrary_getSubLibrary, METH_VARARGS, "Get the sub-library named <name>" }

@@ -1,37 +1,28 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./PaletteWidget.h"                        |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/PaletteWidget.h"       |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_PALETTE_WIDGET__
-#define  __HURRICANE_PALETTE_WIDGET__
+#ifndef  HURRICANE_PALETTE_WIDGET_H
+#define  HURRICANE_PALETTE_WIDGET_H
 
-#include  <map>
-#include  <limits>
-#include  <QScrollArea>
+#include <map>
+#include <limits>
+#include <QScrollArea>
 
-#include  "hurricane/Commons.h"
-#include  "hurricane/Name.h"
+#include "hurricane/Commons.h"
+#include "hurricane/Name.h"
 
 
 class QLabel;
@@ -52,7 +43,11 @@ namespace Hurricane {
   class PaletteNamedItem;
   class PaletteLayerItem;
   class PaletteExtensionGoItem;
+  class PaletteWidget;
 
+
+// -------------------------------------------------------------------
+// Class  :  "PaletteWidget".
 
   class PaletteWidget : public QWidget {
       Q_OBJECT;
@@ -66,7 +61,9 @@ namespace Hurricane {
              bool              isSelectable      ( const Name& name ) const;
       inline void              setOneColumn      ();
       inline void              setColumnHeight   ( size_t height=std::numeric_limits<size_t>::max() );
-             void              build             ();
+             void              readGraphics      ();
+             void              resetGraphics     ();
+             void              rereadGraphics    ();
     signals:                                     
              void              paletteChanged    ();
     public slots:              
@@ -80,16 +77,16 @@ namespace Hurricane {
              void              setItemVisible    ( const Name& name, bool visible );
                              
     protected:               
-             QScrollArea*     _scrollArea;
-             PaletteItems     _layerItems;
-             PaletteItems     _extensionGoItems;
-             QPushButton*     _showAll;
-             QPushButton*     _hideAll;
-             QGridLayout*     _grid;
-             size_t           _columnHeight;
-             int              _extensionRow;
-             int              _extensionColumn;
-             QWidget*         _extensionGroup;
+             QScrollArea*          _scrollArea;
+             PaletteItems          _layerItems;
+             PaletteItems          _extensionGoItems;
+             QPushButton*          _showAll;
+             QPushButton*          _hideAll;
+             QGridLayout*          _grid;
+             size_t                _columnHeight;
+             int                   _extensionRow;
+             int                   _extensionColumn;
+             QWidget*              _extensionGroup;
                              
     private:               
                                      PaletteWidget          ( const PaletteWidget& );
@@ -108,7 +105,6 @@ namespace Hurricane {
   inline void  PaletteWidget::setColumnHeight ( size_t height ) { _columnHeight = height; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif  // __HURRICANE_PALETTE_WIDGET__
+#endif  // HURRICANE_PALETTE_WIDGET_H

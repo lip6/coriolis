@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +26,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./ExtensionGo.cpp"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Error.h"
@@ -59,22 +50,22 @@ namespace Hurricane {
 
   void  ExtensionGo::_preDestroy ()
   {
-    ltrace(10) << "ExtensionGo::_preDestroy() - " << (void*)this << endl;
+    cdebug.log(18) << "ExtensionGo::_preDestroy() - " << (void*)this << endl;
     Go::_preDestroy ();
   }
 
 
   void  ExtensionGo::materialize ()
   {
-    if ( !isMaterialized() ) {
-      if ( _cell ) {
-        ExtensionSlice* slice = _cell->getExtensionSlice ( getName() );
-        if ( !slice ) slice = ExtensionSlice::_create ( _cell, getName() );
-        QuadTree* quadTree = slice->_getQuadTree ();
-        quadTree->insert ( this );
-        _cell->_fit ( quadTree->getBoundingBox() );
+    if (not isMaterialized()) {
+      if (_cell) {
+        ExtensionSlice* slice = _cell->getExtensionSlice( getName() );
+        if (not slice) slice = ExtensionSlice::_create( _cell, getName() );
+        QuadTree* quadTree = slice->_getQuadTree();
+        quadTree->insert( this );
+        _cell->_fit( quadTree->getBoundingBox() );
       } else {
-        cerr << Warning("%s not inserted into QuadTree.",getString(this).c_str()) << endl;
+        cerr << Warning( "%s not inserted into QuadTree.", getString(this).c_str() ) << endl;
       }
     }
   }
@@ -82,20 +73,19 @@ namespace Hurricane {
 
   void ExtensionGo::unmaterialize ()
   {
-  //ltrace(9) << "ExtensionGo::unmaterialize() - " << (void*)this << endl;
-  //ltracein(9);
+    cdebug.log(18,1) << "ExtensionGo::unmaterialize() - start" << (void*)this << endl;
 
     if ( isMaterialized() ) {
-      ExtensionSlice* slice = _cell->getExtensionSlice ( getName() );
-      if ( slice ) {
-        _cell->_unfit ( getBoundingBox() );
-        slice->_getQuadTree()->remove ( this );
-        if ( slice->isEmpty() ) slice->_destroy ();
+      ExtensionSlice* slice = _cell->getExtensionSlice( getName() );
+      if (slice) {
+        _cell->_unfit( getBoundingBox() );
+        slice->_getQuadTree()->remove( this );
+        if (slice->isEmpty()) slice->_destroy();
       }
     }
 
-  //ltrace(9) << "ExtensionGo::unmaterialize() - exit" << endl;
-  //ltraceout(9);
+    cdebug.tabw(18,-1);
+    cdebug.log(18) << "ExtensionGo::unmaterialize() - completed" << endl;
   }
 
 
@@ -114,7 +104,7 @@ namespace Hurricane {
   string ExtensionGo::_getString () const
   {
     string s = Go::_getString();
-    s.insert ( s.length() - 1, " " + getString(getName()) );
+  //s.insert ( s.length() - 1, " " + getString(getName()) );
     return s;
   }
 

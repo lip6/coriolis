@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Path.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -245,6 +245,38 @@ void Path::setNameSeparator(char nameSeparator)
     SharedPath::setNameSeparator(nameSeparator);
 }
 
+string Path::getCompactString() const
+// **********************************
+{
+  if (isEmpty()) return "<empty>";
+
+  string s = "<";
+  s += getString(getOwnerCell()->getName());
+  s += ":";
+  s += getString(_sharedPath->getName()) + ":";
+  s += getString(getMasterCell()->getName()) + ">";
+  return s;
+}
+
+string Path::getJsonString(unsigned long flags) const
+// **************************************************
+{
+  if (isEmpty()) return "";
+
+  string s;
+  if (flags & JsonWriter::DesignBlobMode) {
+  //s += getString(getOwnerCell()->getId()) + "::";
+    s += getString(_sharedPath->getJsonString(flags));
+  //s += "::" + getString(getMasterCell()->getId());
+  } else {
+  //s += getString(getOwnerCell()->getName()) + "::";
+    s += getString(_sharedPath->getJsonString(flags));
+  //s += "::" + getString(getMasterCell()->getName());
+  }
+
+  return s;
+}
+
 string Path::_getString() const
 // ****************************
 {
@@ -269,10 +301,9 @@ Record* Path::_getRecord() const
 }
 
 
-
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

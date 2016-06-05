@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -29,7 +29,9 @@ namespace CRL {
 
   using std::string;
   using std::map;
-
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
+  using Hurricane::Initializer;
   using Hurricane::Record;
   using Hurricane::DbU;
   using Hurricane::Name;
@@ -37,7 +39,6 @@ namespace CRL {
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::CellGauge".
-
 
   class CellGauge {
 
@@ -57,6 +58,7 @@ namespace CRL {
       inline  const DbU::Unit  getSliceStep     () const;
               CellGauge*       getClone         () const;
     // Hurricane management.
+              void             toJson           ( JsonWriter* ) const;
       virtual string           _getTypeName     () const;
       virtual string           _getString       () const;
       virtual Record*          _getRecord       () const;
@@ -94,6 +96,19 @@ namespace CRL {
   inline  const DbU::Unit  CellGauge::getPitch        () const { return _pitch; }
   inline  const DbU::Unit  CellGauge::getSliceHeight  () const { return _sliceHeight; }
   inline  const DbU::Unit  CellGauge::getSliceStep    () const { return _sliceStep; }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonCellGauge".
+
+  class JsonCellGauge : public JsonObject {
+    public:
+      static  void           initialize    ();
+                             JsonCellGauge ( unsigned long flags );
+      virtual string         getTypeName   () const;
+      virtual JsonCellGauge* clone         ( unsigned long flags ) const;
+      virtual void           toData        ( JsonStack& );
+  };
 
 
 }  // namespace CRL.

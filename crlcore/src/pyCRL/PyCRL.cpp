@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCRL.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -22,6 +22,7 @@
 #include "crlcore/PyCatalogState.h"
 #include "crlcore/PyAllianceFramework.h"
 #include "crlcore/PyEnvironment.h"
+#include "crlcore/PyAllianceLibrary.h"
 #include "crlcore/PyCellGauge.h"
 #include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyRoutingLayerGauge.h"
@@ -39,7 +40,8 @@ namespace CRL {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::in_trace;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -71,7 +73,7 @@ extern "C" {
 
   static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
   {
-    trace << "PyVhdl_destroyAllVHDL()" << endl;
+    cdebug.log(30) << "PyVhdl_destroyAllVHDL()" << endl;
 
     HTRY
       EntityExtension::destroyAll();
@@ -101,12 +103,13 @@ extern "C" {
   // Module Initialization  :  "initCRL ()"
 
   DL_EXPORT(void) initCRL () {
-    trace << "initCRL()" << endl;
+    cdebug.log(30) << "initCRL()" << endl;
 
     PyBanner_LinkPyType ();
     PyCatalogState_LinkPyType ();
     PyCatalog_LinkPyType ();
     PyEnvironment_LinkPyType ();
+    PyAllianceLibrary_LinkPyType ();
     PyCellGauge_LinkPyType ();
     PyRoutingGauge_LinkPyType ();
     PyRoutingLayerGauge_LinkPyType ();
@@ -122,6 +125,7 @@ extern "C" {
     PYTYPE_READY ( CatalogState );
     PYTYPE_READY ( Catalog );
     PYTYPE_READY ( Environment );
+    PYTYPE_READY ( AllianceLibrary );
     PYTYPE_READY ( CellGauge );
     PYTYPE_READY ( RoutingGauge );
     PYTYPE_READY ( RoutingLayerGaugeVector );
@@ -136,6 +140,7 @@ extern "C" {
     PYTYPE_READY ( Blif );
    
     // Identifier string can take up to 10 characters.
+    __cs.addType ( "alcLib"     , &PyTypeAllianceLibrary  , "<AllianceLibrary>"  , false );
     __cs.addType ( "alcEnv"     , &PyTypeEnvironment      , "<Environment>"      , false );
     __cs.addType ( "cellGauge"  , &PyTypeCellGauge        , "<CellGauge>"        , false );
     __cs.addType ( "routGauge"  , &PyTypeRoutingGauge     , "<RoutingGauge>"     , false );
@@ -155,6 +160,8 @@ extern "C" {
     PyModule_AddObject ( module, "Banner", (PyObject*)&PyTypeBanner );
     Py_INCREF ( &PyTypeCatalog );
     PyModule_AddObject ( module, "Catalog", (PyObject*)&PyTypeCatalog );
+    Py_INCREF ( &PyTypeAllianceLibrary );
+    PyModule_AddObject ( module, "AllianceLibrary", (PyObject*)&PyTypeAllianceLibrary );
     Py_INCREF ( &PyTypeEnvironment );
     PyModule_AddObject ( module, "Environment", (PyObject*)&PyTypeEnvironment );
     Py_INCREF ( &PyTypeCellGauge );
@@ -185,11 +192,12 @@ extern "C" {
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();
     PyRoutingLayerGauge_postModuleInit ();
+    PyAllianceFramework_postModuleInit ();
     
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
 
-    trace << "CRL.so loaded " << (void*)&typeid(string) << endl;
+    cdebug.log(30) << "CRL.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

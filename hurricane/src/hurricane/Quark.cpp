@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Quark.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -81,20 +81,19 @@ void Quark::_postCreate()
 void Quark::_preDestroy()
 // *********************
 {
-// trace << "entering Quark::_preDestroy: " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Quark::_preDestroy: " << this << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    SharedPath* sharedPath = _occurrence._getSharedPath();
+  SharedPath* sharedPath = _occurrence._getSharedPath();
 
-    if (sharedPath)
-        sharedPath->_getQuarkMap()._remove(this);
-    else
-        if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_remove(this);
+  if (sharedPath)
+    sharedPath->_getQuarkMap()._remove(this);
+  else
+    if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_remove(this);
 
-// trace << "exiting Quark::_preDestroy:" << endl;
-// trace_out();
+  cdebug.log(18) << "exiting Quark::_preDestroy:" << endl;
+  cdebug.tabw(18,-1);
 }
 
 string Quark::_getString() const
@@ -138,5 +137,5 @@ Quark* Entity::_getQuark(SharedPath* sharedPath) const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

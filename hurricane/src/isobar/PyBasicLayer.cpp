@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -47,7 +47,7 @@ extern "C" {
 
   static PyObject* PyBasicLayer_create ( PyObject*, PyObject* args )
   {
-    trace << "PyBasicLayer_create()" << endl;
+    cdebug.log(20) << "PyBasicLayer_create()" << endl;
 
     BasicLayer*   basicLayer     = NULL;
     
@@ -96,7 +96,7 @@ extern "C" {
 
   static PyObject* PyBasicLayer_getMaterial ( PyBasicLayer *self )
   {
-    trace << "PyBasicLayer_getMaterial ()" << endl;
+    cdebug.log(20) << "PyBasicLayer_getMaterial ()" << endl;
     METHOD_HEAD ( "BasicLayer.getMaterial()" )
 
     BasicLayer::Material* material = NULL;
@@ -110,8 +110,8 @@ extern "C" {
 
   updatorFromBasicLayer    (setBlockageLayer,PyBasicLayer,BasicLayer)
   accessorLayerFromVoid    (getBlockageLayer,PyBasicLayer,BasicLayer)
-  DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,"BasicLayer.setExtractNumber",PyBasicLayer,BasicLayer)
-  DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,"BasicLayer.setRealName"     ,PyBasicLayer,BasicLayer)
+  DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,PyBasicLayer,BasicLayer)
+  DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,PyBasicLayer,BasicLayer)
 
 
   // Standart destroy (Attribute).

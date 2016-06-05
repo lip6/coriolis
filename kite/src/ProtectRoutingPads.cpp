@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -44,7 +44,6 @@ namespace {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::ForEachIterator;
   using Hurricane::DbU;
   using Hurricane::Box;
@@ -71,12 +70,17 @@ namespace {
 
   void  protectRoutingPad ( RoutingPad* rp )
   {
+    Name            padNetName     = "pad";
     Component*      usedComponent  = rp->_getEntityAsComponent();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
-    if ( CatalogExtension::isPad(masterNet->getCell()) ) return;
+    if ( CatalogExtension::isPad(masterNet->getCell()) ) {
+      if (   rp->getNet()->isPower()
+         or (rp->getNet()->getName() == padNetName) )
+        return;
+    }
 
     vector<Segment*> segments;
 
@@ -93,8 +97,6 @@ namespace {
     }
 
     for ( size_t i=0 ; i<segments.size() ; ++i ) {
-    //cerr << "Protecting " << segments[i] << endl;
-
       RoutingPlane* plane     = Session::getKiteEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
       unsigned int  direction = plane->getDirection();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();

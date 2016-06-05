@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/IntrusiveSet.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -470,6 +470,11 @@ template<class Element> class IntrusiveSet {
 };
 
 
+  template<class Element>
+  inline GenericCollection<Element*> getCollection(const IntrusiveSet<Element>& intrusiveSet)
+  // ****************************************************************************************
+  { return intrusiveSet.getElements(); }
+
 
 } // End of Hurricane namespace.
 
@@ -487,5 +492,5 @@ inline Hurricane::Record* getRecord ( Hurricane::IntrusiveSet<Type>& intrusiveSe
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

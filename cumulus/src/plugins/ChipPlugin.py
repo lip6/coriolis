@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2015, All Rights Reserved
+# Copyright (c) UPMC 2014-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -95,8 +95,8 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
 
     coreAb = self.cores[0].getMasterCell().getAbutmentBox()
     if (not coreAb.isEmpty()):
-      if     coreAb.getWidth () < self.coreSize.getWidth() \
-         and coreAb.getHeight() < self.coreSize.getHeight():
+      if     coreAb.getWidth () <= self.coreSize.getWidth() \
+         and coreAb.getHeight() <= self.coreSize.getHeight():
         self.coreSize = coreAb
       else:
         print ErrorMessage( 1, [ 'Core %s already have an abutment box, bigger than the requested one:'
@@ -219,7 +219,8 @@ def ScriptMain ( **kw ):
 
   except ErrorMessage, e:
     print e; errorCode = e.code
-    if editor: editor.fit()
+    if     locals().has_key('editor') and editor \
+       and locals().has_key('cell'  ) and cell: editor.fit()
     rvalue = False
   except Exception, e:
     print '\n\n', e; errorCode = 1

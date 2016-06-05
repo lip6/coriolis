@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -29,7 +29,6 @@ namespace Kite {
   using std::endl;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::Error;
   using Hurricane::Technology;
 

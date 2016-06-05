@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -354,6 +354,9 @@ namespace {
       if ( _framework->isCLOCK(hName) ) {
         net->setType   ( Net::Type::CLOCK );
         net->setGlobal ( true );
+      }
+      if ( _framework->isBLOCKAGE(hName) ) {
+        net->setType   ( Net::Type::BLOCKAGE );
       }
     }
 

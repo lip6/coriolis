@@ -55,8 +55,8 @@ check_dir:
 
 
 install: check_dir
-	@./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis --make="$(SMP_FLAGS) install"
-	@./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis --make="-j1 install" --doc
+	@./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=support --project=coriolis --make="$(SMP_FLAGS) install"
+	@./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=support --project=coriolis --make="-j1 install" --doc
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \

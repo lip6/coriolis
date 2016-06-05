@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -24,7 +24,6 @@ namespace  Isobar {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -69,7 +68,7 @@ extern "C" {
   DirectHashMethod(PyPinDirection_Hash, PyPinDirection)
 
   extern void  PyPinDirection_LinkPyType() {
-    trace << "PyPinDirection_LinkType()" << endl;
+    cdebug.log(20) << "PyPinDirection_LinkType()" << endl;
     PyTypePinDirection.tp_dealloc = (destructor) PyPinDirection_DeAlloc;
     PyTypePinDirection.tp_compare = (cmpfunc)    PyPinDirection_Cmp;
     PyTypePinDirection.tp_repr    = (reprfunc)   PyPinDirection_Repr;

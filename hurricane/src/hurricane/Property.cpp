@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +26,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Property.cpp"                                |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/Property.h"
@@ -94,6 +85,13 @@ namespace Hurricane {
   }
 
 
+  bool  Property::hasJson () const
+  { return false; }
+
+
+  void  Property::toJson ( JsonWriter*, const DBo* ) const
+  { }
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::PrivateProperty".
 
@@ -148,6 +146,76 @@ namespace Hurricane {
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::SharedProperty".
+
+  SharedProperty::OrphanedMap  SharedProperty::_orphaneds;
+
+
+  const SharedProperty::OrphanedMap& SharedProperty::getOrphaneds ()
+  { return _orphaneds; }
+
+
+  SharedProperty* SharedProperty::getOrphaned ( const string& tag )
+  {
+    auto iorphaned = _orphaneds.find( tag );
+    if (iorphaned != _orphaneds.end()) return (*iorphaned).second._property;
+
+    return NULL;
+  }
+
+
+  void  SharedProperty::addOrphaned ( const string& tag, SharedProperty* property )
+  {
+    auto iorphaned = _orphaneds.find( tag );
+    if (iorphaned == _orphaneds.end()) {
+      _orphaneds.insert( make_pair(tag,Orphaned(property)) );
+    } else {
+      if ((*iorphaned).second._property != property) {
+        cerr << Error( "SharedProperty::addOrphaned(): Multiple properties with the same tag \"%s\"."
+                     , tag.c_str()
+                     ) << endl;
+      }
+    }
+  }
+
+
+  void  SharedProperty::refOrphaned ( const string& tag )
+  {
+    auto iorphaned = _orphaneds.find( tag );
+    if (iorphaned != _orphaneds.end()) {
+      (*iorphaned).second._refcount++;
+    }
+  }
+
+
+  void  SharedProperty::countOrphaned ( const string& tag , unsigned int count )
+  {
+    auto iorphaned = _orphaneds.find( tag );
+    if (iorphaned != _orphaneds.end()) {
+      (*iorphaned).second._count = count;
+    }
+  }
+
+
+  void  SharedProperty::removeOrphaned ( const string& tag )
+  {
+    auto iorphaned = _orphaneds.find( tag );
+    if (iorphaned != _orphaneds.end()) _orphaneds.erase( iorphaned );
+  }
+
+  
+  void  SharedProperty::clearOrphaneds ()
+  {
+    for ( auto element : _orphaneds ) {
+      if (element.second._refcount != element.second._count) {
+        cerr << Error( "SharedProperty::clearOrphaneds(): On tag \"%s\", count:%u refcount:%u."
+                     , element.first.c_str()
+                     , element.second._count
+                     , element.second._refcount
+                     ) << endl;
+      }
+    }
+    _orphaneds.clear();
+  }
 
 
   SharedProperty::SharedProperty ()

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -43,6 +43,8 @@ namespace Hurricane {
   class Net;
   class Cell;
 
+  using std::pair;
+  using std::make_pair;
   using std::set;
   using std::stack;
 
@@ -61,8 +63,8 @@ namespace Hurricane {
       static inline void          addToTrace   ( const void* symbol );
       static inline void          addToTrace   ( const Cell*, const Name& );
       static inline void          addToTrace   ( const Net* );
-      static inline void          open         ( unsigned int traceLevel );
-      static inline void          open         ( const void* symbol, unsigned int traceLevel=80 );
+      static inline void          open         ( int minLevel, int maxLevel );
+      static inline void          open         ( const void* symbol, int minLevel, int maxLevel );
       static inline void          close        ();
     // Singleton Access.
              inline bool          _isTraced    ( const void* symbol ) const;
@@ -76,9 +78,9 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static DebugSession*        _singleton;
-             set<const void*>     _symbols;
-             stack<unsigned int>  _levels;
+      static DebugSession*           _singleton;
+             set<const void*>        _symbols;
+             stack< pair<int,int> >  _levels;
 
     protected:
     // Internal: Constructor & Destructor.
@@ -92,18 +94,21 @@ namespace Hurricane {
 
 // Inline Functions.
 
-  void  DebugSession::open ( unsigned int traceLevel )
+  void  DebugSession::open ( int minLevel, int maxLevel )
   {
-    _singleton->_levels.push ( ltracelevel(traceLevel) );
+    _singleton->_levels.push( make_pair( cdebug.setMinLevel(minLevel)
+                                       , cdebug.setMaxLevel(maxLevel) ) );
   }
 
 
-  void  DebugSession::open ( const void* symbol, unsigned int traceLevel )
+  void  DebugSession::open ( const void* symbol, int minLevel, int maxLevel )
   {
     if ( _singleton->_isTraced(symbol) )
-      _singleton->_levels.push ( ltracelevel(traceLevel) );
+      _singleton->_levels.push( make_pair( cdebug.setMinLevel(minLevel)
+                                         , cdebug.setMaxLevel(maxLevel) ) );
     else {
-      _singleton->_levels.push ( ltracelevel() );
+      _singleton->_levels.push ( make_pair( cdebug.getMinLevel()
+                                          , cdebug.getMaxLevel() ) );
     }
   }
 
@@ -111,7 +116,8 @@ namespace Hurricane {
   void  DebugSession::close ()
   {
     if ( not _singleton->_levels.empty() ) {
-      ltracelevel ( _singleton->_levels.top() );
+      cdebug.setMinLevel( _singleton->_levels.top().first  );
+      cdebug.setMaxLevel( _singleton->_levels.top().second );
       _singleton->_levels.pop ();
     }
   }

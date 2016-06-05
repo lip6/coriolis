@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/ExtensionGo.h"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_EXTENSION_GO__
-#define  __HURRICANE_EXTENSION_GO__
+#ifndef  HURRICANE_EXTENSION_GO_H
+#define  HURRICANE_EXTENSION_GO_H
 
 #include  "hurricane/Name.h"
 #include  "hurricane/Go.h"
@@ -76,6 +67,6 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-#endif // __HURRICANE_EXTENSION_GO__
+#endif // HURRICANE_EXTENSION_GO_H
 
 

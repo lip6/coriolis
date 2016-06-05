@@ -28,6 +28,7 @@
                                     hurricane/viewer/CellViewer.h
                                     hurricane/viewer/CellPrinter.h
                                     hurricane/viewer/CellImage.h
+                                    hurricane/viewer/OpenBlobDialog.h
                                     hurricane/viewer/RecordModel.h
                                     hurricane/viewer/InspectorWidget.h
                                     hurricane/viewer/SelectionPopupModel.h
@@ -36,6 +37,8 @@
                                     hurricane/viewer/SelectionWidget.h
                                     hurricane/viewer/NetlistModel.h
                                     hurricane/viewer/NetlistWidget.h
+                                    hurricane/viewer/HierarchyModel.h
+                                    hurricane/viewer/HierarchyWidget.h
                                     hurricane/viewer/DisplayFilterWidget.h
                                     hurricane/viewer/ControllerWidget.h
                                     hurricane/viewer/ScriptWidget.h
@@ -55,6 +58,8 @@
                                     hurricane/viewer/HierarchyCommand.h
                                     hurricane/viewer/SelectorCriterion.h
                                     hurricane/viewer/CellWidgets.h
+                                    hurricane/viewer/DesignBlob.h
+                                    hurricane/viewer/JsonConfiguration.h
                       )
                    set( pyIncludes  hurricane/viewer/PyHSVr.h
                                     hurricane/viewer/PyDrawingStyle.h
@@ -94,6 +99,7 @@
                                     CellViewer.cpp
                                     CellPrinter.cpp
                                     CellImage.cpp
+				    OpenBlobDialog.cpp
                                     RecordModel.cpp
                                     InspectorWidget.cpp
                                     SelectionPopupModel.cpp
@@ -104,9 +110,14 @@
                                     NetInformations.cpp
                                     NetlistModel.cpp
                                     NetlistWidget.cpp
+                                    HierarchyInformations.cpp
+                                    HierarchyModel.cpp
+                                    HierarchyWidget.cpp
                                     DisplayFilterWidget.cpp
                                     ControllerWidget.cpp
                                     ScriptWidget.cpp
+                                    DesignBlob.cpp
+                                    JsonConfiguration.cpp
                       )
                    set( pyCpps      PyHSVr.cpp
                                     PyDrawingStyle.cpp

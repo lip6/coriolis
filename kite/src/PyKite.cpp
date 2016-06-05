@@ -26,7 +26,6 @@ namespace Kite {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
-  using Hurricane::in_trace;
   using Isobar::__cs;
   using CRL::PyTypeToolEngine;
   using CRL::PyTypeGraphicTool;
@@ -66,7 +65,7 @@ extern "C" {
   // Module Initialization  :  "initKite ()"
 
   DL_EXPORT(void) initKite () {
-    trace << "initKite()" << endl;
+    cdebug.log(40) << "initKite()" << endl;
 
     PyKiteEngine_LinkPyType();
     PyGraphicKiteEngine_LinkPyType();

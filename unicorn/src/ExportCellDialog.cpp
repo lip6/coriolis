@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -78,6 +78,7 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
+    _formatComboBox->addItem ( tr("JSON (experimental)")   , Json        );
     _formatComboBox->addItem ( tr("Alliance compliant DEF"), AllianceDef );
     _formatComboBox->addItem ( tr("ASCII/GDSII (AGDS)")    , AsciiGds    );
     hLayout2->addWidget ( _formatComboBox );

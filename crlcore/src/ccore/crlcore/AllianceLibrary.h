@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -30,7 +30,8 @@ namespace Hurricane {
 namespace CRL {
 
   using std::vector;
-
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
   using Hurricane::Name;
   using Hurricane::Library;
   using Hurricane::Record;
@@ -53,6 +54,7 @@ namespace CRL {
       inline const Name&      getPath         () const;
       inline Library*         getLibrary      () const;
     // Hurricane management.
+             void             toJson          ( JsonWriter* ) const;
       inline std::string      _getTypeName    () const;
              std::string      _getString      () const;
              Record*          _getRecord      () const;
@@ -72,6 +74,19 @@ namespace CRL {
   inline const Name&  AllianceLibrary::getPath      () const { return _path; }
   inline Library*     AllianceLibrary::getLibrary   () const { return _library; }
   inline std::string  AllianceLibrary::_getTypeName () const { return _TName("AllianceLibrary"); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonAllianceLibrary".
+
+  class JsonAllianceLibrary : public JsonObject {
+    public:
+      static  void                 initialize          ();
+                                   JsonAllianceLibrary ( unsigned long flags );
+      virtual std::string          getTypeName         () const;
+      virtual JsonAllianceLibrary* clone               ( unsigned long flags ) const;
+      virtual void                 toData              ( JsonStack& ); 
+  };
 
 
 } // CRL namespace.

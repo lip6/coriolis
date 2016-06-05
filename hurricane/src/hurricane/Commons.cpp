@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Commons.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -22,79 +22,10 @@
 #include  "hurricane/Commons.h"
 
 
+tstream  cdebug ( std::cerr );
+
+
 namespace Hurricane {
-
-
-
-// ****************************************************************************************************
-// Tracing tools
-// ****************************************************************************************************
-
-static long         TRACE_LEVEL      = 0;
-static unsigned int TRACE_SHOW_LEVEL = (unsigned int)-1;
-
-bool in_trace()
-// ************
-{
-	return (0 < TRACE_LEVEL);
-}
-
-void trace_on()
-// ************
-{
-	TRACE_LEVEL++;
-}
-
-void trace_off()
-// *************
-{
-	if (0 < TRACE_LEVEL) TRACE_LEVEL--;
-}
-
-void trace_in()
-// ************
-{
-	if (0 < TRACE_LEVEL) tab++;
-}
-
-void trace_out()
-// *************
-{
-	if (0 < TRACE_LEVEL) tab--;
-}
-
-bool  inltrace ( unsigned int level )
-//***********************************
-{
-  return TRACE_SHOW_LEVEL <= level;
-}
-
-unsigned int  ltracelevel ()
-//**************************
-{
-  return TRACE_SHOW_LEVEL;
-}
-
-unsigned int  ltracelevel ( unsigned int level )
-//**********************************************
-{
-  unsigned int  previousLevel = TRACE_SHOW_LEVEL;
-  TRACE_SHOW_LEVEL = level;
-
-  return previousLevel;
-}
-
-void  ltracein (unsigned int level, unsigned int count )
-//******************************************************
-{
-  if ( inltrace(level) ) while ( count-- ) tab++;
-}
-
-void  ltraceout (unsigned int level, unsigned int count )
-//*******************************************************
-{
-  if ( inltrace(level) ) while ( count-- ) tab--;
-}
 
 // -------------------------------------------------------------------
 // Function  :  "demangle ()".
@@ -241,5 +172,5 @@ bool Scan ( const string         &s
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

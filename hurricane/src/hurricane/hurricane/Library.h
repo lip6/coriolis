@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Library.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -95,6 +95,7 @@ class Library : public DBo {
     public: DataBase* getDataBase() const {return _dataBase;};
     public: Library* getLibrary() const {return _library;};
     public: const Name& getName() const {return _name;};
+    public: string getHierarchicalName () const;
     public: Library* getLibrary(const Name& name) const {return _libraryMap.getElement(name);};
     public: Libraries getLibraries() const {return _libraryMap.getElements();};
     public: Cell* getCell(const Name& name) const {return _cellMap.getElement(name);};
@@ -115,12 +116,24 @@ class Library : public DBo {
     public: virtual string _getTypeName() const {return _TName("Library");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
+    public: virtual void _toJson( JsonWriter* ) const;
     public: LibraryMap& _getLibraryMap() {return _libraryMap;};
     public: CellMap& _getCellMap() {return _cellMap;};
     public: Library* _getNextOfLibraryLibraryMap() const {return _nextOfLibraryLibraryMap;};
 
     public: void _setNextOfLibraryLibraryMap(Library* library) {_nextOfLibraryLibraryMap = library;};
 
+};
+
+
+class JsonLibrary : public JsonDBo {
+// *******************************
+
+  public: static void initialize();
+  public: JsonLibrary(unsigned long flags);
+  public: virtual string getTypeName() const;
+  public: virtual JsonLibrary* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
 };
 
 
@@ -135,5 +148,5 @@ INSPECTOR_P_SUPPORT(Hurricane::Library::CellMap);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

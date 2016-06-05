@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/DiffusionLayer.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_DIFFUSION_LAYER__
-#define  __HURRICANE_DIFFUSION_LAYER__
+#ifndef  HURRICANE_DIFFUSION_LAYER_H
+#define  HURRICANE_DIFFUSION_LAYER_H
 
 #include  <vector>
 
@@ -48,8 +39,12 @@
 
 namespace Hurricane {
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::DiffusionLayer".
 
   class DiffusionLayer : public Layer {
+    public:
+      typedef  Layer  Super;
 
     public:
     // Constructor.
@@ -69,6 +64,7 @@ namespace Hurricane {
       virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.
+      virtual void            _toJson           ( JsonWriter* ) const;
       virtual void            _onDbuChange      ( float scale );
       virtual string          _getTypeName      () const;
       virtual string          _getString        () const;
@@ -93,10 +89,24 @@ namespace Hurricane {
   };
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonDiffusionLayer".
+
+  class JsonDiffusionLayer : public JsonLayer {
+    public:
+      static  void                initialize         ();
+                                  JsonDiffusionLayer ( unsigned long flags );
+                                 ~JsonDiffusionLayer ();
+      virtual string              getTypeName        () const;
+      virtual JsonDiffusionLayer* clone              ( unsigned long ) const;
+      virtual void                toData             ( JsonStack& ); 
+  };
+
+
 } // End of Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::DiffusionLayer);
 
 
-# endif
+#endif

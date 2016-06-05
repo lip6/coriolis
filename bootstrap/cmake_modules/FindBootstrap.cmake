@@ -78,14 +78,16 @@
 #set(DEBUG_FLAGS "-g -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
  set(DEBUG_FLAGS "-g")
  if(CYGWIN)
-   set(CXX_STANDARD "gnu++0x")
+   set(ADDTIONAL_FLAGS "-D_GLIBCXX_USE_C99")
+   set(CXX_STANDARD "gnu++11")
  else()
+   set(ADDTIONAL_FLAGS "")
    set(CXX_STANDARD "c++11")
  endif()
- set(CMAKE_C_FLAGS_DEBUG     "-std=${CXX_STANDARD} -Wall ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE   "-std=${CXX_STANDARD} -Wall -O2 -DNDEBUG"   CACHE STRING "C Compiler Release options." FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
- set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2 -DNDEBUG"   CACHE STRING "C++ Compiler Release options." FORCE)
+ set(CMAKE_C_FLAGS_DEBUG     "-std=${CXX_STANDARD} -Wall ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."   FORCE)
+ set(CMAKE_C_FLAGS_RELEASE   "-std=${CXX_STANDARD} -Wall -O2  ${ADDTIONAL_FLAGS} -DNDEBUG"   CACHE STRING "C Compiler Release options." FORCE)
+ set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall  ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+ set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2  ${ADDTIONAL_FLAGS} -DNDEBUG"   CACHE STRING "C++ Compiler Release options." FORCE)
 
 
 #

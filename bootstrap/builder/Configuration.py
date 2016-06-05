@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2008-2015, All Rights Reserved
+# Copyright (c) UPMC 2008-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -146,6 +146,8 @@ class Configuration ( object ):
         self._osCygwinW7        = re.compile (".*CYGWIN_NT-6\.1.*i686.*")
         self._osCygwinW8_64     = re.compile (".*CYGWIN_NT-6\.[2-3].*x86_64.*")
         self._osCygwinW8        = re.compile (".*CYGWIN_NT-6\.[2-3].*i686.*")
+        self._osCygwinW10_64    = re.compile (".*CYGWIN_NT-10\.[0-3].*x86_64.*")
+        self._osCygwinW10       = re.compile (".*CYGWIN_NT-10\.[0-3].*i686.*")
 
         uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
         lines = uname.stdout.readlines()
@@ -186,6 +188,10 @@ class Configuration ( object ):
             self._osType = "Cygwin.W8_64"
             self._libSuffix = "64"
         elif self._osCygwinW8.match(lines[0]): self._osType = "Cygwin.W8"
+        elif self._osCygwinW10_64.match(lines[0]):
+            self._osType = "Cygwin.W10_64"
+            self._libSuffix = "64"
+        elif self._osCygwinW10.match(lines[0]): self._osType = "Cygwin.W10"
         else:
             uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
             self._osType = uname.stdout.readlines()[0][:-1]

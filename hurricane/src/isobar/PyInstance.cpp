@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2015, All Rights Reserved
+// Copyright (c) UPMC 2006-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -73,51 +73,51 @@ extern "C" {
 
   static PyObject* PyInstance_create ( PyObject*, PyObject *args )
   {
-    trace << "PyInstance_create ()" << endl;
+    cdebug.log(20) << "PyInstance_create()" << endl;
     
     Instance* instance = NULL;
-    PyObject* arg0;
-    PyObject* arg1;
-    PyObject* arg2;
-    PyObject* arg3;
+    PyObject* arg0     = NULL;
+    PyObject* arg1     = NULL;
+    PyObject* arg2     = NULL;
+    PyObject* arg3     = NULL;
 
     HTRY
-    __cs.init ("Instance.create");
-    if ( ! PyArg_ParseTuple(args,"O&O&O&|O&:Instance.new"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
-                           ,Converter,&arg2
-                           ,Converter,&arg3
-                           )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
+    __cs.init( "Instance.create" );
+    if (not PyArg_ParseTuple(args,"O&O&O&|O&:Instance.create"
+                            ,Converter,&arg0
+                            ,Converter,&arg1
+                            ,Converter,&arg2
+                            ,Converter,&arg3
+                            )) {
+        PyErr_SetString( ConstructorError, "Instance.create(): Invalid number of parameters." );
         return NULL;
     }
 
-    if      ( __cs.getObjectIds() == ":ent:string:ent") {
-        instance = Instance::create(
-                PYCELL_O(arg0),
-                Name(PyString_AsString(arg1)),
-                PYCELL_O(arg2) );
-    } else if ( __cs.getObjectIds() == ":ent:string:ent:transfo") {
-        instance = Instance::create(
-                PYCELL_O(arg0),
-                Name(PyString_AsString(arg1)),
-                PYCELL_O(arg2),
-                *PYTRANSFORMATION_O(arg3),
-                Instance::PlacementStatus::PLACED);
+    if (__cs.getObjectIds() == ":ent:string:ent") {
+      instance = Instance::create( PYCELL_O(arg0)
+                                 , Name(PyString_AsString(arg1))
+                                 , PYCELL_O(arg2)
+                                 );
+    } else if (__cs.getObjectIds() == ":ent:string:ent:transfo") {
+      instance = Instance::create( PYCELL_O(arg0)
+                                 , Name(PyString_AsString(arg1))
+                                 , PYCELL_O(arg2)
+                                 , *PYTRANSFORMATION_O(arg3)
+                                 , Instance::PlacementStatus::PLACED
+                                 );
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Instance constructor." );
+      PyErr_SetString( ConstructorError, "Instance.create(): Bad type of parameter(s)." );
       return NULL;
     }
     HCATCH
 
-    return PyInstance_Link ( instance );
+    return PyInstance_Link( instance );
   }
 
 
   static PyObject* PyInstance_getMasterCell ( PyInstance *self )
   {
-    trace << "PyInstance_getMasterCell ()" << endl;
+    cdebug.log(20) << "PyInstance_getMasterCell ()" << endl;
     
     Cell* cell = NULL;
 
@@ -132,7 +132,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlacementStatus ( PyInstance *self )
   {
-    trace << "PyInstance_getPlacementStatus ()" << endl;
+    cdebug.log(20) << "PyInstance_getPlacementStatus ()" << endl;
     
     METHOD_HEAD ( "Instance.getPlacementStatus()" );
 
@@ -147,7 +147,7 @@ extern "C" {
 
   static PyObject* PyInstance_setPlacementStatus ( PyInstance *self, PyObject* args )
   {
-    trace << "PyInstance_setPlacementStatus()" << endl;
+    cdebug.log(20) << "PyInstance_setPlacementStatus()" << endl;
     METHOD_HEAD ( "Instance.setPlacementStatus()" )
       
     HTRY
@@ -163,7 +163,7 @@ extern "C" {
 
   static PyObject* PyInstance_getTransformation ( PyInstance *self )
   {
-    trace << "PyInstance_getTransformation ()" << endl;
+    cdebug.log(20) << "PyInstance_getTransformation ()" << endl;
     METHOD_HEAD ( "Instance.getTransformation()" );
 
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
@@ -179,7 +179,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlug ( PyInstance *self, PyObject* args )
   {
-    trace << "PyInstance_getPlug ()" << endl;
+    cdebug.log(20) << "PyInstance_getPlug ()" << endl;
 
     Plug* plug = NULL;
     
@@ -198,7 +198,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlugs(PyInstance *self )
   {
-    trace << "PyInstance_getPlugs()" << endl;
+    cdebug.log(20) << "PyInstance_getPlugs()" << endl;
 
     METHOD_HEAD ( "Instance.getPlugs()" )
 
@@ -221,7 +221,7 @@ extern "C" {
 
   static PyObject* PyInstance_getConnectedPlugs(PyInstance *self)
   {
-    trace << "PyInstance_getConnectedPlugs ()" << endl;
+    cdebug.log(20) << "PyInstance_getConnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getConnectedPlugs()")
 
@@ -244,7 +244,7 @@ extern "C" {
 
   static PyObject* PyInstance_getUnconnectedPlugs(PyInstance *self)
   {
-    trace << "PyInstance_getUnconnectedPlugs ()" << endl;
+    cdebug.log(20) << "PyInstance_getUnconnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getUnconnectedPlugs()")
 
@@ -267,7 +267,7 @@ extern "C" {
 
   static PyObject* PyInstance_getAbutmentBox ( PyInstance *self )
   {
-    trace << "PyInstance_getAbutmentBox ()" << endl;
+    cdebug.log(20) << "PyInstance_getAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.getAbutmentBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
@@ -283,7 +283,7 @@ extern "C" {
 
   static PyObject* PyInstance_uniquify ( PyInstance *self )
   {
-    trace << "PyInstance_uniquify ()" << endl;
+    cdebug.log(20) << "PyInstance_uniquify ()" << endl;
 
     HTRY
       METHOD_HEAD ( "Instance.uniquify()" )
@@ -295,7 +295,7 @@ extern "C" {
 
   static PyObject* PyInstance_slaveAbutmentBox ( PyInstance *self )
   {
-    trace << "PyInstance_slaveAbutmentBox ()" << endl;
+    cdebug.log(20) << "PyInstance_slaveAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.slaveAbutmentBox()" )
 
     HTRY
@@ -309,7 +309,7 @@ extern "C" {
 
   static PyObject* PyInstance_getClone ( PyInstance *self, PyObject* args )
   {
-    trace << "PyInstance_getClone ()" << endl;
+    cdebug.log(20) << "PyInstance_getClone ()" << endl;
 
     Instance* cloneInstance = NULL;
     HTRY
@@ -332,7 +332,7 @@ extern "C" {
 
   static PyObject* PyInstance_setTransformation ( PyInstance *self, PyObject* args )
   {
-    trace << "PyInstance_setTransformation()" << endl;
+    cdebug.log(20) << "PyInstance_setTransformation()" << endl;
     METHOD_HEAD ( "Instance.setTransformation()" )
 
     HTRY
@@ -348,7 +348,7 @@ extern "C" {
 
   static PyObject* PyInstance_setMasterCell ( PyInstance *self, PyObject* args )
   {
-    trace << "Instance.setMasterCell()" << endl;
+    cdebug.log(20) << "Instance.setMasterCell()" << endl;
     METHOD_HEAD ( "Instance.setMasterCell()" )
 
     HTRY

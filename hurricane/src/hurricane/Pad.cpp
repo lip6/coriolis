@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Pad.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,6 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Net.h"
 #include "hurricane/BasicLayer.h"
@@ -117,6 +119,15 @@ void Pad::setBoundingBox(const Box& boundingBox)
     }
 }
 
+void Pad::_toJson(JsonWriter* writer) const
+// ****************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_layer"      , _layer->getName() );
+  jsonWrite( writer, "_boundingBox", &_boundingBox     );
+}
+
 string Pad::_getString() const
 // ***************************
 {
@@ -137,9 +148,60 @@ Record* Pad::_getRecord() const
     return record;
 }
 
+
+// ****************************************************************************************************
+// JsonPad implementation
+// ****************************************************************************************************
+
+Initializer<JsonPad>  jsonPadInit ( 0 );
+
+
+void  JsonPad::initialize()
+// ************************
+{ JsonTypes::registerType( new JsonPad (JsonWriter::RegisterMode) ); }
+
+JsonPad::JsonPad(unsigned long flags)
+// **********************************
+  : JsonComponent(flags)
+{
+  add( "_layer"      , typeid(string) );
+  add( "_boundingBox", typeid(Box)    );
+}
+
+string JsonPad::getTypeName() const
+// ********************************
+{ return "Pad"; }
+
+JsonPad* JsonPad::clone(unsigned long flags) const
+// ***********************************************
+{ return new JsonPad ( flags ); }
+
+void JsonPad::toData(JsonStack& stack)
+// ***********************************
+{
+  check( stack, "JsonPad::toData" );
+  unsigned int jsonId = presetId( stack );
+
+  Pad* pad = Pad::create
+    ( get<Net*>(stack,".Net")
+    , DataBase::getDB()->getTechnology()->getLayer( get<const char*>(stack,"_layer") )
+    , get<Box>(stack,".Box")
+    );
+  
+  JsonNet* jnet = jget<JsonNet>( stack );
+  if (jnet) {
+    jnet->addHookLink( pad->getBodyHook  (), jsonId, get<string>(stack,"_bodyHook"  ) );
+  } else {
+    cerr << Error( "JsonPad::toData(): Missing (Json)Net in stack context." ) << endl;
+  }
+
+// Hook/Ring rebuild are done as a post-process.
+  update( stack, pad );
+}
+
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

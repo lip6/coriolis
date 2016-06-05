@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -54,7 +54,7 @@ extern "C" {
   // Class Method  :  "PyInterval_NEW ()"
 
   static PyObject* PyInterval_NEW (PyObject *module, PyObject *args) {
-    trace << "PyInterval_NEW()" << endl;
+    cdebug.log(20) << "PyInterval_NEW()" << endl;
 
     Interval* interval = NULL;
 
@@ -85,13 +85,13 @@ extern "C" {
 
   static int  PyInterval_Init ( PyInterval* self, PyObject* args, PyObject* kwargs )
   {
-    trace << "PyInterval_Init(): " << (void*)self << endl;
+    cdebug.log(20) << "PyInterval_Init(): " << (void*)self << endl;
     return 0;
   }
 
 
   static PyObject* PyInterval_getUnion ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_getUnion()" << endl;
+    cdebug.log(20) << "PyInterval_getUnion()" << endl;
 
     METHOD_HEAD ( "Interval.getUnion()" )
 
@@ -110,7 +110,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_getIntersection ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_getIntersection()" << endl;
+    cdebug.log(20) << "PyInterval_getIntersection()" << endl;
 
     METHOD_HEAD ( "Interval.getIntersection()" )
 
@@ -129,7 +129,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_contains ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_contains ()" << endl;
+    cdebug.log(20) << "PyInterval_contains ()" << endl;
 
     METHOD_HEAD( "Interval.contains()" )
 
@@ -155,7 +155,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_intersect ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_intersect ()" << endl;
+    cdebug.log(20) << "PyInterval_intersect ()" << endl;
     
     bool result = false;
     HTRY
@@ -176,7 +176,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_makeEmpty ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_makeEmpty ()" << endl;
+    cdebug.log(20) << "PyInterval_makeEmpty ()" << endl;
     
     METHOD_HEAD( "Interval.makeEmpty()" )
     interval->makeEmpty();
@@ -187,7 +187,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_inflate ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_inflate ()" << endl;
+    cdebug.log(20) << "PyInterval_inflate ()" << endl;
 
     METHOD_HEAD( "Interval.inflate()" )
 
@@ -213,7 +213,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_merge ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_merge ()" << endl;
+    cdebug.log(20) << "PyInterval_merge ()" << endl;
 
     METHOD_HEAD( "Interval.merge()" )
 
@@ -239,7 +239,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_intersection ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_intersection ()" << endl;
+    cdebug.log(20) << "PyInterval_intersection ()" << endl;
 
     METHOD_HEAD( "Interval.intersection()" )
 
@@ -265,7 +265,7 @@ extern "C" {
 
 
   static PyObject* PyInterval_translate ( PyInterval *self, PyObject* args ) {
-    trace << "PyInterval_translate ()" << endl;
+    cdebug.log(20) << "PyInterval_translate ()" << endl;
     
     HTRY
     METHOD_HEAD( "Interval.translate()" )

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -28,6 +28,7 @@
 #include <QFrame>
 #include <QFont>
 #include <QFontMetrics>
+#include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Exception.h"
 #include "hurricane/viewer/Graphics.h"
@@ -70,6 +71,9 @@ namespace Hurricane {
     try {
       method();
       failure = false;
+    }
+    catch ( Bug& e ) {
+      ExceptionWidget::run( e );
     }
     catch ( Error& e ) {
       ExceptionWidget::run( e );

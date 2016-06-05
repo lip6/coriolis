@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/SharedPath.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -97,6 +97,7 @@ class SharedPath {
     public: SharedPath* getHeadSharedPath() const;
     public: Instance* getTailInstance() const;
     public: string getName() const;
+    public: string getJsonString(unsigned long flags) const;
     public: Cell* getOwnerCell() const;
     public: Cell* getMasterCell() const;
     public: Instances getInstances() const;
@@ -136,5 +137,5 @@ INSPECTOR_P_SUPPORT(Hurricane::SharedPath);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

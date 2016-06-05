@@ -1,20 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingGauge.cpp"                       |
 // +-----------------------------------------------------------------+
 
 
-#include <climits>
+#include <limits>
 #include <sstream>
 #include <algorithm>
 #include "hurricane/Commons.h"
@@ -24,6 +24,7 @@
 #include "crlcore/XmlParser.h"
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/RoutingGauge.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace {
@@ -40,13 +41,18 @@ namespace {
 
 namespace CRL {
 
-
+  using Hurricane::JsonTypes;
+  using Hurricane::JsonArray;
   using Hurricane::DataBase;
   using Hurricane::ViaLayer;
+  using Hurricane::getCollection;
 
 
 // -------------------------------------------------------------------
 // Class  :  "RoutingGauge".
+
+
+  const size_t  RoutingGauge::nlayerdepth = std::numeric_limits<size_t>::max();
 
 
   RoutingGauge::RoutingGauge ( const char* name )
@@ -74,7 +80,8 @@ namespace CRL {
                       , gauge._layerGauges[i]->getOffset()
                       , gauge._layerGauges[i]->getPitch()
                       , gauge._layerGauges[i]->getWireWidth()
-                      , gauge._layerGauges[i]->getViaWidth() )
+                      , gauge._layerGauges[i]->getViaWidth()
+                      , gauge._layerGauges[i]->getObstacleDw() )
                     );
   }
 
@@ -150,7 +157,7 @@ namespace CRL {
       if ( _layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask() )
         return i;
     }
-    return UINT_MAX;
+    return nlayerdepth;
   }
 
 
@@ -160,7 +167,7 @@ namespace CRL {
       if ( _layerGauges[i]->getLayer()->getMask() == layer->getMask() )
         return i;
     }
-    return UINT_MAX;
+    return nlayerdepth;
   }
 
 
@@ -258,6 +265,67 @@ namespace CRL {
     record->add ( getSlot("_name"     , _name       ) );
     record->add ( getSlot("_gauges"   ,&_layerGauges) );
     return ( record );
+  }
+
+
+  void  RoutingGauge::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "RoutingGauge" );
+    jsonWrite( w, "_name"              , _name            );
+    jsonWrite( w, "+routingLayerGauges", getCollection(getLayerGauges()) );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingGauge"
+
+  Initializer<JsonRoutingGauge>  jsonRoutingGaugeInit ( 0 );
+
+
+  void  JsonRoutingGauge::initialize ()
+  { JsonTypes::registerType( new JsonRoutingGauge (JsonWriter::RegisterMode) ); }
+
+
+  JsonRoutingGauge::JsonRoutingGauge( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_name"              , typeid(string)    );
+    add( "+routingLayerGauges", typeid(JsonArray) );
+  }
+
+
+  string JsonRoutingGauge::getTypeName () const
+  { return "RoutingGauge"; }
+
+
+  JsonRoutingGauge* JsonRoutingGauge::clone ( unsigned long flags ) const
+  { return new JsonRoutingGauge ( flags ); }
+
+
+  void JsonRoutingGauge::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonRoutingGauge::toData" );
+
+    AllianceFramework* af   = get<AllianceFramework*>( stack, "_framework" );
+    string             name = get<string>            ( stack, "_name"      );
+    RoutingGauge*      rg   = NULL;
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      if (af) {
+        if (not name.empty()) {
+          rg = RoutingGauge::create( name.c_str() );
+          af->addRoutingGauge( rg );
+        }
+      } else {
+        cerr << Error( "JsonRoutingGauge::toData(): Missing \"_framework\" in stack context." ) << endl;
+      }
+    } else {
+      rg = af->getRoutingGauge( name );
+    }
+  
+    update( stack, rg );
   }
 
 

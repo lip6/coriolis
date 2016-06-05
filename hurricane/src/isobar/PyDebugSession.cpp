@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2015, All Rights Reserved
+// Copyright (c) UPMC 2014-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -44,29 +44,37 @@ extern "C" {
 
   static void PyDebugSession_DeAlloc ( PyDebugSession* self )
   {
-    trace << "PyDebugSession_DeAlloc(" << hex << self << ")" << endl;
+    cdebug.log(20) << "PyDebugSession_DeAlloc(" << hex << self << ")" << endl;
   }
   
 
   static PyObject* PyDebugSession_open ( PyObject*, PyObject* args )
   {
-    trace << "PyDebugSession_open()" << endl;
+    cdebug.log(20) << "PyDebugSession_open()" << endl;
 
     HTRY
-    PyObject*     pySymbol   = NULL;
-    unsigned int  traceLevel = 10000;
-    if (PyArg_ParseTuple( args
-                        , "OI:DebugSession.open"
-                        , &pySymbol
-                        , &traceLevel
-                        )) {
-      void* symbol = PyObject_AsHurricaneSymbol( pySymbol );
+    PyObject* arg0;
+    PyObject* arg1;
+    PyObject* arg2;
+    __cs.init ("DebugSession.open");
+
+    if (not PyArg_ParseTuple(args,"|O&O&O&:DebugSession.open",
+                             Converter, &arg0,
+                             Converter, &arg1,
+                             Converter, &arg2)) {
+      return NULL;
+    }
+
+    if (__cs.getObjectIds() == ":int:int"   ) {
+      DebugSession::open( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+    } else if (__cs.getObjectIds() == ":ent:int:int") {
+      void* symbol = PyObject_AsHurricaneSymbol( arg0 );
       if (not symbol) {
         Py_RETURN_NONE;
       }
-      DebugSession::open( symbol, traceLevel );
+      DebugSession::open( symbol, PyAny_AsLong(arg1), PyAny_AsLong(arg2) );
     } else {
-      PyErr_SetString( ConstructorError, "Bad parameters given to DebugSession.open()." );
+      PyErr_SetString(ConstructorError, "invalid number of parameters for DebugSession::open()." );
       return NULL;
     }
     HCATCH
@@ -77,7 +85,7 @@ extern "C" {
 
   static PyObject* PyDebugSession_close ( PyObject* )
   {
-    trace << "PyDebugSession_close()" << endl;
+    cdebug.log(20) << "PyDebugSession_close()" << endl;
 
     HTRY
     DebugSession::close ();
@@ -89,7 +97,7 @@ extern "C" {
 
   static PyObject* PyDebugSession_addToTrace ( PyObject*, PyObject* args )
   {
-    trace << "PyDebugSession_addToTrace()" << endl;
+    cdebug.log(20) << "PyDebugSession_addToTrace()" << endl;
 
     HTRY
     PyObject* pySymbol = NULL;

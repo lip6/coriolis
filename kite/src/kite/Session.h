@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Session.h<kite>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -83,6 +83,7 @@ namespace Kite {
                     Net*                _getBlockageNet     ();
                     unsigned int        _getRipupCost       ();
                     Katabatic::GCell*   _getGCellUnder      ( DbU::Unit, DbU::Unit );
+                    void                _doRemovalEvents    ();
       virtual       size_t              _revalidate         ();
                     bool                _isEmpty            () const;
                     NegociateWindow*    _getNegociateWindow ();

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) LIP6 2010-2015, All Rights Reserved
+// Copyright (c) LIP6 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -389,7 +389,7 @@ namespace {
     CHECK_STATUS(_status);
 #endif
 
-    if ( blockageNet != 0 ) {
+    if ( blockageNet != NULL ) {
       _status = lefwStartMacroObs ();
       CHECK_STATUS(_status);
 

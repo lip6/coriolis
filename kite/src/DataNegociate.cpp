@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -33,9 +33,6 @@ namespace Kite {
   using std::ostringstream;
   using Hurricane::Bug;
   using Hurricane::DebugSession;
-  using Hurricane::inltrace;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
   using Hurricane::tab;
   using Katabatic::KbHorizontal;
   using Katabatic::KbPropagate;
@@ -59,6 +56,7 @@ namespace Kite {
     , _attractors       ()
     , _perpandiculars   ()
     , _perpandicularFree(false)
+    , _reduceRanges     { Interval(), Interval() }
   { }
 
 
@@ -73,22 +71,29 @@ namespace Kite {
       if ( _attractors[i] > axis ) attraction += _attractors[i] - axis;
       else                         attraction += axis - _attractors[i];
     }
+    for ( size_t i=0 ; i<2 ; ++i ) {
+      if (_reduceRanges[i].isEmpty()) continue;
+      if (_reduceRanges[i].contains(axis)) attraction -= 2*_trackSegment->getPitch();
+    }
     return attraction;
   }
 
 
   void  DataNegociate::update ()
   {
-    DebugSession::open( _trackSegment->getNet(), 148 );
+    DebugSession::open( _trackSegment->getNet(), 150, 160 );
 
-  //ltrace(500) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
-    ltrace(148) << "DataNegociate::update() - " << _trackSegment << endl;
-    ltracein(148);
+  //cdebug.log(9000) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
+    cdebug.log(159,1) << "DataNegociate::update() - " << _trackSegment << endl;
 
+    size_t               reduceCandidates = 0;
+    DbU::Unit            pitch            = _trackSegment->getPitch();
     vector<AutoSegment*> collapseds;
     vector<AutoSegment*> perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
 
+    _reduceRanges[0].makeEmpty();
+    _reduceRanges[1].makeEmpty();
     _perpandiculars.clear();
     AutoSegment::getTopologicalInfos( _trackSegment->base()
                                     , collapseds
@@ -98,12 +103,12 @@ namespace Kite {
                                     );
 
     _terminals = AutoSegment::getTerminalCount( _trackSegment->base(), collapseds );
-  //ltrace(500) << "Deter|    Terminals:" << _terminals << endl;
+  //cdebug.log(9000) << "Deter|    Terminals:" << _terminals << endl;
     _attractors.clear();
     _perpandiculars.clear();
     _perpandicularFree = Interval(false);
 
-    ltrace(148) << "Extracting attractors from perpandiculars." << endl;
+    cdebug.log(159) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       Interval      interval;
       TrackElement* perpandicular;
@@ -127,27 +132,29 @@ namespace Kite {
       if (RoutingEvent::getStage() == RoutingEvent::Repair)
         perpandicular->base()->setFlagsOnAligneds( Katabatic::SegUnbound );
 
-      interval.inflate( DbU::fromLambda(-0.5) );
+    //cerr << "perpandicular:" << perpandicular << endl;
+    //cerr << "  " << interval << endl;
+    //interval.inflate( DbU::fromLambda(-0.5) );
 
-      ltrace(148) << "| perpandicular: " << perpandiculars[i] << endl;
-      ltrace(148) << "| canonical:     " << perpandicular << endl;
-      ltracein(148);
-      ltrace(148) << "Canonical // interval: " << interval << endl;
+      cdebug.log(159)   << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug.log(159)   << "| canonical:     " << perpandicular << endl;
+      cdebug.log(159,1) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
       if (perpandicular->getTrack()) {
         Interval  trackFree = perpandicular->getFreeInterval();
-        ltrace(148) << "Track Perpandicular Free: " << trackFree << endl;
+        cdebug.log(159) << "Track Perpandicular Free: " << trackFree << endl;
 
         _perpandicularFree.intersection( trackFree );
       } else {
-        ltrace(148) << "Not in any track " << perpandicular << endl;
+        cdebug.log(159) << "Not in any track " << perpandicular << endl;
       }
 
+#if 0
       if (interval.isPonctual()) {
-        ltrace(148) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug.log(159) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
         _attractors.push_back( interval.getVMin() );
-        ltraceout(148);
+        cdebug.tabw(159,-1);
         continue;
       }
 
@@ -161,7 +168,7 @@ namespace Kite {
         } else {
           iattractor->second -= 1;
         }
-        ltrace(148) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug.log(159) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
       }
 
       if (  (interval.getVMax() != _trackSegment->getAxis())
@@ -174,10 +181,24 @@ namespace Kite {
         } else {
           iattractor->second += 1;
         }
-        ltrace(148) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
+        cdebug.log(159) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
       }
 
-      ltraceout(148);
+      if (perpandicular->base()->isReduceCandidate()) {
+        if (reduceCandidates < 2) {
+          if (interval.getVMin()+DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
+            _reduceRanges[reduceCandidates] = Interval( interval.getVMax()-pitch
+                                                      , interval.getVMax()+pitch );
+          } else if (interval.getVMax()-DbU::fromLambda(0.5) == _trackSegment->getAxis()) {
+            _reduceRanges[reduceCandidates] = Interval( interval.getVMin()-pitch
+                                                      , interval.getVMin()+pitch );
+          }
+          ++reduceCandidates;
+        } 
+      }
+#endif
+
+      cdebug.tabw(159,-1);
     }
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size() < 2) )
       cerr << Bug( "Less than two perpandiculars on %s.", getString(_trackSegment).c_str() ) << endl;
@@ -195,11 +216,11 @@ namespace Kite {
       s << DbU::getValueString( _attractors[i] );
     }
     s << "]";
-    ltrace(148) << s.str() << endl;
-    ltrace(200) << "Perpandicular Free: " << _perpandicularFree << endl;
+    cdebug.log(159) << s.str() << endl;
+    cdebug.log(159) << "Perpandicular Free: " << _perpandicularFree << endl;
 
 
-    ltraceout(148);
+    cdebug.tabw(159,-1);
     DebugSession::close();
   }
 

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Tabulation.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -20,10 +20,8 @@
 #ifndef HURRICANE_TABULATION_H
 #define HURRICANE_TABULATION_H
 
-#include "hurricane/Commons.h"
-
-#ifndef HURRICANE_SLOT_H
-#error "Tabulation.h must be included after Commons.h"
+#ifndef HURRICANE_COMMONS_H
+#error "Tabulation.h must be included through Commons.h"
 #endif
 
 namespace Hurricane {
@@ -101,5 +99,5 @@ INSPECTOR_PV_SUPPORT(Hurricane::Tabulation);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

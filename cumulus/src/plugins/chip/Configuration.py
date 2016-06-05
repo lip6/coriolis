@@ -1,7 +1,7 @@
 # -*- explicit-buffer-name: "Configuration.py<cumulus/src/plugins/chip>" -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2015, All Rights Reserved
+# Copyright (c) UPMC 2014-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -593,6 +593,7 @@ class ChipConf ( object ):
       self._blockageNet = self._cell.getNet(self._blockageName)
       if not self._blockageNet:
         self._blockageNet = Net.create( self._cell, self._blockageName )
+        self._blockageNet.setType( Net.Type.BLOCKAGE )
       return
 
 

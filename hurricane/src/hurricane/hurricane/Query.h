@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -210,7 +210,8 @@ namespace Hurricane {
     instance->getTransformation().getInvert().applyOn ( child->_area );
     parent->_transformation.applyOn ( child->_transformation );
 
-    child->_path = Path ( Path(parent->_path,instance->getCell()->getShuntedPath()) , instance );
+  //child->_path = Path ( Path(parent->_path,instance->getCell()->getShuntedPath()) , instance );
+    child->_path = Path ( parent->_path, instance );
   }
 
 

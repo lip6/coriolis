@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2015, All Rights Reserved
+// Copyright (c) UPMC 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -41,8 +41,6 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::DebugSession;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
 
 
 // -------------------------------------------------------------------
@@ -64,7 +62,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    ltrace(90) << "create(net*) " << autoContact << endl;
+    cdebug.log(145) << "create(net*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -89,6 +87,10 @@ namespace Katabatic {
     if (from == _vertical2) return _vertical1;
     return NULL;
   }
+
+
+  AutoSegment* AutoContactVTee::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
 
 
   AutoSegment* AutoContactVTee::getSegment ( unsigned int index ) const
@@ -157,10 +159,9 @@ namespace Katabatic {
 
   void  AutoContactVTee::updateCache ()
   {
-    DebugSession::open( getNet(), 80 );
+    DebugSession::open( getNet(), 140, 150 );
 
-    ltrace(110) << "AutoContactVTee::updateCache() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << "AutoContactVTee::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [3];
@@ -190,30 +191,29 @@ namespace Katabatic {
     }
     unsetFlags( CntInvalidatedCache );
 
-    ltrace(110) << "h1:" << _horizontal1 << endl;
-    ltrace(110) << "v1:" << _vertical1 << endl;
-    ltrace(110) << "v2:" << _vertical2 << endl;
+    cdebug.log(145) << "h1:" << _horizontal1 << endl;
+    cdebug.log(145) << "v1:" << _vertical1 << endl;
+    cdebug.log(145) << "v2:" << _vertical2 << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  AutoContactVTee::updateGeometry ()
   {
-    DebugSession::open( getNet(), 80 );
+    DebugSession::open( getNet(), 140, 150 );
 
-    ltrace(110) << "AutoContactVTee::updateGeometry() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << "AutoContactVTee::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      ltraceout(110);
+      cdebug.tabw(145,-1);
       return;
     }
 
@@ -225,23 +225,22 @@ namespace Katabatic {
       setY( getHorizontal1()->getY() );
     }
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  AutoContactVTee::updateTopology ()
   {
-    DebugSession::open ( getNet(), 80 );
+    DebugSession::open ( getNet(), 140, 150 );
 
-    ltrace(110) << "AutoContactVTee::updateTopology() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << "AutoContactVTee::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      ltraceout(110);
+      cdebug.tabw(145,-1);
       return;
     }
 
@@ -254,22 +253,24 @@ namespace Katabatic {
       size_t        maxDepth     = std::max( depthH1, std::max(depthV1,depthV2) );
       size_t        delta        = maxDepth - minDepth;
 
-      ltrace(110) << "minDepth:" << minDepth << endl;
-      ltrace(110) << "maxDepth:" << maxDepth << endl;
-      ltrace(110) << "delta:"    << delta << endl;
+      cdebug.log(145) << "minDepth:" << minDepth << endl;
+      cdebug.log(145) << "maxDepth:" << maxDepth << endl;
+      cdebug.log(145) << "delta:"    << delta << endl;
+
+      unsetFlags( CntWeakTerminal );
 
       if ( maxDepth - minDepth > 3 ) {
         showTopologyError( "Sheared VTee, layer delta exceed 3." );
         setFlags( CntBadTopology );
       } else {
         if (depthV1 == depthV2) {
-          ltrace(110) << "depthV1 == depthV2 (" << depthV1 << ")" << endl;
+          cdebug.log(145) << "depthV1 == depthV2 (" << depthV1 << ")" << endl;
         // Dogleg on the horizontal.
           switch ( delta ) {
             case 0: setLayer( rg->getRoutingLayer(minDepth) ); break;
             case 1: setLayer( rg->getContactLayer(minDepth) ); break;
             default:
-              ltrace(110) << "Restore connectivity: dogleg on h1." << endl;
+              cdebug.log(145) << "Restore connectivity: dogleg on h1." << endl;
               setLayer( rg->getContactLayer( depthV1 + ((depthV1==minDepth)?0:-1) ) );
               _horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
               break;
@@ -296,7 +297,7 @@ namespace Katabatic {
       _vertical2  ->invalidate( this );
     }
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close ();
   }
 

@@ -51,7 +51,7 @@ extern "C" {
 
   static PyObject* PyHSVr_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    trace << "PyHSVr_new()" << endl;
+    cdebug.log(20) << "PyHSVr_new()" << endl;
 
     DisplayStyle::HSVr* hsvr   = NULL;
     PyHSVr*             pyHSVr = (PyHSVr*)type->tp_alloc(type,0);
@@ -95,9 +95,9 @@ extern "C" {
   DirectGetDoubleAttribute(PyHSVr_GetHue       ,getHue       ,PyHSVr,DisplayStyle::HSVr)
   DirectGetDoubleAttribute(PyHSVr_GetSaturation,getSaturation,PyHSVr,DisplayStyle::HSVr)
   DirectGetDoubleAttribute(PyHSVr_GetValue     ,getValue     ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,"HSVr.setHue"       ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,"HSVr.setSaturation",PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,"HSVr.setValue"     ,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,PyHSVr,DisplayStyle::HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,PyHSVr,DisplayStyle::HSVr)
 
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyHSVr_IsId,isId,PyHSVr,DisplayStyle::HSVr)
@@ -119,7 +119,7 @@ extern "C" {
   DirectHashMethod(PyHSVr_Hash, PyHSVr)
 
   extern void  PyHSVr_LinkPyType() {
-    trace << "PyHSVr_LinkType()" << endl;
+    cdebug.log(20) << "PyHSVr_LinkType()" << endl;
 
     PyTypeHSVr.tp_new     =              PyHSVr_new;
     PyTypeHSVr.tp_dealloc = (destructor) PyHSVr_DeAlloc;

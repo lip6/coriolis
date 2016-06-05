@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -13,36 +13,37 @@
 // |  C++ Module  :  "./AllianceFramework.cpp"                       |
 // +-----------------------------------------------------------------+
 
-
-#include  <unistd.h>
-#include  "vlsisapd/utilities/Path.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Library.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Instance.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "crlcore/Utilities.h"
-#include  "crlcore/GraphicsParser.h"
-#include  "crlcore/SymbolicTechnologyParser.h"
-#include  "crlcore/RealTechnologyParser.h"
-#include  "crlcore/CellGauge.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "crlcore/RoutingLayerGauge.h"
-#include  "crlcore/AllianceFramework.h"
-
-
-
+#include <unistd.h>
+#include "vlsisapd/utilities/Path.h"
+#include "hurricane/Initializer.h"
+#include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Library.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Instance.h"
+#include "hurricane/viewer/Graphics.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/GraphicsParser.h"
+#include "crlcore/SymbolicTechnologyParser.h"
+#include "crlcore/RealTechnologyParser.h"
+#include "crlcore/CellGauge.h"
+#include "crlcore/RoutingGauge.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/AllianceFramework.h"
 
 
 namespace CRL {
 
-
+  using namespace std::placeholders;
+  using Hurricane::Initializer;
+  using Hurricane::JsonTypes;
+  using Hurricane::JsonArray;
   using Hurricane::Warning;
   using Hurricane::tab;
   using Hurricane::Graphics;
   using Hurricane::ForEachIterator;
+  using Hurricane::getCollection;
   using Hurricane::Instance;
   using Hurricane::PrivateProperty;
 
@@ -57,6 +58,8 @@ namespace CRL {
       static  Name                       getPropertyName ();
       virtual Name                       getName         () const;
       inline  AllianceFramework*         getFramework    () const;
+      virtual bool                       hasJson         () const;
+      virtual void                       toJson          ( JsonWriter*, const DBo* ) const;
       virtual string                     _getTypeName    () const;
       virtual Record*                    _getRecord      () const;
     private:
@@ -64,10 +67,19 @@ namespace CRL {
       AllianceFramework* _framework;
     private:
       inline  AllianceFrameworkProperty ( AllianceFramework* );
+    public:
+      class JsonProperty : public JsonObject {
+        public:
+          static  void          initialize   ();
+                                JsonProperty ( unsigned long flags );
+          virtual string        getTypeName  () const;
+          virtual JsonProperty* clone        ( unsigned long ) const;
+          virtual void          toData       ( JsonStack& ); 
+      };
   };
 
 
-  Name  AllianceFrameworkProperty::_name = "AllianceFramework";
+  Name  AllianceFrameworkProperty::_name = "AllianceFrameworkProperty";
 
 
   inline AllianceFrameworkProperty::AllianceFrameworkProperty ( AllianceFramework* af )
@@ -111,6 +123,56 @@ namespace CRL {
   }
 
 
+  bool  AllianceFrameworkProperty::hasJson () const
+  { return true; }
+
+
+  void  AllianceFrameworkProperty::toJson ( JsonWriter* w, const DBo* ) const
+  {
+    w->startObject();
+    std::string tname = getString(getPropertyName());
+    jsonWrite( w, "@typename" , tname      );
+    jsonWrite( w, "_framework", _framework );
+    w->endObject();
+  }
+
+
+  Initializer<AllianceFrameworkProperty::JsonProperty>  jsonFrameworkPropertyInit ( 20 );
+
+
+  AllianceFrameworkProperty::JsonProperty::JsonProperty ( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( "_framework", typeid(AllianceFramework*) );
+  }
+
+
+  string  AllianceFrameworkProperty::JsonProperty::getTypeName () const
+  { return getString(AllianceFrameworkProperty::getPropertyName()); }
+
+
+  void  AllianceFrameworkProperty::JsonProperty::initialize ()
+  { JsonTypes::registerType( new JsonProperty (JsonWriter::RegisterMode) ); }
+
+
+  AllianceFrameworkProperty::JsonProperty* AllianceFrameworkProperty::JsonProperty::clone ( unsigned long flags ) const
+  { return new JsonProperty ( flags ); }
+
+
+  void AllianceFrameworkProperty::JsonProperty::toData ( JsonStack& stack )
+  {
+    check( stack, "AllianceFrameworkProperty::JsonProperty::toData" );
+
+    DBo*                       dbo       = stack.back_dbo();
+    AllianceFramework*         framework = get<AllianceFramework*>(stack,"_framework");
+    AllianceFrameworkProperty* property
+                 = AllianceFrameworkProperty::create(framework);
+    if (dbo) dbo->put( property );
+    
+    update( stack, property );
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "CRL::AllianceFramework".
 
@@ -121,18 +183,23 @@ namespace CRL {
 
 
   AllianceFramework::AllianceFramework ()
-    : _environment()
-    , _parsers()
-    , _drivers()
-    , _catalog()
-    , _parentLibrary(NULL)
-    , _routingGauges()
+    : _observers          ()
+    , _environment        ()
+    , _parsers            ()
+    , _drivers            ()
+    , _catalog            ()
+    , _parentLibrary      (NULL)
+    , _routingGauges      ()
+    , _defaultRoutingGauge(NULL)
+    , _cellGauges         ()
+    , _defaultCellGauge   (NULL)
   {
     DataBase* db = DataBase::getDB ();
     if ( not db )
       db = DataBase::create ();
 
     db->put ( AllianceFrameworkProperty::create(this) );
+    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
 
   //cmess1 << "  o  Reading Alliance Environment." << endl;
 
@@ -176,7 +243,7 @@ namespace CRL {
   void  AllianceFramework::_bindLibraries ()
   {
     DataBase*     db          = DataBase::getDB ();
-    unsigned int  flags       = InSearchPath;
+    unsigned int  flags       = AppendLibrary;
     SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
     Library*      rootLibrary = db->getRootLibrary ();
 
@@ -192,7 +259,8 @@ namespace CRL {
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
       createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
 
-    //cmess2 << "     - \"" << LIBRARIES[i].getPath() << "\"";
+    //cmess2 << "     - " << LIBRARIES[i].getName()
+    //       << " \"" << LIBRARIES[i].getPath() << "\"" << endl;
     //cmess2.flush();
 
     //if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
@@ -201,13 +269,14 @@ namespace CRL {
   }
 
 
-  AllianceFramework* AllianceFramework::create ()
+  AllianceFramework* AllianceFramework::create ( unsigned long flags )
   {
-    if ( !_singleton ) {
+    if (not _singleton) {
     // Triggers System singleton creation.
       System::get ();
       _singleton = new AllianceFramework ();
-      System::runPythonInit();
+      if (not (flags & NoPythonInit))
+        System::runPythonInit();
       _singleton->_bindLibraries();
     }
 
@@ -217,7 +286,7 @@ namespace CRL {
 
   AllianceFramework* AllianceFramework::get ()
   {
-    return create ();
+    return create();
   }
 
 
@@ -233,6 +302,18 @@ namespace CRL {
   }
 
 
+  void AllianceFramework::addObserver ( BaseObserver* observer )
+  { _observers.addObserver( observer ); }
+
+
+  void AllianceFramework::removeObserver ( BaseObserver* observer )
+  { _observers.removeObserver( observer ); }
+
+
+  void AllianceFramework::notify ( unsigned flags )
+  { _observers.notify( flags ); }
+
+
   AllianceLibrary* AllianceFramework::getAllianceLibrary ( unsigned index )
   {
     if ( index >= _libraries.size() )
@@ -242,7 +323,7 @@ namespace CRL {
   }
 
 
-  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &libName, unsigned int& flags )
+  AllianceLibrary* AllianceFramework::getAllianceLibrary ( const Name &libName, unsigned int flags )
   {
     for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
       if ( _libraries[ilib]->getLibrary()->getName() == libName )
@@ -259,6 +340,15 @@ namespace CRL {
       if ( _libraries[ilib]->getLibrary() == library ) return _libraries[ilib];
     }
     return NULL;
+  }
+
+
+  Cell* AllianceFramework::cellLoader ( const string& rpath )
+  {
+    size_t   dot      = rpath.rfind('.');
+    string   cellName = rpath.substr(dot+1);
+
+    return getCell( cellName, Catalog::State::Views );
   }
 
 
@@ -325,7 +415,7 @@ namespace CRL {
   }
 
 
-  AllianceLibrary* AllianceFramework::createLibrary ( const string& path, unsigned int& flags, string libName )
+  AllianceLibrary* AllianceFramework::createLibrary ( const string& path, unsigned int flags, string libName )
   {
     if ( libName.empty() ) libName = SearchPath::extractLibName(path);
 
@@ -333,7 +423,7 @@ namespace CRL {
 
     string dupLibName = libName;
     for ( size_t duplicate=1 ; true ; ++duplicate ) {
-      AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags );
+      AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags & ~CreateLibrary );
       if (library == NULL) break;
 
       ostringstream oss;
@@ -349,31 +439,42 @@ namespace CRL {
     // }
 
     SearchPath& LIBRARIES = _environment.getLIBRARIES ();
-    if ( not (flags & InSearchPath) ) LIBRARIES.prepend ( path, dupLibName );
-    else                              LIBRARIES.select  ( path );
+    if ( not (flags & AppendLibrary) ) LIBRARIES.prepend ( path, dupLibName );
+    else                               LIBRARIES.select  ( path );
 
-    AllianceLibrary* library = new AllianceLibrary ( path, Library::create(getParentLibrary(),dupLibName) );
+    Library* hlibrary = getParentLibrary()->getLibrary( dupLibName );
+    if (not hlibrary)
+      hlibrary = Library::create( getParentLibrary(), dupLibName );
+    
+    AllianceLibrary* alibrary = new AllianceLibrary ( path, hlibrary );
 
     AllianceLibraries::iterator ilib = _libraries.begin();
-    for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+    if (LIBRARIES.getIndex() != SearchPath::npos)
+      for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+    else
+      ilib = _libraries.end();
 
-    _libraries.insert ( ilib, library );
+    _libraries.insert ( ilib, alibrary );
 
     string catalog = path + "/" + _environment.getCATALOG();
 
-    if ( _catalog.loadFromFile(catalog,library->getLibrary()) ) flags |= HasCatalog;
+    if ( _catalog.loadFromFile(catalog,alibrary->getLibrary()) ) flags |= HasCatalog;
 
     ParserFormatSlot& parser = _parsers.getParserSlot ( path, Catalog::State::Physical, _environment );
 
-    if ( not parser.loadByLib() ) return library;
+    if ( not parser.loadByLib() ) {
+      notify ( AddedLibrary );
+      return alibrary;
+    }
 
   // Load the whole library.
-    if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return library;
+    if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return alibrary;
 
   // Call the parser function.
-    (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , library->getLibrary() , _catalog );
+    (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , alibrary->getLibrary() , _catalog );
 
-    return library;
+    notify ( AddedLibrary );
+    return alibrary;
   }
   
 
@@ -474,6 +575,17 @@ namespace CRL {
   }
 
 
+  Library* AllianceFramework::getLibrary ( const Name &libName )
+  {
+    for ( size_t ilib=0 ; ilib<_libraries.size() ; ++ilib ) {
+      if ( _libraries[ilib]->getLibrary()->getName() == libName )
+        return _libraries[ilib]->getLibrary();
+    }
+
+    return NULL;
+  }
+
+
   unsigned int  AllianceFramework::loadLibraryCells ( Library *library )
   {
     cmess2 << "      " << tab++ << "+ Library: " << getString(library->getName()) << endl;
@@ -564,6 +676,18 @@ namespace CRL {
   }
 
 
+  RoutingGauge* AllianceFramework::setRoutingGauge ( const Name& name )
+  {
+    RoutingGauge* gauge = getRoutingGauge( name );
+    if (gauge) _defaultRoutingGauge = gauge;
+    else
+      cerr << Error( "AllianceFramework::setRoutingGauge(): No gauge named \"%s\"."
+                   , getString(name).c_str() ) << endl;
+
+    return _defaultRoutingGauge;
+  }
+
+
   RoutingGauge* AllianceFramework::getRoutingGauge ( const Name& name )
   {
     if ( name.isEmpty() ) return _defaultRoutingGauge;
@@ -592,6 +716,18 @@ namespace CRL {
 
     _routingGauges [ gauge->getName() ] = gauge;
     _defaultRoutingGauge                = gauge;
+  }
+
+
+  CellGauge* AllianceFramework::setCellGauge ( const Name& name )
+  {
+    CellGauge* gauge = getCellGauge( name );
+    if (gauge) _defaultCellGauge = gauge;
+    else
+      cerr << Error( "AllianceFramework::setCellGauge(): No gauge named \"%s\"."
+                   , getString(name).c_str() ) << endl;
+
+    return _defaultCellGauge;
   }
 
 
@@ -656,14 +792,82 @@ namespace CRL {
   Record *AllianceFramework::_getRecord () const
   {
     Record* record = new Record ( "<AllianceFramework>" );
-    record->add ( getSlot ( "_environment"         , &_environment         ) );
-    record->add ( getSlot ( "_libraries"           , &_libraries           ) );
-    record->add ( getSlot ( "_catalog"             , &_catalog             ) );
-    record->add ( getSlot ( "_defaultRroutingGauge",  _defaultRoutingGauge ) );
-    record->add ( getSlot ( "_routingGauges"       ,  _routingGauges       ) );
-    record->add ( getSlot ( "_defaultCellGauge"    ,  _defaultCellGauge    ) );
-    record->add ( getSlot ( "_cellGauges"          ,  _cellGauges          ) );
+    record->add ( getSlot ( "_environment"        , &_environment         ) );
+    record->add ( getSlot ( "_libraries"          , &_libraries           ) );
+    record->add ( getSlot ( "_catalog"            , &_catalog             ) );
+    record->add ( getSlot ( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
+    record->add ( getSlot ( "_routingGauges"      ,  _routingGauges       ) );
+    record->add ( getSlot ( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
+    record->add ( getSlot ( "_cellGauges"         ,  _cellGauges          ) );
     return record;
+  }
+
+
+  void  AllianceFramework::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename"           ,  _getTypeName() );
+    jsonWrite( w, "_environment"        , &_environment   );
+    jsonWrite( w, "_defaultRoutingGauge",  _defaultRoutingGauge->getName() );
+    jsonWrite( w, "_defaultCellGauge"   ,  _defaultCellGauge->getName() );
+    jsonWrite( w, "+libraries"          ,  getAllianceLibraries() );
+    jsonWrite( w, "+routingGauges"      ,  _routingGauges );
+    jsonWrite( w, "+cellGauges"         ,  _cellGauges );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::JsonAllianceFramework".
+
+  Initializer<JsonAllianceFramework>  jsonFrameworkInit ( 20 );
+
+
+  JsonAllianceFramework::JsonAllianceFramework ( unsigned long flags )
+    : JsonObject          (flags)
+    , _defaultRoutingGauge()
+    , _defaultCellGauge   ()
+  {
+    add( "_environment"        , typeid(Environment*) );
+    add( "_defaultRoutingGauge", typeid(string)       );
+    add( "_defaultCellGauge"   , typeid(string)       );
+    add( "+libraries"          , typeid(JsonArray)    );
+    add( "+routingGauges"      , typeid(JsonArray)    );
+    add( "+cellGauges"         , typeid(JsonArray)    );
+  }
+
+
+  JsonAllianceFramework::~JsonAllianceFramework ()
+  {
+    AllianceFramework* framework = AllianceFramework::get(); 
+    framework->setRoutingGauge( _defaultRoutingGauge );
+    framework->setCellGauge   ( _defaultCellGauge    );
+  }
+
+
+  string JsonAllianceFramework::getTypeName () const
+  { return "AllianceFramework"; }
+
+
+  void  JsonAllianceFramework::initialize ()
+  { JsonTypes::registerType( new JsonAllianceFramework (JsonWriter::RegisterMode) ); }
+
+
+  JsonAllianceFramework* JsonAllianceFramework::clone ( unsigned long flags ) const
+  { return new JsonAllianceFramework ( flags ); }
+
+
+  void JsonAllianceFramework::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonAllianceFramework::toData" );
+
+  // It's a singleton. Do not create it...
+    AllianceFramework* framework = AllianceFramework::get(); 
+
+    string _defaultRoutingGauge = get<string>( stack, "_defaultRoutingGauge" );
+    string _defaultCellGauge    = get<string>( stack, "_defaultCellGauge"    );
+
+    update( stack, framework );
   }
 
 

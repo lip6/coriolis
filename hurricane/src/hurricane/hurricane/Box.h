@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Box.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -24,8 +24,6 @@
 
 namespace Hurricane {
 
-
-
 // ****************************************************************************************************
 // Box declaration
 // ****************************************************************************************************
@@ -35,7 +33,6 @@ class Box {
 
 // Attributes
 // **********
-
 
     private: DbU::Unit _xMin;
     private: DbU::Unit _yMin;
@@ -125,9 +122,20 @@ class Box {
     public: string _getTypeName() const { return _TName("Box"); };
     public: string _getString() const;
     public: Record* _getRecord() const;
+    public: void toJson(JsonWriter*) const;
 
 };
 
+
+class JsonBox : public JsonObject {
+// ********************************
+
+  public: static void initialize();
+  public: JsonBox(unsigned long);
+  public: virtual string getTypeName() const;
+  public: virtual JsonBox* clone(unsigned long) const;
+  public: virtual void toData(JsonStack&); 
+};
 
 
 } // End of Hurricane namespace.
@@ -140,5 +148,5 @@ INSPECTOR_PV_SUPPORT(Hurricane::Box);
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

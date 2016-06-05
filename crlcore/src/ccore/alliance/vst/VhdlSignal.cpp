@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2015, All Rights Reserved
+// Copyright (c) UPMC 2015-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -102,7 +102,7 @@ namespace Vhdl {
   { }
 
   ScalarSignal::~ScalarSignal ()
-  { }
+  { _bit->destroy(); }
 
   bool            ScalarSignal::isScalar     () const { return true; }
   bool            ScalarSignal::isVector     () const { return false; }
@@ -150,7 +150,7 @@ namespace Vhdl {
   { }
 
   VectorSignal::~VectorSignal ()
-  { for ( auto bit : _bits ) bit->getProperty()->destroy(); }
+  { for ( auto bit : _bits ) bit->destroy(); }
 
 
   bool            VectorSignal::isScalar     () const { return false; }

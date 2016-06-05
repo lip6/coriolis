@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Segment.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -294,16 +294,26 @@ void Segment::invert()
 void Segment::_preDestroy()
 // ***********************
 {
-// trace << "entering Segment::_preDestroy: " << this << endl;
-// trace_in();
+  cdebug.log(18,1) << "entering Segment::_preDestroy: " << this << endl;
 
-    Inherit::_preDestroy();
+  Inherit::_preDestroy();
 
-    _sourceHook.detach();
-    _targetHook.detach();
+  _sourceHook.detach();
+  _targetHook.detach();
 
-// trace << "exiting Segment::_preDestroy:" << endl;
-// trace_out();
+  cdebug.log(18) << "exiting Segment::_preDestroy:" << endl;
+  cdebug.tabw(18,-1);
+}
+
+void Segment::_toJson(JsonWriter* writer) const
+// ********************************************
+{
+  Inherit::_toJson( writer );
+
+  jsonWrite( writer, "_sourceHook", _sourceHook.getNextHook()->toJson() );
+  jsonWrite( writer, "_targetHook", _targetHook.getNextHook()->toJson() );
+  jsonWrite( writer, "_layer"     , _layer->getName() );
+  jsonWrite( writer, "_width"     , _width );
 }
 
 string Segment::_getString() const
@@ -318,7 +328,7 @@ string Segment::_getString() const
 }
 
 Record* Segment::_getRecord() const
-// **************************
+// ********************************
 {
     Record* record = Inherit::_getRecord();
     if (record) {
@@ -332,6 +342,7 @@ Record* Segment::_getRecord() const
     return record;
 }
 
+
 // ****************************************************************************************************
 // Segment::SourceHook implementation
 // ****************************************************************************************************
@@ -342,11 +353,13 @@ Segment::SourceHook::SourceHook(Segment* segment)
 // **********************************************
 :    Inherit()
 {
-    if (!segment)
-        throw Error("Can't create " + _TName("Segment::SourceHook") + " (null segment)");
+  if (!segment)
+    throw Error("Can't create " + _getTypeName() + " (null segment)");
 
-    if (SOURCE_HOOK_OFFSET == -1)
-        SOURCE_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
+  if (SOURCE_HOOK_OFFSET == -1) {
+    SOURCE_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
+    Hook::addCompToHook(_getTypeName(),_compToHook);
+  }
 }
 
 Component* Segment::SourceHook::getComponent() const
@@ -361,6 +374,16 @@ string Segment::SourceHook::_getString() const
     return "<" + _TName("Segment::SourceHook") + " " + getString(getComponent()) + ">";
 }
 
+Hook* Segment::SourceHook::_compToHook(Component* component)
+// ***************************************************************
+{
+  Segment* segment = dynamic_cast<Segment*>(component);
+  if (not segment) {
+    throw Error( "SourceHook::_compToHook(): Unable to cast %s into Segment*."
+               , getString(component).c_str() );
+  }
+  return &(segment->_sourceHook);
+}
 
 
 // ****************************************************************************************************
@@ -376,8 +399,10 @@ Segment::TargetHook::TargetHook(Segment* segment)
     if (!segment)
         throw Error("Can't create " + _TName("Segment::TargetHook") + " (null segment)");
 
-    if (TARGET_HOOK_OFFSET == -1)
-        TARGET_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
+    if (TARGET_HOOK_OFFSET == -1) {
+      TARGET_HOOK_OFFSET = (unsigned long)this - (unsigned long)segment;
+      Hook::addCompToHook(_getTypeName(),_compToHook);
+    }
 }
 
 Component* Segment::TargetHook::getComponent() const
@@ -391,6 +416,18 @@ string Segment::TargetHook::_getString() const
 {
     return "<" + _TName("Segment::TargetHook") + " " + getString(getComponent()) + ">";
 }
+
+Hook* Segment::TargetHook::_compToHook(Component* component)
+// ***************************************************************
+{
+  Segment* segment = dynamic_cast<Segment*>(component);
+  if (not segment) {
+    throw Error( "TargetHook::_compToHook(): Unable to cast %s into Segment*."
+               , getString(component).c_str() );
+  }
+  return &(segment->_targetHook);
+}
+
 
 // ****************************************************************************************************
 // Segment_Hooks implementation
@@ -633,9 +670,23 @@ string Segment_Anchors::Locator::_getString() const
 
 
 
+// ****************************************************************************************************
+// JsonSegment implementation
+// ****************************************************************************************************
+
+JsonSegment::JsonSegment(unsigned long flags)
+// ******************************************
+  : JsonComponent(flags)
+{
+  add( "_sourceHook", typeid(string)   );
+  add( "_targetHook", typeid(string)   );
+  add( "_layer"     , typeid(uint64_t) );
+  add( "_width"     , typeid(uint64_t) );
+}
+
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

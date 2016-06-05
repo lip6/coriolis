@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2015, All Rights Reserved
+// Copyright (c) UPMC 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -41,8 +41,6 @@ namespace Katabatic {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::DebugSession;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
 
 
 // -------------------------------------------------------------------
@@ -64,7 +62,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    ltrace(90) << "create(net*) " << autoContact << endl;
+    cdebug.log(145) << "create(net*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -89,6 +87,10 @@ namespace Katabatic {
     if (from == _horizontal2) return _horizontal1;
     return NULL;
   }
+
+
+  AutoSegment* AutoContactHTee::getPerpandicular ( const AutoSegment* ) const
+  { return NULL; }
 
 
   AutoSegment* AutoContactHTee::getSegment ( unsigned int index ) const
@@ -122,12 +124,25 @@ namespace Katabatic {
 
   void  AutoContactHTee::cacheDetach ( AutoSegment* segment )
   {
-    ltrace(110) << _getTypeName() << "::_cacheDetach() " << this << endl;
+    cdebug.log(145) << _getTypeName() << "::cacheDetach() " << this << endl;
+    cdebug.log(145) << "| h1:" << _horizontal1 << endl;
+    cdebug.log(145) << "| h2:" << _horizontal2 << endl;
+    cdebug.log(145) << "| v1:" << _vertical1 << endl;
 
     if      (segment == _horizontal1) _horizontal1 = NULL;
     else if (segment == _horizontal2) _horizontal2 = NULL;
     else if (segment == _vertical1)   _vertical1   = NULL;
-    else return;
+    else {
+      if (_horizontal1 or _horizontal2 or _vertical1)
+        cerr << Bug( "%s::cacheDetach() On %s,\n"
+                     "      Cannot detach %s\n"
+                     "      because it *not* attached to this contact."
+                   , _getTypeName().c_str()
+                   , getString(this).c_str()
+                   , getString(segment).c_str()
+                   ) << endl;
+      return;
+    }
 
     setFlags( CntInvalidatedCache );
   }
@@ -135,9 +150,8 @@ namespace Katabatic {
 
   void  AutoContactHTee::cacheAttach ( AutoSegment* segment )
   {
-    ltrace(110) << _getTypeName() << "::cacheAttach() " << this << endl;
-    ltracein(110);
-    ltrace(110) << "Attaching: " << segment << endl;
+    cdebug.log(145,1) << _getTypeName() << "::cacheAttach() " << this << endl;
+    cdebug.log(145)   << "Attaching: " << segment << endl;
 
     if (segment->getDirection() == KbHorizontal) {
       if      (not _horizontal1) _horizontal1 = static_cast<AutoHorizontal*>(segment);
@@ -147,7 +161,7 @@ namespace Katabatic {
                      "      h1 & h2 cache have not been cleared first, cancelled."
                    , _getTypeName().c_str(), getString(this).c_str()
                    ) << endl;
-        ltraceout(110);
+        cdebug.tabw(145,-1);
         return;
       }
     } else if (segment->getDirection() == KbVertical) {
@@ -156,7 +170,7 @@ namespace Katabatic {
                      "      v1 cache has not been cleared first, cancelled."
                    , _getTypeName().c_str(), getString(this).c_str()
                    ) << endl;
-        ltraceout(110);
+        cdebug.tabw(145,-1);
         return;
       }
       _vertical1 = static_cast<AutoVertical*>(segment);
@@ -165,16 +179,19 @@ namespace Katabatic {
     if (_horizontal1 and _horizontal2 and _vertical1)
       unsetFlags( CntInvalidatedCache  );
 
-    ltraceout(110);
+    cdebug.log(145) << "| h1:" << _horizontal1 << endl;
+    cdebug.log(145) << "| h2:" << _horizontal2 << endl;
+    cdebug.log(145) << "| v1:" << _vertical1 << endl;
+
+    cdebug.tabw(145,-1);
   }
 
 
   void  AutoContactHTee::updateCache ()
   {
-    DebugSession::open( getNet(), 80 );
+    DebugSession::open( getNet(), 140, 150 );
 
-    ltrace(110) << _getTypeName() << "::updateCache() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [3];
@@ -207,30 +224,29 @@ namespace Katabatic {
     }
     unsetFlags( CntInvalidatedCache );
 
-    ltrace(110) << "h1:" << _horizontal1 << endl;
-    ltrace(110) << "h2:" << _horizontal2 << endl;
-    ltrace(110) << "v1:" << _vertical1 << endl;
+    cdebug.log(145) << "h1:" << _horizontal1 << endl;
+    cdebug.log(145) << "h2:" << _horizontal2 << endl;
+    cdebug.log(145) << "v1:" << _vertical1 << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  AutoContactHTee::updateGeometry ()
   {
-    DebugSession::open( getNet(), 80 );
+    DebugSession::open( getNet(), 140, 150 );
 
-    ltrace(110) << _getTypeName() << "::updateGeometry() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      ltraceout(110);
+      cdebug.tabw(145,-1);
       return;
     }
 
@@ -242,23 +258,22 @@ namespace Katabatic {
       setY( getHorizontal1()->getY() );
     }
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  AutoContactHTee::updateTopology ()
   {
-    DebugSession::open( getNet(), 80 );
+    DebugSession::open( getNet(), 140, 150 );
 
-    ltrace(110) << _getTypeName() << "::updateTopology() " << this << endl;
-    ltracein(110);
+    cdebug.log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      ltraceout(110);
+      cdebug.tabw(145,-1);
       return;
     }
 
@@ -271,7 +286,9 @@ namespace Katabatic {
       size_t        maxDepth = std::max( depthV1, std::max(depthH1,depthH2) );
       size_t        delta    = maxDepth - minDepth;
 
-      ltrace(110) << "delta:" << delta << endl;
+      cdebug.log(145) << "delta:" << delta << endl;
+
+      unsetFlags( CntWeakTerminal );
 
       if (maxDepth - minDepth > 3) {
         showTopologyError( "Sheared HTee, layer delta exceed 3." );
@@ -296,12 +313,12 @@ namespace Katabatic {
             setLayer( rg->getContactLayer( depthH2 + ((depthH2<depthV1)?0:-1) )  );
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
-            ltrace(110) << "New h1:" << _horizontal1 << endl;
+            cdebug.log(145) << "New h1:" << _horizontal1 << endl;
           } else {
             setLayer( rg->getContactLayer( depthH1 + ((depthH1<depthV1)?0:-1) )  );
           //_horizontal2 = static_cast<AutoHorizontal*>( _horizontal2->makeDogleg(this) );
             _horizontal2->makeDogleg(this);
-            ltrace(110) << "New h2:" << _horizontal2 << endl;
+            cdebug.log(145) << "New h2:" << _horizontal2 << endl;
           }
         }
       }
@@ -311,7 +328,7 @@ namespace Katabatic {
       _vertical1  ->invalidate( this );
     }
 
-    ltraceout(110);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 

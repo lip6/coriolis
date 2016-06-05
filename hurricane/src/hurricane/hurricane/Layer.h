@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -30,8 +30,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __HURRICANE_LAYER__
-#define __HURRICANE_LAYER__
+#ifndef HURRICANE_LAYER_H
+#define HURRICANE_LAYER_H
 
 #include  "hurricane/Mask.h"
 #include  "hurricane/DBo.h"
@@ -46,7 +46,12 @@ namespace Hurricane {
   class Technology;
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Layer".
+
   class Layer : public DBo {
+    public:
+      typedef  DBo  Super;
 
     public:
     // Types.
@@ -88,6 +93,7 @@ namespace Hurricane {
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
     // Hurricane Managment.
+      virtual void              _toJson                      ( JsonWriter* ) const;
       virtual string            _getString                   () const;
       virtual Record*           _getRecord                   () const;
       inline  Layer*            _getNextOfTechnologyLayerMap () const;
@@ -95,6 +101,7 @@ namespace Hurricane {
       inline  void              _setExtractMask              ( const Mask& extractMask );
       inline  void              _setNextOfTechnologyLayerMap ( Layer* layer );
       virtual void              _onDbuChange                 ( float scale );
+      static  const Name&       _sgetName                    ( const Layer* );
 
     private:
     // Internal: Attributes
@@ -109,14 +116,14 @@ namespace Hurricane {
 
     protected:
     // Internal: Constructors & Destructors.
-                                Layer                        ( Technology* technology
-                                                             , const Name& name
-                                                             , const DbU::Unit& minimalSize    = 0
-                                                             , const DbU::Unit& minimalSpacing = 0
-                                                             , const DbU::Unit& pitch          = 0
-                                                             );
-      virtual void              _postCreate                  ();
-      virtual void              _preDestroy                  ();
+                    Layer       ( Technology* technology
+                                , const Name& name
+                                , const DbU::Unit& minimalSize    = 0
+                                , const DbU::Unit& minimalSpacing = 0
+                                , const DbU::Unit& pitch          = 0
+                                );
+      virtual void  _postCreate ();
+      virtual void  _preDestroy ();
 
     public:
       struct CompareByMask : public binary_function<const Layer*,const Layer*,bool> {
@@ -145,12 +152,21 @@ namespace Hurricane {
   { return (lhs?lhs->getMask():Layer::Mask()) < (rhs?rhs->getMask():Layer::Mask()); }
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::JsonLayer".
 
-} // End of Hurricane namespace.
+  class JsonLayer : public JsonDBo {
+    public:
+                  JsonLayer        ( unsigned long flags );
+      Technology* lookupTechnology ( JsonStack&, const string& fname ) const;
+  };
+
+
+}  // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Layer);
 INSPECTOR_PV_SUPPORT(Hurricane::Layer::Mask);
 
 
-# endif
+#endif  // HURRICANE_LAYER_H

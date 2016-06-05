@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |               C o r e   L i b r a r y                           |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./RoutingLayerGauge.cpp"                  |
 // +-----------------------------------------------------------------+
@@ -17,10 +17,11 @@
 
 
 #include  <sstream>
-
-#include  "hurricane/BasicLayer.h"
-
-#include  "crlcore/RoutingLayerGauge.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
+#include "crlcore/RoutingLayerGauge.h"
+#include "crlcore/RoutingGauge.h"
 
 
 namespace {
@@ -86,28 +87,27 @@ namespace CRL {
 
 
   using namespace std;
-
+  using Hurricane::JsonTypes;
   using Hurricane::Tabulation;
   using Hurricane::BasicLayer;
-  using Hurricane::trace_in;
-  using Hurricane::trace_out;
-  using Hurricane::in_trace;
   using Hurricane::tab;
+  using Hurricane::DataBase;
+  using Hurricane::Technology;
 
 
 // -------------------------------------------------------------------
 // Class  :  "RoutingLayerGauge"
 
-
-  RoutingLayerGauge::RoutingLayerGauge ( const Layer*  layer
-                                       , unsigned int  direction
-                                       , unsigned int  type
-                                       , unsigned int  depth
-                                       , double        density
-                                       , DbU::Unit     offset
-                                       , DbU::Unit     pitch
-                                       , DbU::Unit     wireWidth
-                                       , DbU::Unit     viaWidth )
+  RoutingLayerGauge::RoutingLayerGauge ( const Layer*              layer
+                                       , Constant::Direction       direction
+                                       , Constant::LayerGaugeType  type
+                                       , unsigned int              depth
+                                       , double                    density
+                                       , DbU::Unit                 offset
+                                       , DbU::Unit                 pitch
+                                       , DbU::Unit                 wireWidth
+                                       , DbU::Unit                 viaWidth
+                                       , DbU::Unit                 obsDw )
       : _layer        (layer)
       , _blockageLayer(layer->getBlockageLayer())
       , _direction    (direction)
@@ -118,18 +118,20 @@ namespace CRL {
       , _pitch        (pitch)
       , _wireWidth    (wireWidth)
       , _viaWidth     (viaWidth)
+      , _obstacleDw   (obsDw)
   { }
 
 
-  RoutingLayerGauge* RoutingLayerGauge::create ( const Layer*  layer
-                                               , unsigned int  direction
-                                               , unsigned int  type
-                                               , unsigned int  depth
-                                               , double        density
-                                               , DbU::Unit     offset
-                                               , DbU::Unit     pitch
-                                               , DbU::Unit     wireWidth
-                                               , DbU::Unit     viaWidth )
+  RoutingLayerGauge* RoutingLayerGauge::create ( const Layer*              layer
+                                               , Constant::Direction       direction
+                                               , Constant::LayerGaugeType  type
+                                               , unsigned int              depth
+                                               , double                    density
+                                               , DbU::Unit                 offset
+                                               , DbU::Unit                 pitch
+                                               , DbU::Unit                 wireWidth
+                                               , DbU::Unit                 viaWidth
+                                               , DbU::Unit                 obsDw )
   {
 //  Temporary: must write a more smart check.
 //  BasicLayer* basicLayer = dynamic_cast<BasicLayer*>(layer);
@@ -147,7 +149,8 @@ namespace CRL {
                                                      , offset
                                                      , pitch
                                                      , wireWidth
-                                                     , viaWidth );
+                                                     , viaWidth
+                                                     , obsDw );
 
     return gauge;
   }
@@ -204,18 +207,17 @@ namespace CRL {
 
   unsigned  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
   {
-    trace << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
-    trace_in ();
+    cdebug.log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
 
     long  modulo;
     long  depth;
 
     divide ( position-start, depth, modulo );
 
-    trace << "depth := " << depth << endl;
+    cdebug.log(100) << "depth := " << depth << endl;
 
     if ( depth < 0 ) {
-      trace_out ();
+      cdebug.tabw(100,-1);
       return 0;
 
       // throw Error ( negativeIndex
@@ -237,7 +239,7 @@ namespace CRL {
 
     unsigned int tracksNumber = getTrackNumber(start,stop);
     if ( (unsigned)depth >= tracksNumber ) {
-      trace_out ();
+      cdebug.tabw(100,-1);
       return (tracksNumber > 0) ? tracksNumber-1 : 0;
       // throw Error ( overflowIndex
       //             , getString(this).c_str()
@@ -247,7 +249,7 @@ namespace CRL {
       //             );
     }
 
-    trace_out ();
+    cdebug.tabw(100,-1);
 
     return depth;
   }
@@ -302,4 +304,107 @@ namespace CRL {
   }
 
 
-} // End of Coriolis namespace.
+  void  RoutingLayerGauge::toJson ( JsonWriter* w ) const
+  {
+    w->startObject();
+    jsonWrite( w, "@typename", "RoutingLayerGauge" );
+    jsonWrite( w, "_layer"        , _layer->getName() );
+    jsonWrite( w, "_direction"    , getString(&_direction) );
+    jsonWrite( w, "_type"         , getString(&_type     ) );
+    jsonWrite( w, "_depth"        , _depth      );
+    jsonWrite( w, "_density"      , _density    );
+    jsonWrite( w, "_offset"       , _offset     );
+    jsonWrite( w, "_pitch"        , _pitch      );
+    jsonWrite( w, "_wireWidth"    , _wireWidth  );
+    jsonWrite( w, "_viaWidth"     , _viaWidth   );
+    jsonWrite( w, "_obstacleDw"   , _obstacleDw );
+    w->endObject();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonRoutingLayerGauge"
+
+  Initializer<JsonRoutingLayerGauge>  jsonRoutingLayerGaugeInit ( 0 );
+
+
+  void  JsonRoutingLayerGauge::initialize ()
+  { JsonTypes::registerType( new JsonRoutingLayerGauge (JsonWriter::RegisterMode) ); }
+
+
+  JsonRoutingLayerGauge::JsonRoutingLayerGauge( unsigned long flags )
+    : JsonObject(flags)
+  {
+    add( ".RoutingGauge" , typeid(RoutingGauge*) );
+    add( "_layer"        , typeid(string) );
+    add( "_direction"    , typeid(string) );
+    add( "_type"         , typeid(string) );
+    add( "_depth"        , typeid(unsigned int) );
+    add( "_density"      , typeid(double)  );
+    add( "_offset"       , typeid(int64_t) );
+    add( "_pitch"        , typeid(int64_t) );
+    add( "_wireWidth"    , typeid(int64_t) );
+    add( "_viaWidth"     , typeid(int64_t) );
+    add( "_obstacleDw"   , typeid(int64_t) );
+  }
+
+
+  string JsonRoutingLayerGauge::getTypeName () const
+  { return "RoutingLayerGauge"; }
+
+
+  JsonRoutingLayerGauge* JsonRoutingLayerGauge::clone ( unsigned long flags ) const
+  { return new JsonRoutingLayerGauge ( flags ); }
+
+
+  void JsonRoutingLayerGauge::toData ( JsonStack& stack )
+  {
+    check( stack, "JsonRoutingLayerGauge::toData" );
+
+    Technology*        techno      = DataBase::getDB()->getTechnology();
+    RoutingGauge*      rg          = get<RoutingGauge*>( stack, ".RoutingGauge"  );
+    RoutingLayerGauge* rlg         = NULL;
+    string             layer       = get<string>       ( stack, "_layer"         );
+    unsigned int       depth       = get<int64_t>      ( stack, "_depth"         );
+    double             density     = get<double>       ( stack, "_density"       );
+    DbU::Unit          offset      = get<int64_t>      ( stack, "_offset"        );
+    DbU::Unit          pitch       = get<int64_t>      ( stack, "_pitch"         );
+    DbU::Unit          wireWidth   = get<int64_t>      ( stack, "_wireWidth"     );
+    DbU::Unit          viaWidth    = get<int64_t>      ( stack, "_viaWidth"      );
+    DbU::Unit          obstacleDw = get<int64_t>       ( stack, "_obstacleDw"    );
+
+    Constant::Direction       direction;
+    Constant::LayerGaugeType  type;
+    from( direction, get<string>(stack,"_direction") );
+    from( type     , get<string>(stack,"_type"     ) );
+
+    if (stack.issetFlags(JsonWriter::TechnoMode)) {
+      if (rg) {
+        if (not layer.empty()) {
+          rlg = RoutingLayerGauge::create( techno->getLayer(layer)
+                                         , direction
+                                         , type
+                                         , depth
+                                         , density
+                                         , offset
+                                         , pitch
+                                         , wireWidth
+                                         , viaWidth
+                                         , obstacleDw
+                                         );
+          rg->addLayerGauge( rlg );
+        }
+      } else {
+        cerr << Error( "JsonRoutingLayerGauge::toData(): Missing \".RoutingGauge\" in stack context." ) << endl;
+      }
+    } else {
+      if (rg) {
+        rlg = rg->getLayerGauge( techno->getLayer(layer) );
+      }
+    }
+  
+    update( stack, rlg );
+}
+
+
+} // Coriolis namespace.

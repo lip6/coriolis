@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -29,6 +29,7 @@ namespace bopts = boost::program_options;
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
+#include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/Script.h"
@@ -95,7 +96,6 @@ int main ( int argc, char *argv[] )
     bool          destroyDatabase;
     float         edgeCapacity;
     unsigned long eventsLimit;
-    unsigned int  traceLevel;
     bool          textMode;
     double        margin;
     bool          quadriPlace;
@@ -114,9 +114,6 @@ int main ( int argc, char *argv[] )
       ( "help,h"             , "Print this help." )
       ( "destroy-db"         , bopts::bool_switch(&destroyDatabase)->default_value(false)
                              , "Perform a complete deletion of the database (may be buggy).")
-      ( "trace-level,l"      , bopts::value<unsigned int>(&traceLevel)
-                             , "Set the level of trace, trace messages with a level superior to "
-                               "<arg> will be printed on <stderr>." )
       ( "verbose,v"          , bopts::bool_switch()
                              , "First level of verbosity.")
       ( "very-verbose,V"     , bopts::bool_switch()
@@ -199,13 +196,10 @@ int main ( int argc, char *argv[] )
     if (arguments["info"        ].as<bool>()) Cfg::getParamBool("misc.info"         )->setBool ( true , Cfg::Parameter::CommandLine );
     if (arguments["log-mode"    ].as<bool>()) Cfg::getParamBool("misc.logMode"      )->setBool ( true , Cfg::Parameter::CommandLine );
     if (arguments["show-conf"   ].as<bool>()) Cfg::getParamBool("misc.showConf"     )->setBool ( true , Cfg::Parameter::CommandLine );
-
-    if (arguments.count("trace-level" )) Cfg::getParamInt("misc.traceLevel")->setInt ( traceLevel, Cfg::Parameter::CommandLine );
-
     bool showConf = Cfg::getParamBool("misc.showConf")->asBool();
 
-    dbo_ptr<DataBase>          db   ( DataBase::create() );
-    dbo_ptr<AllianceFramework> af   ( AllianceFramework::create() );
+    dbo_ptr<DataBase>          db   ( DataBase::getDB() );
+    dbo_ptr<AllianceFramework> af   ( AllianceFramework::get() );
     Cell*                      cell = NULL;
 
     Utilities::Path path = Utilities::Path::cwd();
@@ -434,6 +428,10 @@ int main ( int argc, char *argv[] )
 
     if ( not destroyDatabase ) exit ( 0 );
     cmess1 << "  o  Full database deletion (may be buggy)." << endl;
+  }
+  catch ( Bug& e ) {
+    cerr << e.what() << endl;
+    exit ( 1 );
   }
   catch ( Error& e ) {
     cerr << e.what() << endl;

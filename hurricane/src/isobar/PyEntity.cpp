@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2015, All Rights Reserved
+// Copyright (c) UPMC 2010-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -59,7 +59,7 @@ extern "C" {
   // Attribute Method  :  "PyEntity_getCell ()"
 
   static PyObject* PyEntity_getCell ( PyEntity *self ) {
-    trace << "PyEntity_getCell ()" << endl;
+    cdebug.log(20) << "PyEntity_getCell ()" << endl;
 
     Cell* cell = NULL;
     

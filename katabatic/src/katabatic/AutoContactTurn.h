@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2015, All Rights Reserved
+// Copyright (c) UPMC 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -43,6 +43,7 @@ namespace Katabatic {
       inline  AutoHorizontal*  getHorizontal1         () const;
       inline  AutoVertical*    getVertical1           () const;
       virtual AutoSegment*     getOpposite            ( const AutoSegment* ) const;
+      virtual AutoSegment*     getPerpandicular       ( const AutoSegment* ) const;
       virtual AutoSegment*     getSegment             ( unsigned int ) const;
       virtual void             updateGeometry         ();
       virtual void             updateTopology         ();

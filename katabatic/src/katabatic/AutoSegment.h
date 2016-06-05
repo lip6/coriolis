@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -30,7 +30,7 @@ namespace Hurricane {
   class Vertical;
   class Cell;
 }
-
+#include  "crlcore/RoutingGauge.h"
 #include  "katabatic/Constants.h"
 #include  "katabatic/Observer.h"
 #include  "katabatic/GCell.h"
@@ -46,13 +46,13 @@ namespace Katabatic {
   using std::endl;
   using std::binary_function;
   using Hurricane::tab;
-  using Hurricane::inltrace;
   using Hurricane::Interval;
   using Hurricane::Layer;
   using Hurricane::Components;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::Cell;
+  using CRL::RoutingGauge;
 
   class AutoHorizontal;
   class AutoVertical;
@@ -60,43 +60,44 @@ namespace Katabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
 
-  enum AutoSegmentFlag { SegNoFlags           = 0x00000000
-                       , SegHorizontal        = 0x00000001
-                       , SegFixed             = 0x00000002
-                       , SegGlobal            = 0x00000004
-                       , SegWeakGlobal        = 0x00000008
-                       , SegCanonical         = 0x00000010
-                       , SegBipoint           = 0x00000020
-                       , SegDogleg            = 0x00000040
-                       , SegStrap             = 0x00000080
-                       , SegSourceTop         = 0x00000100
-                       , SegSourceBottom      = 0x00000200
-                       , SegTargetTop         = 0x00000400
-                       , SegTargetBottom      = 0x00000800
-                       , SegLayerChange       = 0x00001000
-                       , SegSourceTerminal    = 0x00002000  // Replace Terminal.
-                       , SegTargetTerminal    = 0x00004000  // Replace Terminal.
+  enum AutoSegmentFlag { SegNoFlags           = 0x0
+                       , SegHorizontal        = (1<< 0)
+                       , SegFixed             = (1<< 1)
+                       , SegGlobal            = (1<< 2)
+                       , SegWeakGlobal        = (1<< 3)
+                       , SegCanonical         = (1<< 4)
+                       , SegBipoint           = (1<< 5)
+                       , SegDogleg            = (1<< 6)
+                       , SegStrap             = (1<< 7)
+                       , SegSourceTop         = (1<< 8)
+                       , SegSourceBottom      = (1<< 9)
+                       , SegTargetTop         = (1<<10)
+                       , SegTargetBottom      = (1<<11)
+                       , SegIsReduced         = (1<<12)
+                       , SegLayerChange       = (1<<13)
+                       , SegSourceTerminal    = (1<<14)  // Replace Terminal.
+                       , SegTargetTerminal    = (1<<15)  // Replace Terminal.
                        , SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal
-                       , SegWeakTerminal1     = 0x00008000  // Replace TopologicalEnd.
-                       , SegWeakTerminal2     = 0x00010000  // Replace TopologicalEnd.
-                       , SegNotSourceAligned  = 0x00020000
-                       , SegNotTargetAligned  = 0x00040000
-                       , SegUnbound           = 0x00100000
-                       , SegHalfSlackened     = 0x00200000
-                       , SegSlackened         = 0x00400000
-                       , SegAxisSet           = 0x00800000
-                       , SegInvalidated       = 0x01000000
-                       , SegInvalidatedSource = 0x02000000
-                       , SegInvalidatedTarget = 0x04000000
-                       , SegInvalidatedLayer  = 0x08000000
-                       , SegCreated           = 0x10000000
-                       , SegUserDefined       = 0x20000000
+                       , SegWeakTerminal1     = (1<<16)  // Replace TopologicalEnd.
+                       , SegWeakTerminal2     = (1<<17)  // Replace TopologicalEnd.
+                       , SegNotSourceAligned  = (1<<18)
+                       , SegNotTargetAligned  = (1<<19)
+                       , SegUnbound           = (1<<20)
+                       , SegHalfSlackened     = (1<<21)
+                       , SegSlackened         = (1<<22)
+                       , SegAxisSet           = (1<<23)
+                       , SegInvalidated       = (1<<24)
+                       , SegInvalidatedSource = (1<<25)
+                       , SegInvalidatedTarget = (1<<26)
+                       , SegInvalidatedLayer  = (1<<27)
+                       , SegCreated           = (1<<28)
+                       , SegUserDefined       = (1<<29)
                        // Masks.              
                        , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
                        , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
-                       , SegSpinTop           = SegSourceTop   |SegTargetTop
-                       , SegSpinBottom        = SegSourceBottom|SegTargetBottom
-                       , SegDepthSpin         = SegSpinTop     |SegSpinBottom
+                       , SegSpinTop           = SegSourceTop    |SegTargetTop
+                       , SegSpinBottom        = SegSourceBottom |SegTargetBottom
+                       , SegDepthSpin         = SegSpinTop      |SegSpinBottom
                        };
  
 
@@ -122,6 +123,7 @@ namespace Katabatic {
       static  AutoSegment*        create                     ( AutoContact*  source
                                                              , AutoContact*  target
                                                              , unsigned int  dir
+                                                             , size_t        depth=RoutingGauge::nlayerdepth
                                                              );
               void                destroy                    ();
     // Wrapped Segment Functions.                            
@@ -169,11 +171,11 @@ namespace Katabatic {
               bool                isStrongTerminal           ( unsigned int flags=0 ) const;
       inline  bool                isSourceTerminal           () const;
       inline  bool                isTargetTerminal           () const;
-              bool                isSameLayerDogleg          () const;
       inline  bool                isLayerChange              () const;
       inline  bool                isSpinTop                  () const;
       inline  bool                isSpinBottom               () const;
       inline  bool                isSpinTopOrBottom          () const;
+      inline  bool                isReduced                  () const;
       inline  bool                isStrap                    () const;
       inline  bool                isDogleg                   () const;
       inline  bool                isUnbound                  () const;
@@ -184,7 +186,11 @@ namespace Katabatic {
       inline  bool                isUnsetAxis                () const;
       inline  bool                isSlackened                () const;
       inline  bool                isUserDefined              () const;
+              bool                isReduceCandidate          () const;
+              bool                isUTurn                    () const;
       virtual bool                _canSlacken                () const = 0;
+              bool                canReduce                  () const;
+              bool                mustRaise                  () const;
               unsigned int        canDogleg                  ( Interval );
       virtual bool                canMoveULeft               ( float reserve=0.0 ) const = 0;
       virtual bool                canMoveURight              ( float reserve=0.0 ) const = 0;
@@ -239,6 +245,8 @@ namespace Katabatic {
       inline  void                unsetFlags                 ( unsigned int );
       inline  void                setFlags                   ( unsigned int );
               void                setFlagsOnAligneds         ( unsigned int );
+      inline  void                incReduceds                ();
+      inline  void                decReduceds                ();
       virtual void                setDuSource                ( DbU::Unit du ) = 0;
       virtual void                setDuTarget                ( DbU::Unit du ) = 0;
               void                computeTerminal            ();
@@ -270,6 +278,9 @@ namespace Katabatic {
               void                changeDepth                ( unsigned int depth, unsigned int flags );
               bool                moveUp                     ( unsigned int flags=KbNoFlags );
               bool                moveDown                   ( unsigned int flags=KbNoFlags );
+              bool                reduceDoglegLayer          ();
+              bool                reduce                     ();
+              bool                raise                      ();
     // Canonical Modifiers.                                            
               AutoSegment*        canonize                   ( unsigned int flags=KbNoFlags );
       virtual void                invalidate                 ( unsigned int flags=KbPropagate );
@@ -314,6 +325,7 @@ namespace Katabatic {
              unsigned int         _depth      : 8;
              unsigned int         _optimalMin : 8;
              unsigned int         _optimalMax : 8;
+             unsigned int         _reduceds   : 2;
              DbU::Unit            _sourcePosition;
              DbU::Unit            _targetPosition;
              Interval             _userConstraints;
@@ -445,6 +457,7 @@ namespace Katabatic {
   inline  bool            AutoSegment::isSpinTop            () const { return ((_flags & SegSpinTop   ) == SegSpinTop); }
   inline  bool            AutoSegment::isSpinBottom         () const { return ((_flags & SegSpinBottom) == SegSpinBottom); }
   inline  bool            AutoSegment::isSpinTopOrBottom    () const { return isSpinTop() or isSpinBottom(); }
+  inline  bool            AutoSegment::isReduced            () const { return _flags & SegIsReduced; }
   inline  bool            AutoSegment::isSlackened          () const { return _flags & SegSlackened; }
   inline  bool            AutoSegment::isCanonical          () const { return _flags & SegCanonical; }
   inline  bool            AutoSegment::isUnsetAxis          () const { return not (_flags & SegAxisSet); }
@@ -457,6 +470,8 @@ namespace Katabatic {
                                                             
   inline  unsigned int    AutoSegment::getFlags             () const { return _flags; }
   inline  unsigned int    AutoSegment::_getFlags            () const { return _flags; }
+  inline  void            AutoSegment::incReduceds          () { if (_reduceds<3) ++_reduceds; }
+  inline  void            AutoSegment::decReduceds          () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setLayer             ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); }
   inline  void            AutoSegment::setOptimalMin        ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }
   inline  void            AutoSegment::setOptimalMax        ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
@@ -506,7 +521,7 @@ namespace Katabatic {
 
   inline int  AutoSegment::getTerminalCount ( AutoSegment* seed )
   {
-    ltrace(80) << "getTerminalCount() - " << seed << endl;
+    cdebug.log(145) << "getTerminalCount() - " << seed << endl;
 
     vector<AutoSegment*>  collapseds;
     vector<AutoSegment*>  perpandiculars;

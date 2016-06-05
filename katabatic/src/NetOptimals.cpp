@@ -29,9 +29,6 @@ namespace Katabatic {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::ltracein;
-  using Hurricane::ltraceout;
-  using Hurricane::inltrace;
   using Hurricane::ForEachIterator;
   using Hurricane::Net;
   using Hurricane::Segment;
@@ -40,9 +37,9 @@ namespace Katabatic {
 
   void  KatabaticEngine::_computeNetOptimals ( Net* net )
   {
-    DebugSession::open( net, 88 );
-    ltrace(100) << "Katabatic::_computeNetOptimals( " << net << " )" << endl;
-    ltracein(99);
+    DebugSession::open( net, 140, 150 );
+    cdebug.log(149) << "Katabatic::_computeNetOptimals( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
@@ -55,16 +52,16 @@ namespace Katabatic {
     for ( size_t i=0 ; i<segments.size() ; i++ )
       segments[i]->computeOptimal( processeds );
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 
 
   void  KatabaticEngine::toOptimals ( Net* net )
   {
-    DebugSession::open( net, 88 );
-    ltrace(100) << "Katabatic::_toOptimals( " << net << " )" << endl;
-    ltracein(99);
+    DebugSession::open( net, 140, 150 );
+    cdebug.log(149) << "Katabatic::_toOptimals( " << net << " )" << endl;
+    cdebug.tabw(145,1);
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
@@ -77,7 +74,7 @@ namespace Katabatic {
       if (segments[i]->isCanonical()) segments[i]->toOptimalAxis();
     }
 
-    ltraceout(99);
+    cdebug.tabw(145,-1);
     DebugSession::close();
   }
 

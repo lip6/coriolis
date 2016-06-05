@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./Box.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,8 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#include "hurricane/Error.h"
 #include "hurricane/Box.h"
+#include "hurricane/Error.h"
 
 namespace Hurricane {
 
@@ -318,7 +318,7 @@ Box& Box::merge(const Box& box)
 }
 
 Box& Box::translate(const DbU::Unit& dx, const DbU::Unit& dy)
-// ************************************************
+// **********************************************************
 {
     if (!isEmpty()) {
         _xMin += dx;
@@ -353,10 +353,69 @@ Record* Box::_getRecord() const
     return record;
 }
 
+void  Box::toJson(JsonWriter* w) const
+// ***********************************
+{
+  w->startObject();
+  jsonWrite( w, "@typename", "Box" );
+  jsonWrite( w, "_xMin", getXMin() );
+  jsonWrite( w, "_yMin", getYMin() );
+  jsonWrite( w, "_xMax", getXMax() );
+  jsonWrite( w, "_yMax", getYMax() );
+  w->endObject();
+}
+
+
+Initializer<JsonBox>  jsonBoxInit ( 0 );
+
+void  JsonBox::initialize()
+// **************************
+{ JsonTypes::registerType( new JsonBox (JsonWriter::RegisterMode) ); }
+
+JsonBox::JsonBox(unsigned long flags)
+// **********************************
+  : JsonObject(flags)
+{ 
+  add( "_xMin", typeid(int64_t) );
+  add( "_yMin", typeid(int64_t) );
+  add( "_xMax", typeid(int64_t) );
+  add( "_yMax", typeid(int64_t) );
+}
+
+string  JsonBox::getTypeName() const
+// *********************************
+{ return "Box"; }
+
+JsonBox* JsonBox::clone(unsigned long flags) const
+// ***********************************************
+{ return new JsonBox ( flags ); }
+
+void JsonBox::toData(JsonStack& stack)
+// ***********************************
+{
+  check( stack, "JsonBox::toData" );
+
+  DbU::Unit xMin = DbU::fromDb(get<int64_t>(stack,"_xMin"));
+  DbU::Unit yMin = DbU::fromDb(get<int64_t>(stack,"_yMin"));
+  DbU::Unit xMax = DbU::fromDb(get<int64_t>(stack,"_xMax"));
+  DbU::Unit yMax = DbU::fromDb(get<int64_t>(stack,"_yMax"));
+
+  Box box;
+  
+  if ( (xMin <= xMax) and (yMin <= yMax) )
+    box.merge( xMin, yMin, xMax, yMax ); 
+
+  cdebug.log(19) << "Box(" << xMin << ", "
+                 <<           yMin << ", "
+                 <<           xMax << ", "
+                 <<           yMax << ")" << endl;
+
+  update( stack, box );
+}
 
 } // End of Hurricane namespace.
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2015, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 // ****************************************************************************************************

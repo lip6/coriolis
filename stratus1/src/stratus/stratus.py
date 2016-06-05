@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2008-2015, All Rights Reserved
+# Copyright (c) UPMC 2008-2016, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -71,16 +71,19 @@ DoLayout  = 0x0002
 DoStop    = 0x0004
 
 
-def buildModel ( name, flags ):
+def buildModel ( moduleName, flags, className=None, modelName=None, parameters={} ):
     try:
-      print name
-      module = __import__( name, globals(), locals(), name )
-      if not module.__dict__.has_key(name):
-          print '[ERROR] Stratus module <%s> do not contains a design of the same name.' % name
+     #print moduleName
+      if not className: className = moduleName
+      if not modelName: modelName = moduleName.lower()
+
+      module = __import__( moduleName, globals(), locals(), className )
+      if not module.__dict__.has_key(className):
+          print '[ERROR] Stratus module <%s> do not contains a design named <%s>.' % (moduleName,className)
           sys.exit(1)
 
-      print '     - Generating Stratus Model <%s>' % name
-      model = module.__dict__[name](name)
+      print '     - Generating Stratus Model <%s> (generator:<%s>).' % (modelName, className)
+      model = module.__dict__[className](modelName,parameters)
       model.Interface()
 
       if flags & DoNetlist: model.Netlist()
@@ -88,7 +91,7 @@ def buildModel ( name, flags ):
 
       stopLevel=0
       if flags & DoStop: stopLevel = 1
-      model.View(stopLevel, 'Model %s' % name)
+      model.View(stopLevel, 'Model %s' % modelName)
       model.Save(LOGICAL|PHYSICAL)
 
     except ImportError, e:
@@ -100,10 +103,10 @@ def buildModel ( name, flags ):
       sys.exit(1)
     except Exception, e:
       print '[ERROR] A strange exception occurred while loading the Stratus'
-      print '        design <%s>. Please check that module for error:\n' % name
+      print '        design <%s>. Please check that module for error:\n' % moduleName
       traceback.print_tb(sys.exc_info()[2])
       print '        %s' % e
       sys.exit(2)
 
     framework = CRL.AllianceFramework.get()
-    return framework.getCell( name, CRL.Catalog.State.Views )
+    return framework.getCell( modelName, CRL.Catalog.State.Views )

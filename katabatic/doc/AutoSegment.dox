@@ -68,6 +68,9 @@
   *                      This operation is used to slacken the constraints on a segment
   *                      or restore connexity on source/target contact after a layer
   *                      change. The new segment is always created on the source.
+  *                  <li><b>Reduction/Raising.</b> When a segment is a short dogleg,
+  *                      no greater than one picth, it can use the layer of the
+  *                      perpandiculars.
   *                </ul>
   *
   *
@@ -97,6 +100,8 @@
   *                  <li>The interval giving the complete length of the AutoSegment,
   *                      that is, with all extentions cap taken into account.
   *                      This interval is refered as the \e span.
+  *                  <li>A small counter, of the number of reduced neighbors (never
+  *                      exceed two).
   *                </ul>
   *
   *
@@ -197,6 +202,10 @@
  //! \var         AutoSegmentFlag::SegTargetBottom
  //!              The target contact of this segment is connected to the <em>bottom</em> layer.
 
+ //! \var         AutoSegmentFlag::SegIsReduced
+ //!              This segment is the perpandicular part of a dogleg which will use the
+ //!              <em>same</em> layer as the parallels.
+
  //! \var         AutoSegmentFlag::SegLayerChange
  //!              This AutoSegment has been created to to reconnect parts of an AutoSegment
  //!              after a layer change.
@@ -273,10 +282,11 @@
  //!                  \c source or \c target are not the one decorating the anchors, an
  //!                  exception is thrown.
 
- //! \function    AutoSegment* AutoSegment::create ( AutoContact* source, AutoContact* target, unsigned int flags );
+ //! \function    AutoSegment* AutoSegment::create ( AutoContact* source, AutoContact* target, unsigned int dir, size_t depth );
  //! \param       source  The source AutoContact.
  //! \param       target  The target AutoContact.
- //! \param       flags   Specify the constructor behavior.
+ //! \param       dir     Specify the segment direction.
+ //! \param       depth   The layer, given by it's depth in the RoutingGauge.
  //! \return      The AutoHorizontal/AutoVertical.
  //!
  //!              Factory method to create AutoHorizontal or AutoVertical.
@@ -391,6 +401,22 @@
  //! \sreturn     \true if segment is a strap used only to connect between two different
  //!              metal layers on the way up or down.
 
+ //! \function    bool  AutoSegment::isSpinTop() const;
+ //! \sreturn     \true if segment is connected to turns and both perpandiculars segments
+ //!              are in the \e top layer (candidate for reduction).
+
+ //! \function    bool  AutoSegment::isSpinBottom() const;
+ //! \sreturn     \true if segment is connected to turns and both perpandiculars segments
+ //!              are in the \e bottom layer (candidate for reduction).
+
+ //! \function    bool  AutoSegment::isSpinTopOrBottom() const;
+ //! \sreturn     \true if segment is either <em>spin top</em> or <em>spin bottom</em> 
+ //!              (candidate for reduction).
+
+ //! \function    bool  AutoSegment::isReduced() const;
+ //! \sreturn     \true if segment is actually in a reduced state: it's effective layer
+ //!              will be the one of it's perpandiculars.
+
  //! \function    bool  AutoSegment::isStrap() const;
  //! \sreturn     \true if segment has been created from a slackening operation to
  //!              restore the slack of another segment.
@@ -426,6 +452,20 @@
 
  //  \function    bool  AutoSegment::canDesalignate( AutoContact* contact ) const;
  //  \sreturn     \true if \c contact restrict the slack of the segment.
+
+ //! \function    bool  AutoSegment::canReduce() const;
+ //! \sreturn     \true if the segment can be reduced. That is:
+ //!                - Source & target are AutoContactTurn.
+ //!                - It is either <em>spin top</em> or <em>spin bottom</em>, that is
+ //!                  connecting perpandiculars both in the same layer.
+ //!                - Has a length less or equal one pitch in the perpandicular direction.
+ //!                - Neither of the perpandicular are also reduceds.
+
+ //! \function    bool  AutoSegment::mustRaise() const;
+ //! \sreturn     \true if the segment must \e be reduced. That is:
+ //!                 - It is in reduced state...
+ //!                 - It is no longer <em>spin top</em> or <em>spin bottom</em>.
+ //!                 - It's length exceed one pitch in the perpandicular direction.
 
  //! \function    bool  AutoSegment::canSlacken( unsigned int flags=0 ) const;
  //! \sreturn     \true if the segment can be slackened. That is, source or target constraints
@@ -806,6 +846,40 @@
  //!              Perform operations that must be done before the actual destructor is
  //!              called. Merely whidrawn the AutoSegment from the lookup/Session mechanism.
 
+ //! \function    bool  AutoSegment::reduce ();
+ //!              Sets the segment into reduced state.
+ //!  
+ //! \sreturn     \true if the operation did succeed. The layer will not be actually changed
+ //!              until the Katabatic database is saved/destroyed.
+ //!
+ //!              A segment can be reduced if:
+ //!                - Source & target are AutoContactTurn.
+ //!                - It is either <em>spin top</em> or <em>spin bottom</em>, that is
+ //!                  connecting perpandiculars both in the same layer.
+ //!                - Has a length less or equal one pitch in the perpandicular direction.
+ //!                - Neither of the perpandicular are also reduceds.
+ //!              
+ //!              \image html  reduce-1.png "Reduce Example"
+ //!
+ //!              If segment \c id:12 is reduced, it prevents \c id:10 & \c id:14 to
+ //!              be also reduced, by increasing the \c _reduced counter. In this
+ //!              example \c id:14 is <em>spin top</em> and \c id:12 is <em>spin bottom</em>.
+ //!
+ //!              If we reduce two adjacent segments, one will go up while the other
+ //!              will go down (they will actually exchange their layers), it will
+ //!              thus defeat the purpose of creating a <em>same layer</em> dogleg.
+ //!              Besides, the turn contact between them will be changed into a pure
+ //!              metal one, generating a disconnexion...
+ //!
+ //! \see         AutoSegment::raise()
+
+ //! \function    bool  AutoSegment::raise ();
+ //!              Get a segment out of \e reduced state.
+ //! 
+ //! \sreturn     \true if a state change did really take place.
+ //!
+ //! \see         AutoSegment::reduce()
+
  //! \function    AutoSegment* AutoSegment::makeDogleg ( AutoContact* from );
  //! \param       from   The AutoContact \e from which we want to make a dogleg.
  //!
@@ -968,5 +1042,12 @@
  //!              (see \b 2.c ).
  //!
  //!              \image html  _slacken-2.png "slacken() for an Horizontal (special cases)"
+
+ //! \function    bool  AutoSegment::reduceDoglegLayer ();
+ //!
+ //!              Perform the actual layer change on a reduced segment. This method is to
+ //!              be called juste before destroying the Katabatic database.
+ //!
+ //! \sreturn     \true if a change occurs.
 
 }

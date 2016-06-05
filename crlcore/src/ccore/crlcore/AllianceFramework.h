@@ -1,8 +1,7 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -18,17 +17,21 @@
 #ifndef  CRL_ALLIANCE_FRAMEWORK_H
 #define  CRL_ALLIANCE_FRAMEWORK_H
 
-#include  <map>
-#include  <limits>
-#include  "hurricane/Cell.h"
-#include  "crlcore/Environment.h"
-#include  "crlcore/AllianceLibrary.h"
-#include  "crlcore/Catalog.h"
-#include  "crlcore/ParsersDrivers.h"
+#include <map>
+#include <limits>
+#include "hurricane/Cell.h"
+#include "crlcore/Environment.h"
+#include "crlcore/AllianceLibrary.h"
+#include "crlcore/Catalog.h"
+#include "crlcore/ParsersDrivers.h"
 
 
 namespace CRL {
 
+  using Hurricane::Observable;
+  using Hurricane::BaseObserver;
+  using Hurricane::JsonObject;
+  using Hurricane::JsonStack;
   using Hurricane::Cell;
   using Hurricane::Net;
   class RoutingGauge;
@@ -37,11 +40,23 @@ namespace CRL {
 
   class AllianceFramework {
     public:
-      enum InstancesCountFlags { Recursive=0x1, IgnoreFeeds=0x2 };
-      enum LibraryFlags        { CreateLibrary=0x1, InSearchPath=0x2, HasCatalog=0x4 };
+      enum FunctionsFlags      { NoFlags        = 0
+                               , NoPythonInit   = (1<<0)
+                               };                
+      enum InstancesCountFlags { Recursive      = (1<<0)
+                               , IgnoreFeeds    = (1<<1)
+                               };                  
+      enum LibraryFlags        { CreateLibrary  = (1<<0)
+                               , AppendLibrary  = (1<<1)
+                               , HasCatalog     = (1<<2)
+                               };                
+      enum NotifyFlags         { AddedLibrary   = (1<<0)
+                               , RemovedLibrary = (1<<1)
+                               , ConfigChanged  = (1<<2)
+                               };
     public:
     // Constructors.
-      static AllianceFramework*       create                   ();
+      static AllianceFramework*       create                   ( unsigned long flags=NoFlags );
     // Destructors.                   
              void                     destroy                  ();
     // Accessors.                     
@@ -71,10 +86,11 @@ namespace CRL {
       inline const Name&              getParentLibraryName     () const;
       inline Library*                 getParentLibrary         ();
              Library*                 getLibrary               ( unsigned int index );
+             Library*                 getLibrary               ( const Name& libName );
              AllianceLibrary*         getAllianceLibrary       ( unsigned int index );
-             AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int& flags );
+             AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
              AllianceLibrary*         getAllianceLibrary       ( Library* );
-             AllianceLibrary*         createLibrary            ( const string& path, unsigned int& flags, string libName="" );
+             AllianceLibrary*         createLibrary            ( const string& path, unsigned int flags, string libName="" );
       inline const AllianceLibraries& getAllianceLibraries     () const;
              void                     saveLibrary              ( Library* );
              void                     saveLibrary              ( AllianceLibrary* );
@@ -82,9 +98,15 @@ namespace CRL {
              CellGauge*               getCellGauge             ( const Name& name="" );
       inline const Name               getDefaultCGPinLayerName () const;
     // Modifiers.                     
+             RoutingGauge*            setRoutingGauge          ( const Name& name="" );
+             CellGauge*               setCellGauge             ( const Name& name="" );
              void                     addRoutingGauge          ( RoutingGauge* );
              void                     addCellGauge             ( CellGauge* );
+             void                     addObserver              ( BaseObserver* );
+             void                     removeObserver           ( BaseObserver* );
+             void                     notify                   ( unsigned int flags );
     // Cell Management.               
+             Cell*                    cellLoader               ( const string& rpath );
              Cell*                    getCell                  ( const string& name
                                                                , unsigned int  mode
                                                                , unsigned int  depth=(unsigned int)-1 );
@@ -94,6 +116,7 @@ namespace CRL {
              unsigned int             loadLibraryCells         ( const Name& );
       static size_t                   getInstancesCount        ( Cell*, unsigned int flags );
     // Hurricane Managment.           
+             void                     toJson                   ( JsonWriter* ) const;
       inline string                   _getTypeName             () const;
              string                   _getString               () const;
              Record*                  _getRecord               () const;
@@ -102,15 +125,16 @@ namespace CRL {
     protected:
       static const Name          _parentLibraryName;
       static AllianceFramework*  _singleton;
+             Observable          _observers;
              Environment         _environment;
              ParsersMap          _parsers;
              DriversMap          _drivers;
              Catalog             _catalog;
              AllianceLibraries   _libraries;
              Library*            _parentLibrary;
-             RoutingGauge*       _defaultRoutingGauge;
              map<const Name,RoutingGauge*>
                                  _routingGauges;
+             RoutingGauge*       _defaultRoutingGauge;
              map<const Name,CellGauge*>
                                  _cellGauges;
              CellGauge*          _defaultCellGauge;
@@ -156,6 +180,20 @@ namespace CRL {
   inline const Name   AllianceFramework::getDefaultCGPinLayerName
                                                                () const { return "CALU1"; }
   inline string       AllianceFramework::_getTypeName          () const { return "AllianceFramework"; }
+
+
+  class JsonAllianceFramework : public JsonObject {
+    public:
+      static void                    initialize           ();
+                                     JsonAllianceFramework( unsigned long );
+      virtual                       ~JsonAllianceFramework();
+      virtual string                 getTypeName          () const;
+      virtual JsonAllianceFramework* clone                ( unsigned long ) const;
+      virtual void                   toData               ( JsonStack& ); 
+    private:
+      std::string  _defaultRoutingGauge;
+      std::string  _defaultCellGauge;
+  };
 
 
 } // CRL namespace.

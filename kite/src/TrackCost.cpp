@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2015, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -30,6 +30,34 @@ namespace Kite {
 
 // -------------------------------------------------------------------
 // Class  :  "TrackCost".
+
+  TrackCost::TrackCost ( Track* track, Net* net )
+    : _flags          (ZeroCost)
+    , _track          (track)
+    , _begin          (Track::npos)
+    , _end            (Track::npos)
+    , _interval       ()
+    , _forGlobal      (false)
+    , _blockage       (false)
+    , _fixed          (false)
+    , _infinite       (false)
+    , _hardOverlap    (false)
+    , _overlap        (false)
+    , _leftOverlap    (false)
+    , _rightOverlap   (false)
+    , _overlapGlobal  (false)
+    , _globalEnclosed (false)
+    , _terminals      (0)
+    , _delta          (0)
+    , _deltaShared    (0)
+    , _deltaPerpand   (0)
+    , _axisWeight     (0)
+    , _distanceToFixed(2*Session::getSliceHeight())
+    , _longuestOverlap(0)
+    , _dataState      (0)
+    , _ripupCount     (0)
+  { }
+
 
   TrackCost::TrackCost (       Track*        track
                        , const Interval&     interval
@@ -94,7 +122,6 @@ namespace Kite {
     }
   }
 
-
   TrackCost::~TrackCost ()
   { }
 
@@ -138,6 +165,19 @@ namespace Kite {
       if ( lhs._delta < rhs._delta ) return true;
       if ( lhs._delta > rhs._delta ) return false;
     }
+
+#if 0
+    DbU::Unit lhsMixedWeight = 0.5*lhs._deltaPerpand;
+    DbU::Unit rhsMixedWeight = 0.5*rhs._deltaPerpand;
+
+    if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
+      lhsMixedWeight += lhsMixedWeight;
+      rhsMixedWeight += rhsMixedWeight;
+    }
+
+    if (lhsMixedWeight < rhsMixedWeight) return true;
+    if (lhsMixedWeight > rhsMixedWeight) return false;
+#endif
 
     if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
       if ( lhs._axisWeight < rhs._axisWeight ) return true;
