@@ -605,7 +605,7 @@ namespace Hurricane {
 
     Graphics::getGraphics()->addObserver( &_observer );
                                         
-    resize( Graphics::toHighDpi(600), Graphics::toHighDpi(500) );
+    resize( Graphics::toHighDpi(620), Graphics::toHighDpi(500) );
   }
 
 
@@ -661,11 +661,9 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "ControllerWidget::GraphicsObserver".
 
-//void  ControllerWidget::GraphicsObserver::notify ( unsigned int flags )
   void  ControllerWidget::notify ( ControllerWidget* controller, unsigned int flags )
   {
-    cdebug.log(111) << "ControllerWidget::notify()" << endl;
-  //ControllerWidget* controller = getOwner();
+    cdebug.log(19) << "ControllerWidget::notify()" << endl;
     if (flags & Graphics::ChangedDisplayStyles) {
       controller->graphicsUpdated();
     }

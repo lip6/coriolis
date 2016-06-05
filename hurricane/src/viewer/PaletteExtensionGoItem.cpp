@@ -35,6 +35,8 @@ namespace Hurricane {
   {
     PaletteExtensionGoItem* item = new PaletteExtensionGoItem ( name );
     item->_postCreate ();
+
+    cdebug.log(19) << "PaletteExtensionGoItem::create() - " << name << endl;
     return item;
   }
 
@@ -63,6 +65,12 @@ namespace Hurricane {
 
     connect( _visible   , SIGNAL(clicked()), this, SIGNAL(visibleToggled   ()) );
     connect( _selectable, SIGNAL(clicked()), this, SIGNAL(selectableToggled()) );
+  }
+
+
+  PaletteExtensionGoItem::~PaletteExtensionGoItem ()
+  {
+    cdebug.log(19) << "PaletteExtensionGoItem::~PaletteExtensionGoItem() - " << _name << endl;
   }
 
 

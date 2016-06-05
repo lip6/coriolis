@@ -47,6 +47,7 @@ namespace Hurricane {
     protected:
                                       PaletteExtensionGoItem ( const Name& );
                                       PaletteExtensionGoItem ( const PaletteExtensionGoItem& );
+      virtual                        ~PaletteExtensionGoItem ();
               PaletteExtensionGoItem& operator=              ( const PaletteExtensionGoItem& );
       virtual void                    _postCreate            ();
   };

@@ -43,15 +43,16 @@ namespace {
 
   class GridBuffer {
     public:
-                     GridBuffer      ( QGridLayout*, size_t rowMax, size_t startRow=0, size_t startColumn=0 );
-      inline int     getRow          () const;
-      inline int     getColumn       () const;
-      inline int     getCurrentRow   () const;
-             void    addSection      ( QWidget*, Qt::Alignment align=0 );
-             void    addWidget       ( QWidget*, Qt::Alignment align=0 );
-             void    newColumn       ();
-             void    flushWidgets    ();
-      inline bool    columnOverload  () const;
+                     GridBuffer     ( QGridLayout*, size_t rowMax, size_t startRow=0, size_t startColumn=0 );
+                    ~GridBuffer     ();
+      inline int     getRow         () const;
+      inline int     getColumn      () const;
+      inline int     getCurrentRow  () const;
+             void    addSection     ( QWidget*, Qt::Alignment align=0 );
+             void    addWidget      ( QWidget*, Qt::Alignment align=0 );
+             void    newColumn      ();
+             void    flushWidgets   ();
+      inline bool    columnOverload () const;
     protected:
       QGridLayout*           _grid;
       size_t                 _rowMax;
@@ -66,37 +67,54 @@ namespace {
                          , size_t maxRow
                          , size_t startRow
                          , size_t startColumn )
-    : _grid      (grid)
-    , _rowMax    (maxRow)
-    , _row       (startRow)
-    , _column    (startColumn)
-    , _widgets   ()
-    , _aligns    ()
-  { }
+    : _grid   (grid)
+    , _rowMax (maxRow)
+    , _row    (startRow)
+    , _column (startColumn)
+    , _widgets()
+    , _aligns ()
+  {
+    cdebug.log(19) << "GridBuffer::GridBuffer() column:" << _column << " row:" << _row << endl;
+  }
+
+
+  GridBuffer::~GridBuffer ()
+  {
+    cdebug.log(19) << "GridBuffer::~GridBuffer() column:" << _column << " row:" << _row << endl;
+  }
 
 
   inline int   GridBuffer::getRow          () const { return _row; }
   inline int   GridBuffer::getColumn       () const { return _column; }
   inline int   GridBuffer::getCurrentRow   () const { return _widgets.size() + _row; }
-  inline bool  GridBuffer::columnOverload  () const { return getCurrentRow() > (int)_rowMax; }
+  inline bool  GridBuffer::columnOverload  () const { return getCurrentRow() >= (int)_rowMax; }
 
 
   void  GridBuffer::flushWidgets ()
   {
+    cdebug.log(19,1) << "GridBuffer::flushWidgets()" << endl;
+
     if ( columnOverload() ) {
       _column++;
       _row = 0;
     }
 
-    for ( size_t i=0 ; i < _widgets.size() ; ++i )
+    for ( size_t i=0 ; i < _widgets.size() ; ++i ) {
+      cdebug.log(19) << "add Widget to grid @(" << _column << "," << _row << ")" << endl;
+
       _grid->addWidget ( _widgets[i], _row++, _column, _aligns[i] );
+    }
     _widgets.clear ();
     _aligns.clear ();
+
+    cdebug.tabw(19,-1);
   }
 
 
   void  GridBuffer::newColumn ()
   {
+    cdebug.log(19) << "GridBuffer::newColumn()" << endl;
+
     if ( columnOverload() ) return;
 
     flushWidgets ();
@@ -292,21 +310,22 @@ namespace Hurricane {
       }
     }
 
-    if ( _columnHeight < numeric_limits<size_t>::max() )
-      gridBuffer.newColumn ();
-    else
-      gridBuffer.flushWidgets ();
+    gridBuffer.flushWidgets ();
 
     _extensionRow    = gridBuffer.getRow();
     _extensionColumn = gridBuffer.getColumn();
     _extensionGroup  = _createGroupItem ( "Extensions" );
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
     gridBuffer.flushWidgets ();
+
+    cdebug.log(19) << " column:" << _extensionColumn << " row:" << _extensionRow << endl;
   }
 
 
   void  PaletteWidget::updateExtensions ( Cell* cell )
   {
+    cdebug.log(19,1) << "PaletteWidget::updateExtensions()" << endl;
+
     if (_extensionGroup) {
       _grid->removeWidget ( _extensionGroup );
     //_extensionGroup->deleteLater ();
@@ -322,6 +341,8 @@ namespace Hurricane {
       _extensionGoItems.clear ();
     }
 
+    cdebug.log(19) << " column:" << _extensionColumn << " row:" << _extensionRow << endl;
+
     GridBuffer gridBuffer ( _grid, _columnHeight, _extensionRow, _extensionColumn );
     _extensionGroup  = _createGroupItem ( "Extensions" );
     gridBuffer.addSection ( _extensionGroup, Qt::AlignHCenter );
@@ -334,6 +355,8 @@ namespace Hurricane {
       }
     }
     gridBuffer.flushWidgets ();
+
+    cdebug.tabw(19,-1);
   }
 
 
