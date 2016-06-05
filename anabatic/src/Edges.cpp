@@ -101,7 +101,7 @@ namespace Anabatic {
       }
     }
 
-    // cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _flags << " iedge:" << _iedge << endl;
+    cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _flags << " iedge:" << _iedge << endl;
   }
 
 

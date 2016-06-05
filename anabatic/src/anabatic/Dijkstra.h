@@ -106,20 +106,20 @@ namespace Anabatic {
     , _from    (NULL)
   { }
 
-  inline                  Vertex::~Vertex        () { }
-  inline unsigned int     Vertex::getId          () const { return _id; }
-  inline GCell*           Vertex::getGCell       () const { return _gcell; }
-  inline AnabaticEngine*  Vertex::getAnabatic    () const { return _gcell->getAnabatic(); }
-  inline Contact*         Vertex::getGContact    ( Net* net ) { return _gcell->getGContact(net); }
-  inline Point            Vertex::getCenter      () const { return _gcell->getBoundingBox().getCenter(); }
-  inline float            Vertex::getDistance    () const { return hasValidStamp() ? _distance : unreached; }
-  inline int              Vertex::getStamp       () const { return _stamp; }
-  inline int              Vertex::getConnexId    () const { return hasValidStamp() ? _connexId : -1; }
-  inline Edge*            Vertex::getFrom        () const { return _from; }
-  inline void             Vertex::setDistance    ( float distance ) { _distance=distance; }
-  inline void             Vertex::setFrom        ( Edge* from ) { _from=from; }
-  inline void             Vertex::setStamp       ( int stamp ) { _stamp=stamp; }
-  inline void             Vertex::setConnexId    ( int id ) { _connexId=id; }
+  inline                 Vertex::~Vertex     () { }
+  inline unsigned int    Vertex::getId       () const { return _id; }
+  inline GCell*          Vertex::getGCell    () const { return _gcell; }
+  inline AnabaticEngine* Vertex::getAnabatic () const { return _gcell->getAnabatic(); }
+  inline Contact*        Vertex::getGContact ( Net* net ) { return _gcell->getGContact(net); }
+  inline Point           Vertex::getCenter   () const { return _gcell->getBoundingBox().getCenter(); }
+  inline float           Vertex::getDistance () const { return hasValidStamp() ? _distance : unreached; }
+  inline int             Vertex::getStamp    () const { return _stamp; }
+  inline int             Vertex::getConnexId () const { return hasValidStamp() ? _connexId : -1; }
+  inline Edge*           Vertex::getFrom     () const { return _from; }
+  inline void            Vertex::setDistance ( float distance ) { _distance=distance; }
+  inline void            Vertex::setFrom     ( Edge* from ) { _from=from; }
+  inline void            Vertex::setStamp    ( int stamp ) { _stamp=stamp; }
+  inline void            Vertex::setConnexId ( int id ) { _connexId=id; }
 
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }

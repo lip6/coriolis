@@ -158,11 +158,12 @@ namespace Anabatic {
 
   float  Edge::getDistance () const
   {
-    Point sourceCenter = getSource()->getBoundingBox().getCenter();
-    Point targetCenter = getTarget()->getBoundingBox().getCenter();
+    Point     sourceCenter = getSource()->getBoundingBox().getCenter();
+    Point     targetCenter = getTarget()->getBoundingBox().getCenter();
+    DbU::Unit dx           = targetCenter.getX() - sourceCenter.getX();
+    DbU::Unit dy           = targetCenter.getY() - sourceCenter.getY();
 
-    return ( (targetCenter.getX() - sourceCenter.getX())
-           + (targetCenter.getY() - sourceCenter.getY()) ) / unity;
+    return (float)( ((dx > 0) ? dx : -dx) + ((dy > 0) ? dy : -dy) ) / (float)unity;
   }
 
 

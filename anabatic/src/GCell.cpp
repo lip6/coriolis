@@ -112,7 +112,7 @@ namespace Anabatic {
     if (side.contains(Flags::WestSide)) {
       cdebug.log(110) << "Adding to West side of " << this << endl;
       for ( auto iedge=_westEdges.begin() ; iedge != _westEdges.end() ; ++iedge )
-        if ((*iedge)->getAxisMin() >= edge->getAxisMin()) {
+        if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _westEdges.insert( iedge, edge );
           cdebug.tabw(110,-1);
           return;
@@ -123,7 +123,7 @@ namespace Anabatic {
     if (side.contains(Flags::EastSide)) {
       cdebug.log(110) << "Adding to East side of " << this << endl;
       for ( auto iedge=_eastEdges.begin() ; iedge != _eastEdges.end() ; ++iedge )
-        if ((*iedge)->getAxisMin() >= edge->getAxisMin()) {
+        if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _eastEdges.insert( iedge, edge );
           cdebug.tabw(110,-1);
           return;
@@ -137,7 +137,7 @@ namespace Anabatic {
         cdebug.log(110) << "| @" << DbU::getValueString((*iedge)->getAxisMin()) << " " << *iedge << endl;
 
       for ( auto iedge=_southEdges.begin() ; iedge != _southEdges.end() ; ++iedge )
-        if ((*iedge)->getAxisMin() >= edge->getAxisMin()) {
+        if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           cdebug.log(110) << "Insert *before* " << *iedge << endl;
 
           _southEdges.insert( iedge, edge );
@@ -152,7 +152,7 @@ namespace Anabatic {
     if (side.contains(Flags::NorthSide)) {
       cdebug.log(110) << "Adding to North side of " << this << endl;
       for ( auto iedge=_northEdges.begin() ; iedge != _northEdges.end() ; ++iedge )
-        if ((*iedge)->getAxisMin() >= edge->getAxisMin()) {
+        if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _northEdges.insert( iedge, edge );
           cdebug.tabw(110,-1);
           return;
@@ -260,7 +260,7 @@ namespace Anabatic {
 
   GCell*  GCell::vcut ( DbU::Unit x )
   {
-    cdebug.log(110,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
+    cdebug.log(119,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
 
     if ( (x < getXMin()) or (x > getXMax()) )
       throw Error( "GCell::vcut(): Vertical cut axis at %s is outside GCell box,\n"
@@ -270,7 +270,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( x, getYMin() );
-    cdebug.log(110) << "New chunk:" << chunk << endl;
+    cdebug.log(119) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
@@ -285,8 +285,12 @@ namespace Anabatic {
                         << " " << _southEdges[iedge] << endl;
         if (x <= _southEdges[iedge]->getOpposite(this)->getXMax()) break;
       }
-      if (x < _southEdges[iedge]->getOpposite(this)->getXMax())
+
+      if (      (x <  _southEdges[iedge]->getOpposite(this)->getXMax())
+         or (   (x == _southEdges[iedge]->getOpposite(this)->getXMax())
+            and (chunk->getXMax() == getXMax())) )
         Edge::create( _southEdges[iedge]->getOpposite(this), chunk, Flags::Vertical );
+
       _moveEdges( chunk, iedge+1, Flags::SouthSide );
     }
 
@@ -296,15 +300,19 @@ namespace Anabatic {
       size_t iedge = 0;
       for ( ; (iedge < _northEdges.size()) ; ++iedge )
         if (x <= _northEdges[iedge]->getOpposite(this)->getXMax()) break;
-      if (x < _northEdges[iedge]->getOpposite(this)->getXMax())
+
+      if (      (x <  _northEdges[iedge]->getOpposite(this)->getXMax())
+         or (   (x == _northEdges[iedge]->getOpposite(this)->getXMax())
+            and (chunk->getXMax() == getXMax())) )
         Edge::create( chunk, _northEdges[iedge]->getOpposite(this), Flags::Vertical );
+
       _moveEdges( chunk, iedge+1, Flags::NorthSide );
     }
 
     _revalidate();
     chunk->_revalidate();
 
-    cdebug.tabw(110,-1);
+    cdebug.tabw(119,-1);
 
     return chunk;
   }
@@ -312,7 +320,7 @@ namespace Anabatic {
 
   GCell* GCell::hcut ( DbU::Unit y )
   {
-    cdebug.log(110,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
+    cdebug.log(119,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
 
     if ( (y < getYMin()) or (y > getYMax()) )
       throw Error( "GCell::hcut(): Horizontal cut axis at %s is outside GCell box,\n"
@@ -322,7 +330,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( getXMin(), y );
-    cdebug.log(110) << "New chunk:" << chunk << endl;
+    cdebug.log(119) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
@@ -331,8 +339,12 @@ namespace Anabatic {
       size_t iedge = 0;
       for ( ; (iedge < _westEdges.size()) ; ++iedge )
         if (y <= _westEdges[iedge]->getOpposite(this)->getYMax()) break;
-      if (y < _westEdges[iedge]->getOpposite(this)->getYMax())
+
+      if (      (y <  _westEdges[iedge]->getOpposite(this)->getYMax())
+         or (   (y == _westEdges[iedge]->getOpposite(this)->getYMax())
+            and (chunk->getYMax() == getYMax())) )
         Edge::create( _westEdges[iedge]->getOpposite(this), chunk, Flags::Horizontal );
+
       _moveEdges( chunk, iedge+1, Flags::WestSide );
     }
 
@@ -340,15 +352,19 @@ namespace Anabatic {
       size_t iedge = 0;
       for ( ; (iedge < _eastEdges.size()) ; ++iedge )
         if (y <= _eastEdges[iedge]->getOpposite(this)->getYMax()) break;
-      if (y < _eastEdges[iedge]->getOpposite(this)->getYMax())
+
+      if (      (y <  _eastEdges[iedge]->getOpposite(this)->getYMax())
+         or (   (y == _eastEdges[iedge]->getOpposite(this)->getYMax())
+            and (chunk->getYMax() == getYMax())) )
         Edge::create( chunk, _eastEdges[iedge]->getOpposite(this), Flags::Horizontal );
+
       _moveEdges( chunk, iedge+1, Flags::EastSide );
     }
 
     _revalidate();
     chunk->_revalidate();
 
-    cdebug.tabw(110,-1);
+    cdebug.tabw(119,-1);
 
     return chunk;
   }

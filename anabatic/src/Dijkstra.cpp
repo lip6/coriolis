@@ -30,6 +30,7 @@ namespace Anabatic {
   using std::cerr;
   using std::endl;
   using std::numeric_limits;
+  using Hurricane::ForEachIterator;
   using Hurricane::Error;
   using Hurricane::Component;
   using Hurricane::Horizontal;
@@ -51,7 +52,14 @@ namespace Anabatic {
 
   string  Vertex::_getString () const
   {
+    if (not _gcell) {
+      string s = "<Vertex [key] " + getString(_id) + ">";
+      return s;
+    }
+
     string s = "<Vertex " + getString(_id)
+             + " @(" + DbU::getValueString(_gcell->getXMin())
+             +  "," + DbU::getValueString(_gcell->getYMin()) + ")"
              + " connexId:" + getString(_connexId)
              + " d:" + ((_distance == unreached) ? "unreached" : getString(_distance) )
              + " stamp:" + (hasValidStamp() ? "valid" : "outdated")
@@ -109,36 +117,35 @@ namespace Anabatic {
     _searchArea.makeEmpty();
     _stamp = _anabatic->incStamp();
 
-    for ( Component* component : _net->getRoutingPads() ) {
-      RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
-      if (rp) {
-        Box    rpBb   = rp->getBoundingBox();
-        Point  center = rpBb.getCenter();
-        GCell* gcell  = _anabatic->getGCellUnder( center );
+    vector<RoutingPad*> rps;
+    for ( RoutingPad* rp : _net->getRoutingPads() ) rps.push_back( rp );
+    for ( RoutingPad* rp : rps ) {
+      Box    rpBb   = rp->getBoundingBox();
+      Point  center = rpBb.getCenter();
+      GCell* gcell  = _anabatic->getGCellUnder( center );
         
-        if (not gcell) {
-          cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
-                         "        It will be ignored ans the routing will be incomplete."
-                       , getString(rp  ).c_str()
-                       , getString(_net).c_str()
-                       ) << endl;
-          continue;
-        }
+      if (not gcell) {
+        cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
+                       "        It will be ignored ans the routing will be incomplete."
+                     , getString(rp  ).c_str()
+                     , getString(_net).c_str()
+                     ) << endl;
+        continue;
+      }
 
-        _searchArea.merge( rpBb );
+      _searchArea.merge( rpBb );
 
-        Vertex* vertex = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
-        if (vertex->getConnexId() < 0) {
-          cdebug.log(111) << "Add Vertex: " << vertex << endl;
+      Vertex* vertex = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
+      if (vertex->getConnexId() < 0) {
+        vertex->setStamp   ( _stamp );
+        vertex->setConnexId( _targets.size() );
+        vertex->setFrom    ( NULL );
+        Contact* gcontact = vertex->getGContact( _net );
+        rp->getBodyHook()->detach();
+        rp->getBodyHook()->attach( gcontact->getBodyHook() );
+        _targets.insert( vertex );
 
-          vertex->setStamp   ( _stamp );
-          vertex->setConnexId( _targets.size() );
-          vertex->setFrom    ( NULL );
-          Contact* gcontact = vertex->getGContact( _net );
-          rp->getBodyHook()->detach();
-          rp->getBodyHook()->attach( gcontact->getBodyHook() );
-          _targets.insert( vertex );
-        }
+        cdebug.log(111) << "Add Vertex: " << vertex << endl;
       }
     }
 
@@ -195,15 +202,26 @@ namespace Anabatic {
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
 
-          cdebug.log(111) << "Neighbor: " << vneighbor << endl;
+          cdebug.log(111) << "| Edge " << edge << endl;
+          cdebug.log(111) << "+ Neighbor: " << vneighbor << endl;
 
           if (vneighbor->getConnexId() == _connectedsId) continue;
+          if (vneighbor->getConnexId() >= 0) {
+            vneighbor->setFrom( edge );
+            _queue.push( vneighbor );
+
+            cdebug.log(111) << "Push (target): (size:" << _queue.size() << ") " << vneighbor << endl;
+            continue;
+          }
 
           float distance = current->getDistance() + edge->getDistance();
 
           if (distance < vneighbor->getDistance()) {
             if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
-            else                                               vneighbor->setStamp( _stamp );
+            else {
+              vneighbor->setStamp   ( _stamp );
+              vneighbor->setConnexId( -1 );
+            }
 
             vneighbor->setDistance( distance );
             vneighbor->setFrom    ( edge );
@@ -222,22 +240,14 @@ namespace Anabatic {
       _targets.erase( current );
       while ( current ) {
         cdebug.log(111) << "| " << current << endl;
-
-        if ( (current->getConnexId() == _connectedsId) and (current->getFrom()) ) {
-          cerr << Error( "Dijkstra::propagate(): There is a loop in the traceback path\n"
-                         "        while routing %s."
-                       , getString(_net).c_str()
-                       ) <<endl;
-          break;
-        }
+        if (current->getConnexId() == _connectedsId) break;
 
         _sources.insert( current );
         current->setDistance( 0.0 );
         current->setConnexId( _connectedsId );
+        _queue.push( current );
 
-        Vertex* predecessor = current->getPredecessor();
-        current->setFrom( NULL );
-        current = predecessor;
+        current = current->getPredecessor();
       }
 
       cdebug.tabw(111,-1);
@@ -293,7 +303,6 @@ namespace Anabatic {
     for ( Vertex* vertex : _sources ) {
       Edge* from = vertex->getFrom();
       if (not from) continue;
-
 
       cdebug.log(111) << "| " << vertex << endl;
 

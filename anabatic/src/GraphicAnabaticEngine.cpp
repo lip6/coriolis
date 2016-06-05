@@ -175,10 +175,30 @@ namespace Anabatic {
     const GCell* gcell = static_cast<const GCell*>(go);
 
     QPainter& painter = widget->getPainter();
+    QPen      pen     = Graphics::getPen  ("Anabatic::GCell",widget->getDarkening()); 
+    Box bb = gcell->getBoundingBox();
 
-    painter.setPen  ( Graphics::getPen  ("Anabatic::GCell",widget->getDarkening()) );
+    painter.setPen  ( pen );
     painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
-    painter.drawRect( widget->dbuToScreenRect(gcell->getBoundingBox()) );
+    painter.drawRect( widget->dbuToScreenRect(bb) );
+
+    if (gcell->isFlat()) return;
+
+    QString text  = QString("id:%1").arg(gcell->getId());
+    QFont   font  = Graphics::getFixedFont( QFont::Bold );
+    painter.setFont(font);
+
+    pen.setWidth( 1 );
+    painter.setPen( pen );
+
+    painter.save     ();
+    painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+    painter.drawRect (QRect( -75, -25, 150, 50 ));
+    painter.drawText (QRect( -75, -25, 150, 50 )
+                     , text
+                     , QTextOption(Qt::AlignCenter)
+                     );
+    painter.restore  ();
   }
 
 
