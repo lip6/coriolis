@@ -58,7 +58,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public EdgesHL {
         public:
-                           Locator    ( const GCell* gcell );
+                           Locator    ( const GCell* gcell, Flags filterFlags );
           inline           Locator    ( const Locator& );
           virtual Edge*    getElement () const;
           virtual EdgesHL* getClone   () const;
@@ -67,41 +67,46 @@ namespace Anabatic {
           virtual string   _getString () const;
         protected:
           const GCell*  _gcell;
-                Flags   _flags;
+                Flags   _stateFlags;
+                Flags   _filterFlags;
                 size_t  _iedge;
       };
 
     // GCell_Edges.
     public:
-      inline           GCell_Edges ( const GCell* gcell );
+      inline           GCell_Edges ( const GCell* gcell, Flags filterFlags=Flags::AllSides );
       inline           GCell_Edges ( const GCell_Edges& );
       virtual EdgesHC* getClone    () const;
 	  virtual EdgesHL* getLocator  () const;
       virtual string  _getString   () const;
     protected:
       const GCell*  _gcell;
+            Flags   _filterFlags;
   };
 
   
   inline GCell_Edges::Locator::Locator ( const Locator &locator )
     : EdgesHL()
-    , _gcell(locator._gcell)
-    , _flags(locator._flags)
-    , _iedge(locator._iedge)
+    , _gcell      (locator._gcell)
+    , _stateFlags (locator._stateFlags)
+    , _filterFlags(locator._filterFlags)
+    , _iedge      (locator._iedge)
   {
     // cdebug.log(110) << "GCell_Edges::Locator::Locator(const Locator&)" << std::endl;
   }
 
 
-  inline GCell_Edges::GCell_Edges ( const GCell* gcell )
+  inline GCell_Edges::GCell_Edges ( const GCell* gcell, Flags filterFlags )
     : EdgesHC()
-    , _gcell(gcell)
+    , _gcell      (gcell)
+    , _filterFlags(filterFlags)
   { }
 
 
   inline GCell_Edges::GCell_Edges ( const GCell_Edges& edges )
     : EdgesHC()
-    , _gcell(edges._gcell)
+    , _gcell      (edges._gcell)
+    , _filterFlags(edges._filterFlags)
   { }
 
 

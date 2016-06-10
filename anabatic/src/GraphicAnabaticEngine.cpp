@@ -152,6 +152,31 @@ namespace Anabatic {
   }
     
 
+  void  anabaticTest_5 ( AnabaticEngine* engine )
+  {
+    Cell* cell = engine->getCell();
+
+
+    cell->flattenNets( Cell::Flags::BuildRings );
+    cell->createRoutingPadRings( Cell::Flags::BuildRings );
+
+  //DebugSession::addToTrace( cell->getNet("alu_out(3)") );
+    DebugSession::addToTrace( cell->getNet("imuxe.not_aux2") );
+
+    UpdateSession::open();
+    engine->getSouthWestGCell()->doGrid();
+
+    Dijkstra* dijkstra = new Dijkstra ( engine );
+    for ( Net* net : cell->getNets() ) {
+      if (net->isPower() or net->isClock()) continue;
+      dijkstra->load( net );
+      dijkstra->run();
+    }
+    delete dijkstra;
+    UpdateSession::close();
+  }
+    
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GraphicAnabaticEngine".
 
@@ -304,7 +329,8 @@ namespace Anabatic {
   //anabaticTest_1( engine );
   //anabaticTest_2( engine );
   //anabaticTest_3( engine );
-    anabaticTest_4( engine );
+  //anabaticTest_4( engine );
+    anabaticTest_5( engine );
 
     if (_viewer) _viewer->emitCellChanged();
   }

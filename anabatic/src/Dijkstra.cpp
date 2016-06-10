@@ -21,6 +21,7 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/DebugSession.h"
 #include "anabatic/AnabaticEngine.h"
 #include "anabatic/Dijkstra.h"
 
@@ -37,6 +38,7 @@ namespace Anabatic {
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::UpdateSession;
+  using Hurricane::DebugSession;
 
 
 // -------------------------------------------------------------------
@@ -81,9 +83,40 @@ namespace Anabatic {
 // Class  :  "Anabatic::Dijkstra".
 
 
+  Dijkstra::Mode::~Mode ()
+  { }
+
+
+  string  Dijkstra::Mode::_getTypeName () const
+  { return "Anabatic::Dijkstra::Mode"; }
+
+
+  string Dijkstra::Mode::_getString () const
+  {
+    string s = "";
+    s += (_flags & Standart ) ? 'S' : '-';
+    s += (_flags & Monotonic) ? 'M' : '-';
+
+    return s;
+  }
+
+
+  float  Dijkstra::getDistance ( const Vertex* a, const Vertex* b, const Edge* e )
+  {
+    float distance = a->getDistance() + e->getDistance();
+
+    Edge* aFrom = a->getFrom();
+    if (aFrom) {
+      distance += (aFrom->isHorizontal() xor e->isHorizontal()) ? 3.0 : 0.0;
+    }
+    return distance;
+  }
+
+
   Dijkstra::Dijkstra ( AnabaticEngine* anabatic )
     : _anabatic    (anabatic)
     , _vertexes    ()
+    , _mode        (Mode::Standart)
     , _net         (NULL)
     , _stamp       (-1)
     , _sources     ()
@@ -109,8 +142,8 @@ namespace Anabatic {
   {
     _net = net;
 
+    DebugSession::open( _net, 110, 120 );
     cdebug.log(111,1) << "Dijkstra::load() " << _net << endl;
-    UpdateSession::open();
 
     _sources.clear();
     _targets.clear();
@@ -133,66 +166,89 @@ namespace Anabatic {
         continue;
       }
 
-      _searchArea.merge( rpBb );
+      _searchArea.merge( gcell->getBoundingBox() );
 
       Vertex* vertex = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
       if (vertex->getConnexId() < 0) {
         vertex->setStamp   ( _stamp );
         vertex->setConnexId( _targets.size() );
         vertex->setFrom    ( NULL );
-        Contact* gcontact = vertex->getGContact( _net );
-        rp->getBodyHook()->detach();
-        rp->getBodyHook()->attach( gcontact->getBodyHook() );
         _targets.insert( vertex );
-
         cdebug.log(111) << "Add Vertex: " << vertex << endl;
       }
+
+      Contact* gcontact = vertex->getGContact( _net );
+      rp->getBodyHook()->detach();
+      rp->getBodyHook()->attach( gcontact->getBodyHook() );
     }
 
-    UpdateSession::close();
+    cdebug.log(111) << "Search area: " << _searchArea << endl;
     cdebug.tabw(111,-1);
+    DebugSession::close();
   } 
 
 
-  void  Dijkstra::selectFirstSource ()
+  void  Dijkstra::_selectFirstSource ()
   {
     if (_targets.empty()) {
-      cerr << Error( "Dijkstra::selectFirstSource(): %s has no vertexes to route, ignored."
+      cerr << Error( "Dijkstra::_selectFirstSource(): %s has no vertexes to route, ignored."
                    , getString(_net).c_str()
                    ) << endl;
       return;
     }
-    Point      areaCenter  = _searchArea.getCenter();
-    auto       ivertex     = _targets.begin();
-    Vertex*    firstSource = *ivertex++;
-    DbU::Unit  minDistance = areaCenter.manhattanDistance( firstSource->getCenter() );
 
-    for ( ; ivertex != _targets.end() ; ++ivertex ) {
-      DbU::Unit distance = areaCenter.manhattanDistance( (*ivertex)->getCenter() );
-      if (distance < minDistance) {
-        minDistance = distance;
-        firstSource = *ivertex;
+    Vertex* firstSource = NULL;
+
+    if (_mode & Mode::Monotonic) {
+      if (_targets.size() == 2) {
+        auto ivertex = _targets.begin();
+        Vertex* v1 = *ivertex;
+        Vertex* v2 = *(++ivertex);
+
+        firstSource = (v1->getCenter().getX() <= v2->getCenter().getY()) ? v1 : v2;
+      } else {
+        cerr << Error( "Dijkstra::_selectFirstSource(): %s cannot be routed in monotonic mode.\n"
+                       "        Must have exactly two terminals (%u), revert to Standart."
+                     , getString(_net).c_str()
+                     , _targets.size()
+                     ) << endl;
+        _mode = Mode::Standart;
+      }
+    }
+
+    if (not firstSource) {
+    // Standart routing.
+      Point      areaCenter  = _searchArea.getCenter();
+      auto       ivertex     = _targets.begin();
+
+      firstSource = *ivertex++;
+      DbU::Unit  minDistance = areaCenter.manhattanDistance( firstSource->getCenter() );
+
+      for ( ; ivertex != _targets.end() ; ++ivertex ) {
+        DbU::Unit distance = areaCenter.manhattanDistance( (*ivertex)->getCenter() );
+        if (distance < minDistance) {
+          minDistance = distance;
+          firstSource = *ivertex;
+        }
       }
     }
 
     _targets.erase ( firstSource );
     _sources.insert( firstSource );
 
-    cdebug.log(111) << "Dijkstra::selectFirstSource() " << *_sources.begin() << endl;
+    cdebug.log(111) << "Dijkstra::_selectFirstSource() " << *_sources.begin() << endl;
   }
 
 
-  bool  Dijkstra::propagate ()
+  bool  Dijkstra::_propagate ( Flags enabledSides )
   {
-    cdebug.log(111,1) << "Dijkstra::propagate() " << _net << endl;
+    cdebug.log(111,1) << "Dijkstra::_propagate() " << _net << endl;
 
     while ( not _queue.empty() ) {
       _queue.dump();
 
       Vertex* current = _queue.top();
       _queue.pop();
-
-      cdebug.log(111) << "Pop: (size:" << _queue.size() << ") " << current << endl;
 
       if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
         for ( Edge* edge : current->getGCell()->getEdges() ) {
@@ -202,26 +258,34 @@ namespace Anabatic {
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
 
+          if (not _searchArea.contains(vneighbor->getCenter())) continue;
+
           cdebug.log(111) << "| Edge " << edge << endl;
           cdebug.log(111) << "+ Neighbor: " << vneighbor << endl;
 
+          float distance = getDistance( current, vneighbor, edge );
+
           if (vneighbor->getConnexId() == _connectedsId) continue;
           if (vneighbor->getConnexId() >= 0) {
-            vneighbor->setFrom( edge );
+            vneighbor->setFrom    ( edge );
+            vneighbor->setDistance( distance );
+            cdebug.log(111) << "Push (before): (size:" << _queue.size() << ")" << endl;
             _queue.push( vneighbor );
 
             cdebug.log(111) << "Push (target): (size:" << _queue.size() << ") " << vneighbor << endl;
             continue;
           }
 
-          float distance = current->getDistance() + edge->getDistance();
-
           if (distance < vneighbor->getDistance()) {
-            if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
-            else {
+            cdebug.log(111) << "Push (before erase): (size:" << _queue.size() << ") " << vneighbor << endl;
+            if (vneighbor->getDistance() != Vertex::unreached) {
+              _queue.erase( vneighbor );
+              _queue.dump();
+            } else {
               vneighbor->setStamp   ( _stamp );
               vneighbor->setConnexId( -1 );
             }
+            cdebug.log(111) << "Push (after erase): (size:" << _queue.size() << ")" << endl;
 
             vneighbor->setDistance( distance );
             vneighbor->setFrom    ( edge );
@@ -263,18 +327,27 @@ namespace Anabatic {
   }
 
 
-  void  Dijkstra::run ()
+  void  Dijkstra::run ( Dijkstra::Mode mode )
   {
-    cdebug.log(111,1) << "Dijkstra::run() on " << _net << endl;
+    DebugSession::open( _net, 110, 120 );
 
-    selectFirstSource();
+    cdebug.log(111,1) << "Dijkstra::run() on " << _net << " mode:" << mode << endl;
+    _mode = mode;
+
+    _selectFirstSource();
     if (_sources.empty()) {
       cdebug.log(111) << "No source to start, not routed." << endl;
       cdebug.tabw(111,-1);
       return;
     }
 
-    UpdateSession::open();
+    Flags enabledEdges = Flags::AllSides;
+    if (_mode & Mode::Monotonic) {
+      if ((*_sources.begin())->getCenter().getY() <= (*_targets.begin())->getCenter().getY())
+        enabledEdges = Flags::EastSide | Flags::NorthSide;
+      else
+        enabledEdges = Flags::EastSide | Flags::SouthSide;
+    }
 
     Vertex* source = *_sources.begin();
     _queue.clear();
@@ -286,17 +359,17 @@ namespace Anabatic {
                     << source
                     << " _connectedsId:" << _connectedsId << endl;
 
-    while ( not _targets.empty() and propagate() );
+    while ( not _targets.empty() and _propagate(enabledEdges) );
 
-    toWires();
+    _toWires();
     _queue.clear();
 
-    UpdateSession::close();
     cdebug.tabw(111,-1);
+    DebugSession::close();
   }
 
 
-  void  Dijkstra::toWires ()
+  void  Dijkstra::_toWires ()
   {
     cdebug.log(111,1) << "Dijkstra::toWires() " << _net << endl;
 

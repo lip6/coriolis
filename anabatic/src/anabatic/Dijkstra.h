@@ -50,7 +50,7 @@ namespace Anabatic {
       static         void            notify         ( Vertex*, unsigned flags );
     public:                         
              inline                  Vertex         ( GCell* );
-             inline                  Vertex         ( size_t id );
+           //inline                  Vertex         ( size_t id );
              inline                 ~Vertex         ();
              inline  unsigned int    getId          () const;
              inline  GCell*          getGCell       () const;
@@ -92,19 +92,18 @@ namespace Anabatic {
     , _distance(unreached)
     , _from    (NULL)
   {
-  //gcell->setLookup<Vertex>( this );
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
 
-  inline Vertex::Vertex ( size_t id )
-    : _id      (id)
-    , _gcell   (NULL)
-    , _observer((Vertex*)0x1)  // To trick the NULL detection.
-    , _connexId(-1)
-    , _stamp   (-1)
-    , _distance(unreached)
-    , _from    (NULL)
-  { }
+  // inline Vertex::Vertex ( size_t id )
+  //   : _id      (id)
+  //   , _gcell   (NULL)
+  //   , _observer((Vertex*)0x1)  // To trick the NULL detection.
+  //   , _connexId(-1)
+  //   , _stamp   (-1)
+  //   , _distance(unreached)
+  //   , _from    (NULL)
+  // { }
 
   inline                 Vertex::~Vertex     () { }
   inline unsigned int    Vertex::getId       () const { return _id; }
@@ -165,10 +164,21 @@ namespace Anabatic {
   inline bool    PriorityQueue::empty          () const { return _queue.empty(); }
   inline size_t  PriorityQueue::size           () const { return _queue.size(); }
   inline void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
-  inline void    PriorityQueue::erase          ( Vertex* v ) { _queue.erase(v); }
   inline Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
-  inline void    PriorityQueue::pop            () { _queue.erase(_queue.begin()); }
   inline void    PriorityQueue::clear          () { _queue.clear(); }
+
+  inline void  PriorityQueue::pop ()
+  {
+    cdebug.log(111) << "Pop: (size:" << _queue.size() << ") " << *_queue.begin() << std::endl;
+    _queue.erase(_queue.begin());
+  }
+
+  inline void  PriorityQueue::erase ( Vertex* v )
+  {
+    for ( auto ivertex = _queue.begin() ; ivertex != _queue.end() ; ++ivertex ) {
+      if (*ivertex == v) { _queue.erase( ivertex ); break; }
+    }
+  }
 
   inline void  PriorityQueue::dump () const
   {
@@ -187,20 +197,40 @@ namespace Anabatic {
 
   class Dijkstra {
     public:
-                Dijkstra          ( AnabaticEngine* );
-               ~Dijkstra          ();
+    // Mode sub-classe.
+      class Mode : public Hurricane::BaseFlags {
+        public:
+          enum Flag { NoMode    = 0
+                    , Standart  = (1<<0)
+                    , Monotonic = (1<<1)
+                    };
+        public:
+          inline               Mode         ( unsigned int flags=NoMode );
+          inline               Mode         ( BaseFlags );
+          virtual             ~Mode         ();
+          virtual std::string  _getTypeName () const;
+          virtual std::string  _getString   () const;
+      };
+
     public:
-      void      load              ( Net* );
-      void      run               ();
-      bool      propagate         ();
-      void      selectFirstSource ();
-      void      toWires           ();
+             float     getDistance        ( const Vertex*, const Vertex*, const Edge* );
+    public:
+                       Dijkstra           ( AnabaticEngine* );
+                      ~Dijkstra           ();
+    public:                        
+      inline bool      isBipoint          () const;
+             void      load               ( Net* );
+             void      run                ( Mode mode=Mode::Standart );
     private:
-                Dijkstra          ( const Dijkstra& );
-      Dijkstra& operator=         ( const Dijkstra& );
+                       Dijkstra           ( const Dijkstra& );
+             Dijkstra& operator=          ( const Dijkstra& );
+             bool      _propagate         ( Flags enabledSides );
+             void      _selectFirstSource ();
+             void      _toWires           ();
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
+      Mode             _mode;
       Net*             _net;
       int              _stamp;
       VertexSet        _sources;
@@ -211,10 +241,17 @@ namespace Anabatic {
   };
 
 
+  inline Dijkstra::Mode::Mode ( unsigned int flags ) : BaseFlags(flags) { }
+  inline Dijkstra::Mode::Mode ( BaseFlags    base  ) : BaseFlags(base)  { }
+
+  inline bool  Dijkstra::isBipoint () const { return _net and (_targets.size()+_sources.size() == 2); }
+
+
 }  // Anabatic namespace.
 
 
 GETSTRING_POINTER_SUPPORT(Anabatic::Vertex);
 IOSTREAM_POINTER_SUPPORT(Anabatic::Vertex);
+INSPECTOR_PV_SUPPORT(Anabatic::Dijkstra::Mode);
 
 #endif  // ANABATIC_DIJKSTRA_H

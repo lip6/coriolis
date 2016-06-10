@@ -395,7 +395,7 @@ namespace Anabatic {
       return false;
     }
 
-    UpdateSession::open();
+  //UpdateSession::open();
 
     GCell*    row    = this;
     GCell*    column = NULL;
@@ -414,7 +414,7 @@ namespace Anabatic {
       column = column->vcut( xcut );
     }
 
-    UpdateSession::close();
+  //UpdateSession::close();
 
     return true;
   }
