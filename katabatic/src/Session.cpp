@@ -119,18 +119,18 @@ namespace Katabatic {
 
   void  Session::_invalidate ( Net* net )
   {
-    cdebug.log(149) << "Session::invalidate(Net*) - " << net << endl;
+    cdebug_log(149,0) << "Session::invalidate(Net*) - " << net << endl;
     _netInvalidateds.insert(net);
   }
 
 
   void  Session::_canonize ()
   {
-    cdebug.log(145,1) << "Katabatic::Session::_canonize()" << endl;
+    cdebug_log(145,1) << "Katabatic::Session::_canonize()" << endl;
 
     if (_segmentInvalidateds.empty()) {
-      cdebug.log(145) << "Invalidated AutoSegment collection <_segmentInvalidateds> is empty." << endl;
-      cdebug.tabw(145,-1);
+      cdebug_log(145,0) << "Invalidated AutoSegment collection <_segmentInvalidateds> is empty." << endl;
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -145,13 +145,13 @@ namespace Katabatic {
       AutoSegment* canonical   = seedSegment;
 
       if (exploredSegments.find(seedSegment->base()) == exploredSegments.end()) {
-        cdebug.log(145) << "New chunk from: " << seedSegment << endl;
+        cdebug_log(145,0) << "New chunk from: " << seedSegment << endl;
         aligneds.push_back( seedSegment );
 
         bool isWeakGlobal = seedSegment->isGlobal();
         if (not seedSegment->isNotAligned()) {
           forEach ( AutoSegment*, aligned, seedSegment->getAligneds() ) {
-            cdebug.log(145) << "Aligned: " << *aligned << endl;
+            cdebug_log(145,0) << "Aligned: " << *aligned << endl;
             aligneds.push_back ( *aligned );
             exploredSegments.insert ( aligned->base() );
 
@@ -161,10 +161,10 @@ namespace Katabatic {
           }
         }
 
-        cdebug.tabw(145,1);
+        cdebug_tabw(145,1);
 
         canonical->setFlags( SegCanonical );
-        cdebug.log(145) << "Canonical: " << canonical << endl;
+        cdebug_log(145,0) << "Canonical: " << canonical << endl;
 
         for ( size_t j=0 ; j<aligneds.size() ; j++ ) {
           if (isWeakGlobal and not aligneds[j]->isGlobal()) aligneds[j]->setFlags  ( SegWeakGlobal );
@@ -177,33 +177,33 @@ namespace Katabatic {
                          ,getString(aligneds[j]).c_str()) << endl;
           }
           aligneds[j]->unsetFlags( SegCanonical );
-          cdebug.log(145) << "Secondary: " << aligneds[j] << endl;
+          cdebug_log(145,0) << "Secondary: " << aligneds[j] << endl;
         }
         if (aligneds.empty()) canonical->setFlags( SegNotAligned );
 
-        cdebug.log(149) << "Align @" << DbU::toLambda(canonical->getAxis())
+        cdebug_log(149,0) << "Align @" << DbU::toLambda(canonical->getAxis())
                     << " on " << canonical << endl;
 
       //canonical->setAxis( canonical->getAxis(), KbRealignate );
         if (canonical->isUnsetAxis()) canonical->toOptimalAxis( KbRealignate|KbPropagate );
         else                          canonical->setAxis( canonical->getAxis(), KbRealignate|KbPropagate );
         aligneds.clear();
-        cdebug.tabw(145,-1);
+        cdebug_tabw(145,-1);
       }
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 
   void  Session::_revalidateTopology ()
   {
-    cdebug.log(145,1) << "Katabatic::Session::_revalidateTopology()" << endl;
+    cdebug_log(145,1) << "Katabatic::Session::_revalidateTopology()" << endl;
 
     set<Net*>::iterator inet = _netInvalidateds.begin();
 
     for ( ; inet != _netInvalidateds.end() ; inet++ ) {
-      cdebug.log(145) << "Katabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
+      cdebug_log(145,0) << "Katabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
       _katabatic->updateNetTopology    ( *inet );
       _katabatic->computeNetConstraints( *inet );
       _katabatic->_computeNetOptimals  ( *inet );
@@ -221,27 +221,27 @@ namespace Katabatic {
     _netRevalidateds.clear();
     _netRevalidateds.swap( _netInvalidateds );
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 
   size_t  Session::_revalidate ()
   {
-    cdebug.log(145,1) << "Katabatic::Session::revalidate()" << endl;
-    cdebug.log(145)   << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
-    cdebug.log(145)   << "_autoContacts.size(): " << _autoContacts.size() << endl;
+    cdebug_log(145,1) << "Katabatic::Session::revalidate()" << endl;
+    cdebug_log(145,0)   << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
+    cdebug_log(145,0)   << "_autoContacts.size(): " << _autoContacts.size() << endl;
 
     size_t count = 0;
 
     if (not _netInvalidateds.empty()) _revalidateTopology();
 
-    cdebug.log(145) << "AutoContacts Revalidate (after _revalidateTopology())." << endl;
+    cdebug_log(145,0) << "AutoContacts Revalidate (after _revalidateTopology())." << endl;
     for ( size_t i=0 ; i < _autoContacts.size() ; i++, count++ )
       _autoContacts[i]->updateGeometry();
     _autoContacts.clear();
 
-    cdebug.log(145) << "AutoSegments Revalidate (after AutoContact::updateGeometry())." << endl;
-    cdebug.log(145) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
+    cdebug_log(145,0) << "AutoSegments Revalidate (after AutoContact::updateGeometry())." << endl;
+    cdebug_log(145,0) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
 
     _segmentRevalidateds.clear();
     for ( size_t i=0 ; i < _segmentInvalidateds.size() ; ++i, ++count ) {
@@ -254,7 +254,7 @@ namespace Katabatic {
     }
     _segmentInvalidateds.clear();
 
-    cdebug.log(145) << "AutoSegments/AutoContacts queued deletion." << endl;
+    cdebug_log(145,0) << "AutoSegments/AutoContacts queued deletion." << endl;
     unsigned int flags = _katabatic->getFlags( EngineDestroyMask );
     _katabatic->setFlags( EngineDestroyMask );
     set<AutoSegment*>::iterator  isegment = _destroyedSegments.begin();
@@ -268,7 +268,7 @@ namespace Katabatic {
     _katabatic->setFlags( flags );
     set<AutoSegment*>().swap( _destroyedSegments );
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
 
     return count;
   }
@@ -276,7 +276,7 @@ namespace Katabatic {
 
   Session*  Session::open ( KatabaticEngine* ktbt )
   {
-    cdebug.log(145) << "Session::open()" << endl;
+    cdebug_log(145,0) << "Session::open()" << endl;
 
     if (_session) {
       if (_session->_katabatic != ktbt)
@@ -294,7 +294,7 @@ namespace Katabatic {
 
   void  Session::close ()
   {
-    cdebug.log(145,1) << "Session::close()" << endl;
+    cdebug_log(145,1) << "Session::close()" << endl;
 
     if (not _session) throw Error( openSessionError, "Session::Close()" );
 
@@ -303,7 +303,7 @@ namespace Katabatic {
     delete _session;
     _session = NULL;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 

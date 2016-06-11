@@ -62,7 +62,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    cdebug.log(145) << "create(net*) " << autoContact << endl;
+    cdebug_log(145,0) << "create(net*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -161,7 +161,7 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << "AutoContactVTee::updateCache() " << this << endl;
+    cdebug_log(145,1) << "AutoContactVTee::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [3];
@@ -191,14 +191,14 @@ namespace Katabatic {
     }
     unsetFlags( CntInvalidatedCache );
 
-    cdebug.log(145) << "h1:" << _horizontal1 << endl;
-    cdebug.log(145) << "v1:" << _vertical1 << endl;
-    cdebug.log(145) << "v2:" << _vertical2 << endl;
+    cdebug_log(145,0) << "h1:" << _horizontal1 << endl;
+    cdebug_log(145,0) << "v1:" << _vertical1 << endl;
+    cdebug_log(145,0) << "v2:" << _vertical2 << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -207,13 +207,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << "AutoContactVTee::updateGeometry() " << this << endl;
+    cdebug_log(145,1) << "AutoContactVTee::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -225,7 +225,7 @@ namespace Katabatic {
       setY( getHorizontal1()->getY() );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -234,13 +234,13 @@ namespace Katabatic {
   {
     DebugSession::open ( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << "AutoContactVTee::updateTopology() " << this << endl;
+    cdebug_log(145,1) << "AutoContactVTee::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -253,9 +253,9 @@ namespace Katabatic {
       size_t        maxDepth     = std::max( depthH1, std::max(depthV1,depthV2) );
       size_t        delta        = maxDepth - minDepth;
 
-      cdebug.log(145) << "minDepth:" << minDepth << endl;
-      cdebug.log(145) << "maxDepth:" << maxDepth << endl;
-      cdebug.log(145) << "delta:"    << delta << endl;
+      cdebug_log(145,0) << "minDepth:" << minDepth << endl;
+      cdebug_log(145,0) << "maxDepth:" << maxDepth << endl;
+      cdebug_log(145,0) << "delta:"    << delta << endl;
 
       unsetFlags( CntWeakTerminal );
 
@@ -264,13 +264,13 @@ namespace Katabatic {
         setFlags( CntBadTopology );
       } else {
         if (depthV1 == depthV2) {
-          cdebug.log(145) << "depthV1 == depthV2 (" << depthV1 << ")" << endl;
+          cdebug_log(145,0) << "depthV1 == depthV2 (" << depthV1 << ")" << endl;
         // Dogleg on the horizontal.
           switch ( delta ) {
             case 0: setLayer( rg->getRoutingLayer(minDepth) ); break;
             case 1: setLayer( rg->getContactLayer(minDepth) ); break;
             default:
-              cdebug.log(145) << "Restore connectivity: dogleg on h1." << endl;
+              cdebug_log(145,0) << "Restore connectivity: dogleg on h1." << endl;
               setLayer( rg->getContactLayer( depthV1 + ((depthV1==minDepth)?0:-1) ) );
               _horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
               break;
@@ -297,7 +297,7 @@ namespace Katabatic {
       _vertical2  ->invalidate( this );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close ();
   }
 

@@ -83,8 +83,8 @@ namespace Kite {
   {
     DebugSession::open( _trackSegment->getNet(), 150, 160 );
 
-  //cdebug.log(9000) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
-    cdebug.log(159,1) << "DataNegociate::update() - " << _trackSegment << endl;
+  //cdebug_log(9000,0) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
+    cdebug_log(159,1) << "DataNegociate::update() - " << _trackSegment << endl;
 
     size_t               reduceCandidates = 0;
     DbU::Unit            pitch            = _trackSegment->getPitch();
@@ -103,12 +103,12 @@ namespace Kite {
                                     );
 
     _terminals = AutoSegment::getTerminalCount( _trackSegment->base(), collapseds );
-  //cdebug.log(9000) << "Deter|    Terminals:" << _terminals << endl;
+  //cdebug_log(9000,0) << "Deter|    Terminals:" << _terminals << endl;
     _attractors.clear();
     _perpandiculars.clear();
     _perpandicularFree = Interval(false);
 
-    cdebug.log(159) << "Extracting attractors from perpandiculars." << endl;
+    cdebug_log(159,0) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       Interval      interval;
       TrackElement* perpandicular;
@@ -136,25 +136,25 @@ namespace Kite {
     //cerr << "  " << interval << endl;
     //interval.inflate( DbU::fromLambda(-0.5) );
 
-      cdebug.log(159)   << "| perpandicular: " << perpandiculars[i] << endl;
-      cdebug.log(159)   << "| canonical:     " << perpandicular << endl;
-      cdebug.log(159,1) << "Canonical // interval: " << interval << endl;
+      cdebug_log(159,0)   << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug_log(159,0)   << "| canonical:     " << perpandicular << endl;
+      cdebug_log(159,1) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
       if (perpandicular->getTrack()) {
         Interval  trackFree = perpandicular->getFreeInterval();
-        cdebug.log(159) << "Track Perpandicular Free: " << trackFree << endl;
+        cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
         _perpandicularFree.intersection( trackFree );
       } else {
-        cdebug.log(159) << "Not in any track " << perpandicular << endl;
+        cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
       }
 
 #if 0
       if (interval.isPonctual()) {
-        cdebug.log(159) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug_log(159,0) << "Punctual attractor @" << DbU::getValueString(interval.getVMin()) << endl;
         _attractors.push_back( interval.getVMin() );
-        cdebug.tabw(159,-1);
+        cdebug_tabw(159,-1);
         continue;
       }
 
@@ -168,7 +168,7 @@ namespace Kite {
         } else {
           iattractor->second -= 1;
         }
-        cdebug.log(159) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
+        cdebug_log(159,0) << "Left attractor @" << DbU::getValueString(interval.getVMin()) << endl;
       }
 
       if (  (interval.getVMax() != _trackSegment->getAxis())
@@ -181,7 +181,7 @@ namespace Kite {
         } else {
           iattractor->second += 1;
         }
-        cdebug.log(159) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
+        cdebug_log(159,0) << "Right attractor @" << DbU::getValueString(interval.getVMax()) << endl;
       }
 
       if (perpandicular->base()->isReduceCandidate()) {
@@ -198,7 +198,7 @@ namespace Kite {
       }
 #endif
 
-      cdebug.tabw(159,-1);
+      cdebug_tabw(159,-1);
     }
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size() < 2) )
       cerr << Bug( "Less than two perpandiculars on %s.", getString(_trackSegment).c_str() ) << endl;
@@ -216,11 +216,11 @@ namespace Kite {
       s << DbU::getValueString( _attractors[i] );
     }
     s << "]";
-    cdebug.log(159) << s.str() << endl;
-    cdebug.log(159) << "Perpandicular Free: " << _perpandicularFree << endl;
+    cdebug_log(159,0) << s.str() << endl;
+    cdebug_log(159,0) << "Perpandicular Free: " << _perpandicularFree << endl;
 
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
     DebugSession::close();
   }
 

@@ -186,8 +186,8 @@ namespace Kite {
     DataNegociate* data = _segment->getDataNegociate();
     if (data) data->setRoutingEvent( this );
 
-    cdebug.log(159) << "create: " << this << endl;
-    cdebug.log(159) << "Initial setAxisHint @" << DbU::getValueString(getAxisHint()) << endl;
+    cdebug_log(159,0) << "create: " << this << endl;
+    cdebug_log(159,0) << "Initial setAxisHint @" << DbU::getValueString(getAxisHint()) << endl;
 
     if (_segment->getTrack()) {
       cerr << Bug( "RoutingEvent::create() - TrackElement is already inserted in a Track."
@@ -224,7 +224,7 @@ namespace Kite {
     clone->_disabled   = false;
     clone->_eventLevel = 0;
 
-    cdebug.log(159) << "RoutingEvent::clone() " << clone
+    cdebug_log(159,0) << "RoutingEvent::clone() " << clone
                 << " (from: " << ")" <<  endl;
 
     return clone;
@@ -233,7 +233,7 @@ namespace Kite {
 
   RoutingEvent::~RoutingEvent ()
   {
-    cdebug.log(159) << "~RoutingEvent() " << endl;
+    cdebug_log(159,0) << "~RoutingEvent() " << endl;
 
     DataNegociate* data = _segment->getDataNegociate();
     if ( data and (data->getRoutingEvent() == this) )
@@ -243,7 +243,7 @@ namespace Kite {
 
   void  RoutingEvent::destroy ()
   {
-    cdebug.log(159) << "RoutingEvent::destroy() " << this << endl;
+    cdebug_log(159,0) << "RoutingEvent::destroy() " << this << endl;
     if (_allocateds > 0) --_allocateds;
 
     delete this;
@@ -274,7 +274,7 @@ namespace Kite {
 
   void  RoutingEvent::setAxisHint ( DbU::Unit axis )
   {
-    cdebug.log(159) << "setAxisHint @" << DbU::getValueString(axis) << " " << _segment << endl;
+    cdebug_log(159,0) << "setAxisHint @" << DbU::getValueString(axis) << " " << _segment << endl;
     _axisHint = axis;
   }
 
@@ -298,7 +298,7 @@ namespace Kite {
     }
     _axisHint = parent->getAxis();
 
-    cdebug.log(159) << "setAxisHintFromParent() - hint:" << DbU::getValueString(_axisHint)
+    cdebug_log(159,0) << "setAxisHintFromParent() - hint:" << DbU::getValueString(_axisHint)
                 << " axis:" << DbU::getValueString(parent->getAxis()) << " parent:" << parent << endl;
     return;
   }
@@ -312,14 +312,14 @@ namespace Kite {
     RoutingEvent* fork = NULL;
 
     if ( (getStage() != Repair) and isUnimplemented() ) {
-      cdebug.log(159) << "Reschedule: cancelled (Unimplemented) "
+      cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) "
                   << " -> " << fork << endl;
       return NULL;
     }
 
     if (not isProcessed()) {
       fork = this;
-      cdebug.log(159) << "Reschedule/Self: "
+      cdebug_log(159,0) << "Reschedule/Self: "
                   << " -> "
                   << eventLevel << ":" << fork << endl;
     } else {
@@ -328,7 +328,7 @@ namespace Kite {
 
       _segment->getDataNegociate()->setRoutingEvent( fork );
 
-      cdebug.log(159) << "Reschedule/Fork: "
+      cdebug_log(159,0) << "Reschedule/Fork: "
                   << " -> " << fork << endl;
     }
 
@@ -396,19 +396,19 @@ namespace Kite {
 
     DebugSession::open( _segment->getNet(), 150, 160 );
 
-    cdebug.log(9000) << "Deter| Event "
+    cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
                      << ","  << getEventLevel()
                      << ","  << setw(6) << getPriority()
                      << ": " << _segment << endl;
     _processeds++;
 
-    cdebug.tabw(159,1);
-    cdebug.log(159) << "State: *before* "
+    cdebug_tabw(159,1);
+    cdebug_log(159,0) << "State: *before* "
                     << DataNegociate::getStateString(_segment->getDataNegociate())
                     << " ripup:" << _segment->getDataNegociate()->getRipupCount()
                     << endl;
-    cdebug.log(159) << "Level: " << getEventLevel()
+    cdebug_log(159,0) << "Level: " << getEventLevel()
                     << ", area: " << _segment->getFreedomDegree() << endl;
 
   //_preCheck( _segment );
@@ -417,7 +417,7 @@ namespace Kite {
     if (_mode != Pack) history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
-      cdebug.log(159) << "Already processed or disabled." << endl;
+      cdebug_log(159,0) << "Already processed or disabled." << endl;
     } else {
       setProcessed();
       setTimeStamp( _processeds );
@@ -431,7 +431,7 @@ namespace Kite {
           break;
       }
     }
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
 
     queue.repushInvalidateds();
     Session::revalidate();
@@ -450,7 +450,7 @@ namespace Kite {
 
   void  RoutingEvent::_processNegociate ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
-    cdebug.log(159) << "* Mode:Negociation." << endl;
+    cdebug_log(159,0) << "* Mode:Negociation." << endl;
 
     SegmentFsm fsm ( this, queue, history );
 
@@ -459,23 +459,23 @@ namespace Kite {
       return;
     }
 
-    cdebug.tabw(159,1);
+    cdebug_tabw(159,1);
 
     fsm.getData()->incRipupCount();
 
     size_t itrack = 0;
     for ( itrack = 0 ; itrack < fsm.getCosts().size() ; itrack++ )
-      cdebug.log(159) << "| " << fsm.getCost(itrack) << endl;
+      cdebug_log(159,0) << "| " << fsm.getCost(itrack) << endl;
 
     itrack = 0;
     if ( (not isOverConstrained()) and Manipulator(_segment,fsm).canRipup() ) {
       if (fsm.getCosts().size() and fsm.getCost(itrack).isFree()) {
-        cdebug.log(159) << "Insert in free space " << this << endl;
+        cdebug_log(159,0) << "Insert in free space " << this << endl;
         resetInsertState();
 
         _axisHistory = _segment->getAxis();
         _eventLevel  = 0;
-        cdebug.log(9000) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
+        cdebug_log(9000,0) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
         if (not _segment->isReduced())
           Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
         fsm.setState( SegmentFsm::SelfInserted );
@@ -487,11 +487,11 @@ namespace Kite {
           if (Manipulator(_segment,fsm).canRipup(Manipulator::NotOnLastRipup)) {
             if (cdebug.enabled(9000)) {
               for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
-                cdebug.log(9000) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
+                cdebug_log(9000,0) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
               }
             }
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
-              cdebug.log(159) << "Trying Track: " << itrack << endl;
+              cdebug_log(159,0) << "Trying Track: " << itrack << endl;
               if (fsm.getCost(itrack).isInfinite()) break;
               if (fsm.insertInTrack(itrack)) break;
               resetInsertState();
@@ -506,7 +506,7 @@ namespace Kite {
     } else {
     // Ripup limit has been reached.
       if (isOverConstrained()) {
-        cdebug.log(159) << "Immediate slackening due to overconstraint" << endl;
+        cdebug_log(159,0) << "Immediate slackening due to overconstraint" << endl;
         fsm.getData()->setState( DataNegociate::Slacken );
       }
       if (not fsm.slackenTopology()) {
@@ -517,17 +517,17 @@ namespace Kite {
     fsm.doActions();
 
     if (itrack < fsm.getCosts().size()) {
-      cdebug.log(159) << "Placed: @" << DbU::getValueString(fsm.getCost(itrack).getTrack()->getAxis())
+      cdebug_log(159,0) << "Placed: @" << DbU::getValueString(fsm.getCost(itrack).getTrack()->getAxis())
                   << " " << this << endl;
     }
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
   }
 
 
   void  RoutingEvent::_processPack ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
-    cdebug.log(159) << "* Mode:Pack." << endl;
+    cdebug_log(159,0) << "* Mode:Pack." << endl;
 
     if (not _segment->isUTurn()) return;
 
@@ -535,10 +535,10 @@ namespace Kite {
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
 
-    cdebug.tabw(159,1);
+    cdebug_tabw(159,1);
     for ( size_t i = 0 ; i < fsm.getCosts().size() ; i++ )
-      cdebug.log(159) << "| " << fsm.getCost(i) << endl;
-    cdebug.tabw(159,-1);
+      cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
+    cdebug_tabw(159,-1);
 
     if (    _segment->getTrack()
        and  fsm.getCosts().size()
@@ -554,10 +554,10 @@ namespace Kite {
 
   void  RoutingEvent::_processRepair ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
-    cdebug.log(159) << "* Mode:Repair." << endl;
+    cdebug_log(159,0) << "* Mode:Repair." << endl;
 
     if ( _segment->getTrack() != NULL ) {
-      cdebug.log(159) << "* Cancel: already in Track." << endl;
+      cdebug_log(159,0) << "* Cancel: already in Track." << endl;
       return;
     }
 
@@ -565,13 +565,13 @@ namespace Kite {
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
 
-    cdebug.tabw(159,1);
+    cdebug_tabw(159,1);
     for ( size_t i = 0 ; i < fsm.getCosts().size() ; i++ )
-      cdebug.log(159) << "| " << fsm.getCost(i) << endl;
-    cdebug.tabw(159,-1);
+      cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
+    cdebug_tabw(159,-1);
 
     if (fsm.getCosts().size() and fsm.getCost(0).isFree()) {
-      cdebug.log(159) << "Insert in free space." << endl;
+      cdebug_log(159,0) << "Insert in free space." << endl;
       Session::addInsertEvent( _segment, fsm.getCost(0).getTrack() );
       fsm.setState( SegmentFsm::SelfInserted );
     } else {
@@ -591,7 +591,7 @@ namespace Kite {
           queue.commit();
           break;
         default:
-          cdebug.log(159) << "Repair failed." << endl;
+          cdebug_log(159,0) << "Repair failed." << endl;
           break;
       }
     }
@@ -602,34 +602,34 @@ namespace Kite {
   {
     DebugSession::open( _segment->getNet(), 150, 160 );
 
-    cdebug.log(159,1) << "RoutingEvent::revalidate() - " << this << endl;
+    cdebug_log(159,1) << "RoutingEvent::revalidate() - " << this << endl;
 
   //_dataNegociate->update();
 
     setAxisHintFromParent();
-    cdebug.log(159) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
+    cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
 
     _overConstrained = false;
     _segment->base()->getConstraints( _constraints );
     _segment->base()->getOptimal    ( _optimal );
 
-    cdebug.log(159) << "Stage:" << RoutingEvent::getStage() << endl;
+    cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
     if (RoutingEvent::getStage() == RoutingEvent::Repair) {
       if (_segment->isStrongTerminal(KbPropagate)) {
-        cdebug.log(159) << "Not expanding on Terminals:" << _constraints << endl;
+        cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
       } else {
-        cdebug.log(159) << "Expanding:" << _constraints << endl;
+        cdebug_log(159,0) << "Expanding:" << _constraints << endl;
         _constraints.inflate( Session::getSliceHeight() );
-        cdebug.log(159) << "Expanding (after):" << _constraints << endl;
+        cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
     }
-    cdebug.log(159) << "| Raw Track Constraint: " << _constraints << endl;
+    cdebug_log(159,0) << "| Raw Track Constraint: " << _constraints << endl;
 
     _tracksNb = 0;
 
     Interval perpandicular = _constraints;
     perpandicular.intersection( getPerpandicularFree());
-    cdebug.log(159) << "| Perpandicular Free: " << perpandicular << endl;
+    cdebug_log(159,0) << "| Perpandicular Free: " << perpandicular << endl;
 
     if (not perpandicular.isEmpty()) {
       RoutingPlane* plane   = Session::getKiteEngine()->getRoutingPlaneByLayer(_segment->getLayer());
@@ -640,7 +640,7 @@ namespace Kite {
             ; track = track->getNextTrack(), _tracksNb++ );
     }
     if (not _tracksNb) {
-      cdebug.log(159) << "| Reverting to pure constraints." << endl;
+      cdebug_log(159,0) << "| Reverting to pure constraints." << endl;
       RoutingPlane* plane   = Session::getKiteEngine()->getRoutingPlaneByLayer(_segment->getLayer());
       Track*        track   = plane->getTrackByPosition(_constraints.getVMin());
 
@@ -649,7 +649,7 @@ namespace Kite {
             ; track = track->getNextTrack(), _tracksNb++ );
     }
     if (not _tracksNb) {
-      cdebug.log(159) << "| Pure constraints are too tight." << endl;
+      cdebug_log(159,0) << "| Pure constraints are too tight." << endl;
       if (_segment->base())
         _overConstrained =     _segment->base()->getAutoSource()->isTerminal()
                            and _segment->base()->getAutoTarget()->isTerminal();
@@ -659,8 +659,8 @@ namespace Kite {
       = (DbU::toLambda(_segment->getLength())        + 1.0)
       * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
 
-    cdebug.log(159) << _segment << " has " << _tracksNb << " choices " << perpandicular << endl;
-    cdebug.tabw(159,-1);
+    cdebug_log(159,0) << _segment << " has " << _tracksNb << " choices " << perpandicular << endl;
+    cdebug_tabw(159,-1);
 
     DebugSession::close();
   }

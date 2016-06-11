@@ -79,28 +79,28 @@ region_distribution::region::region(capacity_t cap, point<float_t> pos, std::vec
 
 box<int_t> region_distribution::get_box(index_t x, index_t y, index_t x_cnt, index_t y_cnt) const{
     auto ret = box<int_t>(
-        placement_area_.x_min_ + ( ((std::int64_t) (placement_area_.x_max_ - placement_area_.x_min_)) * x )     / x_cnt,
-        placement_area_.x_min_ + ( ((std::int64_t) (placement_area_.x_max_ - placement_area_.x_min_)) * (x+1) ) / x_cnt,
-        placement_area_.y_min_ + ( ((std::int64_t) (placement_area_.y_max_ - placement_area_.y_min_)) * y )     / y_cnt,
-        placement_area_.y_min_ + ( ((std::int64_t) (placement_area_.y_max_ - placement_area_.y_min_)) * (y+1) ) / y_cnt
+        placement_area_.x_min + ( ((std::int64_t) (placement_area_.x_max - placement_area_.x_min)) * x )     / x_cnt,
+        placement_area_.x_min + ( ((std::int64_t) (placement_area_.x_max - placement_area_.x_min)) * (x+1) ) / x_cnt,
+        placement_area_.y_min + ( ((std::int64_t) (placement_area_.y_max - placement_area_.y_min)) * y )     / y_cnt,
+        placement_area_.y_min + ( ((std::int64_t) (placement_area_.y_max - placement_area_.y_min)) * (y+1) ) / y_cnt
     );
     assert(not ret.empty());
     return ret;
 }
 
 std::vector<region_distribution::region> region_distribution::prepare_regions(index_t x_cnt, index_t y_cnt) const{
-    assert(placement_area_.x_max_ > placement_area_.x_min_);
-    assert(placement_area_.y_max_ > placement_area_.y_min_);
+    assert(placement_area_.x_max > placement_area_.x_min);
+    assert(placement_area_.y_max > placement_area_.y_min);
 
     // Uses a sweepline algorithm to initialize all regions' capacities at a time, taking macros and density maps into account
 
-    // The events in the priority queue: basically a density_limit object, but the y_min_ may be different from the original one
+    // The events in the priority queue: basically a density_limit object, but the y_min may be different from the original one
     struct event{
         box<int_t> box_;
         capacity_t multiplicator_;
         bool operator<(event const o) const{
-            return box_.y_min_ > o.box_.y_min_ // Priority queue = highest first
-            or (box_.y_min_ == o.box_.y_min_ and multiplicator_ > o.multiplicator_); // Smallest density first, just because
+            return box_.y_min > o.box_.y_min // Priority queue = highest first
+            or (box_.y_min == o.box_.y_min and multiplicator_ > o.multiplicator_); // Smallest density first, just because
         }
         event(box<int_t> surface, capacity_t den) : box_(surface), multiplicator_(den) {}
         event(density_limit D, capacity_t density_mul) : box_(D.box_) {
@@ -109,9 +109,9 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
     };
 
     struct line_y{
-        int_t y_min_, y_max_;
+        int_t y_min, y_max;
         capacity_t multiplicator_;
-        line_y(int_t mn, int_t mx, capacity_t cap) : y_min_(mn), y_max_(mx), multiplicator_(cap) {}
+        line_y(int_t mn, int_t mx, capacity_t cap) : y_min(mn), y_max(mx), multiplicator_(cap) {}
     };
 
     // The regions' capacities
@@ -120,10 +120,10 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
     // Find the limits of the regions
     std::vector<int_t> x_reg_lims(x_cnt+1), y_reg_lims(y_cnt+1);
     for(index_t i=0; i<=x_cnt; ++i){
-        x_reg_lims[i] = placement_area_.x_min_ + ( ((std::int64_t) (placement_area_.x_max_ - placement_area_.x_min_)) * i ) / x_cnt;
+        x_reg_lims[i] = placement_area_.x_min + ( ((std::int64_t) (placement_area_.x_max - placement_area_.x_min)) * i ) / x_cnt;
     }
     for(index_t i=0; i<=y_cnt; ++i){
-        y_reg_lims[i] = placement_area_.y_min_ + ( ((std::int64_t) (placement_area_.y_max_ - placement_area_.y_min_)) * i ) / y_cnt;
+        y_reg_lims[i] = placement_area_.y_min + ( ((std::int64_t) (placement_area_.y_max - placement_area_.y_min)) * i ) / y_cnt;
     }
 
     //std::vector<box<int_t> > added;
@@ -132,12 +132,12 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
         /*
         // Failed attempt at calculating the coordinates directly
         point<int_t> dims = placement_area_.dimensions();
-        auto mins = point<int_t>(placement_area_.x_min_, placement_area_.y_min_);
+        auto mins = point<int_t>(placement_area_.x_min, placement_area_.y_min);
 
-        index_t x_mn = (static_cast<std::int64_t>(bx.x_min_ - mins.x_ + 1) * x_cnt) / dims.x_,
-                x_mx = (static_cast<std::int64_t>(bx.x_max_ - mins.x_ - 1) * x_cnt) / dims.x_ + 1,
-                y_mn = (static_cast<std::int64_t>(bx.y_min_ - mins.y_ + 1) * y_cnt) / dims.y_,
-                y_mx = (static_cast<std::int64_t>(bx.y_max_ - mins.y_ - 1) * y_cnt) / dims.y_ + 1;
+        index_t x_mn = (static_cast<std::int64_t>(bx.x_min - mins.x + 1) * x_cnt) / dims.x,
+                x_mx = (static_cast<std::int64_t>(bx.x_max - mins.x - 1) * x_cnt) / dims.x + 1,
+                y_mn = (static_cast<std::int64_t>(bx.y_min - mins.y + 1) * y_cnt) / dims.y,
+                y_mx = (static_cast<std::int64_t>(bx.y_max - mins.y - 1) * y_cnt) / dims.y + 1;
         */
 
         /*
@@ -148,15 +148,15 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
         added.push_back(bx);
         */
     
-        assert(bx.x_min_ >= placement_area_.x_min_);
-        assert(bx.y_min_ >= placement_area_.y_min_);
-        assert(bx.x_max_ <= placement_area_.x_max_);
-        assert(bx.y_max_ <= placement_area_.y_max_);
+        assert(bx.x_min >= placement_area_.x_min);
+        assert(bx.y_min >= placement_area_.y_min);
+        assert(bx.x_max <= placement_area_.x_max);
+        assert(bx.y_max <= placement_area_.y_max);
 
-        index_t x_mn = std::upper_bound(x_reg_lims.begin(), x_reg_lims.end(), bx.x_min_) - x_reg_lims.begin() -1,
-                y_mn = std::upper_bound(y_reg_lims.begin(), y_reg_lims.end(), bx.y_min_) - y_reg_lims.begin() -1,
-                x_mx = std::lower_bound(x_reg_lims.begin(), x_reg_lims.end(), bx.x_max_) - x_reg_lims.begin(),
-                y_mx = std::lower_bound(y_reg_lims.begin(), y_reg_lims.end(), bx.y_max_) - y_reg_lims.begin();
+        index_t x_mn = std::upper_bound(x_reg_lims.begin(), x_reg_lims.end(), bx.x_min) - x_reg_lims.begin() -1,
+                y_mn = std::upper_bound(y_reg_lims.begin(), y_reg_lims.end(), bx.y_min) - y_reg_lims.begin() -1,
+                x_mx = std::lower_bound(x_reg_lims.begin(), x_reg_lims.end(), bx.x_max) - x_reg_lims.begin(),
+                y_mx = std::lower_bound(y_reg_lims.begin(), y_reg_lims.end(), bx.y_max) - y_reg_lims.begin();
 
         for(index_t x=x_mn; x<x_mx; ++x){
             for(index_t y=y_mn; y<y_mx; ++y){
@@ -164,7 +164,7 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
                 assert(bx.intersects(cur_box));
                 box<int_t> inter = bx.intersection(cur_box);
                 point<int_t> dims = inter.dimensions();
-                region_caps[y*x_cnt + x] += d * static_cast<capacity_t>(dims.x_) * static_cast<capacity_t>(dims.y_);
+                region_caps[y*x_cnt + x] += d * static_cast<capacity_t>(dims.x) * static_cast<capacity_t>(dims.y);
             }
         }
     };
@@ -186,24 +186,24 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
     // The initial sweepline, with begin and end of the line
     std::map<int_t, line_y> active_obstacles;
 
-    line_y placement_begin (placement_area_.y_min_, placement_area_.y_max_, full_density_mul),
-           placement_end   (placement_area_.y_min_, placement_area_.y_max_, 0);
+    line_y placement_begin (placement_area_.y_min, placement_area_.y_max, full_density_mul),
+           placement_end   (placement_area_.y_min, placement_area_.y_max, 0);
 
-    active_obstacles.insert(std::pair<int_t, line_y>(placement_area_.x_min_, placement_begin)); // Full density placement area as initial object
-    active_obstacles.insert(std::pair<int_t, line_y>(placement_area_.x_max_, placement_end));
+    active_obstacles.insert(std::pair<int_t, line_y>(placement_area_.x_min, placement_begin)); // Full density placement area as initial object
+    active_obstacles.insert(std::pair<int_t, line_y>(placement_area_.x_max, placement_end));
 
 
     // Main loop: sweep the line on y (the line is horizontal, and moves toward bigger y)
     while(not events.empty()){
         event D = events.top();
-        int_t x_b=D.box_.x_min_, x_e=D.box_.x_max_;
-        int_t y_b=D.box_.y_min_, y_e=D.box_.y_max_;
+        int_t x_b=D.box_.x_min, x_e=D.box_.x_max;
+        int_t y_b=D.box_.y_min, y_e=D.box_.y_max;
         events.pop();
 
-        assert(x_b >= placement_area_.x_min_);
-        assert(y_b >= placement_area_.y_min_);
-        assert(x_e <= placement_area_.x_max_);
-        assert(y_e <= placement_area_.y_max_);
+        assert(x_b >= placement_area_.x_min);
+        assert(y_b >= placement_area_.y_min);
+        assert(x_e <= placement_area_.x_max);
+        assert(y_e <= placement_area_.y_max);
 
         // For each delimitation between the bounds of the new rectangle
         //      If the new delimitation has higher density or this delimitation ends on y there
@@ -215,7 +215,7 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
         line_y const new_elt(y_b, y_e, D.multiplicator_);
         std::vector<line_y> new_delimitations;
 
-        // First element on the line whose x_ is after our x_min (i.e. may have an intersection), and while there is an intersection
+        // First element on the line whose x is after our x_min (i.e. may have an intersection), and while there is an intersection
         auto first_it = active_obstacles.upper_bound(x_b);
         assert(first_it != active_obstacles.begin());
         assert(std::prev(first_it)->first <= x_b);
@@ -224,8 +224,8 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
         for(auto it = std::prev(first_it); it != active_obstacles.end() and it->first < x_e;){
             auto next_it = std::next(it);
             assert(next_it != active_obstacles.end());
-            assert(it->second.y_min_ <= y_b);
-            assert(it->second.y_max_ >= y_b);
+            assert(it->second.y_min <= y_b);
+            assert(it->second.y_max >= y_b);
             assert(it->first < x_e);
             assert(next_it->first > x_b);
             assert(next_it-> first > it->first);
@@ -233,18 +233,18 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
             int_t x_c_min = std::max(x_b, it->first),
                   x_c_max = std::min(x_e, next_it->first);
             assert(x_c_min < x_c_max);
-            // Add the area from it->second.y_min_ to D.box_.y_min_
-            if(y_b > it->second.y_min_)
-                add_region(box<int_t>(it->first, next_it->first, it->second.y_min_, y_b), it->second.multiplicator_);
-            it->second.y_min_ = y_b; // Now the part before has been used
+            // Add the area from it->second.y_min to D.box_.y_min
+            if(y_b > it->second.y_min)
+                add_region(box<int_t>(it->first, next_it->first, it->second.y_min, y_b), it->second.multiplicator_);
+            it->second.y_min = y_b; // Now the part before has been used
 
             auto part_b = *it, part_e = *next_it;
 
-            if(part_b.second.multiplicator_ > D.multiplicator_ or part_b.second.y_max_ == y_b){ // The new event is visible now
+            if(part_b.second.multiplicator_ > D.multiplicator_ or part_b.second.y_max == y_b){ // The new event is visible now
 
                 // In case parts of the line become visible again later
-                if(part_b.second.y_max_ > y_e){ // Push back a new event to account for the comeback
-                    events.push(event(box<int_t>(x_c_min, x_c_max, y_e, part_b.second.y_max_), part_b.second.multiplicator_));
+                if(part_b.second.y_max > y_e){ // Push back a new event to account for the comeback
+                    events.push(event(box<int_t>(x_c_min, x_c_max, y_e, part_b.second.y_max), part_b.second.multiplicator_));
                 }
 
                 // Depending whether this part of the line is or is not fully covered
@@ -265,8 +265,8 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
             }
             else{ // The new event is not visible yet
                 currently_in = false;
-                if(part_b.second.y_max_ < y_e){ // Push back a new event
-                    events.push(event(box<int_t>(x_c_min, x_c_max, part_b.second.y_max_, y_e), D.multiplicator_));
+                if(part_b.second.y_max < y_e){ // Push back a new event
+                    events.push(event(box<int_t>(x_c_min, x_c_max, part_b.second.y_max, y_e), D.multiplicator_));
                 }
             }
 
@@ -274,8 +274,8 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
         }
     }
     for(auto it=active_obstacles.begin(); std::next(it) != active_obstacles.end(); ++it){
-        assert(it->second.y_max_ == placement_area_.y_max_);
-        add_region(box<int_t>(it->first, std::next(it)->first, it->second.y_min_, it->second.y_max_), it->second.multiplicator_); 
+        assert(it->second.y_max == placement_area_.y_max);
+        add_region(box<int_t>(it->first, std::next(it)->first, it->second.y_min, it->second.y_max), it->second.multiplicator_); 
     }
 
     std::vector<region> ret(x_cnt*y_cnt);
@@ -284,7 +284,7 @@ std::vector<region_distribution::region> region_distribution::prepare_regions(in
             box<int_t> bx = get_box(x, y, x_cnt, y_cnt);
             ret[y*x_cnt + x] = region(
                 region_caps[y*x_cnt + x],
-                point<float_t>(0.5f * bx.x_min_ + 0.5f * bx.x_max_, 0.5f * bx.y_min_ + 0.5f * bx.y_max_),
+                point<float_t>(0.5f * bx.x_min + 0.5f * bx.x_max, 0.5f * bx.y_min + 0.5f * bx.y_max),
                 std::vector<cell_ref>()
             );
         }
@@ -437,7 +437,7 @@ void region_distribution::region::distribute_new_cells(std::vector<std::referenc
     }
 
     sort_uniquify(all_cells);
-    std::sort(all_cells.begin(), all_cells.end(), [](cell_ref const a, cell_ref const b){ return a.allocated_capacity_ > b.allocated_capacity_ or (a.allocated_capacity_ == b.allocated_capacity_ and a.pos_.x_+a.pos_.y_ < b.pos_.x_+b.pos_.y_); });
+    std::sort(all_cells.begin(), all_cells.end(), [](cell_ref const a, cell_ref const b){ return a.allocated_capacity_ > b.allocated_capacity_ or (a.allocated_capacity_ == b.allocated_capacity_ and a.pos_.x+a.pos_.y < b.pos_.x+b.pos_.y); });
 
     std::vector<std::vector<float_t> > costs(regions.size());
     std::vector<capacity_t> demands;
@@ -704,7 +704,7 @@ void region_distribution::redo_line_partitions(){
         for(index_t x=0; x<x_regions_cnt(); ++x){
             regs.push_back(std::reference_wrapper<region>(get_region(x, y)));
         }
-        region::redistribute_cells(regs, [](point<float_t> p){ return p.x_; });
+        region::redistribute_cells(regs, [](point<float_t> p){ return p.x; });
     }
     #pragma omp parallel for
     for(index_t x=0; x<x_regions_cnt(); ++x){
@@ -712,7 +712,7 @@ void region_distribution::redo_line_partitions(){
         for(index_t y=0; y<y_regions_cnt(); ++y){
             regs.push_back(std::reference_wrapper<region>(get_region(x, y)));
         }
-        region::redistribute_cells(regs, [](point<float_t> p){ return p.y_; });
+        region::redistribute_cells(regs, [](point<float_t> p){ return p.y; });
     }
 }
 
@@ -737,7 +737,7 @@ void region_distribution::x_resize(index_t sz){
         for(index_t x=0; x<x_regions_cnt(); ++x){
             regs.push_back(std::reference_wrapper<region>(get_region(x, y)));
         }
-        region::distribute_new_cells(regs, cells, [](point<float_t> p){ return p.x_; });
+        region::distribute_new_cells(regs, cells, [](point<float_t> p){ return p.x; });
     }
 }
 
@@ -762,7 +762,7 @@ void region_distribution::y_resize(index_t sz){
         for(index_t y=0; y<y_regions_cnt(); ++y){
             regs.push_back(std::reference_wrapper<region>(get_region(x, y)));
         }
-        region::distribute_new_cells(regs, cells, [](point<float_t> p){ return p.y_; });
+        region::distribute_new_cells(regs, cells, [](point<float_t> p){ return p.y; });
     }
 }
 
@@ -823,7 +823,7 @@ region_distribution::region_distribution(
             auto pos = pl.positions_[i];
             auto end = pos + c.size;
             density_limit macro;
-            macro.box_ = box<int_t>(pos.x_, end.x_, pos.y_, end.y_);
+            macro.box_ = box<int_t>(pos.x, end.x, pos.y, end.y);
             macro.density_ = 0.0f;
             density_map_.push_back(macro);
         }
@@ -969,11 +969,11 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
             for(index_t i=0; i<n; ++i){
                 point<float_t> pt = R.cell_references_[i].pos_;
                 float_t cap = static_cast<float_t>(R.cell_references_[i].allocated_capacity_);
-                x_cells[i] = OSRP_task(pt.x_, cap/total_capacity * (surface.x_max_ - surface.x_min_), 1.0, i);
-                y_cells[i] = OSRP_task(pt.y_, cap/total_capacity * (surface.y_max_ - surface.y_min_), 1.0, i);
+                x_cells[i] = OSRP_task(pt.x, cap/total_capacity * (surface.x_max - surface.x_min), 1.0, i);
+                y_cells[i] = OSRP_task(pt.y, cap/total_capacity * (surface.y_max - surface.y_min), 1.0, i);
             }
-            std::vector<float_t> x_ret = get_optimal_quadratic_pos(x_cells, surface.x_min_, surface.x_max_);
-            std::vector<float_t> y_ret = get_optimal_quadratic_pos(y_cells, surface.y_min_, surface.y_max_);
+            std::vector<float_t> x_ret = get_optimal_quadratic_pos(x_cells, surface.x_min, surface.x_max);
+            std::vector<float_t> y_ret = get_optimal_quadratic_pos(y_cells, surface.y_min, surface.y_max);
     
             for(index_t i=0; i<n; ++i){
                 weighted_pos[R.cell_references_[i].index_in_list_] +=
@@ -988,7 +988,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
         movable_cell C = cell_list_[i];
         assert(C.demand_ > 0);
         C.pos_ = ( static_cast<float_t>(1.0) / static_cast<float_t>(C.demand_) ) * weighted_pos[i];
-        assert(std::isfinite(C.pos_.x_) and std::isfinite(C.pos_.y_));
+        assert(std::isfinite(C.pos_.x) and std::isfinite(C.pos_.y));
         ret.push_back(C);
     }
     return ret;
@@ -1003,19 +1003,19 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
             index_t n = R.cell_references_.size();
             float_t total_capacity = static_cast<float_t>(R.capacity());
             box<float_t> surface = static_cast<box<float_t> >(get_box(x, y, x_regions_cnt(), y_regions_cnt()));
-            assert(surface.x_max_ > surface.x_min_ and surface.y_max_ > surface.y_min_);
+            assert(surface.x_max > surface.x_min and surface.y_max > surface.y_min);
     
             std::vector<legalizable_task<float_t> > x_cells, y_cells;
     
             for(auto const C : R.cell_references_){
                 float_t cap = static_cast<float_t>(C.allocated_capacity_);
-                float_t x_cap_prop = cap/total_capacity * (surface.x_max_ - surface.x_min_),
-                        y_cap_prop = cap/total_capacity * (surface.y_max_ - surface.y_min_);
-                x_cells.push_back(legalizable_task<float_t>(x_cap_prop, C.pos_.x_, C.index_in_list_));
-                y_cells.push_back(legalizable_task<float_t>(y_cap_prop, C.pos_.y_, C.index_in_list_));
+                float_t x_cap_prop = cap/total_capacity * (surface.x_max - surface.x_min),
+                        y_cap_prop = cap/total_capacity * (surface.y_max - surface.y_min);
+                x_cells.push_back(legalizable_task<float_t>(x_cap_prop, C.pos_.x, C.index_in_list_));
+                y_cells.push_back(legalizable_task<float_t>(y_cap_prop, C.pos_.y, C.index_in_list_));
             }
     
-            OSRP_leg<float_t> x_leg(surface.x_min_, surface.x_max_), y_leg(surface.y_min_, surface.y_max_);
+            OSRP_leg<float_t> x_leg(surface.x_min, surface.x_max), y_leg(surface.y_min, surface.y_max);
     
             std::sort(x_cells.begin(), x_cells.end());
             for(legalizable_task<float_t> & C : x_cells)
@@ -1025,7 +1025,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
             auto x_pl = x_leg.get_placement();
             for(index_t i=0; i<n; ++i){
                 assert(std::isfinite(x_pl[i].second));
-                weighted_pos[x_pl[i].first].x_ += (x_pl[i].second + 0.5f * x_cells[i].width) * static_cast<float_t>(x_cells[i].width * total_capacity / (surface.x_max_ - surface.x_min_));
+                weighted_pos[x_pl[i].first].x += (x_pl[i].second + 0.5f * x_cells[i].width) * static_cast<float_t>(x_cells[i].width * total_capacity / (surface.x_max - surface.x_min));
             }
 
             std::sort(y_cells.begin(), y_cells.end());
@@ -1036,7 +1036,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
             auto y_pl = y_leg.get_placement();
             for(index_t i=0; i<n; ++i){
                 assert(std::isfinite(y_pl[i].second));
-                weighted_pos[y_pl[i].first].y_ += (y_pl[i].second + 0.5f * y_cells[i].width) * static_cast<float_t>(y_cells[i].width * total_capacity / (surface.y_max_ - surface.y_min_));
+                weighted_pos[y_pl[i].first].y += (y_pl[i].second + 0.5f * y_cells[i].width) * static_cast<float_t>(y_cells[i].width * total_capacity / (surface.y_max - surface.y_min));
             }
         }
     }
@@ -1046,7 +1046,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
         movable_cell C = cell_list_[i];
         assert(C.demand_ > 0);
         C.pos_ = ( 1.0f / static_cast<float_t>(C.demand_ * cell_density_mul) ) * weighted_pos[i];
-        assert(std::isfinite(C.pos_.x_) and std::isfinite(C.pos_.y_));
+        assert(std::isfinite(C.pos_.x) and std::isfinite(C.pos_.y));
         ret.push_back(C);
     }
     return ret;
@@ -1055,7 +1055,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
 float_t region_distribution::region::cost() const{
     float_t res = 0.0;
     for(cell_ref const C : cell_references_){
-        res += (std::abs(C.pos_.x_-pos_.x_) + std::abs(C.pos_.y_-pos_.y_)) * static_cast<float_t>(C.allocated_capacity_);
+        res += (std::abs(C.pos_.x-pos_.x) + std::abs(C.pos_.y-pos_.y)) * static_cast<float_t>(C.allocated_capacity_);
     }
     return res;
 }

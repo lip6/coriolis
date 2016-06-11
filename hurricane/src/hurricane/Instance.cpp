@@ -428,8 +428,8 @@ void Instance::setPlacementStatus(const PlacementStatus& placementStatus)
 void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
 // ************************************************************
 {
-  cdebug.log(18,1) << "Instance::setMasterCell() on " << this << endl;
-  cdebug.log(18) << "NEW masterCell:" << masterCell << endl;
+  cdebug_log(18,1) << "Instance::setMasterCell() on " << this << endl;
+  cdebug_log(18,0) << "NEW masterCell:" << masterCell << endl;
 
   if (masterCell != _masterCell) {
     UpdateSession::open();
@@ -475,14 +475,14 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
       masterNetList.pop_front();
     }
 
-    cdebug.log(18) << "Remove " << this << " from " << _masterCell << endl;
+    cdebug_log(18,0) << "Remove " << this << " from " << _masterCell << endl;
     _masterCell->_getSlaveInstanceSet()._remove(this);
     _masterCell = masterCell;
 
-    cdebug.log(18) << "Add (before) " << this << " to " << _masterCell << endl;
+    cdebug_log(18,0) << "Add (before) " << this << " to " << _masterCell << endl;
     _masterCell->isUnique();
     _masterCell->_getSlaveInstanceSet()._insert(this);
-    cdebug.log(18) << "Add (after) " << this << " to " << _masterCell << endl;
+    cdebug_log(18,0) << "Add (after) " << this << " to " << _masterCell << endl;
     _masterCell->isUnique();
 
     for_each_net(externalNet, _masterCell->getExternalNets()) {
@@ -493,7 +493,7 @@ void Instance::setMasterCell(Cell* masterCell, bool secureFlag)
     UpdateSession::close();
   }
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 void Instance::uniquify()

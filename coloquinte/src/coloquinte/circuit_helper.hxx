@@ -24,28 +24,28 @@ struct pin_2D{
     bool         movable;
 
     pin_2D(index_t c, point<int_t> p, point<int_t> o, bool m) : cell_ind(c), pos(p), offs(o), movable(m){}
-    pin_1D x() const{ return pin_1D(cell_ind, pos.x_, offs.x_, movable); }
-    pin_1D y() const{ return pin_1D(cell_ind, pos.y_, offs.y_, movable); }
+    pin_1D x() const{ return pin_1D(cell_ind, pos.x, offs.x, movable); }
+    pin_1D y() const{ return pin_1D(cell_ind, pos.y, offs.y, movable); }
 };
 
 inline int_t dist(pin_2D const a, pin_2D const b){
     point<int_t> diff = a.pos - b.pos;
-    return std::abs(diff.x_) + std::abs(diff.y_);
+    return std::abs(diff.x) + std::abs(diff.y);
 }
 
 inline std::vector<pin_2D>         get_pins_2D(netlist const & circuit, placement_t const & pl, index_t net_ind){
     std::vector<pin_2D> ret;
     for(auto p : circuit.get_net(net_ind)){
-        assert(std::isfinite(pl.positions_[p.cell_ind].x_) and std::isfinite(pl.positions_[p.cell_ind].y_));
-        assert(std::isfinite(pl.orientations_[p.cell_ind].x_) and std::isfinite(pl.orientations_[p.cell_ind].y_));
+        assert(std::isfinite(pl.positions_[p.cell_ind].x) and std::isfinite(pl.positions_[p.cell_ind].y));
+        assert(std::isfinite(pl.orientations_[p.cell_ind].x) and std::isfinite(pl.orientations_[p.cell_ind].y));
 
         point<int_t> offs;
-            offs.x_ = pl.orientations_[p.cell_ind].x_ ? p.offset.x_ : circuit.get_cell(p.cell_ind).size.x_ - p.offset.x_;
-            offs.y_ = pl.orientations_[p.cell_ind].y_ ? p.offset.y_ : circuit.get_cell(p.cell_ind).size.y_ - p.offset.y_;
+            offs.x = pl.orientations_[p.cell_ind].x ? p.offset.x : circuit.get_cell(p.cell_ind).size.x - p.offset.x;
+            offs.y = pl.orientations_[p.cell_ind].y ? p.offset.y : circuit.get_cell(p.cell_ind).size.y - p.offset.y;
         point<int_t> pos  = offs + pl.positions_[p.cell_ind];
 
-        assert(std::isfinite(offs.x_) and std::isfinite(offs.y_));
-        assert(std::isfinite(pos.x_) and std::isfinite(pos.y_));
+        assert(std::isfinite(offs.x) and std::isfinite(offs.y));
+        assert(std::isfinite(pos.x) and std::isfinite(pos.y));
 
         bool movable = (circuit.get_cell(p.cell_ind).attributes & XMovable) != 0 and (circuit.get_cell(p.cell_ind).attributes & YMovable) != 0;
         ret.push_back(pin_2D(p.cell_ind, pos, offs, movable));
@@ -56,22 +56,22 @@ inline std::vector<pin_2D>         get_pins_2D(netlist const & circuit, placemen
 inline point<std::vector<pin_1D> > get_pins_1D(netlist const & circuit, placement_t const & pl, index_t net_ind){
     point<std::vector<pin_1D> > ret;
     for(auto p : circuit.get_net(net_ind)){
-        assert(std::isfinite(pl.positions_[p.cell_ind].x_) and std::isfinite(pl.positions_[p.cell_ind].y_));
-        assert(std::isfinite(pl.orientations_[p.cell_ind].x_) and std::isfinite(pl.orientations_[p.cell_ind].y_));
+        assert(std::isfinite(pl.positions_[p.cell_ind].x) and std::isfinite(pl.positions_[p.cell_ind].y));
+        assert(std::isfinite(pl.orientations_[p.cell_ind].x) and std::isfinite(pl.orientations_[p.cell_ind].y));
 
         point<int_t> offs;
-            offs.x_ = pl.orientations_[p.cell_ind].x_ ? p.offset.x_ : circuit.get_cell(p.cell_ind).size.x_ - p.offset.x_;
-            offs.y_ = pl.orientations_[p.cell_ind].y_ ? p.offset.y_ : circuit.get_cell(p.cell_ind).size.y_ - p.offset.y_;
+            offs.x = pl.orientations_[p.cell_ind].x ? p.offset.x : circuit.get_cell(p.cell_ind).size.x - p.offset.x;
+            offs.y = pl.orientations_[p.cell_ind].y ? p.offset.y : circuit.get_cell(p.cell_ind).size.y - p.offset.y;
         point<int_t> pos  = offs + pl.positions_[p.cell_ind];
 
-        assert(std::isfinite(offs.x_) and std::isfinite(offs.y_));
-        assert(std::isfinite(pos.x_) and std::isfinite(pos.y_));
+        assert(std::isfinite(offs.x) and std::isfinite(offs.y));
+        assert(std::isfinite(pos.x) and std::isfinite(pos.y));
 
         bool x_movable = (circuit.get_cell(p.cell_ind).attributes & XMovable) != 0;
         bool y_movable = (circuit.get_cell(p.cell_ind).attributes & YMovable) != 0;
 
-        ret.x_.push_back(pin_1D(p.cell_ind, pos.x_, offs.x_, x_movable));
-        ret.y_.push_back(pin_1D(p.cell_ind, pos.y_, offs.y_, y_movable));
+        ret.x.push_back(pin_1D(p.cell_ind, pos.x, offs.x, x_movable));
+        ret.y.push_back(pin_1D(p.cell_ind, pos.y, offs.y, y_movable));
     }
     return ret;
 }

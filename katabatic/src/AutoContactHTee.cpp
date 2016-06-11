@@ -62,7 +62,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    cdebug.log(145) << "create(net*) " << autoContact << endl;
+    cdebug_log(145,0) << "create(net*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -124,10 +124,10 @@ namespace Katabatic {
 
   void  AutoContactHTee::cacheDetach ( AutoSegment* segment )
   {
-    cdebug.log(145) << _getTypeName() << "::cacheDetach() " << this << endl;
-    cdebug.log(145) << "| h1:" << _horizontal1 << endl;
-    cdebug.log(145) << "| h2:" << _horizontal2 << endl;
-    cdebug.log(145) << "| v1:" << _vertical1 << endl;
+    cdebug_log(145,0) << _getTypeName() << "::cacheDetach() " << this << endl;
+    cdebug_log(145,0) << "| h1:" << _horizontal1 << endl;
+    cdebug_log(145,0) << "| h2:" << _horizontal2 << endl;
+    cdebug_log(145,0) << "| v1:" << _vertical1 << endl;
 
     if      (segment == _horizontal1) _horizontal1 = NULL;
     else if (segment == _horizontal2) _horizontal2 = NULL;
@@ -150,8 +150,8 @@ namespace Katabatic {
 
   void  AutoContactHTee::cacheAttach ( AutoSegment* segment )
   {
-    cdebug.log(145,1) << _getTypeName() << "::cacheAttach() " << this << endl;
-    cdebug.log(145)   << "Attaching: " << segment << endl;
+    cdebug_log(145,1) << _getTypeName() << "::cacheAttach() " << this << endl;
+    cdebug_log(145,0)   << "Attaching: " << segment << endl;
 
     if (segment->getDirection() == KbHorizontal) {
       if      (not _horizontal1) _horizontal1 = static_cast<AutoHorizontal*>(segment);
@@ -161,7 +161,7 @@ namespace Katabatic {
                      "      h1 & h2 cache have not been cleared first, cancelled."
                    , _getTypeName().c_str(), getString(this).c_str()
                    ) << endl;
-        cdebug.tabw(145,-1);
+        cdebug_tabw(145,-1);
         return;
       }
     } else if (segment->getDirection() == KbVertical) {
@@ -170,7 +170,7 @@ namespace Katabatic {
                      "      v1 cache has not been cleared first, cancelled."
                    , _getTypeName().c_str(), getString(this).c_str()
                    ) << endl;
-        cdebug.tabw(145,-1);
+        cdebug_tabw(145,-1);
         return;
       }
       _vertical1 = static_cast<AutoVertical*>(segment);
@@ -179,11 +179,11 @@ namespace Katabatic {
     if (_horizontal1 and _horizontal2 and _vertical1)
       unsetFlags( CntInvalidatedCache  );
 
-    cdebug.log(145) << "| h1:" << _horizontal1 << endl;
-    cdebug.log(145) << "| h2:" << _horizontal2 << endl;
-    cdebug.log(145) << "| v1:" << _vertical1 << endl;
+    cdebug_log(145,0) << "| h1:" << _horizontal1 << endl;
+    cdebug_log(145,0) << "| h2:" << _horizontal2 << endl;
+    cdebug_log(145,0) << "| v1:" << _vertical1 << endl;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 
@@ -191,7 +191,7 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [3];
@@ -224,14 +224,14 @@ namespace Katabatic {
     }
     unsetFlags( CntInvalidatedCache );
 
-    cdebug.log(145) << "h1:" << _horizontal1 << endl;
-    cdebug.log(145) << "h2:" << _horizontal2 << endl;
-    cdebug.log(145) << "v1:" << _vertical1 << endl;
+    cdebug_log(145,0) << "h1:" << _horizontal1 << endl;
+    cdebug_log(145,0) << "h2:" << _horizontal2 << endl;
+    cdebug_log(145,0) << "v1:" << _vertical1 << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -240,13 +240,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -258,7 +258,7 @@ namespace Katabatic {
       setY( getHorizontal1()->getY() );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -267,13 +267,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -286,7 +286,7 @@ namespace Katabatic {
       size_t        maxDepth = std::max( depthV1, std::max(depthH1,depthH2) );
       size_t        delta    = maxDepth - minDepth;
 
-      cdebug.log(145) << "delta:" << delta << endl;
+      cdebug_log(145,0) << "delta:" << delta << endl;
 
       unsetFlags( CntWeakTerminal );
 
@@ -313,12 +313,12 @@ namespace Katabatic {
             setLayer( rg->getContactLayer( depthH2 + ((depthH2<depthV1)?0:-1) )  );
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
-            cdebug.log(145) << "New h1:" << _horizontal1 << endl;
+            cdebug_log(145,0) << "New h1:" << _horizontal1 << endl;
           } else {
             setLayer( rg->getContactLayer( depthH1 + ((depthH1<depthV1)?0:-1) )  );
           //_horizontal2 = static_cast<AutoHorizontal*>( _horizontal2->makeDogleg(this) );
             _horizontal2->makeDogleg(this);
-            cdebug.log(145) << "New h2:" << _horizontal2 << endl;
+            cdebug_log(145,0) << "New h2:" << _horizontal2 << endl;
           }
         }
       }
@@ -328,7 +328,7 @@ namespace Katabatic {
       _vertical1  ->invalidate( this );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 

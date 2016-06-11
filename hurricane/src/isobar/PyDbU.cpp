@@ -531,7 +531,7 @@ extern "C" {
 
   extern void  PyDbU_LinkPyType()
   {
-    cdebug.log(20) << "PyDbU_LinkType()" << endl;
+    cdebug_log(20,0) << "PyDbU_LinkType()" << endl;
 
     PyTypeDbU.tp_methods   =  PyDbU_Methods;
   }

@@ -60,8 +60,8 @@ namespace Katabatic {
                                                    , DbU::Unit    height
                                                    )
   {
-    cdebug.log(145,1) << "AutoContactTerminal::create(... Point, ...)" << endl;
-    cdebug.log(145)   << "@" << point << endl; 
+    cdebug_log(145,1) << "AutoContactTerminal::create(... Point, ...)" << endl;
+    cdebug_log(145,0)   << "@" << point << endl; 
 
     anchor->getBodyHook()->detach();
 
@@ -71,7 +71,7 @@ namespace Katabatic {
                                                                   , point.getX(), point.getY()
                                                                   , width, height
                                                                   );
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     return autoContact;
   }
 
@@ -85,8 +85,8 @@ namespace Katabatic {
                                                    , const DbU::Unit  height
                                                    )
   {
-    cdebug.log(145) << "AutoContactTerminal::create(... x, y, ...)" << endl;
-    cdebug.log(145) << "@ x:" << DbU::getValueString(x) << " y:" << DbU::getValueString(y) << endl; 
+    cdebug_log(145,0) << "AutoContactTerminal::create(... x, y, ...)" << endl;
+    cdebug_log(145,0) << "@ x:" << DbU::getValueString(x) << " y:" << DbU::getValueString(y) << endl; 
 
     Point anchorPosition = anchor->getPosition();
 
@@ -102,7 +102,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    cdebug.log(145) << "create(Component*) " << autoContact << endl;
+    cdebug_log(145,0) << "create(Component*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -141,12 +141,12 @@ namespace Katabatic {
 
   Box  AutoContactTerminal::getNativeConstraintBox () const
   {
-    cdebug.log(145,1) << "AutoContactTerminal::getNativeConstraintBox()" << endl;
+    cdebug_log(145,1) << "AutoContactTerminal::getNativeConstraintBox()" << endl;
 
     Component* component = getAnchor();
     if (component == NULL) {
       cerr << Error( "%s is not anchored.", getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return _gcell->getBoundingBox ();
     }
     
@@ -159,13 +159,13 @@ namespace Katabatic {
     RoutingPad* routingPad;
 
     if ( (horizontal = dynamic_cast<Horizontal*>(component)) ) {
-      cdebug.log(145) << "Anchor: " << horizontal << "@" << horizontal->getSourcePosition() << endl;
+      cdebug_log(145,0) << "Anchor: " << horizontal << "@" << horizontal->getSourcePosition() << endl;
       xMin = horizontal->getSourcePosition().getX();
       xMax = horizontal->getTargetPosition().getX();
       yMin = yMax
            = horizontal->getTargetPosition().getY();
     } else if ( (vertical = dynamic_cast<Vertical*>(component)) ) {
-      cdebug.log(145) << "Anchor: " << vertical << "@" << vertical->getSourcePosition() << endl;
+      cdebug_log(145,0) << "Anchor: " << vertical << "@" << vertical->getSourcePosition() << endl;
       yMin = vertical->getSourcePosition().getY();
       yMax = vertical->getTargetPosition().getY();
       xMin = xMax
@@ -173,7 +173,7 @@ namespace Katabatic {
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
       Entity*         entity = routingPad->getOccurrence().getEntity();
       Transformation  transf = routingPad->getOccurrence().getPath().getTransformation();
-      cdebug.log(145) << "Anchor: " << routingPad << endl;
+      cdebug_log(145,0) << "Anchor: " << routingPad << endl;
 
       int rpOrient = 1;
       switch ( transf.getOrientation() ) {
@@ -222,10 +222,10 @@ namespace Katabatic {
     order( xMin, xMax );
     order( yMin, yMax );
 
-    cdebug.log(145) << "| Using (y): " << DbU::getValueString(yMin) << " "
+    cdebug_log(145,0) << "| Using (y): " << DbU::getValueString(yMin) << " "
                                    << DbU::getValueString(yMax) << endl;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     return Box( xMin, yMin, xMax, yMax );
   }
 
@@ -263,7 +263,7 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [2];
@@ -300,12 +300,12 @@ namespace Katabatic {
       throw Error( os.str() );
     }
     unsetFlags( CntInvalidatedCache );
-    cdebug.log(145) << "seg:" << _segment << endl;
+    cdebug_log(145,0) << "seg:" << _segment << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -314,13 +314,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -331,7 +331,7 @@ namespace Katabatic {
     if (not hasBadTopology()) {
       if (_segment->isHorizontal()) {
         if (not getUConstraints(KbVertical).contains(_segment->getY())) {
-          cdebug.log(145) << "Cached: " << _segment << endl;
+          cdebug_log(145,0) << "Cached: " << _segment << endl;
           message << "Terminal horizontal segment Y " << DbU::getValueString(_segment->getY())
                   << " axis is outside RoutingPad " << getUConstraints(KbVertical) << ".";
 
@@ -342,7 +342,7 @@ namespace Katabatic {
           setY( _segment->getY() );
       } else {
         if (not getUConstraints(KbHorizontal).contains(_segment->getX())) {
-          cdebug.log(145) << "Cached: " << _segment << endl;
+          cdebug_log(145,0) << "Cached: " << _segment << endl;
           message << "Terminal vertical segment X" << DbU::getValueString(_segment->getX())
                   << " axis is outside RoutingPad " << getUConstraints(KbHorizontal) << ".";
 
@@ -354,7 +354,7 @@ namespace Katabatic {
       }
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -363,13 +363,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -386,7 +386,7 @@ namespace Katabatic {
       if (delta > 1) {
       //_segment = _segment->makeDogleg( this );
         _segment->makeDogleg( this );
-        cdebug.log(145) << "Update seg: " << _segment << endl;
+        cdebug_log(145,0) << "Update seg: " << _segment << endl;
         delta = abssub( anchorDepth, rg->getLayerDepth( _segment->getLayer() ) );
       }
       else if (delta == 0) setLayer( rg->getRoutingLayer(anchorDepth) );
@@ -394,7 +394,7 @@ namespace Katabatic {
     }
     _segment->invalidate( this );
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 

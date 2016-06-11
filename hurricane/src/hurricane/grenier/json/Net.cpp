@@ -1095,7 +1095,7 @@ void JsonNet::toData(JsonStack& stack)
 
   update( stack, net );
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 } // End of Hurricane namespace.

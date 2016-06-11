@@ -66,7 +66,7 @@ extern "C" {
 
   static PyObject* PySegment_getOppositeHook ( PySegment *self, PyObject* args )
   {
-    cdebug.log(20) << "PySegment_getOppositeHook()" << endl;
+    cdebug_log(20,0) << "PySegment_getOppositeHook()" << endl;
     METHOD_HEAD ( "Segment.getOppositeHook()" )
 
     PyHook* pyReturnHook = PyObject_NEW( PyHook, &PyTypeHook );
@@ -87,7 +87,7 @@ extern "C" {
 
   static PyObject* PySegment_getSource ( PySegment *self )
   {
-    cdebug.log(20) << "PySegment_getSource()" << endl;
+    cdebug_log(20,0) << "PySegment_getSource()" << endl;
 
     METHOD_HEAD( "Segment.Source()" )
 
@@ -106,7 +106,7 @@ extern "C" {
 
   static PyObject* PySegment_getTarget ( PySegment *self )
   {
-    cdebug.log(20) << "PySegment_getTarget()" << endl;
+    cdebug_log(20,0) << "PySegment_getTarget()" << endl;
 
     METHOD_HEAD( "Segment.Target()" )
 
@@ -125,7 +125,7 @@ extern "C" {
 
   static PyObject* PySegment_getSourcePosition ( PySegment *self )
   {
-    cdebug.log(20) << "PySegment_getSourcePosition()" << endl;
+    cdebug_log(20,0) << "PySegment_getSourcePosition()" << endl;
 
     METHOD_HEAD ( "Segment.SourcePosition()" )
 
@@ -142,7 +142,7 @@ extern "C" {
 
   static PyObject* PySegment_getTargetPosition ( PySegment *self )
   {
-    cdebug.log(20) << "PySegment_getTargetPosition()" << endl;
+    cdebug_log(20,0) << "PySegment_getTargetPosition()" << endl;
 
     METHOD_HEAD ( "Segment.TargetPosition()" )
 

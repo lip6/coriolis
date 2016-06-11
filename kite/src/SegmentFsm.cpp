@@ -160,7 +160,7 @@ namespace {
 
   void  UnionIntervals::addInterval ( Interval& interval )
   {
-    cdebug.log(159) << "UnionInterval::addInterval() - " << interval << endl;
+    cdebug_log(159,0) << "UnionInterval::addInterval() - " << interval << endl;
 
     list<Interval>::iterator iintv = _intervals.begin ();
 
@@ -367,9 +367,9 @@ namespace Kite {
     DebugSession::open( _segment->getNet(), 150, 160 );
 
     if (_type & Perpandicular) {
-      cdebug.log(159) << "* Riping Pp " << _segment << endl;
+      cdebug_log(159,0) << "* Riping Pp " << _segment << endl;
     } else {
-      cdebug.log(159) << "* Riping // " << _segment << endl;
+      cdebug_log(159,0) << "* Riping // " << _segment << endl;
     }
 
     if (_segment->isFixed()) { DebugSession::close(); return true; }
@@ -395,7 +395,7 @@ namespace Kite {
     }
 
     if ( (_type & AxisHint) /*and not _segment->isSlackenDogleg()*/ ) {
-      cdebug.log(159) << "Setting Axis Hint: @" << DbU::getValueString(_axisHint) << endl;
+      cdebug_log(159,0) << "Setting Axis Hint: @" << DbU::getValueString(_axisHint) << endl;
       event->setAxisHint( _axisHint );
     }
 
@@ -403,7 +403,7 @@ namespace Kite {
   // There should be no need to move the axis of the segment to be inserted,
   // it will automatically slot into the empty track, if any.
     if (_type & MoveToAxis) {
-      cdebug.log(159) << "Moving Axis To: @" << DbU::getValueString(_axisHint) << endl;
+      cdebug_log(159,0) << "Moving Axis To: @" << DbU::getValueString(_axisHint) << endl;
       _segment->setAxis( _axisHint );
     }
 
@@ -469,28 +469,28 @@ namespace Kite {
 
     const Interval& perpandicular = _event->getPerpandicularFree();
 
-    cdebug.log(159) << "Katabatic intervals:"                  << endl;
-    cdebug.log(159) << "* Optimal:        "  << _optimal       << endl;
-    cdebug.log(159) << "* Constraints:    "  << _constraint    << endl;
-    cdebug.log(159) << "* Perpandicular:  "  << perpandicular  << endl;
-    cdebug.log(159) << "* AxisHint:       "  << DbU::getValueString(_event->getAxisHint()) << endl;
+    cdebug_log(159,0) << "Katabatic intervals:"                  << endl;
+    cdebug_log(159,0) << "* Optimal:        "  << _optimal       << endl;
+    cdebug_log(159,0) << "* Constraints:    "  << _constraint    << endl;
+    cdebug_log(159,0) << "* Perpandicular:  "  << perpandicular  << endl;
+    cdebug_log(159,0) << "* AxisHint:       "  << DbU::getValueString(_event->getAxisHint()) << endl;
 
     if (_event->getTracksNb()) {
       if (_constraint.getIntersection(perpandicular).isEmpty()) {
-        cdebug.log(159) << "Perpandicular free is too tight." << endl;
+        cdebug_log(159,0) << "Perpandicular free is too tight." << endl;
         _state = EmptyTrackList;
       } else
         _constraint.intersection( perpandicular );
     } else {
-      cdebug.log(159) << "No Track in perpandicular free." << endl;
+      cdebug_log(159,0) << "No Track in perpandicular free." << endl;
       _state = EmptyTrackList;
     }
 
     if (_state == EmptyTrackList) return;
 
-    cdebug.log(159)   << "Negociate intervals:" << endl;
-    cdebug.log(159)   << "* Optimal:     "      << _optimal    << endl;
-    cdebug.log(159,1) << "* Constraints: "      << _constraint << endl;
+    cdebug_log(159,0)   << "Negociate intervals:" << endl;
+    cdebug_log(159,0)   << "* Optimal:     "      << _optimal    << endl;
+    cdebug_log(159,1) << "* Constraints: "      << _constraint << endl;
 
     // if ( segment->isLocal() and (_data->getState() >= DataNegociate::MaximumSlack) )
     //   _constraint.inflate ( 0, DbU::lambda(1.0) );
@@ -511,7 +511,7 @@ namespace Kite {
       _costs.back().setAxisWeight  ( _event->getAxisWeight(track->getAxis()) );
       _costs.back().incDeltaPerpand( _data->getWiringDelta(track->getAxis()) );
       if (segment->isGlobal()) {
-        cdebug.log(9000) << "Deter| setForGlobal() on " << track << endl;
+        cdebug_log(9000,0) << "Deter| setForGlobal() on " << track << endl;
         _costs.back().setForGlobal();
       }
 
@@ -527,9 +527,9 @@ namespace Kite {
       if ( _fullBlocked and (not _costs.back().isBlockage() and not _costs.back().isFixed()) ) 
         _fullBlocked = false;
 
-      cdebug.log(159) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << track << endl;
+      cdebug_log(159,0) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << track << endl;
     }
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
 
     if (_costs.empty()) {
       Track* nearest = plane->getTrackByPosition(_constraint.getCenter());
@@ -557,7 +557,7 @@ namespace Kite {
     flags |= (RoutingEvent::getStage() == RoutingEvent::Repair) ? TrackCost::IgnoreSharedLength : 0;
 
     if (flags & TrackCost::DiscardGlobals) {
-      cdebug.log(159) << "TrackCost::Compare() - DiscardGlobals" << endl;
+      cdebug_log(159,0) << "TrackCost::Compare() - DiscardGlobals" << endl;
     }
 
     sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
@@ -575,14 +575,14 @@ namespace Kite {
   {
     if ( not segment->isFixed() ) {
       _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
-      cdebug.log(159) << "SegmentFsm::addAction(): " << segment << endl;
+      cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
     }
   }
 
 
   void  SegmentFsm::doActions ()
   {
-    cdebug.log(159) << "SegmentFsm::doActions() - " << _actions.size() << endl;
+    cdebug_log(159,0) << "SegmentFsm::doActions() - " << _actions.size() << endl;
 
     bool ripupOthersParallel = false;
     bool ripedByLocal        = getEvent()->getSegment()->isLocal();
@@ -611,7 +611,7 @@ namespace Kite {
 
   bool  SegmentFsm::insertInTrack ( size_t i )
   {
-    cdebug.log(159) << "SegmentFsm::insertInTrack() istate:" << _event->getInsertState()
+    cdebug_log(159,0) << "SegmentFsm::insertInTrack() istate:" << _event->getInsertState()
                 << " track:" << i << endl;
 
     _event->incInsertState();
@@ -637,7 +637,7 @@ namespace Kite {
     RoutingEvent* event;
     TrackElement* segment = _event->getSegment();
 
-    cdebug.log(159) << "SegmentFsm::conflictSolveByHistory()" << endl;
+    cdebug_log(159,0) << "SegmentFsm::conflictSolveByHistory()" << endl;
 
     size_t maxDepth   = min( getHistory().size(), (size_t)300 );
     size_t depth      = 0;
@@ -663,10 +663,10 @@ namespace Kite {
       if (sourceDogleg) {
         if (segment->isHorizontal()) {
           breakPoint = Point( minConflict, segment->getAxis() );
-          cdebug.log(159) << breakPoint << endl;
+          cdebug_log(159,0) << breakPoint << endl;
         } else {
           breakPoint = Point( segment->getAxis(), minConflict );
-          cdebug.log(159) << breakPoint << endl;
+          cdebug_log(159,0) << breakPoint << endl;
         }
 
         Katabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
@@ -682,10 +682,10 @@ namespace Kite {
       if (not success and targetDogleg) {
         if (segment->isHorizontal()) {
           breakPoint = Point( maxConflict, segment->getAxis() );
-          cdebug.log(159) << breakPoint << endl;
+          cdebug_log(159,0) << breakPoint << endl;
         } else {
           breakPoint = Point( segment->getAxis(), maxConflict );
-          cdebug.log(159) << breakPoint << endl;
+          cdebug_log(159,0) << breakPoint << endl;
         }
 
         Katabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
@@ -699,14 +699,14 @@ namespace Kite {
         }
       }
     } else {
-      cdebug.log(159) << "No disloggers found @" << DbU::getValueString(segment->getAxis()) << endl;
+      cdebug_log(159,0) << "No disloggers found @" << DbU::getValueString(segment->getAxis()) << endl;
 
       Interval freeSpan = Session::getKiteEngine()->
         getTrackByPosition(segment->getLayer(),segment->getAxis())->
         getFreeInterval(segment->getSourceU(),segment->getNet());
 
       if (freeSpan.contains(segment->getCanonicalInterval())) {
-        cdebug.log(159) << "Disloggers vanished, Segment can be re-inserted." << endl;
+        cdebug_log(159,0) << "Disloggers vanished, Segment can be re-inserted." << endl;
         success = true;
       }
     }
@@ -726,8 +726,8 @@ namespace Kite {
                                      | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                  : Manipulator::NoExpand);
 
-    cdebug.log(159) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
-    cdebug.log(159) << "| Candidates Tracks: " << endl;
+    cdebug_log(159,0) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
+    cdebug_log(159,0) << "| Candidates Tracks: " << endl;
 
     segment->base()->getConstraints( constraints );
     Interval      overlap    = segment->getCanonicalInterval();
@@ -759,29 +759,29 @@ namespace Kite {
       candidates.back().setBegin( begin );
       candidates.back().setEnd  ( end );
 
-      cdebug.log(159) << "* " << track << " [" << begin << ":" << end << "]" << endl;
+      cdebug_log(159,0) << "* " << track << " [" << begin << ":" << end << "]" << endl;
 
       for ( ; (begin < end) ; ++begin ) {
         other = track->getSegment( begin );
 
         if (other->getNet() == segment->getNet()) {
-          cdebug.log(159) << "  | " << begin << " Same net: " << " " << other << endl;
+          cdebug_log(159,0) << "  | " << begin << " Same net: " << " " << other << endl;
           continue;
         }
         if (not other->getCanonicalInterval().intersect(overlap)) {
-          cdebug.log(159) << "  | " << begin << " No Conflict: " << " " << other << endl;
+          cdebug_log(159,0) << "  | " << begin << " No Conflict: " << " " << other << endl;
           if (otherNet == NULL) candidates.back().setBegin( begin+1 );
           continue;
         }
-        cdebug.log(159) << "  | " << begin << " Conflict: " << " " << other << endl;
+        cdebug_log(159,0) << "  | " << begin << " Conflict: " << " " << other << endl;
 
         if (otherNet != other->getNet()) {
           if (otherNet) {
             if (otherIsGlobal) {
               candidates.back().addConflict( otherOverlap );
-              cdebug.log(159) << "  | Other overlap G: " << otherOverlap << endl;
+              cdebug_log(159,0) << "  | Other overlap G: " << otherOverlap << endl;
             } else {
-              cdebug.log(159) << "  | Other overlap L: " << otherOverlap << " ignored." << endl;
+              cdebug_log(159,0) << "  | Other overlap L: " << otherOverlap << " ignored." << endl;
             }
           }
           otherNet      = other->getNet();
@@ -795,9 +795,9 @@ namespace Kite {
       if (not otherOverlap.isEmpty()) {
         if (otherIsGlobal) {
           candidates.back().addConflict( otherOverlap );
-          cdebug.log(159) << "  | Other overlap G: " << otherOverlap << endl;
+          cdebug_log(159,0) << "  | Other overlap G: " << otherOverlap << endl;
         } else {
-          cdebug.log(159) << "  | Other overlap L: " << otherOverlap << " ignored." << endl;
+          cdebug_log(159,0) << "  | Other overlap L: " << otherOverlap << " ignored." << endl;
         }
       }
 
@@ -807,14 +807,14 @@ namespace Kite {
     sort( candidates.begin(), candidates.end() );
 
     for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
-      cdebug.log(159) << "Trying l:" << candidates[icandidate].getLength()
+      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getLength()
                   << " " << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
-      cdebug.log(159) << "overlap0: " << overlap0 << endl;
+      cdebug_log(159,0) << "overlap0: " << overlap0 << endl;
 
       if (overlap0.isEmpty()) {
-        cdebug.log(159) << "overlap0 is empty, no conflict, ignoring Track candidate." << endl;
+        cdebug_log(159,0) << "overlap0 is empty, no conflict, ignoring Track candidate." << endl;
         continue;
       }
 
@@ -826,11 +826,11 @@ namespace Kite {
       }
 
       if (other->isGlobal()) {
-        cdebug.log(159) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
+        cdebug_log(159,0) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
         if ((success = Manipulator(other,*this).moveUp())) break;
       }
 
-      cdebug.log(159) << "conflictSolveByPlaceds() - Relaxing self" << endl;
+      cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
 
       if (Manipulator(segment,*this).relax(overlap0,relaxFlags)) {
         success = true;
@@ -839,7 +839,7 @@ namespace Kite {
         if ( not canMoveUp
            and (relaxFlags != Manipulator::NoExpand)
            and Manipulator(segment,*this).relax(overlap0,Manipulator::NoExpand|Manipulator::NoDoglegReuse) ) {
-          cdebug.log(159) << "Cannot move up but successful narrow breaking." << endl;
+          cdebug_log(159,0) << "Cannot move up but successful narrow breaking." << endl;
           success = true;
           break;
         }
@@ -847,8 +847,8 @@ namespace Kite {
     }
 
     if ( not success and segment->isGlobal() and (_costs.size() <= 1) ) {
-      cdebug.log(159) << "Overconstrained perpandiculars, rip them up. On track:" << endl;
-      cdebug.log(159) << "  " << track << endl;
+      cdebug_log(159,0) << "Overconstrained perpandiculars, rip them up. On track:" << endl;
+      cdebug_log(159,0) << "  " << track << endl;
       Manipulator(segment,*this).ripupPerpandiculars ();
       success = true;
     }
@@ -860,7 +860,7 @@ namespace Kite {
   bool  SegmentFsm::solveTerminalVsGlobal ()
   {
     TrackElement* segment = getEvent()->getSegment();
-    cdebug.log(159) << "SegmentFsm::solveTerminalVsGlobal: " << " " << segment << endl;
+    cdebug_log(159,0) << "SegmentFsm::solveTerminalVsGlobal: " << " " << segment << endl;
 
     if (not (segment->isTerminal() and segment->isLocal())) return false;
 
@@ -878,9 +878,9 @@ namespace Kite {
         if (not other->isGlobal()) continue;
         if (not otherOverlap.contains(overlap)) continue;
 
-        cdebug.log(159) << "| Global candidate:" << other << endl;
+        cdebug_log(159,0) << "| Global candidate:" << other << endl;
         if (Manipulator(other,*this).moveUp(Manipulator::AllowTerminalMoveUp)) {
-          cdebug.log(159) << "| Global candidate selected." << endl;
+          cdebug_log(159,0) << "| Global candidate selected." << endl;
           return true;
         }
       }
@@ -895,13 +895,13 @@ namespace Kite {
     bool          success = false;
     TrackElement* segment = getEvent()->getSegment();
 
-    cdebug.log(159,1) << "SegmentFsm::solveFullBlockages: " << " " << segment << endl;
+    cdebug_log(159,1) << "SegmentFsm::solveFullBlockages: " << " " << segment << endl;
 
     if ( segment->isLocal() ) {
       success = Manipulator(segment,*this).pivotUp();
       if ( not success ) {
-        cdebug.log(159) << "Tightly constrained local segment overlapping a blockage, move up." << endl;
-        cdebug.log(159) << segment << endl;
+        cdebug_log(159,0) << "Tightly constrained local segment overlapping a blockage, move up." << endl;
+        cdebug_log(159,0) << segment << endl;
         success = Manipulator(segment,*this).moveUp
           (Manipulator::AllowLocalMoveUp|Manipulator::AllowTerminalMoveUp);
       }
@@ -918,7 +918,7 @@ namespace Kite {
         if ( other->getNet() == segment->getNet() ) continue;
         if ( not otherOverlap.intersect(overlap) ) continue;
         
-        cdebug.log(159) << "| " << begin << " Blockage conflict: " << " " << other << endl;
+        cdebug_log(159,0) << "| " << begin << " Blockage conflict: " << " " << other << endl;
         if ( (success = Manipulator(segment,*this).relax
              (otherOverlap,Manipulator::NoDoglegReuse|Manipulator::NoExpand)) ) {
           break;
@@ -928,24 +928,24 @@ namespace Kite {
     if ( not success ) {
       cparanoid << Error( "Tighly constrained segment overlapping a blockage:\n        %s"
                         , getString(segment).c_str() ) << endl;
-      cdebug.log(159) << "Segment is hard blocked, bypass to Unimplemented." << endl;
+      cdebug_log(159,0) << "Segment is hard blocked, bypass to Unimplemented." << endl;
     }
     
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
     return success;
   }
 
 
   bool  SegmentFsm::desaturate ()
   {
-    cdebug.log(159,1) << "SegmentFsm::desaturate()" << endl;
+    cdebug_log(159,1) << "SegmentFsm::desaturate()" << endl;
 
     size_t        itrack  = 0;
 
 #if THIS_IS_DISABLED
     TrackElement* segment = _event->getSegment();
     for ( ; itrack<getCosts().size() ; ++itrack ) {
-      cdebug.log(159) << "Trying track:" << itrack << endl;
+      cdebug_log(159,0) << "Trying track:" << itrack << endl;
 
       if ( getCost(itrack).isGlobalEnclosed() ) {
         Track*    track      = getTrack(itrack);
@@ -958,7 +958,7 @@ namespace Kite {
         for ( size_t i = begin ; success and (i < end) ; i++ ) {
           TrackElement* segment2 = track->getSegment(i);
 
-          cdebug.log(159) << "* Looking // " << segment2 << endl;
+          cdebug_log(159,0) << "* Looking // " << segment2 << endl;
 
           if ( segment2->getNet() == ownerNet  ) continue;
           if ( not toFree.intersect(segment2->getCanonicalInterval()) ) continue;
@@ -969,12 +969,12 @@ namespace Kite {
 
           DataNegociate* data2 = segment2->getDataNegociate();
           if ( not data2 ) {
-            cdebug.log(159) << "No DataNegociate, ignoring." << endl;
+            cdebug_log(159,0) << "No DataNegociate, ignoring." << endl;
             success = false;
             continue;
           }
 
-          cdebug.log(159) << "- Forced moveUp " << segment2 << endl;
+          cdebug_log(159,0) << "- Forced moveUp " << segment2 << endl;
           if ( not (success=Manipulator(segment2,*this).moveUp(Manipulator::AllowTerminalMoveUp)) ) {
             continue;
           }
@@ -992,7 +992,7 @@ namespace Kite {
     }
 
 #endif
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
     return (itrack < _costs.size());
   }
 
@@ -1000,7 +1000,7 @@ namespace Kite {
 
   bool  SegmentFsm::_slackenStrap ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
   {
-    cdebug.log(159) << "Strap segment Fsm." << endl;
+    cdebug_log(159,0) << "Strap segment Fsm." << endl;
 
     bool          success   = false;
     unsigned int  nextState = data->getState();
@@ -1032,7 +1032,7 @@ namespace Kite {
 
     if (not (flags&NoTransition)) {
       data->setState( nextState );
-      cdebug.log(159) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
+      cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
     }
 
     return success;
@@ -1041,7 +1041,7 @@ namespace Kite {
 
   bool  SegmentFsm::_slackenLocal ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
   {
-    cdebug.log(159) << "Local segment Fsm." << endl;
+    cdebug_log(159,0) << "Local segment Fsm." << endl;
 
     bool          success   = false;
     unsigned int  nextState = data->getState();
@@ -1053,7 +1053,7 @@ namespace Kite {
         if (success) break;
       case DataNegociate::Minimize:
         if (isFullBlocked() and not segment->isTerminal()) {
-          cdebug.log(159) << "Is Fully blocked." << endl;
+          cdebug_log(159,0) << "Is Fully blocked." << endl;
           nextState = DataNegociate::Unimplemented;
           break;
         }
@@ -1109,7 +1109,7 @@ namespace Kite {
 
     if (not (flags&NoTransition)) {
       data->setState( nextState );
-      cdebug.log(159) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
+      cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
     }
 
     return success;
@@ -1125,17 +1125,17 @@ namespace Kite {
       case DataNegociate::RipupPerpandiculars:
       case DataNegociate::Minimize:
       case DataNegociate::Dogleg:
-        cdebug.log(159) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+        cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
         nextState = DataNegociate::Slacken;
         break;
       case DataNegociate::Slacken:
-        cdebug.log(159) << "Global, SegmentFsm: Slacken."  << endl;
+        cdebug_log(159,0) << "Global, SegmentFsm: Slacken."  << endl;
         if ((success = Manipulator(segment,*this).slacken(KbHalfSlacken))) {
           nextState = DataNegociate::RipupPerpandiculars;
           break;
         }
       case DataNegociate::MoveUp:
-        cdebug.log(159) << "Global, SegmentFsm: MoveUp." << endl;
+        cdebug_log(159,0) << "Global, SegmentFsm: MoveUp." << endl;
         if ((success = Manipulator(segment,*this).moveUp(Manipulator::AllowShortPivotUp))) {
           break;
         }
@@ -1143,7 +1143,7 @@ namespace Kite {
         break;
       case DataNegociate::ConflictSolveByHistory:
       case DataNegociate::ConflictSolveByPlaceds:
-        cdebug.log(159) << "Global, SegmentFsm: ConflictSolveByHistory or ConflictSolveByPlaceds." << endl;
+        cdebug_log(159,0) << "Global, SegmentFsm: ConflictSolveByHistory or ConflictSolveByPlaceds." << endl;
         if ((success = conflictSolveByPlaceds())) {
           if (segment->canMoveUp(1.0,Katabatic::KbCheckLowDensity))
             nextState = DataNegociate::MoveUp;
@@ -1160,7 +1160,7 @@ namespace Kite {
           break;
         }
       case DataNegociate::Unimplemented:
-        cdebug.log(159) << "Global, SegmentFsm: MaximumSlack or Unimplemented." << endl;
+        cdebug_log(159,0) << "Global, SegmentFsm: MaximumSlack or Unimplemented." << endl;
         nextState = DataNegociate::Unimplemented;
         break;
     }
@@ -1180,12 +1180,12 @@ namespace Kite {
     if (not (flags&NoTransition)) {
       if (data->getChildSegment()) {
         TrackElement* child = segment;
-        cdebug.log(159) << "Incrementing state of childs (after): " << endl;
+        cdebug_log(159,0) << "Incrementing state of childs (after): " << endl;
         while ( child ) {
-          cdebug.log(159) << "| " << child << endl;
+          cdebug_log(159,0) << "| " << child << endl;
           if (child->base()->isGlobal()) {
             child->getDataNegociate()->setState( nextState );
-            cdebug.log(159) << "| Update:" << nextState << " count:" << child->getDataNegociate()->getStateCount() << endl;
+            cdebug_log(159,0) << "| Update:" << nextState << " count:" << child->getDataNegociate()->getStateCount() << endl;
           }
           TrackElement* parent = child;
           child = parent->getDataNegociate()->getChildSegment();
@@ -1193,8 +1193,8 @@ namespace Kite {
         }
       } else {
         data->setState( nextState );
-        cdebug.log(159) << "Incrementing state (after): " << segment << endl;
-        cdebug.log(159) << "| " << nextState << " count:" << data->getStateCount() << endl;
+        cdebug_log(159,0) << "Incrementing state (after): " << segment << endl;
+        cdebug_log(159,0) << "| " << nextState << " count:" << data->getStateCount() << endl;
       }
     }
 
@@ -1210,10 +1210,10 @@ namespace Kite {
     unsigned int   actionFlags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
 
     DebugSession::open( segment->getNet(), 150, 160 );
-    cdebug.log(159,1) << "Slacken Topology for " << segment->getNet()
+    cdebug_log(159,1) << "Slacken Topology for " << segment->getNet()
                       << " " << segment << endl;
 
-    if (not segment or not data) { cdebug.tabw(159,-1); DebugSession::close(); return false; }
+    if (not segment or not data) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
 
     _event->resetInsertState();
     data->resetRipupCount();
@@ -1232,7 +1232,7 @@ namespace Kite {
       }
     }
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
     DebugSession::close();
 
     return success;

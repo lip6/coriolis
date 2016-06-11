@@ -785,14 +785,14 @@ void Graph::increaseVTuplePriority ( VTuple* vtuple, float distance )
 void Graph::printVTuplePriorityQueue()
 // ***********************************
 {
-  cdebug.tabw(139,1);
-  cdebug.log(139) << "VTuplePriorityQueue:" << endl;
+  cdebug_tabw(139,1);
+  cdebug_log(139,0) << "VTuplePriorityQueue:" << endl;
   unsigned int i=0;
   for ( auto iv : _vtuplePriorityQueue ) {
-    cdebug.log(139) << setw(3) << i << "| " << iv->getVertex() << " : " << iv->getDistance() << endl;
+    cdebug_log(139,0) << setw(3) << i << "| " << iv->getVertex() << " : " << iv->getDistance() << endl;
     ++i;
   }
-  cdebug.tabw(139,-1);
+  cdebug_tabw(139,-1);
 }
 
 void Graph::clearPriorityQueue()
@@ -979,7 +979,7 @@ int Graph::initRouting ( Net* net )
     //editor->Stop ("Going to init");
 
   //if (_working_net->getName() == "read0") DebugSession::open( 130, 140 );
-    cdebug.log(139,1) << "Graph::initRouting() " << _working_net << endl;
+    cdebug_log(139,1) << "Graph::initRouting() " << _working_net << endl;
 
     int currentConnexID = 0;
     vector<Contact*> vContacts;
@@ -1029,9 +1029,9 @@ int Graph::initRouting ( Net* net )
     //bool useConnexID = false;
     for ( unsigned index = 0 ; index < vRoutingPads.size() ; index ++ ) {
         RoutingPad* routingPad = vRoutingPads[index];
-        cdebug.log(139) << routingPad << endl;
+        cdebug_log(139,0) << routingPad << endl;
         Vertex*  rpVertex = getVertex ( routingPad->getCenter() );
-        cdebug.log(139) << rpVertex << endl;
+        cdebug_log(139,0) << rpVertex << endl;
         Contact* rpContact = rpVertex->getContact();
         if ( rpContact && (rpContact->getNet() == routingPad->getNet()) ) {
             // s'il existe deja un contact pour ce vertex pour ce net, on s'y attache
@@ -1114,7 +1114,7 @@ int Graph::initRouting ( Net* net )
     //cerr << "net " << net << " has " << _vertexes_to_route.size() << " vertexes to route." << endl;
     //}
 
-    cdebug.tabw(139,-1);
+    cdebug_tabw(139,-1);
   //DebugSession::close();
 
     return _vertexes_to_route.size();
@@ -1146,13 +1146,13 @@ void Graph::Dijkstra()
 //DebugSession::open( _working_net, 130, 140 );
 //if (_working_net->getName() == "read0") DebugSession::open( 130, 140 );
 
-  cdebug.log(139,1) << "Dijkstra for net: " << _working_net << endl;
-  cdebug.log(139)   << "Stamp:" << _netStamp << endl;
-  cdebug.log(139)   << "Search area : " << _searchingArea
+  cdebug_log(139,1) << "Dijkstra for net: " << _working_net << endl;
+  cdebug_log(139,0)   << "Stamp:" << _netStamp << endl;
+  cdebug_log(139,0)   << "Search area : " << _searchingArea
                     << " h:" << DbU::getValueString(_searchingArea.getHeight()) << endl;
-  cdebug.log(139)   << "Matrix tile height : " << DbU::getValueString(_matrixVertex->getTileHeight()) << endl;
-  cdebug.log(139)   << "Central vertex : " << centralVertex << endl;
-  cdebug.log(139,1) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
+  cdebug_log(139,0)   << "Matrix tile height : " << DbU::getValueString(_matrixVertex->getTileHeight()) << endl;
+  cdebug_log(139,0)   << "Central vertex : " << centralVertex << endl;
+  cdebug_log(139,1) << "_vertexes_to_route.size(): " << _vertexes_to_route.size() << endl;
 //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>initialized</center>");
 
   while ( _vertexes_to_route.size() > 1 ) {
@@ -1162,12 +1162,12 @@ void Graph::Dijkstra()
 
   //checkGraphConsistency();
     if (cdebug.enabled(139)) {
-      cdebug.log(139) << "_vertexes_to_route:" << endl;
+      cdebug_log(139,0) << "_vertexes_to_route:" << endl;
       for ( auto iv : _vertexes_to_route )
-        cdebug.log(139) << "| " << iv << endl;
+        cdebug_log(139,0) << "| " << iv << endl;
     }
 
-    cdebug.log(139) << "Source component" << endl;
+    cdebug_log(139,0) << "Source component" << endl;
     printVTuplePriorityQueue();
   //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>source connexe component</center>");
 
@@ -1188,7 +1188,7 @@ void Graph::Dijkstra()
         reachedDistance = currentVertex->getDistance();
         reachedVertexes.clear();
         reachedVertexes.push_back ( currentVertex );
-        cdebug.log(139) << "Re-init reachedVertexes with " << currentVertex << endl;
+        cdebug_log(139,0) << "Re-init reachedVertexes with " << currentVertex << endl;
         break;
       }
 
@@ -1228,21 +1228,21 @@ void Graph::Dijkstra()
 
           VTuple* oppositeVTuple = oppositeVertex->getVTuple();
           if (oppositeVTuple) {
-            cdebug.log(139) << "Increasing priority for:" << endl;
-            cdebug.log(139) << "* " << oppositeVertex << endl;
-            cdebug.log(139) << "* " << oppositeVTuple << endl;
+            cdebug_log(139,0) << "Increasing priority for:" << endl;
+            cdebug_log(139,0) << "* " << oppositeVertex << endl;
+            cdebug_log(139,0) << "* " << oppositeVTuple << endl;
             increaseVTuplePriority( oppositeVTuple, newDistance );
           // Du fait de la reinit ce n'est plus seulement un increase!
           // Non, c'est bon si on garde le CleanRoutingState (avec clearPriorityQueue)
           } else {
             VTuple* newOppositeVTuple = VTuple::create ( oppositeVertex, newDistance );
-            cdebug.log(139) << "Creating New VTuple for Vertex:" << endl;
-            cdebug.log(139) << "* " << oppositeVertex    << ":" << newDistance << endl;
-            cdebug.log(139) << "* " << newOppositeVTuple << endl;
+            cdebug_log(139,0) << "Creating New VTuple for Vertex:" << endl;
+            cdebug_log(139,0) << "* " << oppositeVertex    << ":" << newDistance << endl;
+            cdebug_log(139,0) << "* " << newOppositeVTuple << endl;
             addVTupleToPriorityQueue( newOppositeVTuple );
           }
 
-          cdebug.log(139) << "Updated distance " << newDistance << " on: " << (*iedge) << endl;
+          cdebug_log(139,0) << "Updated distance " << newDistance << " on: " << (*iedge) << endl;
           printVTuplePriorityQueue();
         //Breakpoint::stop(1, "<center><b>Dijkstra</b><br>distance has been updated</center>");
         }
@@ -1256,7 +1256,7 @@ void Graph::Dijkstra()
             reachedDistance = newDistance;
             reachedVertexes.clear();
             reachedVertexes.push_back( oppositeVertex );
-            cdebug.log(139) << "Re-init (< distance) reachedVertexes with " << oppositeVertex << endl;
+            cdebug_log(139,0) << "Re-init (< distance) reachedVertexes with " << oppositeVertex << endl;
           } else if (newDistance == reachedDistance) {
           // on pourrait simplifier grandement tout ca : 1 seul vertex atteint sauvergardé!
           // Conclusion qu'il ait le meme connexID ou pas, on ne fait rien, on en a deja atteint
@@ -1273,7 +1273,7 @@ void Graph::Dijkstra()
             }
             if (not foundVertex) {
               reachedVertexes.push_back( oppositeVertex );
-              cdebug.log(139) << "Re-init (== distance) reachedVertexes with " << oppositeVertex << endl;
+              cdebug_log(139,0) << "Re-init (== distance) reachedVertexes with " << oppositeVertex << endl;
             }
           } else {
           // Nothing to do?
@@ -1293,9 +1293,9 @@ void Graph::Dijkstra()
     }
     assert( reachedDistance < (float)(HUGE_VAL) );
 
-    cdebug.log(139) << "Updating two connex components:" << endl;
-    cdebug.log(139) << "1. " << (*(reachedVertexes.begin())) << endl;
-    cdebug.log(139) << "2. " << firstVertex << endl;
+    cdebug_log(139,0) << "Updating two connex components:" << endl;
+    cdebug_log(139,0) << "1. " << (*(reachedVertexes.begin())) << endl;
+    cdebug_log(139,0) << "2. " << firstVertex << endl;
     UpdateConnexComp( reachedVertexes, firstVertex );
   }
 
@@ -1306,7 +1306,7 @@ void Graph::Dijkstra()
 //_vertexes_to_route.clear();   // no more useful
 //_vertexes_to_route = copy_vertex ;
 
-  cdebug.tabw(139,-2);
+  cdebug_tabw(139,-2);
 //DebugSession::close();
 }
 

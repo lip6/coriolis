@@ -80,8 +80,6 @@ void OSRP_convex_RSMT(netlist const & circuit, detailed_placement & pl);
 void OSRP_noncvx_HPWL(netlist const & circuit, detailed_placement & pl);
 void OSRP_noncvx_RSMT(netlist const & circuit, detailed_placement & pl);
 
-void optimize_on_topology_HPWL(netlist const & circuit, detailed_placement & pl);
-
 void row_compatible_orientation(netlist const & circuit, detailed_placement & pl, bool first_row_orient);
 
 } // namespace dp

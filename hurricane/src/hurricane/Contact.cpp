@@ -325,14 +325,14 @@ void Contact::setOffset(const DbU::Unit& dx, const DbU::Unit& dy)
 void Contact::_preDestroy()
 // ***********************
 {
-  cdebug.log(18,1) << "entering Contact::PreDestroy " << this << endl;
+  cdebug_log(18,1) << "entering Contact::PreDestroy " << this << endl;
 
   Inherit::_preDestroy();
 
   _anchorHook.detach();
 
-  cdebug.log(19) << "exiting Contact::PreDestroy" << endl;
-  cdebug.tabw(18,-1);
+  cdebug_log(19,0) << "exiting Contact::PreDestroy" << endl;
+  cdebug_tabw(18,-1);
 }
 
 void Contact::_toJson(JsonWriter* writer) const

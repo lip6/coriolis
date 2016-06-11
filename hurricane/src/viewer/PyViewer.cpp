@@ -62,7 +62,7 @@ extern "C" {
   // Module Initialization  :  "initViewer ()"
 
   DL_EXPORT(void) initViewer () {
-    cdebug.log(20) << "initViewer()" << endl;
+    cdebug_log(20,0) << "initViewer()" << endl;
 
     PyHSVr_LinkPyType ();
     PyRawDrawingStyle_LinkPyType ();
@@ -114,7 +114,7 @@ extern "C" {
     PyDisplayStyle_postModuleInit();
     PyCellViewer_postModuleInit();
 
-    cdebug.log(20) << "Viewer.so loaded " << (void*)&typeid(string) << endl;
+    cdebug_log(20,0) << "Viewer.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

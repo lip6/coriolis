@@ -352,7 +352,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    cdebug.log(19) << "JsonBasicLayer::JsonBasicLayer()" << endl;
+    cdebug_log(19,0) << "JsonBasicLayer::JsonBasicLayer()" << endl;
 
     add( "_material"     , typeid(string) );
     add( "_extractNumber", typeid(string) );
@@ -375,7 +375,7 @@ namespace Hurricane {
 
   void JsonBasicLayer::toData(JsonStack& stack)
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonBasicLayer::toData" );
 
@@ -449,7 +449,7 @@ namespace Hurricane {
     
     update( stack, basicLayer );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

@@ -383,10 +383,10 @@ Vertex* MatrixVertex::getVertex ( Point point )
     pair<unsigned int,unsigned int> indexes = getIJ ( point );
     Vertex* vertex = getVertex ( indexes );
 
-    cdebug.log(139) << "MatrixVertex::getVertex(): " << vertex << endl;
+    cdebug_log(139,0) << "MatrixVertex::getVertex(): " << vertex << endl;
 
     if (vertex and vertex->isBlocked()) {
-      cdebug.log(139) << "Vertex is blocked, looking for neighbor." << endl;
+      cdebug_log(139,0) << "Vertex is blocked, looking for neighbor." << endl;
       Vertex* neighbor = NULL;
       for ( size_t i=0; i<4 ; ++i ) {
         neighbor = vertex->getFirstEdges(i)->getOpposite( vertex );

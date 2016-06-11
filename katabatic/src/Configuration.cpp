@@ -143,7 +143,7 @@ namespace Katabatic {
 
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
-    cdebug.log(145) << "About to delete attribute _rg (RoutingGauge)." << endl;
+    cdebug_log(145,0) << "About to delete attribute _rg (RoutingGauge)." << endl;
     _cg->destroy ();
     _rg->destroy ();
   }

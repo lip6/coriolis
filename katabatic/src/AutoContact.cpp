@@ -89,16 +89,16 @@ namespace Katabatic {
   {
     restoreNativeConstraintBox();
 
-    cdebug.log(145) << "Native CBox: " << this
-               << " <" << DbU::toLambda(getCBXMin())
-               << " "  << DbU::toLambda(getCBYMin())
-               << " "  << DbU::toLambda(getCBXMax())
-               << " "  << DbU::toLambda(getCBYMax()) << ">" << endl;
+    cdebug_log(145,0) << "Native CBox: " << this
+                    << " <" << DbU::toLambda(getCBXMin())
+                    << " "  << DbU::toLambda(getCBYMin())
+                    << " "  << DbU::toLambda(getCBXMax())
+                    << " "  << DbU::toLambda(getCBYMax()) << ">" << endl;
     
     Session::link( this );
     invalidate( KbTopology );
 
-    cdebug.log(145) << "AutoContact::_postCreate() - " << this << " in " << _gcell << endl;
+    cdebug_log(145,0) << "AutoContact::_postCreate() - " << this << " in " << _gcell << endl;
   }
 
 
@@ -113,7 +113,7 @@ namespace Katabatic {
   {
     DebugSession::open( _contact->getNet(), 140, 150 );
 
-    cdebug.log(145) << "AutoContact::_preDestroy() - <AutoContact id:" << _id << ">" << endl;
+    cdebug_log(145,0) << "AutoContact::_preDestroy() - <AutoContact id:" << _id << ">" << endl;
 
 #if 0
     bool canDestroyBase = true;
@@ -190,12 +190,12 @@ namespace Katabatic {
     Component* anchor = getAnchor ();
     if (anchor) {
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
-    //cdebug.log(149) << "Anchor:" << anchor << endl;
+    //cdebug_log(149,0) << "Anchor:" << anchor << endl;
     }
 
     forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(isegment->getLayer()) );
-    //cdebug.log(149) << "Slave:" << *icomponent << endl;
+    //cdebug_log(149,0) << "Slave:" << *icomponent << endl;
     }
 
     return (unsigned int)minDepth;
@@ -208,12 +208,12 @@ namespace Katabatic {
     Component* anchor = getAnchor ();
     if ( anchor ) {
       maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
-    //cdebug.log(149) << "Anchor:" << anchor << endl;
+    //cdebug_log(149,0) << "Anchor:" << anchor << endl;
     }
 
     forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
       maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(isegment->getLayer()) );
-    //cdebug.log(149) << "Slave:" << *icomponent << endl;
+    //cdebug_log(149,0) << "Slave:" << *icomponent << endl;
     }
 
     return (unsigned int)maxDepth;
@@ -296,7 +296,7 @@ namespace Katabatic {
   void  AutoContact::invalidate ( unsigned int flags )
   {
     if (not isInvalidated()) {
-      cdebug.log(145,1) << "AutoContact::invalidate() - " << this << endl;
+      cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
       setFlags( CntInvalidated );
       if (flags & KbTopology ) setFlags( CntInvalidatedCache );
       Session::invalidate( this );
@@ -306,7 +306,7 @@ namespace Katabatic {
     //  isegment->invalidate();
 
       getGCell()->invalidate();
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
     }
   }
 
@@ -318,14 +318,14 @@ namespace Katabatic {
 
     _gcell = gcell;
     if (_gcell) {
-      cdebug.log(145) << "AutoContact::setGCell() " << gcell << endl;
+      cdebug_log(145,0) << "AutoContact::setGCell() " << gcell << endl;
       _gcell->addContact( this );
       _contact->setPosition( _gcell->getCenter() );
       _dxMin = 0;
       _dyMin = 0;
       _dxMax = (int)DbU::toLambda( _gcell->getXMax()-_gcell->getX() );
       _dyMax = (int)DbU::toLambda( _gcell->getYMax()-_gcell->getY() );
-      cdebug.log(145) << "* deltas: [" << _dxMin << " " << _dyMin << " " << _dxMax << " " << _dyMax << "]" << endl;
+      cdebug_log(145,0) << "* deltas: [" << _dxMin << " " << _dyMin << " " << _dxMax << " " << _dyMax << "]" << endl;
     } else {
       cerr << Bug( "NULL GCell for %s.", _getString().c_str() ) << endl;
     }
@@ -395,7 +395,7 @@ namespace Katabatic {
 
   void  AutoContact::checkTopology ()
   {
-  //cdebug.log(145) << "checkTopology() NOT RE-IMPLEMENTED YET " << this << endl;
+  //cdebug_log(145,0) << "checkTopology() NOT RE-IMPLEMENTED YET " << this << endl;
   }
 
 
@@ -408,7 +408,7 @@ namespace Katabatic {
 
   bool  AutoContact::canMoveUp ( const AutoSegment* moved ) const
   {
-    cdebug.log(149) << "AutoContact::canMoveUp() " << this << endl;
+    cdebug_log(149,0) << "AutoContact::canMoveUp() " << this << endl;
     size_t viaDepth = 100;
 
     RoutingGauge* rg         = Session::getRoutingGauge();
@@ -417,7 +417,7 @@ namespace Katabatic {
     Component* anchor = getAnchor();
     if (anchor) {
       viaDepth = rg->getLayerDepth( anchor->getLayer() );
-      cdebug.log(149) << "| Anchor depth: " << viaDepth << endl;
+      cdebug_log(149,0) << "| Anchor depth: " << viaDepth << endl;
     }
 
     forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
@@ -428,7 +428,7 @@ namespace Katabatic {
       else
         if (viaDepth != depth) return false;
 
-      cdebug.log(149) << "| Segment depth: " << depth << endl;
+      cdebug_log(149,0) << "| Segment depth: " << depth << endl;
     }
 
     return (movedDepth+1 == viaDepth);
@@ -441,8 +441,8 @@ namespace Katabatic {
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    cdebug.log(149) << "setConstraintBox() - " << this << " " << getConstraintBox() << endl;
-    cdebug.log(149) << "* " << _gcell << endl;
+    cdebug_log(149,0) << "setConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    cdebug_log(149,0) << "* " << _gcell << endl;
   }
 
 
@@ -451,7 +451,7 @@ namespace Katabatic {
                                            , unsigned int flags
                                            )
   {
-    cdebug.log(149) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    cdebug_log(149,0) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
     if (flags & KbHorizontal) {
       if ( (constraintMin > getCBYMax()) or (constraintMax < getCBYMin()) ) {
         if ( Session::isInDemoMode() or not (flags & KbWarnOnError) ) return false;
@@ -491,7 +491,7 @@ namespace Katabatic {
       setCBXMin ( std::max(getCBXMin(),constraintMin) );
       setCBXMax ( std::min(getCBXMax(),constraintMax) );
     }
-    cdebug.log(149) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
+    cdebug_log(149,0) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;
     return true;
   }
 

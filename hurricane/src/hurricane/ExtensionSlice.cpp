@@ -66,7 +66,7 @@ namespace Hurricane {
 
   ExtensionSlice::~ExtensionSlice ()
   {
-    cdebug.log(18) << "ExtensionSlice::~ExtensionSlice() - " << (void*)this << endl;
+    cdebug_log(18,0) << "ExtensionSlice::~ExtensionSlice() - " << (void*)this << endl;
     _cell->_removeSlice ( this );
   }
 

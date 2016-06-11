@@ -71,7 +71,7 @@ extern "C" {
 
   static PyObject* PyMaterial_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    cdebug.log(20) << "PyMaterial_new()" << endl;
+    cdebug_log(20,0) << "PyMaterial_new()" << endl;
 
     BasicLayer::Material* material   = NULL;
     PyMaterial*           pyMaterial = (PyMaterial*)type->tp_alloc(type,0);
@@ -101,7 +101,7 @@ extern "C" {
 
   PyObject* PyMaterial_getCode ( PyMaterial* self )
   {
-    cdebug.log(20) << "PyMaterial_getCode()" << endl;
+    cdebug_log(20,0) << "PyMaterial_getCode()" << endl;
 
     int code = 0;
 
@@ -146,7 +146,7 @@ extern "C" {
   DirectDeleteMethod(PyMaterial_DeAlloc, PyMaterial)
 
   extern void  PyMaterial_LinkPyType() {
-    cdebug.log(20) << "PyMaterial_LinkType()" << endl;
+    cdebug_log(20,0) << "PyMaterial_LinkType()" << endl;
 
     PyTypeMaterial.tp_new     =              PyMaterial_new;
     PyTypeMaterial.tp_dealloc = (destructor) PyMaterial_DeAlloc;

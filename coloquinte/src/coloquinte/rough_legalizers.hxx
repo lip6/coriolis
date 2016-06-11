@@ -212,7 +212,7 @@ inline region_distribution::movable_cell::movable_cell(capacity_t demand, point<
 inline box<int_t> region_distribution::placement_area() const { return placement_area_; }
 inline point<float_t> region_distribution::region_dimensions() const {
     point<int_t> s = static_cast<point<float_t> >(placement_area().dimensions());
-    return point<float_t>(s.x_/x_regions_cnt(), s.y_/y_regions_cnt());
+    return point<float_t>(s.x/x_regions_cnt(), s.y/y_regions_cnt());
 }
 
 inline index_t region_distribution::x_regions_cnt() const { return x_regions_cnt_; }
@@ -247,10 +247,10 @@ inline capacity_t region_distribution::region::allocated_capacity() const{
 inline index_t region_distribution::region::cell_cnt() const{ return cell_references_.size(); }
 
 inline float_t region_distribution::region::distance(region_distribution::cell_ref const & C) const{
-    return std::abs(pos_.x_ - C.pos_.x_) + std::abs(pos_.y_ - C.pos_.y_);
+    return std::abs(pos_.x - C.pos_.x) + std::abs(pos_.y - C.pos_.y);
     /*
-    float_t manhattan = std::max(static_cast<float_t>(0.0), std::max(C.pos_.x_ - surface_.x_max_, surface_.x_min_ - C.pos_.x_))
-                      + std::max(static_cast<float_t>(0.0), std::max(C.pos_.y_ - surface_.y_max_, surface_.y_min_ - C.pos_.y_));
+    float_t manhattan = std::max(static_cast<float_t>(0.0), std::max(C.pos_.x - surface_.x_max, surface_.x_min - C.pos_.x))
+                      + std::max(static_cast<float_t>(0.0), std::max(C.pos_.y - surface_.y_max, surface_.y_min - C.pos_.y));
     return manhattan * (1.0 + manhattan * 0.0001);
     */
 }

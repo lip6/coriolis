@@ -54,7 +54,7 @@ extern "C" {
   // Module Initialization  :  "initKatabatic ()"
 
   DL_EXPORT(void) initKatabatic () {
-    cdebug.log(38) << "initKatabatic()" << endl;
+    cdebug_log(38,0) << "initKatabatic()" << endl;
 
     PyObject* module = Py_InitModule ( "Katabatic", PyKatabatic_Methods );
     if ( module == NULL ) {

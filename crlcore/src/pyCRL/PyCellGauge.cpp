@@ -61,7 +61,7 @@ extern "C" {
 
   static PyObject* PyCellGauge_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyCellGauge_create()" << endl;
+    cdebug_log(30,0) << "PyCellGauge_create()" << endl;
 
     CellGauge*   cg   = NULL;
     PyCellGauge* pyCg = NULL;

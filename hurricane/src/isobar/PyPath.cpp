@@ -58,7 +58,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_NEW ()"
 
   static PyObject* PyPath_NEW ( PyObject *module, PyObject *args ) {
-    cdebug.log(20) << "PyPath_NEW()" << endl;
+    cdebug_log(20,0) << "PyPath_NEW()" << endl;
 
     Path*     path   = NULL;
     PyObject* arg0   = NULL;
@@ -102,7 +102,7 @@ extern "C" {
 
   static int  PyPath_Init ( PyPath* self, PyObject* args, PyObject* kwargs )
   {
-    cdebug.log(20) << "PyPath_Init(): " << (void*)self << endl;
+    cdebug_log(20,0) << "PyPath_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -111,7 +111,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getHeadInstance ()"
 
   static PyObject* PyPath_getHeadInstance ( PyPath *self ) {
-    cdebug.log(20) << "PyPath_getHeadInstance()" << endl;
+    cdebug_log(20,0) << "PyPath_getHeadInstance()" << endl;
 
     METHOD_HEAD ( "Path.getHeadInstance()" )
 
@@ -129,7 +129,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getTailInstance ()"
 
   static PyObject* PyPath_getTailInstance ( PyPath *self ) {
-    cdebug.log(20) << "PyPath_getTailInstance()" << endl;
+    cdebug_log(20,0) << "PyPath_getTailInstance()" << endl;
 
     METHOD_HEAD ( "Path.getTailInstance()" )
 
@@ -147,7 +147,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getOwnerCell ()"
 
   static PyObject* PyPath_getOwnerCell ( PyPath *self ) {
-    cdebug.log(20) << "PyPath_getOwnerCell()" << endl;
+    cdebug_log(20,0) << "PyPath_getOwnerCell()" << endl;
 
     METHOD_HEAD ( "Path.getOwnerCell()" )
 
@@ -165,7 +165,7 @@ extern "C" {
   // Attribute Method  :  "PyPath_getMasterCell ()"
 
   static PyObject* PyPath_getMasterCell ( PyPath *self ) {
-    cdebug.log(20) << "PyPath_getMasterCell()" << endl;
+    cdebug_log(20,0) << "PyPath_getMasterCell()" << endl;
 
     METHOD_HEAD ( "Path.getMasterCell()" )
 
@@ -190,7 +190,7 @@ extern "C" {
 
   static PyObject* PyPath_getHeadPath ( PyPath *self ) {
 
-    cdebug.log(20) << "PyPath_getHeadPath ()" << endl;
+    cdebug_log(20,0) << "PyPath_getHeadPath ()" << endl;
     
     METHOD_HEAD ( "Path.getHeadPath()" )
 
@@ -211,7 +211,7 @@ extern "C" {
   static PyObject* PyPath_getTailPath ( PyPath *self )
   {
 
-    cdebug.log(20) << "PyPath_getTailPath ()" << endl;
+    cdebug_log(20,0) << "PyPath_getTailPath ()" << endl;
     
     METHOD_HEAD ( "Path.getTailPath()" )
 
@@ -231,7 +231,7 @@ extern "C" {
 
   static PyObject* PyPath_getTransformation ( PyPath *self, PyObject* args )
   {
-    cdebug.log(20) << "PyPath_getTransformation ()" << endl;
+    cdebug_log(20,0) << "PyPath_getTransformation ()" << endl;
     
     METHOD_HEAD ( "Instance.getTransformation()" );
 
@@ -263,7 +263,7 @@ extern "C" {
 
   static PyObject* PyPath_getInstances(PyPath *self) {
 
-    cdebug.log(20) << "PyPath_getInstances()" << endl;
+    cdebug_log(20,0) << "PyPath_getInstances()" << endl;
 
     METHOD_HEAD ( "Path.getInstances()" )
 

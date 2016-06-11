@@ -72,7 +72,7 @@ extern "C" {
   DirectHashMethod(PyPlacementStatus_Hash, PyPlacementStatus)
 
   extern void  PyPlacementStatus_LinkPyType() {
-    cdebug.log(20) << "PyPlacementStatus_LinkType()" << endl;
+    cdebug_log(20,0) << "PyPlacementStatus_LinkType()" << endl;
     PyTypePlacementStatus.tp_dealloc = (destructor) PyPlacementStatus_DeAlloc;
     PyTypePlacementStatus.tp_compare = (cmpfunc)    PyPlacementStatus_Cmp;
     PyTypePlacementStatus.tp_repr    = (reprfunc)   PyPlacementStatus_Repr;

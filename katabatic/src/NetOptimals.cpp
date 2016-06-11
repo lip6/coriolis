@@ -38,8 +38,8 @@ namespace Katabatic {
   void  KatabaticEngine::_computeNetOptimals ( Net* net )
   {
     DebugSession::open( net, 140, 150 );
-    cdebug.log(149) << "Katabatic::_computeNetOptimals( " << net << " )" << endl;
-    cdebug.tabw(145,1);
+    cdebug_log(149,0) << "Katabatic::_computeNetOptimals( " << net << " )" << endl;
+    cdebug_tabw(145,1);
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
@@ -52,7 +52,7 @@ namespace Katabatic {
     for ( size_t i=0 ; i<segments.size() ; i++ )
       segments[i]->computeOptimal( processeds );
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -60,8 +60,8 @@ namespace Katabatic {
   void  KatabaticEngine::toOptimals ( Net* net )
   {
     DebugSession::open( net, 140, 150 );
-    cdebug.log(149) << "Katabatic::_toOptimals( " << net << " )" << endl;
-    cdebug.tabw(145,1);
+    cdebug_log(149,0) << "Katabatic::_toOptimals( " << net << " )" << endl;
+    cdebug_tabw(145,1);
 
     vector<AutoSegment*> segments;
     forEach ( Segment*, segment, net->getSegments() ) {
@@ -74,7 +74,7 @@ namespace Katabatic {
       if (segments[i]->isCanonical()) segments[i]->toOptimalAxis();
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 

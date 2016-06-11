@@ -640,7 +640,7 @@ JsonTechnology::JsonTechnology(unsigned long flags)
 {
   if (flags & JsonWriter::RegisterMode) return;
 
-  cdebug.log(19) << "JsonTechnology::JsonTechnology()" << endl;
+  cdebug_log(19,0) << "JsonTechnology::JsonTechnology()" << endl;
 
   add( "_name"  , typeid(string)    );
   add( "+layers", typeid(JsonArray) );
@@ -683,7 +683,7 @@ void JsonTechnology::addBlockageRef(const string& blockageLayer, BasicLayer* lay
 void JsonTechnology::toData(JsonStack& stack)
 // ******************************************
 {
-  cdebug.tabw(19,1);
+  cdebug_tabw(19,1);
 
   check( stack, "JsonTechnology::toData" );
 
@@ -708,7 +708,7 @@ void JsonTechnology::toData(JsonStack& stack)
 
   update( stack, techno );
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 } // End of Hurricane namespace.

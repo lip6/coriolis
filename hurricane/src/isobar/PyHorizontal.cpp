@@ -61,7 +61,7 @@ extern "C" {
   // Attribute Method  :  "PyHorizontal_create ()"
 
   static PyObject* PyHorizontal_create ( PyObject*, PyObject *args ) {
-    cdebug.log(20) << "PyHorizontal_create()" << endl;
+    cdebug_log(20,0) << "PyHorizontal_create()" << endl;
 
     PyObject* arg0;
     PyObject* arg1;
@@ -152,7 +152,7 @@ extern "C" {
   // Attribute Method  :  "PyHorizontal_translate ()"
 
   static PyObject* PyHorizontal_translate ( PyHorizontal *self, PyObject* args ) {
-    cdebug.log(20) << "PyHorizontal_translate ()" << endl;
+    cdebug_log(20,0) << "PyHorizontal_translate ()" << endl;
     
     HTRY
     METHOD_HEAD ( "Horizontal.translate()" )

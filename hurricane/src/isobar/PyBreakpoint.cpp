@@ -44,13 +44,13 @@ extern "C" {
 
   static void PyBreakpoint_DeAlloc ( PyBreakpoint* self )
   {
-    cdebug.log(20) << "PySingletonObject_DeAlloc(" << hex << self << ")" << endl;
+    cdebug_log(20,0) << "PySingletonObject_DeAlloc(" << hex << self << ")" << endl;
   }
   
 
   static PyObject* PyBreakpoint_stop ( PyObject*, PyObject *args )
   {
-    cdebug.log(20) << "PyBreakpoint_stop()" << endl;
+    cdebug_log(20,0) << "PyBreakpoint_stop()" << endl;
 
     bool result = false;
 
@@ -71,7 +71,7 @@ extern "C" {
 
   static PyObject* PyBreakpoint_setStopLevel ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyBreakpoint_setStopLevel()" << endl;
+    cdebug_log(20,0) << "PyBreakpoint_setStopLevel()" << endl;
 
 
     HTRY
@@ -89,7 +89,7 @@ extern "C" {
 
   static PyObject* PyBreakpoint_getStopLevel ( PyObject* )
   {
-    cdebug.log(20) << "PyBreakpoint_getStopLevel()" << endl;
+    cdebug_log(20,0) << "PyBreakpoint_getStopLevel()" << endl;
 
     return Py_BuildValue ( "i", Breakpoint::getStopLevel() );
 
@@ -112,7 +112,7 @@ extern "C" {
 
   // extern void  PyBreakpoint_LinkPyType()
   // {
-  //   cdebug.log(20) << "PyBreakpoint_LinkType()" << endl;
+  //   cdebug_log(20,0) << "PyBreakpoint_LinkType()" << endl;
 
   //   PyTypeBreakpoint.tp_new     = (newfunc)   PyType_GenericNew;
   //   PyTypeBreakpoint.tp_dealloc = (destructor)PyBreakpoint_DeAlloc;

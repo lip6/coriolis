@@ -114,7 +114,7 @@ extern "C" {
   DirectHashMethod(PyCatalogState_Hash, PyCatalogState)
 
   extern void  PyCatalogState_LinkPyType() {
-    cdebug.log(30) << "PyCatalogState_LinkType()" << endl;
+    cdebug_log(30,0) << "PyCatalogState_LinkType()" << endl;
     PyTypeCatalogState.tp_dealloc = (destructor) PyCatalogState_DeAlloc;
     PyTypeCatalogState.tp_compare = (cmpfunc)    PyCatalogState_Cmp;
     PyTypeCatalogState.tp_repr    = (reprfunc)   PyCatalogState_Repr;

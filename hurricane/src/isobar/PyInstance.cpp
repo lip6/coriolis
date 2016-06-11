@@ -73,7 +73,7 @@ extern "C" {
 
   static PyObject* PyInstance_create ( PyObject*, PyObject *args )
   {
-    cdebug.log(20) << "PyInstance_create()" << endl;
+    cdebug_log(20,0) << "PyInstance_create()" << endl;
     
     Instance* instance = NULL;
     PyObject* arg0     = NULL;
@@ -117,7 +117,7 @@ extern "C" {
 
   static PyObject* PyInstance_getMasterCell ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_getMasterCell ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getMasterCell ()" << endl;
     
     Cell* cell = NULL;
 
@@ -132,7 +132,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlacementStatus ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_getPlacementStatus ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getPlacementStatus ()" << endl;
     
     METHOD_HEAD ( "Instance.getPlacementStatus()" );
 
@@ -147,7 +147,7 @@ extern "C" {
 
   static PyObject* PyInstance_setPlacementStatus ( PyInstance *self, PyObject* args )
   {
-    cdebug.log(20) << "PyInstance_setPlacementStatus()" << endl;
+    cdebug_log(20,0) << "PyInstance_setPlacementStatus()" << endl;
     METHOD_HEAD ( "Instance.setPlacementStatus()" )
       
     HTRY
@@ -163,7 +163,7 @@ extern "C" {
 
   static PyObject* PyInstance_getTransformation ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_getTransformation ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getTransformation ()" << endl;
     METHOD_HEAD ( "Instance.getTransformation()" );
 
     PyTransformation* resultPyTransf = PyObject_NEW ( PyTransformation, &PyTypeTransformation );
@@ -179,7 +179,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlug ( PyInstance *self, PyObject* args )
   {
-    cdebug.log(20) << "PyInstance_getPlug ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getPlug ()" << endl;
 
     Plug* plug = NULL;
     
@@ -198,7 +198,7 @@ extern "C" {
 
   static PyObject* PyInstance_getPlugs(PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_getPlugs()" << endl;
+    cdebug_log(20,0) << "PyInstance_getPlugs()" << endl;
 
     METHOD_HEAD ( "Instance.getPlugs()" )
 
@@ -221,7 +221,7 @@ extern "C" {
 
   static PyObject* PyInstance_getConnectedPlugs(PyInstance *self)
   {
-    cdebug.log(20) << "PyInstance_getConnectedPlugs ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getConnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getConnectedPlugs()")
 
@@ -244,7 +244,7 @@ extern "C" {
 
   static PyObject* PyInstance_getUnconnectedPlugs(PyInstance *self)
   {
-    cdebug.log(20) << "PyInstance_getUnconnectedPlugs ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getUnconnectedPlugs ()" << endl;
 
     METHOD_HEAD ( "Instance.getUnconnectedPlugs()")
 
@@ -267,7 +267,7 @@ extern "C" {
 
   static PyObject* PyInstance_getAbutmentBox ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_getAbutmentBox ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.getAbutmentBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
@@ -283,7 +283,7 @@ extern "C" {
 
   static PyObject* PyInstance_uniquify ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_uniquify ()" << endl;
+    cdebug_log(20,0) << "PyInstance_uniquify ()" << endl;
 
     HTRY
       METHOD_HEAD ( "Instance.uniquify()" )
@@ -295,7 +295,7 @@ extern "C" {
 
   static PyObject* PyInstance_slaveAbutmentBox ( PyInstance *self )
   {
-    cdebug.log(20) << "PyInstance_slaveAbutmentBox ()" << endl;
+    cdebug_log(20,0) << "PyInstance_slaveAbutmentBox ()" << endl;
     METHOD_HEAD ( "Instance.slaveAbutmentBox()" )
 
     HTRY
@@ -309,7 +309,7 @@ extern "C" {
 
   static PyObject* PyInstance_getClone ( PyInstance *self, PyObject* args )
   {
-    cdebug.log(20) << "PyInstance_getClone ()" << endl;
+    cdebug_log(20,0) << "PyInstance_getClone ()" << endl;
 
     Instance* cloneInstance = NULL;
     HTRY
@@ -332,7 +332,7 @@ extern "C" {
 
   static PyObject* PyInstance_setTransformation ( PyInstance *self, PyObject* args )
   {
-    cdebug.log(20) << "PyInstance_setTransformation()" << endl;
+    cdebug_log(20,0) << "PyInstance_setTransformation()" << endl;
     METHOD_HEAD ( "Instance.setTransformation()" )
 
     HTRY
@@ -348,7 +348,7 @@ extern "C" {
 
   static PyObject* PyInstance_setMasterCell ( PyInstance *self, PyObject* args )
   {
-    cdebug.log(20) << "Instance.setMasterCell()" << endl;
+    cdebug_log(20,0) << "Instance.setMasterCell()" << endl;
     METHOD_HEAD ( "Instance.setMasterCell()" )
 
     HTRY

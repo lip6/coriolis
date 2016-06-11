@@ -76,7 +76,7 @@ namespace Kite {
 
   void  RoutingPlane::destroy ()
   {
-    cdebug.log(155,1) << "RoutingPlane::destroy() - "
+    cdebug_log(155,1) << "RoutingPlane::destroy() - "
                       << (void*)this << " " << this << endl;
 
     for ( size_t index=0 ; index<_tracks.size() ; ++index )
@@ -84,7 +84,7 @@ namespace Kite {
 
     delete this;
 
-    cdebug.tabw(155,-1);
+    cdebug_tabw(155,-1);
   }
 
 

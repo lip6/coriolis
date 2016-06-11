@@ -39,8 +39,8 @@ namespace Kite {
     , _locator       (segment->base())
     , _element       (NULL)
   {
-    cdebug.log(155) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
-    cdebug.log(155) << "  " << segment << endl;
+    cdebug_log(155,0) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
+    cdebug_log(155,0) << "  " << segment << endl;
 
     Interval bounds;
     if ( _locator.isValid() ) {
@@ -59,7 +59,7 @@ namespace Kite {
 
   void  TrackElements_Perpandiculars::Locator::progress ()
   {
-    cdebug.log(155) << "TrackElements_Perpandiculars::Locator::progress()" << endl;
+    cdebug_log(155,0) << "TrackElements_Perpandiculars::Locator::progress()" << endl;
 
     Interval bounds;
     while ( _locator.isValid() ) {

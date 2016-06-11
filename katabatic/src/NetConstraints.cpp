@@ -61,27 +61,27 @@ namespace {
 
   void  propagateConstraintFromRp ( RoutingPad* rp )
   {
-    cdebug.log(145,1) << "propagateConstraintFromRp() - " << rp << endl;
+    cdebug_log(145,1) << "propagateConstraintFromRp() - " << rp << endl;
 
     forEach ( Component*, icomponent, rp->getSlaveComponents() ) {
-      cdebug.log(145) << "slave component: " << *icomponent << endl;
+      cdebug_log(145,0) << "slave component: " << *icomponent << endl;
       AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(*icomponent) );
       if (sourceContact) {
-        cdebug.log(145) << "Start slave: " << sourceContact << endl;
+        cdebug_log(145,0) << "Start slave: " << sourceContact << endl;
 
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
 
         forEach ( AutoSegment*, isegment, sourceContact->getAutoSegments() ) {
-          cdebug.log(145) << "Examining: " << (*isegment) << endl;
+          cdebug_log(145,0) << "Examining: " << (*isegment) << endl;
           AutoContact* targetContact = isegment->getOppositeAnchor(sourceContact);
 
           if (targetContact) {
             if (isegment->isHorizontal()) {
-              cdebug.log(145) << "On horizontal stack " << (*isegment) << endl;
+              cdebug_log(145,0) << "On horizontal stack " << (*isegment) << endl;
               horizontalSegments.insert( (*isegment) );
             } else {
-              cdebug.log(145) << "On vertical stack " << (*isegment) << endl;
+              cdebug_log(145,0) << "On vertical stack " << (*isegment) << endl;
               verticalSegments.insert( (*isegment) );
             }
           }
@@ -90,24 +90,24 @@ namespace {
         Box  constraintBox = sourceContact->getConstraintBox();
 
         // Propagate constraint through horizontally aligned segments.
-        cdebug.log(145) << "Propagate constraint on horizontal segments" << endl;
+        cdebug_log(145,0) << "Propagate constraint on horizontal segments" << endl;
 
         set<AutoSegment*>::iterator ihorizontal = horizontalSegments.begin();
         for ( ; ihorizontal != horizontalSegments.end() ; ++ihorizontal ) {
           AutoContact* contact = NULL;
           forEach ( AutoSegment*, ialigned, (*ihorizontal)->getAligneds() ) {
             contact = ialigned->getAutoTarget();
-            cdebug.log(145) << "contact: " << contact << endl;
+            cdebug_log(145,0) << "contact: " << contact << endl;
             if (contact) {
-              cdebug.log(145) << "Apply to (target): " << contact << endl;
+              cdebug_log(145,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
                                             , KbHorizontal|KbWarnOnError );
             }
             contact = ialigned->getAutoSource();
-            cdebug.log(145) << "contact: " << contact << endl;
+            cdebug_log(145,0) << "contact: " << contact << endl;
             if (contact) {
-              cdebug.log(145) << "Apply to (source): " << contact << endl;
+              cdebug_log(145,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
                                             , KbHorizontal|KbWarnOnError );
@@ -116,7 +116,7 @@ namespace {
         } 
 
         // Propagate constraint through vertically aligned segments.
-        cdebug.log(145) << "Propagate constraint on vertical segments" << endl;
+        cdebug_log(145,0) << "Propagate constraint on vertical segments" << endl;
 
         set<AutoSegment*>::iterator ivertical = verticalSegments.begin();
         for ( ; ivertical != verticalSegments.end() ; ++ivertical ) {
@@ -124,14 +124,14 @@ namespace {
           forEach ( AutoSegment*, ialigned, (*ivertical)->getAligneds() ) {
             contact = ialigned->getAutoTarget();
             if (contact) {
-              cdebug.log(145) << "Apply to (target): " << contact << endl;
+              cdebug_log(145,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , KbVertical|KbWarnOnError );
             }
             contact = ialigned->getAutoSource();
             if (contact) {
-              cdebug.log(145) << "Apply to (source): " << contact << endl;
+              cdebug_log(145,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , KbVertical|KbWarnOnError );
@@ -141,8 +141,8 @@ namespace {
       }
     }
 
-    cdebug.log(145) << "propagateConstraintFromRp() - Exit" << endl;
-    cdebug.tabw(145,-1);
+    cdebug_log(145,0) << "propagateConstraintFromRp() - Exit" << endl;
+    cdebug_tabw(145,-1);
   }
 
 
@@ -160,8 +160,8 @@ namespace Katabatic {
   {
     DebugSession::open( net, 140, 150);
 
-    cdebug.log(149) << "Katabatic::computeNetConstraints( " << net << " )" << endl;
-    cdebug.tabw(145,1);
+    cdebug_log(149,0) << "Katabatic::computeNetConstraints( " << net << " )" << endl;
+    cdebug_tabw(145,1);
 
     vector<RoutingPad*> routingPads;
     forEach ( Component*, icomponent, net->getComponents() ) {
@@ -184,7 +184,7 @@ namespace Katabatic {
     //   if (autoSegment) autoSegment->toConstraintAxis();
     // }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 

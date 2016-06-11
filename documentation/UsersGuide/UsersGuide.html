@@ -271,14 +271,7 @@ running the <span class="cb">ccb</span> installer.</p>
 </ul>
 <p>Optional libraries:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://www.si2.org/">Lemon</a> (used by the detailed placer)</li>
 <li>LEF/DEF (from <a class="reference external" href="https://www.si2.org/">SI2</a>)</li>
-</ul>
-<p>The <span class="sc">Coloquinte</span> component requires the <span class="sc">lemon</span> component from <span class="sc">coin-or</span> (<a class="reference external" href="http://www.coin-or.org/index.html">Coin Or Home</a>).
-A repository of <span class="sc">coin-or</span> packages backported from <span class="sc">Fedora</span> 21 is available here:</p>
-<ul class="simple">
-<li><span class="sc">Scientific Linux 6</span>: <a class="reference external" href="http://ftp.lip6.fr/pub/linux/distributions/slsoc/slsoc/soc/addons/i386/repoview">ftp://pub/linux/distributions/slsoc/slsoc/soc/addons/i386/RPMS</a></li>
-<li><span class="sc">Scientific Linux 7</span>: <a class="reference external" href="http://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview">ftp://pub/linux/distributions/slsoc/soc/7/addons/x86_64/RPMS</a></li>
 </ul>
 <p>For other distributions, refer to their own packaging system.</p>
 <p><span class="raw-html"><hr></span></p>
@@ -824,7 +817,8 @@ parametersTable = \
     , ('misc.logMode'             , TypeBool      , True   )
     , ('misc.verboseLevel1'       , TypeBool      , False  )
     , ('misc.verboseLevel2'       , TypeBool      , True   )
-    , ('misc.traceLevel'          , TypeInt       , 1000   )
+    , ('misc.minTraceLevel'       , TypeInt       , 0      )
+    , ('misc.maxTraceLevel'       , TypeInt       , 0      )
     )
 
 # Some ordinary Python script...
@@ -1568,12 +1562,16 @@ sequences</td>
 </tr>
 <tr><td colspan="3"><strong>Development/Debug Parameters</strong></td>
 </tr>
-<tr><td rowspan="2"><tt class="docutils literal">misc.traceLevel</tt></td>
+<tr><td><tt class="docutils literal">misc.minTraceLevel</tt></td>
 <td>TypeInt</td>
 <td><span class="cb">0</span></td>
 </tr>
-<tr><td colspan="2">Display trace information <em>below</em> that level
-(<span class="cb">ltrace</span> stream)</td>
+<tr><td rowspan="2"><tt class="docutils literal">misc.maxTraceLevel</tt></td>
+<td>TypeInt</td>
+<td><span class="cb">0</span></td>
+</tr>
+<tr><td colspan="2">Display trace information <em>between</em> those two
+levels (<span class="cb">cdebug</span> stream)</td>
 </tr>
 <tr><td rowspan="2"><tt class="docutils literal">misc.catchCore</tt></td>
 <td>TypeBool</td>

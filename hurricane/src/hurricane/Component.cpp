@@ -330,7 +330,7 @@ ComponentFilter Component::getIsUnderFilter(const Box& area)
 void Component::materialize()
 // **************************
 {
-  cdebug.log(18) << "Component::materialize() - " << this << endl;
+  cdebug_log(18,0) << "Component::materialize() - " << this << endl;
 
   if (!isMaterialized()) {
     Cell*  cell  = getCell();
@@ -350,7 +350,7 @@ void Component::materialize()
 void Component::unmaterialize()
 // ****************************
 {
-  cdebug.log(18) << "Component::unmaterialize() " << this << endl;
+  cdebug_log(18,0) << "Component::unmaterialize() " << this << endl;
 
   if (isMaterialized()) {
     Cell* cell = getCell();
@@ -408,7 +408,7 @@ void Component::_postCreate()
 void Component::_preDestroy()
 // *************************
 {
-    cdebug.log(18,1) << "entering Component::_Predestroy: " << this << endl;
+    cdebug_log(18,1) << "entering Component::_Predestroy: " << this << endl;
 
     clearProperties();
 
@@ -468,8 +468,8 @@ void Component::_preDestroy()
     if (_net) _net->_getComponentSet()._remove(this);
 
 
-    cdebug.log(18) << "exiting Component::_Predestroy:" << endl;
-    cdebug.tabw(18,-1);
+    cdebug_log(18,0) << "exiting Component::_Predestroy:" << endl;
+    cdebug_tabw(18,-1);
 }
 
 void Component::_toJson( JsonWriter* writer ) const

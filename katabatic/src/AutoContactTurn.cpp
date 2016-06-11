@@ -64,7 +64,7 @@ namespace Katabatic {
     autoContact->_postCreate();
     autoContact->unsetFlags( CntInCreationStage );
 
-    cdebug.log(145) << "create(net*) " << autoContact << endl;
+    cdebug_log(145,0) << "create(net*) " << autoContact << endl;
     return autoContact;
   }
 
@@ -151,7 +151,7 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
     Component*   anchor;
     Horizontal** horizontals = new Horizontal* [2];
@@ -175,13 +175,13 @@ namespace Katabatic {
     } else
       unsetFlags( CntInvalidatedCache );
 
-    cdebug.log(145) << "h1:" << _horizontal1 << endl;
-    cdebug.log(145) << "v1:" << _vertical1 << endl;
+    cdebug_log(145,0) << "h1:" << _horizontal1 << endl;
+    cdebug_log(145,0) << "v1:" << _vertical1 << endl;
 
     delete [] horizontals;
     delete [] verticals;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -190,13 +190,13 @@ namespace Katabatic {
   {
     DebugSession::open( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -208,7 +208,7 @@ namespace Katabatic {
       setY( getHorizontal1()->getY() );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close();
   }
 
@@ -217,13 +217,13 @@ namespace Katabatic {
   {
     DebugSession::open ( getNet(), 140, 150 );
 
-    cdebug.log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
+    cdebug_log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
     if (isInvalidatedCache()) updateCache();
     if (isInvalidatedCache()) {
       cerr << Error( "%s::updateGeometry() %s: Unable to restore cache."
                    , _getTypeName().c_str(), getString(this).c_str() ) << endl;
-      cdebug.tabw(145,-1);
+      cdebug_tabw(145,-1);
       return;
     }
 
@@ -244,12 +244,12 @@ namespace Katabatic {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
             depthH1 = rg->getLayerDepth( _horizontal1->getLayer() );
-            cdebug.log(145) << "Update h1: " << _horizontal1 << endl;
+            cdebug_log(145,0) << "Update h1: " << _horizontal1 << endl;
           } else /*if (_vertical1->isInvalidatedLayer())*/ {
           //_vertical1 = static_cast<AutoVertical*>( _vertical1->makeDogleg(this) );
             _vertical1->makeDogleg(this);
             depthV1 = rg->getLayerDepth( _vertical1->getLayer() );
-            cdebug.log(145) << "Update v1: " << _vertical1 << endl;
+            cdebug_log(145,0) << "Update v1: " << _vertical1 << endl;
           }
           delta = abssub ( depthH1, depthV1 );
         }
@@ -261,7 +261,7 @@ namespace Katabatic {
       _vertical1  ->invalidate( this );
     }
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
     DebugSession::close ();
   }
 

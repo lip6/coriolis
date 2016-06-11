@@ -27,8 +27,6 @@
 .. |FC13|                           replace:: :sc:`fc13`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
-.. |LEMON|                          replace:: :sc:`lemon`
-.. |Coin-Or|                        replace:: :sc:`coin-or`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -128,7 +126,6 @@
 .. _Box Router:   http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm
 .. _hMETIS:       http://glaros.dtc.umn.edu/gkhome/views/metis
 .. _Knik Thesis:  http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
-.. _Coin Or Home: http://www.coin-or.org/index.html
 .. _RapidJSON:    http://miloyip.github.io/rapidjson/
 
 .. _coriolis2-1.0.2049-1.slsoc6.i686.rpm:    http://asim.lip6.fr/pub/coriolis/2.0/coriolis2-1.0.2049-1.slsoc6.i686.rpm
@@ -377,14 +374,7 @@ Building documentation prerequisites:
 
 Optional libraries:
 
-* `Lemon <https://www.si2.org/>`_ (used by the detailed placer)
 * LEF/DEF (from `SI2 <https://www.si2.org/>`_)
-
-The |Coloquinte| component requires the |LEMON| component from |Coin-Or| (`Coin Or Home`_).
-A repository of |Coin-Or| packages backported from |Fedora| 21 is available here:
-
-* |SL6|: `ftp://pub/linux/distributions/slsoc/slsoc/soc/addons/i386/RPMS <http://ftp.lip6.fr/pub/linux/distributions/slsoc/slsoc/soc/addons/i386/repoview>`_
-* |SL7|: `ftp://pub/linux/distributions/slsoc/soc/7/addons/x86_64/RPMS   <http://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview>`_
 
 For other distributions, refer to their own packaging system.
 

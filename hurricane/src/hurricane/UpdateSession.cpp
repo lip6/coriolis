@@ -147,7 +147,7 @@ void UpdateSession::onNotOwned()
 void Go::invalidate(bool propagateFlag)
 // ************************************
 {
-  cdebug.log(18,1) << "Go::invalidate(" << this << ")" << endl;
+  cdebug_log(18,1) << "Go::invalidate(" << this << ")" << endl;
 
   if (not UPDATOR_STACK or UPDATOR_STACK->empty())
     throw Error( "Can't invalidate go: empty update session stack" );
@@ -184,30 +184,30 @@ void Go::invalidate(bool propagateFlag)
       }
     }
 
-  cdebug.log(18) << "Go::invalidate(" << this << ") - Completed." << endl;
-  cdebug.tabw(18,-1);
+  cdebug_log(18,0) << "Go::invalidate(" << this << ") - Completed." << endl;
+  cdebug_tabw(18,-1);
 }
 
 void UpdateSession::open()
 // ***********************
 {
-  cdebug.log(18,1) << "UpdateSession::open()" << endl;
+  cdebug_log(18,1) << "UpdateSession::open()" << endl;
   UpdateSession::_create();
 }
 
 void UpdateSession::close()
 // ************************
 {
-  cdebug.tabw(18,-1);
-  cdebug.log(18,1) << "UpdateSession::close() - Start materialization." << endl;
+  cdebug_tabw(18,-1);
+  cdebug_log(18,1) << "UpdateSession::close() - Start materialization." << endl;
 
   if (!UPDATOR_STACK || UPDATOR_STACK->empty())
     throw Error("Can't end update : empty update session stack");
 
   UPDATOR_STACK->top()->_destroy();
 
-  cdebug.tabw(18,-1);
-  cdebug.log(18) << "UpdateSession::close() - Materialization completed." << endl;
+  cdebug_tabw(18,-1);
+  cdebug_log(18,0) << "UpdateSession::close() - Materialization completed." << endl;
 }
 
 

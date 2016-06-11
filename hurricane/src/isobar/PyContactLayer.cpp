@@ -76,7 +76,7 @@ extern "C" {
 
   static PyObject* PyContactLayer_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyContactLayer_create()" << endl;
+    cdebug_log(20,0) << "PyContactLayer_create()" << endl;
 
     ContactLayer*   contactLayer     = NULL;
     

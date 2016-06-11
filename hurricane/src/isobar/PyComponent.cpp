@@ -61,7 +61,7 @@ extern "C" {
 
   static PyObject* PyComponent_getPosition ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getPosition ()" << endl;
+    cdebug_log(20,0) << "PyComponent_getPosition ()" << endl;
     METHOD_HEAD ( "Component.getPosition()" )
 
     PyPoint* pyPoint = PyObject_NEW ( PyPoint, &PyTypePoint );
@@ -77,7 +77,7 @@ extern "C" {
 
   static PyObject* PyComponent_getNet ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getNet ()" << endl;
+    cdebug_log(20,0) << "PyComponent_getNet ()" << endl;
     
     Net* net = NULL;
 
@@ -93,7 +93,7 @@ extern "C" {
 
   static PyObject* PyComponent_getLayer ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getLayer ()" << endl;
+    cdebug_log(20,0) << "PyComponent_getLayer ()" << endl;
     METHOD_HEAD ( "Component.getLayer()" )
 
     Layer* layer = NULL;
@@ -108,7 +108,7 @@ extern "C" {
 
   static PyObject* PyComponent_getCenter ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getCenter ()" << endl;
+    cdebug_log(20,0) << "PyComponent_getCenter ()" << endl;
     METHOD_HEAD( "Component.getCenter()" )
 
     PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
@@ -124,7 +124,7 @@ extern "C" {
 
   static PyObject* PyComponent_getBoundingBox ( PyComponent *self, PyObject* args )
   {
-    cdebug.log(20) << "PyComponent_getBoundingBox ()" << endl;
+    cdebug_log(20,0) << "PyComponent_getBoundingBox ()" << endl;
     METHOD_HEAD ( "Component.getBoundingBox()" )
 
     PyBox* pyBox = PyObject_NEW ( PyBox, &PyTypeBox );
@@ -154,7 +154,7 @@ extern "C" {
 
   static PyObject* PyComponent_getConnexComponents ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getConnexComponents()" << endl;
+    cdebug_log(20,0) << "PyComponent_getConnexComponents()" << endl;
     METHOD_HEAD( "PyComponent.getConnexComponents()" )
 
     PyComponentCollection* pyComponentCollection = NULL;
@@ -176,7 +176,7 @@ extern "C" {
 
   static PyObject* PyComponent_getSlaveComponents ( PyComponent *self )
   {
-    cdebug.log(20) << "PyComponent_getSlaveComponents()" << endl;
+    cdebug_log(20,0) << "PyComponent_getSlaveComponents()" << endl;
     METHOD_HEAD( "PyComponent.getSlaveComponents()" )
 
     PyComponentCollection* pyComponentCollection = NULL;

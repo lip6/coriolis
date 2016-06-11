@@ -1107,16 +1107,16 @@ template<typename Type>
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::GenericCollection<Type> collection )
 {
   if (cdebug.enabled(19))
-    cdebug.log(19) << "jsonWrite< GenericCollection<" << Hurricane::demangle(typeid(Type).name())
+    cdebug_log(19,0) << "jsonWrite< GenericCollection<" << Hurricane::demangle(typeid(Type).name())
                    << "> >(w,key,coll)" << " key:\"" << key << "\"" << std::endl;
-  cdebug.tabw(19,1);
+  cdebug_tabw(19,1);
 
   w->key( key );
   w->startArray();
   for ( Type element : collection ) jsonWrite( w, element );
   w->endArray();
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 

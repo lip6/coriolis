@@ -76,7 +76,7 @@ extern "C" {
 
   static PyObject* PyTransistorLayer_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyTransistorLayer_create()" << endl;
+    cdebug_log(20,0) << "PyTransistorLayer_create()" << endl;
 
     TransistorLayer*   transistorLayer     = NULL;
     

@@ -30,75 +30,83 @@ enum Movability{
 
 template<typename T>
 struct point{
-    T x_, y_;
+    T x, y;
     point(){}
-    point(T x, T y): x_(x), y_(y){}
+    point(T x, T y): x(x), y(y){}
 
     template<typename S>
     operator point<S>() const{
-        return point<S>(static_cast<S>(x_), static_cast<S>(y_));
+        return point<S>(static_cast<S>(x), static_cast<S>(y));
     }
 
     void operator+=(point<T> const o){
-        x_ += o.x_;
-        y_ += o.y_;
+        x += o.x;
+        y += o.y;
     }
 };
 
 template<typename T>
 point<T> operator+(point<T> const a, point<T> const b){
-    return point<T>(a.x_+b.x_, a.y_+b.y_);
+    return point<T>(a.x+b.x, a.y+b.y);
 }
 template<typename T>
 point<T> operator-(point<T> const a, point<T> const b){
-    return point<T>(a.x_-b.x_, a.y_-b.y_);
+    return point<T>(a.x-b.x, a.y-b.y);
 }
 template<typename T>
 point<T> operator*(T lambda, point<T> const p){
-    return point<T>(lambda * p.x_, lambda * p.y_);
+    return point<T>(lambda * p.x, lambda * p.y);
 }
 template<typename T>
 point<T> operator*(point<T> const a, point<T> const b){
-    return point<T>(a.x_*b.x_, a.y_*b.y_);
+    return point<T>(a.x*b.x, a.y*b.y);
 }
 
 template<typename T>
 struct box{
-    T x_min_, x_max_, y_min_, y_max_;
+    T x_min, x_max, y_min, y_max;
     box(){}
-    box(T x_mn, T x_mx, T y_mn, T y_mx) : x_min_(x_mn), x_max_(x_mx), y_min_(y_mn), y_max_(y_mx){}
-    box(point<T> mn, point<T> mx) : x_min_(mn.x_), x_max_(mx.x_), y_min_(mn.y_), y_max_(mx.y_){}
+    box(T x_mn, T x_mx, T y_mn, T y_mx) : x_min(x_mn), x_max(x_mx), y_min(y_mn), y_max(y_mx){}
+    box(point<T> mn, point<T> mx) : x_min(mn.x), x_max(mx.x), y_min(mn.y), y_max(mx.y){}
 
     bool in(box<T> const o) const{
-        return x_max_   <= o.x_max_
-            && y_max_   <= o.y_max_
-            && x_min_   >= o.x_min_
-            && y_min_   >= o.y_min_;
+        return x_max   <= o.x_max
+            && y_max   <= o.y_max
+            && x_min   >= o.x_min
+            && y_min   >= o.y_min;
     }
     bool intersects(box<T> const o) const{
-        return x_min_   < o.x_max_
-            && y_min_   < o.y_max_
-            && o.x_min_ < x_max_
-            && o.y_min_ < y_max_;
+        return x_min   < o.x_max
+            && y_min   < o.y_max
+            && o.x_min < x_max
+            && o.y_min < y_max;
     }
     box<T> intersection(box<T> const o) const{
         return box<T>(
-            std::max(x_min_, o.x_min_),
-            std::min(x_max_, o.x_max_),
-            std::max(y_min_, o.y_min_),
-            std::min(y_max_, o.y_max_)
+            std::max(x_min, o.x_min),
+            std::min(x_max, o.x_max),
+            std::max(y_min, o.y_min),
+            std::min(y_max, o.y_max)
+        );
+    }
+    box<T> bounding_box(box<T> const o) const{
+        return box<T>(
+            std::min(x_min, o.x_min),
+            std::max(x_max, o.x_max),
+            std::min(y_min, o.y_min),
+            std::max(y_max, o.y_max)
         );
     }
     point<T> dimensions() const{
-        return point<T>(x_max_-x_min_, y_max_-y_min_);
+        return point<T>(x_max-x_min, y_max-y_min);
     }
     bool empty() const{
-        return dimensions().x_ <= 0 or dimensions().y_ <= 0;
+        return dimensions().x <= 0 or dimensions().y <= 0;
     }
 
     template<typename S>
     operator box<S>() const{
-        return box<S>(static_cast<S>(x_min_), static_cast<S>(x_max_), static_cast<S>(y_min_), static_cast<S>(y_max_));
+        return box<S>(static_cast<S>(x_min), static_cast<S>(x_max), static_cast<S>(y_min), static_cast<S>(y_max));
     }
 };
 

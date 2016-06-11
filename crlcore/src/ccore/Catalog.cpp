@@ -436,7 +436,7 @@ namespace CRL {
     Catalog::State*  state    = get<Catalog::State*>( stack, "_state" );
     CatalogProperty* property = NULL;
 
-    cdebug.log(19) << "topDBo:" << dbo << endl;
+    cdebug_log(19,0) << "topDBo:" << dbo << endl;
 
     Cell* cell = dynamic_cast<Cell*>( dbo );
     if (cell) {

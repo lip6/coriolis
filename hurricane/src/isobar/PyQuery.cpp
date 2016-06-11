@@ -131,7 +131,7 @@ extern "C" {
 
 
   static PyObject* PyQuery_getMasterCell ( PyQuery *self ) {
-    cdebug.log(20) << "PyQuery.getMasterCell()" << endl;
+    cdebug_log(20,0) << "PyQuery.getMasterCell()" << endl;
 
     Cell* cell = NULL;
 
@@ -145,7 +145,7 @@ extern "C" {
 
 
   static PyObject* PyQuery_getInstance ( PyQuery *self ) {
-    cdebug.log(20) << "PyQuery.getInstance()" << endl;
+    cdebug_log(20,0) << "PyQuery.getInstance()" << endl;
 
     Instance* instance = NULL;
 
@@ -160,7 +160,7 @@ extern "C" {
 
   static PyObject* PyQuery_getPath ( PyQuery *self )
   {
-    cdebug.log(20) << "PyQuery_getPath ()" << endl;
+    cdebug_log(20,0) << "PyQuery_getPath ()" << endl;
     
     METHOD_HEAD( "PyQuery.getPath()" )
 
@@ -177,7 +177,7 @@ extern "C" {
 
   static PyObject* PyQuery_getTransformation ( PyQuery *self )
   {
-    cdebug.log(20) << "PyQuery_getTransformation ()" << endl;
+    cdebug_log(20,0) << "PyQuery_getTransformation ()" << endl;
     
     METHOD_HEAD( "PyQuery.getTransformation()" )
 
@@ -194,7 +194,7 @@ extern "C" {
 
   static PyObject* PyQuery_setCell ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setCell()" << endl;
+    cdebug_log(20,0) << "PyQuery.setCell()" << endl;
     METHOD_HEAD("PyQuery.setCell()")
 
     HTRY
@@ -217,7 +217,7 @@ extern "C" {
 
   static PyObject* PyQuery_setFilter ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setFilter()" << endl;
+    cdebug_log(20,0) << "PyQuery.setFilter()" << endl;
     METHOD_HEAD("PyQuery.setFilter()")
 
     HTRY
@@ -235,7 +235,7 @@ extern "C" {
 
   static PyObject* PyQuery_setArea ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setArea()" << endl;
+    cdebug_log(20,0) << "PyQuery.setArea()" << endl;
     METHOD_HEAD("PyQuery.setArea()")
 
     HTRY
@@ -258,7 +258,7 @@ extern "C" {
 
   static PyObject* PyQuery_setTransformation ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setTransformation()" << endl;
+    cdebug_log(20,0) << "PyQuery.setTransformation()" << endl;
     METHOD_HEAD("PyQuery.setTransformation()")
 
     HTRY
@@ -281,7 +281,7 @@ extern "C" {
 
   static PyObject* PyQuery_setBasicLayer ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setBasicLayer()" << endl;
+    cdebug_log(20,0) << "PyQuery.setBasicLayer()" << endl;
     METHOD_HEAD("PyQuery.setBasicLayer()")
 
     HTRY
@@ -304,7 +304,7 @@ extern "C" {
 
   static PyObject* PyQuery_setMasterCellCallback ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setMasterCellCallback()" << endl;
+    cdebug_log(20,0) << "PyQuery.setMasterCellCallback()" << endl;
     METHOD_HEAD("PyQuery.setMasterCellCallback()")
 
     HTRY
@@ -327,7 +327,7 @@ extern "C" {
 
   static PyObject* PyQuery_setGoCallback ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setGoCallback()" << endl;
+    cdebug_log(20,0) << "PyQuery.setGoCallback()" << endl;
     METHOD_HEAD("PyQuery.setGoCallback()")
 
     HTRY
@@ -350,7 +350,7 @@ extern "C" {
 
   static PyObject* PyQuery_setMarkerCallback ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setMarkerCallback()" << endl;
+    cdebug_log(20,0) << "PyQuery.setMarkerCallback()" << endl;
     METHOD_HEAD("PyQuery.setMarkerCallback()")
 
     HTRY
@@ -373,7 +373,7 @@ extern "C" {
 
   static PyObject* PyQuery_setRubberCallback ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setRubberCallback()" << endl;
+    cdebug_log(20,0) << "PyQuery.setRubberCallback()" << endl;
     METHOD_HEAD("PyQuery.setRubberCallback()")
 
     HTRY
@@ -396,7 +396,7 @@ extern "C" {
 
   static PyObject* PyQuery_setExtensionGoCallback ( PyQuery* self, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.setExtensionGoCallback()" << endl;
+    cdebug_log(20,0) << "PyQuery.setExtensionGoCallback()" << endl;
     METHOD_HEAD("PyQuery.setExtensionGoCallback()")
 
     HTRY
@@ -419,7 +419,7 @@ extern "C" {
 
   PyObject* PyQuery_NEW ( PyObject* module, PyObject* args )
   {
-    cdebug.log(20) << "PyQuery.new()" << endl;
+    cdebug_log(20,0) << "PyQuery.new()" << endl;
 
     BaseQuery* query   = NULL;
     PyQuery*   pyQuery = NULL;

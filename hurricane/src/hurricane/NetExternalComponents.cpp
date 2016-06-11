@@ -149,12 +149,12 @@ namespace Hurricane {
 
   void JsonNetExternalComponents::toData ( JsonStack& stack )
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check ( stack, "JsonNetExternalComponents::toData" );
     update( stack, NULL );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

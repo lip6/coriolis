@@ -20,7 +20,8 @@ detailed_placement::detailed_placement(
         plt_(pl),
         cell_rows_(placement_rows),
         min_x_(min_x), max_x_(max_x),
-        y_origin_(y_origin)
+        y_origin_(y_origin),
+        row_height_(row_height)
     {
 
     assert(row_height > 0);
@@ -77,7 +78,7 @@ void detailed_placement::selfcheck() const{
     for(index_t i=0; i<cell_cnt(); ++i){
         for(index_t l=0; l<cell_height(i); ++l){
             // not verified now since we don't modify the position for the obstacles
-            // : assert(c.position.x_ >= min_x_ and c.position.x_ + c.width <= max_x_);
+            // : assert(c.position.x >= min_x_ and c.position.x + c.width <= max_x_);
 
             index_t n_ind = l + neighbours_limits_[i];
             assert(cell_rows_[i] + cell_height(i) <= row_cnt());
@@ -142,10 +143,10 @@ std::pair<int_t, int_t> detailed_placement::get_limit_positions(netlist const & 
                 a_i = neighbours_[l].second;
 
         if(b_i != null_ind){
-            ret.first  = std::max(ret.first,  plt_.positions_[b_i].x_ + circuit.get_cell(b_i).size.x_);
+            ret.first  = std::max(ret.first,  plt_.positions_[b_i].x + circuit.get_cell(b_i).size.x);
         }
         if(a_i != null_ind){
-            ret.second = std::min(ret.second, plt_.positions_[a_i].x_);
+            ret.second = std::min(ret.second, plt_.positions_[a_i].x);
         }
     }
     return ret;
@@ -249,7 +250,7 @@ void detailed_placement::reorder_standard_cells(std::vector<index_t> const old_o
 void row_compatible_orientation(netlist const & circuit, detailed_placement & pl, bool first_row_orient){
     for(index_t c=0; c<circuit.cell_cnt(); ++c){
         if( (circuit.get_cell(c).attributes & YFlippable) != 0 and pl.cell_height(c) == 1){
-            pl.plt_.orientations_[c].y_ = (pl.cell_rows_[c] % 2 != 0) ^ first_row_orient;
+            pl.plt_.orientations_[c].y = (pl.cell_rows_[c] % 2 != 0) ^ first_row_orient;
         }
     }
 }

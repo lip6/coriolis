@@ -59,7 +59,7 @@ extern "C" {
   // Attribute Method  :  "PyEntity_getCell ()"
 
   static PyObject* PyEntity_getCell ( PyEntity *self ) {
-    cdebug.log(20) << "PyEntity_getCell ()" << endl;
+    cdebug_log(20,0) << "PyEntity_getCell ()" << endl;
 
     Cell* cell = NULL;
     

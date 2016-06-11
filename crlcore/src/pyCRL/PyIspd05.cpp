@@ -56,7 +56,7 @@ extern "C" {
 
   static PyObject* PyIspd05_load ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyIspd05_load()" << endl;
+    cdebug_log(30,0) << "PyIspd05_load()" << endl;
 
     Cell* cell = NULL;
     

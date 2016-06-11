@@ -38,7 +38,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_create ( PyObject* ) {
-    cdebug.log(20) << "PyDataBase_create()" << endl;
+    cdebug_log(20,0) << "PyDataBase_create()" << endl;
 
     DataBase* db = NULL;
     
@@ -51,7 +51,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_getDB ( PyObject* ) {
-    cdebug.log(20) << "PyDataBase_getDB()" << endl;
+    cdebug_log(20,0) << "PyDataBase_getDB()" << endl;
 
     DataBase* db = NULL;
 
@@ -66,7 +66,7 @@ extern "C" {
 
 
   PyObject* PyDataBase_getTechnology ( PyDataBase* self ) {
-    cdebug.log(20) << "PyDataBase_getTechnology()" << endl;
+    cdebug_log(20,0) << "PyDataBase_getTechnology()" << endl;
 
     Technology* techno = NULL;
 
@@ -84,7 +84,7 @@ extern "C" {
 
 
   static PyObject* PyDataBase_getRootLibrary ( PyDataBase *self ) {
-    cdebug.log(20) << "PyDataBase_getRootLibrary ()" << endl;
+    cdebug_log(20,0) << "PyDataBase_getRootLibrary ()" << endl;
 
     Library* library = NULL;
 

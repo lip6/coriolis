@@ -73,7 +73,7 @@ extern "C" {
 
   static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
   {
-    cdebug.log(30) << "PyVhdl_destroyAllVHDL()" << endl;
+    cdebug_log(30,0) << "PyVhdl_destroyAllVHDL()" << endl;
 
     HTRY
       EntityExtension::destroyAll();
@@ -103,7 +103,7 @@ extern "C" {
   // Module Initialization  :  "initCRL ()"
 
   DL_EXPORT(void) initCRL () {
-    cdebug.log(30) << "initCRL()" << endl;
+    cdebug_log(30,0) << "initCRL()" << endl;
 
     PyBanner_LinkPyType ();
     PyCatalogState_LinkPyType ();
@@ -197,7 +197,7 @@ extern "C" {
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
 
-    cdebug.log(30) << "CRL.so loaded " << (void*)&typeid(string) << endl;
+    cdebug_log(30,0) << "CRL.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

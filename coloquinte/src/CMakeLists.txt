@@ -24,7 +24,7 @@ set ( cpps           circuit.cxx
                      orientation.cxx
                      detailed.cxx
                      cell_swapping.cxx
-                     MCF_opt.cxx
+                    #MCF_opt.cxx
                      row_opt.cxx
                      topologies.cxx
                      lookup_table.cxx

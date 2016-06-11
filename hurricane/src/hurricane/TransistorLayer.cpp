@@ -258,7 +258,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    cdebug.log(19) << "JsonTransistorLayer::JsonTransistorLayer()" << endl;
+    cdebug_log(19,0) << "JsonTransistorLayer::JsonTransistorLayer()" << endl;
 
     add( "_gate"                    , typeid(string)  );
     add( "_active"                  , typeid(string)  );
@@ -289,7 +289,7 @@ namespace Hurricane {
 
   void JsonTransistorLayer::toData ( JsonStack& stack )
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonTransistorLayer::toData" );
 
@@ -374,7 +374,7 @@ namespace Hurricane {
     
     update( stack, layer );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

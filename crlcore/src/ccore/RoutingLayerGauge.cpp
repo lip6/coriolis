@@ -207,17 +207,17 @@ namespace CRL {
 
   unsigned  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
   {
-    cdebug.log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
+    cdebug_log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
 
     long  modulo;
     long  depth;
 
     divide ( position-start, depth, modulo );
 
-    cdebug.log(100) << "depth := " << depth << endl;
+    cdebug_log(100,0) << "depth := " << depth << endl;
 
     if ( depth < 0 ) {
-      cdebug.tabw(100,-1);
+      cdebug_tabw(100,-1);
       return 0;
 
       // throw Error ( negativeIndex
@@ -239,7 +239,7 @@ namespace CRL {
 
     unsigned int tracksNumber = getTrackNumber(start,stop);
     if ( (unsigned)depth >= tracksNumber ) {
-      cdebug.tabw(100,-1);
+      cdebug_tabw(100,-1);
       return (tracksNumber > 0) ? tracksNumber-1 : 0;
       // throw Error ( overflowIndex
       //             , getString(this).c_str()
@@ -249,7 +249,7 @@ namespace CRL {
       //             );
     }
 
-    cdebug.tabw(100,-1);
+    cdebug_tabw(100,-1);
 
     return depth;
   }

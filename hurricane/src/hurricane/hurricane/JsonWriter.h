@@ -221,12 +221,12 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C& )
 template<typename C>
 inline void  jsonWrite ( JsonWriter* w, const C* object )
 {
-  cdebug.log(19,1) << "jsonWrite<" << Hurricane::demangle(typeid(C).name()) << "*>(w,object)" << std::endl;
+  cdebug_log(19,1) << "jsonWrite<" << Hurricane::demangle(typeid(C).name()) << "*>(w,object)" << std::endl;
 
   if (object) object->toJson( w );
   else        jsonWrite(w);
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 
@@ -240,21 +240,21 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, C* object )
 template<typename C>
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C* object )
 {
-  cdebug.log(19,1) << "jsonWrite<" << Hurricane::demangle(typeid(C).name()) << "*>(w,key,object)"
+  cdebug_log(19,1) << "jsonWrite<" << Hurricane::demangle(typeid(C).name()) << "*>(w,key,object)"
                    << " key:\"" << key << "\"" << std::endl;
 
   w->key( key );
   if (object) jsonWrite( w, object );
   else        jsonWrite(w);
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 
 template<typename Element>
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, const std::vector<Element>& v )
 {
-  cdebug.log(19,1) << "jsonWrite< vector<" << Hurricane::demangle(typeid(Element).name())
+  cdebug_log(19,1) << "jsonWrite< vector<" << Hurricane::demangle(typeid(Element).name())
                    << "> >(w,key,v)" << " key:\"" << key << "\"" << std::endl;
 
   w->key( key );
@@ -262,7 +262,7 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const std::vecto
   for ( Element element : v ) jsonWrite( w, element );
   w->endArray();
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 
@@ -271,7 +271,7 @@ inline void  jsonWrite ( JsonWriter* w
                        , const std::string& key
                        , const std::map<Key,Element,Compare,Allocator>& m )
 {
-  cdebug.log(19,1) << "jsonWrite< map<"
+  cdebug_log(19,1) << "jsonWrite< map<"
                    << Hurricane::demangle(typeid(Key    ).name()) << ","
                    << Hurricane::demangle(typeid(Element).name()) << ","
                    << Hurricane::demangle(typeid(Compare).name())
@@ -282,7 +282,7 @@ inline void  jsonWrite ( JsonWriter* w
   for ( auto mapElement : m ) jsonWrite( w, mapElement.second );
   w->endArray();
 
-  cdebug.tabw(19,-1);
+  cdebug_tabw(19,-1);
 }
 
 

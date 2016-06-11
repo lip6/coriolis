@@ -51,7 +51,7 @@ extern "C" {
 # define  accessorDbuFromOptBasicLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
                                                                                         \
     DbU::Unit  rvalue = 0;                                                              \
                                                                                         \
@@ -85,7 +85,7 @@ extern "C" {
 # define  accessorLayerFromLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                  \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
   {                                                                                      \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
                                                                                          \
     Layer* rlayer = 0;                                                                   \
                                                                                          \
@@ -116,7 +116,7 @@ extern "C" {
 # define  accessorMaskFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)  \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )     \
   {                                                                      \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;         \
                                                                          \
     Layer::Mask  mask = 0;                                               \
                                                                          \
@@ -132,7 +132,7 @@ extern "C" {
 # define  accessorLayerFromOptBool(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)              \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
                                                                                         \
     Layer* rlayer = NULL;                                                               \
                                                                                         \
@@ -162,7 +162,7 @@ extern "C" {
 # define  predicateFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)     \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )   \
   {                                                                    \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;       \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;       \
                                                                        \
     HTRY                                                               \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()") \
@@ -176,7 +176,7 @@ extern "C" {
 # define  updatorFromDbu(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                               \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
   {                                                                                      \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
                                                                                          \
     HTRY                                                                                 \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
@@ -199,7 +199,7 @@ extern "C" {
 # define  updatorFromBasicLayerDbu(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                     \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
   {                                                                                      \
-    cdebug.log(20) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
                                                                                          \
     HTRY                                                                                 \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
@@ -227,7 +227,7 @@ extern "C" {
 
 
   static PyObject* PyLayer_getTechnology ( PyLayer *self ) {
-    cdebug.log(20) << "PyLayer_getTechnology ()" << endl;
+    cdebug_log(20,0) << "PyLayer_getTechnology ()" << endl;
 
     Technology* techno = NULL;
 
