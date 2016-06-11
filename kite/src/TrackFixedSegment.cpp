@@ -159,7 +159,7 @@ namespace Kite {
 
   void  TrackFixedSegment::_preDestroy ()
   {
-    cdebug.log(155) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
+    cdebug_log(155,0) << "TrackFixedSegment::_preDestroy() - " << (void*)this << endl;
     TrackElement::_preDestroy();
   }
 
@@ -173,8 +173,8 @@ namespace Kite {
       trackFixedSegment = new TrackFixedSegment ( track, segment );
       trackFixedSegment->_postCreate();
 
-      cdebug.log(159) << "Adding: " << segment << " on " << track << endl;
-      cdebug.log(159) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
+      cdebug_log(159,0) << "Adding: " << segment << " on " << track << endl;
+      cdebug_log(159,0) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
 
       Session::addInsertEvent( trackFixedSegment, track );
     }

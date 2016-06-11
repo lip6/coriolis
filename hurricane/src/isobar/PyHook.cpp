@@ -48,7 +48,7 @@ extern "C" {
 
   static PyObject* PyHook_getComponent ( PyHook *self )
   {
-    cdebug.log(20) << "PyHook_getComponent()" << endl;
+    cdebug_log(20,0) << "PyHook_getComponent()" << endl;
     METHOD_HEAD ( "Hook.getComponent()" )
 
     Component* component = NULL;
@@ -62,7 +62,7 @@ extern "C" {
 
   static PyObject* PyHook_getHooks ( PyHook *self )
   {
-    cdebug.log(20) << "PyHook_getHooks()" << endl;
+    cdebug_log(20,0) << "PyHook_getHooks()" << endl;
 
     METHOD_HEAD( "Hook.getHooks()" )
 
@@ -83,7 +83,7 @@ extern "C" {
 
   static PyObject* PyHook_getSlaveHooks ( PyHook *self )
   {
-    cdebug.log(20) << "PyHook_getSlaveHooks()" << endl;
+    cdebug_log(20,0) << "PyHook_getSlaveHooks()" << endl;
 
     METHOD_HEAD( "Hook.getSlaveHooks()" )
 
@@ -104,7 +104,7 @@ extern "C" {
 
   static PyObject* PyHook_detach ( PyHook *self )
   {
-    cdebug.log(20) << "PyHook_detach()" << endl;
+    cdebug_log(20,0) << "PyHook_detach()" << endl;
     METHOD_HEAD ( "Hook.detach()" )
 
     PyHook* pyReturnHook = PyObject_NEW ( PyHook, &PyTypeHook );
@@ -120,7 +120,7 @@ extern "C" {
 
   static PyObject* PyHook_attach ( PyHook *self, PyObject* args )
   {
-    cdebug.log(20) << "PyHook_attach()" << endl;
+    cdebug_log(20,0) << "PyHook_attach()" << endl;
     METHOD_HEAD ( "Hook.attach()" )
 
     PyHook* pyReturnHook = PyObject_NEW ( PyHook, &PyTypeHook );
@@ -147,7 +147,7 @@ extern "C" {
 
   static PyObject* PyHook_merge ( PyHook *self, PyObject* args )
   {
-    cdebug.log(20) << "PyHook_merge()" << endl;
+    cdebug_log(20,0) << "PyHook_merge()" << endl;
     METHOD_HEAD ( "Hook.merge()" )
 
     PyHook* pyReturnHook = PyObject_NEW ( PyHook, &PyTypeHook );

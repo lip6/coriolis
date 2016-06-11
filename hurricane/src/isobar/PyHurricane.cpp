@@ -209,7 +209,7 @@ using namespace Hurricane;
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) ) {
         //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification so Pharos can run several scripts during one execution
-        cdebug.log(20) << objectTypeRedefinition << endl; 
+        cdebug_log(20,0) << objectTypeRedefinition << endl; 
         return;
       }
     }
@@ -526,7 +526,7 @@ extern "C" {
 
   DL_EXPORT(void) initHurricane () {
   //trace_on();
-    cdebug.log(20) << "initHurricane()" << endl;
+    cdebug_log(20,0) << "initHurricane()" << endl;
 
     PyDebugSession_LinkPyType ();
     PyUpdateSession_LinkPyType ();
@@ -836,7 +836,7 @@ extern "C" {
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 
-    cdebug.log(20) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
+    cdebug_log(20,0) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
   }
 
   

@@ -81,7 +81,7 @@ void Quark::_postCreate()
 void Quark::_preDestroy()
 // *********************
 {
-  cdebug.log(18,1) << "entering Quark::_preDestroy: " << this << endl;
+  cdebug_log(18,1) << "entering Quark::_preDestroy: " << this << endl;
 
   Inherit::_preDestroy();
 
@@ -92,8 +92,8 @@ void Quark::_preDestroy()
   else
     if (NULL_SHARED_PATH_QUARK_MAP) NULL_SHARED_PATH_QUARK_MAP->_remove(this);
 
-  cdebug.log(18) << "exiting Quark::_preDestroy:" << endl;
-  cdebug.tabw(18,-1);
+  cdebug_log(18,0) << "exiting Quark::_preDestroy:" << endl;
+  cdebug_tabw(18,-1);
 }
 
 string Quark::_getString() const

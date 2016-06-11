@@ -67,7 +67,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_create()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_create()" << endl;
 
     RoutingGauge*   rg   = NULL;
     PyRoutingGauge* pyRg = NULL;
@@ -96,7 +96,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getTechnology ( PyRoutingGauge* self )
   {
-    cdebug.log(30) << "PyRoutingGauge_getTechnology()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getTechnology()" << endl;
 
     Technology* technology = NULL;
 
@@ -111,7 +111,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getDepth ( PyRoutingGauge* self )
   {
-    cdebug.log(30) << "PyRoutingGauge_getDepth()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getDepth()" << endl;
 
     size_t depth = 0;
 
@@ -126,7 +126,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerDepth ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getLayerDepth()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerDepth()" << endl;
 
     size_t depth = 0;
 
@@ -153,7 +153,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getLayerGauge()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerGauge()" << endl;
 
     RoutingLayerGauge* rlg = NULL;
 
@@ -188,7 +188,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerDirection ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getLayerDirection()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerDirection()" << endl;
 
     unsigned int direction = 0;
 
@@ -219,7 +219,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getLayerPitch ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getLayerPitch()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerPitch()" << endl;
 
     DbU::Unit pitch = 0;
 
@@ -250,7 +250,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getRoutingLayer ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getRoutingLayer()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getRoutingLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -277,7 +277,7 @@ extern "C" {
 
   static PyObject* PyRoutingGauge_getContactLayer ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_getContactLayer()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_getContactLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -304,7 +304,7 @@ extern "C" {
 
   PyObject* PyRoutingGauge_addLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingGauge_addLayerGauge()" << endl;
+    cdebug_log(30,0) << "PyRoutingGauge_addLayerGauge()" << endl;
 
     HTRY
     METHOD_HEAD("RoutingGauge.addLayerGauge()")

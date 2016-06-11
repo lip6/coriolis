@@ -57,7 +57,7 @@ extern "C" {
     static char**         argv = NULL;
            vector<char*>  vargv;
 
-    cdebug.log(20) << "PyHApplication_create()" << endl;
+    cdebug_log(20,0) << "PyHApplication_create()" << endl;
 
     HApplication*   ha             = NULL;
     PyHApplication* pyHApplication = NULL;
@@ -116,7 +116,7 @@ extern "C" {
 
   static PyObject* PyHApplication_qtExec ( PyHApplication* self, PyObject* args )
   {
-    cdebug.log(20) << "PyHApplication_qtExec()" << endl;
+    cdebug_log(20,0) << "PyHApplication_qtExec()" << endl;
 
     int returnCode = 0;
 

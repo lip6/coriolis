@@ -106,7 +106,7 @@ extern "C" {
 
   static PyObject* PyLayerMask_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    cdebug.log(20) << "PyLayerMask_new()" << endl;
+    cdebug_log(20,0) << "PyLayerMask_new()" << endl;
 
     PyLayerMask* pyMask = (PyLayerMask*)type->tp_alloc(type,0);
 
@@ -287,7 +287,7 @@ extern "C" {
 
   static void PyLayerMask_DeAlloc ( PyLayerMask *self )
   {
-    cdebug.log(20) << "PyLayerMask_DeAlloc(" << hex << self << ") " << self->_object << endl;
+    cdebug_log(20,0) << "PyLayerMask_DeAlloc(" << hex << self << ") " << self->_object << endl;
     PyObject_DEL ( self );
   }
 
@@ -312,7 +312,7 @@ extern "C" {
 
   extern void  PyLayerMask_LinkPyType()
   {
-    cdebug.log(20) << "PyLayerMask_LinkType()" << endl;
+    cdebug_log(20,0) << "PyLayerMask_LinkType()" << endl;
 
     PyTypeLayerMask.tp_new       =              PyLayerMask_new;
     PyTypeLayerMask.tp_dealloc   = (destructor) PyLayerMask_DeAlloc;

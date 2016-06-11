@@ -260,7 +260,7 @@ namespace Kite {
                   << Session::getSegmentStackSize() << ")." << endl;
 
 #   define _postCheck(segment)                                                              \
-           cdebug.log(159) << "Bounds := ["                                                     \
+           cdebug_log(159,0) << "Bounds := ["                                                     \
                        << DbU::getValueString(segment->base()->getSourcePosition()) << ":"  \
                        << DbU::getValueString(segment->base()->getTargetPosition()) << "] " \
                        << DbU::getValueString(segment->getAxis()) << " "                    \

@@ -350,7 +350,7 @@ namespace Hurricane {
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    cdebug.log(19) << "JsonRegularLayer::JsonRegularLayer()" << endl;
+    cdebug_log(19,0) << "JsonRegularLayer::JsonRegularLayer()" << endl;
 
     add( "_basicLayer"    , typeid(string)  );
     add( "_enclosure"     , typeid(int64_t) );
@@ -373,7 +373,7 @@ namespace Hurricane {
 
   void JsonRegularLayer::toData( JsonStack& stack )
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonRegularLayer::toData" );
 
@@ -440,7 +440,7 @@ namespace Hurricane {
     
     update( stack, layer );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 } // Hurricane namespace.

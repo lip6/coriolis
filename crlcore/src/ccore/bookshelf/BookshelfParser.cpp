@@ -318,7 +318,7 @@ Name BKParser::getNewNetName()
 
 
 bool BKParser::isNumber ( char* token ) {
-    cdebug.log(100) << "isNumber = " << token;
+    cdebug_log(100,0) << "isNumber = " << token;
 
     unsigned i = 0;
     char tok;
@@ -330,7 +330,7 @@ bool BKParser::isNumber ( char* token ) {
 }
 
 bool BKParser::isFloat ( char* token ) {
-  cdebug.log(100) << "isFloat = " << token;
+  cdebug_log(100,0) << "isFloat = " << token;
 
     unsigned i = 0;
     char tok;
@@ -343,7 +343,7 @@ bool BKParser::isFloat ( char* token ) {
 }
 
 bool BKParser::isName ( char* token ) {
-    cdebug.log(100) << "isName = " << token;
+    cdebug_log(100,0) << "isName = " << token;
 
     unsigned i = 0;
     char tok;
@@ -358,7 +358,7 @@ bool BKParser::isName ( char* token ) {
 }
 
 bool BKParser::isSymetry ( char* token ) {
-    cdebug.log(100) << "isSymetry = " << token;
+    cdebug_log(100,0) << "isSymetry = " << token;
     if ( ( ( token[0] == 'X' ) && ( token[1] == char(0) ) )
       || ( ( token[0] == 'Y' ) && ( token[1] == char(0) ) )
       || ( ( token[0] == 'R' ) && ( token[1] == '9' ) && ( token[2] == '0' ) && ( token[3] == char(0) ) ) )
@@ -366,7 +366,7 @@ bool BKParser::isSymetry ( char* token ) {
     return false;
 }
 bool BKParser::isDirection ( char* token ) {
-    cdebug.log(100) << "isDirection = " << token;
+    cdebug_log(100,0) << "isDirection = " << token;
 
     if ( ( ( token[0] == 'I' ) || ( token[0] == 'O' ) || ( token[0] == 'B' ) ) && ( token[1] == char(0) ) )
         return true;
@@ -381,7 +381,7 @@ bool BKParser::ScanAux ()
     // The Aux record looks like :
     // RowBasedPlacement :  <cell_name>.nodes  <cell_name>.nets  <cell_name>.wts  <cell_name>.pl  <cell_name>.scl
     // **********************************************************************************************************
-    cdebug.log(100) << "ScanAux = " << _buffer;
+    cdebug_log(100,0) << "ScanAux = " << _buffer;
 
     // ***********************
     // Patterns initialization
@@ -441,7 +441,7 @@ bool BKParser::ScanNum ( unsigned& num )
     // The NodeNum record looks like :
     // NumNodes : <num>
     // *******************************
-    cdebug.log(100) << "ScanNum = " << _buffer;
+    cdebug_log(100,0) << "ScanNum = " << _buffer;
 
     char *p_type, *p_num;
     if ( ( ( p_type = strtok ( _buffer, "\t \n:" ) ) != NULL ) &&
@@ -460,7 +460,7 @@ bool BKParser::ScanDegree ( unsigned& degree, Name& netName )
     // The NetDregree record looks like :
     // NetDegree : <degree> [netName]
     // **********************************
-    cdebug.log(100) << "ScanDegree = " << _buffer;
+    cdebug_log(100,0) << "ScanDegree = " << _buffer;
 
     bool mDegree = false;
     bool mName   = false;
@@ -502,7 +502,7 @@ bool BKParser::ScanNodes ( Name& name, DbU::Unit& width, DbU::Unit& height, bool
     // The Node record looks like :
     // <ins_name> <width> <height> [terminal]
     // **************************************
-    cdebug.log(100) << "ScanNodes = " << _buffer;
+    cdebug_log(100,0) << "ScanNodes = " << _buffer;
 
     char *p_name, *p_width, *p_height, *p_term;
     if ( ( ( p_name   = strtok ( _buffer, "\t \n" ) ) != NULL ) &&
@@ -528,7 +528,7 @@ bool BKParser::ScanNets ( Name& insName, Net::Direction& dir, DbU::Unit& dx, DbU
     // The Net record looks like :
     // NetDegree : <degree> <net_name>
     // *********************************
-    cdebug.log(100) << "ScanNets = " << _buffer;
+    cdebug_log(100,0) << "ScanNets = " << _buffer;
     
     bool mName      = false;
     bool mDirection = false;
@@ -580,7 +580,7 @@ bool BKParser::ScanWts ( Name& name, unsigned& weight )
     // The Weight record looks like :
     // <ins_name> <weight>
     // ******************************
-    cdebug.log(100) << "ScanWts = " << _buffer;
+    cdebug_log(100,0) << "ScanWts = " << _buffer;
 
     //char *p_x, *p_y, *p_model, *p_name, *p_transf;
 
@@ -622,7 +622,7 @@ bool BKParser::ScanPl ( Name& name, DbU::Unit& x, DbU::Unit& y, Transformation::
     // The Placement record looks like :
     // <ins_name> <x> <y> : <orient> [FIXED]
     // *************************************
-    cdebug.log(100) << "ScanPl = " << _buffer;
+    cdebug_log(100,0) << "ScanPl = " << _buffer;
 
     char *p_name, *p_x, *p_y, *p_orient, *p_fixed;
     if ( ( ( p_name   = strtok ( _buffer, "\t \n"  ) ) != NULL ) &&

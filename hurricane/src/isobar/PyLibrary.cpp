@@ -40,7 +40,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_create ( PyObject *, PyObject *args ) {
-      cdebug.log(20) << "PyLibrary_create()" << endl;
+      cdebug_log(20,0) << "PyLibrary_create()" << endl;
 
       PyObject* arg0;
       PyObject* arg1;
@@ -69,7 +69,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getSubLibrary ( PyLibrary *self, PyObject* args ) {
-    cdebug.log(20) << "PyLibrary_getLibrary ()" << endl;
+    cdebug_log(20,0) << "PyLibrary_getLibrary ()" << endl;
 
     Library* subLibrary = NULL;
 
@@ -89,7 +89,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getCell ( PyLibrary* self, PyObject* args ) {
-      cdebug.log(20) << "PyLibrary_getCell ()" << endl;
+      cdebug_log(20,0) << "PyLibrary_getCell ()" << endl;
       
       Cell* cell = NULL;
 
@@ -109,7 +109,7 @@ extern "C" {
 
 
   static PyObject* PyLibrary_getCells(PyLibrary *self) {
-    cdebug.log(20) << "PyLibrary_getCells()" << endl;
+    cdebug_log(20,0) << "PyLibrary_getCells()" << endl;
 
     METHOD_HEAD ( "Library.getCells()" )
 

@@ -68,7 +68,7 @@ extern "C" {
   DirectHashMethod(PyPinPlacementStatus_Hash, PyPinPlacementStatus)
 
   extern void  PyPinPlacementStatus_LinkPyType() {
-    cdebug.log(20) << "PyPinPlacementStatus_LinkType()" << endl;
+    cdebug_log(20,0) << "PyPinPlacementStatus_LinkType()" << endl;
     PyTypePinPlacementStatus.tp_dealloc = (destructor) PyPinPlacementStatus_DeAlloc;
     PyTypePinPlacementStatus.tp_compare = (cmpfunc)    PyPinPlacementStatus_Cmp;
     PyTypePinPlacementStatus.tp_repr    = (reprfunc)   PyPinPlacementStatus_Repr;

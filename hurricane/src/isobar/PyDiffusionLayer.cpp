@@ -76,7 +76,7 @@ extern "C" {
 
   static PyObject* PyDiffusionLayer_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyDiffusionLayer_create()" << endl;
+    cdebug_log(20,0) << "PyDiffusionLayer_create()" << endl;
 
     DiffusionLayer*   diffusionLayer     = NULL;
     

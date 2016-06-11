@@ -521,7 +521,7 @@ namespace Katabatic {
 
   inline int  AutoSegment::getTerminalCount ( AutoSegment* seed )
   {
-    cdebug.log(145) << "getTerminalCount() - " << seed << endl;
+    cdebug_log(145,0) << "getTerminalCount() - " << seed << endl;
 
     vector<AutoSegment*>  collapseds;
     vector<AutoSegment*>  perpandiculars;

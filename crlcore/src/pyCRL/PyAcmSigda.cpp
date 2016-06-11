@@ -55,7 +55,7 @@ extern "C" {
 
   static PyObject* PyAcmSigda_load ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyAcmSigda_load()" << endl;
+    cdebug_log(30,0) << "PyAcmSigda_load()" << endl;
 
     Cell* cell = NULL;
     

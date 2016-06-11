@@ -45,7 +45,7 @@ extern "C" {
 
   static PyObject* PyUnicornGui_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(46) << "PyUnicornGui_create()" << endl;
+    cdebug_log(46,0) << "PyUnicornGui_create()" << endl;
 
     UnicornGui*   gui   = NULL;
     PyUnicornGui* pyGui = NULL;
@@ -68,7 +68,7 @@ extern "C" {
 
   static PyObject* PyUnicornGui_registerTool ( PyUnicornGui* self, PyObject* args )
   {
-    cdebug.log(46) << "PyUnicornGui_registerTool()" << endl;
+    cdebug_log(46,0) << "PyUnicornGui_registerTool()" << endl;
     
     HTRY
     METHOD_HEAD("UnicornGui.registerTool()")
@@ -92,7 +92,7 @@ extern "C" {
 
   static PyObject* PyUnicornGui_show ( PyUnicornGui* self )
   {
-    cdebug.log(46) << "PyUnicornGui_show()" << endl;
+    cdebug_log(46,0) << "PyUnicornGui_show()" << endl;
     
     HTRY
     METHOD_HEAD("UnicornGui.show()")
@@ -105,7 +105,7 @@ extern "C" {
 
   static PyObject* PyUnicornGui_getBanner ( PyUnicornGui* self )
   {
-    cdebug.log(46) << "PyUnicornGui_getBanner()" << endl;
+    cdebug_log(46,0) << "PyUnicornGui_getBanner()" << endl;
 
     Banner* banner = NULL;
     

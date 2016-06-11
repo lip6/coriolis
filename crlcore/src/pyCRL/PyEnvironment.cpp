@@ -67,7 +67,7 @@ extern "C" {
 
   PyObject* PyEnvironment_addSYSTEM_LIBRARY ( PyEnvironment* self, PyObject* args, PyObject* kwArgs )
   {
-    cdebug.log(30) << "PyEnvironment_addSYSTEM_LIBRARY()" << endl;
+    cdebug_log(30,0) << "PyEnvironment_addSYSTEM_LIBRARY()" << endl;
 
     HTRY
     METHOD_HEAD("Environment.addSYSTEM_LIBRARY()")
@@ -113,7 +113,7 @@ extern "C" {
 
   PyObject* PyEnvironment_getLIBRARYPath ( PyEnvironment* self, PyObject* args )
   {
-    cdebug.log(30) << "PyEnvironment_getLIBRARYPath()" << endl;
+    cdebug_log(30,0) << "PyEnvironment_getLIBRARYPath()" << endl;
 
     HTRY
     METHOD_HEAD("Environment.getLIBRARYPath()")
@@ -265,7 +265,7 @@ extern "C" {
   DirectHashMethod(PyEnvironment_Hash, PyEnvironment)
 
   extern void  PyEnvironment_LinkPyType() {
-    cdebug.log(30) << "PyEnvironment_LinkType()" << endl;
+    cdebug_log(30,0) << "PyEnvironment_LinkType()" << endl;
 
     PyTypeEnvironment.tp_dealloc = (destructor) PyEnvironment_DeAlloc;
     PyTypeEnvironment.tp_repr    = (reprfunc)   PyEnvironment_Repr;

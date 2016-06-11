@@ -55,7 +55,7 @@ extern "C" {
 
   static PyObject* PyBlif_load ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyBlif_load()" << endl;
+    cdebug_log(30,0) << "PyBlif_load()" << endl;
 
     Cell* cell = NULL;
     

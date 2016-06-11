@@ -68,7 +68,7 @@ extern "C" {
   DirectHashMethod(PyPinDirection_Hash, PyPinDirection)
 
   extern void  PyPinDirection_LinkPyType() {
-    cdebug.log(20) << "PyPinDirection_LinkType()" << endl;
+    cdebug_log(20,0) << "PyPinDirection_LinkType()" << endl;
     PyTypePinDirection.tp_dealloc = (destructor) PyPinDirection_DeAlloc;
     PyTypePinDirection.tp_compare = (cmpfunc)    PyPinDirection_Cmp;
     PyTypePinDirection.tp_repr    = (reprfunc)   PyPinDirection_Repr;

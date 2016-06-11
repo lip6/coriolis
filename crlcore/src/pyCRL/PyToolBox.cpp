@@ -70,7 +70,7 @@ extern "C" {
 
   extern PyObject* PyToolBox_createPartRing ( PyObject* module, PyObject* args )
   { 
-    cdebug.log(30) << "PyToolBox_createPartRing ()" << endl;
+    cdebug_log(30,0) << "PyToolBox_createPartRing ()" << endl;
 
     HTRY
     PyObject* arg0;

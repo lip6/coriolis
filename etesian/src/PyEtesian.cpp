@@ -65,7 +65,7 @@ extern "C" {
   // Module Initialization  :  "initEtesian ()"
 
   DL_EXPORT(void) initEtesian () {
-    cdebug.log(34) << "initEtesian()" << endl;
+    cdebug_log(34,0) << "initEtesian()" << endl;
 
     PyEtesianEngine_LinkPyType();
     PyGraphicEtesianEngine_LinkPyType();

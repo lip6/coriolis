@@ -77,7 +77,7 @@ extern "C" {
 
   PyObject* PyDrawingGroup_find ( PyDrawingGroup* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDrawingGroup_find()" << endl;
+    cdebug_log(20,0) << "PyDrawingGroup_find()" << endl;
 
     DrawingStyle drawingStyle;
 
@@ -98,7 +98,7 @@ extern "C" {
 
   PyObject* PyDrawingGroup_addDrawingStyle ( PyDrawingGroup* self, PyObject* args, PyObject* kwArgs )
   {
-    cdebug.log(20) << "PyDrawingGroup_addDrawingStyle()" << endl;
+    cdebug_log(20,0) << "PyDrawingGroup_addDrawingStyle()" << endl;
 
     HTRY
     METHOD_HEAD("DrawingGroup.addDrawingStyle()")
@@ -192,7 +192,7 @@ extern "C" {
   DirectHashMethod(PyDrawingGroup_Hash, PyDrawingGroup)
 
   extern void  PyDrawingGroup_LinkPyType() {
-    cdebug.log(20) << "PyDrawingGroup_LinkType()" << endl;
+    cdebug_log(20,0) << "PyDrawingGroup_LinkType()" << endl;
 
     PyTypeDrawingGroup.tp_dealloc = (destructor) PyDrawingGroup_DeAlloc;
     PyTypeDrawingGroup.tp_repr    = (reprfunc)   PyDrawingGroup_Repr;

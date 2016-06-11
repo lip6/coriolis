@@ -57,7 +57,7 @@ extern "C" {
 
   PyObject* PyRawDrawingStyle_getPattern ( PyRawDrawingStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDrawingStyle_getPattern()" << endl;
+    cdebug_log(20,0) << "PyDrawingStyle_getPattern()" << endl;
 
     const char* pattern = NULL;
 
@@ -72,7 +72,7 @@ extern "C" {
 
   PyObject* PyRawDrawingStyle_getThreshold ( PyRawDrawingStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyRawDrawingStyle_getThreshold()" << endl;
+    cdebug_log(20,0) << "PyRawDrawingStyle_getThreshold()" << endl;
 
     float threshold = 0.0;
 

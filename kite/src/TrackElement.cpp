@@ -101,7 +101,7 @@ namespace Kite {
     TrackElement* segment = getOwner();
     if (flags & AutoSegment::Invalidate) {
       if (not segment->isInvalidated()) {
-        cdebug.log(159) << "::notify() <Invalidate> on " << segment << endl;
+        cdebug_log(159,0) << "::notify() <Invalidate> on " << segment << endl;
         segment->invalidate();
       }
     }
@@ -109,7 +109,7 @@ namespace Kite {
     if (flags & AutoSegment::Revalidate) {
     // Revalidation must be delayed until *all* the AutoSegments have been revalidated.
     // if (segment->isInvalidated()) {
-    //   cdebug.log(159) << "::notify() <Revalidate> on " << segment << endl;
+    //   cdebug_log(159,0) << "::notify() <Revalidate> on " << segment << endl;
     //   segment->revalidate( true );
     // }
     }

@@ -216,7 +216,7 @@ namespace Hurricane {
 
   void JsonDrawingStyle::toData(JsonStack& stack)
   {
-    cdebug.log(19,1);
+    cdebug_log(19,1);
 
     check( stack, "JsonDrawingStyle::toData" );
 
@@ -260,7 +260,7 @@ namespace Hurricane {
     
     update( stack, NULL );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 
@@ -399,7 +399,7 @@ namespace Hurricane {
 
   void JsonDrawingGroup::toData(JsonStack& stack)
   {
-    cdebug.log(19,1);
+    cdebug_log(19,1);
 
     check( stack, "JsonDrawingGroup::toData" );
 
@@ -427,7 +427,7 @@ namespace Hurricane {
     
     update( stack, dg );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 
@@ -695,7 +695,7 @@ namespace Hurricane {
 
   void JsonDisplayStyle::toData(JsonStack& stack)
   {
-    cdebug.log(19,1);
+    cdebug_log(19,1);
 
     check( stack, "JsonDisplayStyle::toData" );
 
@@ -726,7 +726,7 @@ namespace Hurricane {
     
     update( stack, ds );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 
@@ -765,7 +765,7 @@ namespace Hurricane {
 
   void JsonHSVr::toData(JsonStack& stack)
   {
-    cdebug.log(19,1);
+    cdebug_log(19,1);
 
     check( stack, "JsonHSVr::toData" );
 
@@ -777,7 +777,7 @@ namespace Hurricane {
     
     update( stack, hsvr );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

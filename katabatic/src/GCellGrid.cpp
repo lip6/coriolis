@@ -73,9 +73,9 @@ namespace Katabatic {
 
     _rawSize = _columns * _rows;
 
-    cdebug.log(145,1) << "Katabatic GCell Matrix [" << getColumns() << "x" << getRows() << "]" << endl;
-    cdebug.log(145)   << "_xGraduations := " << _xGraduations._print() << endl;
-    cdebug.log(145)   << "_yGraduations := " << _yGraduations._print() << endl;
+    cdebug_log(145,1) << "Katabatic GCell Matrix [" << getColumns() << "x" << getRows() << "]" << endl;
+    cdebug_log(145,0)   << "_xGraduations := " << _xGraduations._print() << endl;
+    cdebug_log(145,0)   << "_yGraduations := " << _yGraduations._print() << endl;
 
     for ( unsigned int row=0 ; row < getRows() ; row++ ) {
       for ( unsigned int column=0; column<getColumns() ; column++ ) {
@@ -87,7 +87,7 @@ namespace Katabatic {
 
         _gcells.push_back ( GCell::create ( this, _gcells.size(), boundingBox ) );
   
-        cdebug.log(145) << "GCell [" << column << "," << row << "] "
+        cdebug_log(145,0) << "GCell [" << column << "," << row << "] "
                    << _gcells[_gcells.size()-1] << endl;
       }
     }
@@ -96,7 +96,7 @@ namespace Katabatic {
            << getColumns() << "x" << getRows() << "] "
            << "(" << (getColumns()*getRows()) << ")." << endl;
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 
@@ -114,13 +114,13 @@ namespace Katabatic {
 
   void  GCellGrid::_preDestroy ()
   {
-    cdebug.log(145,1) << "GCellGrid::_preDestroy()" << endl;
+    cdebug_log(145,1) << "GCellGrid::_preDestroy()" << endl;
 
     vector<GCell*>::iterator   it = _gcells.begin();
     vector<GCell*>::iterator  end = _gcells.end  ();
     for ( ; it != end ; it++ ) (*it)->destroy ();
 
-    cdebug.tabw(145,-1);
+    cdebug_tabw(145,-1);
   }
 
 

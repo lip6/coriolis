@@ -62,7 +62,7 @@ extern "C" {
   // Attribute Method  :  "PyOccurrence_NEW ()"
 
   PyObject* PyOccurrence_NEW ( PyObject *module, PyObject *args ) {
-    cdebug.log(20) << "PyOccurrence_NEW()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_NEW()" << endl;
 
     Occurrence* occurrence;
     PyObject*   arg0;
@@ -102,7 +102,7 @@ extern "C" {
 
   static int  PyOccurrence_Init ( PyOccurrence* self, PyObject* args, PyObject* kwargs )
   {
-    cdebug.log(20) << "PyOccurrence_Init(): " << (void*)self << endl;
+    cdebug_log(20,0) << "PyOccurrence_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -111,7 +111,7 @@ extern "C" {
   // Attribute Method  :  "PyOccurrence_getEntity ()"
 
   static PyObject* PyOccurrence_getEntity ( PyOccurrence *self ) {
-    cdebug.log(20) << "PyOccurrence_getEntity()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_getEntity()" << endl;
 
     METHOD_HEAD ( "Occurrence.getEntity()" )
 
@@ -133,7 +133,7 @@ extern "C" {
   // Attribute Method  :  "PyOccurrence_getOwnerCell ()"
 
   static PyObject* PyOccurrence_getOwnerCell ( PyOccurrence *self ) {
-    cdebug.log(20) << "PyOccurrence_getOwnerCell()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_getOwnerCell()" << endl;
 
     METHOD_HEAD ( "Occurernce.getOwnerCell()" )
 
@@ -152,7 +152,7 @@ extern "C" {
 
   static PyObject* PyOccurrence_getMasterCell ( PyOccurrence *self )
   {
-    cdebug.log(20) << "PyOccurrence_getMasterCell()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_getMasterCell()" << endl;
 
     METHOD_HEAD ( "Occurrence.getMasterCell()" )
 
@@ -171,7 +171,7 @@ extern "C" {
 
   static PyObject* PyOccurrence_getPath ( PyOccurrence *self )
   {
-    cdebug.log(20) << "PyOccurrence_getPath ()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_getPath ()" << endl;
     
     METHOD_HEAD ( "Occurrence.getPath()" )
 
@@ -197,7 +197,7 @@ extern "C" {
 
   static PyObject* PyOccurrence_getBoundingBox ( PyOccurrence *self )
   {
-    cdebug.log(20) << "PyOccurrence_getBoundingBox ()" << endl;
+    cdebug_log(20,0) << "PyOccurrence_getBoundingBox ()" << endl;
     
     METHOD_HEAD ( "Occurrence.getBoundingBox()" )
 

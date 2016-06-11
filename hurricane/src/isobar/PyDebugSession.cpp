@@ -44,13 +44,13 @@ extern "C" {
 
   static void PyDebugSession_DeAlloc ( PyDebugSession* self )
   {
-    cdebug.log(20) << "PyDebugSession_DeAlloc(" << hex << self << ")" << endl;
+    cdebug_log(20,0) << "PyDebugSession_DeAlloc(" << hex << self << ")" << endl;
   }
   
 
   static PyObject* PyDebugSession_open ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyDebugSession_open()" << endl;
+    cdebug_log(20,0) << "PyDebugSession_open()" << endl;
 
     HTRY
     PyObject* arg0;
@@ -85,7 +85,7 @@ extern "C" {
 
   static PyObject* PyDebugSession_close ( PyObject* )
   {
-    cdebug.log(20) << "PyDebugSession_close()" << endl;
+    cdebug_log(20,0) << "PyDebugSession_close()" << endl;
 
     HTRY
     DebugSession::close ();
@@ -97,7 +97,7 @@ extern "C" {
 
   static PyObject* PyDebugSession_addToTrace ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyDebugSession_addToTrace()" << endl;
+    cdebug_log(20,0) << "PyDebugSession_addToTrace()" << endl;
 
     HTRY
     PyObject* pySymbol = NULL;

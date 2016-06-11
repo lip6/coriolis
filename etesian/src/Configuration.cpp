@@ -80,7 +80,7 @@ namespace Etesian {
 
   Configuration::~Configuration ()
   {
-    cdebug.log(129) << "About to delete attribute _cg (CellGauge)." << endl;
+    cdebug_log(129,0) << "About to delete attribute _cg (CellGauge)." << endl;
     _cg->destroy ();
   }
 

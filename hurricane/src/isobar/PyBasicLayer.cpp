@@ -47,7 +47,7 @@ extern "C" {
 
   static PyObject* PyBasicLayer_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(20) << "PyBasicLayer_create()" << endl;
+    cdebug_log(20,0) << "PyBasicLayer_create()" << endl;
 
     BasicLayer*   basicLayer     = NULL;
     
@@ -96,7 +96,7 @@ extern "C" {
 
   static PyObject* PyBasicLayer_getMaterial ( PyBasicLayer *self )
   {
-    cdebug.log(20) << "PyBasicLayer_getMaterial ()" << endl;
+    cdebug_log(20,0) << "PyBasicLayer_getMaterial ()" << endl;
     METHOD_HEAD ( "BasicLayer.getMaterial()" )
 
     BasicLayer::Material* material = NULL;

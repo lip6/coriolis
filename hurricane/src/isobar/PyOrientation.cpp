@@ -72,7 +72,7 @@ extern "C" {
   DirectHashMethod(PyOrientation_Hash, PyOrientation)
 
   extern void  PyOrientation_LinkPyType() {
-    cdebug.log(20) << "PyOrientation_LinkType()" << endl;
+    cdebug_log(20,0) << "PyOrientation_LinkType()" << endl;
     PyTypeOrientation.tp_dealloc = (destructor) PyOrientation_DeAlloc;
     PyTypeOrientation.tp_compare = (cmpfunc)    PyOrientation_Cmp;
     PyTypeOrientation.tp_repr    = (reprfunc)   PyOrientation_Repr;

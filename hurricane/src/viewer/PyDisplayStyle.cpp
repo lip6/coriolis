@@ -79,7 +79,7 @@ extern "C" {
 
   static PyObject* PyDisplayStyle_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )
   {
-    cdebug.log(20) << "PyDisplayStyle_new()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_new()" << endl;
 
     DisplayStyle*   ds   = NULL;
     PyDisplayStyle* pyDs = (PyDisplayStyle*)type->tp_alloc(type,0);
@@ -103,7 +103,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_getDarkening ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_getDarkening()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_getDarkening()" << endl;
 
     DisplayStyle::HSVr* darkening = new DisplayStyle::HSVr();
 
@@ -118,7 +118,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_getGroup ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_getGroup()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_getGroup()" << endl;
 
     const char* group = NULL;
 
@@ -139,7 +139,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_getPattern ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_getPattern()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_getPattern()" << endl;
 
     const char* pattern = NULL;
 
@@ -160,7 +160,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_getThreshold ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_getThreshold()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_getThreshold()" << endl;
 
     float threshold = 0.0;
 
@@ -181,7 +181,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_find ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_find()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_find()" << endl;
 
     DrawingStyle drawingStyle;
 
@@ -202,7 +202,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_setDescription ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_setDescription()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_setDescription()" << endl;
 
     HTRY
     METHOD_HEAD("DisplayStyle.setDescription()")
@@ -221,7 +221,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_setDarkening ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_setDarkening()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_setDarkening()" << endl;
 
     HTRY
     METHOD_HEAD("DisplayStyle.setDarkening()")
@@ -240,7 +240,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_inheritFrom ( PyDisplayStyle* self, PyObject* args )
   {
-    cdebug.log(20) << "PyDisplayStyle_inheritFrom()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_inheritFrom()" << endl;
 
     HTRY
     METHOD_HEAD("DisplayStyle.inheritFrom()")
@@ -266,7 +266,7 @@ extern "C" {
 
   PyObject* PyDisplayStyle_addDrawingStyle ( PyDisplayStyle* self, PyObject* args, PyObject* kwArgs )
   {
-    cdebug.log(20) << "PyDisplayStyle_addDrawingStyle()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_addDrawingStyle()" << endl;
 
     HTRY
     METHOD_HEAD("DisplayStyle.addDrawingStyle()")
@@ -381,7 +381,7 @@ extern "C" {
   DirectHashMethod(PyDisplayStyle_Hash, PyDisplayStyle)
 
   extern void  PyDisplayStyle_LinkPyType() {
-    cdebug.log(20) << "PyDisplayStyle_LinkType()" << endl;
+    cdebug_log(20,0) << "PyDisplayStyle_LinkType()" << endl;
 
     PyTypeDisplayStyle.tp_new     =              PyDisplayStyle_new;
     PyTypeDisplayStyle.tp_dealloc = (destructor) PyDisplayStyle_DeAlloc;

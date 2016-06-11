@@ -56,7 +56,7 @@ namespace Hurricane {
          )
     , _netOccurrence(netOccurrence)
   {
-    cdebug.log(18) << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+    cdebug_log(18,0) << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
   }
 
 
@@ -154,7 +154,7 @@ namespace Hurricane {
   JsonDeepNet::JsonDeepNet ( unsigned long flags )
     : JsonNet(flags)
   {
-    cdebug.log(19) << "JsonDeepNet::JsonDeepNet()" << endl;
+    cdebug_log(19,0) << "JsonDeepNet::JsonDeepNet()" << endl;
 
     add( "_netOccurrence", typeid(Occurrence) );
   }
@@ -174,7 +174,7 @@ namespace Hurricane {
 
   void JsonDeepNet::toData(JsonStack& stack)
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonDeepNet::toData" );
     presetId( stack );
@@ -191,7 +191,7 @@ namespace Hurricane {
     setName( ".Net" );
     update( stack, _net );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

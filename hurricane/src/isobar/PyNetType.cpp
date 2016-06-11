@@ -67,7 +67,7 @@ extern "C" {
   DirectHashMethod(PyNetType_Hash, PyNetType)
 
   extern void  PyNetType_LinkPyType() {
-    cdebug.log(20) << "PyNetType_LinkType()" << endl;
+    cdebug_log(20,0) << "PyNetType_LinkType()" << endl;
     PyTypeNetType.tp_dealloc = (destructor) PyNetType_DeAlloc;
     PyTypeNetType.tp_compare = (cmpfunc)    PyNetType_Cmp;
     PyTypeNetType.tp_repr    = (reprfunc)   PyNetType_Repr;

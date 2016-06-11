@@ -57,7 +57,7 @@ extern "C" {
   // Module Initialization  :  "initUnicorn ()"
 
   DL_EXPORT(void) initUnicorn () {
-    cdebug.log(46) << "initUnicorn()" << endl;
+    cdebug_log(46,0) << "initUnicorn()" << endl;
 
     PyUnicornGui_LinkPyType ();
 

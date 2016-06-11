@@ -179,7 +179,7 @@ void Rubber::_destroy()
 void Rubber::_preDestroy()
 // **********************
 {
-  cdebug.log(18,1) << "entering Rubber::_preDestroy: " << this << endl;
+  cdebug_log(18,1) << "entering Rubber::_preDestroy: " << this << endl;
 
   Inherit::_preDestroy();
 
@@ -192,8 +192,8 @@ void Rubber::_preDestroy()
 
   _net->_getRubberSet()._remove(this);
 
-  cdebug.log(18) << "exiting Rubber::_preDestroy:" << endl;
-  cdebug.tabw(18,-1);
+  cdebug_log(18,0) << "exiting Rubber::_preDestroy:" << endl;
+  cdebug_tabw(18,-1);
 }
 
 string Rubber::_getString() const

@@ -44,7 +44,7 @@ extern "C" {
 
   static PyObject* PyPoint_NEW ( PyObject* module, PyObject *args )
   {
-    cdebug.log(20) << "PyPoint_NEW()" << endl;
+    cdebug_log(20,0) << "PyPoint_NEW()" << endl;
 
     Point*    point;
     PyObject* arg0;
@@ -81,7 +81,7 @@ extern "C" {
 
   static int  PyPoint_Init ( PyPoint* self, PyObject* args, PyObject* kwargs )
   {
-    cdebug.log(20) << "PyPoint_Init(): " << (void*)self << endl;
+    cdebug_log(20,0) << "PyPoint_Init(): " << (void*)self << endl;
     return 0;
   }
 
@@ -91,7 +91,7 @@ extern "C" {
 
   static PyObject* PyPoint_Translate ( PyPoint *self, PyObject* args )
   {
-    cdebug.log(20) << "PyPoint_Translate()" << endl;
+    cdebug_log(20,0) << "PyPoint_Translate()" << endl;
 
     HTRY
 

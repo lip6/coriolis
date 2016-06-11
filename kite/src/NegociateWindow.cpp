@@ -52,13 +52,13 @@ namespace {
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
   {
-    cdebug.log(9000) << "Deter| NegociateOverlapCost() " << segment << endl;
+    cdebug_log(9000,0) << "Deter| NegociateOverlapCost() " << segment << endl;
     Interval intersect = segment->getCanonicalInterval();
 
     if (not intersect.intersect(cost.getInterval())) return;
 
     if (segment->isBlockage() or segment->isFixed()) {
-      cdebug.log(159) << "Infinite cost from: " << segment << endl;
+      cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
       cost.setInfinite   ();
       cost.setOverlap    ();
       cost.setHardOverlap();
@@ -83,7 +83,7 @@ namespace {
     if ( segment->isLocal() ) {
       cost.mergeDataState( data->getState() );
       if (data->getState() >=  DataNegociate::LocalVsGlobal) {
-        cdebug.log(159) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
+        cdebug_log(159,0) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
       }
     }
 
@@ -101,13 +101,13 @@ namespace {
     cost.setOverlap();
     if ( segment->isLocal()
        or (cost.isForGlobal() and (Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) < 3)) ) {
-      cdebug.log(9000) << "Deter|     incTerminals() " << boolalpha << cost.isForGlobal() << " " << (data->getTerminals()*100) << endl;
+      cdebug_log(9000,0) << "Deter|     incTerminals() " << boolalpha << cost.isForGlobal() << " " << (data->getTerminals()*100) << endl;
       cost.incTerminals( data->getTerminals()*100 );
     } else {
-      cdebug.log(9000) << "Deter|     isForGlobal() " << boolalpha << cost.isForGlobal() << endl;
+      cdebug_log(9000,0) << "Deter|     isForGlobal() " << boolalpha << cost.isForGlobal() << endl;
     }
 
-    cdebug.log(159) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
+    cdebug_log(159,0) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
     cost.incDelta( intersect.getSize() );
   }
 
@@ -225,7 +225,7 @@ namespace Kite {
 
   TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, unsigned int flags )
   {
-    cdebug.log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
+    cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
 
   // Special case: fixed AutoSegments must not interfere with blockages.
   // Ugly: uses of getExtensionCap().
@@ -244,25 +244,25 @@ namespace Kite {
       for ( ; (begin < end) ; begin++ ) {
 
         TrackElement* other = track->getSegment(begin);
-        cdebug.log(159) << "| overlap: " << other << endl;
+        cdebug_log(159,0) << "| overlap: " << other << endl;
 
         if (not other->isBlockage()) continue;
 
         other->getCanonical( blockageSpan );
         blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
 
-        cdebug.log(159) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
+        cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
 
         if (not fixedSpan.intersect(blockageSpan)) continue;
 
       // Overlap between fixed & blockage.
-        cdebug.log(159) << "* Blockage overlap: " << autoSegment << endl;
+        cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
         Session::destroyRequest( autoSegment );
 
         cerr << Warning( "Overlap between fixed %s and blockage at %s."
                        , getString(autoSegment).c_str()
                        , getString(blockageSpan).c_str() ) << endl;
-        cdebug.tabw(159,-1);
+        cdebug_tabw(159,-1);
         return NULL;
       }
     }
@@ -274,10 +274,10 @@ namespace Kite {
     TrackElement*  trackSegment  = TrackSegment::create( autoSegment, NULL, created );
 
     if (not (flags & KtLoadingStage))
-      cdebug.log(159) << "* lookup: " << autoSegment << endl;
+      cdebug_log(159,0) << "* lookup: " << autoSegment << endl;
 
     if (created) {
-      cdebug.log(159) << "* " << trackSegment << endl;
+      cdebug_log(159,0) << "* " << trackSegment << endl;
 
       RoutingPlane* plane = Session::getKiteEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
       Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
@@ -286,9 +286,9 @@ namespace Kite {
       if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
       if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
 
-      cdebug.log(159) << "* GCell U-side " << uside << endl;
-      cdebug.log(159) << "* " << plane << endl;
-      cdebug.log(159) << "* " << track << endl;
+      cdebug_log(159,0) << "* GCell U-side " << uside << endl;
+      cdebug_log(159,0) << "* " << plane << endl;
+      cdebug_log(159,0) << "* " << track << endl;
 
       trackSegment->setAxis( track->getAxis(), Katabatic::SegAxisSet );
       trackSegment->invalidate();
@@ -301,10 +301,10 @@ namespace Kite {
     }
 
     if (not created and not (flags & KtLoadingStage)) {
-      cdebug.log(159) << "TrackSegment already exists (and not in loading stage)." << endl;
+      cdebug_log(159,0) << "TrackSegment already exists (and not in loading stage)." << endl;
     }
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
 
     return trackSegment;
   }
@@ -347,26 +347,26 @@ namespace Kite {
 
   void  NegociateWindow::_createRouting  ( Katabatic::GCell* gcell )
   {
-    cdebug.log(159,1) << "NegociateWindow::_createRouting() - " << gcell << endl;
+    cdebug_log(159,1) << "NegociateWindow::_createRouting() - " << gcell << endl;
 
     Segment*     segment;
     AutoSegment* autoSegment;
 
-    cdebug.log(159) << "AutoSegments from AutoContacts" << endl;
+    cdebug_log(159,0) << "AutoSegments from AutoContacts" << endl;
     const vector<AutoContact*>& contacts = gcell->getContacts();
     for ( size_t i=0 ; i<contacts.size() ; i++ ) {
       for( Component* component : contacts[i]->getSlaveComponents() ) {
         segment      = dynamic_cast<Segment*>(component);
         autoSegment  = Session::base()->lookup( segment );
-        cdebug.log(159) << autoSegment << endl;
+        cdebug_log(159,0) << autoSegment << endl;
         if (autoSegment and autoSegment->isCanonical()) {
           createTrackSegment( autoSegment, KtLoadingStage );
         }
       }
     }
 
-    cdebug.log(159) << "_segments.size():" << _segments.size() << endl;
-    cdebug.tabw(159,-1);
+    cdebug_log(159,0) << "_segments.size():" << _segments.size() << endl;
+    cdebug_tabw(159,-1);
   }
 
 
@@ -424,8 +424,8 @@ namespace Kite {
 
   size_t  NegociateWindow::_negociate ()
   {
-    cdebug.log(9000) << "Deter| NegociateWindow::_negociate()" << endl;
-    cdebug.log(159,1) << "NegociateWindow::_negociate() - " << _segments.size() << endl;
+    cdebug_log(9000,0) << "Deter| NegociateWindow::_negociate()" << endl;
+    cdebug_log(159,1) << "NegociateWindow::_negociate() - " << _segments.size() << endl;
 
     cmess1 << "     o  Negociation Stage." << endl;
 
@@ -469,10 +469,10 @@ namespace Kite {
   //_pack( count, true );
     if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
-    cdebug.log(9000) << "Deter| Repair Stage" << endl;
+    cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
     cmess1 << "     o  Repair Stage." << endl;
 
-    cdebug.log(159) << "Loadind Repair queue." << endl;
+    cdebug_log(159,0) << "Loadind Repair queue." << endl;
     RoutingEvent::setStage( RoutingEvent::Repair );
     for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
@@ -524,7 +524,7 @@ namespace Kite {
     }
 
     _statistics.setEventsCount( eventsCount );
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
 
     return eventsCount;
   }
@@ -532,7 +532,7 @@ namespace Kite {
 
   void  NegociateWindow::run ( unsigned int flags )
   {
-    cdebug.log(159,1) << "NegociateWindow::run()" << endl;
+    cdebug_log(159,1) << "NegociateWindow::run()" << endl;
 
     cmess1 << "  o  Running Negociate Algorithm" << endl;
 
@@ -571,7 +571,7 @@ namespace Kite {
     _kite->_check( overlaps, "after negociation" );
 # endif
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
   }
 
 

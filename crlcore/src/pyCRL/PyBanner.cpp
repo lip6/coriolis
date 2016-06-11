@@ -57,7 +57,7 @@ extern "C" {
 
   static PyObject* PyBanner_new ( PyTypeObject* type, PyObject* args, PyObject* kwArgs )
   {
-    cdebug.log(30) << "PyBanner_new()" << endl;
+    cdebug_log(30,0) << "PyBanner_new()" << endl;
 
     Banner*   banner   = NULL;
     PyBanner* pyBanner = (PyBanner*)type->tp_alloc(type,0);
@@ -180,7 +180,7 @@ extern "C" {
   DirectHashMethod(PyBanner_Hash, PyBanner)
 
   extern void  PyBanner_LinkPyType() {
-    cdebug.log(30) << "PyBanner_LinkType()" << endl;
+    cdebug_log(30,0) << "PyBanner_LinkType()" << endl;
 
     PyTypeBanner.tp_new     =             PyBanner_new;
     PyTypeBanner.tp_dealloc = (destructor)PyBanner_DeAlloc;

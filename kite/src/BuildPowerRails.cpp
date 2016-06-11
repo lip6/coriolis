@@ -377,7 +377,7 @@ namespace {
 
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
-    cdebug.log(159) << "    getRootNet:" << path << ":" << net << endl;
+    cdebug_log(159,0) << "    getRootNet:" << path << ":" << net << endl;
 
     if (net == _blockage) return _blockage;
 
@@ -396,12 +396,12 @@ namespace {
     if (not path.isEmpty()) {
       DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
       if (deepClockNet) {
-        cdebug.log(159) << "    Deep Clock Net:" << deepClockNet
+        cdebug_log(159,0) << "    Deep Clock Net:" << deepClockNet
                     << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
 
         return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
       } else {
-        cdebug.log(159) << "    Top Clock Net:" << net
+        cdebug_log(159,0) << "    Top Clock Net:" << net
                     << " state:" << NetRoutingExtension::getFlags(net) << endl;
       }
 
@@ -410,7 +410,7 @@ namespace {
       Plug*      plug     = NULL;
 
       while ( true ) {
-        cdebug.log(159) << "      " << path << "+" << upNet << endl;
+        cdebug_log(159,0) << "      " << path << "+" << upNet << endl;
 
         if (path.isEmpty()) break;
         if ((upNet == NULL) or not upNet->isExternal()) return _blockage;
@@ -424,7 +424,7 @@ namespace {
       }
     }
 
-    cdebug.log(159) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
+    cdebug_log(159,0) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
                 << " cki:" << ((_cki) ? _cki->getName() : "NULL")
                 << " cko:" << ((_cko) ? _cko->getName() : "NULL")
                 << endl;
@@ -555,7 +555,7 @@ namespace {
     , _width (width)
     , _chunks()
   {
-    cdebug.log(159) << "    new Rail "
+    cdebug_log(159,0) << "    new Rail "
                 << " @" << DbU::getValueString(axis)
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << getRails()->getNet()
@@ -573,10 +573,10 @@ namespace {
   void  PowerRailsPlanes::Rail::merge ( DbU::Unit source, DbU::Unit target )
   {
     Interval chunkToMerge ( source, target );
-    cdebug.log(159) << "    Rail::merge() "
+    cdebug_log(159,0) << "    Rail::merge() "
                 << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " " << chunkToMerge << endl;
-    cdebug.log(159) << "    | " << _getString() << endl;
+    cdebug_log(159,0) << "    | " << _getString() << endl;
 
     list<Interval>::iterator imerge = _chunks.end();
     list<Interval>::iterator ichunk = _chunks.begin();
@@ -584,20 +584,20 @@ namespace {
     while ( ichunk != _chunks.end() ) {
       if (imerge == _chunks.end()) {
         if (chunkToMerge.getVMax() < (*ichunk).getVMin()) {
-          cdebug.log(159) << "    | Insert before " << *ichunk << endl;
+          cdebug_log(159,0) << "    | Insert before " << *ichunk << endl;
           imerge = _chunks.insert( ichunk, chunkToMerge );
           break;
         }
 
         if (chunkToMerge.intersect(*ichunk)) {
-          cdebug.log(159) << "    | Merge with " << *ichunk << endl;
+          cdebug_log(159,0) << "    | Merge with " << *ichunk << endl;
           imerge = ichunk;
           (*imerge).merge( chunkToMerge );
         }
       } else {
         if (chunkToMerge.getVMax() >= (*ichunk).getVMin()) {
           (*imerge).merge( *ichunk );
-          cdebug.log(159) << "    | Absorb (erase) " << *ichunk << endl;
+          cdebug_log(159,0) << "    | Absorb (erase) " << *ichunk << endl;
           ichunk = _chunks.erase( ichunk );
           continue;
         } else
@@ -606,12 +606,12 @@ namespace {
 
       // if (chunkToMerge.intersect(*ichunk)) {
       //   if (imerge == _chunks.end()) {
-      //     cdebug.log(159) << "    | Merge with " << *ichunk << endl;
+      //     cdebug_log(159,0) << "    | Merge with " << *ichunk << endl;
       //     imerge = ichunk;
       //     (*imerge).merge( chunkToMerge );
       //   } else {
       //     (*imerge).merge( *ichunk );
-      //     cdebug.log(159) << "    | Absorb (erase) " << *ichunk << endl;
+      //     cdebug_log(159,0) << "    | Absorb (erase) " << *ichunk << endl;
       //     ichunk = _chunks.erase( ichunk );
       //     continue;
       //   }
@@ -621,19 +621,19 @@ namespace {
 
     if (imerge == _chunks.end()) {
       _chunks.insert( ichunk, chunkToMerge );
-      cdebug.log(159) << "    | Insert at end " << DbU::getValueString(_axis) << " " << chunkToMerge << endl;
-      cdebug.log(159) << "    | " << _getString() << endl;
+      cdebug_log(159,0) << "    | Insert at end " << DbU::getValueString(_axis) << " " << chunkToMerge << endl;
+      cdebug_log(159,0) << "    | " << _getString() << endl;
     }
   }
 
 
   void  PowerRailsPlanes::Rail::doLayout ( const Layer* layer )
   {
-    cdebug.log(159) << "Doing layout of rail: "
+    cdebug_log(159,0) << "Doing layout of rail: "
                 << " " << layer->getName()
                 << " " << ((getDirection()==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " @" << DbU::getValueString(_axis) << endl;
-    cdebug.log(159) << _getString() << endl;
+    cdebug_log(159,0) << _getString() << endl;
 
     Net*          net       = getNet();
     RoutingPlane* plane     = getRoutingPlane();
@@ -649,13 +649,13 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
-    cdebug.log(159) << "  delta:" << DbU::getValueString(delta)
+    cdebug_log(159,0) << "  delta:" << DbU::getValueString(delta)
                 << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
                 << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
                 << ")" << endl;
 
     // if ( type == Constant::PinOnly ) {
-    //   cdebug.log(159) << "  Layer is PinOnly." << endl;
+    //   cdebug_log(159,0) << "  Layer is PinOnly." << endl;
     //   return;
     // }
 
@@ -677,7 +677,7 @@ namespace {
                          ) << endl;
         }
         
-        cdebug.log(159) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
+        cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Horizontal::create ( net
@@ -700,13 +700,13 @@ namespace {
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          cdebug.log(159) << "  Insert in " << track << "+" << element << endl;
+          cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
         }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
-        cdebug.log(159) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
+        cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
                     << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Vertical::create ( net
@@ -726,13 +726,13 @@ namespace {
           axisMax += delta;
       //}
 
-        cdebug.log(159) << "  axisMin:" << DbU::getValueString(axisMin)
+        cdebug_log(159,0) << "  axisMin:" << DbU::getValueString(axisMin)
                     <<  " axisMax:" << DbU::getValueString(axisMax) << endl;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
-          cdebug.log(159) << "  Insert in " << track
+          cdebug_log(159,0) << "  Insert in " << track
                       << "+" << element
                       << " " << (net->isExternal() ? "external" : "internal")
                       << endl;
@@ -784,7 +784,7 @@ namespace {
     , _net           (net)
     , _rails         ()
   {
-    cdebug.log(159) << "  new Rails @"
+    cdebug_log(159,0) << "  new Rails @"
                 << " " << getRoutingPlane()->getLayer()->getName()
                 << " " << net
                 << " " << ((getDirection()==KbHorizontal) ? "Horizontal": "Vertical") << endl;
@@ -842,7 +842,7 @@ namespace {
 
   void  PowerRailsPlanes::Rails::doLayout ( const Layer* layer )
   {
-    cdebug.log(159) << "Doing layout of rails: " << layer->getName()
+    cdebug_log(159,0) << "Doing layout of rails: " << layer->getName()
                 << " " << ((_direction==KbHorizontal) ? "Horizontal" : "Vertical")
                 << " " << _net->getName() << endl;
 
@@ -858,7 +858,7 @@ namespace {
     , _verticalRails        ()
     , _powerDirection       (routingPlane->getDirection())
   {
-    cdebug.log(159) << "New Plane " << _layer->getName() << " " << _routingPlane << endl;
+    cdebug_log(159,0) << "New Plane " << _layer->getName() << " " << _routingPlane << endl;
 
   // Hard-coded SxLib gauge.
     if (_routingPlane->getDepth() == 0) _powerDirection = KbHorizontal;
@@ -888,7 +888,7 @@ namespace {
   {
     Rails* rails = NULL;
 
-    cdebug.log(159) << "    Plane::merge() " << net->getName() << " " << bb << endl;
+    cdebug_log(159,0) << "    Plane::merge() " << net->getName() << " " << bb << endl;
 
     unsigned int direction = getDirection();
     if ( (net->getType() == Net::Type::POWER) or (net->getType() == Net::Type::GROUND) )
@@ -911,7 +911,7 @@ namespace {
       } else
         rails = (*irails).second;
 
-      cdebug.log(159) << "    Vertical Merging" << endl; 
+      cdebug_log(159,0) << "    Vertical Merging" << endl; 
       rails->merge ( bb );
     }
   }
@@ -919,7 +919,7 @@ namespace {
 
   void  PowerRailsPlanes::Plane::doLayout ()
   {
-    cdebug.log(159) << "Doing layout of plane: " << _layer->getName() << endl;
+    cdebug_log(159,0) << "Doing layout of plane: " << _layer->getName() << endl;
 
     RailsMap::iterator irails = _horizontalRails.begin();
     for ( ; irails != _horizontalRails.end() ; ++irails ) {
@@ -952,10 +952,10 @@ namespace {
       RoutingLayerGauge* lg = rg->getLayerGauge(regular);
       if ( not lg ) continue;
 
-      cdebug.log(159) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
+      cdebug_log(159,0) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
 
       RoutingPlane* rp = _kite->getRoutingPlaneByIndex(lg->getDepth());
-      cdebug.log(159) << "Plane:"  << rp << endl;
+      cdebug_log(159,0) << "Plane:"  << rp << endl;
 
       _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
 
@@ -1020,7 +1020,7 @@ namespace {
 
     Net* topGlobalNet = _globalNets.getRootNet( net, Path() );
     if (topGlobalNet == NULL) {
-      cdebug.log(159) << "Not a global net: " << net << endl;
+      cdebug_log(159,0) << "Not a global net: " << net << endl;
       return;
     }
 
@@ -1171,17 +1171,17 @@ namespace {
 #endif
 
       if ( rootNet == NULL ) {
-        cdebug.log(159) << "  rootNet is NULL, not taken into account." << endl;
+        cdebug_log(159,0) << "  rootNet is NULL, not taken into account." << endl;
         return;
       }
 
-      cdebug.log(159) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
+      cdebug_log(159,0) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
                   << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
         _goMatchCount++;
-        cdebug.log(159) << "  Merging PowerRail element: " << segment << endl;
+        cdebug_log(159,0) << "  Merging PowerRail element: " << segment << endl;
 
         Box bb = segment->getBoundingBox ( basicLayer );
 
@@ -1210,7 +1210,7 @@ namespace {
           Box bb = contact->getBoundingBox ( basicLayer );
           transformation.applyOn ( bb );
 
-          cdebug.log(159) << "  Merging PowerRail element: " << contact << " bb:" << bb
+          cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
                       << " " << basicLayer << endl;
           
           _powerRailsPlanes.merge ( bb, rootNet );

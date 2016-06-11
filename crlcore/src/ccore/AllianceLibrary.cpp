@@ -132,7 +132,7 @@ namespace CRL {
                                                                , DataBase::CreateLib|DataBase::WarnCreateLib );
     AllianceLibrary*   aLibrary = NULL;
 
-    cdebug.log(19) << "| " << libDbPath << " : " << library << endl;
+    cdebug_log(19,0) << "| " << libDbPath << " : " << library << endl;
 
     if (library) {
       aLibrary = af->getAllianceLibrary( library );
@@ -151,7 +151,7 @@ namespace CRL {
       if (not library) library = aLibrary->getLibrary();
     }
 
-    cdebug.log(19) << "| Associates to: " << aLibrary << endl;
+    cdebug_log(19,0) << "| Associates to: " << aLibrary << endl;
 
     if (aLibrary->getLibrary() != library) {
       cerr << Warning( "JsonAllianceLibrary::toData(): Underlying Hurricane Library discrepency for \"%s\".\n"

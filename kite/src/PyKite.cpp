@@ -65,7 +65,7 @@ extern "C" {
   // Module Initialization  :  "initKite ()"
 
   DL_EXPORT(void) initKite () {
-    cdebug.log(40) << "initKite()" << endl;
+    cdebug_log(40,0) << "initKite()" << endl;
 
     PyKiteEngine_LinkPyType();
     PyGraphicKiteEngine_LinkPyType();

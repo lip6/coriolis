@@ -70,7 +70,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_create()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_create()" << endl;
 
     AllianceFramework*   af    = NULL;
     PyAllianceFramework* pyAf  = NULL;
@@ -96,7 +96,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_get ( PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_get()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_get()" << endl;
 
     AllianceFramework*   af    = NULL;
     PyAllianceFramework* pyAf  = NULL;
@@ -116,7 +116,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getEnvironment ( PyAllianceFramework* self )
   {
-    cdebug.log(30) << "PyAllianceFramework_getEnvironment ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getEnvironment ()" << endl;
 
     Environment* env = NULL;
 
@@ -134,7 +134,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getLibrary ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_getLibrary()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getLibrary()" << endl;
 
     Library* lib = NULL;
 
@@ -164,7 +164,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getAllianceLibrary ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_getAllianceLibrary()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getAllianceLibrary()" << endl;
 
     AllianceLibrary* alib = NULL;
 
@@ -199,7 +199,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getCell ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_getCell ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getCell ()" << endl;
 
     char* name = NULL;
     Cell* cell = NULL;
@@ -222,7 +222,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_saveCell ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_saveCell ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_saveCell ()" << endl;
 
     HTRY
     
@@ -243,7 +243,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_createCell ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_createCell ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_createCell ()" << endl;
 
     char* name = NULL;
     Cell* cell = NULL;
@@ -265,7 +265,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_createLibrary ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_createLibrary()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_createLibrary()" << endl;
 
     AllianceLibrary* alib    = NULL;
     string           libName = "";
@@ -304,7 +304,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_isPad ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_isPad ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_isPad ()" << endl;
 
     char* name = NULL;
     
@@ -325,7 +325,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_addRoutingGauge ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_addRoutingGauge ()" << endl;
 
     HTRY
     METHOD_HEAD("AllianceFramework.addRoutingGauge()")
@@ -341,7 +341,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_getRoutingGauge ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getRoutingGauge ()" << endl;
 
     RoutingGauge* rg = NULL;
 
@@ -365,7 +365,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_addCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_addCellGauge ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_addCellGauge ()" << endl;
 
     HTRY
     METHOD_HEAD("AllianceFramework.addCellGauge()")
@@ -381,7 +381,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_getCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_getCellGauge ()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_getCellGauge ()" << endl;
 
     CellGauge* rg = NULL;
 
@@ -405,7 +405,7 @@ extern "C" {
 
   static PyObject* PyAllianceFramework_loadLibraryCells ( PyAllianceFramework* self, PyObject* args )
   {
-    cdebug.log(30) << "PyAllianceFramework_loadLibraryCells()" << endl;
+    cdebug_log(30,0) << "PyAllianceFramework_loadLibraryCells()" << endl;
 
     unsigned int count = 0;
 

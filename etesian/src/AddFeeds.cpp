@@ -115,8 +115,8 @@ namespace {
   void  Slice::merge ( DbU::Unit source, DbU::Unit target )
   {
     Interval chunkToMerge = _xspan.getIntersection( Interval(source,target) );
-    cdebug.log(129) << "    Slice::merge() " << " " << chunkToMerge << endl;
-    cdebug.log(129) << "    | " << _getString() << endl;
+    cdebug_log(129,0) << "    Slice::merge() " << " " << chunkToMerge << endl;
+    cdebug_log(129,0) << "    | " << _getString() << endl;
 
     if (chunkToMerge.isEmpty()) return;
 
@@ -126,20 +126,20 @@ namespace {
     while ( ichunk != _chunks.end() ) {
       if (imerge == _chunks.end()) {
         if (chunkToMerge.getVMax() < (*ichunk).getVMin()) {
-          cdebug.log(129) << "    | Insert before " << *ichunk << endl;
+          cdebug_log(129,0) << "    | Insert before " << *ichunk << endl;
           imerge = _chunks.insert( ichunk, chunkToMerge );
           break;
         }
 
         if (chunkToMerge.intersect(*ichunk)) {
-          cdebug.log(129) << "    | Merge with " << *ichunk << endl;
+          cdebug_log(129,0) << "    | Merge with " << *ichunk << endl;
           imerge = ichunk;
           (*imerge).merge( chunkToMerge );
         }
       } else {
         if (chunkToMerge.getVMax() >= (*ichunk).getVMin()) {
           (*imerge).merge( *ichunk );
-          cdebug.log(129) << "    | Absorb (erase) " << *ichunk << endl;
+          cdebug_log(129,0) << "    | Absorb (erase) " << *ichunk << endl;
           ichunk = _chunks.erase( ichunk );
           continue;
         } else
@@ -151,8 +151,8 @@ namespace {
 
     if (imerge == _chunks.end()) {
       _chunks.insert( ichunk, chunkToMerge );
-      cdebug.log(129) << "    | Insert at end " << DbU::getValueString(_ybottom) << " " << chunkToMerge << endl;
-      cdebug.log(129) << "    | " << _getString() << endl;
+      cdebug_log(129,0) << "    | Insert at end " << DbU::getValueString(_ybottom) << " " << chunkToMerge << endl;
+      cdebug_log(129,0) << "    | " << _getString() << endl;
     }
   }
 

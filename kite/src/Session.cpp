@@ -75,7 +75,7 @@ namespace Kite {
 
   Session* Session::open ( KiteEngine* kite )
   {
-    cdebug.log(159) << "Kite::Session::open()" << endl;
+    cdebug_log(159,0) << "Kite::Session::open()" << endl;
 
     Session* session = Session::get();
     if (session) {
@@ -151,7 +151,7 @@ namespace Kite {
 
   size_t  Session::_revalidate ()
   {
-    cdebug.log(159,1) << "Kite::Session::_revalidate()" << endl;
+    cdebug_log(159,1) << "Kite::Session::_revalidate()" << endl;
 
     _doRemovalEvents();
 
@@ -168,7 +168,7 @@ namespace Kite {
     set<AutoSegment*>::const_iterator idestroyed = destroyeds.begin();
     for ( ; idestroyed != destroyeds.end() ; ++idestroyed ) {
       if (lookup(*idestroyed)) {
-        cdebug.tabw(155,-1);
+        cdebug_tabw(155,-1);
         throw Error( "Destroyed AutoSegment is associated with a TrackSegment\n"
                      "        (%s)"
                    , getString(*idestroyed).c_str());
@@ -235,18 +235,18 @@ namespace Kite {
         revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
-        cdebug.log(159) << "Session: reduce:" << revalidateds[i] << endl;
+        cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
       }
       if (revalidateds[i]->mustRaise()) {
         revalidateds[i]->raise();
         lookup( revalidateds[i] )->reschedule( 0 );
-        cdebug.log(159) << "Session: raise:" << revalidateds[i] << endl;
+        cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
       }
     }
 
     _doRemovalEvents();
 
-    cdebug.tabw(159,-1);
+    cdebug_tabw(159,-1);
     return count;
   }
 
@@ -281,7 +281,7 @@ namespace Kite {
 
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track )
   {
-    cdebug.log(159) <<  "addInsertEvent() " << segment
+    cdebug_log(159,0) <<  "addInsertEvent() " << segment
                 << "\n               @" << track << endl;
 
     if ( segment->getTrack() != NULL ) {
@@ -307,7 +307,7 @@ namespace Kite {
       return;
     }
 
-    cdebug.log(159) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
+    cdebug_log(159,0) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
     _removeEvents.push_back( Event(segment,segment->getTrack()) );
     _addSortEvent( segment->getTrack(), true );
   }

@@ -176,7 +176,7 @@ namespace {
         _objects[_objects.size()-1]->setName( _objectName );
       }
 
-      cdebug.log(19) << "HurricaneHandler::String() [key/typename] " << value << endl;
+      cdebug_log(19,0) << "HurricaneHandler::String() [key/typename] " << value << endl;
       return true;
     }
 
@@ -201,13 +201,13 @@ namespace {
       return true;
     }
 
-  //cdebug.log(19) << "HurricaneHandler::Key() key:" << _key << " _objects.size():" << _objects.size() << endl;
+  //cdebug_log(19,0) << "HurricaneHandler::Key() key:" << _key << " _objects.size():" << _objects.size() << endl;
 
     if (_objects.back()) {
       if ( doCallToData() and not _key.empty() and (_key[0] != '_') ) {
       // The key is no longer a simple attribute of the object.
       // Triggers it's creation in the Json stack.
-        cdebug.log(19) << "HurricaneHandler::key() Calling "
+        cdebug_log(19,0) << "HurricaneHandler::key() Calling "
                    << _objects.back()->getTypeName() << "::toData(JsonStack&)." << endl;
         _objects.back()->toData( _stack );
       }
@@ -219,17 +219,17 @@ namespace {
 
   bool  HurricaneHandler::StartObject ()
   {
-    cdebug.log(19) << "Hurricane::StartObject()" << endl;
+    cdebug_log(19,0) << "Hurricane::StartObject()" << endl;
     ltracein(50);
 
     _state |= TypenameKey;
     // if (doCallToData()) {
-    //   cdebug.log(19) << "Calling " << _objects.back()->getTypeName() << "::toData(JsonStack&)." << endl;
+    //   cdebug_log(19,0) << "Calling " << _objects.back()->getTypeName() << "::toData(JsonStack&)." << endl;
     //   _objects.back()->toData( _stack );
     // }
     _objectName = (_key == ".Array") ? "" : _key;
     _objects.push_back( NULL );
-    cdebug.log(19) << "_objects.push_back(NULL), size():" << _objects.size() << "." << endl;
+    cdebug_log(19,0) << "_objects.push_back(NULL), size():" << _objects.size() << "." << endl;
 
     ltracein(50);
     return true;
@@ -239,7 +239,7 @@ namespace {
   bool  HurricaneHandler::EndObject ( SizeType )
   {
     ltraceout(50,2);
-    cdebug.log(19) << "HurricaneHandler::EndObject()" << endl;
+    cdebug_log(19,0) << "HurricaneHandler::EndObject()" << endl;
     ltracein(50);
 
     _objectName.clear();
@@ -247,11 +247,11 @@ namespace {
       _state &= ~SkipObject;
     } else {
       if (doCallToData()) {
-        cdebug.log(19) << "Calling " << _objects.back()->getTypeName() << "::toData(JsonStack&)." << endl;
+        cdebug_log(19,0) << "Calling " << _objects.back()->getTypeName() << "::toData(JsonStack&)." << endl;
         _objects.back()->toData( _stack );
       }
       if (_objects.size() > 1) {
-        cdebug.log(19) << "_objects.pop_back(), size():" << _objects.size() << "." << endl;
+        cdebug_log(19,0) << "_objects.pop_back(), size():" << _objects.size() << "." << endl;
         delete _objects.back();
         _objects.pop_back();
       }
@@ -259,14 +259,14 @@ namespace {
         if (_stack[-1].first[0] != '_') _stack.pop_back();
       }
     }
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
     return true;
   }
 
 
   bool  HurricaneHandler::StartArray()
   {
-    cdebug.log(19) << "HurricaneHandler::StartArray() key:\"" << _key << "\"." << endl;
+    cdebug_log(19,0) << "HurricaneHandler::StartArray() key:\"" << _key << "\"." << endl;
     ltracein(50);
 
     _objectName.clear();
@@ -285,14 +285,14 @@ namespace {
 
   bool  HurricaneHandler::EndArray ( SizeType )
   {
-    cdebug.tabw(19,-1);
-    cdebug.log(19) << "HurricaneHandler::EndArray()" << endl;
+    cdebug_tabw(19,-1);
+    cdebug_log(19,0) << "HurricaneHandler::EndArray()" << endl;
     ltracein(50);
 
     _state &= ~(ArrayMode | SkipArray);
     _key.clear();
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
     return true;
   }
 

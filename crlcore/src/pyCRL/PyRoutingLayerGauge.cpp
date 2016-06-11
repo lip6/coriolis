@@ -60,7 +60,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_create()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_create()" << endl;
 
     RoutingLayerGauge*   rlg   = NULL;
     PyRoutingLayerGauge* pyRlg = NULL;
@@ -140,7 +140,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getLayer ( PyRoutingLayerGauge* self )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_getLayer()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_getLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -155,7 +155,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getBlockageLayer ( PyRoutingLayerGauge* self )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_getBlockageLayer()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_getBlockageLayer()" << endl;
 
     Layer* layer = NULL;
 
@@ -170,7 +170,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackNumber ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_getTrackNumber()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_getTrackNumber()" << endl;
 
     unsigned int  trackNumber = 0;
 
@@ -194,7 +194,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackIndex ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_getTrackIndex()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_getTrackIndex()" << endl;
 
     unsigned int  trackIndex = 0;
 
@@ -232,7 +232,7 @@ extern "C" {
 
   static PyObject* PyRoutingLayerGauge_getTrackPosition ( PyRoutingLayerGauge* self, PyObject* args )
   {
-    cdebug.log(30) << "PyRoutingLayerGauge_getTrackPosition()" << endl;
+    cdebug_log(30,0) << "PyRoutingLayerGauge_getTrackPosition()" << endl;
 
     DbU::Unit  trackPosition = 0;
 

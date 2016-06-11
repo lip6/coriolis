@@ -1113,7 +1113,7 @@ string Net_SlavePlugs::Locator::_getString() const
   {
     if (flags & JsonWriter::RegisterMode) return;
 
-    cdebug.log(19) << "JsonNet::JsonNet()" << endl;
+    cdebug_log(19,0) << "JsonNet::JsonNet()" << endl;
 
     add( "_name"              , typeid(string)    );
     add( "_isGlobal"          , typeid(bool)      );
@@ -1125,7 +1125,7 @@ string Net_SlavePlugs::Locator::_getString() const
     add( "+componentSet"      , typeid(JsonArray) );
     add( "+externalComponents", typeid(JsonArray) );
 
-    cdebug.log(19) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
+    cdebug_log(19,0) << "Disabling auto-materialization (" << _autoMaterialize << ")." << endl;
     Go::disableAutoMaterialization();
   }
 
@@ -1140,7 +1140,7 @@ string Net_SlavePlugs::Locator::_getString() const
 
     if (_autoMaterialize) {
       Go::enableAutoMaterialization();
-      cdebug.log(18) << "Enabling auto-materialization." << endl;
+      cdebug_log(18,0) << "Enabling auto-materialization." << endl;
     }
   }
 
@@ -1155,7 +1155,7 @@ string Net_SlavePlugs::Locator::_getString() const
 
   void JsonNet::toData ( JsonStack& stack )
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonNet::toData" );
     presetId( stack );
@@ -1169,7 +1169,7 @@ string Net_SlavePlugs::Locator::_getString() const
 
     update( stack, _net );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 

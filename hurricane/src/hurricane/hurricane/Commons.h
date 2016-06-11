@@ -815,6 +815,10 @@ inline tstream& operator<< ( tstream& o, const std::string& s )
 extern tstream  cdebug;
 
 
+#define  cdebug_log(level,indent)   if (cdebug.enabled(level)) cdebug.log(level,indent)
+#define  cdebug_tabw(level,indent)  cdebug.tabw(level,indent)
+
+
 // x-----------------------------------------------------------------x
 // |            Classes Neededs in All Hurricane Modules             |
 // x-----------------------------------------------------------------x

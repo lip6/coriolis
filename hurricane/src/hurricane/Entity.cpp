@@ -80,7 +80,7 @@ namespace Hurricane {
     if (_flags & ForcedIdMode) {
       if (_flags & NextIdSet) {
         _flags &= ~NextIdSet;
-        cdebug.log(18) << demangle(typeid(*this).name())
+        cdebug_log(18,0) << demangle(typeid(*this).name())
                    << "::getNextId(): Consuming the preset id:" << _nextId << endl;
         return _nextId;
       } else {
@@ -223,14 +223,14 @@ namespace Hurricane {
 
   void JsonEntityRef::toData ( JsonStack& stack )
   {
-    cdebug.tabw(19,1);
+    cdebug_tabw(19,1);
 
     check( stack, "JsonEntityRef::toData" );
 
     unsigned int jsonId = get<int64_t>( stack, "_id" );
     Entity*      entity = stack.getEntity<Entity*>( jsonId );
 
-    cdebug.log(19) << "jsonId:" << jsonId << " entity:" << entity << endl;
+    cdebug_log(19,0) << "jsonId:" << jsonId << " entity:" << entity << endl;
 
     if (entity) {
       JsonBaseArray<Entity*>* array = jget< JsonBaseArray<Entity*> >( stack );
@@ -243,7 +243,7 @@ namespace Hurricane {
 
     update( stack, NULL );
 
-    cdebug.tabw(19,-1);
+    cdebug_tabw(19,-1);
   }
 
 } // End of Hurricane namespace.

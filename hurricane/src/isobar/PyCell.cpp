@@ -65,7 +65,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_create ()"
 
   PyObject* PyCell_create ( PyObject*, PyObject *args ) {
-    cdebug.log(20) << "PyCell_create()" << endl;
+    cdebug_log(20,0) << "PyCell_create()" << endl;
 
     char* name = NULL;
     PyLibrary* pyLibrary = NULL;
@@ -88,7 +88,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getLibrary ()"
 
   static PyObject* PyCell_getLibrary ( PyCell *self ) {
-    cdebug.log(20) << "PyCell_getLibrary ()" << endl;
+    cdebug_log(20,0) << "PyCell_getLibrary ()" << endl;
 
     Library* library = NULL;
 
@@ -110,7 +110,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getInstance ()"
 
   static PyObject* PyCell_getInstance ( PyCell *self, PyObject* args ) {
-    cdebug.log(20) << "PyCell_getInstance ()" << endl;
+    cdebug_log(20,0) << "PyCell_getInstance ()" << endl;
     METHOD_HEAD("Cell.getInstance()")
 
     Instance* instance = NULL;
@@ -133,7 +133,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getInstances()"
 
   static PyObject* PyCell_getInstances( PyCell *self ) {
-    cdebug.log(20) << "PyCell_getInstances()" << endl;
+    cdebug_log(20,0) << "PyCell_getInstances()" << endl;
 
     METHOD_HEAD ( "Cell.getInstances()" )
 
@@ -158,7 +158,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getInstancesUnder()"
 
   static PyObject* PyCell_getInstancesUnder(PyCell *self, PyObject* args) {
-    cdebug.log(20) << "PyCell_getInstancesUnder()" << endl;
+    cdebug_log(20,0) << "PyCell_getInstancesUnder()" << endl;
 
     METHOD_HEAD("Cell.getInstancesUnder()")
 
@@ -188,7 +188,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getSlaveInstances()"
 
   static PyObject* PyCell_getSlaveInstances(PyCell *self) {
-    cdebug.log(20) << "PyCell_getSlaveInstances()" << endl;
+    cdebug_log(20,0) << "PyCell_getSlaveInstances()" << endl;
 
     METHOD_HEAD("Cell.getSlaveInstances()")
 
@@ -213,7 +213,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getComponents()"
 
   static PyObject* PyCell_getComponents(PyCell *self) {
-    cdebug.log(20) << "PyCell_getComponents()" << endl;
+    cdebug_log(20,0) << "PyCell_getComponents()" << endl;
 
     METHOD_HEAD("Cell.getComponents()")
 
@@ -239,7 +239,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getComponentsUnder()"
 
   static PyObject* PyCell_getComponentsUnder(PyCell *self, PyObject* args) {
-    cdebug.log(20) << "PyCell_getComponentsUnder()" << endl;
+    cdebug_log(20,0) << "PyCell_getComponentsUnder()" << endl;
 
     METHOD_HEAD("Cell.getComponentsUnder()")
 
@@ -268,7 +268,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getOccurrences()"
 
   static PyObject* PyCell_getOccurrences(PyCell *self) {
-    cdebug.log(20) << "PyCell_getOccurrences()" << endl;
+    cdebug_log(20,0) << "PyCell_getOccurrences()" << endl;
 
     METHOD_HEAD("Cell.getOccurrences()")
 
@@ -294,7 +294,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getOccurrencesUnder()"
 
   static PyObject* PyCell_getOccurrencesUnder(PyCell *self, PyObject* args) {
-    cdebug.log(20) << "PyCell_getOccurrencesUnder()" << endl;
+    cdebug_log(20,0) << "PyCell_getOccurrencesUnder()" << endl;
 
     METHOD_HEAD("Cell.getOccurrencesUnder()")
 
@@ -323,7 +323,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getLeafInstanceOccurrences()"
 
   static PyObject* PyCell_getLeafInstanceOccurrences(PyCell *self) {
-    cdebug.log(20) << "PyCell_getLeafInstanceOccurrences()" << endl;
+    cdebug_log(20,0) << "PyCell_getLeafInstanceOccurrences()" << endl;
 
     METHOD_HEAD ( "Cell.getLeafInstanceOccurrences()" )
 
@@ -348,7 +348,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getLeafInstanceOccurrencesUnder()"
 
   static PyObject* PyCell_getLeafInstanceOccurrencesUnder(PyCell *self, PyObject* args) {
-    cdebug.log(20) << "PyCell_getLeafInstanceOccurrencesUnder()" << endl;
+    cdebug_log(20,0) << "PyCell_getLeafInstanceOccurrencesUnder()" << endl;
 
     METHOD_HEAD ( "Cell.getLeafInstanceOccurrencesUnder()" )
 
@@ -378,7 +378,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getReferences()"
 
   static PyObject* PyCell_getReferences(PyCell *self) {
-    cdebug.log(20) << "PyCell_getReferences()" << endl;
+    cdebug_log(20,0) << "PyCell_getReferences()" << endl;
 
     METHOD_HEAD("Cell.getReferences()")
 
@@ -403,7 +403,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getHyperNets()"
 
   static PyObject* PyCell_getHyperNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getHyperNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getHyperNets()" << endl;
 
     METHOD_HEAD ( "Cell.getHyperNets()" )
 
@@ -428,7 +428,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getNet ()"
 
   static PyObject* PyCell_getNet(PyCell *self, PyObject* args) {
-      cdebug.log(20) << "PyCell_getNet ()" << endl;
+      cdebug_log(20,0) << "PyCell_getNet ()" << endl;
       METHOD_HEAD ( "Cell.getNet()" )
 
       Net* net = NULL;
@@ -449,7 +449,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getNets ()"
 
   static PyObject* PyCell_getNets ( PyCell *self ) {
-    cdebug.log(20) << "PyCell_getNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getNets()" << endl;
 
     METHOD_HEAD("Cell.getNets()")
 
@@ -474,7 +474,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getExternalNets()"
 
   static PyObject* PyCell_getExternalNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getExternalNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getExternalNets()" << endl;
 
     METHOD_HEAD("Cell.getExternalNets()")
 
@@ -498,7 +498,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getClockNets()"
 
   static PyObject* PyCell_getClockNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getClockNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getClockNets()" << endl;
 
     METHOD_HEAD("Cell.getClockNets")
 
@@ -522,7 +522,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getSupplyNets()"
 
   static PyObject* PyCell_getSupplyNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getSupplyNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getSupplyNets()" << endl;
 
     METHOD_HEAD ( "Cell.getSupplyNets()" )
 
@@ -547,7 +547,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getPowerNets()"
 
   static PyObject* PyCell_getPowerNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getPowerNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getPowerNets()" << endl;
 
     METHOD_HEAD ( "Cell.getPowerNets()" )
 
@@ -572,7 +572,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getGroundNets()"
 
   static PyObject* PyCell_getGroundNets(PyCell *self) {
-    cdebug.log(20) << "PyCell_getGroundNets()" << endl;
+    cdebug_log(20,0) << "PyCell_getGroundNets()" << endl;
 
     METHOD_HEAD ( "Cell.getGroundNets()" )
 
@@ -596,7 +596,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getAbutmentBox ()"
 
   static PyObject* PyCell_getAbutmentBox ( PyCell *self ) {
-    cdebug.log(20) << "PyCell_getAbutmentBox()" << endl;
+    cdebug_log(20,0) << "PyCell_getAbutmentBox()" << endl;
     
     METHOD_HEAD ( "Cell.getAbutmentBox()" )
 
@@ -620,7 +620,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_setAbutmentBox ()"
 
   static PyObject* PyCell_setAbutmentBox ( PyCell *self, PyObject* args ) {
-    cdebug.log(20) << "Cell.setAbutmentBox()" << endl;
+    cdebug_log(20,0) << "Cell.setAbutmentBox()" << endl;
 
     HTRY
     METHOD_HEAD ( "Cell.setAbutmentBox()" )
@@ -640,7 +640,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_setTerminal ()"
 
   static PyObject* PyCell_setTerminal ( PyCell *self, PyObject* args ) {
-    cdebug.log(20) << "PyCell_setTerminal ()" << endl;
+    cdebug_log(20,0) << "PyCell_setTerminal ()" << endl;
 
     HTRY
     METHOD_HEAD ( "Cell.setTerminal()" )
@@ -658,7 +658,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_uniquify ()"
 
   static PyObject* PyCell_uniquify ( PyCell *self, PyObject* args ) {
-    cdebug.log(20) << "PyCell_uniquify ()" << endl;
+    cdebug_log(20,0) << "PyCell_uniquify ()" << endl;
 
     HTRY
       METHOD_HEAD ( "Cell.uniquify()" )
@@ -677,7 +677,7 @@ extern "C" {
   // Attribute Method  :  "PyCell_getClone ()"
 
   static PyObject* PyCell_getClone ( PyCell *self ) {
-    cdebug.log(20) << "PyCell_getClone ()" << endl;
+    cdebug_log(20,0) << "PyCell_getClone ()" << endl;
 
     Cell* cloneCell = NULL;
     HTRY

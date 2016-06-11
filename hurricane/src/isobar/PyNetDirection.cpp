@@ -68,7 +68,7 @@ extern "C" {
   DirectHashMethod(PyNetDirection_Hash, PyNetDirection)
 
   extern void  PyNetDirection_LinkPyType() {
-    cdebug.log(20) << "PyNetDirection_LinkType()" << endl;
+    cdebug_log(20,0) << "PyNetDirection_LinkType()" << endl;
     PyTypeNetDirection.tp_dealloc = (destructor) PyNetDirection_DeAlloc;
     PyTypeNetDirection.tp_compare = (cmpfunc)    PyNetDirection_Cmp;
     PyTypeNetDirection.tp_repr    = (reprfunc)   PyNetDirection_Repr;

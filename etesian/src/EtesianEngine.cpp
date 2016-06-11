@@ -287,7 +287,7 @@ namespace Etesian {
 
   void  EtesianEngine::_preDestroy ()
   {
-    cdebug.log(129,1) << "EtesianEngine::_preDestroy()" << endl;
+    cdebug_log(129,1) << "EtesianEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << getCell()->getName() << ">" << endl;
