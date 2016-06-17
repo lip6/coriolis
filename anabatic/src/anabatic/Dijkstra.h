@@ -44,6 +44,13 @@ namespace Anabatic {
         public:
           inline bool  operator() ( const Vertex* lhs, const Vertex* rhs );
       };
+        public:
+          enum FlagR { NoRestriction = 0
+                     , NRestricted   = (1<<0)
+                     , SRestricted   = (1<<1)
+                     , ERestricted   = (1<<2)
+                     , WRestricted   = (1<<3)
+                     };
     public:
       static         DbU::Unit       unreached;
     public:                         
@@ -248,6 +255,8 @@ namespace Anabatic {
              bool       _propagate         ( Flags enabledSides );
              void       _selectFirstSource ();
              void       _toWires           ();
+      
+             bool       isRestricted       ( const Vertex* v1, const Vertex* v2 ) const;
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
