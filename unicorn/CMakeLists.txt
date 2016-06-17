@@ -26,6 +26,7 @@
 #find_package(NIMBUS REQUIRED)
 #find_package(METIS REQUIRED)
 #find_package(MAUKA REQUIRED)
+ find_package(ANABATIC REQUIRED)
  find_package(ETESIAN REQUIRED)
  find_package(KNIK REQUIRED)
  find_package(KATABATIC REQUIRED)

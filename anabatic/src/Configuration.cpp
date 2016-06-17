@@ -73,6 +73,8 @@ namespace Anabatic {
     , _allowedDepth   (0)
     , _edgeLength     (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
+    , _edgeCostH      (Cfg::getParamDouble("anabatic.edgeCostH",  9.0)->asDouble())
+    , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
   {
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
@@ -120,6 +122,8 @@ namespace Anabatic {
     , _rg           (NULL)
     , _extensionCaps(other._extensionCaps)
     , _allowedDepth (other._allowedDepth)
+    , _edgeCostH    (other._edgeCostH)
+    , _edgeCostK    (other._edgeCostK)
   {
     if (other._cg) _cg = other._cg->getClone();
     if (other._rg) _rg = other._rg->getClone();
@@ -128,7 +132,7 @@ namespace Anabatic {
 
   ConfigurationConcrete::~ConfigurationConcrete ()
   {
-    cdebug.log(145) << "About to delete attribute _rg (RoutingGauge)." << endl;
+    cdebug_log(145,0) << "About to delete attribute _rg (RoutingGauge)." << endl;
     _cg->destroy ();
     _rg->destroy ();
   }
@@ -284,6 +288,14 @@ namespace Anabatic {
   { return _edgeWidth; }
 
 
+  float  ConfigurationConcrete::getEdgeCostH () const
+  { return _edgeCostH; }
+
+
+  float  ConfigurationConcrete::getEdgeCostK () const
+  { return _edgeCostK; }
+
+
 
   void  ConfigurationConcrete::print ( Cell* cell ) const
   {
@@ -317,11 +329,13 @@ namespace Anabatic {
   Record* ConfigurationConcrete::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot( "_rg"              ,  _rg              ) );
-    record->add ( getSlot( "_gmetalh"         , _gmetalh          ) );
-    record->add ( getSlot( "_gmetalv"         , _gmetalv          ) );
-    record->add ( getSlot( "_gcontact"        , _gcontact         ) );
-    record->add ( getSlot( "_allowedDepth"    , _allowedDepth     ) );
+    record->add ( getSlot( "_rg"          ,  _rg          ) );
+    record->add ( getSlot( "_gmetalh"     , _gmetalh      ) );
+    record->add ( getSlot( "_gmetalv"     , _gmetalv      ) );
+    record->add ( getSlot( "_gcontact"    , _gcontact     ) );
+    record->add ( getSlot( "_allowedDepth", _allowedDepth ) );
+    record->add ( getSlot( "_edgeCostH"   , _edgeCostH    ) );
+    record->add ( getSlot( "_edgeCostK"   , _edgeCostK    ) );
                                      
     return ( record );
   }

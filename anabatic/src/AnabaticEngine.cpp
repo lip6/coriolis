@@ -59,6 +59,7 @@ namespace Anabatic {
 
   AnabaticEngine::AnabaticEngine ( Cell* cell )
     : Super(cell)
+    , _timer         ()
     , _configuration (new ConfigurationConcrete())
     , _matrix        ()
     , _gcells        ()
@@ -137,14 +138,14 @@ namespace Anabatic {
         if (layerGauges[depth]->getDirection() != Constant::Horizontal) continue;
         capacity += layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getYMin()
                                                       , span.getVMax() - ab.getYMin() );
-      //cdebug.log(110) << "Horizontal edge capacity:" << capacity << endl;
+      //cdebug_log(110,0) << "Horizontal edge capacity:" << capacity << endl;
       }
 
       if (flags & Flags::Vertical) {
         if (layerGauges[depth]->getDirection() != Constant::Vertical) continue;
         capacity += layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getXMin()
                                                       , span.getVMax() - ab.getXMin() );
-      //cdebug.log(110) << "Vertical edge capacity:" << capacity << endl;
+      //cdebug_log(110,0) << "Vertical edge capacity:" << capacity << endl;
       }
     }
 
@@ -160,6 +161,33 @@ namespace Anabatic {
     UpdateSession::open();
     GCell::create( this );
     UpdateSession::close();
+  }
+
+
+  void  AnabaticEngine::startMeasures ()
+  {
+    _timer.resetIncrease();
+    _timer.start();
+  }
+
+
+  void  AnabaticEngine::stopMeasures ()
+  { _timer.stop(); }
+
+
+  void  AnabaticEngine::printMeasures ( const string& tag ) const
+  {
+    ostringstream result;
+
+    result <<  Timer::getStringTime(_timer.getCombTime()) 
+           << ", " << Timer::getStringMemory(_timer.getIncrease());
+    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+
+    result.str("");
+    result << _timer.getCombTime()
+           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
+           << (_timer.getMemorySize()>>10) << "Kb";
+    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
   }
 
 

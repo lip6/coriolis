@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "hurricane/Timer.h"
 namespace Hurricane {
   class Name;
   class Cell;
@@ -37,6 +38,7 @@ namespace Anabatic {
 
   using std::string;
   using std::vector;
+  using Hurricane::Timer;
   using Hurricane::Name;
   using Hurricane::Record;
   using Hurricane::Interval;
@@ -69,6 +71,9 @@ namespace Anabatic {
       inline const  Flags&          flags             () const;
       inline        Flags&          flags             ();
                     void            reset             ();
+                    void            startMeasures     ();
+                    void            stopMeasures      ();
+                    void            printMeasures     ( const string& ) const;
       inline        void            _add              ( GCell* );
       inline        void            _remove           ( GCell* );
       inline        void            _updateLookup     ( GCell* );
@@ -88,6 +93,7 @@ namespace Anabatic {
                     AnabaticEngine&  operator=        ( const AnabaticEngine& );
     private:
       static Name           _toolName;
+             Timer          _timer;
              Configuration* _configuration;
              Matrix         _matrix;
              vector<GCell*> _gcells;
@@ -112,7 +118,7 @@ namespace Anabatic {
   inline void  AnabaticEngine::_add ( GCell* gcell )
   {
     _gcells.push_back( gcell );
-    std::sort( _gcells.begin(), _gcells.end(), Entity::CompareById() );
+  //std::sort( _gcells.begin(), _gcells.end(), Entity::CompareById() );
   }
 
   inline void  AnabaticEngine::_remove ( GCell* gcell )

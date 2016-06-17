@@ -45,14 +45,7 @@ namespace Anabatic {
           inline bool  operator() ( const Vertex* lhs, const Vertex* rhs );
       };
     public:
-          enum FlagR { NoRestriction = 0
-                     , NRestricted   = (1<<0)
-                     , SRestricted   = (1<<1)
-                     , ERestricted   = (1<<2)
-                     , WRestricted   = (1<<3)
-                     };
-    public:
-      static         float           unreached;
+      static         DbU::Unit       unreached;
     public:                         
       static         void            notify         ( Vertex*, unsigned flags );
     public:                         
@@ -65,14 +58,16 @@ namespace Anabatic {
              inline  Contact*        getGContact    ( Net* );
                      bool            hasValidStamp  () const;
              inline  Point           getCenter      () const;
-             inline  float           getDistance    () const;
+             inline  DbU::Unit       getDistance    () const;
              inline  int             getStamp       () const;
+             inline  int             getBranchId    () const;
              inline  int             getConnexId    () const;
              inline  Edge*           getFrom        () const;
              inline  Vertex*         getPredecessor () const;
-             inline  void            setDistance    ( float );
+             inline  void            setDistance    ( DbU::Unit );
              inline  void            setStamp       ( int );
              inline  void            setConnexId    ( int );
+             inline  void            setBranchId    ( int );
              inline  void            setFrom        ( Edge* );
 
              inline  bool            isNorth        ( Vertex* ) const;
@@ -93,8 +88,9 @@ namespace Anabatic {
       GCell*            _gcell;
       Observer<Vertex>  _observer;
       int               _connexId;
+      int               _branchId;
       int               _stamp;
-      float             _distance;
+      DbU::Unit         _distance;
       Edge*             _from;
       FlagR             _flags;
   };
@@ -105,6 +101,7 @@ namespace Anabatic {
     , _gcell   (gcell)
     , _observer(this)
     , _connexId(-1)
+    , _branchId( 0)
     , _stamp   (-1)
     , _distance(unreached)
     , _from    (NULL)
@@ -113,15 +110,6 @@ namespace Anabatic {
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
 
-  // inline Vertex::Vertex ( size_t id )
-  //   : _id      (id)
-  //   , _gcell   (NULL)
-  //   , _observer((Vertex*)0x1)  // To trick the NULL detection.
-  //   , _connexId(-1)
-  //   , _stamp   (-1)
-  //   , _distance(unreached)
-  //   , _from    (NULL)
-  // { }
 
   inline                 Vertex::~Vertex     () { }
   inline unsigned int    Vertex::getId       () const { return _id; }
@@ -129,14 +117,16 @@ namespace Anabatic {
   inline AnabaticEngine* Vertex::getAnabatic () const { return _gcell->getAnabatic(); }
   inline Contact*        Vertex::getGContact ( Net* net ) { return _gcell->getGContact(net); }
   inline Point           Vertex::getCenter   () const { return _gcell->getBoundingBox().getCenter(); }
-  inline float           Vertex::getDistance () const { return hasValidStamp() ? _distance : unreached; }
+  inline DbU::Unit       Vertex::getDistance () const { return hasValidStamp() ? _distance : unreached; }
   inline int             Vertex::getStamp    () const { return _stamp; }
   inline int             Vertex::getConnexId () const { return hasValidStamp() ? _connexId : -1; }
+  inline int             Vertex::getBranchId () const { return hasValidStamp() ? _branchId :  0; }
   inline Edge*           Vertex::getFrom     () const { return _from; }
-  inline void            Vertex::setDistance ( float distance ) { _distance=distance; }
+  inline void            Vertex::setDistance ( DbU::Unit distance ) { _distance=distance; }
   inline void            Vertex::setFrom     ( Edge* from ) { _from=from; }
   inline void            Vertex::setStamp    ( int stamp ) { _stamp=stamp; }
   inline void            Vertex::setConnexId ( int id ) { _connexId=id; }
+  inline void            Vertex::setBranchId ( int id ) { _branchId=id; }
 
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
@@ -183,7 +173,10 @@ namespace Anabatic {
 
 
   inline bool PriorityQueue::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs )
-  { return lhs->getDistance() < rhs->getDistance(); }
+  {
+    if (lhs->getDistance() == rhs->getDistance()) return lhs->getBranchId() > rhs->getBranchId();
+    return lhs->getDistance() < rhs->getDistance();
+  }
 
 
   inline         PriorityQueue::PriorityQueue  () : _queue() { }
@@ -196,7 +189,7 @@ namespace Anabatic {
 
   inline void  PriorityQueue::pop ()
   {
-    cdebug.log(111) << "Pop: (size:" << _queue.size() << ") " << *_queue.begin() << std::endl;
+    cdebug_log(112,0) << "Pop: (size:" << _queue.size() << ") " << *_queue.begin() << std::endl;
     _queue.erase(_queue.begin());
   }
 
@@ -209,12 +202,12 @@ namespace Anabatic {
 
   inline void  PriorityQueue::dump () const
   {
-    if (cdebug.enabled(111)) {
-      cdebug.log(111,1) << "PriorityQueue::dump() size:" << size() << std::endl;
+    if (cdebug.enabled(112)) {
+      cdebug_log(112,1) << "PriorityQueue::dump() size:" << size() << std::endl;
       size_t order = 0;
       for ( Vertex* v : _queue )
-        cdebug.log(111) << "[" << std::setw(3) << order++ << "] " << v << std::endl;
-      cdebug.tabw(111,-1);
+        cdebug_log(112,0) << "[" << std::setw(3) << order++ << "] " << v << std::endl;
+      cdebug_tabw(112,-1);
     }
   }
 
@@ -238,26 +231,27 @@ namespace Anabatic {
           virtual std::string  _getTypeName () const;
           virtual std::string  _getString   () const;
       };
-
     public:
-             float     getDistance        ( const Vertex*, const Vertex*, const Edge* );
-             bool      isRestricted       ( const Vertex*, const Vertex* ) const;
+      typedef std::function<DbU::Unit(const Vertex*,const Vertex*,const Edge*)>  distance_t;
     public:
-                       Dijkstra           ( AnabaticEngine* );
-                      ~Dijkstra           ();
-    public:                        
-      inline bool      isBipoint          () const;
-             void      load               ( Net* );
-             void      run                ( Mode mode=Mode::Standart );
-    private:
-                       Dijkstra           ( const Dijkstra& );
-             Dijkstra& operator=          ( const Dijkstra& );
-             bool      _propagate         ( Flags enabledSides );
-             void      _selectFirstSource ();
-             void      _toWires           ();
+                        Dijkstra           ( AnabaticEngine* );
+                       ~Dijkstra           ();
+    public:                         
+      inline bool       isBipoint          () const;
+      inline void       setDistance        ( distance_t );
+             void       load               ( Net* );
+             void       run                ( Mode mode=Mode::Standart );
+    private:           
+                        Dijkstra           ( const Dijkstra& );
+             Dijkstra&  operator=          ( const Dijkstra& );
+      static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
+             bool       _propagate         ( Flags enabledSides );
+             void       _selectFirstSource ();
+             void       _toWires           ();
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
+      distance_t       _distanceCb;
       Mode             _mode;
       Net*             _net;
       int              _stamp;
@@ -272,7 +266,8 @@ namespace Anabatic {
   inline Dijkstra::Mode::Mode ( unsigned int flags ) : BaseFlags(flags) { }
   inline Dijkstra::Mode::Mode ( BaseFlags    base  ) : BaseFlags(base)  { }
 
-  inline bool  Dijkstra::isBipoint () const { return _net and (_targets.size()+_sources.size() == 2); }
+  inline bool  Dijkstra::isBipoint   () const { return _net and (_targets.size()+_sources.size() == 2); }
+  inline void  Dijkstra::setDistance ( distance_t cb ) { _distanceCb = cb; }
 
 
 }  // Anabatic namespace.

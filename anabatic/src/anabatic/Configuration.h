@@ -86,6 +86,8 @@ namespace Anabatic {
       virtual void               setAllowedDepth     ( size_t ) = 0;
       virtual DbU::Unit          getEdgeLength       () const = 0;
       virtual DbU::Unit          getEdgeWidth        () const = 0;
+      virtual float              getEdgeCostH        () const = 0;
+      virtual float              getEdgeCostK        () const = 0;
       virtual void               print               ( Cell* ) const = 0;
       virtual Record*            _getRecord          () const = 0;
       virtual string             _getString          () const = 0;
@@ -139,6 +141,8 @@ namespace Anabatic {
       virtual void                   setAllowedDepth       ( size_t );
       virtual DbU::Unit              getEdgeLength         () const;
       virtual DbU::Unit              getEdgeWidth          () const;
+      virtual float                  getEdgeCostH          () const;
+      virtual float                  getEdgeCostK          () const;
       virtual void                   print                 ( Cell* ) const;
       virtual Record*                _getRecord            () const;
       virtual string                 _getString            () const;
@@ -154,6 +158,8 @@ namespace Anabatic {
       size_t                  _allowedDepth;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;
+      float                   _edgeCostH;
+      float                   _edgeCostK;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

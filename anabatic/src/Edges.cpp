@@ -33,14 +33,14 @@ namespace Anabatic {
     , _filterFlags(filterFlags)
     , _iedge      (0)
   {
-    // cdebug.log(110) << "GCell_Edges::Locator::Locator() " << isValid() << endl;
+    // cdebug_log(110,0) << "GCell_Edges::Locator::Locator() " << isValid() << endl;
     if (_gcell->getEastEdges().empty() or not _filterFlags.contains(Flags::EastSide)) progress();
   }
 
 
   EdgesHL* GCell_Edges::Locator::getClone () const
   {
-    // cdebug.log(110) << "GCell_Edges::Locator::getClone()" << endl;
+    // cdebug_log(110,0) << "GCell_Edges::Locator::getClone()" << endl;
     return new Locator (*this);
   }
 
@@ -61,48 +61,48 @@ namespace Anabatic {
 
   void  GCell_Edges::Locator::progress ()
   {
-    // cdebug.log(110) << "GCell_Edges::Locator::progress() [from] " << _stateFlags << " iedge:" << _iedge << endl;
-    // cdebug.log(110) << "  East:"  << _gcell->getEastEdges().size()
+    // cdebug_log(110,0) << "GCell_Edges::Locator::progress() [from] " << _stateFlags << " iedge:" << _iedge << endl;
+    // cdebug_log(110,0) << "  East:"  << _gcell->getEastEdges().size()
     //                 << "  North:" << _gcell->getNorthEdges().size()
     //                 << "  West:"  << _gcell->getWestEdges().size()
     //                 << "  South:" << _gcell->getSouthEdges().size() << endl;
-    // cdebug.log(110) << this << endl;
+    // cdebug_log(110,0) << this << endl;
 
     ++_iedge;
     while (_stateFlags) {
       if ((_stateFlags & _filterFlags).contains(Flags::EastSide)) {
         if (_iedge < _gcell->getEastEdges().size()) break;
-        // cdebug.log(110) << "Switching to North side." << endl;
+        // cdebug_log(110,0) << "Switching to North side." << endl;
         _stateFlags = Flags::NorthSide;
         _iedge      = 0;
-        // cdebug.log(110) << this << endl;
+        // cdebug_log(110,0) << this << endl;
         continue;
       }
       if ((_stateFlags & _filterFlags).contains(Flags::NorthSide))  {
         if (_iedge < _gcell->getNorthEdges().size()) break;
-        // cdebug.log(110) << "Switching to West side." << endl;
+        // cdebug_log(110,0) << "Switching to West side." << endl;
         _stateFlags = Flags::WestSide;
         _iedge      = 0;
-        // cdebug.log(110) << this << endl;
+        // cdebug_log(110,0) << this << endl;
         continue;
       }
       if ((_stateFlags & _filterFlags).contains(Flags::WestSide))  {
         if (_iedge < _gcell->getWestEdges().size()) break;
-        // cdebug.log(110) << "Switching to South side." << endl;
+        // cdebug_log(110,0) << "Switching to South side." << endl;
         _stateFlags = Flags::SouthSide;
         _iedge      = 0;
         continue;
       }
       if ((_stateFlags & _filterFlags).contains(Flags::SouthSide))  {
         if (_iedge < _gcell->getSouthEdges().size()) break;
-        // cdebug.log(110) << "All edges done." << endl;
+        // cdebug_log(110,0) << "All edges done." << endl;
         _stateFlags = 0;
         _iedge      = 0;
         break;;
       }
     }
 
-    cdebug.log(110) << "GCell_Edges::Locator::progress() [to]   " << _stateFlags << " iedge:" << _iedge << endl;
+  //cdebug_log(110,0) << "GCell_Edges::Locator::progress() [to]   " << _stateFlags << " iedge:" << _iedge << endl;
   }
 
 

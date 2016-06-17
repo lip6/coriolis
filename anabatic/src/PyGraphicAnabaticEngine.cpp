@@ -48,7 +48,7 @@ extern "C" {
 
   static PyObject* PyGraphicAnabaticEngine_grab ( PyObject* )
   {
-    cdebug.log(32) << "PyGraphicAnabaticEngine_grab()" << endl;
+    cdebug_log(32,0) << "PyGraphicAnabaticEngine_grab()" << endl;
     PyGraphicAnabaticEngine* pyGraphicAnabaticEngine = NULL;
 
     HTRY
@@ -64,7 +64,7 @@ extern "C" {
 
   static PyObject* PyGraphicAnabaticEngine_getCell ( PyGraphicAnabaticEngine* self )
   {
-    cdebug.log(32) << "PyGraphicAnabaticEngine_getCell ()" << endl;
+    cdebug_log(32,0) << "PyGraphicAnabaticEngine_getCell ()" << endl;
 
     Cell* cell = NULL;
     
