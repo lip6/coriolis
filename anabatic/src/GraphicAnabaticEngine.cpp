@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <cmath>
 #include <boost/bind.hpp>
 #include <QAction>
 #include <QMenu>
@@ -64,6 +65,43 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Test functions.
 
+
+  class DigitalDistance {
+    public:
+      inline            DigitalDistance ( float h, float k );
+             DbU::Unit  operator()      ( const Vertex* source ,const Vertex* target,const Edge* edge ) const;
+    private:
+    // For an explanation of h & k parameters, see:
+    //     "KNIK, routeur global pour la plateforme Coriolis", p. 52.
+      float  _h;
+      float  _k;
+  };
+
+
+  inline DigitalDistance::DigitalDistance ( float h, float k ) : _h(h), _k(k) { }
+
+
+  DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
+  {
+    if (edge->getCapacity() <= 0) return Vertex::unreached;
+
+    float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
+    float congestionCost = 1.0 + _h / (1.0 + std::exp(_k * (congestion - 1.0)));
+
+    float distance = (float)source->getDistance() + congestionCost * (float)edge->getDistance();
+
+    // Edge* sourceFrom = source->getFrom();
+    // if (sourceFrom) {
+    //   distance += ((sourceFrom->isHorizontal() xor edge->isHorizontal()) ? 3.0 : 0.0) * (float)Edge::unity;
+    // }
+    cdebug_log(112,0) << "cong:"   << congestion
+                      << " ccost:" << congestionCost
+                      << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
+
+    return (DbU::Unit)distance;
+  }
+
+
   void  anabaticTest_1 ( AnabaticEngine* engine )
   {
     engine->getSouthWestGCell()->doGrid();
@@ -83,33 +121,33 @@ namespace Anabatic {
     DbU::Unit xcorner = engine->getCell()->getAbutmentBox().getXMin();
     DbU::Unit ycorner = engine->getCell()->getAbutmentBox().getYMin();
 
-    cdebug.log(119,1) << "row0: " << row0 << endl;
+    cdebug_log(119,1) << "row0: " << row0 << endl;
 
     GCell* row1 = row0->hcut( ycorner+DbU::fromLambda(50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row1: " << row1 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row1: " << row1 << endl;
 
     GCell* row2 = row1->hcut( ycorner+DbU::fromLambda(2*50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row2: " << row2 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row2: " << row2 << endl;
 
     row0 = row0->vcut( xcorner+DbU::fromLambda(50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row0+1: " << row0 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row0+1: " << row0 << endl;
 
     row0 = row0->vcut( xcorner+DbU::fromLambda(3*50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row0+2: " << row0 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row0+2: " << row0 << endl;
 
     row0 = row0->vcut( xcorner+DbU::fromLambda(5*50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row0+3: " << row0 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row0+3: " << row0 << endl;
     
     row1 = row1->vcut( xcorner+DbU::fromLambda(2*50.0) );
-    cdebug.tabw(119,-1);
-    cdebug.log(119,1) << "row1+1: " << row1 << endl;
+    cdebug_tabw(119,-1);
+    cdebug_log(119,1) << "row1+1: " << row1 << endl;
 
-    cdebug.tabw(119,-1);
+    cdebug_tabw(119,-1);
 
     UpdateSession::close();
   }
@@ -118,14 +156,14 @@ namespace Anabatic {
   void  anabaticTest_3 ( AnabaticEngine* engine )
   {
     for ( int i=0 ; i<4 ; ++i ) {
-      cdebug.log(110,1) << "Running test 3, loop:" << i << " ..." << endl;
+      cdebug_log(110,1) << "Running test 3, loop:" << i << " ..." << endl;
 
       if ( i%2) anabaticTest_1( engine );
       else      anabaticTest_2( engine );
 
       engine->reset();
-      cdebug.log(110,1) << "Test 3, loop:" << i << " completed." << endl;
-      cdebug.tabw(110,-1);
+      cdebug_log(110,1) << "Test 3, loop:" << i << " completed." << endl;
+      cdebug_tabw(110,-1);
     }
   }
     
@@ -161,12 +199,28 @@ namespace Anabatic {
     cell->createRoutingPadRings( Cell::Flags::BuildRings );
 
   //DebugSession::addToTrace( cell->getNet("alu_out(3)") );
-    DebugSession::addToTrace( cell->getNet("imuxe.not_aux2") );
+  //DebugSession::addToTrace( cell->getNet("imuxe.not_i(1)") );
+    DebugSession::addToTrace( cell->getNet("r(0)") );
+    DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
+
+    engine->startMeasures();
+
+    cmess1 << "  o  Building regular grid..." << endl;
 
     UpdateSession::open();
     engine->getSouthWestGCell()->doGrid();
+    UpdateSession::close();
 
+    engine->stopMeasures();
+    engine->printMeasures( "Anbatic Grid" );
+    engine->startMeasures();
+
+    cmess1 << "  o  Running global routing..." << endl;
+
+    UpdateSession::open();
     Dijkstra* dijkstra = new Dijkstra ( engine );
+    dijkstra->setDistance( DigitalDistance( engine->getConfiguration()->getEdgeCostH()
+                                          , engine->getConfiguration()->getEdgeCostK() ) );
     for ( Net* net : cell->getNets() ) {
       if (net->isPower() or net->isClock()) continue;
       dijkstra->load( net );
@@ -174,6 +228,9 @@ namespace Anabatic {
     }
     delete dijkstra;
     UpdateSession::close();
+
+    engine->stopMeasures();
+    engine->printMeasures( "Dijkstra" );
   }
     
 
@@ -201,29 +258,32 @@ namespace Anabatic {
 
     QPainter& painter = widget->getPainter();
     QPen      pen     = Graphics::getPen  ("Anabatic::GCell",widget->getDarkening()); 
-    Box bb = gcell->getBoundingBox();
+    Box       bb      = gcell->getBoundingBox();
+    QRect     pixelBb = widget->dbuToScreenRect(bb);
 
     painter.setPen  ( pen );
     painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
-    painter.drawRect( widget->dbuToScreenRect(bb) );
+    painter.drawRect( pixelBb );
 
     if (gcell->isFlat()) return;
 
-    QString text  = QString("id:%1").arg(gcell->getId());
-    QFont   font  = Graphics::getFixedFont( QFont::Bold );
-    painter.setFont(font);
+    if (pixelBb.width() > 150) {
+      QString text  = QString("id:%1").arg(gcell->getId());
+      QFont   font  = Graphics::getFixedFont( QFont::Bold );
+      painter.setFont(font);
 
-    pen.setWidth( 1 );
-    painter.setPen( pen );
+      pen.setWidth( 1 );
+      painter.setPen( pen );
 
-    painter.save     ();
-    painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
-    painter.drawRect (QRect( -75, -25, 150, 50 ));
-    painter.drawText (QRect( -75, -25, 150, 50 )
-                     , text
-                     , QTextOption(Qt::AlignCenter)
-                     );
-    painter.restore  ();
+      painter.save     ();
+      painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+      painter.drawRect (QRect( -75, -25, 150, 50 ));
+      painter.drawText (QRect( -75, -25, 150, 50 )
+                       , text
+                       , QTextOption(Qt::AlignCenter)
+                       );
+      painter.restore  ();
+    }
   }
 
 
@@ -240,6 +300,9 @@ namespace Anabatic {
                                         , const Transformation& transformation
                                         )
   {
+    static QFont font       = Graphics::getFixedFont( QFont::Bold ); 
+    static int   fontHeight = QFontMetrics(font).height();
+
     const Edge* edge = static_cast<const Edge*>(go);
 
     if (edge) {
@@ -258,13 +321,15 @@ namespace Anabatic {
       if (edge->getCapacity() > 0.0)
         brush = Graphics::getColorScale( ColorScale::Fire ).getBrush( occupancy, widget->getDarkening() );
 
+      QRect pixelBb = widget->dbuToScreenRect( bb, false);
       painter.setPen( Qt::NoPen );
       painter.setBrush( brush );
-      painter.drawRect( widget->dbuToScreenRect( bb, false) );
+      painter.drawRect( pixelBb );
+
+      if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
 
       QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
-      QColor  color ( Qt::white );
-      QFont   font  = Graphics::getFixedFont( QFont::Bold );
+      QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
       painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
       painter.setFont(font);
 

@@ -108,59 +108,59 @@ namespace Anabatic {
 
   void  GCell::_add ( Edge* edge, Flags side )
   {
-    cdebug.log(110,1) << "GCell::_add(side): side:" << side << " " << edge << endl;
+    cdebug_log(110,1) << "GCell::_add(side): side:" << side << " " << edge << endl;
     if (side.contains(Flags::WestSide)) {
-      cdebug.log(110) << "Adding to West side of " << this << endl;
+      cdebug_log(110,0) << "Adding to West side of " << this << endl;
       for ( auto iedge=_westEdges.begin() ; iedge != _westEdges.end() ; ++iedge )
         if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _westEdges.insert( iedge, edge );
-          cdebug.tabw(110,-1);
+          cdebug_tabw(110,-1);
           return;
         }
       _westEdges.push_back( edge );
     }
 
     if (side.contains(Flags::EastSide)) {
-      cdebug.log(110) << "Adding to East side of " << this << endl;
+      cdebug_log(110,0) << "Adding to East side of " << this << endl;
       for ( auto iedge=_eastEdges.begin() ; iedge != _eastEdges.end() ; ++iedge )
         if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _eastEdges.insert( iedge, edge );
-          cdebug.tabw(110,-1);
+          cdebug_tabw(110,-1);
           return;
         }
       _eastEdges.push_back( edge );
     }
 
     if (side.contains(Flags::SouthSide)) {
-      cdebug.log(110) << "Adding to South side of " << this << endl;
+      cdebug_log(110,0) << "Adding to South side of " << this << endl;
       for ( auto iedge=_southEdges.begin() ; iedge != _southEdges.end() ; ++iedge )
-        cdebug.log(110) << "| @" << DbU::getValueString((*iedge)->getAxisMin()) << " " << *iedge << endl;
+        cdebug_log(110,0) << "| @" << DbU::getValueString((*iedge)->getAxisMin()) << " " << *iedge << endl;
 
       for ( auto iedge=_southEdges.begin() ; iedge != _southEdges.end() ; ++iedge )
         if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
-          cdebug.log(110) << "Insert *before* " << *iedge << endl;
+          cdebug_log(110,0) << "Insert *before* " << *iedge << endl;
 
           _southEdges.insert( iedge, edge );
           for ( auto iedge2=_southEdges.begin() ; iedge2 != _southEdges.end() ; ++iedge2 )
-            cdebug.log(110) << "| @" <<  DbU::getValueString((*iedge2)->getAxisMin()) << " " << *iedge2 << endl;
-          cdebug.tabw(110,-1);
+            cdebug_log(110,0) << "| @" <<  DbU::getValueString((*iedge2)->getAxisMin()) << " " << *iedge2 << endl;
+          cdebug_tabw(110,-1);
           return;
         }
       _southEdges.push_back( edge );
     }
 
     if (side.contains(Flags::NorthSide)) {
-      cdebug.log(110) << "Adding to North side of " << this << endl;
+      cdebug_log(110,0) << "Adding to North side of " << this << endl;
       for ( auto iedge=_northEdges.begin() ; iedge != _northEdges.end() ; ++iedge )
         if ((*iedge)->getAxisMin() > edge->getAxisMin()) {
           _northEdges.insert( iedge, edge );
-          cdebug.tabw(110,-1);
+          cdebug_tabw(110,-1);
           return;
         }
       _northEdges.push_back( edge );
     }
 
-    cdebug.tabw(110,-1);
+    cdebug_tabw(110,-1);
   }
 
 
@@ -260,7 +260,7 @@ namespace Anabatic {
 
   GCell*  GCell::vcut ( DbU::Unit x )
   {
-    cdebug.log(119,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
+    cdebug_log(119,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
 
     if ( (x < getXMin()) or (x > getXMax()) )
       throw Error( "GCell::vcut(): Vertical cut axis at %s is outside GCell box,\n"
@@ -270,17 +270,17 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( x, getYMin() );
-    cdebug.log(119) << "New chunk:" << chunk << endl;
+    cdebug_log(119,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
 
     if (not _southEdges.empty()) {
-      cdebug.log(110) << "Split/create south edges." << endl;
+      cdebug_log(110,0) << "Split/create south edges." << endl;
 
       size_t iedge = 0;
       for ( ; (iedge < _southEdges.size()) ; ++iedge ) {
-        cdebug.log(110) << "[" << iedge << "] xmax of:"
+        cdebug_log(110,0) << "[" << iedge << "] xmax of:"
                         << _southEdges[iedge]->getOpposite(this)
                         << " " << _southEdges[iedge] << endl;
         if (x <= _southEdges[iedge]->getOpposite(this)->getXMax()) break;
@@ -295,7 +295,7 @@ namespace Anabatic {
     }
 
     if (not _northEdges.empty()) {
-      cdebug.log(110) << "Split/create north edges." << endl;
+      cdebug_log(110,0) << "Split/create north edges." << endl;
 
       size_t iedge = 0;
       for ( ; (iedge < _northEdges.size()) ; ++iedge )
@@ -312,7 +312,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug.tabw(119,-1);
+    cdebug_tabw(119,-1);
 
     return chunk;
   }
@@ -320,7 +320,7 @@ namespace Anabatic {
 
   GCell* GCell::hcut ( DbU::Unit y )
   {
-    cdebug.log(119,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
+    cdebug_log(119,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
 
     if ( (y < getYMin()) or (y > getYMax()) )
       throw Error( "GCell::hcut(): Horizontal cut axis at %s is outside GCell box,\n"
@@ -330,7 +330,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( getXMin(), y );
-    cdebug.log(119) << "New chunk:" << chunk << endl;
+    cdebug_log(119,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
@@ -364,7 +364,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug.tabw(119,-1);
+    cdebug_tabw(119,-1);
 
     return chunk;
   }
@@ -422,11 +422,11 @@ namespace Anabatic {
 
   void  GCell::_revalidate ()
   {
-    cdebug.log(110,1) << "GCell::revalidate() " << this << endl;
-    cdebug.log(110,1) << "West side."  << endl; for ( Edge* edge : _westEdges  ) edge->revalidate(); cdebug.tabw(110,-1);
-    cdebug.log(110,1) << "East side."  << endl; for ( Edge* edge : _eastEdges  ) edge->revalidate(); cdebug.tabw(110,-1);
-    cdebug.log(110,1) << "South side." << endl; for ( Edge* edge : _southEdges ) edge->revalidate(); cdebug.tabw(110,-1);
-    cdebug.log(110,1) << "North side." << endl; for ( Edge* edge : _northEdges ) edge->revalidate(); cdebug.tabw(110,-1);
+    cdebug_log(110,1) << "GCell::revalidate() " << this << endl;
+    cdebug_log(110,1) << "West side."  << endl; for ( Edge* edge : _westEdges  ) edge->revalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "East side."  << endl; for ( Edge* edge : _eastEdges  ) edge->revalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "South side." << endl; for ( Edge* edge : _southEdges ) edge->revalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "North side." << endl; for ( Edge* edge : _northEdges ) edge->revalidate(); cdebug_tabw(110,-1);
 
     if (_xmin > getXMax()+1)
       cerr << Error( "GCell::_revalidate(): %s, X Min is greater than Max.", getString(this).c_str() );
@@ -434,21 +434,21 @@ namespace Anabatic {
       cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
 
     _anabatic->_updateLookup( this );
-    _anabatic->getMatrix()->show();
-    cdebug.tabw(110,-1);
+  //_anabatic->getMatrix()->show();
+    cdebug_tabw(110,-1);
   }
 
 
   void  GCell::_moveEdges ( GCell* dest, size_t ibegin, Flags flags )
   {
-    cdebug.log(110,1) << "GCell::_moveEdges() " << this << endl;
-    cdebug.log(110)   << "           toward " << dest << endl;
-    cdebug.log(110)   << "           ibegin: " << ibegin << " flags:" << flags << endl;
+    cdebug_log(110,1) << "GCell::_moveEdges() " << this << endl;
+    cdebug_log(110,0)   << "           toward " << dest << endl;
+    cdebug_log(110,0)   << "           ibegin: " << ibegin << " flags:" << flags << endl;
 
     size_t iclear = ibegin;
 
     if (flags.contains(Flags::SouthSide) and not _southEdges.empty()) {
-      cdebug.log(110) << "South side." << endl;
+      cdebug_log(110,0) << "South side." << endl;
 
       if (iclear < _southEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _southEdges.size()) ; ++iedge ) {
@@ -468,7 +468,7 @@ namespace Anabatic {
     }
 
     if (flags.contains(Flags::NorthSide) and not _northEdges.empty()) {
-      cdebug.log(110) << "North side." << endl;
+      cdebug_log(110,0) << "North side." << endl;
 
       if (iclear < _northEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _northEdges.size()) ; ++iedge ) {
@@ -488,7 +488,7 @@ namespace Anabatic {
     }
 
     if (flags.contains(Flags::WestSide) and not _westEdges.empty()) {
-      cdebug.log(110) << "West side." << endl;
+      cdebug_log(110,0) << "West side." << endl;
 
       if (iclear < _westEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _westEdges.size()) ; ++iedge ) {
@@ -508,7 +508,7 @@ namespace Anabatic {
     }
 
     if (flags.contains(Flags::EastSide) and not _eastEdges.empty()) {
-      cdebug.log(110) << "East side." << endl;
+      cdebug_log(110,0) << "East side." << endl;
 
       if (iclear < _eastEdges.size()) {
         for ( size_t iedge=ibegin ; (iedge < _eastEdges.size()) ; ++iedge ) {
@@ -527,7 +527,7 @@ namespace Anabatic {
       }
     }
 
-    cdebug.tabw(110,-1);
+    cdebug_tabw(110,-1);
   }
 
 
@@ -536,7 +536,7 @@ namespace Anabatic {
 
     for ( Contact* contact : _contacts ) {
       if (contact->getNet() == net) {
-        cdebug.log(111) << "GCell::getGContact(): " << contact << endl;
+        cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
         return contact;
       }
     }
@@ -549,7 +549,7 @@ namespace Anabatic {
                                       , DbU::fromLambda(2.0)
                                       , DbU::fromLambda(2.0)
                                       );
-    cdebug.log(111) << "GCell::getGContact(): " << contact << endl;
+    cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
     return contact;
   }
 

@@ -67,14 +67,14 @@ namespace Anabatic {
     _jmax = _area.getHeight() / side + ((_area.getHeight() % side) ? 1 : 0);
     _gcells.resize( _imax*_jmax );
 
-    cdebug.log(110) << "Matrix::setCell(): " << this << endl;
+    cdebug_log(110,0) << "Matrix::setCell(): " << this << endl;
   }
 
 
   GCell*  Matrix::getUnder ( DbU::Unit x, DbU::Unit y ) const
   {
     int index = xy2maxIndex(x,y);
-    cdebug.log(110) << "Matrix::getUnder() ("
+    cdebug_log(110,0) << "Matrix::getUnder() ("
                     << DbU::getValueString(x) << " "
                     << DbU::getValueString(y) << ") index:" << index << endl;
     return (index < 0) ? NULL : _gcells[index]->getUnder(x,y);
@@ -83,26 +83,26 @@ namespace Anabatic {
 
   void  Matrix::updateLookup ( GCell* gcell )
   {
-    cdebug.log(110,1) << "Matrix::updateLookup(): " << gcell << endl;
+    cdebug_log(110,1) << "Matrix::updateLookup(): " << gcell << endl;
 
     if (gcell->isFlat()) {
-      cdebug.log(110) << " GCell is flat, no update." << endl;
-      cdebug.tabw(110,-1);
+      cdebug_log(110,0) << " GCell is flat, no update." << endl;
+      cdebug_tabw(110,-1);
       return;
     }
 
     Box gcellBb    = gcell->getBoundingBox();
     Box updateArea = _area.getIntersection( gcellBb );
 
-    cdebug.log(110) << "_side            " << _side << endl; 
-    cdebug.log(110) << "_area.getXMin()  " << _area.getXMin() << endl; 
-    cdebug.log(110) << "_area.getYMin()  " << _area.getYMin() << endl; 
-    cdebug.log(110) << "_area.getXMax()  " << _area.getXMax() << endl; 
-    cdebug.log(110) << "_area.getYMax()  " << _area.getYMax() << endl; 
-    cdebug.log(110) << "updateArea.getXMin()  " << updateArea.getXMin() << endl; 
-    cdebug.log(110) << "updateArea.getYMin()  " << updateArea.getYMin() << endl; 
-    cdebug.log(110) << "updateArea.getXMax()  " << updateArea.getXMax() << endl; 
-    cdebug.log(110) << "updateArea.getYMax()  " << updateArea.getYMax() << endl; 
+    cdebug_log(110,0) << "_side            " << _side << endl; 
+    cdebug_log(110,0) << "_area.getXMin()  " << _area.getXMin() << endl; 
+    cdebug_log(110,0) << "_area.getYMin()  " << _area.getYMin() << endl; 
+    cdebug_log(110,0) << "_area.getXMax()  " << _area.getXMax() << endl; 
+    cdebug_log(110,0) << "_area.getYMax()  " << _area.getYMax() << endl; 
+    cdebug_log(110,0) << "updateArea.getXMin()  " << updateArea.getXMin() << endl; 
+    cdebug_log(110,0) << "updateArea.getYMin()  " << updateArea.getYMin() << endl; 
+    cdebug_log(110,0) << "updateArea.getXMax()  " << updateArea.getXMax() << endl; 
+    cdebug_log(110,0) << "updateArea.getYMax()  " << updateArea.getYMax() << endl; 
 
     if (updateArea.isEmpty()) {
       cerr << Error( "Matrix::updateLookup(): %s is not under area of %s."
@@ -118,13 +118,13 @@ namespace Anabatic {
     DbU::Unit dx = updateArea.getXMin() - _area.getXMin();
     DbU::Unit dy = updateArea.getYMin() - _area.getYMin();
 
-    cdebug.log(110) <<  "raw_i:" << (dx / _side + ((dx%_side) ? 1 : 0))
+    cdebug_log(110,0) <<  "raw_i:" << (dx / _side + ((dx%_side) ? 1 : 0))
                     << " raw_j:" << (dy / _side + ((dy%_side) ? 1 : 0)) << endl;
-    cdebug.log(110) << "indexMin:" << indexMin << endl;
-    cdebug.log(110) << "indexMax:" << indexMax << endl;
-    cdebug.log(110) << "xspan:   " << xspan << endl;
+    cdebug_log(110,0) << "indexMin:" << indexMin << endl;
+    cdebug_log(110,0) << "indexMax:" << indexMax << endl;
+    cdebug_log(110,0) << "xspan:   " << xspan << endl;
 
-    if (not indexMin.valid() or not indexMax.valid()) { cdebug.tabw(110,-1); return; }
+    if (not indexMin.valid() or not indexMax.valid()) { cdebug_tabw(110,-1); return; }
 
     int index = indexMin.index();
     while ( index <= indexMax.index() ) {
@@ -134,17 +134,17 @@ namespace Anabatic {
       else                         index += _imax - xspan;
     }
 
-    cdebug.tabw(110,-1);
+    cdebug_tabw(110,-1);
   }
 
 
   void  Matrix::show () const
   {
-    cdebug.log(111) << this << endl;
+    cdebug_log(111,0) << this << endl;
     for ( size_t i=0 ; i<_gcells.size() ; ++i ) {
-      cdebug.log(111) << "[" << setw(3) << setfill('0') << i << setfill(' ') << "] ("
-                      << setw(3) << index2i(i) << ","
-                      << setw(3) << index2j(i) << ") " << _gcells[i] << endl;
+      cdebug_log(111,0) << "[" << setw(3) << setfill('0') << i << setfill(' ') << "] ("
+                        << setw(3) << index2i(i) << ","
+                        << setw(3) << index2j(i) << ") " << _gcells[i] << endl;
     }
   }
 

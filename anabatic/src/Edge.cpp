@@ -85,10 +85,10 @@ namespace Anabatic {
     Edge* edge = new Edge ( source, target, flags );
     edge->_postCreate();
 
-    cdebug.log(110,1) << "Edge::create(): " << (void*)edge << ":" << edge << endl;  
-    cdebug.log(110) << "source:" << (void*)source << ":" << edge->getSource() << endl;
-    cdebug.log(110) << "target:" << (void*)target << ":" << edge->getTarget() << endl;
-    cdebug.tabw(110,-1);
+    cdebug_log(110,1) << "Edge::create(): " << (void*)edge << ":" << edge << endl;  
+    cdebug_log(110,0) << "source:" << (void*)source << ":" << edge->getSource() << endl;
+    cdebug_log(110,0) << "target:" << (void*)target << ":" << edge->getTarget() << endl;
+    cdebug_tabw(110,-1);
     return edge;
   }
 
@@ -156,14 +156,17 @@ namespace Anabatic {
   }
 
 
-  float  Edge::getDistance () const
+  DbU::Unit  Edge::getDistance () const
   {
     Point     sourceCenter = getSource()->getBoundingBox().getCenter();
     Point     targetCenter = getTarget()->getBoundingBox().getCenter();
     DbU::Unit dx           = targetCenter.getX() - sourceCenter.getX();
     DbU::Unit dy           = targetCenter.getY() - sourceCenter.getY();
 
-    return (float)( ((dx > 0) ? dx : -dx) + ((dy > 0) ? dy : -dy) ) / (float)unity;
+    if (dx < 0) dx = -dx;
+    if (dx)     dx += DbU::fromLambda( 0.1 );
+
+    return dx + ((dy > 0) ? dy : -dy);
   }
 
 
@@ -193,7 +196,7 @@ namespace Anabatic {
 
     Super::invalidate( false );
     _flags.reset( Flags::Invalidated );
-    cdebug.log(110) << "Edge::_revalidate() " << this << endl;
+    cdebug_log(110,0) << "Edge::_revalidate() " << this << endl;
   }
 
 

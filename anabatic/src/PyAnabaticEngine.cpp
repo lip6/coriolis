@@ -85,7 +85,7 @@ extern "C" {
 
   static PyObject* PyAnabaticEngine_get ( PyObject*, PyObject* args )
   {
-    cdebug.log(32) << "PyAnabaticEngine_get()" << endl;
+    cdebug_log(32,0) << "PyAnabaticEngine_get()" << endl;
 
     AnabaticEngine* engine = NULL;
     
@@ -102,7 +102,7 @@ extern "C" {
 
   static PyObject* PyAnabaticEngine_create ( PyObject*, PyObject* args )
   {
-    cdebug.log(32) << "PyAnabaticEngine_create()" << endl;
+    cdebug_log(32,0) << "PyAnabaticEngine_create()" << endl;
 
     AnabaticEngine* engine = NULL;
     
@@ -126,7 +126,7 @@ extern "C" {
 
   static PyObject* PyAnabaticEngine_setViewer ( PyAnabaticEngine* self, PyObject* args )
   {
-    cdebug.log(32) << "PyAnabaticEngine_setViewer ()" << endl;
+    cdebug_log(32,0) << "PyAnabaticEngine_setViewer ()" << endl;
 
     HTRY
       METHOD_HEAD( "AnabaticEngine.setViewer()" )
@@ -148,7 +148,7 @@ extern "C" {
 #if 0
   PyObject* PyAnabaticEngine_runTest ( PyAnabaticEngine* self, PyObject* args )
   {
-    cdebug.log(32) << "PyAnabaticEngine_runTest()" << endl;
+    cdebug_log(32,0) << "PyAnabaticEngine_runTest()" << endl;
 
     HTRY
       METHOD_HEAD("AnabaticEngine.runTest()")

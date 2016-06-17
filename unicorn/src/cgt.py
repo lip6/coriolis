@@ -47,6 +47,9 @@ def credits ():
     s +=  '        Knik - Global Router ............................ Damien Dupuis\n'
     s +=  '        Kite - Detailed Router ....................... Jean-Paul Chaput\n\n'
 
+    s +=  '        Contributors\n'
+    s +=  '        Sophie Belloeil, Hugo Clement, Marek Sroka, Wu Yifei\n'
+
     s +=  '        Coloquinte software credits (used by Etesian)\n'
     s +=  '        Author ........................................ Gabriel Gouvine\n'
 
@@ -179,7 +182,7 @@ if __name__ == '__main__':
           
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
-         #unicorn.registerTool        (Anabatic.GraphicAnabaticEngine.grab())
+          unicorn.registerTool        (Anabatic.GraphicAnabaticEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
          #unicorn.setAnonNetSelectable(False)

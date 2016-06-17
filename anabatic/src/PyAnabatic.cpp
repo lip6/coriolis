@@ -62,7 +62,7 @@ extern "C" {
   // Module Initialization  :  "initAnabatic ()"
 
   DL_EXPORT(void) initAnabatic () {
-    cdebug.log(32) << "initAnabatic()" << endl;
+    cdebug_log(32,0) << "initAnabatic()" << endl;
 
     PyAnabaticEngine_LinkPyType();
     PyGraphicAnabaticEngine_LinkPyType();

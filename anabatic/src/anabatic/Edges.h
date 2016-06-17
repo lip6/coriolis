@@ -92,7 +92,7 @@ namespace Anabatic {
     , _filterFlags(locator._filterFlags)
     , _iedge      (locator._iedge)
   {
-    // cdebug.log(110) << "GCell_Edges::Locator::Locator(const Locator&)" << std::endl;
+    // cdebug_log(110,0) << "GCell_Edges::Locator::Locator(const Locator&)" << std::endl;
   }
 
 

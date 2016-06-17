@@ -49,6 +49,8 @@
                                       ${KNIK_LIBRARIES}
                                       ${ETESIAN_GRAPHICAL_LIBRARIES}
                                       ${ETESIAN_LIBRARIES}
+                                      ${ANABATIC_GRAPHICAL_LIBRARIES}
+                                      ${ANABATIC_LIBRARIES}
                                       ${CORIOLIS_PYTHON_LIBRARIES}
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}

@@ -55,7 +55,7 @@ namespace Anabatic {
       inline        unsigned int    getCapacity          () const;
       inline        unsigned int    getRealOccupancy     () const;
       inline        unsigned int    getEstimateOccupancy () const;
-                    float           getDistance          () const;
+                    DbU::Unit       getDistance          () const;
       inline        GCell*          getSource            () const;
       inline        GCell*          getTarget            () const;
                     GCell*          getOpposite          ( const GCell* ) const;

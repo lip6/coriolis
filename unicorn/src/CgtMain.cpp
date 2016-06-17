@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
@@ -64,6 +63,8 @@ using namespace CRL;
 
 // #include "mauka/GraphicMaukaEngine.h"
 // using namespace Mauka;
+
+#include "anabatic/GraphicAnabaticEngine.h"
 
 #include "etesian/GraphicEtesianEngine.h"
 using namespace Etesian;
@@ -268,16 +269,17 @@ int main ( int argc, char *argv[] )
     cmess1 << UnicornGui::getBanner() << endl;
     cmess1 << "        Tool Credits" << endl;
     cmess1 << "        Hurricane .................... Remy Escassut & Christian Masson" << endl;
-    cmess1 << "        Nimbus - Infrastructure .......................... Hugo Clement" << endl;
-    cmess1 << "        Mauka - Placer ........................... Christophe Alexandre" << endl;
+    cmess1 << "        Etesian - Placer .............................. Gabriel Gouvine" << endl;
     cmess1 << "        Knik - Global Router ............................ Damien Dupuis" << endl;
     cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
+    cmess1 << "        " << endl;
+
+    cmess1 << "        Contributors" << endl;
+    cmess1 << "        Sophie Belloeil, Hugo Clement, Marek Sroka, Wu Yifei" << endl;
     cmess1 << endl;
 
-    cout   << "        hMETIS software credits (used by Mauka)" << endl;
-    cout   << "        Author ........................................ Georges Karypis" << endl;
-    cout   << "        Prof. Ident. .......................... University of Minnesota" << endl;
-    cout   << "        URL .......................... http://glaros.dtc.umn.edu/gkhome" << endl;
+    cmess1 << "        Coloquinte software credits (used by Etesian)" << endl;
+    cmess1 << "        Author ........................................ Gabriel Gouvine" << endl;
     cout   << endl;
 
     cout   << "        FLUTE software credits (used by Knik)" << endl;
@@ -329,6 +331,7 @@ int main ( int argc, char *argv[] )
       unicorn->setApplicationName ( QObject::tr("cgt") );
 
     //unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
+      unicorn->registerTool ( Anabatic::GraphicAnabaticEngine::grab() );
       unicorn->registerTool ( Etesian::GraphicEtesianEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
