@@ -29,15 +29,19 @@ namespace Anabatic {
                 , Vertical       = (1<<1)
                 , SourceGCell    = (1<<2)
                 , TargetGCell    = (1<<3)
-                , Invalidated    = (1<<4)
-                , Destroy        = (1<<5)
+                , DeviceGCell    = (1<<4)
+                , ChannelGCell   = (1<<5)
+                , StrutGCell     = (1<<6)
+                , MatrixGCell    = (1<<7)
+                , Invalidated    = (1<<8)
+                , Destroy        = (1<<9)
                 , WestSide       = Horizontal|TargetGCell
                 , EastSide       = Horizontal|SourceGCell
                 , SouthSide      = Vertical  |TargetGCell
                 , NorthSide      = Vertical  |SourceGCell
                 , AllSides       = WestSide|EastSide|SouthSide|NorthSide 
-                , PitchAbove     = (1<<6)
-                , PitchBelow     = (1<<7)
+                , PitchAbove     = (1<<10)
+                , PitchBelow     = (1<<11)
                 };
     public:
       inline               Flags        ( unsigned int flags = NoFlags );

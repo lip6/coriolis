@@ -300,23 +300,7 @@ namespace Anabatic {
 
     // We did reach another target (different <connexId>).
     // Tag back the path, with a higher <branchId>.
-      int branchId = _sources.size();
-      cdebug_log(112,0) << "Trace back branchId:" << branchId << endl;
-      _targets.erase( current );
-      while ( current ) {
-        cdebug_log(112,0) << "| " << current << endl;
-        if (current->getConnexId() == _connectedsId) break;
-
-        _sources.insert( current );
-        current->setDistance( 0.0 );
-        current->setConnexId( _connectedsId );
-        current->setBranchId( branchId );
-        _queue.push( current );
-
-        current = current->getPredecessor();
-      }
-
-      cdebug_tabw(112,-1);
+      _traceback( current );
       return true;
     }
 
@@ -326,6 +310,59 @@ namespace Anabatic {
 
     cdebug_tabw(112,-1);
     return false;
+  }
+
+
+  void  Dijkstra::_traceback ( Vertex* current )
+  {
+    cdebug_log(112,1) << "Dijkstra::_traceback() " << _net << " branchId:" << _sources.size() << endl;
+
+    int branchId = _sources.size();
+    _targets.erase( current );
+
+    while ( current ) {
+      cdebug_log(112,0) << "| " << current << endl;
+      if (current->getConnexId() == _connectedsId) break;
+
+      Edge* from = current->getFrom();
+      if (not from) break;
+      from->incRealOccupancy( 1 );
+
+      _sources.insert( current );
+      current->setDistance( 0.0 );
+      current->setConnexId( _connectedsId );
+      current->setBranchId( branchId );
+      _queue.push( current );
+      
+      Vertex* source = current;
+      Vertex* target = source->getPredecessor();
+      current = target;
+
+      if (  (source->getGCell()->getXMin() > target->getGCell()->getXMin())
+         or (source->getGCell()->getYMin() > target->getGCell()->getYMin()) )
+        std::swap( source, target );
+
+      Contact* sourceContact = source->getGContact( _net );
+      Contact* targetContact = target->getGContact( _net );
+
+      if (from->isHorizontal()) {
+        Horizontal::create( sourceContact
+                          , targetContact
+                          , _anabatic->getConfiguration()->getGHorizontalLayer()
+                          , from->getAxis()
+                          , DbU::fromLambda(2.0)
+                          );
+      } else {
+        Vertical::create( sourceContact
+                        , targetContact
+                        , _anabatic->getConfiguration()->getGVerticalLayer()
+                        , from->getAxis()
+                        , DbU::fromLambda(2.0)
+                        );
+      }
+    }
+
+    cdebug_tabw(112,-1);
   }
 
 
@@ -363,54 +400,10 @@ namespace Anabatic {
 
     while ( not _targets.empty() and _propagate(enabledEdges) );
 
-    _toWires();
     _queue.clear();
 
     cdebug_tabw(112,-1);
     DebugSession::close();
-  }
-
-
-  void  Dijkstra::_toWires ()
-  {
-    cdebug_log(111,1) << "Dijkstra::toWires() " << _net << endl;
-
-    for ( Vertex* vertex : _sources ) {
-      Edge* from = vertex->getFrom();
-      if (not from) continue;
-
-      cdebug_log(111,0) << "| " << vertex << endl;
-
-      from->incRealOccupancy( 1 );
-
-      Vertex* source = vertex;
-      Vertex* target = source->getPredecessor();
-
-      if (  (source->getGCell()->getXMin() > target->getGCell()->getXMin())
-         or (source->getGCell()->getYMin() > target->getGCell()->getYMin()) )
-        std::swap( source, target );
-
-      Contact* sourceContact = source->getGContact( _net );
-      Contact* targetContact = target->getGContact( _net );
-
-      if (from->isHorizontal()) {
-        Horizontal::create( sourceContact
-                          , targetContact
-                          , _anabatic->getConfiguration()->getGHorizontalLayer()
-                          , from->getAxis()
-                          , DbU::fromLambda(2.0)
-                          );
-      } else {
-        Vertical::create( sourceContact
-                        , targetContact
-                        , _anabatic->getConfiguration()->getGVerticalLayer()
-                        , from->getAxis()
-                        , DbU::fromLambda(2.0)
-                        );
-      }
-    }
-
-    cdebug_tabw(111,-1);
   }
 
 
