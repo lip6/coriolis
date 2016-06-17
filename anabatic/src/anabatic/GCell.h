@@ -101,6 +101,11 @@ namespace Anabatic {
                     GCell*          vcut                 ( DbU::Unit x );
                     bool            doGrid               ();
                     Contact*        getGContact          ( Net* );
+
+                    bool            isNorth              ( GCell* ) const;
+                    bool            isSouth              ( GCell* ) const;
+                    bool            isEast               ( GCell* ) const;
+                    bool            isWest               ( GCell* ) const;
     // Misc. functions.
       inline const  Flags&          flags                () const;
       inline        Flags&          flags                ();

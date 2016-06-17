@@ -113,6 +113,49 @@ namespace Anabatic {
   }
 
 
+  bool Dijkstra::isRestricted ( const Vertex* v1, const Vertex* v2 ) const
+  {
+    bool   restricted = true;
+    GCell* c1         = v1->getGCell();
+    GCell* c2         = v2->getGCell();
+    
+  // Check from GCell 1 
+    if        ( c1->isNorth(c2) ) {
+      if ( !v1->isNRestricted() ) restricted = false;
+    } else if ( c1->isSouth(c2) ) {
+      if ( !v1->isSRestricted() ) restricted = false;
+    } else if ( c1->isEast (c2) ) {
+      if ( !v1->isERestricted() ) restricted = false;
+    } else if ( c1->isWest (c2) ) {
+      if ( !v1->isWRestricted() ) restricted = false;
+    } else {
+      cerr << Error( "GCells are not side by side." ) << endl;
+      return true;
+    }
+    
+    if   (restricted) return true;
+    else {
+    // Check from GCell 2 
+      if        ( c2->isNorth(c1) ) {
+        if ( v2->isNRestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isSouth(c1) ) {
+        if ( v2->isSRestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isEast (c1) ) {
+        if ( v2->isERestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isWest (c1) ) {
+        if ( v2->isWRestricted() ) return true;
+        else                       return false;
+      } else {
+        cerr << Error( "GCells are not side by side." ) << endl;
+        return true;
+      }
+    }
+  }
+
+
   Dijkstra::Dijkstra ( AnabaticEngine* anabatic )
     : _anabatic    (anabatic)
     , _vertexes    ()
