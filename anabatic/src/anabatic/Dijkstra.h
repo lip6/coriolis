@@ -22,6 +22,7 @@
 #include "hurricane/Observer.h"
 namespace Hurricane {
   class Net;
+  class RoutingPad;
 }
 #include "anabatic/GCell.h"
 
@@ -32,6 +33,7 @@ namespace Anabatic {
   using std::multiset;
   using Hurricane::Observer;
   using Hurricane::Net;
+  using Hurricane::RoutingPad;
   class AnabaticEngine;
 
 
@@ -59,6 +61,7 @@ namespace Anabatic {
              inline                  Vertex         ( GCell* );
            //inline                  Vertex         ( size_t id );
              inline                 ~Vertex         ();
+             inline  bool            hasDoneAllRps  () const;
              inline  unsigned int    getId          () const;
              inline  GCell*          getGCell       () const;
              inline  AnabaticEngine* getAnabatic    () const;
@@ -76,6 +79,8 @@ namespace Anabatic {
              inline  void            setConnexId    ( int );
              inline  void            setBranchId    ( int );
              inline  void            setFrom        ( Edge* );
+             inline  void            add            ( RoutingPad* );
+             inline  void            clearRps       ();
 
              inline  bool            isNorth        ( Vertex* ) const;
              inline  bool            isSouth        ( Vertex* ) const;
@@ -85,21 +90,21 @@ namespace Anabatic {
              inline  bool            isSRestricted  () const;
              inline  bool            isERestricted  () const;
              inline  bool            isWRestricted  () const;
+
     // Inspector support. 
                      string          _getString     () const;
     private:                        
                                      Vertex         ( const Vertex& );
                      Vertex&         operator=      ( const Vertex& );
     private:
-      size_t            _id;
-      GCell*            _gcell;
-      Observer<Vertex>  _observer;
-      int               _connexId;
-      int               _branchId;
-      int               _stamp;
-      DbU::Unit         _distance;
-      Edge*             _from;
-      FlagR             _flags;
+      size_t               _id;
+      GCell*               _gcell;
+      Observer<Vertex>     _observer;
+      int                  _connexId;
+      int                  _branchId;
+      int                  _stamp;
+      DbU::Unit            _distance;
+      Edge*                _from;
   };
 
 
@@ -118,22 +123,22 @@ namespace Anabatic {
   }
 
 
-  inline                 Vertex::~Vertex     () { }
-  inline unsigned int    Vertex::getId       () const { return _id; }
-  inline GCell*          Vertex::getGCell    () const { return _gcell; }
-  inline AnabaticEngine* Vertex::getAnabatic () const { return _gcell->getAnabatic(); }
-  inline Contact*        Vertex::getGContact ( Net* net ) { return _gcell->getGContact(net); }
-  inline Point           Vertex::getCenter   () const { return _gcell->getBoundingBox().getCenter(); }
-  inline DbU::Unit       Vertex::getDistance () const { return hasValidStamp() ? _distance : unreached; }
-  inline int             Vertex::getStamp    () const { return _stamp; }
-  inline int             Vertex::getConnexId () const { return hasValidStamp() ? _connexId : -1; }
-  inline int             Vertex::getBranchId () const { return hasValidStamp() ? _branchId :  0; }
-  inline Edge*           Vertex::getFrom     () const { return _from; }
-  inline void            Vertex::setDistance ( DbU::Unit distance ) { _distance=distance; }
-  inline void            Vertex::setFrom     ( Edge* from ) { _from=from; }
-  inline void            Vertex::setStamp    ( int stamp ) { _stamp=stamp; }
-  inline void            Vertex::setConnexId ( int id ) { _connexId=id; }
-  inline void            Vertex::setBranchId ( int id ) { _branchId=id; }
+  inline                 Vertex::~Vertex       () { }
+  inline unsigned int    Vertex::getId         () const { return _id; }
+  inline GCell*          Vertex::getGCell      () const { return _gcell; }
+  inline AnabaticEngine* Vertex::getAnabatic   () const { return _gcell->getAnabatic(); }
+  inline Contact*        Vertex::getGContact   ( Net* net ) { return _gcell->getGContact(net); }
+  inline Point           Vertex::getCenter     () const { return _gcell->getBoundingBox().getCenter(); }
+  inline DbU::Unit       Vertex::getDistance   () const { return hasValidStamp() ? _distance : unreached; }
+  inline int             Vertex::getStamp      () const { return _stamp; }
+  inline int             Vertex::getConnexId   () const { return hasValidStamp() ? _connexId : -1; }
+  inline int             Vertex::getBranchId   () const { return hasValidStamp() ? _branchId :  0; }
+  inline Edge*           Vertex::getFrom       () const { return _from; }
+  inline void            Vertex::setDistance   ( DbU::Unit distance ) { _distance=distance; }
+  inline void            Vertex::setFrom       ( Edge* from ) { _from=from; }
+  inline void            Vertex::setStamp      ( int stamp ) { _stamp=stamp; }
+  inline void            Vertex::setConnexId   ( int id ) { _connexId=id; }
+  inline void            Vertex::setBranchId   ( int id ) { _branchId=id; }
 
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
@@ -253,9 +258,10 @@ namespace Anabatic {
              Dijkstra&  operator=          ( const Dijkstra& );
       static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
              bool       _propagate         ( Flags enabledSides );
+             void       _traceback         ( Vertex* );
              void       _selectFirstSource ();
              void       _toWires           ();
-      
+     
              bool       isRestricted       ( const Vertex* v1, const Vertex* v2 ) const;
     private:
       AnabaticEngine*  _anabatic;

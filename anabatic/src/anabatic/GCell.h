@@ -75,6 +75,10 @@ namespace Anabatic {
       inline        bool            isHFlat              () const;
       inline        bool            isVFlat              () const;
       inline        bool            isFlat               () const;
+      inline        bool            isDevice             () const;
+      inline        bool            isChannel            () const;
+      inline        bool            isStrut              () const;
+      inline        bool            isMatrix             () const;
       inline        AnabaticEngine* getAnabatic          () const;
       inline        DbU::Unit       getXMin              () const;
       inline        DbU::Unit       getYMin              () const;
@@ -158,6 +162,10 @@ namespace Anabatic {
   inline       bool            GCell::isHFlat       () const { return getYMin() == getYMax(); }
   inline       bool            GCell::isVFlat       () const { return getXMin() == getXMax(); }
   inline       bool            GCell::isFlat        () const { return isHFlat() or isVFlat(); }
+  inline       bool            GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
+  inline       bool            GCell::isChannel     () const { return _flags & Flags::ChannelGCell; }
+  inline       bool            GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
+  inline       bool            GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
   inline       AnabaticEngine* GCell::getAnabatic   () const { return _anabatic; }
   inline       DbU::Unit       GCell::getXMin       () const { return _xmin; }
   inline       DbU::Unit       GCell::getYMin       () const { return _ymin; }
