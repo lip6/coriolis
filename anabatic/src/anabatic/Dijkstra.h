@@ -25,6 +25,11 @@ namespace Hurricane {
   class RoutingPad;
 }
 #include "anabatic/GCell.h"
+#include "hurricaneAMS/analogic/Device.h"
+#include "hurricaneAMS/devices/Transistor.h"
+#include "hurricaneAMS/devices/SimpleCurrentMirror.h"
+#include "hurricaneAMS/devices/DifferentialPair.h"
+#include "hurricaneAMS/devices/CommonSourcePair.h"
 
 
 namespace Anabatic {
@@ -34,6 +39,7 @@ namespace Anabatic {
   using Hurricane::Observer;
   using Hurricane::Net;
   using Hurricane::RoutingPad;
+  using Hurricane::Plug;
   class AnabaticEngine;
 
 
@@ -55,6 +61,7 @@ namespace Anabatic {
                      };
     public:
       static         DbU::Unit       unreached;
+      static         DbU::Unit       unreachable;
     public:                         
       static         void            notify         ( Vertex*, unsigned flags );
     public:                         
@@ -90,6 +97,15 @@ namespace Anabatic {
              inline  bool            isSRestricted  () const;
              inline  bool            isERestricted  () const;
              inline  bool            isWRestricted  () const;
+             inline  bool            isNotRestricted() const;
+
+             inline  void            setRestricted    ();
+             inline  void            clearRestriction ();
+             inline  void            setNRestricted   ();
+             inline  void            setSRestricted   ();
+             inline  void            setERestricted   ();
+             inline  void            setWRestricted   ();
+             inline  unsigned int    getFlags         () const; 
 
     // Inspector support. 
                      string          _getString     () const;
@@ -105,6 +121,7 @@ namespace Anabatic {
       int                  _stamp;
       DbU::Unit            _distance;
       Edge*                _from;
+      unsigned int         _flags;
   };
 
 
@@ -157,6 +174,15 @@ namespace Anabatic {
   inline  bool Vertex::isSRestricted      () const { return (_flags & SRestricted); }
   inline  bool Vertex::isERestricted      () const { return (_flags & ERestricted); }
   inline  bool Vertex::isWRestricted      () const { return (_flags & WRestricted); }
+  inline  bool Vertex::isNotRestricted    () const { return ((!_flags) & 0xF); }
+
+  inline void         Vertex::setRestricted    () { _flags |= 0xF; }
+  inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
+  inline void         Vertex::setNRestricted   () { _flags |= 0x1; }
+  inline void         Vertex::setSRestricted   () { _flags |= 0x2; }
+  inline void         Vertex::setERestricted   () { _flags |= 0x4; }
+  inline void         Vertex::setWRestricted   () { _flags |= 0x8; }
+  inline unsigned int Vertex::getFlags         () const { return _flags; }
 
 
 // -------------------------------------------------------------------
@@ -262,7 +288,7 @@ namespace Anabatic {
              void       _selectFirstSource ();
              void       _toWires           ();
      
-             bool       isRestricted       ( const Vertex* v1, const Vertex* v2 ) const;
+      static bool       isRestricted       ( const Vertex* v1, const Vertex* v2 );
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;

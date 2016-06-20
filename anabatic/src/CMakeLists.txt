@@ -11,6 +11,7 @@ endif ( CHECK_DETERMINISM )
                         ${Boost_INCLUDE_DIRS}
                         ${QtX_INCLUDE_DIR}
                         ${PYTHON_INCLUDE_PATH}
+                        ${HURRICANEAMS_INCLUDE_DIR}
                       )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
@@ -55,6 +56,7 @@ endif ( CHECK_DETERMINISM )
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
                                      ${PYTHON_LIBRARIES} -lutil
+				     ${HURRICANEAMS_LIBRARIES}
                       )
 
            add_library( anabatic    ${cpps} ${mocCpps} )

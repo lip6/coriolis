@@ -577,7 +577,7 @@ namespace Anabatic {
   {
     bool found = false;
     for (vector<Edge*>::const_iterator it = _northEdges.begin(); it != _northEdges.end(); it++){
-      if ( (*it)->getOpposite(this)->getId() == getId() ) {
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
         found = true;
         break;
       }
@@ -590,7 +590,7 @@ namespace Anabatic {
   {
     bool found = false;
     for (vector<Edge*>::const_iterator it = _southEdges.begin(); it != _southEdges.end(); it++){
-      if ( (*it)->getOpposite(this)->getId() == getId() ) {
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
         found = true;
         break;
       }
@@ -603,7 +603,7 @@ namespace Anabatic {
   {
     bool found = false;
     for (vector<Edge*>::const_iterator it = _eastEdges.begin(); it != _eastEdges.end(); it++){
-      if ( (*it)->getOpposite(this)->getId() == getId() ) {
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
         found = true;
         break;
       }
@@ -616,7 +616,7 @@ namespace Anabatic {
   {
     bool found = false;
     for (vector<Edge*>::const_iterator it = _westEdges.begin(); it != _westEdges.end(); it++){
-      if ( (*it)->getOpposite(this)->getId() == getId() ) {
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
         found = true;
         break;
       }

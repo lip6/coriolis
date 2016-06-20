@@ -47,6 +47,7 @@ namespace Anabatic {
 
 
   DbU::Unit  Vertex::unreached = std::numeric_limits<long>::max();
+  DbU::Unit  Vertex::unreachable  = std::numeric_limits<long>::max()-1;
 
 
   bool  Vertex::hasValidStamp () const
@@ -64,10 +65,14 @@ namespace Anabatic {
              + " @(" + DbU::getValueString(_gcell->getXMin())
              +  "," + DbU::getValueString(_gcell->getYMin()) + ")"
              + " connexId:" + getString(_connexId)
-             + " d:" + ((_distance == unreached) ? "unreached" : DbU::getValueString(_distance) )
+      + " d:" + ((_distance == unreached) ? "unreached" : ((_distance == unreachable) ? "unreachable" : DbU::getValueString(_distance)) )
              +   "+" + getString(_branchId)
              + " stamp:" + (hasValidStamp() ? "valid" : "outdated")
              + " from:" + ((_from) ? "set" : "NULL")
+             + " restricted:" + (isNRestricted() ? "N" : "-")
+             + (isSRestricted() ? "S" : "-")
+             + (isERestricted() ? "E" : "-")
+             + (isWRestricted() ? "W" : "-")
              + ">";
     return s;
   }
@@ -107,6 +112,9 @@ namespace Anabatic {
   {
     DbU::Unit distance = a->getDistance() + e->getDistance();
 
+    if ( (a->isNotRestricted()) && (b->isNotRestricted()) ) { // A remplacer avec verification sur type IsDevice()?.
+      if (isRestricted(a, b)) distance = Vertex::unreachable;
+    }
     // Edge* aFrom = a->getFrom();
     // if (aFrom) {
     //   distance += (aFrom->isHorizontal() xor e->isHorizontal()) ? 3.0 : 0.0;
@@ -115,7 +123,7 @@ namespace Anabatic {
   }
 
 
-  bool Dijkstra::isRestricted ( const Vertex* v1, const Vertex* v2 ) const
+  bool Dijkstra::isRestricted ( const Vertex* v1, const Vertex* v2 )
   {
     bool   restricted = true;
     GCell* c1         = v1->getGCell();
@@ -222,7 +230,31 @@ namespace Anabatic {
         vertex->setBranchId( 0 );
         vertex->setFrom    ( NULL );
         _targets.insert( vertex );
+        vertex->clearRestriction();
         cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
+      }
+    // Analog Restrictions
+      Plug*                plug = dynamic_cast<Plug*>(rp->getPlugOccurrence().getEntity());
+      Cell*                cell = plug->getInstance()->getMasterCell();
+      Device*              dev  = dynamic_cast<Device*          >(cell);
+      TransistorFamily*    tf   = dynamic_cast<TransistorFamily*>(dev);
+
+      if (tf){
+        Transistor*          t    = dynamic_cast<Transistor*         >(tf);
+        SimpleCurrentMirror* scm  = dynamic_cast<SimpleCurrentMirror*>(tf);
+        DifferentialPair*    dp   = dynamic_cast<DifferentialPair*   >(tf);
+        CommonSourcePair*    csp  = dynamic_cast<CommonSourcePair*   >(tf);
+        
+        unsigned int rule = 0;
+        if        (t)   { rule = t->getRestriction(plug->getMasterNet());
+        } else if (scm) { rule = scm->getRestriction(plug->getMasterNet());
+        } else if (dp)  { rule = dp->getRestriction(plug->getMasterNet());
+        } else if (csp) { rule = csp->getRestriction(plug->getMasterNet());
+        }
+        if (!(rule&0x3 )) vertex->setWRestricted();
+        if (!(rule&0xC )) vertex->setERestricted();
+        if (!(rule&0x30)) vertex->setSRestricted();
+        if (!(rule&0xC0)) vertex->setNRestricted();
       }
 
       Contact* gcontact = vertex->getGContact( _net );
