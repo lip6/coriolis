@@ -233,29 +233,6 @@ namespace Anabatic {
         vertex->clearRestriction();
         cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
       }
-    // Analog Restrictions
-      Plug*                plug = dynamic_cast<Plug*>(rp->getPlugOccurrence().getEntity());
-      Cell*                cell = plug->getInstance()->getMasterCell();
-      Device*              dev  = dynamic_cast<Device*          >(cell);
-      TransistorFamily*    tf   = dynamic_cast<TransistorFamily*>(dev);
-
-      if (tf){
-        Transistor*          t    = dynamic_cast<Transistor*         >(tf);
-        SimpleCurrentMirror* scm  = dynamic_cast<SimpleCurrentMirror*>(tf);
-        DifferentialPair*    dp   = dynamic_cast<DifferentialPair*   >(tf);
-        CommonSourcePair*    csp  = dynamic_cast<CommonSourcePair*   >(tf);
-        
-        unsigned int rule = 0;
-        if        (t)   { rule = t->getRestriction(plug->getMasterNet());
-        } else if (scm) { rule = scm->getRestriction(plug->getMasterNet());
-        } else if (dp)  { rule = dp->getRestriction(plug->getMasterNet());
-        } else if (csp) { rule = csp->getRestriction(plug->getMasterNet());
-        }
-        if (!(rule&0x3 )) vertex->setWRestricted();
-        if (!(rule&0xC )) vertex->setERestricted();
-        if (!(rule&0x30)) vertex->setSRestricted();
-        if (!(rule&0xC0)) vertex->setNRestricted();
-      }
 
       Contact* gcontact = vertex->getGContact( _net );
       rp->getBodyHook()->detach();

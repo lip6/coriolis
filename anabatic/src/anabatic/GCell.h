@@ -90,6 +90,7 @@ namespace Anabatic {
       inline const  vector<Edge*>&  getEastEdges         () const;
       inline const  vector<Edge*>&  getNorthEdges        () const;
       inline const  vector<Edge*>&  getSouthEdges        () const;
+      inline const  vector<Contact*>&  getContacts          () const;
       inline        Edges           getEdges             () const;
       inline        GCell*          getWest              () const;
       inline        GCell*          getEast              () const;
@@ -174,6 +175,7 @@ namespace Anabatic {
   inline const vector<Edge*>&  GCell::getEastEdges  () const { return _eastEdges; }
   inline const vector<Edge*>&  GCell::getNorthEdges () const { return _northEdges; }
   inline const vector<Edge*>&  GCell::getSouthEdges () const { return _southEdges; }
+  inline const vector<Contact*>& GCell::getContacts () const { return _contacts; }
   inline       GCell*          GCell::getWest       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
   inline       GCell*          GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
   inline       GCell*          GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }

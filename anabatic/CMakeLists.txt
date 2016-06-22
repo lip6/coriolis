@@ -22,7 +22,6 @@
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
- find_package(HURRICANEAMS       REQUIRED)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)

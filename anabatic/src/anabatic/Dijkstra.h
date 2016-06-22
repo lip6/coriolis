@@ -25,11 +25,6 @@ namespace Hurricane {
   class RoutingPad;
 }
 #include "anabatic/GCell.h"
-#include "hurricaneAMS/analogic/Device.h"
-#include "hurricaneAMS/devices/Transistor.h"
-#include "hurricaneAMS/devices/SimpleCurrentMirror.h"
-#include "hurricaneAMS/devices/DifferentialPair.h"
-#include "hurricaneAMS/devices/CommonSourcePair.h"
 
 
 namespace Anabatic {
