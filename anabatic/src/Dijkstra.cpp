@@ -48,6 +48,7 @@ namespace Anabatic {
 
 
   DbU::Unit  Vertex::unreached = std::numeric_limits<long>::max();
+  DbU::Unit  Vertex::unreachable  = std::numeric_limits<long>::max()-1;
 
 
   bool  Vertex::hasValidStamp () const
@@ -65,10 +66,16 @@ namespace Anabatic {
              + " @(" + DbU::getValueString(_gcell->getXMin())
              +  "," + DbU::getValueString(_gcell->getYMin()) + ")"
              + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")
-             + " d:" + ((_distance == unreached) ? "unreached" : DbU::getValueString(_distance) )
+             + " d:" + ((_distance == unreached) ? "unreached"
+                                                 : ((_distance == unreachable) ? "unreachable"
+                                                                               : DbU::getValueString(_distance)) )
              +   "+" + getString(_branchId)
              + " stamp:" + (hasValidStamp() ? "valid" : "outdated")
              + " from:" + ((_from) ? "set" : "NULL")
+             + " restricted:" + (isNRestricted() ? "N" : "-")
+             + (isSRestricted() ? "S" : "-")
+             + (isERestricted() ? "E" : "-")
+             + (isWRestricted() ? "W" : "-")
              + ">";
     return s;
   }
@@ -108,11 +115,57 @@ namespace Anabatic {
   {
     DbU::Unit distance = a->getDistance() + e->getDistance();
 
+    if ( (a->isNotRestricted()) && (b->isNotRestricted()) ) { // A remplacer avec verification sur type IsDevice()?.
+      if (isRestricted(a, b)) distance = Vertex::unreachable;
+    }
     // Edge* aFrom = a->getFrom();
     // if (aFrom) {
     //   distance += (aFrom->isHorizontal() xor e->isHorizontal()) ? 3.0 : 0.0;
     // }
     return distance;
+  }
+
+
+  bool Dijkstra::isRestricted ( const Vertex* v1, const Vertex* v2 )
+  {
+    bool   restricted = true;
+    GCell* c1         = v1->getGCell();
+    GCell* c2         = v2->getGCell();
+    
+  // Check from GCell 1 
+    if        ( c1->isNorth(c2) ) {
+      if ( !v1->isNRestricted() ) restricted = false;
+    } else if ( c1->isSouth(c2) ) {
+      if ( !v1->isSRestricted() ) restricted = false;
+    } else if ( c1->isEast (c2) ) {
+      if ( !v1->isERestricted() ) restricted = false;
+    } else if ( c1->isWest (c2) ) {
+      if ( !v1->isWRestricted() ) restricted = false;
+    } else {
+      cerr << Error( "GCells are not side by side." ) << endl;
+      return true;
+    }
+    
+    if   (restricted) return true;
+    else {
+    // Check from GCell 2 
+      if        ( c2->isNorth(c1) ) {
+        if ( v2->isNRestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isSouth(c1) ) {
+        if ( v2->isSRestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isEast (c1) ) {
+        if ( v2->isERestricted() ) return true;
+        else                       return false;
+      } else if ( c2->isWest (c1) ) {
+        if ( v2->isWRestricted() ) return true;
+        else                       return false;
+      } else {
+        cerr << Error( "GCells are not side by side." ) << endl;
+        return true;
+      }
+    }
   }
 
 
@@ -198,6 +251,7 @@ namespace Anabatic {
         vertex->setBranchId( 0 );
         vertex->setFrom    ( NULL );
         _targets.insert( vertex );
+        vertex->clearRestriction();
         cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
       }
 

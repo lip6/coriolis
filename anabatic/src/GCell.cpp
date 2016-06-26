@@ -623,6 +623,58 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::isNorth ( GCell* c ) const
+  {
+    bool found = false;
+    for (vector<Edge*>::const_iterator it = _northEdges.begin(); it != _northEdges.end(); it++){
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
+
+  bool  GCell::isSouth ( GCell* c ) const
+  {
+    bool found = false;
+    for (vector<Edge*>::const_iterator it = _southEdges.begin(); it != _southEdges.end(); it++){
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
+
+  bool  GCell::isEast ( GCell* c ) const
+  {
+    bool found = false;
+    for (vector<Edge*>::const_iterator it = _eastEdges.begin(); it != _eastEdges.end(); it++){
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
+  
+  bool  GCell::isWest ( GCell* c ) const
+  {
+    bool found = false;
+    for (vector<Edge*>::const_iterator it = _westEdges.begin(); it != _westEdges.end(); it++){
+      if ( (*it)->getOpposite(this)->getId() == c->getId() ) {
+        found = true;
+        break;
+      }
+    }
+    return found;
+  }
+
+
   string  GCell::_getTypeName () const
   { return getString(_extensionName); }
 

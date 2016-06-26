@@ -79,6 +79,10 @@ namespace Anabatic {
       inline        bool              isChannel            () const;
       inline        bool              isStrut              () const;
       inline        bool              isMatrix             () const;
+                    bool              isWest               ( GCell* ) const;
+                    bool              isEast               ( GCell* ) const;
+                    bool              isNorth              ( GCell* ) const;
+                    bool              isSouth              ( GCell* ) const;
                     bool              hasGContact          ( const Contact* ) const;
       inline        AnabaticEngine*   getAnabatic          () const;
       inline        DbU::Unit         getXMin              () const;
@@ -141,8 +145,8 @@ namespace Anabatic {
       virtual       void              _postCreate          ();
       virtual       void              _preDestroy          ();
     private:                        
-                                    GCell                ( const GCell& );
-                    GCell&          operator=            ( const GCell& );
+                                      GCell                ( const GCell& );
+                    GCell&            operator=            ( const GCell& );
     private:
       static  Name             _extensionName;
               Observable       _observable;

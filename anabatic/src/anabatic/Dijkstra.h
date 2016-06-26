@@ -34,6 +34,7 @@ namespace Anabatic {
   using Hurricane::Observer;
   using Hurricane::Net;
   using Hurricane::RoutingPad;
+  using Hurricane::Plug;
   class AnabaticEngine;
 
 
@@ -46,8 +47,16 @@ namespace Anabatic {
         public:
           inline bool  operator() ( const Vertex* lhs, const Vertex* rhs ) const;
       };
+        public:
+          enum FlagR { NoRestriction = 0
+                     , NRestricted   = (1<<0)
+                     , SRestricted   = (1<<1)
+                     , ERestricted   = (1<<2)
+                     , WRestricted   = (1<<3)
+                     };
     public:
       static         DbU::Unit       unreached;
+      static         DbU::Unit       unreachable;
     public:                         
       static         void            notify         ( Vertex*, unsigned flags );
     public:                         
@@ -74,6 +83,25 @@ namespace Anabatic {
              inline  void            setFrom        ( Edge* );
              inline  void            add            ( RoutingPad* );
              inline  void            clearRps       ();
+
+             inline  bool            isNorth        ( Vertex* ) const;
+             inline  bool            isSouth        ( Vertex* ) const;
+             inline  bool            isEast         ( Vertex* ) const;
+             inline  bool            isWest         ( Vertex* ) const;
+             inline  bool            isNRestricted  () const;
+             inline  bool            isSRestricted  () const;
+             inline  bool            isERestricted  () const;
+             inline  bool            isWRestricted  () const;
+             inline  bool            isNotRestricted() const;
+
+             inline  void            setRestricted    ();
+             inline  void            clearRestriction ();
+             inline  void            setNRestricted   ();
+             inline  void            setSRestricted   ();
+             inline  void            setERestricted   ();
+             inline  void            setWRestricted   ();
+             inline  unsigned int    getFlags         () const; 
+
     // Inspector support. 
                      string          _getString     () const;
     private:                        
@@ -88,18 +116,20 @@ namespace Anabatic {
       int                  _stamp;
       DbU::Unit            _distance;
       Edge*                _from;
+      unsigned int         _flags;
   };
 
 
   inline Vertex::Vertex ( GCell* gcell )
-    : _id         (gcell->getId())
-    , _gcell      (gcell)
-    , _observer   (this)
-    , _connexId   (-1)
-    , _branchId   ( 0)
-    , _stamp      (-1)
-    , _distance   (unreached)
-    , _from       (NULL)
+    : _id      (gcell->getId())
+    , _gcell   (gcell)
+    , _observer(this)
+    , _connexId(-1)
+    , _branchId( 0)
+    , _stamp   (-1)
+    , _distance(unreached)
+    , _from    (NULL)
+    , _flags   (NoRestriction)
   {
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
@@ -130,6 +160,24 @@ namespace Anabatic {
 
 
   typedef  set<Vertex*,Vertex::CompareById>  VertexSet;
+
+  inline  bool Vertex::isNorth ( Vertex* v ) const { return _gcell->isNorth(v->getGCell()); } 
+  inline  bool Vertex::isSouth ( Vertex* v ) const { return _gcell->isSouth(v->getGCell()); }
+  inline  bool Vertex::isEast  ( Vertex* v ) const { return _gcell->isEast (v->getGCell()); }
+  inline  bool Vertex::isWest  ( Vertex* v ) const { return _gcell->isWest (v->getGCell()); }
+  inline  bool Vertex::isNRestricted      () const { return (_flags & NRestricted); }
+  inline  bool Vertex::isSRestricted      () const { return (_flags & SRestricted); }
+  inline  bool Vertex::isERestricted      () const { return (_flags & ERestricted); }
+  inline  bool Vertex::isWRestricted      () const { return (_flags & WRestricted); }
+  inline  bool Vertex::isNotRestricted    () const { return ((!_flags) & 0xF); }
+
+  inline void         Vertex::setRestricted    () { _flags |= 0xF; }
+  inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
+  inline void         Vertex::setNRestricted   () { _flags |= 0x1; }
+  inline void         Vertex::setSRestricted   () { _flags |= 0x2; }
+  inline void         Vertex::setERestricted   () { _flags |= 0x4; }
+  inline void         Vertex::setWRestricted   () { _flags |= 0x8; }
+  inline unsigned int Vertex::getFlags         () const { return _flags; }
 
 
 // -------------------------------------------------------------------
@@ -218,7 +266,6 @@ namespace Anabatic {
       };
     public:
       typedef std::function<DbU::Unit(const Vertex*,const Vertex*,const Edge*)>  distance_t;
-
     public:
                         Dijkstra           ( AnabaticEngine* );
                        ~Dijkstra           ();
@@ -241,6 +288,7 @@ namespace Anabatic {
              Vertex*    _propagateRipup    ( Vertex* );
              void       _tagConnecteds     ( Vertex*, int connexId );
              void       _checkEdges        () const;
+      static bool       isRestricted       ( const Vertex* v1, const Vertex* v2 );
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
