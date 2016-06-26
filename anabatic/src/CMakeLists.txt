@@ -32,6 +32,7 @@ endif ( CHECK_DETERMINISM )
                                      Edges.cpp
                                      GCell.cpp
                                      AnabaticEngine.cpp
+                                     GlobalRoute.cpp
                                      GraphicAnabaticEngine.cpp
                                      Dijkstra.cpp
                       )

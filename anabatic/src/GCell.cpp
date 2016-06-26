@@ -164,6 +164,24 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::hasGContact ( const Contact* owned ) const
+  {
+    for ( Contact* contact : _contacts ) {
+      if (contact == owned) return true;
+    }
+    return false;
+  }
+
+
+  Edge* GCell::getEdgeTo ( GCell* neighbor, Flags sideHint ) const
+  {
+    for ( Edge* edge : getEdges(sideHint) ) {
+      if (edge->getOpposite(this) == neighbor) return edge;
+    }
+    return NULL;
+  }
+
+
   GCell* GCell::getWest  ( DbU::Unit y ) const
   {
     for ( Edge* edge : _westEdges ) {
@@ -372,7 +390,9 @@ namespace Anabatic {
 
   bool  GCell::doGrid ()
   {
-    DbU::Unit  side = getAnabatic()->getConfiguration()->getSliceHeight();
+    const vector<GCell*>& gcells = getAnabatic()->getGCells();
+    size_t    ibegin = gcells.size();
+    DbU::Unit side   = getAnabatic()->getConfiguration()->getSliceHeight();
 
     Interval hspan = getSide( Flags::Horizontal );
     Interval vspan = getSide( Flags::Vertical );
@@ -412,6 +432,15 @@ namespace Anabatic {
     column = row;
     for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
       column = column->vcut( xcut );
+    }
+
+    size_t hLocal = - getAnabatic()->getConfiguration()->getHEdgeLocal();
+    size_t vLocal = - getAnabatic()->getConfiguration()->getVEdgeLocal();
+    for ( ; ibegin < gcells.size() ; ++ibegin ) {
+      for ( Edge* edge : gcells[ibegin]->getEdges(Flags::NorthSide|Flags::EastSide) ) {
+        if (edge->isHorizontal()) edge->incCapacity( hLocal );
+        else                      edge->incCapacity( vLocal );
+      }
     }
 
   //UpdateSession::close();
@@ -549,8 +578,29 @@ namespace Anabatic {
                                       , DbU::fromLambda(2.0)
                                       , DbU::fromLambda(2.0)
                                       );
+    _contacts.push_back( contact );
     cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
     return contact;
+  }
+
+
+  bool  GCell::unrefContact ( Contact* unref )
+  {
+    if (_contacts.empty()) return false;
+
+    for ( size_t i=0 ; i< _contacts.size() ; ++i ) {
+      if (_contacts[i] == unref) {
+        if (_contacts[i]->getSlaveComponents().getLocator()->isValid()) return false;
+        
+        std::swap( _contacts[i], _contacts[_contacts.size()-1] );
+        _contacts[ _contacts.size()-1 ]->destroy();
+        _contacts.pop_back();
+
+        return true;
+      }
+    }
+
+    return false;
   }
 
 

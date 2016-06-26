@@ -18,6 +18,8 @@
 #include <iostream>
 #include "hurricane/Error.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
@@ -33,6 +35,9 @@ namespace Anabatic {
   using std::ostringstream;
   using Hurricane::Error;
   using Hurricane::RegularLayer;
+  using Hurricane::Component;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
   using Hurricane::Cell;
   using Hurricane::UpdateSession;
   using CRL::RoutingGauge;
@@ -63,6 +68,7 @@ namespace Anabatic {
     , _configuration (new ConfigurationConcrete())
     , _matrix        ()
     , _gcells        ()
+    , _ovEdges       ()
     , _viewer        (NULL)
     , _flags         (Flags::NoFlags)
     , _stamp         (-1)
@@ -114,6 +120,7 @@ namespace Anabatic {
     for ( GCell* gcell : _gcells ) gcell->_destroyEdges();
     for ( GCell* gcell : _gcells ) gcell->destroy();
     _gcells.clear();
+    _ovEdges.clear();
   }
 
 
@@ -161,6 +168,39 @@ namespace Anabatic {
     UpdateSession::open();
     GCell::create( this );
     UpdateSession::close();
+  }
+
+
+  size_t  AnabaticEngine::getNetsFromEdge ( const Edge* edge, NetSet& nets )
+  {
+    size_t  count  = 0;
+    GCell*  source = edge->getSource();
+    GCell*  target = edge->getTarget();
+    const vector<Contact*>& contacts = source->getGContacts();
+
+    for ( Contact* contact : contacts ) {
+      for ( Component* component : contact->getSlaveComponents() ) {
+        if (edge->isHorizontal()) {
+          Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
+          if (horizontal
+             and (horizontal->getSource() == contact)
+             and (target->hasGContact(dynamic_cast<Contact*>(horizontal->getTarget())))) {
+            nets.insert( horizontal->getNet() );
+            ++count;
+          }
+        }
+        if (edge->isVertical()) {
+          Vertical* vertical = dynamic_cast<Vertical*>( component );
+          if (vertical
+             and (vertical->getSource() == contact)
+             and (target->hasGContact(dynamic_cast<Contact*>(vertical->getTarget())))) {
+            nets.insert( vertical->getNet() );
+            ++count;
+          }
+        }
+      }
+    }
+    return count;
   }
 
 

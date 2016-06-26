@@ -200,8 +200,9 @@ namespace Anabatic {
 
   //DebugSession::addToTrace( cell->getNet("alu_out(3)") );
   //DebugSession::addToTrace( cell->getNet("imuxe.not_i(1)") );
-    DebugSession::addToTrace( cell->getNet("r(0)") );
-    DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
+  //DebugSession::addToTrace( cell->getNet("r(0)") );
+  //DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
+    DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_muxoutput(159)") );
 
     engine->startMeasures();
 
@@ -226,11 +227,33 @@ namespace Anabatic {
       dijkstra->load( net );
       dijkstra->run();
     }
-    delete dijkstra;
     UpdateSession::close();
 
     engine->stopMeasures();
     engine->printMeasures( "Dijkstra" );
+
+    const vector<Edge*>& ovEdges = engine->getOvEdges();
+    if (not ovEdges.empty()) {
+      size_t count = 0;
+
+      cmess1 << "     - " << ovEdges.size() << " overloaded edges." << endl;
+      cmess1 << "       " << ovEdges[0] << endl;
+      NetSet nets;
+      engine->getNetsFromEdge( ovEdges[0], nets );
+      for ( Net* net : nets ) {
+        cmess1 << "       [" << setw(2) << count++ << "] " << net << endl;
+      }
+
+      UpdateSession::open();
+      Net* net = *nets.begin();
+      dijkstra->load( net );
+      dijkstra->ripup( ovEdges[0] );
+      UpdateSession::close();
+    }
+
+    UpdateSession::open();
+    delete dijkstra;
+    UpdateSession::close();
   }
     
 
@@ -401,21 +424,34 @@ namespace Anabatic {
   }
 
 
+  void  GraphicAnabaticEngine::_globalRoute ()
+  {
+    AnabaticEngine* engine = getForFramework( CreateEngine );
+    engine->globalRoute();
+  }
+
+
   void  GraphicAnabaticEngine::addToMenu ( CellViewer* viewer )
   {
     assert( _viewer == NULL );
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.anabatic")) {
+    if (_viewer->hasMenuAction("placeAndRoute.anabatic.globalRoute")) {
       cerr << Warning( "GraphicAnabaticEngine::addToMenu() - Anabatic engine already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addToMenu( "placeAndRoute.anabatic"
+    _viewer->addMenu  ( "placeAndRoute.anabatic", "Anabatic" );
+    _viewer->addToMenu( "placeAndRoute.anabatic.runTest"
                       , "Anabatic - &Test Run"
                       , "Perform a test run of Anabatic on the design"
                       , std::bind(&GraphicAnabaticEngine::_runTest,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.anabatic.globalRoute"
+                      , "Anabatic - &Global Route"
+                      , "Global Route"
+                      , std::bind(&GraphicAnabaticEngine::_globalRoute,this)
                       );
   }
 

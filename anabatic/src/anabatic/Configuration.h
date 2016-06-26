@@ -88,6 +88,8 @@ namespace Anabatic {
       virtual DbU::Unit          getEdgeWidth        () const = 0;
       virtual float              getEdgeCostH        () const = 0;
       virtual float              getEdgeCostK        () const = 0;
+      virtual size_t             getHEdgeLocal       () const = 0;
+      virtual size_t             getVEdgeLocal       () const = 0;
       virtual void               print               ( Cell* ) const = 0;
       virtual Record*            _getRecord          () const = 0;
       virtual string             _getString          () const = 0;
@@ -143,6 +145,8 @@ namespace Anabatic {
       virtual DbU::Unit              getEdgeWidth          () const;
       virtual float                  getEdgeCostH          () const;
       virtual float                  getEdgeCostK          () const;
+      virtual size_t                 getHEdgeLocal         () const;
+      virtual size_t                 getVEdgeLocal         () const;
       virtual void                   print                 ( Cell* ) const;
       virtual Record*                _getRecord            () const;
       virtual string                 _getString            () const;
@@ -160,6 +164,8 @@ namespace Anabatic {
       DbU::Unit               _edgeWidth;
       float                   _edgeCostH;
       float                   _edgeCostK;
+      size_t                  _hEdgeLocal;
+      size_t                  _vEdgeLocal;
     private:
                              ConfigurationConcrete ( const ConfigurationConcrete& );
       ConfigurationConcrete& operator=             ( const ConfigurationConcrete& );

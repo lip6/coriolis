@@ -22,8 +22,12 @@
 #include "hurricane/Interval.h"
 #include "hurricane/Box.h"
 #include "hurricane/ExtensionGo.h"
+namespace Hurricane {
+  class Segment;
+}
 #include "anabatic/Constants.h"
 #include "anabatic/Edges.h"
+
 
 
 namespace Anabatic {
@@ -34,6 +38,7 @@ namespace Anabatic {
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::Box;
+  using Hurricane::Segment;
   using Hurricane::Cell;
   using Hurricane::ExtensionGo;
 
@@ -63,7 +68,11 @@ namespace Anabatic {
       inline        DbU::Unit       getAxis              () const;
                     DbU::Unit       getAxisMin           () const;
                     Interval        getSide              () const;
-      inline        void            incRealOccupancy     ( unsigned int );
+      inline        Segment*        getSegment           () const;
+      inline        void            incCapacity          ( int );
+                    void            incRealOccupancy     ( int );
+      inline        void            setSegment           ( Segment* );
+                    void            destroySegment       ();
       inline const  Flags&          flags                () const;
       inline        Flags&          flags                ();
       inline        void            invalidate           ();
@@ -80,17 +89,17 @@ namespace Anabatic {
       virtual       Box             getBoundingBox       () const;
     public:                                            
     // Inspector support.                              
-      virtual       string        _getTypeName         () const;
-      virtual       string        _getString           () const;
-      virtual       Record*       _getRecord           () const;
-    protected:                                         
-                                  Edge                 ( GCell* source, GCell* target, Flags flags );
-      virtual                    ~Edge                 ();
-      virtual       void          _postCreate          ();
-      virtual       void          _preDestroy          ();
-    private:
-                                  Edge                 ( const Edge& );
-                    Edge&         operator=            ( const Edge& );
+      virtual       string          _getTypeName         () const;
+      virtual       string          _getString           () const;
+      virtual       Record*         _getRecord           () const;
+    protected:                                           
+                                    Edge                 ( GCell* source, GCell* target, Flags flags );
+      virtual                      ~Edge                 ();
+      virtual       void            _postCreate          ();
+      virtual       void            _preDestroy          ();
+    private:                        
+                                    Edge                 ( const Edge& );
+                    Edge&           operator=            ( const Edge& );
     private:
       static  Name          _extensionName;
               Flags         _flags;
@@ -100,6 +109,7 @@ namespace Anabatic {
               GCell*        _source;
               GCell*        _target;
               DbU::Unit     _axis;
+              Segment*      _segment;
   };
 
 
@@ -112,7 +122,9 @@ namespace Anabatic {
   inline GCell*        Edge::getSource            () const { return _source; }
   inline GCell*        Edge::getTarget            () const { return _target; }
   inline DbU::Unit     Edge::getAxis              () const { return _axis; }
-  inline void          Edge::incRealOccupancy     ( unsigned int delta ) { _realOccupancy+=delta; }
+  inline Segment*      Edge::getSegment           () const { return _segment; }
+  inline void          Edge::incCapacity          ( int delta ) { _capacity = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
+  inline void          Edge::setSegment           ( Segment* s ) { _segment=s; }
   inline const Flags&  Edge::flags                () const { return _flags; }
   inline Flags&        Edge::flags                () { return _flags; }
   inline void          Edge::invalidate           () { _flags |= Flags::Invalidated; }

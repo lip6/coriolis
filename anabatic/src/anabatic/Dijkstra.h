@@ -44,7 +44,7 @@ namespace Anabatic {
     public:
       class CompareById {
         public:
-          inline bool  operator() ( const Vertex* lhs, const Vertex* rhs );
+          inline bool  operator() ( const Vertex* lhs, const Vertex* rhs ) const;
       };
     public:
       static         DbU::Unit       unreached;
@@ -125,7 +125,7 @@ namespace Anabatic {
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
 
-  inline bool  Vertex::CompareById::operator() ( const Vertex* lhs, const Vertex* rhs )
+  inline bool  Vertex::CompareById::operator() ( const Vertex* lhs, const Vertex* rhs ) const
   { return lhs->getId() < rhs->getId(); }
 
 
@@ -224,16 +224,23 @@ namespace Anabatic {
                        ~Dijkstra           ();
     public:                         
       inline bool       isBipoint          () const;
+      inline bool       isSourceVertex     ( Vertex* ) const;
+      inline bool       isTargetVertex     ( Vertex* ) const;
       inline void       setDistance        ( distance_t );
              void       load               ( Net* );
              void       run                ( Mode mode=Mode::Standart );
+             void       ripup              ( Edge* );
     private:           
                         Dijkstra           ( const Dijkstra& );
              Dijkstra&  operator=          ( const Dijkstra& );
       static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
+             void       _cleanup           ();
              bool       _propagate         ( Flags enabledSides );
              void       _traceback         ( Vertex* );
              void       _selectFirstSource ();
+             Vertex*    _propagateRipup    ( Vertex* );
+             void       _tagConnecteds     ( Vertex*, int connexId );
+             void       _checkEdges        () const;
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
@@ -252,8 +259,10 @@ namespace Anabatic {
   inline Dijkstra::Mode::Mode ( unsigned int flags ) : BaseFlags(flags) { }
   inline Dijkstra::Mode::Mode ( BaseFlags    base  ) : BaseFlags(base)  { }
 
-  inline bool  Dijkstra::isBipoint   () const { return _net and (_targets.size()+_sources.size() == 2); }
-  inline void  Dijkstra::setDistance ( distance_t cb ) { _distanceCb = cb; }
+  inline bool  Dijkstra::isBipoint      () const { return _net and (_targets.size()+_sources.size() == 2); }
+  inline bool  Dijkstra::isSourceVertex ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
+  inline bool  Dijkstra::isTargetVertex ( Vertex* v ) const { return (_targets.find(v) != _targets.end()); }
+  inline void  Dijkstra::setDistance    ( distance_t cb ) { _distanceCb = cb; }
 
 
 }  // Anabatic namespace.

@@ -19,10 +19,12 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include "hurricane/Timer.h"
 namespace Hurricane {
   class Name;
+  class Net;
   class Cell;
   class Instance;
   class CellViewer;
@@ -47,6 +49,9 @@ namespace Anabatic {
   using CRL::ToolEngine;
 
 
+  typedef  std::set<Net*,Entity::CompareById>  NetSet;
+
+
   class AnabaticEngine : public ToolEngine {
     public:
       typedef ToolEngine  Super;
@@ -60,13 +65,19 @@ namespace Anabatic {
       inline        void            setViewer         ( CellViewer* );
       inline  const Matrix*         getMatrix         () const;
       inline  const vector<GCell*>& getGCells         () const;
+      inline  const vector<Edge*>&  getOvEdges        () const;
       inline        GCell*          getSouthWestGCell () const;
       inline        GCell*          getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*          getGCellUnder     ( Point ) const;
                     int             getCapacity       ( Interval, Flags ) const;
+                    size_t          getNetsFromEdge   ( const Edge*, NetSet& );
+      inline        void            addOv             ( Edge* );
+      inline        void            removeOv          ( Edge* );
     // Dijkstra related functions.
       inline        int             getStamp          () const;
       inline        int             incStamp          ();
+    // Global routing related functions.
+                    void            globalRoute       ();
     // Misc. functions.
       inline const  Flags&          flags             () const;
       inline        Flags&          flags             ();
@@ -97,6 +108,7 @@ namespace Anabatic {
              Configuration* _configuration;
              Matrix         _matrix;
              vector<GCell*> _gcells;
+             vector<Edge*>  _ovEdges;
              CellViewer*    _viewer;
              Flags          _flags;
              int            _stamp;
@@ -107,6 +119,7 @@ namespace Anabatic {
   inline void                  AnabaticEngine::setViewer         ( CellViewer* viewer ) { _viewer=viewer; }
   inline const Matrix*         AnabaticEngine::getMatrix         () const { return &_matrix; }
   inline const vector<GCell*>& AnabaticEngine::getGCells         () const { return _gcells; }
+  inline const vector<Edge*>&  AnabaticEngine::getOvEdges        () const { return _ovEdges; }
   inline GCell*                AnabaticEngine::getSouthWestGCell () const { return _gcells[0]; }
   inline GCell*                AnabaticEngine::getGCellUnder     ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
   inline GCell*                AnabaticEngine::getGCellUnder     ( Point p ) const { return _matrix.getUnder(p); }
@@ -133,6 +146,14 @@ namespace Anabatic {
 
   inline int  AnabaticEngine::getStamp () const { return _stamp; }
   inline int  AnabaticEngine::incStamp () { return ++_stamp; }
+
+  inline void  AnabaticEngine::addOv ( Edge* edge ) { _ovEdges.push_back(edge); }
+
+  inline void  AnabaticEngine::removeOv ( Edge* edge )
+  { 
+    for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge )
+      if (*iedge == edge) { _ovEdges.erase(iedge); break; }
+  }
 
 }  // Anabatic namespace.
 

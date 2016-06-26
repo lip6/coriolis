@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include "hurricane/Error.h"
+#include "hurricane/Segment.h"
 #include "anabatic/Edge.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
@@ -41,6 +42,7 @@ namespace Anabatic {
     , _source           (source)
     , _target           (target)
     , _axis             (0)
+    , _segment          (NULL)
   { }
 
 
@@ -167,6 +169,30 @@ namespace Anabatic {
     if (dx)     dx += DbU::fromLambda( 0.1 );
 
     return dx + ((dy > 0) ? dy : -dy);
+  }
+
+
+  void  Edge::incRealOccupancy ( int delta )
+  {
+    unsigned int occupancy = 0;
+    if ((int)_realOccupancy + delta > 0) occupancy = _realOccupancy + delta;
+    if ((_realOccupancy <= _capacity) and (occupancy >  _capacity)) getAnabatic()->addOv   ( this );
+    if ((_realOccupancy >  _capacity) and (occupancy <= _capacity)) getAnabatic()->removeOv( this );
+    _realOccupancy = occupancy;
+  }
+
+
+  void  Edge::destroySegment ()
+  {
+    if (not _segment) return;
+
+    Contact* csource = dynamic_cast<Contact*>( _segment->getSource() );
+    Contact* ctarget = dynamic_cast<Contact*>( _segment->getTarget() );
+
+    _segment->destroy();
+    _segment = NULL;
+    if (csource) getSource()->unrefContact( csource );
+    if (ctarget) getTarget()->unrefContact( ctarget );
   }
 
 

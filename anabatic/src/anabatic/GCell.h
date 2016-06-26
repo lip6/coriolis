@@ -68,74 +68,78 @@ namespace Anabatic {
                  Observable& operator=  ( const StaticObservable& );
       };
     public:
-      static        Box             getBorder            ( const GCell*, const GCell* );
-    public:                         
-      static        GCell*          create               ( AnabaticEngine* );
-    public:
-      inline        bool            isHFlat              () const;
-      inline        bool            isVFlat              () const;
-      inline        bool            isFlat               () const;
-      inline        bool            isDevice             () const;
-      inline        bool            isChannel            () const;
-      inline        bool            isStrut              () const;
-      inline        bool            isMatrix             () const;
-      inline        AnabaticEngine* getAnabatic          () const;
-      inline        DbU::Unit       getXMin              () const;
-      inline        DbU::Unit       getYMin              () const;
-      inline        DbU::Unit       getXMax              ( int shrink=0 ) const;
-      inline        DbU::Unit       getYMax              ( int shrink=0 ) const;
-      inline        Interval        getSide              ( Flags direction ) const;
-      inline        Point           getCenter            () const;
-      inline const  vector<Edge*>&  getWestEdges         () const;
-      inline const  vector<Edge*>&  getEastEdges         () const;
-      inline const  vector<Edge*>&  getNorthEdges        () const;
-      inline const  vector<Edge*>&  getSouthEdges        () const;
-      inline        Edges           getEdges             () const;
-      inline        GCell*          getWest              () const;
-      inline        GCell*          getEast              () const;
-      inline        GCell*          getSouth             () const;
-      inline        GCell*          getNorth             () const;
-                    GCell*          getWest              ( DbU::Unit y ) const;
-                    GCell*          getEast              ( DbU::Unit y ) const;
-                    GCell*          getSouth             ( DbU::Unit x ) const;
-                    GCell*          getNorth             ( DbU::Unit x ) const;
-                    GCell*          getUnder             ( DbU::Unit x, DbU::Unit y ) const;
-      inline        GCell*          getUnder             ( Point p ) const;
-                    GCell*          hcut                 ( DbU::Unit y );
-                    GCell*          vcut                 ( DbU::Unit x );
-                    bool            doGrid               ();
-                    Contact*        getGContact          ( Net* );
+      static        Box               getBorder            ( const GCell*, const GCell* );
+    public:                           
+      static        GCell*            create               ( AnabaticEngine* );
+    public:                           
+      inline        bool              isHFlat              () const;
+      inline        bool              isVFlat              () const;
+      inline        bool              isFlat               () const;
+      inline        bool              isDevice             () const;
+      inline        bool              isChannel            () const;
+      inline        bool              isStrut              () const;
+      inline        bool              isMatrix             () const;
+                    bool              hasGContact          ( const Contact* ) const;
+      inline        AnabaticEngine*   getAnabatic          () const;
+      inline        DbU::Unit         getXMin              () const;
+      inline        DbU::Unit         getYMin              () const;
+      inline        DbU::Unit         getXMax              ( int shrink=0 ) const;
+      inline        DbU::Unit         getYMax              ( int shrink=0 ) const;
+      inline        Interval          getSide              ( Flags direction ) const;
+      inline        Point             getCenter            () const;
+      inline const  vector<Edge*>&    getWestEdges         () const;
+      inline const  vector<Edge*>&    getEastEdges         () const;
+      inline const  vector<Edge*>&    getNorthEdges        () const;
+      inline const  vector<Edge*>&    getSouthEdges        () const;
+                    Edge*             getEdgeTo            ( GCell*, Flags sideHint=Flags::AllSides ) const;
+      inline        Edges             getEdges             ( Flags sides=Flags::AllSides ) const;
+      inline        GCell*            getWest              () const;
+      inline        GCell*            getEast              () const;
+      inline        GCell*            getSouth             () const;
+      inline        GCell*            getNorth             () const;
+                    GCell*            getWest              ( DbU::Unit y ) const;
+                    GCell*            getEast              ( DbU::Unit y ) const;
+                    GCell*            getSouth             ( DbU::Unit x ) const;
+                    GCell*            getNorth             ( DbU::Unit x ) const;
+                    GCell*            getUnder             ( DbU::Unit x, DbU::Unit y ) const;
+      inline        GCell*            getUnder             ( Point p ) const;
+                    GCell*            hcut                 ( DbU::Unit y );
+                    GCell*            vcut                 ( DbU::Unit x );
+                    bool              doGrid               ();
+                    Contact*          getGContact          ( Net* );
+      inline const  vector<Contact*>& getGContacts         () const;
+                    bool              unrefContact         ( Contact* );
     // Misc. functions.
-      inline const  Flags&          flags                () const;
-      inline        Flags&          flags                ();
-                    void            _add                 ( Edge* edge, Flags side );
-                    void            _remove              ( Edge* edge, Flags side=Flags::AllSides );
-                    void            _destroyEdges        ();
-    private:                        
-                    void            _revalidate          ();
-                    void            _moveEdges           ( GCell* dest, size_t ibegin, Flags flags );
-    public:                                
-    // Observers.
-      inline        void            setObserver          ( size_t slot, BaseObserver* );
-      template<typename OwnerT>
-      inline        OwnerT*         getObserver          ( size_t slot );
-      inline        void            notify               ( unsigned int flags );
-    // ExtensionGo support.                
-      inline  const Name&           staticGetName        (); 
-      virtual const Name&           getName              () const;
-      virtual       void            translate            ( const DbU::Unit&, const DbU::Unit& );
-      virtual       Box             getBoundingBox       () const;
-    public:                                              
-    // Inspector support.                                
-      virtual       string          _getTypeName         () const;
-      virtual       string          _getString           () const;
-      virtual       Record*         _getRecord           () const;
-    protected:                                           
-                                    GCell                ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
-      virtual                      ~GCell                ();
-                    GCell*          _create              ( DbU::Unit xmin, DbU::Unit ymin );
-      virtual       void            _postCreate          ();
-      virtual       void            _preDestroy          ();
+      inline const  Flags&            flags                () const;
+      inline        Flags&            flags                ();
+                    void              _add                 ( Edge* edge, Flags side );
+                    void              _remove              ( Edge* edge, Flags side=Flags::AllSides );
+                    void              _destroyEdges        ();
+    private:                          
+                    void              _revalidate          ();
+                    void              _moveEdges           ( GCell* dest, size_t ibegin, Flags flags );
+    public:                                  
+    // Observers.                     
+      inline        void              setObserver          ( size_t slot, BaseObserver* );
+      template<typename OwnerT>       
+      inline        OwnerT*           getObserver          ( size_t slot );
+      inline        void              notify               ( unsigned int flags );
+    // ExtensionGo support.                  
+      inline  const Name&             staticGetName        (); 
+      virtual const Name&             getName              () const;
+      virtual       void              translate            ( const DbU::Unit&, const DbU::Unit& );
+      virtual       Box               getBoundingBox       () const;
+    public:                                                
+    // Inspector support.                                  
+      virtual       string            _getTypeName         () const;
+      virtual       string            _getString           () const;
+      virtual       Record*           _getRecord           () const;
+    protected:                                             
+                                      GCell                ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
+      virtual                        ~GCell                ();
+                    GCell*            _create              ( DbU::Unit xmin, DbU::Unit ymin );
+      virtual       void              _postCreate          ();
+      virtual       void              _preDestroy          ();
     private:                        
                                     GCell                ( const GCell& );
                     GCell&          operator=            ( const GCell& );
@@ -154,28 +158,29 @@ namespace Anabatic {
   };
 
 
-  inline       bool            GCell::isHFlat       () const { return getYMin() == getYMax(); }
-  inline       bool            GCell::isVFlat       () const { return getXMin() == getXMax(); }
-  inline       bool            GCell::isFlat        () const { return isHFlat() or isVFlat(); }
-  inline       bool            GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
-  inline       bool            GCell::isChannel     () const { return _flags & Flags::ChannelGCell; }
-  inline       bool            GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
-  inline       bool            GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
-  inline       AnabaticEngine* GCell::getAnabatic   () const { return _anabatic; }
-  inline       DbU::Unit       GCell::getXMin       () const { return _xmin; }
-  inline       DbU::Unit       GCell::getYMin       () const { return _ymin; }
-  inline       Edges           GCell::getEdges      () const { return new GCell_Edges(this); }
-  inline const vector<Edge*>&  GCell::getWestEdges  () const { return _westEdges; }
-  inline const vector<Edge*>&  GCell::getEastEdges  () const { return _eastEdges; }
-  inline const vector<Edge*>&  GCell::getNorthEdges () const { return _northEdges; }
-  inline const vector<Edge*>&  GCell::getSouthEdges () const { return _southEdges; }
-  inline       GCell*          GCell::getWest       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
-  inline       GCell*          GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
-  inline       GCell*          GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
-  inline       GCell*          GCell::getNorth      () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
-  inline       GCell*          GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
-  inline const Flags&          GCell::flags         () const { return _flags; }
-  inline       Flags&          GCell::flags         () { return _flags; }
+  inline       bool              GCell::isHFlat       () const { return getYMin() == getYMax(); }
+  inline       bool              GCell::isVFlat       () const { return getXMin() == getXMax(); }
+  inline       bool              GCell::isFlat        () const { return isHFlat() or isVFlat(); }
+  inline       bool              GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
+  inline       bool              GCell::isChannel     () const { return _flags & Flags::ChannelGCell; }
+  inline       bool              GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
+  inline       bool              GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
+  inline       AnabaticEngine*   GCell::getAnabatic   () const { return _anabatic; }
+  inline       DbU::Unit         GCell::getXMin       () const { return _xmin; }
+  inline       DbU::Unit         GCell::getYMin       () const { return _ymin; }
+  inline       Edges             GCell::getEdges      ( Flags sides ) const { return new GCell_Edges(this,sides); }
+  inline const vector<Edge*>&    GCell::getWestEdges  () const { return _westEdges; }
+  inline const vector<Edge*>&    GCell::getEastEdges  () const { return _eastEdges; }
+  inline const vector<Edge*>&    GCell::getNorthEdges () const { return _northEdges; }
+  inline const vector<Edge*>&    GCell::getSouthEdges () const { return _southEdges; }
+  inline       GCell*            GCell::getWest       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
+  inline       GCell*            GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
+  inline       GCell*            GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
+  inline       GCell*            GCell::getNorth      () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
+  inline       GCell*            GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
+  inline const vector<Contact*>& GCell::getGContacts  () const { return _contacts; }
+  inline const Flags&            GCell::flags         () const { return _flags; }
+  inline       Flags&            GCell::flags         () { return _flags; }
 
   inline DbU::Unit  GCell::getXMax ( int shrink ) const
   { return _eastEdges.empty() ?       getCell()->getAbutmentBox().getXMax() - shrink

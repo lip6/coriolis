@@ -75,6 +75,8 @@ namespace Anabatic {
     , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
     , _edgeCostH      (Cfg::getParamDouble("anabatic.edgeCostH",  9.0)->asDouble())
     , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
+    , _hEdgeLocal     (Cfg::getParamInt("kite.hTracksReservedLocal",0)->asInt())
+    , _vEdgeLocal     (Cfg::getParamInt("kite.vTracksReservedLocal",0)->asInt())
   {
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
@@ -286,6 +288,14 @@ namespace Anabatic {
 
   DbU::Unit  ConfigurationConcrete::getEdgeWidth () const
   { return _edgeWidth; }
+
+
+  size_t  ConfigurationConcrete::getHEdgeLocal () const
+  { return _hEdgeLocal; }
+
+
+  size_t  ConfigurationConcrete::getVEdgeLocal () const
+  { return _vEdgeLocal; }
 
 
   float  ConfigurationConcrete::getEdgeCostH () const
