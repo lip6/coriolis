@@ -23,9 +23,15 @@
 #include "hurricane/Name.h"
 #include "hurricane/Box.h"
 #include "hurricane/Cell.h"
+#include "hurricane/Component.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
 #include "hurricane/ExtensionGo.h"
 namespace Hurricane {
   class Contact;
+  class Component;
+  class Horizontal;
+  class Vertical;
 }
 #include "anabatic/Edge.h"
 
@@ -46,6 +52,9 @@ namespace Anabatic {
   using Hurricane::Entity;
   using Hurricane::Contact;
   using Hurricane::Cell;
+  using Hurricane::Component;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
 
   class AnabaticEngine;
 
@@ -113,6 +122,9 @@ namespace Anabatic {
                     Contact*          getGContact          ( Net* );
       inline const  vector<Contact*>& getGContacts         () const;
                     bool              unrefContact         ( Contact* );
+                    void              setXY                ( DbU::Unit x, DbU::Unit y );
+                    void              updateContactsPosition ();
+
     // Misc. functions.
       inline const  Flags&            flags                () const;
       inline        Flags&            flags                ();

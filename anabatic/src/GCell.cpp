@@ -604,6 +604,39 @@ namespace Anabatic {
   }
 
 
+  void GCell::setXY ( DbU::Unit x, DbU::Unit y )
+  {
+    UpdateSession::open();
+    _xmin = x;
+    _ymin = y;
+    UpdateSession::close(); 
+  }
+
+  
+  void GCell::updateContactsPosition ()
+  {
+    UpdateSession::open();
+    DbU::Unit xc = (getXMax() + getXMin())/2;
+    DbU::Unit yc = (getYMax() + getYMin())/2;
+    for (vector<Contact*>::iterator it = _contacts.begin(); it != _contacts.end(); it++){
+      for ( Component* c : (*it)->getSlaveComponents() ){
+        Horizontal* h = dynamic_cast<Horizontal*>(c);
+        Vertical*   v = dynamic_cast<Vertical*>  (c);
+        if (h){
+        //if (h->getY() == (*it)->getY()) h->setY(yc);
+          h->setY(yc);
+        } else if (v) {
+        //if (v->getX() == (*it)->getX()) v->setX(xc);
+          v->setX(xc);
+        }
+      }
+      (*it)->setX(xc);
+      (*it)->setY(yc);
+    }
+    UpdateSession::close(); 
+  }
+
+
   const Name& GCell::getName () const
   { return _extensionName; }
 
