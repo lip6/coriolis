@@ -35,6 +35,8 @@ class Builder:
         self._noCache          = False
         self._ninja            = False
         self._clang            = False
+        self._noSystemBoost    = False
+        self._macports         = False
         self._devtoolset2      = False
         self._qt5              = False
         self._openmp           = False
@@ -61,7 +63,12 @@ class Builder:
         elif attribute == "noCache":          self._noCache          = value
         elif attribute == "ninja":            self._ninja            = value
         elif attribute == "clang":            self._clang            = value
-        elif attribute == "devtoolset2":      self._devtoolset2      = value
+        elif attribute == "macports":
+            self._macports = value
+            if value: self._noSystemBoost = True
+        elif attribute == "devtoolset2":
+            self._devtoolset2 = value
+            if value: self._noSystemBoost = True
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "openmp":           self._openmp           = value
         elif attribute == "enableDoc":        self._enableDoc        = value
@@ -166,10 +173,10 @@ class Builder:
             self._execute ( command, "Removing tool build directory" )
 
         command = [ 'cmake' ]
-        if self._ninja:       command += [ "-G", "Ninja" ]
-        if self._devtoolset2: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
-        if self._qt5:         command += [ "-D", "WITH_QT5:STRING=TRUE" ]
-        if self._openmp:      command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
+        if self._ninja:         command += [ "-G", "Ninja" ]
+        if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
+        if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
+        if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 
         command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"     % self.buildMode
                    , "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
@@ -296,6 +303,9 @@ class Builder:
         if self._devtoolset2:
             self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-2/root/usr/include'
             self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-2/root/usr/lib'
+        if self._macports:
+            self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/local/include'
+            self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/local/lib'
 
        # Set or guess the various projects TOP environment variables.
         for project in self.projects:
