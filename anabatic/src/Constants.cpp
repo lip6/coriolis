@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "Constants.cpp<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2016-2016, All Rights Reserved
@@ -36,17 +36,17 @@ namespace Anabatic {
     string s = "";
     s += (_flags & Horizontal  ) ? 'h' : '-';
     s += (_flags & Vertical    ) ? 'v' : '-';
-    s += (_flags & SourceGCell ) ? 'S' : '-';
-    s += (_flags & TargetGCell ) ? 'T' : '-';
+    s += (_flags & Source      ) ? 'S' : '-';
+    s += (_flags & Target      ) ? 'T' : '-';
     s += (_flags & DeviceGCell ) ? 'd' : '-';
     s += (_flags & ChannelGCell) ? 'c' : '-';
     s += (_flags & StrutGCell  ) ? 's' : '-';
     s += (_flags & MatrixGCell ) ? 'm' : '-';
     s += ",";
     s += (_flags & Invalidated ) ? 'i' : '-';
-    s += (_flags & Destroy     ) ? 'D' : '-';
-    s += (_flags & PitchAbove  ) ? 'A' : '-';
-    s += (_flags & PitchBelow  ) ? 'B' : '-';
+    s += (_flags & DestroyGCell) ? 'D' : '-';
+    s += (_flags & AboveLayer  ) ? 'A' : '-';
+    s += (_flags & BelowLayer  ) ? 'B' : '-';
 
     return s;
   }

@@ -431,6 +431,13 @@ namespace Anabatic {
   }
 
 
+  void  GraphicAnabaticEngine::_detailRoute ()
+  {
+    AnabaticEngine* engine = getForFramework( CreateEngine );
+    engine->loadGlobalRouting( EngineLoadGrByNet );
+  }
+
+
   void  GraphicAnabaticEngine::addToMenu ( CellViewer* viewer )
   {
     assert( _viewer == NULL );
@@ -452,6 +459,11 @@ namespace Anabatic {
                       , "Anabatic - &Global Route"
                       , "Global Route"
                       , std::bind(&GraphicAnabaticEngine::_globalRoute,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.anabatic.detailedRoute"
+                      , "Anabatic - &Detailed Route"
+                      , "Run the <b>Anabatic</b> detailed router"
+                      , std::bind(&GraphicAnabaticEngine::_detailRoute,this)
                       );
   }
 

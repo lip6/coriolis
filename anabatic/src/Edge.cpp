@@ -101,8 +101,8 @@ namespace Anabatic {
 
   void  Edge::_preDestroy ()
   {
-    _source->_remove( this, _flags|Flags::SourceGCell );
-    _target->_remove( this, _flags|Flags::TargetGCell );
+    _source->_remove( this, _flags|Flags::Source );
+    _target->_remove( this, _flags|Flags::Target );
 
     Super::_preDestroy();
   }

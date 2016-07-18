@@ -15,36 +15,302 @@
 
 
 #include <iostream>
+#include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Contact.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/UpdateSession.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
+
+
+namespace {
+
+  using namespace std;
+  using namespace Hurricane;
+  using namespace Anabatic;
+
+
+// -------------------------------------------------------------------
+// Class  :  "::UsedFragments".
+
+  class UsedFragments {
+    private:
+      class Axiss;
+
+      class Axis {
+        public:
+                                Axis             ( UsedFragments*, DbU::Unit axis );
+          inline DbU::Unit      getAxis          () const;
+          inline UsedFragments* getUsedFragments () const;
+                 void           merge            ( const Interval& mergeChunk );
+                 Interval       getMaxFree       () const;
+        private:
+          UsedFragments* _ufragments;
+          DbU::Unit      _axis;
+          list<Interval> _chunks;
+      };
+
+    private:
+      class AxisCompare {
+        public:
+          bool operator() ( const Axis* lhs, const Axis* rhs );
+      };
+
+      class AxisMatch : public unary_function<Axis*,bool> {
+        public:
+          inline      AxisMatch  ( DbU::Unit axis );
+          inline bool operator() ( const Axis* );
+        private:
+          DbU::Unit  _axis;
+      };
+
+    public:
+                        UsedFragments ();
+                       ~UsedFragments ();
+      inline DbU::Unit  getPitch      () const;
+      inline DbU::Unit  getMin        () const;
+      inline DbU::Unit  getMax        () const;
+             Interval   getMaxFree    () const;
+      inline void       setSpan       ( DbU::Unit min, DbU::Unit max );
+      inline void       setCapacity   ( size_t );
+      inline void       incGlobals    ( size_t count=1 );
+      inline void       setPitch      ( DbU::Unit );
+             void       merge         ( DbU::Unit axis, const Interval& );
+    private:
+      DbU::Unit      _pitch;
+      vector<Axis*>  _axiss;
+      Interval       _span;
+      size_t         _capacity;
+      size_t         _globals;
+  };
+
+
+  UsedFragments::Axis::Axis ( UsedFragments* ufragments, DbU::Unit axis )
+    : _ufragments(ufragments)
+    , _axis      (axis)
+    , _chunks    ()
+  {
+    merge( Interval( ufragments->getMin()-ufragments->getPitch(), ufragments->getMin() ) );
+    merge( Interval( ufragments->getMax(), ufragments->getMax()+ufragments->getPitch() ) );
+  }
+
+  inline DbU::Unit      UsedFragments::Axis::getAxis          () const { return _axis; }
+  inline UsedFragments* UsedFragments::Axis::getUsedFragments () const { return _ufragments; }
+
+
+  void  UsedFragments::Axis::merge ( const Interval& chunkMerge )
+  {
+    // cerr << "    Merge @" << DbU::getValueString(_axis)
+    //      << " " << chunkMerge << endl;
+
+    list<Interval>::iterator imerge = _chunks.end();
+    list<Interval>::iterator ichunk = _chunks.begin();
+
+    while ( ichunk != _chunks.end() ) {
+      if (chunkMerge.getVMax() < (*ichunk).getVMin()) break;
+
+      if (chunkMerge.intersect(*ichunk)) {
+        if (imerge == _chunks.end()) {
+          imerge = ichunk;
+          (*imerge).merge( chunkMerge );
+        } else {
+          (*imerge).merge( *ichunk );
+          ichunk = _chunks.erase( ichunk );
+          continue;
+        }
+      }
+      ichunk++;
+    }
+
+    if (imerge == _chunks.end()) {
+      _chunks.insert( ichunk, chunkMerge );
+    }
+  }
+
+
+  Interval  UsedFragments::Axis::getMaxFree () const
+  {
+    list<Interval>::const_iterator ichunk =   _chunks.begin();
+    list<Interval>::const_iterator iend   = --_chunks.end();
+
+    Interval maxFree;
+    for ( ; ichunk != iend ; ++ichunk ) {
+      list<Interval>::const_iterator inext = ichunk;
+      ++inext;
+
+      if (inext == iend) break;
+
+      Interval currentFree ( (*ichunk).getVMax(), (*inext).getVMin() );
+      if (currentFree.getSize() > maxFree.getSize())
+        maxFree = currentFree;
+
+      // cerr << "    @" << DbU::getValueString(_axis)
+      //      << " before:" << *ichunk << " after:" << *inext
+      //      << " size:" << DbU::getValueString(currentFree.getSize()) << endl;
+    }
+
+    return maxFree;
+  }
+
+
+  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs )
+  {
+    if (lhs->getAxis () < rhs->getAxis ()) return true;
+    return false;
+  }
+
+
+  inline  UsedFragments::AxisMatch::AxisMatch ( DbU::Unit axis )
+    : _axis(axis)
+  { }
+
+
+  inline bool  UsedFragments::AxisMatch::operator() ( const Axis* axis )
+  { return (axis->getAxis() == _axis); }
+
+
+  UsedFragments::UsedFragments ()
+    : _pitch   (0)
+    , _axiss   ()
+    , _span    (false)
+    , _capacity(0)
+    , _globals (0)
+  { }
+
+
+  UsedFragments::~UsedFragments ()
+  {
+    while ( not _axiss.empty() ) {
+      delete (*_axiss.begin());
+      _axiss.erase( _axiss.begin() );
+    }
+  }
+
+
+  inline DbU::Unit  UsedFragments::getPitch    () const { return _pitch; }
+  inline DbU::Unit  UsedFragments::getMin      () const { return _span.getVMin(); }
+  inline DbU::Unit  UsedFragments::getMax      () const { return _span.getVMax(); }
+  inline void       UsedFragments::setPitch    ( DbU::Unit pitch ) { _pitch=pitch; }
+  inline void       UsedFragments::setSpan     ( DbU::Unit min, DbU::Unit max ) { _span=Interval(min,max); }
+  inline void       UsedFragments::setCapacity ( size_t capacity ) { _capacity=capacity; }
+  inline void       UsedFragments::incGlobals  ( size_t count ) { _globals+=count; }
+
+
+  void  UsedFragments::merge ( DbU::Unit axis, const Interval& chunkMerge )
+  {
+    Interval restrict = chunkMerge.getIntersection(_span);
+    if (restrict.isEmpty()) return;
+
+    vector<Axis*>::iterator iaxis = find_if( _axiss.begin(), _axiss.end(), AxisMatch(axis) );
+
+    Axis* paxis = NULL;
+    if (iaxis == _axiss.end()) {
+      paxis = new Axis(this,axis);
+      _axiss.push_back ( paxis );
+      stable_sort( _axiss.begin(), _axiss.end(), AxisCompare() );
+    } else {
+      paxis = *iaxis;
+    }
+
+    paxis->merge( restrict );
+  }
+
+
+  Interval  UsedFragments::getMaxFree () const
+  {
+  //cerr << "capacity:" << _capacity << " _globals:" << _globals << " _axiss:" << _axiss.size() << endl;
+    if (_capacity > _globals + _axiss.size() + 1) return _span;
+
+    Interval maxFree;
+    vector<Axis*>::const_iterator iaxis = _axiss.begin();
+    for ( ; iaxis != _axiss.end() ; ++iaxis ) {
+      Interval axisMaxFree = (*iaxis)->getMaxFree();
+      if (axisMaxFree.getSize() > maxFree.getSize())
+        maxFree = axisMaxFree;
+    }
+
+    return maxFree;
+  }
+
+
+} // End of anonymous namespace.
 
 
 namespace Anabatic {
 
   using std::cerr;
   using std::endl;
+  using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::UpdateSession;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
 
+
+// -------------------------------------------------------------------
+// Class  :  "Katabatic::GCell::CompareByDensity".
+
+
+  GCell::CompareByDensity::CompareByDensity ( size_t depth )
+    : _depth(depth)
+  { }
+
+
+  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
+  {
+    float difference = lhs->getDensity(_depth) - rhs->getDensity(_depth);
+    if (difference != 0.0) return (difference > 0.0);
+    
+    return lhs->getId() < rhs->getId();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::GCell".
 
   Name  GCell::_extensionName = "Anabatic::GCell";
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
     : Super(anabatic->getCell())
-    , _observable()
-    , _anabatic  (anabatic)
-    , _flags     (Flags::NoFlags)
-    , _westEdges ()
-    , _eastEdges ()
-    , _southEdges()
-    , _northEdges()
-    , _xmin      (xmin)
-    , _ymin      (ymin)
-    , _contacts  ()
-  { }
+    , _observable    ()
+    , _anabatic      (anabatic)
+    , _flags         (Flags::Invalidated)
+    , _westEdges     ()
+    , _eastEdges     ()
+    , _southEdges    ()
+    , _northEdges    ()
+    , _xmin          (xmin)
+    , _ymin          (ymin)
+    , _gcontacts     ()
+    , _vsegments     ()
+    , _hsegments     ()
+    , _contacts      ()
+    , _depth         (Session::getRoutingGauge()->getDepth())
+    , _pinDepth      (0)
+    , _blockages     (new DbU::Unit [_depth])
+    , _cDensity      (0.0)
+    , _densities     (new float [_depth])
+    , _feedthroughs  (new float [_depth])
+    , _fragmentations(new float [_depth])
+    , _globalsCount  (new float [_depth])
+    , _key           (this,1)
+  {
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      _blockages     [i] = 0;
+      _densities     [i] = 0.0;
+      _feedthroughs  [i] = 0.0;
+      _fragmentations[i] = 0.0;
+      _globalsCount  [i] = 0.0;
+
+      if (Session::getRoutingGauge()->getLayerGauge(i)->getType() == Constant::PinOnly)
+        ++_pinDepth;
+    }
+
+    updateKey( 1 );
+  }
 
 
   void  GCell::_postCreate ()
@@ -59,11 +325,14 @@ namespace Anabatic {
     if (not anabatic)            throw Error( "GCell::create(): NULL anabatic argument." );
     if (not anabatic->getCell()) throw Error( "GCell::create(): AnabaticEngine has no Cell loaded." );
 
+    Session::open( anabatic );
     GCell* gcell = new GCell ( anabatic
                              , anabatic->getCell()->getAbutmentBox().getXMin()
                              , anabatic->getCell()->getAbutmentBox().getYMin() );
     gcell->_postCreate();
     gcell->_revalidate();
+    Session::close();
+
     return gcell;
   }
 
@@ -77,7 +346,15 @@ namespace Anabatic {
 
 
   GCell::~GCell ()
-  { }
+  {
+    cdebug_log(145,0) << "GCell::~GCell()" << endl;
+
+    delete [] _blockages;
+    delete [] _densities;
+    delete [] _feedthroughs;
+    delete [] _fragmentations;
+    delete [] _globalsCount;
+  }
 
 
   void  GCell::_destroyEdges ()
@@ -166,7 +443,7 @@ namespace Anabatic {
 
   bool  GCell::hasGContact ( const Contact* owned ) const
   {
-    for ( Contact* contact : _contacts ) {
+    for ( Contact* contact : _gcontacts ) {
       if (contact == owned) return true;
     }
     return false;
@@ -196,7 +473,6 @@ namespace Anabatic {
   {
     for ( Edge* edge : _eastEdges ) {
       GCell* side = edge->getOpposite(this);
-      cerr << "east @Y: " << DbU::getValueString(y) << " " << side << endl;
       if (y < side->getYMax()) return side;
     }
     return NULL;
@@ -390,9 +666,11 @@ namespace Anabatic {
 
   bool  GCell::doGrid ()
   {
+    Session::open( getAnabatic() );
+
     const vector<GCell*>& gcells = getAnabatic()->getGCells();
     size_t    ibegin = gcells.size();
-    DbU::Unit side   = getAnabatic()->getConfiguration()->getSliceHeight();
+    DbU::Unit side   = Session::getSliceHeight();
 
     Interval hspan = getSide( Flags::Horizontal );
     Interval vspan = getSide( Flags::Vertical );
@@ -403,6 +681,7 @@ namespace Anabatic {
                    , DbU::getValueString(hspan.getSize()).c_str()
                    , getString(this).c_str()
                    ) << endl;
+      Session::close();
       return false;
     }
 
@@ -414,8 +693,6 @@ namespace Anabatic {
                    ) << endl;
       return false;
     }
-
-  //UpdateSession::open();
 
     GCell*    row    = this;
     GCell*    column = NULL;
@@ -443,8 +720,7 @@ namespace Anabatic {
       }
     }
 
-  //UpdateSession::close();
-
+    Session::close();
     return true;
   }
 
@@ -563,7 +839,7 @@ namespace Anabatic {
   Contact* GCell::getGContact ( Net* net )
   {
 
-    for ( Contact* contact : _contacts ) {
+    for ( Contact* contact : _gcontacts ) {
       if (contact->getNet() == net) {
         cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
         return contact;
@@ -578,7 +854,7 @@ namespace Anabatic {
                                       , DbU::fromLambda(2.0)
                                       , DbU::fromLambda(2.0)
                                       );
-    _contacts.push_back( contact );
+    _gcontacts.push_back( contact );
     cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
     return contact;
   }
@@ -586,21 +862,34 @@ namespace Anabatic {
 
   bool  GCell::unrefContact ( Contact* unref )
   {
-    if (_contacts.empty()) return false;
+    if (_gcontacts.empty()) return false;
 
-    for ( size_t i=0 ; i< _contacts.size() ; ++i ) {
-      if (_contacts[i] == unref) {
-        if (_contacts[i]->getSlaveComponents().getLocator()->isValid()) return false;
+    for ( size_t i=0 ; i< _gcontacts.size() ; ++i ) {
+      if (_gcontacts[i] == unref) {
+        if (_gcontacts[i]->getSlaveComponents().getLocator()->isValid()) return false;
         
-        std::swap( _contacts[i], _contacts[_contacts.size()-1] );
-        _contacts[ _contacts.size()-1 ]->destroy();
-        _contacts.pop_back();
+        std::swap( _gcontacts[i], _gcontacts[_gcontacts.size()-1] );
+        _gcontacts[ _gcontacts.size()-1 ]->destroy();
+        _gcontacts.pop_back();
 
         return true;
       }
     }
 
     return false;
+  }
+
+
+  void  GCell::cleanupGlobal ()
+  {
+    for ( size_t i=0 ; i<_gcontacts.size() ; ) {
+      if (not _gcontacts[i]->getSlaveComponents().getLocator()->isValid()) {
+        std::swap( _gcontacts[i], _gcontacts[_gcontacts.size()-1] );
+        _gcontacts[ _gcontacts.size()-1 ]->destroy();
+        _gcontacts.pop_back();
+      } else
+        ++i;
+    }
   }
 
 
@@ -675,6 +964,601 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::isSaturated ( size_t depth ) const
+  { return getDensity(depth) > Session::getSaturateRatio(); }
+
+
+  Interval  GCell::getSide ( unsigned int direction ) const
+  {
+    Interval side;
+    switch ( direction ) {
+      default:
+      case Flags::Horizontal: side = Interval(getXMin(),getXMax()); break;
+      case Flags::Vertical:   side = Interval(getYMin(),getYMax()); break;
+    }
+    return side;
+  }
+
+
+  AutoSegments  GCell::getHStartSegments ()
+  { return new AutoSegments_AnchorOnGCell (this,Flags::EastSide); }
+
+
+  AutoSegments  GCell::getVStartSegments ()
+  { return new AutoSegments_AnchorOnGCell (this,Flags::NorthSide); }
+
+
+  AutoSegments  GCell::getHStopSegments ()
+  { return new AutoSegments_AnchorOnGCell (this,Flags::WestSide); }
+
+
+  AutoSegments  GCell::getVStopSegments ()
+  { return new AutoSegments_AnchorOnGCell (this,Flags::SouthSide); }
+
+
+  size_t  GCell::getRoutingPads ( set<RoutingPad*>& rps )
+  {
+    for ( size_t i=0 ; i<_contacts.size() ; ++i ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>(_contacts[i]->getAnchor());
+      if ( rp ) {
+        rps.insert ( rp );
+      }
+    }
+    return rps.size();
+  }
+
+
+  float  GCell::getHCapacity () const
+  {
+    int capacity = 0;
+    if (not _eastEdges.empty()) {
+      for ( Edge* edge : _eastEdges ) capacity += edge->getCapacity(); 
+    } else {
+      for ( Edge* edge : _westEdges ) capacity += edge->getCapacity(); 
+    }
+    return (float)capacity;
+  }
+
+
+  float  GCell::getVCapacity () const
+  {
+    int capacity = 0;
+    if (not _northEdges.empty()) {
+      for ( Edge* edge : _northEdges ) capacity += edge->getCapacity(); 
+    } else {
+      for ( Edge* edge : _southEdges ) capacity += edge->getCapacity(); 
+    }
+    return (float)capacity;
+  }
+
+
+  float  GCell::getAverageHVDensity () const
+  {
+  // Average density of all layers mixeds together.
+    float density = 0.0;
+    for ( size_t i=0 ; i<_depth ; i++ )
+      density += _densities[i];
+    return density / ((float)(_depth-_pinDepth));
+  }
+
+
+  float  GCell::getMaxHVDensity () const
+  {
+  // Maximum density between all horizontal vs. all vertical layers.
+    size_t hplanes  = 0;
+    size_t vplanes  = 0;
+    float  hdensity = 0.0;
+    float  vdensity = 0.0;
+
+    for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
+      else       { vdensity += _densities[i]; ++vplanes; }
+    }
+
+    if (hplanes) hdensity /= hplanes;
+    if (vplanes) vdensity /= vplanes;
+
+    return std::max(hdensity, vdensity);
+  }
+
+
+  float  GCell::getDensity ( unsigned int flags ) const
+  {
+    if (isInvalidated() and not(flags & Flags::NoUpdate))  const_cast<GCell*>(this)->updateDensity();
+
+    float density = 0.0;
+
+    if (getAnabatic()->getDensityMode() == AverageHVDensity) {
+      density = getAverageHVDensity();
+    } else if (getAnabatic()->getDensityMode() == MaxHVDensity) {
+      density = getMaxHVDensity();
+    } else if (getAnabatic()->getDensityMode() == AverageHDensity) {
+      size_t hplanes  = 0;
+      float  hdensity = 0.0;
+
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if (i%2) { hdensity += _densities[i]; ++hplanes; }
+      }
+      if (hplanes) hdensity /= hplanes;
+
+      density = hdensity;
+    } else if (getAnabatic()->getDensityMode() == AverageVDensity) {
+      size_t vplanes  = 0;
+      float  vdensity = 0.0;
+
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if (i%2 == 0) { vdensity += _densities[i]; ++vplanes; }
+      }
+
+      if (vplanes) vdensity /= vplanes;
+
+      density = vdensity;
+    } else if (getAnabatic()->getDensityMode() == MaxDensity) {
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if (_densities[i] > density) density = _densities[i];
+      }
+    } else if (getAnabatic()->getDensityMode() == MaxHDensity) {
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ((i%2) and (_densities[i] > density)) density = _densities[i];
+      }
+    } else if (getAnabatic()->getDensityMode() == MaxVDensity) {
+      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+        if ((i%2 == 0) and (_densities[i] > density)) density = _densities[i];
+      }
+    }
+
+    return density;
+  }
+
+
+  void  GCell::addBlockage ( size_t depth, DbU::Unit length )
+  {
+    if (depth >= _depth) return;
+
+    _blockages[depth] += length;
+    _flags |= Flags::Invalidated;
+
+    cdebug_log(149,0) << "GCell:addBlockage() " << this << " "
+                << depth << ":" << DbU::getValueString(_blockages[depth]) << endl;
+  }
+
+
+  void  GCell::removeContact ( AutoContact* ac )
+  {
+    size_t begin = 0;
+    size_t end   = _contacts.size();
+    bool   found = false;
+
+    for ( ; not found and (begin < end) ; begin++ ) {
+      if ( _contacts[begin] == ac ) {
+        _contacts[begin] = _contacts[end-1];
+        found = true;
+      }
+    }
+
+    if (found) {
+      cdebug_log(149,0) << "remove " << ac << " from " << this << endl;
+      _contacts.pop_back();
+    } else {
+      cerr << Bug("%p:%s do not belong to %s."
+                 ,ac->base(),getString(ac).c_str(),_getString().c_str()) << endl;
+    }
+  }
+
+
+  void  GCell::removeHSegment ( AutoSegment* segment )
+  {
+    size_t end   = _hsegments.size();
+    size_t begin = 0;
+
+    for ( ; begin < end ; begin++ ) {
+      if (_hsegments[begin] == segment) std::swap( _hsegments[begin], _hsegments[--end] );
+    }
+
+    if (_hsegments.size() == end) {
+      cerr << Bug( "%s do not go through %s."
+                 , getString(segment).c_str()
+                 , _getString().c_str() ) << endl;
+      return;
+    }
+
+    if (_hsegments.size() - end > 1)
+      cerr << Bug( "%s has multiple occurrences of %s."
+                 , _getString().c_str()
+                 , getString(segment).c_str() ) << endl;
+
+    _hsegments.erase( _hsegments.begin() + end, _hsegments.end() );
+  }
+
+
+  void  GCell::removeVSegment ( AutoSegment* segment )
+  {
+    size_t end   = _vsegments.size();
+    size_t begin = 0;
+
+    for ( ; begin < end ; begin++ ) {
+      if (_vsegments[begin] == segment) std::swap( _vsegments[begin], _vsegments[--end] );
+    }
+
+    if (_vsegments.size() == end) {
+      cerr << Bug( "%s do not go through %s."
+                 , getString(segment).c_str()
+                 , _getString().c_str() ) << endl;
+      return;
+    }
+
+    if (_vsegments.size() - end > 1)
+      cerr << Bug( "%s has multiple occurrences of %s."
+                 , _getString().c_str()
+                 , getString(segment).c_str() ) << endl;
+
+    _vsegments.erase( _vsegments.begin() + end, _vsegments.end() );
+  }
+
+
+  void  GCell::updateContacts ()
+  { for ( AutoContact* contact : _contacts ) contact->updateGeometry(); }
+
+
+  size_t  GCell::updateDensity ()
+  {
+    if (not isInvalidated()) return (isSaturated()) ? 1 : 0;
+
+    _flags.reset( Flags::Saturated );
+
+    for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
+      if ( _vsegments[i] == NULL )
+        cerr << "NULL Autosegment at index " << i << endl;
+    }
+
+    sort( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
+    sort( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
+
+    float                    hcapacity    = getHCapacity ();
+    float                    vcapacity    = getVCapacity ();
+    float                    ccapacity    = hcapacity * vcapacity * 4; 
+    DbU::Unit                width        = getXMax() - getXMin();
+    DbU::Unit                height       = getYMax() - getYMin();
+    DbU::Unit                hpenalty     = 0 /*_box.getWidth () / 3*/;
+    DbU::Unit                vpenalty     = 0 /*_box.getHeight() / 3*/;
+    DbU::Unit                uLengths1    [ _depth ];
+    DbU::Unit                uLengths2    [ _depth ];
+    float                    localCounts  [ _depth ];
+    vector<UsedFragments>    ufragments   ( _depth );
+
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      ufragments[i].setPitch ( Session::getPitch(i) );
+      _feedthroughs[i] = 0.0;
+      uLengths2    [i] = 0;
+      localCounts  [i] = 0.0;
+      _globalsCount[i] = 0.0;
+
+      switch ( Session::getDirection(i) ) {
+        case Flags::Horizontal:
+          ufragments[i].setSpan    ( getXMin(), getXMax() );
+          ufragments[i].setCapacity( (size_t)hcapacity );
+          break;
+        case Flags::Vertical:
+          ufragments[i].setSpan    ( getYMin(), getYMax() );
+          ufragments[i].setCapacity( (size_t)vcapacity );
+          break;
+      }
+    }
+
+  // Compute wirelength associated to contacts (in DbU::Unit converted to float).
+    AutoSegment::DepthLengthSet  processeds;
+    for ( AutoContact* contact : _contacts ) {
+      for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
+      contact->getLengths ( uLengths1, processeds );
+      for ( size_t i=0 ; i<_depth ; i++ ) {
+        switch ( Session::getDirection(i) ) {
+          case Flags::Horizontal: uLengths2[i] += uLengths1[i]+hpenalty; break;
+          case Flags::Vertical:   uLengths2[i] += uLengths1[i]+vpenalty; break;
+        }
+      }
+    }
+
+  // Add the "pass through" horizontal segments.
+    if ( _hsegments.size() ) {
+      const Layer* layer = _hsegments[0]->getLayer();
+      size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
+      size_t       count = 0;
+      for ( size_t i=0 ; i<_hsegments.size() ; i++ ) {
+        _globalsCount[depth] += 1.0;
+        ufragments[depth].incGlobals();
+
+        if ( layer != _hsegments[i]->getLayer() ) {
+          uLengths2[depth] += count * width;
+
+          count = 0;
+          layer = _hsegments[i]->getLayer();
+          depth = Session::getRoutingGauge()->getLayerDepth(layer);
+        }
+        count++;
+        _feedthroughs[depth] += 1.0;
+      }
+      if ( count ) {
+        uLengths2[depth] += count * width;
+      }
+    }
+
+  // Add the "pass through" vertical segments.
+    if ( _vsegments.size() ) {
+      const Layer* layer = _vsegments[0]->getLayer();
+      size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
+      size_t       count = 0;
+      for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
+        _globalsCount[depth] += 1.0;
+        ufragments[depth].incGlobals();
+
+        if ( layer != _vsegments[i]->getLayer() ) {
+          uLengths2[depth] += count * height;
+
+          count = 0;
+          layer = _vsegments[i]->getLayer();
+          depth = Session::getRoutingGauge()->getLayerDepth(layer);
+        }
+        count++;
+        _feedthroughs[depth] += 1.0;
+      }
+      if ( count ) {
+        uLengths2[depth] += count * height;
+      }
+    }
+
+  // Add the blockages.
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      uLengths2[i] += _blockages[i];
+    }
+
+  // Compute the number of non pass-through tracks.
+    if (processeds.size()) {
+      AutoSegment::DepthLengthSet::iterator isegment = processeds.begin();
+      const Layer* layer = (*isegment)->getLayer();
+      DbU::Unit    axis  = (*isegment)->getAxis();
+      size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
+      size_t       count = 0;
+      for ( ; isegment != processeds.end(); ++isegment ) {
+        _feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+        localCounts  [depth] += 1.0;
+        if ( (*isegment)->isGlobal() ) _globalsCount[depth] += 1.0;
+
+        ufragments[depth].merge( (*isegment)->getAxis(), (*isegment)->getSpanU() );
+        if ( (axis != (*isegment)->getAxis()) or (layer != (*isegment)->getLayer()) ) {
+          count = 0;
+          axis  = (*isegment)->getAxis();
+          layer = (*isegment)->getLayer();
+          depth = Session::getRoutingGauge()->getLayerDepth(layer);
+        }
+        ++count;
+      }
+    }
+
+  // Normalize: 0 < d < 1.0 (divide by H/V capacity).
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      switch ( Session::getDirection(i) ) {
+        case Flags::Horizontal:
+          _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
+          _feedthroughs  [i] += (float)(_blockages[i] / width);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
+          break;
+        case Flags::Vertical:
+          _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
+          _feedthroughs  [i] += (float)(_blockages[i] / height);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
+          break;
+      }
+
+      if (_densities[i] >= 1.0) _flags |= Flags::Saturated;
+    }
+
+    _cDensity  = ( (float)_contacts.size() ) / ccapacity;
+    _flags.reset( Flags::Invalidated );
+
+    checkDensity();
+
+    return isSaturated() ? 1 : 0 ;
+  }
+
+
+  size_t  GCell::checkDensity () const
+  {
+    if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
+
+    if ( not Session::isInDemoMode() and Session::doWarnGCellOverload() ) {
+      for ( size_t i=0 ; i<_depth ; i++ ) {
+        if (_densities[i] > 1.0) {
+          cparanoid << Warning( "%s overloaded in %s (M2:%.2f M3:%.2f M4:%.2f M5:%.2f)"
+                              , _getString().c_str()
+                              , getString(Session::getRoutingGauge()->getRoutingLayer(i)->getName()).c_str()
+                              , _densities[1]  // M2
+                              , _densities[2]  // M3
+                            //, _blockages[2]  // M4
+                              , _densities[3]  // M5
+                              , _densities[4]  // M6
+                              )
+             << endl;
+        }
+      }
+    }
+
+    return isSaturated() ? 1 : 0 ;
+  }
+
+
+  bool  GCell::hasFreeTrack ( size_t depth, float reserve ) const
+  {
+    if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
+
+    float capacity = 0.0;
+    switch ( Session::getDirection(depth) ) {
+      case Flags::Horizontal: capacity = getHCapacity(); break;
+      case Flags::Vertical:   capacity = getVCapacity(); break;
+    }
+
+    cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
+                << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
+              //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
+                << " " << _feedthroughs[depth] << " vs. " << capacity
+                << " " << this << endl;
+    
+    return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
+  }
+
+
+  void  GCell::rpDesaturate ( set<Net*>& globalNets )
+  {
+    set<RoutingPad*> rps;
+    getRoutingPads( rps );
+
+    set<Net*> rpNets;
+    set<RoutingPad*>::iterator irp = rps.begin();
+    for ( RoutingPad* rp : rps ) {
+      if (rp->getLayer() != Session::getRoutingLayer(0)) continue;
+      rpNets.insert( rp->getNet() );
+    }
+
+    if (rpNets.size() < Session::getSaturateRp()) return;
+
+    cerr << Warning("%s has %zd terminals (h:%zd, v:%zd)"
+                   ,getString(this).c_str()
+                   ,rps.size()
+                   ,_hsegments.size()
+                   ,_vsegments.size()
+                   ) << endl;
+
+    AutoSegment* segment;
+    while ( (_densities[1] > 0.5) and stepDesaturate(1,globalNets,segment,Flags::ForceMove) ) {
+      cdebug_log(149,0) << "Moved up: " << segment << endl;
+    }
+  }
+
+
+  bool  GCell::stepDesaturate ( size_t        depth
+                              , set<Net*>&    globalNets
+                              , AutoSegment*& moved
+                              , unsigned int  flags
+                              )
+  {
+    cdebug_log(9000,0) << "Deter| GCell::stepDesaturate() [" << getId() << "] depth:" << depth << endl;
+
+    updateDensity();
+    moved = NULL;
+
+    if (not (flags & Flags::ForceMove) and not isSaturated(depth)) return false;
+
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+
+    switch ( Session::getDirection(depth) ) {
+      case Flags::Horizontal:
+        iend     = _hsegments.end  ();
+        isegment = _hsegments.begin();
+        break;
+      case Flags::Vertical:
+        iend     = _vsegments.end  ();
+        isegment = _vsegments.begin();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if (segmentDepth < depth) continue;
+      if (segmentDepth > depth) break;
+
+      globalNets.insert( (*isegment)->getNet() );
+      cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
+
+      moved = (*isegment);
+
+      if (moved) return true;
+    }
+
+    return false;
+  }
+
+
+  bool  GCell::stepBalance ( size_t depth, GCell::Set& invalidateds )
+  {
+    cdebug_log(149,0) << "stepBalance() - " << this << endl;
+
+    updateDensity();
+
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+    set<Net*>                      globalNets;
+
+    switch ( Session::getDirection(depth) ) {
+      case Flags::Horizontal:
+        iend     = _hsegments.end  ();
+        isegment = _hsegments.begin();
+        break;
+      case Flags::Vertical:
+        iend     = _vsegments.end  ();
+        isegment = _vsegments.begin();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if (segmentDepth < depth) continue;
+      if (segmentDepth > depth) break;
+
+#if THIS_IS_DISABLED
+    // Hard-coded: reserve 3 tracks (1/20 * 3).
+      if ((*isegment)->canMoveULeft(0.05)) {
+        getAnabatic()->moveULeft(*isegment,globalNets,invalidateds);
+        return true;
+      }
+      if ((*isegment)->canMoveURight(0.05)) {
+        getAnabatic()->moveURight(*isegment,globalNets,invalidateds);
+        return true;
+      }
+#endif
+    }
+
+    return false;
+  }
+
+
+  bool  GCell::stepNetDesaturate ( size_t depth, set<Net*>& globalNets, GCell::Set& invalidateds )
+  {
+    cdebug_log(9000,0) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
+    cdebug_log(9000,0) << "Deter| " << this << endl;
+
+    updateDensity();
+
+    vector<AutoSegment*>::iterator isegment;
+    vector<AutoSegment*>::iterator iend;
+
+    switch ( Session::getDirection(depth) ) {
+      case Flags::Horizontal:
+        iend     = _hsegments.end   ();
+        isegment = _hsegments.begin ();
+        break;
+      case Flags::Vertical:
+        iend     = _vsegments.end   ();
+        isegment = _vsegments.begin ();
+        break;
+    }
+
+    for ( ; (isegment != iend) ; isegment++ ) {
+      unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
+
+      if (segmentDepth < depth) continue;
+      if (segmentDepth > depth) break;
+
+      cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
+
+    // if (getAnabatic()->moveUpNetTrunk2(*isegment,globalNets,invalidateds))
+    //  return true;
+    }
+
+    return false;
+  }
+
   string  GCell::_getTypeName () const
   { return getString(_extensionName); }
 
@@ -691,16 +1575,111 @@ namespace Anabatic {
   Record* GCell::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot("_flags"     , &_flags     ) );
-    record->add( getSlot("_westEdges" , &_westEdges ) );
-    record->add( getSlot("_eastEdges" , &_eastEdges ) );
-    record->add( getSlot("_southEdges", &_southEdges) );
-    record->add( getSlot("_northEdges", &_northEdges) );
+    record->add( getSlot("_flags"      , &_flags     ) );
+    record->add( getSlot("_westEdges"  , &_westEdges ) );
+    record->add( getSlot("_eastEdges"  , &_eastEdges ) );
+    record->add( getSlot("_southEdges" , &_southEdges) );
+    record->add( getSlot("_northEdges" , &_northEdges) );
     record->add( DbU::getValueSlot("_xmin", &_xmin) );
     record->add( DbU::getValueSlot("_ymin", &_ymin) );
+    record->add( getSlot ( "_vsegments", &_vsegments ) );
+    record->add( getSlot ( "_hsegments", &_hsegments ) );
+    record->add( getSlot ( "_contacts" , &_contacts  ) );
+    record->add( getSlot ( "_depth"    , &_depth     ) );
+
+    RoutingGauge* rg = getAnabatic()->getConfiguration()->getRoutingGauge();
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth)->getBlockageLayer();
+      s << "_blockages[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_blockages[depth] ) );
+    }
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_densities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_densities[depth] ) );
+    }
     return record;
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::GCellDensitySet".
+
+
+  GCellDensitySet::GCellDensitySet ( size_t depth )
+    : _depth   (depth)
+    , _set     ()
+    , _requests()
+  { }
+
+
+  GCellDensitySet::GCellDensitySet ( size_t depth, const GCell::Vector& gcells )
+    : _depth   (depth)
+    , _set     ()
+    , _requests()
+  {
+    for ( size_t i=0 ; i<gcells.size() ; i++ )
+      _requests.insert( gcells[i] );
+    requeue();
+  }
+
+
+  GCellDensitySet::~GCellDensitySet ()
+  {
+    if (not _requests.empty()) {
+      cerr << Warning("~GCellDensitySet(): Still contains %d requests (and %d elements)."
+                     ,_requests.size(),_set.size()) << endl;
+    }
+  }
+
+
+  void  GCellDensitySet::requeue ()
+  {
+    cdebug_log(149,0) << "GCellDensitySet::requeue()" << endl;
+
+    std::set<GCell*,GCell::CompareByKey>::iterator iinserted;
+    GCell::Set::iterator                           igcell    = _requests.begin();
+
+  // Remove invalidateds GCell from the queue.
+    for ( ; igcell != _requests.end() ; ++igcell ) {
+      iinserted = _set.find(*igcell);
+      if (iinserted != _set.end()) {
+        _set.erase( iinserted );
+      }
+    }
+
+  // Re-insert invalidateds GCell in the queue *after* updating the key.
+    for ( igcell = _requests.begin() ; igcell != _requests.end() ; ++igcell ) {
+      (*igcell)->updateKey( _depth );
+      _set.insert( *igcell );
+    }
+
+    _requests.clear();
+  }
+
+
+// -------------------------------------------------------------------
+// Utilities.
+
+
+  string  getVectorString ( float* v, size_t size )
+  {
+    ostringstream s;
+
+    s << setprecision(3);
+    for ( size_t i=0 ; i<size ; i++ ) {
+      if ( !i ) s << "[";
+      else      s << " ";
+      s << v[i];
+    }
+    s << "]";
+
+    return s.str();
+  }
 
 
 }  // Anabatic namespace.

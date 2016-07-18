@@ -83,6 +83,7 @@ namespace Anabatic {
       virtual                       ~GraphicAnabaticEngine ();
               void                  _runTest               ();
               void                  _globalRoute           ();
+              void                  _detailRoute           ();
   };
 
 

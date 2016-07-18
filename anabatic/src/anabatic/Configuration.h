@@ -83,7 +83,13 @@ namespace Anabatic {
       virtual DbU::Unit          getWireWidth        ( const Layer* ) const = 0;
       virtual DbU::Unit          getExtensionCap     ( const Layer* ) const = 0;
       virtual Flags              getDirection        ( const Layer* ) const = 0;
+      virtual float              getSaturateRatio    () const = 0;
+      virtual size_t             getSaturateRp       () const = 0;
+      virtual DbU::Unit          getGlobalThreshold  () const = 0;
       virtual void               setAllowedDepth     ( size_t ) = 0;
+      virtual void               setSaturateRatio    ( float ) = 0;
+      virtual void               setSaturateRp       ( size_t ) = 0;
+      virtual void               setGlobalThreshold  ( DbU::Unit ) = 0;
       virtual DbU::Unit          getEdgeLength       () const = 0;
       virtual DbU::Unit          getEdgeWidth        () const = 0;
       virtual float              getEdgeCostH        () const = 0;
@@ -140,7 +146,13 @@ namespace Anabatic {
       virtual DbU::Unit              getWireWidth          ( const Layer* ) const;
       virtual DbU::Unit              getExtensionCap       ( const Layer* ) const;
       virtual Flags                  getDirection          ( const Layer* ) const;
+      virtual float                  getSaturateRatio      () const;
+      virtual size_t                 getSaturateRp         () const;
+      virtual DbU::Unit              getGlobalThreshold    () const;
       virtual void                   setAllowedDepth       ( size_t );
+      virtual void                   setSaturateRatio      ( float );
+      virtual void                   setSaturateRp         ( size_t );
+      virtual void                   setGlobalThreshold    ( DbU::Unit );
       virtual DbU::Unit              getEdgeLength         () const;
       virtual DbU::Unit              getEdgeWidth          () const;
       virtual float                  getEdgeCostH          () const;
@@ -159,6 +171,9 @@ namespace Anabatic {
       CellGauge*              _cg;
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
+      float                   _saturateRatio;
+      size_t                  _saturateRp;
+      DbU::Unit               _globalThreshold;
       size_t                  _allowedDepth;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;

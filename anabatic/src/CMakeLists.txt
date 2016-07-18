@@ -20,6 +20,16 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/AnabaticEngine.h
                                      anabatic/GraphicAnabaticEngine.h
                                      anabatic/Dijkstra.h
+
+                                     anabatic/AutoContact.h
+                                     anabatic/AutoContactTerminal.h
+                                     anabatic/AutoContactTurn.h
+                                     anabatic/AutoContactHTee.h
+                                     anabatic/AutoContactVTee.h
+                                     anabatic/AutoSegment.h          anabatic/AutoSegments.h
+                                     anabatic/AutoHorizontal.h
+                                     anabatic/AutoVertical.h
+                                     anabatic/Session.h
                       )
                    set( mocIncludes  anabatic/GraphicAnabaticEngine.h )
                    set( pyIncludes   anabatic/PyAnabaticEngine.h
@@ -35,6 +45,19 @@ endif ( CHECK_DETERMINISM )
                                      GlobalRoute.cpp
                                      GraphicAnabaticEngine.cpp
                                      Dijkstra.cpp
+
+                                     AutoContact.cpp
+                                     AutoContactTerminal.cpp
+                                     AutoContactTurn.cpp
+                                     AutoContactHTee.cpp
+                                     AutoContactVTee.cpp
+                                     AutoSegment.cpp          AutoSegments.cpp
+                                     AutoHorizontal.cpp
+                                     AutoVertical.cpp
+                                     Session.cpp
+                                     NetConstraints.cpp
+                                     NetOptimals.cpp
+                                     LoadGlobalRouting.cpp
                       )
                    set( pyCpps       PyAnabaticEngine.cpp
                                      PyGraphicAnabaticEngine.cpp

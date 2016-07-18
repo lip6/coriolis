@@ -70,6 +70,9 @@ namespace Anabatic {
     , _cg             (NULL)
     , _rg             (NULL)
     , _extensionCaps  ()
+    , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
+    , _saturateRp     (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
+    , _globalThreshold(0)
     , _allowedDepth   (0)
     , _edgeLength     (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
@@ -117,15 +120,17 @@ namespace Anabatic {
 
   ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
     : Configuration()
-    , _gmetalh      (other._gmetalh)
-    , _gmetalv      (other._gmetalv)
-    , _gcontact     (other._gcontact)
-    , _cg           (NULL)
-    , _rg           (NULL)
-    , _extensionCaps(other._extensionCaps)
-    , _allowedDepth (other._allowedDepth)
-    , _edgeCostH    (other._edgeCostH)
-    , _edgeCostK    (other._edgeCostK)
+    , _gmetalh        (other._gmetalh)
+    , _gmetalv        (other._gmetalv)
+    , _gcontact       (other._gcontact)
+    , _cg             (NULL)
+    , _rg             (NULL)
+    , _extensionCaps  (other._extensionCaps)
+    , _saturateRatio  (other._saturateRatio)
+    , _globalThreshold(other._globalThreshold)
+    , _allowedDepth   (other._allowedDepth)
+    , _edgeCostH      (other._edgeCostH)
+    , _edgeCostK      (other._edgeCostK)
   {
     if (other._cg) _cg = other._cg->getClone();
     if (other._rg) _rg = other._rg->getClone();
@@ -220,11 +225,23 @@ namespace Anabatic {
   { return getDirection( getLayerDepth(layer) ); }
 
 
+  float  ConfigurationConcrete::getSaturateRatio () const
+  { return _saturateRatio; }
+
+
+  size_t  ConfigurationConcrete::getSaturateRp () const
+  { return _saturateRp; }
+
+
+  DbU::Unit  ConfigurationConcrete::getGlobalThreshold () const
+  { return _globalThreshold; }
+
+
   DbU::Unit  ConfigurationConcrete::getPitch ( size_t depth, Flags flags ) const
   {
     if (flags == Flags::NoFlags) return _rg->getLayerPitch(depth);
 
-    if (flags & Flags::PitchAbove) {
+    if (flags & Flags::AboveLayer) {
       if (depth < getAllowedDepth()) 
         return _rg->getLayerPitch( depth + 1 );
       else {
@@ -233,7 +250,7 @@ namespace Anabatic {
       }
     }
 
-    if (flags & Flags::PitchBelow) {
+    if (flags & Flags::BelowLayer) {
       if ( (depth > 0) and (_rg->getLayerType(depth-1) != Constant::PinOnly) )
         return _rg->getLayerPitch( depth - 1 );
       else {
@@ -280,6 +297,18 @@ namespace Anabatic {
                  , getString(_rg->getName()).c_str()
                  , getString(name).c_str() ) << endl;
   }
+
+
+  void  ConfigurationConcrete::setSaturateRatio ( float ratio )
+  { _saturateRatio = ratio; }
+
+
+  void  ConfigurationConcrete::setSaturateRp ( size_t threshold )
+  { _saturateRp = threshold; }
+
+
+  void  ConfigurationConcrete::setGlobalThreshold ( DbU::Unit threshold )
+  { _globalThreshold = threshold; }
 
 
   DbU::Unit  ConfigurationConcrete::getEdgeLength () const

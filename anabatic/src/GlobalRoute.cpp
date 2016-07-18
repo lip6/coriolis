@@ -189,6 +189,8 @@ namespace Anabatic {
 
     delete dijkstra;
     UpdateSession::close();
+
+    _state = EngineGlobalLoaded;
   }
 
 
