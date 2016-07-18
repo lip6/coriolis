@@ -197,28 +197,29 @@ autoLocate()
 checkCMake()
 
 parser = optparse.OptionParser ()  
-parser.add_option ( "-g", "--gui"         , action="store_true" ,                dest="gui"          , help="Lauch the graphical interface." )
+parser.add_option ( "-g", "--gui"            , action="store_true" ,                dest="gui"          , help="Lauch the graphical interface." )
 # Build relateds.                                                                                   
-parser.add_option ( "-c", "--conf"        ,                       type="string", dest="conf"         , help="Fichier de configuration." )
-parser.add_option (       "--show-conf"   , action="store_true" ,                dest="showConf"     , help="Display the Project/Tools configuration, then exit." )
-parser.add_option ( "-q", "--quiet"       , action="store_true" ,                dest="quiet"        , help="Do not print all the informative messages." )
-parser.add_option ( "-r", "--release"     , action="store_true" ,                dest="release"      , help="Build a <Release> aka optimized version." )
-parser.add_option ( "-d", "--debug"       , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
-parser.add_option ( "-s", "--static"      , action="store_true" ,                dest="static"       , help="Try to link statically, as much as possible." )
-parser.add_option (       "--doc"         , action="store_true" ,                dest="doc"          , help="Enable the documentation building (uses with -j1)." )
-parser.add_option ( "-v", "--verbose"     , action="store_true" ,                dest="verboseMakefile" , help="Tells CMake to print all compilation commands." )
-parser.add_option (       "--root"        , action="store"      , type="string", dest="rootDir"      , help="The root directory (default: <~/coriolis-2.x/>)." )
-parser.add_option (       "--no-build"    , action="store_true" ,                dest="noBuild"      , help="Do *not* build anything (by default: build)." )
-parser.add_option (       "--no-cache"    , action="store_true" ,                dest="noCache"      , help="Remove previous CMake cache before building." )
-parser.add_option (       "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
-parser.add_option (       "--devtoolset-2", action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
-parser.add_option (       "--qt5"         , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
-parser.add_option (       "--openmp"      , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
-parser.add_option (       "--ninja"       , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
-parser.add_option (       "--clang"       , action="store_true" ,                dest="clang"        , help="Force use of Clang C/C++ compiler instead of system default." )
-parser.add_option (       "--make"        , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
-parser.add_option (       "--project"     , action="append"     , type="string", dest="projects"     , help="The name of a project to build (may appears any number of time)." )
-parser.add_option ( "-t", "--tool"        , action="append"     , type="string", dest="tools"        , help="The name of a tool to build (may appears any number of time)." )
+parser.add_option ( "-c", "--conf"           ,                       type="string", dest="conf"         , help="Fichier de configuration." )
+parser.add_option (       "--show-conf"      , action="store_true" ,                dest="showConf"     , help="Display the Project/Tools configuration, then exit." )
+parser.add_option ( "-q", "--quiet"          , action="store_true" ,                dest="quiet"        , help="Do not print all the informative messages." )
+parser.add_option ( "-r", "--release"        , action="store_true" ,                dest="release"      , help="Build a <Release> aka optimized version." )
+parser.add_option ( "-d", "--debug"          , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
+parser.add_option ( "-s", "--static"         , action="store_true" ,                dest="static"       , help="Try to link statically, as much as possible." )
+parser.add_option (       "--doc"            , action="store_true" ,                dest="doc"          , help="Enable the documentation building (uses with -j1)." )
+parser.add_option ( "-v", "--verbose"        , action="store_true" ,                dest="verboseMakefile" , help="Tells CMake to print all compilation commands." )
+parser.add_option (       "--root"           , action="store"      , type="string", dest="rootDir"      , help="The root directory (default: <~/coriolis-2.x/>)." )
+parser.add_option (       "--no-build"       , action="store_true" ,                dest="noBuild"      , help="Do *not* build anything (by default: build)." )
+parser.add_option (       "--no-cache"       , action="store_true" ,                dest="noCache"      , help="Remove previous CMake cache before building." )
+parser.add_option (       "--rm-build"       , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
+parser.add_option (       "--macports"       , action="store_true" ,                dest="macports"     , help="Build against MacPorts." )
+parser.add_option (       "--devtoolset-2"   , action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
+parser.add_option (       "--qt5"            , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
+parser.add_option (       "--openmp"         , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
+parser.add_option (       "--ninja"          , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
+parser.add_option (       "--clang"          , action="store_true" ,                dest="clang"        , help="Force use of Clang C/C++ compiler instead of system default." )
+parser.add_option (       "--make"           , action="store"      , type="string", dest="makeArguments", help="Arguments to pass to make (ex: \"-j4 install\")." )
+parser.add_option (       "--project"        , action="append"     , type="string", dest="projects"     , help="The name of a project to build (may appears any number of time)." )
+parser.add_option ( "-t", "--tool"           , action="append"     , type="string", dest="tools"        , help="The name of a tool to build (may appears any number of time)." )
 # SVN repository relateds.                
 # Have to be ported to Git.               
 #parser.add_option ( "--svn-tag"           , action="store"      , type="string", dest="svnTag"       , help="Explicitly select a SVN tag (for SVN related commands)." )
@@ -288,6 +289,7 @@ else:
     if options.rmBuild:          builder.rmBuild           = True
     if options.ninja:            builder.ninja             = True
     if options.clang:            builder.clang             = True
+    if options.macports:         builder.macports          = True
     if options.devtoolset2:      builder.devtoolset2       = True
     if options.qt5:              builder.qt5               = True
     if options.openmp:           builder.openmp            = True
