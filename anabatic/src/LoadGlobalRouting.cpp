@@ -657,6 +657,10 @@ namespace {
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
+             void          _doChannel        ();
+             void          _doDevice         ();
+             void          _doStrut          ();
+             void          _doIoPad          ();
 
     private:
       enum ConnexityBits { GlobalBSize = 4
@@ -828,12 +832,12 @@ namespace {
 
     for ( Hook* hook : fromHook->getHooks() ) {
       cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
-                 << "["  << _connexity.fields.globals
-                 << "+"  << _connexity.fields.M1     
-                 << "+"  << _connexity.fields.M2     
-                 << "+"  << _connexity.fields.M3
-                 << "+"  << _connexity.fields.Pin
-                 << "+"  << _connexity.fields.Pad
+                 << "["  << (int)_connexity.fields.globals
+                 << "+"  << (int)_connexity.fields.M1     
+                 << "+"  << (int)_connexity.fields.M2     
+                 << "+"  << (int)_connexity.fields.M3
+                 << "+"  << (int)_connexity.fields.Pin
+                 << "+"  << (int)_connexity.fields.Pad
                  << "] " << _gcell
                  << endl;
 
@@ -868,6 +872,12 @@ namespace {
             else if (_gcell != gcell) {
               throw Error( mismatchGCell );
             }
+
+            if (not _gcell->isMatrix()) {
+              cdebug_log(145,0) << "* Non-matrix GCell under: " << contact << endl;
+              cdebug_log(145,0) << "| " << gcell << endl;
+              break;
+            }
           } else {
             if (rp and AllianceFramework::get()->isPad(rp->_getEntityAsComponent()->getCell())) {
               _connexity.fields.Pad++;
@@ -896,20 +906,29 @@ namespace {
         }
       }
     }
-    cdebug_log(145,0) << "east: " << _east  << endl;
-    cdebug_log(145,0) << "west: " << _west  << endl;
-    cdebug_log(145,0) << "north:" << _north << endl;
-    cdebug_log(145,0) << "south:" << _south << endl;
 
-    if (_connexity.fields.globals == 1) {
-      if ( _north or _south ) _topology |= Global_Vertical_End;
-      else                    _topology |= Global_Horizontal_End;
-    } else if (_connexity.fields.globals == 2) {
-      if      ( _east  && _west  ) _topology |= Global_Horizontal;
-      else if ( _north && _south ) _topology |= Global_Vertical;
-      else                         _topology |= Global_Turn;
+    if (_gcell->isMatrix()) {
+      cdebug_log(145,0) << "east: " << _east  << endl;
+      cdebug_log(145,0) << "west: " << _west  << endl;
+      cdebug_log(145,0) << "north:" << _north << endl;
+      cdebug_log(145,0) << "south:" << _south << endl;
+
+      if (_connexity.fields.globals == 1) {
+        if ( _north or _south ) _topology |= Global_Vertical_End;
+        else                    _topology |= Global_Horizontal_End;
+      } else if (_connexity.fields.globals == 2) {
+        if      ( _east  && _west  ) _topology |= Global_Horizontal;
+        else if ( _north && _south ) _topology |= Global_Vertical;
+        else                         _topology |= Global_Turn;
+      } else {
+        _topology |= Global_Fork;
+      }
     } else {
-      _topology |= Global_Fork;
+      _connexity.connexity = 0;
+      _east  = NULL;
+      _west  = NULL;
+      _north = NULL;
+      _south = NULL;
     }
 
     cdebug_tabw(145,-1);
@@ -925,163 +944,175 @@ namespace {
     _southWestContact = NULL;
     _northEastContact = NULL;
 
-    bool straightLine = false;
+    if (_gcell->isMatrix()) {
+      bool straightLine = false;
 
-    switch ( _connexity.connexity ) {
-      case Conn_1G_1Pad:
-      case Conn_2G_1Pad:
-      case Conn_3G_1Pad:   _do_xG_1Pad();   break;
-      case Conn_1G_1PinM2: _do_1G_1PinM2(); break;
-      case Conn_1G_1M1:    _do_1G_1M1();    break;
-      case Conn_1G_2M1:
-      case Conn_1G_3M1:
-      case Conn_1G_4M1:
-      case Conn_1G_5M1:  _do_1G_xM1(); break;
-      case Conn_1G_1M2:
-      case Conn_1G_2M2:
-      case Conn_1G_3M2:
-      case Conn_1G_4M2:  _do_xG_xM2(); break;
-      case Conn_1G_1M3:  _do_1G_1M3(); break;
-      case Conn_1G_2M3:
-      case Conn_1G_3M3:
-      case Conn_1G_4M3:     _do_xG_xM3    (); break;
-      case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
-      case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
-      case Conn_2G_1M1:
-      case Conn_2G_2M1:
-      case Conn_2G_3M1:
-      case Conn_2G_4M1:
-      case Conn_2G_5M1:
-      case Conn_3G_1M1:
-      case Conn_3G_2M1:
-      case Conn_3G_3M1:
-      case Conn_3G_4M1:
-      case Conn_3G_2M3:
-      case Conn_3G_3M3:
-      case Conn_3G_4M3:
-      case Conn_4G_1M1:
-      case Conn_4G_2M1:
-      case Conn_4G_3M1:
-      case Conn_4G_4M1: _do_xG_xM1_xM3(); break;
-      case Conn_4G_1M2: _do_4G_1M2(); break;
-      case Conn_2G_1M2:
-      case Conn_2G_2M2:
-      case Conn_2G_3M2:
-      case Conn_2G_4M2:
-      case Conn_3G_1M2:
-      case Conn_3G_2M2: _do_xG_xM2(); break;
-      case Conn_2G_1M3:
-      case Conn_2G_2M3:
-      case Conn_2G_3M3:
-      case Conn_2G_4M3:
-      case Conn_3G_1M3:     _do_xG_xM3    (); break;
-      case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
-      case Conn_2G:
-        if ( (_east and _west) or (_north and _south) ) {
-          straightLine = true;
+      switch ( _connexity.connexity ) {
+        case Conn_1G_1Pad:
+        case Conn_2G_1Pad:
+        case Conn_3G_1Pad:   _do_xG_1Pad();   break;
+        case Conn_1G_1PinM2: _do_1G_1PinM2(); break;
+        case Conn_1G_1M1:    _do_1G_1M1();    break;
+        case Conn_1G_2M1:
+        case Conn_1G_3M1:
+        case Conn_1G_4M1:
+        case Conn_1G_5M1:  _do_1G_xM1(); break;
+        case Conn_1G_1M2:
+        case Conn_1G_2M2:
+        case Conn_1G_3M2:
+        case Conn_1G_4M2:  _do_xG_xM2(); break;
+        case Conn_1G_1M3:  _do_1G_1M3(); break;
+        case Conn_1G_2M3:
+        case Conn_1G_3M3:
+        case Conn_1G_4M3:     _do_xG_xM3    (); break;
+        case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
+        case Conn_2G_1M1:
+        case Conn_2G_2M1:
+        case Conn_2G_3M1:
+        case Conn_2G_4M1:
+        case Conn_2G_5M1:
+        case Conn_3G_1M1:
+        case Conn_3G_2M1:
+        case Conn_3G_3M1:
+        case Conn_3G_4M1:
+        case Conn_3G_2M3:
+        case Conn_3G_3M3:
+        case Conn_3G_4M3:
+        case Conn_4G_1M1:
+        case Conn_4G_2M1:
+        case Conn_4G_3M1:
+        case Conn_4G_4M1: _do_xG_xM1_xM3(); break;
+        case Conn_4G_1M2: _do_4G_1M2(); break;
+        case Conn_2G_1M2:
+        case Conn_2G_2M2:
+        case Conn_2G_3M2:
+        case Conn_2G_4M2:
+        case Conn_3G_1M2:
+        case Conn_3G_2M2: _do_xG_xM2(); break;
+        case Conn_2G_1M3:
+        case Conn_2G_2M3:
+        case Conn_2G_3M3:
+        case Conn_2G_4M3:
+        case Conn_3G_1M3:     _do_xG_xM3    (); break;
+        case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_2G:
+          if ( (_east and _west) or (_north and _south) ) {
+            straightLine = true;
+            break;
+          }
+        case Conn_3G:
+        case Conn_4G:
+          _do_xG();
           break;
-        }
-      case Conn_3G:
-      case Conn_4G:
-        _do_xG();
-        break;
-      default:
-        throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                   "      The global routing seems to be defective."
-                 , _connexity.connexity
-                 , _connexity.fields.globals
-                 , _connexity.fields.M1     
-                 , _connexity.fields.M2     
-                 , _connexity.fields.M3
-                 , _connexity.fields.Pin
-                 , _connexity.fields.Pad
-                 , _net->_getString().c_str()
-                 , getString(_gcell).c_str()
-                 );
-        _do_xG();
-    }
+        default:
+          throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
+                     "      The global routing seems to be defective."
+                   , _connexity.connexity
+                   , _connexity.fields.globals
+                   , _connexity.fields.M1     
+                   , _connexity.fields.M2     
+                   , _connexity.fields.M3
+                   , _connexity.fields.Pin
+                   , _connexity.fields.Pad
+                   , _net->_getString().c_str()
+                   , getString(_gcell).c_str()
+                   );
+          _do_xG();
+      }
 
-    if (straightLine) {
-      _northEastContact = _southWestContact = _sourceContact;
-      // This a global router problem.
-      // cerr << Bug( "Unmanaged configuration: straight line in %s,\n"
-      //              "      The global routing seems to be defective."
-      //            , _net->_getString().c_str()
-      //            ) << endl;
-      // return;
-    } else {
-      if (_sourceContact) {
-        AutoContact* targetContact
-          = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
-            ? _northEastContact : _southWestContact ;
-        AutoSegment* globalSegment = AutoSegment::create( _sourceContact
-                                                        , targetContact
-                                                        , static_cast<Segment*>( _fromHook->getComponent() )
-                                                        );
-        globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
-        cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
+      if (straightLine) {
+        _northEastContact = _southWestContact = _sourceContact;
+      } else {
+        if (_sourceContact) {
+          AutoContact* targetContact
+            = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
+              ? _northEastContact : _southWestContact ;
+          AutoSegment* globalSegment = AutoSegment::create( _sourceContact
+                                                          , targetContact
+                                                          , static_cast<Segment*>( _fromHook->getComponent() )
+                                                          );
+          globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
+          cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
 
-#if THIS_IS_DEPRECATED
-        if ( globalSegment->isHorizontal()
-           and (  (Session::getRoutingGauge()->getLayerDepth(_sourceContact->getLayer()->getBottom()) > 1)
-               or (Session::getRoutingGauge()->getLayerDepth(targetContact ->getLayer()->getBottom()) > 1)) ) {
-          globalSegment->setLayer ( Session::getRoutingLayer(3) );
-          cdebug_log(145,0) << "Source:" << _sourceContact << endl;
-          cdebug_log(145,0) << "Target:" << targetContact << endl;
-          cdebug_log(145,0) << "Moving up global:" << globalSegment << endl;
-        }
-#endif
-      // HARDCODED VALUE.
-        if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
-          _toFixSegments.push_back( globalSegment );
+        // HARDCODED VALUE.
+          if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
+            _toFixSegments.push_back( globalSegment );
         
-        if (_connexity.fields.globals < 2) {
-          cdebug_tabw(145,-1);
-          return;
-        }
-      } else
-        _fromHook = NULL;
-    }
+          if (_connexity.fields.globals < 2) {
+            cdebug_tabw(145,-1);
+            return;
+          }
+        } else
+          _fromHook = NULL;
+      }
 
-    Hook* toHook         = NULL;
-    Hook* toHookOpposite = NULL;
-    if ( _east and (_fromHook != _east) ) {
-      toHook         = _east;
-      toHookOpposite = getSegmentOppositeHook( _east );
-      cdebug_log(145,0) << "Pushing East (to)   " << getString(toHook) << endl;
-      cdebug_log(145,0) << "Pushing East (from) " << _northEastContact << endl;
-      forks.push( toHookOpposite, _northEastContact );
-    }
-    if ( _west and (_fromHook != _west) ) {
-      toHook         = _west;
-      toHookOpposite = getSegmentOppositeHook( _west );
-      cdebug_log(145,0) << "Pushing West (to)   " << getString(toHook) << endl;
-      cdebug_log(145,0) << "Pushing West (from) " << _southWestContact << endl;
-      forks.push( toHookOpposite, _southWestContact );
-    }
-    if ( _north and (_fromHook != _north) ) {
-      toHook         = _north;
-      toHookOpposite = getSegmentOppositeHook( _north );
-      cdebug_log(145,0) << "Pushing North (to)   " << getString(toHook) << endl;
-      cdebug_log(145,0) << "Pushing North (from) " << _northEastContact << endl;
-      forks.push( toHookOpposite, _northEastContact );
-    }
-    if ( _south and (_fromHook != _south) ) {
-      toHook         = _south;
-      toHookOpposite = getSegmentOppositeHook( _south );
-      cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
-      cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
-      forks.push( toHookOpposite, _southWestContact );
-    }
+      Hook* toHook         = NULL;
+      Hook* toHookOpposite = NULL;
+      if ( _east and (_fromHook != _east) ) {
+        toHook         = _east;
+        toHookOpposite = getSegmentOppositeHook( _east );
+        cdebug_log(145,0) << "Pushing East (to)   " << getString(toHook) << endl;
+        cdebug_log(145,0) << "Pushing East (from) " << _northEastContact << endl;
+        forks.push( toHookOpposite, _northEastContact );
+      }
+      if ( _west and (_fromHook != _west) ) {
+        toHook         = _west;
+        toHookOpposite = getSegmentOppositeHook( _west );
+        cdebug_log(145,0) << "Pushing West (to)   " << getString(toHook) << endl;
+        cdebug_log(145,0) << "Pushing West (from) " << _southWestContact << endl;
+        forks.push( toHookOpposite, _southWestContact );
+      }
+      if ( _north and (_fromHook != _north) ) {
+        toHook         = _north;
+        toHookOpposite = getSegmentOppositeHook( _north );
+        cdebug_log(145,0) << "Pushing North (to)   " << getString(toHook) << endl;
+        cdebug_log(145,0) << "Pushing North (from) " << _northEastContact << endl;
+        forks.push( toHookOpposite, _northEastContact );
+      }
+      if ( _south and (_fromHook != _south) ) {
+        toHook         = _south;
+        toHookOpposite = getSegmentOppositeHook( _south );
+        cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
+        cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
+        forks.push( toHookOpposite, _southWestContact );
+      }
 
-    if (straightLine and toHook) {
-      Hook* prevSource = getSegmentOppositeHook( _fromHook );
-      Hook* master     = prevSource->getMasterHook();
+      if (straightLine and toHook) {
+        Hook* prevSource = getSegmentOppositeHook( _fromHook );
+        Hook* master     = prevSource->getMasterHook();
 
-      prevSource->getComponent()->destroy();
+        prevSource->getComponent()->destroy();
 
-      toHook->detach();
-      toHook->attach( master );
+        toHook->detach();
+        toHook->attach( master );
+      }
+    } else {
+      if      (_gcell->isDevice ()) _doDevice();
+      else if (_gcell->isChannel()) _doChannel();
+      else if (_gcell->isStrut  ()) _doStrut();
+      else if (_gcell->isIoPad  ()) _doIoPad();
+      else
+        throw Bug( "Unmanaged GCell type: %s in %s\n"
+                   "      The global routing seems to be defective."
+                 , getString(_gcell).c_str()
+                 , getString(_net).c_str()
+                 );
+
+      for ( Hook* toHook : _fromHook->getHooks() ) {
+        if (toHook == _fromHook) continue;
+
+        Segment* segment = dynamic_cast<Segment*>( toHook->getComponent() );
+        if (not segment) continue;
+
+        Hook* toHookOpposite = getSegmentOppositeHook( toHook );
+
+      // Temporary. A vector of HTee/VTee must be defined in replacement of
+      // SW / NE contacts, so we connect to the right contact branch.
+        cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
+        cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
+        forks.push( toHookOpposite, _southWestContact );
+      }
     }
 
     cdebug_tabw(145,-1);
@@ -1462,7 +1493,7 @@ namespace {
   void  GCellTopology::_do_xG_1Pad ()
   {
     cdebug_log(145,1) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
-    cdebug_log(145,0)   << "_connexity.globals:" << _connexity.fields.globals << endl;
+    cdebug_log(145,0)   << "_connexity.globals:" << (int)_connexity.fields.globals << endl;
 
     unsigned int  flags       = NoFlags;
     bool          eastPad     = false;
@@ -1600,7 +1631,7 @@ namespace {
 
   void  GCellTopology::_do_1G_xM1 ()
   {
-    cdebug_log(145,1) << "_do_1G_" << _connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
+    cdebug_log(145,1) << "_do_1G_" << (int)_connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1702,9 +1733,9 @@ namespace {
 
   void  GCellTopology::_do_xG_xM1_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_"  << _connexity.fields.M1
-                      << "M1_"      << _connexity.fields.M3
-                      << "M3() [G:" << _connexity.fields.globals << " Managed Configuration]" << endl;
+    cdebug_log(145,1) << "_do_xG_"  << (int)_connexity.fields.M1
+                      << "M1_"      << (int)_connexity.fields.M3
+                      << "M3() [G:" << (int)_connexity.fields.globals << " Managed Configuration]" << endl;
     cdebug_log(145,0) << "_connexity: " << _connexity.connexity << endl;
     cdebug_log(145,0) << "_north:     " << _north << endl;
     cdebug_log(145,0) << "_south:     " << _south << endl;
@@ -1829,8 +1860,8 @@ namespace {
   void  GCellTopology::_do_xG_xM2 ()
   {
     cdebug_log(145,1) << "_do_"
-                      << _connexity.fields.globals << "G_"
-                      << _connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
+                      << (int)_connexity.fields.globals << "G_"
+                      << (int)_connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
     Component* biggestRp = _routingPads[0];
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1910,7 +1941,7 @@ namespace {
 
   void  GCellTopology::_do_xG_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_" << _connexity.fields.M3
+    cdebug_log(145,1) << "_do_xG_" << (int)_connexity.fields.M3
                       << "M3() [Managed Configuration]" << endl;
     cdebug_log(145,0) << "_west:"  << _west  << endl;
     cdebug_log(145,0) << "_east:"  << _east  << endl;
@@ -2035,6 +2066,30 @@ namespace {
     }
 
     cdebug_tabw(145,-1);
+  }
+
+
+  void  GCellTopology::_doDevice ()
+  {
+    throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
+  }
+
+
+  void  GCellTopology::_doChannel ()
+  {
+    throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao." );
+  }
+
+
+  void  GCellTopology::_doStrut ()
+  {
+    throw Error( "GCellTopology::_doStrut() Unimplemented, blame goes to E. Lao." );
+  }
+
+
+  void  GCellTopology::_doIoPad ()
+  {
+    throw Error( "GCellTopology::_doIoPad() Unimplemented, blame goes to J.-P. Chaput." );
   }
 
 
