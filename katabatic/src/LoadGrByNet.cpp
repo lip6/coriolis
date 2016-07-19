@@ -828,12 +828,12 @@ namespace {
 
     forEach ( Hook*, hook, fromHook->getHooks() ) {
       cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
-                 << "["  << _connexity.fields.globals
-                 << "+"  << _connexity.fields.M1     
-                 << "+"  << _connexity.fields.M2     
-                 << "+"  << _connexity.fields.M3
-                 << "+"  << _connexity.fields.Pin
-                 << "+"  << _connexity.fields.Pad
+                 << "["  << (int)_connexity.fields.globals
+                 << "+"  << (int)_connexity.fields.M1     
+                 << "+"  << (int)_connexity.fields.M2     
+                 << "+"  << (int)_connexity.fields.M3
+                 << "+"  << (int)_connexity.fields.Pin
+                 << "+"  << (int)_connexity.fields.Pad
                  << "] " << _gcell
                  << endl;
 
@@ -1447,7 +1447,7 @@ namespace {
   void  GCellTopology::_do_xG_1Pad ()
   {
     cdebug_log(145,1) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
-    cdebug_log(145,0)   << "_connexity.globals:" << _connexity.fields.globals << endl;
+    cdebug_log(145,0)   << "_connexity.globals:" << (int)_connexity.fields.globals << endl;
 
     unsigned int  flags       = NoFlags;
     bool          eastPad     = false;
@@ -1585,7 +1585,7 @@ namespace {
 
   void  GCellTopology::_do_1G_xM1 ()
   {
-    cdebug_log(145,1) << "_do_1G_" << _connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
+    cdebug_log(145,1) << "_do_1G_" << (int)_connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1687,9 +1687,9 @@ namespace {
 
   void  GCellTopology::_do_xG_xM1_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_"  << _connexity.fields.M1
-                      << "M1_"      << _connexity.fields.M3
-                      << "M3() [G:" << _connexity.fields.globals << " Managed Configuration]" << endl;
+    cdebug_log(145,1) << "_do_xG_"  << (int)_connexity.fields.M1
+                      << "M1_"      << (int)_connexity.fields.M3
+                      << "M3() [G:" << (int)_connexity.fields.globals << " Managed Configuration]" << endl;
     cdebug_log(145,0) << "_connexity: " << _connexity.connexity << endl;
     cdebug_log(145,0) << "_north:     " << _north << endl;
     cdebug_log(145,0) << "_south:     " << _south << endl;
@@ -1814,8 +1814,8 @@ namespace {
   void  GCellTopology::_do_xG_xM2 ()
   {
     cdebug_log(145,1) << "_do_"
-                      << _connexity.fields.globals << "G_"
-                      << _connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
+                      << (int)_connexity.fields.globals << "G_"
+                      << (int)_connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
     Component* biggestRp = _routingPads[0];
     for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
@@ -1895,7 +1895,7 @@ namespace {
 
   void  GCellTopology::_do_xG_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_" << _connexity.fields.M3
+    cdebug_log(145,1) << "_do_xG_" << (int)_connexity.fields.M3
                       << "M3() [Managed Configuration]" << endl;
     cdebug_log(145,0) << "_west:"  << _west  << endl;
     cdebug_log(145,0) << "_east:"  << _east  << endl;

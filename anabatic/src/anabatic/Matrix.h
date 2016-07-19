@@ -49,18 +49,19 @@ namespace Anabatic {
           static inline Matrix::Index  asMin ( Matrix*, Point position );
           static inline Matrix::Index  asMax ( Matrix*, Point position );
         public:
-          inline               Index  ( Matrix*, int index );
-          inline               Index  ( Matrix*, int i, int j );
-          inline       Matrix* matrix () const;
-          inline const int&    index  () const;
-          inline       int&    index  ();
-          inline       bool    valid  () const;
-          inline       int     i      () const;
-          inline       int     j      () const;
-          inline       Index&  west   ();
-          inline       Index&  east   ();
-          inline       Index&  south  ();
-          inline       Index&  north  ();
+          inline               Index      ( Matrix*, int index );
+          inline               Index      ( Matrix*, int i, int j );
+          inline       Matrix* matrix     () const;
+          inline const int&    index      () const;
+          inline       int&    index      ();
+          inline       bool    valid      () const;
+          inline       int     i          () const;
+          inline       int     j          () const;
+          inline       Index&  west       ();
+          inline       Index&  east       ();
+          inline       Index&  south      ();
+          inline       Index&  north      ();
+          inline       string  _getString () const;
         private:
           Matrix* _matrix;
           int     _index;
@@ -205,11 +206,6 @@ namespace Anabatic {
   inline Point  Matrix::getGridPoint ( const Index& index ) const
   { return getGridPoint( index.i(), index.j() ); }
 
-// Matrix::Index inline functions.
-
-  inline  Matrix::Index::Index ( Matrix* m, int index )    : _matrix(m), _index(index) { }
-  inline  Matrix::Index::Index ( Matrix* m, int i, int j ) : _matrix(m), _index(m->ij2index(i,j)) { }
-
   inline       Matrix::Index   Matrix::Index::asMin  ( Matrix* m, DbU::Unit x, DbU::Unit y ) { return Index( m, m->xy2minIndex(x,y) ); }
   inline       Matrix::Index   Matrix::Index::asMin  ( Matrix* m, Point position )           { return Index( m, m->xy2minIndex(position) ); }
   inline       Matrix::Index   Matrix::Index::asMax  ( Matrix* m, DbU::Unit x, DbU::Unit y ) { return Index( m, m->xy2maxIndex(x,y) ); }
@@ -226,16 +222,21 @@ namespace Anabatic {
   inline       Matrix::Index&  Matrix::Index::north  ()       { return _matrix->north  (*this); }
 
 
+// Matrix::Index inline functions.
+  inline  Matrix::Index::Index ( Matrix* m, int index )    : _matrix(m), _index(index) { }
+  inline  Matrix::Index::Index ( Matrix* m, int i, int j ) : _matrix(m), _index(m->ij2index(i,j)) { }
+
+  inline string  Matrix::Index::_getString () const
+  { return "(" + getString(index()) + "|" + getString(i()) + "," + getString(j()) + ")"; }
+
+
 }  // Anabatic namespace.
 
 
-inline std::ostream& operator<< ( std::ostream& o, const Anabatic::Matrix::Index& index )
-{
-  o << "(" << index.index() << "|" << index.i() << "," << index.j() << ")";
-  return o;
-}
-
-
 INSPECTOR_P_SUPPORT(Anabatic::Matrix);
+GETSTRING_POINTER_SUPPORT(Anabatic::Matrix::Index);
+GETSTRING_VALUE_SUPPORT(Anabatic::Matrix::Index);
+IOSTREAM_POINTER_SUPPORT(Anabatic::Matrix::Index);
+IOSTREAM_VALUE_SUPPORT(Anabatic::Matrix::Index);
 
 #endif  // ANABATIC_MATRIX_H

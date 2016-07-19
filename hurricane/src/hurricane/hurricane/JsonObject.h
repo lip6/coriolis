@@ -285,7 +285,7 @@ namespace Hurricane {
   template<typename T> inline void  JsonStack::push_back ( const std::string& key, T t )
   {
     cdebug_log(19,0) << "JsonStack::push_back(T) key:" << key << " value:" << t
-                   << " (" << demangle(typeid(T)) << ")." << endl;
+                     << " (" << demangle(typeid(T)) << ")." << endl;
     _stack.push_back(std::make_pair(key,boost::any(t)));
   }
 

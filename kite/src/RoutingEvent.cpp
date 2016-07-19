@@ -659,7 +659,7 @@ namespace Kite {
       = (DbU::toLambda(_segment->getLength())        + 1.0)
       * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
 
-    cdebug_log(159,0) << _segment << " has " << _tracksNb << " choices " << perpandicular << endl;
+    cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);
 
     DebugSession::close();

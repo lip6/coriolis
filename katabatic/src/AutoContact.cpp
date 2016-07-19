@@ -325,7 +325,11 @@ namespace Katabatic {
       _dyMin = 0;
       _dxMax = (int)DbU::toLambda( _gcell->getXMax()-_gcell->getX() );
       _dyMax = (int)DbU::toLambda( _gcell->getYMax()-_gcell->getY() );
-      cdebug_log(145,0) << "* deltas: [" << _dxMin << " " << _dyMin << " " << _dxMax << " " << _dyMax << "]" << endl;
+      cdebug_log(145,0) << "* deltas: [" << (int)_dxMin
+                        << " "           << (int)_dyMin
+                        << " "           << (int)_dxMax
+                        << " "           << (int)_dyMax
+                        << "]" << endl;
     } else {
       cerr << Bug( "NULL GCell for %s.", _getString().c_str() ) << endl;
     }

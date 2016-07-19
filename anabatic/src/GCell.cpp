@@ -277,7 +277,7 @@ namespace Anabatic {
     : Super(anabatic->getCell())
     , _observable    ()
     , _anabatic      (anabatic)
-    , _flags         (Flags::Invalidated)
+    , _flags         (Flags::ChannelGCell|Flags::Invalidated)
     , _westEdges     ()
     , _eastEdges     ()
     , _southEdges    ()
@@ -711,9 +711,13 @@ namespace Anabatic {
       column = column->vcut( xcut );
     }
 
+    setType( Flags::MatrixGCell );
+
     size_t hLocal = - getAnabatic()->getConfiguration()->getHEdgeLocal();
     size_t vLocal = - getAnabatic()->getConfiguration()->getVEdgeLocal();
     for ( ; ibegin < gcells.size() ; ++ibegin ) {
+      gcells[ibegin]->setType( Flags::MatrixGCell );
+
       for ( Edge* edge : gcells[ibegin]->getEdges(Flags::NorthSide|Flags::EastSide) ) {
         if (edge->isHorizontal()) edge->incCapacity( hLocal );
         else                      edge->incCapacity( vLocal );
@@ -1445,7 +1449,6 @@ namespace Anabatic {
     getRoutingPads( rps );
 
     set<Net*> rpNets;
-    set<RoutingPad*>::iterator irp = rps.begin();
     for ( RoutingPad* rp : rps ) {
       if (rp->getLayer() != Session::getRoutingLayer(0)) continue;
       rpNets.insert( rp->getNet() );

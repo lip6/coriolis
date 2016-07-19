@@ -239,7 +239,7 @@ namespace Anabatic {
       cdebug_log(112,1) << "PriorityQueue::dump() size:" << size() << std::endl;
       size_t order = 0;
       for ( Vertex* v : _queue )
-        cdebug_log(112,0) << "[" << std::setw(3) << order++ << "] " << v << std::endl;
+        cdebug_log(112,0) << "[" << tsetw(3) << order++ << "] " << v << std::endl;
       cdebug_tabw(112,-1);
     }
   }

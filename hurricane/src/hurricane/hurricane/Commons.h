@@ -43,6 +43,7 @@
 #include <stack>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 
@@ -165,6 +166,38 @@ template<typename Data> inline std::string  getString ( Data data )
 { return std::string("<type ")
          + Hurricane::demangle(typeid(data).name())
          + std::string(" unsupported by getString()>"); }
+
+// "const &" flavors.
+
+template<> inline std::string  getString<const bool> ( const bool b )
+{ return (b)?"True":"False" ; }
+
+template<> inline std::string  getString<const int> ( const int i )
+{ std::ostringstream os (""); os << i; return os.str(); }
+
+template<> inline std::string  getString<const long> ( const long l )
+{ std::ostringstream os (""); os << l; return os.str(); }
+
+template<> inline std::string  getString<const unsigned int>  ( const unsigned int u )
+{ std::ostringstream os (""); os << u; return os.str(); }
+
+template<> inline std::string  getString<const unsigned long> ( const unsigned long ul )
+{ std::ostringstream os (""); os << ul; return os.str(); }
+
+template<> inline std::string  getString<const unsigned long long> ( const unsigned long long ull )
+{ std::ostringstream os (""); os << ull; return os.str(); }
+
+template<> inline std::string  getString<const unsigned short int> ( const unsigned short int us )
+{ std::ostringstream os (""); os << us; return os.str(); }
+
+template<> inline std::string  getString<const float> ( const float f )
+{ std::ostringstream os (""); os << f; return os.str(); }
+
+template<> inline std::string  getString<const double> ( const double d )
+{ std::ostringstream os; os << d; return os.str(); }
+
+template<> inline std::string  getString<const std::string> ( const std::string s )
+{ return s; }
 
 // "const *" flavors.
 
@@ -627,7 +660,11 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   {                                                                  \
     if (!d) return o << "NULL [const " #Data "]";                    \
     return o << "&" << getString<const Data*>(d);                    \
-  }
+  }                                                                  \
+
+
+//inline tstream& operator<< ( tstream& o, Data* d )                    \
+//{ if (o.enabled()) static_cast<std::ostream&>(o) << d; return o; }
 
 
 # define GETRECORD_POINTER_SUPPORT(Data) \
@@ -651,7 +688,11 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   { return o << getString<Data&>(d); }                                     \
                                                                            \
   inline std::ostream& operator<< ( std::ostream& o, const Data& d )       \
-  { return o << getString<Data&>(d); }
+  { return o << getString<const Data&>(d); }                               \
+                                                                           \
+
+//  inline tstream& operator<< ( tstream& o, Data& d )                  \
+//{ if (o.enabled()) static_cast<std::ostream&>(o) << d; return o; }
 
 
 # define GETRECORD_REFERENCE_SUPPORT(Data) \
@@ -734,19 +775,14 @@ class tstream : public std::ostream {
     inline tstream&  log         ( int level, int count=0 );
     inline tstream&  tabw        ( int level, int count );
     inline           tstream     ( std::ostream & );
+    inline tstream&  put         ( char c );
+    inline tstream&  flush       ();
   private:
     inline tstream&  _tab        ();
     inline tstream&  _tabw       ( int count );
   public:
-  // Overload for formatted outputs.
-  //template<typename T> inline tstream& operator<< ( T  t );
-    template<typename T> inline tstream& operator<< ( T* t );
-    template<typename T> inline tstream& operator<< ( const T  t );
-    template<typename T> inline tstream& operator<< ( const T* t );
-                         inline tstream& put        ( char c );
-                         inline tstream& flush      ();
   // Overload for manipulators.
-                         inline tstream &operator<< ( std::ostream &(*pf)(std::ostream &) );
+    inline tstream&  operator<<  ( std::ostream &(*pf)(std::ostream &) );
   private:
     int                    _minLevel;
     int                    _maxLevel;
@@ -790,27 +826,37 @@ inline tstream&  tstream::_tabw ( int count )
 inline tstream& tstream::log ( int level, int count )
 { setLevel(level); _tab(); return _tabw(count); }
 
-// For POD Types.
-// template<typename T>
-// inline tstream& tstream::operator<< ( T& t )
-// { if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
-
-template<typename T>
-inline tstream& tstream::operator<< ( T* t )
-{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
-
-template<typename T>
-inline tstream& tstream::operator<< ( const T t )
-{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
-
-template<typename T>
-inline tstream& tstream::operator<< ( const T* t )
-{ if (enabled()) { *(static_cast<std::ostream*>(this)) << t; } return *this; };
-
 // For STL Types.
-inline tstream& operator<< ( tstream& o, const std::string& s )
+inline tstream& operator<< ( tstream& o, const std::string s )
 { if (o.enabled()) { static_cast<std::ostream&>(o) << s; } return o; };
 
+// For POD Types.
+// template<typename T>
+// inline tstream& operator<< ( tstream& o, T& t )
+// { if (o.enabled()) { static_cast<std::ostream&>(o) << getString<T&>(t); } return o; };
+
+template<typename T>
+inline tstream& operator<< ( tstream& o, T* t )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << getString<T*>(t); } return o; };
+
+// template<typename T>
+// inline tstream& operator<< ( tstream& o, const T& t )
+// { if (o.enabled()) { static_cast<std::ostream&>(o) << getString<const T&>(t); } return o; };
+
+template<typename T>
+inline tstream& operator<< ( tstream& o, T t )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << getString<T>(t); } return o; };
+
+template<typename T>
+inline tstream& operator<< ( tstream& o, const T* t )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << getString<const T*>(t); } return o; };
+
+struct _Tsetw { int n_; };
+inline _Tsetw tsetw ( int n ) { return { n }; }
+
+template<>
+inline tstream& operator<< ( tstream& o, _Tsetw manip )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << std::setw(manip.n_); } return o; }
 
 extern tstream  cdebug;
 

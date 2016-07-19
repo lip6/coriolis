@@ -324,7 +324,13 @@ namespace Anabatic {
       _dyMin = 0;
       _dxMax = (int)DbU::toLambda( _gcell->getXMax()-_gcell->getXMin() );
       _dyMax = (int)DbU::toLambda( _gcell->getYMax()-_gcell->getYMin() );
-      cdebug_log(145,0) << "* deltas: [" << _dxMin << " " << _dyMin << " " << _dxMax << " " << _dyMax << "]" << endl;
+      if (cdebug.enabled()) {
+        int  dxMin = _dxMin;
+        int  dyMin = _dyMin;
+        int  dxMax = _dxMax;
+        int  dyMax = _dyMax;
+        cdebug_log(145,0) << "* deltas: [" << dxMin << " " << dyMin << " " << dxMax << " " << dyMax << "]" << endl;
+      }
     } else {
       cerr << Bug( "NULL GCell for %s.", _getString().c_str() ) << endl;
     }

@@ -166,4 +166,6 @@ namespace Hurricane {
 
 } // Hurricane namespace.
 
+INSPECTOR_PV_SUPPORT(Hurricane::BaseFlags);
+
 # endif  // HURRICANE_BASE_FLAGS_H

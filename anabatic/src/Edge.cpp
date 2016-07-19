@@ -201,7 +201,8 @@ namespace Anabatic {
     if (source == _target)
       throw Error("Edge::_setSource(): Source & target are the same (%s).", getString(source).c_str() );
     
-    invalidate(); _source=source;
+    _invalidate();
+    _source=source;
   }
 
 
@@ -210,7 +211,15 @@ namespace Anabatic {
     if (_source == target)
       throw Error("Edge::_setTarget(): Source & target are the same (%s).", getString(target).c_str() );
     
-    invalidate(); _target=target;
+    _invalidate();
+    _target=target;
+  }
+
+
+  void  Edge::_invalidate ()
+  {
+    _flags |= Flags::Invalidated;
+    Super::invalidate( false );
   }
 
 
@@ -220,7 +229,6 @@ namespace Anabatic {
     _axis     = side.getCenter();
     _capacity = getAnabatic()->getCapacity( side, _flags );
 
-    Super::invalidate( false );
     _flags.reset( Flags::Invalidated );
     cdebug_log(110,0) << "Edge::_revalidate() " << this << endl;
   }

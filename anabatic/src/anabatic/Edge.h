@@ -75,11 +75,11 @@ namespace Anabatic {
                     void            destroySegment       ();
       inline const  Flags&          flags                () const;
       inline        Flags&          flags                ();
-      inline        void            invalidate           ();
       inline        void            revalidate           () const;
                     void            _setSource           ( GCell* );
                     void            _setTarget           ( GCell* );
     private:                        
+                    void            _invalidate          ();
                     void            _revalidate          ();
     public:                                  
     // ExtensionGo support.                  
@@ -127,7 +127,6 @@ namespace Anabatic {
   inline void          Edge::setSegment           ( Segment* s ) { _segment=s; }
   inline const Flags&  Edge::flags                () const { return _flags; }
   inline Flags&        Edge::flags                () { return _flags; }
-  inline void          Edge::invalidate           () { _flags |= Flags::Invalidated; }
   inline void          Edge::revalidate           () const { /*if (_flags&Flags::Invalidated)*/ const_cast<Edge*>(this)->_revalidate(); }
 
 

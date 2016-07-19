@@ -141,6 +141,7 @@ namespace Anabatic {
                     bool                  isSouth             ( GCell* ) const;
                     bool                  hasGContact         ( const Contact* ) const;
       inline        AnabaticEngine*       getAnabatic         () const;
+      inline        Flags                 getType             () const;
       inline        DbU::Unit             getXMin             () const;
       inline        DbU::Unit             getYMin             () const;
       inline        DbU::Unit             getXMax             ( int shrink=0 ) const;
@@ -200,6 +201,7 @@ namespace Anabatic {
       inline  const Key&                  getKey              () const;
                     size_t                checkDensity        () const;
                     bool                  checkEdgeSaturation ( size_t hreserved, size_t vreserved) const;
+                    void                  setType             ( Flags );
                     void                  addBlockage         ( size_t depth, DbU::Unit );
       inline        void                  addHSegment         ( AutoSegment* );
       inline        void                  addVSegment         ( AutoSegment* );
@@ -289,6 +291,7 @@ namespace Anabatic {
   inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
   inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }
   inline       bool                  GCell::isInvalidated () const { return _flags & Flags::Invalidated; }
+  inline       Flags                 GCell::getType       () const { return _flags & Flags::GCellTypeMask; }
   inline       AnabaticEngine*       GCell::getAnabatic   () const { return _anabatic; }
   inline       DbU::Unit             GCell::getXMin       () const { return _xmin; }
   inline       DbU::Unit             GCell::getYMin       () const { return _ymin; }
@@ -308,6 +311,7 @@ namespace Anabatic {
   inline const vector<AutoSegment*>& GCell::getHSegments  () const { return _hsegments; }
   inline const vector<AutoContact*>& GCell::getContacts   () const { return _contacts; }
   inline const GCell::Key&           GCell::getKey        () const { return _key; }
+  inline       void                  GCell::setType       ( Flags type ) { _flags.reset(Flags::GCellTypeMask); _flags |= (type&Flags::GCellTypeMask); };
   inline       void                  GCell::updateKey     ( size_t depth ) { _key.update(depth); }
   inline const Flags&                GCell::flags         () const { return _flags; }
   inline       Flags&                GCell::flags         () { return _flags; }
