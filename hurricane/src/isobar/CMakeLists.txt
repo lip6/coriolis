@@ -4,6 +4,7 @@
    include_directories( ${HURRICANE_SOURCE_DIR}/src/hurricane
                         ${HURRICANE_SOURCE_DIR}/src/viewer
                         ${HURRICANE_SOURCE_DIR}/src/isobar
+                        ${Boost_INCLUDE_DIRS}
                         ${CONFIGURATION_INCLUDE_DIR}
                         ${PYTHON_INCLUDE_PATH}
                       )

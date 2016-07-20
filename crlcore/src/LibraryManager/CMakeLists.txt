@@ -5,6 +5,7 @@
                         ${CRLCORE_SOURCE_DIR}/src/ccore/bookshelf
                         ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                         ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
+                        ${Boost_INCLUDE_DIRS}
                         ${CONFIGURATION_INCLUDE_DIR}
                         ${HURRICANE_INCLUDE_DIR}
                       )

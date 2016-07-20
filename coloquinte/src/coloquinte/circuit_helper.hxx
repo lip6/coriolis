@@ -4,6 +4,7 @@
 
 #include "common.hxx"
 #include "netlist.hxx"
+#include <cmath>
 
 namespace coloquinte{
 
@@ -30,7 +31,7 @@ struct pin_2D{
 
 inline int_t dist(pin_2D const a, pin_2D const b){
     point<int_t> diff = a.pos - b.pos;
-    return std::abs(diff.x) + std::abs(diff.y);
+    return std::abs((float)diff.x) + std::abs((float)diff.y);
 }
 
 inline std::vector<pin_2D>         get_pins_2D(netlist const & circuit, placement_t const & pl, index_t net_ind){

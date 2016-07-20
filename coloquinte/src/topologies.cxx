@@ -7,6 +7,8 @@
 #include <cassert>
 #include <set>
 #include <functional>
+#include <cmath>
+#include <array>
 
 namespace coloquinte{
 using edge_t = std::pair<index_t, index_t>;
@@ -44,7 +46,7 @@ int_t Hconnectivity<pin_cnt>::get_wirelength(std::array<point<int_t>, pin_cnt> c
     }
     int_t cost = sorted_points.back().x - sorted_points.front().x + sorted_points[b_con+1].x - sorted_points[e_con+1].x;
     for(std::uint8_t const E : connexions){
-        cost += std::abs(sorted_points[(E >> 4) +1].x - sorted_points[(E & 15u) +1].x);
+      cost += std::abs((float)(sorted_points[(E >> 4) +1].x - sorted_points[(E & 15u) +1].x));
     }
     for(index_t i=0; i<pin_cnt-2; ++i){
         cost += (minmaxs[i].max - minmaxs[i].min);
@@ -91,7 +93,7 @@ std::int64_t get_wirelength_from_topo(std::vector<point<int_t> > const & points,
     }
     std::int64_t cost = 0;
     for(edge_t const E : Htopo){
-        cost += std::abs(points[E.first].x - points[E.second].x);
+      cost += std::abs((float)(points[E.first].x - points[E.second].x));
     }
     for(index_t i=0; i<points.size(); ++i){
         cost += (minmaxs[i].max - minmaxs[i].min);
@@ -401,7 +403,7 @@ std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int
             edges.push_back(edge_t(0, 1));
         }
         if(pins.size() == 3){
-            auto D = [](point<int_t> a, point<int_t> b){ return std::abs(a.x - b.x) + std::abs(a.y - b.y); };
+	  auto D = [](point<int_t> a, point<int_t> b){ return (int_t)(std::abs((float)(a.x - b.x)) + std::abs((float)(a.y - b.y))); };
             auto dists = std::array<int_t, 3>({D(pins[1], pins[2]), D(pins[1], pins[2]), D(pins[0], pins[1])});
             index_t mx = std::max_element(dists.begin(), dists.end()) - dists.begin();
             for(index_t i=0; i<3; ++i){
@@ -420,7 +422,7 @@ std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int
     auto edge_length = [&](edge_t E){
         point<int_t> p1 = pins[E.first],
                      p2 = pins[E.second];
-        return std::abs(p1.x - p2.x) + std::abs(p1.y - p2.y);
+        return std::abs((float)(p1.x - p2.x)) + std::abs((float)(p1.y - p2.y));
     };
 	// Perform Kruskal to get the tree
 	std::sort(edges.begin(), edges.end(), [&](edge_t a, edge_t b){ return edge_length(a) < edge_length(b); });
@@ -444,8 +446,8 @@ std::int64_t MST_length(std::vector<point<int_t> > const & pins){
     auto edges = get_MST_topology(pins);
     std::int64_t sum = 0;
     for(auto E : edges){
-        sum += std::abs(pins[E.first].x - pins[E.second].x);
-        sum += std::abs(pins[E.first].y - pins[E.second].y);
+      sum += std::abs((float)(pins[E.first].x - pins[E.second].x));
+      sum += std::abs((float)(pins[E.first].y - pins[E.second].y));
     }
     return sum;
 }
@@ -454,7 +456,7 @@ std::int64_t RSMT_length(std::vector<point<int_t> > const & pins, index_t exacti
     assert(exactitude_limit <= 10 and exactitude_limit >= 3);
     if(pins.size() <= 3){
         if(pins.size() == 2){
-            return std::abs(pins[0].x - pins[1].x) + std::abs(pins[0].y - pins[1].y);
+	  return std::abs((float)(pins[0].x - pins[1].x)) + std::abs((float)(pins[0].y - pins[1].y));
         }
         else if(pins.size() == 3){
             auto minmaxX = std::minmax_element(pins.begin(), pins.end(), [](point<int_t> a, point<int_t> b){ return a.x < b.x; }), 

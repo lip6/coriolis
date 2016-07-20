@@ -2,6 +2,7 @@
 #include "coloquinte/piecewise_linear.hxx"
 
 #include <cassert>
+#include <cmath>
 
 namespace coloquinte{
 

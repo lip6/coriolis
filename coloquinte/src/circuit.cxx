@@ -1,6 +1,7 @@
 
 #include "coloquinte/circuit_helper.hxx"
 #include "coloquinte/circuit.hxx"
+#include <cmath>
 
 namespace coloquinte{
 
@@ -51,7 +52,7 @@ void add_force(pin_1D const p1, pin_1D const p2, linear_system & L, float_t forc
 }
 
 void add_force(pin_1D const p1, pin_1D const p2, linear_system & L, float_t tol, float_t scale){
-    add_force(p1, p2, L, scale/std::max(tol, static_cast<float_t>(std::abs(p2.pos-p1.pos))));
+  add_force(p1, p2, L, scale/std::max(tol, static_cast<float_t>(std::abs((float)(p2.pos-p1.pos)))));
 }
 
 point<linear_system> empty_linear_systems(netlist const & circuit, placement_t const & pl){
@@ -344,11 +345,11 @@ point<linear_system> get_linear_pulling_forces (netlist const & circuit, placeme
     std::vector<float_t> scaling = get_area_scales(circuit);
     for(index_t i=0; i<LB_pl.cell_cnt(); ++i){
         L.x.add_anchor(
-            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].x - LB_pl.positions_[i].x)), min_distance)),
+		       force * scaling[i] / (std::max(static_cast<float_t>(std::abs((float)(UB_pl.positions_[i].x - LB_pl.positions_[i].x))), min_distance)),
             i, UB_pl.positions_[i].x
         );
         L.y.add_anchor(
-            force * scaling[i] / (std::max(static_cast<float_t>(std::abs(UB_pl.positions_[i].y - LB_pl.positions_[i].y)), min_distance)),
+		       force * scaling[i] / (std::max(static_cast<float_t>(std::abs((float)(UB_pl.positions_[i].y - LB_pl.positions_[i].y))), min_distance)),
             i, UB_pl.positions_[i].y
         );
     }
@@ -378,7 +379,7 @@ float_t get_mean_linear_disruption(netlist const & circuit, placement_t const & 
         if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x == 0);
         if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y == 0);
 
-        tot_cost += area * (std::abs(diff.x) + std::abs(diff.y));
+        tot_cost += area * (std::abs((float)diff.x) + std::abs((float)diff.y));
         tot_area += area;
     }
     return tot_cost / tot_area;
@@ -394,7 +395,7 @@ float_t get_mean_quadratic_disruption(netlist const & circuit, placement_t const
         if( (circuit.get_cell(i).attributes & XMovable) == 0) assert(diff.x == 0);
         if( (circuit.get_cell(i).attributes & YMovable) == 0) assert(diff.y == 0);
 
-        float_t manhattan = (std::abs(diff.x) + std::abs(diff.y));
+        float_t manhattan = (std::abs((float)diff.x) + std::abs((float)diff.y));
         tot_cost += area * manhattan * manhattan;
         tot_area += area;
     }

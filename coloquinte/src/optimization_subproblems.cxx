@@ -51,7 +51,7 @@ std::vector<capacity_t>  transport_1D(std::vector<t1D_elt> sources, std::vector<
     auto get_slope = [&](index_t src, index_t boundary){
         assert(boundary+1 < sinks.size());
         assert(src < sources.size());
-        return std::abs(sources[src].first - sinks[boundary+1].first) - std::abs(sources[src].first - sinks[boundary].first);
+        return std::abs((float)(sources[src].first - sinks[boundary+1].first)) - std::abs((float)(sources[src].first - sinks[boundary].first));
     };
 
     capacity_t cur_abs_pos = min_abs_pos;

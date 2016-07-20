@@ -18,6 +18,7 @@
 #define  HURRICANE_OBSERVER_H
 
 #include <vector>
+#include <array>
 #include "hurricane/Error.h"
 
 

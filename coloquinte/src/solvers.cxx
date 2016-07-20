@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <cmath>
 
 namespace coloquinte{
 namespace gp{

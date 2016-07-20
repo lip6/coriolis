@@ -7,6 +7,8 @@
 #include <queue>
 #include <vector>
 #include <cassert>
+#include <numeric>
+#include <cmath>
 
 namespace coloquinte{
 
@@ -133,7 +135,7 @@ inline T OSRP_leg<T>::get_displacement(legalizable_task<T> const newly_pushed, b
         }
     }
 
-    return cur_cost + width * std::abs(final_abs_pos - target_abs_pos); // Add the cost of the new cell
+    return cur_cost + width * std::abs((float)(final_abs_pos - target_abs_pos)); // Add the cost of the new cell
 }
 
 template<typename T>

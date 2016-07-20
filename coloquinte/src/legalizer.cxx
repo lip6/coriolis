@@ -119,7 +119,7 @@ std::vector<cell_leg_properties> simple_legalize(
 
             if(interval_lim >= cur_pos){ // An admissible solution is found (and if cell.x_pos is between cur_pos and interval_lim it is optimal)
                 int_t row_best_x = std::min(interval_lim, std::max(cur_pos, cell.x_pos));
-                int_t row_cost_x = std::abs(row_best_x - cell.x_pos);
+                int_t row_cost_x = std::abs((float)(row_best_x - cell.x_pos));
                 if(not found_location or row_cost_x + additional_cost < best_cost){
                     found_location = true;
                     best_cost = row_cost_x + additional_cost;
@@ -140,11 +140,11 @@ std::vector<cell_leg_properties> simple_legalize(
             ++row_dist
         ){
             if(central_row + row_dist < nbr_rows - C.nbr_rows){
-                int_t add_cost = C.width * std::abs(static_cast<int_t>(central_row + row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
+	      int_t add_cost = C.width * std::abs((float)static_cast<int_t>(central_row + row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
                 check_row_cost(central_row + row_dist, C, add_cost);
             }
             if(central_row >= row_dist){
-                int_t add_cost = C.width * std::abs(static_cast<int_t>(central_row - row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
+	      int_t add_cost = C.width * std::abs((float)static_cast<int_t>(central_row - row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
                 check_row_cost(central_row - row_dist, C, add_cost);
             }
         }
@@ -252,7 +252,7 @@ std::vector<cell_leg_properties> good_legalize(
                         int_t region_end = it != obstacles[r].rend() ? it->min_x : x_max;
                         if(region_end >= prev_it->max_x + cell.width){
                             int_t loc_x = std::min(region_end - cell.width, std::max(prev_it->max_x, cell.x_pos));
-                            int_t loc_cost = cell.width * std::abs(cell.x_pos - loc_x);
+                            int_t loc_cost = cell.width * std::abs((float)(cell.x_pos - loc_x));
                             if(not found_here or cur_cost > loc_cost){
                                 found_here = true;
                                 cur_cost = loc_cost;
@@ -287,11 +287,11 @@ std::vector<cell_leg_properties> good_legalize(
             ++row_dist
         ){
             if(central_row + row_dist < nbr_rows - C.nbr_rows){
-                int_t add_cost = C.width * std::abs(static_cast<int_t>(central_row + row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
+	      int_t add_cost = C.width * std::abs((float)static_cast<int_t>(central_row + row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
                 check_row_cost(central_row + row_dist, C, add_cost);
             }
             if(central_row >= row_dist){
-                int_t add_cost = C.width * std::abs(static_cast<int_t>(central_row - row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
+	      int_t add_cost = C.width * std::abs((float)static_cast<int_t>(central_row - row_dist) * static_cast<int_t>(row_height) + y_orig - C.y_pos);
                 check_row_cost(central_row - row_dist, C, add_cost);
             }
         }
