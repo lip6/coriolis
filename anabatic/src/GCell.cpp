@@ -1588,8 +1588,8 @@ namespace Anabatic {
 
       cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
 
-    // if (getAnabatic()->moveUpNetTrunk2(*isegment,globalNets,invalidateds))
-    //  return true;
+      if (getAnabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds))
+        return true;
     }
 
     return false;

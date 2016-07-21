@@ -435,6 +435,7 @@ namespace Anabatic {
   {
     AnabaticEngine* engine = getForFramework( CreateEngine );
     engine->loadGlobalRouting( EngineLoadGrByNet );
+    engine->layerAssign( EngineNoNetLayerAssign );
   }
 
 

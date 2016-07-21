@@ -39,6 +39,7 @@ namespace Anabatic {
   using Hurricane::Component;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::NetRoutingExtension;
   using Hurricane::Cell;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
@@ -82,21 +83,26 @@ namespace Anabatic {
 
   AnabaticEngine::AnabaticEngine ( Cell* cell )
     : Super(cell)
-    , _timer         ()
-    , _configuration (new ConfigurationConcrete())
-    , _state         (EngineCreation)
-    , _matrix        ()
-    , _gcells        ()
-    , _ovEdges       ()
-    , _viewer        (NULL)
-    , _flags         (Flags::DestroyBaseContact)
-    , _stamp         (-1)
-    , _densityMode   (MaxDensity)
-    , _autoSegmentLut()
-    , _autoContactLut()
+    , _timer           ()
+    , _configuration   (new ConfigurationConcrete())
+    , _chipTools       (cell)
+    , _state           (EngineCreation)
+    , _matrix          ()
+    , _gcells          ()
+    , _ovEdges         ()
+    , _viewer          (NULL)
+    , _flags           (Flags::DestroyBaseContact)
+    , _stamp           (-1)
+    , _densityMode     (MaxDensity)
+    , _autoSegmentLut  ()
+    , _autoContactLut  ()
+    , _netRoutingStates()
+    , _blockageNet     (cell->getNet("blockagenet"))
   {
     _matrix.setCell( cell, _configuration->getSliceHeight() );
     Edge::unity = _configuration->getSliceHeight();
+
+    if (not _blockageNet) _blockageNet = Net::create( cell, "blockagenet" );
   }
 
 
@@ -276,6 +282,34 @@ namespace Anabatic {
       }
     }
     return count;
+  }
+
+
+  NetRoutingState* AnabaticEngine::getRoutingState ( Net* net, unsigned int flags )
+  {
+    NetRoutingState* state = NetRoutingExtension::get( net );
+
+    if (state) {
+      NetRoutingStates::iterator istate = _netRoutingStates.find( net->getId() );
+      if (istate != _netRoutingStates.end()) {
+        if (istate->second != state) {
+          cerr << Error( "AnabaticEngine::getRoutingStates() - %s incoherency between property and LUT:\n"
+                        "        Property:%x vs. LUT:%x, re-init LUT from property."
+                       , getString(net->getName()).c_str()
+                       , (void*)state
+                       , (void*)(istate->second)) << endl;
+          _netRoutingStates.insert( make_pair(net->getId(), state) );
+        }
+        return state;
+      }
+    } else {
+      if (not (flags & Flags::Create)) return NULL;
+
+      state = NetRoutingExtension::create( net );
+    }
+
+    _netRoutingStates.insert( make_pair(net->getId(), state) );
+    return state;
   }
 
 
@@ -559,6 +593,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::updateDensity ()
   { for ( GCell* gcell : _gcells ) gcell->updateDensity(); } 
+
+
+  size_t  AnabaticEngine::checkGCellDensities ()
+  {
+    size_t saturateds = 0;
+    for ( GCell* gcell : _gcells ) saturateds += gcell->checkDensity();
+    return saturateds;
+  } 
 
 
   AutoSegment* AnabaticEngine::_lookup ( Segment* segment ) const

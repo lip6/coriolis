@@ -30,6 +30,7 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/AutoHorizontal.h
                                      anabatic/AutoVertical.h
                                      anabatic/Session.h
+                                     anabatic/ChipTools.h
                       )
                    set( mocIncludes  anabatic/GraphicAnabaticEngine.h )
                    set( pyIncludes   anabatic/PyAnabaticEngine.h
@@ -58,6 +59,9 @@ endif ( CHECK_DETERMINISM )
                                      NetConstraints.cpp
                                      NetOptimals.cpp
                                      LoadGlobalRouting.cpp
+                                     ChipTools.cpp
+                                     LayerAssign.cpp
+                                     PreRouteds.cpp
                       )
                    set( pyCpps       PyAnabaticEngine.cpp
                                      PyGraphicAnabaticEngine.cpp

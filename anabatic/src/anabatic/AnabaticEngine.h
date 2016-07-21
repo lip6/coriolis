@@ -22,10 +22,8 @@
 #include <set>
 
 #include "hurricane/Timer.h"
+#include "hurricane/NetRoutingProperty.h"
 namespace Hurricane {
-  class Name;
-  class Net;
-  class Cell;
   class Instance;
   class CellViewer;
 }
@@ -36,6 +34,7 @@ namespace Hurricane {
 #include "anabatic/GCell.h"
 #include "anabatic/AutoContact.h"
 #include "anabatic/AutoSegments.h"
+#include "anabatic/ChipTools.h"
 
 
 namespace Anabatic {
@@ -48,10 +47,12 @@ namespace Anabatic {
   using Hurricane::Interval;
   using Hurricane::Cell;
   using Hurricane::CellViewer;
+  using Hurricane::NetRoutingState;
   using CRL::ToolEngine;
 
 
-  typedef  std::set<Net*,Entity::CompareById>  NetSet;
+  typedef  std::set<Net*,Entity::CompareById>       NetSet;
+  typedef  std::map<unsigned int,NetRoutingState*>  NetRoutingStates;
 
 
   class AnabaticEngine : public ToolEngine {
@@ -67,138 +68,159 @@ namespace Anabatic {
     public:
       typedef ToolEngine  Super;
     public:
-      static        AnabaticEngine* create                ( Cell* );
-      static        AnabaticEngine* get                   ( const Cell* );
-      static  const Name&           staticGetName         ();
-      virtual const Name&           getName               () const;
-      virtual       Configuration*  getConfiguration      ();
-      inline        unsigned int    getDensityMode        () const;
-      inline        CellViewer*     getViewer             () const;
-      inline        void            setViewer             ( CellViewer* );
-      inline        EngineState     getState              () const;
-      inline  const Matrix*         getMatrix             () const;
-      inline  const vector<GCell*>& getGCells             () const;
-      inline  const vector<Edge*>&  getOvEdges            () const;
-      inline        GCell*          getSouthWestGCell     () const;
-      inline        GCell*          getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const;
-      inline        GCell*          getGCellUnder         ( Point ) const;
-                    int             getCapacity           ( Interval, Flags ) const;
-                    size_t          getNetsFromEdge       ( const Edge*, NetSet& );
-      inline        void            setState              ( EngineState state );
-      inline        void            setDensityMode        ( unsigned int );
-      inline        void            addOv                 ( Edge* );
-      inline        void            removeOv              ( Edge* );
-    // Dijkstra related functions.                        
-      inline        int             getStamp              () const;
-      inline        int             incStamp              ();
+      static        AnabaticEngine*   create                ( Cell* );
+      static        AnabaticEngine*   get                   ( const Cell* );
+      static  const Name&             staticGetName         ();
+      virtual const Name&             getName               () const;
+      virtual       Configuration*    getConfiguration      ();
+      inline        unsigned int      getDensityMode        () const;
+      inline        CellViewer*       getViewer             () const;
+      inline        void              setViewer             ( CellViewer* );
+      inline        EngineState       getState              () const;
+      inline  const Matrix*           getMatrix             () const;
+      inline  const vector<GCell*>&   getGCells             () const;
+      inline  const vector<Edge*>&    getOvEdges            () const;
+      inline        GCell*            getSouthWestGCell     () const;
+      inline        GCell*            getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const;
+      inline        GCell*            getGCellUnder         ( Point ) const;
+                    int               getCapacity           ( Interval, Flags ) const;
+                    size_t            getNetsFromEdge       ( const Edge*, NetSet& );
+      inline        void              setState              ( EngineState state );
+      inline        void              setDensityMode        ( unsigned int );
+      inline        void              addOv                 ( Edge* );
+      inline        void              removeOv              ( Edge* );
+    // Dijkstra related functions.                          
+      inline        int               getStamp              () const;
+      inline        int               incStamp              ();
     // Global routing related functions.                  
-                    void            globalRoute           ();
-                    void            cleanupGlobal         ();
+                    void              globalRoute           ();
+                    void              cleanupGlobal         ();
     // Detailed routing related functions.                
-      inline        bool            isInDemoMode          () const;
-      inline        bool            doWarnOnGCellOverload () const;
-      inline        bool            doDestroyBaseContact  () const;
-      inline        bool            doDestroyBaseSegment  () const;
-      inline        bool            doDestroyTool         () const;
-      inline        DbU::Unit       getGlobalThreshold    () const;
-      inline        float           getSaturateRatio      () const;
-      inline        size_t          getSaturateRp         () const;
-      inline        DbU::Unit       getExtensionCap       () const;
-                    void            updateDensity         ();
-      inline        void            setGlobalThreshold    ( DbU::Unit );
-      inline        void            setSaturateRatio      ( float );
-      inline        void            setSaturateRp         ( size_t );
-                    void            loadGlobalRouting     ( unsigned int method );
-                    void            computeNetConstraints ( Net* );
-                    void            toOptimals            ( Net* );
-                    void            updateNetTopology     ( Net* );
-                    void            finalizeLayout        ();
-      inline const  AutoContactLut& _getAutoContactLut    () const;
-      inline const  AutoSegmentLut& _getAutoSegmentLut    () const;
-                    void            _link                 ( AutoContact* );
-                    void            _link                 ( AutoSegment* );
-      void            _unlink               ( AutoContact* );
-                    void            _unlink               ( AutoSegment* );
-                    AutoContact*    _lookup               ( Contact* ) const;
-                    AutoSegment*    _lookup               ( Segment* ) const;
-                    void            _loadGrByNet          ();
-                    void            _loadNetGlobalRouting ( Net* );
-                    void            _computeNetOptimals   ( Net* );
-                    void            _computeNetTerminals  ( Net* );
-                    void            _alignate             ( Net* );
-                    void            _saveNet              ( Net* );
-                    void            _destroyAutoContacts  ();
-                    void            _destroyAutoSegments  ();
-    // Misc. functions.                                   
-      inline const  Flags&          flags                 () const;
-      inline        Flags&          flags                 ();
-                    void            reset                 ();
-                    void            startMeasures         ();
-                    void            stopMeasures          ();
-                    void            printMeasures         ( const string& ) const;
-      inline        void            _add                  ( GCell* );
-      inline        void            _remove               ( GCell* );
-      inline        void            _updateLookup         ( GCell* );
-      inline        bool            _inDestroy            () const;
-    // Inspector support.                                 
-      virtual       Record*         _getRecord            () const;
-      virtual       string          _getString            () const;
-      virtual       string          _getTypeName          () const;
+      inline        bool              isInDemoMode          () const;
+      inline        bool              isChip                () const;
+      inline        bool              doWarnOnGCellOverload () const;
+      inline        bool              doDestroyBaseContact  () const;
+      inline        bool              doDestroyBaseSegment  () const;
+      inline        bool              doDestroyTool         () const;
+      inline        DbU::Unit         getGlobalThreshold    () const;
+      inline        float             getSaturateRatio      () const;
+      inline        size_t            getSaturateRp         () const;
+      inline        DbU::Unit         getExtensionCap       () const;
+      inline        Net*              getBlockageNet        () const;
+      inline const  NetRoutingStates& getNetRoutingStates   () const;
+                    NetRoutingState*  getRoutingState       ( Net*, unsigned int flags=Flags::NoFlags );
+                    void              updateDensity         ();
+                    size_t            checkGCellDensities   ();
+      inline        void              setGlobalThreshold    ( DbU::Unit );
+      inline        void              setSaturateRatio      ( float );
+      inline        void              setSaturateRp         ( size_t );
+                    void              chipPrep              ();
+                    void              setupSpecialNets      ();
+                    void              setupPreRouteds       ();
+                    void              loadGlobalRouting     ( unsigned int method );
+                    void              computeNetConstraints ( Net* );
+                    void              toOptimals            ( Net* );
+                    void              updateNetTopology     ( Net* );
+                    bool              moveUpNetTrunk        ( AutoSegment*, set<Net*>& globalNets, GCell::Set& invalidateds );
+                    void              layerAssign           ( unsigned int method );
+                    void              finalizeLayout        ();
+      inline const  AutoContactLut&   _getAutoContactLut    () const;
+      inline const  AutoSegmentLut&   _getAutoSegmentLut    () const;
+                    void              _link                 ( AutoContact* );
+                    void              _link                 ( AutoSegment* );
+                    void              _unlink               ( AutoContact* );
+                    void              _unlink               ( AutoSegment* );
+                    AutoContact*      _lookup               ( Contact* ) const;
+                    AutoSegment*      _lookup               ( Segment* ) const;
+                    void              _loadGrByNet          ();
+                    void              _loadNetGlobalRouting ( Net* );
+                    void              _computeNetOptimals   ( Net* );
+                    void              _computeNetTerminals  ( Net* );
+                    void              _alignate             ( Net* );
+                    void              _desaturate           ( unsigned int depth, set<Net*>&, unsigned long& total, unsigned long& globals );
+                    void              _layerAssignByLength  ( unsigned long& total, unsigned long& global, set<Net*>& );
+                    void              _layerAssignByLength  ( Net*, unsigned long& total, unsigned long& global, set<Net*>& );
+                    void              _layerAssignByTrunk   ( unsigned long& total, unsigned long& global, set<Net*>& );
+                    void              _layerAssignByTrunk   ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
+                    void              _saveNet              ( Net* );
+                    void              _destroyAutoContacts  ();
+                    void              _destroyAutoSegments  ();
+    // Misc. functions.                                     
+      inline const  Flags&            flags                 () const;
+      inline        Flags&            flags                 ();
+                    void              reset                 ();
+                    void              startMeasures         ();
+                    void              stopMeasures          ();
+                    void              printMeasures         ( const string& ) const;
+      inline        void              _add                  ( GCell* );
+      inline        void              _remove               ( GCell* );
+      inline        void              _updateLookup         ( GCell* );
+      inline        bool              _inDestroy            () const;
+    // Inspector support.                                   
+      virtual       Record*           _getRecord            () const;
+      virtual       string            _getString            () const;
+      virtual       string            _getTypeName          () const;
     protected:                                            
-                                     AnabaticEngine       ( Cell* );
-      virtual                       ~AnabaticEngine       ();
-      virtual       void             _postCreate          ();
-      virtual       void             _preDestroy          ();
-                    void             _gutAnabatic         ();
-    private:                                              
-                                     AnabaticEngine       ( const AnabaticEngine& );
-                    AnabaticEngine&  operator=            ( const AnabaticEngine& );
+                                      AnabaticEngine        ( Cell* );
+      virtual                        ~AnabaticEngine        ();
+      virtual       void              _postCreate           ();
+      virtual       void              _preDestroy           ();
+                    void              _gutAnabatic          ();
+    private:                                                 
+                                      AnabaticEngine        ( const AnabaticEngine& );
+                    AnabaticEngine&   operator=             ( const AnabaticEngine& );
     private:
-      static Name            _toolName;
-             Timer           _timer;
-             Configuration*  _configuration;
-             EngineState     _state;
-             Matrix          _matrix;
-             vector<GCell*>  _gcells;
-             vector<Edge*>   _ovEdges;
-             CellViewer*     _viewer;
-             Flags           _flags;
-             int             _stamp;
-             unsigned int    _densityMode;
-             AutoSegmentLut  _autoSegmentLut;
-             AutoContactLut  _autoContactLut;
+      static Name              _toolName;
+             Timer             _timer;
+             Configuration*    _configuration;
+             ChipTools         _chipTools;
+             EngineState       _state;
+             Matrix            _matrix;
+             vector<GCell*>    _gcells;
+             vector<Edge*>     _ovEdges;
+             CellViewer*       _viewer;
+             Flags             _flags;
+             int               _stamp;
+             unsigned int      _densityMode;
+             AutoSegmentLut    _autoSegmentLut;
+             AutoContactLut    _autoContactLut;
+             NetRoutingStates  _netRoutingStates;
+             Net*              _blockageNet;
   };
 
 
-  inline       EngineState     AnabaticEngine::getState              () const { return _state; }
-  inline       void            AnabaticEngine::setState              ( EngineState state ) { _state = state; }
-  inline       CellViewer*     AnabaticEngine::getViewer             () const { return _viewer; }
-  inline       void            AnabaticEngine::setViewer             ( CellViewer* viewer ) { _viewer=viewer; }
-  inline const Matrix*         AnabaticEngine::getMatrix             () const { return &_matrix; }
-  inline const vector<GCell*>& AnabaticEngine::getGCells             () const { return _gcells; }
-  inline const vector<Edge*>&  AnabaticEngine::getOvEdges            () const { return _ovEdges; }
-  inline       GCell*          AnabaticEngine::getSouthWestGCell     () const { return _gcells[0]; }
-  inline       GCell*          AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
-  inline       GCell*          AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
-  inline       unsigned int    AnabaticEngine::getDensityMode        () const { return _densityMode; }
-  inline       void            AnabaticEngine::setDensityMode        ( unsigned int mode ) { _densityMode=mode; }
-  inline const AutoContactLut& AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }
-  inline const AutoSegmentLut& AnabaticEngine::_getAutoSegmentLut    () const { return _autoSegmentLut; }
-  inline const Flags&          AnabaticEngine::flags                 () const { return _flags; }
-  inline       Flags&          AnabaticEngine::flags                 () { return _flags; }
-  inline       bool            AnabaticEngine::doDestroyBaseContact  () const { return _flags & Flags::DestroyBaseContact; }
-  inline       bool            AnabaticEngine::doDestroyBaseSegment  () const { return _flags & Flags::DestroyBaseSegment; }
-  inline       bool            AnabaticEngine::doDestroyTool         () const { return _state >= EngineGutted; }
-  inline       bool            AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
-  inline       bool            AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
-  inline       DbU::Unit       AnabaticEngine::getGlobalThreshold    () const { return _configuration->getGlobalThreshold(); }
-  inline       float           AnabaticEngine::getSaturateRatio      () const { return _configuration->getSaturateRatio(); }
-  inline       size_t          AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }
-  inline       void            AnabaticEngine::setSaturateRatio      ( float ratio ) { _configuration->setSaturateRatio(ratio); }
-  inline       void            AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
-  inline       void            AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
-  inline       void            AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
-  inline       bool            AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
+  inline       EngineState       AnabaticEngine::getState              () const { return _state; }
+  inline       void              AnabaticEngine::setState              ( EngineState state ) { _state = state; }
+  inline       CellViewer*       AnabaticEngine::getViewer             () const { return _viewer; }
+  inline       void              AnabaticEngine::setViewer             ( CellViewer* viewer ) { _viewer=viewer; }
+  inline const Matrix*           AnabaticEngine::getMatrix             () const { return &_matrix; }
+  inline const vector<GCell*>&   AnabaticEngine::getGCells             () const { return _gcells; }
+  inline const vector<Edge*>&    AnabaticEngine::getOvEdges            () const { return _ovEdges; }
+  inline       GCell*            AnabaticEngine::getSouthWestGCell     () const { return _gcells[0]; }
+  inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
+  inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
+  inline       unsigned int      AnabaticEngine::getDensityMode        () const { return _densityMode; }
+  inline       void              AnabaticEngine::setDensityMode        ( unsigned int mode ) { _densityMode=mode; }
+  inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }
+  inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut    () const { return _autoSegmentLut; }
+  inline const Flags&            AnabaticEngine::flags                 () const { return _flags; }
+  inline       Flags&            AnabaticEngine::flags                 () { return _flags; }
+  inline       bool              AnabaticEngine::doDestroyBaseContact  () const { return _flags & Flags::DestroyBaseContact; }
+  inline       bool              AnabaticEngine::doDestroyBaseSegment  () const { return _flags & Flags::DestroyBaseSegment; }
+  inline       bool              AnabaticEngine::doDestroyTool         () const { return _state >= EngineGutted; }
+  inline       bool              AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
+  inline       bool              AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
+  inline       bool              AnabaticEngine::isChip                () const { return _chipTools.isChip(); }
+  inline       DbU::Unit         AnabaticEngine::getGlobalThreshold    () const { return _configuration->getGlobalThreshold(); }
+  inline       float             AnabaticEngine::getSaturateRatio      () const { return _configuration->getSaturateRatio(); }
+  inline       size_t            AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }
+  inline       void              AnabaticEngine::setSaturateRatio      ( float ratio ) { _configuration->setSaturateRatio(ratio); }
+  inline       void              AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
+  inline       Net*              AnabaticEngine::getBlockageNet        () const { return _blockageNet; }
+  inline       void              AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
+  inline const NetRoutingStates& AnabaticEngine::getNetRoutingStates   () const { return _netRoutingStates; }
+  inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
   {
@@ -226,6 +248,9 @@ namespace Anabatic {
     for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge )
       if (*iedge == edge) { _ovEdges.erase(iedge); break; }
   }
+
+
+  extern const char* badMethod;
 
 }  // Anabatic namespace.
 

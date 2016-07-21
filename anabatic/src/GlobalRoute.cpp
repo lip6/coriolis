@@ -133,13 +133,23 @@ namespace Anabatic {
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
+
+    Session::open( this );
+    setupSpecialNets();
+    setupPreRouteds ();
+    Session::close();
+
     startMeasures();
 
     cmess1 << "  o  Running global routing..." << endl;
 
     NetSet  netsToRoute;
     for ( Net* net : cell->getNets() ) {
-      if (net->isSupply() or net->isClock()) continue;
+      NetRoutingState* state = getRoutingState( net );
+      if (state) {
+        if (state->isMixedPreRoute()) continue;
+      }
+
       netsToRoute.insert( net );
     }
 
