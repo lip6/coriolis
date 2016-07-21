@@ -124,6 +124,7 @@ class GaugeConf ( object ):
       self._routingGauge  = None
       self._topLayerDepth = 0
       self._plugToRp      = { }
+      self._rpToAccess    = { }
 
       self._loadRoutingGauge()
       return
@@ -206,6 +207,10 @@ class GaugeConf ( object ):
     def _rpAccess ( self, rp, flags ):
       trace( 550, ',+', '\t_rpAccess() %s\n' % str(rp) )
 
+      if self._rpToAccess.has_key(rp):
+        trace( 550, '-' )
+        return self._rpToAccess[rp]
+
       if flags & GaugeConf.DeepDepth:
         hdepth = self._horizontalDeepDepth
         vdepth = self._verticalDeepDepth
@@ -259,6 +264,8 @@ class GaugeConf ( object ):
                                    )
           trace( 550, segment )
         contact1 = contact2
+
+      self._rpToAccess[rp] = contact1
   
       trace( 550, '-' )
       return contact1
