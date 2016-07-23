@@ -663,10 +663,6 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   }                                                                  \
 
 
-//inline tstream& operator<< ( tstream& o, Data* d )                    \
-//{ if (o.enabled()) static_cast<std::ostream&>(o) << d; return o; }
-
-
 # define GETRECORD_POINTER_SUPPORT(Data) \
   template<> inline Hurricane::Record* getRecord<Data*>( Data* data )             \
   { if (!data) return NULL; return data->_getRecord(); }                          \
@@ -690,10 +686,6 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   inline std::ostream& operator<< ( std::ostream& o, const Data& d )       \
   { return o << getString<const Data&>(d); }                               \
                                                                            \
-
-//  inline tstream& operator<< ( tstream& o, Data& d )                  \
-//{ if (o.enabled()) static_cast<std::ostream&>(o) << d; return o; }
-
 
 # define GETRECORD_REFERENCE_SUPPORT(Data) \
   template<> inline Hurricane::Record* getRecord<Data&>( Data& data )             \
