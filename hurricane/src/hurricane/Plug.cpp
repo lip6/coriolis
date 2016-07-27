@@ -134,20 +134,26 @@ PlugFilter Plug::getIsUnconnectedFilter()
 void Plug::setNet(Net* net)
 // ************************
 {
-    if (net != getNet()) {
+  if (net != getNet()) {
+    if (net and (getCell() != net->getCell()))
+      throw Error( "Plug::setNet(): Can't set Net of plug %s to %s\n"
+                   "Net belong to %s instead of %s."
+                 , getString(this).c_str()
+                 , getString(net).c_str()
+                 , getString(net->getCell()).c_str()
+                 , getString(getCell()).c_str()
+                 );
 
-        if (net && (getCell() != net->getCell()))
-            throw Error("Can't change net of plug: " + getString(net) + " does not belong to " + getString(getCell()));
+    if (not getBodyHook()->getSlaveHooks().isEmpty())
+      throw Error( "Plug::setNet(): Can't change net of %s: Component(s) are still attached upon it."
+                 , getString(this).c_str()
+                 );
 
-        if (!getBodyHook()->getSlaveHooks().isEmpty())
-            throw Error("Can't change net of plug: not empty slave hooks");
+    if (not net) 
+      cdebug_log(18,0) << "Plug::setNet(): About to disconnect " << this << endl;
 
-        if (net == NULL) {
-          cerr << "About to disconnect " << this << endl;
-        }
-
-        _setNet(net);
-    }
+    _setNet( net );
+  }
 }
 
 Plug* Plug::_create(Instance* instance, Net* masterNet)
