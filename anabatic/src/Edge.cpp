@@ -42,7 +42,7 @@ namespace Anabatic {
     , _source           (source)
     , _target           (target)
     , _axis             (0)
-    , _segment          (NULL)
+    , _segments         ()
   { }
 
 
@@ -182,17 +182,43 @@ namespace Anabatic {
   }
 
 
-  void  Edge::destroySegment ()
+  Segment* Edge::getSegment ( const Net* owner ) const
   {
-    if (not _segment) return;
+    for ( Segment* segment : _segments ) {
+      if (segment->getNet() == owner) return segment;
+    }
+    return NULL;
+  }
 
-    Contact* csource = dynamic_cast<Contact*>( _segment->getSource() );
-    Contact* ctarget = dynamic_cast<Contact*>( _segment->getTarget() );
 
-    _segment->destroy();
-    _segment = NULL;
-    if (csource) getSource()->unrefContact( csource );
-    if (ctarget) getTarget()->unrefContact( ctarget );
+  void  Edge::add ( Segment* segment )
+  {
+    _segments.push_back( segment );
+    incRealOccupancy( 1 );  // Need to take the wire width into account.
+  }
+
+
+  void  Edge::remove ( Segment* segment )
+  {
+    for ( size_t i=0 ; i<_segments.size() ; ++i ) {
+      if (_segments[i] == segment) {
+        std::swap( _segments[i], _segments[_segments.size()-1] );
+        _segments.pop_back();
+        incRealOccupancy( -1 );  // Need to take the wire width into account.
+        return;
+      }
+    }
+  }
+
+
+  void  Edge::replace ( Segment* orig, Segment* repl )
+  {
+    for ( size_t i=0 ; i<_segments.size() ; ++i ) {
+      if (_segments[i] == orig) {
+        _segments[i] = repl;
+        return;
+      }
+    }
   }
 
 
@@ -281,13 +307,14 @@ namespace Anabatic {
   Record* Edge::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot("_flags"            , _flags            ) );
-    record->add( getSlot("_capacity"         , _capacity         ) );
-    record->add( getSlot("_realOccupancy"    , _realOccupancy    ) );
-    record->add( getSlot("_estimateOccupancy", _estimateOccupancy) );
-    record->add( getSlot("_source"           , _source           ) );
-    record->add( getSlot("_target"           , _target           ) );
+    record->add( getSlot("_flags"            ,  _flags            ) );
+    record->add( getSlot("_capacity"         ,  _capacity         ) );
+    record->add( getSlot("_realOccupancy"    ,  _realOccupancy    ) );
+    record->add( getSlot("_estimateOccupancy",  _estimateOccupancy) );
+    record->add( getSlot("_source"           ,  _source           ) );
+    record->add( getSlot("_target"           ,  _target           ) );
     record->add( DbU::getValueSlot("_axis", &_axis) );
+    record->add( getSlot("_segments"         , &_segments         ) );
     return record;
   }
 

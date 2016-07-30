@@ -19,6 +19,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
 #include "hurricane/DebugSession.h"
@@ -61,6 +62,71 @@ namespace Anabatic {
   const char* lookupFailed =
     "Anabatic::Extension::getDatas(Segment*) :\n\n"
     "    Cannot find AutoSegment associated to %s (internal error).\n";
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::RawGCellsUnder".
+
+  RawGCellsUnder::RawGCellsUnder ( const AnabaticEngine* engine, Segment* segment )
+  {
+    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(): " << segment << endl;
+
+    GCell* gsource = engine->getGCellUnder( segment->getSourcePosition() );
+    GCell* gtarget = engine->getGCellUnder( segment->getTargetPosition() );
+
+    if (not gsource) {
+      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s source not over a GCell (ignored)."
+                   , getString(segment).c_str()
+                   ) << endl;
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return;
+    }
+    if (not gtarget) {
+      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s target not over a GCell (ignored)."
+                   , getString(segment).c_str()
+                   ) << endl;
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return;
+    }
+
+    if (gsource == gtarget) {
+      _elements.push_back( Element(gsource,NULL) );
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return;
+    }
+
+    Flags       side       = Flags::NoFlags;
+    DbU::Unit   axis       = 0;
+    Horizontal* horizontal = dynamic_cast<Horizontal*>( segment );
+    if (horizontal) {
+      side = Flags::EastSide;
+      axis = horizontal->getY();
+
+      if (horizontal->getSourceX() > horizontal->getTargetX())
+        std::swap( gsource, gtarget );
+    } else {
+      Vertical* vertical = dynamic_cast<Vertical*>( segment );
+      side = Flags::NorthSide;
+      axis = vertical->getX();
+
+      if (vertical->getSourceY() > vertical->getTargetY())
+        std::swap( gsource, gtarget );
+    }
+
+    Edge* edge = gsource->getEdgeAt( side, axis );
+    while ( edge ) {
+      _elements.push_back( Element(edge->getSource(),edge) );
+
+      if (edge->getTarget() == gtarget) break;
+      edge = edge->getTarget()->getEdgeAt( side, axis );
+    } 
+    _elements.push_back( Element(gtarget,NULL) );
+
+    cdebug_tabw(112,-1);
+  }
 
 
 // -------------------------------------------------------------------
@@ -310,6 +376,226 @@ namespace Anabatic {
 
     _netRoutingStates.insert( make_pair(net->getId(), state) );
     return state;
+  }
+
+
+  Contact* AnabaticEngine::breakAt ( Segment* segment, GCell* breakGCell )
+  {
+    size_t       i      = 0;
+    GCellsUnder  gcells ( new RawGCellsUnder(this,segment) );
+    for ( ; i<gcells->size() ; ++i ) {
+      if (gcells->gcellAt(i) == breakGCell) break;
+    }
+
+    Contact* breakContact = breakGCell->getGContact( segment->getNet() );
+
+    if (i == gcells->size()) {
+      cerr << Error( "AnabaticEngine::breakAt(): %s is *not* over %s."
+                   , getString(segment).c_str()
+                   , getString(breakGCell).c_str()
+                   ) << endl;
+      return breakContact;
+    }
+
+    Component* targetContact = segment->getTarget();
+    segment->getTargetHook()->detach();
+    segment->getTargetHook()->attach( breakContact->getBodyHook() );
+
+    Segment*    splitted   = NULL;
+    Horizontal* horizontal = dynamic_cast<Horizontal*>(segment);
+    if (horizontal) {
+      splitted = Horizontal::create( breakContact
+                                   , targetContact
+                                   , getConfiguration()->getGHorizontalLayer()
+                                   , horizontal->getY()
+                                   , DbU::fromLambda(2.0)
+                                   );
+    } else {
+      Vertical* vertical = dynamic_cast<Vertical*>(segment);
+      if (vertical) {
+        splitted = Vertical::create( breakContact
+                                   , targetContact
+                                   , getConfiguration()->getGVerticalLayer()
+                                   , vertical->getX()
+                                   , DbU::fromLambda(2.0)
+                                   );
+      } else
+        return breakContact;
+    }
+
+    for ( ; i<gcells->size()-1 ; ++i ) gcells->edgeAt(i)->replace( segment, splitted );
+
+    return breakContact;
+  }
+
+
+  bool  AnabaticEngine::unify ( Contact* contact )
+  {
+    size_t      hCount     = 0;
+    size_t      vCount     = 0;
+    Horizontal* horizontals[2];
+    Vertical*   verticals  [2];
+
+    for ( Component* slave : contact->getSlaveComponents() ) {
+      Horizontal* h = dynamic_cast<Horizontal*>( slave );
+      if (h) {
+        if (vCount or (hCount > 1)) return false;
+        horizontals[hCount++] = h;
+      } else {
+        Vertical* v = dynamic_cast<Vertical*>( slave );
+        if (v) {
+          if (hCount or (vCount > 1)) return false;
+          verticals[vCount++] = v;
+        } else {
+        // Something else depends on this contact.
+          return false;
+        }
+      }
+    }
+
+    if (hCount == 2) {
+      if (horizontals[0]->getTarget() != contact) std::swap( horizontals[0], horizontals[1] );
+      Interval    constraints ( false );
+      GCellsUnder gcells0     = getGCellsUnder( horizontals[0] );
+      if (not gcells0->empty()) {
+        for ( size_t i=0 ; i<gcells0->size() ; ++i )
+          constraints.intersection( gcells0->gcellAt(i)->getSide(Flags::Vertical) );
+      }
+
+      GCellsUnder gcells1 = getGCellsUnder( horizontals[1] );
+      if (not gcells1->empty()) {
+        for ( size_t i=0 ; i<gcells1->size() ; ++i ) {
+          constraints.intersection( gcells1->gcellAt(i)->getSide(Flags::Vertical) );
+          if (constraints.isEmpty()) return false;
+        }
+      }
+
+      if (not gcells1->empty()) {
+        for ( size_t i=0 ; i<gcells1->size()-1 ; ++i )
+          gcells1->edgeAt(i)->replace( horizontals[1], horizontals[0] );
+      }
+
+      Component* target = horizontals[1]->getTarget();
+      horizontals[1]->destroy();
+      horizontals[0]->getTargetHook()->detach();
+      horizontals[0]->getTargetHook()->attach( target->getBodyHook() );
+    } 
+
+    if (vCount == 2) {
+      if (verticals[0]->getTarget() != contact) std::swap( verticals[0], verticals[1] );
+      Interval    constraints ( false );
+      GCellsUnder gcells0     = getGCellsUnder( verticals[0] );
+      if (not gcells0->empty()) {
+        for ( size_t i=0 ; i<gcells0->size() ; ++i )
+          constraints.intersection( gcells0->gcellAt(i)->getSide(Flags::Horizontal) );
+      }
+
+      GCellsUnder gcells1 = getGCellsUnder( verticals[1] );
+      if (not gcells1->empty()) {
+        for ( size_t i=0 ; i<gcells1->size() ; ++i ) {
+          constraints.intersection( gcells1->gcellAt(i)->getSide(Flags::Horizontal) );
+          if (constraints.isEmpty()) return false;
+        }
+      }
+
+      if (not gcells1->empty()) {
+        for ( size_t i=0 ; i<gcells1->size()-1 ; ++i )
+          gcells1->edgeAt(i)->replace( verticals[1], verticals[0] );
+      }
+
+      Component* target = verticals[1]->getTarget();
+      verticals[1]->destroy();
+      verticals[0]->getTargetHook()->detach();
+      verticals[0]->getTargetHook()->attach( target->getBodyHook() );
+    } 
+
+    getGCellUnder( contact->getPosition() )->unrefContact( contact );
+
+    return true;
+  }
+
+
+  void  AnabaticEngine::ripup ( Segment* seed, Flags flags )
+  {
+    DebugSession::open( seed->getNet(), 112, 120 );
+    cdebug_log(112,1) << "AnabaticEngine::ripup(): " << seed << endl;
+
+    Contact* end0 = NULL;
+    Contact* end1 = NULL;
+
+    vector<Segment*> ripups;
+    ripups.push_back( seed );
+
+    vector< pair<Segment*,Component*> > stack;
+    if (flags & Flags::Propagate) {
+      stack.push_back( make_pair(seed,seed->getSource()) );
+      stack.push_back( make_pair(seed,seed->getTarget()) );
+    }
+
+    while ( not stack.empty() ) {
+      Contact* contact = dynamic_cast<Contact*>( stack.back().second );
+      Segment* from    = stack.back().first;
+      stack.pop_back();
+      if (not contact) continue;
+
+      Segment* connected  = NULL;
+      size_t   slaveCount = 0;
+      for ( Hook* hook : contact->getBodyHook()->getHooks() ) {
+        Component* linked = hook->getComponent();
+        if ((linked == contact) or (linked == from)) continue;
+
+        if (dynamic_cast<RoutingPad*>(linked)) { ++slaveCount; continue; }
+
+        connected = dynamic_cast<Segment*>( linked );
+        if (connected) ++slaveCount; 
+      }
+
+      if ((slaveCount == 1) and (connected)) {
+        stack .push_back( make_pair(connected,connected->getOppositeAnchor(contact)) );
+        ripups.push_back( connected );
+      } else {
+        if (not end0) {
+          end0 = contact;
+          cdebug_log(112,0) << "end0:" << contact << endl;
+        } else {
+          end1 = contact;
+          cdebug_log(112,0) << "end1:" << contact << endl;
+        }
+      }
+    }
+
+    for ( Segment* segment : ripups ) {
+      cdebug_log(112,1) << "| Destroy:" << segment << endl;
+
+      GCellsUnder gcells = getGCellsUnder( segment );
+      if (not gcells->empty()) {
+        for ( size_t i=0 ; i<gcells->size()-1 ; ++i )
+          gcells->edgeAt(i)->remove( segment );
+      }
+
+      Contact* source = dynamic_cast<Contact*>( segment->getSource() );
+      Contact* target = dynamic_cast<Contact*>( segment->getTarget() );
+      segment->destroy();
+      bool deletedSource = gcells->gcellAt( 0                )->unrefContact( source );
+      bool deletedTarget = gcells->gcellAt( gcells->size()-1 )->unrefContact( target );
+
+      if (deletedSource) {
+        if (source == end0) end0 = NULL;
+        if (source == end1) end1 = NULL;
+      }
+      if (deletedTarget) {
+        if (target == end0) end0 = NULL;
+        if (target == end1) end1 = NULL;
+      }
+
+      cdebug_tabw(112,-1);
+    }
+
+    if (end0) unify( end0 );
+    if (end1) unify( end1 );
+
+    cdebug_tabw(111,-1);
+    DebugSession::close();
   }
 
 

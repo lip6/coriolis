@@ -232,6 +232,7 @@ namespace Anabatic {
     engine->stopMeasures();
     engine->printMeasures( "Dijkstra" );
 
+#if 0
     const vector<Edge*>& ovEdges = engine->getOvEdges();
     if (not ovEdges.empty()) {
       size_t count = 0;
@@ -246,10 +247,11 @@ namespace Anabatic {
 
       UpdateSession::open();
       Net* net = *nets.begin();
-      dijkstra->load( net );
-      dijkstra->ripup( ovEdges[0] );
+    //dijkstra->load( net );
+    //dijkstra->ripup( ovEdges[0] );
       UpdateSession::close();
     }
+#endif
 
     UpdateSession::open();
     delete dijkstra;

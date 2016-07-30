@@ -122,8 +122,8 @@ namespace Anabatic {
       message << "Base contact still have slaves components, cancelled.\n"
               << "        on: " << this;
 
-      forEach ( Component*, icomponent, _contact->getSlaveComponents() ) {
-        message << "\n          | " << (*icomponent);
+      for ( Component* component : _contact->getSlaveComponents() ) {
+        message << "\n          | " << component;
       }
       cerr << Error( message.str() ) << endl;
 
@@ -189,12 +189,10 @@ namespace Anabatic {
     Component* anchor = getAnchor ();
     if (anchor) {
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
-    //cdebug_log(149,0) << "Anchor:" << anchor << endl;
     }
 
-    forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
-      minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(isegment->getLayer()) );
-    //cdebug_log(149,0) << "Slave:" << *icomponent << endl;
+    for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
+      minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
     }
 
     return (unsigned int)minDepth;
@@ -207,12 +205,10 @@ namespace Anabatic {
     Component* anchor = getAnchor ();
     if ( anchor ) {
       maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
-    //cdebug_log(149,0) << "Anchor:" << anchor << endl;
     }
 
-    forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
-      maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(isegment->getLayer()) );
-    //cdebug_log(149,0) << "Slave:" << *icomponent << endl;
+    for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
+      maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
     }
 
     return (unsigned int)maxDepth;
@@ -224,33 +220,33 @@ namespace Anabatic {
     DbU::Unit hSideLength = getGCell()->getSide( Flags::Horizontal ).getSize();
     DbU::Unit vSideLength = getGCell()->getSide( Flags::Vertical   ).getSize();
 
-    forEach ( AutoSegment*, isegment, getAutoSegments() ) {
-      bool isSourceHook = (isegment->getAutoSource() == this);
+    for ( AutoSegment* segment : getAutoSegments() ) {
+      bool isSourceHook = (segment->getAutoSource() == this);
 
-      if (processeds.find(*isegment) != processeds.end()) continue;
-      processeds.insert( *isegment );
+      if (processeds.find(segment) != processeds.end()) continue;
+      processeds.insert( segment );
 
-      size_t     depth  = Session::getRoutingGauge()->getLayerDepth(isegment->getLayer());
+      size_t     depth  = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
       DbU::Unit  length;
-      if (isegment->isLocal()) {
-        length = isegment->getLength();
+      if (segment->isLocal()) {
+        length = segment->getLength();
         lengths[depth] += length;
 
-        DbU::Unit sideLength = (isegment->isHorizontal()) ? hSideLength : vSideLength;
-        if ( not isegment->isUnbound() and (abs(length) > sideLength) )
+        DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;
+        if ( not segment->isUnbound() and (abs(length) > sideLength) )
           cerr << Error("Suspicious length:%.2f of %s."
-                       ,DbU::toLambda(length),getString(*isegment).c_str()) << endl;
+                       ,DbU::toLambda(length),getString(segment).c_str()) << endl;
       } else {
-        if ( isegment->isHorizontal() ) {
+        if (segment->isHorizontal()) {
           if (isSourceHook)
-            lengths[depth] += _gcell->getXMax() - isegment->getSourceX();
+            lengths[depth] += _gcell->getXMax() - segment->getSourceX();
           else
-            lengths[depth] += isegment->getTargetX() - _gcell->getXMin();
+            lengths[depth] += segment->getTargetX() - _gcell->getXMin();
         } else {
           if (isSourceHook)
-            lengths[depth] += _gcell->getYMax() - isegment->getSourceY();
+            lengths[depth] += _gcell->getYMax() - segment->getSourceY();
           else
-            lengths[depth] += isegment->getTargetY() - _gcell->getYMin();
+            lengths[depth] += segment->getTargetY() - _gcell->getYMin();
         }
       }
     }
@@ -301,8 +297,6 @@ namespace Anabatic {
       Session::invalidate( this );
 
       _invalidate( flags );
-    //forEach( AutoSegment*, isegment, getAutoSegments() )
-    //  isegment->invalidate();
 
       getGCell()->invalidate();
       cdebug_tabw(145,-1);
@@ -349,12 +343,12 @@ namespace Anabatic {
 
     anchor = support->getAnchor();
 
-    forEach ( Component*, icomponent, support->getSlaveComponents() ) {
-      Horizontal* h = dynamic_cast<Horizontal*>(*icomponent);
+    for ( Component* component : support->getSlaveComponents() ) {
+      Horizontal* h = dynamic_cast<Horizontal*>(component);
       if (h != NULL) {
         if (hcount < size) horizontals[hcount++] = h;
       } else {
-        Vertical* v = dynamic_cast<Vertical*>(*icomponent);
+        Vertical* v = dynamic_cast<Vertical*>(component);
         if ( (v != NULL) and (vcount < size) ) verticals[vcount++] = v;
       }
     }
@@ -425,10 +419,10 @@ namespace Anabatic {
       cdebug_log(149,0) << "| Anchor depth: " << viaDepth << endl;
     }
 
-    forEach ( AutoSegment*, isegment, const_cast<AutoContact*>(this)->getAutoSegments() ) {
-      if (*isegment == moved) continue;
+    for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
+      if (segment == moved) continue;
 
-      size_t depth = rg->getLayerDepth(isegment->getLayer());
+      size_t depth = rg->getLayerDepth(segment->getLayer());
       if (viaDepth == 100) viaDepth = depth;
       else
         if (viaDepth != depth) return false;

@@ -65,6 +65,8 @@ namespace Anabatic {
     string s = "<Vertex " + getString(_id)
              + " @(" + DbU::getValueString(_gcell->getXMin())
              +  "," + DbU::getValueString(_gcell->getYMin()) + ")"
+             + " rps:" +  getString(_rpCount)
+             + " deg:" +  getString(_degree)
              + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")
              + " d:" + ((_distance == unreached) ? "unreached"
                                                  : ((_distance == unreachable) ? "unreachable"
@@ -199,43 +201,26 @@ namespace Anabatic {
   {
     _cleanup();
 
-    const Layer* gcontactLayer = _anabatic->getConfiguration()->getGContactLayer();
-
     _net   = net;
     _stamp = _anabatic->incStamp();
 
     DebugSession::open( _net, 112, 120 );
     cdebug_log(112,1) << "Dijkstra::load() " << _net << endl;
 
-    vector< std::pair<Component*,bool> > components;
+    vector<RoutingPad*> rps;
     for ( Component* component : _net->getComponents() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
-      if (rp) { components.push_back( make_pair(rp,true) ); continue; }
-
-      Contact* gcontact = dynamic_cast<Contact*>( component );
-      if (gcontact and (gcontact->getLayer() == gcontactLayer))
-        components.push_back( make_pair(gcontact,false) );
+      if (rp) { rps.push_back( rp ); continue; }
     }
 
-    for ( auto element : components ) {
-      RoutingPad* rp       = NULL;
-      Contact*    gcontact = NULL;
-      Point       center;
-
-      if (element.second) {
-        rp     = static_cast<RoutingPad*>( element.first );
-        center = rp->getBoundingBox().getCenter();
-      } else {
-        gcontact = static_cast<Contact*>( element.first );
-        center   = gcontact->getCenter();
-      }
-
-      GCell* gcell = _anabatic->getGCellUnder( center );
+    for ( auto rp : rps ) {
+      Point  center = rp->getBoundingBox().getCenter();
+      GCell* gcell  = _anabatic->getGCellUnder( center );
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
                        "        It will be ignored so the routing may be incomplete."
-                     , getString(element.first).c_str()
+                     , getString(rp).c_str()
                      , getString(_net).c_str()
                      ) << endl;
         continue;
@@ -243,75 +228,30 @@ namespace Anabatic {
 
       _searchArea.merge( gcell->getBoundingBox() );
 
-      Vertex* vertex = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
-      if (vertex->getConnexId() < 0) {
-        vertex->setDistance( Vertex::unreached );
-        vertex->setStamp   ( _stamp );
-        vertex->setConnexId( _connectedsId );
-        vertex->setBranchId( 0 );
-        vertex->setFrom    ( NULL );
-        _targets.insert( vertex );
-        vertex->clearRestriction();
-        cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
-      }
+      Vertex* seed = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
+      if (seed->getConnexId() < 0) {
+        VertexSet  connecteds;
+        _getConnecteds( seed, connecteds );
 
-      if (gcontact) {
-        for ( Component* slave : gcontact->getSlaveComponents() ) {
-          Flags  sideHint      = Flags::NoFlags;
-          GCell* oppositeGCell = NULL;
-
-          Segment* segment = dynamic_cast<Horizontal*>(slave);
-          if (segment) {
-            cdebug_log(112,0) << "| " << segment << endl;
-            if (segment->getSource() == gcontact) {
-              oppositeGCell = _anabatic->getGCellUnder( segment->getTarget()->getCenter() );
-              sideHint = Flags::EastSide;
-            } else
-              if (segment->getTarget() == gcontact) {
-                cdebug_log(112,0) << "  Connected by target, skipped." << endl;
-                continue;
-              }
-          } else {
-            segment = dynamic_cast<Vertical*>(slave);
-            if (segment) {
-              cdebug_log(112,0) << "| " << segment << endl;
-              if (segment->getSource() == gcontact) {
-                oppositeGCell = _anabatic->getGCellUnder( segment->getTarget()->getCenter() );
-                sideHint = Flags::NorthSide;
-              } else
-                if (segment->getTarget() == gcontact) {
-                  cdebug_log(112,0) << "  Connected by target, skipped." << endl;
-                  continue;
-                }
-            }
-          }
-
-          Edge* edge = gcell->getEdgeTo( oppositeGCell, sideHint );
-          if (edge) {
-            cdebug_log(112,0) << "+ Associated to edge." << endl;
-            edge->setSegment( segment );
-          } else
-            cerr << Error( "Dijkstra::load(): Cannot bind segment to any edge:\n"
-                           "  %s\n"
-                           "  source:%s\n"
-                           "  target:%s"
-                         , getString(segment).c_str()
-                         , getString(gcell).c_str()
-                         , getString(oppositeGCell).c_str()
-                         ) << endl;
+        ++_connectedsId;
+        for ( Vertex* vertex : connecteds ) {
+          vertex->setDistance     ( Vertex::unreached );
+          vertex->setStamp        ( _stamp );
+          vertex->setConnexId     ( _connectedsId );
+          vertex->setBranchId     ( 0 );
+          vertex->setDegree       ( 1 );
+          vertex->setRpCount      ( 0 );
+          vertex->setFrom         ( NULL );
+          vertex->clearRestriction();
+          _targets.insert( vertex );
+          cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
         }
       }
 
-      if (rp) {
-        Contact* vcontact = vertex->getGContact( _net );
-        rp->getBodyHook()->detach();
-        rp->getBodyHook()->attach( vcontact->getBodyHook() );
-      }
-    }
-
-    for ( Vertex* vertex : _targets ) {
-      if (vertex->getConnexId() != 0) continue;
-      _tagConnecteds( vertex, ++_connectedsId );
+      seed->incRpCount();
+      Contact* vcontact = seed->getGContact( _net );
+      rp->getBodyHook()->detach();
+      rp->getBodyHook()->attach( vcontact->getBodyHook() );
     }
 
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
@@ -384,11 +324,7 @@ namespace Anabatic {
 
   void  Dijkstra::_cleanup ()
   {
-    for ( Vertex* vertex : _sources ) if (vertex->getFrom()) vertex->getFrom()->setSegment( NULL );
-    for ( Vertex* vertex : _targets ) if (vertex->getFrom()) vertex->getFrom()->setSegment( NULL );
-
   //_checkEdges();
-
     _sources.clear();
     _targets.clear();
     _searchArea.makeEmpty();
@@ -432,6 +368,8 @@ namespace Anabatic {
               if (not vneighbor->hasValidStamp()) {
                 vneighbor->setConnexId( -1 );
                 vneighbor->setStamp   ( _stamp );
+                vneighbor->setDegree  ( 1 );
+                vneighbor->setRpCount ( 0 );
               }
             }
 
@@ -468,50 +406,112 @@ namespace Anabatic {
     cdebug_log(112,1) << "Dijkstra::_traceback() " << _net << " branchId:" << _sources.size() << endl;
 
     int branchId = _sources.size();
-    _targets.erase( current );
+    _toSources( current, _connectedsId );
 
+    current = current->getPredecessor();
     while ( current ) {
       cdebug_log(112,0) << "| " << current << endl;
+
+      current->incDegree();
       if (current->getConnexId() == _connectedsId) break;
 
       Edge* from = current->getFrom();
       if (not from) break;
-      from->incRealOccupancy( 1 );
 
-      _sources.insert( current );
       current->setDistance( 0.0 );
       current->setConnexId( _connectedsId );
       current->setBranchId( branchId );
+      _sources.insert( current );
       _queue.push( current );
       
-      Vertex* source = current;
-      Vertex* target = source->getPredecessor();
-      current = target;
+      current = current->getPredecessor();
+    }
 
-      if (  (source->getGCell()->getXMin() > target->getGCell()->getXMin())
-         or (source->getGCell()->getYMin() > target->getGCell()->getYMin()) )
-        std::swap( source, target );
+    cdebug_tabw(112,-1);
+  }
 
-      Contact* sourceContact = source->getGContact( _net );
-      Contact* targetContact = target->getGContact( _net );
 
-      Segment* segment = NULL;
-      if (from->isHorizontal()) {
-        segment = Horizontal::create( sourceContact
+  void  Dijkstra::_materialize ()
+  {
+    cdebug_log(112,1) << "Dijkstra::_materialize() " << _net << " _sources:" << _sources.size() << endl;
+
+    if (_sources.size() < 2) { cdebug_tabw(112,-1); return; }
+
+    for ( Vertex* startVertex : _sources ) {
+      cdebug_log(112,0) << "? " << startVertex << endl;
+
+      if (not startVertex->getFrom()) continue;
+      if (   not startVertex->hasGContact(_net)
+         and not startVertex->getRpCount()
+         and (startVertex->getDegree() < 3)) continue;
+
+      Vertex* source = startVertex;
+      while ( source ) {
+        cdebug_log(112,0) << "* " << source << endl;
+
+        Edge* from = source->getFrom();
+        vector<Edge*> aligneds;
+        aligneds.push_back( from );
+
+        Vertex*  target       = source->getPredecessor();
+        Interval constraint   = from->getSide();
+        source->setFrom( NULL );
+
+        cdebug_log(112,0) << "| " << target << endl;
+
+        while ( true ) {
+          from = target->getFrom();
+          if (   not from
+             or (target->hasGContact(_net))
+             or (target->getRpCount())
+             or (target->getDegree() > 2)
+             or (aligneds.back()->isHorizontal() xor from->isHorizontal())
+             or not constraint.intersect(from->getSide())) break;
+
+          aligneds.push_back( from );
+          constraint.merge( from->getSide() );
+
+          Vertex* nextTarget = target->getPredecessor();
+          target->setFrom( NULL );
+          target = nextTarget;
+
+          cdebug_log(112,0) << "+ " << target << endl;
+        }
+
+        Contact* sourceContact = source->getGContact( _net );
+        Contact* targetContact = target->hasGContact( _net );
+        Segment* segment       = NULL;
+
+        if (not targetContact) {
+          if (target->getFrom()) targetContact = target->getGContact( _net );
+          else                   targetContact = target->breakGoThrough( _net );
+        }
+
+        if (  (source->getGCell()->getXMin() > target->getGCell()->getXMin())
+           or (source->getGCell()->getYMin() > target->getGCell()->getYMin()) )
+          std::swap( sourceContact, targetContact );
+
+        if (aligneds.front()->isHorizontal()) {
+          segment = Horizontal::create( sourceContact
+                                      , targetContact
+                                      , _anabatic->getConfiguration()->getGHorizontalLayer()
+                                      , constraint.getCenter()
+                                      , DbU::fromLambda(2.0)
+                                      );
+          for ( Edge* through : aligneds ) through->add( segment );
+        } else {
+          segment = Vertical::create( sourceContact
                                     , targetContact
-                                    , _anabatic->getConfiguration()->getGHorizontalLayer()
-                                    , from->getAxis()
+                                    , _anabatic->getConfiguration()->getGVerticalLayer()
+                                    , constraint.getCenter()
                                     , DbU::fromLambda(2.0)
                                     );
-      } else {
-        segment = Vertical::create( sourceContact
-                                  , targetContact
-                                  , _anabatic->getConfiguration()->getGVerticalLayer()
-                                  , from->getAxis()
-                                  , DbU::fromLambda(2.0)
-                                  );
+          for ( Edge* through : aligneds ) through->add( segment );
+        }
+
+        cdebug_log(112,0) << "| " << "break (turn, branch or terminal)." << endl;
+        source = (target->getFrom()) ? target : NULL;
       }
-      from->setSegment( segment );
     }
 
     cdebug_tabw(112,-1);
@@ -554,118 +554,22 @@ namespace Anabatic {
     while ( not _targets.empty() and _propagate(enabledEdges) );
 
     _queue.clear();
+    _materialize();
 
     cdebug_tabw(112,-1);
     DebugSession::close();
   }
 
 
-  void  Dijkstra::ripup ( Edge* edge )
+  void  Dijkstra::_toSources ( Vertex* source, int connexId )
   {
-    DebugSession::open( _net, 112, 120 );
-
-    cdebug_log(112,1) << "Dijkstra::ripup(): " << edge << endl;
-
-    GCell*  gsource = edge->getSource();
-    GCell*  gtarget = edge->getTarget();
-    Vertex* vsource = gsource->getObserver<Vertex>(GCell::Observable::Vertex);
-    Vertex* vtarget = gtarget->getObserver<Vertex>(GCell::Observable::Vertex);
-
-    if (  (not isSourceVertex(vsource) and not isTargetVertex(vsource)) 
-       or (not isSourceVertex(vtarget) and not isTargetVertex(vtarget)) ) {
-      cerr << Error( "Dijkstra::ripup(): %s do *not* belong to %s (ignored)."
-                   , getString(edge).c_str()
-                   , getString(_net).c_str()
-                   ) << endl;
-      cdebug_tabw(112,-1);
-      DebugSession::close();
-      return;
-    } 
-
-    edge->destroySegment();
-    // for ( Contact* contact : gsource->getGContacts() ) {
-    //   if (contact->getNet() != _net) continue;
-
-    //   for ( Component* component : contact->getSlaveComponents() ) {
-    //     Segment* segment = dynamic_cast<Segment*>( component );
-    //     if (segment and (gtarget->hasGContact(dynamic_cast<Contact*>(segment->getTarget())))) {
-    //       segment->destroy();
-    //       break;
-    //     }
-    //   }
-
-    //   break;
-    // }
-
-    edge->incRealOccupancy( -1 );
-    _propagateRipup( vsource );
-    vtarget = _propagateRipup( vtarget );
-    _tagConnecteds( vtarget, ++_connectedsId );
-
-    cdebug_tabw(112,-1);
-    DebugSession::close();
-  }
-
-
-  Vertex* Dijkstra::_propagateRipup ( Vertex* end )
-  {
-    cdebug_log(112,1) << "Dijkstra::_propagateRipup() from:" << end << endl;
-
-    while ( end ) {
-      cdebug_log(112,0) << "| " << end << endl;
-
-      Contact* gcontact = end->getGCell()->getGContact( _net );
-      if (not gcontact) {
-        cdebug_log(112,0) << "Exiting on missing GContact." << endl;
-        cdebug_tabw(112,-1);
-        return end;
-      }
-
-      Edge* eneighbor = NULL;
-      for ( Edge* edge : end->getGCell()->getEdges() ) {
-        if (edge->getSegment()) {
-          if (not eneighbor) eneighbor = edge;
-          else {
-            eneighbor = NULL;
-            break;
-          }
-        }
-      }
-
-      for ( Component* component : gcontact->getSlaveComponents() ) {
-        if (dynamic_cast<RoutingPad*>(component)) {
-          eneighbor = NULL;
-          break;
-        }
-      }
-
-      if (not eneighbor) {
-        cdebug_log(112,0) << "Normal exit (fork or RoutingPad)." << endl;
-        cdebug_tabw(112,-1);
-        return end;
-      }
-
-      cdebug_log(112,0) << "+ " << eneighbor << endl;
-      eneighbor->incRealOccupancy( -1 );
-      eneighbor->destroySegment();
-      eneighbor->setSegment( NULL );
-
-      end->setConnexId( -1 );
-      end->setDistance( Vertex::unreached );
-      end = eneighbor->getOpposite(end->getGCell())->getObserver<Vertex>(GCell::Observable::Vertex);;
-    }
-
-    cdebug_log(112,0) << "Exiting on nothing left." << endl;
-    cdebug_tabw(112,-1);
-    return NULL;
-  }
-
-
-  void  Dijkstra::_tagConnecteds ( Vertex* source, int connexId )
-  {
-    cdebug_log(112,1) << "Dijkstra::_tagConnecteds()" << endl;
+    cdebug_log(112,1) << "Dijkstra::_setReacheds()" << endl;
 
     source->setConnexId( connexId );
+    source->setDistance( 0.0 );
+    _targets.erase ( source );
+    _sources.insert( source );
+    _queue.push( source );
 
     VertexSet stack;
     stack.insert( source );
@@ -677,7 +581,7 @@ namespace Anabatic {
       cdebug_log(112,0) << "| source:" << source << " stack.size():" << stack.size() << endl;
 
       for ( Edge* edge : source->getGCell()->getEdges() ) {
-        if (not edge->getSegment()) {
+        if (not edge->hasNet(_net)) {
           cdebug_log(112,0) << "  Not connected:" << edge << endl; 
           continue;
         }
@@ -689,7 +593,47 @@ namespace Anabatic {
         if (vneighbor->getConnexId() == connexId) continue;
 
         vneighbor->setConnexId( connexId );
+        vneighbor->setDistance( 0.0 );
+        _targets.erase ( vneighbor );
+        _sources.insert( vneighbor );
+        _queue.push( vneighbor );
         stack.insert( vneighbor );
+      }
+    }
+
+    cdebug_tabw(112,-1);
+  }
+
+
+  void  Dijkstra::_getConnecteds ( Vertex* source, VertexSet& connecteds )
+  {
+    cdebug_log(112,1) << "Dijkstra::_getConnecteds()" << endl;
+
+    connecteds.clear();
+    connecteds.insert( source );
+
+    VertexSet stack;
+    stack.insert( source );
+
+    while ( not stack.empty() ) {
+      source = *stack.begin();
+      stack.erase( source );
+
+      cdebug_log(112,0) << "| source:" << source << " stack.size():" << stack.size() << endl;
+
+      for ( Edge* edge : source->getGCell()->getEdges() ) {
+        if (not edge->hasNet(_net)) {
+          cdebug_log(112,0) << "  Not connected:" << edge << endl; 
+          continue;
+        }
+
+        GCell*  gneighbor = edge->getOpposite(source->getGCell());
+        Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
+
+        if (connecteds.find(vneighbor) != connecteds.end()) continue;
+
+        stack.insert( vneighbor );
+        connecteds.insert( vneighbor );
       }
     }
 
@@ -703,9 +647,6 @@ namespace Anabatic {
 
     for ( Vertex* vertex : _vertexes ) {
       for ( Edge* edge : vertex->getGCell()->getEdges(Flags::EastSide|Flags::NorthSide) ) {
-        if (edge->getSegment()) {
-          cdebug_log(112,0) << "Not reset:" << edge << edge->getSegment() << endl;
-        }
       }
     }
 

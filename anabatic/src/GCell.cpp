@@ -441,12 +441,41 @@ namespace Anabatic {
   }
 
 
-  bool  GCell::hasGContact ( const Contact* owned ) const
+  Contact* GCell::hasGContact ( const Net* net ) const
   {
     for ( Contact* contact : _gcontacts ) {
-      if (contact == owned) return true;
+      if (contact->getNet() == net) return contact;
     }
-    return false;
+    return NULL;
+  }
+
+
+  Contact* GCell::hasGContact ( const Contact* owned ) const
+  {
+    for ( Contact* contact : _gcontacts ) {
+      if (contact == owned) return contact;
+    }
+    return NULL;
+  }
+
+
+  Contact* GCell::breakGoThrough ( Net* net )
+  {
+    for ( Edge* edge : _eastEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) 
+          return getAnabatic()->breakAt( segment, this );
+      }
+    }
+
+    for ( Edge* edge : _northEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) 
+          return getAnabatic()->breakAt( segment, this );
+      }
+    }
+
+    return NULL;
   }
 
 
@@ -454,6 +483,17 @@ namespace Anabatic {
   {
     for ( Edge* edge : getEdges(sideHint) ) {
       if (edge->getOpposite(this) == neighbor) return edge;
+    }
+    return NULL;
+  }
+
+
+  Edge* GCell::getEdgeAt ( Flags sideHint, DbU::Unit u ) const
+  {
+    for ( Edge* edge : getEdges(sideHint) ) {
+      GCell* side = edge->getOpposite(this);
+      if ( (sideHint & (Flags::WestSide |Flags::EastSide )) and (u < side->getYMax()) ) return edge;
+      if ( (sideHint & (Flags::SouthSide|Flags::NorthSide)) and (u < side->getXMax()) ) return edge;
     }
     return NULL;
   }
@@ -875,7 +915,6 @@ namespace Anabatic {
 
   Contact* GCell::getGContact ( Net* net )
   {
-
     for ( Contact* contact : _gcontacts ) {
       if (contact->getNet() == net) {
         cdebug_log(111,0) << "GCell::getGContact(): " << contact << endl;
@@ -901,10 +940,13 @@ namespace Anabatic {
   {
     if (_gcontacts.empty()) return false;
 
+    cdebug_log(112,0) << "GCell::unrefContact(): " << unref << endl;
+
     for ( size_t i=0 ; i< _gcontacts.size() ; ++i ) {
       if (_gcontacts[i] == unref) {
         if (_gcontacts[i]->getSlaveComponents().getLocator()->isValid()) return false;
         
+        cdebug_log(112,0) << "  Effective destroy." << endl;
         std::swap( _gcontacts[i], _gcontacts[_gcontacts.size()-1] );
         _gcontacts[ _gcontacts.size()-1 ]->destroy();
         _gcontacts.pop_back();

@@ -50,6 +50,7 @@ namespace Anabatic {
       static const unsigned int  SouthSide           = Vertical  |Target;
       static const unsigned int  NorthSide           = Vertical  |Source;
       static const unsigned int  AllSides            = WestSide|EastSide|SouthSide|NorthSide ;
+      static const unsigned int  EndsMask            = Source|Target;
       static const unsigned int  DirectionMask       = Horizontal|Vertical;
       static const unsigned int  DestroyMask         = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
       static const unsigned int  GCellTypeMask       = DeviceGCell|ChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;

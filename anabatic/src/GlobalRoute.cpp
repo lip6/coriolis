@@ -112,12 +112,13 @@ namespace Anabatic {
     cell->flattenNets( Cell::Flags::BuildRings );
     cell->createRoutingPadRings( Cell::Flags::BuildRings );
 
+  //DebugSession::addToTrace( cell->getNet("ra(2)") );
   //DebugSession::addToTrace( cell->getNet("alu_out(3)") );
   //DebugSession::addToTrace( cell->getNet("imuxe.not_i(1)") );
   //DebugSession::addToTrace( cell->getNet("r(0)") );
   //DebugSession::addToTrace( cell->getNet("a_from_pads(0)") );
   //DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
-  //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_muxoutput(126)") );
+  //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_muxoutput(159)") );
 
     startMeasures();
 
@@ -175,12 +176,12 @@ namespace Anabatic {
       while ( not ovEdges.empty() ) {
         Edge*   ovEdge = ovEdges[0];
         NetSet  netsToUnroute;
-        getNetsFromEdge( ovEdge, netsToUnroute );
 
-        for ( Net* net : netsToUnroute ) {
-          dijkstra->load( net );
-          dijkstra->ripup( ovEdge );
-          netsToRoute.insert( net );
+        vector<Segment*> segments = ovEdge->getSegments();
+        for ( Segment* segment : segments ) {
+          netsToRoute.insert( segment->getNet() );
+          cerr << segment->getNet() << endl;
+          ripup( segment, Flags::Propagate );
         }
       }
 
@@ -190,6 +191,29 @@ namespace Anabatic {
       cmess2 << " " << setw(10) << Timer::getStringTime  (_timer.getCombTime())
              << " " << setw( 6) << Timer::getStringMemory(_timer.getIncrease()) << endl;
       startMeasures();
+
+#if THIS_IS_A_TEST 
+      if (iteration == 0) {
+        Net* testNet = getCell()->getNet( "ra(2)" );
+        DebugSession::open( testNet, 112, 120 );
+        if (testNet) {
+          for ( Component* component : testNet->getComponents() ) {
+            if (component->getId() == 23947) {
+              Segment* segment = static_cast<Segment*>( component );
+              GCellsUnder gcells = getGCellsUnder( segment );
+              Contact* contact = breakAt( segment, gcells->gcellAt(2) );
+              cerr << "break:" << contact << endl;
+              unify( contact );
+            //ripup( static_cast<Segment*>(component), Flags::Propagate );
+            //iteration = 5;
+            //netsToRoute.insert( testNet );
+              break;
+            }
+          }
+        }
+        DebugSession::close();
+      }
+#endif
 
       ++iteration;
     }

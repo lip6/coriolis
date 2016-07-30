@@ -64,6 +64,7 @@ namespace Anabatic {
            //inline                  Vertex         ( size_t id );
              inline                 ~Vertex         ();
              inline  bool            hasDoneAllRps  () const;
+             inline  Contact*        hasGContact    ( Net* );
              inline  unsigned int    getId          () const;
              inline  GCell*          getGCell       () const;
              inline  AnabaticEngine* getAnabatic    () const;
@@ -74,15 +75,22 @@ namespace Anabatic {
              inline  int             getStamp       () const;
              inline  int             getBranchId    () const;
              inline  int             getConnexId    () const;
+             inline  int             getDegree      () const;
+             inline  int             getRpCount     () const;
              inline  Edge*           getFrom        () const;
              inline  Vertex*         getPredecessor () const;
              inline  void            setDistance    ( DbU::Unit );
              inline  void            setStamp       ( int );
              inline  void            setConnexId    ( int );
              inline  void            setBranchId    ( int );
+             inline  void            setDegree      ( int );
+             inline  void            incDegree      ( int delta=1 );
+             inline  void            setRpCount     ( int );
+             inline  void            incRpCount     ( int delta=1 );
              inline  void            setFrom        ( Edge* );
              inline  void            add            ( RoutingPad* );
              inline  void            clearRps       ();
+             inline  Contact*        breakGoThrough ( Net* );
 
              inline  bool            isNorth        ( Vertex* ) const;
              inline  bool            isSouth        ( Vertex* ) const;
@@ -113,6 +121,8 @@ namespace Anabatic {
       Observer<Vertex>     _observer;
       int                  _connexId;
       int                  _branchId;
+      int                  _degree  : 8;
+      int                  _rpCount : 8;
       int                  _stamp;
       DbU::Unit            _distance;
       Edge*                _from;
@@ -126,6 +136,8 @@ namespace Anabatic {
     , _observer(this)
     , _connexId(-1)
     , _branchId( 0)
+    , _degree  ( 0)
+    , _rpCount ( 0)
     , _stamp   (-1)
     , _distance(unreached)
     , _from    (NULL)
@@ -135,22 +147,30 @@ namespace Anabatic {
   }
 
 
-  inline                 Vertex::~Vertex       () { }
-  inline unsigned int    Vertex::getId         () const { return _id; }
-  inline GCell*          Vertex::getGCell      () const { return _gcell; }
-  inline AnabaticEngine* Vertex::getAnabatic   () const { return _gcell->getAnabatic(); }
-  inline Contact*        Vertex::getGContact   ( Net* net ) { return _gcell->getGContact(net); }
-  inline Point           Vertex::getCenter     () const { return _gcell->getBoundingBox().getCenter(); }
-  inline DbU::Unit       Vertex::getDistance   () const { return hasValidStamp() ? _distance : unreached; }
-  inline int             Vertex::getStamp      () const { return _stamp; }
-  inline int             Vertex::getConnexId   () const { return hasValidStamp() ? _connexId : -1; }
-  inline int             Vertex::getBranchId   () const { return hasValidStamp() ? _branchId :  0; }
-  inline Edge*           Vertex::getFrom       () const { return _from; }
-  inline void            Vertex::setDistance   ( DbU::Unit distance ) { _distance=distance; }
-  inline void            Vertex::setFrom       ( Edge* from ) { _from=from; }
-  inline void            Vertex::setStamp      ( int stamp ) { _stamp=stamp; }
-  inline void            Vertex::setConnexId   ( int id ) { _connexId=id; }
-  inline void            Vertex::setBranchId   ( int id ) { _branchId=id; }
+  inline                 Vertex::~Vertex        () { }
+  inline Contact*        Vertex::hasGContact    ( Net* net ) { return _gcell->hasGContact(net); }
+  inline unsigned int    Vertex::getId          () const { return _id; }
+  inline GCell*          Vertex::getGCell       () const { return _gcell; }
+  inline AnabaticEngine* Vertex::getAnabatic    () const { return _gcell->getAnabatic(); }
+  inline Contact*        Vertex::getGContact    ( Net* net ) { return _gcell->getGContact(net); }
+  inline Point           Vertex::getCenter      () const { return _gcell->getBoundingBox().getCenter(); }
+  inline DbU::Unit       Vertex::getDistance    () const { return hasValidStamp() ? _distance : unreached; }
+  inline int             Vertex::getStamp       () const { return _stamp; }
+  inline int             Vertex::getConnexId    () const { return hasValidStamp() ? _connexId : -1; }
+  inline int             Vertex::getBranchId    () const { return hasValidStamp() ? _branchId :  0; }
+  inline int             Vertex::getDegree      () const { return hasValidStamp() ? _degree   :  0; }
+  inline int             Vertex::getRpCount     () const { return hasValidStamp() ? _rpCount  :  0; }
+  inline Edge*           Vertex::getFrom        () const { return _from; }
+  inline void            Vertex::setDistance    ( DbU::Unit distance ) { _distance=distance; }
+  inline void            Vertex::setFrom        ( Edge* from ) { _from=from; }
+  inline void            Vertex::setStamp       ( int stamp ) { _stamp=stamp; }
+  inline void            Vertex::setConnexId    ( int id ) { _connexId=id; }
+  inline void            Vertex::setBranchId    ( int id ) { _branchId=id; }
+  inline void            Vertex::setDegree      ( int degree ) { _degree=degree; }
+  inline void            Vertex::incDegree      ( int delta ) { _degree+=delta; }
+  inline void            Vertex::setRpCount     ( int count ) { _rpCount=count; }
+  inline void            Vertex::incRpCount     ( int delta ) { _rpCount+=delta; }
+  inline Contact*        Vertex::breakGoThrough ( Net* net ) { return _gcell->breakGoThrough(net); }
 
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
@@ -276,7 +296,6 @@ namespace Anabatic {
       inline void       setDistance        ( distance_t );
              void       load               ( Net* );
              void       run                ( Mode mode=Mode::Standart );
-             void       ripup              ( Edge* );
     private:           
                         Dijkstra           ( const Dijkstra& );
              Dijkstra&  operator=          ( const Dijkstra& );
@@ -284,9 +303,10 @@ namespace Anabatic {
              void       _cleanup           ();
              bool       _propagate         ( Flags enabledSides );
              void       _traceback         ( Vertex* );
+             void       _materialize       ();
              void       _selectFirstSource ();
-             Vertex*    _propagateRipup    ( Vertex* );
-             void       _tagConnecteds     ( Vertex*, int connexId );
+             void       _toSources         ( Vertex*, int connexId );
+             void       _getConnecteds     ( Vertex*, VertexSet& );
              void       _checkEdges        () const;
       static bool       isRestricted       ( const Vertex* v1, const Vertex* v2 );
     private:

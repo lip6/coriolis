@@ -17,6 +17,7 @@
 #ifndef  ANABATIC_ANABATIC_ENGINE_H
 #define  ANABATIC_ANABATIC_ENGINE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <set>
@@ -54,6 +55,56 @@ namespace Anabatic {
   typedef  std::set<Net*,Entity::CompareById>       NetSet;
   typedef  std::map<unsigned int,NetRoutingState*>  NetRoutingStates;
 
+  class AnabaticEngine;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::RawGCellsUnder".
+
+  class RawGCellsUnder {
+    public:
+      class Element {
+        public:
+          inline         Element ( GCell*, Edge* );
+          inline  GCell* gcell   () const;
+          inline  Edge*  edge    () const;
+        private:
+          GCell* _gcell;
+          Edge*  _edge;
+      };
+    public:
+                                    RawGCellsUnder ( const AnabaticEngine*, Segment* );
+      inline       bool             empty          () const;
+      inline       size_t           size           () const;
+      inline       GCell*           gcellAt        ( size_t ) const;
+      inline       GCell*           gcellRAt       ( size_t ) const;
+      inline       Edge*            edgeAt         ( size_t ) const;
+      inline const vector<Element>& getElements    () const;
+    private:
+                      RawGCellsUnder ( const RawGCellsUnder& );
+      RawGCellsUnder& operator=      ( const RawGCellsUnder& );
+    private:
+      vector<Element>  _elements;
+  };
+
+
+  inline         RawGCellsUnder::Element::Element ( GCell* gcell, Edge* edge ) : _gcell(gcell), _edge(edge) { } 
+  inline  GCell* RawGCellsUnder::Element::gcell   () const { return _gcell; }
+  inline  Edge*  RawGCellsUnder::Element::edge    () const { return _edge; }
+
+  inline       bool    RawGCellsUnder::empty       () const { return _elements.empty(); }
+  inline       size_t  RawGCellsUnder::size        () const { return _elements.size(); }
+  inline const vector<RawGCellsUnder::Element>&
+                       RawGCellsUnder::getElements () const { return _elements; }
+  inline       Edge*   RawGCellsUnder::edgeAt      ( size_t i ) const { return (i<size()) ? _elements[i].edge () : NULL; }
+  inline       GCell*  RawGCellsUnder::gcellAt     ( size_t i ) const { return (i<size()) ? _elements[i].gcell() : NULL; }
+  inline       GCell*  RawGCellsUnder::gcellRAt    ( size_t i ) const { return (i<size()) ? _elements[size()-1-i].gcell() : NULL; }
+
+  typedef  std::shared_ptr<RawGCellsUnder>  GCellsUnder;
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::AnabaticEngine".
 
   class AnabaticEngine : public ToolEngine {
     public:
@@ -83,6 +134,7 @@ namespace Anabatic {
       inline        GCell*            getSouthWestGCell     () const;
       inline        GCell*            getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*            getGCellUnder         ( Point ) const;
+      inline        GCellsUnder       getGCellsUnder        ( Segment* ) const;
                     int               getCapacity           ( Interval, Flags ) const;
                     size_t            getNetsFromEdge       ( const Edge*, NetSet& );
       inline        void              setState              ( EngineState state );
@@ -92,6 +144,9 @@ namespace Anabatic {
     // Dijkstra related functions.                          
       inline        int               getStamp              () const;
       inline        int               incStamp              ();
+                    Contact*          breakAt               ( Segment*, GCell* );
+                    void              ripup                 ( Segment*, Flags );
+                    bool              unify                 ( Contact* );
     // Global routing related functions.                  
                     void              globalRoute           ();
                     void              cleanupGlobal         ();
@@ -199,6 +254,7 @@ namespace Anabatic {
   inline       GCell*            AnabaticEngine::getSouthWestGCell     () const { return _gcells[0]; }
   inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
   inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
+  inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
   inline       unsigned int      AnabaticEngine::getDensityMode        () const { return _densityMode; }
   inline       void              AnabaticEngine::setDensityMode        ( unsigned int mode ) { _densityMode=mode; }
   inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }

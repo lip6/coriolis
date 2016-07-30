@@ -647,6 +647,7 @@ namespace {
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
              void          _do_xG            ();
+             void          _do_2G            ();
              void          _do_xG_1Pad       ();
              void          _do_1G_1PinM2     ();
              void          _do_1G_1M1        ();
@@ -996,11 +997,7 @@ namespace {
         case Conn_2G_4M3:
         case Conn_3G_1M3:     _do_xG_xM3    (); break;
         case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
-        case Conn_2G:
-          if ( (_east and _west) or (_north and _south) ) {
-            straightLine = true;
-            break;
-          }
+        case Conn_2G:         _do_2G        (); break;
         case Conn_3G:
         case Conn_4G:
           _do_xG();
@@ -1486,6 +1483,28 @@ namespace {
       AutoSegment::create( _southWestContact, turn, Flags::Horizontal );
       AutoSegment::create( turn, _northEastContact, Flags::Vertical   );
     } 
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  GCellTopology::_do_2G ()
+  {
+    cdebug_log(145,1) << "_do_2G()" << endl;
+
+    if (_east and _west) {
+      _southWestContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      AutoSegment::create( _southWestContact, _northEastContact, Flags::Vertical );
+    } else if (_south and _north) {
+      _southWestContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      _northEastContact = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      AutoSegment::create( _southWestContact, _northEastContact, Flags::Horizontal );
+    } else {
+      _southWestContact
+        = _northEastContact
+        = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+    }
+
     cdebug_tabw(145,-1);
   }
 

@@ -139,7 +139,8 @@ namespace Anabatic {
                     bool                  isEast              ( GCell* ) const;
                     bool                  isNorth             ( GCell* ) const;
                     bool                  isSouth             ( GCell* ) const;
-                    bool                  hasGContact         ( const Contact* ) const;
+                    Contact*              hasGContact         ( const Contact* ) const;
+                    Contact*              hasGContact         ( const Net* ) const;
       inline        AnabaticEngine*       getAnabatic         () const;
       inline        Flags                 getType             () const;
       inline        DbU::Unit             getXMin             () const;
@@ -153,6 +154,7 @@ namespace Anabatic {
       inline const  vector<Edge*>&        getNorthEdges       () const;
       inline const  vector<Edge*>&        getSouthEdges       () const;
                     Edge*                 getEdgeTo           ( GCell*, Flags sideHint=Flags::AllSides ) const;
+                    Edge*                 getEdgeAt           ( Flags sideHint, DbU::Unit u ) const;
       inline        Edges                 getEdges            ( Flags sides=Flags::AllSides ) const;
       inline        GCell*                getWest             () const;
       inline        GCell*                getEast             () const;
@@ -169,6 +171,7 @@ namespace Anabatic {
                     bool                  doGrid              ();
                     Contact*              getGContact         ( Net* );
       inline const  vector<Contact*>&     getGContacts        () const;
+                    Contact*              breakGoThrough      ( Net* net );
                     bool                  unrefContact        ( Contact* );
                     void                  setXY               ( DbU::Unit x, DbU::Unit y );
                     void                  updateContactsPosition ();

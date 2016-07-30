@@ -94,15 +94,9 @@ namespace Anabatic {
     Box gcellBb    = gcell->getBoundingBox();
     Box updateArea = _area.getIntersection( gcellBb );
 
-    cdebug_log(110,0) << "_side            " << _side << endl; 
-    cdebug_log(110,0) << "_area.getXMin()  " << _area.getXMin() << endl; 
-    cdebug_log(110,0) << "_area.getYMin()  " << _area.getYMin() << endl; 
-    cdebug_log(110,0) << "_area.getXMax()  " << _area.getXMax() << endl; 
-    cdebug_log(110,0) << "_area.getYMax()  " << _area.getYMax() << endl; 
-    cdebug_log(110,0) << "updateArea.getXMin()  " << updateArea.getXMin() << endl; 
-    cdebug_log(110,0) << "updateArea.getYMin()  " << updateArea.getYMin() << endl; 
-    cdebug_log(110,0) << "updateArea.getXMax()  " << updateArea.getXMax() << endl; 
-    cdebug_log(110,0) << "updateArea.getYMax()  " << updateArea.getYMax() << endl; 
+    cdebug_log(110,0) << "_side:      " << DbU::getValueString(_side) << endl; 
+    cdebug_log(110,0) << "_area:      " << _area << endl; 
+    cdebug_log(110,0) << "updateArea: " << updateArea << endl; 
 
     if (updateArea.isEmpty()) {
       cerr << Error( "Matrix::updateLookup(): %s is not under area of %s."
