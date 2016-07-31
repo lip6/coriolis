@@ -556,6 +556,8 @@ namespace Anabatic {
     _queue.clear();
     _materialize();
 
+    _anabatic->getNetData( _net )->setGlobalRouted( true );
+
     cdebug_tabw(112,-1);
     DebugSession::close();
   }
@@ -645,10 +647,10 @@ namespace Anabatic {
   {
     cdebug_log(112,1) << "Dijkstra::_checkEdges()" << endl;
 
-    for ( Vertex* vertex : _vertexes ) {
-      for ( Edge* edge : vertex->getGCell()->getEdges(Flags::EastSide|Flags::NorthSide) ) {
-      }
-    }
+    // for ( Vertex* vertex : _vertexes ) {
+    //   for ( Edge* edge : vertex->getGCell()->getEdges(Flags::EastSide|Flags::NorthSide) ) {
+    //   }
+    // }
 
     cdebug_tabw(112,-1);
   }

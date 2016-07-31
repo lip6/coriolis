@@ -44,6 +44,8 @@ namespace Anabatic {
       static const unsigned int  DestroyGCell        = (1 <<  7);
       static const unsigned int  DestroyBaseContact  = (1 <<  8);
       static const unsigned int  DestroyBaseSegment  = (1 <<  9);
+    // Flags for NetDatas objects states only.                      
+      static const unsigned int  GlobalRouted        = (1 <<  5);
     // Masks.                                      
       static const unsigned int  WestSide            = Horizontal|Target;
       static const unsigned int  EastSide            = Horizontal|Source;

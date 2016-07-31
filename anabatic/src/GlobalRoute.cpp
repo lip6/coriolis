@@ -138,21 +138,12 @@ namespace Anabatic {
     Session::open( this );
     setupSpecialNets();
     setupPreRouteds ();
+    setupNetDatas();
     Session::close();
 
     startMeasures();
 
     cmess1 << "  o  Running global routing..." << endl;
-
-    NetSet  netsToRoute;
-    for ( Net* net : cell->getNets() ) {
-      NetRoutingState* state = getRoutingState( net );
-      if (state) {
-        if (state->isMixedPreRoute()) continue;
-      }
-
-      netsToRoute.insert( net );
-    }
 
     UpdateSession::open();
     Dijkstra* dijkstra = new Dijkstra ( this );
@@ -160,32 +151,37 @@ namespace Anabatic {
                                           , getConfiguration()->getEdgeCostK() ) );
 
     size_t iteration = 0;
-    while ( not netsToRoute.empty() and (iteration < 5) ) {
-      cmess2 << "     [" << setw(3) << iteration << "] nets:"
-             << left << setw(6) << netsToRoute.size() << right;
+    size_t netCount  = 0;
+    do {
+      cmess2 << "     [" << setw(3) << iteration << "] nets:";
 
-      for ( Net* net : netsToRoute ) {
-        dijkstra->load( net );
+      netCount = 0;
+      for ( NetData* netData : _netOrdering ) {
+        if (netData->isGlobalRouted()) continue;
+
+        dijkstra->load( netData->getNet() );
         dijkstra->run();
+        ++netCount;
       }
+      cmess2 << left << setw(6) << netCount << right;
 
-      netsToRoute.clear();
       const vector<Edge*>& ovEdges = getOvEdges();
       cmess2 << " ovEdges:" << ovEdges.size();
 
+      netCount = 0;
       while ( not ovEdges.empty() ) {
         Edge*   ovEdge = ovEdges[0];
-        NetSet  netsToUnroute;
 
         vector<Segment*> segments = ovEdge->getSegments();
         for ( Segment* segment : segments ) {
-          netsToRoute.insert( segment->getNet() );
-          cerr << segment->getNet() << endl;
+          NetData* netData = getNetData( segment->getNet() );
+          if (netData->isGlobalRouted()) ++netCount;
+
           ripup( segment, Flags::Propagate );
         }
       }
 
-      cmess2 << " ripup:" << netsToRoute.size();
+      cmess2 << " ripup:" << netCount;
 
       stopMeasures();
       cmess2 << " " << setw(10) << Timer::getStringTime  (_timer.getCombTime())
@@ -216,7 +212,7 @@ namespace Anabatic {
 #endif
 
       ++iteration;
-    }
+    } while ( (netCount > 0) and (iteration < 5) );
 
     stopMeasures();
     printMeasures( "Dijkstra" );

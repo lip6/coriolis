@@ -56,8 +56,10 @@ namespace Anabatic {
       }
       if (af->isBLOCKAGE(net->getName())) excludedType = "BLOCKAGE";
       if (excludedType) {
-        NetRoutingState* state = getRoutingState( net, Flags::Create );
+        NetData*         ndata = getNetData( net, Flags::Create );
+        NetRoutingState* state = ndata->getNetRoutingState();
         state->setFlags( NetRoutingState::Fixed );
+        ndata->setGlobalRouted( true );
       }
     }
   }
@@ -138,9 +140,11 @@ namespace Anabatic {
       }
 
       if (isFixed or isPreRouted or (rpCount < 2)) {
-        NetRoutingState* state = getRoutingState( net, Flags::Create );
+        NetData*         ndata = getNetData( net, Flags::Create );
+        NetRoutingState* state = ndata->getNetRoutingState();
         state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
         state->setFlags  ( NetRoutingState::ManualGlobalRoute );
+        ndata->setGlobalRouted( true );
         if (rpCount < 2)
           state->setFlags  ( NetRoutingState::Unconnected );
 

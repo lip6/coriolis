@@ -51,10 +51,6 @@ namespace Anabatic {
   using Hurricane::NetRoutingState;
   using CRL::ToolEngine;
 
-
-  typedef  std::set<Net*,Entity::CompareById>       NetSet;
-  typedef  std::map<unsigned int,NetRoutingState*>  NetRoutingStates;
-
   class AnabaticEngine;
 
 
@@ -104,7 +100,71 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::NetData".
+
+  class NetData {
+    public:
+                                    NetData            ( Net* );
+      inline       bool             isGlobalRouted     () const;
+      inline       bool             isMixedPreRoute    () const;
+      inline       Net*             getNet             () const;
+      inline       NetRoutingState* getNetRoutingState () const;
+      inline const Box&             getSearchArea      () const;
+      inline       DbU::Unit        getHalfPerimeter   () const;
+      inline       size_t           getRpCount         () const;
+      inline       DbU::Unit        getSparsity        () const;
+      inline       void             setNetRoutingState ( NetRoutingState* );
+      inline       void             setSearchArea      ( Box );
+      inline       void             setGlobalRouted    ( bool );
+      inline       void             setRpCount         ( size_t );
+    private:                                     
+                              NetData            ( const NetData& );
+             NetData&         operator=          ( const NetData& );
+      inline void             _update            ();
+    private:
+      Net*             _net;
+      NetRoutingState* _state;
+      Box              _searchArea;
+      size_t           _rpCount;
+      DbU::Unit        _sparsity;
+      Flags            _flags;
+  };
+
+
+  inline bool             NetData::isGlobalRouted     () const { return _flags & Flags::GlobalRouted; }
+  inline bool             NetData::isMixedPreRoute    () const { return (_state) ? _state->isMixedPreRoute() : false; }
+  inline Net*             NetData::getNet             () const { return _net; }
+  inline NetRoutingState* NetData::getNetRoutingState () const { return _state; }
+  inline const Box&       NetData::getSearchArea      () const { return _searchArea; }
+  inline DbU::Unit        NetData::getHalfPerimeter   () const { return (_searchArea.isEmpty()) ? 0.0 : (_searchArea.getWidth()+_searchArea.getHeight()); }
+  inline size_t           NetData::getRpCount         () const { return _rpCount; }
+  inline void             NetData::setNetRoutingState ( NetRoutingState* state ) { _state=state; }
+  inline DbU::Unit        NetData::getSparsity        () const { return _sparsity; }
+  inline void             NetData::setGlobalRouted    ( bool state ) { _flags.set(Flags::GlobalRouted,state); }
+  inline void             NetData::setRpCount         ( size_t count ) { _rpCount=count; _update(); }
+
+
+  inline void  NetData::_update ()
+  { if (_rpCount) _sparsity=getHalfPerimeter()/_rpCount; else _sparsity=0; }
+
+
+  class SparsityOrder {
+    public:
+      inline bool operator() ( const NetData* lhs, const NetData* rhs ) const
+      {
+        if (lhs->isMixedPreRoute() != rhs->isMixedPreRoute()) return lhs->isMixedPreRoute();
+        if (lhs->getSparsity()     != rhs->getSparsity()    ) return lhs->getSparsity() < rhs->getSparsity();
+        return lhs->getNet()->getId() < rhs->getNet()->getId();
+      }
+  };
+
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::AnabaticEngine".
+
+  typedef  std::set<Net*,Entity::CompareById>  NetSet;
+  typedef  std::map<unsigned int,NetData*>     NetDatas;
+
 
   class AnabaticEngine : public ToolEngine {
     public:
@@ -141,6 +201,9 @@ namespace Anabatic {
       inline        void              setDensityMode        ( unsigned int );
       inline        void              addOv                 ( Edge* );
       inline        void              removeOv              ( Edge* );
+      inline const  NetDatas&         getNetDatas           () const;
+                    NetData*          getNetData            ( Net*, unsigned int flags=Flags::NoFlags );
+                    void              setupNetDatas         ();
     // Dijkstra related functions.                          
       inline        int               getStamp              () const;
       inline        int               incStamp              ();
@@ -162,8 +225,6 @@ namespace Anabatic {
       inline        size_t            getSaturateRp         () const;
       inline        DbU::Unit         getExtensionCap       () const;
       inline        Net*              getBlockageNet        () const;
-      inline const  NetRoutingStates& getNetRoutingStates   () const;
-                    NetRoutingState*  getRoutingState       ( Net*, unsigned int flags=Flags::NoFlags );
                     void              updateDensity         ();
                     size_t            checkGCellDensities   ();
       inline        void              setGlobalThreshold    ( DbU::Unit );
@@ -233,13 +294,14 @@ namespace Anabatic {
              Matrix            _matrix;
              vector<GCell*>    _gcells;
              vector<Edge*>     _ovEdges;
+             vector<NetData*>  _netOrdering;
+             NetDatas          _netDatas;
              CellViewer*       _viewer;
              Flags             _flags;
              int               _stamp;
              unsigned int      _densityMode;
              AutoSegmentLut    _autoSegmentLut;
              AutoContactLut    _autoContactLut;
-             NetRoutingStates  _netRoutingStates;
              Net*              _blockageNet;
   };
 
@@ -274,7 +336,7 @@ namespace Anabatic {
   inline       void              AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
   inline       Net*              AnabaticEngine::getBlockageNet        () const { return _blockageNet; }
   inline       void              AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
-  inline const NetRoutingStates& AnabaticEngine::getNetRoutingStates   () const { return _netRoutingStates; }
+  inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
   inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
   inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
   

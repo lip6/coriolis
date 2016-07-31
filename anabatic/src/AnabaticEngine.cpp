@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <iostream>
+#include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
@@ -35,6 +36,7 @@ namespace Anabatic {
   using std::cout;
   using std::endl;
   using std::ostringstream;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
@@ -130,6 +132,27 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::NetData".
+
+  NetData::NetData ( Net* net )
+    : _net       (net)
+    , _state     (NetRoutingExtension::get(net))
+    , _searchArea()
+    , _rpCount   (0)
+    , _sparsity  (0)
+    , _flags     ()
+  {
+    if (_state and _state->isMixedPreRoute()) return;
+
+    for ( RoutingPad* rp : _net->getRoutingPads() ) {
+      _searchArea.merge( rp->getBoundingBox() );
+      ++_rpCount;
+    }
+    _update();
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::AnabaticEngine".
 
   Name  AnabaticEngine::_toolName = "Anabatic";
@@ -156,13 +179,14 @@ namespace Anabatic {
     , _matrix          ()
     , _gcells          ()
     , _ovEdges         ()
+    , _netOrdering     ()
+    , _netDatas        ()
     , _viewer          (NULL)
     , _flags           (Flags::DestroyBaseContact)
     , _stamp           (-1)
     , _densityMode     (MaxDensity)
     , _autoSegmentLut  ()
     , _autoContactLut  ()
-    , _netRoutingStates()
     , _blockageNet     (cell->getNet("blockagenet"))
   {
     _matrix.setCell( cell, _configuration->getSliceHeight() );
@@ -197,6 +221,7 @@ namespace Anabatic {
   AnabaticEngine::~AnabaticEngine ()
   {
     delete _configuration;
+    for ( pair<unsigned int,NetData*> data : _netDatas ) delete data.second;
   }
 
 
@@ -318,6 +343,23 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::setupNetDatas ()
+  {
+    size_t  oindex = _netOrdering.size();
+    for ( Net* net : _cell->getNets() ) {
+      if (_netDatas.find(net->getId()) != _netDatas.end()) continue;
+      _netOrdering.push_back( new NetData(net) );
+    }
+
+    for ( ; oindex < _netOrdering.size() ; ++oindex ) {
+      _netDatas.insert( make_pair( _netOrdering[oindex]->getNet()->getId()
+                                 , _netOrdering[oindex] ) );
+    }
+
+    sort( _netOrdering.begin(), _netOrdering.end(), SparsityOrder() );
+  }
+
+
   size_t  AnabaticEngine::getNetsFromEdge ( const Edge* edge, NetSet& nets )
   {
     size_t  count  = 0;
@@ -351,31 +393,26 @@ namespace Anabatic {
   }
 
 
-  NetRoutingState* AnabaticEngine::getRoutingState ( Net* net, unsigned int flags )
+  NetData* AnabaticEngine::getNetData ( Net* net, unsigned int flags )
   {
-    NetRoutingState* state = NetRoutingExtension::get( net );
+    NetData*            data = NULL;
+    NetDatas::iterator idata = _netDatas.find( net->getId() );
+    if (idata == _netDatas.end()) {
+      data = new NetData( net );
+      _netDatas.insert( make_pair(net->getId(),data) );
+      _netOrdering.push_back( data );
+      // cerr << Bug( "AnabaticEngine::getNetData() - %s is missing in NetDatas table."
+      //            , getString(net->getName()).c_str()
+      //            ) << endl;
+      // return NULL;
+    } else
+      data = idata->second;
 
-    if (state) {
-      NetRoutingStates::iterator istate = _netRoutingStates.find( net->getId() );
-      if (istate != _netRoutingStates.end()) {
-        if (istate->second != state) {
-          cerr << Error( "AnabaticEngine::getRoutingStates() - %s incoherency between property and LUT:\n"
-                        "        Property:%x vs. LUT:%x, re-init LUT from property."
-                       , getString(net->getName()).c_str()
-                       , (void*)state
-                       , (void*)(istate->second)) << endl;
-          _netRoutingStates.insert( make_pair(net->getId(), state) );
-        }
-        return state;
-      }
-    } else {
-      if (not (flags & Flags::Create)) return NULL;
-
-      state = NetRoutingExtension::create( net );
+    if ((flags & Flags::Create) and not data->getNetRoutingState()) {
+      data->setNetRoutingState( NetRoutingExtension::create(net) );
     }
 
-    _netRoutingStates.insert( make_pair(net->getId(), state) );
-    return state;
+    return data;
   }
 
 
@@ -517,7 +554,9 @@ namespace Anabatic {
 
   void  AnabaticEngine::ripup ( Segment* seed, Flags flags )
   {
-    DebugSession::open( seed->getNet(), 112, 120 );
+    Net* net = seed->getNet();
+
+    DebugSession::open( net, 112, 120 );
     cdebug_log(112,1) << "AnabaticEngine::ripup(): " << seed << endl;
 
     Contact* end0 = NULL;
@@ -593,6 +632,8 @@ namespace Anabatic {
 
     if (end0) unify( end0 );
     if (end1) unify( end1 );
+
+    getNetData( net )->setGlobalRouted( false );
 
     cdebug_tabw(111,-1);
     DebugSession::close();
