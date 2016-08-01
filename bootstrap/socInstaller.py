@@ -124,23 +124,42 @@ class Command ( object ):
         print '[WARNING] Command.__init__(): <fdLog> is neither None or a file.'
       return
 
+    def _argumentsToStr ( self, arguments ):
+      s = ''
+      for argument in arguments:
+        if argument.find(' ') >= 0: s += ' "' + argument + '"'
+        else:                       s += ' '  + argument
+      return s
+
+    def log ( self, text ):
+      print text[:-1]
+      sys.stdout.flush()
+      sys.stderr.flush()
+      if isinstance(self.fdLog,file):
+        self.fdLog.write( text )
+        self.fdLog.flush()
+      return
+
     def execute ( self ):
+      global conf
       sys.stdout.flush()
       sys.stderr.flush()
 
+      homeDir = os.environ['HOME']
+      workDir = os.getcwd()
+      if homeDir.startswith(homeDir):
+         workDir = '~' + workDir[ len(homeDir) : ]
+      prompt = '%s@%s:%s$' % (os.environ['USER'],conf.masterHost,workDir)
+
       try:
+        self.log( '%s%s\n' % (prompt,self._argumentsToStr(self.arguments)) )
         child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         while True:
           line = child.stdout.readline()
           if not line: break
 
-          print line[:-1]
-          sys.stdout.flush()
-
-          if isinstance(self.fdLog,file):
-            self.fdLog.write( line )
-            self.fdLog.flush()
+          self.log( line )
       except OSError, e:
         raise BadBinary( self.arguments[0] )
 
@@ -161,10 +180,11 @@ class GitRepository ( object ):
         localRepo = localRepo[:-4]
       return localRepo
 
-    def __init__ ( self, url, cloneDir ):
+    def __init__ ( self, url, cloneDir, fdLog=None ):
       self.url       = url
       self.cloneDir  = cloneDir
       self.localRepo = GitRepository.getLocalRepository( url )
+      self.fdLog     = fdLog
       return
 
     @property
@@ -177,20 +197,21 @@ class GitRepository ( object ):
       return
 
     def clone ( self ):
+      print 'Clone/pull from:', self.url
       if not os.path.isdir(self.cloneDir):
         os.makedirs( self.cloneDir )
 
       if not os.path.isdir(self.localRepoDir):
         os.chdir( self.cloneDir )
-        Command( [ 'git', 'clone', self.url ] ).execute()
+        Command( [ 'git', 'clone', self.url ], self.fdLog ).execute()
       else:
         os.chdir( self.localRepoDir )
-        Command( [ 'git', 'pull' ] ).execute()
+        Command( [ 'git', 'pull' ], self.fdLog ).execute()
       return
 
     def checkout ( self, branch ):
       os.chdir( self.localRepoDir )
-      Command( [ 'git', 'checkout', branch ] ).execute()
+      Command( [ 'git', 'checkout', branch ], self.fdLog ).execute()
       return
 
 
@@ -366,7 +387,10 @@ class Report ( object ):
       fd.close()
       self.mainText += '    <%s>\n' % logFile
 
-      self.attachements.append( MIMEApplication(tailLines) )
+      attachement = MIMEApplication(tailLines)
+      attachement.add_header( 'Content-Disposition', 'attachment', filename=os.path.basename(logFile) )
+
+      self.attachements.append( attachement )
       return
 
     def send ( self ):
@@ -413,9 +437,9 @@ try:
     gitSupports = []
     for supportRepo in conf.supportRepos:
       gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
-    gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir )
-    gitChams    = GitRepository( conf.chamsRepo   , conf.srcDir )
-    gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir )
+    gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir, conf.fds['build'] )
+    gitChams    = GitRepository( conf.chamsRepo   , conf.srcDir, conf.fds['build'] )
+    gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir, conf.fds['build'] )
 
     if conf.doGit:
       for gitSupport in gitSupports:
