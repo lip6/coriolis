@@ -1,4 +1,3 @@
-
 // -*- C++ -*-
 //
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,16 +26,13 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Backtrace.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_BACKTRACE__
-#define  __HURRICANE_BACKTRACE__
+#ifndef  HURRICANE_BACKTRACE_H
+#define  HURRICANE_BACKTRACE_H
 
-#include  <string>
+#include <string>
 #include "hurricane/Commons.h"
 #include "hurricane/TextTranslator.h"
 
@@ -71,7 +62,6 @@ namespace Hurricane {
   inline std::string  Backtrace::_getString   () const { return "<Backtrace>"; }
   
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif
+#endif  // HURRICANE_BACKTRACE_H

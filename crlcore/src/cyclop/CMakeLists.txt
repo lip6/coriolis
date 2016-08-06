@@ -43,6 +43,7 @@ endif()
                                        -lutil
                                        ${LIBXML2_LIBRARIES}
                                        ${LIBEXECINFO_LIBRARIES}
+                                       ${LIBBFD_LIBRARIES}
                        )
                install ( TARGETS       cyclop        DESTINATION bin )
 

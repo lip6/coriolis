@@ -5,6 +5,7 @@
                    FindLEFDEF.cmake
                    FindBootstrap.cmake
                    FindLibexecinfo.cmake
+                   FindLibbfd.cmake
                    FindQwt.cmake
                    GetGitRevisionDescription.cmake
                    GetGitRevisionDescription.cmake.in

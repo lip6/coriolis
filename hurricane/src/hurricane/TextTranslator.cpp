@@ -1,30 +1,21 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./TextTranslator.cpp"                     |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#include  <iostream>
-#include  "hurricane/TextTranslator.h"
+#include <iostream>
+#include "hurricane/TextTranslator.h"
 
 
 namespace Hurricane {
@@ -84,6 +75,7 @@ namespace Hurricane {
       _toTextTranslator.addTranslation ( "</small>" , ""   );
       _toTextTranslator.addTranslation ( "&lt;"     , "<"  );
       _toTextTranslator.addTranslation ( "&gt;"     , ">"  );
+      _toTextTranslator.addTranslation ( "&nbsp;"   , " "  );
     }
 
     return _toTextTranslator;

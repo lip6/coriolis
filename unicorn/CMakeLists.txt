@@ -15,6 +15,7 @@
  setup_boost(program_options python regex)
  setup_qt()
  
+ find_package(Libbfd)
  find_package(LibXml2 REQUIRED)
  find_package(PythonLibs REQUIRED)
  find_package(PythonSitePackages REQUIRED)

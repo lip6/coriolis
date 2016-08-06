@@ -1,33 +1,24 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2010, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./TextTranslator.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/TextTranslator.h"             |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_TEXT_TRANSLATOR__
-#define  __HURRICANE_TEXT_TRANSLATOR__
+#ifndef HURRICANE_TEXT_TRANSLATOR_H
+#define HURRICANE_TEXT_TRANSLATOR_H
 
-#include  <string>
-#include  <vector>
+#include <string>
+#include <vector>
 
 namespace Hurricane {
 
@@ -68,7 +59,7 @@ namespace Hurricane {
   }
 
 
-}  // End of Hurricane namespace.
+}  // Hurricane namespace.
 
 
-#endif  // __HURRICANE_TEXT_TRANSLATOR__
+#endif  // HURRICANE_TEXT_TRANSLATOR_H

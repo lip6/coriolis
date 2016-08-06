@@ -31,6 +31,7 @@
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Exception.h"
+#include "hurricane/TextTranslator.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 
@@ -56,12 +57,17 @@ namespace Hurricane {
   {
     ExceptionWidget* ew = new ExceptionWidget();
 
-    ew->setMessage ( what );
-    if ( not where.isEmpty() )
-      ew->setTrace ( where );
+    ew->setMessage( what );
+    if (not where.isEmpty())
+      ew->setTrace( where );
 
-    if ( ew->exec() == QDialog::Rejected )
-      kill ( getpid(), SIGSEGV );
+    if (ew->exec() == QDialog::Rejected) {
+      cerr << "\n[BUG] A C++ exception was catched:\n" << endl;
+      cerr << TextTranslator::toTextTranslator().translate(  what.toStdString() ) << endl;
+      cerr << "\n[Backtrace]" << endl;
+      cerr << TextTranslator::toTextTranslator().translate( where.toStdString() ) << endl;
+      kill( getpid(), SIGSEGV );
+    }
   }
 
 
@@ -106,7 +112,7 @@ namespace Hurricane {
     setWindowTitle( tr("<An Exception was Caught>") );
     setToolTip    ( tr("Ben mon cochon, t'es dans le bouillon") );
 
-    _header->setMinimumWidth ( Graphics::isHighDpi() ? 400 : 200 );
+    _header->setMinimumWidth ( Graphics::isHighDpi() ? 1500 : 400 );
     _header->setTextFormat   ( Qt::RichText );
     _header->setText         ( "<b>[ERROR]</b>" );
 
@@ -116,7 +122,7 @@ namespace Hurricane {
     _trace->setTextInteractionFlags ( Qt::TextBrowserInteraction );
     _trace->setAcceptRichText       ( true );
     _trace->setHtml                 ( "<b>No program trace sets yet.</b>" );
-    _trace->setMinimumSize          ( QSize( Graphics::isHighDpi() ? 1800 : 800, 500) );
+    _trace->setMinimumSize          ( Graphics::isHighDpi() ? QSize(2500,1000) : QSize(800,500) );
     _trace->setLineWrapMode         ( QTextEdit::NoWrap );
   //_trace->setSizePolicy           ( QSizePolicy::Ignored, QSizePolicy::Ignored );
     _trace->hide                    ();

@@ -69,6 +69,7 @@
                                       ${PYTHON_LIBRARIES}
                                       -lutil
                                       ${LIBXML2_LIBRARIES}
+                                      ${LIBBFD_LIBRARIES}
                       )
 
            add_library( unicorn       ${cpps} ${mocCpps} ${pyCpps} )

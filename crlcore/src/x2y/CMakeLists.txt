@@ -14,5 +14,6 @@
  target_link_libraries ( cx2y        crlcore
                                      ${UTILITIES_LIBRARY}
                                      ${LIBEXECINFO_LIBRARIES} 
+                                     ${LIBBFD_LIBRARIES} 
                        )
                install ( TARGETS     cx2y DESTINATION bin )

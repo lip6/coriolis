@@ -14,7 +14,7 @@
 
  set_cmake_policies()
  set_lib_link_mode()
- setup_boost(regex)
+ setup_boost(program_options regex)
  setup_qt()
 
  find_package(LibXml2            REQUIRED)
@@ -25,6 +25,7 @@
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD           REQUIRED)
  find_package(Libexecinfo        REQUIRED)
+ find_package(Libbfd)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)

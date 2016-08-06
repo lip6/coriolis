@@ -30,6 +30,7 @@
  find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(Libexecinfo        REQUIRED)
+ find_package(Libbfd)
  
  add_subdirectory(src)
  add_subdirectory(python)
