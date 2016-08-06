@@ -1417,21 +1417,36 @@ namespace Anabatic {
     for ( size_t i=0 ; i<_depth ; i++ ) {
       switch ( Session::getDirection(i) ) {
         case Flags::Horizontal:
-          _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
-          _feedthroughs  [i] += (float)(_blockages[i] / width);
-          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
+          if (width) {
+            _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
+            _feedthroughs  [i] += (float)(_blockages[i] / width);
+            _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
+          } else {
+            _densities     [i]  = 0;
+            _feedthroughs  [i]  = 0;
+            _fragmentations[i]  = 0;
+          }
           break;
         case Flags::Vertical:
-          _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
-          _feedthroughs  [i] += (float)(_blockages[i] / height);
-          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
+          if (height) {
+            _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
+            _feedthroughs  [i] += (float)(_blockages[i] / height);
+            _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
+          } else {
+            _densities     [i]  = 0;
+            _feedthroughs  [i]  = 0;
+            _fragmentations[i]  = 0;
+          }
           break;
       }
 
       if (_densities[i] >= 1.0) _flags |= Flags::Saturated;
     }
 
-    _cDensity  = ( (float)_contacts.size() ) / ccapacity;
+    if (ccapacity)
+      _cDensity = ( (float)_contacts.size() ) / ccapacity;
+    else
+      _cDensity = 0;
     _flags.reset( Flags::Invalidated );
 
     checkDensity();

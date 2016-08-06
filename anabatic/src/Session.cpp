@@ -32,13 +32,8 @@
 namespace {
 
 
-  const char* reopenSession =
-    "Session::open() :\n\n"
-    "    Session already open for %s (internal error).";
-
-  const char* openSessionError =
-    "%s :\n\n"
-    "    Session has not been opened (internal error).";
+  const char* reopenSession    = "Session::open(): Session already open for %s (internal error).";
+  const char* openSessionError = "%s: Session has not been opened (internal error).";
 
 
 } // End of local namespace.
