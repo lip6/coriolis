@@ -262,7 +262,6 @@ namespace {
           return;
         }
       }
-      
     }
   }
 
@@ -414,6 +413,7 @@ namespace Hurricane {
 // Class  :  "Hurricane::Backtrace".
 
 
+  int             Backtrace::_callCount      = 0;
   TextTranslator  Backtrace::_textTranslator = TextTranslator::toTextTranslator();
   const size_t    Backtrace::_stackSize      = 50;
 
@@ -428,6 +428,18 @@ namespace Hurricane {
   Backtrace::Backtrace ()
     : _stack()
   {
+    if (_callCount > 0) {
+      _stack.push_back( "[BUG] Backtrace::Backtrace(): An error occurred in the backtace *istself*." );
+      _stack.push_back( "" );
+      _stack.push_back( "      Under RHEL 6, this may be due to a link with a wrong version of <libbfd>," );
+      _stack.push_back( "      please check that you have the <devtoolset-2-binutils-devel> package" );
+      _stack.push_back( "      installed." );
+      _stack.push_back( "" );
+      _stack.push_back( "      For other OSs, check for any problems related to BFD." );
+      return;
+    }
+    ++_callCount;
+
 #if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
     void*  rawStack [ _stackSize ];
     size_t depth    = backtrace ( rawStack, _stackSize );
@@ -496,6 +508,10 @@ namespace Hurricane {
 #  endif
 #endif
   }
+
+
+  Backtrace::~Backtrace ()
+  { --_callCount; }
 
 
   string  Backtrace::htmlWhere () const
