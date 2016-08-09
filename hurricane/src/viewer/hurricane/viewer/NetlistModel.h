@@ -66,17 +66,14 @@ namespace Hurricane {
   template<typename InformationType>
   void  NetlistModel::setCell ( Cell* cell )
   {
-    if ( _cell != cell ) {
-      if ( _cell )
-        delete _netlist;
+    if (_cell != cell) {
+      if (_cell) delete _netlist;
 
       _cell    = cell;
       _netlist = new NetInformationsVector<InformationType>();
 
-      if ( _cell ) {
-        forEach ( Net*, net, _cell->getNets() ) {
-          _netlist->addNet ( *net );
-        }
+      if (_cell) {
+        for ( Net* net : _cell->getNets() ) _netlist->addNet( net );
       }
 
       emit layoutChanged ();
@@ -84,7 +81,6 @@ namespace Hurricane {
   }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif // __NETLIST_MODEL_H__ 
+#endif // HURRICANE_NETLIST_MODEL_H

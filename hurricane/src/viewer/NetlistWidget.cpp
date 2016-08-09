@@ -71,9 +71,6 @@ namespace Hurricane {
     QHeaderView* horizontalHeader = _view->horizontalHeader();
     horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
     horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 300 : 150 );
-    horizontalHeader->setResizeMode        ( 0, QHeaderView::Interactive );
-    horizontalHeader->setResizeMode        ( 1, QHeaderView::Interactive );
-    horizontalHeader->setResizeMode        ( 2, QHeaderView::Interactive );
     horizontalHeader->setStretchLastSection( true );
 
     QHeaderView* verticalHeader = _view->verticalHeader();

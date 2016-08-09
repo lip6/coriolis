@@ -55,8 +55,13 @@ namespace CRL {
   //_view->resizeColumnToContents ( 1 );
 
     QHeaderView* horizontalHeader = _view->horizontalHeader();
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    horizontalHeader->setSectionResizeMode ( 0, QHeaderView::Stretch );
+    horizontalHeader->setSectionResizeMode ( 1, QHeaderView::ResizeToContents );
+#else
     horizontalHeader->setResizeMode        ( 0, QHeaderView::Stretch );
     horizontalHeader->setResizeMode        ( 1, QHeaderView::ResizeToContents );
+#endif
   //horizontalHeader->setStretchLastSection( false );
 
     QHeaderView* verticalHeader = _view->verticalHeader();
