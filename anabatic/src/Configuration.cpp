@@ -78,6 +78,7 @@ namespace Anabatic {
     , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
     , _edgeCostH      (Cfg::getParamDouble("anabatic.edgeCostH",  9.0)->asDouble())
     , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
+    , _edgeHInc       (Cfg::getParamDouble("anabatic.edgeHInc" , 1.5)->asDouble())
     , _hEdgeLocal     (Cfg::getParamInt("kite.hTracksReservedLocal",0)->asInt())
     , _vEdgeLocal     (Cfg::getParamInt("kite.vTracksReservedLocal",0)->asInt())
   {
@@ -131,6 +132,7 @@ namespace Anabatic {
     , _allowedDepth   (other._allowedDepth)
     , _edgeCostH      (other._edgeCostH)
     , _edgeCostK      (other._edgeCostK)
+    , _edgeHInc       (other._edgeHInc)
   {
     if (other._cg) _cg = other._cg->getClone();
     if (other._rg) _rg = other._rg->getClone();
@@ -334,6 +336,9 @@ namespace Anabatic {
   float  ConfigurationConcrete::getEdgeCostK () const
   { return _edgeCostK; }
 
+
+  float  ConfigurationConcrete::getEdgeHInc () const
+  { return _edgeHInc; }
 
 
   void  ConfigurationConcrete::print ( Cell* cell ) const

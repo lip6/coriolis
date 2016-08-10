@@ -18,6 +18,7 @@
 #include <iostream>
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
@@ -38,6 +39,7 @@ namespace Anabatic {
   using std::ostringstream;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::Breakpoint;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
   using Hurricane::Horizontal;
@@ -554,6 +556,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::ripup ( Segment* seed, Flags flags )
   {
+
     Net* net = seed->getNet();
 
     DebugSession::open( net, 112, 120 );
@@ -614,6 +617,8 @@ namespace Anabatic {
 
       Contact* source = dynamic_cast<Contact*>( segment->getSource() );
       Contact* target = dynamic_cast<Contact*>( segment->getTarget() );
+      segment->getSourceHook()->detach();
+      segment->getTargetHook()->detach();
       segment->destroy();
       bool deletedSource = gcells->gcellAt( 0                )->unrefContact( source );
       bool deletedTarget = gcells->gcellAt( gcells->size()-1 )->unrefContact( target );
@@ -635,7 +640,7 @@ namespace Anabatic {
 
     getNetData( net )->setGlobalRouted( false );
 
-    cdebug_tabw(111,-1);
+    cdebug_tabw(112,-1);
     DebugSession::close();
   }
 

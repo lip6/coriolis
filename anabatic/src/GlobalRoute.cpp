@@ -63,7 +63,9 @@ namespace {
     float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
     float congestionCost = 1.0 + _h / (1.0 + std::exp(_k * (congestion - 1.0)));
 
-    float distance = (float)source->getDistance() + congestionCost * (float)edge->getDistance();
+    float distance = (float)source->getDistance()
+                   + congestionCost * (float)edge->getDistance();
+                   + edge->getHistoricCost();
 
     // Edge* sourceFrom = source->getFrom();
     // if (sourceFrom) {
@@ -74,6 +76,19 @@ namespace {
                       << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
 
     return (DbU::Unit)distance;
+  }
+
+
+  void  computeNextHCost ( Edge* edge, float edgeHInc )
+  {
+    float congestion = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
+    float hCost      = edge->getHistoricCost();
+
+    float alpha = (congestion < 1.0) ? congestion : std::exp( std::log(8)*( congestion - 1 ) );
+
+    edge->setHistoricCost( alpha * (hCost + ((congestion < 1.0) ? 0.0 : edgeHInc) ));
+
+    cdebug_log(113,0) << edge << endl;
   }
 
 
@@ -119,6 +134,7 @@ namespace Anabatic {
   //DebugSession::addToTrace( cell->getNet("a_from_pads(0)") );
   //DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
   //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_muxoutput(159)") );
+  //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_c1(3)") );
 
     startMeasures();
 
@@ -145,7 +161,9 @@ namespace Anabatic {
 
     cmess1 << "  o  Running global routing..." << endl;
 
-    UpdateSession::open();
+    float edgeHInc = getConfiguration()->getEdgeHInc();
+
+    Session::open( this );
     Dijkstra* dijkstra = new Dijkstra ( this );
     dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                           , getConfiguration()->getEdgeCostK() ) );
@@ -165,8 +183,12 @@ namespace Anabatic {
       }
       cmess2 << left << setw(6) << netCount << right;
 
+    //Session::revalidate();
+
       const vector<Edge*>& ovEdges = getOvEdges();
       cmess2 << " ovEdges:" << ovEdges.size();
+
+      for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
 
       netCount = 0;
       while ( not ovEdges.empty() ) {
@@ -181,8 +203,9 @@ namespace Anabatic {
         }
       }
 
-      cmess2 << " ripup:" << netCount;
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
 
+      cmess2 << " ripup:" << netCount;
       stopMeasures();
       cmess2 << " " << setw(10) << Timer::getStringTime  (_timer.getCombTime())
              << " " << setw( 6) << Timer::getStringMemory(_timer.getIncrease()) << endl;
@@ -218,7 +241,7 @@ namespace Anabatic {
     printMeasures( "Dijkstra" );
 
     delete dijkstra;
-    UpdateSession::close();
+    Session::close();
 
     _state = EngineGlobalLoaded;
   }

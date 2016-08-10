@@ -293,7 +293,9 @@ namespace Anabatic {
       inline bool       isBipoint          () const;
       inline bool       isSourceVertex     ( Vertex* ) const;
       inline bool       isTargetVertex     ( Vertex* ) const;
+      inline DbU::Unit  getSearchAreaHalo  () const;
       inline void       setDistance        ( distance_t );
+      inline void       setSearchAreaHalo  ( DbU::Unit );
              void       load               ( Net* );
              void       run                ( Mode mode=Mode::Standart );
     private:           
@@ -319,6 +321,7 @@ namespace Anabatic {
       VertexSet        _sources;
       VertexSet        _targets;
       Box              _searchArea;
+      DbU::Unit        _searchAreaHalo;
       int              _connectedsId;
       PriorityQueue    _queue;
   };
@@ -327,10 +330,12 @@ namespace Anabatic {
   inline Dijkstra::Mode::Mode ( unsigned int flags ) : BaseFlags(flags) { }
   inline Dijkstra::Mode::Mode ( BaseFlags    base  ) : BaseFlags(base)  { }
 
-  inline bool  Dijkstra::isBipoint      () const { return _net and (_targets.size()+_sources.size() == 2); }
-  inline bool  Dijkstra::isSourceVertex ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
-  inline bool  Dijkstra::isTargetVertex ( Vertex* v ) const { return (_targets.find(v) != _targets.end()); }
-  inline void  Dijkstra::setDistance    ( distance_t cb ) { _distanceCb = cb; }
+  inline bool       Dijkstra::isBipoint         () const { return _net and (_targets.size()+_sources.size() == 2); }
+  inline bool       Dijkstra::isSourceVertex    ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
+  inline bool       Dijkstra::isTargetVertex    ( Vertex* v ) const { return (_targets.find(v) != _targets.end()); }
+  inline DbU::Unit  Dijkstra::getSearchAreaHalo () const { return _searchAreaHalo; }
+  inline void       Dijkstra::setDistance       ( distance_t cb ) { _distanceCb = cb; }
+  inline void       Dijkstra::setSearchAreaHalo ( DbU::Unit halo ) { _searchAreaHalo = halo; }
 
 
 }  // Anabatic namespace.

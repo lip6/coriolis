@@ -172,17 +172,18 @@ namespace Anabatic {
 
 
   Dijkstra::Dijkstra ( AnabaticEngine* anabatic )
-    : _anabatic    (anabatic)
-    , _vertexes    ()
-    , _distanceCb  (_distance)
-    , _mode        (Mode::Standart)
-    , _net         (NULL)
-    , _stamp       (-1)
-    , _sources     ()
-    , _targets     ()
-    , _searchArea  ()
-    , _connectedsId(-1)
-    , _queue       ()
+    : _anabatic      (anabatic)
+    , _vertexes      ()
+    , _distanceCb    (_distance)
+    , _mode          (Mode::Standart)
+    , _net           (NULL)
+    , _stamp         (-1)
+    , _sources       ()
+    , _targets       ()
+    , _searchArea    ()
+    , _searchAreaHalo(0)
+    , _connectedsId  (-1)
+    , _queue         ()
   {
     const vector<GCell*>& gcells = _anabatic->getGCells();
     for ( GCell* gcell : gcells ) {
@@ -216,6 +217,8 @@ namespace Anabatic {
     for ( auto rp : rps ) {
       Point  center = rp->getBoundingBox().getCenter();
       GCell* gcell  = _anabatic->getGCellUnder( center );
+
+      cdebug_log(112,0) << "| " << rp << endl;
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
@@ -244,7 +247,7 @@ namespace Anabatic {
           vertex->setFrom         ( NULL );
           vertex->clearRestriction();
           _targets.insert( vertex );
-          cdebug_log(112,0) << "Add Vertex: " << vertex << endl;
+          cdebug_log(112,0) << "| Add: " << vertex << endl;
         }
       }
 
@@ -254,6 +257,7 @@ namespace Anabatic {
       rp->getBodyHook()->attach( vcontact->getBodyHook() );
     }
 
+    _searchArea.inflate( _searchAreaHalo );
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
     cdebug_tabw(112,-1);
     DebugSession::close();

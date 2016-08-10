@@ -94,6 +94,7 @@ namespace Anabatic {
       virtual DbU::Unit          getEdgeWidth        () const = 0;
       virtual float              getEdgeCostH        () const = 0;
       virtual float              getEdgeCostK        () const = 0;
+      virtual float              getEdgeHInc         () const = 0;
       virtual size_t             getHEdgeLocal       () const = 0;
       virtual size_t             getVEdgeLocal       () const = 0;
       virtual void               print               ( Cell* ) const = 0;
@@ -157,6 +158,7 @@ namespace Anabatic {
       virtual DbU::Unit              getEdgeWidth          () const;
       virtual float                  getEdgeCostH          () const;
       virtual float                  getEdgeCostK          () const;
+      virtual float                  getEdgeHInc           () const;
       virtual size_t                 getHEdgeLocal         () const;
       virtual size_t                 getVEdgeLocal         () const;
       virtual void                   print                 ( Cell* ) const;
@@ -179,6 +181,7 @@ namespace Anabatic {
       DbU::Unit               _edgeWidth;
       float                   _edgeCostH;
       float                   _edgeCostK;
+      float                   _edgeHInc;
       size_t                  _hEdgeLocal;
       size_t                  _vEdgeLocal;
     private:

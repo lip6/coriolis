@@ -39,6 +39,7 @@ namespace Anabatic {
     , _capacity         (0)
     , _realOccupancy    (0)
     , _estimateOccupancy(0.0)
+    , _historicCost     (0.0)
     , _source           (source)
     , _target           (target)
     , _axis             (0)
@@ -299,6 +300,7 @@ namespace Anabatic {
     s.insert( s.size()-1, " "+DbU::getValueString(_axis) );
     s.insert( s.size()-1, " "+getString(_realOccupancy) );
     s.insert( s.size()-1, "/"+getString(_capacity) );
+    s.insert( s.size()-1, " h:"+getString(_historicCost) );
     s.insert( s.size()-1, " "+getString(_flags) );
     return s;
   }

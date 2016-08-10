@@ -594,7 +594,7 @@ namespace Anabatic {
 
   GCell*  GCell::vcut ( DbU::Unit x )
   {
-    cdebug_log(119,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
+    cdebug_log(110,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
 
     if ( (x < getXMin()) or (x > getXMax()) )
       throw Error( "GCell::vcut(): Vertical cut axis at %s is outside GCell box,\n"
@@ -604,7 +604,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( x, getYMin() );
-    cdebug_log(119,0) << "New chunk:" << chunk << endl;
+    cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
@@ -646,7 +646,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug_tabw(119,-1);
+    cdebug_tabw(110,-1);
 
     return chunk;
   }
@@ -654,7 +654,7 @@ namespace Anabatic {
 
   GCell* GCell::hcut ( DbU::Unit y )
   {
-    cdebug_log(119,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
+    cdebug_log(110,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
 
     if ( (y < getYMin()) or (y > getYMax()) )
       throw Error( "GCell::hcut(): Horizontal cut axis at %s is outside GCell box,\n"
@@ -664,7 +664,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( getXMin(), y );
-    cdebug_log(119,0) << "New chunk:" << chunk << endl;
+    cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
@@ -698,7 +698,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug_tabw(119,-1);
+    cdebug_tabw(110,-1);
 
     return chunk;
   }
