@@ -50,7 +50,7 @@ namespace Hurricane {
       inline std::string  _getTypeName () const;
       inline std::string  _getString   () const;
     private:
-      static int                       _callCount;
+      static bool                      _inConstructor;
       static TextTranslator            _textTranslator;
       static const size_t              _stackSize;
              std::vector<std::string>  _stack;

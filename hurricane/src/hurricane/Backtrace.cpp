@@ -413,7 +413,7 @@ namespace Hurricane {
 // Class  :  "Hurricane::Backtrace".
 
 
-  int             Backtrace::_callCount      = 0;
+  bool            Backtrace::_inConstructor  = false;
   TextTranslator  Backtrace::_textTranslator = TextTranslator::toTextTranslator();
   const size_t    Backtrace::_stackSize      = 50;
 
@@ -428,7 +428,7 @@ namespace Hurricane {
   Backtrace::Backtrace ()
     : _stack()
   {
-    if (_callCount > 0) {
+    if (_inConstructor) {
       _stack.push_back( "[BUG] Backtrace::Backtrace(): An error occurred in the backtace *istself*." );
       _stack.push_back( "" );
       _stack.push_back( "      Under RHEL 6, this may be due to a link with a wrong version of <libbfd>," );
@@ -438,7 +438,7 @@ namespace Hurricane {
       _stack.push_back( "      For other OSs, check for any problems related to BFD." );
       return;
     }
-    ++_callCount;
+    _inConstructor = true;
 
 #if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
     void*  rawStack [ _stackSize ];
@@ -484,6 +484,7 @@ namespace Hurricane {
         _stack.push_back( symbols[i] );
       }
     }
+#else
 #  ifdef  __APPLE__
     boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\+\\s+(\\d+)" ); 
     boost::cmatch match;
@@ -507,11 +508,12 @@ namespace Hurricane {
     _stack.push_back( "Backtrace only supported under FreeBSD, Linux and OSX." );
 #  endif
 #endif
+    _inConstructor = false;
   }
 
 
   Backtrace::~Backtrace ()
-  { --_callCount; }
+  { }
 
 
   string  Backtrace::htmlWhere () const
