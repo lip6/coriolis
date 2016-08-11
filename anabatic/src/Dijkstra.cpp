@@ -345,12 +345,19 @@ namespace Anabatic {
       if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
         for ( Edge* edge : current->getGCell()->getEdges() ) {
 
-          if (edge == current->getFrom()) continue;
+          if (edge == current->getFrom()) {
+            cdebug_log(111,0) << "edge == current->getFrom()" << endl;
+            continue;
+          }
           
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
 
-          if (not _searchArea.contains(vneighbor->getCenter())) continue;
+        //if (not _searchArea.contains(vneighbor->getCenter())) {
+          if (not _searchArea.intersect(gneighbor->getBoundingBox())) {
+            cdebug_log(111,0) << "not _searchArea.contains(vneighbor->getCenter()):" << _searchArea << endl;
+            continue;
+          }
 
           cdebug_log(111,0) << "| Edge " << edge << endl;
           cdebug_log(111,0) << "+ Neighbor: " << vneighbor << endl;
@@ -461,7 +468,8 @@ namespace Anabatic {
 
         while ( true ) {
           from = target->getFrom();
-          if (   not from
+          if (  not from
+             or not (target->getGCell()->isMatrix())
              or (target->hasGContact(_net))
              or (target->getRpCount())
              or (target->getDegree() > 2)
