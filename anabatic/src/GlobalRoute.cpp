@@ -191,15 +191,17 @@ namespace Anabatic {
       for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
 
       netCount = 0;
-      while ( not ovEdges.empty() ) {
-        Edge*   ovEdge = ovEdges[0];
+      size_t iEdge = 0;
+      while ( iEdge < ovEdges.size() ) {
+        Edge* edge = ovEdges[iEdge];
+        netCount += edge->ripup();
 
-        vector<Segment*> segments = ovEdge->getSegments();
-        for ( Segment* segment : segments ) {
-          NetData* netData = getNetData( segment->getNet() );
-          if (netData->isGlobalRouted()) ++netCount;
-
-          ripup( segment, Flags::Propagate );
+        if (ovEdges[iEdge] == edge) {
+          cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
+                         "        %s"
+                       , getString(edge).c_str()
+                       ) << endl;
+          ++iEdge;
         }
       }
 

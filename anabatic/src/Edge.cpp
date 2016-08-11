@@ -223,6 +223,25 @@ namespace Anabatic {
   }
 
 
+  size_t  Edge::ripup ()
+  {
+    AnabaticEngine* anabatic        = getAnabatic();
+    DbU::Unit       globalThreshold = Session::getSliceHeight()*3;
+    size_t          netCount        = 0;
+
+    for ( size_t i=0 ; i<_segments.size(); ) {
+      if (_segments[i]->getLength() >= globalThreshold) {
+        NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+        if (netData->isGlobalRouted()) ++netCount;
+
+        anabatic->ripup( _segments[i], Flags::Propagate );
+      } else
+        ++i;
+    }
+    return netCount;
+  }
+
+
   void  Edge::_setSource ( GCell* source )
   {
     if (source == _target)
