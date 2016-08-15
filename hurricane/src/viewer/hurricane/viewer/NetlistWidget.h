@@ -18,10 +18,10 @@
 #ifndef  HURRICANE_NETLIST_WIDGET_H
 #define  HURRICANE_NETLIST_WIDGET_H
 
-
 #include <set>
 #include <QWidget>
 #include <QTableView>
+#include <QHeaderView>
 #include <QItemDelegate>
 #include <QSortFilterProxyModel>
 #include "hurricane/Commons.h"
@@ -187,9 +187,17 @@ namespace Hurricane {
     string windowTitle = "Netlist" + getString(cell);
     setWindowTitle( tr(windowTitle.c_str()) );
 
+    QHeaderView* header = _view->horizontalHeader();
+
     _view->selectRow( 0 );
-    for ( int i=0 ; i<_baseModel->columnCount() ; ++i )
+    for ( int i=0 ; i<_baseModel->columnCount() ; ++i ) {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+      header->setSectionResizeMode( i, QHeaderView::Interactive );
+#else
+      header->setResizeMode( i, QHeaderView::Interactive );
+#endif
       _view->resizeColumnToContents( i );
+    }
     _view->setVisible( true );
   }
 

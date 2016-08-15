@@ -65,8 +65,13 @@ namespace Hurricane {
     QHeaderView* horizontalHeader = _view->header();
     horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
     horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 600 : 300 );
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     horizontalHeader->setResizeMode        ( 0, QHeaderView::Interactive );
     horizontalHeader->setResizeMode        ( 1, QHeaderView::Interactive );
+// #else
+//     horizontalHeader->setSectionResizeMode ( 0, QHeaderView::Interactive );
+//     horizontalHeader->setSectionResizeMode ( 1, QHeaderView::Interactive );
+#endif
     horizontalHeader->setStretchLastSection( true );
 
     QLabel* filterPatternLabel = new QLabel(tr("&Filter pattern:"), this);
@@ -219,7 +224,8 @@ namespace Hurricane {
   {
     if (delta == 0) return;
 
-    QModelIndex newIndex = _baseModel->index( _view->currentIndex().row()+delta, 0, QModelIndex() );
+  //QModelIndex newIndex =
+    _baseModel->index( _view->currentIndex().row()+delta, 0, QModelIndex() );
 
   //if (newIndex.isValid())
   //  _view->selectRow( newIndex.row() );

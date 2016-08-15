@@ -164,6 +164,7 @@ namespace Anabatic {
                     GCell*                getEast             ( DbU::Unit y ) const;
                     GCell*                getSouth            ( DbU::Unit x ) const;
                     GCell*                getNorth            ( DbU::Unit x ) const;
+                    GCell*                getNeighborAt       ( Flags side, DbU::Unit axis ) const;
                     GCell*                getUnder            ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*                getUnder            ( Point p ) const;
                     GCell*                hcut                ( DbU::Unit y );
@@ -215,6 +216,7 @@ namespace Anabatic {
                     void                  updateContacts      ();
                     size_t                updateDensity       ();
       inline        void                  updateKey           ( size_t depth );
+                    void                  truncDensities      ();
                     bool                  stepBalance         ( size_t depth, Set& invalidateds );
                     void                  rpDesaturate        ( set<Net*>& );
                     bool                  stepDesaturate      ( size_t                    depth
@@ -445,6 +447,8 @@ namespace Anabatic {
 // Utilities.
 
   string  getVectorString ( float*, size_t );
+  bool    isLess          ( const GCell* lhs, const GCell* rhs, Flags direction );
+  bool    isGreater       ( const GCell* lhs, const GCell* rhs, Flags direction );
 
 
 }  // Anabatic namespace.

@@ -66,8 +66,9 @@ namespace Hurricane {
 
   inline void  HierarchyModel::setCell ( Cell* cell )
   {
+    beginResetModel();
     _root.setCell( cell );
-    reset();
+    endResetModel();
   }
 
 

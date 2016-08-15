@@ -398,7 +398,8 @@ class Report ( object ):
       for attachement in self.attachements:
         self.message.attach( attachement )
 
-      print "Sending mail report to <%s>" % self.conf.receivers
+      print "Sending mail report to:"
+      for receiver in self.conf.receivers: print '  <%s>' % receiver
       session = smtplib.SMTP( 'localhost' )
       session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
       session.quit()
@@ -433,6 +434,9 @@ try:
     if options.noReport:                  conf.doSendReport = False
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
+
+    if conf.doBuild:  conf.openLog( 'build' )
+    if conf.doBenchs: conf.openLog( 'benchs' )
 
     gitSupports = []
     for supportRepo in conf.supportRepos:
@@ -471,9 +475,6 @@ try:
       raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
                              , '   <%s>' % ccbBin
                              ] )
-
-    if conf.doBuild:  conf.openLog( 'build' )
-    if conf.doBenchs: conf.openLog( 'benchs' )
 
     buildCommand  = '%s --root=%s --project=support --project=coriolis --project=chams --make="-j%%d install" %%s' \
                      % (ccbBin,conf.rootDir)

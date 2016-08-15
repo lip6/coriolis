@@ -49,7 +49,7 @@ namespace Hurricane {
 
 
   void  Observable::removeObserver ( BaseObserver* observer )
-  { 
+  {
     vector<BaseObserver*>::iterator iobserver=_observers.begin();
     for ( ; iobserver!=_observers.end() ; ++iobserver ) {
       if (*iobserver == observer) {

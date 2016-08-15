@@ -63,40 +63,42 @@ namespace {
   {
     cdebug_log(145,1) << "propagateConstraintFromRp() - " << rp << endl;
 
-    forEach ( Component*, icomponent, rp->getSlaveComponents() ) {
-      cdebug_log(145,0) << "slave component: " << *icomponent << endl;
-      AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(*icomponent) );
+    for ( Component* component : rp->getSlaveComponents() ) {
+      cdebug_log(145,0) << "slave component: " << component << endl;
+      AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(component) );
       if (sourceContact) {
         cdebug_log(145,0) << "Start slave: " << sourceContact << endl;
 
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
 
-        forEach ( AutoSegment*, isegment, sourceContact->getAutoSegments() ) {
-          cdebug_log(145,0) << "Examining: " << (*isegment) << endl;
-          AutoContact* targetContact = isegment->getOppositeAnchor(sourceContact);
+        for ( AutoSegment* segment : sourceContact->getAutoSegments() ) {
+          cdebug_log(145,0) << "Examining: " << segment << endl;
+          AutoContact* targetContact = segment->getOppositeAnchor(sourceContact);
 
           if (targetContact) {
-            if (isegment->isHorizontal()) {
-              cdebug_log(145,0) << "On horizontal stack " << (*isegment) << endl;
-              horizontalSegments.insert( (*isegment) );
+            if (segment->isHorizontal()) {
+              cdebug_log(145,0) << "On horizontal stack " << segment << endl;
+              horizontalSegments.insert( segment );
             } else {
-              cdebug_log(145,0) << "On vertical stack " << (*isegment) << endl;
-              verticalSegments.insert( (*isegment) );
+              cdebug_log(145,0) << "On vertical stack " << segment << endl;
+              verticalSegments.insert( segment );
             }
           }
         }
 
         Box  constraintBox = sourceContact->getConstraintBox();
+        cdebug_log(145,0) << "Contraint: " << constraintBox << endl;
 
         // Propagate constraint through horizontally aligned segments.
         cdebug_log(145,0) << "Propagate constraint on horizontal segments" << endl;
 
-        set<AutoSegment*>::iterator ihorizontal = horizontalSegments.begin();
-        for ( ; ihorizontal != horizontalSegments.end() ; ++ihorizontal ) {
+        for ( AutoSegment* horizontal : horizontalSegments ) {
           AutoContact* contact = NULL;
-          forEach ( AutoSegment*, ialigned, (*ihorizontal)->getAligneds() ) {
-            contact = ialigned->getAutoTarget();
+          for ( AutoSegment* aligned : horizontal->getAligneds(Flags::WithSelf) ) {
+            cdebug_log(145,0) << "aligned horizontal: " << aligned << endl;
+
+            contact = aligned->getAutoTarget();
             cdebug_log(145,0) << "contact: " << contact << endl;
             if (contact) {
               cdebug_log(145,0) << "Apply to (target): " << contact << endl;
@@ -104,7 +106,7 @@ namespace {
                                             , constraintBox.getYMax()
                                             , Flags::Horizontal|Flags::WarnOnError );
             }
-            contact = ialigned->getAutoSource();
+            contact = aligned->getAutoSource();
             cdebug_log(145,0) << "contact: " << contact << endl;
             if (contact) {
               cdebug_log(145,0) << "Apply to (source): " << contact << endl;
@@ -118,18 +120,19 @@ namespace {
         // Propagate constraint through vertically aligned segments.
         cdebug_log(145,0) << "Propagate constraint on vertical segments" << endl;
 
-        set<AutoSegment*>::iterator ivertical = verticalSegments.begin();
-        for ( ; ivertical != verticalSegments.end() ; ++ivertical ) {
+        for ( AutoSegment* vertical : verticalSegments ) {
           AutoContact* contact = NULL;
-          forEach ( AutoSegment*, ialigned, (*ivertical)->getAligneds() ) {
-            contact = ialigned->getAutoTarget();
+          for ( AutoSegment* aligned : vertical->getAligneds(Flags::WithSelf) ) {
+            cdebug_log(145,0) << "aligned vertical: " << aligned << endl;
+
+            contact = aligned->getAutoTarget();
             if (contact) {
               cdebug_log(145,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
             }
-            contact = ialigned->getAutoSource();
+            contact = aligned->getAutoSource();
             if (contact) {
               cdebug_log(145,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()

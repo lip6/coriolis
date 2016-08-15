@@ -325,7 +325,7 @@ namespace Anabatic {
     if (not anabatic)            throw Error( "GCell::create(): NULL anabatic argument." );
     if (not anabatic->getCell()) throw Error( "GCell::create(): AnabaticEngine has no Cell loaded." );
 
-    Session::open( anabatic );
+    anabatic->openSession();
     GCell* gcell = new GCell ( anabatic
                              , anabatic->getCell()->getAbutmentBox().getXMin()
                              , anabatic->getCell()->getAbutmentBox().getYMin() );
@@ -539,6 +539,16 @@ namespace Anabatic {
   }
 
 
+  GCell* GCell::getNeighborAt ( Flags side, DbU::Unit axis ) const
+  {
+    if (side & Flags::EastSide ) return getEast (axis);
+    if (side & Flags::WestSide ) return getWest (axis);
+    if (side & Flags::NorthSide) return getNorth(axis);
+    if (side & Flags::SouthSide) return getSouth(axis);
+    return NULL;
+  }
+
+
   GCell* GCell::getUnder ( DbU::Unit x, DbU::Unit y ) const
   {
     const GCell* current = this;
@@ -594,7 +604,7 @@ namespace Anabatic {
 
   GCell*  GCell::vcut ( DbU::Unit x )
   {
-    cdebug_log(119,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
+    cdebug_log(110,1) << "GCell::vcut() @x:" << DbU::getValueString(x) << " " << this << endl;
 
     if ( (x < getXMin()) or (x > getXMax()) )
       throw Error( "GCell::vcut(): Vertical cut axis at %s is outside GCell box,\n"
@@ -604,7 +614,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( x, getYMin() );
-    cdebug_log(119,0) << "New chunk:" << chunk << endl;
+    cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
@@ -646,7 +656,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug_tabw(119,-1);
+    cdebug_tabw(110,-1);
 
     return chunk;
   }
@@ -654,7 +664,7 @@ namespace Anabatic {
 
   GCell* GCell::hcut ( DbU::Unit y )
   {
-    cdebug_log(119,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
+    cdebug_log(110,1) << "GCell::hcut() @y:" << DbU::getValueString(y) << " " << this << endl;
 
     if ( (y < getYMin()) or (y > getYMax()) )
       throw Error( "GCell::hcut(): Horizontal cut axis at %s is outside GCell box,\n"
@@ -664,7 +674,7 @@ namespace Anabatic {
                  );
 
     GCell* chunk = _create( getXMin(), y );
-    cdebug_log(119,0) << "New chunk:" << chunk << endl;
+    cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
@@ -698,7 +708,7 @@ namespace Anabatic {
     _revalidate();
     chunk->_revalidate();
 
-    cdebug_tabw(119,-1);
+    cdebug_tabw(110,-1);
 
     return chunk;
   }
@@ -706,10 +716,10 @@ namespace Anabatic {
 
   bool  GCell::doGrid ()
   {
-    Session::open( getAnabatic() );
+    getAnabatic()->openSession();
 
-    const vector<GCell*>& gcells = getAnabatic()->getGCells();
-    size_t    ibegin = gcells.size();
+  //const vector<GCell*>& gcells = getAnabatic()->getGCells();
+  //size_t    ibegin = gcells.size();
     DbU::Unit side   = Session::getSliceHeight();
 
     Interval hspan = getSide( Flags::Horizontal );
@@ -740,29 +750,32 @@ namespace Anabatic {
     for ( ; ycut < vspan.getVMax() ; ycut += side ) {
       column = row;
       row    = row->hcut( ycut );
+      row->setType( Flags::MatrixGCell );
 
       for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
         column = column->vcut( xcut );
+        column->setType( Flags::MatrixGCell );
       }
     }
 
     column = row;
     for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
       column = column->vcut( xcut );
+      column->setType( Flags::MatrixGCell );
     }
 
     setType( Flags::MatrixGCell );
 
-    size_t hLocal = - getAnabatic()->getConfiguration()->getHEdgeLocal();
-    size_t vLocal = - getAnabatic()->getConfiguration()->getVEdgeLocal();
-    for ( ; ibegin < gcells.size() ; ++ibegin ) {
-      gcells[ibegin]->setType( Flags::MatrixGCell );
+  //size_t hLocal = - getAnabatic()->getConfiguration()->getHEdgeLocal();
+  //size_t vLocal = - getAnabatic()->getConfiguration()->getVEdgeLocal();
+  //for ( ; ibegin < gcells.size() ; ++ibegin ) {
+  //  gcells[ibegin]->setType( Flags::MatrixGCell );
 
-      for ( Edge* edge : gcells[ibegin]->getEdges(Flags::NorthSide|Flags::EastSide) ) {
-        if (edge->isHorizontal()) edge->incCapacity( hLocal );
-        else                      edge->incCapacity( vLocal );
-      }
-    }
+  //  for ( Edge* edge : gcells[ibegin]->getEdges(Flags::NorthSide|Flags::EastSide) ) {
+  //    if (edge->isHorizontal()) edge->incCapacity( hLocal );
+  //    else                      edge->incCapacity( vLocal );
+  //  }
+  //}
 
     Session::close();
     return true;
@@ -1049,13 +1062,8 @@ namespace Anabatic {
 
   Interval  GCell::getSide ( unsigned int direction ) const
   {
-    Interval side;
-    switch ( direction ) {
-      default:
-      case Flags::Horizontal: side = Interval(getXMin(),getXMax()); break;
-      case Flags::Vertical:   side = Interval(getYMin(),getYMax()); break;
-    }
-    return side;
+    if (direction & Flags::Vertical) return Interval( getYMin(), getYMax() );
+    return Interval( getXMin(), getXMax() );
   }
 
 
@@ -1312,15 +1320,12 @@ namespace Anabatic {
       localCounts  [i] = 0.0;
       _globalsCount[i] = 0.0;
 
-      switch ( Session::getDirection(i) ) {
-        case Flags::Horizontal:
-          ufragments[i].setSpan    ( getXMin(), getXMax() );
-          ufragments[i].setCapacity( (size_t)hcapacity );
-          break;
-        case Flags::Vertical:
-          ufragments[i].setSpan    ( getYMin(), getYMax() );
-          ufragments[i].setCapacity( (size_t)vcapacity );
-          break;
+      if (Session::getDirection(i) & Flags::Horizontal) {
+        ufragments[i].setSpan    ( getXMin(), getXMax() );
+        ufragments[i].setCapacity( (size_t)hcapacity );
+      } else {
+        ufragments[i].setSpan    ( getYMin(), getYMax() );
+        ufragments[i].setCapacity( (size_t)vcapacity );
       }
     }
 
@@ -1330,10 +1335,10 @@ namespace Anabatic {
       for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
       contact->getLengths ( uLengths1, processeds );
       for ( size_t i=0 ; i<_depth ; i++ ) {
-        switch ( Session::getDirection(i) ) {
-          case Flags::Horizontal: uLengths2[i] += uLengths1[i]+hpenalty; break;
-          case Flags::Vertical:   uLengths2[i] += uLengths1[i]+vpenalty; break;
-        }
+        if (Session::getDirection(i) & Flags::Horizontal)
+          uLengths2[i] += uLengths1[i]+hpenalty;
+        else
+          uLengths2[i] += uLengths1[i]+vpenalty; break;
       }
     }
 
@@ -1415,29 +1420,26 @@ namespace Anabatic {
 
   // Normalize: 0 < d < 1.0 (divide by H/V capacity).
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      switch ( Session::getDirection(i) ) {
-        case Flags::Horizontal:
-          if (width) {
-            _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
-            _feedthroughs  [i] += (float)(_blockages[i] / width);
-            _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
-          } else {
-            _densities     [i]  = 0;
-            _feedthroughs  [i]  = 0;
-            _fragmentations[i]  = 0;
-          }
-          break;
-        case Flags::Vertical:
-          if (height) {
-            _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
-            _feedthroughs  [i] += (float)(_blockages[i] / height);
-            _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
-          } else {
-            _densities     [i]  = 0;
-            _feedthroughs  [i]  = 0;
-            _fragmentations[i]  = 0;
-          }
-          break;
+      if (Session::getDirection(i) & Flags::Horizontal) {
+        if (width) {
+          _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
+          _feedthroughs  [i] += (float)(_blockages[i] / width);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
+        } else {
+          _densities     [i]  = 0;
+          _feedthroughs  [i]  = 0;
+          _fragmentations[i]  = 0;
+        }
+      } else {
+        if (height) {
+          _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
+          _feedthroughs  [i] += (float)(_blockages[i] / height);
+          _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
+        } else {
+          _densities     [i]  = 0;
+          _feedthroughs  [i]  = 0;
+          _fragmentations[i]  = 0;
+        }
       }
 
       if (_densities[i] >= 1.0) _flags |= Flags::Saturated;
@@ -1452,6 +1454,25 @@ namespace Anabatic {
     checkDensity();
 
     return isSaturated() ? 1 : 0 ;
+  }
+
+
+  void  GCell::truncDensities ()
+  {
+    int  hcapacity = (int)getHCapacity();
+    int  vcapacity = (int)getVCapacity();
+    Box  bBox      = getBoundingBox();
+
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      if (Session::getDirection(i) & Flags::Horizontal) {
+        if (_blockages[i] > hcapacity * bBox.getWidth())
+          _blockages[i]  = hcapacity * bBox.getWidth();
+      } else {
+        if (_blockages[i] > vcapacity * bBox.getHeight())
+          _blockages[i]  = vcapacity * bBox.getHeight();
+      }
+    }
+    _flags &= ~Flags::Saturated;
   }
 
 
@@ -1485,10 +1506,8 @@ namespace Anabatic {
     if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
 
     float capacity = 0.0;
-    switch ( Session::getDirection(depth) ) {
-      case Flags::Horizontal: capacity = getHCapacity(); break;
-      case Flags::Vertical:   capacity = getVCapacity(); break;
-    }
+    if (Session::getDirection(depth) & Flags::Horizontal) capacity = getHCapacity();
+    else                                                  capacity = getVCapacity();
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
                 << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
@@ -1543,15 +1562,12 @@ namespace Anabatic {
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
-    switch ( Session::getDirection(depth) ) {
-      case Flags::Horizontal:
-        iend     = _hsegments.end  ();
-        isegment = _hsegments.begin();
-        break;
-      case Flags::Vertical:
-        iend     = _vsegments.end  ();
-        isegment = _vsegments.begin();
-        break;
+    if (Session::getDirection(depth) & Flags::Horizontal) {
+      iend     = _hsegments.end  ();
+      isegment = _hsegments.begin();
+    } else {
+      iend     = _vsegments.end  ();
+      isegment = _vsegments.begin();
     }
 
     for ( ; (isegment != iend) ; isegment++ ) {
@@ -1582,15 +1598,12 @@ namespace Anabatic {
     vector<AutoSegment*>::iterator iend;
     set<Net*>                      globalNets;
 
-    switch ( Session::getDirection(depth) ) {
-      case Flags::Horizontal:
-        iend     = _hsegments.end  ();
-        isegment = _hsegments.begin();
-        break;
-      case Flags::Vertical:
-        iend     = _vsegments.end  ();
-        isegment = _vsegments.begin();
-        break;
+    if (Session::getDirection(depth) & Flags::Horizontal) {
+      iend     = _hsegments.end  ();
+      isegment = _hsegments.begin();
+    } else {
+      iend     = _vsegments.end  ();
+      isegment = _vsegments.begin();
     }
 
     for ( ; (isegment != iend) ; isegment++ ) {
@@ -1626,15 +1639,12 @@ namespace Anabatic {
     vector<AutoSegment*>::iterator isegment;
     vector<AutoSegment*>::iterator iend;
 
-    switch ( Session::getDirection(depth) ) {
-      case Flags::Horizontal:
-        iend     = _hsegments.end   ();
-        isegment = _hsegments.begin ();
-        break;
-      case Flags::Vertical:
-        iend     = _vsegments.end   ();
-        isegment = _vsegments.begin ();
-        break;
+    if (Session::getDirection(depth) & Flags::Horizontal) {
+      iend     = _hsegments.end   ();
+      isegment = _hsegments.begin ();
+    } else {
+      iend     = _vsegments.end   ();
+      isegment = _vsegments.begin ();
     }
 
     for ( ; (isegment != iend) ; isegment++ ) {
@@ -1772,6 +1782,32 @@ namespace Anabatic {
     s << "]";
 
     return s.str();
+  }
+
+
+  bool  isLess ( const GCell* lhs, const GCell* rhs, Flags direction )
+  {
+    if (direction & Flags::Horizontal) {
+      if (lhs->getXMin() != rhs->getXMin()) return lhs->getXMin() < rhs->getXMin();
+    } else {
+      if (direction & Flags::Vertical) {
+        if (lhs->getYMin() != rhs->getYMin()) return lhs->getYMin() < rhs->getYMin();
+      }
+    }
+    return lhs->getId() < rhs->getId();
+  }
+
+
+  bool  isGreater ( const GCell* lhs, const GCell* rhs, Flags direction )
+  {
+    if (direction & Flags::Horizontal) {
+      if (lhs->getXMin() != rhs->getXMin()) return lhs->getXMin() > rhs->getXMin();
+    } else {
+      if (direction & Flags::Vertical) {
+        if (lhs->getYMin() != rhs->getYMin()) return lhs->getYMin() > rhs->getYMin();
+      }
+    }
+    return lhs->getId() > rhs->getId();
   }
 
 

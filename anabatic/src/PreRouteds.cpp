@@ -70,6 +70,8 @@ namespace Anabatic {
   {
     cmess1 << "  o  Looking for fixed or manually global routed nets." << endl;
 
+    openSession();
+
     for ( Net* net : getCell()->getNets() ) {
       if (net == _blockageNet) continue;
       if (net->getType() == Net::Type::POWER ) continue;
@@ -170,7 +172,7 @@ namespace Anabatic {
       }
     }
 
-    Session::revalidate();
+    Session::close();
   }
 
 

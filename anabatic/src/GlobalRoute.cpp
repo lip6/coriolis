@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "GlobalRoute.cpp<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2016-2016, All Rights Reserved
@@ -63,7 +63,9 @@ namespace {
     float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
     float congestionCost = 1.0 + _h / (1.0 + std::exp(_k * (congestion - 1.0)));
 
-    float distance = (float)source->getDistance() + congestionCost * (float)edge->getDistance();
+    float distance = (float)source->getDistance()
+                   + congestionCost * (float)edge->getDistance();
+                   + edge->getHistoricCost();
 
     // Edge* sourceFrom = source->getFrom();
     // if (sourceFrom) {
@@ -74,6 +76,19 @@ namespace {
                       << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
 
     return (DbU::Unit)distance;
+  }
+
+
+  void  computeNextHCost ( Edge* edge, float edgeHInc )
+  {
+    float congestion = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
+    float hCost      = edge->getHistoricCost();
+
+    float alpha = (congestion < 1.0) ? congestion : std::exp( std::log(8)*( congestion - 1 ) );
+
+    edge->setHistoricCost( alpha * (hCost + ((congestion < 1.0) ? 0.0 : edgeHInc) ));
+
+    cdebug_log(113,0) << edge << endl;
   }
 
 
@@ -119,10 +134,10 @@ namespace Anabatic {
   //DebugSession::addToTrace( cell->getNet("a_from_pads(0)") );
   //DebugSession::addToTrace( cell->getNet("ialu.not_aux104") );
   //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_muxoutput(159)") );
+  //DebugSession::addToTrace( cell->getNet("mips_r3000_1m_dp_shift32_rshift_se_c1(3)") );
 
     startMeasures();
 
-    UpdateSession::open();
     if (getGCells().size() == 1) {
       cmess1 << "  o  Building regular grid..." << endl;
       getSouthWestGCell()->doGrid();
@@ -130,22 +145,21 @@ namespace Anabatic {
       cmess1 << "  o  Reusing existing grid." << endl;
     }
     cmess1 << Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
-    UpdateSession::close();
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
 
-    Session::open( this );
     setupSpecialNets();
     setupPreRouteds ();
     setupNetDatas();
-    Session::close();
 
+    openSession();
     startMeasures();
 
     cmess1 << "  o  Running global routing..." << endl;
 
-    UpdateSession::open();
+    float edgeHInc = getConfiguration()->getEdgeHInc();
+
     Dijkstra* dijkstra = new Dijkstra ( this );
     dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                           , getConfiguration()->getEdgeCostK() ) );
@@ -165,24 +179,31 @@ namespace Anabatic {
       }
       cmess2 << left << setw(6) << netCount << right;
 
+    //Session::revalidate();
+
       const vector<Edge*>& ovEdges = getOvEdges();
       cmess2 << " ovEdges:" << ovEdges.size();
 
+      for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
+
       netCount = 0;
-      while ( not ovEdges.empty() ) {
-        Edge*   ovEdge = ovEdges[0];
+      size_t iEdge = 0;
+      while ( iEdge < ovEdges.size() ) {
+        Edge* edge = ovEdges[iEdge];
+        netCount += edge->ripup();
 
-        vector<Segment*> segments = ovEdge->getSegments();
-        for ( Segment* segment : segments ) {
-          NetData* netData = getNetData( segment->getNet() );
-          if (netData->isGlobalRouted()) ++netCount;
-
-          ripup( segment, Flags::Propagate );
+        if (ovEdges[iEdge] == edge) {
+          cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
+                         "        %s"
+                       , getString(edge).c_str()
+                       ) << endl;
+          ++iEdge;
         }
       }
 
-      cmess2 << " ripup:" << netCount;
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
 
+      cmess2 << " ripup:" << netCount;
       stopMeasures();
       cmess2 << " " << setw(10) << Timer::getStringTime  (_timer.getCombTime())
              << " " << setw( 6) << Timer::getStringMemory(_timer.getIncrease()) << endl;
@@ -218,7 +239,7 @@ namespace Anabatic {
     printMeasures( "Dijkstra" );
 
     delete dijkstra;
-    UpdateSession::close();
+    Session::close();
 
     _state = EngineGlobalLoaded;
   }

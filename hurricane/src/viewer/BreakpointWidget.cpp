@@ -40,7 +40,7 @@ namespace Hurricane {
     setWindowTitle   ( "Breakpoint" );
     setToolTip       ( "Crush the Mush to continue..." );
 
-    _message->setTextFormat ( Qt::RichText );
+  //_message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>No Message Yet</b>" );
 
     QLabel* stopLabel = new QLabel ();
@@ -56,7 +56,7 @@ namespace Hurricane {
     vLine->setFrameShadow ( QFrame::Sunken );
 
     QGridLayout* layout = new QGridLayout ();
-    layout->setSizeConstraint  ( QLayout::SetFixedSize );
+  //layout->setSizeConstraint  ( QLayout::SetFixedSize );
     layout->addWidget          ( _message  , 0, 0 );
     layout->addWidget          ( stopLabel , 1, 0 );
     layout->addWidget          ( _stopLevel, 1, 1 );

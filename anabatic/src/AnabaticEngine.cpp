@@ -18,6 +18,7 @@
 #include <iostream>
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
@@ -38,6 +39,7 @@ namespace Anabatic {
   using std::ostringstream;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::Breakpoint;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
   using Hurricane::Horizontal;
@@ -73,21 +75,45 @@ namespace Anabatic {
   {
     cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(): " << segment << endl;
 
-    GCell* gsource = engine->getGCellUnder( segment->getSourcePosition() );
-    GCell* gtarget = engine->getGCellUnder( segment->getTargetPosition() );
+    Box   gcellsArea     = engine->getCell()->getAbutmentBox();
+    Point sourcePosition = segment->getSourcePosition();
+    Point targetPosition = segment->getTargetPosition();
 
-    if (not gsource) {
-      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s source not over a GCell (ignored)."
+    if (  (sourcePosition.getX() >= gcellsArea.getXMax())
+       or (sourcePosition.getY() >= gcellsArea.getYMax())
+       or (targetPosition.getX() <= gcellsArea.getXMin())
+       or (targetPosition.getY() <= gcellsArea.getYMin()) ) {
+      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s is completly outside the GCells area (ignored)."
                    , getString(segment).c_str()
                    ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;
     }
+
+    DbU::Unit xsource = std::max( sourcePosition.getX(), gcellsArea.getXMin() );
+    DbU::Unit ysource = std::max( sourcePosition.getY(), gcellsArea.getYMin() );
+    DbU::Unit xtarget = std::min( targetPosition.getX(), gcellsArea.getXMax() );
+    DbU::Unit ytarget = std::min( targetPosition.getY(), gcellsArea.getYMax() );
+
+    if (xtarget == gcellsArea.getXMax()) --xtarget;
+    if (ytarget == gcellsArea.getYMax()) --ytarget;
+
+    GCell* gsource = engine->getGCellUnder( xsource, ysource );
+    GCell* gtarget = engine->getGCellUnder( xtarget, ytarget );
+
+    if (not gsource) {
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s source not under a GCell (ignored)."
+                 , getString(segment).c_str()
+                 ) << endl;
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return;
+    }
     if (not gtarget) {
-      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s target not over a GCell (ignored)."
-                   , getString(segment).c_str()
-                   ) << endl;
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s target not under a GCell (ignored)."
+                 , getString(segment).c_str()
+                 ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;
@@ -173,7 +199,7 @@ namespace Anabatic {
   AnabaticEngine::AnabaticEngine ( Cell* cell )
     : Super(cell)
     , _timer           ()
-    , _configuration   (new ConfigurationConcrete())
+    , _configuration   (new Configuration())
     , _chipTools       (cell)
     , _state           (EngineCreation)
     , _matrix          ()
@@ -249,7 +275,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_gutAnabatic ()
   {
-    Session::open( this );
+    openSession();
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
 
@@ -299,6 +325,21 @@ namespace Anabatic {
   { return _configuration; }
 
 
+  Interval  AnabaticEngine::getUSide ( Flags direction ) const
+  {
+    Interval side;
+    Box      bBox ( getCell()->getBoundingBox() );
+
+    if      (direction & Flags::Horizontal) side = Interval( bBox.getXMin(), bBox.getXMax() );
+    else if (direction & Flags::Vertical  ) side = Interval( bBox.getYMin(), bBox.getYMax() );
+    else {
+      cerr << Error( "AnabaticEngine::getUSide(): Unknown direction flag \"%i\""
+                   , getString(direction).c_str() ) << endl;
+    }
+    return side;
+  }
+
+
   int  AnabaticEngine::getCapacity ( Interval span, Flags flags ) const
   {
     int           capacity = 0;
@@ -329,6 +370,10 @@ namespace Anabatic {
 
     return capacity;
   }
+
+
+  void  AnabaticEngine::openSession ()
+  { Session::_open(this); }
 
 
   void  AnabaticEngine::reset ()
@@ -554,6 +599,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::ripup ( Segment* seed, Flags flags )
   {
+
     Net* net = seed->getNet();
 
     DebugSession::open( net, 112, 120 );
@@ -614,6 +660,8 @@ namespace Anabatic {
 
       Contact* source = dynamic_cast<Contact*>( segment->getSource() );
       Contact* target = dynamic_cast<Contact*>( segment->getTarget() );
+      segment->getSourceHook()->detach();
+      segment->getTargetHook()->detach();
       segment->destroy();
       bool deletedSource = gcells->gcellAt( 0                )->unrefContact( source );
       bool deletedTarget = gcells->gcellAt( gcells->size()-1 )->unrefContact( target );
@@ -635,7 +683,7 @@ namespace Anabatic {
 
     getNetData( net )->setGlobalRouted( false );
 
-    cdebug_tabw(111,-1);
+    cdebug_tabw(112,-1);
     DebugSession::close();
   }
 
@@ -1005,6 +1053,46 @@ namespace Anabatic {
 
     for ( auto cacp : _autoContactLut ) cacp.second->destroy();
     _autoContactLut.clear();
+  }
+
+
+  void  AnabaticEngine::_check ( Net* net ) const
+  {
+    cdebug_log(149,1) << "Checking " << net << endl;
+    for ( Segment* segment : net->getComponents().getSubSet<Segment*>() ) {
+      AutoSegment* autoSegment = _lookup( segment );
+      cdebug_log(149,0) << autoSegment << endl;
+      if (autoSegment) {
+        AutoContact* autoContact = autoSegment->getAutoSource();
+        cdebug_log(149,0) << autoContact << endl;
+        if (autoContact) autoContact->checkTopology();
+
+        autoContact = autoSegment->getAutoTarget();
+        cdebug_log(149,0) << autoContact << endl;
+        if (autoContact) autoContact->checkTopology();
+      }
+    }
+    cdebug_tabw(149,-1);
+  }
+
+
+  bool  AnabaticEngine::_check ( const char* message ) const
+  {
+    bool coherency = true;
+    if (message)
+      cerr << "     o  checking Anabatic DB (" << message << ")." << endl;
+
+    for ( auto element : _autoSegmentLut )
+      coherency = element.second->_check() and coherency;
+
+    for ( GCell* gcell : _gcells ) {
+      for ( AutoContact* contact : gcell->getContacts() )
+        contact->checkTopology();
+    }
+
+    if (message) cerr << "        - completed." << endl;
+
+    return coherency;
   }
 
 

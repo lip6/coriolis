@@ -43,15 +43,17 @@ namespace Hurricane {
   class Backtrace {
     public:
                           Backtrace    ();
+                         ~Backtrace    ();
       inline std::string  where        () const;
       inline std::string  textWhere    () const;
              std::string  htmlWhere    () const;
       inline std::string  _getTypeName () const;
       inline std::string  _getString   () const;
     private:
-      static TextTranslator     _textTranslator;
-      static const size_t       _stackSize;
-      std::vector<std::string>  _stack;
+      static bool                      _inConstructor;
+      static TextTranslator            _textTranslator;
+      static const size_t              _stackSize;
+             std::vector<std::string>  _stack;
   };
 
 

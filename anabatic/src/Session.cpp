@@ -32,7 +32,7 @@
 namespace {
 
 
-  const char* reopenSession    = "Session::open(): Session already open for %s (internal error).";
+  const char* reopenSession    = "Anabatic::Session::_open(): Session already open for %s (internal error).";
   const char* openSessionError = "%s: Session has not been opened (internal error).";
 
 
@@ -96,7 +96,6 @@ namespace Anabatic {
   {
     if (_anabatic->getState() <= EngineActive) {
       _revalidate ();
-
       _anabatic->updateDensity();
     }
     UpdateSession::close();
@@ -266,9 +265,9 @@ namespace Anabatic {
   }
 
 
-  Session*  Session::open ( AnabaticEngine* anbt )
+  Session*  Session::_open ( AnabaticEngine* anbt )
   {
-    cdebug_log(145,0) << "Session::open()" << endl;
+    cdebug_log(145,0) << "Anabatic::Session::_open()" << endl;
 
     if (_session) {
       if (_session->_anabatic != anbt)

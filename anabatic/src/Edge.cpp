@@ -39,6 +39,7 @@ namespace Anabatic {
     , _capacity         (0)
     , _realOccupancy    (0)
     , _estimateOccupancy(0.0)
+    , _historicCost     (0.0)
     , _source           (source)
     , _target           (target)
     , _axis             (0)
@@ -222,6 +223,25 @@ namespace Anabatic {
   }
 
 
+  size_t  Edge::ripup ()
+  {
+    AnabaticEngine* anabatic        = getAnabatic();
+    DbU::Unit       globalThreshold = Session::getSliceHeight()*3;
+    size_t          netCount        = 0;
+
+    for ( size_t i=0 ; i<_segments.size(); ) {
+      if (_segments[i]->getLength() >= globalThreshold) {
+        NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+        if (netData->isGlobalRouted()) ++netCount;
+
+        anabatic->ripup( _segments[i], Flags::Propagate );
+      } else
+        ++i;
+    }
+    return netCount;
+  }
+
+
   void  Edge::_setSource ( GCell* source )
   {
     if (source == _target)
@@ -299,6 +319,7 @@ namespace Anabatic {
     s.insert( s.size()-1, " "+DbU::getValueString(_axis) );
     s.insert( s.size()-1, " "+getString(_realOccupancy) );
     s.insert( s.size()-1, "/"+getString(_capacity) );
+    s.insert( s.size()-1, " h:"+getString(_historicCost) );
     s.insert( s.size()-1, " "+getString(_flags) );
     return s;
   }
