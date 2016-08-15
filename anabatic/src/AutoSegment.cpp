@@ -685,8 +685,8 @@ namespace Anabatic {
   {
     setFlags( flags );
     if (not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds() )
-        isegment->setFlags( flags );
+      for( AutoSegment* segment : getAligneds() )
+        segment->setFlags( flags );
     }
   }
 
@@ -846,8 +846,8 @@ namespace Anabatic {
     _setAxis( axis );
 
     if (not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds() ) {
-        isegment->_setAxis( getAxis() );
+      for ( AutoSegment* segment : getAligneds() ) {
+        segment->_setAxis( getAxis() );
       }
     } else {
       cdebug_log(149,0) << "No need to process parallels." << endl;
@@ -1009,11 +1009,11 @@ namespace Anabatic {
     setOptimalMax( optimalMax );
     processeds.insert( this );
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, autoSegment, getAligneds() ) {
-        cdebug_log(145,0) << "Applying constraint on: " << *autoSegment << endl;
+      for ( AutoSegment* autoSegment : getAligneds() ) {
+        cdebug_log(145,0) << "Applying constraint on: " << autoSegment << endl;
         autoSegment->setOptimalMin( optimalMin );
         autoSegment->setOptimalMax( optimalMax );
-        processeds.insert( (*autoSegment) );
+        processeds.insert( autoSegment );
       }
     }
 

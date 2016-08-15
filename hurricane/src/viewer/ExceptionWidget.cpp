@@ -117,6 +117,7 @@ namespace Hurricane {
     _header->setText         ( "<b>[ERROR]</b>" );
 
     _message->setTextFormat ( Qt::RichText );
+    _message->setFont       ( Graphics::getFixedFont(QFont::Normal,false,false) );
     _message->setText       ( "<b>Oups! I did it again!</b>" );
 
     _trace->setTextInteractionFlags ( Qt::TextBrowserInteraction );

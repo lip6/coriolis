@@ -57,17 +57,8 @@ namespace Anabatic {
 // Class  :  "Anabatic::Configuration".
 
 
-  Configuration::Configuration () { }
-  Configuration::~Configuration () { }
-
-
-// -------------------------------------------------------------------
-// Class  :  "Anabatic::ConfigurationConcrete".
-
-
-  ConfigurationConcrete::ConfigurationConcrete ( const CellGauge* cg, const RoutingGauge* rg )
-    : Configuration   ()
-    , _cg             (NULL)
+  Configuration::Configuration ( const CellGauge* cg, const RoutingGauge* rg )
+    : _cg             (NULL)
     , _rg             (NULL)
     , _extensionCaps  ()
     , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
@@ -79,8 +70,6 @@ namespace Anabatic {
     , _edgeCostH      (Cfg::getParamDouble("anabatic.edgeCostH",  9.0)->asDouble())
     , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
     , _edgeHInc       (Cfg::getParamDouble("anabatic.edgeHInc" , 1.5)->asDouble())
-    , _hEdgeLocal     (Cfg::getParamInt("kite.hTracksReservedLocal",0)->asInt())
-    , _vEdgeLocal     (Cfg::getParamInt("kite.vTracksReservedLocal",0)->asInt())
   {
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
@@ -119,9 +108,8 @@ namespace Anabatic {
   }
 
 
-  ConfigurationConcrete::ConfigurationConcrete ( const ConfigurationConcrete& other )
-    : Configuration()
-    , _gmetalh        (other._gmetalh)
+  Configuration::Configuration ( const Configuration& other )
+    : _gmetalh        (other._gmetalh)
     , _gmetalv        (other._gmetalv)
     , _gcontact       (other._gcontact)
     , _cg             (NULL)
@@ -139,7 +127,7 @@ namespace Anabatic {
   }
 
 
-  ConfigurationConcrete::~ConfigurationConcrete ()
+  Configuration::~Configuration ()
   {
     cdebug_log(145,0) << "About to delete attribute _rg (RoutingGauge)." << endl;
     _cg->destroy ();
@@ -147,99 +135,99 @@ namespace Anabatic {
   }
 
 
-  ConfigurationConcrete* ConfigurationConcrete::clone () const
-  { return new ConfigurationConcrete(*this); }
+  Configuration* Configuration::clone () const
+  { return new Configuration(*this); }
 
 
-  bool  ConfigurationConcrete::isGMetal ( const Layer* layer ) const
+  bool  Configuration::isGMetal ( const Layer* layer ) const
   { return (layer and ((layer == _gmetalh) or (layer == _gmetalv))); }
 
 
-  bool  ConfigurationConcrete::isGContact ( const Layer* layer ) const
+  bool  Configuration::isGContact ( const Layer* layer ) const
   { return (layer and (layer == _gcontact)); }
 
-  const Layer* ConfigurationConcrete::getGContactLayer () const
+  const Layer* Configuration::getGContactLayer () const
   { return _gcontact; }
 
-  const Layer* ConfigurationConcrete::getGHorizontalLayer () const
+  const Layer* Configuration::getGHorizontalLayer () const
   { return _gmetalh; }
 
-  const Layer* ConfigurationConcrete::getGVerticalLayer () const
+  const Layer* Configuration::getGVerticalLayer () const
   { return _gmetalv; }
 
-  size_t  ConfigurationConcrete::getDepth () const
+  size_t  Configuration::getDepth () const
   { return _rg->getDepth(); }
 
 
-  size_t  ConfigurationConcrete::getAllowedDepth () const
+  size_t  Configuration::getAllowedDepth () const
   { return _allowedDepth; }
 
 
-  size_t  ConfigurationConcrete::getLayerDepth ( const Layer* layer ) const
+  size_t  Configuration::getLayerDepth ( const Layer* layer ) const
   { return _rg->getLayerDepth(layer); }
 
 
-  CellGauge* ConfigurationConcrete::getCellGauge () const
+  CellGauge* Configuration::getCellGauge () const
   { return _cg; }
 
 
-  RoutingGauge* ConfigurationConcrete::getRoutingGauge () const
+  RoutingGauge* Configuration::getRoutingGauge () const
   { return _rg; }
 
 
-  RoutingLayerGauge* ConfigurationConcrete::getLayerGauge ( size_t depth ) const
+  RoutingLayerGauge* Configuration::getLayerGauge ( size_t depth ) const
   { return _rg->getLayerGauge(depth); }
 
 
-  const Layer* ConfigurationConcrete::getRoutingLayer ( size_t depth ) const
+  const Layer* Configuration::getRoutingLayer ( size_t depth ) const
   { return _rg->getRoutingLayer(depth); }
 
 
-  Layer* ConfigurationConcrete::getContactLayer ( size_t depth ) const
+  Layer* Configuration::getContactLayer ( size_t depth ) const
   { return _rg->getContactLayer(depth); }
 
 
-  DbU::Unit  ConfigurationConcrete::getSliceHeight () const
+  DbU::Unit  Configuration::getSliceHeight () const
   { return _cg->getSliceHeight(); }
 
 
-  DbU::Unit  ConfigurationConcrete::getSliceStep () const
+  DbU::Unit  Configuration::getSliceStep () const
   { return _cg->getSliceStep(); }
 
 
-  DbU::Unit  ConfigurationConcrete::getPitch ( const Layer* layer, Flags flags ) const
+  DbU::Unit  Configuration::getPitch ( const Layer* layer, Flags flags ) const
   { return getPitch( getLayerDepth(layer), flags ); }
 
 
-  DbU::Unit  ConfigurationConcrete::getOffset ( const Layer* layer ) const
+  DbU::Unit  Configuration::getOffset ( const Layer* layer ) const
   { return getOffset( getLayerDepth(layer) ); }
 
 
-  DbU::Unit  ConfigurationConcrete::getExtensionCap ( const Layer* layer ) const
+  DbU::Unit  Configuration::getExtensionCap ( const Layer* layer ) const
   { return getExtensionCap( getLayerDepth(layer) ); }
 
 
-  DbU::Unit  ConfigurationConcrete::getWireWidth ( const Layer* layer ) const
+  DbU::Unit  Configuration::getWireWidth ( const Layer* layer ) const
   { return getWireWidth( getLayerDepth(layer) ); }
 
 
-  Flags  ConfigurationConcrete::getDirection ( const Layer* layer ) const
+  Flags  Configuration::getDirection ( const Layer* layer ) const
   { return getDirection( getLayerDepth(layer) ); }
 
 
-  float  ConfigurationConcrete::getSaturateRatio () const
+  float  Configuration::getSaturateRatio () const
   { return _saturateRatio; }
 
 
-  size_t  ConfigurationConcrete::getSaturateRp () const
+  size_t  Configuration::getSaturateRp () const
   { return _saturateRp; }
 
 
-  DbU::Unit  ConfigurationConcrete::getGlobalThreshold () const
+  DbU::Unit  Configuration::getGlobalThreshold () const
   { return _globalThreshold; }
 
 
-  DbU::Unit  ConfigurationConcrete::getPitch ( size_t depth, Flags flags ) const
+  DbU::Unit  Configuration::getPitch ( size_t depth, Flags flags ) const
   {
     if (flags == Flags::NoFlags) return _rg->getLayerPitch(depth);
 
@@ -266,27 +254,27 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit  ConfigurationConcrete::getOffset ( size_t depth ) const
+  DbU::Unit  Configuration::getOffset ( size_t depth ) const
   { return _rg->getLayerOffset(depth); }
 
 
-  DbU::Unit  ConfigurationConcrete::getWireWidth ( size_t depth ) const
+  DbU::Unit  Configuration::getWireWidth ( size_t depth ) const
   { return _rg->getLayerWireWidth(depth); }
 
 
-  DbU::Unit  ConfigurationConcrete::getExtensionCap ( size_t depth ) const
+  DbU::Unit  Configuration::getExtensionCap ( size_t depth ) const
   { return _extensionCaps[depth]; }
 
 
-  Flags  ConfigurationConcrete::getDirection ( size_t depth ) const
+  Flags  Configuration::getDirection ( size_t depth ) const
   { return _rg->getLayerDirection(depth); }
 
 
-  void  ConfigurationConcrete::setAllowedDepth ( size_t allowedDepth )
+  void  Configuration::setAllowedDepth ( size_t allowedDepth )
   { _allowedDepth = (allowedDepth > getDepth()) ? getDepth() : allowedDepth; }
 
 
-  void  ConfigurationConcrete::_setTopRoutingLayer ( Name name )
+  void  Configuration::_setTopRoutingLayer ( Name name )
   {
     for ( size_t depth=0 ; depth<_rg->getDepth() ; ++depth ) {
       if (_rg->getRoutingLayer(depth)->getName() == name) {
@@ -301,47 +289,39 @@ namespace Anabatic {
   }
 
 
-  void  ConfigurationConcrete::setSaturateRatio ( float ratio )
+  void  Configuration::setSaturateRatio ( float ratio )
   { _saturateRatio = ratio; }
 
 
-  void  ConfigurationConcrete::setSaturateRp ( size_t threshold )
+  void  Configuration::setSaturateRp ( size_t threshold )
   { _saturateRp = threshold; }
 
 
-  void  ConfigurationConcrete::setGlobalThreshold ( DbU::Unit threshold )
+  void  Configuration::setGlobalThreshold ( DbU::Unit threshold )
   { _globalThreshold = threshold; }
 
 
-  DbU::Unit  ConfigurationConcrete::getEdgeLength () const
+  DbU::Unit  Configuration::getEdgeLength () const
   { return _edgeLength; }
 
 
-  DbU::Unit  ConfigurationConcrete::getEdgeWidth () const
+  DbU::Unit  Configuration::getEdgeWidth () const
   { return _edgeWidth; }
 
 
-  size_t  ConfigurationConcrete::getHEdgeLocal () const
-  { return _hEdgeLocal; }
-
-
-  size_t  ConfigurationConcrete::getVEdgeLocal () const
-  { return _vEdgeLocal; }
-
-
-  float  ConfigurationConcrete::getEdgeCostH () const
+  float  Configuration::getEdgeCostH () const
   { return _edgeCostH; }
 
 
-  float  ConfigurationConcrete::getEdgeCostK () const
+  float  Configuration::getEdgeCostK () const
   { return _edgeCostK; }
 
 
-  float  ConfigurationConcrete::getEdgeHInc () const
+  float  Configuration::getEdgeHInc () const
   { return _edgeHInc; }
 
 
-  void  ConfigurationConcrete::print ( Cell* cell ) const
+  void  Configuration::print ( Cell* cell ) const
   {
     string       topLayerName = "UNKOWN";
     const Layer* topLayer     = _rg->getRoutingLayer( _allowedDepth );
@@ -354,13 +334,13 @@ namespace Anabatic {
   }
 
 
-  string  ConfigurationConcrete::_getTypeName () const
+  string  Configuration::_getTypeName () const
   {
-    return "ConfigurationConcrete";
+    return "Configuration";
   }
 
 
-  string  ConfigurationConcrete::_getString () const
+  string  Configuration::_getString () const
   {
     ostringstream  os;
 
@@ -370,7 +350,7 @@ namespace Anabatic {
   }
 
 
-  Record* ConfigurationConcrete::_getRecord () const
+  Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
     record->add ( getSlot( "_rg"          ,  _rg          ) );
@@ -383,7 +363,6 @@ namespace Anabatic {
                                      
     return ( record );
   }
-
 
 
 }  // Anabatic namespace.

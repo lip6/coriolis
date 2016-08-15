@@ -107,6 +107,7 @@ namespace Anabatic {
                                     NetData            ( Net* );
       inline       bool             isGlobalRouted     () const;
       inline       bool             isMixedPreRoute    () const;
+      inline       bool             isFixed            () const;
       inline       Net*             getNet             () const;
       inline       NetRoutingState* getNetRoutingState () const;
       inline const Box&             getSearchArea      () const;
@@ -133,6 +134,7 @@ namespace Anabatic {
 
   inline bool             NetData::isGlobalRouted     () const { return _flags & Flags::GlobalRouted; }
   inline bool             NetData::isMixedPreRoute    () const { return (_state) ? _state->isMixedPreRoute() : false; }
+  inline bool             NetData::isFixed            () const { return (_state) ? _state->isFixed        () : false; }
   inline Net*             NetData::getNet             () const { return _net; }
   inline NetRoutingState* NetData::getNetRoutingState () const { return _state; }
   inline const Box&       NetData::getSearchArea      () const { return _searchArea; }
@@ -195,8 +197,10 @@ namespace Anabatic {
       inline        GCell*            getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*            getGCellUnder         ( Point ) const;
       inline        GCellsUnder       getGCellsUnder        ( Segment* ) const;
+                    Interval          getUSide              ( Flags direction ) const;
                     int               getCapacity           ( Interval, Flags ) const;
                     size_t            getNetsFromEdge       ( const Edge*, NetSet& );
+      virtual       void              openSession           ();
       inline        void              setState              ( EngineState state );
       inline        void              setDensityMode        ( unsigned int );
       inline        void              addOv                 ( Edge* );
@@ -225,11 +229,14 @@ namespace Anabatic {
       inline        size_t            getSaturateRp         () const;
       inline        DbU::Unit         getExtensionCap       () const;
       inline        Net*              getBlockageNet        () const;
+      inline const  ChipTools&        getChipTools          () const;
+      inline const  vector<NetData*>& getNetOrdering        () const;
                     void              updateDensity         ();
                     size_t            checkGCellDensities   ();
       inline        void              setGlobalThreshold    ( DbU::Unit );
       inline        void              setSaturateRatio      ( float );
       inline        void              setSaturateRp         ( size_t );
+      inline        void              setBlockageNet        ( Net* );
                     void              chipPrep              ();
                     void              setupSpecialNets      ();
                     void              setupPreRouteds       ();
@@ -261,10 +268,13 @@ namespace Anabatic {
                     void              _saveNet              ( Net* );
                     void              _destroyAutoContacts  ();
                     void              _destroyAutoSegments  ();
+                    void              _check                ( Net* net ) const;
+                    bool              _check                ( const char* message ) const;
     // Misc. functions.                                     
       inline const  Flags&            flags                 () const;
       inline        Flags&            flags                 ();
                     void              reset                 ();
+      inline const  Timer&            getTimer              () const;
                     void              startMeasures         ();
                     void              stopMeasures          ();
                     void              printMeasures         ( const string& ) const;
@@ -319,6 +329,7 @@ namespace Anabatic {
   inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
   inline       unsigned int      AnabaticEngine::getDensityMode        () const { return _densityMode; }
   inline       void              AnabaticEngine::setDensityMode        ( unsigned int mode ) { _densityMode=mode; }
+  inline       void              AnabaticEngine::setBlockageNet        ( Net* net ) { _blockageNet = net; }
   inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }
   inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut    () const { return _autoSegmentLut; }
   inline const Flags&            AnabaticEngine::flags                 () const { return _flags; }
@@ -335,6 +346,8 @@ namespace Anabatic {
   inline       void              AnabaticEngine::setSaturateRatio      ( float ratio ) { _configuration->setSaturateRatio(ratio); }
   inline       void              AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
   inline       Net*              AnabaticEngine::getBlockageNet        () const { return _blockageNet; }
+  inline const ChipTools&        AnabaticEngine::getChipTools          () const { return _chipTools; }
+  inline const vector<NetData*>& AnabaticEngine::getNetOrdering        () const { return _netOrdering; }
   inline       void              AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
   inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
   inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
@@ -356,8 +369,9 @@ namespace Anabatic {
       }
   }
 
-  inline int  AnabaticEngine::getStamp () const { return _stamp; }
-  inline int  AnabaticEngine::incStamp () { return ++_stamp; }
+  inline const Timer& AnabaticEngine::getTimer () const { return _timer; }
+  inline       int    AnabaticEngine::getStamp () const { return _stamp; }
+  inline       int    AnabaticEngine::incStamp () { return ++_stamp; }
 
   inline void  AnabaticEngine::addOv ( Edge* edge ) { _ovEdges.push_back(edge); }
 

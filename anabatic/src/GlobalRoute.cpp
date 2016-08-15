@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "GlobalRoute.cpp<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2016-2016, All Rights Reserved
@@ -138,7 +138,6 @@ namespace Anabatic {
 
     startMeasures();
 
-    UpdateSession::open();
     if (getGCells().size() == 1) {
       cmess1 << "  o  Building regular grid..." << endl;
       getSouthWestGCell()->doGrid();
@@ -146,24 +145,21 @@ namespace Anabatic {
       cmess1 << "  o  Reusing existing grid." << endl;
     }
     cmess1 << Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
-    UpdateSession::close();
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
 
-    Session::open( this );
     setupSpecialNets();
     setupPreRouteds ();
     setupNetDatas();
-    Session::close();
 
+    openSession();
     startMeasures();
 
     cmess1 << "  o  Running global routing..." << endl;
 
     float edgeHInc = getConfiguration()->getEdgeHInc();
 
-    Session::open( this );
     Dijkstra* dijkstra = new Dijkstra ( this );
     dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                           , getConfiguration()->getEdgeCostK() ) );

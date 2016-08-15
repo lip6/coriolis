@@ -139,28 +139,35 @@ namespace Anabatic {
     constraintMax = getNativeMax();
 
     cdebug_log(149,0) << "Native constraints: ["
-                << DbU::getValueString(constraintMin) << ":"
-                << DbU::getValueString(constraintMax) << "]"
-                << endl;
+                      << DbU::getValueString(constraintMin) << ":"
+                      << DbU::getValueString(constraintMax) << "]"
+                      << endl;
+
+    constraintMin = std::max ( constraintMin, getAutoSource()->getCBXMin() );
+    constraintMax = std::min ( constraintMax, getAutoSource()->getCBXMax() );
+    cdebug_log(149,0) << "Merge with source constraints: ["
+                      << DbU::getValueString(getAutoSource()->getCBXMin()) << ":"
+                      << DbU::getValueString(getAutoSource()->getCBXMax()) << "]"
+                      << endl;
 
     constraintMin = max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = min ( constraintMax, getUserConstraints().getVMax() );
 
-    cdebug_log(149,0) << "Merge with user constraints: " << getUserConstraints() << " ["
-                << DbU::getValueString(getUserConstraints().getVMin()) << ":"
-                << DbU::getValueString(getUserConstraints().getVMax()) << "]"
-                << endl;
+    cdebug_log(149,0) << "Merge with user constraints: ["
+                      << DbU::getValueString(getUserConstraints().getVMin()) << ":"
+                      << DbU::getValueString(getUserConstraints().getVMax()) << "]"
+                      << endl;
 
     cdebug_log(149,0) << "Resulting constraints: " << " ["
-                << DbU::getValueString(constraintMin) << ":"
-                << DbU::getValueString(constraintMax) << "]"
-                << endl;
+                      << DbU::getValueString(constraintMin) << ":"
+                      << DbU::getValueString(constraintMax) << "]"
+                      << endl;
     
     return true;
   }
 
 
-  unsigned int  AutoVertical::getDirection () const
+  Flags  AutoVertical::getDirection () const
   { return Flags::Vertical; }
 
 

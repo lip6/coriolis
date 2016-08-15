@@ -335,6 +335,10 @@ namespace Anabatic {
           message << "Terminal horizontal segment Y " << DbU::getValueString(_segment->getY())
                   << " axis is outside RoutingPad " << getUConstraints(Flags::Vertical) << ".";
 
+          Interval intv;
+          _segment->getConstraints( intv );
+          message << "\n        Segment constraints: " << intv << endl;
+
           unsigned int flags = 0;
           if (_segment->isCreated()) flags |= Flags::CParanoid;
           showTopologyError( message.str(), flags );

@@ -2096,7 +2096,10 @@ namespace {
 
   void  GCellTopology::_doChannel ()
   {
-    throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao." );
+    throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao.\n"
+                 "        On: %s."
+               , getString(_gcell).c_str()
+               );
   }
 
 
@@ -2134,7 +2137,7 @@ namespace Anabatic {
   //cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
 
     startMeasures();
-    Session::open( this );
+    openSession();
 
     forEach ( Net*, inet, getCell()->getNets() ) {
       if (NetRoutingExtension::isAutomaticGlobalRoute(*inet)) {

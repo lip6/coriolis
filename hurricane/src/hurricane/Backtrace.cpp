@@ -440,6 +440,10 @@ namespace Hurricane {
     }
     _inConstructor = true;
 
+#ifndef HAVE_LIBBFD
+    _stack.push_back( "Build without BFD (<b>libbfd</b>) support, no filename and line number." );
+#endif
+
 #if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
     void*  rawStack [ _stackSize ];
     size_t depth    = backtrace ( rawStack, _stackSize );

@@ -215,7 +215,7 @@ namespace Anabatic {
     // Accessors.                                            
       inline  unsigned long       getId                      () const;
       inline  unsigned int        getFlags                   () const;
-      virtual unsigned int        getDirection               () const = 0;
+      virtual Flags               getDirection               () const = 0;
       inline  GCell*              getGCell                   () const;
       virtual size_t              getGCells                  ( vector<GCell*>& ) const = 0;
       inline  AutoContact*        getAutoSource              () const;

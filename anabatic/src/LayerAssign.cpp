@@ -377,7 +377,7 @@ namespace Anabatic {
   void  AnabaticEngine::_balanceGlobalDensity ( unsigned int depth )
   {
     startMeasures();
-    Session::open( this );
+    openSession();
 
     cmess1 << "  o  Balance Global Density "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
@@ -435,7 +435,7 @@ namespace Anabatic {
     set<Net*>   globalNets;
     GCell::Set  invalidateds;
 
-    Session::open( this );
+    openSession();
 
     vector<AutoSegment*>  segments;
 
@@ -482,7 +482,7 @@ namespace Anabatic {
     unsigned long  global = 0;
 
     startMeasures();
-    Session::open( this );
+    openSession();
 
     if (Session::getAllowedDepth() >= 3) {
       switch ( method ) {

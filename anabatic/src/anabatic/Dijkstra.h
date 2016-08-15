@@ -147,7 +147,7 @@ namespace Anabatic {
   }
 
 
-  inline                 Vertex::~Vertex        () { }
+  inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
   inline Contact*        Vertex::hasGContact    ( Net* net ) { return _gcell->hasGContact(net); }
   inline unsigned int    Vertex::getId          () const { return _id; }
   inline GCell*          Vertex::getGCell       () const { return _gcell; }

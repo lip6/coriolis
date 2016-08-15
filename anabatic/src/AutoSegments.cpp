@@ -131,7 +131,7 @@ namespace Anabatic {
     contact = segment->getAutoTarget();
     if (contact) _stack.push( contact, segment );
 
-    progress();
+    if (not (_flags & Flags::WithSelf)) progress();
   }
 
 

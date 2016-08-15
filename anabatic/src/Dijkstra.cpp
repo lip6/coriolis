@@ -85,7 +85,6 @@ namespace Anabatic {
 
   void  Vertex::notify ( Vertex* vertex, unsigned int flags )
   {
-  //Vertex* vertex = getOwner();
     cdebug_log(111,0) << "Vertex::notify() " << vertex << endl;
   // Take into account the GCell modification here.
   }
