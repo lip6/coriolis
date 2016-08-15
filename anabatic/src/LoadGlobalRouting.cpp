@@ -924,13 +924,13 @@ namespace {
       } else {
         _topology |= Global_Fork;
       }
-    } else {
+    } /*else {
       _connexity.connexity = 0;
-      _east  = NULL;
-      _west  = NULL;
-      _north = NULL;
-      _south = NULL;
-    }
+    _east  = NULL;
+    _west  = NULL;
+    _north = NULL;
+    _south = NULL;
+    }*/
 
     cdebug_tabw(145,-1);
 
@@ -2090,19 +2090,77 @@ namespace {
 
   void  GCellTopology::_doDevice ()
   {
-    throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
+    cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
+  
+  // Find NE and SW routing pads
+    Horizontal* hne = NULL;
+    Vertical*   vne = NULL;
+    Horizontal* hsw = NULL;
+    Vertical*   vsw = NULL;
+    
+    for ( Component* c : _net->getComponents() ){
+      Segment* s = dynamic_cast<Segment*>(c);
+      if (s){
+        if ( Session::getAnabatic()->getConfiguration()->getGContactLayer() != s->getLayer() ){
+          if ( _gcell->getBoundingBox().intersect(s->getBoundingBox() ) ){
+            Horizontal* h = dynamic_cast<Horizontal*> (s);
+            Vertical*   v = dynamic_cast<Vertical*>   (s);
+            if (h){
+              if ( (not (hne)) && (not (hsw)) ){
+                hne = h;
+                hsw = h;
+              } else {
+              // criteria for NE: (xMax-xSegment) + (yMax-ySegment), the smaller it is, the better it is 
+                DbU::Unit bNEc = (_gcell->getXMax() - hne->getTarget()->getX()) + ( _gcell->getYMax() - hne->getTarget()->getY());
+                DbU::Unit cNEc = (_gcell->getXMax() - h->getTarget()->getX())   + ( _gcell->getYMax() - h->getTarget()->getY()  );
+                if (cNEc < bNEc) hne = h;
+
+              // criteria for SW: (xSegment-xMin) + (ySegment-yMin), the smaller it is, the better it is 
+                DbU::Unit bSWc = (hne->getSource()->getX() - _gcell->getXMin()) + (hne->getSource()->getY() - _gcell->getYMin());
+                DbU::Unit cSWc = (h->getSource()->getX()   - _gcell->getXMin()) + (h->getSource()->getY()   - _gcell->getYMin());
+                if (cSWc < bSWc) hsw = h;
+              } 
+            } else if (v){ 
+              if ( (not (vne)) && (not (vsw)) ){
+                vne = v;
+                vsw = v;
+              } else {
+              // criteria for NE: (xMax-xSegment) + (yMax-ySegment), the smaller it is, the better it is 
+                DbU::Unit bNEc = (_gcell->getXMax() - vne->getTarget()->getX()) + ( _gcell->getYMax() - vne->getTarget()->getY());
+                DbU::Unit cNEc = (_gcell->getXMax() - v->getTarget()->getX())   + ( _gcell->getYMax() - v->getTarget()->getY()  );
+                if (cNEc < bNEc) vne = v;
+
+              // criteria for SW: (xSegment-xMin) + (ySegment-yMin), the smaller it is, the better it is 
+                DbU::Unit bSWc = (vne->getSource()->getX() - _gcell->getXMin()) + (vne->getSource()->getY() - _gcell->getYMin());
+                DbU::Unit cSWc = (v->getSource()->getX()   - _gcell->getXMin()) + (v->getSource()->getY()   - _gcell->getYMin());
+                if (cSWc < bSWc) vsw = v;
+              } 
+            }
+          }
+        }
+      }
+    }
+    if (hne) cerr << "NE: " << hne << endl;
+    else     cerr << "NE: " << vne << endl;
+    
+    if (hsw) cerr << "SW: " << hsw << endl;
+    else     cerr << "SW: " << vsw << endl;
+
+  /*problem: How to create routing pad with segment only without plugs
+  */
+//throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
   }
 
 
   void  GCellTopology::_doChannel ()
   {
-    throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao." );
+  //throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao." );
   }
 
 
   void  GCellTopology::_doStrut ()
   {
-    throw Error( "GCellTopology::_doStrut() Unimplemented, blame goes to E. Lao." );
+  //throw Error( "GCellTopology::_doStrut() Unimplemented, blame goes to E. Lao." );
   }
 
 
