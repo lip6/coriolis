@@ -131,8 +131,10 @@ namespace Anabatic {
       inline        bool                  isVFlat             () const;
       inline        bool                  isFlat              () const;
       inline        bool                  isDevice            () const;
-      inline        bool                  isChannel           () const;
-      inline        bool                  isStrut             () const;
+      inline        bool                  isHChannel          () const;
+      inline        bool                  isVChannel          () const;
+      inline        bool                  isHStrut            () const;
+      inline        bool                  isVStrut            () const;
       inline        bool                  isMatrix            () const;
       inline        bool                  isIoPad             () const;
                     bool                  isWest              ( GCell* ) const;
@@ -231,8 +233,8 @@ namespace Anabatic {
                     void                  _add                ( Edge* edge, Flags side );
                     void                  _remove             ( Edge* edge, Flags side=Flags::AllSides );
                     void                  _destroyEdges       ();
-    private:                              
                     void                  _revalidate         ();
+    private:                              
                     void                  _moveEdges          ( GCell* dest, size_t ibegin, Flags flags );
     public:                                      
     // Observers.                         
@@ -290,8 +292,10 @@ namespace Anabatic {
   inline       bool                  GCell::isVFlat       () const { return getXMin() == getXMax(); }
   inline       bool                  GCell::isFlat        () const { return isHFlat() or isVFlat(); }
   inline       bool                  GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
-  inline       bool                  GCell::isChannel     () const { return _flags & Flags::ChannelGCell; }
-  inline       bool                  GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
+  inline       bool                  GCell::isHChannel    () const { return _flags & Flags::HChannelGCell; }
+  inline       bool                  GCell::isVChannel    () const { return _flags & Flags::VChannelGCell; }
+  inline       bool                  GCell::isHStrut      () const { return _flags & Flags::HStrutGCell; }
+  inline       bool                  GCell::isVStrut      () const { return _flags & Flags::VStrutGCell; }
   inline       bool                  GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
   inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
   inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }

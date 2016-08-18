@@ -405,6 +405,14 @@ namespace Anabatic {
   }
 
 
+  void AnabaticEngine::updateMatrix()
+  {
+    _matrix.setCell( getCell(), Session::getSliceHeight() );
+    for ( GCell* gcell : _gcells ){
+      gcell->_revalidate();
+    }
+  }
+
   size_t  AnabaticEngine::getNetsFromEdge ( const Edge* edge, NetSet& nets )
   {
     size_t  count  = 0;

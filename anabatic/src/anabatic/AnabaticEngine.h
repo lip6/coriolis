@@ -208,6 +208,7 @@ namespace Anabatic {
       inline const  NetDatas&         getNetDatas           () const;
                     NetData*          getNetData            ( Net*, unsigned int flags=Flags::NoFlags );
                     void              setupNetDatas         ();
+                    void              updateMatrix          ();
     // Dijkstra related functions.                          
       inline        int               getStamp              () const;
       inline        int               incStamp              ();

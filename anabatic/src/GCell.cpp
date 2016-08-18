@@ -277,7 +277,7 @@ namespace Anabatic {
     : Super(anabatic->getCell())
     , _observable    ()
     , _anabatic      (anabatic)
-    , _flags         (Flags::ChannelGCell|Flags::Invalidated)
+    , _flags         (Flags::HChannelGCell|Flags::Invalidated)
     , _westEdges     ()
     , _eastEdges     ()
     , _southEdges    ()
@@ -796,7 +796,7 @@ namespace Anabatic {
       cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
 
     _anabatic->_updateLookup( this );
-  //_anabatic->getMatrix()->show();
+    _anabatic->getMatrix()->show();
     cdebug_tabw(110,-1);
   }
 

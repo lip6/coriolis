@@ -498,11 +498,10 @@ namespace Anabatic {
           else                   targetContact = target->breakGoThrough( _net );
         }
 
-        if (  (source->getGCell()->getXMin() > target->getGCell()->getXMin())
-           or (source->getGCell()->getYMin() > target->getGCell()->getYMin()) )
-          std::swap( sourceContact, targetContact );
-
         if (aligneds.front()->isHorizontal()) {
+          if (sourceContact->getX() > targetContact->getX())
+            std::swap( sourceContact, targetContact );
+
           segment = Horizontal::create( sourceContact
                                       , targetContact
                                       , _anabatic->getConfiguration()->getGHorizontalLayer()
@@ -511,6 +510,9 @@ namespace Anabatic {
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
         } else {
+          if (sourceContact->getY() > targetContact->getY())
+            std::swap( sourceContact, targetContact );
+
           segment = Vertical::create( sourceContact
                                     , targetContact
                                     , _anabatic->getConfiguration()->getGVerticalLayer()

@@ -658,9 +658,11 @@ namespace {
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
-             void          _doChannel        ();
+             void          _doHChannel       ();
+             void          _doVChannel       ();
+             void          _doHStrut         ();
+             void          _doVStrut         ();
              void          _doDevice         ();
-             void          _doStrut          ();
              void          _doIoPad          ();
 
     private:
@@ -1086,8 +1088,10 @@ namespace {
       }
     } else {
       if      (_gcell->isDevice ()) _doDevice();
-      else if (_gcell->isChannel()) _doChannel();
-      else if (_gcell->isStrut  ()) _doStrut();
+      else if (_gcell->isHChannel()) _doHChannel();
+      else if (_gcell->isVChannel()) _doVChannel();
+      else if (_gcell->isHStrut  ()) _doHStrut();
+      else if (_gcell->isVStrut  ()) _doVStrut();
       else if (_gcell->isIoPad  ()) _doIoPad();
       else
         throw Bug( "Unmanaged GCell type: %s in %s\n"
@@ -2091,7 +2095,7 @@ namespace {
   void  GCellTopology::_doDevice ()
   {
     cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
-  
+  /*
   // Find NE and SW routing pads
     Horizontal* hne = NULL;
     Vertical*   vne = NULL;
@@ -2140,30 +2144,55 @@ namespace {
         }
       }
     }
+  // SetExternal + create AutoContact northEast + southWest, Placed center of segment
     if (hne) cerr << "NE: " << hne << endl;
     else     cerr << "NE: " << vne << endl;
     
     if (hsw) cerr << "SW: " << hsw << endl;
     else     cerr << "SW: " << vsw << endl;
-
+  */
   /*problem: How to create routing pad with segment only without plugs
   */
+    
+  // _north, _south, _west, _east => segment GContact
+  // if nort or east
+  // detach wire from GContact to AutoContact
+  // move Segment to wire X (vertical), Y (horizontal) given by AutoContact
+  // do accordingly for _south and _west
+
 //throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
   }
 
 
-  void  GCellTopology::_doChannel ()
+  void  GCellTopology::_doHChannel ()
   {
-    /*throw Error( "GCellTopology::_doChannel() Unimplemented, blame goes to E. Lao.\n"
+    
+    /*throw Error( "GCellTopology::_doHChannel() Unimplemented, blame goes to E. Lao.\n"
                  "        On: %s."
                , getString(_gcell).c_str()
                );*/
   }
 
 
-  void  GCellTopology::_doStrut ()
+  void  GCellTopology::_doVChannel ()
   {
-  //throw Error( "GCellTopology::_doStrut() Unimplemented, blame goes to E. Lao." );
+    
+    /*throw Error( "GCellTopology::_doVChannel() Unimplemented, blame goes to E. Lao.\n"
+                 "        On: %s."
+               , getString(_gcell).c_str()
+               );*/
+  }
+
+
+  void  GCellTopology::_doHStrut ()
+  {
+  //throw Error( "GCellTopology::_doHStrut() Unimplemented, blame goes to E. Lao." );
+  }
+
+
+  void  GCellTopology::_doVStrut ()
+  {
+  //throw Error( "GCellTopology::_doVStrut() Unimplemented, blame goes to E. Lao." );
   }
 
 

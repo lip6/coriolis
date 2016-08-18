@@ -122,23 +122,27 @@ namespace Anabatic {
 
     int index = indexMin.index();
     while ( index <= indexMax.index() ) {
+      cdebug_log(110,0) << "i,j = " << index2i(index) << "," << index2j(index)
+                        << " " << getGridPoint(index) << endl;
       if (updateArea.contains(getGridPoint(index))) _gcells[index] = gcell;
 
-      if (index <= indexMax.j()) ++index;
-      else                         index += _imax - xspan;
+      if (index2j(index) <= indexMax.j()) ++index;
+      else                                  index += _imax - xspan;
     }
 
     cdebug_tabw(110,-1);
   }
 
-
   void  Matrix::show () const
   {
     cdebug_log(111,0) << this << endl;
     for ( size_t i=0 ; i<_gcells.size() ; ++i ) {
-      cdebug_log(111,0) << "[" << setw(3) << setfill('0') << i << setfill(' ') << "] ("
-                        << setw(3) << index2i(i) << ","
-                        << setw(3) << index2j(i) << ") " << _gcells[i] << endl;
+    //cdebug_log(111,0) << "[" << setw(3) << setfill('0') << i << setfill(' ') << "] ("
+    //                  << setw(3) << index2i(i) << ","
+    //                  << setw(3) << index2j(i) << ") " << _gcells[i] << endl;
+      cdebug_log(111,0) << "[" <<  i << "] ("
+                        << index2i(i) << ","
+                        << index2j(i) << ") " << _gcells[i] << endl;
     }
   }
 
