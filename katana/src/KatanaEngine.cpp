@@ -284,7 +284,7 @@ namespace Katana {
             continue;
           }
 
-          Segment*   segment = element->base()->base();
+          Segment*   segment = element->getSegment();
           Flags      side    = Flags::EastSide;
           DbU::Unit  axis    = segment->getY();
           if (track->getDirection() == Flags::Vertical) {

@@ -131,6 +131,7 @@ namespace Katana {
 
 
   AutoSegment*   TrackFixedSegment::base            () const { return NULL; }
+  Segment*       TrackFixedSegment::getSegment      () const { return _segment; }
   DbU::Unit      TrackFixedSegment::getAxis         () const { return getTrack()->getAxis(); }
   bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
   bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }

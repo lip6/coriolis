@@ -173,6 +173,32 @@ extern "C" {
   }
 
 
+  PyObject* PyKatanaEngine_loadGlobalRouting ( PyKatanaEngine* self, PyObject* args )
+  {
+    cdebug_log(40,0) << "PyKatanaEngine_loadGlobalRouting()" << endl;
+
+    HTRY
+    METHOD_HEAD("KatanaEngine.loadGlobalRouting()")
+    unsigned int  flags = 0;
+    if (PyArg_ParseTuple(args,"I:KatanaEngine.loadGlobalRouting", &flags)) {
+      if (katana->getViewer()) {
+        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::loadGlobalRouting,katana,flags) )) {
+          PyErr_SetString( HurricaneError, "KatanaEngine::loadGlobalrouting() has thrown an exception (C++)." );
+          return NULL;
+        }
+      } else {
+        katana->loadGlobalRouting(flags);
+      }
+    } else {
+      PyErr_SetString(ConstructorError, "KatanaEngine.loadGlobalRouting(): Invalid number/bad type of parameter.");
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   PyObject* PyKatanaEngine_layerAssign ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_layerAssign()" << endl;
@@ -265,6 +291,8 @@ extern "C" {
                                , "Returns True if the detailed routing has been successful." }
     , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_VARARGS
                                , "Run the global router (Knik)." }
+    , { "loadGlobalRouting"    , (PyCFunction)PyKatanaEngine_loadGlobalRouting    , METH_VARARGS
+                               , "Load global routing into the detailed router." }
     , { "layerAssign"          , (PyCFunction)PyKatanaEngine_layerAssign          , METH_VARARGS
                                , "Run the layer assigment stage." }
     , { "runNegociatePreRouted", (PyCFunction)PyKatanaEngine_runNegociatePreRouted, METH_NOARGS

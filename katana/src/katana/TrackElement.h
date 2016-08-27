@@ -89,6 +89,7 @@ namespace Katana {
     public:                                                
               void                    destroy              ();
       virtual AutoSegment*            base                 () const;
+      virtual Segment*                getSegment           () const = 0;
     // Wrapped AutoSegment Functions (when applicable).
       virtual bool                    isFixed              () const;
       virtual bool                    isHorizontal         () const = 0;

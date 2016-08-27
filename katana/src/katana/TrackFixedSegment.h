@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/TrackFixedSegment.h"                    |
+// |  C++ Header  :  "./katana/TrackFixedSegment.h"                  |
 // +-----------------------------------------------------------------+
 
 
@@ -41,6 +41,7 @@ namespace Katana {
       static  TrackElement*  create             ( Katana::Track* track , Segment* segment );
     public:
       virtual AutoSegment*   base               () const;
+      virtual Segment*       getSegment         () const;
       virtual bool           isHorizontal       () const;
       virtual bool           isVertical         () const;
       virtual bool           isFixed            () const;

@@ -145,6 +145,7 @@ namespace Katana {
 // Formerly Inline Functions.
 // Wrappeds.
   AutoSegment*   TrackSegment::base                 () const { return _base; }
+  Segment*       TrackSegment::getSegment           () const { return _base->base(); }
   bool           TrackSegment::isFixed              () const { return _base->isFixed(); }
   bool           TrackSegment::isHorizontal         () const { return _base->isHorizontal(); }
   bool           TrackSegment::isVertical           () const { return _base->isVertical(); }

@@ -56,6 +56,7 @@ namespace Katana {
     public:                                                
     // Wrapped AutoSegment Functions (when applicable).
       virtual AutoSegment*          base                   () const;
+      virtual Segment*              getSegment             () const;
       virtual bool                  isFixed                () const;
       virtual bool                  isHorizontal           () const;
       virtual bool                  isVertical             () const;
