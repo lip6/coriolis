@@ -607,7 +607,7 @@ namespace Etesian {
     auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10) // Limit the number of pins: don't want big awful nets with high weight
               + get_pulling_forces( _circuit, _placementUB, 1000000.0);
     solve_linear_system( _circuit, _placementLB, solv, 200 );
-    _progressReport2("     [--]" );
+    _progressReport2("     [---]" );
   }
 
   void  EtesianEngine::roughLegalize( float minDisruption, unsigned options ){
@@ -695,7 +695,7 @@ namespace Etesian {
 
       ostringstream label;
       label.str("");
-      label  << "     [" << setw(2) << setfill('0') << i << "] Bipart.";
+      label  << "     [" << setw(3) << setfill('0') << i << "] Bipart.";
       _progressReport1(label.str() );
 
       upperWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementUB));
@@ -709,7 +709,7 @@ namespace Etesian {
       auto solv = opt_problem
                 + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pullingForce, 2.0f * linearDisruption);
       solve_linear_system( _circuit, _placementLB, solv, 200 ); // 200 iterations
-      _progressReport2("          Linear." );
+      _progressReport2("           Linear." );
 
       if(options & UpdateLB)
         _updatePlacement( _placementLB );
@@ -717,7 +717,7 @@ namespace Etesian {
       // Optimize orientation sometimes
       if (i%5 == 0) {
           optimize_exact_orientations( _circuit, _placementLB );
-          _progressReport2("          Orient." );
+          _progressReport2("           Orient." );
       }
 
       lowerWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementLB));
@@ -756,7 +756,7 @@ namespace Etesian {
     for ( int i=0; i<iterations; ++i ){
         ostringstream label;
         label.str("");
-        label  << "     [" << setw(2) << setfill('0') << i << "]";
+        label  << "     [" << setw(3) << setfill('0') << i << "]";
 
         optimize_x_orientations( _circuit, _placementUB ); // Don't disrupt VDD/VSS connections in a row
         _progressReport1(label.str()+" Oriented ......." );
@@ -765,14 +765,14 @@ namespace Etesian {
 
         auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        _progressReport1("          Legalized ......" );
+        _progressReport1("           Legalized ......" );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
         row_compatible_orientation( _circuit, legalizer, true );
         swaps_global_HPWL( _circuit, legalizer, 3, 4 );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        _progressReport1("          Global Swaps ..." );
+        _progressReport1("           Global Swaps ..." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
@@ -781,7 +781,7 @@ namespace Etesian {
         else
           OSRP_convex_HPWL( _circuit, legalizer );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        _progressReport1("          Row Optimization" );
+        _progressReport1("           Row Optimization" );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
@@ -790,7 +790,7 @@ namespace Etesian {
         else
           swaps_row_convex_HPWL( _circuit, legalizer, effort+2 );
         coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-        _progressReport1("          Local Swaps ...." );
+        _progressReport1("           Local Swaps ...." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
@@ -799,7 +799,7 @@ namespace Etesian {
           row_compatible_orientation( _circuit, legalizer, true );
           coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
           verify_placement_legality( _circuit, _placementUB, _surface );
-          _progressReport1("          Final Legalize ." );
+          _progressReport1("           Final Legalize ." );
         }
     }
     _placementLB = _placementUB; // In case we run other passes
