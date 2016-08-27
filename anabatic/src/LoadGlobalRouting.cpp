@@ -739,6 +739,7 @@ namespace {
                          , Conn_2G_1Pad     = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
                          , Conn_3G_1Pad     = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
                          , Conn_1G_1PinM2   = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
+                         , Conn_2G_1PinM2   = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
                          };
 
     // Connexity Union Type.
@@ -999,6 +1000,7 @@ namespace {
         case Conn_2G_4M3:
         case Conn_3G_1M3:     _do_xG_xM3    (); break;
         case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_2G_1PinM2:  _do_xG_xM2();     break;
         case Conn_2G:         _do_2G        (); break;
         case Conn_3G:
         case Conn_4G:
