@@ -112,7 +112,6 @@ namespace Anabatic {
   };
 
 
-
 // Matrix inline functions.
   inline Box            Matrix::getArea () const { return _area; }
   inline DbU::Unit      Matrix::getSide () const { return _side; }

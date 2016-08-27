@@ -67,9 +67,9 @@ namespace Anabatic {
     , _gcell     (gcell)
     , _flags     (CntInvalidatedCache|CntInCreationStage)
     , _dxMin     (0)
-    , _dxMax     ((int)DbU::toLambda( _gcell->getXMax()-_gcell->getXMin() ))
-    , _dyMin     (0)
-    , _dyMax     ((int)DbU::toLambda( _gcell->getYMax()-_gcell->getYMin() ))
+    , _dxMax     ((int)DbU::toLambda(gcell->getConstraintXMax()))
+    , _dyMin     ()
+    , _dyMax     ((int)DbU::toLambda(gcell->getConstraintYMax()))
   {
     _allocateds++;
     _gcell->addContact ( this );
@@ -257,7 +257,7 @@ namespace Anabatic {
   {
     if (isUserNativeConstraints()) return getConstraintBox();
     if (isFixed()) return Box(_contact->getPosition());
-    return _gcell->getBoundingBox();
+    return _gcell->getConstraintBox();
   }
 
 
@@ -316,8 +316,8 @@ namespace Anabatic {
       _contact->setPosition( _gcell->getCenter() );
       _dxMin = 0;
       _dyMin = 0;
-      _dxMax = (int)DbU::toLambda( _gcell->getXMax()-_gcell->getXMin() );
-      _dyMax = (int)DbU::toLambda( _gcell->getYMax()-_gcell->getYMin() );
+      _dxMax = (int)DbU::toLambda( gcell->getConstraintXMax() );
+      _dyMax = (int)DbU::toLambda( gcell->getConstraintYMax() );
       if (cdebug.enabled()) {
         int  dxMin = _dxMin;
         int  dyMin = _dyMin;

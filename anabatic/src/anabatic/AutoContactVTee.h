@@ -28,6 +28,7 @@ namespace Anabatic {
 
 
   class AutoContactVTee : public AutoContact {
+      typedef  AutoContact  Super;
       friend class AutoContact;
     public:
       static  AutoContactVTee* create                 ( GCell*, Net*, const Layer* );

@@ -88,6 +88,8 @@ namespace Anabatic {
     cdebug_log(145,0) << "AutoContactTerminal::create(... x, y, ...)" << endl;
     cdebug_log(145,0) << "@ x:" << DbU::getValueString(x) << " y:" << DbU::getValueString(y) << endl; 
 
+    _preCreate( gcell, anchor->getNet(), layer );
+
     Point anchorPosition = anchor->getPosition();
 
     Contact* contact = Contact::create( anchor

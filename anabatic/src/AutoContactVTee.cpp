@@ -49,6 +49,8 @@ namespace Anabatic {
 
   AutoContactVTee* AutoContactVTee::create ( GCell* gcell, Net* net, const Layer* layer )
   {
+    _preCreate( gcell, net, layer );
+
     DbU::Unit viaSide = Session::getViaWidth( layer );
     Contact*  contact = Contact::create( net
                                        , layer

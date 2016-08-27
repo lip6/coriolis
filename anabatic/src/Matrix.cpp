@@ -73,10 +73,14 @@ namespace Anabatic {
 
   GCell*  Matrix::getUnder ( DbU::Unit x, DbU::Unit y ) const
   {
+    if (x == _area.getXMax()) --x;
+    if (y == _area.getYMax()) --y;
+
     int index = xy2maxIndex(x,y);
     cdebug_log(110,0) << "Matrix::getUnder() ("
                     << DbU::getValueString(x) << " "
                     << DbU::getValueString(y) << ") index:" << index << endl;
+
     return (index < 0) ? NULL : _gcells[index]->getUnder(x,y);
   }
 
@@ -132,6 +136,7 @@ namespace Anabatic {
 
     cdebug_tabw(110,-1);
   }
+
 
   void  Matrix::show () const
   {

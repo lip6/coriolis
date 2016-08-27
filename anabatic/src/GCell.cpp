@@ -553,6 +553,8 @@ namespace Anabatic {
   {
     const GCell* current = this;
 
+    if (not this) cerr << Error("*this* is NULL!") << endl;
+
     while ( current ) {
       if (not current->isFlat() and current->getBoundingBox().contains(x,y)) break;
 
@@ -796,7 +798,7 @@ namespace Anabatic {
       cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
 
     _anabatic->_updateLookup( this );
-    _anabatic->getMatrix()->show();
+  //_anabatic->getMatrix()->show();
     cdebug_tabw(110,-1);
   }
 

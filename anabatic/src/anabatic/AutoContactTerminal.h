@@ -28,6 +28,7 @@ namespace Anabatic {
 
 
   class AutoContactTerminal : public AutoContact {
+      typedef  AutoContact  Super;
       friend class AutoContact;
     public:
       static  AutoContactTerminal* create                 ( GCell*       gcell
