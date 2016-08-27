@@ -122,6 +122,7 @@ namespace Anabatic {
       int                  _connexId;
       int                  _branchId;
       int                  _degree  : 8;
+
       int                  _rpCount : 8;
       int                  _stamp;
       DbU::Unit            _distance;

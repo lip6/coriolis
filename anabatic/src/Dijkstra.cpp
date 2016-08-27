@@ -188,6 +188,7 @@ namespace Anabatic {
     for ( GCell* gcell : gcells ) {
       _vertexes.push_back( new Vertex (gcell) );
     }
+    _anabatic->getMatrix()->show();
   }
 
 
@@ -220,9 +221,11 @@ namespace Anabatic {
       cdebug_log(112,0) << "| " << rp << endl;
         
       if (not gcell) {
-        cerr << Error( "Dijkstra::load(): %s of %s is not under any GCell.\n"
+        cerr << Error( "Dijkstra::load(): %s\n"
+                       "        @%s of %s is not under any GCell.\n"
                        "        It will be ignored so the routing may be incomplete."
                      , getString(rp).c_str()
+                     , getString(center).c_str()
                      , getString(_net).c_str()
                      ) << endl;
         continue;
@@ -467,7 +470,12 @@ namespace Anabatic {
         Interval constraint   = from->getSide();
         source->setFrom( NULL );
 
-        cdebug_log(112,0) << "| " << target << endl;
+        cdebug_log(112,0) << "+ " << target << endl;
+
+        if (target->getConnexId() < 0) {
+          cdebug_log(112,0) << "| " << "break (abort: false start)." << endl;
+          break;
+        }
 
         while ( true ) {
           from = target->getFrom();
@@ -486,7 +494,7 @@ namespace Anabatic {
           target->setFrom( NULL );
           target = nextTarget;
 
-          cdebug_log(112,0) << "+ " << target << endl;
+          cdebug_log(112,0) << "| " << target << endl;
         }
 
         Contact* sourceContact = source->getGContact( _net );
@@ -522,6 +530,7 @@ namespace Anabatic {
           for ( Edge* through : aligneds ) through->add( segment );
         }
 
+        cdebug_log(112,0) << "| " << segment << endl;
         cdebug_log(112,0) << "| " << "break (turn, branch or terminal)." << endl;
         source = (target->getFrom()) ? target : NULL;
       }
@@ -578,7 +587,8 @@ namespace Anabatic {
 
   void  Dijkstra::_toSources ( Vertex* source, int connexId )
   {
-    cdebug_log(112,1) << "Dijkstra::_setReacheds()" << endl;
+    cdebug_log(112,1) << "Dijkstra::_toSources() " << endl;
+    cdebug_log(112,0) << "* from:  " << source << endl;
 
     source->setConnexId( connexId );
     source->setDistance( 0.0 );
@@ -597,7 +607,8 @@ namespace Anabatic {
 
       for ( Edge* edge : source->getGCell()->getEdges() ) {
         if (not edge->hasNet(_net)) {
-          cdebug_log(112,0) << "  Not connected:" << edge << endl; 
+          cdebug_log(112,0) << "  Not connected:" << edge
+                            << " to:" << edge->getOpposite(source->getGCell()) << endl; 
           continue;
         }
 
@@ -609,6 +620,7 @@ namespace Anabatic {
 
         vneighbor->setConnexId( connexId );
         vneighbor->setDistance( 0.0 );
+      //vneighbor->setFrom    ( edge );
         _targets.erase ( vneighbor );
         _sources.insert( vneighbor );
         _queue.push( vneighbor );
