@@ -410,6 +410,11 @@ namespace Anabatic {
       unsetFlags( SegInvalidatedSource|SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedSource) setFlags( SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedTarget) setFlags( SegInvalidatedSource );
+
+      unsigned int terminalFlags = _flags & SegStrongTerminal;
+      unsetFlags( SegStrongTerminal );
+      if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
+      if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );
     }
   }
 

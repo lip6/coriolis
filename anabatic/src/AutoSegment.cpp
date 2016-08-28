@@ -886,8 +886,9 @@ namespace Anabatic {
         case SegWeakTerminal1:  terminalFlag = SegWeakTerminal1; break;
         case SegWeakTerminal2:  terminalFlag = SegWeakTerminal2; break;
         default:
-          cerr << Warning("%s has multiple terminal flag sets: %x."
+          cerr << Warning("%s has multiple terminal flag sets:%s (%x)."
                          ,getString(this).c_str()
+                         ,_getStringFlags().c_str()
                          ,_flags
                          ) << endl;
           terminalFlag = SegWeakTerminal2; break;
