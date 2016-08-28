@@ -237,12 +237,13 @@ namespace Anabatic {
     cdebug_log(149,0) << "test:" << (getLength() < getPitch()*5) << endl;
     cdebug_log(149,0) << "length:" << DbU::getValueString(getLength()) << endl;
 
-    bool         success       = false;
-    bool         slackened     = false;
-    bool         halfSlackened = false;
-    int          lowSlack      = (flags & Flags::HalfSlacken) ? 3 : 10;
-    AutoContact* source        = getAutoSource();
-    AutoSegment* parallel      = this;
+    bool         success         = false;
+    bool         sourceSlackened = false;
+    bool         targetSlackened = false;
+    bool         halfSlackened   = false;
+    int          lowSlack        = (flags & Flags::HalfSlacken) ? 3 : 10;
+    AutoContact* source          = getAutoSource();
+    AutoSegment* parallel        = this;
 
     if (source->isTerminal()) {
       Interval  constraints       = source->getUConstraints      (Flags::Horizontal|Flags::NoGCellShrink);
@@ -253,14 +254,14 @@ namespace Anabatic {
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
         _makeDogleg( source->getGCell(), Flags::NoFlags );
-        slackened = true;
+        sourceSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
       }
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
-      if (doglegs.size() >= 2) {
-        cdebug_log(149,0) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
+      if (sourceSlackened and (doglegs.size() >= 2)) {
+        cdebug_log(149,0) << "AutoVertical::_slacken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
         doglegs[doglegs.size()-2]->_setAxis( getSourcePosition() );
         success = true;
 
@@ -284,24 +285,31 @@ namespace Anabatic {
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
         _makeDogleg( target->getGCell(), Flags::NoFlags );
-        slackened = true;
+        targetSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
       }
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
-      if (doglegs.size() >= 2) {
-        cdebug_log(149,0) << "AutoSegment::_slaken(): Source @" << DbU::getValueString(getTargetPosition()) << endl;
+      if (targetSlackened and (doglegs.size() >= 2)) {
+        cdebug_log(149,0) << "AutoVertical::_slacken(): Source @" << DbU::getValueString(getTargetPosition()) << endl;
         doglegs[doglegs.size()-2]->_setAxis( getTargetPosition() );
         success = true;
       }
     }
 
-    if (halfSlackened) {
-      setFlags( SegHalfSlackened );
-    } else if (slackened) {
+    if (sourceSlackened and targetSlackened) {
       setFlags  ( SegSlackened );
       unsetFlags( SegHalfSlackened );
+    } else {
+      if (sourceSlackened or targetSlackened) {
+        if (halfSlackened) {
+          setFlags( SegHalfSlackened );
+        } else {
+          setFlags  ( SegSlackened );
+          unsetFlags( SegHalfSlackened );
+        }
+      }
     }
     cdebug_tabw(149,-1);
 

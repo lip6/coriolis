@@ -838,7 +838,7 @@ namespace Anabatic {
 
     if ( (axis == getAxis()) and not (flags & Flags::Realignate) ) return;
 
-    cdebug_log(149,0) << "setAxis() @"
+    cdebug_log(159,0) << "setAxis() @"
                 << ((isHorizontal())?"Y ":"X ") << DbU::toLambda(getAxis())
                 << " to " << DbU::toLambda(axis) << " on " << this << endl;
     cdebug_tabw(145,1);

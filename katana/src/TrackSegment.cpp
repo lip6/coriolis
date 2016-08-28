@@ -422,6 +422,7 @@ namespace Katana {
     return (not isSlackened() and (getDoglegLevel() <= 3)) ? _base->canSlacken(Flags::Propagate) : false;
   }
 
+
   bool  TrackSegment::slacken ( unsigned int flags )
   {
     cdebug_log(159,0) << "TrackSegment::slacken()" << endl;
