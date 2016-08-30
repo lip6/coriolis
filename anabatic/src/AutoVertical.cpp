@@ -71,7 +71,7 @@ namespace Anabatic {
     _gcell = source->getGCell();
 
     setOptimalMax( getGCell()->getXMax() );
-    resetNativeConstraints( getGCell()->getXMin(), getGCell()->getXMax() );
+    resetNativeConstraints( getGCell()->getXMin(), getGCell()->getConstraintXMax() );
 
     if (getGCell() != target->getGCell()) {
       setFlags( SegGlobal );
@@ -82,7 +82,7 @@ namespace Anabatic {
         if ( (gcell != getGCell()) and (gcell != target->getGCell()) )
           gcell->addVSegment( this );
         mergeNativeMin( gcell->getXMin() );
-        mergeNativeMax( gcell->getXMax() );
+        mergeNativeMax( gcell->getConstraintXMax() );
       }
     }
   }
@@ -376,10 +376,10 @@ namespace Anabatic {
     vector<GCell*> gcells;
     getGCells( gcells );
 
-    resetNativeConstraints( gcells[0]->getXMin(), gcells[0]->getXMax() );
+    resetNativeConstraints( gcells[0]->getXMin(), gcells[0]->getConstraintXMax() );
     for ( GCell* gcell : gcells ) {
       mergeNativeMin( gcell->getXMin() );
-      mergeNativeMax( gcell->getXMax() );
+      mergeNativeMax( gcell->getConstraintXMax() );
     }
   }
 

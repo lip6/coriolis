@@ -1246,15 +1246,13 @@ namespace Anabatic {
 
     if (_hsegments.size() == end) {
       cerr << Bug( "%s do not go through %s."
-                 , getString(segment).c_str()
-                 , _getString().c_str() ) << endl;
+                 , getString(segment).c_str(), _getString().c_str() ) << endl;
       return;
     }
 
     if (_hsegments.size() - end > 1)
       cerr << Bug( "%s has multiple occurrences of %s."
-                 , _getString().c_str()
-                 , getString(segment).c_str() ) << endl;
+                 , _getString().c_str(), getString(segment).c_str() ) << endl;
 
     _hsegments.erase( _hsegments.begin() + end, _hsegments.end() );
   }

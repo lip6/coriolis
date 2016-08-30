@@ -246,9 +246,9 @@ namespace Anabatic {
   inline GCell*        AutoContact::getGCell                () const { return _gcell; }
   inline Box           AutoContact::getConstraintBox        () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }
   inline void          AutoContact::setCBXMin               ( DbU::Unit xMin ) { _dxMin = _getDeltaMin(xMin,_gcell->getXMin()); }
-  inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getXMin(),_gcell->getXMax()); }
+  inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getXMin(),_gcell->getConstraintXMax()); }
   inline void          AutoContact::setCBYMin               ( DbU::Unit yMin ) { _dyMin = _getDeltaMin(yMin,_gcell->getYMin()); }
-  inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getYMin(),_gcell->getYMax()); }
+  inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getYMin(),_gcell->getConstraintYMax()); }
   inline void          AutoContact::setFlags                ( unsigned int flags ) { _flags|= flags; }
   inline void          AutoContact::unsetFlags              ( unsigned int flags ) { _flags&=~flags; }
   inline int           AutoContact::_getDeltaMin            ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::toLambda(x-xMin); }

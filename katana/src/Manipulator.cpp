@@ -292,7 +292,7 @@ namespace Katana {
     vector<GCell*> gcells;
     _segment->getGCells( gcells );
 
-    if (gcells.size() < 2 ){
+    if (gcells.size() < 2) {
       cerr << Bug( "relax() Cannot break %s,\n      only in %s."
                  , getString(_segment).c_str()
                  , getString(gcells[0]).c_str()

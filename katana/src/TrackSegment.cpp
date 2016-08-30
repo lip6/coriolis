@@ -234,7 +234,7 @@ namespace Katana {
     cdebug_log(159,0) << "getGCells(): sourceGCell: " << sourceGCell << endl;
     cdebug_log(159,0) << "getGCells(): targetGCell: " << targetGCell << endl;
 
-    for( AutoSegment* segment : base()->getAligneds() ) {
+    for ( AutoSegment* segment : base()->getAligneds() ) {
       cdebug_log(159,0) << "| " << segment << endl;
 
       Anabatic::GCell* gcell = segment->getAutoSource()->getGCell();
@@ -256,10 +256,12 @@ namespace Katana {
 
     Flags      side = (direction & Flags::Horizontal) ? Flags::EastSide : Flags::NorthSide;
     DbU::Unit  axis = getAxis();
+    cdebug_log(159,0) << "* dir:" << side._getString() << " @" << DbU::getValueString(axis) << endl;
 
     gcells.push_back( sourceGCell );
     while ( sourceGCell != targetGCell ) {
       sourceGCell = sourceGCell->getNeighborAt( direction, axis );
+      cdebug_log(159,0) << "| " << sourceGCell << endl;
       if (not sourceGCell) break;
 
       gcells.push_back( sourceGCell );
@@ -724,8 +726,8 @@ namespace Katana {
 
 
   TrackElement* TrackSegment::makeDogleg ( Anabatic::GCell* dogLegGCell
-                                         , TrackElement*&    perpandicular
-                                         , TrackElement*&    parallel
+                                         , TrackElement*&   perpandicular
+                                         , TrackElement*&   parallel
                                          )
   {
     cdebug_log(159,0) << "TrackSegment::makeDogleg(GCell*)" << endl;

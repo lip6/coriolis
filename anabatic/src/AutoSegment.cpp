@@ -1896,7 +1896,7 @@ namespace Anabatic {
     }
 
     if (doglegGCell->getSide(getDirection()).intersect(getSpanU())) {
-      cdebug_log(149,0) << "Dogleg in " << this << endl;
+      cdebug_log(149,0) << "Dogleg in " << this << " spanU:" << getSpanU() << endl;
       rflags = _makeDogleg( doglegGCell, flags );
     } else {
       cdebug_log(149,0) << "Looking in aligneds." << endl;

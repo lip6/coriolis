@@ -337,10 +337,10 @@ namespace Anabatic {
                                : _northEdges[0]->getOpposite(this)->getYMin() - shrink; }
 
   inline DbU::Unit  GCell::getConstraintXMax () const
-  { return getXMax( _eastEdges .empty() ? -1 : 0 ); }
+  { return getXMax( _eastEdges.empty() ? 0 : 1 ); }
 
   inline DbU::Unit  GCell::getConstraintYMax () const
-  { return getYMax( _northEdges .empty() ? -1 : 0 ); }
+  { return getYMax( _northEdges.empty() ? 0 : 1 ); }
 
   inline Point  GCell::getCenter () const
   { return Point( (getXMin()+getXMax())/2, (getYMin()+getYMax())/2); }
@@ -350,8 +350,8 @@ namespace Anabatic {
 
   inline Interval  GCell::getSide ( Flags direction ) const
   {
-    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getYMax() );
-    return Interval( getXMin(), getXMax() );
+    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getConstraintYMax() );
+    return Interval( getXMin(), getConstraintXMax() );
   }
 
   inline void  GCell::setObserver ( size_t slot, BaseObserver* observer )

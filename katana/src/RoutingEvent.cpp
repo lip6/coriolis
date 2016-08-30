@@ -622,7 +622,9 @@ namespace Katana {
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
     }
-    cdebug_log(159,0) << "| Raw Track Constraint: " << _constraints << endl;
+    cdebug_log(159,0) << "| Raw Track Constraint: " << _constraints
+                      << " [" << _constraints.getVMin()
+                      <<  "," << _constraints.getVMax() << "]" << endl;
 
     _tracksNb = 0;
 

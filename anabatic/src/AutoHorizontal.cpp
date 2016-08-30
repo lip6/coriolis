@@ -77,7 +77,7 @@ namespace Anabatic {
     _gcell = source->getGCell();
 
     setOptimalMax( getGCell()->getYMax() );
-    resetNativeConstraints( getGCell()->getYMin(), getGCell()->getYMax() );
+    resetNativeConstraints( getGCell()->getYMin(), getGCell()->getConstraintYMax() );
 
     if (getGCell() != target->getGCell()) {
       setFlags( SegGlobal );
@@ -88,7 +88,7 @@ namespace Anabatic {
         if ( (gcell != getGCell()) and (gcell != target->getGCell()) )
           gcell->addHSegment( this );
         mergeNativeMin( gcell->getYMin() );
-        mergeNativeMax( gcell->getYMax() );
+        mergeNativeMax( gcell->getConstraintYMax() );
       }
     }
   }
@@ -440,10 +440,10 @@ namespace Anabatic {
     vector<GCell*> gcells;
     getGCells( gcells );
 
-    resetNativeConstraints( gcells[0]->getYMin(), gcells[0]->getYMax() );
+    resetNativeConstraints( gcells[0]->getYMin(), gcells[0]->getConstraintYMax() );
     for ( GCell* gcell : gcells ) {
       mergeNativeMin( gcell->getYMin() );
-      mergeNativeMax( gcell->getYMax() );
+      mergeNativeMax( gcell->getConstraintYMax() );
     }
   }
 
@@ -749,8 +749,10 @@ namespace Anabatic {
     if (doglegGCell != end) {
       GCell* gcell = doglegGCell;
       do {
-        if (gcell != begin)
+        if (gcell != begin) {
+          cdebug_log(149,0) << "| Remove from:" << gcell << endl;
           gcell->removeHSegment( this );
+        }
         gcell = gcell->getEast( getNativeMin() );
       } while ( gcell and (gcell != end) );
     }
