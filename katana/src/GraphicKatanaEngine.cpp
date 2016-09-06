@@ -69,6 +69,7 @@ namespace Katana {
       katana = KatanaEngine::create( cell );
       katana->setPostEventCb( boost::bind(&GraphicKatanaEngine::postEvent,this) );
       katana->setViewer( _viewer );
+      katana->digitalInit();
       if (cmess1.enabled()) katana->printConfiguration();
     } else
       cerr << Warning( "%s already has a Katana engine.", getString(cell).c_str() ) << endl;

@@ -143,7 +143,7 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::_initDataBase ()
+  void  KatanaEngine::digitalInit ()
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
@@ -163,7 +163,6 @@ namespace Katana {
     KatanaEngine* katana = new KatanaEngine ( cell );
 
     katana->_postCreate();
-    katana->_initDataBase();
 
     return katana;
   }

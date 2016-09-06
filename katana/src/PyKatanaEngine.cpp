@@ -147,6 +147,26 @@ extern "C" {
   }
 
 
+  PyObject* PyKatanaEngine_digitalInit ( PyKatanaEngine* self )
+  {
+    cdebug_log(40,0) << "PyKatanaEngine_digitalInit()" << endl;
+
+    HTRY
+      METHOD_HEAD("KatanaEngine.digitalInit()")
+      if (katana->getViewer()) {
+        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::digitalInit,katana) )) {
+          PyErr_SetString( HurricaneError, "KatanaEngine::digitalInit() has thrown an exception (C++)." );
+          return NULL;
+        }
+      } else {
+        katana->digitalInit();
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
@@ -285,6 +305,8 @@ extern "C" {
                                , "Create a Katana engine on this cell." }
     , { "setViewer"            , (PyCFunction)PyKatanaEngine_setViewer            , METH_VARARGS
                                , "Associate a Viewer to this KatanaEngine." }
+    , { "digitalInit"          , (PyCFunction)PyKatanaEngine_digitalInit          , METH_NOARGS
+                               , "Setup Katana for digital routing." }
     , { "printConfiguration"   , (PyCFunction)PyKatanaEngine_printConfiguration   , METH_NOARGS
                                , "Display on the console the configuration of Katana." }
     , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS

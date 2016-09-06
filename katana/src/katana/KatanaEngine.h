@@ -105,6 +105,7 @@ namespace Katana {
               void                     setupGlobalGraph           ( unsigned int mode );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
+              void                     digitalInit                ();
               void                     runNegociate               ( unsigned int flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
       virtual void                     finalizeLayout             ();
@@ -134,7 +135,6 @@ namespace Katana {
       virtual              ~KatanaEngine  ();
       virtual void          _postCreate   ();
       virtual void          _preDestroy   ();
-              void          _initDataBase ();
     private:
                             KatanaEngine  ( const KatanaEngine& );
               KatanaEngine& operator=     ( const KatanaEngine& );
