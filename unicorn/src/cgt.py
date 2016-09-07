@@ -183,7 +183,6 @@ if __name__ == '__main__':
           
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
-          unicorn.registerTool        (Anabatic.GraphicAnabaticEngine.grab())
           unicorn.registerTool        (Katana.GraphicKatanaEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
