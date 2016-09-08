@@ -1051,6 +1051,8 @@ void Cell::materialize()
 {
   if (_flags.isset(Flags::Materialized)) return;
 
+  cdebug_log(18,1) << "Cell::materialize() " << this << endl;
+
   _flags |= Flags::Materialized;
 
   for ( Instance* instance : getInstances() ) {
@@ -1060,6 +1062,8 @@ void Cell::materialize()
 
   for ( Net*    net    : getNets   () ) net   ->materialize();
   for ( Marker* marker : getMarkers() ) marker->materialize();
+
+  cdebug_tabw(18,-1);
 }
 
 void Cell::unmaterialize()
@@ -1212,20 +1216,21 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add( getSlot("_library"       , _library          ) );
-        record->add( getSlot("_name"          , &_name            ) );
-        record->add( getSlot("_instances"     , &_instanceMap     ) );
-        record->add( getSlot("_quadTree"      ,  _quadTree        ) );
-        record->add( getSlot("_slaveInstances", &_slaveInstanceSet) );
-        record->add( getSlot("_netMap"        , &_netMap          ) );
-        record->add( getSlot("_netAliasSet"   , &_netAliasSet     ) );
-        record->add( getSlot("_pinMap"        , &_pinMap          ) );
-        record->add( getSlot("_sliceMap"      ,  _sliceMap        ) );
-        record->add( getSlot("_markerSet"     , &_markerSet       ) );
-        record->add( getSlot("_slaveEntityMap", &_slaveEntityMap  ) );
-        record->add( getSlot("_abutmentBox"   , &_abutmentBox     ) );
-        record->add( getSlot("_boundingBox"   , &_boundingBox     ) );
-        record->add( getSlot("_flags"         , &_flags           ) );
+        record->add( getSlot("_library"        , _library          ) );
+        record->add( getSlot("_name"           , &_name            ) );
+        record->add( getSlot("_instances"      , &_instanceMap     ) );
+        record->add( getSlot("_quadTree"       ,  _quadTree        ) );
+        record->add( getSlot("_extensionSlices", &_extensionSlices ) );
+        record->add( getSlot("_slaveInstances" , &_slaveInstanceSet) );
+        record->add( getSlot("_netMap"         , &_netMap          ) );
+        record->add( getSlot("_netAliasSet"    , &_netAliasSet     ) );
+        record->add( getSlot("_pinMap"         , &_pinMap          ) );
+        record->add( getSlot("_sliceMap"       ,  _sliceMap        ) );
+        record->add( getSlot("_markerSet"      , &_markerSet       ) );
+        record->add( getSlot("_slaveEntityMap" , &_slaveEntityMap  ) );
+        record->add( getSlot("_abutmentBox"    , &_abutmentBox     ) );
+        record->add( getSlot("_boundingBox"    , &_boundingBox     ) );
+        record->add( getSlot("_flags"          , &_flags           ) );
     }
     return record;
 }
@@ -1699,6 +1704,8 @@ Initializer<JsonCell>  jsonCellInitialize ( 10 );
 JsonCell::JsonCell(unsigned long flags)
 // ************************************
   : JsonEntity(flags)
+  , _cell                (NULL)
+  , _materializationState(Go::autoMaterializationIsDisabled())
 {
   remove( ".Cell" );
   add( "_library"     , typeid(string)    );
@@ -1706,6 +1713,19 @@ JsonCell::JsonCell(unsigned long flags)
   add( "_abutmentBox" , typeid(Box)       );
   add( "+instanceMap" , typeid(JsonArray) );
   add( "+netMap"      , typeid(JsonArray) );
+
+  Go::enableAutoMaterialization();
+}
+
+JsonCell::~JsonCell()
+// ******************
+{
+  cdebug_log(19,0) << "JsonCell::~JsonCell() " << _cell << endl;
+
+  Go::enableAutoMaterialization();
+  if (_cell) _cell->materialize();
+
+  if (_materializationState) Go::disableAutoMaterialization();
 }
 
 string JsonCell::getTypeName() const
@@ -1728,10 +1748,10 @@ void JsonCell::toData(JsonStack& stack)
 
   Library* library = DataBase::getDB()->getLibrary( get<string>(stack,"_library")
                                                   , DataBase::CreateLib|DataBase::WarnCreateLib );
-  Cell*    cell    = Cell::create( library, get<string>(stack,"_name") );
-  cell->setAbutmentBox( stack.as<Box>("_abutmentBox") );
+  _cell = Cell::create( library, get<string>(stack,"_name") );
+  _cell->setAbutmentBox( stack.as<Box>("_abutmentBox") );
 
-  update( stack, cell );
+  update( stack, _cell );
 }
 
 } // End of Hurricane namespace.

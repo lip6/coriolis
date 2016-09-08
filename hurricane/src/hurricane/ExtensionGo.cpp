@@ -73,7 +73,7 @@ namespace Hurricane {
 
   void ExtensionGo::unmaterialize ()
   {
-    cdebug_log(18,1) << "ExtensionGo::unmaterialize() - start" << (void*)this << endl;
+    cdebug_log(18,1) << "ExtensionGo::unmaterialize() - start" << endl;
 
     if ( isMaterialized() ) {
       ExtensionSlice* slice = _cell->getExtensionSlice( getName() );

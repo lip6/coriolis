@@ -20,6 +20,7 @@
 #include "hurricane/QuadTree.h"
 #include "hurricane/Go.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 namespace Hurricane {
 
@@ -232,18 +233,16 @@ QuadTree::~QuadTree()
 const Box& QuadTree::getBoundingBox() const
 // ****************************************
 {
-    if (_boundingBox.isEmpty()) {
-        Box& boundingBox = ((QuadTree*)this)->_boundingBox;
-        if (_ulChild) boundingBox.merge(_ulChild->getBoundingBox());
-        if (_urChild) boundingBox.merge(_urChild->getBoundingBox());
-        if (_llChild) boundingBox.merge(_llChild->getBoundingBox());
-        if (_lrChild) boundingBox.merge(_lrChild->getBoundingBox());
-        for_each_go(go, _goSet.getElements()) {
-            boundingBox.merge(go->getBoundingBox());
-            end_for;
-        }
-    }
-    return _boundingBox;
+  if (_boundingBox.isEmpty()) {
+    Box& boundingBox = const_cast<Box&>( _boundingBox );
+    if (_ulChild) boundingBox.merge(_ulChild->getBoundingBox());
+    if (_urChild) boundingBox.merge(_urChild->getBoundingBox());
+    if (_llChild) boundingBox.merge(_llChild->getBoundingBox());
+    if (_lrChild) boundingBox.merge(_lrChild->getBoundingBox());
+    for ( Go* go : _goSet.getElements() )
+      boundingBox.merge(go->getBoundingBox());
+  }
+  return _boundingBox;
 }
 
 Gos QuadTree::getGos() const
@@ -322,23 +321,23 @@ string QuadTree::_getString() const
 }
 
 Record* QuadTree::_getRecord() const
-// ***************************
+// *********************************
 {
-    Record* record = NULL;
-    if (_size) {
-        record = new Record(getString(this));
-        record->add(getSlot("Parent", _parent));
-        record->add(getSlot("X", &_x));
-        record->add(getSlot("Y", &_y));
-        record->add(getSlot("BoundingBox", &_boundingBox));
-        record->add(getSlot("Size", &_size));
-        record->add(getSlot("Gos", &_goSet));
-        record->add(getSlot("ULChild", _ulChild));
-        record->add(getSlot("URChild", _urChild));
-        record->add(getSlot("LLChild", _llChild));
-        record->add(getSlot("LRChild", _lrChild));
-    }
-    return record;
+  Record* record = NULL;
+  if (_size) {
+    record = new Record( getString(this) );
+    record->add( getSlot("_parent"     , _parent      ) );
+    record->add( DbU::getValueSlot("_x", &_x          ) );
+    record->add( DbU::getValueSlot("_y", &_y          ) );
+    record->add( getSlot("_boundingBox", &_boundingBox) );
+    record->add( getSlot("_size"       , &_size       ) );
+    record->add( getSlot("_goSet"      , &_goSet      ) );
+    record->add( getSlot("_ulChild"    ,  _ulChild    ) );
+    record->add( getSlot("_urChild"    ,  _urChild    ) );
+    record->add( getSlot("_llChild"    ,  _llChild    ) );
+    record->add( getSlot("_lrChild"    ,  _lrChild    ) );
+  }
+  return record;
 }
 
 QuadTree* QuadTree::_getDeepestChild(const Box& box)

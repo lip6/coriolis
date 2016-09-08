@@ -62,7 +62,7 @@ void Go::_postCreate()
     Inherit::_postCreate();
 
     if (not autoMaterializationIsDisabled()) {
-      materialize();
+      invalidate( true );
     } // materialized after entire post creation
 }
 

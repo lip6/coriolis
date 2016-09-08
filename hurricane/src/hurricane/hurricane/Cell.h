@@ -566,9 +566,12 @@ class JsonCell : public JsonEntity {
 
   public: static void initialize();
   public: JsonCell(unsigned long flags);
+  public: virtual ~JsonCell();
   public: virtual string getTypeName() const;
   public: virtual JsonCell* clone(unsigned long) const;
   public: virtual void toData(JsonStack&); 
+  private: Cell* _cell;
+  private: bool  _materializationState;
 };
 
 } // End of Hurricane namespace.
