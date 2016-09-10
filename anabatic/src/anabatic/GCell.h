@@ -75,6 +75,9 @@ namespace Anabatic {
       typedef std::set< GCell*, Entity::CompareById >  Set;
       typedef std::vector<GCell*>                      Vector;
     public:
+      enum DisplayMode { Boundary         = 1
+                       , Density          = 2
+                       };
       enum DensityMode { AverageHVDensity = 1  // Average between all densities.
                        , AverageHDensity  = 2  // Average between all H densities.
                        , AverageVDensity  = 3  // Average between all V densities.
@@ -120,6 +123,8 @@ namespace Anabatic {
           float  _density;
       };
     public:
+      static        unsigned int          getDisplayMode      ();
+      static        void                  setDisplayMode      ( unsigned int );
       static        Box                   getBorder           ( const GCell*, const GCell* );
     public:                           
       static        GCell*                create              ( AnabaticEngine* );
@@ -266,6 +271,7 @@ namespace Anabatic {
                     GCell&                operator=           ( const GCell& );
     private:
       static  Name                  _extensionName;
+      static  unsigned int          _displayMode;
               Observable            _observable;
               AnabaticEngine*       _anabatic;
               Flags                 _flags;

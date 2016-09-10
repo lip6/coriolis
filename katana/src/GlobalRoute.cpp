@@ -172,10 +172,10 @@ namespace Katana {
         dijkstra->run();
         ++netCount;
       }
-      cmess2 << left << setw(6) << netCount << right;
+      cmess2 << left << setw(6) << netCount;
 
       const vector<Edge*>& ovEdges = getOvEdges();
-      cmess2 << " ovEdges:" << ovEdges.size();
+      cmess2 << " ovEdges:" << setw(4) << ovEdges.size();
 
       for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
 
@@ -185,6 +185,7 @@ namespace Katana {
         Edge* edge = ovEdges[iEdge];
         netCount += edge->ripup();
 
+        if (ovEdges.empty()) break;
         if (ovEdges[iEdge] == edge) {
           cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
                          "        %s"
@@ -196,7 +197,7 @@ namespace Katana {
 
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
 
-      cmess2 << " ripup:" << netCount;
+      cmess2 << " ripup:" << setw(4) << netCount << right;
       stopMeasures();
       cmess2 << " " << setw(10) << Timer::getStringTime  (getTimer().getCombTime())
              << " " << setw( 6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;

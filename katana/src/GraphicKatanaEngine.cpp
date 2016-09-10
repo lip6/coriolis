@@ -66,6 +66,8 @@ namespace Katana {
   void  GraphicKatanaEngine::initGCell ( CellWidget* widget )
   {
     widget->getDrawingPlanes().setPen( Qt::NoPen );
+    KatanaEngine* katana = KatanaEngine::get( widget->getCell() );
+    if (katana) katana->setDensityMode( GCell::MaxDensity );
   }
 
 
@@ -83,28 +85,38 @@ namespace Katana {
     Box       bb      = gcell->getBoundingBox();
     QRect     pixelBb = widget->dbuToScreenRect(bb);
 
-    painter.setPen  ( pen );
-    painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
-    painter.drawRect( pixelBb );
-
     if (gcell->isFlat()) return;
 
-    if (pixelBb.width() > 150) {
-      QString text  = QString("id:%1").arg(gcell->getId());
-      QFont   font  = Graphics::getFixedFont( QFont::Bold );
-      painter.setFont(font);
+    if (GCell::getDisplayMode() == GCell::Density) {
+      unsigned int density = (unsigned int)( 255.0 * gcell->getDensity() );
+      if (density > 255) density = 255;
 
-      pen.setWidth( 1 );
-      painter.setPen( pen );
+      painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
+      painter.drawRect( pixelBb );
+    } else {
+      if (pixelBb.width() > 150) {
+        painter.setPen  ( pen );
+        painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
+        painter.drawRect( pixelBb );
 
-      painter.save     ();
-      painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
-      painter.drawRect (QRect( -75, -25, 150, 50 ));
-      painter.drawText (QRect( -75, -25, 150, 50 )
-                       , text
-                       , QTextOption(Qt::AlignCenter)
-                       );
-      painter.restore  ();
+        if (pixelBb.width() > 300) {
+          QString text  = QString("id:%1").arg(gcell->getId());
+          QFont   font  = Graphics::getFixedFont( QFont::Bold );
+          painter.setFont(font);
+
+          pen.setWidth( 1 );
+          painter.setPen( pen );
+
+          painter.save     ();
+          painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+          painter.drawRect (QRect( -75, -25, 150, 50 ));
+          painter.drawText (QRect( -75, -25, 150, 50 )
+                           , text
+                           , QTextOption(Qt::AlignCenter)
+                           );
+          painter.restore  ();
+        }
+      }
     }
   }
 
@@ -341,7 +353,7 @@ namespace Katana {
                       );
     _viewer->addToMenu( "placeAndRoute.katana.stepByStep.globalRoute"
                       , "Katana - &Global Route"
-                      , "Run the <b>Knik</b> global router"
+                      , "Run the <b>Katana</b> global router"
                       , std::bind(&GraphicKatanaEngine::_globalRoute,this)
                       );
     _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedRoute"

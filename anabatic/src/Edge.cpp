@@ -315,12 +315,16 @@ namespace Anabatic {
 
   string  Edge::_getString () const
   {
+    Point center ( getSource()->getCenter() );
+
     string s = Super::_getString();
-    s.insert( s.size()-1, " "+DbU::getValueString(_axis) );
-    s.insert( s.size()-1, " "+getString(_realOccupancy) );
-    s.insert( s.size()-1, "/"+getString(_capacity) );
-    s.insert( s.size()-1, " h:"+getString(_historicCost) );
-    s.insert( s.size()-1, " "+getString(_flags) );
+    s.insert( s.size()-1, " S:["+DbU::getValueString(center.getX()) );
+    s.insert( s.size()-1, " "   +DbU::getValueString(center.getY()) );
+    s.insert( s.size()-1, "] "  +DbU::getValueString(_axis) );
+    s.insert( s.size()-1, " "   +getString(_realOccupancy) );
+    s.insert( s.size()-1, "/"   +getString(_capacity) );
+    s.insert( s.size()-1, " h:" +getString(_historicCost) );
+    s.insert( s.size()-1, " "   +getString(_flags) );
     return s;
   }
 

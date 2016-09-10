@@ -79,8 +79,8 @@ namespace Anabatic {
     Point sourcePosition = segment->getSourcePosition();
     Point targetPosition = segment->getTargetPosition();
 
-    if (  (sourcePosition.getX() >= gcellsArea.getXMax())
-       or (sourcePosition.getY() >= gcellsArea.getYMax())
+    if (  (sourcePosition.getX() >  gcellsArea.getXMax())
+       or (sourcePosition.getY() >  gcellsArea.getYMax())
        or (targetPosition.getX() <= gcellsArea.getXMin())
        or (targetPosition.getY() <= gcellsArea.getYMin()) ) {
       cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s is completly outside the GCells area (ignored)."

@@ -312,7 +312,7 @@ extern "C" {
     , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS
                                , "Returns True if the detailed routing has been successful." }
     , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_VARARGS
-                               , "Run the global router (Knik)." }
+                               , "Run the global router (Katana)." }
     , { "loadGlobalRouting"    , (PyCFunction)PyKatanaEngine_loadGlobalRouting    , METH_VARARGS
                                , "Load global routing into the detailed router." }
     , { "layerAssign"          , (PyCFunction)PyKatanaEngine_layerAssign          , METH_VARARGS
