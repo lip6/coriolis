@@ -209,6 +209,16 @@ void UpdateSession::close()
   cdebug_log(18,0) << "UpdateSession::close() - Materialization completed." << endl;
 }
 
+void UpdateSession::reset()
+// ************************
+{
+  cdebug_log(18,1) << "UpdateSession::reset()" << endl;
+
+  while ( UPDATOR_STACK and not UPDATOR_STACK->empty() ) close();
+
+  cdebug_tabw(18,-1);
+}
+
 
 
 } // End of Hurricane namespace.

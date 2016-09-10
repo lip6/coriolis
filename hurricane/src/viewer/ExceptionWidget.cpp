@@ -32,6 +32,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Exception.h"
 #include "hurricane/TextTranslator.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 
@@ -97,6 +98,8 @@ namespace Hurricane {
 
       ExceptionWidget::run( message );
     }
+    if (failure) UpdateSession::reset();
+
     return failure;
   }
 
