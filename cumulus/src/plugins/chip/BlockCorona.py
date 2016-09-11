@@ -538,6 +538,7 @@ class Corona ( object ):
         if self.horizontalDepth > self.verticalDepth:
             contactDepth = self.verticalDepth
 
+        UpdateSession.open()
         for i in range(self._railsNb):
             xBL = self._westSide .getRail(i).axis
             yBL = self._southSide.getRail(i).axis
@@ -582,4 +583,5 @@ class Corona ( object ):
 
         self._westSide.addBlockages()
         self._eastSide.addBlockages()
+        UpdateSession.close()
         return

@@ -958,6 +958,14 @@ namespace Anabatic {
   { _timer.stop(); }
 
 
+  void  AnabaticEngine::suspendMeasures ()
+  { _timer.suspend(); }
+
+
+  void  AnabaticEngine::resumeMeasures ()
+  { _timer.resume(); }
+
+
   void  AnabaticEngine::printMeasures ( const string& tag ) const
   {
     ostringstream result;

@@ -150,7 +150,7 @@ namespace Katana {
     annotateGlobalGraph();
 
     startMeasures();
-    cmess1 << "  o  Running global routing..." << endl;
+    cmess1 << "  o  Running global routing." << endl;
 
     float edgeHInc = getConfiguration()->getEdgeHInc();
 
@@ -198,10 +198,10 @@ namespace Katana {
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
 
       cmess2 << " ripup:" << setw(4) << netCount << right;
-      stopMeasures();
+      suspendMeasures();
       cmess2 << " " << setw(10) << Timer::getStringTime  (getTimer().getCombTime())
              << " " << setw( 6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;
-      startMeasures();
+      resumeMeasures();
 
       ++iteration;
     } while ( (netCount > 0) and (iteration < 5) );
