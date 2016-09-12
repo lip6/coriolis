@@ -2163,38 +2163,48 @@ namespace {
   // do accordingly for _south and _west
 
 //throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
+
+    cdebug_tabw(145,-1);
   }
 
 
   void  GCellTopology::_doHChannel ()
   {
+    cdebug_log(145,1) << "void  GCellTopology::_doHChannel ()" << _gcell << endl;
     
     /*throw Error( "GCellTopology::_doHChannel() Unimplemented, blame goes to E. Lao.\n"
                  "        On: %s."
                , getString(_gcell).c_str()
                );*/
+    cdebug_tabw(145,-1);
   }
 
 
   void  GCellTopology::_doVChannel ()
   {
+    cdebug_log(145,1) << "void  GCellTopology::_doVChannel ()" << _gcell << endl;
     
     /*throw Error( "GCellTopology::_doVChannel() Unimplemented, blame goes to E. Lao.\n"
                  "        On: %s."
                , getString(_gcell).c_str()
                );*/
+    cdebug_tabw(145,-1);
   }
 
 
   void  GCellTopology::_doHStrut ()
   {
+    cdebug_log(145,1) << "void  GCellTopology::_doHStrut ()" << _gcell << endl;
   //throw Error( "GCellTopology::_doHStrut() Unimplemented, blame goes to E. Lao." );
+    cdebug_tabw(145,-1);
   }
 
 
   void  GCellTopology::_doVStrut ()
   {
+    cdebug_log(145,1) << "void  GCellTopology::_doVStrut ()" << _gcell << endl;
   //throw Error( "GCellTopology::_doVStrut() Unimplemented, blame goes to E. Lao." );
+    cdebug_tabw(145,-1);
   }
 
 
