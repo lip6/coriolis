@@ -775,7 +775,7 @@ class tstream : public std::ostream {
     inline tstream&  _tabw       ( int count );
   public:
   // Overload for manipulators.
-    inline tstream&  operator<<  ( std::ostream &(*pf)(std::ostream &) );
+    inline tstream&  operator<<  ( std::ostream& (*pf)(std::ostream &) );
   private:
     int                    _minLevel;
     int                    _maxLevel;
@@ -844,8 +844,15 @@ template<typename T>
 inline tstream& operator<< ( tstream& o, const T* t )
 { if (o.enabled()) { static_cast<std::ostream&>(o) << getString<const T*>(t); } return o; };
 
+template<>
+inline tstream& operator<< ( tstream& o, std::ios_base& (*pf)(std::ios_base&) )
+{ if (o.enabled()) { static_cast<std::ostream&>(o) << pf; } return o; };
+
 struct _Tsetw { int n_; };
 inline _Tsetw tsetw ( int n ) { return { n }; }
+
+struct _Tsetf { int n_; };
+inline _Tsetf tsetf ( int n ) { return { n }; }
 
 template<>
 inline tstream& operator<< ( tstream& o, _Tsetw manip )
