@@ -32,6 +32,7 @@ try:
   print '     - Netlist format: <%s>.' % Cfg.getParamString('stratus1.format').asString()
   print '     - Simulator: <%s>.'      % Cfg.getParamString('stratus1.simulator').asString()
   
+  from Hurricane        import UpdateSession
   from st_model         import *
   from st_net           import *
   from st_instance      import *
@@ -82,6 +83,7 @@ def buildModel ( moduleName, flags, className=None, modelName=None, parameters={
           print '[ERROR] Stratus module <%s> do not contains a design named <%s>.' % (moduleName,className)
           sys.exit(1)
 
+      UpdateSession.open()
       print '     - Generating Stratus Model <%s> (generator:<%s>).' % (modelName, className)
       model = module.__dict__[className](modelName,parameters)
       model.Interface()
@@ -93,6 +95,7 @@ def buildModel ( moduleName, flags, className=None, modelName=None, parameters={
       if flags & DoStop: stopLevel = 1
       model.View(stopLevel, 'Model %s' % modelName)
       model.Save(LOGICAL|PHYSICAL)
+      UpdateSession.close()
 
     except ImportError, e:
       module = str(e).split()[-1]

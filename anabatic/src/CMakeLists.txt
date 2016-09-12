@@ -18,7 +18,6 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/Edge.h                 anabatic/Edges.h
                                      anabatic/GCell.h               #anabatic/GCells.h
                                      anabatic/AnabaticEngine.h
-                                     anabatic/GraphicAnabaticEngine.h
                                      anabatic/Dijkstra.h
 
                                      anabatic/AutoContact.h
@@ -32,10 +31,7 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/Session.h
                                      anabatic/ChipTools.h
                       )
-                   set( mocIncludes  anabatic/GraphicAnabaticEngine.h )
-                   set( pyIncludes   anabatic/PyAnabaticEngine.h
-                                     anabatic/PyGraphicAnabaticEngine.h
-                      )
+                   set( pyIncludes   )
                    set( cpps         Constants.cpp
                                      Configuration.cpp
                                      Matrix.cpp
@@ -43,8 +39,6 @@ endif ( CHECK_DETERMINISM )
                                      Edges.cpp
                                      GCell.cpp
                                      AnabaticEngine.cpp
-                                     GlobalRoute.cpp
-                                     GraphicAnabaticEngine.cpp
                                      Dijkstra.cpp
 
                                      AutoContact.cpp
@@ -63,11 +57,8 @@ endif ( CHECK_DETERMINISM )
                                      LayerAssign.cpp
                                      PreRouteds.cpp
                       )
-                   set( pyCpps       PyAnabaticEngine.cpp
-                                     PyGraphicAnabaticEngine.cpp
-                                     PyAnabatic.cpp
+                   set( pyCpps       PyAnabatic.cpp
                       )
-          qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 
                    set( depLibs      ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
@@ -85,7 +76,7 @@ endif ( CHECK_DETERMINISM )
                                      ${PYTHON_LIBRARIES} -lutil
                       )
 
-           add_library( anabatic    ${cpps} ${mocCpps} )
+           add_library( anabatic    ${cpps} )
  set_target_properties( anabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries( anabatic    ${depLibs} )
 
@@ -97,7 +88,6 @@ endif ( CHECK_DETERMINISM )
                         include/coriolis2/anabatic
                       )
 
-               install( TARGETS anabatic     DESTINATION lib${LIB_SUFFIX} )
-               install( FILES ${includes}
-                              ${mocIncludes}  DESTINATION include/coriolis2/anabatic ) 
+               install( TARGETS anabatic      DESTINATION lib${LIB_SUFFIX} )
+               install( FILES ${includes}     DESTINATION include/coriolis2/anabatic ) 
    

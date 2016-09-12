@@ -16,8 +16,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
-#include "anabatic/PyAnabaticEngine.h"
-#include "anabatic/PyGraphicAnabaticEngine.h"
+#include "anabatic/Constants.h"
 
 
 namespace Anabatic {
@@ -26,8 +25,6 @@ namespace Anabatic {
   using std::endl;
   using Hurricane::tab;
   using Isobar::__cs;
-  using CRL::PyTypeToolEngine;
-  using CRL::PyTypeGraphicTool;
 
 
 #if !defined(__PYTHON_MODULE__)
@@ -64,24 +61,12 @@ extern "C" {
   DL_EXPORT(void) initAnabatic () {
     cdebug_log(32,0) << "initAnabatic()" << endl;
 
-    PyAnabaticEngine_LinkPyType();
-    PyGraphicAnabaticEngine_LinkPyType();
-
-    PYTYPE_READY_SUB( AnabaticEngine       , ToolEngine  );
-    PYTYPE_READY_SUB( GraphicAnabaticEngine, GraphicTool );
-
-
     PyObject* module = Py_InitModule( "Anabatic", PyAnabatic_Methods );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Anabatic module." << endl;
       return;
     }
-
-    Py_INCREF( &PyTypeAnabaticEngine );
-    PyModule_AddObject( module, "AnabaticEngine", (PyObject*)&PyTypeAnabaticEngine );
-    Py_INCREF( &PyTypeGraphicAnabaticEngine );
-    PyModule_AddObject( module, "GraphicAnabaticEngine", (PyObject*)&PyTypeGraphicAnabaticEngine );
 
     PyObject* dictionnary = PyModule_GetDict(module);
     PyObject* constant;

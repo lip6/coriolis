@@ -278,6 +278,8 @@ namespace Anabatic {
       inline const  Timer&            getTimer              () const;
                     void              startMeasures         ();
                     void              stopMeasures          ();
+                    void              suspendMeasures       ();
+                    void              resumeMeasures        ();
                     void              printMeasures         ( const string& ) const;
       inline        void              _add                  ( GCell* );
       inline        void              _remove               ( GCell* );

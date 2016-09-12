@@ -17,6 +17,7 @@
 #include <iostream>
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Contact.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/UpdateSession.h"
@@ -270,7 +271,12 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GCell".
 
-  Name  GCell::_extensionName = "Anabatic::GCell";
+  Name          GCell::_extensionName = "Anabatic::GCell";
+  unsigned int  GCell::_displayMode   = GCell::Boundary;
+
+
+  unsigned int  GCell::getDisplayMode      () { return _displayMode; }
+  void          GCell::setDisplayMode      ( unsigned int mode ) { _displayMode = mode; }
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
@@ -720,12 +726,9 @@ namespace Anabatic {
   {
     getAnabatic()->openSession();
 
-  //const vector<GCell*>& gcells = getAnabatic()->getGCells();
-  //size_t    ibegin = gcells.size();
-    DbU::Unit side   = Session::getSliceHeight();
-
-    Interval hspan = getSide( Flags::Horizontal );
-    Interval vspan = getSide( Flags::Vertical );
+    DbU::Unit side  = Session::getSliceHeight();
+    Interval  hspan = getSide( Flags::Horizontal );
+    Interval  vspan = getSide( Flags::Vertical );
 
     if (hspan.getSize() < 3*side) {
       cerr << Error( "GCell::doGrid(): GCell is too narrow (dx:%s) to build a grid.\n"

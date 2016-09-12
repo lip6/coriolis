@@ -30,6 +30,7 @@
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/AllianceFramework.h"
 #include "anabatic/Configuration.h"
+#include "anabatic/GCell.h"
 
 
 
@@ -71,6 +72,8 @@ namespace Anabatic {
     , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
     , _edgeHInc       (Cfg::getParamDouble("anabatic.edgeHInc" , 1.5)->asDouble())
   {
+    GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
+
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
     if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
     _cg = cg->getClone();
@@ -122,6 +125,8 @@ namespace Anabatic {
     , _edgeCostK      (other._edgeCostK)
     , _edgeHInc       (other._edgeHInc)
   {
+    GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
+
     if (other._cg) _cg = other._cg->getClone();
     if (other._rg) _rg = other._rg->getClone();
   }

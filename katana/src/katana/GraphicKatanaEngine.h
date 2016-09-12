@@ -53,6 +53,20 @@ namespace Katana {
     public:
       enum FunctionFlags { NoFlags=0x0000, CreateEngine=0x0001 };
     public:
+      static  void                   initGCell       ( CellWidget* );
+      static  void                   drawGCell       ( CellWidget*
+                                                     , const Go*
+                                                     , const BasicLayer*
+                                                     , const Box&
+                                                     , const Transformation&
+                                                     );
+      static  void                   initEdge        ( CellWidget* );
+      static  void                   drawEdge        ( CellWidget*
+                                                     , const Go*
+                                                     , const BasicLayer*
+                                                     , const Box&
+                                                     , const Transformation&
+                                                     );
               KatanaEngine*        createEngine      ();
               KatanaEngine*        getForFramework   ( unsigned int flags );
       static  GraphicKatanaEngine* grab              ();

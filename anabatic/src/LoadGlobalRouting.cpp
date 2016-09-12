@@ -2232,7 +2232,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_loadGrByNet ()
   {
-    cmess1 << "  o  Loading Nets global routing from Knik." << endl;
+    cmess1 << "  o  Building detailed routing from global." << endl;
   //cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
 
     startMeasures();

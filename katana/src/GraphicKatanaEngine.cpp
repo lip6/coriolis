@@ -50,14 +50,141 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Graphics;
   using Hurricane::ColorScale;
+  using Hurricane::DisplayStyle;
   using Hurricane::ControllerWidget;
   using Hurricane::ExceptionWidget;
   using CRL::Catalog;
   using CRL::AllianceFramework;
+  using Anabatic::Edge;
+  using Anabatic::GCell;
 
 
   size_t               GraphicKatanaEngine::_references = 0;
   GraphicKatanaEngine* GraphicKatanaEngine::_singleton  = NULL;
+
+
+  void  GraphicKatanaEngine::initGCell ( CellWidget* widget )
+  {
+    widget->getDrawingPlanes().setPen( Qt::NoPen );
+    KatanaEngine* katana = KatanaEngine::get( widget->getCell() );
+    if (katana) katana->setDensityMode( GCell::MaxDensity );
+  }
+
+
+  void  GraphicKatanaEngine::drawGCell ( CellWidget*           widget
+                                       , const Go*             go
+                                       , const BasicLayer*     basicLayer
+                                       , const Box&            box
+                                       , const Transformation& transformation
+                                       )
+  {
+    const GCell* gcell = static_cast<const GCell*>(go);
+
+    QPainter& painter = widget->getPainter();
+    QPen      pen     = Graphics::getPen  ("Anabatic::GCell",widget->getDarkening()); 
+    Box       bb      = gcell->getBoundingBox();
+    QRect     pixelBb = widget->dbuToScreenRect(bb);
+
+    if (gcell->isFlat()) return;
+
+    if (GCell::getDisplayMode() == GCell::Density) {
+      unsigned int density = (unsigned int)( 255.0 * gcell->getDensity() );
+      if (density > 255) density = 255;
+
+      painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
+      painter.drawRect( pixelBb );
+    } else {
+      if (pixelBb.width() > 150) {
+        painter.setPen  ( pen );
+        painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
+        painter.drawRect( pixelBb );
+
+        if (pixelBb.width() > 300) {
+          QString text  = QString("id:%1").arg(gcell->getId());
+          QFont   font  = Graphics::getFixedFont( QFont::Bold );
+          painter.setFont(font);
+
+          pen.setWidth( 1 );
+          painter.setPen( pen );
+
+          painter.save     ();
+          painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+          painter.drawRect (QRect( -75, -25, 150, 50 ));
+          painter.drawText (QRect( -75, -25, 150, 50 )
+                           , text
+                           , QTextOption(Qt::AlignCenter)
+                           );
+          painter.restore  ();
+        }
+      }
+    }
+  }
+
+
+  void  GraphicKatanaEngine::initEdge ( CellWidget* widget )
+  {
+    widget->getDrawingPlanes().setPen( Qt::NoPen );
+  }
+
+
+  void  GraphicKatanaEngine::drawEdge ( CellWidget*           widget
+                                      , const Go*             go
+                                      , const BasicLayer*     basicLayer
+                                      , const Box&            box
+                                      , const Transformation& transformation
+                                      )
+  {
+    static QFont font       = Graphics::getFixedFont( QFont::Bold ); 
+    static int   fontHeight = QFontMetrics(font).height();
+
+    const Edge* edge = static_cast<const Edge*>(go);
+
+    if (edge) {
+      Box          bb        = edge->getBoundingBox();
+      unsigned int occupancy = 255;
+      if (edge->getRealOccupancy() < edge->getCapacity())
+        occupancy = (unsigned int)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+
+      QPainter& painter = widget->getPainter();
+      if (edge->getRealOccupancy() > edge->getCapacity()) {
+        QColor color ( Qt::cyan );
+        painter.setPen( DisplayStyle::darken(color,widget->getDarkening()) );
+      }
+
+      QBrush brush = QBrush( Qt::white, Qt::DiagCrossPattern );
+      if (edge->getCapacity() > 0.0)
+        brush = Graphics::getColorScale( ColorScale::Fire ).getBrush( occupancy, widget->getDarkening() );
+
+      QRect pixelBb = widget->dbuToScreenRect( bb, false);
+      painter.setPen( Qt::NoPen );
+      painter.setBrush( brush );
+      painter.drawRect( pixelBb );
+
+      if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
+
+      QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+      QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
+      painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
+      painter.setFont(font);
+
+      if (edge->isVertical()) {
+        painter.save     ();
+        painter.translate( widget->dbuToScreenPoint(bb.getXMin(), bb.getYMin()) );
+        painter.rotate   ( -90 );
+        painter.drawText (QRect( 0
+                               , 0
+                               , widget->dbuToScreenLength(bb.getHeight())
+                               , widget->dbuToScreenLength(bb.getWidth ()))
+                         , text
+                         , QTextOption(Qt::AlignCenter)
+                         );
+        painter.restore  ();
+      } else
+        painter.drawText( widget->dbuToScreenRect(bb,false ), text, QTextOption(Qt::AlignCenter) );
+
+      painter.setPen( Qt::NoPen );
+    }
+  }
 
 
   KatanaEngine* GraphicKatanaEngine::createEngine ()
@@ -226,7 +353,7 @@ namespace Katana {
                       );
     _viewer->addToMenu( "placeAndRoute.katana.stepByStep.globalRoute"
                       , "Katana - &Global Route"
-                      , "Run the <b>Knik</b> global router"
+                      , "Run the <b>Katana</b> global router"
                       , std::bind(&GraphicKatanaEngine::_globalRoute,this)
                       );
     _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedRoute"
@@ -297,7 +424,10 @@ namespace Katana {
   GraphicKatanaEngine::GraphicKatanaEngine ()
     : GraphicTool()
     , _viewer    (NULL)
-  { }
+  {
+    addDrawGo( "Anabatic::GCell", initGCell, drawGCell );
+    addDrawGo( "Anabatic::Edge" , initEdge , drawEdge  );
+  }
 
 
   GraphicKatanaEngine::~GraphicKatanaEngine ()

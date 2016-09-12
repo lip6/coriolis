@@ -105,6 +105,7 @@ class HTree ( GaugeConfWrapper ):
       raise ErrorMessage( 3, 'ClockTree: clockTree.minimumSide (%g) is less than 100 lambda.' \
                              % DbU.toLambda(self.minSide) )
 
+    UpdateSession.open()
     self.framework    = CRL.AllianceFramework.get()
     self.cell         = cell
     self.area         = area
@@ -126,6 +127,7 @@ class HTree ( GaugeConfWrapper ):
       if not self.masterClock:
         raise ErrorMessage( 3, 'ClockTree: Cell %s has no clock net.' % cell.getName() )
     self._createChildNet( self.topBuffer, 'ck_htree' )
+    UpdateSession.close()
 
     return
 
@@ -371,6 +373,7 @@ class HTreeNode ( object ):
   DownBranch   = 0x0010
 
   def __init__ ( self, topTree, sourceBuffer, area, prefix, flags ):
+    UpdateSession.open()
     self.topTree      = topTree
     self.childs       = []
     self.blLeafs      = []
@@ -406,6 +409,7 @@ class HTreeNode ( object ):
       self.childs.append( HTreeNode( self.topTree, self.tlBuffer, self.tlArea(), self.prefix+'_tl', 0 ) )
       self.childs.append( HTreeNode( self.topTree, self.trBuffer, self.trArea(), self.prefix+'_tr', 0 ) )
 
+    UpdateSession.close()
     return
 
   def xmin      ( self ): return self.area.getXMin()

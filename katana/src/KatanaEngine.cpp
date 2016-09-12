@@ -331,7 +331,7 @@ namespace Katana {
     // size_t       vTracksReservedLocal = getVTracksReservedLocal();
 
     // if (cparanoid.enabled()) {
-    //   cparanoid << "  o  Post-checking Knik capacity overload h:" << hTracksReservedLocal
+    //   cparanoid << "  o  Post-checking Katana capacity overload h:" << hTracksReservedLocal
     //             << " v:." << vTracksReservedLocal << endl;
     //   getGCellGrid()->checkEdgeOverflow( hTracksReservedLocal, vTracksReservedLocal );
     // }

@@ -19,12 +19,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,19 +27,16 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/ExtensionSlice.h"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_EXTENSION_SLICE__
-#define  __HURRICANE_EXTENSION_SLICE__
+#ifndef  HURRICANE_EXTENSION_SLICE_H
+#define  HURRICANE_EXTENSION_SLICE_H
 
-#include  "hurricane/Mask.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/ExtensionSlices.h"
-#include  "hurricane/QuadTree.h"
+#include "hurricane/Mask.h"
+#include "hurricane/Name.h"
+#include "hurricane/ExtensionSlices.h"
+#include "hurricane/QuadTree.h"
 
 
 namespace Hurricane {
@@ -107,5 +99,6 @@ namespace Hurricane {
 
 } // End of Hurricane namespace.
 
+INSPECTOR_P_SUPPORT(Hurricane::ExtensionSlice);
 
-# endif // __HURRICANE_EXTENSION_SLICE__
+# endif // HURRICANE_EXTENSION_SLICE_H

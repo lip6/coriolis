@@ -55,32 +55,12 @@ using namespace Hurricane;
 #include "crlcore/DefExport.h"
 using namespace CRL;
 
-// #include "nimbus/NimbusEngine.h"
-// using namespace Nimbus;
-
-// #include "metis/MetisEngine.h"
-// using namespace Metis;
-
-// #include "mauka/GraphicMaukaEngine.h"
-// using namespace Mauka;
-
-#include "anabatic/GraphicAnabaticEngine.h"
-
+#include "katana/GraphicKatanaEngine.h"
 #include "etesian/GraphicEtesianEngine.h"
-using namespace Etesian;
-
 #include "knik/GraphicKnikEngine.h"
-using namespace Knik;
-
 #include "kite/GraphicKiteEngine.h"
-using namespace Kite;
-
 #include "equinox/GraphicEquinoxEngine.h"
-using namespace Equinox;
-
-#include  "solstice/GraphicSolsticeEngine.h"
-using namespace Solstice;
-
+#include "solstice/GraphicSolsticeEngine.h"
 #include "unicorn/UnicornGui.h"
 using namespace Unicorn;
 
@@ -331,7 +311,7 @@ int main ( int argc, char *argv[] )
       unicorn->setApplicationName ( QObject::tr("cgt") );
 
     //unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
-      unicorn->registerTool ( Anabatic::GraphicAnabaticEngine::grab() );
+      unicorn->registerTool ( Katana::GraphicKatanaEngine::grab() );
       unicorn->registerTool ( Etesian::GraphicEtesianEngine::grab() );
     //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
       unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
@@ -403,7 +383,7 @@ int main ( int argc, char *argv[] )
         unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
                                                 : Kite::KtBuildGlobalRouting;
 
-        KiteEngine* kite = KiteEngine::create ( cell );
+        Kite::KiteEngine* kite = Kite::KiteEngine::create ( cell );
         if ( showConf ) kite->printConfiguration ();
         
         kite->runGlobalRouter ( globalFlags );

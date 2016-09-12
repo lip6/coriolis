@@ -155,37 +155,36 @@ void Go::invalidate(bool propagateFlag)
   Property* property = getProperty( UpdateSession::getPropertyName() );
 
   if (property) {
-
-      if (not dynamic_cast<UpdateSession*>(property))
-        throw Error( "Can't invalidate go : bad update session type" );
-    } else {
-      SlaveEntityMap::iterator  it;
-      SlaveEntityMap::iterator  end;
-      getCell()->_getSlaveEntities( this, it, end );
-      for( ; it!=end ; it++ ) {
-        Go* go = dynamic_cast<Go*>( it->second );
-        if (go) go->invalidate( propagateFlag );
-      }
-
-      if (isMaterialized()) {
-        unmaterialize();
-        put( UPDATOR_STACK->top() );
-      }
-
-      Property* cellUpdateSession = getCell()->getProperty( UpdateSession::getPropertyName() );
-      if (not cellUpdateSession) {
-      // Put the cell in the UpdateSession relation, but *do not* unmaterialize it.
-      //cerr << "Notify Cell::CellAboutToChange to: " << getCell() << endl; 
-        getCell()->put   ( UPDATOR_STACK->top() );
-        getCell()->notify( Cell::Flags::CellAboutToChange );
-        for ( Instance* instance : getCell()->getSlaveInstances() ) {
-          instance->invalidate( false );
-        }
-      }
+    if (not dynamic_cast<UpdateSession*>(property))
+      throw Error( "Can't invalidate go : bad update session type" );
+  } else {
+    SlaveEntityMap::iterator  it;
+    SlaveEntityMap::iterator  end;
+    getCell()->_getSlaveEntities( this, it, end );
+    for( ; it!=end ; it++ ) {
+      Go* go = dynamic_cast<Go*>( it->second );
+      if (go) go->invalidate( propagateFlag );
     }
 
-  cdebug_log(18,0) << "Go::invalidate(" << this << ") - Completed." << endl;
+    if (isMaterialized() or not Go::autoMaterializationIsDisabled()) {
+      unmaterialize();
+      put( UPDATOR_STACK->top() );
+    }
+
+    Property* cellUpdateSession = getCell()->getProperty( UpdateSession::getPropertyName() );
+    if (not cellUpdateSession) {
+    // Put the cell in the UpdateSession relation, but *do not* unmaterialize it.
+    //cerr << "Notify Cell::CellAboutToChange to: " << getCell() << endl; 
+      getCell()->put   ( UPDATOR_STACK->top() );
+      getCell()->notify( Cell::Flags::CellAboutToChange );
+      for ( Instance* instance : getCell()->getSlaveInstances() ) {
+        instance->invalidate( false );
+      }
+    }
+  }
+  
   cdebug_tabw(18,-1);
+  cdebug_log(18,0) << "Go::invalidate(" << this << ") - Completed." << endl;
 }
 
 void UpdateSession::open()
@@ -208,6 +207,16 @@ void UpdateSession::close()
 
   cdebug_tabw(18,-1);
   cdebug_log(18,0) << "UpdateSession::close() - Materialization completed." << endl;
+}
+
+void UpdateSession::reset()
+// ************************
+{
+  cdebug_log(18,1) << "UpdateSession::reset()" << endl;
+
+  while ( UPDATOR_STACK and not UPDATOR_STACK->empty() ) close();
+
+  cdebug_tabw(18,-1);
 }
 
 
