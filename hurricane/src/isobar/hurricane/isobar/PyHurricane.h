@@ -685,12 +685,12 @@ extern "C" {
 #define  DirectDeleteMethod(PY_FUNC_NAME, PY_SELF_TYPE)      \
   static void PY_FUNC_NAME ( PY_SELF_TYPE *self )            \
   {                                                          \
-    cdebug_log(20,0) << #PY_SELF_TYPE"_DeAlloc(" << hex << self << ") " \
-          << hex << (void*)(self->ACCESS_OBJECT)             \
+    cdebug_log(20,0) << #PY_SELF_TYPE"_DeAlloc(" << (void*)self << ") " \
+          << (void*)(self->ACCESS_OBJECT)                    \
           << ":" << self->ACCESS_OBJECT << endl;             \
                                                              \
     if ( self->ACCESS_OBJECT ) {                             \
-      cdebug_log(20,0) << "C++ object := " << hex              \
+      cdebug_log(20,0) << "C++ object := "                   \
               << &(self->ACCESS_OBJECT) << endl;             \
         delete self->ACCESS_OBJECT;                          \
     }                                                        \
@@ -705,7 +705,7 @@ extern "C" {
 #define PlugDeleteMethod(PY_FUNC_NAME,PY_SELF_TYPE)               \
   static void PY_FUNC_NAME ( PY_SELF_TYPE *self )                 \
   {                                                               \
-    cdebug_log(20,0) << "PyHObject_DeAlloc(" << hex << self << ") " \
+    cdebug_log(20,0) << "PyHObject_DeAlloc(" << (void*)self << ") " \
           << self->ACCESS_OBJECT << endl;                         \
                                                                   \
     PyObject_DEL ( self );                                        \
@@ -974,7 +974,7 @@ extern "C" {
       return ( PyString_FromString("<PyObject invalid dynamic-cast>") ); \
                                                                          \
     ostringstream repr;                                                  \
-    repr << "[" << hex << self << "<->" << (void*)object << " " << getString(object) << "]"; \
+    repr << "[" << (void*)self << "<->" << (void*)object << " " << getString(object) << "]"; \
                                                                          \
     return ( PyString_FromString(repr.str().c_str()) );                  \
   }
@@ -1040,8 +1040,8 @@ extern "C" {
     if (pyObject == NULL) { return NULL; }                                     \
                                                                                \
     pyObject->ACCESS_OBJECT = object;                                          \
-    cdebug_log(20,0) << "Py" #SELF_TYPE "_Link(" << hex << pyObject << ") "      \
-                   << hex << (void*)object << ":" << object << endl;           \
+    cdebug_log(20,0) << "Py" #SELF_TYPE "_Link(" << (void*)pyObject << ") "    \
+                   << (void*)object << ":" << object << endl;                  \
     HCATCH                                                                     \
                                                                                \
     return ( (PyObject*)pyObject );                                            \
@@ -1102,8 +1102,8 @@ extern "C" {
       pyObject = (Py##SELF_TYPE*)proxy->getShadow ();                          \
       Py_INCREF ( ACCESS_CLASS(pyObject) );                                    \
     }                                                                          \
-    cdebug_log(20,0) << "PyDbo" #SELF_TYPE "_Link(" << hex << pyObject << ") "   \
-                   << hex << (void*)object << ":" << object << endl;           \
+    cdebug_log(20,0) << "PyDbo" #SELF_TYPE "_Link(" << (void*)pyObject << ") " \
+                   << (void*)object << ":" << object << endl;                  \
     HCATCH                                                                     \
                                                                                \
     return ( (PyObject*)pyObject );                                            \
@@ -1115,8 +1115,8 @@ extern "C" {
 # define  DBoDeleteMethod(SELF_TYPE)                                     \
   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )            \
   {                                                                      \
-    cdebug_log(20,0) << "PyDbObject_DeAlloc(" << hex << self << ") "       \
-                   << hex << (void*)(self->ACCESS_OBJECT) << ":" << self->ACCESS_OBJECT << endl; \
+    cdebug_log(20,0) << "PyDbObject_DeAlloc(" << (void*)self << ") "     \
+                   << (void*)(self->ACCESS_OBJECT) << ":" << self->ACCESS_OBJECT << endl; \
                                                                          \
     if ( self->ACCESS_OBJECT != NULL ) {                                 \
         ProxyProperty* proxy = static_cast<ProxyProperty*>               \
@@ -1140,8 +1140,8 @@ extern "C" {
 # define  PythonOnlyDeleteMethod(SELF_TYPE)                      \
   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )    \
   {                                                              \
-    cdebug_log(20,0) << "PythonOnlyObject_DeAlloc(" << hex << self << ") " \
-                   << hex << (void*)(self->ACCESS_OBJECT)        \
+    cdebug_log(20,0) << "PythonOnlyObject_DeAlloc(" << (void*)self << ") " \
+                   << (void*)(self->ACCESS_OBJECT)        \
           << ":" << self->ACCESS_OBJECT << endl;                 \
     PyObject_DEL ( self );                                       \
   }
@@ -1155,7 +1155,7 @@ extern "C" {
 # define  NoObjectDeleteMethod(SELF_TYPE)                        \
   static void Py##SELF_TYPE##_DeAlloc ( Py##SELF_TYPE *self )    \
   {                                                              \
-    cdebug_log(20,0) << "PythonOnlyObject_DeAlloc(" << hex << self << ") " \
+    cdebug_log(20,0) << "PythonOnlyObject_DeAlloc(" << (void*)self << ") " \
                    << "[no object]" << endl;                     \
     PyObject_DEL ( self );                                       \
   }
@@ -1168,7 +1168,7 @@ extern "C" {
 
 #define PyTypeObjectLinkPyTypeWithoutObject(PY_SELF_TYPE,SELF_TYPE)               \
   extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                   \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                 \
                                                                                   \
     PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
     PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
@@ -1186,7 +1186,7 @@ extern "C" {
   DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
   DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
   extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                   \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                 \
                                                                                   \
     PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
     PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
@@ -1203,7 +1203,7 @@ extern "C" {
   DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
   DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
   extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                   \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                 \
                                                                                   \
     PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
     PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
@@ -1230,7 +1230,7 @@ extern "C" {
   DirectCmpMethod (Py##PY_SELF_TYPE##Locator_Cmp,  IsPy##PY_SELF_TYPE##Locator, Py##PY_SELF_TYPE##Locator) \
   extern void  Py##PY_SELF_TYPE##Locator_LinkPyType ()                                                     \
   {                                                                                                        \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "Locator_LinkType()" << endl;                                     \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "Locator_LinkType()" << endl;                                   \
                                                                                                            \
     PyType##PY_SELF_TYPE##Locator.tp_dealloc = (destructor)Py##PY_SELF_TYPE##Locator_DeAlloc;              \
     PyType##PY_SELF_TYPE##Locator.tp_compare = (cmpfunc)   Py##PY_SELF_TYPE##Locator_Cmp;                  \
@@ -1443,38 +1443,38 @@ extern "C" {
 # define   HTRY  try {
 
 # define   HCATCH  \
-    }                                                            \
-    catch ( const Warning& w ) {                                 \
-      std::string message = "\n" + getString(w);                 \
+    }                                                               \
+    catch ( const Warning& w ) {                                    \
+      std::string message = "\n" + getString(w);                    \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
-    }                                                            \
-    catch ( const Error& e ) {                                   \
-      std::string message = "\n" + getString(e);                 \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return NULL;                                               \
-    }                                                            \
-    catch ( const Bug& e ) {                                     \
-      std::string message = "\n" + getString(e);                 \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return NULL;                                               \
-    }                                                            \
-    catch ( const Exception& e ) {                               \
-      std::string message = "\nUnknown Hurricane::Exception";    \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return NULL;                                               \
-    }                                                            \
-    catch ( const std::exception& e )  {                         \
-      std::string message = "\n" + std::string(e.what());        \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return NULL;                                               \
-    }                                                            \
-    catch ( ... ) {                                              \
-      std::string message =                                      \
-        "\nUnmanaged exception, neither a Hurricane::Error nor"  \
-        " a std::exception.";                                    \
-      PyErr_SetString ( HurricaneError, message.c_str() );       \
-      return NULL;                                               \
-    }                                                            \
+    }                                                               \
+    catch ( const Error& e ) {                                      \
+      std::string message = "\n" + getString(e) + "\n" + e.where(); \
+      PyErr_SetString ( HurricaneError, message.c_str() );          \
+      return NULL;                                                  \
+    }                                                               \
+    catch ( const Bug& e ) {                                        \
+      std::string message = "\n" + getString(e);                    \
+      PyErr_SetString ( HurricaneError, message.c_str() );          \
+      return NULL;                                                  \
+    }                                                               \
+    catch ( const Exception& e ) {                                  \
+      std::string message = "\nUnknown Hurricane::Exception";       \
+      PyErr_SetString ( HurricaneError, message.c_str() );          \
+      return NULL;                                                  \
+    }                                                               \
+    catch ( const std::exception& e )  {                            \
+      std::string message = "\n" + std::string(e.what());           \
+      PyErr_SetString ( HurricaneError, message.c_str() );          \
+      return NULL;                                                  \
+    }                                                               \
+    catch ( ... ) {                                                 \
+      std::string message =                                         \
+        "\nUnmanaged exception, neither a Hurricane::Error nor"     \
+        " a std::exception.";                                       \
+      PyErr_SetString ( HurricaneError, message.c_str() );          \
+      return NULL;                                                  \
+    }                                                               \
 
 }  // End of extern "C".
 
