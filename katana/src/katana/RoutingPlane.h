@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/RoutingPlane.h"                         |
+// |  C++ Header  :  "./katana/RoutingPlane.h"                       |
 // +-----------------------------------------------------------------+
 
 
@@ -37,7 +37,7 @@ namespace Katana {
              void                destroy            ();
       inline bool                isHorizontal       () const;
       inline bool                isVertical         () const;
-      inline KatanaEngine*         getKatanaEngine      () const;
+      inline KatanaEngine*       getKatanaEngine    () const;
       inline RoutingLayerGauge*  getLayerGauge      () const;
       inline unsigned int        getDirection       () const;
       inline size_t              getDepth           () const;
@@ -91,7 +91,7 @@ namespace Katana {
   inline bool RoutingPlane::TrackCompare::operator() ( Track* lhs, Track* rhs )
   { return lhs->getAxis() > rhs->getAxis(); };
 
-  inline KatanaEngine*        RoutingPlane::getKatanaEngine    () const { return _katana; }
+  inline KatanaEngine*      RoutingPlane::getKatanaEngine  () const { return _katana; }
   inline RoutingLayerGauge* RoutingPlane::getLayerGauge    () const { return _layerGauge; }
   inline unsigned int       RoutingPlane::getDirection     () const { return _flags & Flags::DirectionMask; }
   inline size_t             RoutingPlane::getDepth         () const { return _depth; }

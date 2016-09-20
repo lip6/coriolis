@@ -275,7 +275,7 @@ namespace Katana {
       if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
 
-    cdebug_log(159,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
+    cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
   }
 
 
@@ -287,7 +287,7 @@ namespace Katana {
   {
     TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
 
-    cdebug_log(159,1) << "getOverlapCost() @" << DbU::getValueString(_axis)
+    cdebug_log(155,1) << "getOverlapCost() @" << DbU::getValueString(_axis)
                       << " [" << DbU::getValueString(interval.getVMin())
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
@@ -299,16 +299,16 @@ namespace Katana {
 
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
-      cdebug_log(159,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
+      cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
       if ( _markers[mbegin]->getNet() != net ) {
-        cdebug_log(159,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+        cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
       }
     }
 
     if (begin == npos) {
-      cdebug_log(159,0) << "  begin == npos (after last TrackElement)." << endl;
-      cdebug_tabw(159,-1);
+      cdebug_log(155,0) << "  begin == npos (after last TrackElement)." << endl;
+      cdebug_tabw(155,-1);
       return cost;
     }
 
@@ -317,12 +317,12 @@ namespace Katana {
       if ( _segments[begin]->getNet() == net ) {
         cost.incDeltaShared ( overlap.getSize() );
       }
-      cdebug_log(159,0) << "| overlap: " << _segments[begin] << endl;
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
       _segments[begin]->incOverlapCost( net, cost );
       if (cost.isInfinite()) break;
     }
 
-    cdebug_tabw(159,-1);
+    cdebug_tabw(155,-1);
 
     return cost;
   }
@@ -345,7 +345,7 @@ namespace Katana {
 
   void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const
   {
-    cdebug_log(159,1) << "getTerminalWeight() @" << DbU::getValueString(_axis)
+    cdebug_log(155,1) << "getTerminalWeight() @" << DbU::getValueString(_axis)
                       << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
 
   //count  = 0;
@@ -357,14 +357,14 @@ namespace Katana {
 
     for ( ;    (mbegin < _markers.size())
             && (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
-      cdebug_log(159,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
+      cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
       if ( _markers[mbegin]->getNet() == net ) {
-        cdebug_log(159,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+        cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         weight += _markers[mbegin]->getWeight(this);
         ++count;
       }
     }
-    cdebug_tabw(159,-1);
+    cdebug_tabw(155,-1);
   }
 
 
@@ -409,7 +409,11 @@ namespace Katana {
 
   Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const
   {
+    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end << " " << net << endl;
+    cdebug_log(155,0) << _segments[begin] << endl;
+
     DbU::Unit minFree = _min;
+    cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
 
     if (not (state & BeginIsTrackMin) ) {
       if (_segments[begin]->getNet() == net)
@@ -417,6 +421,7 @@ namespace Katana {
 
       if (begin != npos) {
         minFree = getOccupiedInterval(begin).getVMax();
+        cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " begin:" << begin << endl;
       }
     }
 
@@ -432,6 +437,7 @@ namespace Katana {
         }
       }
     }
+    cdebug_tabw(155,-1);
 
     return Interval( minFree, getMaximalPosition(end,state) );
   }
@@ -452,7 +458,7 @@ namespace Katana {
   {
     // cdebug_log(9000,0) << "Deter| Track::insert() " << getLayer()->getName()
     //             << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
-    cdebug_log(159,0) << "Track::insert() " << getLayer()->getName()
+    cdebug_log(155,0) << "Track::insert() " << getLayer()->getName()
                 << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
 
     if (   (getLayer()->getMask()         != segment->getLayer()->getMask())
@@ -596,9 +602,13 @@ namespace Katana {
     Interval  mergedInterval;
     _segments[seed]->getCanonical( mergedInterval );
 
+    cdebug_log(155,0) << "| seed:" << _segments[seed] << endl;
+
     size_t i = seed;
     while ( --i != npos ) {
       if (_segments[i]->getNet() != owner) break;
+
+      cdebug_log(155,0) << "| merge:" << _segments[i] << endl;
 
       _segments[i]->getCanonical ( segmentInterval );
       if (segmentInterval.getVMax() >= mergedInterval.getVMin()) {
@@ -623,7 +633,7 @@ namespace Katana {
 
   size_t  Track::doRemoval ()
   {
-    cdebug_log(159,1) << "Track::doRemoval() - " << this << endl;
+    cdebug_log(155,1) << "Track::doRemoval() - " << this << endl;
 
     size_t  size = _segments.size();
 
@@ -632,8 +642,8 @@ namespace Katana {
 
     _segments.erase( beginRemove, _segments.end() );
 
-    cdebug_log(159,0) << "After doRemoval " << this << endl;
-    cdebug_tabw(159,-1);
+    cdebug_log(155,0) << "After doRemoval " << this << endl;
+    cdebug_tabw(155,-1);
 
     return size - _segments.size();
   }
@@ -641,18 +651,18 @@ namespace Katana {
 
   void  Track::doReorder ()
   {
-    cdebug_log(159,0) << "Track::doReorder() " << this << endl;
+    cdebug_log(155,0) << "Track::doReorder() " << this << endl;
 
-    if (not _segmentsValid ) {
-      std::sort ( _segments.begin(), _segments.end(), SegmentCompare() );
+    if (not _segmentsValid) {
+      std::sort( _segments.begin(), _segments.end(), SegmentCompare() );
       for ( size_t i=0 ; i < _segments.size() ; i++ ) {
-        _segments[i]->setIndex ( i );
+        _segments[i]->setIndex( i );
       }
       _segmentsValid = true;
     }
 
-    if (not _markersValid ) {
-      std::sort ( _markers.begin(), _markers.end(), TrackMarker::Compare() );
+    if (not _markersValid) {
+      std::sort( _markers.begin(), _markers.end(), TrackMarker::Compare() );
       _markersValid = true;
     }
   }

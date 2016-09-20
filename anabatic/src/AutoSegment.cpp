@@ -323,16 +323,17 @@ namespace Anabatic {
     , _parent           (NULL)
     , _observers        ()
   {
-    AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
-    AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
-
     _allocateds++;
 
     if (dynamic_cast<Horizontal*>(segment)) setFlags( SegHorizontal );
-    if (source->isTerminal())               setFlags( SegSourceTerminal );
-    if (target->isTerminal())               setFlags( SegTargetTerminal );
 
     _globalsCount += isGlobal() ? 1 : 0;
+
+    AutoContact* source   = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
+    AutoContact* target   = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
+
+    if (source->isTerminal()) setFlags( SegSourceTerminal );
+    if (target->isTerminal()) setFlags( SegTargetTerminal );
 
     source->invalidate( Flags::Topology );
   }
@@ -859,21 +860,19 @@ namespace Anabatic {
 
   void  AutoSegment::computeTerminal ()
   {
-    AutoContact* source = getAutoSource();
-    AutoContact* target = getAutoTarget();
-
-    cdebug_log(145,0) << "computeTerminal() S:" << source->isTerminal()
-               << " T:" << target->isTerminal()
-               << " " << this << endl;
+    AutoContact* source   = getAutoSource();
+    AutoContact* target   = getAutoTarget();
 
     if (source->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegSourceTerminal );
+
       if (not target->isTerminal())
         target->setFlags( CntWeakTerminal );
     } else if (target->isTerminal()) {
       unsetFlags( SegWeakTerminal );
       setFlags  ( SegTargetTerminal );
+
       if (not source->isTerminal())
         source->setFlags( CntWeakTerminal );
     } else {
@@ -896,6 +895,10 @@ namespace Anabatic {
       unsetFlags( SegWeakTerminal );
       setFlags  ( terminalFlag );
     }
+
+    cdebug_log(145,0) << "computeTerminal() S:" << source->isTerminal()
+                      << " T:" << target->isTerminal()
+                      << " " << this << endl;
   }
 
 
@@ -1400,7 +1403,8 @@ namespace Anabatic {
                 << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange()    or isFixed() ) return false;
-    if ( isStrongTerminal() or isLocal() ) return false;
+    if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
+    if ( isLocal()          and (not (flags & Flags::AllowLocal   )) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
     if (depth+2 >= Session::getRoutingGauge()->getDepth()) return false;
@@ -1415,8 +1419,8 @@ namespace Anabatic {
       cdebug_log(149,0) << getAutoSource() << endl;
       cdebug_log(149,0) << getAutoTarget() << endl;
       cdebug_log(149,0) << "min depths, Segment:" << depth
-                  <<            " S:" << getAutoSource()->getMinDepth()
-                  <<            " T:" << getAutoTarget()->getMinDepth() << endl;
+                        <<            " S:" << getAutoSource()->getMinDepth()
+                        <<            " T:" << getAutoTarget()->getMinDepth() << endl;
 
       if (getAutoSource()->getMinDepth() < depth) return false;
       if (getAutoTarget()->getMinDepth() < depth) return false;
@@ -1491,12 +1495,11 @@ namespace Anabatic {
 
   bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags ) const
   {
-    cdebug_log(149,0) << "AutoSegment::canMoveUp() " << flags
-                << " (reserve:" << reserve << ")" << endl;
+    cdebug_log(159,0) << "AutoSegment::canMoveUp() " << flags
+                      << " (reserve:" << reserve << ") " << this << endl;
 
-    bool   lowDensity = true;
-    GCell* begin      = NULL;
-    GCell* end        = NULL;
+    bool   nLowDensity   = true;
+    bool   nLowUpDensity = true;
 
     if ( isLayerChange() or isFixed() ) return false;
     if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
@@ -1507,65 +1510,79 @@ namespace Anabatic {
 
     vector<GCell*> gcells;
     getGCells( gcells );
-    begin = *gcells.begin ();
-    end   = *gcells.rbegin();
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.5) ) lowDensity = false;
+      if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.5) ) nLowDensity   = false;
+      if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) nLowUpDensity = false;
       if (not gcells[i]->hasFreeTrack(depth,reserve)) {
-        cdebug_log(149,0) << "Not enough free track in " << gcells[i] << endl;
+        cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
         return false;
       }
     }
 
-    cdebug_log(149,0) << "Enough free track under canonical segment." << endl;
+    cdebug_log(159,0) << "Enough free track under canonical segment." << endl;
+
+    if (not (flags & Flags::IgnoreContacts)) {
+      if (getAutoSource()->getMinDepth() < depth-2) return false;
+      if (getAutoTarget()->getMinDepth() < depth-2) return false;
+    }
 
     if ( isLocal() and not (flags & Flags::Propagate) ) {
       if (not getAutoSource()->canMoveUp(this)) return false;
       if (not getAutoTarget()->canMoveUp(this)) return false;
       return true;
     }
+    cdebug_log(159,0) << "Both source & target Contacts can move up." << endl;
 
   //bool hasGlobalSegment = false;
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
-        if (isegment->isFixed ()) return false;
-      //if (isegment->isGlobal()) hasGlobalSegment = true;
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
+        if (segment->isFixed ()) return false;
+      //if (segment->isGlobal()) hasGlobalSegment = true;
 
-        isegment->getGCells( gcells );
-      //if ( (*gcells.begin ())->getIndex() < begin->getIndex() ) begin = *gcells.begin (); 
-      //if ( (*gcells.rbegin())->getIndex() > end  ->getIndex() ) end   = *gcells.rbegin(); 
+        if (not (flags & Flags::IgnoreContacts)) {
+          if (segment->getAutoSource()->getMinDepth() < depth-2) return false;
+          if (segment->getAutoTarget()->getMinDepth() < depth-2) return false;
+        }
+
+        segment->getGCells( gcells );
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( lowDensity and (gcells[i]->getWDensity(depth-2) > 0.6) ) lowDensity = false;
+          if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.6) ) nLowDensity   = false;
+          if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) {
+            cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
+                              << "d:" << gcells[i]->getWDensity(depth) << endl;
+            nLowUpDensity = false;
+          }
           if (not gcells[i]->hasFreeTrack(depth,reserve)) {
-            cdebug_log(149,0) << "Not enough free track in " << gcells[i] << endl;
+            cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
             return false;
           }
         }
       }
     }
 
-    if (lowDensity and (flags & Flags::CheckLowDensity)) return false;
+    if (    nLowDensity   and (flags & Flags::CheckLowDensity  )) return false;
+    if (not nLowUpDensity and (flags & Flags::CheckLowUpDensity)) return false;
 
     if ( (depth >= 4) and (flags & Flags::WithPerpands) ) {
-      float fragmentation = begin->getFragmentation( depth-1 );
-      cdebug_log(149,0) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
+      float fragmentation = (*gcells.begin())->getFragmentation( depth-1 );
+      cdebug_log(159,0) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
 
       if (fragmentation < 0.5) {
-        cdebug_log(149,0) << "Not enough free track for perpandicular in begin GCell "
-                    << "(frag:" << fragmentation << ")."
-                    << endl;
+        cdebug_log(159,0) << "Not enough free track for perpandicular in begin GCell "
+                          << "(frag:" << fragmentation << ")."
+                          << endl;
         return false;
       }
 
-      fragmentation = end->getFragmentation( depth-1 );
-      cdebug_log(149,0) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
+      fragmentation = (*gcells.rbegin())->getFragmentation( depth-1 );
+      cdebug_log(159,0) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
 
       if (fragmentation < 0.5) {
-        cdebug_log(149,0) << "Not enough free track for perpandicular in end GCell "
-                    << "(frag:" << fragmentation << ")."
-                    << endl;
+        cdebug_log(159,0) << "Not enough free track for perpandicular in end GCell "
+                          << "(frag:" << fragmentation << ")."
+                          << endl;
         return false;
       }
     }

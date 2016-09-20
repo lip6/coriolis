@@ -244,6 +244,7 @@ namespace {
       if (segment and segment->isFixed() and segment->isTerminal()) {
         Interval   freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
         DbU::Unit  ppitch       = segment->getPPitch();
+      //DbU::Unit  pitch        = segment->getPitch();
 
       //if (freeInterval.getSize() < ppitch*6) {
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)

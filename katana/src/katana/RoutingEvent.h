@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :   "./katana/RoutingEvent.h"                        |
+// |  C++ Header  :   "./katana/RoutingEvent.h"                      |
 // +-----------------------------------------------------------------+
 
 

@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :   "./katana/DataNegociate.h"                       |
+// |  C++ Header  :   "./katana/DataNegociate.h"                     |
 // +-----------------------------------------------------------------+
 
 

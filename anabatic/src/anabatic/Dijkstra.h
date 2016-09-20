@@ -64,7 +64,7 @@ namespace Anabatic {
            //inline                  Vertex         ( size_t id );
              inline                 ~Vertex         ();
              inline  bool            hasDoneAllRps  () const;
-             inline  Contact*        hasGContact    ( Net* );
+             inline  Contact*        hasGContact    ( Net* ) const;
              inline  unsigned int    getId          () const;
              inline  GCell*          getGCell       () const;
              inline  AnabaticEngine* getAnabatic    () const;
@@ -149,7 +149,7 @@ namespace Anabatic {
 
 
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
-  inline Contact*        Vertex::hasGContact    ( Net* net ) { return _gcell->hasGContact(net); }
+  inline Contact*        Vertex::hasGContact    ( Net* net ) const { return _gcell->hasGContact(net); }
   inline unsigned int    Vertex::getId          () const { return _id; }
   inline GCell*          Vertex::getGCell       () const { return _gcell; }
   inline AnabaticEngine* Vertex::getAnabatic    () const { return _gcell->getAnabatic(); }

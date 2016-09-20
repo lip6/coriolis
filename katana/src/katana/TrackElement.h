@@ -115,8 +115,8 @@ namespace Katana {
       inline  bool                    hasTargetDogleg      () const;
       inline  bool                    canRipple            () const;
       virtual bool                    canSlacken           () const;
-      virtual bool                    canPivotUp           ( float reserve ) const;
-      virtual bool                    canPivotDown         ( float reserve ) const;
+      virtual bool                    canPivotUp           ( float reserve, unsigned int flags ) const;
+      virtual bool                    canPivotDown         ( float reserve, unsigned int flags ) const;
       virtual bool                    canMoveUp            ( float reserve, unsigned int flags=Flags::WithPerpands ) const;
       virtual bool                    canDogleg            ();
       virtual bool                    canDogleg            ( Interval );

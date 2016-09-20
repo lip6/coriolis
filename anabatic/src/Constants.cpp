@@ -82,7 +82,8 @@ namespace Anabatic {
   const unsigned int  Flags::NoGCellShrink       = (1 << 27);
   const unsigned int  Flags::CParanoid           = (1 << 28);
   const unsigned int  Flags::CheckLowDensity     = (1 << 29);
-  const unsigned int  Flags::NoUpdate            = (1 << 30);
+  const unsigned int  Flags::CheckLowUpDensity   = (1 << 30);
+  const unsigned int  Flags::NoUpdate            = (1 << 31);
 
 
   Flags::~Flags ()

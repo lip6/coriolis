@@ -146,8 +146,8 @@ namespace Katana {
   bool           TrackElement::isUserDefined        () const { return false; }
 // Predicates.
   bool           TrackElement::canSlacken           () const { return false; }
-  bool           TrackElement::canPivotUp           ( float ) const { return false; };
-  bool           TrackElement::canPivotDown         ( float ) const { return false; };
+  bool           TrackElement::canPivotUp           ( float, unsigned int ) const { return false; };
+  bool           TrackElement::canPivotDown         ( float, unsigned int ) const { return false; };
   bool           TrackElement::canMoveUp            ( float, unsigned int ) const { return false; };
   bool           TrackElement::canDogleg            () { return false; };
   bool           TrackElement::canDogleg            ( Interval ) { return false; };

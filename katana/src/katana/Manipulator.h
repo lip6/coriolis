@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :   "./katana/Manipulator.h"                         |
+// |  C++ Header  :   "./katana/Manipulator.h"                       |
 // +-----------------------------------------------------------------+
 
 
@@ -48,6 +48,7 @@ namespace Katana {
                         , LeftAxisHint        = 0x0200
                         , RightAxisHint       = 0x0400 
                         , NotOnLastRipup      = 0x0800 
+                        , IgnoreContacts      = 0x1000 
                         };
     public:
                                   Manipulator             ( TrackElement*, SegmentFsm& );
