@@ -28,6 +28,7 @@ namespace {
   using std::left;
   using std::right;
   using Hurricane::DbU;
+  using Hurricane::Net;
   using Anabatic::Edge;
   using Anabatic::Vertex;
 
@@ -35,16 +36,19 @@ namespace {
   class DigitalDistance {
     public:
       inline            DigitalDistance ( float h, float k );
+      inline void       setNet          ( Net* );
              DbU::Unit  operator()      ( const Vertex* source ,const Vertex* target,const Edge* edge ) const;
     private:
     // For an explanation of h & k parameters, see:
     //     "KNIK, routeur global pour la plateforme Coriolis", p. 52.
       float  _h;
       float  _k;
+      Net*   _net;
   };
 
 
-  inline DigitalDistance::DigitalDistance ( float h, float k ) : _h(h), _k(k) { }
+  inline       DigitalDistance::DigitalDistance ( float h, float k ) : _h(h), _k(k), _net(NULL) { }
+  inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
 
 
   DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
@@ -54,8 +58,15 @@ namespace {
     float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
     float congestionCost = 1.0 + _h / (1.0 + std::exp(_k * (congestion - 1.0)));
 
+    float viaCost = 0.0;
+    if (    source->getFrom()
+       and (source->getFrom()->isHorizontal() xor edge->isHorizontal())
+       and not source->hasGContact(_net) ) {
+      viaCost += 2.5;
+    }
+
     float distance = (float)source->getDistance()
-                   + congestionCost * (float)edge->getDistance();
+                   + (congestionCost + viaCost) * (float)edge->getDistance()
                    + edge->getHistoricCost();
 
     // Edge* sourceFrom = source->getFrom();
@@ -155,9 +166,10 @@ namespace Katana {
     float edgeHInc = getConfiguration()->getEdgeHInc();
 
     openSession();
-    Dijkstra* dijkstra = new Dijkstra ( this );
-    dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
-                                          , getConfiguration()->getEdgeCostK() ) );
+    Dijkstra*       dijkstra = new Dijkstra ( this );
+    DigitalDistance distance ( getConfiguration()->getEdgeCostH()
+                             , getConfiguration()->getEdgeCostK() );
+    dijkstra->setDistance( distance );
 
     size_t iteration = 0;
     size_t netCount  = 0;
@@ -168,6 +180,7 @@ namespace Katana {
       for ( NetData* netData : getNetOrdering() ) {
         if (netData->isGlobalRouted()) continue;
 
+        distance.setNet( netData->getNet() );
         dijkstra->load( netData->getNet() );
         dijkstra->run();
         ++netCount;

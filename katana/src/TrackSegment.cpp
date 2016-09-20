@@ -406,12 +406,12 @@ namespace Katana {
   { return _base->getMaxUnderDensity( flags ); }
 
 
-  bool  TrackSegment::canPivotUp ( float reserve ) const
-  { return _base->canPivotUp(reserve); }
+  bool  TrackSegment::canPivotUp ( float reserve, unsigned int flags ) const
+  { return _base->canPivotUp( reserve, flags ); }
 
 
-  bool  TrackSegment::canPivotDown ( float reserve ) const
-  { return _base->canPivotDown( reserve ); }
+  bool  TrackSegment::canPivotDown ( float reserve, unsigned int flags ) const
+  { return _base->canPivotDown( reserve, flags ); }
 
 
   bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const

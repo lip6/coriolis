@@ -95,7 +95,7 @@ namespace Katana {
     if (not _segment)
       throw Error( "Manipulator::Manipulator(): cannot build upon a NULL TrackElement." );
 
-    DebugSession::open( _segment->getNet(), 150, 160 );
+    DebugSession::open( _segment->getNet(), 149, 160 );
 
     _data = _segment->getDataNegociate();
     if (_data) _event = _data->getRoutingEvent();
@@ -1067,9 +1067,9 @@ namespace Katana {
     cdebug_log(159,0) << "Manipulator::pivotDown() " << _segment << endl; 
     return false;
 
-    if (    _segment->isFixed ()       ) return false;
-    if (    _segment->isStrap ()       ) return false;
-    if (not _segment->canPivotDown(2.0)) return false;
+    if (    _segment->isFixed () ) return false;
+    if (    _segment->isStrap () ) return false;
+    if (not _segment->canPivotDown(2.0,Flags::NoFlags)) return false;
 
     return _segment->moveDown( Flags::NoFlags );
   }
@@ -1081,16 +1081,17 @@ namespace Katana {
 
     unsigned int kflags = Flags::WithNeighbors;
   //kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AutoSegment::AllowLocal    : 0;
-    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal : 0;
+    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : 0;
+    kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : 0;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
       if (_segment->isLocal()) {
-        if (not _segment->canPivotUp(0.5)) return false;
+        if (not _segment->canPivotUp(0.5,kflags)) return false;
       } else {
         if (_segment->getLength() < 20*getPitch()) {
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0)) return false;
+          if (not _segment->canPivotUp(1.0,kflags)) return false;
         }
         if (not _segment->canMoveUp(0.5,kflags)) return false;
       }

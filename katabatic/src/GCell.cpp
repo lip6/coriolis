@@ -1317,7 +1317,7 @@ namespace Katabatic {
       ostringstream s;
       const Layer* layer = rg->getRoutingLayer(depth)->getBlockageLayer();
       s << "_blockages[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
-      record->add ( getSlot ( s.str(),  &_blockages[depth] ) );
+      record->add ( DbU::getValueSlot ( s.str(),  &_blockages[depth] ) );
     }
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {

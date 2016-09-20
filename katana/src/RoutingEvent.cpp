@@ -393,7 +393,7 @@ namespace Katana {
 #endif
     }
 
-    DebugSession::open( _segment->getNet(), 150, 160 );
+    DebugSession::open( _segment->getNet(), 149, 160 );
 
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()

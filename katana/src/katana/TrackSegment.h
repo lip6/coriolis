@@ -75,8 +75,8 @@ namespace Katana {
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );
       virtual bool                  canDogleg              ( Anabatic::GCell*, unsigned int flags=0 );
-      virtual bool                  canPivotUp             ( float reserve ) const;
-      virtual bool                  canPivotDown           ( float reserve ) const;
+      virtual bool                  canPivotUp             ( float reserve, unsigned int flags ) const;
+      virtual bool                  canPivotDown           ( float reserve, unsigned int flags ) const;
       virtual bool                  canMoveUp              ( float reserve, unsigned int flags ) const;
       virtual bool                  canSlacken             () const;
       virtual float                 getMaxUnderDensity     ( unsigned int flags ) const;

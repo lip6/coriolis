@@ -21,6 +21,7 @@
 #include "katana/Track.h"
 #include "katana/TrackElement.h"
 #include "katana/KatanaEngine.h"
+#include "katana/RoutingPlane.h"
 
 
 namespace {
@@ -207,24 +208,9 @@ namespace Katana {
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
       revalidateds[i]->check();
     }
-
-  //_getKatanaEngine()->_showOverlap ();
 # endif
 
     _sortEvents.clear();
-
-#if THIS_IS_DISABLED
-    if (not faileds.empty()) {
-      set<TrackElement*>::iterator ifailed = faileds.begin();
-      Anabatic::GCellVector gcells;
-      for ( ; ifailed != faileds.end() ; ++ifailed ) {
-        (*ifailed)->getGCells ( gcells );
-        (*ifailed)->makeDogLeg( gcells[0] );
-      }
-
-      count += _revalidate();
-    }
-#endif
 
   // Looking for reduced/raised segments.
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
@@ -242,6 +228,8 @@ namespace Katana {
     }
 
     _doRemovalEvents();
+    for ( Track* track : _sortEvents ) track->doReorder();
+    _sortEvents.clear();
 
     cdebug_tabw(159,-1);
     return count;

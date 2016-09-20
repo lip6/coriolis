@@ -125,8 +125,9 @@ namespace Anabatic {
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getPerpandicular           ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
-              unsigned int     getMinDepth                () const;
-              unsigned int     getMaxDepth                () const;
+              void             getDepthSpan               ( size_t& minDepth, size_t& maxDepth ) const;
+      inline  unsigned int     getMinDepth                () const;
+      inline  unsigned int     getMaxDepth                () const;
               void             getLengths                 ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& );
       virtual Box              getNativeConstraintBox     () const;
               Interval         getNativeUConstraints      ( unsigned int direction ) const;
@@ -265,6 +266,12 @@ namespace Anabatic {
 
   inline DbU::Unit AutoContact::getCBYMax () const
   { return isFixed() ? _contact->getY() : DbU::fromLambda(_dyMax) + _gcell->getYMin(); }
+
+  inline unsigned int  AutoContact::getMinDepth () const
+  { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return minDepth; }
+
+  inline unsigned int  AutoContact::getMaxDepth () const
+  { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return maxDepth; }
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::LocatorHelper".

@@ -568,9 +568,9 @@ namespace Katana {
 
 
   void  SegmentFsm::addAction ( TrackElement* segment
-                         , unsigned int  type
-                         , DbU::Unit     axisHint
-                         , unsigned int  toSegmentFsm  )
+                              , unsigned int  type
+                              , DbU::Unit     axisHint
+                              , unsigned int  toSegmentFsm  )
   {
     if ( not segment->isFixed() ) {
       _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
@@ -720,7 +720,7 @@ namespace Katana {
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = _event->getSegment();
-    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5) : segment->canMoveUp(1.0,Flags::CheckLowDensity); // MARK 1
+    bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5,Flags::NoFlags) : segment->canMoveUp(1.0,Flags::CheckLowDensity); // MARK 1
     unsigned int          relaxFlags = Manipulator::NoDoglegReuse
                                      | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                  : Manipulator::NoExpand);
@@ -1001,19 +1001,20 @@ namespace Katana {
   {
     cdebug_log(159,0) << "Strap segment Fsm." << endl;
 
-    bool          success   = false;
-    unsigned int  nextState = data->getState();
+    bool          success     = false;
+    unsigned int  nextState   = data->getState();
+    Manipulator   manipulator ( segment, *this );
 
     switch ( data->getState() ) {
       case DataNegociate::RipupPerpandiculars:
         nextState = DataNegociate::Minimize;
-        success = Manipulator(segment,*this).ripupPerpandiculars();
+        success = manipulator.ripupPerpandiculars();
         if (success) break;
       case DataNegociate::Minimize:
         if (data->getStateCount() >= 2) {
           nextState = DataNegociate::MaximumSlack;
         }
-        success = Manipulator(segment,*this).minimize();
+        success = manipulator.minimize();
         if (success) break;
       case DataNegociate::Dogleg:
       case DataNegociate::Slacken:
@@ -1027,7 +1028,7 @@ namespace Katana {
     }
     
     if (not success and (nextState != DataNegociate::Unimplemented))
-      success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
+      success = manipulator.ripupPerpandiculars(Manipulator::ToRipupLimit);
 
     if (not (flags&NoTransition)) {
       data->setState( nextState );
@@ -1042,13 +1043,14 @@ namespace Katana {
   {
     cdebug_log(159,0) << "Local segment Fsm." << endl;
 
-    bool          success   = false;
-    unsigned int  nextState = data->getState();
+    bool          success     = false;
+    unsigned int  nextState   = data->getState();
+    Manipulator   manipulator ( segment, *this );
 
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
         nextState = DataNegociate::Minimize;
-        success = Manipulator(segment,*this).ripupPerpandiculars();
+        success = manipulator.ripupPerpandiculars();
         if (success) break;
       case DataNegociate::Minimize:
         if (isFullBlocked() and not segment->isTerminal()) {
@@ -1057,15 +1059,15 @@ namespace Katana {
           break;
         }
         nextState = DataNegociate::Dogleg;
-        success = Manipulator(segment,*this).minimize();
+        success = manipulator.minimize();
         if (success) break;
       case DataNegociate::Dogleg:
         nextState = DataNegociate::Slacken;
-        success = Manipulator(segment,*this).makeDogleg();
+        success = manipulator.makeDogleg();
         if (success) break;
       case DataNegociate::Slacken:
         nextState = DataNegociate::ConflictSolveByPlaceds;
-        success = Manipulator(segment,*this).slacken();
+        success = manipulator.slacken();
         if (success) break;
       case DataNegociate::ConflictSolveByHistory:
       case DataNegociate::ConflictSolveByPlaceds:
@@ -1079,7 +1081,7 @@ namespace Katana {
         break;
       case DataNegociate::MoveUp:
         nextState = DataNegociate::MaximumSlack;
-        success = Manipulator(segment,*this).moveUp();
+        success = manipulator.moveUp();
         if (success) break;
       case DataNegociate::MaximumSlack:
         if (segment->isStrap()) { 
@@ -1096,7 +1098,7 @@ namespace Katana {
 
     if (not success and (nextState != DataNegociate::Unimplemented)) {
       if (data->getStateCount() < 6)
-        success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
+        success = manipulator.ripupPerpandiculars(Manipulator::ToRipupLimit);
     }
 
     if (not success
@@ -1117,8 +1119,10 @@ namespace Katana {
 
   bool  SegmentFsm::_slackenGlobal ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
   {
-    bool          success   = false;
-    unsigned int  nextState = data->getState();
+    bool          success     = false;
+    unsigned int  nextState   = data->getState();
+    Manipulator   manipulator ( segment, *this );
+    unsigned int  moveUpFlags = Manipulator::AllowShortPivotUp|Manipulator::IgnoreContacts;
 
     switch ( data->getState() ) {
       case DataNegociate::RipupPerpandiculars:
@@ -1128,14 +1132,22 @@ namespace Katana {
         nextState = DataNegociate::Slacken;
         break;
       case DataNegociate::Slacken:
-        cdebug_log(159,0) << "Global, SegmentFsm: Slacken."  << endl;
-        if ((success = Manipulator(segment,*this).slacken(Flags::HalfSlacken))) {
-          nextState = DataNegociate::RipupPerpandiculars;
-          break;
+        cdebug_log(159,0) << "Global, SegmentFsm: Slacken "
+                          << ((manipulator.getEvent())
+                             ? manipulator.getEvent()->getConstraints() : "(not event yet)") << endl;
+        if (   manipulator.getEvent()
+           and manipulator.getEvent()->getConstraints().isPonctual()
+           and segment->canMoveUp(1.0,Flags::CheckLowUpDensity|Flags::AllowTerminal) ) {
+          moveUpFlags |= Manipulator::AllowTerminalMoveUp;
+        } else {
+          if ((success = manipulator.slacken(Flags::HalfSlacken))) {
+            nextState = DataNegociate::RipupPerpandiculars;
+            break;
+          }
         }
       case DataNegociate::MoveUp:
         cdebug_log(159,0) << "Global, SegmentFsm: MoveUp." << endl;
-        if ((success = Manipulator(segment,*this).moveUp(Manipulator::AllowShortPivotUp))) {
+        if ((success = manipulator.moveUp(moveUpFlags))) {
           break;
         }
         nextState = DataNegociate::ConflictSolveByHistory;
@@ -1155,7 +1167,7 @@ namespace Katana {
           break;
         }
       case DataNegociate::MaximumSlack:
-        if ((success=Manipulator(segment,*this).forceOverLocals())) {
+        if ((success=manipulator.forceOverLocals())) {
           break;
         }
       case DataNegociate::Unimplemented:
@@ -1166,7 +1178,7 @@ namespace Katana {
 
     if (not success and (nextState != DataNegociate::Unimplemented)) {
       if (data->getStateCount() < 6)
-        success = Manipulator(segment,*this).ripupPerpandiculars(Manipulator::ToRipupLimit);
+        success = manipulator.ripupPerpandiculars(Manipulator::ToRipupLimit);
     }
 
   // Special case: all tracks are overlaping a blockage.

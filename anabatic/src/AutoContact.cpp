@@ -183,35 +183,21 @@ namespace Anabatic {
   { return NULL; }
 
 
-  unsigned int  AutoContact::getMinDepth () const
+  void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
   {
-    size_t minDepth = (size_t)-1;
+    minDepth = (size_t)-1;
+    maxDepth = 0;
+
     Component* anchor = getAnchor ();
     if (anchor) {
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
+      maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
     }
 
     for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
+      maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
     }
-
-    return (unsigned int)minDepth;
-  }
-
-
-  unsigned int  AutoContact::getMaxDepth () const
-  {
-    size_t maxDepth = 0;
-    Component* anchor = getAnchor ();
-    if ( anchor ) {
-      maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
-    }
-
-    for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
-      maxDepth = std::max ( maxDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
-    }
-
-    return (unsigned int)maxDepth;
   }
 
 

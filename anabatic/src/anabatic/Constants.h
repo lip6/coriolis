@@ -84,6 +84,7 @@ namespace Anabatic {
       static const unsigned int  NoGCellShrink       ;
       static const unsigned int  CParanoid           ;
       static const unsigned int  CheckLowDensity     ;
+      static const unsigned int  CheckLowUpDensity   ;
       static const unsigned int  NoUpdate            ;
     public:
       inline               Flags        ( unsigned int flags = NoFlags );
