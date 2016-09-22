@@ -182,6 +182,7 @@ namespace Anabatic {
     cdebug_log(149,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
 
     if (gcell->getYMin() > end->getYMin()) std::swap( gcell, end );
+    if (xprobe == gcell->getConstraintXMax()) xprobe--;
 
     gcells.push_back( gcell );
 
