@@ -888,11 +888,11 @@ namespace {
             } else {
               const Layer* layer = anchor->getLayer();
 
-              if      (layer == Session::getRoutingLayer(0)) _connexity.fields.M1++; // M1 V
-              else if (layer == Session::getRoutingLayer(1)) _connexity.fields.M2++; // M2 H
-              else if (layer == Session::getRoutingLayer(2)) _connexity.fields.M3++; // M3 V
-              else if (layer == Session::getRoutingLayer(3)) _connexity.fields.M2++; // M4 H
-              else if (layer == Session::getRoutingLayer(4)) _connexity.fields.M3++; // M5 V
+              if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
+              else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
+              else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
+              else if (layer->getMask() == Session::getRoutingLayer(3)->getMask()) _connexity.fields.M2++; // M4 H
+              else if (layer->getMask() == Session::getRoutingLayer(4)->getMask()) _connexity.fields.M3++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()

@@ -181,11 +181,12 @@ namespace Anabatic {
   {
     vector<GCell*>().swap( gcells );
 
-    DbU::Unit yprobe = getNativeMin();
+    DbU::Unit yprobe = getY();
     GCell*    gcell  = getAutoSource()->getGCell();
     GCell*    end    = getAutoTarget()->getGCell();
 
     if (gcell->getXMin() > end->getXMin()) std::swap( gcell, end );
+    if (yprobe == gcell->getConstraintYMax()) yprobe--;
 
     gcells.push_back( gcell );
 
