@@ -66,10 +66,10 @@ namespace Anabatic {
     , _contact   (contact)
     , _gcell     (gcell)
     , _flags     (CntInvalidatedCache|CntInCreationStage)
-    , _dxMin     (0)
-    , _dxMax     ((int)DbU::toLambda(gcell->getConstraintXMax()))
-    , _dyMin     ()
-    , _dyMax     ((int)DbU::toLambda(gcell->getConstraintYMax()))
+    , _xMin      (_gcell->getXMin())
+    , _xMax      (_gcell->getConstraintXMax())
+    , _yMin      (_gcell->getYMin())
+    , _yMax      (_gcell->getConstraintYMax())
   {
     _allocateds++;
     _gcell->addContact ( this );
@@ -300,16 +300,16 @@ namespace Anabatic {
       cdebug_log(145,0) << "AutoContact::setGCell() " << gcell << endl;
       _gcell->addContact( this );
       _contact->setPosition( _gcell->getCenter() );
-      _dxMin = 0;
-      _dyMin = 0;
-      _dxMax = (int)DbU::toLambda( gcell->getConstraintXMax() );
-      _dyMax = (int)DbU::toLambda( gcell->getConstraintYMax() );
+      _xMin = _gcell->getXMin();
+      _yMin = _gcell->getYMin();
+      _xMax = _gcell->getConstraintXMax();
+      _yMax = _gcell->getConstraintYMax();
       if (cdebug.enabled()) {
-        int  dxMin = _dxMin;
-        int  dyMin = _dyMin;
-        int  dxMax = _dxMax;
-        int  dyMax = _dyMax;
-        cdebug_log(145,0) << "* deltas: [" << dxMin << " " << dyMin << " " << dxMax << " " << dyMax << "]" << endl;
+        cdebug_log(145,0) << "* deltas: [" << DbU::getValueString(_xMin)
+                          << " "           << DbU::getValueString(_yMin)
+                          << " "           << DbU::getValueString(_xMax)
+                          << " "           << DbU::getValueString(_yMax)
+                          << "]" << endl;
       }
     } else {
       cerr << Bug( "NULL GCell for %s.", _getString().c_str() ) << endl;
@@ -443,14 +443,14 @@ namespace Anabatic {
 
         cerr << Error ( "Incompatible DY restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBYMax() )
-          cerr << Error ( "(constraintMin > CBYMax : %.2lf > %.2lf)"
-                        , DbU::toLambda(constraintMin)
-                        , DbU::toLambda(getCBYMax()) )
+          cerr << Error ( "(constraintMin > CBYMax : %s > %s)"
+                        , DbU::getValueString(constraintMin).c_str()
+                        , DbU::getValueString(getCBYMax()).c_str() )
                << endl;
         if ( constraintMax < getCBYMin() )
-          cerr << Error ( "(constraintMax < CBYMin : %.2lf < %.2lf)"
-                        , DbU::toLambda(constraintMax)
-                        , DbU::toLambda(getCBYMin()) )
+          cerr << Error ( "(constraintMax < CBYMin : %s < %s)"
+                        , DbU::getValueString(constraintMax).c_str()
+                        , DbU::getValueString(getCBYMin()).c_str() )
                << endl;
         return false;
       }
@@ -462,14 +462,14 @@ namespace Anabatic {
 
         cerr << Error ( "Incompatible DX restriction on %s", _getString().c_str() ) << endl;
         if ( constraintMin > getCBXMax() )
-          cerr << Error ( "(constraintMin > CBXMax : %.2lf > %.2lf)"
-                        , DbU::toLambda(constraintMin)
-                        , DbU::toLambda(getCBXMax()) )
+          cerr << Error ( "(constraintMin > CBXMax : %s > %s)"
+                        , DbU::getValueString(constraintMin).c_str()
+                        , DbU::getValueString(getCBXMax()).c_str() )
                << endl;
         if ( constraintMax < getCBXMin() )
-          cerr << Error ( "(constraintMax < CBXMin : %.2lf < %.2lf)"
-                        , DbU::toLambda(constraintMax)
-                        , DbU::toLambda(getCBXMin()) )
+          cerr << Error ( "(constraintMax < CBXMin : %s < %s)"
+                        , DbU::getValueString(constraintMax).c_str()
+                        , DbU::getValueString(getCBXMin()).c_str() )
                << endl;
         return false;
       }
