@@ -179,10 +179,10 @@ namespace Anabatic {
               Contact*         _contact;
               GCell*           _gcell;
               unsigned int     _flags;
-              int              _dxMin:8;
-              int              _dxMax:8;
-              int              _dyMin:8;
-              int              _dyMax:8;
+              DbU::Unit        _xMin;
+              DbU::Unit        _xMax;
+              DbU::Unit        _yMin;
+              DbU::Unit        _yMax;
 
     protected:
     // Constructors & Destructors.
@@ -196,8 +196,8 @@ namespace Anabatic {
               AutoContact&     operator=    ( const AutoContact& );
 
     protected:
-      inline  int              _getDeltaMin ( DbU::Unit x, DbU::Unit xMin );
-      inline  int              _getDeltaMax ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax );
+      inline  int              _boundX      ( DbU::Unit x ) const;
+      inline  int              _boundY      ( DbU::Unit x ) const;
       static  void             _getTopology ( Contact*, Component*& anchor, Horizontal**&, Vertical**&, size_t );
       virtual void             _invalidate  ( unsigned int flags ) = 0;
   };
@@ -246,32 +246,30 @@ namespace Anabatic {
   inline Contact*      AutoContact::base                    () const { return _contact; }
   inline GCell*        AutoContact::getGCell                () const { return _gcell; }
   inline Box           AutoContact::getConstraintBox        () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }
-  inline void          AutoContact::setCBXMin               ( DbU::Unit xMin ) { _dxMin = _getDeltaMin(xMin,_gcell->getXMin()); }
-  inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _dxMax = _getDeltaMax(xMax,_gcell->getXMin(),_gcell->getConstraintXMax()); }
-  inline void          AutoContact::setCBYMin               ( DbU::Unit yMin ) { _dyMin = _getDeltaMin(yMin,_gcell->getYMin()); }
-  inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _dyMax = _getDeltaMax(yMax,_gcell->getYMin(),_gcell->getConstraintYMax()); }
+  inline void          AutoContact::setCBXMin               ( DbU::Unit xMin ) { _xMin = _boundX(xMin); }
+  inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _xMax = _boundX(xMax); }
+  inline void          AutoContact::setCBYMin               ( DbU::Unit yMin ) { _yMin = _boundY(yMin); }
+  inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _yMax = _boundY(yMax); }
   inline void          AutoContact::setFlags                ( unsigned int flags ) { _flags|= flags; }
   inline void          AutoContact::unsetFlags              ( unsigned int flags ) { _flags&=~flags; }
-  inline int           AutoContact::_getDeltaMin            ( DbU::Unit x, DbU::Unit xMin ) { if (x<xMin) return 0; return (int)DbU::toLambda(x-xMin); }
-  inline int           AutoContact::_getDeltaMax            ( DbU::Unit x, DbU::Unit xMin, DbU::Unit xMax ) { if (x>xMax) x=xMax; return (int)DbU::toLambda(x-xMin); }
-
-  inline DbU::Unit AutoContact::getCBXMin () const
-  { return isFixed() ? _contact->getX() : DbU::fromLambda(_dxMin) + _gcell->getXMin(); }
-
-  inline DbU::Unit AutoContact::getCBXMax () const
-  { return isFixed() ? _contact->getX() : DbU::fromLambda(_dxMax) + _gcell->getXMin(); }
-
-  inline DbU::Unit AutoContact::getCBYMin () const
-  { return isFixed() ? _contact->getY() : DbU::fromLambda(_dyMin) + _gcell->getYMin(); }
-
-  inline DbU::Unit AutoContact::getCBYMax () const
-  { return isFixed() ? _contact->getY() : DbU::fromLambda(_dyMax) + _gcell->getYMin(); }
+  inline DbU::Unit     AutoContact::getCBXMin               () const { return isFixed() ? _contact->getX() : _xMin; }
+  inline DbU::Unit     AutoContact::getCBXMax               () const { return isFixed() ? _contact->getX() : _xMax; }
+  inline DbU::Unit     AutoContact::getCBYMin               () const { return isFixed() ? _contact->getY() : _yMin; }
+  inline DbU::Unit     AutoContact::getCBYMax               () const { return isFixed() ? _contact->getY() : _yMax; }
 
   inline unsigned int  AutoContact::getMinDepth () const
   { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return minDepth; }
 
   inline unsigned int  AutoContact::getMaxDepth () const
   { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return maxDepth; }
+
+  inline int  AutoContact::_boundX ( DbU::Unit x ) const
+  { return (x<_gcell->getXMin()) ? _gcell->getXMin()
+                                 : ((x>_gcell->getConstraintXMax()) ? _gcell->getConstraintXMax() : x); }
+
+  inline int  AutoContact::_boundY ( DbU::Unit y ) const
+  { return (y<_gcell->getYMin()) ? _gcell->getYMin()
+                                 : ((y>_gcell->getConstraintYMax()) ? _gcell->getConstraintYMax() : y); }
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::LocatorHelper".
