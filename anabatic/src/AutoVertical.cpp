@@ -175,9 +175,11 @@ namespace Anabatic {
   {
     vector<GCell*>().swap( gcells );
 
-    DbU::Unit xprobe = getNativeMin();
+    DbU::Unit xprobe = getX();
     GCell*    gcell  = getAutoSource()->getGCell();
     GCell*    end    = getAutoTarget()->getGCell();
+
+    cdebug_log(149,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
 
     if (gcell->getYMin() > end->getYMin()) std::swap( gcell, end );
 
@@ -187,7 +189,7 @@ namespace Anabatic {
       gcell = gcell->getNorth( xprobe );
 
       if (not gcell) {
-        cerr << Error( "AutoHorizontal::getGCells() : NULL GCell under %s\n"
+        cerr << Error( "AutoVertical::getGCells() : NULL GCell under %s\n"
                        "        begin:%s\n"
                        "        end:  %s"
                      , getString(this).c_str()

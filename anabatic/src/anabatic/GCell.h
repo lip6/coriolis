@@ -187,6 +187,8 @@ namespace Anabatic {
                     void                  setXY               ( DbU::Unit x, DbU::Unit y );
                     void                  updateContactsPosition ();
                     void                  cleanupGlobal       ();
+      inline        DbU::Unit             getWidth            () const;
+      inline        DbU::Unit             getHeight           () const;
     // Detailed routing functions.
                     bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
       inline        size_t                getDepth            () const;
@@ -328,6 +330,10 @@ namespace Anabatic {
   inline const vector<AutoSegment*>& GCell::getVSegments  () const { return _vsegments; }
   inline const vector<AutoSegment*>& GCell::getHSegments  () const { return _hsegments; }
   inline const vector<AutoContact*>& GCell::getContacts   () const { return _contacts; }
+
+  inline       DbU::Unit             GCell::getWidth      () const { return (getXMax()-getXMin()); }
+  inline       DbU::Unit             GCell::getHeight     () const { return (getYMax()-getYMin()); }
+
   inline const GCell::Key&           GCell::getKey        () const { return _key; }
   inline       void                  GCell::setType       ( Flags type ) { _flags.reset(Flags::GCellTypeMask); _flags |= (type&Flags::GCellTypeMask); };
   inline       void                  GCell::updateKey     ( size_t depth ) { _key.update(depth); }

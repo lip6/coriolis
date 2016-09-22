@@ -64,7 +64,9 @@ namespace Anabatic {
 
     string s = "<Vertex " + getString(_id)
              + " @(" + DbU::getValueString(_gcell->getXMin())
-             +  "," + DbU::getValueString(_gcell->getYMin()) + ")"
+             +  "-" + DbU::getValueString(_gcell->getYMin()) 
+             +  "-" + DbU::getValueString(_gcell->getXMax())
+             +  "-" + DbU::getValueString(_gcell->getYMax()) + ")"
              + " rps:" +  getString(_rpCount)
              + " deg:" +  getString(_degree)
              + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")
@@ -218,7 +220,7 @@ namespace Anabatic {
       Point  center = rp->getBoundingBox().getCenter();
       GCell* gcell  = _anabatic->getGCellUnder( center );
 
-      cdebug_log(112,0) << "| " << rp << endl;
+      cdebug_log(112,0) << "| " << rp << " || " << gcell << endl;
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s\n"
@@ -346,6 +348,7 @@ namespace Anabatic {
       _queue.dump();
 
       Vertex* current = _queue.top();
+      cdebug_log(111,0) << "Current Vertex: " << current << endl;
       _queue.pop();
 
       if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {

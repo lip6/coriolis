@@ -540,6 +540,57 @@ namespace {
     return SouthBound;
   }
 
+// ---------------------------------------------------------------
+  // Class :  "SortHkByX".
+
+  class SortHkByX {
+    public:
+      inline       SortHkByX  ( unsigned int flags );
+      inline bool  operator() ( Hook* h1, Hook* h2 );
+    protected:
+      unsigned int  _flags;
+  };
+
+
+  inline  SortHkByX::SortHkByX ( unsigned int  flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortHkByX::operator() ( Hook* h1, Hook* h2 )
+  {
+    DbU::Unit x1 = h1->getComponent()->getCenter().getX();
+    DbU::Unit x2 = h2->getComponent()->getCenter().getX();
+
+    if (x1 == x2) return false;
+    return (_flags & SortDecreasing) xor (x1 < x2);
+  }
+
+// ---------------------------------------------------------------
+  // Class :  "SortHkByY".
+
+  class SortHkByY {
+    public:
+      inline       SortHkByY  ( unsigned int flags );
+      inline bool  operator() ( Hook* h1, Hook* h2 );
+    protected:
+      unsigned int  _flags;
+  };
+
+
+  inline  SortHkByY::SortHkByY ( unsigned int  flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortHkByY::operator() ( Hook* h1, Hook* h2 )
+  {
+    DbU::Unit y1 = h1->getComponent()->getCenter().getY();
+    DbU::Unit y2 = h2->getComponent()->getCenter().getY();
+
+    if (y1 == y2) return false;
+    return (_flags & SortDecreasing) xor (y1 < y2);
+  }
 
   // ---------------------------------------------------------------
   // Class :  "SortRpByX".
@@ -658,7 +709,7 @@ namespace {
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
-             void          _doHChannel       ();
+             void          _doHChannel       ( ForkStack& forks );
              void          _doVChannel       ();
              void          _doHStrut         ();
              void          _doVStrut         ();
@@ -834,7 +885,9 @@ namespace {
     Segment* fromSegment = static_cast<Segment*>( _fromHook->getComponent() );
     _net = fromSegment->getNet();
 
+    cdebug_log(145,0) << "For Hooks from fromHook" << endl;
     for ( Hook* hook : fromHook->getHooks() ) {
+      cdebug_log(145,0) << "Hook: " << hook << endl;
       cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
                  << "["  << (int)_connexity.fields.globals
                  << "+"  << (int)_connexity.fields.M1     
@@ -848,10 +901,10 @@ namespace {
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
       if (toSegment) {
         switch ( getSegmentHookType(hook) ) {
-          case WestBound:  _west  = hook; break;
-          case EastBound:  _east  = hook; break;
-          case SouthBound: _south = hook; break;
-          case NorthBound: _north = hook; break;
+          case WestBound:  _west  = hook; break; cdebug_log(145,0) << "hook is west";
+          case EastBound:  _east  = hook; break; cdebug_log(145,0) << "hook is east";
+          case SouthBound: _south = hook; break; cdebug_log(145,0) << "hook is south";
+          case NorthBound: _north = hook; break; cdebug_log(145,0) << "hook is north";
         }
 
         _connexity.fields.globals++;
@@ -859,10 +912,11 @@ namespace {
         Component*  anchor = hook->getComponent();
         RoutingPad* rp     = dynamic_cast<RoutingPad*>( anchor );
 
-        cdebug_log(145,0) << "| Looking for Anchor:" << anchor << " rp:" << rp << endl;
+        cdebug_log(145,0) << "| Looking for Anchor:" << anchor << endl;
 
         if (anchor) {
           Contact* contact = dynamic_cast<Contact*>( anchor );
+          cdebug_log(145,0) << "Contact:" << contact << endl;
           if (contact
              and (  Session::getAnabatic()->getConfiguration()->isGContact( anchor->getLayer() )
                  or Session::getAnabatic()->getConfiguration()->isGMetal  ( anchor->getLayer() )) ) {
@@ -880,13 +934,13 @@ namespace {
             if (not _gcell->isMatrix()) {
               cdebug_log(145,0) << "* Non-matrix GCell under: " << contact << endl;
               cdebug_log(145,0) << "| " << gcell << endl;
-              break;
             }
           } else {
             if (rp and AllianceFramework::get()->isPad(rp->_getEntityAsComponent()->getCell())) {
               _connexity.fields.Pad++;
             } else {
               const Layer* layer = anchor->getLayer();
+              cdebug_log(145,0) << "rp: " << rp << endl;
 
               if      (layer == Session::getRoutingLayer(0)) _connexity.fields.M1++; // M1 V
               else if (layer == Session::getRoutingLayer(1)) _connexity.fields.M2++; // M2 H
@@ -898,7 +952,7 @@ namespace {
                                , getString(layer->getName()).c_str()
                                , getString(anchor).c_str() )
                      << endl;
-                continue;
+              //continue;
               }
 
               if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) _connexity.fields.Pin++; 
@@ -935,6 +989,7 @@ namespace {
     _south = NULL;
     }*/
 
+    cdebug_log(145,0) << " " << endl;
     cdebug_tabw(145,-1);
 
     if (_gcell == NULL) throw Error( missingGCell );
@@ -1089,33 +1144,91 @@ namespace {
         toHook->attach( master );
       }
     } else {
-      if      (_gcell->isDevice ()) _doDevice();
-      else if (_gcell->isHChannel()) _doHChannel();
-      else if (_gcell->isVChannel()) _doVChannel();
-      else if (_gcell->isHStrut  ()) _doHStrut();
-      else if (_gcell->isVStrut  ()) _doVStrut();
-      else if (_gcell->isIoPad  ()) _doIoPad();
+      if      (_gcell->isDevice ()){
+        _doDevice();
+        cdebug_log(145,0) << "doDevice done" << endl;
+        if (_sourceContact) {
+          cdebug_log(145,0) << "sourceContact is not NULL" << endl;
+          AutoContact* targetContact
+            = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
+            ? _northEastContact : _southWestContact ;
+          AutoSegment* globalSegment = AutoSegment::create( _sourceContact
+                                                          , targetContact
+                                                          , static_cast<Segment*>( _fromHook->getComponent() )
+                                                          );
+          cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
+        } else {
+          cdebug_log(145,0) << "sourceContact is NULL" << endl;
+          _fromHook = NULL;
+        }
+
+        Hook* toHook         = NULL;
+        Hook* toHookOpposite = NULL;
+        if ( _east and (_fromHook != _east) ) {
+          toHook         = _east;
+          toHookOpposite = getSegmentOppositeHook( _east );
+          cdebug_log(145,0) << "Pushing East (to)   " << getString(toHook) << endl;
+          cdebug_log(145,0) << "toHookOpposite:     " << toHookOpposite << endl;
+          cdebug_log(145,0) << "Pushing East (from) " << _northEastContact << endl;
+          forks.push( toHookOpposite, _northEastContact );
+        }
+        if ( _west and (_fromHook != _west) ) {
+          toHook         = _west;
+          toHookOpposite = getSegmentOppositeHook( _west );
+          cdebug_log(145,0) << "Pushing West (to)   " << getString(toHook) << endl;
+          cdebug_log(145,0) << "toHookOpposite:     " << toHookOpposite << endl;
+          cdebug_log(145,0) << "Pushing West (from) " << _southWestContact << endl;
+          forks.push( toHookOpposite, _southWestContact );
+        }
+        if ( _north and (_fromHook != _north) ) {
+          toHook         = _north;
+          toHookOpposite = getSegmentOppositeHook( _north );
+          cdebug_log(145,0) << "Pushing North (to)   " << getString(toHook) << endl;
+          cdebug_log(145,0) << "toHookOpposite:      " << toHookOpposite << endl;
+          cdebug_log(145,0) << "Pushing North (from) " << _northEastContact << endl;
+          forks.push( toHookOpposite, _northEastContact );
+        }
+        if ( _south and (_fromHook != _south) ) {
+          toHook         = _south;
+          toHookOpposite = getSegmentOppositeHook( _south );
+          cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
+          cdebug_log(145,0) << "toHookOpposite:      " << toHookOpposite << endl;
+          cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
+          forks.push( toHookOpposite, _southWestContact );
+        }
+
+      } else if ((_gcell->isHChannel()) || (_gcell->isHStrut  ())){
+        _doHChannel( forks );
+
+        cdebug_log(145,0) << "doHChannel done" << endl;
+
+      } else if ((_gcell->isVChannel()) || (_gcell->isVStrut  ())){
+        _doVChannel();
+      } else if (_gcell->isIoPad  ()) _doIoPad();
       else
         throw Bug( "Unmanaged GCell type: %s in %s\n"
                    "      The global routing seems to be defective."
                  , getString(_gcell).c_str()
                  , getString(_net).c_str()
                  );
+      
+      // for ( Hook* toHook : _fromHook->getHooks() ) {
+      //   if (toHook == _fromHook) continue;
 
-      for ( Hook* toHook : _fromHook->getHooks() ) {
-        if (toHook == _fromHook) continue;
+      //   Segment* segment = dynamic_cast<Segment*>( toHook->getComponent() );
+      //   if (not segment) continue;
 
-        Segment* segment = dynamic_cast<Segment*>( toHook->getComponent() );
-        if (not segment) continue;
+      //   Hook* toHookOpposite = getSegmentOppositeHook( toHook );
 
-        Hook* toHookOpposite = getSegmentOppositeHook( toHook );
-
-      // Temporary. A vector of HTee/VTee must be defined in replacement of
-      // SW / NE contacts, so we connect to the right contact branch.
-        cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
-        cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
-        forks.push( toHookOpposite, _southWestContact );
-      }
+      // // Temporary. A vector of HTee/VTee must be defined in replacement of
+      // // SW / NE contacts, so we connect to the right contact branch.
+      //   cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
+      //   cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
+      //   forks.push( toHookOpposite, _southWestContact );
+      // }
+      if (_sourceContact) {
+      } else _fromHook = NULL;
+      
     }
 
     cdebug_tabw(145,-1);
@@ -2094,84 +2207,254 @@ namespace {
   }
 
 
-  void  GCellTopology::_doDevice ()
+  bool isVertical ( RoutingPad* rp )
+  {
+    return (  (rp->getSourcePosition().getX() == rp->getTargetPosition().getX()) 
+           && (rp->getSourcePosition().getY() != rp->getTargetPosition().getY()) 
+           );
+  }
+
+  bool isHorizontal ( RoutingPad* rp )
+  {
+    return (  (rp->getSourcePosition().getY() == rp->getTargetPosition().getY()) 
+           && (rp->getSourcePosition().getX() != rp->getTargetPosition().getX()) 
+           );
+  }
+
+  RoutingPad* returnSW ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 ){
+
+    DbU::Unit c1SW = (rp1->getSourcePosition().getX() - gcell->getXMin()) + (rp1->getSourcePosition().getY() - gcell->getYMin());
+    DbU::Unit c2SW = (rp2->getSourcePosition().getX() - gcell->getXMin()) + (rp2->getSourcePosition().getY() - gcell->getYMin());
+
+    if ( c1SW < c2SW ){
+      return rp1;
+    } else {
+      return rp2;
+    }
+  }
+
+  RoutingPad* returnNE ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 ){
+
+    DbU::Unit c1NE = (rp1->getTargetPosition().getX() - gcell->getXMin()) + (rp1->getTargetPosition().getY() - gcell->getYMin());
+    DbU::Unit c2NE = (rp2->getTargetPosition().getX() - gcell->getXMin()) + (rp2->getTargetPosition().getY() - gcell->getYMin());
+
+    if ( c1NE < c2NE ){
+      return rp1;
+    } else {
+      return rp2;
+    }
+  }
+
+  
+  AutoContact* doRp_AC ( GCell* gcell , RoutingPad* rp, bool isSW, bool singleSeg = false )
+  {
+    const Layer* rpLayer  = rp->getLayer();
+    size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+    DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+    Point        position;
+
+    if (singleSeg == false){
+      if (isSW) position = rp->getSourcePosition();
+      else      position = rp->getTargetPosition();
+    } else {
+      position = Point ( abs(rp->getSourcePosition().getX() + rp->getTargetPosition().getX())/2
+                       , abs(rp->getSourcePosition().getY() + rp->getTargetPosition().getY())/2
+                       );
+    }
+
+    return AutoContactTerminal::create( gcell
+                                      , rp
+                                      , rpLayer
+                                      , position
+                                      , viaSide, viaSide
+                                      );
+  }
+  
+
+  void GCellTopology::_doDevice ()
   {
     cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
-  /*
-  // Find NE and SW routing pads
-    Horizontal* hne = NULL;
-    Vertical*   vne = NULL;
-    Horizontal* hsw = NULL;
-    Vertical*   vsw = NULL;
     
-    for ( Component* c : _net->getComponents() ){
-      Segment* s = dynamic_cast<Segment*>(c);
-      if (s){
-        if ( Session::getAnabatic()->getConfiguration()->getGContactLayer() != s->getLayer() ){
-          if ( _gcell->getBoundingBox().intersect(s->getBoundingBox() ) ){
-            Horizontal* h = dynamic_cast<Horizontal*> (s);
-            Vertical*   v = dynamic_cast<Vertical*>   (s);
-            if (h){
-              if ( (not (hne)) && (not (hsw)) ){
-                hne = h;
-                hsw = h;
-              } else {
-              // criteria for NE: (xMax-xSegment) + (yMax-ySegment), the smaller it is, the better it is 
-                DbU::Unit bNEc = (_gcell->getXMax() - hne->getTarget()->getX()) + ( _gcell->getYMax() - hne->getTarget()->getY());
-                DbU::Unit cNEc = (_gcell->getXMax() - h->getTarget()->getX())   + ( _gcell->getYMax() - h->getTarget()->getY()  );
-                if (cNEc < bNEc) hne = h;
-
-              // criteria for SW: (xSegment-xMin) + (ySegment-yMin), the smaller it is, the better it is 
-                DbU::Unit bSWc = (hne->getSource()->getX() - _gcell->getXMin()) + (hne->getSource()->getY() - _gcell->getYMin());
-                DbU::Unit cSWc = (h->getSource()->getX()   - _gcell->getXMin()) + (h->getSource()->getY()   - _gcell->getYMin());
-                if (cSWc < bSWc) hsw = h;
-              } 
-            } else if (v){ 
-              if ( (not (vne)) && (not (vsw)) ){
-                vne = v;
-                vsw = v;
-              } else {
-              // criteria for NE: (xMax-xSegment) + (yMax-ySegment), the smaller it is, the better it is 
-                DbU::Unit bNEc = (_gcell->getXMax() - vne->getTarget()->getX()) + ( _gcell->getYMax() - vne->getTarget()->getY());
-                DbU::Unit cNEc = (_gcell->getXMax() - v->getTarget()->getX())   + ( _gcell->getYMax() - v->getTarget()->getY()  );
-                if (cNEc < bNEc) vne = v;
-
-              // criteria for SW: (xSegment-xMin) + (ySegment-yMin), the smaller it is, the better it is 
-                DbU::Unit bSWc = (vne->getSource()->getX() - _gcell->getXMin()) + (vne->getSource()->getY() - _gcell->getYMin());
-                DbU::Unit cSWc = (v->getSource()->getX()   - _gcell->getXMin()) + (v->getSource()->getY()   - _gcell->getYMin());
-                if (cSWc < bSWc) vsw = v;
-              } 
-            }
-          }
-        }
+  // #0: Check if all RoutingPads are set to a component. 
+    for ( unsigned int i=0; i<_routingPads.size() ; i++ ) {
+      if ( ( _routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX() )
+         &&( _routingPads[i]->getSourcePosition().getY() == _routingPads[i]->getTargetPosition().getY() )
+         ){
+        throw Error( "GCellTopology::_doDevice() Some RoutingPads are not set to a component.\n"
+                   "        On: %s."
+                   , getString(_gcell).c_str()
+                   );
       }
     }
-  // SetExternal + create AutoContact northEast + southWest, Placed center of segment
-    if (hne) cerr << "NE: " << hne << endl;
-    else     cerr << "NE: " << vne << endl;
     
-    if (hsw) cerr << "SW: " << hsw << endl;
-    else     cerr << "SW: " << vsw << endl;
-  */
-  /*problem: How to create routing pad with segment only without plugs
-  */
-    
-  // _north, _south, _west, _east => segment GContact
-  // if nort or east
-  // detach wire from GContact to AutoContact
-  // move Segment to wire X (vertical), Y (horizontal) given by AutoContact
-  // do accordingly for _south and _west
+    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
+    if (_routingPads.size() > 1){ 
+    // #1: Find RoutingPads to use for AutoContacts NE+SW
+      RoutingPad* rpNE = _routingPads[0];
+      RoutingPad* rpSW = _routingPads[0];
 
-//throw Error( "GCellTopology::_doDevice() Unimplemented, blame goes to E. Lao." );
+      for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
+        rpNE = returnNE( _gcell, rpNE, _routingPads[i] );
+        rpSW = returnSW( _gcell, rpSW, _routingPads[i] );
+      }
+      
+      cdebug_log(145,0) << "rpNE: " << rpNE << endl;
+      cdebug_log(145,0) << "rpSW: " << rpSW << endl;
+    // #2: Check if 1 or 2 AutoContacts is necessary.
+      bool ne = false;
+      bool sw = false;
+      if ( (!_north) || (!_east) ){
+        _northEastContact = doRp_AC ( _gcell , rpSW, true );
+        ne = true;
+      } 
+      if ( (!_south) || (!_west) ){
+        _southWestContact = doRp_AC ( _gcell , rpNE, false );
+        sw = true;
+      }
+      if ( ne == false ) _northEastContact = _southWestContact;
+      if ( sw == false ) _southWestContact = _northEastContact;
+      cdebug_log(145,0) << "AutoContact NE: " << _northEastContact << endl;
+      cdebug_log(145,0) << "AutoContact SW: " << _southWestContact << endl;
+
+    } else if (_routingPads.size() == 0){
+      cdebug_log(145,0) << "Pas de RoutingPad trouvé." << endl;
+    } else {
+    // #1: Find RoutingPads to use for AutoContacts NE+SW
+    // Only 1 RoutingPads => 1 Component
+      cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
+    // #2: Check if 1 or 2 AutoContacts is necessary.
+      bool ne = false;
+      bool sw = false;
+      
+      cdebug_log(145,0) << "North: " << _north << endl;
+      cdebug_log(145,0) << "East : " << _east << endl;
+      cdebug_log(145,0) << "South: " << _south << endl;
+      cdebug_log(145,0) << "West : " << _west << endl;
+      if ( (_north) || (_east) ){
+        _northEastContact = doRp_AC ( _gcell , _routingPads[0], true );
+        ne = true;
+      } 
+      if ( (_south) || (_west) ){
+        _southWestContact = doRp_AC ( _gcell , _routingPads[0], false );
+        sw = true;
+      }
+      if ( ne == false ) _northEastContact = _southWestContact;
+      if ( sw == false ) _southWestContact = _northEastContact;
+      cdebug_log(145,0) << "AutoContact NE: " << _northEastContact << endl;
+      cdebug_log(145,0) << "AutoContact SW: " << _southWestContact << endl;
+    }
 
     cdebug_tabw(145,-1);
   }
 
 
-  void  GCellTopology::_doHChannel ()
+  void  GCellTopology::_doHChannel ( ForkStack& forks )
   {
-    cdebug_log(145,1) << "void  GCellTopology::_doHChannel ()" << _gcell << endl;
+    cdebug_log(145,1) << "void  GCellTopology::_doHChannel ( ForkStack& forks )" << _gcell << endl;
     
+    vector<Hook*>        hooks;
+    vector<AutoContact*> autoContacts;
+    
+
+    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
+    for ( Hook* toHook : _fromHook->getHooks() ) {
+      cdebug_log(145,0) << "toHook: "  << toHook << endl;
+
+      Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
+      if (s) hooks.push_back(toHook);
+    }
+    
+    sort( hooks.begin(), hooks.end(), SortHkByX(NoFlags) );
+    size_t i = 0;
+    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
+      
+      Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
+      Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
+      AutoContact* ac = NULL;
+      if (i == 0){
+        if        (h){
+          ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+          ac->setX(_gcell->getXMin());
+          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        } else if (v){
+          ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+          ac->setX(v->getX());
+          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        }
+      } else if (i == hooks.size()-1){
+        if        (h){
+          ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+          ac->setX(_gcell->getXMin() + _gcell->getWidth());
+          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        } else if (v){
+          ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+          ac->setX(v->getX());
+          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        }
+      } else {
+        ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+        ac->setX(v->getX());
+        ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+      } 
+      autoContacts.push_back(ac);
+      
+      cdebug_log(145,0) << "FromHook: " << _fromHook << endl << endl;
+      if (_fromHook->getComponent() == (*it)->getComponent()){
+        cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
+
+        if (_sourceContact) {
+
+          if ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) ){
+            AutoSegment* globalSegment = AutoSegment::create( ac
+                                                            , _sourceContact
+                                                            , static_cast<Segment*>( _fromHook->getComponent() )
+                                                            );
+            globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
+            cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
+          } else if ( getSegmentHookType(_fromHook) & (EastBound|SouthBound) ){
+            AutoSegment* globalSegment = AutoSegment::create( ac
+                                                            , _sourceContact
+                                                            , static_cast<Segment*>( _fromHook->getComponent() )
+                                                            );
+            globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
+            cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
+          }
+        } else _fromHook = NULL;
+      } else {
+      forks.push(  getSegmentOppositeHook((*it)), ac );
+      }
+      i++;
+    }
+
+
+
+    cdebug_log(145,0) << "Segments:" << hooks.size() <<endl;
+    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
+      cdebug_log(145,0) << (*it)->getComponent() << endl;
+    }
+    cdebug_log(145,0) << "AutoContacts:" << autoContacts.size() << endl;
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    const Layer*        horizontalLayer = hLayer;
+    DbU::Unit           horizontalWidth = hWidth;
+
+    for (size_t j=1; j < autoContacts.size(); j++){
+      AutoSegment::create( autoContacts[j-1]
+                         , autoContacts[j]
+                         , Horizontal::create( autoContacts[j-1]->base()
+                                             , autoContacts[j]->base()
+                                             , horizontalLayer
+                                             , autoContacts[j-1]->getY()
+                                             , horizontalWidth 
+                                             )
+                         );
+    }
+
+    for (vector<AutoContact*>::iterator it = autoContacts.begin(); it != autoContacts.end(); it++){
+      cdebug_log(145,0) << (*it) << endl;
+    }
+    cdebug_log(145,0) << _sourceContact << endl;
+
     /*throw Error( "GCellTopology::_doHChannel() Unimplemented, blame goes to E. Lao.\n"
                  "        On: %s."
                , getString(_gcell).c_str()
@@ -2263,7 +2546,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_loadNetGlobalRouting ( Net* net )
   {
-    cdebug_log(149,0) << "Anabatic::_loadNetGlobalRouting( " << net << " )" << endl;
+    cdebug_log(149,0) << "Anabatic::_loadNetGlobalRouting( " << net << " ) ==========================================================" << endl;
     cdebug_tabw(145,1);
 
     ForkStack    forks;
@@ -2303,6 +2586,7 @@ namespace Anabatic {
     forEach ( RoutingPad*, startRp, routingPads ) {
       bool segmentFound = false;
 
+      cdebug_log(145,0) << "startRp: " << startRp << endl;
       forEach ( Hook*, ihook, startRp->getBodyHook()->getHooks() ) {
         cdebug_log(145,0) << "Component " << ihook->getComponent() << endl;
         Segment* segment = dynamic_cast<Segment*>( ihook->getComponent() );
@@ -2312,6 +2596,7 @@ namespace Anabatic {
           segmentFound = true;
 
           GCellTopology  gcellConf ( this, *ihook, NULL );
+          cdebug_log(145,0) << "GCell.globals: " << gcellConf.getStateG() << endl;
           if (gcellConf.getStateG() == 1) {
             if ( (lowestGCell == NULL) or (*gcellConf.getGCell() < *lowestGCell) ) {
               cdebug_log(145,0) << "Starting from GCell " << gcellConf.getGCell() << endl;
@@ -2341,7 +2626,9 @@ namespace Anabatic {
 
     if (startHook == NULL) { singleGCell( this, net ); cdebug_tabw(145,-1); return; }
 
+    cdebug_log(145,0) << "******************************" << endl;
     GCellTopology  startGCellConf ( this, startHook, NULL );
+    cdebug_log(145,0) << "StartGCellConf" << startGCellConf.getGCell() << endl;
     startGCellConf.construct( forks );
 
     sourceHook    = forks.getFrom   ();
