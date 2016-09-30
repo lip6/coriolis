@@ -138,8 +138,7 @@ namespace Anabatic {
       inline        bool                  isDevice            () const;
       inline        bool                  isHChannel          () const;
       inline        bool                  isVChannel          () const;
-      inline        bool                  isHStrut            () const;
-      inline        bool                  isVStrut            () const;
+      inline        bool                  isStrut             () const;
       inline        bool                  isMatrix            () const;
       inline        bool                  isIoPad             () const;
                     bool                  isWest              ( GCell* ) const;
@@ -305,8 +304,7 @@ namespace Anabatic {
   inline       bool                  GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
   inline       bool                  GCell::isHChannel    () const { return _flags & Flags::HChannelGCell; }
   inline       bool                  GCell::isVChannel    () const { return _flags & Flags::VChannelGCell; }
-  inline       bool                  GCell::isHStrut      () const { return _flags & Flags::HStrutGCell; }
-  inline       bool                  GCell::isVStrut      () const { return _flags & Flags::VStrutGCell; }
+  inline       bool                  GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
   inline       bool                  GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
   inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
   inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }

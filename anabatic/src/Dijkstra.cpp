@@ -47,7 +47,7 @@ namespace Anabatic {
 // Class  :  "Anabatic::Vertex".
 
 
-  DbU::Unit  Vertex::unreached = std::numeric_limits<long>::max();
+  DbU::Unit  Vertex::unreached    = std::numeric_limits<long>::max();
   DbU::Unit  Vertex::unreachable  = std::numeric_limits<long>::max()-1;
 
 
@@ -116,10 +116,15 @@ namespace Anabatic {
 
   DbU::Unit  Dijkstra::_distance ( const Vertex* a, const Vertex* b, const Edge* e )
   {
+    cdebug_log(112,0) << "Calcul _distance "<< endl;
+    cdebug_log(112,0) << "a: "<< b->hasRestrictions() << ", " << a <<  endl;
+    cdebug_log(112,0) << "b: "<< b->hasRestrictions() << ", " << b <<  endl;
     DbU::Unit distance = a->getDistance() + e->getDistance();
 
-    if ( (a->isNotRestricted()) && (b->isNotRestricted()) ) { // A remplacer avec verification sur type IsDevice()?.
-      if (isRestricted(a, b)) distance = Vertex::unreachable;
+    if ( (a->hasRestrictions()) || (b->hasRestrictions()) ) { 
+      if (isRestricted(a, b)) {
+        distance = Vertex::unreachable;
+      }
     }
     // Edge* aFrom = a->getFrom();
     // if (aFrom) {
@@ -213,14 +218,24 @@ namespace Anabatic {
     vector<RoutingPad*> rps;
     for ( Component* component : _net->getComponents() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
-      if (rp) { rps.push_back( rp ); continue; }
+      if (rp) { 
+        rps.push_back( rp ); 
+        cerr << "rp to route: " << rp << endl;
+        continue; 
+      }
     }
 
     for ( auto rp : rps ) {
       Point  center = rp->getBoundingBox().getCenter();
       GCell* gcell  = _anabatic->getGCellUnder( center );
+      cerr << "rp   : " << rp << endl;
+      cerr << "gcell: " << gcell << endl;
+      
+      if (gcell->isDevice()){
+        _searchArea.merge( _net->getCell()->getAbutmentBox() );
+      }
 
-      cdebug_log(112,0) << "| " << rp << " || " << gcell << endl;
+      cdebug_log(112,0) << "| " << rp << endl;
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s\n"
@@ -233,7 +248,9 @@ namespace Anabatic {
         continue;
       }
 
+      cdebug_log(112,0) << "Current Search area: " << _searchArea << ", gcell: " << gcell << endl;
       _searchArea.merge( gcell->getBoundingBox() );
+      cdebug_log(112,0) << "New Search area: " << _searchArea << endl;
 
       Vertex* seed = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
       if (seed->getConnexId() < 0) {
@@ -348,7 +365,7 @@ namespace Anabatic {
       _queue.dump();
 
       Vertex* current = _queue.top();
-      cdebug_log(111,0) << "Current Vertex: " << current << endl;
+      cdebug_log(111,0) << "[Current Vertex]: " << current << endl;
       _queue.pop();
 
       if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
@@ -364,7 +381,7 @@ namespace Anabatic {
 
         //if (not _searchArea.contains(vneighbor->getCenter())) {
           if (not _searchArea.intersect(gneighbor->getBoundingBox())) {
-            cdebug_log(111,0) << "not _searchArea.contains(vneighbor->getCenter()):" << _searchArea << endl;
+            cdebug_log(111,0) << "not in _searchArea: " << _searchArea << ", gneighbor area: "  << gneighbor->getBoundingBox() << endl;
             continue;
           }
 
@@ -372,15 +389,26 @@ namespace Anabatic {
           cdebug_log(111,0) << "+ Neighbor: " << vneighbor << endl;
 
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
+          cdebug_log(111,0) << "Distance: " << distance << ", unreachable: " << Vertex::unreachable << endl;
 
-          if (vneighbor->getConnexId() == _connectedsId) continue;
 
-          if (      (distance  < vneighbor->getDistance())
-             or (   (distance == vneighbor->getDistance())
-                and (current->getBranchId() > vneighbor->getBranchId())) ) {
+          if (vneighbor->getConnexId() == _connectedsId) {
+            cdebug_log(111,0) << "ConnectedsId" << endl;
+            continue;
+          }
+
+          if ( (      (distance  < vneighbor->getDistance())
+               or (   (distance == vneighbor->getDistance())
+                  and (current->getBranchId() > vneighbor->getBranchId())) 
+               ) 
+             and (distance != Vertex::unreachable)
+             ){
+            cdebug_log(111,0) << "1" << endl;
             if (vneighbor->getDistance() != Vertex::unreached) {
+              cdebug_log(111,0) << "2" << endl;
               _queue.erase( vneighbor );
             } else {
+              cdebug_log(111,0) << "3" << endl;
               if (not vneighbor->hasValidStamp()) {
                 vneighbor->setConnexId( -1 );
                 vneighbor->setStamp   ( _stamp );
@@ -512,6 +540,10 @@ namespace Anabatic {
         if (aligneds.front()->isHorizontal()) {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
+          if (sourceContact->getX() == targetContact->getX()){
+            cerr << "source Vertex: " << source << endl;
+            cerr << "target Vertex: " << source << endl;
+          }
 
           segment = Horizontal::create( sourceContact
                                       , targetContact
@@ -523,6 +555,10 @@ namespace Anabatic {
         } else {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
+          if (sourceContact->getY() == targetContact->getY()){
+            cerr << "source Vertex: " << source << endl;
+            cerr << "target Vertex: " << source << endl;
+          }
 
           segment = Vertical::create( sourceContact
                                     , targetContact

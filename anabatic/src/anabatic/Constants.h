@@ -34,12 +34,11 @@ namespace Anabatic {
     // Flags for GCell objects states only.                        
       static const unsigned int  DeviceGCell         ; // = (1 <<  5);
       static const unsigned int  HChannelGCell       ; // = (1 <<  6);
-      static const unsigned int  VChannelGCell       ; // = (1 <<  6);
-      static const unsigned int  HStrutGCell         ; // = (1 <<  7);
-      static const unsigned int  VStrutGCell         ; // = (1 <<  7);
-      static const unsigned int  MatrixGCell         ; // = (1 <<  8);
-      static const unsigned int  IoPadGCell          ; // = (1 <<  9);
-      static const unsigned int  Saturated           ; // = (1 << 10);
+      static const unsigned int  VChannelGCell       ; // = (1 <<  7);
+      static const unsigned int  StrutGCell          ; // = (1 <<  8);
+      static const unsigned int  MatrixGCell         ; // = (1 <<  9);
+      static const unsigned int  IoPadGCell          ; // = (1 << 10);
+      static const unsigned int  Saturated           ; // = (1 << 11);
     // Flags for Anabatic objects states only.                      
       static const unsigned int  DemoMode            ; // = (1 <<  5);
       static const unsigned int  WarnOnGCellOverload ; // = (1 <<  6);
@@ -57,7 +56,7 @@ namespace Anabatic {
       static const unsigned int  EndsMask            ; // = Source|Target;
       static const unsigned int  DirectionMask       ; // = Horizontal|Vertical;
       static const unsigned int  DestroyMask         ; // = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
-      static const unsigned int  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|HStrutGCell|VStrutGCell|MatrixGCell|IoPadGCell;
+      static const unsigned int  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
     // Flags for functions arguments only.           
       static const unsigned int  Create              ; // = (1 <<  5);
       static const unsigned int  WithPerpands        ;

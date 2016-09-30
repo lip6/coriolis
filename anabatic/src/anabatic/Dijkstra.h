@@ -100,7 +100,7 @@ namespace Anabatic {
              inline  bool            isSRestricted  () const;
              inline  bool            isERestricted  () const;
              inline  bool            isWRestricted  () const;
-             inline  bool            isNotRestricted() const;
+             inline  bool            hasRestrictions() const;
 
              inline  void            setRestricted    ();
              inline  void            clearRestriction ();
@@ -190,7 +190,7 @@ namespace Anabatic {
   inline  bool Vertex::isSRestricted      () const { return (_flags & SRestricted); }
   inline  bool Vertex::isERestricted      () const { return (_flags & ERestricted); }
   inline  bool Vertex::isWRestricted      () const { return (_flags & WRestricted); }
-  inline  bool Vertex::isNotRestricted    () const { return ((!_flags) & 0xF); }
+  inline  bool Vertex::hasRestrictions    () const { return ( isNRestricted()||isSRestricted()||isERestricted()||isWRestricted()) ; }
 
   inline void         Vertex::setRestricted    () { _flags |= 0xF; }
   inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }

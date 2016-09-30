@@ -33,11 +33,10 @@ namespace Anabatic {
   const unsigned int  Flags::DeviceGCell         = (1 <<  5);
   const unsigned int  Flags::HChannelGCell       = (1 <<  6);
   const unsigned int  Flags::VChannelGCell       = (1 <<  7);
-  const unsigned int  Flags::HStrutGCell         = (1 <<  8);
-  const unsigned int  Flags::VStrutGCell         = (1 <<  9);
-  const unsigned int  Flags::MatrixGCell         = (1 << 10);
-  const unsigned int  Flags::IoPadGCell          = (1 << 11);
-  const unsigned int  Flags::Saturated           = (1 << 12);
+  const unsigned int  Flags::StrutGCell          = (1 <<  8);
+  const unsigned int  Flags::MatrixGCell         = (1 <<  9);
+  const unsigned int  Flags::IoPadGCell          = (1 << 10);
+  const unsigned int  Flags::Saturated           = (1 << 11);
 // Flags for Anabatic objects states only.                      
   const unsigned int  Flags::DemoMode            = (1 <<  5);
   const unsigned int  Flags::WarnOnGCellOverload = (1 <<  6);
@@ -55,7 +54,7 @@ namespace Anabatic {
   const unsigned int  Flags::EndsMask            = Source|Target;
   const unsigned int  Flags::DirectionMask       = Horizontal|Vertical;
   const unsigned int  Flags::DestroyMask         = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
-  const unsigned int  Flags::GCellTypeMask       = DeviceGCell|HChannelGCell|VChannelGCell|HStrutGCell|VStrutGCell|MatrixGCell|IoPadGCell;
+  const unsigned int  Flags::GCellTypeMask       = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
 // Flags for functions arguments only.           
   const unsigned int  Flags::Create              = (1 <<  5);
   const unsigned int  Flags::WithPerpands        = (1 <<  6);
@@ -104,8 +103,7 @@ namespace Anabatic {
     s += (_flags & DeviceGCell  ) ? 'd'  : '-';
     s += (_flags & HChannelGCell) ? 'c' : '-';
     s += (_flags & VChannelGCell) ? 'c' : '-';
-    s += (_flags & HStrutGCell  ) ? 's' : '-';
-    s += (_flags & VStrutGCell  ) ? 's' : '-';
+    s += (_flags & StrutGCell   ) ? 's' : '-';
     s += (_flags & MatrixGCell  ) ? 'm'  : '-';
     s += ",";
     s += (_flags & Invalidated  ) ? 'i'  : '-';

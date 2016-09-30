@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <sstream>
 #include "hurricane/Bug.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
@@ -50,6 +51,8 @@
 namespace {
 
   using  Anabatic::AutoContactTerminal;
+  using Hurricane::Breakpoint;
+  
 
 
 /*! \defgroup     LoadGlobalRouting  Global Routing Loading
@@ -709,12 +712,16 @@ namespace {
              void          _do_xG_xM2        ();
              void          _do_1G_1M3        ();
              void          _do_xG_xM3        ();
-             void          _doHChannel       ( ForkStack& forks );
-             void          _doVChannel       ();
-             void          _doHStrut         ();
-             void          _doVStrut         ();
-             void          _doDevice         ();
+             AutoContact*  _doHChannel       ( ForkStack& forks );
+             AutoContact*  _doVChannel       ( ForkStack& forks );
+             AutoContact*  _doStrut          ( ForkStack& forks );
+             AutoContact*  _doDevice         ( ForkStack& forks );
              void          _doIoPad          ();
+      
+             unsigned int  getNumberGlobals       ();
+             unsigned int  getDeviceNeighbourBound();
+      
+      
 
     private:
       enum ConnexityBits { GlobalBSize = 4
@@ -942,11 +949,11 @@ namespace {
               const Layer* layer = anchor->getLayer();
               cdebug_log(145,0) << "rp: " << rp << endl;
 
-              if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
-              else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
-              else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
-              else if (layer->getMask() == Session::getRoutingLayer(3)->getMask()) _connexity.fields.M2++; // M4 H
-              else if (layer->getMask() == Session::getRoutingLayer(4)->getMask()) _connexity.fields.M3++; // M5 V
+              if      (layer == Session::getRoutingLayer(0)) _connexity.fields.M1++; // M1 V
+              else if (layer == Session::getRoutingLayer(1)) _connexity.fields.M2++; // M2 H
+              else if (layer == Session::getRoutingLayer(2)) _connexity.fields.M3++; // M3 V
+              else if (layer == Session::getRoutingLayer(3)) _connexity.fields.M2++; // M4 H
+              else if (layer == Session::getRoutingLayer(4)) _connexity.fields.M3++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()
@@ -1144,93 +1151,29 @@ namespace {
         toHook->attach( master );
       }
     } else {
-      if      (_gcell->isDevice ()){
-        _doDevice();
-        cdebug_log(145,0) << "doDevice done" << endl;
-        if (_sourceContact) {
-          cdebug_log(145,0) << "sourceContact is not NULL" << endl;
-          AutoContact* targetContact
-            = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
-            ? _northEastContact : _southWestContact ;
-          AutoSegment* globalSegment = AutoSegment::create( _sourceContact
-                                                          , targetContact
-                                                          , static_cast<Segment*>( _fromHook->getComponent() )
-                                                          );
-          cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
-        } else {
-          cdebug_log(145,0) << "sourceContact is NULL" << endl;
-          _fromHook = NULL;
-        }
+      AutoContact* targetContact = NULL;
+      if (!_sourceContact) _fromHook = NULL;
 
-        Hook* toHook         = NULL;
-        Hook* toHookOpposite = NULL;
-        if ( _east and (_fromHook != _east) ) {
-          toHook         = _east;
-          toHookOpposite = getSegmentOppositeHook( _east );
-          cdebug_log(145,0) << "Pushing East (to)   " << getString(toHook) << endl;
-          cdebug_log(145,0) << "toHookOpposite:     " << toHookOpposite << endl;
-          cdebug_log(145,0) << "Pushing East (from) " << _northEastContact << endl;
-          forks.push( toHookOpposite, _northEastContact );
-        }
-        if ( _west and (_fromHook != _west) ) {
-          toHook         = _west;
-          toHookOpposite = getSegmentOppositeHook( _west );
-          cdebug_log(145,0) << "Pushing West (to)   " << getString(toHook) << endl;
-          cdebug_log(145,0) << "toHookOpposite:     " << toHookOpposite << endl;
-          cdebug_log(145,0) << "Pushing West (from) " << _southWestContact << endl;
-          forks.push( toHookOpposite, _southWestContact );
-        }
-        if ( _north and (_fromHook != _north) ) {
-          toHook         = _north;
-          toHookOpposite = getSegmentOppositeHook( _north );
-          cdebug_log(145,0) << "Pushing North (to)   " << getString(toHook) << endl;
-          cdebug_log(145,0) << "toHookOpposite:      " << toHookOpposite << endl;
-          cdebug_log(145,0) << "Pushing North (from) " << _northEastContact << endl;
-          forks.push( toHookOpposite, _northEastContact );
-        }
-        if ( _south and (_fromHook != _south) ) {
-          toHook         = _south;
-          toHookOpposite = getSegmentOppositeHook( _south );
-          cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
-          cdebug_log(145,0) << "toHookOpposite:      " << toHookOpposite << endl;
-          cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
-          forks.push( toHookOpposite, _southWestContact );
-        }
-
-      } else if ((_gcell->isHChannel()) || (_gcell->isHStrut  ())){
-        _doHChannel( forks );
-
-        cdebug_log(145,0) << "doHChannel done" << endl;
-
-      } else if ((_gcell->isVChannel()) || (_gcell->isVStrut  ())){
-        _doVChannel();
-      } else if (_gcell->isIoPad  ()) _doIoPad();
+      if      (_gcell->isDevice ())  targetContact = _doDevice  ( forks );
+      else if (_gcell->isHChannel()) targetContact = _doHChannel( forks );
+      else if (_gcell->isVChannel()) targetContact = _doVChannel( forks );
+      else if (_gcell->isStrut  ())  targetContact = _doStrut   ( forks );
+      else if (_gcell->isIoPad  ())  _doIoPad();
       else
         throw Bug( "Unmanaged GCell type: %s in %s\n"
                    "      The global routing seems to be defective."
                  , getString(_gcell).c_str()
                  , getString(_net).c_str()
                  );
-      
-      // for ( Hook* toHook : _fromHook->getHooks() ) {
-      //   if (toHook == _fromHook) continue;
 
-      //   Segment* segment = dynamic_cast<Segment*>( toHook->getComponent() );
-      //   if (not segment) continue;
-
-      //   Hook* toHookOpposite = getSegmentOppositeHook( toHook );
-
-      // // Temporary. A vector of HTee/VTee must be defined in replacement of
-      // // SW / NE contacts, so we connect to the right contact branch.
-      //   cdebug_log(145,0) << "Pushing South (to)   " << getString(toHook) << endl;
-      //   cdebug_log(145,0) << "Pushing South (from) " << _southWestContact << endl;
-      //   forks.push( toHookOpposite, _southWestContact );
-      // }
-      if (_sourceContact) {
-      } else _fromHook = NULL;
-      
+      if ( (_sourceContact) && (targetContact) ){
+        AutoSegment* globalSegment = AutoSegment::create( _sourceContact
+                                                        , targetContact
+                                                        , static_cast<Segment*>( _fromHook->getComponent() )
+                                                        );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+      }     
     }
-
     cdebug_tabw(145,-1);
   }
 
@@ -2235,8 +2178,8 @@ namespace {
 
   RoutingPad* returnNE ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 ){
 
-    DbU::Unit c1NE = (rp1->getTargetPosition().getX() - gcell->getXMin()) + (rp1->getTargetPosition().getY() - gcell->getYMin());
-    DbU::Unit c2NE = (rp2->getTargetPosition().getX() - gcell->getXMin()) + (rp2->getTargetPosition().getY() - gcell->getYMin());
+    DbU::Unit c1NE = (gcell->getXMax() - rp1->getTargetPosition().getX()) + (gcell->getYMax() - rp1->getTargetPosition().getY());
+    DbU::Unit c2NE = (gcell->getXMax() - rp2->getTargetPosition().getX()) + (gcell->getYMax() - rp2->getTargetPosition().getY());
 
     if ( c1NE < c2NE ){
       return rp1;
@@ -2271,10 +2214,139 @@ namespace {
   }
   
 
-  void GCellTopology::_doDevice ()
+  AutoContact* GCellTopology::_doDevice ( ForkStack& forks )
   {
     cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
-    
+  // #0: Check if all RoutingPads are set to a component. 
+    for ( unsigned int i=0; i<_routingPads.size() ; i++ ) {
+      if ( ( _routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX() )
+         &&( _routingPads[i]->getSourcePosition().getY() == _routingPads[i]->getTargetPosition().getY() )
+         ){
+        throw Error( "GCellTopology::_doDevice() Some RoutingPads are not set to a component.\n"
+                   "        On: %s."
+                   , getString(_gcell).c_str()
+                   );
+      }
+    }
+    cdebug_log(145,0) << "FromHook: " << _fromHook  << endl;
+    cdebug_log(145,0) << "North   : " << _north     << endl;
+    cdebug_log(145,0) << "East    : " << _east      << endl;
+    cdebug_log(145,0) << "South   : " << _south     << endl;
+    cdebug_log(145,0) << "West    : " << _west      << endl;
+    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
+
+    RoutingPad*  rpNE          = NULL;
+    RoutingPad*  rpSW          = NULL;
+    AutoContact* targetContact = NULL;
+
+    if ( _routingPads.size() > 1 ){
+      cdebug_log(145,0) << "Case _routingPads.size() > 1 "<< endl;
+      for(vector<RoutingPad*>::iterator it = _routingPads.begin();  it != _routingPads.end(); it++){
+        cdebug_log(145,0) << (*it) << endl;
+      }
+      
+    // #1: Find RoutingPads to use for AutoContacts NE+SW
+      rpNE = _routingPads[0];
+      rpSW = _routingPads[0];
+
+      for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
+        rpNE = returnNE( _gcell, rpNE, _routingPads[i] );
+        rpSW = returnSW( _gcell, rpSW, _routingPads[i] );
+      }
+      
+      cdebug_log(145,0) << "rpNE: " << rpNE << endl;
+      cdebug_log(145,0) << "rpSW: " << rpSW << endl;
+    } else if (_routingPads.size() == 0){
+      cdebug_log(145,0) << "Case _routingPads.size() = 0 "<< endl;
+      throw Error( "GCellTopology::_doDevice() No RoutingPads found.\n"
+                 "        On: %s."
+                 , getString(_gcell).c_str()
+                 );
+    } else {
+      cdebug_log(145,0) << "Case _routingPads.size() = 1 "<< endl;
+      rpNE = rpSW = _routingPads[0];
+    }
+    cdebug_log(145,0) << "rp NE: " << rpNE << endl;
+    cdebug_log(145,0) << "rp SW: " << rpSW << endl;
+
+    if ((rpNE != NULL) && (rpSW != NULL)){
+      if (_east){
+        cdebug_log(145,0) << "East"  << endl;
+        const Layer* rpLayer  = rpNE->getLayer();
+        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+        Point        position;
+
+        position = Point ( abs(rpNE->getSourcePosition().getX() + rpNE->getTargetPosition().getX())/2
+                         , abs(rpNE->getSourcePosition().getY() + rpNE->getTargetPosition().getY())/2
+                         );
+        AutoContact* ac = AutoContactTerminal::create( _gcell, rpNE, rpLayer, position
+                                                     , viaSide, viaSide
+                                                     );
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        if ( _fromHook != _east) forks.push( getSegmentOppositeHook( _east ), ac );
+        else                     targetContact = ac;
+      } 
+      if (_west){
+        cdebug_log(145,0) << "West"  << endl;
+        const Layer* rpLayer  = rpSW->getLayer();
+        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+        Point        position;
+
+        position = Point ( abs(rpSW->getSourcePosition().getX() + rpSW->getTargetPosition().getX())/2
+                         , abs(rpSW->getSourcePosition().getY() + rpSW->getTargetPosition().getY())/2
+                         );
+        AutoContact* ac = AutoContactTerminal::create( _gcell, rpSW, rpLayer, position
+                                                     , viaSide, viaSide
+                                                     );
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        if ( _fromHook != _west) forks.push( getSegmentOppositeHook( _west ), ac );
+        else                     targetContact = ac;
+      }
+      if (_south){
+        cdebug_log(145,0) << "South"  << endl;
+        const Layer* rpLayer  = rpSW->getLayer();
+        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+        Point        position;
+
+        position = Point ( abs(rpSW->getSourcePosition().getX() + rpSW->getTargetPosition().getX())/2
+                         , abs(rpSW->getSourcePosition().getY() + rpSW->getTargetPosition().getY())/2
+                         );
+        AutoContact* ac = AutoContactTerminal::create( _gcell, rpSW, rpLayer, position
+                                                     , viaSide, viaSide
+                                                     );
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        if ( _fromHook != _south) forks.push( getSegmentOppositeHook( _south ), ac );
+        else                      targetContact = ac;
+      }
+      if (_north){
+        cdebug_log(145,0) << "North"  << endl;
+        const Layer* rpLayer  = rpNE->getLayer();
+        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+        Point        position;
+
+        position = Point ( abs(rpNE->getSourcePosition().getX() + rpNE->getTargetPosition().getX())/2
+                         , abs(rpNE->getSourcePosition().getY() + rpNE->getTargetPosition().getY())/2
+                         );
+        AutoContact* ac = AutoContactTerminal::create( _gcell, rpNE, rpLayer, position
+                                                     , viaSide, viaSide
+                                                     );
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        if ( _fromHook != _north) forks.push( getSegmentOppositeHook( _north ), ac );
+        else                      targetContact = ac;
+      }
+    }
+    cdebug_log(145,0) << "doDevice done" << endl;
+    cdebug_tabw(145,-1);
+    return targetContact;
+  }
+/*
+  AutoContact* GCellTopology::_doDevice ( ForkStack& forks )
+  {
+    cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
   // #0: Check if all RoutingPads are set to a component. 
     for ( unsigned int i=0; i<_routingPads.size() ; i++ ) {
       if ( ( _routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX() )
@@ -2288,7 +2360,7 @@ namespace {
     }
     
     cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
-    if (_routingPads.size() > 1){ 
+    if ( _routingPads.size() > 1 ){
     // #1: Find RoutingPads to use for AutoContacts NE+SW
       RoutingPad* rpNE = _routingPads[0];
       RoutingPad* rpSW = _routingPads[0];
@@ -2326,10 +2398,6 @@ namespace {
       bool ne = false;
       bool sw = false;
       
-      cdebug_log(145,0) << "North: " << _north << endl;
-      cdebug_log(145,0) << "East : " << _east << endl;
-      cdebug_log(145,0) << "South: " << _south << endl;
-      cdebug_log(145,0) << "West : " << _west << endl;
       if ( (_north) || (_east) ){
         _northEastContact = doRp_AC ( _gcell , _routingPads[0], true );
         ne = true;
@@ -2343,151 +2411,1026 @@ namespace {
       cdebug_log(145,0) << "AutoContact NE: " << _northEastContact << endl;
       cdebug_log(145,0) << "AutoContact SW: " << _southWestContact << endl;
     }
+    
+    AutoContact* targetContact = NULL;
+    if (_sourceContact){
+      targetContact = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
+        ? _northEastContact : _southWestContact ;
+    }
+    cdebug_log(145,0) << "fromHook: " <<  _fromHook << endl;
+    cdebug_log(145,0) << "North   : " << _north     << endl;
+    cdebug_log(145,0) << "East    : " << _east      << endl;
+    cdebug_log(145,0) << "South   : " << _south     << endl;
+    cdebug_log(145,0) << "West    : " << _west      << endl;
 
+    if ( _east and (_fromHook != _east) ) {
+      forks.push( getSegmentOppositeHook( _east ), _northEastContact );
+    }
+    if ( _west and (_fromHook != _west) ) {
+      forks.push( getSegmentOppositeHook( _west ), _southWestContact );
+    }
+    if ( _north and (_fromHook != _north) ) {
+      forks.push( getSegmentOppositeHook( _north ), _northEastContact );
+    }
+    if ( _south and (_fromHook != _south) ) {
+      forks.push( getSegmentOppositeHook( _south ), _southWestContact );
+    }
+
+    cdebug_log(145,0) << "doDevice done" << endl;
     cdebug_tabw(145,-1);
-  }
+
+    return targetContact;
+    }*/
 
 
-  void  GCellTopology::_doHChannel ( ForkStack& forks )
+  AutoContact*  GCellTopology::_doHChannel ( ForkStack& forks )
   {
     cdebug_log(145,1) << "void  GCellTopology::_doHChannel ( ForkStack& forks )" << _gcell << endl;
     
-    vector<Hook*>        hooks;
-    vector<AutoContact*> autoContacts;
-    
+    vector<Hook*>       hooks;
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    static const Layer* vLayer = Session::getRoutingLayer( 2 );
+    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
 
+    const Layer* horizontalLayer = hLayer;
+    DbU::Unit    horizontalWidth = hWidth;
+    const Layer* verticalLayer   = vLayer;
+    DbU::Unit    verticalWidth   = vWidth;
+    AutoContact* targetContact = NULL;
+    
+  // Save segments only
     cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
     for ( Hook* toHook : _fromHook->getHooks() ) {
       cdebug_log(145,0) << "toHook: "  << toHook << endl;
 
       Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
-      if (s) hooks.push_back(toHook);
-    }
-    
-    sort( hooks.begin(), hooks.end(), SortHkByX(NoFlags) );
-    size_t i = 0;
-    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      
-      Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
-      Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
-      AutoContact* ac = NULL;
-      if (i == 0){
-        if        (h){
-          ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-          ac->setX(_gcell->getXMin());
-          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        } else if (v){
-          ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-          ac->setX(v->getX());
-          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        }
-      } else if (i == hooks.size()-1){
-        if        (h){
-          ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-          ac->setX(_gcell->getXMin() + _gcell->getWidth());
-          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        } else if (v){
-          ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-          ac->setX(v->getX());
-          ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        }
-      } else {
-        ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-        ac->setX(v->getX());
-        ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-      } 
-      autoContacts.push_back(ac);
-      
-      cdebug_log(145,0) << "FromHook: " << _fromHook << endl << endl;
-      if (_fromHook->getComponent() == (*it)->getComponent()){
-        cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
-
-        if (_sourceContact) {
-
-          if ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) ){
-            AutoSegment* globalSegment = AutoSegment::create( ac
-                                                            , _sourceContact
-                                                            , static_cast<Segment*>( _fromHook->getComponent() )
-                                                            );
-            globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
-            cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
-          } else if ( getSegmentHookType(_fromHook) & (EastBound|SouthBound) ){
-            AutoSegment* globalSegment = AutoSegment::create( ac
-                                                            , _sourceContact
-                                                            , static_cast<Segment*>( _fromHook->getComponent() )
-                                                            );
-            globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
-            cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
-          }
-        } else _fromHook = NULL;
-      } else {
-      forks.push(  getSegmentOppositeHook((*it)), ac );
+      if (s) {
+        hooks.push_back(toHook);
       }
-      i++;
     }
 
-
-
-    cdebug_log(145,0) << "Segments:" << hooks.size() <<endl;
+    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
+    sort( hooks.begin(), hooks.end(), SortHkByX(NoFlags) );
     for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      cdebug_log(145,0) << (*it)->getComponent() << endl;
+      cdebug_log(145,0) << "toHook: "  << (*it) << endl;
     }
-    cdebug_log(145,0) << "AutoContacts:" << autoContacts.size() << endl;
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    const Layer*        horizontalLayer = hLayer;
-    DbU::Unit           horizontalWidth = hWidth;
+    size_t i = 0;
 
-    for (size_t j=1; j < autoContacts.size(); j++){
-      AutoSegment::create( autoContacts[j-1]
-                         , autoContacts[j]
-                         , Horizontal::create( autoContacts[j-1]->base()
-                                             , autoContacts[j]->base()
-                                             , horizontalLayer
-                                             , autoContacts[j-1]->getY()
-                                             , horizontalWidth 
-                                             )
-                         );
+  // More than 2 AutoContacts to create
+    cdebug_log(145,0) << "Number of hooks: " <<  hooks.size() << endl;
+    if ( hooks.size() > 2 ){
+      cdebug_log(145,0) << "Number of hooks > 2 : " <<  hooks.size() << endl;
+      vector<AutoContact*> autoContacts;
+      bool                 firstH      = false; 
+
+      for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
+      
+        Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
+        Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
+        AutoContact* ac = NULL;
+        cdebug_log(145,0) << "index: " << i << endl;
+        cdebug_log(145,0) << "h    : " << h << endl;
+        cdebug_log(145,0) << "v    : " << v << endl;
+
+        if (i == 0){
+          if        (h){
+            ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+            ac->setX(_gcell->getXMin());
+            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+            firstH = true;
+          } else if (v){
+            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(v->getX());
+            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+          }
+        } else if (i == hooks.size()-1){
+          if        (h){
+            ac = autoContacts[i-1];
+          } else if (v){
+            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(v->getX());
+            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+          }
+        } else {
+          if ((i == 1)&&(firstH)){
+            ac = autoContacts[i-1];
+            if (v) ac->setX(v->getX());
+            else {
+              cerr << Warning( "Something is wrong with the number of globals in this HChannel."
+                             , getString(_gcell).c_str() )
+                   << endl;
+            }
+          } else {
+            ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+            ac->setX(v->getX());
+            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+          }
+        } 
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        autoContacts.push_back(ac);
+      
+        cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
+        if (_fromHook->getComponent() == (*it)->getComponent()){
+          cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
+          targetContact = ac;
+        } else {
+          forks.push( getSegmentOppositeHook((*it)), ac );
+        }
+        i++;
+      }   
+      cdebug_log(145,0) << "Chain contacts: "  << endl;
+      for (size_t j=1; j < autoContacts.size(); j++){
+        if (autoContacts[j-1] != autoContacts[j]){
+          AutoSegment* globalSegment = 
+            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
+                               , Horizontal::create( autoContacts[j-1]->base() , autoContacts[j]->base()
+                                                   , horizontalLayer
+                                                   , autoContacts[j-1]->getY()
+                                                   , horizontalWidth 
+                                                   )
+                               );
+          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        }
+      }
+    // There are only 2 AutoContacts to create
+    } else if (hooks.size() == 2){
+      cdebug_log(145,0) << "Number of hooks == 2 : " <<  hooks.size() << endl;
+      Horizontal*  h0  = dynamic_cast<Horizontal*>(hooks[0]->getComponent());
+      Vertical*    v0  = dynamic_cast<Vertical*>  (hooks[0]->getComponent());
+      Horizontal*  h1  = dynamic_cast<Horizontal*>(hooks[1]->getComponent());
+      Vertical*    v1  = dynamic_cast<Vertical*>  (hooks[1]->getComponent());
+      AutoContact* source = NULL;
+      AutoContact* target = NULL;
+      cdebug_log(145,0) << "h0: " << h0 << endl;
+      cdebug_log(145,0) << "v0: " << v0 << endl;
+      cdebug_log(145,0) << "h1: " << h1 << endl;
+      cdebug_log(145,0) << "v1: " << v1 << endl;
+        
+      if ((v0 != NULL) && (v1 != NULL)){
+        cdebug_log(145,0) << "case 2V" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(v0->getX());
+        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        target->setX(v1->getX());
+        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+
+        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Horizontal::create( source->base(), target->base()
+                                                 , horizontalLayer
+                                                 , source->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          targetContact = source;
+          forks.push( getSegmentOppositeHook(hooks[1]), target );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          targetContact = target;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+
+      } else if (((h0 != NULL) && (v1 != NULL)) || ((v0 != NULL) && (h1 != NULL))){
+        cdebug_log(145,0) << "case 1V and 1H" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
+        if (h0 && v1){
+          source->setX(v1->getX());
+        } else {
+          source->setX(v0->getX());
+        }
+        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        targetContact = source;
+
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          forks.push( getSegmentOppositeHook(hooks[1]), source );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+      } else if ((h0 != NULL) && (h1 != NULL)){
+        cdebug_log(145,0) << "case 2H" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+
+        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
+
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Vertical::create( source->base(), target->base()
+                                               , verticalLayer
+                                               , source->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          targetContact = source;
+          forks.push( getSegmentOppositeHook(hooks[1]), target );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          targetContact = target;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+      }
     }
-
-    for (vector<AutoContact*>::iterator it = autoContacts.begin(); it != autoContacts.end(); it++){
-      cdebug_log(145,0) << (*it) << endl;
-    }
-    cdebug_log(145,0) << _sourceContact << endl;
-
-    /*throw Error( "GCellTopology::_doHChannel() Unimplemented, blame goes to E. Lao.\n"
-                 "        On: %s."
-               , getString(_gcell).c_str()
-               );*/
+    cdebug_log(145,0) << "doHChannel done" << endl;
     cdebug_tabw(145,-1);
+
+    return targetContact;
   }
 
 
-  void  GCellTopology::_doVChannel ()
+  AutoContact*  GCellTopology::_doVChannel ( ForkStack& forks )
   {
     cdebug_log(145,1) << "void  GCellTopology::_doVChannel ()" << _gcell << endl;
     
-    /*throw Error( "GCellTopology::_doVChannel() Unimplemented, blame goes to E. Lao.\n"
-                 "        On: %s."
-               , getString(_gcell).c_str()
-               );*/
+  
+    vector<Hook*>       hooks;
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    static const Layer* vLayer = Session::getRoutingLayer( 2 );
+    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+
+    const Layer* horizontalLayer = hLayer;
+    DbU::Unit    horizontalWidth = hWidth;
+    const Layer* verticalLayer   = vLayer;
+    DbU::Unit    verticalWidth   = vWidth;
+    AutoContact* targetContact   = NULL;
+    
+  // Save segments only
+    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
+
+    
+    for ( Hook* toHook : _fromHook->getHooks() ) {
+      cdebug_log(145,0) << "toHook: "  << toHook << endl;
+
+      Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
+      if (s) {
+        hooks.push_back(toHook);
+      }
+    }
+    
+    cdebug_log(145,0) << "Sorted hooks:" << endl;
+    sort( hooks.begin(), hooks.end(), SortHkByY(NoFlags) );
+    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
+      cdebug_log(145,0) << "toHook: "  << (*it) << endl;
+    }
+    size_t i = 0;
+
+  // More than 2 AutoContacts to create
+    cdebug_log(145,0) << "Number of hooks: " <<  hooks.size() << endl;
+    if ( hooks.size() > 2 ){
+      cdebug_log(145,0) << "Number of hooks > 2 : " <<  hooks.size() << endl;
+      vector<AutoContact*> autoContacts;
+      bool                 firstV      = false; 
+
+      for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
+      
+        Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
+        Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
+        AutoContact* ac = NULL;
+        cdebug_log(145,0) << "index: " << i << endl;
+        cdebug_log(145,0) << "h    : " << h << endl;
+        cdebug_log(145,0) << "v    : " << v << endl;
+
+        if (i == 0){
+          if        (v){
+            ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+            ac->setY(_gcell->getYMin());
+            firstV = true;
+          } else if (h){
+            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+            ac->setY(h->getY());
+          }
+        } else if (i == hooks.size()-1){
+          if        (v){
+            ac = autoContacts[i-1];
+          } else if (h){
+            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+            ac->setY(h->getY());
+          }
+        } else {
+          if ((i == 1)&&(firstV)){
+            ac = autoContacts[i-1];
+            if (h) ac->setY(h->getY());
+            else {
+              cerr << Warning( "Something is wrong with the number of globals in this VChannel."
+                             , getString(_gcell).c_str() )
+                   << endl;
+            }
+          } else {
+            ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+            ac->setY(h->getY());
+          }
+        } 
+        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        autoContacts.push_back(ac);
+      
+        cdebug_log(145,0) << "FromHook: " << _fromHook << endl << endl;
+        if (_fromHook->getComponent() == (*it)->getComponent()){
+          cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
+          targetContact = ac;
+        } else {
+          forks.push( getSegmentOppositeHook((*it)), ac );
+        }
+        i++;
+      }   
+      cdebug_log(145,0) << "Chain contacts: "  << endl;
+      for (size_t j=1; j < autoContacts.size(); j++){
+        if (autoContacts[j-1] != autoContacts[j]){
+          AutoSegment* globalSegment = 
+            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
+                               , Vertical::create( autoContacts[j-1]->base() , autoContacts[j]->base()
+                                                 , verticalLayer
+                                                 , autoContacts[j-1]->getX()
+                                                 , verticalWidth 
+                                                 )
+                               );
+          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        }
+      }
+    // There are only 2 AutoContacts to create
+    } else if (hooks.size() == 2){
+      cdebug_log(145,0) << "Number of hooks == 2 : " <<  hooks.size() << endl;
+      Horizontal*  h0  = dynamic_cast<Horizontal*>(hooks[0]->getComponent());
+      Vertical*    v0  = dynamic_cast<Vertical*>  (hooks[0]->getComponent());
+      Horizontal*  h1  = dynamic_cast<Horizontal*>(hooks[1]->getComponent());
+      Vertical*    v1  = dynamic_cast<Vertical*>  (hooks[1]->getComponent());
+      AutoContact* source = NULL;
+      AutoContact* target = NULL;
+      cdebug_log(145,0) << "h0: " << h0 << endl;
+      cdebug_log(145,0) << "v0: " << v0 << endl;
+      cdebug_log(145,0) << "h1: " << h1 << endl;
+      cdebug_log(145,0) << "v1: " << v1 << endl;
+          
+      if ((h0 != NULL) && (h1 != NULL)){
+        cdebug_log(145,0) << "case 2H" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        source->setY(h0->getY());
+
+        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        target->setY(h1->getY());
+
+        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
+
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Vertical::create( source->base(), target->base()
+                                               , verticalLayer
+                                               , source->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          targetContact = source;
+          forks.push( getSegmentOppositeHook(hooks[1]), target );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          targetContact = target;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+
+      } else if (((v0 != NULL) && (h1 != NULL)) || ((h0 != NULL) && (v1 != NULL))){
+        cdebug_log(145,0) << "case 1V and 1H" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        if (v0 && h1){
+          source->setY(h1->getY());
+        } else {
+          source->setY(h0->getY());
+        }
+        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        targetContact = source;
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
+
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          forks.push( getSegmentOppositeHook(hooks[1]), source );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+      } else if ((v0 != NULL) && (v1 != NULL)){
+        cdebug_log(145,0) << "case 2V" << endl;
+        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+
+        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
+
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Horizontal::create( source->base(), target->base()
+                                                 , horizontalLayer
+                                                 , source->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
+          targetContact = source;
+          forks.push( getSegmentOppositeHook(hooks[1]), target );
+          
+        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
+          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
+          targetContact = target;
+          forks.push( getSegmentOppositeHook(hooks[0]), source );
+        }
+      }
+    }
+    cdebug_log(145,0) << "doVChannel done" << endl;
     cdebug_tabw(145,-1);
+
+    return targetContact;
   }
 
 
-  void  GCellTopology::_doHStrut ()
+  unsigned int GCellTopology::getNumberGlobals ()
   {
-    cdebug_log(145,1) << "void  GCellTopology::_doHStrut ()" << _gcell << endl;
-  //throw Error( "GCellTopology::_doHStrut() Unimplemented, blame goes to E. Lao." );
-    cdebug_tabw(145,-1);
+    unsigned int i = 0;
+    if (_north) i++;
+    if (_south) i++;
+    if (_east ) i++;
+    if (_west ) i++;
+    return i;
   }
 
 
-  void  GCellTopology::_doVStrut ()
+  unsigned int GCellTopology::getDeviceNeighbourBound()
   {
-    cdebug_log(145,1) << "void  GCellTopology::_doVStrut ()" << _gcell << endl;
-  //throw Error( "GCellTopology::_doVStrut() Unimplemented, blame goes to E. Lao." );
+    unsigned int bound = 0;
+    if (_north){
+      if (_gcell->getNorth()->isDevice()) bound = NorthBound;
+    } else if (_south){
+      if (_gcell->getSouth()->isDevice()) bound = SouthBound;
+    } else if (_east){
+      if (_gcell->getEast()->isDevice() ) bound = EastBound;
+    } else if (_west){
+      if (_gcell->getWest()->isDevice() ) bound = WestBound;
+    }
+    return bound;
+  }
+
+
+  AutoContact*  GCellTopology::_doStrut ( ForkStack& forks )
+  {
+    cdebug_log(145,1) << "void  GCellTopology::_doStrut ()" << _gcell << endl;
+    
+    static const Layer* hLayer = Session::getRoutingLayer( 1 );
+    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    static const Layer* vLayer = Session::getRoutingLayer( 2 );
+    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+
+    const Layer* horizontalLayer = hLayer;
+    DbU::Unit    horizontalWidth = hWidth;
+    const Layer* verticalLayer   = vLayer;
+    DbU::Unit    verticalWidth   = vWidth;
+    AutoContact* targetContact   = NULL; // Contact for fromHook segment
+    cdebug_log(145,0) << "FromHook: " << _fromHook  << endl;
+    cdebug_log(145,0) << "North   : " << _north     << endl;
+    cdebug_log(145,0) << "East    : " << _east      << endl;
+    cdebug_log(145,0) << "South   : " << _south     << endl;
+    cdebug_log(145,0) << "West    : " << _west      << endl;
+
+  // Determine NE and SW contacts
+    if ( getNumberGlobals() == 2 ){
+      cdebug_log(145,0) << "Case 2 globals: " <<  getNumberGlobals() << endl;
+
+      AutoContact* source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      targetContact = source;
+      if (  ((_north != NULL) && (_west != NULL)) 
+         || ((_north != NULL) && (_east != NULL))
+         || ((_south != NULL) && (_west != NULL))
+         || ((_south != NULL) && (_east != NULL))
+         ){
+        if        ((_north != NULL) && (_west != NULL)) {
+          cdebug_log(145,0) << "North: " << _north << endl;
+          cdebug_log(145,0) << "West : " << _west << endl;
+          source->setX(_north->getComponent()->getX());
+          source->setY(_west->getComponent ()->getY());
+        } else if ((_north != NULL) && (_east != NULL)) {
+          cdebug_log(145,0) << "North: " << _north << endl;
+          cdebug_log(145,0) << "East : " << _east << endl;
+          source->setX(_north->getComponent()->getX());
+          source->setY(_east->getComponent ()->getY());
+        } else if ((_south != NULL) && (_west != NULL)) {
+          cdebug_log(145,0) << "South: " << _south << endl;
+          cdebug_log(145,0) << "West : " << _west << endl;
+          source->setX(_south->getComponent()->getX());
+          source->setY(_west->getComponent ()->getY());
+        } else if ((_south != NULL) && (_east != NULL)) {
+          cdebug_log(145,0) << "South: " << _south << endl;
+          cdebug_log(145,0) << "East: "  << _east << endl;
+          source->setX(_south->getComponent()->getX());
+          source->setY(_east->getComponent ()->getY());
+        }
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
+        if ( _east and (_fromHook != _east) ) 
+          forks.push( getSegmentOppositeHook( _east ), source );
+        if ( _west and (_fromHook != _west) ) 
+          forks.push( getSegmentOppositeHook( _west ), source );
+        if ( _north and (_fromHook != _north) ) 
+          forks.push( getSegmentOppositeHook( _north ), source );
+        if ( _south and (_fromHook != _south) ) 
+          forks.push( getSegmentOppositeHook( _south ), source );
+
+      } else if ((_north != NULL) && (_south != NULL)) {
+        cdebug_log(145,0) << "Case NS" <<  endl;
+        AutoContact* target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(_north->getComponent()->getX());
+        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+        target->setX(_south->getComponent()->getX());
+        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
+
+        if (_north->getComponent()->getX() > _south->getComponent()->getX()) {
+          swap( source, target );
+          if ( _north and (_fromHook != _north) ){
+            forks.push( getSegmentOppositeHook( _north ), target );
+          } else if ( _south and (_fromHook != _south) ){
+            forks.push( getSegmentOppositeHook( _south ), source );
+            targetContact = target;
+          } else {
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+                           , getString(_gcell).c_str() )
+                 << endl;
+          }
+        } else {
+          if ( _north and (_fromHook != _north) ){ 
+            forks.push( getSegmentOppositeHook( _north ), source );
+            targetContact = target;
+          } else if ( _south and (_fromHook != _south) ){
+            forks.push( getSegmentOppositeHook( _south ), target );
+          } else {
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+                           , getString(_gcell).c_str() )
+                 << endl;
+          }
+        }
+        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
+
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Horizontal::create( source->base(), target->base()
+                                                 , horizontalLayer
+                                                 , source->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+      
+      } else if ((_east != NULL) && (_west != NULL) ) {
+        cdebug_log(145,0) << "Case EW" <<  endl;
+        AutoContact* target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        source->setY(_east->getComponent()->getY());
+        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+        target->setY(_west->getComponent()->getY());
+        cdebug_log(145,0) << "1" <<  endl;
+        
+        if (_east->getComponent()->getY() > _west->getComponent()->getY()){
+          cdebug_log(145,0) << "2.1" <<  endl;
+          swap( source, target );
+
+          cdebug_log(145,0) << "3.1" <<  endl;
+          if ( _east and (_fromHook != _east) ){
+            forks.push( getSegmentOppositeHook( _east ), target );
+          } else if ( _west and (_fromHook != _west) ){
+            forks.push( getSegmentOppositeHook( _west ), source );
+            targetContact = target;
+          } else {
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+                           , getString(_gcell).c_str() )
+                 << endl;
+          }
+        } else {
+          cdebug_log(145,0) << "2.2" <<  endl;
+          if ( _east and (_fromHook != _east) ){ 
+            forks.push( getSegmentOppositeHook( _east ), source );
+            targetContact = target;
+          } else if ( _west and (_fromHook != _west) ){
+            forks.push( getSegmentOppositeHook( _west ), target );
+          } else {
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+                           , getString(_gcell).c_str() )
+                 << endl;
+          }
+        }
+        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
+
+        AutoSegment* globalSegment = 
+          AutoSegment::create( source, target
+                             , Vertical::create( source->base(), target->base()
+                                               , verticalLayer
+                                               , source->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+      } else {
+        cerr << Warning( "Something is wrong with the globals in this Strut."
+                       , getString(_gcell).c_str() )
+             << endl;
+      }
+    } else if ( getNumberGlobals() == 3 ){
+      cdebug_log(145,0) << "Case 3 globals: " <<  getNumberGlobals() << endl;
+
+      AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      AutoContact* xtee = NULL;
+      xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+
+      if        ((_north != NULL) && (_south != NULL) && (_east != NULL)){ 
+        cdebug_log(145,0) << "Case NSE " << endl;
+        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+
+        if (_north->getComponent()->getX() < _south->getComponent()->getX()){
+          turn->setX(_north->getComponent()->getX());
+          xtee->setX(_south->getComponent()->getX());
+          if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), turn );
+          else                                    targetContact = turn;
+          if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), xtee );
+          else                                    targetContact = xtee;
+
+        } else {
+          turn->setX(_south->getComponent()->getX());
+          xtee->setX(_north->getComponent()->getX());
+          if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
+          else                                    targetContact = xtee;
+          if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), turn );
+          else                                    targetContact = turn;
+        }
+        turn->setY(_east->getComponent()->getY());
+        xtee->setY(_east->getComponent()->getY());
+        if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), xtee );
+        else                                  targetContact = xtee;
+     
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
+        AutoSegment* globalSegment = 
+          AutoSegment::create( turn, xtee
+                             , Horizontal::create( turn->base(), xtee->base()
+                                                 , horizontalLayer
+                                                 , turn->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+      } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
+        cdebug_log(145,0) << "Case NSW " << endl;
+        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+
+        if (_north->getComponent()->getX() < _south->getComponent()->getX()){
+          xtee->setX(_north->getComponent()->getX());
+          turn->setX(_south->getComponent()->getX());
+          if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
+          else                                    targetContact = xtee;
+          if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), turn );
+          else                                    targetContact = turn;
+
+        } else {
+          xtee->setX(_south->getComponent()->getX());
+          turn->setX(_north->getComponent()->getX());
+          if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), turn );
+          else                                    targetContact = turn;
+          if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), xtee );
+          else                                    targetContact = xtee;
+        }
+        turn->setY(_east->getComponent()->getY());
+        xtee->setY(_east->getComponent()->getY());
+        if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), xtee );
+        else                                  targetContact = xtee;
+     
+        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment = 
+          AutoSegment::create( xtee, turn
+                             , Horizontal::create( xtee->base(), turn->base()
+                                                 , horizontalLayer
+                                                 , xtee->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+
+      } else if ((_east != NULL)  && (_north != NULL) && (_west != NULL)){
+        cdebug_log(145,0) << "Case EWN " << endl;
+        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+
+        if (_east->getComponent()->getY() < _west->getComponent()->getY()){
+          turn->setY(_east->getComponent()->getY());
+          xtee->setY(_west->getComponent()->getY());
+          if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), turn );
+          else                                  targetContact = turn;
+          if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), xtee );
+          else                                  targetContact = xtee;
+
+        } else {
+          turn->setY(_west->getComponent()->getY());
+          xtee->setY(_east->getComponent()->getY());
+          if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), xtee );
+          else                                  targetContact = xtee;
+          if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), turn );
+          else                                  targetContact = turn;
+        }
+        turn->setX(_north->getComponent()->getX());
+        xtee->setX(_north->getComponent()->getX());
+        if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
+        else                                    targetContact = xtee;
+     
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
+        AutoSegment* globalSegment = 
+          AutoSegment::create( turn, xtee
+                             , Vertical::create( turn->base(), xtee->base()
+                                               , verticalLayer
+                                               , turn->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+      } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
+        cdebug_log(145,0) << "Case EWS " << endl;
+        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+
+        if (_east->getComponent()->getY() < _west->getComponent()->getY()){
+          xtee->setY(_east->getComponent()->getY());
+          turn->setY(_west->getComponent()->getY());
+          if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), xtee );
+          else                                  targetContact = xtee;
+          if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), turn );
+          else                                  targetContact = turn;
+
+        } else {
+          xtee->setY(_west->getComponent()->getY());
+          turn->setY(_east->getComponent()->getY());
+          if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), turn );
+          else                                  targetContact = turn;
+          if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), xtee );
+          else                                  targetContact = xtee;
+        }
+        turn->setX(_south->getComponent()->getX());
+        xtee->setX(_south->getComponent()->getX());
+        if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
+        else                                    targetContact = xtee;
+     
+        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment = 
+          AutoSegment::create( xtee, turn
+                             , Vertical::create( xtee->base(), turn->base()
+                                               , verticalLayer
+                                               , turn->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+
+      } else {
+        cerr << Warning( "Something is wrong with the globals in this Strut."
+                       , getString(_gcell).c_str() )
+             << endl;
+      }
+    } else if ( getNumberGlobals() == 4 ){
+      cdebug_log(145,0) << "Case 4 globals: " <<  getNumberGlobals() << endl;
+      AutoContact* turn  = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
+      AutoContact* hteeh = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+      AutoContact* vteev = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+
+      if (  (_north->getComponent()->getX() < _south->getComponent()->getX() )
+         && (_east->getComponent ()->getY() < _west->getComponent ()->getY() )
+         ) { 
+        cdebug_log(145,0) << "(N.X < S.X) & (E.Y < W.Y)" <<  endl;
+        turn->setX (_north->getComponent()->getX());
+        turn->setY (_east->getComponent ()->getY());
+        hteeh->setX(_south->getComponent()->getX());
+        hteeh->setY(_east->getComponent ()->getY());
+        vteev->setX(_north->getComponent()->getX());
+        vteev->setY(_west->getComponent ()->getY());
+
+        if ( _east and (_fromHook != _east) ) 
+          forks.push( getSegmentOppositeHook( _east  ), hteeh );
+        else targetContact = hteeh;
+        if ( _west and (_fromHook != _west) ) 
+          forks.push( getSegmentOppositeHook( _west  ), vteev );
+        else targetContact = vteev;
+        if ( _north and (_fromHook != _north) ) 
+          forks.push( getSegmentOppositeHook( _north ), vteev );
+        else targetContact = vteev;
+        if ( _south and (_fromHook != _south) ) 
+          forks.push( getSegmentOppositeHook( _south ), hteeh );
+        else targetContact = hteeh;
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment1 = 
+          AutoSegment::create( turn, hteeh
+                             , Horizontal::create( turn->base(), hteeh->base()
+                                                 , horizontalLayer
+                                                 , turn->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        AutoSegment* globalSegment2 = 
+          AutoSegment::create( turn, hteeh
+                             , Vertical::create( turn->base(), hteeh->base()
+                                               , verticalLayer
+                                               , turn->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+
+      } else if (  (_north->getComponent()->getX() > _south->getComponent()->getX() )
+                && (_east->getComponent ()->getY() < _west->getComponent ()->getY() )
+                ) {
+        cdebug_log(145,0) << "(N.X > S.X) & (E.Y < W.Y)" <<  endl;
+        turn->setX (_south->getComponent()->getX());
+        turn->setY (_west->getComponent ()->getY());
+        hteeh->setX(_north->getComponent()->getX());
+        hteeh->setY(_east->getComponent ()->getY());
+        vteev->setX(_south->getComponent()->getX());
+        vteev->setY(_east->getComponent ()->getY());
+
+        if ( _east and (_fromHook != _east) ) 
+          forks.push( getSegmentOppositeHook( _east  ), hteeh );
+        else targetContact = hteeh;
+        if ( _west and (_fromHook != _west) ) 
+          forks.push( getSegmentOppositeHook( _west  ), turn );
+        else targetContact = turn;
+        if ( _north and (_fromHook != _north) ) 
+          forks.push( getSegmentOppositeHook( _north ), hteeh );
+        else targetContact = hteeh;
+        if ( _south and (_fromHook != _south) ) 
+          forks.push( getSegmentOppositeHook( _south ), vteev );
+        else targetContact = vteev;
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment1 = 
+          AutoSegment::create( vteev, hteeh
+                             , Horizontal::create( vteev->base(), hteeh->base()
+                                                 , horizontalLayer
+                                                 , vteev->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        AutoSegment* globalSegment2 = 
+          AutoSegment::create( vteev, turn
+                             , Vertical::create( vteev->base(), turn->base()
+                                               , verticalLayer
+                                               , vteev->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+
+      } else if (  (_north->getComponent()->getX() < _south->getComponent()->getX() )
+                && (_east->getComponent ()->getY() > _west->getComponent ()->getY() )
+                ) {
+        cdebug_log(145,0) << "(N.X < S.X) & (E.Y > W.Y)" <<  endl;
+        turn->setX (_north->getComponent()->getX());
+        turn->setY (_east->getComponent ()->getY());
+        hteeh->setX(_south->getComponent()->getX());
+        hteeh->setY(_east->getComponent ()->getY());
+        vteev->setX(_south->getComponent()->getX());
+        vteev->setY(_west->getComponent ()->getY());
+
+        if ( _east and (_fromHook != _east) ) 
+          forks.push( getSegmentOppositeHook( _east  ), hteeh );
+        else targetContact = hteeh;
+        if ( _west and (_fromHook != _west) ) 
+          forks.push( getSegmentOppositeHook( _west  ), vteev );
+        else targetContact = vteev;
+        if ( _north and (_fromHook != _north) ) 
+          forks.push( getSegmentOppositeHook( _north ), turn );
+        else targetContact = turn;
+        if ( _south and (_fromHook != _south) ) 
+          forks.push( getSegmentOppositeHook( _south ), vteev );
+        else targetContact = vteev;
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment1 = 
+          AutoSegment::create( turn, hteeh
+                             , Horizontal::create( turn->base(), hteeh->base()
+                                                 , horizontalLayer
+                                                 , turn->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        AutoSegment* globalSegment2 = 
+          AutoSegment::create( vteev, hteeh
+                             , Vertical::create( vteev->base(), hteeh->base()
+                                               , verticalLayer
+                                               , vteev->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+
+      } else {
+        cdebug_log(145,0) << "(N.X > S.X) & (E.Y > W.Y)" <<  endl;
+        turn->setX (_south->getComponent()->getX());
+        turn->setY (_east->getComponent ()->getY());
+        hteeh->setX(_north->getComponent()->getX());
+        hteeh->setY(_east->getComponent ()->getY());
+        vteev->setX(_south->getComponent()->getX());
+        vteev->setY(_west->getComponent ()->getY());
+
+        if ( _east and (_fromHook != _east) ) 
+          forks.push( getSegmentOppositeHook( _east  ), hteeh );
+        else targetContact = hteeh;
+        if ( _west and (_fromHook != _west) ) 
+          forks.push( getSegmentOppositeHook( _west  ), vteev );
+        else targetContact = vteev;
+        if ( _north and (_fromHook != _north) ) 
+          forks.push( getSegmentOppositeHook( _north ), hteeh );
+        else targetContact = hteeh;
+        if ( _south and (_fromHook != _south) ) 
+          forks.push( getSegmentOppositeHook( _south ), vteev );
+        else targetContact = vteev;
+
+        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
+        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
+        AutoSegment* globalSegment1 = 
+          AutoSegment::create( turn, hteeh
+                             , Horizontal::create( turn->base(), hteeh->base()
+                                                 , horizontalLayer
+                                                 , turn->getY()
+                                                 , horizontalWidth 
+                                                 )
+                             );
+        AutoSegment* globalSegment2 = 
+          AutoSegment::create( vteev, turn
+                             , Vertical::create( vteev->base(), turn->base()
+                                               , verticalLayer
+                                               , vteev->getX()
+                                               , verticalWidth 
+                                               )
+                             );
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+      }
+    } else { 
+      cerr << Warning( "Something is wrong with the number of globals in this Strut."
+                     , getString(_gcell).c_str() )
+           << endl;
+    }
+    cdebug_log(145,0) << "doStrut done" << endl;
     cdebug_tabw(145,-1);
+
+    return targetContact;
   }
 
 
@@ -2559,8 +3502,8 @@ namespace Anabatic {
     size_t      degree      = routingPads.getSize();
 
     if (degree == 0) {
-        cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
-                         ,getString(net->getName()).c_str()) << endl;
+      cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
+                       ,getString(net->getName()).c_str()) << endl;
       cdebug_tabw(145,-1);
       return;
     }
@@ -2649,6 +3592,7 @@ namespace Anabatic {
 
     lookupClear();
     Session::revalidate();
+  //Breakpoint::stop( 0, "After construct" );
     
 #if THIS_IS_DISABLED
     set<AutoSegment*>::iterator iover = overconstraineds.begin();
