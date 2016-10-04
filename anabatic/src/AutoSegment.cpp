@@ -198,7 +198,7 @@ namespace {
     _attractors[position]++;
     _attractorsCount++;
 
-    cdebug_log(145,0) << "add Attractor @" << DbU::toLambda(position)
+    cdebug_log(145,0) << "add Attractor @" << DbU::getValueString(position)
                << " [" << _attractors[position] << "]" << endl;
   }
 
@@ -814,6 +814,9 @@ namespace Anabatic {
     DbU::Unit optimalMin = max( min(getOptimalMin(),constraintMax), constraintMin );
     DbU::Unit optimalMax = min( max(getOptimalMax(),constraintMin), constraintMax );
 
+    cdebug_log(149,0) << "optimal:[" << DbU::getValueString(optimalMin)
+                      << " "         << DbU::getValueString(optimalMin) << "]" << endl;
+
     if (getAxis() < optimalMin) {
       setAxis( optimalMin, flags );
       cdebug_tabw(149,-1);
@@ -840,8 +843,8 @@ namespace Anabatic {
     if ( (axis == getAxis()) and not (flags & Flags::Realignate) ) return;
 
     cdebug_log(159,0) << "setAxis() @"
-                << ((isHorizontal())?"Y ":"X ") << DbU::toLambda(getAxis())
-                << " to " << DbU::toLambda(axis) << " on " << this << endl;
+                << ((isHorizontal())?"Y ":"X ") << DbU::getValueString(getAxis())
+                << " to " << DbU::getValueString(axis) << " on " << this << endl;
     cdebug_tabw(145,1);
 
     _setAxis( axis );
@@ -955,8 +958,25 @@ namespace Anabatic {
       }
   
       forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
-        cdebug_log(145,1) << "Perpandicular " << *autoSegment << endl;
-        if (autoSegment->isLocal()) {
+        cdebug_log(145,1) << "| Perpandicular " << *autoSegment << endl;
+        if (autoSegment->isGlobal()) {
+        // Sloppy implentation.
+          DbU::Unit perpandMin = autoSegment->getSourceU();
+          DbU::Unit perpandMax = autoSegment->getTargetU();
+
+          if (perpandMin < minGCell) attractors.addAttractor( minGCell );
+          if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
+        } else if (autoSegment->isLongLocal()) {
+          cdebug_log(145,0) << "| Used as long global attractor." << endl;
+
+          DbU::Unit perpandMin = autoSegment->getSourceU();
+          DbU::Unit perpandMax = autoSegment->getTargetU();
+
+          if (perpandMin != perpandMax) {
+            if (perpandMin == getAxis()) attractors.addAttractor( perpandMax ); 
+            if (perpandMax == getAxis()) attractors.addAttractor( perpandMin ); 
+          }
+        } else if (autoSegment->isLocal()) {
           if (not autoSegment->isStrongTerminal()) { cdebug_tabw(145,-1); continue; }
   
           DbU::Unit  terminalMin;
@@ -971,30 +991,13 @@ namespace Anabatic {
             if (terminalMin != terminalMax)
               attractors.addAttractor( terminalMax );
           }
-        } else {
-#if THIS_IS_DISABLED
-          bool isMin = true;
-          if (    isHorizontal()
-             and (autoSegment->getAutoSource()->getGCell()->getRow() == _gcell->getRow()) )
-            isMin = false;
-          if (    isVertical()
-             and (autoSegment->getAutoSource()->getGCell()->getColumn() == _gcell->getColumn()) )
-            isMin = false;
-          attractors.addAttractor( (isMin) ? minGCell : maxGCell );
-#endif
-        // Sloppy implentation.
-          DbU::Unit perpandMin = autoSegment->getSourceU();
-          DbU::Unit perpandMax = autoSegment->getTargetU();
-
-          if (perpandMin < minGCell) attractors.addAttractor( minGCell );
-          if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
         }
         cdebug_tabw(145,-1);
       }
   
       if (attractors.getAttractorsCount()) {
-        cdebug_log(145,0) << "Lower Median " << DbU::toLambda(attractors.getLowerMedian()) << endl;
-        cdebug_log(145,0) << "Upper Median " << DbU::toLambda(attractors.getUpperMedian()) << endl;
+        cdebug_log(145,0) << "Lower Median " << DbU::getValueString(attractors.getLowerMedian()) << endl;
+        cdebug_log(145,0) << "Upper Median " << DbU::getValueString(attractors.getUpperMedian()) << endl;
   
         optimalMin = attractors.getLowerMedian();
         optimalMax = attractors.getUpperMedian();
@@ -1959,6 +1962,7 @@ namespace Anabatic {
     state += isCanonical     () ? "C": "-";
     state += isGlobal        () ? "G": "-";
     state += isWeakGlobal    () ? "g": "-";
+    state += isLongLocal     () ? "L": "-";
     state += isStrongTerminal() ? "T": "-";
     state += isWeakTerminal1 () ? "W": "-";
     state += isWeakTerminal2 () ? "w": "-";

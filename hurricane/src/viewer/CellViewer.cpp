@@ -115,6 +115,7 @@ namespace Hurricane {
                                              , _updateState            (ExternalEmit)
                                              , _pyScriptName           ()
   {
+    setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
     setObjectName( "viewer" );
     menuBar()->setObjectName ( _getAbsWidgetPath("") );
 

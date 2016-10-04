@@ -220,7 +220,7 @@ namespace Anabatic {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
       if (rp) { 
         rps.push_back( rp ); 
-        cerr << "rp to route: " << rp << endl;
+        cdebug_log(112,0) << "| " << rp << endl;
         continue; 
       }
     }
@@ -228,8 +228,6 @@ namespace Anabatic {
     for ( auto rp : rps ) {
       Point  center = rp->getBoundingBox().getCenter();
       GCell* gcell  = _anabatic->getGCellUnder( center );
-      cerr << "rp   : " << rp << endl;
-      cerr << "gcell: " << gcell << endl;
       
       if (gcell->isDevice()){
         _searchArea.merge( _net->getCell()->getAbutmentBox() );
@@ -540,10 +538,6 @@ namespace Anabatic {
         if (aligneds.front()->isHorizontal()) {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
-          if (sourceContact->getX() == targetContact->getX()){
-            cerr << "source Vertex: " << source << endl;
-            cerr << "target Vertex: " << source << endl;
-          }
 
           segment = Horizontal::create( sourceContact
                                       , targetContact
@@ -555,10 +549,6 @@ namespace Anabatic {
         } else {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
-          if (sourceContact->getY() == targetContact->getY()){
-            cerr << "source Vertex: " << source << endl;
-            cerr << "target Vertex: " << source << endl;
-          }
 
           segment = Vertical::create( sourceContact
                                     , targetContact

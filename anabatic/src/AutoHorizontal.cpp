@@ -389,7 +389,7 @@ namespace Anabatic {
 
     if (_horizontal->getY() == axis) return;
 
-    cdebug_log(145,0) << "_setAxis() @Y " << DbU::toLambda(axis) << " " << this << endl;
+    cdebug_log(145,0) << "_setAxis() @Y " << DbU::getValueString(axis) << " " << this << endl;
 
     _horizontal->setY( axis );
     invalidate();

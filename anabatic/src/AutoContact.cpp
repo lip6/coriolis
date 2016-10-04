@@ -89,10 +89,10 @@ namespace Anabatic {
     restoreNativeConstraintBox();
 
     cdebug_log(145,0) << "Native CBox: " << this
-                    << " <" << DbU::toLambda(getCBXMin())
-                    << " "  << DbU::toLambda(getCBYMin())
-                    << " "  << DbU::toLambda(getCBXMax())
-                    << " "  << DbU::toLambda(getCBYMax()) << ">" << endl;
+                    << " <" << DbU::getValueString(getCBXMin())
+                    << " "  << DbU::getValueString(getCBYMin())
+                    << " "  << DbU::getValueString(getCBXMax())
+                    << " "  << DbU::getValueString(getCBYMax()) << ">" << endl;
     
     Session::link( this );
     invalidate( Flags::Topology );
@@ -221,7 +221,8 @@ namespace Anabatic {
         DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;
         if ( not segment->isUnbound() and (abs(length) > sideLength) )
           cerr << Error("Suspicious length:%.2f of %s."
-                       ,DbU::toLambda(length),getString(segment).c_str()) << endl;
+                       ,DbU::getValueString(length).c_str()
+                       ,getString(segment).c_str()) << endl;
       } else {
         if (segment->isHorizontal()) {
           if (isSourceHook)

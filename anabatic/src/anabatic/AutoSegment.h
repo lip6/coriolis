@@ -65,33 +65,34 @@ namespace Anabatic {
                        , SegFixed             = (1<< 1)
                        , SegGlobal            = (1<< 2)
                        , SegWeakGlobal        = (1<< 3)
-                       , SegCanonical         = (1<< 4)
-                       , SegBipoint           = (1<< 5)
-                       , SegDogleg            = (1<< 6)
-                       , SegStrap             = (1<< 7)
-                       , SegSourceTop         = (1<< 8)
-                       , SegSourceBottom      = (1<< 9)
-                       , SegTargetTop         = (1<<10)
-                       , SegTargetBottom      = (1<<11)
-                       , SegIsReduced         = (1<<12)
-                       , SegLayerChange       = (1<<13)
-                       , SegSourceTerminal    = (1<<14)  // Replace Terminal.
-                       , SegTargetTerminal    = (1<<15)  // Replace Terminal.
+                       , SegLongLocal         = (1<< 4)
+                       , SegCanonical         = (1<< 5)
+                       , SegBipoint           = (1<< 6)
+                       , SegDogleg            = (1<< 7)
+                       , SegStrap             = (1<< 8)
+                       , SegSourceTop         = (1<< 9)
+                       , SegSourceBottom      = (1<<10)
+                       , SegTargetTop         = (1<<11)
+                       , SegTargetBottom      = (1<<12)
+                       , SegIsReduced         = (1<<13)
+                       , SegLayerChange       = (1<<14)
+                       , SegSourceTerminal    = (1<<15)  // Replace Terminal.
+                       , SegTargetTerminal    = (1<<16)  // Replace Terminal.
                        , SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal
-                       , SegWeakTerminal1     = (1<<16)  // Replace TopologicalEnd.
-                       , SegWeakTerminal2     = (1<<17)  // Replace TopologicalEnd.
-                       , SegNotSourceAligned  = (1<<18)
-                       , SegNotTargetAligned  = (1<<19)
-                       , SegUnbound           = (1<<20)
-                       , SegHalfSlackened     = (1<<21)
-                       , SegSlackened         = (1<<22)
-                       , SegAxisSet           = (1<<23)
-                       , SegInvalidated       = (1<<24)
-                       , SegInvalidatedSource = (1<<25)
-                       , SegInvalidatedTarget = (1<<26)
-                       , SegInvalidatedLayer  = (1<<27)
-                       , SegCreated           = (1<<28)
-                       , SegUserDefined       = (1<<29)
+                       , SegWeakTerminal1     = (1<<17)  // Replace TopologicalEnd.
+                       , SegWeakTerminal2     = (1<<18)  // Replace TopologicalEnd.
+                       , SegNotSourceAligned  = (1<<19)
+                       , SegNotTargetAligned  = (1<<20)
+                       , SegUnbound           = (1<<21)
+                       , SegHalfSlackened     = (1<<22)
+                       , SegSlackened         = (1<<23)
+                       , SegAxisSet           = (1<<24)
+                       , SegInvalidated       = (1<<25)
+                       , SegInvalidatedSource = (1<<26)
+                       , SegInvalidatedTarget = (1<<27)
+                       , SegInvalidatedLayer  = (1<<28)
+                       , SegCreated           = (1<<29)
+                       , SegUserDefined       = (1<<30)
                        // Masks.              
                        , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
                        , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
@@ -169,6 +170,7 @@ namespace Anabatic {
       inline  bool                isVertical                 () const;
       inline  bool                isGlobal                   () const;
       inline  bool                isWeakGlobal               () const;
+      inline  bool                isLongLocal                () const;
       inline  bool                isLocal                    () const;
       inline  bool                isFixed                    () const;
       inline  bool                isBipoint                  () const;
@@ -342,8 +344,8 @@ namespace Anabatic {
              GCell*               _gcell;
              unsigned int         _flags;
              unsigned int         _depth      : 8;
-             unsigned int         _optimalMin : 8;
-             unsigned int         _optimalMax : 8;
+             unsigned int         _optimalMin :16;
+             unsigned int         _optimalMax :16;
              unsigned int         _reduceds   : 2;
              DbU::Unit            _sourcePosition;
              DbU::Unit            _targetPosition;
@@ -460,6 +462,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isFixed                () const { return _flags & SegFixed; }
   inline  bool            AutoSegment::isGlobal               () const { return _flags & SegGlobal; }
   inline  bool            AutoSegment::isWeakGlobal           () const { return _flags & SegWeakGlobal; }
+  inline  bool            AutoSegment::isLongLocal            () const { return _flags & SegLongLocal; }
   inline  bool            AutoSegment::isLocal                () const { return not (_flags & SegGlobal); }
   inline  bool            AutoSegment::isBipoint              () const { return _flags & SegBipoint; }
   inline  bool            AutoSegment::isWeakTerminal         () const { return _flags & SegWeakTerminal; }

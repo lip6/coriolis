@@ -65,7 +65,7 @@ namespace Katana {
                 Key    ( const RoutingEvent* );
           void  update ( const RoutingEvent* );
         private:
-          unsigned int   _tracksNb:6;
+          unsigned int   _tracksNb:16;
           float          _priority;
           unsigned int   _eventLevel;
           unsigned int   _segFlags;
@@ -188,8 +188,8 @@ namespace Katana {
       Interval              _constraints;
       Interval              _optimal;
     //Interval              _perpandicular;
-      unsigned int          _tracksNb        : 6;
-      unsigned int          _tracksFree      : 4;
+      unsigned int          _tracksNb        :16;
+      unsigned int          _tracksFree      :16;
       unsigned int          _insertState     : 6;
       unsigned int          _mode            : 4;
       unsigned int          _rippleState     : 4;

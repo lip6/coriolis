@@ -102,10 +102,12 @@ namespace Katana {
               void                     protectRoutingPads         ();
               void                     preProcess                 ();
               void                     setInterrupt               ( bool );
+              void                     setupRoutingPlanes         ();
               void                     setupGlobalGraph           ( unsigned int mode );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
               void                     digitalInit                ();
+              void                     analogInit                 ();
               void                     runNegociate               ( unsigned int flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
       virtual void                     finalizeLayout             ();

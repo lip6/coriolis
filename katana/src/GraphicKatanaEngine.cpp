@@ -85,8 +85,6 @@ namespace Katana {
     Box       bb      = gcell->getBoundingBox();
     QRect     pixelBb = widget->dbuToScreenRect(bb);
 
-    if (gcell->isFlat()) return;
-
     if (GCell::getDisplayMode() == GCell::Density) {
       unsigned int density = (unsigned int)( 255.0 * gcell->getDensity() );
       if (density > 255) density = 255;
@@ -94,12 +92,12 @@ namespace Katana {
       painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
       painter.drawRect( pixelBb );
     } else {
-      if (pixelBb.width() > 150) {
+      if ( (pixelBb.width() > 150) or (pixelBb.height() > 150) ) {
         painter.setPen  ( pen );
         painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
         painter.drawRect( pixelBb );
 
-        if (pixelBb.width() > 300) {
+        if ( (pixelBb.width() > 300) and (pixelBb.height() > 100) ) {
           QString text  = QString("id:%1").arg(gcell->getId());
           QFont   font  = Graphics::getFixedFont( QFont::Bold );
           painter.setFont(font);
@@ -109,8 +107,8 @@ namespace Katana {
 
           painter.save     ();
           painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
-          painter.drawRect (QRect( -75, -25, 150, 50 ));
-          painter.drawText (QRect( -75, -25, 150, 50 )
+          painter.drawRect ( QRect( -80, -25, 160, 50 ) );
+          painter.drawText ( QRect( -80, -25, 160, 50 )
                            , text
                            , QTextOption(Qt::AlignCenter)
                            );

@@ -502,7 +502,7 @@ namespace {
     flags |= ((width == 0) && (height == 0))             ? Punctual : 0;
 
     cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << anchorDepth << "]:"
-               << DbU::toLambda(Session::getPitch(anchorDepth)) << " "
+               << DbU::getValueString(Session::getPitch(anchorDepth)) << " "
                << ((flags & HSmall) ? "HSmall " : " ")
                << ((flags & VSmall) ? "VSmall " : " ")
                << endl;
@@ -908,10 +908,10 @@ namespace {
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
       if (toSegment) {
         switch ( getSegmentHookType(hook) ) {
-          case WestBound:  _west  = hook; break; cdebug_log(145,0) << "hook is west";
-          case EastBound:  _east  = hook; break; cdebug_log(145,0) << "hook is east";
-          case SouthBound: _south = hook; break; cdebug_log(145,0) << "hook is south";
-          case NorthBound: _north = hook; break; cdebug_log(145,0) << "hook is north";
+          case WestBound:  _west  = hook; break;
+          case EastBound:  _east  = hook; break;
+          case SouthBound: _south = hook; break;
+          case NorthBound: _north = hook; break;
         }
 
         _connexity.fields.globals++;
@@ -949,11 +949,11 @@ namespace {
               const Layer* layer = anchor->getLayer();
               cdebug_log(145,0) << "rp: " << rp << endl;
 
-              if      (layer == Session::getRoutingLayer(0)) _connexity.fields.M1++; // M1 V
-              else if (layer == Session::getRoutingLayer(1)) _connexity.fields.M2++; // M2 H
-              else if (layer == Session::getRoutingLayer(2)) _connexity.fields.M3++; // M3 V
-              else if (layer == Session::getRoutingLayer(3)) _connexity.fields.M2++; // M4 H
-              else if (layer == Session::getRoutingLayer(4)) _connexity.fields.M3++; // M5 V
+              if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
+              else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
+              else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
+              else if (layer->getMask() == Session::getRoutingLayer(3)->getMask()) _connexity.fields.M2++; // M4 H
+              else if (layer->getMask() == Session::getRoutingLayer(4)->getMask()) _connexity.fields.M3++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()
@@ -2770,6 +2770,7 @@ namespace {
                                                  , verticalWidth 
                                                  )
                                );
+          if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
           cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
         }
       }
@@ -2808,6 +2809,7 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -2862,6 +2864,7 @@ namespace {
                                                  , horizontalWidth 
                                                  )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -3016,6 +3019,7 @@ namespace {
                                                  , horizontalWidth 
                                                  )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
       
       } else if ((_east != NULL) && (_west != NULL) ) {
@@ -3066,6 +3070,7 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else {
@@ -3115,6 +3120,7 @@ namespace {
                                                  , horizontalWidth 
                                                  )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
@@ -3152,6 +3158,7 @@ namespace {
                                                  , horizontalWidth 
                                                  )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
 
@@ -3190,6 +3197,7 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
@@ -3227,6 +3235,7 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else {

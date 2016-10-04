@@ -172,8 +172,8 @@ namespace Anabatic {
         }
         if (aligneds.empty()) canonical->setFlags( SegNotAligned );
 
-        cdebug_log(149,0) << "Align @" << DbU::toLambda(canonical->getAxis())
-                    << " on " << canonical << endl;
+        cdebug_log(149,0) << "Align @" << DbU::getValueString(canonical->getAxis())
+                          << " on " << canonical << endl;
 
       //canonical->setAxis( canonical->getAxis(), Flags::Realignate );
         if (canonical->isUnsetAxis()) canonical->toOptimalAxis( Flags::Realignate|Flags::Propagate );

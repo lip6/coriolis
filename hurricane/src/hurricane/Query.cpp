@@ -140,8 +140,9 @@ namespace Hurricane {
             if ( not ( (*islice)->getMask() & _extensionMask ) ) continue;
             if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;
 
-            forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
-              extensionGoCallback ( *igo );
+            for ( Go* go : (*islice)->getGosUnder(_stack.getArea()) ) {
+              extensionGoCallback ( go );
+            }
           }
         }
       }

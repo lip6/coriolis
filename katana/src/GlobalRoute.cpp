@@ -112,8 +112,6 @@ namespace Katana {
 
     cell->flattenNets( Cell::Flags::BuildRings|Cell::Flags::WarnOnUnplacedInstances );
     cell->createRoutingPadRings( Cell::Flags::BuildRings );
-  
-    Super::chipPrep();
 
     startMeasures();
 
@@ -128,8 +126,6 @@ namespace Katana {
     stopMeasures();
     printMeasures( "Anabatic Grid" );
 
-  //setupSpecialNets();
-  //setupPreRouteds();
     setupNetDatas();
 
     for ( GCell* gcell : getGCells() ) {
@@ -140,14 +136,6 @@ namespace Katana {
         else                      edge->incCapacity( -getVTracksReservedLocal() );
       }
     }
-
-    openSession();
-    size_t maxDepth = getConfiguration()->getRoutingGauge()->getDepth();
-    _routingPlanes.reserve( maxDepth );
-    for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
-      _routingPlanes.push_back( RoutingPlane::create( this, depth ) );
-    }
-    Session::close();
   }
 
 

@@ -147,7 +147,10 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
+    Super::chipPrep();
+
     setupGlobalGraph( Flags::NoFlags );
+    setupRoutingPlanes();
     setupSpecialNets();
     setupPreRouteds();
     setupPowerRails();
@@ -155,6 +158,36 @@ namespace Katana {
     _runKatanaInit();
 
     cdebug_tabw(155,-1);
+  }
+
+
+  void  KatanaEngine::analogInit ()
+  {
+    cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
+
+    Super::chipPrep();
+
+    setupRoutingPlanes();
+    _runKatanaInit();
+
+    cdebug_tabw(155,-1);
+  }
+
+
+  void  KatanaEngine::setupRoutingPlanes ()
+  {
+    cdebug_log(155,1) << "KatanaEngine::setupRoutingPlanes()" << endl;
+
+    bool sessionReUse = Session::isOpen();
+    if (not sessionReUse) openSession();
+
+    size_t maxDepth = getConfiguration()->getRoutingGauge()->getDepth();
+    _routingPlanes.reserve( maxDepth );
+    for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
+      _routingPlanes.push_back( RoutingPlane::create( this, depth ) );
+    }
+
+    if (not sessionReUse) Session::close();
   }
 
 

@@ -73,6 +73,8 @@ namespace Anabatic {
     setOptimalMax( getGCell()->getXMax() );
     resetNativeConstraints( getGCell()->getXMin(), getGCell()->getConstraintXMax() );
 
+    cdebug_log(145,0) << "Source in " << getGCell() << endl;
+    cdebug_log(145,0) << "Target in " << target->getGCell() << endl;
     if (getGCell() != target->getGCell()) {
       setFlags( SegGlobal );
 
@@ -326,7 +328,7 @@ namespace Anabatic {
 
     if (_vertical->getX() == axis) return;
 
-    cdebug_log(149,0) << "_setAxis() @X " << DbU::toLambda(axis) << " " << this << endl;
+    cdebug_log(149,0) << "_setAxis() @X " << DbU::getValueString(axis) << " " << this << endl;
 
     _vertical->setX( axis );
     invalidate();

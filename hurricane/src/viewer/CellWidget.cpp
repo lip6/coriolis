@@ -1042,7 +1042,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 500;
+  int  CellWidget::_initialSide = 250;
 
 
   CellWidget::CellWidget ( QWidget* parent )
@@ -1075,7 +1075,7 @@ namespace Hurricane {
     setAttribute     ( Qt::WA_NoSystemBackground );
   //setAttribute     ( Qt::WA_PaintOnScreen );
     setAttribute     ( Qt::WA_StaticContents );
-    setSizePolicy    ( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    setSizePolicy    ( QSizePolicy::Preferred, QSizePolicy::Preferred );
     setFocusPolicy   ( Qt::StrongFocus );
     setMouseTracking ( true );
 
@@ -1566,8 +1566,8 @@ namespace Hurricane {
     PaletteItem* item  = (_palette) ? _palette->find(extensionName) : NULL;
     DbU::Unit    unity = DbU::lambda(1.0);
 
-    return (!item || item->isItemVisible())
-      && ( Graphics::getThreshold(extensionName) < getScale()*unity );
+    return (not item or item->isItemVisible())
+      and ( Graphics::getThreshold(extensionName) < getScale()*unity );
   }
 
 

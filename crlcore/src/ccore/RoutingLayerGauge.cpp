@@ -295,10 +295,11 @@ namespace CRL {
     record->add ( getSlot ( "_type"     ,  _type      ) );
     record->add ( getSlot ( "_depth"    ,  _depth     ) );
     record->add ( getSlot ( "_density"  ,  _density   ) );
-    record->add ( getSlot ( "_offset"   ,  _offset    ) );
-    record->add ( getSlot ( "_pitch"    ,  _pitch     ) );
-    record->add ( getSlot ( "_wireWidth",  _wireWidth ) );
-    record->add ( getSlot ( "_viaWidth" ,  _viaWidth  ) );
+
+    record->add ( DbU::getValueSlot ( "_offset"   , &_offset    ) );
+    record->add ( DbU::getValueSlot ( "_pitch"    , &_pitch     ) );
+    record->add ( DbU::getValueSlot ( "_wireWidth", &_wireWidth ) );
+    record->add ( DbU::getValueSlot ( "_viaWidth" , &_viaWidth  ) );
 
     return ( record );
   }

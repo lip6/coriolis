@@ -813,7 +813,7 @@ namespace Anabatic {
         }
 
         cdebug_log(149,0) << "Align on " << aligneds[0]
-                    << " " << DbU::toLambda(aligneds[0]->getAxis()) << endl;
+                    << " " << DbU::getValueString(aligneds[0]->getAxis()) << endl;
         aligneds[0]->setAxis( aligneds[0]->getAxis(), Flags::Realignate );
         aligneds.clear();
 

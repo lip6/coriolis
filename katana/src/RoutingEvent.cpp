@@ -462,9 +462,10 @@ namespace Katana {
 
     fsm.getData()->incRipupCount();
 
+    cdebug_log(159,0) << "| Candidate Tracks:" << endl;
     size_t itrack = 0;
     for ( itrack = 0 ; itrack < fsm.getCosts().size() ; itrack++ )
-      cdebug_log(159,0) << "| " << fsm.getCost(itrack) << endl;
+      cdebug_log(159,0) << "| " << itrack << ":" << fsm.getCost(itrack) << endl;
 
     itrack = 0;
     if ( (not isOverConstrained()) and Manipulator(_segment,fsm).canRipup() ) {
