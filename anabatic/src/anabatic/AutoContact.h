@@ -52,18 +52,18 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoContact".
 
-  enum AutoContactFlag { CntFixed                 = 0x00000001
-                       , CntTerminal              = 0x00000002
-                       , CntTurn                  = 0x00000004
-                       , CntHTee                  = 0x00000008
-                       , CntVTee                  = 0x00000010
-                       , CntInvalidated           = 0x00000020
-                       , CntInvalidatedCache      = 0x00000040
-                       , CntInCreationStage       = 0x00000080
-                       , CntBadTopology           = 0x00000100
-                       , CntIgnoreAnchor          = 0x00000200
-                       , CntWeakTerminal          = 0x00000400
-                       , CntUserNativeConstraints = 0x00000800
+  enum AutoContactFlag { CntFixed                 = (1 <<  0)
+                       , CntTerminal              = (1 <<  1)
+                       , CntTurn                  = (1 <<  2)
+                       , CntHTee                  = (1 <<  3)
+                       , CntVTee                  = (1 <<  4)
+                       , CntInvalidated           = (1 <<  6)
+                       , CntInvalidatedCache      = (1 <<  7)
+                       , CntInCreationStage       = (1 <<  8)
+                       , CntBadTopology           = (1 <<  9)
+                       , CntIgnoreAnchor          = (1 << 10)
+                       , CntWeakTerminal          = (1 << 11)
+                       , CntUserNativeConstraints = (1 << 12)
                        };
 
   class AutoContact {
@@ -149,6 +149,7 @@ namespace Anabatic {
       virtual void             updateTopology             () = 0;
               void             showTopologyError          ( const std::string&, unsigned int flags=0 );
       virtual void             checkTopology              ();
+      virtual void             forceOnGrid                ( Point );
       inline  void             setFlags                   ( unsigned int );
       inline  void             unsetFlags                 ( unsigned int );
               void             setGCell                   ( GCell* );

@@ -472,7 +472,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "Changed source: " << source << endl;
 
       unsetFlags( SegSourceTop|SegSourceBottom );
-      if (contactLayer != segmentLayer)
+      if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegSourceBottom : SegSourceTop ); 
       if (source->isTurn() and source->getPerpandicular(this)->isReduced())
         incReduceds();
@@ -485,7 +485,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "Changed target: " << target << endl;
 
       unsetFlags( SegTargetTop|SegTargetBottom );
-      if (contactLayer != segmentLayer)
+      if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer == contactLayer->getTop()) ? SegTargetBottom : SegTargetTop ); 
       if (target->isTurn() and target->getPerpandicular(this)->isReduced())
         incReduceds();
@@ -1971,11 +1971,11 @@ namespace Anabatic {
     state += isReduced       () ? "r": "-";
     state += isInvalidated   () ? "i": "-";
 
-    if      (_flags & SegSourceTop)    state += 'T';
-    else if (_flags & SegSourceBottom) state += 'B';
+    if      (_flags & SegSourceTop)    state += 't';
+    else if (_flags & SegSourceBottom) state += 'b';
     else state += '-';
-    if      (_flags & SegTargetTop)    state += 'T';
-    else if (_flags & SegTargetBottom) state += 'B';
+    if      (_flags & SegTargetTop)    state += 't';
+    else if (_flags & SegTargetBottom) state += 'b';
     else state += '-';
 
     return state;

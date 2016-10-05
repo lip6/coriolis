@@ -385,6 +385,16 @@ namespace Anabatic {
   }
 
 
+  void  AutoContact::forceOnGrid ( Point )
+  {
+    cerr << Warning( "AutoContact::forcedOnGrid() not implemented for this derived class.\n"
+                     "          %s\n"
+                   , getString(this).c_str()
+                   ) << endl;
+  }
+
+
+
   bool  AutoContact::isTee ( unsigned int direction ) const
   {
     return (isHTee() and (direction & Flags::Horizontal))

@@ -697,6 +697,7 @@ namespace {
       static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, unsigned int flags );
       static AutoContact*  doRp_Access       ( GCell*, Component*, unsigned int  flags );
       static AutoContact*  doRp_AccessPad    ( RoutingPad*, unsigned int flags );
+      static AutoContact*  doRp_AccessAnalog ( GCell*, RoutingPad*, unsigned int flags );
       static void          doRp_StairCaseH   ( GCell*, Component* rp1, Component* rp2 );
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
@@ -1448,6 +1449,42 @@ namespace {
   }
 
 
+  AutoContact* GCellTopology::doRp_AccessAnalog ( GCell* gcell, RoutingPad* rp, unsigned int flags )
+  {
+    cdebug_log(145,1) << "doRp_AccessAnalog()" << endl;
+    cdebug_log(145,0) << rp << endl;
+
+    const Layer* rpLayer  = rp->getLayer();
+    size_t       rpDepth  = Session::getLayerDepth( rpLayer );
+    DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+    Point        position = rp->getCenter();
+    Point        onGrid   = Session::getNearestGridPoint( position, gcell->getConstraintBox() );
+
+    AutoContact* contact = AutoContactTerminal::create( gcell, rp, rpLayer, position, viaSide, viaSide );
+
+    if (position != onGrid) {
+      cerr << Bug( "GCellTopology::doRp_AccessAnalog(): RoutingPad is not under any grid point.\n"
+                   "      %s\n"
+                   "      Using nearest grid point: %s"
+                 , getString(rp).c_str()
+                 , getString(onGrid).c_str()
+                 ) << endl;
+      contact->forceOnGrid( onGrid );
+    }
+
+    if (rpDepth != 1) {
+      cerr << Bug( "GCellTopology::doRp_AccessAnalog(): RoutingPad must be in METAL2 layer.\n"
+                   "      %s"
+                 , getString(rp).c_str()
+                 ) << endl;
+    }
+
+    cdebug_log(145,0) << contact << endl;
+    cdebug_tabw(145,-1);
+    return contact;
+  }
+
+
   void  GCellTopology::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 )
   {
     cdebug_log(145,0) << "doRp_StairCaseH()" << endl;
@@ -2157,6 +2194,7 @@ namespace {
            );
   }
 
+
   bool isHorizontal ( RoutingPad* rp )
   {
     return (  (rp->getSourcePosition().getY() == rp->getTargetPosition().getY()) 
@@ -2164,8 +2202,9 @@ namespace {
            );
   }
 
-  RoutingPad* returnSW ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 ){
 
+  RoutingPad* returnSW ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 )
+  {
     DbU::Unit c1SW = (rp1->getSourcePosition().getX() - gcell->getXMin()) + (rp1->getSourcePosition().getY() - gcell->getYMin());
     DbU::Unit c2SW = (rp2->getSourcePosition().getX() - gcell->getXMin()) + (rp2->getSourcePosition().getY() - gcell->getYMin());
 
@@ -2176,8 +2215,9 @@ namespace {
     }
   }
 
-  RoutingPad* returnNE ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 ){
 
+  RoutingPad* returnNE ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 )
+  {
     DbU::Unit c1NE = (gcell->getXMax() - rp1->getTargetPosition().getX()) + (gcell->getYMax() - rp1->getTargetPosition().getY());
     DbU::Unit c2NE = (gcell->getXMax() - rp2->getTargetPosition().getX()) + (gcell->getYMax() - rp2->getTargetPosition().getY());
 
@@ -2186,31 +2226,6 @@ namespace {
     } else {
       return rp2;
     }
-  }
-
-  
-  AutoContact* doRp_AC ( GCell* gcell , RoutingPad* rp, bool isSW, bool singleSeg = false )
-  {
-    const Layer* rpLayer  = rp->getLayer();
-    size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-    DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
-    Point        position;
-
-    if (singleSeg == false){
-      if (isSW) position = rp->getSourcePosition();
-      else      position = rp->getTargetPosition();
-    } else {
-      position = Point ( abs(rp->getSourcePosition().getX() + rp->getTargetPosition().getX())/2
-                       , abs(rp->getSourcePosition().getY() + rp->getTargetPosition().getY())/2
-                       );
-    }
-
-    return AutoContactTerminal::create( gcell
-                                      , rp
-                                      , rpLayer
-                                      , position
-                                      , viaSide, viaSide
-                                      );
   }
   
 
@@ -2259,7 +2274,7 @@ namespace {
     } else if (_routingPads.size() == 0){
       cdebug_log(145,0) << "Case _routingPads.size() = 0 "<< endl;
       throw Error( "GCellTopology::_doDevice() No RoutingPads found.\n"
-                 "        On: %s."
+                   "        On: %s."
                  , getString(_gcell).c_str()
                  );
     } else {
@@ -2272,69 +2287,25 @@ namespace {
     if ((rpNE != NULL) && (rpSW != NULL)){
       if (_east){
         cdebug_log(145,0) << "East"  << endl;
-        const Layer* rpLayer  = rpNE->getLayer();
-        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
-        Point        position;
-
-        position = Point ( abs(rpNE->getSourcePosition().getX() + rpNE->getTargetPosition().getX())/2
-                         , abs(rpNE->getSourcePosition().getY() + rpNE->getTargetPosition().getY())/2
-                         );
-        AutoContact* ac = AutoContactTerminal::create( _gcell, rpNE, rpLayer, position
-                                                     , viaSide, viaSide
-                                                     );
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
         if ( _fromHook != _east) forks.push( getSegmentOppositeHook( _east ), ac );
         else                     targetContact = ac;
       } 
       if (_west){
         cdebug_log(145,0) << "West"  << endl;
-        const Layer* rpLayer  = rpSW->getLayer();
-        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
-        Point        position;
-
-        position = Point ( abs(rpSW->getSourcePosition().getX() + rpSW->getTargetPosition().getX())/2
-                         , abs(rpSW->getSourcePosition().getY() + rpSW->getTargetPosition().getY())/2
-                         );
-        AutoContact* ac = AutoContactTerminal::create( _gcell, rpSW, rpLayer, position
-                                                     , viaSide, viaSide
-                                                     );
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
         if ( _fromHook != _west) forks.push( getSegmentOppositeHook( _west ), ac );
         else                     targetContact = ac;
       }
       if (_south){
         cdebug_log(145,0) << "South"  << endl;
-        const Layer* rpLayer  = rpSW->getLayer();
-        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
-        Point        position;
-
-        position = Point ( abs(rpSW->getSourcePosition().getX() + rpSW->getTargetPosition().getX())/2
-                         , abs(rpSW->getSourcePosition().getY() + rpSW->getTargetPosition().getY())/2
-                         );
-        AutoContact* ac = AutoContactTerminal::create( _gcell, rpSW, rpLayer, position
-                                                     , viaSide, viaSide
-                                                     );
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
         if ( _fromHook != _south) forks.push( getSegmentOppositeHook( _south ), ac );
         else                      targetContact = ac;
       }
       if (_north){
         cdebug_log(145,0) << "North"  << endl;
-        const Layer* rpLayer  = rpNE->getLayer();
-        size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-        DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
-        Point        position;
-
-        position = Point ( abs(rpNE->getSourcePosition().getX() + rpNE->getTargetPosition().getX())/2
-                         , abs(rpNE->getSourcePosition().getY() + rpNE->getTargetPosition().getY())/2
-                         );
-        AutoContact* ac = AutoContactTerminal::create( _gcell, rpNE, rpLayer, position
-                                                     , viaSide, viaSide
-                                                     );
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
+        AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
         if ( _fromHook != _north) forks.push( getSegmentOppositeHook( _north ), ac );
         else                      targetContact = ac;
       }
@@ -2343,104 +2314,6 @@ namespace {
     cdebug_tabw(145,-1);
     return targetContact;
   }
-/*
-  AutoContact* GCellTopology::_doDevice ( ForkStack& forks )
-  {
-    cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
-  // #0: Check if all RoutingPads are set to a component. 
-    for ( unsigned int i=0; i<_routingPads.size() ; i++ ) {
-      if ( ( _routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX() )
-         &&( _routingPads[i]->getSourcePosition().getY() == _routingPads[i]->getTargetPosition().getY() )
-         ){
-        throw Error( "GCellTopology::_doDevice() Some RoutingPads are not set to a component.\n"
-                   "        On: %s."
-                   , getString(_gcell).c_str()
-                   );
-      }
-    }
-    
-    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
-    if ( _routingPads.size() > 1 ){
-    // #1: Find RoutingPads to use for AutoContacts NE+SW
-      RoutingPad* rpNE = _routingPads[0];
-      RoutingPad* rpSW = _routingPads[0];
-
-      for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
-        rpNE = returnNE( _gcell, rpNE, _routingPads[i] );
-        rpSW = returnSW( _gcell, rpSW, _routingPads[i] );
-      }
-      
-      cdebug_log(145,0) << "rpNE: " << rpNE << endl;
-      cdebug_log(145,0) << "rpSW: " << rpSW << endl;
-    // #2: Check if 1 or 2 AutoContacts is necessary.
-      bool ne = false;
-      bool sw = false;
-      if ( (!_north) || (!_east) ){
-        _northEastContact = doRp_AC ( _gcell , rpSW, true );
-        ne = true;
-      } 
-      if ( (!_south) || (!_west) ){
-        _southWestContact = doRp_AC ( _gcell , rpNE, false );
-        sw = true;
-      }
-      if ( ne == false ) _northEastContact = _southWestContact;
-      if ( sw == false ) _southWestContact = _northEastContact;
-      cdebug_log(145,0) << "AutoContact NE: " << _northEastContact << endl;
-      cdebug_log(145,0) << "AutoContact SW: " << _southWestContact << endl;
-
-    } else if (_routingPads.size() == 0){
-      cdebug_log(145,0) << "Pas de RoutingPad trouvé." << endl;
-    } else {
-    // #1: Find RoutingPads to use for AutoContacts NE+SW
-    // Only 1 RoutingPads => 1 Component
-      cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
-    // #2: Check if 1 or 2 AutoContacts is necessary.
-      bool ne = false;
-      bool sw = false;
-      
-      if ( (_north) || (_east) ){
-        _northEastContact = doRp_AC ( _gcell , _routingPads[0], true );
-        ne = true;
-      } 
-      if ( (_south) || (_west) ){
-        _southWestContact = doRp_AC ( _gcell , _routingPads[0], false );
-        sw = true;
-      }
-      if ( ne == false ) _northEastContact = _southWestContact;
-      if ( sw == false ) _southWestContact = _northEastContact;
-      cdebug_log(145,0) << "AutoContact NE: " << _northEastContact << endl;
-      cdebug_log(145,0) << "AutoContact SW: " << _southWestContact << endl;
-    }
-    
-    AutoContact* targetContact = NULL;
-    if (_sourceContact){
-      targetContact = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
-        ? _northEastContact : _southWestContact ;
-    }
-    cdebug_log(145,0) << "fromHook: " <<  _fromHook << endl;
-    cdebug_log(145,0) << "North   : " << _north     << endl;
-    cdebug_log(145,0) << "East    : " << _east      << endl;
-    cdebug_log(145,0) << "South   : " << _south     << endl;
-    cdebug_log(145,0) << "West    : " << _west      << endl;
-
-    if ( _east and (_fromHook != _east) ) {
-      forks.push( getSegmentOppositeHook( _east ), _northEastContact );
-    }
-    if ( _west and (_fromHook != _west) ) {
-      forks.push( getSegmentOppositeHook( _west ), _southWestContact );
-    }
-    if ( _north and (_fromHook != _north) ) {
-      forks.push( getSegmentOppositeHook( _north ), _northEastContact );
-    }
-    if ( _south and (_fromHook != _south) ) {
-      forks.push( getSegmentOppositeHook( _south ), _southWestContact );
-    }
-
-    cdebug_log(145,0) << "doDevice done" << endl;
-    cdebug_tabw(145,-1);
-
-    return targetContact;
-    }*/
 
 
   AutoContact*  GCellTopology::_doHChannel ( ForkStack& forks )

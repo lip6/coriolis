@@ -22,6 +22,7 @@
 #include "hurricane/Cell.h"
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
+#include "crlcore/RoutingLayerGauge.h"
 #include "anabatic/Configuration.h"
 #include "anabatic/Session.h"
 #include "anabatic/AutoContact.h"
@@ -51,6 +52,7 @@ namespace Anabatic {
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::Cell;
+  using CRL::RoutingLayerGauge;
 
 
 // -------------------------------------------------------------------
@@ -333,6 +335,32 @@ namespace Anabatic {
 
   // Should issue at least a warning here.
     return _routingGauge->getLayerPitch(depth);
+  }
+
+
+  Point  Session::_getNearestGridPoint ( Point p, Box constraint )
+  {
+    Box ab = _anabatic->getCell()->getAbutmentBox();
+
+    RoutingLayerGauge* lg = _routingGauge->getLayerGauge( 1 );
+    DbU::Unit x = lg->getTrackPosition( ab.getXMin()
+                                      , lg->getTrackIndex( ab.getXMin()
+                                                         , ab.getXMax()
+                                                         , p.getX()
+                                                         , Constant::Nearest ) );
+    if (x < constraint.getXMin()) x += lg->getPitch();
+    if (x > constraint.getXMax()) x -= lg->getPitch();
+
+    lg = _routingGauge->getLayerGauge( 2 );
+    DbU::Unit y = lg->getTrackPosition( ab.getYMin()
+                                      , lg->getTrackIndex( ab.getYMin()
+                                                         , ab.getYMax()
+                                                         , p.getY()
+                                                         , Constant::Nearest ) );
+    if (y < constraint.getYMin()) y += lg->getPitch();
+    if (y > constraint.getYMax()) y -= lg->getPitch();
+
+    return Point(x,y);
   }
 
 

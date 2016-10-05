@@ -23,7 +23,7 @@
 #include <map>
 #include <boost/function.hpp>
 #include "hurricane/Commons.h"
-#include "hurricane/DbU.h"
+#include "hurricane/Box.h"
 #include "crlcore/CellGauge.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/Constants.h"
@@ -53,6 +53,8 @@ namespace Anabatic {
   using Hurricane::Layer;
   using Hurricane::Technology;
   using Hurricane::DbU;
+  using Hurricane::Point;
+  using Hurricane::Box;
   using Hurricane::Net;
   using Hurricane::Contact;
   using Hurricane::Segment;
@@ -103,6 +105,7 @@ namespace Anabatic {
       static  inline DbU::Unit                   getWireWidth          ( const Layer* );
       static  inline DbU::Unit                   getViaWidth           ( const Layer* );
       static  inline DbU::Unit                   getExtensionCap       ( const Layer* );
+      static  inline Point                       getNearestGridPoint   ( Point, Box constraints );
       static  inline size_t                      getSegmentStackSize   ();
       static  inline size_t                      getContactStackSize   ();
       static  inline const vector<AutoSegment*>& getInvalidateds       (); 
@@ -143,6 +146,7 @@ namespace Anabatic {
                      void                        _revalidateTopology   ();
       virtual        size_t                      _revalidate           ();
                      DbU::Unit                   _getPitch             ( size_t depth, unsigned int flags ) const;
+                     Point                       _getNearestGridPoint  ( Point, Box constraints );
                      Record*                     _getRecord            () const;
                      string                      _getString            () const;
               inline string                      _getTypeName          () const;
@@ -218,6 +222,7 @@ namespace Anabatic {
   inline DbU::Unit                   Session::getViaWidth          ( const Layer* layer ) { return getViaWidth ( getViaDepth(layer) ); }
   inline DbU::Unit                   Session::getExtensionCap      ( const Layer* layer ) { return getConfiguration()->getExtensionCap(layer); }
   inline unsigned int                Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
+  inline Point                       Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
 
   inline void                        Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
   inline void                        Session::_doglegReset         () { _doglegs.clear(); }

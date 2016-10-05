@@ -59,6 +59,7 @@ namespace Anabatic {
       virtual AutoSegment*         getPerpandicular       ( const AutoSegment* ) const;
       virtual void                 updateGeometry         ();
       virtual void                 updateTopology         ();
+      virtual void                 forceOnGrid            ( Point );
       virtual void                 cacheDetach            ( AutoSegment* );
       virtual void                 cacheAttach            ( AutoSegment* );
       virtual void                 updateCache            ();

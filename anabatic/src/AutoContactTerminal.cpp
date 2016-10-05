@@ -145,6 +145,12 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "AutoContactTerminal::getNativeConstraintBox()" << endl;
 
+    if (isUserNativeConstraints()) {
+      cdebug_log(145,1) << "  Native constraints sets by user:" << getConstraintBox() << endl;
+      cdebug_tabw(145,-1);
+      return getConstraintBox();
+    }
+
     Component* component = getAnchor();
     if (component == NULL) {
       cerr << Error( "%s is not anchored.", getString(this).c_str() ) << endl;
@@ -224,8 +230,9 @@ namespace Anabatic {
     order( xMin, xMax );
     order( yMin, yMax );
 
-    cdebug_log(145,0) << "| Using (y): " << DbU::getValueString(yMin) << " "
-                                   << DbU::getValueString(yMax) << endl;
+    cdebug_log(145,0) << "| Using (y): "
+                      << DbU::getValueString(yMin) << " "
+                      << DbU::getValueString(yMax) << endl;
 
     cdebug_tabw(145,-1);
     return Box( xMin, yMin, xMax, yMax );
@@ -402,6 +409,13 @@ namespace Anabatic {
 
     cdebug_tabw(145,-1);
     DebugSession::close();
+  }
+
+
+  void  AutoContactTerminal::forceOnGrid ( Point gridPoint )
+  {
+    setFlags( CntUserNativeConstraints );
+    setConstraintBox( Box(gridPoint) );
   }
 
 
