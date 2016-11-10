@@ -1,0 +1,2 @@
+# Nightly build of Coriolis.
+0 4 * * * ${HOME}/bin/socInstaller.py --nightly --rm-all --benchs > /dev/null 2>&1

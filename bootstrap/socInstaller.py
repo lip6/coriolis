@@ -34,6 +34,7 @@ try:
   import subprocess
   import socket
   import re
+  import bz2
   import smtplib
   from email.mime.text        import MIMEText
   from email.mime.multipart   import MIMEMultipart
@@ -337,6 +338,21 @@ class Configuration ( object ):
         if fd: fd.close()
       return
 
+    def compressLogs ( self ):
+      for log in self._logs.values():
+        if not log: continue
+
+        fd   = open( log, 'r' )
+        bzfd = bz2.BZ2File( log+'.bz2', 'w' )
+
+        for line in fd.readlines(): bzfd.write( line )
+
+        bzfd.close()
+        fd.close()
+
+        os.unlink( log )
+      return
+
 
 class Report ( object ):
 
@@ -500,6 +516,7 @@ try:
         Command( [ 'ssh', host, command ], fd ).execute()
 
     conf.closeLogs()
+
     conf.success = True
 
 except ErrorMessage, e:
@@ -517,5 +534,7 @@ if conf.doSendReport:
   report.attachLog( conf.logs['build' ] )
   report.attachLog( conf.logs['benchs'] )
   report.send()
+
+conf.compressLogs()
 
 sys.exit( conf.rcode )
