@@ -346,7 +346,7 @@ class Inst :
     # Not for vdd/vss in case of utilisation of SetGlobal
     # The detection is done with vst driver in this case ...
     for plug in self._hur_instance.getUnconnectedPlugs():
-      if plug.getMasterNet().getType() not in ( TypePOWER, TypeGROUND ) :
+      if plug.getMasterNet().getType() not in ( Net.Type.POWER, Net.Type.GROUND ) :
         name = str(plug.getMasterNet().getName())
         chaine = re.search ( "(.*)\(", name )
         if chaine : name = chaine.group(1)

@@ -274,7 +274,7 @@ class Model :
         direction = net.getDirection()
         name      = str(net.getName())
 
-        if net.getType() in ( TypePOWER, TypeGROUND, TypeCLOCK ) :
+        if net.getType() in ( Net.Type.POWER, Net.Type.GROUND, Net.Type.CLOCK ) :
           found = True
           continue
           
@@ -1199,7 +1199,7 @@ class Model :
         if plug_de_inst.getMasterNet().getDirection() == DirectionIN :
           # ignore vdd and vss
           type = plug_de_inst.getNet().getType()
-          if type not in ( TypePOWER, TypeGROUND ) : net_entree_inst.append ( plug_de_inst.getNet() )
+          if type not in ( Net.Type.POWER, Net.Type.GROUND ) : net_entree_inst.append ( plug_de_inst.getNet() )
 
       ### Deletion of te instance ###
       # If the instance has only one output
