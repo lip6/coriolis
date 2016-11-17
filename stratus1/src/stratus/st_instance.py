@@ -207,7 +207,8 @@ class Inst :
     if not self._st_cell._hur_cell :
       err = "\n[Stratus ERROR] HurricanePlug : Problem of hurricane cell.\nTry to contact Coriolis team.\n"
       raise Exception ( err )
-      
+     
+    UpdateSession.open()
     inst = Instance.create ( self._st_cell._hur_cell
                            , self._name
                            , self._hur_masterCell
@@ -345,7 +346,7 @@ class Inst :
     # Not for vdd/vss in case of utilisation of SetGlobal
     # The detection is done with vst driver in this case ...
     for plug in self._hur_instance.getUnconnectedPlugs():
-      if plug.getMasterNet().getType() not in ( TypePOWER, TypeGROUND ) :
+      if plug.getMasterNet().getType() not in ( Net.Type.POWER, Net.Type.GROUND ) :
         name = str(plug.getMasterNet().getName())
         chaine = re.search ( "(.*)\(", name )
         if chaine : name = chaine.group(1)
@@ -353,6 +354,8 @@ class Inst :
         err = "\n[Stratus ERROR] Inst : plug " + name + " of instance " + self._name + " must be connected.\n"
         err += '               (raw name: <%s>)\n' % str(plug.getMasterNet().getName())
         raise Exception ( err )
+
+    UpdateSession.close()
 
   ##############
   ### Prints ###
