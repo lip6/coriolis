@@ -268,6 +268,42 @@
 
 
 #
+# Find Qwt, correlated to the Qt version.
+#
+ macro(setup_qwt)
+   if(WITH_QT5)
+     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
+                               PATHS         /usr/include/qt5
+                                             /usr/include
+                               PATH_SUFFIXES qwt )
+     find_library(QWT_LIBRARY NAMES qwt-qt5
+                              PATHS /usr/lib${LIB_SUFFIX} )
+   else()
+     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
+                               PATHS         /usr/include
+                                             /usr/include/qt4
+                               PATH_SUFFIXES qwt )
+     find_library(QWT_LIBRARY NAMES qwt
+                              PATHS /usr/lib${LIB_SUFFIX} )
+   endif()
+
+   if( QWT_INCLUDE_DIR AND QWT_LIBRARY)
+     set(QWT_FOUND TRUE)
+   endif()
+
+   if(QWT_FOUND)
+     if(NOT QWT_FIND_QUIETLY)
+       message(STATUS "-- Found Qwt: ${QWT_LIBRARY}")
+     endif()
+   else()
+     if(QWT_FIND_REQUIRED)
+       message(FATAL_ERROR "-- Could not find Qwt")
+     endif()
+   endif()
+ endmacro()
+
+
+#
 # Guess the value of SYS_CONF_DIR according to INSTALLDIR.
 # if INSTALLDIR is either /usr or /opt, we uses the system-wide /etc,
 # otherwise we install under the tool INSTALLDIR/etc.

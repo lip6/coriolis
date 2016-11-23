@@ -561,7 +561,7 @@ namespace Katana {
     if (getState() < EngineState::EngineGutted) {
       openSession();
 
-      size_t maxDepth = getConfiguration()->getRoutingGauge()->getDepth();
+      size_t maxDepth = std::min( getConfiguration()->getRoutingGauge()->getDepth(), _routingPlanes.size() );
       for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
         _routingPlanes[depth]->destroy();
       }

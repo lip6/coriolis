@@ -33,6 +33,7 @@
 #define  HURRICANE_DBU_H
 
 
+#include  <cstdint>
 #include  <cmath>
 #include  "hurricane/Commons.h"
 
@@ -63,7 +64,7 @@ namespace Hurricane {
                          , Nearest        = 4
                          };
     public:
-      typedef  long  Unit;
+      typedef  std::int64_t  Unit;
 
     public:
       static        void                checkGridBound          ( double value );
