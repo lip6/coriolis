@@ -353,7 +353,7 @@ namespace Anabatic {
 
   GCell::~GCell ()
   {
-    cdebug_log(145,0) << "GCell::~GCell()" << endl;
+  //cdebug_log(145,0) << "GCell::~GCell()" << endl;
 
     delete [] _blockages;
     delete [] _densities;

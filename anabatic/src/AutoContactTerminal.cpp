@@ -148,6 +148,7 @@ namespace Anabatic {
     if (isUserNativeConstraints()) {
       cdebug_log(145,1) << "  Native constraints sets by user:" << getConstraintBox() << endl;
       cdebug_tabw(145,-1);
+      cdebug_tabw(145,-1);
       return getConstraintBox();
     }
 
