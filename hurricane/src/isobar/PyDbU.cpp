@@ -398,7 +398,7 @@ extern "C" {
   {
     PyObject* arg0;
     if ( not ParseOneArg( "DbU.toDb", args,INT_ARG, &arg0 ) ) return NULL;
-    return PyLong_FromLong(DbU::toDb(PyAny_AsLong(arg0)));
+    return PyLong_FromLong(DbU::toDb((DbU::Unit)PyAny_AsLong(arg0)));
   }
 
 
@@ -406,7 +406,7 @@ extern "C" {
   {
     PyObject* arg0;
     if ( not ParseOneArg( "DbU.toGrid", args,INT_ARG, &arg0 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toGrid(PyAny_AsLong(arg0)));
+    return Py_BuildValue("d",DbU::toGrid((DbU::Unit)PyAny_AsLong(arg0)));
   }
 
 
@@ -414,7 +414,7 @@ extern "C" {
   {
     PyObject* arg0;
     if ( not ParseOneArg( "DbU.toLambda", args,INT_ARG, &arg0 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toLambda(PyAny_AsLong(arg0)));
+    return Py_BuildValue("d",DbU::toLambda((DbU::Unit)PyAny_AsLong(arg0)));
   }
 
 
@@ -423,7 +423,7 @@ extern "C" {
     PyObject* arg0;
     PyObject* arg1;
     if ( not ParseTwoArg( "DbU.toPhysical", args,INTS2_ARG, &arg0, &arg1 ) ) return NULL;
-    return Py_BuildValue("d",DbU::toPhysical(PyAny_AsLong(arg0), PyInt_AsUnitPower(arg1)));
+    return Py_BuildValue("d",DbU::toPhysical((DbU::Unit)PyAny_AsLong(arg0), PyInt_AsUnitPower(arg1)));
   }
 
 
