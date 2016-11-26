@@ -623,6 +623,8 @@ static void mergeNets(Net* net1, Net* net2)
 void Net::merge(Net* net)
 // **********************
 {
+    cdebug_log(18,0) << "Net::merge(): " << this << " with " << net << " (deleted)." << endl;
+
     if (!net)
         throw Error("Can't merge net : null net");
 
@@ -706,38 +708,41 @@ void Net::_postCreate()
 void Net::_preDestroy()
 // *******************
 {
-    Inherit::_preDestroy();
+  cdebug_log(18,1) << "entering Net::_preDestroy: " << this << endl;
 
-    Plugs plugs = getSlavePlugs();
-    while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
+  Inherit::_preDestroy();
 
-    unmaterialize();
+  Plugs plugs = getSlavePlugs();
+  while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
-    Rubbers rubbers = getRubbers();
-    while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
+  unmaterialize();
 
-    for_each_component(component, getComponents()) {
-        for_each_hook(hook, component->getHooks()) {
-            // 15 05 2006 xtof : detach all hooks in rings when
-            // a net deletion occurs, can't see why master hooks were not detached.
-            //if (!hook->IsMaster()) hook->detach();
-            hook->detach();
-            end_for;
-            // 24/02/2016 jpc: the answer, at last... we cannot iterate
-            // over a collection as it is modificated/destroyed!
-        }
-        end_for;
+  Rubbers rubbers = getRubbers();
+  while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
+
+  for ( Component* component : getComponents() ) {
+    for ( Hook* hook : component->getHooks() ) {
+    // 15 05 2006 xtof : detach all hooks in rings when
+    // a net deletion occurs, can't see why master hooks were not detached.
+    //if (!hook->IsMaster()) hook->detach();
+      hook->detach();
+    // 24/02/2016 jpc: the answer, at last... we cannot iterate
+    // over a collection as it is modificated/destroyed!
     }
+  }
+    
+  Components components = getComponents();
+  while ( components.getFirst() ) {
+    Component* component = components.getFirst();
+    if (!dynamic_cast<Plug*>(component)) component->destroy();
+    else (static_cast<Plug*>(component))->setNet(NULL);
+  }
 
-    Components components = getComponents();
-    while ( components.getFirst() ) {
-      Component* component = components.getFirst();
-      if (!dynamic_cast<Plug*>(component)) component->destroy();
-      else (static_cast<Plug*>(component))->setNet(NULL);
-    }
+  _mainName.clear();
+  _cell->_getNetMap()._remove(this);
 
-    _mainName.clear();
-    _cell->_getNetMap()._remove(this);
+  cdebug_log(18,0) << "exiting Net::_preDestroy: " << this << endl;
+  cdebug_tabw(18,-1);
 }
 
 string Net::_getString() const

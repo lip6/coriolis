@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -44,20 +44,12 @@ namespace {
 }
 
 
-// x-----------------------------------------------------------------x
-// |              "::ProxyProperty" Global Variables                 |
-// x-----------------------------------------------------------------x
+// -------------------------------------------------------------------
+// Class : "ProxyProperty".
 
 
- Name  ProxyProperty::_name   = "Isobar::ProxyProperty";
- int   ProxyProperty::_offset = -1;
-
-
-
-
-// x-----------------------------------------------------------------x
-// |              "::ProxyProperty" Class Definitions                |
-// x-----------------------------------------------------------------x
+Name  ProxyProperty::_name   = "Isobar::ProxyProperty";
+int   ProxyProperty::_offset = -1;
 
 
 ProxyProperty::ProxyProperty ( void* shadow )
@@ -67,11 +59,15 @@ ProxyProperty::ProxyProperty ( void* shadow )
 { }
 
 
-ProxyProperty* ProxyProperty::create ( void* shadow ) {
+ProxyProperty* ProxyProperty::create ( void* shadow )
+{
+  if (not shadow)
+    throw Error( "ProxyProperty::create(): Empty \"shadow\" argument." );
+
   ProxyProperty* property = new ProxyProperty ( shadow );
 
-  if ( property == NULL )
-    throw Error ( "ProxyProperty::create()" );
+  if (not property)
+    throw Error( "ProxyProperty::create()" );
 
   return property;
 }
@@ -80,12 +76,13 @@ ProxyProperty* ProxyProperty::create ( void* shadow ) {
 void  ProxyProperty::_preDestroy () {
   if ( _owner ) _owner->_onDestroyed ( this );
 
-  cdebug_log(20,0) << "ProxyProperty::_owner := " << hex << (void*)_owner << endl;
+  cdebug_log(20,0) << "ProxyProperty::_owner:        " << (void*)_owner  << endl;
+  cdebug_log(20,0) << "ProxyProperty::_shadow:       " << (void*)_shadow << endl;
 
   if ( _offset > 0 ) {
     void** shadowMember = ( (void**)( (unsigned long)_shadow + _offset ) );
 
-    cdebug_log(20,0) << "ProxyProperty::_shadowMember := " << hex << *shadowMember << endl;
+    cdebug_log(20,0) << "ProxyProperty::_shadowMember: " << (void*)*shadowMember << endl;
 
     *shadowMember = NULL;
   }

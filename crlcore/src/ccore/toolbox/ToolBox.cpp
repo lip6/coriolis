@@ -212,70 +212,56 @@ void  placePlugs ( Cell* cell )
 //     }
 //}
 
-static void AttachPlugOrPin(Net& net)
+static void attachPlugOrPin ( Net* net )
 {
-    unsigned nbPlugs = 0;
-    unsigned nbPins  = 0;
-    unsigned nbUnattachedPlugs = 0;
-    unsigned nbUnattachedPins  = 0;
+  unsigned int nbPlugs                   = 0;
+  unsigned int nbPins                    = 0;
+  unsigned int nbUnattachedPlugs         = 0;
+  unsigned int nbUnattachedPins          = 0;
+  Component*   firstAttachedComponent    = NULL;
+  Component*   firstUnattachedComponent  = NULL;
+  Component*   secondUnattachedComponent = NULL;
 
-    Component* firstAttachedComponent    = NULL;
-    Component* firstUnattachedComponent  = NULL;
-    Component* secondUnattachedComponent = NULL;
-
-    for_each_plug ( plug, net.getPlugs() ) {
-        nbPlugs++;
-        if ( !plug->getBodyHook()->isAttached() ) {
-            if ( !firstUnattachedComponent )
-                firstUnattachedComponent = plug;
-            else
-                if ( !secondUnattachedComponent )
-                    secondUnattachedComponent = plug;
-            nbUnattachedPlugs++;
-        }
-        else {
-            if ( !firstAttachedComponent )
-                firstAttachedComponent = plug;
-        }
-        end_for
+  for ( Plug* plug : net->getPlugs() ) {
+    nbPlugs++;
+    if (not plug->getBodyHook()->isAttached()) {
+      if      (not  firstUnattachedComponent)  firstUnattachedComponent = plug;
+      else if (not secondUnattachedComponent) secondUnattachedComponent = plug;
+      nbUnattachedPlugs++;
+    } else {
+      if (not firstAttachedComponent ) firstAttachedComponent = plug;
     }
+  }
 
-    for_each_pin ( pin, net.getPins() ) {
-        nbPins++;
-        if ( !pin->getBodyHook()->isAttached() ) {
-            if ( !firstUnattachedComponent )
-                firstUnattachedComponent = pin;
-            else
-                if ( !secondUnattachedComponent )
-                    secondUnattachedComponent = pin;
-            nbUnattachedPins++;
-        }
-        else {
-            if ( !firstAttachedComponent )
-                firstAttachedComponent = pin;
-        }
-        end_for
+  for ( Pin* pin : net->getPins() ) {
+    nbPins++;
+    if (not pin->getBodyHook()->isAttached()) {
+      if      (not firstUnattachedComponent )  firstUnattachedComponent = pin;
+      else if (not secondUnattachedComponent) secondUnattachedComponent = pin;
+      nbUnattachedPins++;
+    } else {
+      if (not firstAttachedComponent ) firstAttachedComponent = pin;
     }
+  }
 
-    if ( (nbPlugs + nbPins) == 1 )
-        return;
+  if (nbPlugs + nbPins < 2) return;
+  
+  if ( (nbPlugs + nbPins > 2) and (nbUnattachedPlugs + nbUnattachedPins != 1) ) {
+    throw Error( "attachPlugOrPin(): Net \"%s\" has %u unattached Plugs/Pins,"
+                 " while it should have only one."
+               , getString(net->getName()).c_str()
+               , nbUnattachedPlugs + nbUnattachedPins
+               );
+  }
 
-    if ( ((nbPlugs + nbPins) > 2) && ((nbUnattachedPlugs + nbUnattachedPins) != 1) ) {
-        string message = "AttachPlugOrPin() : Net " + getString(&net) + " has " + getString(nbUnattachedPlugs + nbUnattachedPins)
-                                              + " unattached plugs/pins : it should have only one unattached plug/pin.";
-        throw Error(message);
-    }
-
-    if ( !firstAttachedComponent ) {
-        assert ( firstUnattachedComponent );
-        assert ( secondUnattachedComponent );
-        firstUnattachedComponent->getBodyHook()->attach ( secondUnattachedComponent->getBodyHook() );
-    }
-    else {
-        assert ( firstUnattachedComponent );
-        firstUnattachedComponent->getBodyHook()->attach ( firstAttachedComponent->getBodyHook() );
-    }
-
+  if (not firstAttachedComponent) {
+    assert( firstUnattachedComponent );
+    assert( secondUnattachedComponent );
+    firstUnattachedComponent->getBodyHook()->attach( secondUnattachedComponent->getBodyHook() );
+  } else {
+    assert( firstUnattachedComponent );
+    firstUnattachedComponent->getBodyHook()->attach( firstAttachedComponent->getBodyHook() );
+  }
 }
 
 
@@ -303,7 +289,7 @@ void createPartRing2(Net& net)
     if (net.isGlobal())
       throw Warning("Cannot create plugs ring on global Net");
       
-    AttachPlugOrPin(net);
+    attachPlugOrPin(&net);
     
     UpdateSession::close();
 }

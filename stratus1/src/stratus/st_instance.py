@@ -311,8 +311,10 @@ class Inst :
         else :
           hurNet = realNet._hur_net[i]
 
-        if mapNet._arity == 1 : tempNet = self._hur_masterCell.getNet ( pin.lower() )
-        else                  : tempNet = self._hur_masterCell.getNet ( pin.lower() + "(" + str(j+lsb) + ")" )
+        if mapNet._arity == 1:
+          tempNet = self._hur_masterCell.getNet ( pin.lower() )
+        else:
+          tempNet = self._hur_masterCell.getNet ( pin.lower() + "(" + str(j+lsb) + ")" )
         j += 1
       
         if not ( tempNet ) :

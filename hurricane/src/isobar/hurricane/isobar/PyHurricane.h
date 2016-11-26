@@ -764,7 +764,7 @@ extern "C" {
                                                                                          \
   extern void Py##TYPE##Collection_LinkPyType ()                                         \
   {                                                                                      \
-    cdebug_log(20,0) << "Py"#TYPE"Collection_LinkType()" << endl;                          \
+    cdebug_log(20,0) << "Py"#TYPE"Collection_LinkType()" << endl;                        \
     PyType##TYPE##Collection.tp_iter            = (getiterfunc)GetLocator;               \
     PyType##TYPE##Collection.tp_dealloc         = (destructor)Py##TYPE##Collection_DeAlloc;       \
     PyType##TYPE##CollectionLocator.tp_dealloc  = (destructor)Py##TYPE##CollectionLocatorDeAlloc; \
@@ -964,19 +964,22 @@ extern "C" {
 // Attribute Method For Repr.
 
 
-#define DirectReprMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)            \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                   \
-  {                                                                      \
-    if ( self->ACCESS_OBJECT == NULL )                                   \
-      return ( PyString_FromString("<PyObject unbound>") );              \
-    SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);   \
-    if ( object == NULL )                                                \
-      return ( PyString_FromString("<PyObject invalid dynamic-cast>") ); \
-                                                                         \
-    ostringstream repr;                                                  \
+#define DirectReprMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                 \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                        \
+  {                                                                           \
+    if (self->ACCESS_OBJECT == NULL) {                                        \
+      ostringstream repr;                                                     \
+      repr << "<" #PY_SELF_TYPE " [" << (void*)self << " <-> NULL] unbound>"; \
+      return PyString_FromString( repr.str().c_str() );                       \
+    }                                                                         \
+    SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);        \
+    if (object == NULL)                                                       \
+      return PyString_FromString( "<PyObject invalid dynamic_cast>" );        \
+                                                                              \
+    ostringstream repr;                                                       \
     repr << "[" << (void*)self << "<->" << (void*)object << " " << getString(object) << "]"; \
-                                                                         \
-    return ( PyString_FromString(repr.str().c_str()) );                  \
+                                                                              \
+    return PyString_FromString(repr.str().c_str() );                          \
   }
 
 
@@ -985,16 +988,19 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Str.
 
-# define  DirectStrMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)           \
-  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                   \
-  {                                                                      \
-    if ( self->ACCESS_OBJECT == NULL )                                   \
-      return ( PyString_FromString("<PyObject unbound>") );              \
-    SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);   \
-    if ( object == NULL )                                                \
-      return ( PyString_FromString("<PyObject invalid dynamic_cast>") ); \
-                                                                         \
-    return ( PyString_FromString(getString(object).c_str()) );           \
+# define  DirectStrMethod(PY_FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                        \
+  {                                                                           \
+    if (self->ACCESS_OBJECT == NULL) {                                        \
+      ostringstream repr;                                                     \
+      repr << "<" #PY_SELF_TYPE " [" << (void*)self << " <-> NULL] unbound>"; \
+      return PyString_FromString( repr.str().c_str() );                       \
+    }                                                                         \
+    SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);        \
+    if (object == NULL)                                                       \
+      return PyString_FromString("<PyObject invalid dynamic_cast>" );         \
+                                                                              \
+    return PyString_FromString(getString(object).c_str() );                   \
   }
 
 
@@ -1070,6 +1076,8 @@ extern "C" {
       PyErr_SetString( ProxyError, message.str().c_str() );                                \
       return NULL;                                                                         \
     }                                                                                      \
+    cdebug_log(20,0) << #PY_FUNC_NAME "(" << (void*)self << ") "                           \
+                     << (void*)self->ACCESS_OBJECT << ":" << self->ACCESS_OBJECT << endl;  \
     self->ACCESS_OBJECT->destroy();                                                        \
     self->ACCESS_OBJECT = NULL;                                                            \
     HCATCH                                                                                 \

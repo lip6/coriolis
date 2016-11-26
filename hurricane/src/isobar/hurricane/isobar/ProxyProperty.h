@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC 2008-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,8 +15,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __PROXY_PROPERTY__
-#define  __PROXY_PROPERTY__
+#ifndef  ISOBAR_PROXY_PROPERTY_H
+#define  ISOBAR_PROXY_PROPERTY_H
 
 #include "hurricane/DBo.h"
 #include "hurricane/Property.h"
@@ -44,7 +44,7 @@ using namespace Hurricane;
       static  const Name&    getPropertyName () { return _name; }
       static  int            getOffset       () { return _offset; };
       static  void           setOffset       ( int offset );
-      static  ProxyProperty* create          ( void* _shadow=NULL );
+      static  ProxyProperty* create          ( void* shadow=NULL );
     public:   
               DBo*           getOwner        () const { return _owner; };
               void*          getShadow       () const { return _shadow; };
