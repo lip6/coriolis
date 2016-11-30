@@ -173,27 +173,25 @@ extern "C" {
     
     METHOD_HEAD ( "Transformation.getX()" )
 
-    PyObject* arg0;
-    PyObject* arg1;
-    long      result = 0;
+    PyObject*  arg0   = NULL;
+    PyObject*  arg1   = NULL;
+    DbU::Unit  result = 0;
 
     HTRY
-
-    __cs.init ("Transformation.getX");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getX",Converter,&arg0,Converter,&arg1) )
-      return ( NULL );
-
-    if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getX ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getX ( PyAny_AsLong(arg0)
-                                                                         , PyAny_AsLong(arg1) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getX()." );
-      return ( NULL );
-    }
-
+      __cs.init ("Transformation.getX");
+      if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getX",Converter,&arg0,Converter,&arg1) )
+        return NULL;
+      
+      if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getX ( *PYPOINT_O(arg0) ); }
+      else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getX ( PyAny_AsLong(arg0)
+                                                                           , PyAny_AsLong(arg1) ); }
+      else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getX()." );
+        return NULL;
+      }
     HCATCH
 
-    return ( (PyObject*)PyLong_FromLong(result) );
+    return PyDbU_FromLong(result);
   }
 
 
@@ -208,27 +206,25 @@ extern "C" {
     
     METHOD_HEAD ( "Transformation.getY()" )
 
-    PyObject* arg0;
-    PyObject* arg1;
-    long      result = 0;
+    PyObject*  arg0   = NULL;
+    PyObject*  arg1   = NULL;
+    DbU::Unit  result = 0;
 
     HTRY
-
     __cs.init ("Transformation.getY");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getY",Converter,&arg0,Converter,&arg1) )
-      return ( NULL );
-
-    if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getY ( *PYPOINT_O(arg0) ); }
-    else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getY ( PyAny_AsLong(arg0)
-                                                                         , PyAny_AsLong(arg1) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getY()." );
-      return ( NULL );
-    }
-
+      if ( ! PyArg_ParseTuple(args,"|O&O&:Transformation.getY",Converter,&arg0,Converter,&arg1) )
+        return NULL;
+      
+      if      ( __cs.getObjectIds() == POINT_ARG ) { result = transf->getY ( *PYPOINT_O(arg0) ); }
+      else if ( __cs.getObjectIds() == INTS2_ARG ) { result = transf->getY ( PyAny_AsLong(arg0)
+                                                                           , PyAny_AsLong(arg1) ); }
+      else {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Tranformation.getY()." );
+        return NULL;
+      }
     HCATCH
 
-    return ( (PyObject*)PyLong_FromLong(result) );
+    return PyDbU_FromLong(result);
   }
 
 
@@ -243,18 +239,16 @@ extern "C" {
     
     METHOD_HEAD ( "Transformation.getDx()" )
 
-    PyObject* arg0;
-    PyObject* arg1;
-    long      result = 0;
+    PyObject*  arg0   = NULL;
+    PyObject*  arg1   = NULL;
+    DbU::Unit  result = 0;
 
     HTRY
-
-    if ( ! ParseTwoArg ( "Transformation.getDx", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-    result = transf->getDx ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-
+      if ( ! ParseTwoArg ( "Transformation.getDx", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+      result = transf->getDx ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
     HCATCH
 
-    return ( (PyObject*)PyLong_FromLong(result) );
+    return PyDbU_FromLong(result);
   }
 
 
@@ -269,18 +263,16 @@ extern "C" {
     
     METHOD_HEAD ( "Transformation.getDy()" )
 
-    PyObject* arg0;
-    PyObject* arg1;
-    long      result = 0;
+    PyObject*  arg0   = NULL;
+    PyObject*  arg1   = NULL;
+    DbU::Unit  result = 0;
 
     HTRY
-
-    if ( ! ParseTwoArg ( "Transformation.getDy", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-    result = transf->getDy ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-
+      if ( ! ParseTwoArg ( "Transformation.getDy", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
+      result = transf->getDy ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
     HCATCH
 
-    return ( (PyObject*)PyLong_FromLong(result) );
+    return PyDbU_FromLong(result);
   }
 
 

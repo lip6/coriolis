@@ -103,11 +103,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "Contact.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Contact.translate", &dx, &dy)) {
-        contact->translate(dx, dy);
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("Contact.translate");
+    if (PyArg_ParseTuple(args,"O&O&:Contact.translate", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) contact->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "Contact.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Contact.translate()" );
+      PyErr_SetString ( ConstructorError, "Contact.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH

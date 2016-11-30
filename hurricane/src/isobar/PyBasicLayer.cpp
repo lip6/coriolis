@@ -52,21 +52,21 @@ extern "C" {
     BasicLayer*   basicLayer     = NULL;
     
     HTRY
-    PyObject*     pyTechnology   = NULL;
-    char*         name           = NULL;
-    PyObject*     pyMaterial     = NULL;
-    unsigned int  extractNumber  = 0;
-    long          minimalSize    = 0;
-    long          minimalSpacing = 0;
+    PyObject*     pyTechnology     = NULL;
+    char*         name             = NULL;
+    PyObject*     pyMaterial       = NULL;
+    unsigned int  extractNumber    = 0;
+    PyObject*     pyMinimalSize    = NULL;
+    PyObject*     pyMinimalSpacing = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "OsO|Ill:BasicLayer.create"
+                        , "OsO|IOO:BasicLayer.create"
                         , &pyTechnology
                         , &name
                         , &pyMaterial
                         , &extractNumber
-                        , &minimalSize
-                        , &minimalSpacing
+                        , &pyMinimalSize
+                        , &pyMinimalSpacing
                         )) {
       if (not IsPyTechnology(pyTechnology)) {
         PyErr_SetString ( ConstructorError, "Hurricane.create(): First argument is not of type Technology." );
@@ -81,8 +81,8 @@ extern "C" {
                                      , Name(name)
                                      , *PYMATERIAL_O(pyMaterial)
                                      , extractNumber
-                                     , minimalSize
-                                     , minimalSpacing
+                                     , (pyMinimalSize)    ? PyAny_AsLong(pyMinimalSize)    : 0
+                                     , (pyMinimalSpacing) ? PyAny_AsLong(pyMinimalSpacing) : 0
                                      );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to BasicLayer.create()." );

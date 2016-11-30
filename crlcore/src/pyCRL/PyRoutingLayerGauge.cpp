@@ -43,6 +43,8 @@ namespace  CRL {
   using Isobar::PyLayer;
   using Isobar::PyTypeLayer;
   using Isobar::PyLayer_LinkDerived;
+  using Isobar::PyAny_AsLong;
+  using Isobar::PyDbU_FromLong;
 
 
 extern "C" {
@@ -71,24 +73,24 @@ extern "C" {
     int       type;
     int       depth;
     double    density;
-    long      offset;
-    long      pitch;
-    long      wireWidth;
-    long      viaWidth;
-    long      obsDw;
+    PyObject* pyOffset    = NULL;
+    PyObject* pyPitch     = NULL;
+    PyObject* pyWireWidth = NULL;
+    PyObject* pyViaWidth  = NULL;
+    PyObject* pyObsDw     = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "OIIIdlllll:RoutingLayerGauge.create"
+                        , "OIIIdOOOOO:RoutingLayerGauge.create"
                         , &pyLayer
                         , &direction
                         , &type
                         , &depth
                         , &density
-                        , &offset
-                        , &pitch
-                        , &wireWidth
-                        , &viaWidth
-                        , &obsDw
+                        , &pyOffset
+                        , &pyPitch
+                        , &pyWireWidth
+                        , &pyViaWidth
+                        , &pyObsDw
                         )) {
       if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
         PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingLayerGauge.create()." );
@@ -114,11 +116,11 @@ extern "C" {
                                      , (Constant::LayerGaugeType)type
                                      , depth
                                      , density
-                                     , offset
-                                     , pitch
-                                     , wireWidth
-                                     , viaWidth
-                                     , obsDw
+                                     , PyAny_AsLong(pyOffset)
+                                     , PyAny_AsLong(pyPitch)
+                                     , PyAny_AsLong(pyWireWidth)
+                                     , PyAny_AsLong(pyViaWidth)
+                                     , PyAny_AsLong(pyObsDw)
                                      );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.create()." );
@@ -177,11 +179,11 @@ extern "C" {
     HTRY
     METHOD_HEAD("RoutingLayerGauge.getTrackNumber()")
 
-    long  start = 0;
-    long  stop  = 0;
+    PyObject* pyStart = NULL;
+    PyObject* pyStop  = NULL;
     
-    if (PyArg_ParseTuple( args, "ll:RoutingLayerGauge.getTrackNumber", &start, &stop)) {
-      trackNumber = rlg->getTrackNumber( (DbU::Unit)start, (DbU::Unit)stop );
+    if (PyArg_ParseTuple( args, "OO:RoutingLayerGauge.getTrackNumber", &pyStart, &pyStop)) {
+      trackNumber = rlg->getTrackNumber( PyAny_AsLong(pyStart), PyAny_AsLong(pyStop) );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.getTrackNumber()." );
       return NULL;
@@ -201,12 +203,12 @@ extern "C" {
     HTRY
     METHOD_HEAD("RoutingLayerGauge.getTrackIndex()")
 
-    long  start    = 0;
-    long  stop     = 0;
-    long  position = 0;
-    long  mode     = 0;
+    PyObject* pyStart    = NULL;
+    PyObject* pyStop     = NULL;
+    PyObject* pyPosition = NULL;
+    long      mode       = 0;
     
-    if (PyArg_ParseTuple( args, "lllI:RoutingLayerGauge.getTrackIndex", &start, &stop, &position, &mode)) {
+    if (PyArg_ParseTuple( args, "OOOI:RoutingLayerGauge.getTrackIndex", &pyStart, &pyStop, &pyPosition, &mode)) {
       switch(mode) {
         case Constant::Superior:
         case Constant::Inferior:
@@ -216,9 +218,9 @@ extern "C" {
           PyErr_SetString ( ConstructorError, "RoutingLayerGauge.getTrackIndex(): The <mode> parameter has an invalid value ." );
           return NULL;
       }
-      trackIndex = rlg->getTrackIndex( (DbU::Unit)start
-                                     , (DbU::Unit)stop
-                                     , (DbU::Unit)position
+      trackIndex = rlg->getTrackIndex( PyAny_AsLong(pyStart)
+                                     , PyAny_AsLong(pyStop)
+                                     , PyAny_AsLong(pyPosition)
                                      , (unsigned int)mode );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.getTrackIndex()." );
@@ -239,18 +241,18 @@ extern "C" {
     HTRY
     METHOD_HEAD("RoutingLayerGauge.getTrackPosition()")
 
-    long          start = 0;
-    unsigned int  depth = 0;
+    PyObject*     pyStart = NULL;
+    unsigned int  depth   = 0;
     
-    if (PyArg_ParseTuple( args, "lI:RoutingLayerGauge.getTrackIndex", &start, &depth)) {
-      trackPosition = rlg->getTrackNumber( (DbU::Unit)start , depth);
+    if (PyArg_ParseTuple( args, "OI:RoutingLayerGauge.getTrackIndex", &pyStart, &depth)) {
+      trackPosition = rlg->getTrackNumber( PyAny_AsLong(pyStart), depth);
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.getTrackPosition()." );
       return NULL;
     }
     HCATCH
 
-    return PyLong_FromLong((long)trackPosition);
+    return PyDbU_FromLong(trackPosition);
   }
 
 

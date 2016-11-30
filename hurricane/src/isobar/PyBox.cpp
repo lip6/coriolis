@@ -368,11 +368,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "Box.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Box.translate", &dx, &dy)) {
-        box->translate(dx, dy);
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("Box.translate");
+    if (PyArg_ParseTuple(args,"O&O&:Box.translate", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) box->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "Box.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Box.translate()" );
+      PyErr_SetString ( ConstructorError, "Box.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH
@@ -432,9 +438,6 @@ extern "C" {
 // x=================================================================x
 
 
-
-
-
   // ---------------------------------------------------------------
   // PyBox Object Definitions.
   
@@ -442,14 +445,7 @@ extern "C" {
 
 # endif  // End of Shared Library Code Part.
 
-
-
-
 }  // End of extern "C".
-
-
-
-
 
 }  // End of Isobar namespace.
  

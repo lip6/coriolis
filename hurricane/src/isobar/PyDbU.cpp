@@ -111,7 +111,7 @@ extern "C" {
     }
     HCATCH
     
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
@@ -133,7 +133,7 @@ extern "C" {
     }
     HCATCH
     
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
@@ -155,7 +155,7 @@ extern "C" {
     }
     HCATCH
     
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
@@ -173,7 +173,7 @@ extern "C" {
     result = DbU::fromPhysical(value,(DbU::UnitPower)power);
     HCATCH
 
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
@@ -282,37 +282,37 @@ extern "C" {
 
 
   extern PyObject* PyDbU_getRealSnapGridStep ( PyObject* )
-  { return PyLong_FromLong(DbU::getRealSnapGridStep()); }
+  { return PyDbU_FromLong(DbU::getRealSnapGridStep()); }
 
 
   extern PyObject* PyDbU_getOnRealSnapGrid ( PyObject* , PyObject* args )
   {
-    long       value   = 0;
-    int        snap    = DbU::Nearest;
-    DbU::Unit  result  = 0;
+    PyObject*  value  = NULL;
+    int        snap   = DbU::Nearest;
+    DbU::Unit  result = 0;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnRealSnapGrid", &value, &snap) ) {
+    if (not PyArg_ParseTuple(args,"O|i:DbU.getOnRealSnapGrid", &value, &snap) ) {
       PyErr_SetString ( ConstructorError, "DbU.getOnRealSnapGrid(): Invalid/bad type parameters ." );
       return NULL;
     }
-    result = DbU::getOnRealSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
+    result = DbU::getOnRealSnapGrid(PyAny_AsLong(value),(DbU::SnapMode)snap);
     HCATCH
 
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
   extern PyObject* PyDbU_setRealSnapGridStep ( PyObject* , PyObject* args )
   {
-    long  step = 0;
+    PyObject* step = NULL;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l:DbU.setRealSnapGridStep", &step) ) {
+    if (not PyArg_ParseTuple(args,"O:DbU.setRealSnapGridStep", &step) ) {
       PyErr_SetString ( ConstructorError, "DbU.setRealSnapGridStep(): Invalid/bad type parameters ." );
       return NULL;
     }
-    DbU::setRealSnapGridStep(DbU::db(step));
+    DbU::setRealSnapGridStep(PyAny_AsLong(step));
     HCATCH
 
     Py_RETURN_NONE;
@@ -320,37 +320,37 @@ extern "C" {
 
 
   extern PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject* )
-  { return PyLong_FromLong(DbU::getSymbolicSnapGridStep()); }
+  { return PyDbU_FromLong(DbU::getSymbolicSnapGridStep()); }
 
 
   extern PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject* , PyObject* args )
   {
-    long       value   = 0;
+    PyObject*  pyValue = NULL;
     int        snap    = DbU::Nearest;
     DbU::Unit  result  = 0;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnSymbolicSnapGrid", &value, &snap) ) {
+    if (not PyArg_ParseTuple(args,"O|i:DbU.getOnSymbolicSnapGrid", &pyValue, &snap) ) {
       PyErr_SetString ( ConstructorError, "DbU.getOnSymbolicSnapGrid(): Invalid/bad type parameters ." );
       return NULL;
     }
-    result = DbU::getOnSymbolicSnapGrid(DbU::db(value),(DbU::SnapMode)snap);
+    result = DbU::getOnSymbolicSnapGrid(PyAny_AsLong(pyValue),(DbU::SnapMode)snap);
     HCATCH
 
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
   extern PyObject* PyDbU_setSymbolicSnapGridStep ( PyObject* , PyObject* args )
   {
-    long  step = 0;
+    PyObject* step = NULL;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l:DbU.setSymbolicSnapGridStep", &step) ) {
+    if (not PyArg_ParseTuple(args,"O:DbU.setSymbolicSnapGridStep", &step) ) {
       PyErr_SetString ( ConstructorError, "DbU.setSymbolicSnapGridStep(): Invalid/bad type parameters ." );
       return NULL;
     }
-    DbU::setSymbolicSnapGridStep(DbU::db(step));
+    DbU::setSymbolicSnapGridStep(PyAny_AsLong(step));
     HCATCH
 
     Py_RETURN_NONE;
@@ -359,38 +359,38 @@ extern "C" {
 
   extern PyObject* PyDbU_getOnCustomGrid ( PyObject* , PyObject* args )
   {
-    long       value   = 0;
-    long       step    = 1;
-    int        snap    = DbU::Nearest;
-    DbU::Unit  result  = 0;
+    PyObject* pyValue = NULL;
+    PyObject* pyStep  = NULL;
+    DbU::Unit result  = 0;
+    int       snap    = DbU::Nearest;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"ll|i:DbU.getOnCustomGrid", &value, &step, &snap) ) {
+    if (not PyArg_ParseTuple(args,"OO|i:DbU.getOnCustomGrid", &pyValue, &pyStep, &snap) ) {
       PyErr_SetString ( ConstructorError, "DbU.getOnCustomGrid(): Invalid/bad type parameters ." );
       return NULL;
     }
-    result = DbU::getOnCustomGrid(DbU::db(value),DbU::db(step),(DbU::SnapMode)snap);
+    result = DbU::getOnCustomGrid(PyAny_AsLong(pyValue),PyAny_AsLong(pyStep),(DbU::SnapMode)snap);
     HCATCH
 
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
   extern PyObject* PyDbU_getOnPhysicalGrid ( PyObject* , PyObject* args )
   {
-    long       value   = 0;
+    PyObject*  pyValue = NULL;
     int        snap    = DbU::Superior;
     DbU::Unit  result  = 0;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l|i:DbU.getOnPhysicalGrid", &value, &snap) ) {
+    if (not PyArg_ParseTuple(args,"O|i:DbU.getOnPhysicalGrid", &pyValue, &snap) ) {
       PyErr_SetString ( ConstructorError, "DbU.getOnPhysicalGrid(): Invalid/bad type parameters ." );
       return NULL;
     }
-    result = DbU::getOnPhysicalGrid(DbU::db(value),(DbU::SnapMode)snap);
+    result = DbU::getOnPhysicalGrid(PyAny_AsLong(pyValue),(DbU::SnapMode)snap);
     HCATCH
 
-    return PyLong_FromLong(result);
+    return PyDbU_FromLong(result);
   }
 
 
@@ -398,7 +398,7 @@ extern "C" {
   {
     PyObject* arg0;
     if ( not ParseOneArg( "DbU.toDb", args,INT_ARG, &arg0 ) ) return NULL;
-    return PyLong_FromLong(DbU::toDb((DbU::Unit)PyAny_AsLong(arg0)));
+    return PyDbU_FromLong(DbU::toDb((DbU::Unit)PyAny_AsLong(arg0)));
   }
 
 
@@ -429,16 +429,16 @@ extern "C" {
 
   extern PyObject* PyDbU_getValueString ( PyObject* , PyObject* args )
   {
-    long    value   = 0;
-    int     mode    = DbU::SmartTruncate;
-    string  result  = "";
+    PyObject* value   = NULL;
+    int       mode    = DbU::SmartTruncate;
+    string    result  = "";
 
     HTRY
-    if (not PyArg_ParseTuple(args,"l|i:DbU.getValueString", &value, &mode) ) {
+    if (not PyArg_ParseTuple(args,"O|i:DbU.getValueString", &value, &mode) ) {
       PyErr_SetString ( ConstructorError, "DbU.getValueString(): Invalid/bad type parameters ." );
       return NULL;
     }
-    result = DbU::getValueString(DbU::db(value),mode);
+    result = DbU::getValueString(PyAny_AsLong(value),mode);
     HCATCH
 
     return Py_BuildValue("s",result.c_str());

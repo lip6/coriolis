@@ -71,12 +71,12 @@ namespace Hurricane {
       static        void                checkLambdaBound        ( double value );
       static        void                checkPhysicalBound      ( double value, UnitPower p );
     // User to DB Converters.
-      static inline Unit                fromDb                  ( long value );
+      static inline Unit                fromDb                  ( Unit value );
       static inline Unit                fromGrid                ( double value );
       static inline Unit                fromLambda              ( double value );
       static inline Unit                fromPhysical            ( double value, UnitPower p );
     // Old naming scheme (was not very clear).
-      static inline Unit                db                      ( long value );
+      static inline Unit                db                      ( Unit value );
       static inline Unit                grid                    ( double value );
       static inline Unit                lambda                  ( double value );
       static inline Unit                physicalToDbu           ( double value, UnitPower p );
@@ -103,7 +103,7 @@ namespace Hurricane {
       static        DbU::Unit           getOnCustomGrid         ( DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest );
       static inline DbU::Unit           getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode=Superior );
     // Conversions.
-      static inline long                toDb                    ( Unit u );
+      static inline Unit                toDb                    ( Unit u );
       static inline double              toGrid                  ( Unit u );
       static inline double              toGrid                  ( double u );
       static inline double              toLambda                ( Unit u );
@@ -111,7 +111,7 @@ namespace Hurricane {
       static inline double              toPhysical              ( Unit u, UnitPower p );
       static inline double              toPhysical              ( double u, UnitPower p );
     // Old naming scheme (not very clear).
-      static inline long                getDb                   ( Unit u );
+      static inline Unit                getDb                   ( Unit u );
       static inline double              getGrid                 ( Unit u );
       static inline double              getGrid                 ( double u );
       static inline double              getLambda               ( Unit u );
@@ -150,11 +150,11 @@ namespace Hurricane {
 
 // Inline Functions.
 // New converter naming scheme.
-  inline DbU::Unit  DbU::fromDb                  ( long value )                 { return value; }
-  inline DbU::Unit  DbU::fromGrid                ( double value )               { checkGridBound    (value);   return (long)rint( value/_resolution ); }
+  inline DbU::Unit  DbU::fromDb                  ( DbU::Unit value )            { return value; }
+  inline DbU::Unit  DbU::fromGrid                ( double value )               { checkGridBound    (value);   return (Unit)rint( value/_resolution ); }
   inline DbU::Unit  DbU::fromLambda              ( double value )               { checkLambdaBound  (value);   return fromGrid(value*_gridsPerLambda); }
   inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { checkPhysicalBound(value,p); return fromGrid((value*getUnitPower(p))/_physicalsPerGrid); }
-  inline long       DbU::toDb                    ( DbU::Unit u )                { return u; }
+  inline DbU::Unit  DbU::toDb                    ( DbU::Unit u )                { return u; }
   inline double     DbU::toGrid                  ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::toGrid                  ( double u )                   { return _resolution*u; }
   inline double     DbU::toLambda                ( DbU::Unit u )                { return toGrid(u)/_gridsPerLambda; }
@@ -163,11 +163,11 @@ namespace Hurricane {
   inline double     DbU::toPhysical              ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
 
 // Old converter naming scheme.
-  inline DbU::Unit  DbU::db                      ( long value )                 { return fromDb(value); }
+  inline DbU::Unit  DbU::db                      ( DbU::Unit value )            { return fromDb(value); }
   inline DbU::Unit  DbU::grid                    ( double value )               { return fromGrid(value); }
   inline DbU::Unit  DbU::lambda                  ( double value )               { return fromLambda(value); }
   inline DbU::Unit  DbU::physicalToDbu           ( double value, UnitPower p )  { return fromPhysical(value,p); }
-  inline long       DbU::getDb                   ( DbU::Unit u )                { return toDb(u); }
+  inline DbU::Unit  DbU::getDb                   ( DbU::Unit u )                { return toDb(u); }
   inline double     DbU::getGrid                 ( DbU::Unit u )                { return toGrid(u); }
   inline double     DbU::getGrid                 ( double u )                   { return toGrid(u); }
   inline double     DbU::getLambda               ( DbU::Unit u )                { return toLambda(u); }

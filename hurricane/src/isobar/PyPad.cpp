@@ -133,11 +133,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "Pad.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Pad.translate", &dx, &dy)) {
-        pad->translate(dx, dy);
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("Pad.translate");
+    if (PyArg_ParseTuple(args,"O&O&:Pad.translate", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) pad->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "Pad.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad.translate()" );
+      PyErr_SetString ( ConstructorError, "Pad.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH

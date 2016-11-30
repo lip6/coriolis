@@ -54,8 +54,8 @@ namespace Hurricane {
   DbU::UnitPower      DbU::_stringModeUnitPower  = DbU::Nano;
   DbU::Unit           DbU::_symbolicSnapGridStep = DbU::fromLambda( 1.0);
   DbU::Unit           DbU::_realSnapGridStep     = DbU::fromGrid  (10.0);
-  const DbU::Unit     DbU::Min                   = std::numeric_limits<long>::min();
-  const DbU::Unit     DbU::Max                   = std::numeric_limits<long>::max();
+  const DbU::Unit     DbU::Min                   = std::numeric_limits<DbU::Unit>::min();
+  const DbU::Unit     DbU::Max                   = std::numeric_limits<DbU::Unit>::max();
 
 
 // -------------------------------------------------------------------
@@ -301,17 +301,18 @@ namespace Hurricane {
 
   string  DbU::getValueString ( DbU::Unit u, int mode )
   {
-    char buffer[1024];
-    char unitPower = 'u';
-    char unitSymbol   = '\0';
+    ostringstream os;
+    char unitPower  = ' ';
+    char unitSymbol = 'u';
 
-    if ( _stringMode == Grid ) {
-      unitPower = 'g';
-      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
-    } else if ( _stringMode == Symbolic ) {
-      unitPower = 'l';
-      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
-    } else if ( _stringMode == Physical ) {
+    os << fixed;  
+    if (_stringMode == Grid) {
+      unitSymbol = 'g';
+      os << setprecision(1) << toGrid(u);
+    } else if (_stringMode == Symbolic) {
+      unitSymbol = 'l';
+      os << setprecision(1) << toLambda(u);
+    } else if (_stringMode == Physical) {
       unitSymbol = 'm';
       switch ( _stringModeUnitPower ) {
         case Pico:  unitPower = 'p'; break;
@@ -322,42 +323,46 @@ namespace Hurricane {
         case Kilo:  unitPower = 'k'; break;
         default:    unitPower = '?'; break;
       }
-      snprintf ( buffer, 1024, "%.3f", getPhysical(u,_stringModeUnitPower) );
+      os << setprecision(3) << toPhysical(u,_stringModeUnitPower);
     } else {
-      if ( _stringMode != Db )
+      if (_stringMode != Db)
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
 
-      snprintf ( buffer, 1024, "%ld", u );
+      os << u;
     }
 
-    size_t length = strlen(buffer) - 1;
-    if ( mode & SmartTruncate ) {
-      for ( ; length > 0 ; length-- ) {
-        if ( buffer[length] == '.' ) { length--; break; }
-        if ( buffer[length] != '0' ) break;
+    string s = os.str();
+    if (mode & SmartTruncate) {
+
+      size_t dot = s.rfind( '.' );
+      if (dot != string::npos) {
+        size_t end = dot+1;
+        for ( ; end < s.size() ; ++end ) if (s[end] != '0') break;
+        if (end == s.size()) s.erase( dot );
       }
     }
-    buffer[++length] = unitPower;
-    if ( unitSymbol ) buffer[++length] = unitSymbol;
-    buffer[++length] = '\0';
 
-    return buffer;
+    if (unitPower != ' ') s += unitPower;
+    s += unitSymbol;
+
+    return s;
   }
 
 
   string  DbU::getValueString ( double u, int mode )
   {
-    char buffer[1024];
-    char unitPower = 'u';
-    char unitSymbol   = '\0';
+    ostringstream os;
+    char unitPower  = ' ';
+    char unitSymbol = 'u';
 
-    if ( _stringMode == Grid ) {
-      unitPower = 'g';
-      snprintf ( buffer, 1024, "%.1f", getGrid(u) );
-    } else if ( _stringMode == Symbolic ) {
-      unitPower = 'l';
-      snprintf ( buffer, 1024, "%.1f", getLambda(u) );
-    } else if ( _stringMode == Physical ) {
+    os << fixed;  
+    if (_stringMode == Grid) {
+      unitSymbol = 'g';
+      os << setprecision(1) << toGrid(u);
+    } else if (_stringMode == Symbolic) {
+      unitSymbol = 'l';
+      os << setprecision(1) << toLambda(u);
+    } else if (_stringMode == Physical) {
       unitSymbol = 'm';
       switch ( _stringModeUnitPower ) {
         case Pico:  unitPower = 'p'; break;
@@ -368,26 +373,28 @@ namespace Hurricane {
         case Kilo:  unitPower = 'k'; break;
         default:    unitPower = '?'; break;
       }
-      snprintf ( buffer, 1024, "%.3f", getPhysical(u,_stringModeUnitPower) );
+      os << setprecision(3) << toPhysical(u,_stringModeUnitPower);
     } else {
-      if ( _stringMode != Db )
+      if (_stringMode != Db)
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
 
-      snprintf ( buffer, 1024, "%f", u );
+      os << u;
     }
 
-    size_t length = strlen(buffer) - 1;
-    if ( mode & SmartTruncate ) {
-      for ( ; length > 0 ; length-- ) {
-        if ( buffer[length] == '.' ) { length--; break; }
-        if ( buffer[length] != '0' ) break;
+    string s = os.str();
+    if (mode & SmartTruncate) {
+      size_t dot = s.rfind( '.' );
+      if (dot != string::npos) {
+        size_t end = dot+1;
+        for ( ; end < s.size() ; ++end ) if (s[end] != '0') break;
+        if (end == s.size()) s.erase( dot );
       }
     }
-    buffer[++length] = unitPower;
-    if ( unitSymbol ) buffer[++length] = unitSymbol;
-    buffer[++length] = '\0';
 
-    return buffer;
+    if (unitPower != ' ') s += unitPower;
+    s += unitSymbol;
+
+    return s;
   }
 
 

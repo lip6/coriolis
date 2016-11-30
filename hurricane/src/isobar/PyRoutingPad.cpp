@@ -164,12 +164,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "RoutingPad.translate()" )
-    DbU::Unit  dx = 0;
-    DbU::Unit  dy = 0;
-    if (PyArg_ParseTuple(args,"ll:RoutingPad.translate", &dx, &dy)) {
-      rp->translate( dx, dy );
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("RoutingPad.translate");
+    if (PyArg_ParseTuple(args,"O&O&:RoutingPad.translate", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) rp->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "RoutingPad.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString( ConstructorError, "invalid number of parameters for RoutingPad.translate()" );
+      PyErr_SetString ( ConstructorError, "RoutingPad.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH
@@ -217,12 +222,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "RoutingPad.setOffset()" )
-    DbU::Unit  dx = 0;
-    DbU::Unit  dy = 0;
-    if (PyArg_ParseTuple(args,"ll:RoutingPad.setOffset", &dx, &dy)) {
-      rp->setOffset( dx, dy );
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("RoutingPad.setOffset");
+    if (PyArg_ParseTuple(args,"O&O&:RoutingPad.setOffset", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) rp->setOffset( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "RoutingPad.setOffset(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString( ConstructorError, "invalid number of parameters for RoutingPad.setOffset()" );
+      PyErr_SetString ( ConstructorError, "RoutingPad.setOffset(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH

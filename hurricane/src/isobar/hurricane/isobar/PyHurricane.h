@@ -31,12 +31,14 @@
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DbU.h"
 #include "hurricane/isobar/ProxyProperty.h"
 
 namespace Isobar {
 
 
-using namespace std;
+  using namespace std;
+  using Hurricane::DbU;
 
 
 // -------------------------------------------------------------------
@@ -107,8 +109,48 @@ using namespace std;
   extern ConverterState             __cs;
   extern int                        __objectOffset;
 
-  int   PyAny_AsInt  ( PyObject* object );
-  long  PyAny_AsLong ( PyObject* object );
+
+  inline int  PyAny_AsInt ( PyObject* object )
+  {
+    long value = 0;
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return (int)value;
+  }
+
+
+  template< typename T = DbU::Unit, typename enable_if< is_same<T,long>::value, T >::type = 0 >
+  inline T  PyAny_AsLong ( PyObject* object )
+  {
+    T  value = 0;
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return value;
+  }
+
+
+  template< typename T = DbU::Unit, typename enable_if< is_same<T,long long>::value, T >::type = 0 >
+  inline T  PyAny_AsLong ( PyObject* object )
+  {
+    T  value = 0;
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong     ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLongLong( object );
+
+    if (value > numeric_limits<int>::max()) {
+      throw Error( "PyAny_AsLong(): Suspiciously big int %s, db:%li"
+                 , DbU::getValueString(value).c_str(), value
+                 );
+    }
+    return value;
+  }
+
+
+  template< typename T = DbU::Unit, typename enable_if< is_same<T,long>::value, T >::type = 0 >
+  inline PyObject* PyDbU_FromLong ( T unit ) { return PyLong_FromLong( unit ); }
+
+
+  template< typename T = DbU::Unit, typename enable_if< is_same<T,long long>::value, T >::type = 0 >
+  inline PyObject* PyDbU_FromLong ( T unit ) { return PyLong_FromLongLong( unit ); }
 
 
 extern "C" {
@@ -316,7 +358,7 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
-    return Py_BuildValue("l", cobject->FUNC_NAME());                            \
+    return Isobar::PyDbU_FromLong(cobject->FUNC_NAME());                        \
   }
 
 

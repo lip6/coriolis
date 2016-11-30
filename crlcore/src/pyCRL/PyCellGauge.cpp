@@ -39,6 +39,8 @@ namespace  CRL {
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
+  using Isobar::PyAny_AsLong;
+  using Isobar::PyDbU_FromLong;
 
 
 extern "C" {
@@ -69,23 +71,23 @@ extern "C" {
     HTRY
     char*     name;
     char*     pinLayerName;
-    long      pitch;
-    long      sliceHeight;
-    long      sliceStep;
+    PyObject* pyPitch        = NULL;
+    PyObject* pySliceHeight  = NULL;
+    PyObject* pySliceStep    = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "sslll:CellGauge.create"
+                        , "ssOOO:CellGauge.create"
                         , &name
                         , &pinLayerName
-                        , &pitch
-                        , &sliceHeight
-                        , &sliceStep
+                        , &pyPitch
+                        , &pySliceHeight
+                        , &pySliceStep
                         )) {
       cg = CellGauge::create( name
                             , pinLayerName
-                            , pitch
-                            , sliceHeight
-                            , sliceStep
+                            , PyAny_AsLong(pyPitch)
+                            , PyAny_AsLong(pySliceHeight)
+                            , PyAny_AsLong(pySliceStep)
                             );
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to CellGauge.create()." );

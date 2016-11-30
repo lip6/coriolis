@@ -156,11 +156,17 @@ extern "C" {
     
     HTRY
     METHOD_HEAD ( "Horizontal.translate()" )
-    DbU::Unit dx=0, dy=0;
-    if (PyArg_ParseTuple(args,"ll:Horizontal.translate", &dx, &dy)) {
-        horizontal->translate(dx, dy);
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("Horizontal.translate");
+    if (PyArg_ParseTuple(args,"O&O&:Horizontal.translate", Converter, &arg0, Converter, &arg1)) {
+      if (__cs.getObjectIds() == INTS2_ARG) horizontal->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else {
+        PyErr_SetString ( ConstructorError, "Horizontal.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Horizontal.translate()" );
+      PyErr_SetString ( ConstructorError, "Horizontal.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH

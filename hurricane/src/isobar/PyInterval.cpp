@@ -269,11 +269,16 @@ extern "C" {
     
     HTRY
     METHOD_HEAD( "Interval.translate()" )
-    DbU::Unit delta = 0;
-    if (PyArg_ParseTuple(args,"l:Interval.translate", &delta)) {
-      interval->translate(delta);
+    PyObject* arg0 = NULL;
+    __cs.init ("Contact.translate");
+    if (PyArg_ParseTuple(args,"O&:Interval.translate", Converter, &arg0)) {
+      if (__cs.getObjectIds() == INT_ARG) interval->translate( PyAny_AsLong(arg0) );
+      else {
+        PyErr_SetString ( ConstructorError, "Interval.translate(): Invalid type for parameter." );
+        return NULL;
+      }
     } else {
-      PyErr_SetString( ConstructorError, "invalid number of parameters for Interval.translate()" );
+      PyErr_SetString ( ConstructorError, "Interval.translate(): Invalid number of parameters." );
       return NULL;
     }
     HCATCH

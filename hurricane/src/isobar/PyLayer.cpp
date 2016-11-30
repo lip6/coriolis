@@ -176,15 +176,15 @@ extern "C" {
 # define  updatorFromDbu(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                               \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
   {                                                                                      \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                       \
                                                                                          \
     HTRY                                                                                 \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
                                                                                          \
-    long dimension = 0;                                                                  \
+    PyObject* pyDimension = NULL;                                                        \
                                                                                          \
-    if (PyArg_ParseTuple( args, "l:"#SELF_TYPE"."#FUNC_NAME"()", &dimension)) {          \
-      cobject->FUNC_NAME( dimension );                                                   \
+    if (PyArg_ParseTuple( args, "O:"#SELF_TYPE"."#FUNC_NAME"()", &pyDimension)) {        \
+      cobject->FUNC_NAME( PyAny_AsLong(pyDimension) );                                   \
     } else {                                                                             \
       PyErr_SetString ( ConstructorError                                                 \
                       , #SELF_TYPE"."#FUNC_NAME"(): Parameter is not of long (DbU) type" ); \
@@ -205,16 +205,16 @@ extern "C" {
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
                                                                                          \
     PyObject* pyBasicLayer = NULL;                                                       \
-    long      dimension    = 0;                                                          \
+    PyObject* pyDimension  = NULL;                                                       \
                                                                                          \
-    if (PyArg_ParseTuple( args, "Ol:"#SELF_TYPE"."#FUNC_NAME"()", &pyBasicLayer, &dimension)) { \
+    if (PyArg_ParseTuple( args, "OO:"#SELF_TYPE"."#FUNC_NAME"()", &pyBasicLayer, &pyDimension)) { \
       BasicLayer* layer = PYBASICLAYER_O(pyBasicLayer);                                  \
       if (layer == NULL) {                                                               \
         PyErr_SetString ( ConstructorError                                               \
                         , #SELF_TYPE"."#FUNC_NAME"(): First parameter is not of BasicLayer type" ); \
         return NULL;                                                                     \
       }                                                                                  \
-      cobject->FUNC_NAME( layer, dimension );                                            \
+      cobject->FUNC_NAME( layer, PyAny_AsLong(pyDimension) );                            \
     } else {                                                                             \
       PyErr_SetString ( ConstructorError                                                 \
                       , #SELF_TYPE"."#FUNC_NAME"(): Bad parameters types or numbers." ); \
