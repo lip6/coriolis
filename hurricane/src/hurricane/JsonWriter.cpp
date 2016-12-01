@@ -90,6 +90,8 @@
   void           JsonWriter::write      (       int  v )             { _WRITER->Int   ( v); }
   void           JsonWriter::write      ( const long* v )            { _WRITER->Int64 (*v); }
   void           JsonWriter::write      (       long  v )            { _WRITER->Int64 ( v); }
+  void           JsonWriter::write      ( const long long* v )       { _WRITER->Int64 (*v); }
+  void           JsonWriter::write      (       long long  v )       { _WRITER->Int64 ( v); }
   void           JsonWriter::write      ( const unsigned int* v )    { _WRITER->Uint  (*v); }
   void           JsonWriter::write      (       unsigned int  v )    { _WRITER->Uint  ( v); }
   void           JsonWriter::write      ( const unsigned long* v )   { _WRITER->Uint64(*v); }

@@ -86,6 +86,8 @@ namespace Hurricane {
       void          write       (       int );
       void          write       ( const int* );
       void          write       (       long );
+      void          write       ( const long long* );
+      void          write       (       long long );
       void          write       ( const long* );
       void          write       (       unsigned int );
       void          write       ( const unsigned int* );
@@ -130,6 +132,8 @@ inline void  jsonWrite ( JsonWriter* w, const int* v )           { w->write(v); 
 inline void  jsonWrite ( JsonWriter* w,       int  v )           { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w, const long* v )          { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w,       long  v )          { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w, const long long* v )     { w->write(v); }
+inline void  jsonWrite ( JsonWriter* w,       long long  v )     { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w, const unsigned int* v )  { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w,       unsigned int  v )  { w->write(v); }
 inline void  jsonWrite ( JsonWriter* w, const unsigned long* v ) { w->write(v); }
@@ -213,7 +217,7 @@ template<typename C>
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, const C& )
 {
   w->key( key );
-  std::string message = "JSON unsupported type " + Hurricane::demangle(typeid(C).name());
+  std::string message = "[DRIVER ERROR] JSON unsupported type " + Hurricane::demangle(typeid(C).name());
   w->write( message.c_str() );
 }
 
