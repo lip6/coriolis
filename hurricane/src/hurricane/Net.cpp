@@ -465,23 +465,23 @@ void Net::setGlobal(bool isGlobal)
 void Net::setExternal(bool isExternal)
 // ***********************************
 {
-    if (isExternal != _isExternal) {
-        if (!isExternal) {
-            if (!getConnectedSlavePlugs().isEmpty())
-                throw Error("Can't set internal : has connected slave plugs");
-            _direction = Direction::UNDEFINED;
-        }
-        _isExternal = isExternal;
-        if (_isExternal) {
-            UpdateSession::open();
-            setPosition(Point(0,0));
-            for_each_instance(instance, _cell->getSlaveInstances()) {
-                Plug::_create(instance, this);
-                end_for;
-            }
-            UpdateSession::close();
-        }
+  if (isExternal != _isExternal) {
+    if (not isExternal) {
+      if (not getConnectedSlavePlugs().isEmpty())
+        throw Error( "Net::setExternal(): Cannot set \"%s\" of \"%s\" internal, has connected slave plugs"
+                   , getString(getName()).c_str()
+                   , getString(getCell()->getName()).c_str()
+                   );
+      _direction = Direction::UNDEFINED;
     }
+    _isExternal = isExternal;
+    if (_isExternal) {
+      setPosition( Point(0,0) );
+      for ( Instance* instance : _cell->getSlaveInstances() ) {
+        Plug::_create( instance, this );
+      }
+    }
+  }
 }
 
 void Net::setAutomatic(bool isAutomatic)

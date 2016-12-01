@@ -245,6 +245,8 @@ namespace Kite {
     }
 
     _doRemovalEvents();
+    for ( Track* track : _sortEvents ) track->doReorder();
+    _sortEvents.clear();
 
     cdebug_tabw(159,-1);
     return count;

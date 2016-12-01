@@ -426,6 +426,16 @@ namespace Katabatic {
       if (spinFlags & SegSourceBottom) setFlags( SegTargetBottom );
       if (spinFlags & SegTargetTop   ) setFlags( SegSourceTop );
       if (spinFlags & SegTargetBottom) setFlags( SegSourceBottom );
+
+      unsigned int invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
+      unsetFlags( SegInvalidatedSource|SegInvalidatedTarget );
+      if (invalidatedFlags & SegInvalidatedSource) setFlags( SegInvalidatedTarget );
+      if (invalidatedFlags & SegInvalidatedTarget) setFlags( SegInvalidatedSource );
+
+      unsigned int terminalFlags = _flags & SegStrongTerminal;
+      unsetFlags( SegStrongTerminal );
+      if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
+      if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );
     }
   }
 

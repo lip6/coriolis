@@ -20,6 +20,8 @@ try:
   import os.path
   import optparse
   import math
+  import cProfile
+  import pstats
   import Cfg
   import Hurricane
   from   Hurricane import DataBase
@@ -151,10 +153,18 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
         etesian.place()
         etesian.destroy()
 
+     #profile = cProfile.Profile()
+     #profile.enable()
       ht.connectLeaf()
      #ht.prune()
       ht.route()
       ht.save( self.cell )
+     #profile.disable()
+
+     #stats = pstats.Stats( profile, stream=sys.stderr )
+     #stats.strip_dirs()
+     #stats.sort_stats( 'cumtime' )
+     #stats.print_stats()
     else:
       if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
         mauka  = Mauka.MaukaEngine.create( coreCell )
