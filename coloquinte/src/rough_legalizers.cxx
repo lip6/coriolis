@@ -2,6 +2,7 @@
 #include "coloquinte/rough_legalizers.hxx"
 #include "coloquinte/optimization_subproblems.hxx"
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <cassert>
@@ -9,6 +10,9 @@
 
 namespace coloquinte{
 namespace gp{
+
+  using std::cerr;
+  using std::endl;
 
 namespace{
     const capacity_t default_density_mul = 256;

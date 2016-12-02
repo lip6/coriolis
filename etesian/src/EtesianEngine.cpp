@@ -477,6 +477,15 @@ namespace Etesian {
         occurrence.makeInvalid();
         instance->slaveAbutmentBox();
       }
+
+      if (not masterCell->getAbutmentBox().isEmpty()
+         and (  (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+             or (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) ) {
+        throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
+                   , getString(instance  ->getName()).c_str()
+                   , getString(masterCell->getName()).c_str()
+                   );
+      }
     }
     UpdateSession::close();
 
@@ -590,7 +599,9 @@ namespace Etesian {
 
   }
 
-  void  EtesianEngine::preplace (){
+
+  void  EtesianEngine::preplace ()
+  {
     using namespace coloquinte::gp;
 
     // Perform a very quick legalization pass
