@@ -467,6 +467,15 @@ namespace Etesian {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
+      if (not masterCell->getAbutmentBox().isEmpty()
+         and (  (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+             or (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) ) {
+        throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
+                   , getString(instance  ->getName()).c_str()
+                   , getString(masterCell->getName()).c_str()
+                   );
+      }
+
       if ( masterCell->getAbutmentBox().isEmpty()
          or (   (masterCell->getAbutmentBox().getHeight() == topAb.getHeight())
             and (masterCell->getAbutmentBox().getWidth () == topAb.getWidth ()) ) ) {
@@ -476,15 +485,6 @@ namespace Etesian {
       //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
         occurrence.makeInvalid();
         instance->slaveAbutmentBox();
-      }
-
-      if (not masterCell->getAbutmentBox().isEmpty()
-         and (  (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-             or (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) ) {
-        throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
-                   , getString(instance  ->getName()).c_str()
-                   , getString(masterCell->getName()).c_str()
-                   );
       }
     }
     UpdateSession::close();
