@@ -160,7 +160,7 @@ def coriolisConfigure():
 
  #sys.stdout.write(CRL.AllianceFramework.get().getEnvironment().getPrint())
 
-  if Cfg.getParamString('stratus1.mappingName').asString() == 'not_set':
+  if not Cfg.getParamString('stratus1.mappingName').asString():
     vendorTech  = helpers.realTechno.split('/')[-1]
     mappingFile = os.path.join( helpers.realDir, 'stratus.xml' )
     if not os.path.isfile(mappingFile): 

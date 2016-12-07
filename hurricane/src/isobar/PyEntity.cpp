@@ -77,7 +77,7 @@ extern "C" {
 
   PyMethodDef PyEntity_Methods[] =
     { { "getCell"              , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
-    , { "destroy"               , (PyCFunction)PyEntity_destroy      , METH_NOARGS
+    , { "destroy"              , (PyCFunction)PyEntity_destroy       , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };

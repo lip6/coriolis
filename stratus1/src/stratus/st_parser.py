@@ -47,7 +47,7 @@
 # x-----------------------------------------------------------------x
 
 import xml.parsers.expat
-import re, types
+import re, types, os.path
 
 BV   = []
 BVg  = []
@@ -165,6 +165,8 @@ class InitParser :
   # Parsing a file
   ################
   def Parse ( self, nameFile ) :
+    if not os.path.isfile(nameFile):
+      print '[ERROR] Parser.Parse(): stratus1.mappingName (\"%s\") file not found.' % nameFile
     self._p.ParseFile ( open ( nameFile, "r" ) )
 
     # Given the tab of the name of the cells, contruction of a tab giving the name of the generators (first letter uppered)

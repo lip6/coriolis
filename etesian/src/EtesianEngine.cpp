@@ -468,8 +468,8 @@ namespace Etesian {
       Cell*     masterCell   = instance->getMasterCell();
 
       if (not masterCell->getAbutmentBox().isEmpty()
-         and (  (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-             or (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) ) {
+         and (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
         throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
                    , getString(instance  ->getName()).c_str()
                    , getString(masterCell->getName()).c_str()

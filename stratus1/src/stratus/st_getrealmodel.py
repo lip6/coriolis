@@ -55,6 +55,8 @@ def InitBV () :
   myP = InitParser()
 
   mapping = Cfg.getParamString('stratus1.mappingName').asString()
+  if not mapping:
+    print '[ERROR] \"stratus1.mappingName\" configuration variable has not been set.'
   myP.Parse ( mapping )
   return
 
