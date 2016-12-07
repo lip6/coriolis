@@ -339,7 +339,7 @@ namespace CRL {
     Cfg::getParamBool  ("misc.logMode"        ,false)->registerCb ( this, logModeChanged );
     Cfg::getParamInt   ("misc.minTraceLevel"  ,0    )->registerCb ( this, minTraceLevelChanged );
     Cfg::getParamInt   ("misc.maxTraceLevel"  ,0    )->registerCb ( this, maxTraceLevelChanged );
-    Cfg::getParamString("stratus1.mappingName","not_set")->registerCb ( this, stratus1MappingNameChanged );
+    Cfg::getParamString("stratus1.mappingName",""   )->registerCb ( this, stratus1MappingNameChanged );
 
   // Immediate update from the configuration.
   //catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
