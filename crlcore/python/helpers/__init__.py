@@ -25,6 +25,7 @@ import re
 import traceback
 import Hurricane
 
+quiet          = False
 sysConfDir     = None
 ndaConfDir     = None
 symbolicTechno = 'cmos'
@@ -37,6 +38,13 @@ moduleGlobals  = globals()
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
+
+
+def isderived ( derived, base ):
+    btype = base.mro()[0]
+    for dtype in derived.mro():
+      if dtype == btype: return True
+    return False
 
 
 def truncPath ( path ):
@@ -246,12 +254,15 @@ def setTraceLevel ( level ):
   return
 
 
-def initTechno ( quiet ):
+def initTechno ( argQuiet ):
+  global quiet
   global ndaConfDir
   global realDir
   global realTechno
   global symbolicDir
   global symbolicTechno
+
+  quiet = argQuiet
 
   technoFiles  = [ sysConfDir+'/techno.conf' ]
   if os.getenv('HOME'):

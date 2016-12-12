@@ -80,8 +80,10 @@ def runScript ( scriptPath, editor ):
 
   except ImportError, e:
       module = str(e).split()[-1]
-      print '[ERROR] The <%s> script cannot be loaded.' % module
-      print '        Please check your design hierarchy.'
+      print '[ERROR] The <%s> script cannot be loaded.' % os.path.basename(scriptPath)
+      print '        Please check your design hierarchy or the Python syntax.'
+      print '        Error was:'
+      print '          %s\n' % e
   except Exception, e:
       print '[ERROR] An exception occured while loading the Stratus script module:'
       print '        <%s>\n' % (scriptPath)
