@@ -2147,6 +2147,12 @@ namespace {
       return;
     }
 
+    if (rpM1s.empty()) {
+      cerr << Error( "No METAL1 in Single GCell for Net \"%s\".", getString(net->getName()).c_str() ) << endl;
+      cdebug_tabw(145,-1);
+      return;
+    }
+
     sort( rpM1s.begin(), rpM1s.end(), SortRpByX(NoFlags) ); // increasing X.
 
     GCell* gcell1 = anbt->getGCellUnder( (*rpM1s.begin ())->getCenter() );
