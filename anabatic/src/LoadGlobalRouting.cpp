@@ -562,8 +562,20 @@ namespace {
 
   inline bool  SortHkByX::operator() ( Hook* h1, Hook* h2 )
   {
-    DbU::Unit x1 = h1->getComponent()->getCenter().getX();
-    DbU::Unit x2 = h2->getComponent()->getCenter().getX();
+    DbU::Unit x1 = 0;
+    DbU::Unit x2 = 0;
+    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
+    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
+    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
+    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
+
+    if      (hh1) x1 = min( hh1->getSource()->getX(), hh1->getTarget()->getX() );
+    else if (vv1) x1 = vv1->getX();
+    else          x1 = h1->getComponent()->getCenter().getX();
+
+    if      (hh2) x2 = min( hh2->getSource()->getX(), hh2->getTarget()->getX() );
+    else if (vv2) x2 = vv2->getX();
+    else          x2 = h2->getComponent()->getCenter().getX();
 
     if (x1 == x2) return false;
     return (_flags & SortDecreasing) xor (x1 < x2);
@@ -588,8 +600,20 @@ namespace {
 
   inline bool  SortHkByY::operator() ( Hook* h1, Hook* h2 )
   {
-    DbU::Unit y1 = h1->getComponent()->getCenter().getY();
-    DbU::Unit y2 = h2->getComponent()->getCenter().getY();
+    DbU::Unit y1 = 0;
+    DbU::Unit y2 = 0;
+    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
+    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
+    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
+    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
+
+    if      (vv1) y1 = min( vv1->getSource()->getY(), vv1->getTarget()->getY() );
+    else if (hh1) y1 = hh1->getY();
+    else          y1 = h1->getComponent()->getCenter().getX();
+
+    if      (vv2) y2 = min( vv2->getSource()->getY(), vv2->getTarget()->getY() );
+    else if (hh2) y2 = hh2->getY();
+    else          y2 = h2->getComponent()->getCenter().getY();
 
     if (y1 == y2) return false;
     return (_flags & SortDecreasing) xor (y1 < y2);
@@ -2321,6 +2345,8 @@ namespace {
     cdebug_log(145,1) << "void  GCellTopology::_doHChannel ( ForkStack& forks )" << _gcell << endl;
     
     vector<Hook*>       hooks;
+    Hook*               firsthhook = NULL;
+    Hook*               lasthhook  = NULL;
     static const Layer* hLayer = Session::getRoutingLayer( 1 );
     static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
     static const Layer* vLayer = Session::getRoutingLayer( 2 );
@@ -2339,12 +2365,21 @@ namespace {
 
       Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
       if (s) {
-        hooks.push_back(toHook);
+        Horizontal* h = dynamic_cast<Horizontal*>(s);
+        if (h) {
+          if      (h->getSource()->getX() <= _gcell->getXMin()) firsthhook = toHook;
+          else if (h->getTarget()->getX() >= _gcell->getXMax()) lasthhook  = toHook;
+          else    cdebug_log(145,0) << "Error(AutoContact*  GCellTopology::_doHChannel ( ForkStack& forks )): This case should not happen " << endl;
+        } else hooks.push_back(toHook);
       }
     }
 
-    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
+    cdebug_log(145,0) << "Sorted hooks:" << endl;
     sort( hooks.begin(), hooks.end(), SortHkByX(NoFlags) );
+    
+    if (firsthhook) hooks.insert   (hooks.begin(), firsthhook);
+    if (lasthhook ) hooks.push_back(lasthhook                );
+
     for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
       cdebug_log(145,0) << "toHook: "  << (*it) << endl;
     }
@@ -2368,25 +2403,30 @@ namespace {
 
         if (i == 0){
           if        (h){
+            cerr << "case i=0, h" <<  endl;
             ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
             ac->setX(_gcell->getXMin());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
             firstH = true;
           } else if (v){
+            cerr << "case i=0, v" <<  endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
           }
         } else if (i == hooks.size()-1){
           if        (h){
+            cerr << "case i=last, h" <<  endl;
             ac = autoContacts[i-1];
           } else if (v){
+            cerr << "case i=last, v" <<  endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
           }
         } else {
           if ((i == 1)&&(firstH)){
+            cerr << "case i=1, first was H" <<  endl;
             ac = autoContacts[i-1];
             if (v) ac->setX(v->getX());
             else {
@@ -2395,6 +2435,7 @@ namespace {
                    << endl;
             }
           } else {
+            cerr << "case i=1, first was V" <<  endl;
             ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
@@ -2539,6 +2580,8 @@ namespace {
     
   
     vector<Hook*>       hooks;
+    Hook*               firstvhook = NULL;
+    Hook*               lastvhook  = NULL;
     static const Layer* hLayer = Session::getRoutingLayer( 1 );
     static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
     static const Layer* vLayer = Session::getRoutingLayer( 2 );
@@ -2559,12 +2602,21 @@ namespace {
 
       Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
       if (s) {
-        hooks.push_back(toHook);
+        Vertical* v = dynamic_cast<Vertical*>(s);
+        if (v) {
+          if      (v->getSource()->getY() <= _gcell->getYMin()) firstvhook = toHook;
+          else if (v->getTarget()->getY() >= _gcell->getYMax()) lastvhook  = toHook;
+          else    cdebug_log(145,0) << "Error(AutoContact*  GCellTopology::_doVChannel ( ForkStack& forks )): This case should not happen " << endl;
+        } else hooks.push_back(toHook);
       }
     }
     
     cdebug_log(145,0) << "Sorted hooks:" << endl;
     sort( hooks.begin(), hooks.end(), SortHkByY(NoFlags) );
+
+    if (firstvhook) hooks.insert   (hooks.begin(), firstvhook);
+    if (lastvhook ) hooks.push_back(lastvhook                );
+
     for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
       cdebug_log(145,0) << "toHook: "  << (*it) << endl;
     }
@@ -2588,25 +2640,30 @@ namespace {
 
         if (i == 0){
           if        (v){
+            cdebug_log(145,0) << "case i=0, v"<< endl;
             ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
             ac->setY(_gcell->getYMin());
             firstV = true;
           } else if (h){
+            cdebug_log(145,0) << "case i=0, h"<< endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
             ac->setY(h->getY());
           }
         } else if (i == hooks.size()-1){
           if        (v){
+            cdebug_log(145,0) << "case i=last, v"<< endl;
             ac = autoContacts[i-1];
           } else if (h){
+            cdebug_log(145,0) << "case i=last, h"<< endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
             ac->setY(h->getY());
           }
         } else {
           if ((i == 1)&&(firstV)){
+            cdebug_log(145,0) << "case i=X, first was V"<< endl;
             ac = autoContacts[i-1];
             if (h) ac->setY(h->getY());
             else {
@@ -2615,8 +2672,11 @@ namespace {
                    << endl;
             }
           } else {
+            cdebug_log(145,0) << "case i=X, first was H"<< endl;
             ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+            cerr << "1" << endl; 
             ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
+            cerr << "2" << endl; 
             ac->setY(h->getY());
           }
         } 
@@ -2956,11 +3016,11 @@ namespace {
 
       AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
       AutoContact* xtee = NULL;
-      xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+    //xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
 
       if        ((_north != NULL) && (_south != NULL) && (_east != NULL)){ 
         cdebug_log(145,0) << "Case NSE " << endl;
-        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+      xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
 
         if (_north->getComponent()->getX() < _south->getComponent()->getX()){
           turn->setX(_north->getComponent()->getX());
@@ -2998,7 +3058,7 @@ namespace {
 
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
         cdebug_log(145,0) << "Case NSW " << endl;
-        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
+        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
 
         if (_north->getComponent()->getX() < _south->getComponent()->getX()){
           xtee->setX(_north->getComponent()->getX());
@@ -3037,7 +3097,7 @@ namespace {
 
       } else if ((_east != NULL)  && (_north != NULL) && (_west != NULL)){
         cdebug_log(145,0) << "Case EWN " << endl;
-        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(2) );
 
         if (_east->getComponent()->getY() < _west->getComponent()->getY()){
           turn->setY(_east->getComponent()->getY());
@@ -3075,7 +3135,7 @@ namespace {
 
       } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
         cdebug_log(145,0) << "Case EWS " << endl;
-        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
+        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(2) );
 
         if (_east->getComponent()->getY() < _west->getComponent()->getY()){
           xtee->setY(_east->getComponent()->getY());
@@ -3095,7 +3155,7 @@ namespace {
         }
         turn->setX(_south->getComponent()->getX());
         xtee->setX(_south->getComponent()->getX());
-        if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
+        if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), xtee );
         else                                    targetContact = xtee;
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
