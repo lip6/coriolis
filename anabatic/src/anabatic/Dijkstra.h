@@ -92,10 +92,10 @@ namespace Anabatic {
              inline  void            clearRps       ();
              inline  Contact*        breakGoThrough ( Net* );
 
-             inline  bool            isNorth        ( Vertex* ) const;
-             inline  bool            isSouth        ( Vertex* ) const;
-             inline  bool            isEast         ( Vertex* ) const;
-             inline  bool            isWest         ( Vertex* ) const;
+             inline  bool            isNorth        ( const Vertex* ) const;
+             inline  bool            isSouth        ( const Vertex* ) const;
+             inline  bool            isEast         ( const Vertex* ) const;
+             inline  bool            isWest         ( const Vertex* ) const;
              inline  bool            isNRestricted  () const;
              inline  bool            isSRestricted  () const;
              inline  bool            isERestricted  () const;
@@ -109,6 +109,10 @@ namespace Anabatic {
              inline  void            setERestricted   ();
              inline  void            setWRestricted   ();
              inline  unsigned int    getFlags         () const; 
+                     void            setPathPoint     ( DbU::Unit, DbU::Unit );
+             inline  DbU::Unit       getXPath         () const;
+             inline  DbU::Unit       getYPath         () const;
+             inline  Point           getPathPoint     () const;
 
     // Inspector support. 
                      string          _getString     () const;
@@ -128,7 +132,9 @@ namespace Anabatic {
       DbU::Unit            _distance;
       Edge*                _from;
       unsigned int         _flags;
-  };
+      DbU::Unit            _xpath;
+      DbU::Unit            _ypath;
+  }; 
 
 
   inline Vertex::Vertex ( GCell* gcell )
@@ -143,6 +149,8 @@ namespace Anabatic {
     , _distance(unreached)
     , _from    (NULL)
     , _flags   (NoRestriction)
+    , _xpath   (0)
+    , _ypath   (0)
   {
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
@@ -182,10 +190,10 @@ namespace Anabatic {
 
   typedef  set<Vertex*,Vertex::CompareById>  VertexSet;
 
-  inline  bool Vertex::isNorth ( Vertex* v ) const { return _gcell->isNorth(v->getGCell()); } 
-  inline  bool Vertex::isSouth ( Vertex* v ) const { return _gcell->isSouth(v->getGCell()); }
-  inline  bool Vertex::isEast  ( Vertex* v ) const { return _gcell->isEast (v->getGCell()); }
-  inline  bool Vertex::isWest  ( Vertex* v ) const { return _gcell->isWest (v->getGCell()); }
+  inline  bool Vertex::isNorth ( const Vertex* v ) const { return _gcell->isNorth(v->getGCell()); } 
+  inline  bool Vertex::isSouth ( const Vertex* v ) const { return _gcell->isSouth(v->getGCell()); }
+  inline  bool Vertex::isEast  ( const Vertex* v ) const { return _gcell->isEast (v->getGCell()); }
+  inline  bool Vertex::isWest  ( const Vertex* v ) const { return _gcell->isWest (v->getGCell()); }
   inline  bool Vertex::isNRestricted      () const { return (_flags & NRestricted); }
   inline  bool Vertex::isSRestricted      () const { return (_flags & SRestricted); }
   inline  bool Vertex::isERestricted      () const { return (_flags & ERestricted); }
@@ -199,7 +207,9 @@ namespace Anabatic {
   inline void         Vertex::setERestricted   () { _flags |= 0x4; }
   inline void         Vertex::setWRestricted   () { _flags |= 0x8; }
   inline unsigned int Vertex::getFlags         () const { return _flags; }
-
+  inline DbU::Unit    Vertex::getXPath         () const { return _xpath; }
+  inline DbU::Unit    Vertex::getYPath         () const { return _ypath; }
+  inline Point        Vertex::getPathPoint     () const { return Point(_xpath, _ypath); }
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
@@ -303,6 +313,7 @@ namespace Anabatic {
                         Dijkstra           ( const Dijkstra& );
              Dijkstra&  operator=          ( const Dijkstra& );
       static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
+      static Point      _getNextPathPoint  ( const Vertex*, const Vertex* );
              void       _cleanup           ();
              bool       _propagate         ( Flags enabledSides );
              void       _traceback         ( Vertex* );

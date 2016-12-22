@@ -55,6 +55,13 @@ namespace Anabatic {
   { return _stamp == getAnabatic()->getStamp(); }
 
 
+  void Vertex::setPathPoint( DbU::Unit x, DbU::Unit y )
+  {
+    _xpath = x;
+    _ypath = y;
+  }
+
+
   string  Vertex::_getString () const
   {
     if (not _gcell) {
@@ -114,16 +121,46 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit  Dijkstra::_distance ( const Vertex* a, const Vertex* b, const Edge* e )
+  DbU::Unit  Dijkstra::_distance ( const Vertex* current, const Vertex* vneighbour, const Edge* e )
   {
     cdebug_log(112,0) << "Calcul _distance "<< endl;
-    cdebug_log(112,0) << "a: "<< b->hasRestrictions() << ", " << a <<  endl;
-    cdebug_log(112,0) << "b: "<< b->hasRestrictions() << ", " << b <<  endl;
-    DbU::Unit distance = a->getDistance() + e->getDistance();
+    cdebug_log(112,0) << "current   : "<< current->hasRestrictions() << ", " << current <<  endl;
+    cdebug_log(112,0) << "vneighbour: "<< vneighbour->hasRestrictions() << ", " << vneighbour <<  endl;
 
-    if ( (a->hasRestrictions()) || (b->hasRestrictions()) ) { 
-      if (isRestricted(a, b)) {
+    DbU::Unit distance      = current->getDistance();
+    DbU::Unit addedDistance = 0;
+  
+  /*
+    if ((current->getGCell()->isMatrix())&&(vneighbour->getGCell()->isMatrix())) addedDistance = e->getDistance();
+    else {
+      Point pneighbour = _getNextPathPoint( current, vneighbour );
+      addedDistance = abs(pneighbour.getX() - current->getXPath()) + abs(pneighbour.getY() - current->getXPath());
+    }*/
+    addedDistance = e->getDistance();
+    distance += addedDistance;
+
+    if ( (current->hasRestrictions()) || (vneighbour->hasRestrictions()) ) { 
+      if (isRestricted(current, vneighbour)) {
         distance = Vertex::unreachable;
+      }
+    }
+    
+    if ((!current->getGCell()->isMatrix()) || (!vneighbour->getGCell()->isMatrix())){
+      if (distance != Vertex::unreachable) { 
+        if (current->getFrom() != NULL){
+          GCell* gprevious  = current->getFrom()->getOpposite(current->getGCell());
+          GCell* gcurrent   = current->getGCell();
+          GCell* gneighbour = vneighbour->getGCell();
+          float cost = 0;
+
+          if (  ( gcurrent->isNorth(gprevious) && (!gcurrent->isSouth(gneighbour)) )
+             || ( gcurrent->isEast (gprevious) && (!gcurrent->isWest (gneighbour)) )
+             || ( gcurrent->isSouth(gprevious) && (!gcurrent->isNorth(gneighbour)) )  
+             || ( gcurrent->isWest (gprevious) && (!gcurrent->isEast (gneighbour)) )  
+             ){
+            distance += cost * addedDistance;
+          }
+        }
       }
     }
     // Edge* aFrom = a->getFrom();
@@ -131,6 +168,62 @@ namespace Anabatic {
     //   distance += (aFrom->isHorizontal() xor e->isHorizontal()) ? 3.0 : 0.0;
     // }
     return distance;
+  }
+
+
+  Point Dijkstra::_getNextPathPoint( const Vertex* current, const Vertex* next )
+  {
+    if ((current == NULL) || (next == NULL)){
+      cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unvalid NULL argument."<< endl;
+      return Point(0,0);
+    }
+
+    if (next->getGCell()->isMatrix()) return Point(next->getGCell()->getXCenter(), next->getGCell()->getYCenter());
+    if (next->getGCell()->isDevice()) return next->getPathPoint();
+
+    if        (next->isNorth(current)){
+      if        (next->getGCell()->isHChannel()){
+        return Point(current->getXPath(), next->getGCell()->getYCenter());
+      } else if ( (next->getGCell()->isVChannel()) || (next->getGCell()->isStrut())) {
+        return Point(current->getXPath(), next->getGCell()->getYMax());
+      } else {
+        cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unknown GCell type."<< endl;
+        return Point(0,0);
+      }
+
+    } else if (next->isSouth(current)){
+      if (next->getGCell()->isHChannel()){
+        return Point(current->getXPath(), next->getGCell()->getYCenter());
+      } else if ( (next->getGCell()->isVChannel()) || (next->getGCell()->isStrut())) {
+        return Point(current->getXPath(), next->getGCell()->getYMin());
+      } else {
+        cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unknown GCell type."<< endl;
+        return Point(0,0);
+      }
+
+    } else if (next->isEast (current)){
+      if (next->getGCell()->isHChannel()){
+        return Point(next->getGCell()->getXMax(), current->getYPath());
+      } else if ( (next->getGCell()->isVChannel()) || (next->getGCell()->isStrut())) {
+        return Point(next->getGCell()->getXCenter(), current->getYPath());
+      } else {
+        cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unknown GCell type."<< endl;
+        return Point(0,0);
+      }
+      
+    } else if (next->isWest (current)){
+      if (next->getGCell()->isHChannel()){
+        return Point(next->getGCell()->getXMin(), current->getYPath());
+      } else if ( (next->getGCell()->isVChannel()) || (next->getGCell()->isStrut())) {
+        return Point(next->getGCell()->getXCenter(), current->getYPath());
+      } else {
+        cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unknown GCell type."<< endl;
+        return Point(0,0);
+      }
+    } else {
+      cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Vertex are not neighbours."<< endl;
+      return Point(0,0);
+    }
   }
 
 
@@ -251,6 +344,7 @@ namespace Anabatic {
       cdebug_log(112,0) << "New Search area: " << _searchArea << endl;
 
       Vertex* seed = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
+      seed->setPathPoint(rp->getBoundingBox().getCenter().getX(), rp->getBoundingBox().getCenter().getY());
       if (seed->getConnexId() < 0) {
         VertexSet  connecteds;
         _getConnecteds( seed, connecteds );
@@ -417,7 +511,9 @@ namespace Anabatic {
 
             vneighbor->setBranchId( current->getBranchId() );
             vneighbor->setDistance( distance );
-            vneighbor->setFrom    ( edge );
+            Point pathPoint =_getNextPathPoint( current, vneighbor );
+            vneighbor->setPathPoint( pathPoint.getX(), pathPoint.getY() );
+            vneighbor->setFrom     ( edge );
             _queue.push( vneighbor );
 
             cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
@@ -461,6 +557,7 @@ namespace Anabatic {
       if (not from) break;
 
       current->setDistance( 0.0 );
+      if (!current->getGCell()->isDevice()) current->setPathPoint( current->getGCell()->getXCenter(), current->getGCell()->getYCenter() );
       current->setConnexId( _connectedsId );
       current->setBranchId( branchId );
       _sources.insert( current );

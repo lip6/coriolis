@@ -153,6 +153,8 @@ namespace Anabatic {
       inline        DbU::Unit             getYMin             () const;
       inline        DbU::Unit             getXMax             ( int shrink=0 ) const;
       inline        DbU::Unit             getYMax             ( int shrink=0 ) const;
+      inline        DbU::Unit             getXCenter          () const;
+      inline        DbU::Unit             getYCenter          () const;
       inline        DbU::Unit             getConstraintXMax   () const;
       inline        DbU::Unit             getConstraintYMax   () const;
       inline        Interval              getSide             ( Flags direction ) const;
@@ -345,6 +347,9 @@ namespace Anabatic {
   inline DbU::Unit  GCell::getYMax ( int shrink ) const
   { return _northEdges.empty() ?        getCell()->getAbutmentBox().getYMax() - shrink
                                : _northEdges[0]->getOpposite(this)->getYMin() - shrink; }
+
+  inline DbU::Unit GCell::getXCenter () const { return (getXMin()+getXMax())/2; }
+  inline DbU::Unit GCell::getYCenter () const { return (getYMin()+getYMax())/2; }
 
   inline DbU::Unit  GCell::getConstraintXMax () const
   { return getXMax( _eastEdges.empty() ? 0 : 1 ); }
