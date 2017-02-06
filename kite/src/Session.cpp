@@ -155,11 +155,12 @@ namespace Kite {
 
     _doRemovalEvents();
 
-    for ( size_t i=0 ; i<_insertEvents.size() ; ++i ) {
-      if (_insertEvents[i]._segment) {
-        _insertEvents[i]._track->insert( _insertEvents[i]._segment );
+    for ( const Event& event : _insertEvents ) {
+      if (event._segment) {
+        if (event._segment->isReduced()) event._segment->setAxis( event._track->getAxis() );
+        else                             event._track->insert( event._segment );
       }
-      if (_insertEvents[i]._marker) _insertEvents[i]._track->insert( _insertEvents[i]._marker );
+      if (event._marker) event._track->insert( event._marker );
     }
     _insertEvents.clear();
 

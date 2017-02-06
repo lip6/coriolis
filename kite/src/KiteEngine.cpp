@@ -218,6 +218,7 @@ namespace Kite {
     UpdateSession::open();
 
     for ( Net* net : cell->getNets() ) {
+      if (net->isClock() or net->isSupply()) continue;
       if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
 
     // First pass: destroy the contacts
@@ -227,8 +228,14 @@ namespace Kite {
         if (contact and not contact->getAnchorHook()->isAttached())
           contacts.push_back( contact );
       }
-      for ( Contact* contact : contacts )
-        contact->destroy();
+      for ( Contact* contact : contacts ) contact->destroy();
+
+      contacts.clear();
+      for ( Component* component : net->getComponents() ) {
+        Contact* contact = dynamic_cast<Contact*>(component);
+        if (contact) contacts.push_back( contact );
+      }
+      for ( Contact* contact : contacts ) contact->destroy();
 
     // Second pass: destroy unconnected segments added by Knik as blockages
       std::vector<Component*> segments;
