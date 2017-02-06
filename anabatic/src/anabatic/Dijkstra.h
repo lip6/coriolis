@@ -295,7 +295,8 @@ namespace Anabatic {
       inline bool       isSourceVertex     ( Vertex* ) const;
       inline bool       isTargetVertex     ( Vertex* ) const;
       inline DbU::Unit  getSearchAreaHalo  () const;
-      inline void       setDistance        ( distance_t );
+      template<typename DistanceT>
+      inline DistanceT* setDistance        ( DistanceT );
       inline void       setSearchAreaHalo  ( DbU::Unit );
              void       load               ( Net* );
              void       run                ( Mode mode=Mode::Standart );
@@ -335,9 +336,10 @@ namespace Anabatic {
   inline bool       Dijkstra::isSourceVertex    ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
   inline bool       Dijkstra::isTargetVertex    ( Vertex* v ) const { return (_targets.find(v) != _targets.end()); }
   inline DbU::Unit  Dijkstra::getSearchAreaHalo () const { return _searchAreaHalo; }
-  inline void       Dijkstra::setDistance       ( distance_t cb ) { _distanceCb = cb; }
   inline void       Dijkstra::setSearchAreaHalo ( DbU::Unit halo ) { _searchAreaHalo = halo; }
 
+  template<typename DistanceT>
+  inline DistanceT* Dijkstra::setDistance       ( DistanceT cb ) { _distanceCb = cb; return _distanceCb.target<DistanceT>(); }
 
 }  // Anabatic namespace.
 

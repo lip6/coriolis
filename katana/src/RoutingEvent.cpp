@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "RoutingEvent.cpp<katana>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2008-2016, All Rights Reserved
