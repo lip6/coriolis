@@ -129,7 +129,27 @@ def guessOs ():
       libDir = 'lib'
     
     return (osType,libDir,useDevtoolset2)
-      
+
+
+def guessCsh ():
+    cshBins = [ '/usr/bin/tcsh'
+              , '/bin/tcsh'
+              , '/usr/pkg/bin/tcsh'
+              , '/usr/bin/csh'
+              , '/bin/csh'
+              , '/usr/pkg/bin/csh'
+              ]
+    for cshBin in cshBins:
+      if os.path.isfile(cshBin): return cshBin
+    return None
+
+
+def guessShell ():
+    if os.environ.has_key('SHELL'): return os.environ['SHELL']
+
+   # If SHELL is not set, it is likely we are under C-Shell variant.
+   # Look for standard places where the binaries are expecteds.
+    return guessCsh()
 
 
 
@@ -139,6 +159,7 @@ if __name__ == "__main__":
   buildType                    = "Release"
   linkType                     = "Shared"
   rootDir                      = None
+  shellBin                     = guessShell()
 
   parser = optparse.OptionParser ()  
  # Build relateds.
@@ -155,12 +176,17 @@ if __name__ == "__main__":
   parser.add_option ( "--root"           , action="store"      , type="string", dest="rootDir"       )
   ( options, args ) = parser.parse_args ()
 
-  if options.release:    buildType       = "Release"
-  if options.debug:      buildType       = "Debug"
-  if options.devel:      buildType       = "Debug"
-  if options.static:     linkType        = "Static"
-  if options.shared:     linkType        = "Shared"
-  if options.rootDir:    rootDir         = options.rootDir
+  if options.csh:        shellBin  = guessCsh()
+  if options.release:    buildType = "Release"
+  if options.debug:      buildType = "Debug"
+  if options.devel:      buildType = "Debug"
+  if options.static:     linkType  = "Static"
+  if options.shared:     linkType  = "Shared"
+  if options.rootDir:    rootDir   = options.rootDir
+
+  if not shellBin:
+    print 'echo "[ERROR] coriolisEnv.py was not able to guess/find the current shell interpeter."'
+    sys.exit( 1 )
 
   strippedPath        = stripPath ( "PATH" )
   strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
@@ -246,17 +272,20 @@ if __name__ == "__main__":
     if osType == "Darwin":
       shellScriptSh  += 'DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' \
                         'export DYLD_LIBRARY_PATH;'
-      shellScriptCsh += 'setenv DYLD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' 
+      shellScriptCsh += 'setenv DYLD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";' 
     else:
       shellScriptSh  += 'LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";' \
                         'export LD_LIBRARY_PATH;'
-      shellScriptCsh += 'setenv LD_LIBRARY_PATH="%(LD_LIBRARY_PATH)s";'
+      shellScriptCsh += 'setenv LD_LIBRARY_PATH "%(LD_LIBRARY_PATH)s";'
   
   shellScriptSh  += "hash -r;"
   shellScriptCsh += "rehash;"
 
   if options.csh: shellScript = shellScriptCsh
   else:           shellScript = shellScriptSh
+
+  if useDevtoolset2:
+    shellScript += ' scl enable devtoolset-2 %(SHELL)s'
 
   evalScript = shellScript % { "PATH"            : strippedPath
                              , "LD_LIBRARY_PATH" : strippedLibraryPath
@@ -266,10 +295,8 @@ if __name__ == "__main__":
                              , "SYSCONF_DIR"     : sysconfDir
                              , "MESSAGE"         : shellMessage
                              , "buildDir"        : buildDir
+                             , 'SHELL'           : shellBin
                              }
-  if useDevtoolset2:
-    evalScript = '%s scl enable devtoolset-2 ${SHELL}' % evalScript
-
   if options.queryISysRoot:
     print '%s/%s' % (rootDir,osType)
     sys.exit( 0 )
@@ -279,3 +306,4 @@ if __name__ == "__main__":
     sys.exit( 0 )
 
   print evalScript
+  sys.exit( 0 )
