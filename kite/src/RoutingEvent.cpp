@@ -476,8 +476,7 @@ namespace Kite {
         _axisHistory = _segment->getAxis();
         _eventLevel  = 0;
         cdebug_log(9000,0) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
-        if (not _segment->isReduced())
-          Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
+        Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
         fsm.setState( SegmentFsm::SelfInserted );
       } else {
       // Do ripup.

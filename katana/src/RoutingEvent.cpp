@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- mode: C++; explicit-buffer-name: "RoutingEvent.cpp<katana>" -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC 2008-2016, All Rights Reserved
@@ -476,8 +476,7 @@ namespace Katana {
         _axisHistory = _segment->getAxis();
         _eventLevel  = 0;
         cdebug_log(9000,0) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
-        if (not _segment->isReduced())
-          Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
+        Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
         fsm.setState( SegmentFsm::SelfInserted );
       } else {
       // Do ripup.

@@ -154,10 +154,10 @@ namespace Katana {
     float edgeHInc = getConfiguration()->getEdgeHInc();
 
     openSession();
-    Dijkstra*       dijkstra = new Dijkstra ( this );
-    DigitalDistance distance ( getConfiguration()->getEdgeCostH()
-                             , getConfiguration()->getEdgeCostK() );
-    dijkstra->setDistance( distance );
+    Dijkstra*        dijkstra = new Dijkstra ( this );
+    DigitalDistance* distance =
+      dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
+                                            , getConfiguration()->getEdgeCostK() ));
 
     size_t iteration = 0;
     size_t netCount  = 0;
@@ -168,7 +168,7 @@ namespace Katana {
       for ( NetData* netData : getNetOrdering() ) {
         if (netData->isGlobalRouted()) continue;
 
-        distance.setNet( netData->getNet() );
+        distance->setNet( netData->getNet() );
         dijkstra->load( netData->getNet() );
         dijkstra->run();
         ++netCount;

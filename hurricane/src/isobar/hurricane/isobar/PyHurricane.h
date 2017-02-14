@@ -136,11 +136,11 @@ namespace Isobar {
     if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong     ( object );
     else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLongLong( object );
 
-    if (value > numeric_limits<int>::max()) {
-      throw Error( "PyAny_AsLong(): Suspiciously big int %s, db:%li"
-                 , DbU::getValueString(value).c_str(), value
-                 );
-    }
+  //if (value > numeric_limits<int>::max()) {
+  //  throw Error( "PyAny_AsLong(): Suspiciously big int %s, db:%lli"
+  //             , DbU::getValueString(value).c_str(), value
+  //             );
+  //}
     return value;
   }
 
