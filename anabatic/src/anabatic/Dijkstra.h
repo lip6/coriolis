@@ -39,6 +39,61 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::IntervalC".
+
+  class IntervalC
+  {
+    public:
+      enum iFlag { None        = 0
+                 , iHorizontal = (1<<0)
+                 , iVertical   = (1<<1)
+                 , iSet        = (1<<2)
+      };
+    private:
+                       IntervalC();
+                      ~IntervalC();
+    public:
+      static IntervalC* create();   
+
+    public:
+             void       set          ( DbU::Unit, DbU::Unit, DbU::Unit );
+             void       setRange     ( DbU::Unit, DbU::Unit );
+             void       extendMin    ( DbU::Unit );
+             void       extendMax    ( DbU::Unit );
+             void       print        () const;
+      inline bool       isH          () const;
+      inline bool       isV          () const;
+      inline void       setAsH       ();
+      inline void       setAsV       ();
+      inline DbU::Unit  getMin       () const;
+      inline DbU::Unit  getMax       () const;
+      inline DbU::Unit  getCenter    () const;
+             DbU::Unit  getAxis      () const;
+      inline void       setAxis      ( DbU::Unit );
+      inline void       setiSet      ();
+      inline bool       isiSet       () const;
+             void       reset        ();
+
+    private:
+      unsigned int _flags;
+      DbU::Unit    _min;
+      DbU::Unit    _max;
+      DbU::Unit    _axis;
+  };
+
+  inline void      IntervalC::setAsH   () { _flags = ((_flags & ~(0x3)) | iHorizontal); }
+  inline void      IntervalC::setAsV   () { _flags = ((_flags & ~(0x3)) | iVertical  ); }
+  inline void      IntervalC::setAxis  ( DbU::Unit axis ) { _axis = axis; }
+  inline DbU::Unit IntervalC::getAxis  () const           { return _axis; }
+  inline DbU::Unit IntervalC::getCenter() const           { return getMin()+getMax(); }
+  inline DbU::Unit IntervalC::getMin   () const           { return _min; }
+  inline DbU::Unit IntervalC::getMax   () const           { return _max; }
+  inline void      IntervalC::setiSet  ()  { _flags |= iSet; }
+  inline bool      IntervalC::isiSet   () const { return _flags & iSet; }
+  inline bool      IntervalC::isH      () const { return _flags & iHorizontal; }
+  inline bool      IntervalC::isV      () const { return _flags & iVertical  ; }
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::Vertex".
 
   class Vertex {
@@ -109,10 +164,38 @@ namespace Anabatic {
              inline  void            setERestricted   ();
              inline  void            setWRestricted   ();
              inline  unsigned int    getFlags         () const; 
-                     void            setPathPoint     ( DbU::Unit, DbU::Unit );
              inline  DbU::Unit       getXPath         () const;
              inline  DbU::Unit       getYPath         () const;
-             inline  Point           getPathPoint     () const;
+                     bool            hasRP            ( Net* ) const;
+                     bool            hasVRP           ( Net* ) const;
+                     bool            hasHRP           ( Net* ) const;
+      static         bool            isRestricted     ( const Vertex* v1, const Vertex* v2 );
+      static         Point           getNextPathPoint2( const Vertex*, const Vertex* );
+                     Point           getPathPoint     ( const Vertex * ) const;
+              inline void            setIAsH          ();
+              inline void            setIAsV          ();
+              inline DbU::Unit       getIAxis         () const;
+              inline void            setIAxis         ( DbU::Unit ) ;
+              inline DbU::Unit       getICenter       () const;
+              inline DbU::Unit       getIMax          () const;
+              inline DbU::Unit       getIMin          () const;
+              inline void            setPIAsH          ();
+              inline void            setPIAsV          ();
+              inline DbU::Unit       getPIAxis         () const;
+              inline void            setPIAxis         ( DbU::Unit ) ;
+              inline DbU::Unit       getPICenter       () const;
+              inline DbU::Unit       getPIMax          () const;
+              inline DbU::Unit       getPIMin          () const;
+                     bool            isH               () const;
+                     bool            isV               () const;
+              inline bool            isiSet            () const;
+              inline void            setInterv         ( DbU::Unit, DbU::Unit, DbU::Unit );
+              inline void            setIRange         ( DbU::Unit, DbU::Unit );
+              inline void            setIRangeFrom     ( DbU::Unit, DbU::Unit );
+              inline void            printInterval     () const ;
+                     void            setIntervals      ( Vertex* );
+                     void            resetIntervals    ();
+ 
 
     // Inspector support. 
                      string          _getString     () const;
@@ -132,8 +215,8 @@ namespace Anabatic {
       DbU::Unit            _distance;
       Edge*                _from;
       unsigned int         _flags;
-      DbU::Unit            _xpath;
-      DbU::Unit            _ypath;
+      IntervalC*           _intervfrom;
+      IntervalC*           _interv;
   }; 
 
 
@@ -149,8 +232,9 @@ namespace Anabatic {
     , _distance(unreached)
     , _from    (NULL)
     , _flags   (NoRestriction)
-    , _xpath   (0)
-    , _ypath   (0)
+
+    , _intervfrom(IntervalC::create())  
+    , _interv    (IntervalC::create()) 
   {
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
@@ -207,9 +291,27 @@ namespace Anabatic {
   inline void         Vertex::setERestricted   () { _flags |= 0x4; }
   inline void         Vertex::setWRestricted   () { _flags |= 0x8; }
   inline unsigned int Vertex::getFlags         () const { return _flags; }
-  inline DbU::Unit    Vertex::getXPath         () const { return _xpath; }
-  inline DbU::Unit    Vertex::getYPath         () const { return _ypath; }
-  inline Point        Vertex::getPathPoint     () const { return Point(_xpath, _ypath); }
+
+  inline void         Vertex::setIAxis   ( DbU::Unit axis ) { _interv->setAxis(axis); }
+  inline DbU::Unit    Vertex::getIAxis   () const           { return _interv->getAxis(); }
+  inline void         Vertex::setIAsH    ()                 { _interv->setAsH(); }
+  inline void         Vertex::setIAsV    ()                 { _interv->setAsV(); }
+  inline DbU::Unit    Vertex::getICenter () const           { return _interv->getCenter(); }
+  inline DbU::Unit    Vertex::getIMax    () const           { return _interv->getMax(); }
+  inline DbU::Unit    Vertex::getIMin    () const           { return _interv->getMin(); }
+  inline void         Vertex::setPIAxis  ( DbU::Unit axis ) { _intervfrom->setAxis(axis); }
+  inline DbU::Unit    Vertex::getPIAxis  () const           { return _intervfrom->getAxis(); }
+  inline void         Vertex::setPIAsH   ()                 { _intervfrom->setAsH(); }
+  inline void         Vertex::setPIAsV   ()                 { _intervfrom->setAsV(); }
+  inline DbU::Unit    Vertex::getPICenter() const           { return _intervfrom->getCenter(); }
+  inline DbU::Unit    Vertex::getPIMax   () const           { return _intervfrom->getMax(); }
+  inline DbU::Unit    Vertex::getPIMin   () const           { return _intervfrom->getMin(); }
+  inline bool         Vertex::isiSet     () const           { return _interv->isiSet(); }
+
+  inline void         Vertex::setInterv    ( DbU::Unit min, DbU::Unit max, DbU::Unit axis ) { _interv->set(min, max, axis); }
+  inline void         Vertex::setIRange    ( DbU::Unit min, DbU::Unit max ) { _interv->setRange(min, max); }
+  inline void         Vertex::setIRangeFrom( DbU::Unit min, DbU::Unit max ) { _intervfrom->setRange(min, max); }
+  inline void         Vertex::printInterval() const { _interv->print(); } 
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
@@ -313,7 +415,9 @@ namespace Anabatic {
                         Dijkstra           ( const Dijkstra& );
              Dijkstra&  operator=          ( const Dijkstra& );
       static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
-      static Point      _getNextPathPoint  ( const Vertex*, const Vertex* );
+             DbU::Unit  _getDistancetoRP   ( Point );
+             DbU::Unit  _estimatePtoRP     ( Point, RoutingPad*, Vertex* );
+             Point      _getPonderedPoint  () const;
              void       _cleanup           ();
              bool       _propagate         ( Flags enabledSides );
              void       _traceback         ( Vertex* );
@@ -322,7 +426,6 @@ namespace Anabatic {
              void       _toSources         ( Vertex*, int connexId );
              void       _getConnecteds     ( Vertex*, VertexSet& );
              void       _checkEdges        () const;
-      static bool       isRestricted       ( const Vertex* v1, const Vertex* v2 );
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;

@@ -3020,8 +3020,7 @@ namespace {
 
       if        ((_north != NULL) && (_south != NULL) && (_east != NULL)){ 
         cdebug_log(145,0) << "Case NSE " << endl;
-      xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
-
+        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
         if (_north->getComponent()->getX() < _south->getComponent()->getX()){
           turn->setX(_north->getComponent()->getX());
           xtee->setX(_south->getComponent()->getX());
@@ -3059,8 +3058,10 @@ namespace {
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
         cdebug_log(145,0) << "Case NSW " << endl;
         xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
+        cerr << "1" << endl;
 
         if (_north->getComponent()->getX() < _south->getComponent()->getX()){
+          cerr << "2" << endl;
           xtee->setX(_north->getComponent()->getX());
           turn->setX(_south->getComponent()->getX());
           if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
@@ -3069,6 +3070,7 @@ namespace {
           else                                    targetContact = turn;
 
         } else {
+          cerr << "3" << endl;
           xtee->setX(_south->getComponent()->getX());
           turn->setX(_north->getComponent()->getX());
           if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), turn );
@@ -3076,9 +3078,10 @@ namespace {
           if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), xtee );
           else                                    targetContact = xtee;
         }
-        turn->setY(_east->getComponent()->getY());
-        xtee->setY(_east->getComponent()->getY());
-        if ( _east and (_fromHook != _east) ) forks.push( getSegmentOppositeHook( _east ), xtee );
+        cerr << "4" << endl;
+        turn->setY(_west->getComponent()->getY());
+        xtee->setY(_west->getComponent()->getY());
+        if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), xtee );
         else                                  targetContact = xtee;
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
