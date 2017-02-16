@@ -245,7 +245,6 @@ namespace Anabatic {
     }
 
     if (vnext->getGCell()->isMatrix()) {
-      cerr << "This is not planned" << endl; 
       return Point(vnext->getGCell()->getXCenter(), vnext->getGCell()->getYCenter());
     }
     
@@ -1086,12 +1085,10 @@ namespace Anabatic {
       if (h) {
         seed->setIAsH();
         seed->setInterv(rp->getBoundingBox().getXMin(), rp->getBoundingBox().getXMax(), rp->getBoundingBox().getYCenter());
-        seed->printInterval();
       }
       if (v) {
         seed->setIAsV();
         seed->setInterv(rp->getBoundingBox().getYMin(), rp->getBoundingBox().getYMax(), rp->getBoundingBox().getXCenter());
-        seed->printInterval();
       }
       
       if (seed->getConnexId() < 0) {

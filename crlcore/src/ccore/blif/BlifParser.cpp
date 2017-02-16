@@ -595,6 +595,7 @@ namespace CRL {
     Tokenize              tokenize  ( blifFile );
     const vector<string>& blifLine  = tokenize.blifLine();
 
+    UpdateSession::open();
     while ( tokenize.readEntry() ) {
       if (tokenize.state() == Tokenize::Model) {
         if (blifModel) {
@@ -732,6 +733,7 @@ namespace CRL {
     Model::connectModels();
     Model::toVhdlModels();
     Model::clearStatic();
+    UpdateSession::close();
 
     --tab;
 
