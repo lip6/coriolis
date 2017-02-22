@@ -38,12 +38,16 @@ namespace Hurricane {
       friend class NetRoutingExtension;
 
     public:
-      enum State { Excluded             = 0x0001
-                 , Fixed                = 0x0002
-                 , Unconnected          = 0x0004
-                 , ManualGlobalRoute    = 0x0008
-                 , AutomaticGlobalRoute = 0x0010
+      enum State { Excluded             = (1<< 0)
+                 , Fixed                = (1<< 1)
+                 , Unconnected          = (1<< 2)
+                 , ManualGlobalRoute    = (1<< 3)
+                 , AutomaticGlobalRoute = (1<< 4)
                  , MixedPreRoute        = Fixed|ManualGlobalRoute
+                 , Horizontal           = (1<< 4)
+                 , Vertical             = (1<< 5)
+                 , Symmetric            = (1<< 6)
+                 , SymmetricMaster      = (1<< 7)
                  };
     public:
       inline  bool          isExcluded             () const;
@@ -52,10 +56,18 @@ namespace Hurricane {
       inline  bool          isManualGlobalRoute    () const;
       inline  bool          isAutomaticGlobalRoute () const;
       inline  bool          isMixedPreRoute        () const;
+      inline  bool          isSymmetric            () const;
+      inline  bool          isSymHorizontal        () const;
+      inline  bool          isSymVertical          () const;
+      inline  bool          isSymMaster            () const;
+      inline  Net*          getNet                 () const;
+      inline  Net*          getSymNet              () const;
+      inline  DbU::Unit     getSymAxis             () const;
       inline  unsigned int  getFlags               () const;
+      inline  void          setSymNet              ( Net* );
+      inline  void          setSymAxis             ( DbU::Unit );
       inline  void          setFlags               ( unsigned int mask );
       inline  void          unsetFlags             ( unsigned int mask );
-      inline  Net*          getNet                 () const;
               std::string   _getString             () const;
               Record*       _getRecord             () const;
     private:
@@ -64,11 +76,13 @@ namespace Hurricane {
       inline  void          setNet                 ( Net* );
     private:
       Net*          _net;
+      Net*          _symNet;
       unsigned int  _flags;
+      DbU::Unit     _axis;
   };
 
 
-  inline NetRoutingState::NetRoutingState ( Net* net, unsigned int flags ) : _net(net), _flags(flags) { }
+  inline NetRoutingState::NetRoutingState ( Net* net, unsigned int flags ) : _net(net), _symNet(NULL), _flags(flags), _axis(0) { }
 
   inline bool          NetRoutingState::isExcluded             () const { return _flags & Excluded; };
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
@@ -76,11 +90,19 @@ namespace Hurricane {
   inline bool          NetRoutingState::isManualGlobalRoute    () const { return _flags & ManualGlobalRoute; };
   inline bool          NetRoutingState::isAutomaticGlobalRoute () const { return _flags & AutomaticGlobalRoute; };
   inline bool          NetRoutingState::isMixedPreRoute        () const { return _flags & MixedPreRoute; };
+  inline bool          NetRoutingState::isSymmetric            () const { return _flags & Symmetric; }
+  inline bool          NetRoutingState::isSymHorizontal        () const { return _flags & Horizontal; }
+  inline bool          NetRoutingState::isSymVertical          () const { return _flags & Vertical; }
+  inline bool          NetRoutingState::isSymMaster            () const { return _flags & SymmetricMaster; }
+  inline Net*          NetRoutingState::getSymNet              () const { return _symNet; }
+  inline DbU::Unit     NetRoutingState::getSymAxis             () const { return _axis; }
   inline unsigned int  NetRoutingState::getFlags               () const { return _flags; };
   inline Net*          NetRoutingState::getNet                 () const { return _net; }
   inline void          NetRoutingState::setFlags               ( unsigned int mask ) { _flags |=  mask; }
   inline void          NetRoutingState::unsetFlags             ( unsigned int mask ) { _flags &= ~mask; }
   inline void          NetRoutingState::setNet                 ( Net* net ) { _net = net; }
+  inline void          NetRoutingState::setSymNet              ( Net* symNet ) { _symNet = symNet; }
+  inline void          NetRoutingState::setSymAxis             ( DbU::Unit axis ) { _axis = axis; }
 
 
 // -------------------------------------------------------------------
@@ -138,7 +160,15 @@ namespace Hurricane {
       static inline  bool             isManualGlobalRoute    ( const Net* );
       static inline  bool             isAutomaticGlobalRoute ( const Net* );
       static inline  bool             isMixedPreRoute        ( const Net* );
+      static inline  bool             isSymmetric            ( const Net* );
+      static inline  bool             isSymHorizontal        ( const Net* );
+      static inline  bool             isSymVertical          ( const Net* );
+      static inline  bool             isSymMaster            ( const Net* );
       static inline  unsigned int     getFlags               ( const Net* );
+      static inline  Net*             getSymNet              ( const Net* );
+      static inline  DbU::Unit        getSymAxis             ( const Net* );
+      static inline  void             setSymNet              ( const Net*, Net* );
+      static inline  void             setSymAxis             ( const Net*, DbU::Unit );
       static inline  void             setFlags               ( const Net*, unsigned int mask );
       static inline  void             unsetFlags             ( const Net*, unsigned int mask );
       static         NetRoutingState* get                    ( const Net* );
@@ -184,6 +214,34 @@ namespace Hurricane {
   }
 
 
+  inline bool  NetRoutingExtension::isSymmetric ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isSymmetric();
+  }
+
+
+  inline bool  NetRoutingExtension::isSymHorizontal ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isSymHorizontal();
+  }
+
+
+  inline bool  NetRoutingExtension::isSymVertical ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isSymVertical();
+  }
+
+
+  inline bool  NetRoutingExtension::isSymMaster ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isSymMaster();
+  }
+
+
   inline unsigned int  NetRoutingExtension::getFlags ( const Net* net )
   {
     NetRoutingState* state = get( net );
@@ -191,10 +249,38 @@ namespace Hurricane {
   }
 
 
+  inline Net* NetRoutingExtension::getSymNet ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? NULL : state->getSymNet();
+  }
+
+
+  inline DbU::Unit  NetRoutingExtension::getSymAxis ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? 0 : state->getSymAxis();
+  }
+
+
   inline void  NetRoutingExtension::setFlags ( const Net* net, unsigned int mask )
   {
     NetRoutingState* state = get( net );
     if (state != NULL) state->setFlags( mask );
+  }
+
+
+  inline void  NetRoutingExtension::setSymNet ( const Net* net, Net* symNet )
+  {
+    NetRoutingState* state = get( net );
+    if (state != NULL) state->setSymNet( symNet );
+  }
+
+
+  inline void  NetRoutingExtension::setSymAxis ( const Net* net, DbU::Unit axis )
+  {
+    NetRoutingState* state = get( net );
+    if (state != NULL) state->setSymAxis( axis );
   }
 
 

@@ -37,6 +37,10 @@ namespace Hurricane {
     s += (isUnconnected         ()) ? 'u' : '-';
     s += (isManualGlobalRoute   ()) ? 'm' : '-';
     s += (isAutomaticGlobalRoute()) ? 'a' : '-';
+    s += (isSymmetric           ()) ? 'S' : '-';
+    s += (isSymHorizontal       ()) ? 'h' : '-';
+    s += (isSymVertical         ()) ? 'v' : '-';
+    s += (isSymMaster           ()) ? 'M' : '-';
 
     return s;
   }
@@ -116,6 +120,7 @@ namespace Hurricane {
     w->startObject();
     jsonWrite( w, "@typename", _getTypeName()      );
     jsonWrite( w, "_state"   , _state._getString() );
+    jsonWrite( w, "_axis"    , _state.getSymAxis() );
     w->endObject();
   }
 
@@ -157,6 +162,10 @@ namespace Hurricane {
     flags |= (sflags[2] == 'u') ? NetRoutingState::Unconnected          : 0;
     flags |= (sflags[3] == 'm') ? NetRoutingState::ManualGlobalRoute    : 0;
     flags |= (sflags[4] == 'a') ? NetRoutingState::AutomaticGlobalRoute : 0;
+    flags |= (sflags[5] == 'S') ? NetRoutingState::Symmetric            : 0;
+    flags |= (sflags[6] == 'h') ? NetRoutingState::Horizontal           : 0;
+    flags |= (sflags[7] == 'v') ? NetRoutingState::Vertical             : 0;
+    flags |= (sflags[8] == 'M') ? NetRoutingState::SymmetricMaster      : 0;
 
     NetRoutingProperty* property = NULL;
     DBo*                dbo      = stack.back_dbo();
@@ -170,10 +179,12 @@ namespace Hurricane {
                        )  << endl;
           NetRoutingState* state = property->getState();
           state->unsetFlags( (unsigned int)-1 );
-          state->setFlags( flags );
+          state->setFlags  ( flags );
+          state->setSymAxis( DbU::fromDb( get<int64_t>(stack,"_axis") ) );
         } else {
           property = NetRoutingProperty::create( net );
-          property->getState()->setFlags( flags );
+          property->getState()->setFlags  ( flags );
+          property->getState()->setSymAxis( DbU::fromDb( get<int64_t>(stack,"_axis") ) );
           net->put( property );
         }
       } else {
