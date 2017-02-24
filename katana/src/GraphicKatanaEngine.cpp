@@ -269,7 +269,14 @@ namespace Katana {
     }
   }
 
+
+  void  GraphicKatanaEngine::_runTest ()
+  {
+    KatanaEngine* katana = getForFramework( NoFlags );
+    if (katana) katana->runTest();
+  }
   
+
   void  GraphicKatanaEngine::_dumpMeasures ()
   {
     KatanaEngine* katana = getForFramework( NoFlags );
@@ -373,6 +380,11 @@ namespace Katana {
                       , "Katana - &Save Design"
                       , "Save routed design (temporary hack)"
                       , std::bind(&GraphicKatanaEngine::_save,this)
+                      );
+    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.runTest"
+                      , "Katana - Run &Test"
+                      , "Run Test Program (symmetric routing of gmChamla)"
+                      , std::bind(&GraphicKatanaEngine::_runTest,this)
                       );
   }
 

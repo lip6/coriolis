@@ -44,10 +44,10 @@ namespace Hurricane {
                  , ManualGlobalRoute    = (1<< 3)
                  , AutomaticGlobalRoute = (1<< 4)
                  , MixedPreRoute        = Fixed|ManualGlobalRoute
-                 , Horizontal           = (1<< 4)
-                 , Vertical             = (1<< 5)
-                 , Symmetric            = (1<< 6)
-                 , SymmetricMaster      = (1<< 7)
+                 , Horizontal           = (1<< 5)
+                 , Vertical             = (1<< 6)
+                 , Symmetric            = (1<< 7)
+                 , SymmetricMaster      = (1<< 8)
                  };
     public:
       inline  bool          isExcluded             () const;

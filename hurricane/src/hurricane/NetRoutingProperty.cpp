@@ -50,8 +50,10 @@ namespace Hurricane {
   {
     Record* record = new Record ( "<NetRoutingState " + _getString() + " >" );
     if (record != NULL) {
-      record->add( getSlot("_net"  , _net   ) );
-      record->add( getSlot("_flags", _flags ) );
+      record->add(           getSlot("_net"   , _net   ) );
+      record->add(           getSlot("_symNet", _symNet) );
+      record->add(           getSlot("_flags" , _flags ) );
+      record->add( DbU::getValueSlot("_axis"  ,&_axis  ) );
     }
     return record;
   }

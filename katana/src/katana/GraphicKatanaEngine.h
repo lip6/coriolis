@@ -94,6 +94,7 @@ namespace Katana {
               void                 _detailRoute           ();
               void                 _finalize              ();
               void                 _save                  ();
+              void                 _runTest               ();
               void                 _dumpMeasures          ();
   };
 

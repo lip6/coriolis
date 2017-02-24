@@ -110,6 +110,7 @@ namespace Katana {
               void                     analogInit                 ();
               void                     runNegociate               ( unsigned int flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
+              void                     runTest                    ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();
               void                     _gutKatana                 ();

@@ -45,6 +45,66 @@
 #include "katana/PyKatanaEngine.h"
 
 
+namespace {
+
+  using namespace std;
+  using Hurricane::Error;
+  using Hurricane::NetRoutingState;
+  using Hurricane::NetRoutingExtension;
+  using Hurricane::Net;
+  using Hurricane::Cell;
+
+
+  void  setSymmetricSelf ( Cell* cell, string name )
+  {
+    Net* net = cell->getNet( name );
+    if (not net)
+      throw Error( "::setSymmetricSelf() Net \"%s\" not found." , name.c_str() );
+
+    NetRoutingState* state = NetRoutingExtension::get( net );
+    if (not state) state = NetRoutingExtension::create( net );
+
+    state->setFlags  ( NetRoutingState::AutomaticGlobalRoute
+                     | NetRoutingState::Symmetric
+                     | NetRoutingState::Vertical );
+    state->setSymAxis( cell->getAbutmentBox().getCenter().getX() );
+  }
+
+
+  void  setSymmetricPair ( Cell* cell, string masterName, string slaveName )
+  {
+    Net* masterNet = cell->getNet( masterName );
+    if (not masterNet)
+      throw Error( "::setSymmetricPair() Net \"%s\" not found." , masterName.c_str() );
+
+    NetRoutingState* masterState = NetRoutingExtension::get( masterNet );
+    if (not masterState) masterState = NetRoutingExtension::create( masterNet );
+
+    masterState->setFlags  ( NetRoutingState::AutomaticGlobalRoute
+                           | NetRoutingState::Symmetric
+                           | NetRoutingState::SymmetricMaster
+                           | NetRoutingState::Vertical );
+    masterState->setSymAxis( cell->getAbutmentBox().getCenter().getX() );
+
+    Net* slaveNet = cell->getNet( slaveName );
+    if (not slaveNet)
+      throw Error( "KatanaEngine::runTest() Net \"%s\" not found." , slaveName.c_str() );
+
+    NetRoutingState* slaveState = NetRoutingExtension::get( slaveNet );
+    if (not slaveState) slaveState = NetRoutingExtension::create( slaveNet );
+
+    slaveState ->setFlags  ( NetRoutingState::AutomaticGlobalRoute
+                           | NetRoutingState::Symmetric
+                           | NetRoutingState::Vertical );
+    slaveState ->setSymAxis(cell->getAbutmentBox().getCenter().getX() );
+    slaveState ->setSymNet ( masterNet );
+    masterState->setSymNet (  slaveNet );
+  }
+
+
+}  // Anonymous namespace.
+
+
 namespace Katana {
 
   using std::cout;
@@ -73,6 +133,7 @@ namespace Katana {
   using Hurricane::Layer;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
   using Hurricane::Cell;
   using CRL::System;
@@ -375,6 +436,24 @@ namespace Katana {
     _toolSuccess = _toolSuccess and (overlaps == 0);
   }
 
+
+  void  KatanaEngine::runTest ()
+  {
+    if (getCell()->getName() != "gmchamla")
+      throw Error( "KatanaEngine::runTest() Work only on \"gmchamla\" (loaded:\"%s\")."
+                 , getString(getCell()->getName()).c_str()
+                 );
+
+    setSymmetricSelf( getCell(), "Vc"  );
+    setSymmetricSelf( getCell(), "vb5" );
+    setSymmetricSelf( getCell(), "vb7" );
+    setSymmetricPair( getCell(), "ampp_73", "ampn_72" );
+    setSymmetricPair( getCell(), "ampp_71", "ampn_71" );
+    setSymmetricPair( getCell(), "m2n_in" , "m2p_in"  );
+    setSymmetricPair( getCell(), "ampp_4" , "ampn_4"  );
+    setSymmetricPair( getCell(), "ampp_2" , "ampn_2"  );
+    setSymmetricPair( getCell(), "ampp_1" , "ampn_1"  );
+  }
 
   void  KatanaEngine::printCompletion () const
   {
