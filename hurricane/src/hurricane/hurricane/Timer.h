@@ -34,8 +34,8 @@
 //! author="Igor Markov 06/22/97 "      
 // freely inspired from abktimer from UCLApack .... just no windows.
 
-#ifndef  __HURRICANE_TIMER__
-#define  __HURRICANE_TIMER__
+#ifndef  HURRICANE_TIMER_H
+#define  HURRICANE_TIMER_H
 
 #include  <sys/types.h>
 #include  <sys/time.h>
@@ -61,11 +61,12 @@ namespace Hurricane {
 
 // Used to record the CPU time of process 
   class Timer {
-
     public:
     // Static Methods.
       static  string         getStringTime       ( double duration );
       static  string         getStringMemory     ( size_t size );
+      static  size_t         getMemorySize       ( size_t& memory, size_t& shared );
+      static  size_t         getMemorySize       ();
     // Constructors & Destructors.             
                              Timer               ( double limitInSec=0.0 );
                             ~Timer               () { };
@@ -97,9 +98,8 @@ namespace Hurricane {
                                                      // (INT_MAX+0.0)/CLOCKS_PER_SEC) sec (can be 36 mins),
                                                      // call realTimeExpired() instead
       inline  size_t         getBaseMemorySize   () const;
-      inline  size_t         getMemorySize       () const;
-      inline  size_t         getIncrease         () const;
-      inline  void           resetIncrease       ();
+              size_t         getIncrease         () const;
+              void           resetIncrease       ();
               string         _getString          () const;
 
     protected:
@@ -111,18 +111,17 @@ namespace Hurricane {
 
     private:
     // Internal: Attributes.
-               time_t         realTime1;
-       mutable time_t         realTime2;
-               double         UserTime1;
-       mutable double         UserTime2;
-               double         SysTime1;
-       mutable double         SysTime2;
-               double         timeLimit;
-               Status         status;
-       mutable struct rusage  _ru;
-               size_t         _memorySize;
-       static  size_t         _baseMemorySize;
-    // Internal: Methods.
+              time_t         realTime1;
+      mutable time_t         realTime2;
+              double         UserTime1;
+      mutable double         UserTime2;
+              double         SysTime1;
+      mutable double         SysTime2;
+              double         timeLimit;
+              Status         status;
+      mutable struct rusage  _ru;
+              size_t         _memorySize;
+      static  size_t         _baseMemorySize;
 
   };
 
@@ -130,9 +129,8 @@ namespace Hurricane {
 // Inline Functions.
   inline bool   Timer::isStopped         () const { return status == TimerOff; }
   inline size_t Timer::getBaseMemorySize () const { return _baseMemorySize; }
-  inline size_t Timer::getMemorySize     () const { return _memorySize - _baseMemorySize; }
-  inline size_t Timer::getIncrease       () const { return (size_t)(sbrk(0)) - _memorySize; }
-  inline void   Timer::resetIncrease     () { _memorySize = (size_t)sbrk(0); }
+  inline size_t Timer::getIncrease       () const { return getMemorySize() - _memorySize; }
+  inline void   Timer::resetIncrease     () { _memorySize = getMemorySize(); }
 
 
   inline double Timer::getRealTimeOnTheFly () const
@@ -179,11 +177,10 @@ namespace Hurricane {
   }
 
 
-}  // End of Hurricane namespace.
+}  // Hurricane namespace.
 
 
 GETSTRING_VALUE_SUPPORT(Hurricane::Timer);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Timer);
 
-
-#endif  // __HURRICANE_TIMER__
+#endif  // HURRICANE_TIMER_H

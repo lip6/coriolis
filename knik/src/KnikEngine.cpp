@@ -363,13 +363,19 @@ Vertex* KnikEngine::getVertex ( DbU::Unit x, DbU::Unit y )
 void KnikEngine::printTime()
 // *************************
 {
+    ostringstream result;
+
     cmess2 << "           + Done in " << Timer::getStringTime(_timer.getCombTime()) 
            << " [+" << Timer::getStringMemory(_timer.getIncrease()) << "]." << endl;
     cmess2 << "             (raw measurements : " << _timer.getCombTime()
            << "s [+" << (_timer.getIncrease()>>10) <<  "Ko/"
            << (_timer.getMemorySize()>>10) << "Ko])" << endl;
 
-
+    result.str("");
+    result << _timer.getCombTime()
+           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
+           <<  Timer::getStringMemory(Timer::getMemorySize());
+    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
 }
 // void KnikEngine::showEstimateOccupancy()
 // // *************************************
@@ -1069,6 +1075,12 @@ void KnikEngine::run( const map<Name,Net*>& excludedNets )
            << ", " << Timer::getStringMemory(_timer.getIncrease());
     cmess1 << "  o  Global Routing Completed." << endl;
     cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+
+    result.str("");
+    result << _timer.getCombTime()
+           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
+           <<  Timer::getStringMemory(Timer::getMemorySize());
+    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
 
     addMeasure<double> ( getCell(), "knikT",  _timer.getCombTime  () );
     addMeasure<size_t> ( getCell(), "knikS", (_timer.getMemorySize() >> 20) );

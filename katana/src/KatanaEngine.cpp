@@ -25,6 +25,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/Timer.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
@@ -128,6 +129,7 @@ namespace Katana {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
+  using Hurricane::Timer;
   using Hurricane::Box;
   using Hurricane::Torus;
   using Hurricane::Layer;
@@ -254,6 +256,9 @@ namespace Katana {
 
   KatanaEngine* KatanaEngine::create ( Cell* cell )
   {
+    cmess1 << Dots::asString( "     - Initial memory"
+                            , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
+
     KatanaEngine* katana = new KatanaEngine ( cell );
 
     katana->_postCreate();

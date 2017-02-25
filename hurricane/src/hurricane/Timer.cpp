@@ -32,13 +32,16 @@
 ***************************************************************************/
 
 
-#include  "hurricane/Timer.h"
+#include <fstream> 
+#include <sstream> 
+#include <iomanip> 
+#include "hurricane/Timer.h"
 
 
 namespace Hurricane {
 
 
-  size_t Timer::_baseMemorySize = (size_t)sbrk(0);
+  size_t Timer::_baseMemorySize = Timer::getMemorySize();
 
 
 // -------------------------------------------------------------------
@@ -47,7 +50,7 @@ namespace Hurricane {
 
   Timer::Timer ( double limitInSec )
     : timeLimit(limitInSec)
-    , _memorySize((size_t)sbrk(0))
+    , _memorySize(getMemorySize())
   {
     status = TimerOff;
   }
@@ -142,6 +145,75 @@ namespace Hurricane {
   } 
 
 
+  size_t  Timer::getMemorySize ()
+  {
+    size_t s, m;
+    return getMemorySize(s,m);
+  }
+
+
+  size_t  Timer::getMemorySize ( size_t& memory, size_t& shared )
+  {
+#if !defined __linux__
+    return (size_t)sbrk( 0 );
+#else
+#if 0
+    string              mmapFile = "/proc/" + to_string(getpid()) + "/maps" ;
+    ifstream            mmap     ( mmapFile );
+    char                line     [ 4096 ];
+    unsigned long long  rmemory  = 0;
+    unsigned long long  rshared  = 0;
+
+    while ( not mmap.eof() ) {
+      mmap.getline( line, 4096 );
+      const string       sline    ( line );
+      istringstream      iss      ( sline );
+      unsigned long long baddress = 0;
+      unsigned long long eaddress = 0;
+      string             perms;
+      unsigned long long offset;
+      int                major;
+      int                minor;
+      unsigned long long inode;
+      string             pathname;
+      char               separ;
+
+      iss >> hex >> baddress >> separ >> eaddress >> dec >> perms >> offset
+          >> major >> separ >> minor >> inode >> pathname;
+
+      if (not pathname.empty() and pathname.compare(0,6,"[heap]") != 0)
+        rshared += eaddress - baddress;
+      else
+        rmemory += eaddress - baddress;
+    }
+
+    memory = (size_t)rmemory;
+    shared = (size_t)rshared;
+
+    mmap.close();
+    return memory;
+#endif
+    long                pagesize  = sysconf( _SC_PAGESIZE );
+    string              statmFile = "/proc/" + to_string(getpid()) + "/statm" ;
+    ifstream            statm     ( statmFile );
+    unsigned long long  size      = 0;
+    unsigned long long  resident  = 0;
+    unsigned long long  share     = 0;
+    unsigned long long  text      = 0;
+    unsigned long long  lib       = 0;
+    unsigned long long  data      = 0;
+    unsigned long long  dt        = 0;
+
+    statm >> size >> resident >> share >> text >> lib >> data >> dt;
+
+    memory = (size_t)size * pagesize;
+
+    statm.close();
+    return memory;
+#endif
+  }
+
+
   string  Timer::_getString () const
   {
     //CPUNormalizer cpunorm;
@@ -196,15 +268,16 @@ namespace Hurricane {
   }
 
 
-  string Timer::getStringMemory ( size_t size ) {
-    string s;
+  string Timer::getStringMemory ( size_t size )
+  {
+    ostringstream oss;
 
-    if ( size >> 30 )      s = getString(size>>30) + "Mb";
-    else if ( size >> 20 ) s = getString(size>>20) + "Mb";
-    else if ( size >> 10 ) s = getString(size>>10) + "Kb";
-    else                   s = getString(size) + " bytes";
+    if      (size >> 30) oss << fixed << setprecision(1) << ((float)size)/powf(2.0,30.0) << "Gb";
+    else if (size >> 20) oss << fixed << setprecision(1) << ((float)size)/powf(2.0,20.0) << "Mb";
+    else if (size >> 10) oss << size << "Kb";
+    else                 oss << size << " bytes";
 
-    return s;
+    return oss.str();
   }
 
 

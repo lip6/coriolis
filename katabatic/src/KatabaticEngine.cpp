@@ -383,7 +383,7 @@ namespace Katabatic {
     result.str("");
     result << _timer.getCombTime()
            << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
-           << (_timer.getMemorySize()>>10) << "Kb";
+           <<  Timer::getStringMemory(Timer::getMemorySize());
     cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
 
    if (not tag.empty()) {
