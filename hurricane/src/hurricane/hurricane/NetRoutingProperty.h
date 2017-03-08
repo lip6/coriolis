@@ -60,6 +60,7 @@ namespace Hurricane {
       inline  bool          isSymHorizontal        () const;
       inline  bool          isSymVertical          () const;
       inline  bool          isSymMaster            () const;
+      inline  bool          isSymSlave             () const;
       inline  Net*          getNet                 () const;
       inline  Net*          getSymNet              () const;
       inline  DbU::Unit     getSymAxis             () const;
@@ -68,6 +69,8 @@ namespace Hurricane {
       inline  void          setSymAxis             ( DbU::Unit );
       inline  void          setFlags               ( unsigned int mask );
       inline  void          unsetFlags             ( unsigned int mask );
+      inline  bool          isSelfSym              () const;
+              DbU::Unit     getSymValue            ( DbU::Unit ) const;
               std::string   _getString             () const;
               Record*       _getRecord             () const;
     private:
@@ -102,7 +105,9 @@ namespace Hurricane {
   inline void          NetRoutingState::unsetFlags             ( unsigned int mask ) { _flags &= ~mask; }
   inline void          NetRoutingState::setNet                 ( Net* net ) { _net = net; }
   inline void          NetRoutingState::setSymNet              ( Net* symNet ) { _symNet = symNet; }
-  inline void          NetRoutingState::setSymAxis             ( DbU::Unit axis ) { _axis = axis; }
+  inline void          NetRoutingState::setSymAxis             ( DbU::Unit axis ) { _axis = axis; } 
+  inline bool          NetRoutingState::isSelfSym              () const { return ( (_symNet == NULL) and (isSymmetric())  ); }
+  inline bool          NetRoutingState::isSymSlave             () const { return ( (_symNet != NULL) and (!isSymMaster()) ); }
 
 
 // -------------------------------------------------------------------

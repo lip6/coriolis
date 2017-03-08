@@ -28,6 +28,14 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "NetRoutingState"
 
+  DbU::Unit NetRoutingState::getSymValue( DbU::Unit v ) const
+  {
+    if (v < _axis) {
+      return _axis + (_axis-v);
+    } else return _axis;
+  }
+
+
   string  NetRoutingState::_getString () const
   {
     string  s;
