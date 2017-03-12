@@ -121,6 +121,13 @@ namespace Anabatic {
   { }
 
 
+  bool  AutoContactTerminal::isEndPoint () const
+  {
+    RoutingPad* rp = dynamic_cast<RoutingPad*>( getAnchor() );
+    return (rp->getBodyHook()->getSlaveHooks().getSize() == 1);
+  }
+
+
   AutoSegment* AutoContactTerminal::getOpposite ( const AutoSegment* ) const
   { return NULL; }
 
@@ -139,6 +146,14 @@ namespace Anabatic {
     }
     return NULL;
   }
+
+
+  RoutingPad* AutoContactTerminal::getRoutingPad () const
+  { return dynamic_cast<RoutingPad*>(getAnchor()); }
+
+
+  AutoSegments  AutoContactTerminal::getRpConnecteds () const
+  { return AutoSegments_OnRoutingPad(this); }
 
 
   Box  AutoContactTerminal::getNativeConstraintBox () const

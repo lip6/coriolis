@@ -99,7 +99,7 @@ class Cell : public Entity {
                   };
 
       public:
-                             Flags        ( unsigned int flags = NoFlags );
+                             Flags        ( uint64_t flags = NoFlags );
         virtual             ~Flags        ();
         virtual std::string  _getTypeName () const;
         virtual std::string  _getString   () const;
@@ -357,9 +357,9 @@ class Cell : public Entity {
     public: virtual string _getTypeName() const {return _TName("Cell");};
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
-    public: static  string  getFlagString( unsigned int );
-    public: static  Record* getFlagRecord( unsigned int );
-    public: static  Slot* getFlagSlot( unsigned int );
+    public: static  string  getFlagString( uint64_t );
+    public: static  Record* getFlagRecord( uint64_t );
+    public: static  Slot* getFlagSlot( uint64_t );
 
     public: InstanceMap& _getInstanceMap() {return _instanceMap;};
     public: QuadTree* _getQuadTree() {return _quadTree;};
@@ -506,10 +506,10 @@ class Cell : public Entity {
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
     public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
-    public: void flattenNets(unsigned int flags=Flags::BuildRings);
-    public: void createRoutingPadRings(unsigned int flags=Flags::BuildRings);
-    public: void setFlags(unsigned int flags) { _flags |= flags; }
-    public: void resetFlags(unsigned int flags) { _flags &= ~flags; }
+    public: void flattenNets(uint64_t flags=Flags::BuildRings);
+    public: void createRoutingPadRings(uint64_t flags=Flags::BuildRings);
+    public: void setFlags(uint64_t flags) { _flags |= flags; }
+    public: void resetFlags(uint64_t flags) { _flags &= ~flags; }
     public: bool updatePlacedFlag();
     public: void materialize();
     public: void unmaterialize();

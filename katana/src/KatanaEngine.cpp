@@ -256,9 +256,6 @@ namespace Katana {
 
   KatanaEngine* KatanaEngine::create ( Cell* cell )
   {
-    cmess1 << Dots::asString( "     - Initial memory"
-                            , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
-
     KatanaEngine* katana = new KatanaEngine ( cell );
 
     katana->_postCreate();
@@ -340,6 +337,13 @@ namespace Katana {
   }
 
 
+  DataSymmetric* KatanaEngine::getDataSymmetric ( Net* net )
+  {
+    auto idata = _symmetrics.find( net );
+    if (idata != _symmetrics.end()) return (*idata).second;
+    return NULL;
+  }
+
   void  KatanaEngine::openSession ()
   { Session::_open(this); }
 
@@ -350,6 +354,26 @@ namespace Katana {
       _negociateWindow->setInterrupt( state ); 
       cerr << "Interrupt [CRTL+C] of " << this << endl;
     }
+  }
+
+
+  DataSymmetric* KatanaEngine::addDataSymmetric ( Net* net )
+  {
+    DataSymmetric* data = getDataSymmetric( net );
+    if (data) {
+      cerr << Error( "KatanaEngine::addDataSymmetric(): Try to add twice Net \"%s\" (ignored)."
+                   , getString(net->getName()).c_str() ) << endl;
+      return data;
+    }
+
+    data = DataSymmetric::create( net );
+    if (data) {
+      _symmetrics.insert( make_pair(net,data) );
+      if (data->getSymNet())
+        _symmetrics.insert( make_pair(data->getSymNet(),data) );
+    }
+
+    return data;
   }
 
 
@@ -649,6 +673,10 @@ namespace Katana {
       for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
         _routingPlanes[depth]->destroy();
       }
+      _routingPlanes.clear();
+
+      for ( auto symmetric : _symmetrics ) delete symmetric.second;
+      _symmetrics.clear();
 
       Session::close();
     }
@@ -702,8 +730,9 @@ namespace Katana {
     Record* record = Super::_getRecord ();
                                      
     if (record) {
-      record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
       record->add( getSlot( "_configuration",  _configuration ) );
+      record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
+      record->add( getSlot( "_symmetrics"   , &_symmetrics    ) );
     }
     return record;
   }

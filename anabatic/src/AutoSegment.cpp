@@ -635,6 +635,13 @@ namespace Anabatic {
   }
 
 
+  AutoSegments  AutoSegment::getConnecteds ( unsigned int flags )
+  {
+    cdebug_log(145,0) << "AutoSegment::getConnecteds() - flags:" << flags << endl;
+    return AutoSegments_Connecteds( this, flags );
+  }
+
+
   AutoSegments  AutoSegment::getPerpandiculars ()
   { return AutoSegments_Perpandiculars( this ); }
 

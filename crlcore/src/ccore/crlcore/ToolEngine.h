@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include "hurricane/Commons.h"
+#include "hurricane/Timer.h"
 #include "hurricane/DBo.h"
 #include "hurricane/Slot.h"
 
@@ -36,6 +37,7 @@ namespace CRL {
 
   using std::string;
   using std::vector;
+  using Hurricane::Timer;
   using Hurricane::Record;
   using Hurricane::Name;
   using Hurricane::DBo;
@@ -47,36 +49,45 @@ namespace CRL {
 
   class ToolEngine : public DBo {
     public:
-      static  ToolEngines  get                                 ( const Cell* cell );
-      static  ToolEngine*  get                                 ( const Cell* cell, const Name& name );
-      static  void         destroyAll                          ();
-      static  bool         inDestroyAll                        ();
+      typedef  DBo  Super;
     public:
-      virtual const Name&  getName                             () const = 0;
-      inline  Cell*        getCell                             () const;
-              bool         placementModificationFlagHasChanged ();
-              bool         routingModificationFlagHasChanged   ();
-      inline  void         setInRelationDestroy                ( bool );
-      virtual string       _getTypeName                        () const;
-      virtual string       _getString                          () const;
-      virtual Record*      _getRecord                          () const;
+      static        ToolEngines  get                                 ( const Cell* cell );
+      static        ToolEngine*  get                                 ( const Cell* cell, const Name& name );
+      static        void         destroyAll                          ();
+      static        bool         inDestroyAll                        ();
+    public:
+      virtual const Name&        getName                             () const = 0;
+      inline        Cell*        getCell                             () const;
+                    bool         placementModificationFlagHasChanged ();
+                    bool         routingModificationFlagHasChanged   ();
+      inline        void         setInRelationDestroy                ( bool );
+      inline  const Timer&       getTimer                            () const;
+                    void         startMeasures                       ();
+                    void         stopMeasures                        ();
+                    void         suspendMeasures                     ();
+                    void         resumeMeasures                      ();
+                    void         printMeasures                       () const;
+      virtual       string       _getTypeName                        () const;
+      virtual       string       _getString                          () const;
+      virtual       Record*      _getRecord                          () const;
     private:
-      static  bool         _inDestroyAll;
+      static        bool         _inDestroyAll;
     protected:
-              Cell*        _cell;
+                    Cell*        _cell;
     private:
-              unsigned int _placementModificationFlag;
-              unsigned int _routingModificationFlag;
-              bool         _inRelationDestroy;
+                    unsigned int _placementModificationFlag;
+                    unsigned int _routingModificationFlag;
+                    bool         _inRelationDestroy;
+                    Timer        _timer;
     protected:
-                           ToolEngine                          ( Cell* cell );
-      virtual void         _postCreate                         ();
-      virtual void         _preDestroy                         ();
-    protected:
-              void         grabPlacementModificationFlag       ();
-              void         getPlacementModificationFlag        ();
-              void         grabRoutingModificationFlag         ();
-              void         getRoutingModificationFlag          ();
+                                 ToolEngine                          ( Cell* cell );
+      virtual       void         _postCreate                         ();
+      virtual       void         _preDestroy                         ();
+    protected:      
+                    void         grabPlacementModificationFlag       ();
+                    void         getPlacementModificationFlag        ();
+                    void         grabRoutingModificationFlag         ();
+                    void         getRoutingModificationFlag          ();
   };
 
 
@@ -84,8 +95,9 @@ namespace CRL {
 // Inline Functions.
 
 
-  inline  Cell* ToolEngine::getCell              () const { return _cell; }
-  inline  void  ToolEngine::setInRelationDestroy ( bool state ) { _inRelationDestroy = state; }
+  inline       Cell*  ToolEngine::getCell              () const { return _cell; }
+  inline       void   ToolEngine::setInRelationDestroy ( bool state ) { _inRelationDestroy = state; }
+  inline const Timer& ToolEngine::getTimer             () const { return _timer; }
 
 
 } // CRL namespace.

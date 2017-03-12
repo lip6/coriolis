@@ -37,6 +37,7 @@ namespace Knik {
 #include "katana/Constants.h"
 #include "katana/TrackElement.h"
 #include "katana/Configuration.h"
+#include "katana/DataSymmetric.h"
 
 
 namespace Katana {
@@ -85,6 +86,7 @@ namespace Katana {
               RoutingPlane*            getRoutingPlaneByIndex     ( size_t index ) const;
               RoutingPlane*            getRoutingPlaneByLayer     ( const Layer* ) const;
               Track*                   getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
+              DataSymmetric*           getDataSymmetric           ( Net* );
       inline  void                     printConfiguration         () const;
               void                     printCompletion            () const;
               void                     dumpMeasures               ( std::ostream& ) const;
@@ -98,6 +100,7 @@ namespace Katana {
       inline  void                     setRipupCost               ( unsigned int );
       inline  void                     setHTracksReservedLocal    ( size_t );
       inline  void                     setVTracksReservedLocal    ( size_t );
+              DataSymmetric*           addDataSymmetric           ( Net* );
               void                     setupPowerRails            ();
               void                     protectRoutingPads         ();
               void                     preProcess                 ();
@@ -110,6 +113,7 @@ namespace Katana {
               void                     analogInit                 ();
               void                     runNegociate               ( unsigned int flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
+              void                     runSymmetricRouter         ();
               void                     runTest                    ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();
@@ -124,14 +128,15 @@ namespace Katana {
       virtual string                   _getTypeName               () const;
     private:                          
     // Attributes.                    
-      static  Name                     _toolName;
-    protected:                        
-              CellViewer*              _viewer;
-              Configuration*           _configuration;
-              vector<RoutingPlane*>    _routingPlanes;
-              NegociateWindow*         _negociateWindow;
-              double                   _minimumWL;
-      mutable bool                     _toolSuccess;
+      static  Name                          _toolName;
+    protected:                              
+              CellViewer*                   _viewer;
+              Configuration*                _configuration;
+              vector<RoutingPlane*>         _routingPlanes;
+              NegociateWindow*              _negociateWindow;
+              double                        _minimumWL;
+              std::map<Net*,DataSymmetric*> _symmetrics;
+      mutable bool                          _toolSuccess;
     protected:
     // Constructors & Destructors.
                             KatanaEngine  ( Cell* );

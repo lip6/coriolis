@@ -47,7 +47,7 @@ namespace Hurricane {
 
   string  BaseFlags::_getString () const
   {
-    static size_t  width = sizeof(unsigned int) * CHAR_BIT;
+    static size_t  width = sizeof(uint64_t) * CHAR_BIT;
 
     std::ostringstream formatted;
     formatted << "0x" << std::hex << std::setw(width) << std::setfill('0') << _flags;

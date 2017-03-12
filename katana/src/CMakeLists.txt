@@ -12,6 +12,7 @@
                    set( includes     katana/Constants.h
                                      katana/TrackCost.h
                                      katana/DataNegociate.h
+                                     katana/DataSymmetric.h
                                      katana/TrackElement.h       katana/TrackElements.h
                                      katana/TrackSegment.h
                                      katana/TrackFixedSegment.h
@@ -40,6 +41,7 @@
                    set( cpps         Constants.cpp
                                      Configuration.cpp
                                      DataNegociate.cpp
+                                     DataSymmetric.cpp
                                      TrackCost.cpp
                                      TrackElement.cpp
                                      TrackElements.cpp
@@ -64,6 +66,7 @@
                                      ProtectRoutingPads.cpp
                                      PreProcess.cpp
                                      GlobalRoute.cpp
+                                     SymmetricRoute.cpp
                                      KatanaEngine.cpp
                                      GraphicKatanaEngine.cpp
                       )

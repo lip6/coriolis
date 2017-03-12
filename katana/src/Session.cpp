@@ -98,6 +98,10 @@ namespace Katana {
   { return Session::getKatanaEngine()->getConfiguration(); }
 
 
+  AutoContact* Session::lookup ( Contact* contact )
+  { return Super::lookup(contact); }
+
+
   TrackElement* Session::lookup ( Segment* segment )
   { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup(segment); }
 

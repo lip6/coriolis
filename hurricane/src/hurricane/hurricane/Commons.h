@@ -41,6 +41,7 @@
 #include <set>
 #include <map>
 #include <stack>
+#include <array>
 #include <vector>
 #include <iostream>
 #include <iomanip>
@@ -316,6 +317,104 @@ template<> inline std::string  getString<std::string> ( std::string s )
 
 template<typename Data> inline Hurricane::Record* getRecord ( Data data )
 { return NULL; }
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "[const] std::array<Element>*".
+
+
+template<typename Element,size_t N>
+inline std::string  getString ( std::array<Element,N>* v )
+{
+  std::string name = "const std::array<Element,N>:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<typename Element,size_t N>
+inline Hurricane::Record* getRecord ( std::array<Element,N>* v )
+{
+  Hurricane::Record* record = NULL;
+  if ( !v->empty() ) {
+    record = new Hurricane::Record ( "std::array<Element,N>" );
+    unsigned n = 0;
+    typename std::array<Element,N>::iterator iterator = v->begin();
+    while ( iterator != v->end() ) {
+      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+template<typename Element,size_t N>
+inline std::string  getString ( const std::array<Element,N>* v )
+{
+  std::string name = "const std::array<Element,N>:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<typename Element,size_t N>
+inline Hurricane::Record* getRecord ( const std::array<Element,N>* v )
+{
+  Hurricane::Record* record = NULL;
+  if ( !v->empty() ) {
+    record = new Hurricane::Record ( "const std::array<Element,N>" );
+    unsigned n = 0;
+    typename std::array<Element,N>::const_iterator iterator = v->begin();
+    while ( iterator != v->end() ) {
+      record->add ( getSlot<const Element>(getString(n++), *iterator) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+template<typename Element,size_t N>
+inline std::string  getString ( std::array<Element,N>& v )
+{
+  std::string name = "std::array<Element,N>&:";
+  return name + getString<size_t>(v.size());
+}
+
+
+template<typename Element,size_t N>
+inline Hurricane::Record* getRecord ( std::array<Element,N>& v )
+{
+  Hurricane::Record* record = NULL;
+  if (not v.empty()) {
+    record = new Hurricane::Record ( "std::array<Element,N>&" );
+    unsigned n = 0;
+    for ( auto element : v )
+      record->add( getSlot<Element>(getString(n++), element) );
+  }
+  return record;
+}
+
+
+template<typename Element,size_t N>
+inline std::string  getString ( const std::array<Element,N>& v )
+{
+  std::string name = "const std::array<Element,N>&:";
+  return name + getString<size_t>(v.size());
+}
+
+
+template<typename Element,size_t N>
+inline Hurricane::Record* getRecord ( const std::array<Element,N>& v )
+{
+  Hurricane::Record* record = NULL;
+  if (not v.empty()) {
+    record = new Hurricane::Record ( "const std::array<Element,N>&" );
+    unsigned n = 0;
+    for ( auto element : v )
+      record->add( getSlot<Element>(getString(n++), element) );
+  }
+  return record;
+}
 
 
 // -------------------------------------------------------------------

@@ -145,7 +145,6 @@ namespace Katabatic {
 
   KatabaticEngine::KatabaticEngine ( Cell* cell )
     : ToolEngine         (cell)
-    , _timer             ()
     , _state             (EngineCreation)
     , _flags             (EngineDestroyBaseContact)
     , _configuration     (new ConfigurationConcrete())
@@ -361,34 +360,13 @@ namespace Katabatic {
   }
 
 
-  void  KatabaticEngine::startMeasures ()
-  {
-    _timer.resetIncrease();
-    _timer.start();
-  }
-
-
-  void  KatabaticEngine::stopMeasures ()
-  { _timer.stop(); }
-
-
   void  KatabaticEngine::printMeasures ( const string& tag ) const
   {
-    ostringstream result;
+    Super::printMeasures();
 
-    result <<  Timer::getStringTime(_timer.getCombTime()) 
-           << ", " << Timer::getStringMemory(_timer.getIncrease());
-    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
-
-    result.str("");
-    result << _timer.getCombTime()
-           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
-           <<  Timer::getStringMemory(Timer::getMemorySize());
-    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
-
-   if (not tag.empty()) {
-      addMeasure<double>( getCell(), tag+"T",  _timer.getCombTime  () );
-      addMeasure<size_t>( getCell(), tag+"S", (_timer.getMemorySize() >> 20) );
+    if (not tag.empty()) {
+      addMeasure<double>( getCell(), tag+"T",  getTimer().getCombTime  () );
+      addMeasure<size_t>( getCell(), tag+"S", (getTimer().getMemorySize() >> 20) );
     }
   }
 

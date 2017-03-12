@@ -43,8 +43,8 @@ namespace {
 
 
   void  getPerpandiculars ( TrackElement*           segment
-                          , Anabatic::AutoContact* from
-                          , unsigned int            direction
+                          , Anabatic::AutoContact*  from
+                          , Flags                   direction
                           , vector<TrackElement*>&  perpandiculars
                           )
   {
@@ -69,7 +69,7 @@ namespace {
   }
 
 
-  void  findFailedPerpandiculars ( RoutingPad* rp, unsigned int direction, set<TrackElement*>& faileds )
+  void  findFailedPerpandiculars ( RoutingPad* rp, Flags direction, set<TrackElement*>& faileds )
   {
     cdebug_log(159,0) << "Find failed caging: " << rp << endl;
 

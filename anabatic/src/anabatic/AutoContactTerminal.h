@@ -18,9 +18,16 @@
 #define  ANABATIC_AUTOCONTACT_TERMINAL_H
 
 #include  "anabatic/AutoContact.h"
+#include  "anabatic/AutoSegments.h"
+
+namespace Hurricane {
+  class RoutingPad;
+}
 
 
 namespace Anabatic {
+
+  using Hurricane::RoutingPad;
 
 
 // -------------------------------------------------------------------
@@ -52,11 +59,14 @@ namespace Anabatic {
       virtual                     ~AutoContactTerminal    ();
       virtual void                 _invalidate            ( unsigned int flags );
     public:
+              bool                 isEndPoint             () const;
       virtual Box                  getNativeConstraintBox () const;
+              RoutingPad*          getRoutingPad          () const;
       inline  AutoSegment*         getSegment             () const;
       virtual AutoSegment*         getSegment             ( unsigned int ) const;
       virtual AutoSegment*         getOpposite            ( const AutoSegment* ) const;
       virtual AutoSegment*         getPerpandicular       ( const AutoSegment* ) const;
+              AutoSegments         getRpConnecteds        () const;
       virtual void                 updateGeometry         ();
       virtual void                 updateTopology         ();
       virtual void                 forceOnGrid            ( Point );

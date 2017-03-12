@@ -15,7 +15,8 @@
 
 
 #include "hurricane/Error.h"
-#include "anabatic/AutoContact.h"
+#include "hurricane/RoutingPad.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoSegment.h"
 
 
@@ -27,7 +28,7 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::ForEachIterator;
   using Hurricane::Hook;
-  using Hurricane::Contact;
+  using Hurricane::RoutingPad;
 
 
 // -------------------------------------------------------------------
@@ -106,6 +107,183 @@ namespace Anabatic {
   {
     string s = "<" + _TName("AutoSegments_OnContact") + " "
                    + getString(_master)
+                   + ">";
+    return s;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::AutoSegments_OnRoutingPad".
+
+  AutoSegments_OnRoutingPad::Locator::Locator ( RoutingPad* rp, const AutoContactTerminal* contact )
+    : AutoSegmentHL()
+    , _elements    ({NULL,NULL,NULL,NULL})
+    , _index       (0)
+  {
+    if (rp) {
+      for ( Component* component : rp->getSlaveComponents() ) {
+        AutoSegment* segment = Session::lookup( dynamic_cast<Segment*>(component) );
+        if (not segment) continue;
+
+        size_t offset = 2;
+        if (contact and (contact->getSegment() == segment)) offset = 0;
+
+        if (segment->isHorizontal()) _elements[offset  ] = segment;
+        else                         _elements[offset+1] = segment;
+      }
+    }
+
+    while ( (_index < 4) and not _elements[_index] ) ++_index; 
+  }
+
+
+  AutoSegmentHL* AutoSegments_OnRoutingPad::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  AutoSegment* AutoSegments_OnRoutingPad::Locator::getElement () const
+  { return (_index < 4) ? _elements[_index] : NULL; }
+
+
+  bool  AutoSegments_OnRoutingPad::Locator::isValid () const
+  { return (_index < 4); }
+
+
+  void  AutoSegments_OnRoutingPad::Locator::progress ()
+  {
+    cdebug_log(145,0) << "AutoSegments_OnRoutingPad::Locator::progress()" << endl;
+    ++_index;
+    while ( (_index < 4) and not _elements[_index] ) ++_index; 
+  }
+
+
+  string  AutoSegments_OnRoutingPad::Locator::_getString () const
+  {
+    string s = "<" + _TName("AutoSegments_OnRoutingPad::Locator")
+                   + getString(_index)
+                   + ">";
+    return s;
+  }
+
+
+  AutoSegments_OnRoutingPad::AutoSegments_OnRoutingPad ( const AutoContact* contact )
+    : AutoSegmentHC()
+    , _routingPad(NULL)
+    , _contact   (dynamic_cast<const AutoContactTerminal*>(contact))
+  {
+    if (_contact)
+      _routingPad = dynamic_cast<RoutingPad*>(_contact->getAnchor());
+  }
+
+
+  AutoSegmentHC* AutoSegments_OnRoutingPad::getClone () const
+  { return new AutoSegments_OnRoutingPad(*this); }
+
+
+  AutoSegmentHL* AutoSegments_OnRoutingPad::getLocator () const
+  { return new Locator(_routingPad,_contact); }
+
+
+  string  AutoSegments_OnRoutingPad::_getString () const
+  {
+    string s = "<" + _TName("AutoSegments_OnRoutingPad") + " "
+                   + getString(_routingPad)
+                   + ">";
+    return s;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "AutoSegments_Connecteds".
+
+  AutoSegments_Connecteds::Locator::Locator ( AutoSegment* segment, unsigned int flags )
+    : AutoSegmentHL()
+    , _stack ()
+  {
+    cdebug_log(145,0) << "AutoSegments_Connecteds::Locator::Locator()" << endl;
+
+    if (flags & Flags::Source) {
+      AutoContact* contact = segment->getAutoSource();
+      if (contact) _stack.push( contact, segment );
+    }
+
+    if (flags & Flags::Target) {
+      AutoContact* contact = segment->getAutoTarget();
+      if (contact) _stack.push( contact, segment );
+    }
+  }
+
+
+  AutoSegmentHL* AutoSegments_Connecteds::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  bool  AutoSegments_Connecteds::Locator::isValid () const
+  { return not _stack.isEmpty(); }
+
+
+  void  AutoSegments_Connecteds::Locator::progress ()
+  {
+    cdebug_log(145,0) << "AutoSegments_Connecteds::Locator::progress()" << endl;
+
+    while (not _stack.isEmpty()) {
+      AutoContact* sourceContact = _stack.getAutoContact ();
+      AutoSegment* sourceSegment = _stack.getAutoSegment ();
+
+      _stack.pop ();
+
+      AutoContactTerminal* sourceTerminal = dynamic_cast<AutoContactTerminal*>( sourceContact );
+      if (sourceTerminal) {
+        for ( AutoSegment* currentSegment : sourceTerminal->getRpConnecteds() ) {
+          cdebug_log(145,0) << "Looking at: " << currentSegment << endl;
+          if (currentSegment == sourceSegment) continue;
+
+          AutoContact* targetContact = currentSegment->getAutoSource();
+          if (not targetContact->isTerminal()) _stack.push( targetContact, currentSegment );
+
+          targetContact = currentSegment->getAutoTarget();
+          if (not targetContact->isTerminal()) _stack.push( targetContact, currentSegment );
+        }
+      } else {
+        LocatorHelper helper (sourceContact,Flags::WithPerpands);
+        for ( ; helper.isValid() ; helper.progress() ) {
+          AutoSegment* currentSegment = helper.getSegment();
+          cdebug_log(145,0) << "Looking at: " << currentSegment << endl;
+
+          if (currentSegment == sourceSegment) continue;
+
+          AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
+          if (targetContact) _stack.push( targetContact, currentSegment );
+        }
+      }
+      break;
+    }
+  }
+
+
+  string  AutoSegments_Connecteds::Locator::_getString () const
+  {
+    string s = "<" + _TName("AutoSegments_Connecteds::Locator") + ">";
+    return s;
+  }
+
+
+  AutoSegmentHC* AutoSegments_Connecteds::getClone () const
+  { return new AutoSegments_Connecteds(*this); }
+
+
+  AutoSegmentHL* AutoSegments_Connecteds::getLocator () const
+  { return new Locator(_segment,_flags); }
+
+
+  AutoSegment* AutoSegments_Connecteds::Locator::getElement () const
+  { return _stack.getAutoSegment(); }
+
+
+  string  AutoSegments_Connecteds::_getString () const
+  {
+    string s = "<" + _TName("AutoSegments_Connecteds") + " "
+                   + getString(_segment)
                    + ">";
     return s;
   }

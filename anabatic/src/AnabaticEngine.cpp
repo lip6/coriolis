@@ -198,7 +198,6 @@ namespace Anabatic {
 
   AnabaticEngine::AnabaticEngine ( Cell* cell )
     : Super(cell)
-    , _timer           ()
     , _configuration   (new Configuration())
     , _chipTools       (cell)
     , _state           (EngineCreation)
@@ -947,45 +946,6 @@ namespace Anabatic {
   }
 
 
-  void  AnabaticEngine::startMeasures ()
-  {
-    _timer.resetIncrease();
-    _timer.start();
-  }
-
-
-  void  AnabaticEngine::stopMeasures ()
-  { _timer.stop(); }
-
-
-  void  AnabaticEngine::suspendMeasures ()
-  { _timer.suspend(); }
-
-
-  void  AnabaticEngine::resumeMeasures ()
-  { _timer.resume(); }
-
-
-  void  AnabaticEngine::printMeasures ( const string& tag ) const
-  {
-    ostringstream result;
-
-    result <<  Timer::getStringTime(_timer.getCombTime()) 
-           << ", " << Timer::getStringMemory(_timer.getIncrease());
-    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
-
-    result.str("");
-    result << _timer.getCombTime()
-           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
-           <<  Timer::getStringMemory(Timer::getMemorySize());
-    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
-
-    // result.str("");
-    // result << Timer::getStringMemory(Timer::getMemorySize());
-    // cmess1 << Dots::asString( "     - Total memory", result.str() ) << endl;
-  }
-
-
   void  AnabaticEngine::updateDensity ()
   { for ( GCell* gcell : _gcells ) gcell->updateDensity(); } 
 
@@ -1113,6 +1073,17 @@ namespace Anabatic {
     if (message) cerr << "        - completed." << endl;
 
     return coherency;
+  }
+
+
+  void  AnabaticEngine::printMeasures ( const string& tag ) const
+  {
+    Super::printMeasures();
+
+    // if (not tag.empty()) {
+    //   addMeasure<double>( getCell(), tag+"T",  getTimer().getCombTime  () );
+    //   addMeasure<size_t>( getCell(), tag+"S", (getTimer().getMemorySize() >> 20) );
+    // }
   }
 
 

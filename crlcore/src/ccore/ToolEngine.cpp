@@ -28,6 +28,7 @@ namespace {
   using std::cerr;
   using std::endl;
   using std::string;
+  using std::ostringstream;
   using std::set;
   using std::vector;
   using Hurricane::ForEachIterator;
@@ -191,30 +192,37 @@ namespace CRL {
 
 
   ToolEngine::ToolEngine ( Cell* cell )
-    : DBo()
+    : Super()
     , _cell                     (cell)
     , _placementModificationFlag(0)
     , _routingModificationFlag  (0)
     , _inRelationDestroy        (false)
-  {}
+    , _timer                    ()
+  { }
 
 
   void  ToolEngine::_postCreate ()
   {
-    DBo::_postCreate();
-    if ( !_cell )
-        throw Error ( "Can't create " + _TName("ToolEngine") + " : empty _cell" );
+    Super::_postCreate();
+    if (not _cell)
+        throw Error( "Can't create " + _TName("ToolEngine") + " : empty _cell" );
+
     ToolEnginesRelation*  enginesRelation = ToolEnginesRelation::getToolEnginesRelation(_cell);
-    if ( !enginesRelation )
-      enginesRelation = ToolEnginesRelation::create ( _cell );
+    if (not enginesRelation)
+      enginesRelation = ToolEnginesRelation::create( _cell );
     else 
-      forEach ( ToolEngine*, itool, enginesRelation->getSlaveOwners().getSubSet<ToolEngine*>() ) {
-        if (itool->getName() == getName())
-          throw Error ( "Can't create " + _TName("ToolEngine") + " : already exists !!" );
+      for ( ToolEngine* tool : enginesRelation->getSlaveOwners().getSubSet<ToolEngine*>() ) {
+        if (tool->getName() == getName())
+          throw Error( "Can't create " + _TName("ToolEngine") + " : already exists !!" );
       }
-    put ( enginesRelation );
+
+    put( enginesRelation );
+
     cmess1 << "  o  Creating ToolEngine<" << getName() << "> for Cell <"
            << _cell->getName() << ">" << endl;
+
+    cmess1 << Dots::asString( "     - Initial memory"
+                            , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
   }
 
 
@@ -226,7 +234,7 @@ namespace CRL {
         throw Error( "Abnormal state: no ToolEnginesRelation on %s", getString(_cell).c_str() );
       remove( relation );
     }
-    DBo::_preDestroy();
+    Super::_preDestroy();
     _cell->notify( Cell::Flags::CellChanged );
   }
 
@@ -249,7 +257,7 @@ namespace CRL {
 
   string  ToolEngine::_getString () const
   {
-    string s = DBo::_getString();
+    string s = Super::_getString();
     s.insert(s.length() - 1, " " + getString(_cell->getName()));
     return s;
   }
@@ -257,7 +265,7 @@ namespace CRL {
 
   Record* ToolEngine::_getRecord () const
   {
-    Record* record = DBo::_getRecord();
+    Record* record = Super::_getRecord();
     if ( record ) {
         record->add ( getSlot ( "Cell"                     , _cell                      ) );
         record->add ( getSlot ( "Name"                     , getName()                  ) );
@@ -345,6 +353,45 @@ namespace CRL {
       }
       return NULL;
     }
+  }
+
+
+  void  ToolEngine::startMeasures ()
+  {
+    _timer.resetIncrease();
+    _timer.start();
+  }
+
+
+  void  ToolEngine::stopMeasures ()
+  { _timer.stop(); }
+
+
+  void  ToolEngine::suspendMeasures ()
+  { _timer.suspend(); }
+
+
+  void  ToolEngine::resumeMeasures ()
+  { _timer.resume(); }
+
+
+  void  ToolEngine::printMeasures () const
+  {
+    ostringstream result;
+
+    result <<  Timer::getStringTime(_timer.getCombTime()) 
+           << ", " << Timer::getStringMemory(_timer.getIncrease());
+    cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+
+    result.str("");
+    result << _timer.getCombTime()
+           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
+           <<  Timer::getStringMemory(Timer::getMemorySize());
+    cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
+
+    // result.str("");
+    // result << Timer::getStringMemory(Timer::getMemorySize());
+    // cmess1 << Dots::asString( "     - Total memory", result.str() ) << endl;
   }
 
 

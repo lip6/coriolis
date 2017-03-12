@@ -231,10 +231,10 @@ namespace Katana {
 
   void  GraphicKatanaEngine::_loadGlobalRouting ()
   {
-    KatanaEngine* anabatic = getForFramework( NoFlags );
+    KatanaEngine* katana = getForFramework( NoFlags );
 
     _viewer->clearToolInterrupt();
-    anabatic->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
+    katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
   }
 
 
@@ -273,7 +273,12 @@ namespace Katana {
   void  GraphicKatanaEngine::_runTest ()
   {
     KatanaEngine* katana = getForFramework( NoFlags );
-    if (katana) katana->runTest();
+    if (katana) {
+      katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
+      katana->runTest();
+      katana->runNegociate( Flags::SymmetricStage );
+      katana->runNegociate();
+    }
   }
   
 

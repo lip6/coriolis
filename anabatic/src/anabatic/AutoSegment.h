@@ -311,6 +311,7 @@ namespace Anabatic {
               AutoSegments        getCachedOnSourceContact   ( unsigned int direction );
               AutoSegments        getCachedOnTargetContact   ( unsigned int direction );
               AutoSegments        getAligneds                ( unsigned int flags=Flags::NoFlags );
+              AutoSegments        getConnecteds              ( unsigned int flags=Flags::NoFlags );
               AutoSegments        getPerpandiculars          ();
               size_t              getAlignedContacts         ( map<AutoContact*,int>& ) const ;
     // Observers.                         
@@ -387,6 +388,7 @@ namespace Anabatic {
 
     // Static Utilities.
     public:
+      static inline unsigned int  swapSourceTargetFlags      ( AutoSegment* );
       static inline bool          areAlignedsAndDiffLayer    ( AutoSegment*, AutoSegment* );
       static        bool          isTopologicalBound         ( AutoSegment*  seed, unsigned int flags );
       static inline bool          arePerpandiculars          ( AutoSegment* a, AutoSegment* b );
@@ -519,6 +521,30 @@ namespace Anabatic {
   
   inline unsigned long AutoSegment::getMaxId ()
   { return _maxId; }
+
+  inline unsigned int  AutoSegment::swapSourceTargetFlags ( AutoSegment* segment )
+  {
+    unsigned int segFlags  = segment->getFlags();
+    unsigned int swapFlags = segment->getFlags() & ~(SegSourceTop        |SegTargetTop
+                                                    |SegSourceBottom     |SegTargetBottom
+                                                    |SegSourceTerminal   |SegTargetTerminal
+                                                    |SegNotSourceAligned |SegNotTargetAligned
+                                                    |SegInvalidatedSource|SegInvalidatedTarget
+                                                    );
+
+    swapFlags |= (segFlags & SegSourceTop        ) ? SegTargetTop         : SegNoFlags;
+    swapFlags |= (segFlags & SegSourceBottom     ) ? SegTargetBottom      : SegNoFlags;
+    swapFlags |= (segFlags & SegSourceTerminal   ) ? SegTargetTerminal    : SegNoFlags;
+    swapFlags |= (segFlags & SegNotSourceAligned ) ? SegNotTargetAligned  : SegNoFlags;
+    swapFlags |= (segFlags & SegInvalidatedSource) ? SegInvalidatedTarget : SegNoFlags;
+
+    swapFlags |= (segFlags & SegTargetTop        ) ? SegSourceTop         : SegNoFlags;
+    swapFlags |= (segFlags & SegTargetBottom     ) ? SegSourceBottom      : SegNoFlags;
+    swapFlags |= (segFlags & SegTargetTerminal   ) ? SegSourceTerminal    : SegNoFlags;
+    swapFlags |= (segFlags & SegNotTargetAligned ) ? SegNotSourceAligned  : SegNoFlags;
+    swapFlags |= (segFlags & SegInvalidatedTarget) ? SegInvalidatedSource : SegNoFlags;
+    return swapFlags;
+  }
 
   inline bool  AutoSegment::areAlignedsAndDiffLayer ( AutoSegment* s1, AutoSegment* s2 )
   { return s1 and s2

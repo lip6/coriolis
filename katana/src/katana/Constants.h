@@ -26,24 +26,25 @@ namespace Katana {
     public:
       typedef  Anabatic::Flags  Super;
     public:
-      static const unsigned int  AllowDoglegReuse;
-      static const unsigned int  DataSelf;
-      static const unsigned int  Nearest;
-      static const unsigned int  Force;
-      static const unsigned int  ResetCount;
-      static const unsigned int  WithConstraints;
-      static const unsigned int  MoveToLeft;
-      static const unsigned int  MoveToRight;
-      static const unsigned int  LoadingStage;
-      static const unsigned int  SlowMotion;
-      static const unsigned int  PreRoutedStage;
+      static const uint64_t  AllowDoglegReuse;
+      static const uint64_t  DataSelf;
+      static const uint64_t  Nearest;
+      static const uint64_t  Force;
+      static const uint64_t  ResetCount;
+      static const uint64_t  WithConstraints;
+      static const uint64_t  MoveToLeft;
+      static const uint64_t  MoveToRight;
+      static const uint64_t  LoadingStage;
+      static const uint64_t  SlowMotion;
+      static const uint64_t  PreRoutedStage;
+      static const uint64_t  SymmetricStage;
     public:
-      inline  Flags ( unsigned int );
+      inline  Flags ( uint64_t );
       inline  Flags ( const Super& );
   };
 
 
-  inline  Flags::Flags (       unsigned int  flags ) : Super(flags) { }
+  inline  Flags::Flags (       uint64_t      flags ) : Super(flags) { }
   inline  Flags::Flags ( const Flags::Super& base  ) : Super(base)  { }
 
 

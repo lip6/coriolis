@@ -24,12 +24,14 @@
 namespace Hurricane {
   class Record;
   class Net;
+  class Contact;
   class Segment;
 }
 
 #include "anabatic/Session.h"
 namespace Anabatic {
   class GCell;
+  class AutoContact;
   class AutoSegment;
 }
 
@@ -41,8 +43,10 @@ namespace Katana {
   using std::string;
   using Hurricane::Record;
   using Hurricane::Net;
+  using Hurricane::Contact;
   using Hurricane::Segment;
   using Hurricane::DbU;
+  using Anabatic::AutoContact;
   using Anabatic::AutoSegment;
 
   class Track;
@@ -77,6 +81,7 @@ namespace Katana {
       inline static void                addMoveEvent        ( TrackElement* , Track* );
       inline static void                addSortEvent        ( Track*, bool forced=false );
       inline static size_t              revalidate          ();
+             static AutoContact*        lookup              ( Contact* );
              static TrackElement*       lookup              ( Segment* );
              static TrackElement*       lookup              ( AutoSegment* );
              static Session*            _open               ( KatanaEngine* );

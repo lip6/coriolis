@@ -20,6 +20,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <array>
 #include <map>
 #include "hurricane/Collection.h"
 #include "hurricane/DbU.h"
@@ -30,6 +31,7 @@ namespace Hurricane {
   class Component;
   class Contact;
   class Segment;
+  class RoutingPad;
   class Net;
 }
 
@@ -49,6 +51,7 @@ namespace Anabatic {
   using Hurricane::Component;
   using Hurricane::Contact;
   using Hurricane::Segment;
+  using Hurricane::RoutingPad;
   using Hurricane::Net;
   using Hurricane::Filter;
   using Hurricane::Locator;
@@ -59,6 +62,7 @@ namespace Anabatic {
 
   class LocatorHelper;
   class AutoContact;
+  class AutoContactTerminal;
   class AutoSegment;
   class GCell;
 
@@ -156,6 +160,56 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::AutoSegments_OnRoutingPad".
+
+  class AutoSegments_OnRoutingPad : public AutoSegmentHC {
+
+    public:
+    // Sub-Class: Locator.
+      class Locator : public AutoSegmentHL {
+        public:
+                                 Locator    ( RoutingPad* rp, const AutoContactTerminal* contact );
+          inline                 Locator    ( const Locator& );
+          virtual AutoSegment*   getElement () const;
+          virtual AutoSegmentHL* getClone   () const;
+          virtual bool           isValid    () const;
+          virtual void           progress   ();
+          virtual string         _getString () const;
+        protected:
+          std::array<AutoSegment*,4> _elements;
+          size_t                     _index;
+      };
+
+    public:
+    // AutoSegments_OnRoutingPad Methods.
+                             AutoSegments_OnRoutingPad ( const AutoContact* contact );
+      inline                 AutoSegments_OnRoutingPad ( const AutoSegments_OnRoutingPad& );
+      virtual AutoSegmentHC* getClone                  () const;
+	  virtual AutoSegmentHL* getLocator                () const;
+      virtual string         _getString                () const;
+
+    protected:
+    // AutoSegments_OnRoutingPad Attributes.
+            RoutingPad*          _routingPad;
+      const AutoContactTerminal* _contact;
+  };
+
+  
+  inline AutoSegments_OnRoutingPad::Locator::Locator ( const Locator &locator )
+    : AutoSegmentHL()
+    , _elements(locator._elements)
+    , _index   (locator._index)
+  { }
+
+
+  inline AutoSegments_OnRoutingPad::AutoSegments_OnRoutingPad ( const AutoSegments_OnRoutingPad& segments )
+    : AutoSegmentHC()
+    , _routingPad(segments._routingPad)
+    , _contact   (segments._contact)
+  { }
+
+
+// -------------------------------------------------------------------
 // Class  :  "AutoSegments_Aligneds".
 
   class AutoSegments_Aligneds : public AutoSegmentHC {
@@ -208,6 +262,61 @@ namespace Anabatic {
 
 
   inline AutoSegments_Aligneds::AutoSegments_Aligneds ( const AutoSegments_Aligneds& autosegments )
+    : AutoSegmentHC()
+    , _flags  (autosegments._flags)
+    , _segment(autosegments._segment)
+  { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "AutoSegments_Connecteds".
+
+  class AutoSegments_Connecteds : public AutoSegmentHC {
+
+    public:
+    // Sub-Class: Locator.
+      class Locator : public AutoSegmentHL {
+        public:
+          inline                 Locator    ( AutoSegment* segment, unsigned int flags );
+          inline                 Locator    ( const Locator &locator );
+          virtual AutoSegment*   getElement () const;
+          virtual AutoSegmentHL* getClone   () const;
+          virtual bool           isValid    () const;
+          virtual void           progress   ();
+          virtual string         _getString () const;
+        protected:
+          AutoSegmentStack  _stack;
+      };
+
+    public:
+    // AutoSegments_Connecteds Methods.
+                             AutoSegments_Connecteds ( AutoSegment*, unsigned int flags );
+                             AutoSegments_Connecteds ( const AutoSegments_Connecteds& );
+      virtual AutoSegmentHC* getClone                () const;
+	  virtual AutoSegmentHL* getLocator              () const;
+      virtual string         _getString              () const;
+
+    protected:
+    // AutoSegments_Connecteds Attributes.
+      unsigned int  _flags;
+      AutoSegment*  _segment;
+  };
+
+
+  inline AutoSegments_Connecteds::Locator::Locator ( const Locator &locator )
+    : AutoSegmentHL()
+    , _stack (locator._stack)
+  { }
+
+
+  inline AutoSegments_Connecteds::AutoSegments_Connecteds ( AutoSegment* segment, unsigned int flags )
+    : AutoSegmentHC()
+    , _flags  (flags)
+    , _segment(segment)
+  { }
+
+
+  inline AutoSegments_Connecteds::AutoSegments_Connecteds ( const AutoSegments_Connecteds& autosegments )
     : AutoSegmentHC()
     , _flags  (autosegments._flags)
     , _segment(autosegments._segment)

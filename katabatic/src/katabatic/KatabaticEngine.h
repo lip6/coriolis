@@ -22,7 +22,6 @@
 #include  <vector>
 #include  <set>
 #include  <map>
-#include  "hurricane/Timer.h"
 #include  "hurricane/DbU.h"
 #include  "hurricane/Torus.h"
 #include  "hurricane/Layer.h"
@@ -91,6 +90,7 @@ namespace Katabatic {
 
   class KatabaticEngine : public ToolEngine {
     public:
+      typedef ToolEngine                  Super;
       typedef set<Net*,NetCompareByName>  NetSet;
 
     public:
@@ -134,8 +134,6 @@ namespace Katabatic {
       inline  void                    setGlobalThreshold        ( DbU::Unit );
       inline  void                    setSaturateRatio          ( float );
       inline  void                    setSaturateRp             ( size_t );
-              void                    startMeasures             ();
-              void                    stopMeasures              ();
               void                    printMeasures             ( const string& ) const;
               void                    refresh                   ( unsigned int flags=KbOpenSession );
       virtual void                    createDetailedGrid        ();
@@ -192,7 +190,6 @@ namespace Katabatic {
     protected:
     // Attributes.
       static  Name              _toolName;
-              Timer             _timer;
               EngineState       _state;
               unsigned int      _flags;
               Configuration*    _configuration;

@@ -552,6 +552,11 @@ namespace Katana {
     Session::getKatanaEngine()->_check( overlaps, "after _createRouting(GCell*)" );
 #endif 
 
+    if (flags & Flags::SymmetricStage) {
+      _katana->runSymmetricRouter();
+      Session::revalidate();
+    }
+
     _flags |= flags;
     _negociate();
     printStatistics();

@@ -244,11 +244,10 @@ namespace Etesian {
 
 
   EtesianEngine::EtesianEngine ( Cell* cell )
-    : ToolEngine    (cell)
+    : Super         (cell)
     , _configuration(new Configuration())
     , _placed       (false)
     , _flatDesign   (false)
-    , _timer        ()
     , _surface      ()
     , _circuit      ()
     , _placementLB  ()
@@ -263,6 +262,8 @@ namespace Etesian {
 
   void  EtesianEngine::_postCreate ()
   {
+    Super::_postCreate();
+
   // Ugly: Name based detection of ISPD benchmarks.
     if (getString(getCell()->getName()).substr(0,7) == "bigblue") {
       cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
@@ -292,6 +293,8 @@ namespace Etesian {
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << getCell()->getName() << ">" << endl;
 
+    Super::_preDestroy();
+
     cdebug.log(129,-1);
   }
 
@@ -312,33 +315,6 @@ namespace Etesian {
 
   Configuration* EtesianEngine::getConfiguration ()
   { return _configuration; }
-
-
-  void  EtesianEngine::startMeasures ()
-  {
-    _timer.resetIncrease();
-    _timer.start();
-  }
-
-
-  void  EtesianEngine::stopMeasures ()
-  { _timer.stop(); }
-
-
-  void  EtesianEngine::printMeasures ( string tag ) const
-  {
-    ostringstream result;
-
-    result <<  Timer::getStringTime(_timer.getCombTime()) << ", " 
-           << Timer::getStringMemory(_timer.getIncrease());
-    cmess1 << ::Dots::asString( "     - Done in", result.str() ) << endl;
-
-    result.str("");
-    result << _timer.getCombTime()
-           << "s, +" << (_timer.getIncrease()>>10) <<  "Kb/"
-           << (_timer.getMemorySize()>>10) << "Kb";
-    cmess2 << ::Dots::asString( "     - Raw measurements", result.str() ) << endl;
-  }
 
 
   void  EtesianEngine::setDefaultAb ()
@@ -925,7 +901,7 @@ namespace Etesian {
 
     cmess1 << "  o  Placement finished." << endl;
     stopMeasures();
-    printMeasures( "total" );
+    printMeasures();
     cmess1 << ::Dots::asString
       ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
     cmess1 << ::Dots::asString
@@ -954,10 +930,7 @@ namespace Etesian {
       indent = label;
     }
 
-    ostringstream elapsed;
-    //elapsed << "  dTime:" << setw(5) << _timer.getCombTime() << "s ";
-
-    cmess2 << label << elapsed.str()
+    cmess2 << label
            << " HPWL:" << setw(11) << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementUB )
            << " RMST:" << setw(11) << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementUB )
            << endl;
@@ -977,10 +950,7 @@ namespace Etesian {
       indent = label;
     }
 
-    ostringstream elapsed;
-    //elapsed << "  dTime:" << setw(5) << _timer.getCombTime() << "s ";
-
-    cmess2 << label << elapsed.str()
+    cmess2 << label
            << " HPWL:" << setw(11) << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementLB )
            << " RMST:" << setw(11) << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementLB )
            << endl;
@@ -1042,7 +1012,7 @@ namespace Etesian {
 
   Record* EtesianEngine::_getRecord () const
   {
-    Record* record = ToolEngine::_getRecord ();
+    Record* record = Super::_getRecord ();
                                      
     if (record) {
       record->add( getSlot( "_configuration",  _configuration ) );

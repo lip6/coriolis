@@ -22,7 +22,6 @@
 #include <vector>
 #include <set>
 
-#include "hurricane/Timer.h"
 #include "hurricane/NetRoutingProperty.h"
 namespace Hurricane {
   class Instance;
@@ -42,7 +41,6 @@ namespace Anabatic {
 
   using std::string;
   using std::vector;
-  using Hurricane::Timer;
   using Hurricane::Name;
   using Hurricane::Record;
   using Hurricane::Interval;
@@ -271,16 +269,11 @@ namespace Anabatic {
                     void              _destroyAutoSegments  ();
                     void              _check                ( Net* net ) const;
                     bool              _check                ( const char* message ) const;
+                    void              printMeasures         ( const string& tag ) const;
     // Misc. functions.                                     
       inline const  Flags&            flags                 () const;
       inline        Flags&            flags                 ();
                     void              reset                 ();
-      inline const  Timer&            getTimer              () const;
-                    void              startMeasures         ();
-                    void              stopMeasures          ();
-                    void              suspendMeasures       ();
-                    void              resumeMeasures        ();
-                    void              printMeasures         ( const string& ) const;
       inline        void              _add                  ( GCell* );
       inline        void              _remove               ( GCell* );
       inline        void              _updateLookup         ( GCell* );
@@ -300,7 +293,6 @@ namespace Anabatic {
                     AnabaticEngine&   operator=             ( const AnabaticEngine& );
     private:
       static Name              _toolName;
-             Timer             _timer;
              Configuration*    _configuration;
              ChipTools         _chipTools;
              EngineState       _state;
@@ -372,7 +364,6 @@ namespace Anabatic {
       }
   }
 
-  inline const Timer& AnabaticEngine::getTimer () const { return _timer; }
   inline       int    AnabaticEngine::getStamp () const { return _stamp; }
   inline       int    AnabaticEngine::incStamp () { return ++_stamp; }
 

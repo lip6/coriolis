@@ -53,6 +53,8 @@ namespace Etesian {
 
   class EtesianEngine : public CRL::ToolEngine {
     public:
+      typedef ToolEngine  Super;
+    public:
       static  const Name&            staticGetName    ();
       static  EtesianEngine*         create           ( Cell* );
       static  EtesianEngine*         get              ( const Cell* );
@@ -72,10 +74,6 @@ namespace Etesian {
       inline  const FeedCells&       getFeedCells     () const;
       inline  Hurricane::CellViewer* getViewer        () const;
       inline  void                   setViewer        ( Hurricane::CellViewer* );
-                                     
-              void                   startMeasures    ();
-              void                   stopMeasures     ();
-              void                   printMeasures    ( std::string ) const;
                                      
               void                   setDefaultAb     ();
               void                   resetPlacement   ();
@@ -104,7 +102,6 @@ namespace Etesian {
              bool                                     _placed;
              bool                                     _ySpinSet;
              bool                                     _flatDesign;
-             Timer                                    _timer;
              coloquinte::box<coloquinte::int_t>       _surface;
              coloquinte::netlist                      _circuit;
              coloquinte::placement_t                  _placementLB;

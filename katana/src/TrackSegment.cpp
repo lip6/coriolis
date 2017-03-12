@@ -510,7 +510,7 @@ namespace Katana {
   {
     if (not hasSourceDogleg()) return NULL;
    
-    unsigned int  direction = perpandicularTo( getDirection() );
+    Flags         direction = perpandicularTo( getDirection() );
     TrackElement* dogleg    = NULL;
     for( Segment* segment : base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
       dogleg = Session::lookup( segment );
@@ -527,7 +527,7 @@ namespace Katana {
   {
     if (not hasSourceDogleg()) return NULL;
    
-    unsigned int  direction = perpandicularTo( getDirection() );
+    Flags         direction = perpandicularTo( getDirection() );
     TrackElement* dogleg    = NULL;
     for( Segment* segment : base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
       dogleg = Session::lookup( segment );

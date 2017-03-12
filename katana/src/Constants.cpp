@@ -21,17 +21,18 @@
 namespace Katana {
 
 
-  const unsigned int  Flags::AllowDoglegReuse = (1 << 20);
-  const unsigned int  Flags::DataSelf         = (1 << 21);
-  const unsigned int  Flags::Nearest          = (1 << 22);
-  const unsigned int  Flags::Force            = (1 << 23);
-  const unsigned int  Flags::ResetCount       = (1 << 24);
-  const unsigned int  Flags::WithConstraints  = (1 << 25);
-  const unsigned int  Flags::MoveToLeft       = (1 << 26);
-  const unsigned int  Flags::MoveToRight      = (1 << 27);
-  const unsigned int  Flags::LoadingStage     = (1 << 28);
-  const unsigned int  Flags::SlowMotion       = (1 << 29);
-  const unsigned int  Flags::PreRoutedStage   = (1 << 30);
+  const uint64_t  Flags::AllowDoglegReuse = (1 << 20);
+  const uint64_t  Flags::DataSelf         = (1 << 21);
+  const uint64_t  Flags::Nearest          = (1 << 22);
+  const uint64_t  Flags::Force            = (1 << 23);
+  const uint64_t  Flags::ResetCount       = (1 << 24);
+  const uint64_t  Flags::WithConstraints  = (1 << 25);
+  const uint64_t  Flags::MoveToLeft       = (1 << 26);
+  const uint64_t  Flags::MoveToRight      = (1 << 27);
+  const uint64_t  Flags::LoadingStage     = (1 << 28);
+  const uint64_t  Flags::SlowMotion       = (1 << 29);
+  const uint64_t  Flags::PreRoutedStage   = (1 << 30);
+  const uint64_t  Flags::SymmetricStage   = (1 << 31);
 
 
 }  // Anabatic namespace.

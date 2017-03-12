@@ -814,7 +814,7 @@ DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
 }
 
 
-void Cell::flattenNets(unsigned int flags)
+void Cell::flattenNets(uint64_t flags)
 // ***************************************
 {
   cdebug_log(18,0) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
@@ -892,7 +892,7 @@ void Cell::flattenNets(unsigned int flags)
 }
 
 
-void Cell::createRoutingPadRings(unsigned int flags)
+void Cell::createRoutingPadRings(uint64_t flags)
 // *************************************************
 {
   flags &= Flags::MaskRings;
@@ -1339,7 +1339,7 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
 // Cell::Flags implementation
 // ****************************************************************************************************
 
-  Cell::Flags::Flags ( unsigned int flags)
+  Cell::Flags::Flags ( uint64_t flags)
     : BaseFlags(flags)
   { }
 
