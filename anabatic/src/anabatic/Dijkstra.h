@@ -39,6 +39,43 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::Symmetry".
+
+  class Symmetry
+  {
+    public:
+      enum iFlag { None        = 0
+                 , sHorizontal = (1<<0)
+                 , sVertical   = (1<<1)
+                 , sCFound     = (1<<2)
+      };
+    private:
+       Symmetry(unsigned int, DbU::Unit);
+      ~Symmetry();
+    public:
+      static Symmetry* create(unsigned int, DbU::Unit);   
+
+    public:
+             unsigned int getType () const;
+      inline DbU::Unit    getValue() const;
+      inline bool         isCFound() const;
+      inline void         setAsH();
+      inline void         setAsV();
+      inline void         setFound();
+
+    private:
+      unsigned int _flags;
+      DbU::Unit    _value;
+  };
+
+  inline void      Symmetry::setAsH   () { _flags = ((_flags & ~(0x3)) | sHorizontal); }
+  inline void      Symmetry::setAsV   () { _flags = ((_flags & ~(0x3)) | sVertical  ); }
+  inline void      Symmetry::setFound () { _flags |= sCFound; }
+  inline DbU::Unit Symmetry::getValue () const { return _value; }
+  inline bool      Symmetry::isCFound () const { return _flags & sCFound; }
+  
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::IntervalC".
 
   class IntervalC
@@ -106,8 +143,9 @@ namespace Anabatic {
           enum FlagR { NoRestriction = 0
                      , NRestricted   = (1<<0)
                      , SRestricted   = (1<<1)
-                     , ERestricted   = (1<<2)
+                     , ERestricted   = (1<<2)  
                      , WRestricted   = (1<<3)
+                     , AxisTarget    = (1<<4)
                      };
     public:
       static         DbU::Unit       unreached;
@@ -195,6 +233,10 @@ namespace Anabatic {
               inline void            printInterval     () const ;
                      void            setIntervals      ( Vertex* );
                      void            resetIntervals    ();
+             inline  void            setFlags          ( unsigned int );
+             inline  bool            isAxisTarget      () const;
+             inline  void            unsetFlags        ( unsigned int );
+             inline  void            setAxisTarget     ();
  
 
     // Inspector support. 
@@ -286,10 +328,10 @@ namespace Anabatic {
 
   inline void         Vertex::setRestricted    () { _flags |= 0xF; }
   inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
-  inline void         Vertex::setNRestricted   () { _flags |= 0x1; }
-  inline void         Vertex::setSRestricted   () { _flags |= 0x2; }
-  inline void         Vertex::setERestricted   () { _flags |= 0x4; }
-  inline void         Vertex::setWRestricted   () { _flags |= 0x8; }
+  inline void         Vertex::setNRestricted   () { _flags |= NRestricted; }
+  inline void         Vertex::setSRestricted   () { _flags |= SRestricted; }
+  inline void         Vertex::setERestricted   () { _flags |= ERestricted; }
+  inline void         Vertex::setWRestricted   () { _flags |= WRestricted; }
   inline unsigned int Vertex::getFlags         () const { return _flags; }
 
   inline void         Vertex::setIAxis   ( DbU::Unit axis ) { _interv->setAxis(axis); }
@@ -313,6 +355,9 @@ namespace Anabatic {
   inline void         Vertex::setIRangeFrom( DbU::Unit min, DbU::Unit max ) { _intervfrom->setRange(min, max); }
   inline void         Vertex::printInterval() const { _interv->print(); } 
 
+  inline void         Vertex::setAxisTarget() { _flags |= AxisTarget; }
+  inline bool         Vertex::isAxisTarget () const { return (_flags & AxisTarget); }
+  inline void         Vertex::unsetFlags   ( unsigned int mask ) { _flags &= ~mask; }
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
 
@@ -386,9 +431,10 @@ namespace Anabatic {
     // Mode sub-classe.
       class Mode : public Hurricane::BaseFlags {
         public:
-          enum Flag { NoMode    = 0
-                    , Standart  = (1<<0)
-                    , Monotonic = (1<<1)
+          enum Flag { NoMode     = 0
+                    , Standart   = (1<<0)
+                    , Monotonic  = (1<<1)
+                    , AxisTarget = (1<<2)
                     };
         public:
           inline               Mode         ( unsigned int flags=NoMode );
@@ -410,7 +456,7 @@ namespace Anabatic {
       template<typename DistanceT>
       inline DistanceT* setDistance        ( DistanceT );
       inline void       setSearchAreaHalo  ( DbU::Unit );
-             void       load               ( Net* );
+             void       load               ( Net* net ); 
              void       run                ( Mode mode=Mode::Standart );
     private:           
                         Dijkstra           ( const Dijkstra& );
@@ -427,6 +473,14 @@ namespace Anabatic {
              void       _toSources         ( Vertex*, int connexId );
              void       _getConnecteds     ( Vertex*, VertexSet& );
              void       _checkEdges        () const;
+             void       _createSelfSymSeg  ( Segment* );
+
+             inline void setAxisTarget     ();
+             inline bool needAxisTarget    () const;
+             inline void setFlags          ( unsigned int );
+             inline void unsetFlags        ( unsigned int );
+                    void setAxisTargets    ();
+                    void unsetAxisTargets  ();
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
@@ -440,6 +494,7 @@ namespace Anabatic {
       DbU::Unit        _searchAreaHalo;
       int              _connectedsId;
       PriorityQueue    _queue;
+      unsigned int     _flags;
   };
 
 
@@ -455,6 +510,9 @@ namespace Anabatic {
   template<typename DistanceT>
   inline DistanceT* Dijkstra::setDistance       ( DistanceT cb ) { _distanceCb = cb; return _distanceCb.target<DistanceT>(); }
 
+  inline void       Dijkstra::setFlags       ( unsigned int mask ) { _flags |= mask; }
+  inline  bool      Dijkstra::needAxisTarget () const { return (_flags & Mode::AxisTarget); }
+  inline void       Dijkstra::unsetFlags     ( unsigned int mask ) { _flags &= ~mask; }
 }  // Anabatic namespace.
 
 

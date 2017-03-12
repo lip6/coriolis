@@ -2929,7 +2929,7 @@ namespace {
             forks.push( getSegmentOppositeHook( _south ), source );
             targetContact = target;
           } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut 1."
                            , getString(_gcell).c_str() )
                  << endl;
           }
@@ -2940,7 +2940,7 @@ namespace {
           } else if ( _south and (_fromHook != _south) ){
             forks.push( getSegmentOppositeHook( _south ), target );
           } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut 2."
                            , getString(_gcell).c_str() )
                  << endl;
           }
@@ -2979,7 +2979,7 @@ namespace {
             forks.push( getSegmentOppositeHook( _west ), source );
             targetContact = target;
           } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut. 3"
                            , getString(_gcell).c_str() )
                  << endl;
           }
@@ -2991,7 +2991,7 @@ namespace {
           } else if ( _west and (_fromHook != _west) ){
             forks.push( getSegmentOppositeHook( _west ), target );
           } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut."
+            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut. 4"
                            , getString(_gcell).c_str() )
                  << endl;
           }
@@ -3011,7 +3011,7 @@ namespace {
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else {
-        cerr << Warning( "Something is wrong with the globals in this Strut."
+        cerr << Warning( "Something is wrong with the globals in this Strut. 5 "
                        , getString(_gcell).c_str() )
              << endl;
       }
@@ -3175,7 +3175,7 @@ namespace {
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
 
       } else {
-        cerr << Warning( "Something is wrong with the globals in this Strut."
+        cerr << Warning( "Something is wrong with the globals in this Strut. 6"
                        , getString(_gcell).c_str() )
              << endl;
       }
@@ -3368,7 +3368,7 @@ namespace {
         cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
       }
     } else { 
-      cerr << Warning( "Something is wrong with the number of globals in this Strut."
+      cerr << Warning( "Something is wrong with the number of globals in this Strut. 7"
                      , getString(_gcell).c_str() )
            << endl;
     }
