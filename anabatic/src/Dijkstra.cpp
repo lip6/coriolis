@@ -1340,7 +1340,7 @@ namespace Anabatic {
     cdebug_log(112,1) << "Dijkstra::_traceback() " << _net << " branchId:" << _sources.size() << endl;
 
     int   branchId      = _sources.size();
-    Point ponderedpoint = _getPonderedPoint();
+  //Point ponderedpoint = _getPonderedPoint();
     _toSources( current, _connectedsId );
 
 

@@ -2409,30 +2409,30 @@ namespace {
 
         if (i == 0){
           if        (h){
-            cerr << "case i=0, h" <<  endl;
+            cdebug_log(145,0) << "case i=0, h" <<  endl;
             ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
             ac->setX(_gcell->getXMin());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
             firstH = true;
           } else if (v){
-            cerr << "case i=0, v" <<  endl;
+            cdebug_log(145,0) << "case i=0, v" <<  endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
           }
         } else if (i == hooks.size()-1){
           if        (h){
-            cerr << "case i=last, h" <<  endl;
+            cdebug_log(145,0) << "case i=last, h" <<  endl;
             ac = autoContacts[i-1];
           } else if (v){
-            cerr << "case i=last, v" <<  endl;
+            cdebug_log(145,0) << "case i=last, v" <<  endl;
             ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
           }
         } else {
           if ((i == 1)&&(firstH)){
-            cerr << "case i=1, first was H" <<  endl;
+            cdebug_log(145,0) << "case i=1, first was H" <<  endl;
             ac = autoContacts[i-1];
             if (v) ac->setX(v->getX());
             else {
@@ -2441,7 +2441,7 @@ namespace {
                    << endl;
             }
           } else {
-            cerr << "case i=1, first was V" <<  endl;
+            cdebug_log(145,0) << "case i=1, first was V" <<  endl;
             ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
             ac->setX(v->getX());
             ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
@@ -2680,9 +2680,7 @@ namespace {
           } else {
             cdebug_log(145,0) << "case i=X, first was H"<< endl;
             ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
-            cerr << "1" << endl; 
             ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-            cerr << "2" << endl; 
             ac->setY(h->getY());
           }
         } 
@@ -3064,10 +3062,8 @@ namespace {
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
         cdebug_log(145,0) << "Case NSW " << endl;
         xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
-        cerr << "1" << endl;
 
         if (_north->getComponent()->getX() < _south->getComponent()->getX()){
-          cerr << "2" << endl;
           xtee->setX(_north->getComponent()->getX());
           turn->setX(_south->getComponent()->getX());
           if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), xtee );
@@ -3076,7 +3072,6 @@ namespace {
           else                                    targetContact = turn;
 
         } else {
-          cerr << "3" << endl;
           xtee->setX(_south->getComponent()->getX());
           turn->setX(_north->getComponent()->getX());
           if ( _north and (_fromHook != _north) ) forks.push( getSegmentOppositeHook( _north ), turn );
@@ -3084,7 +3079,6 @@ namespace {
           if ( _south and (_fromHook != _south) ) forks.push( getSegmentOppositeHook( _south ), xtee );
           else                                    targetContact = xtee;
         }
-        cerr << "4" << endl;
         turn->setY(_west->getComponent()->getY());
         xtee->setY(_west->getComponent()->getY());
         if ( _west and (_fromHook != _west) ) forks.push( getSegmentOppositeHook( _west ), xtee );
