@@ -288,7 +288,8 @@ namespace Hurricane {
     if (_cellWidget->getCell() == NULL) return;
 
     _printer = printer;
-    _printer->setResolution ( resolution() );
+  //_printer->setResolution ( resolution() );
+    _printer->setResolution ( 150 );
     _printer->setPageMargins( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
 
     _paperWidth    = _printer->width ();
@@ -301,7 +302,6 @@ namespace Hurricane {
     _ypaper        = (imageOnly) ? 0 : frameMargin();
 
   // Substract the cartouche size only for A4 format.
-  //cerr << _printer->paperSize() << endl;
     if ( _printer->orientation() == QPrinter::Landscape ) {
       _drawingWidth -= cartoucheHeight();
     } else {
@@ -309,13 +309,16 @@ namespace Hurricane {
     }
 
   // Compute the delta size between CellPrinter and CellWidget.
-    // cerr << "(paperw,paperh) = (" << _paperWidth << "," << _paperHeight << ")"  << endl;
-    // cerr << "CellPrinter:      " << geometry().width() << "x" << geometry().height() << endl;
-    // cerr << "CellWidget:       " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
-    // cerr << "ScreenCellWidget: " << _screenCellWidget->geometry().width() << "x" << _screenCellWidget->geometry().height() << endl;
-    // cerr << "resize:           " << _drawingWidth << "x" << _drawingHeight << endl;
-    // cerr << "AbutmentBox:      " << _cellWidget->getCell()->getAbutmentBox() << endl;
-    // cerr << "visibleArea:      " << _cellWidget->getVisibleArea() << endl;
+  //cerr << "Printer/Screen settings:" << endl;
+  //cerr << "  Paper size:              " << _printer->paperSize() << endl;
+  //cerr << "  Resolution (DPI):        " << _printer->resolution() << " (screen:" << resolution() << ")" << endl;   
+  //cerr << "  (paperw,paperh) =        (" << _paperWidth << "," << _paperHeight << ")"  << endl;
+  //cerr << "  CellPrinter:             " << geometry().width() << "x" << geometry().height() << endl;
+  //cerr << "  CellWidget:              " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
+  //cerr << "  ScreenCellWidget:        " << _screenCellWidget->geometry().width() << "x" << _screenCellWidget->geometry().height() << endl;
+  //cerr << "  resize:                  " << _drawingWidth << "x" << _drawingHeight << endl;
+  //cerr << "  AbutmentBox:             " << _cellWidget->getCell()->getAbutmentBox() << endl;
+  //cerr << "  visibleArea:             " << _cellWidget->getVisibleArea() << endl;
 
   // Resize the pixel window to the size of the paper usable area.
   // Then redraw the same visible area (in Hurricane coordinates).
@@ -336,13 +339,13 @@ namespace Hurricane {
       _cellWidget->reframe( _screenCellWidget->getVisibleArea() );
     }
 
-    // cerr << "After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
-    // cerr << "visibleArea(printer):    " << _cellWidget->getVisibleArea() << endl;
-    // cerr << "visibleArea(screen):     " << _screenCellWidget->getVisibleArea() << endl;
-
-  //cerr << "(xpaper,ypaper) = (" << xpaper << "," << ypaper << ")"  << endl;
-  //cerr << "(w,h) = (" << w << "," << h << ")"  << endl;
-  //cerr << "(dw,dh) = (" << drawingWidth << "," << drawingHeight << ")"  << endl;
+  //cerr << "  After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
+  //cerr << "  VisibleArea(printer):    " << _cellWidget->getVisibleArea() << endl;
+  //cerr << "  VisibleArea(screen):     " << _screenCellWidget->getVisibleArea() << endl;
+    
+  //cerr << "  (xpaper,ypaper) =        (" << _xpaper << "," << _ypaper << ")"  << endl;
+  //cerr << "  (w,h) =                  (" << w << "," << h << ")"  << endl;
+  //cerr << "  (dw,dh) =                (" << _drawingWidth << "," << _drawingHeight << ")"  << endl;
 
     CellWidget::PainterCb_t cb = boost::bind( &CellPrinter::pageDecorate, this, _1 );
     _cellWidget->copyToPrinter( _xpaper, _ypaper, _printer, cb );
