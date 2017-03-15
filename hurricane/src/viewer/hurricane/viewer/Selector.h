@@ -1,31 +1,21 @@
-
-
 // -*- C++ -*-
 //
 // This file is part of the Hurricane Software.
 // Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                       Remy Escassut              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./Selector.h"                             |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :  "./hurricane/viewer/Selector.h"                 |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_SELECTOR__
-#define  __HURRICANE_SELECTOR__
+#ifndef  HURRICANE_SELECTOR_H
+#define  HURRICANE_SELECTOR_H
 
 #include  "hurricane/Property.h"
 #include  "hurricane/Selectors.h"
@@ -80,7 +70,6 @@ namespace Hurricane {
   typedef set<Selector*,SelectorLess>  SelectorSet;
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif
+#endif  // HURRICANE_SELECTOR_H

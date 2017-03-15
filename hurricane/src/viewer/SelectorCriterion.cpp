@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2008-2016, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./SelectorCriterion.cpp"                  |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include  "hurricane/viewer/CellWidget.h"
@@ -62,6 +53,10 @@ namespace Hurricane {
 
   NetSelectorCriterion::~NetSelectorCriterion ()
   { }
+
+
+  NetSelectorCriterion* NetSelectorCriterion::clone () const
+  { return new NetSelectorCriterion(_net); }
 
 
   const Net* NetSelectorCriterion::getNet () const
@@ -114,6 +109,10 @@ namespace Hurricane {
 
   AreaSelectorCriterion::~AreaSelectorCriterion ()
   { }
+
+
+  AreaSelectorCriterion* AreaSelectorCriterion::clone () const
+  { return new AreaSelectorCriterion(_area); }
 
 
   const Box& AreaSelectorCriterion::getArea () const

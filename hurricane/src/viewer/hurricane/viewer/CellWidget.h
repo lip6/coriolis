@@ -305,6 +305,7 @@ namespace Hurricane {
               void                      _goUp                      ( int dy );
               void                      _goDown                    ( int dy );
               void                      _refresh                   ();
+              std::string               _getString                 () const;
 
     private:
       class Spot {
@@ -523,16 +524,18 @@ namespace Hurricane {
     private:
       class SelectorCriterions {
         public:
-                                    SelectorCriterions ();
-                                   ~SelectorCriterions ();
-          inline void               setCellWidget      ( CellWidget* );
-                 SelectorCriterion* add                ( const Net* net );
-                 SelectorCriterion* add                ( Box area );
-                 bool               remove             ( const Net* net );
-                 void               clear              ();
-                 void               invalidate         ();
-                 void               revalidate         ();
-          inline size_t             size               () const;
+                                                   SelectorCriterions ();
+                                                  ~SelectorCriterions ();
+          inline void                              setCellWidget      ( CellWidget* );
+          inline const vector<SelectorCriterion*>& getCriterions      () const;
+                 SelectorCriterion*                add                ( const Net* net );
+                 SelectorCriterion*                add                ( Box area );
+          inline SelectorCriterion*                add                ( SelectorCriterion* );
+                 bool                              remove             ( const Net* net );
+                 void                              clear              ();
+                 void                              invalidate         ();
+                 void                              revalidate         ();
+          inline size_t                            size               () const;
         private:
           CellWidget*                 _cellWidget;
           vector<SelectorCriterion*>  _criterions;
@@ -883,6 +886,17 @@ namespace Hurricane {
 
   inline size_t  CellWidget::SelectorCriterions::size () const
   { return _criterions.size(); }
+
+
+  inline const vector<SelectorCriterion*>& CellWidget::SelectorCriterions::getCriterions () const
+  { return _criterions; }
+
+
+  inline SelectorCriterion*  CellWidget::SelectorCriterions::add ( SelectorCriterion* criterion )
+  {
+    _criterions.push_back( criterion );
+    return _criterions.back();
+  }
 
 
   inline CellWidget::State::ScaleEntry::ScaleEntry ( float scale, const Point& topLeft )
@@ -1424,4 +1438,8 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-#endif  // __HURRICANE_CELL_WIDGET__
+GETSTRING_POINTER_SUPPORT(Hurricane::CellWidget);
+IOSTREAM_POINTER_SUPPORT(Hurricane::CellWidget);
+
+
+#endif  // HURRICANE_CELL_WIDGET

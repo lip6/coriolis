@@ -992,6 +992,10 @@ namespace Hurricane {
     clone->setRubberShape        ( getRubberShape() );
     clone->setTopLeft            ( getTopLeft() );
 
+    for ( SelectorCriterion* criterion : _selection.getCriterions() ) {
+      clone->_selection.add( criterion->clone() );
+    }
+
     return clone;
   }
 
@@ -2476,6 +2480,7 @@ namespace Hurricane {
     _drawingQuery    .setStartLevel( _state->getStartLevel() );
     _drawingQuery    .setStopLevel ( _state->getStopLevel() );
     _textDrawingQuery.setCell      ( getCell() );
+    _state->getSelection().revalidate();
 
     reframe();
     _state->setHistoryEnable( true );
@@ -2792,6 +2797,16 @@ namespace Hurricane {
     emit cellPostModificated ();
 
     closeRefreshSession ();
+  }
+
+
+  string  CellWidget::_getString () const
+  {
+    string s = "<CellWidget ";
+    if (getCell()) s += "\"" + getString(getCell()->getName()) + "\" ";
+    else           s += "[NULL] ";
+    s += getString( (void*)this ) + ">";
+    return s;
   }
 
 

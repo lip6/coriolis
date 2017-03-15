@@ -284,11 +284,12 @@ namespace Hurricane {
 
   void  CellPrinter::toPdf ( QPrinter* printer, bool imageOnly )
   {
+    int screenResolution = resolution();
+
     if (printer == NULL) return;
     if (_cellWidget->getCell() == NULL) return;
 
     _printer = printer;
-  //_printer->setResolution ( resolution() );
     _printer->setResolution ( 150 );
     _printer->setPageMargins( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
 
@@ -311,7 +312,7 @@ namespace Hurricane {
   // Compute the delta size between CellPrinter and CellWidget.
   //cerr << "Printer/Screen settings:" << endl;
   //cerr << "  Paper size:              " << _printer->paperSize() << endl;
-  //cerr << "  Resolution (DPI):        " << _printer->resolution() << " (screen:" << resolution() << ")" << endl;   
+  //cerr << "  Resolution (DPI):        " << _printer->resolution() << " (screen:" << screenResolution << ")" << endl;   
   //cerr << "  (paperw,paperh) =        (" << _paperWidth << "," << _paperHeight << ")"  << endl;
   //cerr << "  CellPrinter:             " << geometry().width() << "x" << geometry().height() << endl;
   //cerr << "  CellWidget:              " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
@@ -331,20 +332,17 @@ namespace Hurricane {
 
     Box visibleArea = _screenCellWidget->getVisibleArea();
     if ( visibleArea.contains(_screenCellWidget->getCell()->getAbutmentBox()) ) {
-    //cerr << "fit to AB" << endl;
       setFitOnAbutmentBox( true );
       _cellWidget->fitToContents();
     } else {
-    //cerr << "reframe" << endl;
       _cellWidget->reframe( _screenCellWidget->getVisibleArea() );
     }
 
   //cerr << "  After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
   //cerr << "  VisibleArea(printer):    " << _cellWidget->getVisibleArea() << endl;
   //cerr << "  VisibleArea(screen):     " << _screenCellWidget->getVisibleArea() << endl;
-    
+  //
   //cerr << "  (xpaper,ypaper) =        (" << _xpaper << "," << _ypaper << ")"  << endl;
-  //cerr << "  (w,h) =                  (" << w << "," << h << ")"  << endl;
   //cerr << "  (dw,dh) =                (" << _drawingWidth << "," << _drawingHeight << ")"  << endl;
 
     CellWidget::PainterCb_t cb = boost::bind( &CellPrinter::pageDecorate, this, _1 );
