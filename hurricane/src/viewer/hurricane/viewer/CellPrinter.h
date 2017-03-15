@@ -70,6 +70,8 @@ namespace Hurricane {
               void                 pageDecorate              ( QPainter& );
               void                 toPdf                     ( QPrinter* , bool imageOnly=false );
       virtual std::string          _getString                () const;
+    private:
+              int                  _scalePixels              ( int pixels, int dpi );
 
     protected:                     
       CellWidget*    _screenCellWidget;

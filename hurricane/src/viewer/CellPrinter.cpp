@@ -162,12 +162,18 @@ namespace Hurricane {
 
   void  CellPrinter::pageDecorate ( QPainter& painter )
   {
+    _cartoucheWidth  = _scalePixels( _cartoucheWidth , 600 );
+    _cartoucheHeight = _scalePixels( _cartoucheHeight, 600 );
+    _titleHeight     = _scalePixels( _titleHeight    , 600 );
+
     int  right          = 0;
     int  bottom         = 0;
-    int  userFieldWidth = 150 * _mode;
-    int  dateFieldWidth = 180 * _mode;
-    int  unitFieldWidth = 150 * _mode;
+    int  userFieldWidth = _scalePixels( 150 * _mode, 600 );
+    int  dateFieldWidth = _scalePixels( 180 * _mode, 600 );
+    int  unitFieldWidth = _scalePixels( 150 * _mode, 600 );
     int  areaFieldWidth = cartoucheWidth() - userFieldWidth - dateFieldWidth - unitFieldWidth;
+    int  thinWidth      = _scalePixels( 1, 600 );
+    int  thickWidth     = _scalePixels( 2, 600 );
 
     QFont font ( "Bitstream Vera Sans", 18 );
     font.setWeight ( QFont::Bold );
@@ -208,14 +214,14 @@ namespace Hurricane {
     titleRect.adjust( 0, 0, 0,  titleHeight() - cartoucheHeight() );
 
   // The cartouche box.
-    cartouchePen.setWidth( 2 );
+    cartouchePen.setWidth( thickWidth );
     painter.setPen  ( cartouchePen );
     painter.drawRect( cartoucheRect );
 
   // The title & horizontal separator.
     string title = getString(_cellWidget->getCell()->getName());
 
-    cartouchePen.setWidth( 1 );
+    cartouchePen.setWidth( thinWidth );
     painter.setPen  ( cartouchePen );
     painter.drawLine( titleRect.bottomLeft(), titleRect.bottomRight() );
     painter.setFont ( font );
@@ -290,7 +296,7 @@ namespace Hurricane {
     if (_cellWidget->getCell() == NULL) return;
 
     _printer = printer;
-    _printer->setResolution ( 150 );
+    _printer->setResolution ( 600 );
     _printer->setPageMargins( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
 
     _paperWidth    = _printer->width ();
@@ -350,6 +356,10 @@ namespace Hurricane {
 
     _printer = NULL;
   }
+
+
+  int  CellPrinter::_scalePixels ( int pixels, int dpi )
+  { return (int)( (float)dpi/150.0 * (float)pixels ); }
 
 
   string  CellPrinter::_getString () const
