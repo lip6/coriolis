@@ -813,8 +813,9 @@ namespace Hurricane {
     }
 
     QPrinter printer ( QPrinter::ScreenResolution );
-    printer.setPaperSize      ( (QPrinter::PaperSize)Cfg::getParamEnumerate("viewer.printer.paper",0)->asInt() );
     printer.setOutputFileName ( "unicorn-snapshot.pdf" );
+    printer.setPaperSize  ( (QPrinter::PaperSize  )Cfg::getParamEnumerate("viewer.printer.paper"      ,0)->asInt() );
+    printer.setOrientation( (QPrinter::Orientation)Cfg::getParamEnumerate("viewer.printer.orientation",0)->asInt() );
 
     QPrintDialog  dialog ( &printer );
     if ( dialog.exec() == QDialog::Accepted )
@@ -824,7 +825,7 @@ namespace Hurricane {
 
   void  CellViewer::print ( QPrinter* printer )
   {
-    CellPrinter* cellPrinter        = new CellPrinter();
+    CellPrinter* cellPrinter = new CellPrinter();
 
     cellPrinter->setScreenCellWidget( _cellWidget );
     cellPrinter->toPdf              ( printer, false );

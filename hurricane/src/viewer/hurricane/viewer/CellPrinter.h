@@ -71,13 +71,14 @@ namespace Hurricane {
               void                 toPdf                     ( QPrinter* , bool imageOnly=false );
       virtual std::string          _getString                () const;
     private:
-              int                  _scalePixels              ( int pixels, int dpi );
+              int                  _scalePixels              ( int pixels );
 
     protected:                     
       CellWidget*    _screenCellWidget;
       CellWidget*    _cellWidget;
       PaletteWidget* _palette;
       QPrinter*      _printer;
+      int            _dpi;
       int            _mode;
       int            _paperWidth;
       int            _paperHeight;

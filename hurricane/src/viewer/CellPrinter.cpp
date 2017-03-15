@@ -31,23 +31,25 @@
 namespace Hurricane {
 
 
-  CellPrinter::CellPrinter ( QWidget* parent ) : QMainWindow      (parent)
-                                               , _screenCellWidget(NULL)
-                                               , _cellWidget      (NULL)
-                                               , _palette         (NULL)
-                                               , _printer         (NULL)
-                                               , _mode            (Cfg::getParamEnumerate("viewer.printer.mode",1)->asInt())
-                                               , _paperWidth      (0)
-                                               , _paperHeight     (0)
-                                               , _frameMargin     (50)
-                                               , _cartoucheWidth  (1000)
-                                               , _cartoucheHeight (90)   // 40*2
-                                               , _titleHeight     (60)   // 30*2
-                                               , _xpaper          (0)
-                                               , _ypaper          (0)
-                                               , _drawingWidth    (0)
-                                               , _drawingHeight   (0)
-                                               , _fitOnAbutmentBox(false)
+  CellPrinter::CellPrinter ( QWidget* parent )
+    : QMainWindow      (parent)
+    , _screenCellWidget(NULL)
+    , _cellWidget      (NULL)
+    , _palette         (NULL)
+    , _printer         (NULL)
+    , _dpi             (Cfg::getParamInt      ("viewer.printer.DPI" ,150)->asInt())
+    , _mode            (Cfg::getParamEnumerate("viewer.printer.mode",  1)->asInt())
+    , _paperWidth      (0)
+    , _paperHeight     (0)
+    , _frameMargin     (_scalePixels(  50))  // Dimensions are in pixels,
+    , _cartoucheWidth  (_scalePixels(1000))  // computed for a reference DPI of 150.
+    , _cartoucheHeight (_scalePixels(  90))
+    , _titleHeight     (_scalePixels(  60))
+    , _xpaper          (0)
+    , _ypaper          (0)
+    , _drawingWidth    (0)
+    , _drawingHeight   (0)
+    , _fitOnAbutmentBox(false)
   {
     setObjectName("viewer.printer");
     setAttribute (Qt::WA_DontShowOnScreen);
@@ -162,18 +164,14 @@ namespace Hurricane {
 
   void  CellPrinter::pageDecorate ( QPainter& painter )
   {
-    _cartoucheWidth  = _scalePixels( _cartoucheWidth , 600 );
-    _cartoucheHeight = _scalePixels( _cartoucheHeight, 600 );
-    _titleHeight     = _scalePixels( _titleHeight    , 600 );
-
-    int  right          = 0;
-    int  bottom         = 0;
-    int  userFieldWidth = _scalePixels( 150 * _mode, 600 );
-    int  dateFieldWidth = _scalePixels( 180 * _mode, 600 );
-    int  unitFieldWidth = _scalePixels( 150 * _mode, 600 );
-    int  areaFieldWidth = cartoucheWidth() - userFieldWidth - dateFieldWidth - unitFieldWidth;
-    int  thinWidth      = _scalePixels( 1, 600 );
-    int  thickWidth     = _scalePixels( 2, 600 );
+    int  thinWidth       = _scalePixels(    1 );
+    int  thickWidth      = _scalePixels(    2 );
+    int  right           = 0;
+    int  bottom          = 0;
+    int  userFieldWidth  = _scalePixels( 150 * _mode );
+    int  dateFieldWidth  = _scalePixels( 180 * _mode );
+    int  unitFieldWidth  = _scalePixels( 150 * _mode );
+    int  areaFieldWidth  = cartoucheWidth() - userFieldWidth - dateFieldWidth - unitFieldWidth;
 
     QFont font ( "Bitstream Vera Sans", 18 );
     font.setWeight ( QFont::Bold );
@@ -290,19 +288,17 @@ namespace Hurricane {
 
   void  CellPrinter::toPdf ( QPrinter* printer, bool imageOnly )
   {
-    int screenResolution = resolution();
+  //int screenResolution = resolution();
 
     if (printer == NULL) return;
     if (_cellWidget->getCell() == NULL) return;
 
     _printer = printer;
-    _printer->setResolution ( 600 );
+    _printer->setResolution ( _dpi );
     _printer->setPageMargins( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
 
     _paperWidth    = _printer->width ();
     _paperHeight   = _printer->height ();
-  //_drawingWidth  = _paperWidth /4 - (frameMargin()<<1);
-  //_drawingHeight = _paperHeight/4 - (frameMargin()<<1);
     _drawingWidth  = _paperWidth  - (frameMargin()<<1);
     _drawingHeight = _paperHeight - (frameMargin()<<1);
     _xpaper        = (imageOnly) ? 0 : frameMargin();
@@ -358,8 +354,8 @@ namespace Hurricane {
   }
 
 
-  int  CellPrinter::_scalePixels ( int pixels, int dpi )
-  { return (int)( (float)dpi/150.0 * (float)pixels ); }
+  int  CellPrinter::_scalePixels ( int pixels )
+  { return (int)( (float)_dpi/150.0 * (float)pixels ); }
 
 
   string  CellPrinter::_getString () const
