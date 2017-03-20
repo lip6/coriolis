@@ -26,7 +26,6 @@
 #include "crlcore/Utilities.h"
 #include "anabatic/AnabaticEngine.h"
 #include "anabatic/Dijkstra.h"
-
 #include "hurricane/DataBase.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/Technology.h"
@@ -266,7 +265,7 @@ namespace Anabatic {
   {
   //cdebug_log(112,0) << "Point Dijkstra::getNextPathPoint( const Vertex* current, const Vertex* next )" << endl;
     if ((vcurr == NULL) || (vnext == NULL)){
-    //cdebug_log(112,0) << "Error(Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unvalid NULL argument."<< endl;
+    //cdebug_log(112,0) << "[ERROR](Point Dijkstra::_getNextPathPoint( const Vertex*, const Vertex* )): Unvalid NULL argument."<< endl;
       return Point(0,0);
     }
 
@@ -292,7 +291,7 @@ namespace Anabatic {
           if      ( pcurr.getY() > vnext->getIMax() ) y = vnext->getIMax();
           else if ( pcurr.getY() < vnext->getIMin() ) y = vnext->getIMin();
           else                                        y = pcurr.getY();
-        } else  cdebug_log(112,0) << "Error(Point Vertex::getNextPathPoint2(...) const: Something is wrong.1" << endl;
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.1" << endl;
       } else {
       //cdebug_log(112,0) << "Case not set" << endl;
         if (vcurr->isNorth(vnext)){
@@ -316,7 +315,7 @@ namespace Anabatic {
           if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
           else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
           else                                      y = pcurr.getY();
-        } else  cdebug_log(112,0) << "Error(Point Vertex::getNextPathPoint2(...) const: Something is wrong.2" << endl;
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.2" << endl;
       }
       
     } else if (vnext->isH()) {
@@ -331,7 +330,7 @@ namespace Anabatic {
           if      ( pcurr.getX() > vnext->getIMax() ) x = vnext->getIMax();
           else if ( pcurr.getX() < vnext->getIMin() ) x = vnext->getIMin();
           else                                        x = pcurr.getX();
-        } else  cdebug_log(112,0) << "Error(Point Vertex::getNextPathPoint2(...) const: Something is wrong.3" << endl;
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.3" << endl;
 
       } else {
       //cdebug_log(112,0) << "Case not set" << endl;
@@ -356,10 +355,10 @@ namespace Anabatic {
           if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
           else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
           else                                      y = pcurr.getY();
-        } else  cdebug_log(112,0) << "Error(Point Vertex::getNextPathPoint2(...) const: Something is wrong.4" << endl;
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.4" << endl;
       }
     } else {
-      cdebug_log(112,0) << "Error(Point Vertex::getNextPathPoint2(...) const: Something is wrong.5" << endl;
+      cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.5" << endl;
     }
     return Point(x,y);
   }
@@ -367,7 +366,7 @@ namespace Anabatic {
 
   Point Vertex::getPathPoint( const Vertex* next ) const
   {
-  //cdebug_log(112,0) << "Point Vertex::getPathPoint( const Vertex* next ) const:" << this << endl;
+    cdebug_log(112,0) << "Point Vertex::getPathPoint( const Vertex* next ) const:" << this << endl;
     
     GCell* gcurr = getGCell();
     GCell* gnext = next->getGCell();
@@ -376,37 +375,37 @@ namespace Anabatic {
     
 
     if (gcurr->isDevice  ()){
-    //cdebug_log(112,0) << "Case device" << endl;
+      cdebug_log(112,0) << "Case device" << endl;
       if      (isH()){
-      //cdebug_log(112,0) << "hinterval: " <<  DbU::getValueString(_interv->getAxis()) << endl;
+        cdebug_log(112,0) << "hinterval: " <<  DbU::getValueString(_interv->getAxis()) << endl;
         y = _interv->getAxis();
         if      ((gnext->getXMax() < _interv->getMin())||(isWest (next))) x = _interv->getMin();
         else if ((gnext->getXMin() > _interv->getMax())||(isEast (next))) x = _interv->getMax();
         else    x = (max(gnext->getXMin(), _interv->getMin())+min(gnext->getXMax(), _interv->getMax()))/2;
 
       } else if (isV()){
-      //cdebug_log(112,0) << "vinterval" << endl;
+        cdebug_log(112,0) << "vinterval" << endl;
         x = _interv->getAxis();
         if      ((gnext->getYMax() < _interv->getMin())||(isSouth(next))) y = _interv->getMin();
         else if ((gnext->getYMin() > _interv->getMax())||(isNorth(next))) y = _interv->getMax();
         else y = (max(gnext->getYMin(), _interv->getMin())+min(gnext->getYMax(), _interv->getMax()))/2 ;
       } else {
-        cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+        cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
         return Point(0,0);
       }
     } else if (isH()) {
-    //cdebug_log(112,0) << "Case horizontal: " << isiSet() << endl;
+      cdebug_log(112,0) << "Case horizontal: " << isiSet() << endl;
       GCell*  gprev = getFrom()->getOpposite(gcurr);
       Vertex* prev  = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
       if (isiSet()){
-      //cdebug_log(112,0) << "isiSet" << endl;
+        cdebug_log(112,0) << "isiSet" << endl;
         y = _interv->getAxis();
         if      ((gnext->getXMax() < _interv->getMin())||(isWest (next))) x = _interv->getMin();
         else if ((gnext->getXMin() > _interv->getMax())||(isEast (next))) x = _interv->getMax();
         else    x = (max(gnext->getXMin(), _interv->getMin())+min(gnext->getXMax(), _interv->getMax()))/2;
       } else {
         if        (prev->isH()){
-        //cdebug_log(112,0) << "prev is H" << endl;
+          cdebug_log(112,0) << "prev is H" << endl;
           if        (isNorth(prev)){
             x = (max(_intervfrom->getMin(), gcurr->getXMin())+min(_intervfrom->getMax(), gcurr->getXMax()))/2 ;
             y = gcurr->getYMax();
@@ -420,7 +419,7 @@ namespace Anabatic {
             x = gcurr->getXMax();
             y = _intervfrom->getAxis();
           } else {
-            cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
             return Point(0,0);
           }
         } else if (prev->isV()){
@@ -454,28 +453,28 @@ namespace Anabatic {
               y = (max(_intervfrom->getMin(), gcurr->getYMin())+min(_intervfrom->getMax(), gcurr->getYMax()))/2 ;
             }
           } else {
-            cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
             return Point(0,0);
           }
           cdebug_log(112,0) << "x: " << DbU::getValueString(x) << ", y:" << DbU::getValueString(y) << endl;
         } else {
-          cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+          cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
           return Point(0,0);
         }
       }
     } else if (isV()) {
-    //cdebug_log(112,0) << "Case V: " << isiSet() << endl;
+      cdebug_log(112,0) << "Case V: " << isiSet() << endl;
       GCell*  gprev = getFrom()->getOpposite(gcurr);
       Vertex* prev  = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
       if (isiSet()){
-      //cdebug_log(112,0) << "isiSet" << endl;
+        cdebug_log(112,0) << "isiSet" << endl;
         x = _interv->getAxis();
         if      ((gnext->getYMax() < _interv->getMin())||(isSouth(next))) y = _interv->getMin();
         else if ((gnext->getYMin() > _interv->getMax())||(isNorth(next))) y = _interv->getMax();
         else y = (max(gnext->getYMin(), _interv->getMin())+min(gnext->getYMax(), _interv->getMax()))/2 ;
       } else {
         if        (prev->isH()){
-        //cdebug_log(112,0) << "prev is H" << endl;
+          cdebug_log(112,0) << "prev is H" << endl;
           if        (isNorth(prev)){
             y = gcurr->getYMax();
             if        ( _intervfrom->getMin() > gcurr->getXMax() ){
@@ -501,11 +500,11 @@ namespace Anabatic {
             x = gcurr->getXMax();
             y = _intervfrom->getAxis();
           } else {
-            cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
             return Point(0,0);
           }
         } else if (prev->isV()){
-        //cdebug_log(112,0) << "prev is V" << endl;
+          cdebug_log(112,0) << "prev is V" << endl;
           if        (isNorth(prev)){
             x = _intervfrom->getAxis();
             y = gcurr->getYMax();
@@ -519,16 +518,16 @@ namespace Anabatic {
             x = gcurr->getXMax();
             y = (max(_intervfrom->getMin(), gcurr->getYMin())+min(_intervfrom->getMax(), gcurr->getYMax()))/2 ;
           } else {
-            cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
             return Point(0,0);
           }
         } else {
-          cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+          cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
           return Point(0,0);
         }
       }
     } else {
-        cdebug_log(112,0) << "Error(Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+        cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
         return Point(0,0);
     }
     return Point(x,y);
@@ -540,7 +539,7 @@ namespace Anabatic {
     GCell* gcell = getGCell();
     if      (gcell->isDevice())   return _interv->isH();
     else if (gcell->isHChannel()) return true;
-    else if (gcell->isStrut())    return gcell->getWidth() > gcell->getHeight();
+    else if (gcell->isStrut())    return ((gcell->getWidth() > gcell->getHeight())||(gcell->getWidth() == gcell->getHeight()));
     else                          return false;
   }
 
@@ -559,15 +558,50 @@ namespace Anabatic {
   {
     Point pcurr = vcurr->getPathPoint(this);
     Point pnext = Vertex::getNextPathPoint2( vcurr, this );
-  //cdebug_log(112,0) << "void Vertex::setIntervals ( Vertex* vcurr )" << endl;
+    cdebug_log(112,0) << "void Vertex::setIntervals ( Vertex* vcurr )" << endl;
     cdebug_log(112,0) << "Pcurrent  : X:" << DbU::getValueString(pcurr.getX())   << ", Y:" << DbU::getValueString(pcurr.getY())   << endl;
-  //cdebug_log(112,0) << "Pneighbour: X:" << DbU::getValueString(pnext.getX()) << ", Y:" << DbU::getValueString(pnext.getY()) << endl;
+    cdebug_log(112,0) << "Pneighbour: X:" << DbU::getValueString(pnext.getX()) << ", Y:" << DbU::getValueString(pnext.getY()) << endl;
     DbU::Unit min, max, axis;
 
+  /*if        (vcurr->isH()){
+      if        (isH()){
+        if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
+        } else {
+        }
+      } else if (isV()){
+        if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
+        } else {
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR](void Vertex::setIntervals(...)): Something is wrong." << endl;
+        return;
+      }
+    } else if (vcurr->isV()){
+      if        (isH()){
+        if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
+        } else {
+        }
+      } else if (isV()){
+        if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
+        } else {
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR](void Vertex::setIntervals(...)): Something is wrong." << endl;
+        return;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR](void Vertex::setIntervals(...)): Something is wrong." << endl;
+      return;
+    }*/
+
+
+
+
+    ///////////////////////////
     if        (vcurr->isH()){
-    //cdebug_log(112,0) << "case vcurr: Horizontal" << endl;
+      cdebug_log(112,0) << "case vcurr: Horizontal" << endl;
       if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
-      //cdebug_log(112,0) << "case set" << endl;
+        cdebug_log(112,0) << "case set" << endl;
         if      (vcurr->getIMin() > pnext.getX()) {
           min  = pnext.getX();
           max  = vcurr->getIMax();
@@ -582,22 +616,44 @@ namespace Anabatic {
           axis = vcurr->getIAxis();
         } 
       } else {
-      //cdebug_log(112,0) << "case not set" << endl;
+        cdebug_log(112,0) << "case not set" << endl;
         axis = pcurr.getY();
-        if (pcurr.getX() < pnext.getX()){
-          min = pcurr.getX();
-          max = pnext.getX();
+        bool hh = false;
+        if (vcurr->hasValidStamp() && (vcurr->getFrom() != NULL)){
+          GCell*  gcurr = vcurr->getGCell();
+          GCell*  gprev = vcurr->getFrom()->getOpposite(gcurr);
+          Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+          if (vprev->isH()) {
+            cdebug_log(112,0) << "----------------------------" << endl;
+            cdebug_log(112,0) << "HHCASE:" << endl;
+            cdebug_log(112,0) << "prev: " << vprev << endl;
+            cdebug_log(112,0) << "curr: " << vcurr << endl;
+            cdebug_log(112,0) << "next: " << this << endl;
+            cdebug_log(112,0) << "----------------------------" << endl;
+            hh = true;
+          }
+        }
+        if (hh){
+          GCell*  gcurr = vcurr->getGCell();
+          Vertex* vcurr = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
+          min = std::max(gcurr->getXMin(), vcurr->getPIMin());
+          max = std::min(gcurr->getXMax(), vcurr->getPIMax());
         } else {
-          max = pcurr.getX();
-          min = pnext.getX();
+          if (pcurr.getX() < pnext.getX()){
+            min = pcurr.getX();
+            max = pnext.getX();
+          } else {
+            max = pcurr.getX();
+            min = pnext.getX();
+          }
         }
       }
 
     } else if (vcurr->isV()){
-    //cdebug_log(112,0) << "case vcurr: Vertical" << endl;
+      cdebug_log(112,0) << "case vcurr: Vertical" << endl;
       
       if ((vcurr->isiSet())&&(vcurr->hasValidStamp())){
-      //cdebug_log(112,0) << "case set" << endl;
+        cdebug_log(112,0) << "case set" << endl;
         if      (vcurr->getIMin() > pnext.getY()) {
           min  = pnext.getY();
           max  = vcurr->getIMax();
@@ -612,19 +668,41 @@ namespace Anabatic {
           axis = vcurr->getIAxis();
         }
       } else {
-      //cdebug_log(112,0) << "case not set" << endl;
+        cdebug_log(112,0) << "case not set" << endl;
         axis = pcurr.getX();
-        if (pcurr.getY() < pnext.getY()){
-          min = pcurr.getY();
-          max = pnext.getY();
+        bool vv = false;
+        if (vcurr->hasValidStamp() && (vcurr->getFrom() != NULL)){
+          GCell*  gcurr = vcurr->getGCell();
+          GCell*  gprev = vcurr->getFrom()->getOpposite(gcurr);
+          Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+          if (vprev->isV()) {
+            cdebug_log(112,0) << "----------------------------" << endl;
+            cdebug_log(112,0) << "VVCASE:" << endl;
+            cdebug_log(112,0) << "prev: " << vprev << endl;
+            cdebug_log(112,0) << "curr: " << vcurr << endl;
+            cdebug_log(112,0) << "next: " << this << endl;
+            cdebug_log(112,0) << "----------------------------" << endl;
+            vv = true;
+          }
+        }
+        if (vv){
+          GCell*  gcurr = vcurr->getGCell();
+          Vertex* vcurr = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
+          min = std::max(gcurr->getYMin(), vcurr->getPIMin());
+          max = std::min(gcurr->getYMax(), vcurr->getPIMax());
         } else {
-          max = pcurr.getY();
-          min = pnext.getY();
+          if (pcurr.getY() < pnext.getY()){
+            min = pcurr.getY();
+            max = pnext.getY();
+          } else {
+            max = pcurr.getY();
+            min = pnext.getY();
+          }
         }
       }
 
     } else {
-      cdebug_log(112,0) << "Error(void Vertex::setIntervals(...)): Something is wrong." << endl;
+      cdebug_log(112,0) << "[ERROR](void Vertex::setIntervals(...)): Something is wrong." << endl;
       return;
     }
     cdebug_log(112,0) << "IntervFrom => min: " << DbU::getValueString(min) << ", max: " << DbU::getValueString(max) << ", axis:" << DbU::getValueString(axis) << endl; 
@@ -902,6 +980,107 @@ namespace Anabatic {
     }
     return d;
   }
+
+
+  DbU::Unit Vertex::getXMinUnionfrom ()
+  {
+    if (_intervfrom){
+      if (hasValidStamp()){
+        GCell*  gcurr = getGCell();
+        GCell*  gprev = getFrom()->getOpposite(gcurr);
+        Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+
+        if (vprev->isH() && isH()){
+          return max(_intervfrom->getMin(), gcurr->getXMin());
+        } else {
+          cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 3" << endl;
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 2" << endl;
+        return 0;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 1" << endl;
+      return 0;
+    }
+  }
+
+
+  DbU::Unit Vertex::getXMaxUnionfrom  ()
+  {
+    if (_intervfrom){
+      if (hasValidStamp()){
+        GCell*  gcurr = getGCell();
+        GCell*  gprev = getFrom()->getOpposite(gcurr);
+        Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+
+        if (vprev->isH() && isH()){
+          return min(_intervfrom->getMax(), gcurr->getXMax());
+        } else {
+          cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 3" << endl;
+          return 0;
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 2" << endl;
+        return 0;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 1" << endl;
+      return 0;
+    }
+  }
+
+
+  DbU::Unit Vertex::getYMinUnionfrom  ()
+  {
+    if (_intervfrom){
+      if (hasValidStamp()){
+        GCell*  gcurr = getGCell();
+        GCell*  gprev = getFrom()->getOpposite(gcurr);
+        Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+
+        if (vprev->isV() && isV()){
+          return max(_intervfrom->getMin(), gcurr->getYMin());
+        } else {
+          cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 3" << endl;
+          return 0;
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 2" << endl;
+        return 0;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 1" << endl;
+      return 0;
+    }
+  }
+
+
+  DbU::Unit Vertex::getYMaxUnionfrom  ()
+  {
+    if (_intervfrom){
+      if (hasValidStamp()){
+        GCell*  gcurr = getGCell();
+        GCell*  gprev = getFrom()->getOpposite(gcurr);
+        Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+
+        if (vprev->isV() && isV()){
+          return min(_intervfrom->getMax(), gcurr->getYMax());
+        } else {
+          cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 3" << endl;
+          return 0;
+        }
+      } else {
+        cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 2" << endl;
+        return 0;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 1" << endl;
+      return 0;
+    }
+  }
+
+
 
 
   Dijkstra::Dijkstra ( AnabaticEngine* anabatic )
@@ -1320,6 +1499,7 @@ namespace Anabatic {
             continue;
           }
           cdebug_log(111,0) << endl  << "===================================================================================" << endl << endl;
+          cdebug_log(111,0) << "| Net: " << _net << endl;
           cdebug_log(111,0) << "| Curr: " << current;
           if (current->getFrom()){
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
@@ -1328,7 +1508,7 @@ namespace Anabatic {
           }
           cdebug_log(111,0) << "| Edge " << edge << endl;
           cdebug_log(111,0) << "+ Neighbor: " << vneighbor;
-          if (vneighbor->getFrom() != NULL) {cdebug_log(111,0) << "| Neighbor getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;}
+          if ((vneighbor->getFrom() != NULL)&&(vneighbor->hasValidStamp())) {cdebug_log(111,0) << "| Neighbor getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;}
           else                              {cdebug_log(111,0) << endl;}
 
 
@@ -1364,6 +1544,7 @@ namespace Anabatic {
                   && ( calcDistance(ppond, pnext) < calcDistance(ppond, pprev) )
                   )
                ){
+              _queue.erase( vneighbor );
               cdebug_log(111,0) << "BETTER GetFROM" << endl;
               vneighbor->setBranchId( current->getBranchId() );
               vneighbor->setDistance( distance );

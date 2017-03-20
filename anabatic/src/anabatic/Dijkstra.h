@@ -237,6 +237,10 @@ namespace Anabatic {
              inline  bool            isAxisTarget      () const;
              inline  void            unsetFlags        ( unsigned int );
              inline  void            setAxisTarget     ();
+                     DbU::Unit       getXMinUnionfrom  ();
+                     DbU::Unit       getXMaxUnionfrom  ();
+                     DbU::Unit       getYMinUnionfrom  ();
+                     DbU::Unit       getYMaxUnionfrom  ();
  
 
     // Inspector support. 
