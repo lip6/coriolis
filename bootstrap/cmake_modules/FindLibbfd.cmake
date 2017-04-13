@@ -35,7 +35,7 @@
                                      ENV CPATH)
  
 # Ugly, yes ugly...
- find_library(LIBBFD_BFD_LIBRARY NAMES bfd-${BINUTILS_VERSION}
+ find_library(LIBBFD_BFD_LIBRARY NAMES bfd-${BINUTILS_VERSION} bfd
                                  PATHS /usr/lib
                                        /usr/lib64
                                        /usr/local/lib
