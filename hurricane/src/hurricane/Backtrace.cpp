@@ -82,6 +82,8 @@
 #if (defined __linux__ || defined __FreeBSD__ || defined __APPLE__)
 #include  <execinfo.h>
 #ifdef HAVE_LIBBFD
+#define   PACKAGE          "Hurricane"
+#define   PACKAGE_VERSION  "no_version"
 #include  <bfd.h>
 #endif
 #endif
