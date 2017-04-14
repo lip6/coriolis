@@ -9,26 +9,35 @@ import subprocess
 import optparse
 
 
-coriolisPattern = re.compile ( r".*coriolis.*" )
+reCoriolisPattern      = re.compile( r".*coriolis.*" )
+reReleaseSharedPattern = re.compile( r".*Release\.Shared.*" )
+reReleaseStaticPattern = re.compile( r".*Release\.Static.*" )
+reDebugSharedPattern   = re.compile( r".*Debug\.Shared.*" )
+reDebugStaticPattern   = re.compile( r".*Debug\.Static.*" )
 
 
-def stripPath ( pathName ):
-  pathEnv = os.getenv ( pathName )
+def scrubPath ( pathName ):
+  pathEnv = os.getenv( pathName )
   if not pathEnv: return ""
   
-  pathList     = string.split ( pathEnv, ':' )
-  strippedList = []
+  pathList     = string.split( pathEnv, ':' )
+  scrubbedList = []
   for pathElement in pathList:
-    if not coriolisPattern.match(pathElement):
-        strippedList += [ pathElement ]
+    if    reCoriolisPattern     .match(pathElement) \
+       or reReleaseSharedPattern.match(pathElement) \
+       or reReleaseStaticPattern.match(pathElement) \
+       or reDebugSharedPattern  .match(pathElement) \
+       or reDebugStaticPattern  .match(pathElement):
+      continue
+    scrubbedList += [ pathElement ]
 
-  if len(strippedList) == 0: return ""
+  if len(scrubbedList) == 0: return ""
 
-  strippedEnv = strippedList[0]
-  for pathElement in strippedList[1:]:
-      strippedEnv += ":" + pathElement
+  scrubbedEnv = scrubbedList[0]
+  for pathElement in scrubbedList[1:]:
+      scrubbedEnv += ":" + pathElement
 
-  return strippedEnv
+  return scrubbedEnv
 
 
 def guessOs ():
@@ -131,25 +140,31 @@ def guessOs ():
     return (osType,libDir,useDevtoolset2)
 
 
-def guessCsh ():
-    cshBins = [ '/usr/bin/tcsh'
-              , '/bin/tcsh'
-              , '/usr/pkg/bin/tcsh'
-              , '/usr/bin/csh'
-              , '/bin/csh'
-              , '/usr/pkg/bin/csh'
-              ]
-    for cshBin in cshBins:
-      if os.path.isfile(cshBin): return cshBin
-    return None
-
-
 def guessShell ():
-    if os.environ.has_key('SHELL'): return os.environ['SHELL']
+   # This environement variable cannot be trusted as it is set once when
+   # the user logs in. If aftewards it changes it that variable is *not*
+   # affected :-(.
+   #if os.environ.has_key('SHELL'): return os.environ['SHELL']
 
-   # If SHELL is not set, it is likely we are under C-Shell variant.
-   # Look for standard places where the binaries are expecteds.
-    return guessCsh()
+    psCommand     = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
+    shell         = psCommand.stdout.readlines()[1][:-1].split()[-1]
+    whichCommand  = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
+    shellPath     = whichCommand.stdout.readlines()[0][:-1]
+
+    isBourneShell = True
+    cshBins       = [ '/usr/bin/tcsh'
+                    , '/bin/tcsh'
+                    , '/usr/pkg/bin/tcsh'
+                    , '/usr/local/bin/tcsh'
+                    , '/usr/bin/csh'
+                    , '/bin/csh'
+                    , '/usr/pkg/bin/csh'
+                    , '/usr/local/bin/csh'
+                    ]
+    if shellPath in cshBins: isBourneShell = False
+   #print 'GUESSED SHELL: "%s"' % shellPath
+
+    return shellPath, isBourneShell
 
 
 
@@ -159,13 +174,12 @@ if __name__ == "__main__":
   buildType                    = "Release"
   linkType                     = "Shared"
   rootDir                      = None
-  shellBin                     = guessShell()
+  shellBin, isBourneShell      = guessShell()
 
   parser = optparse.OptionParser ()  
  # Build relateds.
   parser.add_option ( "--query-inst-root", action="store_true" ,                dest="queryInstRoot" )
   parser.add_option ( "--query-isys-root", action="store_true" ,                dest="queryISysRoot" )
-  parser.add_option ( "--csh"            , action="store_true" ,                dest="csh"           )
   parser.add_option ( "--release"        , action="store_true" ,                dest="release"       )
   parser.add_option ( "--debug"          , action="store_true" ,                dest="debug"         )
   parser.add_option ( "--devel"          , action="store_true" ,                dest="devel"         )
@@ -176,7 +190,6 @@ if __name__ == "__main__":
   parser.add_option ( "--root"           , action="store"      , type="string", dest="rootDir"       )
   ( options, args ) = parser.parse_args ()
 
-  if options.csh:        shellBin  = guessCsh()
   if options.release:    buildType = "Release"
   if options.debug:      buildType = "Debug"
   if options.devel:      buildType = "Debug"
@@ -184,13 +197,16 @@ if __name__ == "__main__":
   if options.shared:     linkType  = "Shared"
   if options.rootDir:    rootDir   = options.rootDir
 
+  scriptPath = os.path.abspath(os.path.dirname(sys.argv[0]))
+  if 'Debug.' in scriptPath: buildType = 'Debug'
+
   if not shellBin:
     print 'echo "[ERROR] coriolisEnv.py was not able to guess/find the current shell interpeter."'
     sys.exit( 1 )
 
-  strippedPath        = stripPath ( "PATH" )
-  strippedLibraryPath = stripPath ( "LD_LIBRARY_PATH" )
-  strippedPythonPath  = stripPath ( "PYTHONPATH" )
+  strippedPath        = scrubPath( "PATH" )
+  strippedLibraryPath = scrubPath( "LD_LIBRARY_PATH" )
+  strippedPythonPath  = scrubPath( "PYTHONPATH" )
 
   shellScriptSh = \
     'echo "%(MESSAGE)s";'                                          \
@@ -246,6 +262,10 @@ if __name__ == "__main__":
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
   strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
 
+  if not os.path.exists(coriolisTop):
+    print 'echo "[ERROR] coriolisEnv.py, top directory <%s> do not exists."' % coriolisTop
+    sys.exit( 1 )
+
   if not options.nopython:
     pyVersion = sys.version_info
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
@@ -281,11 +301,13 @@ if __name__ == "__main__":
   shellScriptSh  += "hash -r;"
   shellScriptCsh += "rehash;"
 
-  if options.csh: shellScript = shellScriptCsh
-  else:           shellScript = shellScriptSh
+  if isBourneShell: shellScript = shellScriptSh
+  else:             shellScript = shellScriptCsh
 
   if useDevtoolset2:
-    shellScript += ' scl enable devtoolset-2 %(SHELL)s'
+    shellScript += \
+      ' echo "Launching a devtoolset-2 subshell though scl (CTRL+D to exit).";' \
+      ' scl enable devtoolset-2 %(SHELL)s'
 
   evalScript = shellScript % { "PATH"            : strippedPath
                              , "LD_LIBRARY_PATH" : strippedLibraryPath
