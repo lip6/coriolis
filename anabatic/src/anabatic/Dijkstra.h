@@ -39,41 +39,20 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Anabatic::Symmetry".
-
-  class Symmetry
+// Class  :  "Anabatic::GRAData".
+/*
+  class GRAData 
   {
-    public:
-      enum iFlag { None        = 0
-                 , sHorizontal = (1<<0)
-                 , sVertical   = (1<<1)
-                 , sCFound     = (1<<2)
-      };
     private:
-       Symmetry(unsigned int, DbU::Unit);
-      ~Symmetry();
+                      GRAData();
+                     ~GRAData();
     public:
-      static Symmetry* create(unsigned int, DbU::Unit);   
+      static GRAData* create();  
 
-    public:
-             unsigned int getType () const;
-      inline DbU::Unit    getValue() const;
-      inline bool         isCFound() const;
-      inline void         setAsH();
-      inline void         setAsV();
-      inline void         setFound();
-
-    private:
-      unsigned int _flags;
-      DbU::Unit    _value;
-  };
-
-  inline void      Symmetry::setAsH   () { _flags = ((_flags & ~(0x3)) | sHorizontal); }
-  inline void      Symmetry::setAsV   () { _flags = ((_flags & ~(0x3)) | sVertical  ); }
-  inline void      Symmetry::setFound () { _flags |= sCFound; }
-  inline DbU::Unit Symmetry::getValue () const { return _value; }
-  inline bool      Symmetry::isCFound () const { return _flags & sCFound; }
-  
+    private: 
+      IntervalC*           _intervfrom;
+      IntervalC*           _interv;
+      };*/
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::IntervalC".
@@ -93,6 +72,7 @@ namespace Anabatic {
       static IntervalC* create();   
 
     public:
+             void       destroy      ();
              void       set          ( DbU::Unit, DbU::Unit, DbU::Unit );
              void       setRange     ( DbU::Unit, DbU::Unit );
              void       extendMin    ( DbU::Unit );
@@ -146,6 +126,8 @@ namespace Anabatic {
                      , ERestricted   = (1<<2)  
                      , WRestricted   = (1<<3)
                      , AxisTarget    = (1<<4)
+                     , From2Mode     = (1<<5)
+                     , UseFromFrom2  = (1<<6)
                      };
     public:
       static         DbU::Unit       unreached;
@@ -185,6 +167,7 @@ namespace Anabatic {
              inline  void            clearRps       ();
              inline  Contact*        breakGoThrough ( Net* );
 
+    //////////////////////////////////////// Analog
              inline  bool            isNorth        ( const Vertex* ) const;
              inline  bool            isSouth        ( const Vertex* ) const;
              inline  bool            isEast         ( const Vertex* ) const;
@@ -201,9 +184,7 @@ namespace Anabatic {
              inline  void            setSRestricted   ();
              inline  void            setERestricted   ();
              inline  void            setWRestricted   ();
-             inline  unsigned int    getFlags         () const; 
-             inline  DbU::Unit       getXPath         () const;
-             inline  DbU::Unit       getYPath         () const;
+    //inline  unsigned int    getFlags         () const; 
                      bool            hasRP            ( Net* ) const;
                      bool            hasVRP           ( Net* ) const;
                      bool            hasHRP           ( Net* ) const;
@@ -213,36 +194,55 @@ namespace Anabatic {
               inline void            setIAsH          ();
               inline void            setIAsV          ();
               inline DbU::Unit       getIAxis         () const;
-              inline void            setIAxis         ( DbU::Unit ) ;
-              inline DbU::Unit       getICenter       () const;
+    //inline void            setIAxis         ( DbU::Unit ) ;
+    //inline DbU::Unit       getICenter       () const;
               inline DbU::Unit       getIMax          () const;
               inline DbU::Unit       getIMin          () const;
-              inline void            setPIAsH          ();
-              inline void            setPIAsV          ();
+    //inline void            setPIAsH          ();
+    //inline void            setPIAsV          ();
               inline DbU::Unit       getPIAxis         () const;
-              inline void            setPIAxis         ( DbU::Unit ) ;
-              inline DbU::Unit       getPICenter       () const;
+    //inline void            setPIAxis         ( DbU::Unit ) ;
+    //inline DbU::Unit       getPICenter       () const;
               inline DbU::Unit       getPIMax          () const;
               inline DbU::Unit       getPIMin          () const;
                      bool            isH               () const;
                      bool            isV               () const;
               inline bool            isiSet            () const;
               inline void            setInterv         ( DbU::Unit, DbU::Unit, DbU::Unit );
-              inline void            setIRange         ( DbU::Unit, DbU::Unit );
-              inline void            setIRangeFrom     ( DbU::Unit, DbU::Unit );
-              inline void            printInterval     () const ;
+              inline void            setIntervfrom     ( DbU::Unit, DbU::Unit, DbU::Unit );
+    //inline void            setIRange         ( DbU::Unit, DbU::Unit );
+    //inline void            setIRangeFrom     ( DbU::Unit, DbU::Unit );
+    //inline void            printInterval     () const ;
                      void            setIntervals      ( Vertex* );
                      void            resetIntervals    ();
-             inline  void            setFlags          ( unsigned int );
-             inline  bool            isAxisTarget      () const;
-             inline  void            unsetFlags        ( unsigned int );
-             inline  void            setAxisTarget     ();
-                     DbU::Unit       getXMinUnionfrom  ();
-                     DbU::Unit       getXMaxUnionfrom  ();
-                     DbU::Unit       getYMinUnionfrom  ();
-                     DbU::Unit       getYMaxUnionfrom  ();
+              inline void            setFlags          ( unsigned int );
+              inline bool            isAxisTarget      () const;
+              inline void            unsetFlags        ( unsigned int );
+              inline void            setAxisTarget     ();
+    //DbU::Unit       getXMinUnionfrom  ();
+    //DbU::Unit       getXMaxUnionfrom  ();
+    //DbU::Unit       getYMinUnionfrom  ();
+    //DbU::Unit       getYMaxUnionfrom  ();
+                     bool            areSameSide       ( const Vertex*, const Vertex* ) const;
+                     Point           getStartPathPoint ( const Vertex* next ) const;
+                     Point           getNextPathPoint  ( Point, const Vertex* ) const;
+                     void            clearFrom2        ();
+              inline void            setFrom2Mode      ();
+              inline void            unsetFrom2Mode    ();
+              inline bool            isFrom2Mode       () const;
+              inline Edge*           getFrom2          () const;
+              inline bool            isFromFrom2       () const;
+              inline void            setFromFrom2      () ;
+              inline void            unsetFromFrom2    () ;
+    //inline Vertex*         getPredecessor2   () const;
+              inline void            setFrom2          ( Edge* );
+              inline void            createIntervFrom2 ();
+              inline DbU::Unit       getPIMax2         () const;
+              inline DbU::Unit       getPIMin2         () const;
+              inline DbU::Unit       getPIAxis2        () const;
+              inline IntervalC*      getIntervFrom2    () const;
+              inline IntervalC*      getIntervFrom     () const;
  
-
     // Inspector support. 
                      string          _getString     () const;
     private:                        
@@ -263,6 +263,8 @@ namespace Anabatic {
       unsigned int         _flags;
       IntervalC*           _intervfrom;
       IntervalC*           _interv;
+      Edge*                _from2;
+      IntervalC*           _intervfrom2;
   }; 
 
 
@@ -279,8 +281,10 @@ namespace Anabatic {
     , _from    (NULL)
     , _flags   (NoRestriction)
 
-    , _intervfrom(IntervalC::create())  
-    , _interv    (IntervalC::create()) 
+    , _intervfrom (IntervalC::create())  
+    , _interv     (IntervalC::create()) 
+    , _from2      (NULL)
+    , _intervfrom2(NULL)  
   {
     gcell->setObserver( GCell::Observable::Vertex, &_observer );
   }
@@ -336,32 +340,51 @@ namespace Anabatic {
   inline void         Vertex::setSRestricted   () { _flags |= SRestricted; }
   inline void         Vertex::setERestricted   () { _flags |= ERestricted; }
   inline void         Vertex::setWRestricted   () { _flags |= WRestricted; }
-  inline unsigned int Vertex::getFlags         () const { return _flags; }
+//inline unsigned int Vertex::getFlags         () const { return _flags; }
 
-  inline void         Vertex::setIAxis   ( DbU::Unit axis ) { _interv->setAxis(axis); }
+//inline void         Vertex::setIAxis   ( DbU::Unit axis ) { _interv->setAxis(axis); }
   inline DbU::Unit    Vertex::getIAxis   () const           { return _interv->getAxis(); }
   inline void         Vertex::setIAsH    ()                 { _interv->setAsH(); }
   inline void         Vertex::setIAsV    ()                 { _interv->setAsV(); }
-  inline DbU::Unit    Vertex::getICenter () const           { return _interv->getCenter(); }
+//inline DbU::Unit    Vertex::getICenter () const           { return _interv->getCenter(); }
   inline DbU::Unit    Vertex::getIMax    () const           { return _interv->getMax(); }
   inline DbU::Unit    Vertex::getIMin    () const           { return _interv->getMin(); }
-  inline void         Vertex::setPIAxis  ( DbU::Unit axis ) { _intervfrom->setAxis(axis); }
+//inline void         Vertex::setPIAxis  ( DbU::Unit axis ) { _intervfrom->setAxis(axis); }
   inline DbU::Unit    Vertex::getPIAxis  () const           { return _intervfrom->getAxis(); }
-  inline void         Vertex::setPIAsH   ()                 { _intervfrom->setAsH(); }
-  inline void         Vertex::setPIAsV   ()                 { _intervfrom->setAsV(); }
-  inline DbU::Unit    Vertex::getPICenter() const           { return _intervfrom->getCenter(); }
+//inline void         Vertex::setPIAsH   ()                 { _intervfrom->setAsH(); }
+//inline void         Vertex::setPIAsV   ()                 { _intervfrom->setAsV(); }
+//inline DbU::Unit    Vertex::getPICenter() const           { return _intervfrom->getCenter(); }
   inline DbU::Unit    Vertex::getPIMax   () const           { return _intervfrom->getMax(); }
   inline DbU::Unit    Vertex::getPIMin   () const           { return _intervfrom->getMin(); }
   inline bool         Vertex::isiSet     () const           { return _interv->isiSet(); }
 
   inline void         Vertex::setInterv    ( DbU::Unit min, DbU::Unit max, DbU::Unit axis ) { _interv->set(min, max, axis); }
-  inline void         Vertex::setIRange    ( DbU::Unit min, DbU::Unit max ) { _interv->setRange(min, max); }
-  inline void         Vertex::setIRangeFrom( DbU::Unit min, DbU::Unit max ) { _intervfrom->setRange(min, max); }
-  inline void         Vertex::printInterval() const { _interv->print(); } 
+  inline void         Vertex::setIntervfrom( DbU::Unit min, DbU::Unit max, DbU::Unit axis ) { _intervfrom->set(min, max, axis); }
+//inline void         Vertex::setIRange    ( DbU::Unit min, DbU::Unit max ) { _interv->setRange(min, max); }
+//inline void         Vertex::setIRangeFrom( DbU::Unit min, DbU::Unit max ) { _intervfrom->setRange(min, max); }
+//inline void         Vertex::printInterval() const { _interv->print(); } 
 
   inline void         Vertex::setAxisTarget() { _flags |= AxisTarget; }
   inline bool         Vertex::isAxisTarget () const { return (_flags & AxisTarget); }
   inline void         Vertex::unsetFlags   ( unsigned int mask ) { _flags &= ~mask; }
+  inline void         Vertex::setFrom2Mode   () { _flags |= Vertex::From2Mode;   }
+  inline void         Vertex::unsetFrom2Mode () { unsetFlags(Vertex::From2Mode); }
+  inline bool         Vertex::isFrom2Mode    () const { return (_flags & Vertex::From2Mode); }
+  inline Edge*        Vertex::getFrom2       () const { return _from2; }
+
+  inline void         Vertex::setFromFrom2   () { _flags |= Vertex::UseFromFrom2;   }
+  inline void         Vertex::unsetFromFrom2 () { unsetFlags(Vertex::UseFromFrom2); }
+  inline bool         Vertex::isFromFrom2    () const { return (_flags & Vertex::UseFromFrom2); }
+//inline Vertex*      Vertex::getPredecessor2 () const
+//{ return (hasValidStamp() and _from2) ? _from2->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
+  inline void         Vertex::setFrom2            ( Edge*     from ) { _from2=from; }
+  inline void         Vertex::createIntervFrom2() { _intervfrom2 = IntervalC::create(); }
+  inline DbU::Unit    Vertex::getPIMax2        () const { return _intervfrom2->getMax() ; }
+  inline DbU::Unit    Vertex::getPIMin2        () const { return _intervfrom2->getMin() ; }
+  inline DbU::Unit    Vertex::getPIAxis2       () const { return _intervfrom2->getAxis(); }
+  inline IntervalC*   Vertex::getIntervFrom2   () const { return _intervfrom2; }
+  inline IntervalC*   Vertex::getIntervFrom    () const { return _intervfrom; }
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
 

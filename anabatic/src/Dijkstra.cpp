@@ -49,38 +49,6 @@ namespace Anabatic {
   using Hurricane::NetRoutingExtension;
 
 
-
-// -------------------------------------------------------------------
-// Class  :  "Anabatic::Symmetry".
-
-
-  Symmetry::Symmetry( unsigned int type, DbU::Unit value )
-  {
-    if      (type == sHorizontal) setAsH();
-    else if (type == sVertical  ) setAsV();
-
-    _value = value;
-  }
-
-
-  Symmetry::~Symmetry() {}
-
-
-  Symmetry* Symmetry::create( unsigned int type, DbU::Unit value )
-  {
-    return new Symmetry( type, value );
-  }
-
-
-  unsigned int Symmetry::getType() const 
-  {
-    if      (_flags & sHorizontal) return sHorizontal;
-    else if (_flags & sVertical  ) return sVertical;
-    else    return 0;
-  }
-
-
-
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::IntervalC".
 
@@ -101,6 +69,10 @@ namespace Anabatic {
     return new IntervalC();
   }
 
+  void IntervalC::destroy ()
+  {
+    delete (this);
+  }
 
   void IntervalC::set ( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
   {
@@ -138,7 +110,7 @@ namespace Anabatic {
 
   void IntervalC::print() const
   {
-    cerr << "[IntervalC]: min: " << DbU::getValueString(_min) << ", max:" << DbU::getValueString(_min) << ", axis:" << DbU::getValueString(_axis) << endl;
+    cerr << "[IntervalC]: typeH: " << isH() << ", typeV: " << isV() << ", min: " << DbU::getValueString(_min) << ", max:" << DbU::getValueString(_max) << ", axis:" << DbU::getValueString(_axis) << endl;
   }
 
 
@@ -258,6 +230,408 @@ namespace Anabatic {
         return true;
       }
     }
+  }
+
+
+  Point Vertex::getNextPathPoint( Point pcurr, const Vertex* vnext ) const
+  {
+  //cdebug_log(112,1) << "Point Dijkstra::getNextPathPoint( IntervalC* interv, IntervalC* intervfrom, Vertex* next )" << endl;
+  // done in vcurr
+    if (vnext == NULL){
+      cdebug_tabw(112,-1);
+      return Point(0,0);
+    }
+
+    if (vnext->getGCell()->isMatrix()) {
+      cdebug_tabw(112,-1);
+      return Point(vnext->getGCell()->getXCenter(), vnext->getGCell()->getYCenter());
+    }
+    
+  //Point  pcurr = getStartPathPoint(interv, intervfrom, next);
+    GCell* gnext = vnext->getGCell();
+    GCell* gcurr = getGCell();
+    DbU::Unit x = 0;
+    DbU::Unit y = 0;
+
+
+    if (vnext->isV()){
+    //cdebug_log(112,0) << "Case next: Vertical: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
+      if ((vnext->isiSet())&&(vnext->hasValidStamp())){
+      //cdebug_log(112,0) << "Case set" << endl;
+        x = vnext->getIAxis();
+        if (isNorth(vnext))      y = vnext->getIMin();
+        else if (isSouth(vnext)) y = vnext->getIMax();
+        else if ((isWest(vnext))||(isEast(vnext))) {
+          if      ( pcurr.getY() > vnext->getIMax() ) y = vnext->getIMax();
+          else if ( pcurr.getY() < vnext->getIMin() ) y = vnext->getIMin();
+          else                                        y = pcurr.getY();
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.1" << endl;
+      } else {
+      //cdebug_log(112,0) << "Case not set" << endl;
+        if (isNorth(vnext)){
+          y = gcurr->getYMax();
+          if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
+          else if (pcurr.getX() > gnext->getXMax()) x = gnext->getXMax();
+          else                                      x = pcurr.getX();
+        } else if (isSouth(vnext)){
+          y = gcurr->getYMin();
+          if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
+          else if (pcurr.getX() > gnext->getXMax()) x = gnext->getXMax();
+          else                                      x = pcurr.getX();
+        } else if (isWest(vnext)){
+          x = gcurr->getXMin();
+          if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
+          else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
+          else                                      y = pcurr.getY();
+          
+        } else if (isEast(vnext)){
+          x = gcurr->getXMax();
+          if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
+          else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
+          else                                      y = pcurr.getY();
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.2" << endl;
+      }
+      
+    } else if (vnext->isH()) {
+    //cdebug_log(112,0) << "Case next: Horizontal: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
+      
+      if ((vnext->isiSet())&&(vnext->hasValidStamp())){
+      //cdebug_log(112,0) << "Case set" << endl;
+        y = vnext->getIAxis();
+        if      (isEast (vnext)) x = vnext->getIMin();
+        else if (isWest (vnext)) x = vnext->getIMax();
+        else if ((isNorth(vnext))||(isSouth(vnext))) {
+          if      ( pcurr.getX() > vnext->getIMax() ) x = vnext->getIMax();
+          else if ( pcurr.getX() < vnext->getIMin() ) x = vnext->getIMin();
+          else                                        x = pcurr.getX();
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.3" << endl;
+
+      } else {
+      //cdebug_log(112,0) << "Case not set" << endl;
+        if (isNorth(vnext)){
+          y = gcurr->getYMax();
+          if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
+          else if (pcurr.getX() > gnext->getXMax()) x = gnext->getXMax();
+          else                                      x = pcurr.getX();
+        } else if (isSouth(vnext)){
+          y = gcurr->getYMin();
+          if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
+          else if (pcurr.getX() > gnext->getXMax()) x = gnext->getXMax();
+          else                                      x = pcurr.getX();
+        } else if (isWest(vnext)){
+          x = gcurr->getXMin();
+          if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
+          else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
+          else                                      y = pcurr.getY();
+          
+        } else if (isEast(vnext)){
+          x = gcurr->getXMax();
+          if      (pcurr.getY() < gnext->getYMin()) y = gnext->getYMin();
+          else if (pcurr.getY() > gnext->getYMax()) y = gnext->getYMax();
+          else                                      y = pcurr.getY();
+        } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.4" << endl;
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.5" << endl;
+    }
+  //cdebug_tabw(112,-1);
+    return Point(x,y);
+  }
+
+
+  Point Vertex::getStartPathPoint( const Vertex* next ) const
+  {
+    cdebug_log(112,1) << "Point Vertex::getStartPathPoint( const Vertex* next ) const:" << this << endl;
+    
+    GCell* gcurr = getGCell();
+    GCell* gnext = next->getGCell();
+    DbU::Unit x = 0;
+    DbU::Unit y = 0;
+
+    IntervalC* interv     = _interv;
+    IntervalC* intervfrom = NULL;
+  /*GCell*     gprev      = NULL;
+    if (isFrom2Mode()){
+      cdebug_log(112,0) << "UseFrom2Mode" << endl;
+      intervfrom = _intervfrom2;
+      if (_from2) gprev      = _from2->getOpposite(gcurr);
+    } else {
+      cdebug_log(112,0) << "UseFrom1Mode" << endl;
+      intervfrom = _intervfrom;
+      if (_from) gprev      = _from->getOpposite(gcurr);
+      } 
+    Vertex* prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);*/
+
+
+    if (gcurr->isDevice  ()){
+      cdebug_log(112,0) << "Case device" << endl;
+      if      (isH()){
+        cdebug_log(112,0) << "hinterval: " <<  DbU::getValueString(interv->getAxis()) << endl;
+        y = interv->getAxis();
+        if      ((gnext->getXMax() < interv->getMin())||(isWest (next))) x = interv->getMin();
+        else if ((gnext->getXMin() > interv->getMax())||(isEast (next))) x = interv->getMax();
+        else    x = (max(gnext->getXMin(), interv->getMin())+min(gnext->getXMax(), interv->getMax()))/2;
+
+      } else if (isV()){
+        cdebug_log(112,0) << "vinterval" << endl;
+        x = interv->getAxis();
+        if      ((gnext->getYMax() < interv->getMin())||(isSouth(next))) y = interv->getMin();
+        else if ((gnext->getYMin() > interv->getMax())||(isNorth(next))) y = interv->getMax();
+        else y = (max(gnext->getYMin(), interv->getMin())+min(gnext->getYMax(), interv->getMax()))/2 ;
+      } else {
+        cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+        cdebug_tabw(112,-1);
+        return Point(0,0);
+      }
+    } else if (isH()) {
+      cdebug_log(112,0) << "Case horizontal: " << isiSet() << endl;      
+      GCell*     gprev      = NULL;
+      if (isFrom2Mode()){
+        cdebug_log(112,0) << "UseFrom2Mode" << endl;
+        intervfrom = _intervfrom2;
+        if (_from2) gprev      = _from2->getOpposite(gcurr);
+      } else {
+        cdebug_log(112,0) << "UseFrom1Mode" << endl;
+        intervfrom = _intervfrom;
+        if (_from) gprev      = _from->getOpposite(gcurr);
+      } 
+      Vertex* prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+      cdebug_log(112,0) << "PREV: " << prev << " ";  
+      intervfrom->print();
+      
+
+      if (isiSet()){
+        cdebug_log(112,0) << "isiSet: "; 
+        interv->print();
+        y = interv->getAxis();
+        if      ((gnext->getXMax() < interv->getMin())||(isWest (next))) x = interv->getMin();
+        else if ((gnext->getXMin() > interv->getMax())||(isEast (next))) x = interv->getMax();
+        else    x = (max(gnext->getXMin(), interv->getMin())+min(gnext->getXMax(), interv->getMax()))/2;
+      } else {
+        if        (prev->isH()){
+          cdebug_log(112,0) << "prev is H" << endl;
+          if      (gnext->getXMax() < intervfrom->getMin()) x = intervfrom->getMin();
+          else if (gnext->getXMin() > intervfrom->getMax()) x = intervfrom->getMax();
+          else    x = (max(gnext->getXMin(), intervfrom->getMin())+min(gnext->getXMax(), intervfrom->getMax()))/2;
+          if      (isNorth(prev)) y = gcurr->getYMax();
+          else if (isSouth(prev)) y = gcurr->getYMin();
+          else                    y = intervfrom->getAxis();
+
+        /*if        (isNorth(prev)){
+            x = (max(intervfrom->getMin(), gcurr->getXMin())+min(intervfrom->getMax(), gcurr->getXMax()))/2 ;
+            y = gcurr->getYMax();
+          } else if (isSouth(prev)){
+            x = (max(intervfrom->getMin(), gcurr->getXMin())+min(intervfrom->getMax(), gcurr->getXMax()))/2 ;
+            y = gcurr->getYMin();
+          } else if (isWest (prev)){
+            x = gcurr->getXMin();
+            y = intervfrom->getAxis();
+          } else if (isEast (prev)){
+            x = gcurr->getXMax();
+            y = intervfrom->getAxis();
+          } else {
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getPathPoint( Vertex * vertex ) const: Something is wrong." << endl;
+            cdebug_tabw(112,-1);
+            return Point(0,0);
+            }*/
+        } else if (prev->isV()){
+          cdebug_log(112,0) << "prev is V" << endl;
+
+          if        (isNorth(prev)){
+            cdebug_log(112,0) << "1" << endl;
+            x = intervfrom->getAxis();
+            y = gcurr->getYMax();
+          } else if (isSouth(prev)){
+            cdebug_log(112,0) << "2" << endl;
+            x = intervfrom->getAxis();
+            y = gcurr->getYMin();
+          } else if (isWest (prev)){
+            cdebug_log(112,0) << "3" << endl;
+            x = gcurr->getXMin();
+            if        (isNorth(next)){
+              if   (intervfrom->getMax() > gcurr->getYMax()) y = gcurr->getYMax();
+              else                                           y = intervfrom->getMax();
+            } else if (isSouth(next)){
+              if   (intervfrom->getMin() < gcurr->getYMin()) y = gcurr->getYMin();
+              else                                           y = intervfrom->getMin();
+            } else { // East side
+              if        ( intervfrom->getMin() < gcurr->getYMin() ){ y = gcurr->getYMin();
+              } else if ( intervfrom->getMax() > gcurr->getYMax() ){ y = gcurr->getYMax();
+              } else {                                               y = (intervfrom->getMin() + intervfrom->getMax())/2 ;
+              }
+            }
+          /*if        ( intervfrom->getMin() > gcurr->getYMax() ){
+              y = gcurr->getYMax();
+            } else if ( intervfrom->getMax() < gcurr->getYMin() ){
+              y = gcurr->getYMin();
+            } else {
+              y = (max(intervfrom->getMin(), gcurr->getYMin())+min(intervfrom->getMax(), gcurr->getYMax()))/2 ;
+              }*/
+          } else if (isEast (prev)){
+            cdebug_log(112,0) << "4" << endl;
+            x = gcurr->getXMax();
+            if        (isNorth(next)){
+              if   (intervfrom->getMax() > gcurr->getYMax()) y = gcurr->getYMax();
+              else                                           y = intervfrom->getMax();
+            } else if (isSouth(next)){
+              if   (intervfrom->getMin() < gcurr->getYMin()) y = gcurr->getYMin();
+              else                                           y = intervfrom->getMin();
+            } else { // West side
+              if        ( intervfrom->getMin() < gcurr->getYMin() ){ y = gcurr->getYMin();
+              } else if ( intervfrom->getMax() > gcurr->getYMax() ){ y = gcurr->getYMax();
+              } else {                                               y = (intervfrom->getMin() + intervfrom->getMax())/2 ;
+              }
+            }
+          /*if        ( intervfrom->getMin() > gcurr->getYMax() ){
+              y = gcurr->getYMax();
+            } else if ( intervfrom->getMax() < gcurr->getYMin() ){
+              y = gcurr->getYMin();
+            } else {
+              y = (max(intervfrom->getMin(), gcurr->getYMin())+min(intervfrom->getMax(), gcurr->getYMax()))/2 ;
+              }*/
+          } else {
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+            cdebug_tabw(112,-1);
+            return Point(0,0);
+          }
+          cdebug_log(112,0) << "x: " << DbU::getValueString(x) << ", y:" << DbU::getValueString(y) << endl;
+        } else {
+          cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+          cdebug_tabw(112,-1);
+          return Point(0,0);
+        }
+      }
+    } else if (isV()) {
+      cdebug_log(112,0) << "Case vertical: " << isiSet() << endl;
+      GCell*     gprev      = NULL;
+      if (isFrom2Mode()){
+        cdebug_log(112,0) << "UseFrom2Mode" << endl;
+        intervfrom = _intervfrom2;
+        if (_from2) gprev      = _from2->getOpposite(gcurr);
+      } else {
+        cdebug_log(112,0) << "UseFrom1Mode" << endl;
+        intervfrom = _intervfrom;
+        if (_from) gprev      = _from->getOpposite(gcurr);
+      } 
+      Vertex* prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+      cdebug_log(112,0) << "PREV: " << prev << " ";   
+      intervfrom->print();  
+
+      if (isiSet()){
+        cdebug_log(112,0) << "isiSet: "; 
+        interv->print();
+        x = interv->getAxis();
+        if      ((gnext->getYMax() <= interv->getMin())||(isSouth(next))){
+          y = interv->getMin();
+          cdebug_log(112,0) << "1" << endl;
+        }
+        else if ((gnext->getYMin() >= interv->getMax())||(isNorth(next))){
+          y = interv->getMax();
+          cdebug_log(112,0) << "2" << endl;
+        }
+        else {
+          y = (max(gnext->getYMin(), interv->getMin())+min(gnext->getYMax(), interv->getMax()))/2 ;
+          cdebug_log(112,0) << "3" << endl;
+        }
+      } else {
+        if        (prev->isH()){
+          cdebug_log(112,0) << "prev is H" << endl;
+          if        (isNorth(prev)){
+            y = gcurr->getYMax();
+            if        (isNorth(next)){
+              if   (intervfrom->getMax() > gcurr->getXMax()) x = gcurr->getXMax();
+              else                                           x = intervfrom->getMax();
+            } else if (isSouth(next)){
+              if   (intervfrom->getMin() < gcurr->getXMin()) x = gcurr->getXMin();
+              else                                           x = intervfrom->getMin();
+            } else { // West side
+              if        ( intervfrom->getMin() < gcurr->getXMin() ){ x = gcurr->getXMin();
+              } else if ( intervfrom->getMax() > gcurr->getXMax() ){ x = gcurr->getXMax();
+              } else {                                               x = (intervfrom->getMin() + intervfrom->getMax())/2 ;
+              }
+            }
+          /*y = gcurr->getYMax();
+            if        ( intervfrom->getMin() > gcurr->getXMax() ){
+              x = gcurr->getXMax();
+            } else if ( intervfrom->getMax() < gcurr->getXMin() ){
+              x = gcurr->getXMin();
+            } else {
+              x = (max(intervfrom->getMin(), gcurr->getXMin())+min(intervfrom->getMax(), gcurr->getXMax()))/2 ;
+            }*/
+          } else if (isSouth(prev)){
+            y = gcurr->getYMin();
+            if        (isEast(next)){
+              if   (intervfrom->getMax() > gcurr->getXMax()) x = gcurr->getXMax();
+              else                                           x = intervfrom->getMax();
+            } else if (isWest(next)){
+              if   (intervfrom->getMin() < gcurr->getXMin()) x = gcurr->getXMin();
+              else                                           x = intervfrom->getMin();
+            } else { // Northside
+              if        ( intervfrom->getMin() < gcurr->getXMin() ){ x = gcurr->getXMin();
+              } else if ( intervfrom->getMax() > gcurr->getXMax() ){ x = gcurr->getXMax();
+              } else {                                               x = (intervfrom->getMin() + intervfrom->getMax())/2 ;
+              }
+            }
+
+          /*y = gcurr->getYMin();
+            if        ( intervfrom->getMin() > gcurr->getXMax() ){
+              x = gcurr->getXMax();
+            } else if ( intervfrom->getMax() < gcurr->getXMin() ){
+              x = gcurr->getXMin();
+            } else {
+              x = (max(intervfrom->getMin(), gcurr->getXMin())+min(intervfrom->getMax(), gcurr->getXMax()))/2 ;
+            }*/
+          } else if (isWest (prev)){
+            x = gcurr->getXMin();
+            y = intervfrom->getAxis();
+          } else if (isEast (prev)){
+            x = gcurr->getXMax();
+            y = intervfrom->getAxis();
+          } else {
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+            cdebug_tabw(112,-1);
+            return Point(0,0);
+          }
+        } else if (prev->isV()){
+          cdebug_log(112,0) << "prev is V" << endl;
+          if      (gnext->getYMax() < intervfrom->getMin())  { y = intervfrom->getMin();
+          } else if (gnext->getYMin() > intervfrom->getMax()){ y = intervfrom->getMax();
+          } else{ y = (max(gnext->getYMin(), intervfrom->getMin())+min(gnext->getYMax(), intervfrom->getMax()))/2;
+          }
+
+          if      (isEast(prev)) x = gcurr->getXMax();
+          else if (isWest(prev)) x = gcurr->getXMin();
+          else                   x = intervfrom->getAxis();
+
+          /*if (isNorth(prev)){
+            x = intervfrom->getAxis();
+            y = gcurr->getYMax();
+          } else if (isSouth(prev)){
+            x = intervfrom->getAxis();
+            y = gcurr->getYMin();
+          } else if (isWest (prev)){
+            x = gcurr->getXMin(); 
+            y = (max(intervfrom->getMin(), gcurr->getYMin())+min(intervfrom->getMax(), gcurr->getYMax()))/2 ;
+          } else if (isEast (prev)){
+            x = gcurr->getXMax();
+            y = (max(intervfrom->getMin(), gcurr->getYMin())+min(intervfrom->getMax(), gcurr->getYMax()))/2 ;
+          } else {
+            cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+            return Point(0,0);
+          }*/
+        } else {
+          cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+          cdebug_tabw(112,-1);
+          return Point(0,0);
+        }
+      }
+    } else {
+      cdebug_log(112,0) << "[ERROR](Point Vertex::getStartPathPoint() const: Something is wrong." << endl;
+      cdebug_tabw(112,-1);
+      return Point(0,0);
+    }
+    cdebug_tabw(112,-1);
+    return Point(x,y);
   }
 
 
@@ -556,9 +930,18 @@ namespace Anabatic {
   
   void Vertex::setIntervals ( Vertex* vcurr )
   {
-    Point pcurr = vcurr->getPathPoint(this);
-    Point pnext = Vertex::getNextPathPoint2( vcurr, this );
-    cdebug_log(112,0) << "void Vertex::setIntervals ( Vertex* vcurr )" << endl;
+    cdebug_log(112,1) << "!SETINTERVALS! ( Vertex* vcurr )" << endl;
+  //Point pcurr = vcurr->getPathPoint(this);
+    Point pcurr;
+    if (isFromFrom2()){
+      vcurr->setFrom2Mode();
+      pcurr = vcurr->getStartPathPoint(this);
+      vcurr->unsetFrom2Mode();
+    } else {
+      pcurr = vcurr->getStartPathPoint(this);
+    }
+  //Point pnext = Vertex::getNextPathPoint2( vcurr, this );
+    Point pnext = vcurr->getNextPathPoint( pcurr, this );
     cdebug_log(112,0) << "Pcurrent  : X:" << DbU::getValueString(pcurr.getX())   << ", Y:" << DbU::getValueString(pcurr.getY())   << endl;
     cdebug_log(112,0) << "Pneighbour: X:" << DbU::getValueString(pnext.getX()) << ", Y:" << DbU::getValueString(pnext.getY()) << endl;
     DbU::Unit min, max, axis;
@@ -622,6 +1005,9 @@ namespace Anabatic {
         if (vcurr->hasValidStamp() && (vcurr->getFrom() != NULL)){
           GCell*  gcurr = vcurr->getGCell();
           GCell*  gprev = vcurr->getFrom()->getOpposite(gcurr);
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()) gprev = vcurr->getFrom2()->getOpposite(gcurr);
+          }
           Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
           if (vprev->isH()) {
             cdebug_log(112,0) << "----------------------------" << endl;
@@ -634,15 +1020,46 @@ namespace Anabatic {
           }
         }
         if (hh){
-          GCell*  gcurr = vcurr->getGCell();
+          GCell*     gcurr      = vcurr->getGCell();
+          GCell*     gnext      = getGCell();
+        //Vertex*    vcurr      = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
+          IntervalC* intervfrom = vcurr->getIntervFrom();
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()) intervfrom = vcurr->getIntervFrom2();
+          }
+          
+          if        (gnext->getXMin() > intervfrom->getMax()){
+            cdebug_log(112,0) << "1" << endl;
+            min = intervfrom->getMax();
+            max = gnext->getXMin();
+          } else if (gnext->getXMax() < intervfrom->getMin()){
+            cdebug_log(112,0) << "2" << endl;
+            min = gnext->getXMax();
+            max = intervfrom->getMin();
+          } else {
+            cdebug_log(112,0) << "3" << endl;
+            min = std::max(gcurr->getXMin(), intervfrom->getMin());
+            max = std::min(gcurr->getXMax(), intervfrom->getMax());
+          }
+
+
+        /*GCell*  gcurr = vcurr->getGCell();
           Vertex* vcurr = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
           min = std::max(gcurr->getXMin(), vcurr->getPIMin());
           max = std::min(gcurr->getXMax(), vcurr->getPIMax());
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()){
+              min = std::max(gcurr->getXMin(), vcurr->getPIMin2());
+              max = std::min(gcurr->getXMax(), vcurr->getPIMax2());
+            }
+          }*/
         } else {
           if (pcurr.getX() < pnext.getX()){
+            cdebug_log(112,0) << "4" << endl;
             min = pcurr.getX();
             max = pnext.getX();
           } else {
+            cdebug_log(112,0) << "5" << endl;
             max = pcurr.getX();
             min = pnext.getX();
           }
@@ -674,8 +1091,11 @@ namespace Anabatic {
         if (vcurr->hasValidStamp() && (vcurr->getFrom() != NULL)){
           GCell*  gcurr = vcurr->getGCell();
           GCell*  gprev = vcurr->getFrom()->getOpposite(gcurr);
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()) gprev = vcurr->getFrom2()->getOpposite(gcurr);
+          }
           Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
-          if (vprev->isV()) {
+          if ((vprev->isV())) {
             cdebug_log(112,0) << "----------------------------" << endl;
             cdebug_log(112,0) << "VVCASE:" << endl;
             cdebug_log(112,0) << "prev: " << vprev << endl;
@@ -686,15 +1106,42 @@ namespace Anabatic {
           }
         }
         if (vv){
-          GCell*  gcurr = vcurr->getGCell();
-          Vertex* vcurr = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
+          GCell*     gcurr      = vcurr->getGCell();
+          GCell*     gnext      = getGCell();
+        //Vertex*    vcurr      = gcurr->getObserver<Vertex>(GCell::Observable::Vertex);
+          IntervalC* intervfrom = vcurr->getIntervFrom();
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()) intervfrom = vcurr->getIntervFrom2();
+          }
+          if        (gnext->getYMin() > intervfrom->getMax()){
+            cdebug_log(112,0) << "1" << endl;
+            min = intervfrom->getMax();
+            max = gnext->getYMin();
+          } else if (gnext->getYMax() < intervfrom->getMin()){
+            cdebug_log(112,0) << "2" << endl;
+            min = gnext->getYMax();
+            max = intervfrom->getMin();
+          } else {
+            cdebug_log(112,0) << "3" << endl;
+            min = std::max(gcurr->getYMin(), intervfrom->getMin());
+            max = std::min(gcurr->getYMax(), intervfrom->getMax());
+          }
+        /*
           min = std::max(gcurr->getYMin(), vcurr->getPIMin());
           max = std::min(gcurr->getYMax(), vcurr->getPIMax());
+          if (vcurr->getFrom2() != NULL){
+            if (isFromFrom2()){
+              min = std::max(gcurr->getYMin(), vcurr->getPIMin2());
+              max = std::min(gcurr->getYMax(), vcurr->getPIMax2());
+            }
+          }*/
         } else {
           if (pcurr.getY() < pnext.getY()){
+            cdebug_log(112,0) << "4" << endl;
             min = pcurr.getY();
             max = pnext.getY();
           } else {
+            cdebug_log(112,0) << "5" << endl;
             max = pcurr.getY();
             min = pnext.getY();
           }
@@ -707,7 +1154,15 @@ namespace Anabatic {
     }
     cdebug_log(112,0) << "IntervFrom => min: " << DbU::getValueString(min) << ", max: " << DbU::getValueString(max) << ", axis:" << DbU::getValueString(axis) << endl; 
     
-    _intervfrom->set( min, max, axis );
+    if (isFrom2Mode()) {
+      cdebug_log(112,0) << "SetIntervfrom2" << endl;
+      _intervfrom2->set( min, max, axis );
+    }
+    else {
+      cdebug_log(112,0) << "SetIntervfrom" << endl;
+      _intervfrom->set ( min, max, axis );
+    }
+    cdebug_tabw(112,-1);
   }
 
 
@@ -715,6 +1170,16 @@ namespace Anabatic {
   {
     _interv->reset();
     _intervfrom->reset();
+  }
+                     
+  bool Vertex::areSameSide ( const Vertex* v1, const Vertex* v2 ) const
+  {
+    if (  (isNorth(v1) and isNorth(v2))
+       || (isSouth(v1) and isSouth(v2))
+       || (isWest (v1) and isWest (v2))
+       || (isEast (v1) and isEast (v2))
+       ) return true;
+    else return false;
   }
 
 
@@ -724,7 +1189,6 @@ namespace Anabatic {
       string s = "<Vertex [key] " + getString(_id) + ">";
       return s;
     }
-
     string s = "<Vertex " + getString(_id)
              + " @(" + DbU::getValueString(_gcell->getXMin())
              +  "-" + DbU::getValueString(_gcell->getYMin()) 
@@ -739,6 +1203,7 @@ namespace Anabatic {
     /*+   "+" + getString(_branchId)
       + " stamp:" + (hasValidStamp() ? "valid" : "outdated")*/
              + " from:" + ((_from) ? "set" : "NULL")
+             + " from2:" + ((_from2) ? "set" : "NULL")
              + " restricted:" + (isNRestricted() ? "N" : "-")
              + (isSRestricted() ? "S" : "-")
              + (isERestricted() ? "E" : "-")
@@ -982,7 +1447,7 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit Vertex::getXMinUnionfrom ()
+/*DbU::Unit Vertex::getXMinUnionfrom ()
   {
     if (_intervfrom){
       if (hasValidStamp()){
@@ -994,6 +1459,7 @@ namespace Anabatic {
           return max(_intervfrom->getMin(), gcurr->getXMin());
         } else {
           cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 3" << endl;
+          return 0;
         }
       } else {
         cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 2" << endl;
@@ -1078,9 +1544,14 @@ namespace Anabatic {
       cdebug_log(112,0) << "[ERROR]: No FROM, wrong usage. 1" << endl;
       return 0;
     }
+    }*/
+
+
+  void Vertex::clearFrom2 ()
+  {
+    _from2 = NULL;
+  //if (_intervfrom2) _intervfrom2->destroy();
   }
-
-
 
 
   Dijkstra::Dijkstra ( AnabaticEngine* anabatic )
@@ -1470,21 +1941,32 @@ namespace Anabatic {
       _queue.dump();
 
       Vertex* current = _queue.top();
-      cdebug_log(111,0) << endl;
-      cdebug_log(111,0) << "[Current Vertex]: " << current << ", current->getConnexId() == _connectedsId):" << (current->getConnexId() == _connectedsId)<< ", (current->getConnexId() < 0): "  << current->getConnexId()  << endl;
+      cdebug_log(111,0) << endl << "[Current Vertex]: " << current << ", current->getConnexId() == _connectedsId):" << (current->getConnexId() == _connectedsId)<< ", (current->getConnexId() < 0): "  << current->getConnexId()  << endl;
       _queue.pop();
 
-      if (   current->isAxisTarget() 
-         and needAxisTarget()
-         ){ 
-        unsetFlags(Mode::AxisTarget);
-      } else if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
+      if      ( current->isAxisTarget() and needAxisTarget()) unsetFlags(Mode::AxisTarget);
+      else if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
 
         for ( Edge* edge : current->getGCell()->getEdges() ) {
+          cdebug_log(111,0) << endl  << "===================================================================================" << endl << endl;
           if (edge == current->getFrom()) {
             cdebug_log(111,0) << "edge == current->getFrom()" << endl;
             continue;
+          } else {
+            cdebug_log(111,0) << "edge != current->getFrom()" << endl;
           }
+          if (current->getFrom2()){
+            if (edge == current->getFrom2()) {
+              cdebug_log(111,0) << "edge == current->getFrom2()" << endl;
+              continue;
+            } else {
+              cdebug_log(111,0) << "edge != current->getFrom2(): " << current->getFrom2() << endl;
+            }
+          } else {
+            cdebug_log(111,0) << "current->getFrom2() = NULL" << endl;
+          }
+
+
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           GCell*  gcurrent  = current->getGCell();
           Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
@@ -1493,77 +1975,148 @@ namespace Anabatic {
             cdebug_log(111,0) << "ConnectedsId" << endl;
             continue;
           }
-
           if (not _searchArea.intersect(gneighbor->getBoundingBox())) {
             cdebug_log(111,0) << "not in _searchArea: " << _searchArea << ", gneighbor area: "  << gneighbor->getBoundingBox() << endl;
             continue;
           }
-          cdebug_log(111,0) << endl  << "===================================================================================" << endl << endl;
-          cdebug_log(111,0) << "| Net: " << _net << endl;
-          cdebug_log(111,0) << "| Curr: " << current;
-          if (current->getFrom()){
+
+        ////////////////////////////////////// DEBUG ////////////////////////////////////// 
+        //cdebug_log(111,0) << endl  << "===================================================================================" << endl << endl;
+          cdebug_log(111,0) << "| Net   : " << _net << endl;
+          cdebug_log(111,0) << "| [Curr]: " << current;
+          if (current->getFrom()) { 
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
-          } else {
-            cdebug_log(111,0) << endl;
+            current->getIntervFrom()->print();
           }
+          else                    { cdebug_log(111,0) << endl;}
+          if (current->getFrom2()) { 
+            cdebug_log(111,0) << "| FROM2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
+            current->getIntervFrom2()->print();
+          }
+
+
           cdebug_log(111,0) << "| Edge " << edge << endl;
           cdebug_log(111,0) << "+ Neighbor: " << vneighbor;
-          if ((vneighbor->getFrom() != NULL)&&(vneighbor->hasValidStamp())) {cdebug_log(111,0) << "| Neighbor getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;}
+          if ((vneighbor->getFrom() != NULL)&&(vneighbor->hasValidStamp())) {cdebug_log(111,0) << "| Neighbor GETFROM:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;}
           else                              {cdebug_log(111,0) << endl;}
+        /////////////////////////////////////////////////////////////////////////////////// 
 
-
+        // if has 2 from, 2 distances to calculate
+        //current->unsetFromFrom2();
+          cdebug_log(111,0) << "Calc distance1" << endl;
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
-          cdebug_log(111,0) << "Distance curr: " << DbU::getValueString(distance) << endl;
-          cdebug_log(111,0) << "Distance prev: " << DbU::getValueString(vneighbor->getDistance()) << endl;
 
-          if  (   (distance == vneighbor->getDistance())
-              and ( (!gcurrent->isMatrix())||(!gneighbor->isMatrix()) )
-              ){
-            cdebug_log(111,0) << "Distance EQUAL" << endl;
+          DbU::Unit distance2     = Vertex::unreachable;
+          bool isDistance2shorter = false;
+          if (current->getFrom2()) {
+            cdebug_log(111,0) << "HAS 2nd getfrom" << edge << endl;
+            current->setFrom2Mode();
+            cdebug_log(111,0) << "Calc distance2" << endl;
+            distance2 = _distanceCb( current, vneighbor, edge );
+            current->unsetFrom2Mode();
+            cdebug_log(111,0) << "Distance1 curr: " << DbU::getValueString(distance) << endl;
+            cdebug_log(111,0) << "Distance2 curr: " << DbU::getValueString(distance2) << endl;
+            if (distance > distance2){
+              cdebug_log(111,0) << "=> distance2 is shorter" << endl;
+              isDistance2shorter = true;
+              distance = distance2;
+            } else if (distance == distance2) {
+              cdebug_log(111,0) << "distance == distance2" << endl;
+              Point pcurr  = current->getStartPathPoint(vneighbor);
+              current->setFrom2Mode();
+              Point pcurr2 = current->getStartPathPoint(vneighbor);
+              current->unsetFrom2Mode();
+              Point pnext  = gneighbor->getCenter(); 
+              if (calcDistance(pcurr, pnext) > calcDistance(pcurr2, pnext)) {
+                cdebug_log(111,0) << "=> distance2 is shorter" << endl;
+                isDistance2shorter = true;
+                distance = distance2;
+              } else {
+                cdebug_log(111,0) << "=> distance1 is shorter" << endl;
+              }
+            } else {
+              cdebug_log(111,0) << "=> distance1 is shorter" << endl;
+            }
+          } else {
+            cdebug_log(111,0) << "NO 2nd getfrom" << endl;
+            cdebug_log(111,0) << "Distance1 curr: " << DbU::getValueString(distance) << endl;
+          }
+
+        //cdebug_log(111,0) << "Distance1 curr: " << DbU::getValueString(distance) << endl;
+        //cdebug_log(111,0) << "Distance2 curr: " << DbU::getValueString(distance2) << ", isDistance2shorter:" << isDistance2shorter << endl;
+          cdebug_log(111,0) << "Distance prev : " << DbU::getValueString(vneighbor->getDistance()) << endl;
+
+          if  ( (distance == vneighbor->getDistance()) and ((!gcurrent->isMatrix()) and (!gneighbor->isMatrix())) ){
+            cdebug_log(111,0) << "[case: Distance EQUAL + SameSide]" << endl;
             cdebug_log(111,0) << "Previous getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;
             
             GCell*  gnext = vneighbor->getGCell();
             GCell*  gprev = vneighbor->getFrom()->getOpposite(gnext);
             Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+      
+          //Point     pnext    = Vertex::getNextPathPoint2( current, vneighbor );
+          //Point     pprev    = Vertex::getNextPathPoint2( vprev, vneighbor   );
+
+          //Point     pnext    = current->getNextPathPoint( current->getStartPathPoint(vneighbor), vneighbor );
+          //Point     pprev    = vprev->getNextPathPoint  ( vprev->getStartPathPoint(vneighbor), vneighbor   );
+          //Point     ppond    = _getPonderedPoint();
+          //DbU::Unit distcurr = this->_getDistancetoRP(pnext); 
+          //DbU::Unit distprev = this->_getDistancetoRP(pprev);
+
+          //cdebug_log(111,0) << "Pcurrent: X:" << DbU::getValueString(pnext.getX()) << ", Y:" << DbU::getValueString(pnext.getY()) << endl;
+          //cdebug_log(111,0) << "Pprev   : X:" << DbU::getValueString(pprev.getX()) << ", Y:" << DbU::getValueString(pprev.getY()) << endl;
+          //cdebug_log(111,0) << "distToTargets curr: " << DbU::getValueString(distcurr) << endl;
+          //cdebug_log(111,0) << "distToTargets prev: " << DbU::getValueString(distprev) << endl;
 
 
-            Point     pnext    = Vertex::getNextPathPoint2( current, vneighbor );
-            Point     pprev    = Vertex::getNextPathPoint2( vprev, vneighbor );
-            Point     ppond    = _getPonderedPoint();
-            DbU::Unit distcurr =  this->_getDistancetoRP(pnext);
-            DbU::Unit distprev =  this->_getDistancetoRP(pprev);
-
-            cdebug_log(111,0) << "Pcurrent: X:" << DbU::getValueString(pnext.getX()) << ", Y:" << DbU::getValueString(pnext.getY()) << endl;
-            cdebug_log(111,0) << "Pprev   : X:" << DbU::getValueString(pprev.getX()) << ", Y:" << DbU::getValueString(pprev.getY()) << endl;
-
-            cdebug_log(111,0) << "distToTargets curr: " << DbU::getValueString(distcurr) << endl;
-            cdebug_log(111,0) << "distToTargets prev: " << DbU::getValueString(distprev) << endl;
-
-            if (  ( distcurr < distprev )
-               || (  ( distcurr == distprev )
-                  && ( calcDistance(ppond, pnext) < calcDistance(ppond, pprev) )
-                  )
-               ){
+            if ((distance == vneighbor->getDistance()) and vneighbor->areSameSide(vprev, current)){
+              cdebug_log(112,0) << "----------------------------" << endl;
+              cdebug_log(112,0) << "(distance == vneighbor->getDistance()) + sameSide => add create 2nd from" << endl; 
+              cdebug_log(112,0) << "vneighbor: " << vneighbor << endl;
+              cdebug_log(112,0) << "curr: " << current << endl;
+              cdebug_log(112,0) << "prev: " << vprev << endl;
+              cdebug_log(112,0) << "----------------------------" << endl;
+              cdebug_log(111,0) << "[case: Other GetFROM]" << endl; 
+              vneighbor->setFrom2    ( edge );
+            //current->setFrom2Mode();
+              vneighbor->setFrom2Mode();
+              vneighbor->createIntervFrom2();
+              vneighbor->setIntervals( current );
+            //current->unsetFrom2Mode();
+              vneighbor->unsetFrom2Mode();
+              if (isDistance2shorter) {
+                vneighbor->setFromFrom2();
+                cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
+              }
+              cdebug_log(111,0) << "Push BIS : (size:" << _queue.size() << ") " << vneighbor << endl;
+              vneighbor->getIntervFrom()->print();
+              vneighbor->getIntervFrom2()->print();
+            } /*else if (  ( distcurr < distprev )
+                      || (( distcurr == distprev ) && ( calcDistance(ppond, pnext) < calcDistance(ppond, pprev)  ))
+                      ){
               _queue.erase( vneighbor );
-              cdebug_log(111,0) << "BETTER GetFROM" << endl;
+              cdebug_log(111,0) << "case: BETTER GetFROM" << endl; 
               vneighbor->setBranchId( current->getBranchId() );
               vneighbor->setDistance( distance );
-            //Point pathPoint = Vertex::getNextPathPoint( current, vneighbor );
-            //vneighbor->setPathPoint( pathPoint.getX(), pathPoint.getY() );
-              vneighbor->setFrom     ( edge );
+              if (isDistance2shorter) {
+                vneighbor->setFrom2( edge );
+                vneighbor->setFromFrom2();
+                cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
+              } else {
+                vneighbor->setFrom ( edge );
+              }
               _queue.push( vneighbor );
-
               vneighbor->setIntervals( current );
               cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
-            }
+              }*/
+
           } else if (  ( (distance  < vneighbor->getDistance()) and (distance  != Vertex::unreachable) ) 
-                    or ( (distance == vneighbor->getDistance()) and (current->getBranchId() > vneighbor->getBranchId()) ) 
+                  // or ( (distance == vneighbor->getDistance()) and (current->getBranchId() > vneighbor->getBranchId()) ) 
                     ) {
-            if (vneighbor->getDistance() != Vertex::unreached) {
-              _queue.erase( vneighbor );
-            } else {
+            if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
+            else {
               if (not vneighbor->hasValidStamp()) {
-                cdebug_log(111,0) << "Distance FIRST" << endl;
+                cdebug_log(111,0) << "[case: Distance FIRST]" << endl;
                 vneighbor->setConnexId( -1 );
                 vneighbor->setStamp   ( _stamp );
                 vneighbor->setDegree  ( 1 );
@@ -1571,15 +2124,23 @@ namespace Anabatic {
                 vneighbor->unsetFlags(Vertex::AxisTarget);
               }
             }
-
-            cdebug_log(111,0) << "Distance INF" << endl;
+            cdebug_log(111,0) << "[case: Distance INFERIOR]" << endl;
+            vneighbor->unsetFromFrom2();
+            cdebug_log(111,0) << "unsetFromFrom2: " << vneighbor << endl; 
+            vneighbor->clearFrom2();
             vneighbor->setBranchId( current->getBranchId() );
             vneighbor->setDistance( distance );
-            vneighbor->setFrom     ( edge );
+            vneighbor->setFrom ( edge );
+            if (isDistance2shorter) {
+              vneighbor->setFromFrom2();
+              cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
+            } else {
+              cdebug_log(111,0) << "DON'T setFromFrom2: " << vneighbor << endl; 
+            }
             _queue.push( vneighbor );
-
             vneighbor->setIntervals( current );
             cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
+            vneighbor->getIntervFrom()->print();
           }
         }
 
@@ -1611,15 +2172,24 @@ namespace Anabatic {
   {
     cdebug_log(112,1) << "Dijkstra::_traceback() " << _net << " branchId:" << _sources.size() << endl;
 
-    int   branchId      = _sources.size();
+    int branchId = _sources.size();
     _toSources( current, _connectedsId );
 
-    bool    isfirst  = true;
+    bool isfirst  = true;
+    bool useFrom2 = false;
     if (!current->getGCell()->isMatrix()){
       GCell*  gcurr  = current->getGCell();
       GCell*  gprev  = current->getFrom()->getOpposite(gcurr);
       Vertex* vprev  = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
-      Point   pentry = Vertex::getNextPathPoint2( vprev, current );
+
+      Point   pcurrent = vprev->getStartPathPoint(current);
+    //Point   pentry   = Vertex::getNextPathPoint2( vprev, current );
+      Point   pentry   = vprev->getNextPathPoint( pcurrent, current );
+      cdebug_log(112,0) << "current : " << gcurr << endl;
+      cdebug_log(112,0) << "previous: " << gprev << endl;
+      cdebug_log(112,0) << "pcurr : x: " << DbU::getValueString(pcurrent.getX()) << ", y: " << DbU::getValueString(pcurrent.getY()) << endl;
+      cdebug_log(112,0) << "pentry: x: " << DbU::getValueString(pentry.getX())   << ", y: " << DbU::getValueString(pentry.getY())   << endl;
+ 
 
       cdebug_log(112,0) << "| " << current << " | " << endl;
       if        (current->isH()){
@@ -1647,20 +2217,91 @@ namespace Anabatic {
           cdebug_log(112,0) <<                   ", axis: " << DbU::getValueString(current->getIAxis()) << endl;
         }
       } 
-      cdebug_log(112,0) << "isiSet: " << current->isiSet() << ", " << current << endl;
+      cdebug_log(112,0) << "isiSet: " << current->isiSet() << endl;
     } else {
       current = current->getPredecessor();
       isfirst = false;
+      
     }
+    cdebug_log(112,0) << "[Start WHILE]" << endl;
 
     while ( current ) {
+      cdebug_log(112,0) << endl;
       cdebug_log(112,0) << "| " << current << " | " << endl;
 
-      if (!isfirst){
+      if (!current->getGCell()->isMatrix()){
+        if (!isfirst){
+          current->incDegree();
+          if (current->getConnexId() == _connectedsId) break;
+          Edge* from = NULL;
+          if (useFrom2) {
+            cdebug_log(112,0) << "USE FROM2: " << current->getFrom2() << endl;
+            current->setFrom(current->getFrom2());
+            current->setIntervfrom(current->getPIMin2(), current->getPIMax2(), current->getPIAxis2());
+            current->clearFrom2();
+          }
+          from = current->getFrom();
+          if (not from) break;
+
+          current->setDistance( 0.0 );
+          current->setConnexId( _connectedsId );
+          current->setBranchId( branchId );
+          _sources.insert( current );
+          _queue.push( current );
+        } else isfirst = false;
+
+        if (!current->getGCell()->isMatrix()){
+          if (current->getPredecessor() != NULL){
+            cdebug_log(112,0) << "Predecessor()    : " << current->getPredecessor() << endl;
+            cdebug_log(112,0) << "[Interval update]: min : " << DbU::getValueString(current->getPIMin());
+            cdebug_log(112,0) <<                  ", max : " << DbU::getValueString(current->getPIMax());
+            cdebug_log(112,0) <<                  ", axis: " << DbU::getValueString(current->getPIAxis()) << endl;
+            current->getPredecessor()->setInterv(current->getPIMin(), current->getPIMax(), current->getPIAxis());
+            current->getIntervFrom()->print();
+          //cdebug_log(112,0) << "isiSet: " << current->getPredecessor()->isiSet() << ", " << current->getPredecessor() << endl;
+          } 
+        } 
+        Vertex* next = NULL;
+        next = current->getPredecessor();
+
+        if( current->isFromFrom2()) {
+          cdebug_log(112,0) << "ISFROMFROM2: " << current << endl;
+          useFrom2 = true;
+          current->unsetFromFrom2();
+        } else {
+          cdebug_log(112,0) << "ISNOT FROMFROM2" << endl;
+          useFrom2 = false;
+        }
+        current = next;
+      } else {
         current->incDegree();
         if (current->getConnexId() == _connectedsId) break;
 
-        Edge* from = current->getFrom();
+        Edge* from  = current->getFrom();
+        if (not from) break;
+
+        current->setDistance( 0.0 );
+        current->setConnexId( _connectedsId );
+        current->setBranchId( branchId );
+        _sources.insert( current );
+        _queue.push( current );
+        current = current->getPredecessor();
+      }
+
+    /*if (!isfirst){
+        current->incDegree();
+        if (current->getConnexId() == _connectedsId) break;
+
+        Edge* from = NULL;
+        if (useFrom2) {
+          cdebug_log(112,0) << "USE FROM2: " << current->getFrom2() << ", " << current->getIntervFrom2() << endl;
+          
+          current->setFrom(current->getFrom2());
+          current->setInterv(current->getPIMin2(), current->getPIMax2(), current->getPIAxis2());
+          current->clearFrom2();
+        }
+        from = current->getFrom();
+
         if (not from) break;
 
         current->setDistance( 0.0 );
@@ -1672,17 +2313,27 @@ namespace Anabatic {
         isfirst = false;
       }
 
-      if (!current->getGCell()->isMatrix()){
+      if ((!current->getGCell()->isMatrix())&&(!first)){
         if (current->getPredecessor() != NULL){
           cdebug_log(112,0) << "[Interval update]: min : " << DbU::getValueString(current->getPIMin());
           cdebug_log(112,0) <<                  ", max : " << DbU::getValueString(current->getPIMax());
           cdebug_log(112,0) <<                  ", axis: " << DbU::getValueString(current->getPIAxis()) << endl;
           current->getPredecessor()->setInterv(current->getPIMin(), current->getPIMax(), current->getPIAxis());
-          cdebug_log(112,0) << "isiSet: " << current->getPredecessor()->isiSet() << ", " << current->getPredecessor() << endl;
+        //cdebug_log(112,0) << "isiSet: " << current->getPredecessor()->isiSet() << ", " << current->getPredecessor() << endl;
         } 
       } 
-      
-      current = current->getPredecessor();
+      Vertex* next = NULL;
+      next = current->getPredecessor();
+
+      if( current->isFromFrom2()) {
+        cdebug_log(112,0) << "ISFROMFROM2: " << current << endl;
+        useFrom2 = true;
+        current->unsetFromFrom2();
+      } else {
+        cdebug_log(112,0) << "ISNOT FROMFROM2" << endl;
+        useFrom2 = false;
+      }
+      current = next;*/
     }
 
     cdebug_tabw(112,-1);
@@ -1790,7 +2441,9 @@ namespace Anabatic {
 
         cdebug_log(112,0) << "|| " << segment << endl;
       //cdebug_log(112,0) << "| " << "break (turn, branch or terminal)." << endl;
+        Vertex* stc = source;
         source = (target->getFrom()) ? target : NULL;
+        stc->clearFrom2();
       }
     }
 

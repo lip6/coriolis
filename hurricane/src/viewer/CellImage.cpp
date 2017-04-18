@@ -126,7 +126,7 @@ namespace Hurricane {
 
     _flags = flags;
 
-    int  scale = 4 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
+    int  scale = 80 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
     _drawingWidth  = _cellWidget->width ()*scale;
     _drawingHeight = _cellWidget->height()*scale;
 
