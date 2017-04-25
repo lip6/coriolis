@@ -111,6 +111,8 @@ class net :
   
   ##### For buses #####
   def __getitem__ ( self, indice ) :
+    if indice == -1:
+        return Sig ( self, self._ind + self._arity - 1 )
     if ( indice < self._ind ) or ( indice >= ( self._ind + self._arity ) ) :
       err = "\n[Stratus ERROR] [] : bad index " + str(indice) + " for net : " \
           + self._name + " of arity " + str(self._arity)
@@ -234,8 +236,8 @@ class net :
    
     if self._st_cell._hur_cell :
       net.hur_merge()
-      for i in range ( net._arity ) :
-        CRL.createPartRing ( self._st_cell._hur_cell, netInCell._hur_net[i+self._ind].getName() ) # FIXME plante avec le adder mixed dans un cas particulier indetermine ....
+      #for i in range ( net._arity ) :
+      #  CRL.createPartRing ( self._st_cell._hur_cell, netInCell._hur_net[i+self._ind].getName() ) # FIXME plante avec le adder mixed dans un cas particulier indetermine ....
 
   ##### Instanciation of a buffer #####
   def Buffer ( self ) :
