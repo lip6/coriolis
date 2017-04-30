@@ -50,8 +50,9 @@ namespace {
   using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
   using Anabatic::AutoSegmentFlag;
-  using Katana::KatanaEngine;
+  using Katana::TrackElement;
   using Katana::DataSymmetric;
+  using Katana::KatanaEngine;
   using Katana::Session;
 
 
@@ -111,6 +112,7 @@ namespace {
       void                 _doDualPairing        ();
       AutoContactTerminal* _getSymmetricTerminal ( AutoContactTerminal* masterContact );
       Component*           _findMiddleComponent  ();
+      void                 _associate            ();
     private:
       KatanaEngine*         _katana;
       AutoSegment*          _seed;
@@ -138,16 +140,21 @@ namespace {
 
     DebugSession::open( _data->getNet(), 144, 146 );
 
+  // Temporary.
+    _data->setSymAxis( _katana->getCell()->getAbutmentBox().getCenter().getX() );
+
     cmess2 << "     - Net: \"" << _data->getNet()->getName() << "\" ";
     cmess2 << "@" << DbU::getValueString(_data->getSymAxis()) << " ";
     cmess2 << (_data->isSymVertical() ? "Vertical" : "Horizontal") << " ";
     if (_data->getSymNet()) cmess2 << "(paired: \"" << _data->getSymNet()->getName() << "\")";
     else         cmess2 << "(self symmetric)";
+    cmess2 << endl;
     
     if (_data->getSymNet()) _doDualPairing();
     else                    _doSelfPairing();
 
     if (_data->isValid()) _data->checkPairing();
+    _associate();
 
     DebugSession::close();
 
@@ -201,9 +208,7 @@ namespace {
 
   AutoContactTerminal* TopologicalPairing::_getSymmetricTerminal ( AutoContactTerminal* masterContact )
   {
-    Point mirror = masterContact->getCenter();
-    _data->getSymmetrical( mirror );
-
+    Point  mirror      = _data->getSymmetrical( masterContact->getCenter() );
     GCell* mirrorGCell = _katana->getGCellUnder( mirror );
     if (not mirrorGCell) {
       cerr << Error( "getSymmetricTerminal() No GCell under symmetric position (%s,%s)."
@@ -221,7 +226,10 @@ namespace {
       }
     }
 
-    cerr << Error( "getSymmetricTerminal() Missing terminal contact in symmetric GCell."
+    cerr << Error( "getSymmetricTerminal() Missing terminal contact in symmetric GCell.\n"
+                   "        master:%s\n"
+                   "        mirror:%s"
+                 , getString(masterContact).c_str(), getString(mirrorGCell).c_str() 
                  ) << endl;
 
     _data->setValid( false );
@@ -352,6 +360,30 @@ namespace {
   }
 
 
+  void  TopologicalPairing::_associate ()
+  {
+    cdebug_log(144,1) << "TopologicalPairing::_associate()" << endl;
+
+  //cmess1 << "     - Associating symmetrics." << endl;
+
+    if (not _data->isValid()) return;
+
+    const DataSymmetric::Paireds& paireds = _data->getPaireds();
+    for ( auto sympair : paireds ) {
+      if (not sympair[0]->isCanonical() or not sympair[1]->isCanonical()) continue;
+
+      TrackElement* trackSegment0 = Session::lookup( sympair[0] );
+      TrackElement* trackSegment1 = Session::lookup( sympair[1] );
+
+      if (not trackSegment0 or not trackSegment1) continue;
+
+      trackSegment0->setSymmetric( trackSegment1 );
+      trackSegment1->setSymmetric( trackSegment0 );
+    }
+
+    cdebug_tabw(144,-1);
+  }
+
 } // Anonymous namespace.
 
 
@@ -363,6 +395,7 @@ namespace Katana {
   void  KatanaEngine::runSymmetricRouter ()
   {
     for ( Net* net : getCell()->getNets() ) {
+      if (not NetRoutingExtension::isSymmetric(net)) continue;
       TopologicalPairing(this,net).doPairing();
     }
   }

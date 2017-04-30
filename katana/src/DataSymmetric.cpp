@@ -15,6 +15,7 @@
 
 #include "anabatic/AutoSegment.h"
 #include "katana/DataSymmetric.h"
+#include "katana/Session.h"
 
 
 namespace {
@@ -124,6 +125,10 @@ namespace Katana {
     const unsigned int mask   = ~(AutoSegmentFlag::SegIsReduced);
           Message      errors ( 0, "[ERROR]" );
 
+  // Temporary hardwired: M2 (depth 1) for H pitch, M3 (depth 2) for V pitch.
+    DbU::Unit hPitch = Session::getPitch( 1 );
+    DbU::Unit vPitch = Session::getPitch( 2 );
+
     size_t refs = 0;
     size_t syms = 0;
     for ( const array<AutoSegment*,2>& paired : _paireds ) {
@@ -162,7 +167,7 @@ namespace Katana {
               _valid = false;
             }
 
-            if (2*getSymAxis() - paired[0]->getAxis() != paired[1]->getAxis()) {
+            if (std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 2*vPitch ) {
               errors.newline() << "Mirror axis mismatch @ [" << index << "] "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be: "
                                << DbU::getValueString(2*getSymAxis() - paired[0]->getAxis()) << ")";
@@ -179,7 +184,7 @@ namespace Katana {
               _valid = false;
             }
 
-            if (paired[0]->getAxis() != paired[1]->getAxis()) {
+            if ( std::abs( paired[0]->getAxis() - paired[1]->getAxis() ) > 2*hPitch ) {
               errors.newline() << "Axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(paired[0]->getAxis()) << ")";
@@ -190,7 +195,7 @@ namespace Katana {
           }
         } else {
           if (paired[0]->isHorizontal()) {
-            if (2*getSymAxis() - paired[0]->getAxis() != paired[1]->getAxis()) {
+            if ( std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 2*hPitch ) {
               errors.newline() << "Mirror axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(2*getSymAxis() - paired[0]->getAxis()) << ")";
@@ -199,7 +204,7 @@ namespace Katana {
               _valid = false;
             }
           } else {
-            if (paired[0]->getAxis() != paired[1]->getAxis()) {
+            if ( std::abs( paired[0]->getAxis() != paired[1]->getAxis() ) > 2*vPitch ) {
               errors.newline() << "Axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(paired[0]->getAxis()) << ")";
@@ -217,10 +222,10 @@ namespace Katana {
 
     errors.newline();
     if (errors.size()) {
-      cmess2 << " pairing failed." << endl;
+    //cmess2 << " pairing failed." << endl;
       errors.print( cmess2 );
     } else {
-      cmess2 << " paired." << endl;
+    //cmess2 << " paired." << endl;
     }
 
     return _valid;

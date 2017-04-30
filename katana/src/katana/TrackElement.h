@@ -111,6 +111,7 @@ namespace Katana {
       inline  bool                    isBlockage           () const;
       inline  bool                    isLocked             () const;
       inline  bool                    isRouted             () const;
+      virtual bool                    hasSymmetric         () const;
       inline  bool                    hasSourceDogleg      () const;
       inline  bool                    hasTargetDogleg      () const;
       inline  bool                    canRipple            () const;
@@ -151,6 +152,7 @@ namespace Katana {
       virtual unsigned int            getDoglegLevel       () const;
       virtual TrackElement*           getSourceDogleg      ();
       virtual TrackElement*           getTargetDogleg      ();
+      virtual TrackElement*           getSymmetric         ();
       virtual TrackElements           getPerpandiculars    ();
     // Mutators.                       
       inline  void                    setFlags             ( unsigned int );
@@ -158,6 +160,7 @@ namespace Katana {
       inline  void                    setRouted            ();
       virtual void                    setTrack             ( Track* );
       inline  void                    setIndex             ( size_t );
+      virtual void                    setSymmetric         ( TrackElement* );
       virtual void                    updateFreedomDegree  ();
       virtual void                    setDoglegLevel       ( unsigned int );
       virtual void                    swapTrack            ( TrackElement* );

@@ -37,6 +37,26 @@ namespace {
 
 
 // -------------------------------------------------------------------
+// Class  :  "CompareCostArray".
+
+  class CompareCostArray {
+    public:
+      inline       CompareCostArray ( unsigned int flags=0 );
+      inline bool  operator()       ( const array<TrackCost,2>& lhs, const array<TrackCost,2>& rhs );
+    private:
+      TrackCost::Compare  _compare;
+  };
+
+
+  inline CompareCostArray::CompareCostArray ( unsigned int flags )
+    : _compare(flags)
+  { }
+
+  inline bool  CompareCostArray::operator() ( const array<TrackCost,2>& lhs, const array<TrackCost,2>& rhs )
+  { return _compare( lhs[0], rhs[0] ); }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Cs1Candidate".
 
   class Cs1Candidate {
@@ -363,7 +383,7 @@ namespace Katana {
   //   "_immediate" ripup flags was associated with "perpandicular", as they
   //   must be re-inserted *before* any parallel. Must look to solve the redundancy.
 
-    DebugSession::open( _segment->getNet(), 150, 160 );
+    DebugSession::open( _segment->getNet(), 156, 160 );
 
     if (_type & Perpandicular) {
       cdebug_log(159,0) << "* Riping Pp " << _segment << endl;
@@ -438,43 +458,85 @@ namespace Katana {
 // Class  :  "SegmentFsm".
   
 
-  SegmentFsm::SegmentFsm ( RoutingEvent* event, RoutingEventQueue& queue, RoutingEventHistory& history )
-    : _event      (event)
+  SegmentFsm::SegmentFsm ( RoutingEvent*        event1
+                         , RoutingEventQueue&   queue
+                         , RoutingEventHistory& history )
+    : _event1     (event1)
+    , _event2     (NULL)
     , _queue      (queue)
     , _history    (history)
     , _state      (0)
-    , _data       (NULL)
+    , _data1      (NULL)
+    , _data2      (NULL)
     , _constraint ()
     , _optimal    ()
     , _costs      ()
     , _actions    ()
     , _fullBlocked(true)
+    , _sameAxis   (false)
+    , _useEvent2  (false)
   {
-    TrackElement* segment = _event->getSegment();
-    unsigned int  depth   = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
-    _event->setTracksFree( 0 );
+    DataSymmetric* symData  = NULL;
+    TrackElement*  segment1 = _event1->getSegment();
+    TrackElement*  segment2 = segment1->getSymmetric();
+    unsigned int   depth    = Session::getRoutingGauge()->getLayerDepth(segment1->getLayer());
+    _event1->setTracksFree( 0 );
 
-    _data = segment->getDataNegociate();
-    if (not _data) {
+    _data1 = segment1->getDataNegociate();
+    if (not _data1) {
       _state = MissingData;
       return;
     }
 
-    _data->update();
-    _event->revalidate();
+    _data1->update();
+    _event1->revalidate();
 
-    _constraint = _event->getConstraints();
-    _optimal    = _event->getOptimal();
+    if (segment2) {
+      symData = Session::getKatanaEngine()->getDataSymmetric( segment1->getNet() );
 
-    const Interval& perpandicular = _event->getPerpandicularFree();
+      _data2 = segment2->getDataNegociate();
+      if (not _data2 or not symData) {
+        _state = MissingData;
+        return;
+      }
+
+      _event2 = _data2->getRoutingEvent();
+      _event2->setTracksFree( 0 );
+
+      _data2->update();
+      _event2->revalidate();
+
+      _sameAxis = (segment1->isVertical() xor symData->isSymVertical());
+    }
+
+    Interval perpandicular = _event1->getPerpandicularFree();
+    cdebug_log(159,0) << "* Perpandicular (master):  "  << perpandicular  << endl;
+
+    _constraint = _event1->getConstraints();
+    _optimal    = _event1->getOptimal();
+    if (_event2) {
+      if (_sameAxis) {
+        _constraint  .intersection( _event2->getConstraints() );
+        perpandicular.intersection( _event2->getPerpandicularFree() );
+
+        cdebug_log(159,0) << "* Perpandicular (slave): same axis "
+                          << _event2->getPerpandicularFree()  << endl;
+      } else {
+        _constraint  .intersection( symData->getSymmetrical( _event2->getConstraints() ) );
+        perpandicular.intersection( symData->getSymmetrical( _event2->getPerpandicularFree() ) );
+
+        cdebug_log(159,0) << "* Perpandicular (slave): PP axis "
+                          << symData->getSymmetrical(_event2->getPerpandicularFree())  << endl;
+      }
+    }
 
     cdebug_log(159,0) << "Anabatic intervals:"                  << endl;
     cdebug_log(159,0) << "* Optimal:        "  << _optimal       << endl;
     cdebug_log(159,0) << "* Constraints:    "  << _constraint    << endl;
     cdebug_log(159,0) << "* Perpandicular:  "  << perpandicular  << endl;
-    cdebug_log(159,0) << "* AxisHint:       "  << DbU::getValueString(_event->getAxisHint()) << endl;
+    cdebug_log(159,0) << "* AxisHint:       "  << DbU::getValueString(_event1->getAxisHint()) << endl;
 
-    if (_event->getTracksNb()) {
+    if (_event1->getTracksNb()) {
       if (_constraint.getIntersection(perpandicular).isEmpty()) {
         cdebug_log(159,0) << "Perpandicular free is too tight." << endl;
         _state = EmptyTrackList;
@@ -487,46 +549,64 @@ namespace Katana {
 
     if (_state == EmptyTrackList) return;
 
-    cdebug_log(159,0)   << "Negociate intervals:" << endl;
-    cdebug_log(159,0)   << "* Optimal:     "      << _optimal    << endl;
-    cdebug_log(159,1) << "* Constraints: "      << _constraint << endl;
+    cdebug_log(159,0) << "Negociate intervals:" << endl;
+    cdebug_log(159,0) << "* Optimal:     "      << _optimal    << endl;
+    cdebug_log(159,0) << "* Constraints: "      << _constraint << endl;
+    cdebug_log(159,1) << "* _sameAxis:   "      << _sameAxis   << endl;
 
     // if ( segment->isLocal() and (_data->getState() >= DataNegociate::MaximumSlack) )
     //   _constraint.inflate ( 0, DbU::lambda(1.0) );
 
     bool inLocalDepth    = (depth < 3);
-    bool isOneLocalTrack = (segment->isLocal())
-      and (segment->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
+    bool isOneLocalTrack = (segment1->isLocal())
+      and (segment1->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
 
-    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment->getLayer());
-    for ( Track* track : Tracks_Range::get(plane,_constraint) ) {
+    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
+    for ( Track* track1 : Tracks_Range::get(plane,_constraint) ) {
       unsigned int costflags = 0;
-      costflags |= (segment->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
+      costflags |= (segment1->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
 
-      if (not segment->isReduced())
-        _costs.push_back( track->getOverlapCost(segment,costflags) );
-      else
-        _costs.push_back( TrackCost(track,segment->getNet()) );
-      _costs.back().setAxisWeight  ( _event->getAxisWeight(track->getAxis()) );
-      _costs.back().incDeltaPerpand( _data->getWiringDelta(track->getAxis()) );
-      if (segment->isGlobal()) {
-        cdebug_log(9000,0) << "Deter| setForGlobal() on " << track << endl;
-        _costs.back().setForGlobal();
+      Track* track2 = NULL;
+      if (_event2) {
+        track2 =
+          (_sameAxis) ? track1 : plane->getTrackByPosition( symData->getSymmetrical( track1->getAxis() ) );
       }
 
-      if ( inLocalDepth and (_costs.back().getDataState() == DataNegociate::MaximumSlack) )
-        _costs.back().setInfinite();
+      _costs.push_back( array<TrackCost,2>( { TrackCost(NULL), TrackCost(NULL) } ) );
+      if (not segment1->isReduced()) {
+        _costs.back()[0] = track1->getOverlapCost(segment1,costflags);
+        if (_event2) _costs.back()[1] = track2->getOverlapCost(segment2,costflags);
+      } else {
+        _costs.back()[0] = TrackCost(track1);
+        if (_event2) _costs.back()[1] = TrackCost(track2);
+      }
+
+      _costs.back()[0].setAxisWeight  ( _event1->getAxisWeight(track1->getAxis()) );
+      _costs.back()[0].incDeltaPerpand( _data1->getWiringDelta(track1->getAxis()) );
+      if (_event2) {
+        _costs.back()[1].setAxisWeight  ( _event2->getAxisWeight(track2->getAxis()) );
+        _costs.back()[1].incDeltaPerpand( _data2->getWiringDelta(track2->getAxis()) );
+        _costs.back()[0].merge( _costs.back()[1] );
+      }
+
+      if (segment1->isGlobal()) {
+        cdebug_log(9000,0) << "Deter| setForGlobal() on " << track1 << endl;
+        _costs.back()[0].setForGlobal();
+      }
+
+      if ( inLocalDepth and (_costs.back()[0].getDataState() == DataNegociate::MaximumSlack) )
+        _costs.back()[0].setInfinite();
 
       if ( isOneLocalTrack
-         and  _costs.back().isOverlapGlobal()
-         and (_costs.back().getDataState() >= DataNegociate::ConflictSolveByHistory) )
-        _costs.back().setInfinite();
+         and  _costs.back()[0].isOverlapGlobal()
+         and (_costs.back()[0].getDataState() >= DataNegociate::ConflictSolveByHistory) )
+        _costs.back()[0].setInfinite();
 
-      _costs.back().consolidate();
-      if ( _fullBlocked and (not _costs.back().isBlockage() and not _costs.back().isFixed()) ) 
+      _costs.back()[0].consolidate();
+      if ( _fullBlocked and (not _costs.back()[0].isBlockage() and not _costs.back()[0].isFixed()) ) 
         _fullBlocked = false;
 
-      cdebug_log(159,0) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << track << endl;
+      cdebug_log(155,0) << "| " << _costs.back()[0] << ((_fullBlocked)?" FB ": " -- ") << track1 << endl;
     }
     cdebug_tabw(159,-1);
 
@@ -540,7 +620,7 @@ namespace Katana {
       //     << _constraint << " " <<  "." << endl;
       } else {
         cerr << Bug( " %s Track_Range() failed to find Tracks in %s (they exists)."
-                   , getString(segment).c_str()
+                   , getString(segment1).c_str()
                    , getString(_constraint).c_str()
                    ) << endl;
       }
@@ -548,10 +628,10 @@ namespace Katana {
     }
 
     unsigned int flags = 0;
-    flags |= (segment->isStrap()) ? TrackCost::IgnoreAxisWeight : 0;
-    flags |= (segment->isLocal()
-             and (_data->getState() < DataNegociate::Minimize)
-             and (_data->getRipupCount() < 5))
+    flags |= (segment1->isStrap()) ? TrackCost::IgnoreAxisWeight : 0;
+    flags |= (segment1->isLocal()
+             and (_data1->getState() < DataNegociate::Minimize)
+             and (_data1->getRipupCount() < 5))
              ? TrackCost::DiscardGlobals : 0;
     flags |= (RoutingEvent::getStage() == RoutingEvent::Repair) ? TrackCost::IgnoreSharedLength : 0;
 
@@ -559,11 +639,23 @@ namespace Katana {
       cdebug_log(159,0) << "TrackCost::Compare() - DiscardGlobals" << endl;
     }
 
-    sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
+    sort( _costs.begin(), _costs.end(), CompareCostArray(flags) );
 
     size_t i=0;
-    for ( ; (i<_costs.size()) and _costs[i].isFree() ; i++ );
-    _event->setTracksFree ( i );
+    for ( ; (i<_costs.size()) and _costs[i][0].isFree() ; i++ );
+    _event1->setTracksFree ( i );
+
+    if (_event2) {
+      for ( ; (i<_costs.size()) and _costs[i][1].isFree() ; i++ );
+      _event2->setTracksFree ( i );
+    }
+  }
+
+
+  void  SegmentFsm::setDataState ( unsigned int state )
+  {
+    _data1->setState( state );
+    if (_data2) _data2->setState( state );
   }
 
 
@@ -581,7 +673,7 @@ namespace Katana {
 
   void  SegmentFsm::doActions ()
   {
-    cdebug_log(159,0) << "SegmentFsm::doActions() - " << _actions.size() << endl;
+    cdebug_log(159,1) << "SegmentFsm::doActions() - " << _actions.size() << endl;
 
     bool ripupOthersParallel = false;
     bool ripedByLocal        = getEvent()->getSegment()->isLocal();
@@ -597,7 +689,7 @@ namespace Katana {
       if ( (_actions[i].getType() & SegmentAction::SelfInsert) and ripupOthersParallel )
         _actions[i].setFlag ( SegmentAction::EventLevel3 );
 
-      DebugSession::open ( _actions[i].getSegment()->getNet(), 150, 160 );
+      DebugSession::open ( _actions[i].getSegment()->getNet(), 156, 160 );
       if ( not _actions[i].doAction(_queue) ) {
         cinfo << "[INFO] Failed action on " << _actions[i].getSegment() << endl;
       }
@@ -605,36 +697,113 @@ namespace Katana {
     }
 
     _actions.clear ();
+    cdebug_tabw(159,-1);
+  }
+
+
+  void  SegmentFsm::incRipupCount ()
+  {
+    _data1->incRipupCount();
+    if (_data2) _data2->incRipupCount();
   }
 
 
   bool  SegmentFsm::insertInTrack ( size_t i )
   {
-    cdebug_log(159,0) << "SegmentFsm::insertInTrack() istate:" << _event->getInsertState()
+    cdebug_log(159,0) << "SegmentFsm::insertInTrack() istate:" << _event1->getInsertState()
                 << " track:" << i << endl;
 
-    _event->incInsertState();
-    switch ( _event->getInsertState() ) {
+    bool success = true;
+
+    _event1->incInsertState();
+    switch ( _event1->getInsertState() ) {
       case 1:
-        if ( Manipulator(_event->getSegment(),*this).insertInTrack(i) ) return true;
-        _event->incInsertState();
+        success =                             Manipulator(_event1->getSegment(),useEvent1()).insertInTrack(i);
+        success = success and (not _event2 or Manipulator(_event2->getSegment(),useEvent2()).insertInTrack(i));
+        if (success) break;
+        _event1->incInsertState();
+        clearActions();
       case 2:
-        if ( Manipulator(_event->getSegment(),*this).shrinkToTrack(i) ) return true;
-        _event->incInsertState();
+        success =                             Manipulator(_event1->getSegment(),useEvent1()).shrinkToTrack(i);
+        success = success and (not _event2 or Manipulator(_event2->getSegment(),useEvent2()).shrinkToTrack(i));
+        if (success) break;
+        _event1->incInsertState();
+        clearActions();
       case 3:
-        if ( Manipulator(_event->getSegment(),*this).forceToTrack(i) ) return true;
-        _event->incInsertState();
+        success =                             Manipulator(_event1->getSegment(),useEvent1()).forceToTrack(i);
+        success = success and (not _event2 or Manipulator(_event2->getSegment(),useEvent2()).forceToTrack(i));
+        if (success) break;
+        _event1->incInsertState();
+        clearActions();
     }
-    return false;
+
+    useEvent1();
+    if (_event2) _event2->setInsertState( _event1->getInsertState() );
+
+    return success;
   }
 
+
+  void  SegmentFsm::bindToTrack ( size_t i )
+  {
+    cdebug_log(159,0) << "SegmentFsm::bindToTrack() :" << " track:" << i << endl;
+
+    _event1->resetInsertState();
+    _event1->updateAxisHistory();
+    _event1->setEventLevel( 0 );
+
+    cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
+    Session::addInsertEvent( getSegment1(), getCost1(i).getTrack() );
+
+    if (_event2) {
+      _event2->resetInsertState();
+      _event2->updateAxisHistory();
+      _event2->setEventLevel( 0 );
+      _event2->setProcessed( true );
+
+      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
+      Session::addInsertEvent( getSegment2(), getCost2(i).getTrack() );
+    }
+
+    setState( SegmentFsm::SelfInserted );
+  }
+
+
+  void  SegmentFsm::moveToTrack ( size_t i )
+  {
+    cdebug_log(159,0) << "SegmentFsm::moveToTrack() :" << " track:" << i << endl;
+
+    Session::addMoveEvent( getSegment1(), getCost1(i).getTrack() );
+
+    if (_event2) {
+      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
+      Session::addMoveEvent( getSegment2(), getCost2(i).getTrack() );
+    }
+
+    setState( SegmentFsm::SelfInserted );
+  }
+
+
+  void  SegmentFsm::ripupPerpandiculars ()
+  {
+    Manipulator(getSegment1(),*this).ripupPerpandiculars();
+    if (_event2)
+      Manipulator(getSegment2(),*this).ripupPerpandiculars();
+  }
+
+
+  bool  SegmentFsm::canRipup ( unsigned int flags )
+  {
+    return                Manipulator(getSegment1(),*this).canRipup(flags)
+      and (not _event2 or Manipulator(getSegment2(),*this).canRipup(flags));
+  }
 
   bool  SegmentFsm::conflictSolveByHistory ()
   {
     bool          success = false;
-    RipupHistory  ripupHistory ( _event );
+    RipupHistory  ripupHistory ( _event1 );
     RoutingEvent* event;
-    TrackElement* segment = _event->getSegment();
+    TrackElement* segment = getEvent()->getSegment();
 
     cdebug_log(159,0) << "SegmentFsm::conflictSolveByHistory()" << endl;
 
@@ -719,11 +888,11 @@ namespace Katana {
     bool                  success    = false;
     Interval              constraints;
     vector<Cs1Candidate>  candidates;
-    TrackElement*         segment    = _event->getSegment();
+    TrackElement*         segment    = getEvent()->getSegment();
     bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5,Flags::NoFlags) : segment->canMoveUp(1.0,Flags::CheckLowDensity); // MARK 1
     unsigned int          relaxFlags = Manipulator::NoDoglegReuse
-                                     | ((_data and (_data->getStateCount() < 2)) ? Manipulator::AllowExpand
-                                                                                 : Manipulator::NoExpand);
+                                     | ((_data1 and (_data1->getStateCount() < 2)) ? Manipulator::AllowExpand
+                                                                                   : Manipulator::NoExpand);
 
     cdebug_log(159,0) << "SegmentFsm::conflictSolveByPlaceds()" << endl;
     cdebug_log(159,0) << "| Candidates Tracks: " << endl;
@@ -942,7 +1111,7 @@ namespace Katana {
     size_t        itrack  = 0;
 
 #if THIS_IS_DISABLED
-    TrackElement* segment = _event->getSegment();
+    TrackElement* segment = getEvent()->getSegment();
     for ( ; itrack<getCosts().size() ; ++itrack ) {
       cdebug_log(159,0) << "Trying track:" << itrack << endl;
 
@@ -994,7 +1163,6 @@ namespace Katana {
     cdebug_tabw(159,-1);
     return (itrack < _costs.size());
   }
-
 
 
   bool  SegmentFsm::_slackenStrap ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
@@ -1216,30 +1384,40 @@ namespace Katana {
   bool  SegmentFsm::slackenTopology ( unsigned int flags )
   {
     bool           success     = false;
-    TrackElement*  segment     = getEvent()->getSegment();
-    DataNegociate* data        = segment->getDataNegociate ();
+    TrackElement*  segment1    = getSegment1();
     unsigned int   actionFlags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
 
-    DebugSession::open( segment->getNet(), 150, 160 );
-    cdebug_log(159,1) << "Slacken Topology for " << segment->getNet()
-                      << " " << segment << endl;
+    DebugSession::open( segment1->getNet(), 156, 160 );
+    cdebug_log(159,1) << "Slacken Topology for " << segment1->getNet()
+                      << " " << segment1 << endl;
 
-    if (not segment or not data) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
+    if (_data2) {
+      cdebug_log(159,0) << "Symmetric segments are not allowed to slacken (yet)" << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return false;
+    }
 
-    _event->resetInsertState();
-    data->resetRipupCount();
+    if (not segment1 or not _data1) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
 
-    if      (segment->isStrap()) { success = _slackenStrap ( segment, data, flags ); }
-    else if (segment->isLocal()) { success = _slackenLocal ( segment, data, flags ); }
-    else                         { success = _slackenGlobal( segment, data, flags ); }
+    _event1->resetInsertState();
+    _data1->resetRipupCount();
+    if (_event2) {
+      _event2->resetInsertState();
+      _data2->resetRipupCount();
+    }
+
+    if      (segment1->isStrap()) { success = _slackenStrap ( segment1, _data1, flags ); }
+    else if (segment1->isLocal()) { success = _slackenLocal ( segment1, _data1, flags ); }
+    else                          { success = _slackenGlobal( segment1, _data1, flags ); }
 
     if (success) {
       actionFlags |= SegmentAction::ResetRipup;
-      addAction( segment, actionFlags );
+      addAction( segment1, actionFlags );
     } else {
       clearActions();
-      if (data->getState() == DataNegociate::Unimplemented) {
-        cinfo << "[UNSOLVED] " << segment << " unable to slacken topology." << endl;
+      if (_data1->getState() == DataNegociate::Unimplemented) {
+        cinfo << "[UNSOLVED] " << segment1 << " unable to slacken topology." << endl;
       }
     }
 

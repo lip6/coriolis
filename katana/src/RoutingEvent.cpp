@@ -311,24 +311,21 @@ namespace Katana {
     RoutingEvent* fork = NULL;
 
     if ( (getStage() != Repair) and isUnimplemented() ) {
-      cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) "
-                  << " -> " << fork << endl;
+      cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
       return NULL;
     }
 
     if (not isProcessed()) {
       fork = this;
-      cdebug_log(159,0) << "Reschedule/Self: "
-                  << " -> "
-                  << eventLevel << ":" << fork << endl;
+      cdebug_log(159,0) << "Reschedule/Self: -> "
+                        << eventLevel << ":" << fork << endl;
     } else {
       fork = clone();
       fork->_processed  = false;
 
       _segment->getDataNegociate()->setRoutingEvent( fork );
 
-      cdebug_log(159,0) << "Reschedule/Fork: "
-                  << " -> " << fork << endl;
+      cdebug_log(159,0) << "Reschedule/Fork: -> " << fork << endl;
     }
 
     if (fork->_eventLevel < eventLevel)
@@ -393,7 +390,7 @@ namespace Katana {
 #endif
     }
 
-    DebugSession::open( _segment->getNet(), 149, 160 );
+    DebugSession::open( _segment->getNet(), 156, 160 );
 
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
@@ -418,6 +415,9 @@ namespace Katana {
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
     } else {
+      if (_segment->hasSymmetric()) {
+      }
+
       setProcessed();
       setTimeStamp( _processeds );
 
@@ -460,7 +460,7 @@ namespace Katana {
 
     cdebug_tabw(159,1);
 
-    fsm.getData()->incRipupCount();
+    fsm.incRipupCount();
 
     cdebug_log(159,0) << "| Candidate Tracks:" << endl;
     size_t itrack = 0;
@@ -468,22 +468,16 @@ namespace Katana {
       cdebug_log(159,0) << "| " << itrack << ":" << fsm.getCost(itrack) << endl;
 
     itrack = 0;
-    if ( (not isOverConstrained()) and Manipulator(_segment,fsm).canRipup() ) {
+    if ( (not isOverConstrained()) and fsm.canRipup() ) {
       if (fsm.getCosts().size() and fsm.getCost(itrack).isFree()) {
         cdebug_log(159,0) << "Insert in free space " << this << endl;
-        resetInsertState();
-
-        _axisHistory = _segment->getAxis();
-        _eventLevel  = 0;
-        cdebug_log(9000,0) << "Deter| addInsertEvent() @" << fsm.getCost(itrack).getTrack() << endl;
-        Session::addInsertEvent( _segment, fsm.getCost(itrack).getTrack() );
-        fsm.setState( SegmentFsm::SelfInserted );
+        fsm.bindToTrack( itrack );
       } else {
       // Do ripup.
         if (fsm.getState() == SegmentFsm::EmptyTrackList) {
-          Manipulator(_segment,fsm).ripupPerpandiculars();
+          fsm.ripupPerpandiculars();
         } else {
-          if (Manipulator(_segment,fsm).canRipup(Manipulator::NotOnLastRipup)) {
+          if (fsm.canRipup(Manipulator::NotOnLastRipup)) {
             if (cdebug.enabled(9000)) {
               for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
                 cdebug_log(9000,0) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
@@ -506,7 +500,7 @@ namespace Katana {
     // Ripup limit has been reached.
       if (isOverConstrained()) {
         cdebug_log(159,0) << "Immediate slackening due to overconstraint" << endl;
-        fsm.getData()->setState( DataNegociate::Slacken );
+        fsm.setDataState( DataNegociate::Slacken );
       }
       if (not fsm.slackenTopology()) {
         fsm.setState( SegmentFsm::SelfMaximumSlack );
@@ -545,8 +539,7 @@ namespace Katana {
        and (fsm.getCost(0).getTrack() != _segment->getTrack()) ) {
 
       cerr << "_processPack(): move to " << fsm.getCost(0).getTrack() << endl;
-      Session::addMoveEvent( _segment, fsm.getCost(0).getTrack() );
-      fsm.setState( SegmentFsm::SelfInserted );
+      fsm.moveToTrack( 0 );
     }
   }
 
@@ -563,6 +556,7 @@ namespace Katana {
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
+    if (fsm.isSymmetric()) return;
 
     cdebug_tabw(159,1);
     for ( size_t i = 0 ; i < fsm.getCosts().size() ; i++ )
@@ -571,8 +565,7 @@ namespace Katana {
 
     if (fsm.getCosts().size() and fsm.getCost(0).isFree()) {
       cdebug_log(159,0) << "Insert in free space." << endl;
-      Session::addInsertEvent( _segment, fsm.getCost(0).getTrack() );
-      fsm.setState( SegmentFsm::SelfInserted );
+      fsm.bindToTrack( 0 );
     } else {
       switch ( fsm.getData()->getStateCount() ) {
         case 1:
@@ -599,7 +592,7 @@ namespace Katana {
 
   void  RoutingEvent::revalidate ()
   {
-    DebugSession::open( _segment->getNet(), 150, 160 );
+    DebugSession::open( _segment->getNet(), 156, 160 );
 
     cdebug_log(159,1) << "RoutingEvent::revalidate() - " << this << endl;
 

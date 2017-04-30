@@ -275,9 +275,10 @@ namespace Katana {
     KatanaEngine* katana = getForFramework( NoFlags );
     if (katana) {
       katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
-      katana->runTest();
+    // Now done through Horus.
+    //katana->runTest();
       katana->runNegociate( Flags::SymmetricStage );
-      katana->runNegociate();
+    //katana->runNegociate();
     }
   }
   

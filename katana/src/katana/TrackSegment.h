@@ -72,6 +72,7 @@ namespace Katana {
       virtual bool                  isUTurn                () const;
       virtual bool                  isUserDefined          () const;
     // Predicates.
+      virtual bool                  hasSymmetric           () const;
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );
       virtual bool                  canDogleg              ( Anabatic::GCell*, unsigned int flags=0 );
@@ -100,10 +101,12 @@ namespace Katana {
       virtual size_t                getGCells              ( vector<GCell*>& ) const;
       virtual TrackElement*         getSourceDogleg        ();
       virtual TrackElement*         getTargetDogleg        ();
+      virtual TrackElement*         getSymmetric           ();
       virtual TrackElements         getPerpandiculars      ();
       virtual size_t                getPerpandicularsBound ( set<TrackElement*>& );
     // Mutators.
       virtual void                  setTrack               ( Track* );
+      virtual void                  setSymmetric           ( TrackElement* );
       virtual void                  updateFreedomDegree    ();
       virtual void                  setDoglegLevel         ( unsigned int );
       virtual void                  swapTrack              ( TrackElement* );
@@ -133,6 +136,7 @@ namespace Katana {
     // Attributes.
       static size_t         _allocateds;
              AutoSegment*   _base;
+             TrackSegment*  _symmetric;
              unsigned long  _freedomDegree;
              DbU::Unit      _ppitch;
              DataNegociate* _data;

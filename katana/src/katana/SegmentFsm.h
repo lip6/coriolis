@@ -17,10 +17,12 @@
 #ifndef  KATANA_SEGMENT_FSM_H
 #define  KATANA_SEGMENT_FSM_H
 
+#include <array>
 #include "katana/TrackCost.h"
 
 namespace Katana {
 
+  using std::array;
   class TrackElement;
   class DataNegociate;
   class RoutingEvent;
@@ -105,79 +107,111 @@ namespace Katana {
                         };
 
     public:
-                                    SegmentFsm             ( RoutingEvent*
-                                                           , RoutingEventQueue&
-                                                           , RoutingEventHistory&
-                                                           );
-      inline bool                   isFullBlocked          () const;
-      inline RoutingEvent*          getEvent               () const;
-      inline RoutingEventQueue&     getQueue               () const;
-      inline RoutingEventHistory&   getHistory             () const;
-      inline unsigned int           getState               () const;
-      inline DataNegociate*         getData                ();
-      inline Interval&              getConstraint          ();
-      inline Interval&              getOptimal             ();
-      inline vector<TrackCost>&     getCosts               ();
-      inline TrackCost&             getCost                ( size_t );
-      inline Track*                 getTrack               ( size_t );
-      inline size_t                 getBegin               ( size_t );
-      inline size_t                 getEnd                 ( size_t );
-      inline vector<SegmentAction>& getActions             ();
-      inline void                   setState               ( unsigned int );
-             void                   addAction              ( TrackElement*
-                                                           , unsigned int type
-                                                           , DbU::Unit    axisHint=0
-                                                           , unsigned int toState =0
-                                                           );
-             void                   doActions              ();
-      inline void                   clearActions           ();
-             bool                   insertInTrack          ( size_t );
-             bool                   conflictSolveByHistory ();
-             bool                   conflictSolveByPlaceds ();
-             bool                   solveTerminalVsGlobal  ();
-             bool                   desaturate             ();
-             bool                   slackenTopology        ( unsigned int flags=0 );
-             bool                   solveFullBlockages     ();
-    private:                                               
-             bool                   _slackenStrap          ( TrackElement*& 
-                                                           , DataNegociate*&
-                                                           , unsigned int    flags );
-             bool                   _slackenLocal          ( TrackElement*& 
-                                                           , DataNegociate*&
-                                                           , unsigned int    flags  );
-             bool                   _slackenGlobal         ( TrackElement*& 
-                                                           , DataNegociate*&
-                                                           , unsigned int    flags  );
-    private:
-      RoutingEvent*          _event;
-      RoutingEventQueue&     _queue;
-      RoutingEventHistory&   _history;
-      unsigned int           _state;
-      DataNegociate*         _data;
-      Interval               _constraint;
-      Interval               _optimal;
-      vector<TrackCost>      _costs;
-      vector<SegmentAction>  _actions;
-      bool                   _fullBlocked;
+                                           SegmentFsm             ( RoutingEvent*
+                                                                  , RoutingEventQueue&
+                                                                  , RoutingEventHistory&
+                                                                  );
+      inline bool                          isFullBlocked          () const;
+      inline bool                          isSymmetric            () const;
+      inline RoutingEvent*                 getEvent               () const;
+      inline RoutingEvent*                 getEvent1              () const;
+      inline RoutingEvent*                 getEvent2              () const;
+      inline RoutingEventQueue&            getQueue               () const;
+      inline RoutingEventHistory&          getHistory             () const;
+      inline TrackElement*                 getSegment1            () const;
+      inline TrackElement*                 getSegment2            () const;
+      inline unsigned int                  getState               () const;
+      inline DataNegociate*                getData                ();
+      inline DataNegociate*                getData1               ();
+      inline DataNegociate*                getData2               ();
+      inline Interval&                     getConstraint          ();
+      inline Interval&                     getOptimal             ();
+      inline vector< array<TrackCost,2> >& getCosts               ();
+      inline TrackCost&                    getCost                ( size_t );
+      inline TrackCost&                    getCost1               ( size_t );
+      inline TrackCost&                    getCost2               ( size_t );
+      inline Track*                        getTrack               ( size_t );
+      inline size_t                        getBegin               ( size_t );
+      inline size_t                        getEnd                 ( size_t );
+      inline vector<SegmentAction>&        getActions             ();
+      inline void                          setState               ( unsigned int );
+             void                          setDataState           ( unsigned int );
+             void                          addAction              ( TrackElement*
+                                                                  , unsigned int type
+                                                                  , DbU::Unit    axisHint=0
+                                                                  , unsigned int toState =0
+                                                                  );
+             void                          doActions              ();
+      inline void                          clearActions           ();
+      inline SegmentFsm&                   useEvent1              ();
+      inline SegmentFsm&                   useEvent2              ();
+             void                          incRipupCount          ();
+             bool                          insertInTrack          ( size_t );
+             void                          bindToTrack            ( size_t );
+             void                          moveToTrack            ( size_t );
+             void                          ripupPerpandiculars    ();
+             bool                          canRipup               ( unsigned int flags=0 );
+             bool                          conflictSolveByHistory ();
+             bool                          conflictSolveByPlaceds ();
+             bool                          solveTerminalVsGlobal  ();
+             bool                          desaturate             ();
+             bool                          slackenTopology        ( unsigned int flags=0 );
+             bool                          solveFullBlockages     ();
+    private:                                                      
+             bool                          _slackenStrap          ( TrackElement*& 
+                                                                  , DataNegociate*&
+                                                                  , unsigned int    flags );
+             bool                          _slackenLocal          ( TrackElement*& 
+                                                                  , DataNegociate*&
+                                                                  , unsigned int    flags  );
+             bool                          _slackenGlobal         ( TrackElement*& 
+                                                                  , DataNegociate*&
+                                                                  , unsigned int    flags  );
+    private:                               
+      RoutingEvent*                        _event1;
+      RoutingEvent*                        _event2;
+      RoutingEventQueue&                   _queue;
+      RoutingEventHistory&                 _history;
+      unsigned int                         _state;
+      DataNegociate*                       _data1;
+      DataNegociate*                       _data2;
+      Interval                             _constraint;
+      Interval                             _optimal;
+      vector< array<TrackCost,2> >         _costs;
+      vector<SegmentAction>                _actions;
+      bool                                 _fullBlocked;
+      bool                                 _sameAxis;
+      bool                                 _useEvent2;
   };
 
 
-  inline bool                   SegmentFsm::isFullBlocked () const { return _fullBlocked and _costs.size(); }
-  inline RoutingEvent*          SegmentFsm::getEvent      () const { return _event; }
-  inline RoutingEventQueue&     SegmentFsm::getQueue      () const { return _queue; }
-  inline RoutingEventHistory&   SegmentFsm::getHistory    () const { return _history; }
-  inline unsigned int           SegmentFsm::getState      () const { return _state; }
-  inline DataNegociate*         SegmentFsm::getData       () { return _data; }
-  inline Interval&              SegmentFsm::getConstraint () { return _constraint; }
-  inline Interval&              SegmentFsm::getOptimal    () { return _optimal; }
-  inline vector<TrackCost>&     SegmentFsm::getCosts      () { return _costs; }
-  inline TrackCost&             SegmentFsm::getCost       ( size_t i ) { return _costs[i]; }
-  inline Track*                 SegmentFsm::getTrack      ( size_t i ) { return _costs[i].getTrack(); }
-  inline size_t                 SegmentFsm::getBegin      ( size_t i ) { return _costs[i].getBegin(); }
-  inline size_t                 SegmentFsm::getEnd        ( size_t i ) { return _costs[i].getEnd(); }
-  inline vector<SegmentAction>& SegmentFsm::getActions    () { return _actions; }
-  inline void                   SegmentFsm::setState      ( unsigned int state ) { _state = state; }
-  inline void                   SegmentFsm::clearActions  () { _actions.clear(); }
+  inline bool                          SegmentFsm::isSymmetric   () const { return _event2 != NULL; }
+  inline bool                          SegmentFsm::isFullBlocked () const { return _fullBlocked and _costs.size(); }
+  inline RoutingEvent*                 SegmentFsm::getEvent      () const { return (_useEvent2) ? _event2 : _event1; }
+  inline RoutingEvent*                 SegmentFsm::getEvent1     () const { return _event1; }
+  inline RoutingEvent*                 SegmentFsm::getEvent2     () const { return _event2; }
+  inline RoutingEventQueue&            SegmentFsm::getQueue      () const { return _queue; }
+  inline RoutingEventHistory&          SegmentFsm::getHistory    () const { return _history; }
+  inline unsigned int                  SegmentFsm::getState      () const { return _state; }
+  inline TrackElement*                 SegmentFsm::getSegment1   () const { return _event1->getSegment(); }
+  inline TrackElement*                 SegmentFsm::getSegment2   () const { return (_event2) ? _event2->getSegment() : NULL; }
+  inline DataNegociate*                SegmentFsm::getData       () { return (_useEvent2) ? _data2 : _data1; }
+  inline DataNegociate*                SegmentFsm::getData1      () { return _data1; }
+  inline DataNegociate*                SegmentFsm::getData2      () { return _data2; }
+  inline Interval&                     SegmentFsm::getConstraint () { return _constraint; }
+  inline Interval&                     SegmentFsm::getOptimal    () { return _optimal; }
+  inline vector< array<TrackCost,2> >& SegmentFsm::getCosts      () { return _costs; }
+  inline TrackCost&                    SegmentFsm::getCost       ( size_t i ) { return _costs[i][0]; }
+  inline TrackCost&                    SegmentFsm::getCost1      ( size_t i ) { return _costs[i][0]; }
+  inline TrackCost&                    SegmentFsm::getCost2      ( size_t i ) { return _costs[i][1]; }
+  inline Track*                        SegmentFsm::getTrack      ( size_t i ) { return (_useEvent2) ? _costs[i][1].getTrack() : _costs[i][0].getTrack(); }
+  inline size_t                        SegmentFsm::getBegin      ( size_t i ) { return (_useEvent2) ? _costs[i][1].getBegin() : _costs[i][0].getBegin(); }
+  inline size_t                        SegmentFsm::getEnd        ( size_t i ) { return (_useEvent2) ? _costs[i][1].getEnd  () : _costs[i][0].getEnd  (); }
+  inline vector<SegmentAction>&        SegmentFsm::getActions    () { return _actions; }
+  inline void                          SegmentFsm::setState      ( unsigned int state ) { _state = state; }
+  inline void                          SegmentFsm::clearActions  () { _actions.clear(); }
+  inline SegmentFsm&                   SegmentFsm::useEvent1     () { _useEvent2 = false; return *this; }
+  inline SegmentFsm&                   SegmentFsm::useEvent2     () { _useEvent2 = true ; return *this; }
 
 
 }  // Katana namespace.

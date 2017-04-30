@@ -38,15 +38,15 @@ namespace Katana {
     : Hurricane::Locator<Track*>()
     , _constraints (constraints)
   {
-    cdebug_log(159,0) << "Tracks_Range::Locator()" << endl;
-    cdebug_log(159,0) << "* Constraints: " << _constraints << endl;
+    cdebug_log(155,0) << "Tracks_Range::Locator()" << endl;
+    cdebug_log(155,0) << "* Constraints: " << _constraints << endl;
 
     _track = routingPlane->getTrackByPosition ( _constraints.getVMin() );
 
     if ( _track and (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNextTrack();
     if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
 
-    cdebug_log(159,0) << "_track: " << _track << endl;;
+    cdebug_log(155,0) << "_track: " << _track << endl;;
   }
 
 
@@ -147,9 +147,9 @@ namespace Katana {
     , _inMinOptimal(true)
     , _inMaxOptimal(true)
   {
-    cdebug_log(159,0) << "Tracks_Spiral::Locator()" << endl;
-    cdebug_log(159,0) << "* Optimal:     " << _optimal     << endl;
-    cdebug_log(159,0) << "* Constraints: " << _constraints << endl;
+    cdebug_log(155,0) << "Tracks_Spiral::Locator()" << endl;
+    cdebug_log(155,0) << "* Optimal:     " << _optimal     << endl;
+    cdebug_log(155,0) << "* Constraints: " << _constraints << endl;
 
     _minTrack = _maxTrack = routingPlane->getTrackByPosition ( _optimal.getCenter() );
 
@@ -169,8 +169,8 @@ namespace Katana {
     if ( _minTrack && (_minTrack->getAxis() < _optimal.getVMin()) ) _inMinOptimal = false;
     if ( _maxTrack && (_maxTrack->getAxis() > _optimal.getVMax()) ) _inMaxOptimal = false;
 
-    cdebug_log(159,0) << "_minTrack: " << _minTrack << endl;;
-    cdebug_log(159,0) << "_maxTrack: " << _maxTrack << endl;;
+    cdebug_log(155,0) << "_minTrack: " << _minTrack << endl;;
+    cdebug_log(155,0) << "_maxTrack: " << _maxTrack << endl;;
   }
 
 
@@ -210,13 +210,13 @@ namespace Katana {
 
   void  Tracks_Spiral::Locator::progress ()
   {
-    cdebug_log(159,1) << "Track_Spiral::progress() - State:" << endl;
-    cdebug_log(159,0)   << _onMin
+    cdebug_log(155,1) << "Track_Spiral::progress() - State:" << endl;
+    cdebug_log(155,0)   << _onMin
                       << " " << _minTrack
                       << " " << _maxTrack << endl;
 
     if ( !isValid() ) {
-      cdebug_tabw(159,-1);
+      cdebug_tabw(155,-1);
       return;
     }
 
@@ -245,10 +245,10 @@ namespace Katana {
       }
     }
 
-    cdebug_log(159,0) << _onMin
-                << " " << _minTrack
-                << " " << _maxTrack << endl;
-    cdebug_tabw(159,-1);
+    cdebug_log(155,0) << _onMin
+                      << " " << _minTrack
+                      << " " << _maxTrack << endl;
+    cdebug_tabw(155,-1);
   }
 
 
