@@ -396,7 +396,7 @@ namespace Hurricane {
           unsigned int    _count;
       };
     public:
-      typedef set<DBo*>             DBoSet;
+      typedef vector<DBo*>          DBoSet;
       typedef map<string,Orphaned>  OrphanedMap;
     public:
       static  const OrphanedMap& getOrphaneds   ();
@@ -411,6 +411,7 @@ namespace Hurricane {
       virtual void               onCapturedBy   ( DBo* owner );
       virtual void               onReleasedBy   ( DBo* owner );
       virtual void               onNotOwned     ();
+              void               _erase         ( DBo* owner );
       inline  DBoSet&            _getOwnerSet   ();
       virtual string             _getString     () const;
       virtual Record*            _getRecord     () const;

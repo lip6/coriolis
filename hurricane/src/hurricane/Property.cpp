@@ -226,25 +226,53 @@ namespace Hurricane {
 
   void  SharedProperty::_preDestroy ()
   {
-    Property::_preDestroy();
+    for ( size_t i=0 ; i<_ownerSet.size() ; ++i ) {
+      _ownerSet[i]->_onDestroyed(this);
+      _ownerSet[i] = NULL;
+    }
+    _ownerSet.clear();
 
-    while (!_ownerSet.empty()) {
-      DBo* owner = *_ownerSet.begin();
-      _ownerSet.erase(owner);
-      owner->_onDestroyed(this);
+    // while (!_ownerSet.empty()) {
+    //   DBo* owner = *_ownerSet.begin();
+    //   _ownerSet.erase(owner);
+    //   owner->_onDestroyed(this);
+    // }
+
+    Property::_preDestroy();
+  }
+
+
+  void  SharedProperty::_erase ( DBo* owner )
+  {
+    for ( size_t i=0 ; i<_ownerSet.size() ; ++i ) {
+      if (_ownerSet[i] == owner) {
+        std::swap( _ownerSet[i], _ownerSet[_ownerSet.size()-1] );
+        _ownerSet.pop_back();
+      }
     }
   }
 
 
   void  SharedProperty::onCapturedBy ( DBo* owner )
   {
-    _ownerSet.insert(owner);
+    for ( DBo* dbo : _ownerSet ) {
+      if (dbo == owner) return;
+    }
+    _ownerSet.push_back( owner );
+
+  //_ownerSet.insert(owner);
   }
 
 
   void  SharedProperty::onReleasedBy ( DBo* owner )
   {
-    _ownerSet.erase(owner);
+    for ( size_t i=0 ; i<_ownerSet.size() ; ++i ) {
+      if (_ownerSet[i] == owner) {
+        std::swap( _ownerSet[i], _ownerSet[_ownerSet.size()-1] );
+        _ownerSet.pop_back();
+      }
+    }
+  //_ownerSet.erase(owner);
 
     if (_ownerSet.empty()) onNotOwned();
   }

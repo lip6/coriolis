@@ -77,7 +77,7 @@ namespace CRL {
     _stressDisplayAction->setStatusTip  ( tr("Intensive use of display redrawing") );
     connect ( _stressDisplayAction, SIGNAL(triggered()), this, SLOT(stressDisplay()) );
 
-    debugMenu->addAction ( _stressDisplayAction );
+  //debugMenu->addAction ( _stressDisplayAction );
 
     getCellWidget()->addDrawExtensionGo ( DemoGo::staticGetName()
                                         , DemoGo::initDrawDemoGo
