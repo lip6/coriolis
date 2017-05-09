@@ -40,12 +40,13 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
-    , _hTracksReservedLocal(Cfg::getParamInt("katana.hTracksReservedLocal",    3)->asInt())
-    , _vTracksReservedLocal(Cfg::getParamInt("katana.vTracksReservedLocal",    3)->asInt())
+    , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt("katana.ripupCost"           ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt("katana.eventsLimit"         ,4000000)->asInt())
+    , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
     , _flags               (0)
+    , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
@@ -81,6 +82,7 @@ namespace Katana {
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
+    , _profileEventCosts   (other._profileEventCosts)
   {
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
@@ -142,6 +144,8 @@ namespace Katana {
 
   void  Configuration::print ( Cell* cell ) const
   {
+    if (not cmess1.enabled()) return;
+
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;

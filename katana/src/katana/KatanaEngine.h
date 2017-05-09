@@ -78,6 +78,7 @@ namespace Katana {
       inline  unsigned int             getRipupCost               () const;
       inline  size_t                   getHTracksReservedLocal    () const;
       inline  size_t                   getVTracksReservedLocal    () const;
+      inline  bool                     profileEventCosts          () const;
       virtual const Name&              getName                    () const;
       inline  Configuration::PostEventCb_t&
                                        getPostEventCb             ();
@@ -163,6 +164,7 @@ namespace Katana {
   inline  size_t                        KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
   inline  size_t                        KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
   inline  unsigned int                  KatanaEngine::getRipupLimit           ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
+  inline  bool                          KatanaEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
   inline  const std::map<Net*,DataSymmetric*>&
                                         KatanaEngine::getSymmetrics           () const { return _symmetrics; }
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }

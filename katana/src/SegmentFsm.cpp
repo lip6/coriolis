@@ -503,8 +503,10 @@ namespace Katana {
       _event2 = _data2->getRoutingEvent();
       _event2->setTracksFree( 0 );
 
+      cdebug_log(159,1) << "Coupled:" << _event2 << endl;
       _data2->update();
       _event2->revalidate();
+      cdebug_tabw(159,-1);
 
       _sameAxis = (segment1->isVertical() xor symData->isSymVertical());
     }
@@ -639,6 +641,8 @@ namespace Katana {
       cdebug_log(159,0) << "TrackCost::Compare() - DiscardGlobals" << endl;
     }
 
+  // FOR ANALOG ONLY.
+  //flags |= TrackCost::IgnoreSharedLength;
     sort( _costs.begin(), _costs.end(), CompareCostArray(flags) );
 
     size_t i=0;

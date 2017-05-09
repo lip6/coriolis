@@ -78,6 +78,7 @@ namespace Kite {
       inline  unsigned int            getRipupCost               () const;
       inline  size_t                  getHTracksReservedLocal    () const;
       inline  size_t                  getVTracksReservedLocal    () const;
+      inline  bool                    profileEventCosts          () const;
       virtual const Name&             getName                    () const;
       inline  Configuration::PostEventCb_t&
                                       getPostEventCb             ();
@@ -161,6 +162,7 @@ namespace Kite {
   inline  unsigned int                  KiteEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
   inline  size_t                        KiteEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
   inline  size_t                        KiteEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
+  inline  bool                          KiteEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
   inline  unsigned int                  KiteEngine::getRipupLimit           ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
   inline  NegociateWindow*              KiteEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KiteEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }

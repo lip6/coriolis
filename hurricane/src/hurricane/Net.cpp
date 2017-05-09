@@ -748,9 +748,17 @@ void Net::_preDestroy()
 string Net::_getString() const
 // ***************************
 {
-    string s = Inherit::_getString();
-    s.insert(s.length() - 1, " " + getString(_name));
-    return s;
+  string bs = Inherit::_getString();
+  string ds = "\"" + getString(_name) + "\" ";
+  ds += ((_isExternal ) ? "e" : "-");
+  ds += ((_isGlobal   ) ? "g" : "-");
+  ds += ((_isAutomatic) ? "a" : "-");
+  ds += " ";
+  ds += getString(_type     ) + " ";
+  ds += getString(_direction);
+  
+  bs.insert( bs.length() - 1, " " + ds );
+  return bs;
 }
 
 Record* Net::_getRecord() const

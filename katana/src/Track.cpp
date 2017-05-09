@@ -172,10 +172,8 @@ namespace Katana {
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
     for ( index-- ; index != npos ; index-- ) {
-      if (cdebug.enabled()) {
-        cerr << tab << index << ":"; cerr.flush();
-        cerr << _segments[index] << endl;
-      }
+      cdebug_log(140,0) << index << ":" << _segments[index] << endl;
+
       if (_segments[index]->getNet() == net) continue;
       return _segments[index];
     }
@@ -437,6 +435,7 @@ namespace Katana {
         }
       }
     }
+
     cdebug_tabw(155,-1);
 
     return Interval( minFree, getMaximalPosition(end,state) );

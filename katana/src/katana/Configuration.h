@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :   "./katana/Configuration.h"                       |
+// |  C++ Header  :   "./katana/Configuration.h"                     |
 // +-----------------------------------------------------------------+
 
 
@@ -60,6 +60,7 @@ namespace Katana {
                                               ~Configuration           ();
     // Decorateds.                                               
       inline        bool                       useClockTree            () const;
+      inline        bool                       profileEventCosts       () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
       inline  const Anabatic::Configuration*   base                    () const;
@@ -77,6 +78,7 @@ namespace Katana {
                     void                       setVTracksReservedLocal ( size_t );
       inline        void                       setFlags                ( unsigned int );
       inline        void                       unsetFlags              ( unsigned int );
+      inline        void                       setProfileEventCosts    ( bool );
       virtual       void                       print                   ( Cell* ) const;
       virtual       Record*                    _getRecord              () const;
       virtual       string                     _getString              () const;
@@ -90,6 +92,7 @@ namespace Katana {
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
              unsigned int                _flags;
+             bool                        _profileEventCosts;
     private:
                      Configuration ( const Configuration& other );
       Configuration& operator=     ( const Configuration& );
@@ -108,8 +111,10 @@ namespace Katana {
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline       void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
   inline       bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
+  inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
+  inline       void                          Configuration::setProfileEventCosts    ( bool state ) { _profileEventCosts = state; }
 
 
 

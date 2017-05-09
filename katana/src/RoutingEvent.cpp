@@ -15,6 +15,7 @@
 
 
 #include <cstdlib>
+#include <cmath>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -79,11 +80,11 @@ namespace Katana {
     if (lhs._eventLevel < rhs._eventLevel) return true;
 
   // Process all M2 (terminal access) before any others.
-    if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
-    if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
+  //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
+  //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
 
-    if (lhs._priority > rhs._priority) return false;
-    if (lhs._priority < rhs._priority) return true;
+    if (lhs._priority > rhs._priority) return true;
+    if (lhs._priority < rhs._priority) return false;
 
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;
@@ -401,11 +402,11 @@ namespace Katana {
 
     cdebug_tabw(159,1);
     cdebug_log(159,0) << "State: *before* "
-                    << DataNegociate::getStateString(_segment->getDataNegociate())
-                    << " ripup:" << _segment->getDataNegociate()->getRipupCount()
-                    << endl;
+                      << DataNegociate::getStateString(_segment->getDataNegociate())
+                      << " ripup:" << _segment->getDataNegociate()->getRipupCount()
+                      << endl;
     cdebug_log(159,0) << "Level: " << getEventLevel()
-                    << ", area: " << _segment->getFreedomDegree() << endl;
+                      << ", area: " << _segment->getFreedomDegree() << endl;
 
   //_preCheck( _segment );
     _eventLevel = 0;
@@ -648,10 +649,17 @@ namespace Katana {
         _overConstrained =     _segment->base()->getAutoSource()->isTerminal()
                            and _segment->base()->getAutoTarget()->isTerminal();
     }
+
+    double length = DbU::toLambda(_segment->getLength());
+
+    // if (length > 200.0) length = 200.0 - std::log(length)*20.0;
+    // if (length <   0.0) length =   0.0;
       
-    _priority
-      = (DbU::toLambda(_segment->getLength())        + 1.0)
-      * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
+    _priority = (length + 1.0) * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
+
+    // if (_priority > 10000.0) cerr << "_priority:" << _priority
+    //                               << " length:"   << DbU::toLambda(_segment->getLength())
+    //                               << " slack:"    << DbU::toLambda(_segment->base()->getSlack()) << endl;
 
     cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);

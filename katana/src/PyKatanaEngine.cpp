@@ -167,25 +167,19 @@ extern "C" {
   }
 
 
-  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
+  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
 
     HTRY
       METHOD_HEAD("KatanaEngine.runGlobalRouter()")
-      unsigned int flags = 0;
-      if (PyArg_ParseTuple(args,"I:KatanaEngine.runGlobalRouter", &flags)) {
-        if (katana->getViewer()) {
-          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana) )) {
-            PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
-            return NULL;
-          }
-        } else {
-          katana->runGlobalRouter();
+      if (katana->getViewer()) {
+        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana) )) {
+          PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
+          return NULL;
         }
       } else {
-        PyErr_SetString(ConstructorError, "KatanaEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
-        return NULL;
+        katana->runGlobalRouter();
       }
     HCATCH
 
@@ -311,7 +305,7 @@ extern "C" {
                                , "Display on the console the configuration of Katana." }
     , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS
                                , "Returns True if the detailed routing has been successful." }
-    , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_VARARGS
+    , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_NOARGS
                                , "Run the global router (Katana)." }
     , { "loadGlobalRouting"    , (PyCFunction)PyKatanaEngine_loadGlobalRouting    , METH_VARARGS
                                , "Load global routing into the detailed router." }
