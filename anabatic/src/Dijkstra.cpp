@@ -1566,7 +1566,6 @@ namespace Anabatic {
           }
         /////////////////////////////////////////////////////////////////////////////////// 
 
-        // if has 2 from, 2 distances to calculate
           cdebug_log(111,0) << "Calc distance1" << endl;
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
 
