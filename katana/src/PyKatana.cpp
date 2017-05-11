@@ -17,6 +17,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
+#include "katana/PyKatanaFlags.h"
 #include "katana/PyKatanaEngine.h"
 #include "katana/PyGraphicKatanaEngine.h"
 
@@ -67,9 +68,11 @@ extern "C" {
   DL_EXPORT(void) initKatana () {
     cdebug_log(40,0) << "initKatana()" << endl;
 
+    PyKatanaFlags_LinkPyType();
     PyKatanaEngine_LinkPyType();
     PyGraphicKatanaEngine_LinkPyType();
 
+    PYTYPE_READY    ( KatanaFlags );
     PYTYPE_READY_SUB( KatanaEngine       , ToolEngine  );
     PYTYPE_READY_SUB( GraphicKatanaEngine, GraphicTool );
 
@@ -85,12 +88,15 @@ extern "C" {
     PyModule_AddObject( module, "KatanaEngine", (PyObject*)&PyTypeKatanaEngine );
     Py_INCREF( &PyTypeGraphicKatanaEngine );
     PyModule_AddObject( module, "GraphicKatanaEngine", (PyObject*)&PyTypeGraphicKatanaEngine );
-
+    Py_INCREF( &PyTypeKatanaFlags );
+    PyModule_AddObject( module, "Flags", (PyObject*)&PyTypeKatanaFlags );
     // PyObject* dictionnary = PyModule_GetDict( module );
     // PyObject* constant;
 
     // LoadObjectConstant( dictionnary, KtBuildGlobalRouting, "KtBuildGlobalRouting" );
     // LoadObjectConstant( dictionnary, KtLoadGlobalRouting , "KtLoadGlobalRouting"  );
+
+    PyKatanaEngine_postModuleInit();
   }
 
   

@@ -82,9 +82,11 @@ namespace Katana {
   // Process all M2 (terminal access) before any others.
   //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
   //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
+    if (lhs._layerDepth > rhs._layerDepth) return true;
+    if (lhs._layerDepth < rhs._layerDepth) return false;
 
-    if (lhs._priority > rhs._priority) return true;
-    if (lhs._priority < rhs._priority) return false;
+    if (lhs._priority > rhs._priority) return false;
+    if (lhs._priority < rhs._priority) return true;
 
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;

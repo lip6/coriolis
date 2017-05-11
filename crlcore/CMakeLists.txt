@@ -21,7 +21,7 @@
  setup_qt()
 
  find_package(LibXml2            REQUIRED)
- find_package(PythonLibs         REQUIRED)
+ find_package(PythonLibs         2.7 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(BISON              REQUIRED)
  find_package(FLEX               REQUIRED)

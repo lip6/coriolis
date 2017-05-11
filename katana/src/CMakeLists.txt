@@ -36,6 +36,7 @@
                       )
                    set( pyIncludes   katana/PyKatanaEngine.h
                                      katana/PyGraphicKatanaEngine.h
+                                     katana/PyKatanaFlags.h
                       )
                    set( mocIncludes  katana/GraphicKatanaEngine.h )
                    set( cpps         Constants.cpp
@@ -73,6 +74,7 @@
                    set( pyCpps       PyKatana.cpp
                                      PyKatanaEngine.cpp
                                      PyGraphicKatanaEngine.cpp
+                                     PyKatanaFlags.cpp
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 

@@ -41,8 +41,9 @@ extern "C" {
   extern  PyTypeObject  PyTypeKatanaEngine;
   extern  PyMethodDef   PyKatanaEngine_Methods[];
 
-  extern  PyObject* PyKatanaEngine_Link       ( Katana::KatanaEngine* );
-  extern  void      PyKatanaEngine_LinkPyType ();
+  extern  PyObject* PyKatanaEngine_Link           ( Katana::KatanaEngine* );
+  extern  void      PyKatanaEngine_LinkPyType     ();
+  extern  void      PyKatanaEngine_postModuleInit ();
 
 
 #define IsPyKatanaEngine(v)  ( (v)->ob_type == &PyTypeKatanaEngine )
