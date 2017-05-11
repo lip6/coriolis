@@ -1372,6 +1372,8 @@ namespace Anabatic {
 
     if (state){
       if (state->isSelfSym()){
+        cdebug_log(112,0) << "void Dijkstra::setAxisTargets (): " << endl;
+        
         Cell* cell = _anabatic->getCell();
         _queue.clear();
         GCell* gcell = NULL;
@@ -1510,8 +1512,9 @@ namespace Anabatic {
 
   bool  Dijkstra::_propagate ( Flags enabledSides )
   {
-    cdebug_log(112,1) << "Dijkstra::_propagate() " << _net << endl;
+    cdebug_log(112,1) << "Dijkstra::_propagate() " << _net <<  endl;
     while ( not _queue.empty() ) {
+      cdebug_log(111,0) << "Number of targets left: " << _targets.size() << " and needaxis? " << needAxisTarget() << endl;
       _queue.dump();
       Vertex* current  = _queue.top();
       GCell*  gcurrent = current->getGCell();
@@ -1609,9 +1612,11 @@ namespace Anabatic {
                  , getString(_net).c_str()
                  ) << endl;
     
+    cdebug_tabw(112, 0) << "Targets are: " << endl;
     for ( Vertex* v : _targets ) {
       cdebug_tabw(112, 0) << v << endl;
     }
+    cdebug_tabw(112, 0) << "End Targets are." << endl;
 
     cdebug_tabw(112,-1);
     return false;
