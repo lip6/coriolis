@@ -60,6 +60,7 @@ namespace Kite {
       virtual bool                       isGMetal                ( const Layer* ) const;
       virtual bool                       isGContact              ( const Layer* ) const;
       inline  bool                       useClockTree            () const;
+      inline  bool                       profileEventCosts       () const;
       virtual size_t                     getDepth                () const;
       virtual size_t                     getAllowedDepth         () const;
       virtual DbU::Unit                  getSliceHeight          () const;
@@ -89,6 +90,7 @@ namespace Kite {
       virtual void                       setSaturateRatio        ( float );
       virtual void                       setSaturateRp           ( size_t );
       virtual void                       setGlobalThreshold      ( DbU::Unit );
+      inline  void                       setProfileEventCosts    ( bool );
       virtual void                       print                   ( Cell* ) const;
     // Methods.                                                  
       inline  Katabatic::Configuration*  base                    ();
@@ -119,6 +121,7 @@ namespace Kite {
              unsigned int                _ripupCost;
              unsigned long               _eventsLimit;
              unsigned int                _flags;
+             bool                        _profileEventCosts;
     private:
                      Configuration ( const Configuration& other, Katabatic::Configuration* base=NULL );
       Configuration& operator=     ( const Configuration& );
@@ -136,8 +139,10 @@ namespace Kite {
   inline void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
   inline bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
+  inline bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
+  inline void                          Configuration::setProfileEventCosts    ( bool state ) { _profileEventCosts = state; }
 
 
 

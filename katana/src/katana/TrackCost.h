@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/TrackCost.h"                            |
+// |  C++ Header  :  "./katana/TrackCost.h"                          |
 // +-----------------------------------------------------------------+
 
 
@@ -61,9 +61,7 @@ namespace Katana {
       };
 
     public:
-                                 TrackCost          (       Track*        track
-                                                    ,       Net*          net
-                                                    );
+                                 TrackCost          (       Track*        track );
                                  TrackCost          (       Track*        track
                                                     , const Interval&     interval
                                                     ,       size_t        begin
@@ -113,6 +111,7 @@ namespace Katana {
       inline       void          setLonguestOverlap ( DbU::Unit );
       inline       void          mergeRipupCount    ( int );
       inline       void          mergeDataState     ( unsigned int );
+                   void          merge              ( const TrackCost& );
                    void          consolidate        ();
                    Record*       _getRecord         () const;
                    string        _getString         () const;

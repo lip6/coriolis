@@ -408,65 +408,56 @@ void Component::_postCreate()
 void Component::_preDestroy()
 // *************************
 {
-    cdebug_log(18,1) << "entering Component::_Predestroy: " << this << endl;
+    cdebug_log(18,1) << "entering Component::_preDestroy: " << this << endl;
 
     clearProperties();
 
-    set<Component*> componentSet;
-    getSlaveComponents().fill(componentSet);
+    set<Component*,Entity::CompareById> components;
+    getSlaveComponents().fill( components );
+    components.insert( this );
 
-    set<Hook*> masterHookSet;
-    componentSet.insert(this);
-    for_each_component(component, getCollection(componentSet)) {
-        component->unmaterialize();
-        for_each_hook(hook, component->getHooks()) {
-            for_each_hook(hook, hook->getHooks()) {
-                if (hook->isMaster() && (componentSet.find(hook->getComponent()) == componentSet.end()))
-                    masterHookSet.insert(hook);
-                end_for;
-            }
-            if (!hook->isMaster()) hook->detach();
-            end_for;
+    vector<Hook*> masterHooks;
+
+    for ( Component* component : components ) {
+      component->unmaterialize();
+      for ( Hook* chook : component->getHooks() ) {
+        for ( Hook* shook : chook->getHooks() ) {
+          if (shook->isMaster() and (components.find(shook->getComponent()) == components.end()) )
+            masterHooks.push_back( shook );
         }
-        end_for;
+        if (not chook->isMaster()) chook->detach();
+      }
     }
 
-    componentSet.erase(this);
-    for_each_component(component, getCollection(componentSet)) {
-        component->destroy();
-        end_for;
-    }
+    components.erase( this );
+    for ( Component* component : components ) component->destroy();
 
-    set<Rubber*> rubberSet;
-    set<Hook*> mainMasterHookSet;
-    for_each_hook(hook, getCollection(masterHookSet)) {
-        Rubber* rubber = hook->getComponent()->getRubber();
-        if (!rubber)
-            mainMasterHookSet.insert(hook);
-        else {
-            if (rubberSet.find(rubber) == rubberSet.end()) {
-                rubberSet.insert(rubber);
-                mainMasterHookSet.insert(hook);
-            }
+    set<Rubber*,Entity::CompareById>  rubbers;
+    vector<Hook*>                     mainMasterHooks;
+
+    for ( Hook* mhook : masterHooks ) {
+      Rubber* rubber = mhook->getComponent()->getRubber();
+      if (not rubber)
+        mainMasterHooks.push_back( mhook );
+      else {
+        if (rubbers.find(rubber) == rubbers.end()) {
+          rubbers.insert( rubber );
+          mainMasterHooks.push_back( mhook );
         }
-        end_for;
+      }
     }
+
     Hook* masterHook = NULL;
-    for_each_hook(hook, getCollection(mainMasterHookSet)) {
-        if (!masterHook)
-            masterHook = hook;
-        else
-            hook->merge(masterHook);
-        end_for;
+    for ( Hook* hook : mainMasterHooks ) {
+      if (not masterHook) masterHook = hook;
+      else                hook->merge( masterHook );
     }
-    /**/
 
     _bodyHook.detach();
 
     Inherit::_preDestroy();
 
     if (_net) _net->_getComponentSet()._remove(this);
-
 
     cdebug_log(18,0) << "exiting Component::_Predestroy:" << endl;
     cdebug_tabw(18,-1);

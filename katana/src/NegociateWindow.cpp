@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
@@ -137,6 +138,7 @@ namespace {
 
 namespace Katana {
 
+  using std::ofstream;
   using std::cerr;
   using std::endl;
   using std::setw;
@@ -425,7 +427,11 @@ namespace Katana {
 
     cmess1 << "     o  Negociation Stage." << endl;
 
-    unsigned long limit = _katana->getEventsLimit();
+    unsigned long limit     = _katana->getEventsLimit();
+    bool          profiling = _katana->profileEventCosts();
+    ofstream      ofprofile;
+
+    if (profiling) ofprofile.open( "katana.profile.txt" );
 
     _eventHistory.clear();
     _eventQueue.load( _segments );
@@ -451,6 +457,21 @@ namespace Katana {
                << event->getSegment()
                << endl;
         cmess2.flush();
+      }
+
+      if (ofprofile.is_open()) {
+        size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
+        if (depth < 6) {
+          ofprofile << setw(10) << right << count << " ";
+          for ( size_t i=0 ; i<6 ; ++i ) {
+            if (i == depth)
+              ofprofile << setw(10) << right << setprecision(2) << event->getPriority  () << " ";
+            else
+              ofprofile << setw(10) << right << setprecision(2) << 0.0 << " ";
+          }
+
+          ofprofile << setw( 2) << right << event->getEventLevel() << endl;
+        }
       }
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
@@ -519,6 +540,7 @@ namespace Katana {
       cerr << Bug( "%d events remains after clear.", RoutingEvent::getAllocateds() ) << endl;
     }
 
+    if (ofprofile.is_open()) ofprofile.close();
     _statistics.setEventsCount( eventsCount );
     cdebug_tabw(159,-1);
 

@@ -88,9 +88,9 @@ namespace Anabatic {
     Edge* edge = new Edge ( source, target, flags );
     edge->_postCreate();
 
-    cdebug_log(110,1) << "Edge::create(): " << (void*)edge << ":" << edge << endl;  
-    cdebug_log(110,0) << "source:" << (void*)source << ":" << edge->getSource() << endl;
-    cdebug_log(110,0) << "target:" << (void*)target << ":" << edge->getTarget() << endl;
+    cdebug_log(110,1) << "Edge::create(): " << /*(void*)edge << ":" <<*/ edge << endl;  
+    cdebug_log(110,0) << "source:" << /*(void*)source << ":" <<*/ edge->getSource() << endl;
+    cdebug_log(110,0) << "target:" << /*(void*)target << ":" <<*/ edge->getTarget() << endl;
     cdebug_tabw(110,-1);
     return edge;
   }

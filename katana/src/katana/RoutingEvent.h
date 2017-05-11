@@ -152,6 +152,8 @@ namespace Katana {
       inline  void                         setForcedToHint       ( bool state = true );
               void                         setAxisHint           ( DbU::Unit );
               void                         setAxisHintFromParent ();
+      inline  void                         updateAxisHistory     ();
+      inline  void                         setInsertState        ( unsigned int );
       inline  void                         incInsertState        ();
       inline  void                         resetInsertState      ();
       inline  void                         setEventLevel         ( unsigned int );
@@ -162,8 +164,8 @@ namespace Katana {
               string                       _getString            () const;
               string                       _getTypeName          () const;
     private:                                                 
-                                           RoutingEvent      ( TrackElement*, unsigned int mode );
-                                          ~RoutingEvent      ();
+                                           RoutingEvent          ( TrackElement*, unsigned int mode );
+                                          ~RoutingEvent          ();
 
     protected:
     // Attributes.
@@ -234,6 +236,8 @@ namespace Katana {
   inline void                          RoutingEvent::setRipedByLocal         ( bool state ) { _ripedByLocal = state; }
   inline void                          RoutingEvent::setTracksFree           ( unsigned int nb ) { _tracksFree = nb; }
   inline void                          RoutingEvent::setForcedToHint         ( bool state ) { _forceToHint = state; }
+  inline void                          RoutingEvent::updateAxisHistory       () { _axisHistory = _segment->getAxis(); }
+  inline void                          RoutingEvent::setInsertState          ( unsigned int state ) { _insertState = state; }
   inline void                          RoutingEvent::incInsertState          () { _insertState++; }
   inline void                          RoutingEvent::resetInsertState        () { _insertState = 0; }
   inline void                          RoutingEvent::setEventLevel           ( unsigned int level ) { _eventLevel = level; }

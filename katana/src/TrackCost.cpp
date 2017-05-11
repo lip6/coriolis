@@ -31,7 +31,7 @@ namespace Katana {
 // -------------------------------------------------------------------
 // Class  :  "TrackCost".
 
-  TrackCost::TrackCost ( Track* track, Net* net )
+  TrackCost::TrackCost ( Track* track )
     : _flags          (ZeroCost)
     , _track          (track)
     , _begin          (Track::npos)
@@ -206,6 +206,19 @@ namespace Katana {
     //_deltaPerpand += - (_deltaShared << 1);
       _delta += - _deltaShared;
     }
+  }
+
+
+  void  TrackCost::merge ( const TrackCost& other )
+  {
+    _terminals       += other._terminals;
+    _delta           += other._delta;
+    _deltaShared     += other._deltaShared;
+    _deltaPerpand    += other._deltaPerpand;
+    _axisWeight      += other._axisWeight;
+    _distanceToFixed  = std::min( _distanceToFixed, other._distanceToFixed );
+    _longuestOverlap  = std::min( _longuestOverlap, other._longuestOverlap );
+    _dataState        = std::max( _dataState, other._dataState );
   }
 
 

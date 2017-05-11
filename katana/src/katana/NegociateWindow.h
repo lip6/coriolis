@@ -95,31 +95,32 @@ namespace Katana {
                  , Packing     = 2
                  };
     public:
-      static NegociateWindow*              create             ( KatanaEngine* );
-             void                          destroy            ();
-      inline bool                          isInterrupted      () const;
-      inline KatanaEngine*                 getKatanaEngine    () const;
-             Hurricane::Cell*              getCell            () const;
-      inline const vector<GCell*>&         getGCells          () const;
-      inline RoutingEventQueue&            getEventQueue      ();
-      inline RoutingEventHistory&          getEventHistory    ();
-      inline RoutingEventLoop&             getEventLoop       ();
-      inline Stage                         getStage           () const;
-             void                          setGCells          ( const vector<GCell*>& );
-      inline void                          setInterrupt       ( bool );
-      inline void                          setStage           ( Stage );
-             double                        computeWirelength  ();
-             TrackElement*                 createTrackSegment ( AutoSegment*, unsigned int flags );
-             void                          addRoutingEvent    ( TrackElement*, unsigned int level );
-      inline void                          rescheduleEvent    ( RoutingEvent*, unsigned int level );
-             void                          run                ( unsigned int flags );
-             void                          printStatistics    () const;
-             void                          _createRouting     ( Anabatic::GCell* );
-             void                          _pack              ( size_t& count, bool last );
-             size_t                        _negociate         ();
-             Hurricane::Record*            _getRecord         () const;
-             std::string                   _getString         () const;
-      inline std::string                   _getTypeName       () const;
+      static NegociateWindow*              create               ( KatanaEngine* );
+             void                          destroy              ();
+      inline bool                          isInterrupted        () const;
+      inline KatanaEngine*                 getKatanaEngine      () const;
+             Hurricane::Cell*              getCell              () const;
+      inline const vector<GCell*>&         getGCells            () const;
+      inline RoutingEventQueue&            getEventQueue        ();
+      inline RoutingEventHistory&          getEventHistory      ();
+      inline RoutingEventLoop&             getEventLoop         ();
+      inline Stage                         getStage             () const;
+             void                          setGCells            ( const vector<GCell*>& );
+      inline void                          setInterrupt         ( bool );
+      inline void                          setStage             ( Stage );
+             double                        computeWirelength    ();
+             TrackElement*                 createTrackSegment   ( AutoSegment*, unsigned int flags );
+             void                          addRoutingEvent      ( TrackElement*, unsigned int level );
+      inline void                          rescheduleEvent      ( RoutingEvent*, unsigned int level );
+             void                          run                  ( unsigned int flags );
+             void                          printStatistics      () const;
+             void                          _createRouting       ( Anabatic::GCell* );
+             void                          _associateSymmetrics ();
+             void                          _pack                ( size_t& count, bool last );
+             size_t                        _negociate           ();
+             Hurricane::Record*            _getRecord           () const;
+             std::string                   _getString           () const;
+      inline std::string                   _getTypeName         () const;
 
     private:
     // Attributes.

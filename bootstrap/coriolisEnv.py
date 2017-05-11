@@ -147,7 +147,7 @@ def guessShell ():
    #if os.environ.has_key('SHELL'): return os.environ['SHELL']
 
     psCommand     = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
-    shell         = psCommand.stdout.readlines()[1][:-1].split()[-1]
+    shell         = psCommand.stdout.readlines()[1][:-1].split()[-1].lstrip('-')
     whichCommand  = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
     shellPath     = whichCommand.stdout.readlines()[0][:-1]
 

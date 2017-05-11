@@ -145,6 +145,7 @@ namespace Katana {
   bool           TrackElement::isUTurn              () const { return false; }
   bool           TrackElement::isUserDefined        () const { return false; }
 // Predicates.
+  bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }
   bool           TrackElement::canPivotUp           ( float, unsigned int ) const { return false; };
   bool           TrackElement::canPivotDown         ( float, unsigned int ) const { return false; };
@@ -168,8 +169,10 @@ namespace Katana {
   TrackElement*  TrackElement::getCanonical         ( Interval& i ) { i=Interval(getSourceU(),getTargetU()); return this; }
   TrackElement*  TrackElement::getSourceDogleg      () { return NULL; }
   TrackElement*  TrackElement::getTargetDogleg      () { return NULL; }
+  TrackElement*  TrackElement::getSymmetric         () { return NULL; }
 // Mutators.
   void           TrackElement::setTrack             ( Track* track ) { _track = track; }
+  void           TrackElement::setSymmetric         ( TrackElement* ) { }
   void           TrackElement::updateFreedomDegree  () { }
   void           TrackElement::setDoglegLevel       ( unsigned int ) { }
   void           TrackElement::swapTrack            ( TrackElement* ) { }

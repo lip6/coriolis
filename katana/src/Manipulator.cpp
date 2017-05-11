@@ -95,7 +95,7 @@ namespace Katana {
     if (not _segment)
       throw Error( "Manipulator::Manipulator(): cannot build upon a NULL TrackElement." );
 
-    DebugSession::open( _segment->getNet(), 149, 160 );
+    DebugSession::open( _segment->getNet(), 156, 160 );
 
     _data = _segment->getDataNegociate();
     if (_data) _event = _data->getRoutingEvent();
@@ -635,7 +635,8 @@ namespace Katana {
     bool                rightIntrication = false;
     bool                success          = true;
 
-    cdebug_log(159,0) << "Manipulator::insertInTrack() - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::insertInTrack(size_t) - " << toFree << endl;
+    cdebug_log(159,0) << _segment << endl;
 
     for ( size_t i = begin ; success && (i < end) ; i++ ) {
       TrackElement* segment2 = track->getSegment(i);
@@ -748,6 +749,10 @@ namespace Katana {
             }
           }
           if ( shrinkLeft  ) {
+            cdebug_log(159,0) << "Move PP to right: "
+                              << DbU::getValueString(toFree.getVMax()) << " + "
+                              << DbU::getValueString(getPPitch()/2)
+                              << endl;
             if ( not (success=Manipulator(segment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
                            , toFree.getVMax() + getPPitch()/2
@@ -763,8 +768,7 @@ namespace Katana {
           }
         } else {
           if ( not (success=Manipulator(segment3,_fsm).ripup( SegmentAction::OtherRipup
-                                                              | SegmentAction::EventLevel3
-                                                              )) )
+                                                            | SegmentAction::EventLevel3 )) )
             break;
         }
       }
@@ -774,10 +778,10 @@ namespace Katana {
     if ( success ) {
       cdebug_log(159,0) << "Manipulator::insertInTrack() success" << endl;
 
-      _fsm.setState  ( SegmentFsm::OtherRipup );
-      _fsm.addAction ( _segment
-                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
-                     , _fsm.getCost(itrack).getTrack()->getAxis() );
+      _fsm.setState ( SegmentFsm::OtherRipup );
+      _fsm.addAction( _segment
+                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
+                    , _fsm.getCost(itrack).getTrack()->getAxis() );
 
       unsigned int flags = 0;
       if ( rightIntrication ) flags |= RightAxisHint;
@@ -787,6 +791,7 @@ namespace Katana {
     } else
       _fsm.clearActions ();
 
+    cdebug_tabw(159,-1);
     return success;
   }
 
@@ -802,7 +807,7 @@ namespace Katana {
     set<TrackElement*>  canonicals;
     bool                success    = true;
 
-    cdebug_log(159,0) << "Manipulator::forceToTrack() - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::forceToTrack(size_t) - " << toFree << endl;
 
     for ( size_t i=begin ; success and (i < end) ; ++i ) {
       TrackElement* segment2 = track->getSegment(i);
@@ -829,7 +834,7 @@ namespace Katana {
 
       canonicals.clear();
       for( TrackElement* segment3
-              : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
+             : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
         DataNegociate* data3 = segment3->getDataNegociate();
         if (not data3) continue;
 
@@ -848,6 +853,7 @@ namespace Katana {
                     , _fsm.getCost(itrack).getTrack()->getAxis() );
     }
 
+    cdebug_tabw(159,-1);
     return success;
   }
 
@@ -926,15 +932,15 @@ namespace Katana {
   {
     cdebug_log(159,1) << "Manipulator::forceOverLocals()" << endl;
 
-    vector<TrackCost>& costs = _fsm.getCosts();
+    vector< array<TrackCost,2> >& costs = _fsm.getCosts();
     size_t itrack = 0;
     for ( ; itrack<costs.size() ; ++itrack ) {
       cdebug_log(159,0) << "Trying itrack:" << itrack << endl;
 
-      if (  costs[itrack].isFixed()
-         or costs[itrack].isBlockage()
-         or costs[itrack].isInfinite()
-         or costs[itrack].isOverlapGlobal() )
+      if (  costs[itrack][0].isFixed()
+         or costs[itrack][0].isBlockage()
+         or costs[itrack][0].isInfinite()
+         or costs[itrack][0].isOverlapGlobal() )
         continue;
 
       bool      success    = true;

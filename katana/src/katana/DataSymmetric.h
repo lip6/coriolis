@@ -37,6 +37,7 @@ namespace Katana {
   using Hurricane::Record;
   using Hurricane::DbU;
   using Hurricane::Point;
+  using Hurricane::Interval;
   using Hurricane::Net;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
@@ -45,6 +46,8 @@ namespace Katana {
 
   class DataSymmetric {
     public:
+      typedef std::vector< std::array<AutoSegment*,2> >  Paireds;
+    public:
       static DataSymmetric* create         ( Net* );
     public:
       inline bool           isValid        () const;
@@ -52,11 +55,15 @@ namespace Katana {
       inline Net*           getNet         () const;
       inline DbU::Unit      getSymAxis     () const;
       inline Net*           getSymNet      () const;
-      inline Point&         getSymmetrical ( Point& ) const;
+      inline const Paireds& getPaireds     () const;
+      inline DbU::Unit      getSymmetrical ( DbU::Unit ) const;
+      inline Point          getSymmetrical ( const Point& ) const;
+      inline Interval       getSymmetrical ( const Interval& ) const;
              AutoSegment*   getSymmetrical ( AutoSegment* ) const;
              void           addSymmetrical ( AutoSegment* );
       inline void           addReference   ( AutoSegment* );
       inline void           setValid       ( bool );
+      inline void           setSymAxis     ( DbU::Unit );
              bool           checkPairing   ();
              void           print          ( std::ostream& ) const;
              Record*        _getRecord     () const;
@@ -64,28 +71,45 @@ namespace Katana {
     private:                
                             DataSymmetric  ( Net* );
     private:
-      bool                                       _valid;
-      Net*                                       _net;
-      Net*                                       _symNet;
-      NetRoutingState*                           _state;
-      std::vector< std::array<AutoSegment*,2> >  _paireds;
-      size_t                                     _symIndex;
+      bool              _valid;
+      Net*              _net;
+      Net*              _symNet;
+      NetRoutingState*  _state;
+      Paireds           _paireds;
+      size_t            _symIndex;
   };
 
 
-  inline bool       DataSymmetric::isValid       () const { return _valid; }
-  inline bool       DataSymmetric::isSymVertical () const { return _state->isSymVertical(); }
-  inline Net*       DataSymmetric::getNet        () const { return _net; }
-  inline DbU::Unit  DataSymmetric::getSymAxis    () const { return _state->getSymAxis(); }
-  inline Net*       DataSymmetric::getSymNet     () const { return _symNet; }
-  inline void       DataSymmetric::addReference  ( AutoSegment* segment ) { _paireds.push_back( {segment,NULL} ); }
-  inline void       DataSymmetric::setValid      ( bool state ) { _valid = state; }
+  inline bool                          DataSymmetric::isValid       () const { return _valid; }
+  inline bool                          DataSymmetric::isSymVertical () const { return _state->isSymVertical(); }
+  inline const DataSymmetric::Paireds& DataSymmetric::getPaireds    () const { return _paireds; }
+  inline Net*                          DataSymmetric::getNet        () const { return _net; }
+  inline DbU::Unit                     DataSymmetric::getSymAxis    () const { return _state->getSymAxis(); }
+  inline void                          DataSymmetric::setSymAxis    ( DbU::Unit axis ) { _state->setSymAxis(axis); }
+  inline Net*                          DataSymmetric::getSymNet     () const { return _symNet; }
+  inline void                          DataSymmetric::addReference  ( AutoSegment* segment ) { _paireds.push_back( {segment,NULL} ); }
+  inline void                          DataSymmetric::setValid      ( bool state ) { _valid = state; }
 
-  inline Point& DataSymmetric::getSymmetrical ( Point& point ) const
+  inline DbU::Unit  DataSymmetric::getSymmetrical ( DbU::Unit pos ) const
+  { return 2*getSymAxis() - pos; }
+
+  inline Point  DataSymmetric::getSymmetrical ( const Point& point ) const
   {
-    if (_state->isSymVertical()) point.setX( 2*getSymAxis() - point.getX() ); 
-    else                         point.setY( 2*getSymAxis() - point.getY() ); 
-    return point;
+    Point symPoint ( point );
+    if (_state->isSymVertical()) symPoint.setX( 2*getSymAxis() - point.getX() ); 
+    else                         symPoint.setY( 2*getSymAxis() - point.getY() ); 
+    return symPoint;
+  }
+
+  inline Interval  DataSymmetric::getSymmetrical ( const Interval& interval ) const
+  {
+    DbU::Unit vmin = interval.getVMin();
+    if ( (vmin != DbU::Min) and (vmin != DbU::Max) ) vmin = 2*getSymAxis() - vmin;
+
+    DbU::Unit vmax = interval.getVMax();
+    if ( (vmax != DbU::Max) and (vmax != DbU::Max) ) vmax = 2*getSymAxis() - vmax;
+
+    return Interval( vmin, vmax );
   }
 
 

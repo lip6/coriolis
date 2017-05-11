@@ -73,7 +73,7 @@ namespace Katana {
 
   void  TrackSegmentCost::update ( TrackElement* trackSegment )
   {
-    DebugSession::open ( trackSegment->getNet(), 150, 160 );
+    DebugSession::open ( trackSegment->getNet(), 156, 160 );
 
     cdebug_log(159,1) << "TrackSegmentCost::update() - " << trackSegment << endl;
 

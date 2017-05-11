@@ -822,7 +822,7 @@ namespace Anabatic {
     DbU::Unit optimalMax = min( max(getOptimalMax(),constraintMin), constraintMax );
 
     cdebug_log(149,0) << "optimal:[" << DbU::getValueString(optimalMin)
-                      << " "         << DbU::getValueString(optimalMin) << "]" << endl;
+                      << " "         << DbU::getValueString(optimalMax) << "]" << endl;
 
     if (getAxis() < optimalMin) {
       setAxis( optimalMin, flags );
@@ -973,30 +973,30 @@ namespace Anabatic {
 
           if (perpandMin < minGCell) attractors.addAttractor( minGCell );
           if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
-        } else if (autoSegment->isLongLocal()) {
-          cdebug_log(145,0) << "| Used as long global attractor." << endl;
-
-          DbU::Unit perpandMin = autoSegment->getSourceU();
-          DbU::Unit perpandMax = autoSegment->getTargetU();
-
-          if (perpandMin != perpandMax) {
-            if (perpandMin == getAxis()) attractors.addAttractor( perpandMax ); 
-            if (perpandMax == getAxis()) attractors.addAttractor( perpandMin ); 
-          }
         } else if (autoSegment->isLocal()) {
-          if (not autoSegment->isStrongTerminal()) { cdebug_tabw(145,-1); continue; }
+          if (autoSegment->isStrongTerminal()) {
+            DbU::Unit  terminalMin;
+            DbU::Unit  terminalMax;
   
-          DbU::Unit  terminalMin;
-          DbU::Unit  terminalMax;
-  
-          if (getTerminalInterval( *autoSegment
-                                 , NULL
-                                 , isHorizontal()
-                                 , terminalMin
-                                 , terminalMax )) {
-            attractors.addAttractor( terminalMin );
-            if (terminalMin != terminalMax)
-              attractors.addAttractor( terminalMax );
+            if (getTerminalInterval( *autoSegment
+                                   , NULL
+                                   , isHorizontal()
+                                   , terminalMin
+                                   , terminalMax )) {
+              attractors.addAttractor( terminalMin );
+              if (terminalMin != terminalMax)
+                attractors.addAttractor( terminalMax );
+            }
+          } else if (autoSegment->isLongLocal()) {
+            cdebug_log(145,0) << "| Used as long global attractor." << endl;
+
+            DbU::Unit perpandMin = autoSegment->getSourceU();
+            DbU::Unit perpandMax = autoSegment->getTargetU();
+
+            if (perpandMin != perpandMax) {
+              if (perpandMin == getAxis()) attractors.addAttractor( perpandMax ); 
+              if (perpandMax == getAxis()) attractors.addAttractor( perpandMin ); 
+            }
           }
         }
         cdebug_tabw(145,-1);

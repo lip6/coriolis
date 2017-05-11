@@ -61,6 +61,7 @@ namespace Katana {
   TrackSegment::TrackSegment ( AutoSegment* segment, Track* track )
     : TrackElement  (track)
     , _base         (segment)
+    , _symmetric    (NULL)
     , _freedomDegree(0)
     , _ppitch       (0)
     , _data         (NULL)
@@ -161,6 +162,7 @@ namespace Katana {
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
   bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
 // Predicates.
+  bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
 // Accessors.
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }
   Flags          TrackSegment::getDirection         () const { return _base->getDirection(); }
@@ -174,6 +176,7 @@ namespace Katana {
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
   TrackElement*  TrackSegment::getCanonical         ( Interval& i ) { return Session::lookup( _base->getCanonical(i)->base() ); }
+  TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
   void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
@@ -231,22 +234,22 @@ namespace Katana {
     GCell* sourceGCell = base()->getAutoSource()->getGCell();
     GCell* targetGCell = base()->getAutoTarget()->getGCell();
 
-    cdebug_log(159,0) << "getGCells(): sourceGCell: " << sourceGCell << endl;
-    cdebug_log(159,0) << "getGCells(): targetGCell: " << targetGCell << endl;
+    cdebug_log(155,0) << "getGCells(): sourceGCell: " << sourceGCell << endl;
+    cdebug_log(155,0) << "getGCells(): targetGCell: " << targetGCell << endl;
 
     for ( AutoSegment* segment : base()->getAligneds() ) {
-      cdebug_log(159,0) << "| " << segment << endl;
+      cdebug_log(155,0) << "| " << segment << endl;
 
       Anabatic::GCell* gcell = segment->getAutoSource()->getGCell();
       if (isLess(gcell,sourceGCell,direction)) {
         sourceGCell = gcell;
-        cdebug_log(159,0) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
+        cdebug_log(155,0) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
       }
 
       gcell = segment->getAutoTarget()->getGCell();
       if (isGreater(gcell,targetGCell,direction)) {
         targetGCell = gcell;
-        cdebug_log(159,0) << "getGCells(): new targetGCell: " << targetGCell << endl;
+        cdebug_log(155,0) << "getGCells(): new targetGCell: " << targetGCell << endl;
       }
     }
 
@@ -256,12 +259,12 @@ namespace Katana {
 
     Flags      side = (direction & Flags::Horizontal) ? Flags::EastSide : Flags::NorthSide;
     DbU::Unit  axis = getAxis();
-    cdebug_log(159,0) << "* dir:" << side._getString() << " @" << DbU::getValueString(axis) << endl;
+    cdebug_log(155,0) << "* dir:" << side._getString() << " @" << DbU::getValueString(axis) << endl;
 
     gcells.push_back( sourceGCell );
     while ( sourceGCell != targetGCell ) {
       sourceGCell = sourceGCell->getNeighborAt( direction, axis );
-      cdebug_log(159,0) << "| " << sourceGCell << endl;
+      cdebug_log(155,0) << "| " << sourceGCell << endl;
       if (not sourceGCell) break;
 
       gcells.push_back( sourceGCell );
@@ -313,6 +316,10 @@ namespace Katana {
 
   void  TrackSegment::setTrack ( Track* track )
   { TrackElement::setTrack( track ); }
+
+
+  void  TrackSegment::setSymmetric ( TrackElement* segment )
+  { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
   void  TrackSegment::detach ()
@@ -880,7 +887,8 @@ namespace Katana {
   Record* TrackSegment::_getRecord () const
   {
     Record* record = TrackElement::_getRecord();
-    record->add( getSlot( "_base",  _base ) );
+    record->add( getSlot( "_base"     ,  _base      ) );
+    record->add( getSlot( "_symmetric",  _symmetric ) );
     return record;
   }
 
