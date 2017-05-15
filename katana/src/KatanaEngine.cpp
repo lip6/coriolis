@@ -675,7 +675,7 @@ namespace Katana {
       }
       _routingPlanes.clear();
 
-      for ( auto symmetric : _symmetrics ) delete symmetric.second;
+    //for ( auto symmetric : _symmetrics ) delete symmetric.second;
       _symmetrics.clear();
 
       Session::close();
