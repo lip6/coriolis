@@ -119,23 +119,23 @@ namespace {
     private:                            
              bool  guessGlobalNet       ( const Name&, Net* );
     private:
-      unsigned int  _flags;
-      Name          _vddePadNetName;
-      Name          _vddiPadNetName;
-      Name          _vssePadNetName;
-      Name          _vssiPadNetName;
-      Name          _ckPadNetName;
-      Name          _ckiPadNetName;
-      Name          _ckoPadNetName;
-      Net*          _vdde;
-      Net*          _vddi;
-      Net*          _vsse;
-      Net*          _vssi;
-      Net*          _ck;    // Clock net on the (external) pad.
-      Net*          _cki;   // Clock net in the pad ring.
-      Net*          _cko;   // Clock net of the core (design).
-      Net*          _blockage;
-      Cell*         _topCell;
+      uint32_t  _flags;
+      Name      _vddePadNetName;
+      Name      _vddiPadNetName;
+      Name      _vssePadNetName;
+      Name      _vssiPadNetName;
+      Name      _ckPadNetName;
+      Name      _ckiPadNetName;
+      Name      _ckoPadNetName;
+      Net*      _vdde;
+      Net*      _vddi;
+      Net*      _vsse;
+      Net*      _vssi;
+      Net*      _ck;    // Clock net on the (external) pad.
+      Net*      _cki;   // Clock net in the pad ring.
+      Net*      _cko;   // Clock net of the core (design).
+      Net*      _blockage;
+      Cell*     _topCell;
   };
 
 
@@ -457,7 +457,7 @@ namespace {
           inline DbU::Unit     getWidth          () const;
           inline Rails*        getRails          () const;
           inline RoutingPlane* getRoutingPlane   () const;
-          inline unsigned int  getDirection      () const;
+          inline Flags         getDirection      () const;
           inline Net*          getNet            () const;
                  void          merge             ( DbU::Unit source, DbU::Unit target );
                  void          doLayout          ( const Layer* );
@@ -487,17 +487,17 @@ namespace {
     public:
       class Rails {
         public:
-                               Rails             ( Plane*, unsigned int direction, Net* );
+                               Rails             ( Plane*, Flags direction, Net* );
                               ~Rails             ();
           inline Plane*        getPlane          ();
           inline RoutingPlane* getRoutingPlane   ();
-          inline unsigned int  getDirection      () const;
+          inline Flags         getDirection      () const;
           inline Net*          getNet            () const;
                  void          merge             ( const Box& );
                  void          doLayout          ( const Layer* );
         private:
           Plane*         _plane;
-          unsigned int   _direction;
+          Flags          _direction;
           Net*           _net;
           vector<Rail*>  _rails;
       };
@@ -511,8 +511,8 @@ namespace {
                               ~Plane             ();
           inline const Layer*  getLayer          () const;
           inline RoutingPlane* getRoutingPlane   ();
-          inline unsigned int  getDirection      () const;
-          inline unsigned int  getPowerDirection () const;
+          inline Flags         getDirection      () const;
+          inline Flags         getPowerDirection () const;
                  void          merge             ( const Box&, Net* );
                  void          doLayout          ();
         private:
@@ -520,7 +520,7 @@ namespace {
           RoutingPlane*        _routingPlane;
           RailsMap             _horizontalRails;
           RailsMap             _verticalRails;
-          unsigned int         _powerDirection;
+          Flags                _powerDirection;
       };
 
     public:
@@ -562,7 +562,7 @@ namespace {
   inline DbU::Unit                PowerRailsPlanes::Rail::getWidth         () const { return _width; }
   inline PowerRailsPlanes::Rails* PowerRailsPlanes::Rail::getRails         () const { return _rails; }
   inline RoutingPlane*            PowerRailsPlanes::Rail::getRoutingPlane  () const { return _rails->getRoutingPlane(); }
-  inline unsigned int             PowerRailsPlanes::Rail::getDirection     () const { return _rails->getDirection(); }
+  inline Flags                    PowerRailsPlanes::Rail::getDirection     () const { return _rails->getDirection(); }
   inline Net*                     PowerRailsPlanes::Rail::getNet           () const { return _rails->getNet(); }
 
 
@@ -774,7 +774,7 @@ namespace {
   { return (rail->getAxis() == _axis) and (rail->getWidth() == _width); }
 
 
-  PowerRailsPlanes::Rails::Rails ( PowerRailsPlanes::Plane* plane , unsigned int direction , Net* net )
+  PowerRailsPlanes::Rails::Rails ( PowerRailsPlanes::Plane* plane , Flags direction , Net* net )
     : _plane         (plane)
     , _direction     (direction)
     , _net           (net)
@@ -798,7 +798,7 @@ namespace {
 
   inline PowerRailsPlanes::Plane* PowerRailsPlanes::Rails::getPlane          () { return _plane; }
   inline RoutingPlane*            PowerRailsPlanes::Rails::getRoutingPlane   () { return getPlane()->getRoutingPlane(); }
-  inline unsigned int             PowerRailsPlanes::Rails::getDirection      () const { return _direction; }
+  inline Flags                    PowerRailsPlanes::Rails::getDirection      () const { return _direction; }
   inline Net*                     PowerRailsPlanes::Rails::getNet            () const { return _net; }
 
 
@@ -876,8 +876,8 @@ namespace {
 
   inline const Layer*  PowerRailsPlanes::Plane::getLayer          () const { return _layer; }
   inline RoutingPlane* PowerRailsPlanes::Plane::getRoutingPlane   () { return _routingPlane; }
-  inline unsigned int  PowerRailsPlanes::Plane::getDirection      () const { return _routingPlane->getDirection(); }
-  inline unsigned int  PowerRailsPlanes::Plane::getPowerDirection () const { return _powerDirection; }
+  inline Flags         PowerRailsPlanes::Plane::getDirection      () const { return _routingPlane->getDirection(); }
+  inline Flags         PowerRailsPlanes::Plane::getPowerDirection () const { return _powerDirection; }
 
 
   void  PowerRailsPlanes::Plane::merge ( const Box& bb, Net* net )
@@ -886,7 +886,7 @@ namespace {
 
     cdebug_log(159,0) << "    Plane::merge() " << net->getName() << " " << bb << endl;
 
-    unsigned int direction = getDirection();
+    Flags direction = getDirection();
     if ( (net->getType() == Net::Type::POWER) or (net->getType() == Net::Type::GROUND) )
       direction = getPowerDirection();
 
@@ -1057,7 +1057,7 @@ namespace {
               void          ringAddToPowerRails ();
       virtual void          doQuery             ();
       inline  void          doLayout            ();
-      inline  unsigned int  getGoMatchCount     () const;
+      inline  uint32_t      getGoMatchCount     () const;
     private:
       AllianceFramework*      _framework;
       KatanaEngine*             _katana;
@@ -1067,7 +1067,7 @@ namespace {
       bool                    _isBlockagePlane;
       vector<const Segment*>  _hRingSegments;
       vector<const Segment*>  _vRingSegments;
-      unsigned int            _goMatchCount;
+      uint32_t                _goMatchCount;
   };
 
 
@@ -1092,7 +1092,7 @@ namespace {
   }
 
 
-  inline  unsigned int  QueryPowerRails::getGoMatchCount () const
+  inline  uint32_t  QueryPowerRails::getGoMatchCount () const
   { return _goMatchCount; }
 
 
@@ -1181,7 +1181,7 @@ namespace {
 
         Box bb = segment->getBoundingBox ( basicLayer );
 
-        unsigned int depth = _routingGauge->getLayerDepth ( segment->getLayer() );
+        uint32_t depth = _routingGauge->getLayerDepth ( segment->getLayer() );
 
         if (    _chipTools.isChip()
            and ((depth == 2) or (depth == 3))

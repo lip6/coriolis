@@ -106,13 +106,13 @@ namespace Katana {
   { DebugSession::close(); }
 
 
-  bool  Manipulator::canRipup ( unsigned int flags ) const
+  bool  Manipulator::canRipup ( uint32_t flags ) const
   {
     if (_data) {
       if (not _event or _event->isUnimplemented()) return false;
 
-      unsigned int limit = Session::getKatanaEngine()->getRipupLimit(_segment);
-      unsigned int count = _data->getRipupCount() + ((flags & NotOnLastRipup) ? 1 : 0);
+      uint32_t limit = Session::getKatanaEngine()->getRipupLimit(_segment);
+      uint32_t count = _data->getRipupCount() + ((flags & NotOnLastRipup) ? 1 : 0);
 
       return (count < limit);
     }
@@ -141,7 +141,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::ripup ( unsigned int type, DbU::Unit axisHint )
+  bool  Manipulator::ripup ( uint32_t type, DbU::Unit axisHint )
   {
     cdebug_log(159,0) << "Manipulator::ripup() " << endl;
 
@@ -155,17 +155,17 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::ripupPerpandiculars ( unsigned int flags )
+  bool  Manipulator::ripupPerpandiculars ( uint32_t flags )
   {
     cdebug_log(159,0) << "Manipulator::ripupPerpandiculars() - " << flags << endl;
 
-    bool          success                  = true;
-    bool          cagedPerpandiculars      = false;
-    Interval      constraints              ( _event->getConstraints() );
-    Interval      perpandicularConstraints ( constraints );
-    size_t        placedPerpandiculars     = 0;
-    unsigned int  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
-    unsigned int  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+    bool      success                  = true;
+    bool      cagedPerpandiculars      = false;
+    Interval  constraints              ( _event->getConstraints() );
+    Interval  perpandicularConstraints ( constraints );
+    size_t    placedPerpandiculars     = 0;
+    uint32_t  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
+    uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
 
     if (flags & Manipulator::PerpandicularsFirst) {
       parallelActionFlags      &= ~SegmentAction::EventLevel4;
@@ -269,7 +269,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::relax ( Interval interval, unsigned int flags )
+  bool  Manipulator::relax ( Interval interval, uint32_t flags )
   {
     interval.inflate( - Session::getExtensionCap(getLayer()) );
     cdebug_log(159,0) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
@@ -301,12 +301,12 @@ namespace Katana {
       return false;
     }
 
-    unsigned int  depth = Session::getRoutingGauge()->getLayerDepth(_segment->getLayer());
-    Interval      uside;
-    size_t        dogLegCount  = 0;
-    size_t        iminconflict = gcells.size();
-    size_t        imaxconflict = gcells.size();
-    size_t        igcell;
+    uint32_t  depth = Session::getRoutingGauge()->getLayerDepth(_segment->getLayer());
+    Interval  uside;
+    size_t    dogLegCount  = 0;
+    size_t    iminconflict = gcells.size();
+    size_t    imaxconflict = gcells.size();
+    size_t    igcell;
 
   // Look for closest enclosing min & max GCells indexes.
     for ( igcell=0 ; igcell<gcells.size() ; igcell++ ) {
@@ -783,7 +783,7 @@ namespace Katana {
                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
                     , _fsm.getCost(itrack).getTrack()->getAxis() );
 
-      unsigned int flags = 0;
+      uint32_t flags = 0;
       if ( rightIntrication ) flags |= RightAxisHint;
       if ( leftIntrication  ) flags |= LeftAxisHint;
       if ( flags )
@@ -858,7 +858,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::shrinkToTrack ( size_t i, unsigned int flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
+  bool  Manipulator::shrinkToTrack ( size_t i, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
   {
 #if THIS_IS_DISABLED
     Track*              track       = _fsm.getTrack(i);
@@ -990,7 +990,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::slacken ( unsigned int flags )
+  bool  Manipulator::slacken ( Flags flags )
   {
     cdebug_log(159,0) << "Manipulator::slacken() " << _segment << endl; 
 
@@ -1081,11 +1081,11 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::moveUp ( unsigned int flags )
+  bool  Manipulator::moveUp ( uint32_t flags )
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
 
-    unsigned int kflags = Flags::WithNeighbors;
+    Flags kflags = Flags::WithNeighbors;
   //kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AutoSegment::AllowLocal    : 0;
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : 0;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : 0;
@@ -1156,7 +1156,7 @@ namespace Katana {
     if (    _segment->isFixed  ()       ) return false;
     if (not _segment->canDogleg(overlap)) return false;
 
-    unsigned int  flags      = 0;
+    Flags         flags      = Flags::NoFlags;
     TrackElement* dogleg     = _segment->makeDogleg(overlap,flags);
     if (dogleg) {
       cdebug_log(159,0) << "Manipulator::makeDogleg(Interval) - Push dogleg to the "

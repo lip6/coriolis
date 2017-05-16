@@ -248,7 +248,7 @@ namespace Anabatic {
     _segmentInvalidateds.clear();
 
     cdebug_log(145,0) << "AutoSegments/AutoContacts queued deletion." << endl;
-    unsigned int flags = _anabatic->flags() & Flags::DestroyMask;
+    Flags flags = _anabatic->flags() & Flags::DestroyMask;
     _anabatic->flags() = Flags::DestroyMask;
     set<AutoSegment*>::iterator  isegment = _destroyedSegments.begin();
     for ( ; isegment != _destroyedSegments.end() ; isegment++ ) {
@@ -300,18 +300,18 @@ namespace Anabatic {
   }
 
 
-  unsigned int  Session::getDirection ( size_t depth )
+  Flags  Session::getDirection ( size_t depth )
   {
     RoutingGauge* rg = get("getDirection()")->_routingGauge;
     switch ( rg->getLayerDirection(depth) ) {
       case Constant::Horizontal: return Flags::Horizontal;
       case Constant::Vertical:   return Flags::Vertical;
     }
-    return 0;
+    return Flags::NoFlags;
   }
 
 
-  DbU::Unit  Session::_getPitch ( size_t depth, unsigned int flags ) const
+  DbU::Unit  Session::_getPitch ( size_t depth, Flags flags ) const
   {
     if (flags == Flags::NoFlags) return _routingGauge->getLayerPitch(depth);
 
@@ -380,7 +380,7 @@ namespace Anabatic {
   { return get("doWarnGCellOverload()")->_anabatic->doWarnOnGCellOverload(); }
 
 
-  void  Session::setAnabaticFlags ( unsigned int flags )
+  void  Session::setAnabaticFlags ( Flags flags )
   { get("setKabaticFlags()")->_anabatic->flags() = flags; }
 
 

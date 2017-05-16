@@ -106,9 +106,9 @@ namespace Anabatic {
   }
 
 
-  void  AutoContactVTee::_invalidate ( unsigned int )
+  void  AutoContactVTee::_invalidate ( Flags )
   {
-    unsigned int flags = Flags::Propagate;
+    Flags flags = Flags::Propagate;
     if (_vertical1 and _vertical2) {
       if (_vertical1->isInvalidated() xor _vertical2->isInvalidated()) 
         flags = Flags::NoFlags;

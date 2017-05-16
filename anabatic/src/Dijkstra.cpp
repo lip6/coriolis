@@ -989,7 +989,7 @@ namespace Anabatic {
   }
 
 
-  IntervalC Vertex::getIntervFrom( unsigned int criteria ) const
+  IntervalC Vertex::getIntervFrom( uint32_t criteria ) const
   {
     if (_adata){
       switch (criteria){
@@ -1017,13 +1017,13 @@ namespace Anabatic {
           return _adata->getIntervFrom();
       }
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIntervFrom(unsigned int criteria) const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,1) << "DbU::Unit Vertex::getIntervFrom(Flags criteria) const: Inappropriate usage of GRAData. " <<  endl;
       return IntervalC();
     }
   }
 
 
-  GCell* Vertex::getGPrev( unsigned int criteria ) const
+  GCell* Vertex::getGPrev( uint32_t criteria ) const
   {
     if (_adata){
       switch (criteria){

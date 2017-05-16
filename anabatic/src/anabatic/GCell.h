@@ -123,8 +123,8 @@ namespace Anabatic {
           float  _density;
       };
     public:
-      static        unsigned int          getDisplayMode      ();
-      static        void                  setDisplayMode      ( unsigned int );
+      static        uint32_t              getDisplayMode      ();
+      static        void                  setDisplayMode      ( uint32_t );
       static        Box                   getBorder           ( const GCell*, const GCell* );
     public:                           
       static        GCell*                create              ( AnabaticEngine* );
@@ -193,14 +193,13 @@ namespace Anabatic {
     // Detailed routing functions.
                     bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
       inline        size_t                getDepth            () const;
-                    Interval              getSide             ( unsigned int ) const;
                     float                 getHCapacity        () const;
                     float                 getVCapacity        () const;
-                    float                 getDensity          ( unsigned int flags=Flags::NoFlags ) const;
+                    float                 getDensity          ( Flags flags=Flags::NoFlags ) const;
                     float                 getAverageHVDensity () const;
                     float                 getMaxHVDensity     () const;
-      inline        float                 getCDensity         ( unsigned int flags=Flags::NoFlags ) const;
-      inline        float                 getWDensity         ( size_t depth, unsigned int flags=Flags::NoFlags  ) const;
+      inline        float                 getCDensity         ( Flags flags=Flags::NoFlags ) const;
+      inline        float                 getWDensity         ( size_t depth, Flags flags=Flags::NoFlags  ) const;
       inline        DbU::Unit             getBlockage         ( size_t depth ) const;
       inline        float                 getFragmentation    ( size_t depth ) const;
       inline        float                 getFeedthroughs     ( size_t depth ) const;
@@ -212,8 +211,8 @@ namespace Anabatic {
                     AutoSegments          getVStartSegments   ();
                     AutoSegments          getHStopSegments    ();
                     AutoSegments          getVStopSegments    ();
-      inline        AutoSegments          getStartSegments    ( unsigned int direction );
-      inline        AutoSegments          getStopSegments     ( unsigned int direction );
+      inline        AutoSegments          getStartSegments    ( Flags direction );
+      inline        AutoSegments          getStopSegments     ( Flags direction );
                     size_t                getRoutingPads      ( set<RoutingPad*>& );
       inline  const Key&                  getKey              () const;
                     size_t                checkDensity        () const;
@@ -234,7 +233,7 @@ namespace Anabatic {
                     void                  rpDesaturate        ( set<Net*>& );
                     bool                  stepDesaturate      ( size_t                    depth
                                                               , set<Net*>&, AutoSegment*& moved
-                                                              , unsigned int              flags=Flags::NoFlags );
+                                                              , Flags                     flags=Flags::NoFlags );
                     bool                  stepNetDesaturate   ( size_t     depth
                                                               , set<Net*>& globalNets
                                                               , Set&       invalidateds );
@@ -274,7 +273,7 @@ namespace Anabatic {
                     GCell&                operator=           ( const GCell& );
     private:
       static  Name                  _extensionName;
-      static  unsigned int          _displayMode;
+      static  uint32_t              _displayMode;
               Observable            _observable;
               AnabaticEngine*       _anabatic;
               Flags                 _flags;
@@ -381,16 +380,16 @@ namespace Anabatic {
 
   inline GCell::Observable::Observable () : StaticObservable<1>() { }
 
-  inline AutoSegments  GCell::getStartSegments ( unsigned int direction )
+  inline AutoSegments  GCell::getStartSegments ( Flags direction )
   { return (direction&Flags::Horizontal) ? getHStartSegments() : getVStartSegments(); }
 
-  inline  AutoSegments  GCell::getStopSegments ( unsigned int direction )
+  inline  AutoSegments  GCell::getStopSegments ( Flags direction )
   { return (direction&Flags::Horizontal) ? getHStopSegments() : getVStopSegments(); }
 
-  inline  float  GCell::getCDensity ( unsigned int flags ) const
+  inline  float  GCell::getCDensity ( Flags flags ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
 
-  inline  float  GCell::getWDensity ( size_t depth, unsigned int flags  ) const
+  inline  float  GCell::getWDensity ( size_t depth, Flags flags  ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  float  GCell::getFragmentation ( size_t depth ) const

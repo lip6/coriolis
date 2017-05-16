@@ -30,7 +30,7 @@ namespace Katana {
   class HorizontalTrack : public Track {
 
     public:
-      static  HorizontalTrack* create          ( RoutingPlane*, unsigned int index );
+      static  HorizontalTrack* create          ( RoutingPlane*, uint32_t index );
       virtual bool             isHorizontal    () const;
       virtual bool             isVertical      () const;
       virtual Flags            getDirection    () const;
@@ -40,7 +40,7 @@ namespace Katana {
 
     protected:
     // Constructors & Destructors.
-                               HorizontalTrack ( RoutingPlane*, unsigned int index );
+                               HorizontalTrack ( RoutingPlane*, uint32_t index );
       virtual                 ~HorizontalTrack ();
       virtual void             _postCreate     ();
       virtual void             _preDestroy     ();

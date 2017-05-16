@@ -445,7 +445,7 @@ namespace Anabatic {
   }
 
 
-  NetData* AnabaticEngine::getNetData ( Net* net, unsigned int flags )
+  NetData* AnabaticEngine::getNetData ( Net* net, Flags flags )
   {
     NetData*            data = NULL;
     NetDatas::iterator idata = _netDatas.find( net->getId() );
@@ -703,7 +703,7 @@ namespace Anabatic {
   }
 
 
-  void  AnabaticEngine::loadGlobalRouting ( unsigned int method )
+  void  AnabaticEngine::loadGlobalRouting ( uint32_t method )
   {
     if (_state < EngineGlobalLoaded)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing not present yet.");
@@ -711,15 +711,9 @@ namespace Anabatic {
     if (_state > EngineGlobalLoaded)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing already loaded.");
 
-    switch ( method ) {
-      case EngineLoadGrByNet:   _loadGrByNet(); break;
-      case EngineLoadGrByGCell:
-      default:
-        throw Error( badMethod
-                   , "Anabatic::loadGlobalRouting()"
-                   , method
-                   , getString(_cell).c_str()
-                   );
+    if (method == EngineLoadGrByNet ) { _loadGrByNet(); }
+    else {
+      throw Error( badMethod, "Anabatic::loadGlobalRouting()", method, getString(_cell).c_str() );
     }
     cleanupGlobal();
 

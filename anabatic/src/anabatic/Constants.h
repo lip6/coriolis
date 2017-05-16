@@ -60,6 +60,7 @@ namespace Anabatic {
     // Flags for functions arguments only.           
       static const uint64_t  Create              ; // = (1 <<  5);
       static const uint64_t  WithPerpands        ;
+      static const uint64_t  WithDoglegs         ;
       static const uint64_t  WithSelf            ;
       static const uint64_t  AboveLayer          ;
       static const uint64_t  BelowLayer          ;
@@ -87,15 +88,15 @@ namespace Anabatic {
       static const uint64_t  NoUpdate            ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
-      inline               Flags        ( BaseFlags );
+      inline               Flags        ( const Hurricane::BaseFlags& );
       virtual             ~Flags        ();
       virtual std::string  _getTypeName () const;
       virtual std::string  _getString   () const;
   };
 
 
-  Flags::Flags ( uint64_t  flags ) : BaseFlags(flags) { }
-  Flags::Flags ( BaseFlags base  ) : BaseFlags(base)  { }
+  Flags::Flags (                  uint64_t   flags ) : BaseFlags(flags) { }
+  Flags::Flags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
 
 
   enum EngineState     { EngineCreation      = 1

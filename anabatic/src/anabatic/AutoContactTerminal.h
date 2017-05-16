@@ -57,7 +57,7 @@ namespace Anabatic {
     // Constructors & Destructors.
                                    AutoContactTerminal    ( GCell*, Contact* );
       virtual                     ~AutoContactTerminal    ();
-      virtual void                 _invalidate            ( unsigned int flags );
+      virtual void                 _invalidate            ( Flags flags );
     public:
               bool                 isEndPoint             () const;
       virtual Box                  getNativeConstraintBox () const;

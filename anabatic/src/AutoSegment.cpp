@@ -412,7 +412,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::invalidate ( unsigned int flags )
+  void  AutoSegment::invalidate ( Flags flags )
   {
     if (Session::doDestroyTool()) return;
     if (flags & Flags::Source) setFlags( SegInvalidatedSource );
@@ -463,7 +463,7 @@ namespace Anabatic {
     updateOrient   ();
     updatePositions();
 
-    unsigned int oldSpinFlags = _flags & SegDepthSpin;
+    uint32_t oldSpinFlags = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
       AutoContact*  source       = getAutoSource();
@@ -509,13 +509,13 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::isStrongTerminal ( unsigned int flags ) const
+  bool  AutoSegment::isStrongTerminal ( Flags flags ) const
   {
     if (_flags & SegStrongTerminal) return true;
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        if (isegment->_flags & SegStrongTerminal) return true;
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if (segment->_flags & SegStrongTerminal) return true;
       }
     }
     return false;
@@ -606,36 +606,36 @@ namespace Anabatic {
   }
 
 
-  AutoSegments  AutoSegment::getOnSourceContact ( unsigned int direction )
+  AutoSegments  AutoSegment::getOnSourceContact ( Flags direction )
   {
     return AutoSegments_OnContact
       ( this, getSource() ).getSubSet( AutoSegments_InDirection(direction) );
   }
 
 
-  AutoSegments  AutoSegment::getOnTargetContact ( unsigned int direction )
+  AutoSegments  AutoSegment::getOnTargetContact ( Flags direction )
   {
     return AutoSegments_OnContact
       ( this, getTarget() ).getSubSet( AutoSegments_InDirection(direction) );
   }
 
 
-  AutoSegments  AutoSegment::getCachedOnSourceContact ( unsigned int direction )
+  AutoSegments  AutoSegment::getCachedOnSourceContact ( Flags direction )
   { return AutoSegments_CachedOnContact( getAutoSource(), direction ); }
 
 
-  AutoSegments  AutoSegment::getCachedOnTargetContact ( unsigned int direction )
+  AutoSegments  AutoSegment::getCachedOnTargetContact ( Flags direction )
   { return AutoSegments_CachedOnContact( getAutoTarget(), direction ); }
 
 
-  AutoSegments  AutoSegment::getAligneds ( unsigned int flags )
+  AutoSegments  AutoSegment::getAligneds ( Flags flags )
   {
     cdebug_log(145,0) << "AutoSegment::getAligneds() - flags:" << flags << endl;
     return AutoSegments_Aligneds( this, flags );
   }
 
 
-  AutoSegments  AutoSegment::getConnecteds ( unsigned int flags )
+  AutoSegments  AutoSegment::getConnecteds ( Flags flags )
   {
     cdebug_log(145,0) << "AutoSegment::getConnecteds() - flags:" << flags << endl;
     return AutoSegments_Connecteds( this, flags );
@@ -689,7 +689,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::setFlagsOnAligneds ( unsigned int flags )
+  void  AutoSegment::setFlagsOnAligneds ( uint32_t flags )
   {
     setFlags( flags );
     if (not isNotAligned()) {
@@ -769,7 +769,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::toConstraintAxis ( unsigned int flags )
+  bool  AutoSegment::toConstraintAxis ( Flags flags )
   {
     cdebug_log(149,1) << "toConstraintAxis() " << this << endl;
 
@@ -807,7 +807,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::toOptimalAxis ( unsigned int flags )
+  bool  AutoSegment::toOptimalAxis ( Flags flags )
   {
     cdebug_log(149,1) << "toOptimalAxis() " << this << endl;
 
@@ -843,7 +843,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::setAxis ( DbU::Unit axis, unsigned int flags )
+  void  AutoSegment::setAxis ( DbU::Unit axis, Flags flags )
   {
     if (not isCanonical()) return;
 
@@ -886,7 +886,7 @@ namespace Anabatic {
       if (not source->isTerminal())
         source->setFlags( CntWeakTerminal );
     } else {
-      unsigned int terminalFlag = 0;
+      uint32_t terminalFlag = 0;
       switch ( _getFlags() & SegWeakTerminal ) {
         case 0: break;
         case SegSourceTerminal|SegTargetTerminal:
@@ -975,6 +975,8 @@ namespace Anabatic {
           if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
         } else if (autoSegment->isLocal()) {
           if (autoSegment->isStrongTerminal()) {
+            cdebug_log(145,0) << "Used as strong terminal." << endl;
+
             DbU::Unit  terminalMin;
             DbU::Unit  terminalMax;
   
@@ -988,7 +990,7 @@ namespace Anabatic {
                 attractors.addAttractor( terminalMax );
             }
           } else if (autoSegment->isLongLocal()) {
-            cdebug_log(145,0) << "| Used as long global attractor." << endl;
+            cdebug_log(145,0) << "Used as long global attractor." << endl;
 
             DbU::Unit perpandMin = autoSegment->getSourceU();
             DbU::Unit perpandMax = autoSegment->getTargetU();
@@ -1009,6 +1011,8 @@ namespace Anabatic {
         optimalMin = attractors.getLowerMedian();
         optimalMax = attractors.getUpperMedian();
       } else {
+        cdebug_log(145,0) << "No attractors, reverting to GCell bounding box" << endl;
+
         optimalMin = 0;
         optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
                                       : _gcell->getBoundingBox().getXMax();
@@ -1035,7 +1039,7 @@ namespace Anabatic {
   }
 
 
-  AutoSegment* AutoSegment::canonize ( unsigned int flags )
+  AutoSegment* AutoSegment::canonize ( Flags flags )
   {
     cdebug_log(149,0) << "canonize() - " << this << endl;
 
@@ -1128,10 +1132,10 @@ namespace Anabatic {
 
     getAlignedContacts( contacts );
 
-    DbU::Unit    spanMin   = DbU::Min;
-    DbU::Unit    spanMax   = DbU::Max;
-    Interval     constraints;
-    unsigned int direction = getDirection();
+    DbU::Unit spanMin   = DbU::Min;
+    DbU::Unit spanMax   = DbU::Max;
+    Interval  constraints;
+    Flags     direction = getDirection();
 
     for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
       constraints = icontact->first->getUConstraints( direction );
@@ -1278,7 +1282,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::changeDepth ( unsigned int depth, unsigned int flags )
+  void  AutoSegment::changeDepth ( unsigned int depth, Flags flags )
   {
     cdebug_log(149,1) << "changeDepth() " << depth << " - " << this << endl;
     Session::invalidate( getNet() );
@@ -1295,7 +1299,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::_changeDepth ( unsigned int depth, unsigned int flags )
+  void  AutoSegment::_changeDepth ( unsigned int depth, Flags flags )
   {
     cdebug_log(149,1) << "_changeDepth() - " << this << endl;
 
@@ -1346,7 +1350,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::canSlacken ( unsigned int flags ) const
+  bool  AutoSegment::canSlacken ( Flags flags ) const
   {
     cdebug_log(149,0) << "AutoSegment::canSlacken()" << endl;
 
@@ -1363,7 +1367,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::slacken ( unsigned int flags )
+  bool  AutoSegment::slacken ( Flags flags )
   {
     bool success = false;
 
@@ -1379,7 +1383,7 @@ namespace Anabatic {
   }
 
 
-  float  AutoSegment::getMaxUnderDensity ( unsigned int flags )
+  float  AutoSegment::getMaxUnderDensity ( Flags flags )
   {
     cdebug_log(149,0) << "AutoSegment::getMaxUnderDensity() " << endl;
 
@@ -1407,7 +1411,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::canPivotUp ( float reserve, unsigned int flags ) const
+  bool  AutoSegment::canPivotUp ( float reserve, Flags flags ) const
   {
     cdebug_log(149,0) << "AutoSegment::canPivotUp() - " << flags
                 << " (reserve:" << reserve << ")" << endl;
@@ -1456,7 +1460,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::canPivotDown ( float reserve, unsigned int flags ) const
+  bool  AutoSegment::canPivotDown ( float reserve, Flags flags ) const
   {
     cdebug_log(149,0) << "AutoSegment::canPivotDown()"
                 << " (reserve:" << reserve << ")" << endl;
@@ -1503,7 +1507,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::canMoveUp ( float reserve, unsigned int flags ) const
+  bool  AutoSegment::canMoveUp ( float reserve, Flags flags ) const
   {
     cdebug_log(159,0) << "AutoSegment::canMoveUp() " << flags
                       << " (reserve:" << reserve << ") " << this << endl;
@@ -1601,7 +1605,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::moveUp ( unsigned int flags )
+  bool  AutoSegment::moveUp ( Flags flags )
   {
   //if ( not canMoveUp(0.0,flags) ) return false;
     changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Flags::Propagate );
@@ -1610,7 +1614,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::moveDown ( unsigned int flags )
+  bool  AutoSegment::moveDown ( Flags flags )
   {
   //if ( not canPivotDown(0.0,flags) ) return false;
     changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) - 2, flags&Flags::Propagate );
@@ -1648,7 +1652,7 @@ namespace Anabatic {
 #if THIS_IS_DISABLED
 
 
-  bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, unsigned int flags )
+  bool  AutoSegment::shearUp ( GCell* upGCell, AutoSegment*& movedUp, float reserve, Flags flags )
   {
     cdebug_log(149,0) << "AutoSegment::shearUp() " << this << endl;
 
@@ -1719,7 +1723,7 @@ namespace Anabatic {
 #endif
 
 
-  unsigned int  AutoSegment::canDogleg ( Interval interval )
+  Flags  AutoSegment::canDogleg ( Interval interval )
   {
     cdebug_log(149,0) << "AutoSegment::canDogleg(Interval) " << interval << endl;
 
@@ -1823,12 +1827,12 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoSegment::makeDogleg ( Interval interval, unsigned int flags )
+  Flags  AutoSegment::makeDogleg ( Interval interval, Flags flags )
   {
     cdebug_log(149,1) << "AutoSegment::makeDogleg(Interval) - " << interval << endl;
 
     bool         leftDogleg       = true;
-    unsigned int rflags           = 0;
+    Flags        rflags           = Flags::NoFlags;
     size_t       leftDoglegCount  = 0;
     size_t       rightDoglegCount = 0;
     AutoSegment* leftCandidate    = NULL;
@@ -1875,9 +1879,9 @@ namespace Anabatic {
 
       cdebug_log(149,0) << "Break @" << DbU::getValueString(axis) << " " << leftCandidate << endl;
 
-      unsigned int direction = getDirection();
-      GCell*       gcell     = leftCandidate->getAutoSource()->getGCell();
-      GCell*       end       = leftCandidate->getAutoTarget()->getGCell();
+      Flags  direction = getDirection();
+      GCell* gcell     = leftCandidate->getAutoSource()->getGCell();
+      GCell* end       = leftCandidate->getAutoTarget()->getGCell();
       while ( gcell != end ) {
         if (gcell->getSide(direction).contains(axis)) break; 
         gcell = (direction == Flags::Horizontal) ? gcell->getEast (getNativeMin())
@@ -1899,13 +1903,13 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoSegment::makeDogleg ( GCell* doglegGCell, unsigned int flags )
+  Flags  AutoSegment::makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     cdebug_log(9000,0) << "Deter| AutoSegment::makeDogleg(GCell*) " << doglegGCell << endl;
     cdebug_log(9000,0) << "Deter| in " << this << endl;
     cdebug_tabw(149,1);
 
-    unsigned int  rflags = 0;
+    Flags  rflags = Flags::NoFlags;
 
     if (    doglegGCell->isIoPad()
        and (Session::getAnabatic()->getState() != EngineGlobalLoaded) ) {
@@ -2130,10 +2134,10 @@ namespace Anabatic {
   }
 
 
-  AutoSegment* AutoSegment::create ( AutoContact*  source
-                                   , AutoContact*  target
-                                   , unsigned int  dir
-                                   , size_t        depth
+  AutoSegment* AutoSegment::create ( AutoContact* source
+                                   , AutoContact* target
+                                   , Flags        dir
+                                   , size_t       depth
                                    )
   {
   // Hardcoded: make the assumption that,
@@ -2213,7 +2217,28 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::isTopologicalBound ( AutoSegment* seed, unsigned int flags )
+  AutoSegment* AutoSegment::getGlobalThroughDogleg ( AutoSegment* dogleg, AutoContact* from )
+  {
+    AutoContact* source = dogleg->getAutoSource();
+    AutoContact* target = dogleg->getAutoTarget();
+    if (not source->isTurn() or not target->isTurn()) return NULL;
+
+    AutoSegment* fromSegment = (source == from) ? source->getPerpandicular(dogleg) : target->getPerpandicular(dogleg);
+    AutoSegment* toSegment   = (source != from) ? source->getPerpandicular(dogleg) : target->getPerpandicular(dogleg);
+
+    if (not toSegment->isGlobal() or (toSegment->getLayer() != fromSegment->getLayer())) return NULL;
+
+    Interval fromConstraints;
+    Interval toConstraints;
+    fromSegment->getConstraints( fromConstraints );
+    toSegment  ->getConstraints( toConstraints );
+    if (not fromConstraints.intersect(toConstraints)) return NULL;
+
+    return toSegment;
+  }
+
+
+  bool  AutoSegment::isTopologicalBound ( AutoSegment* seed, Flags flags )
   {
     cdebug_log(145,1) << "isTopologicalBound() - " << seed << endl;
 
@@ -2288,13 +2313,13 @@ namespace Anabatic {
 
 
 #if THIS_IS_DISABLED
-  unsigned int  AutoSegment::getPerpandicularState ( AutoContact* contact
-                                                   , AutoSegment* source
-                                                   , AutoSegment* current
-                                                   , bool         isHorizontalMaster
-                                                   , const Layer* masterLayer )
+  Flags  AutoSegment::getPerpandicularState ( AutoContact* contact
+                                            , AutoSegment* source
+                                            , AutoSegment* current
+                                            , bool         isHorizontalMaster
+                                            , const Layer* masterLayer )
   {
-    unsigned int state = 0;
+    Flags state = Flags::NoFlags;
 
     bool  sourcePerpandicular  = arePerpandiculars ( isHorizontalMaster, source  );
     bool  currentPerpandicular = arePerpandiculars ( isHorizontalMaster, current );

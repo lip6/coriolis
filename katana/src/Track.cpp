@@ -116,7 +116,7 @@ namespace Katana {
   { return _routingPlane->getKatanaEngine(); }
 
 
-  unsigned int  Track::getDepth () const
+  uint32_t  Track::getDepth () const
   { return _routingPlane->getDepth(); }
 
 
@@ -148,8 +148,8 @@ namespace Katana {
 
   TrackElement* Track::getSegment ( DbU::Unit position ) const
   {
-    unsigned int  state;
-    size_t        begin;
+    uint32_t  state;
+    size_t    begin;
 
     getBeginIndex( position, begin, state );
     if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
@@ -194,7 +194,7 @@ namespace Katana {
   }
 
 
-  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, unsigned int& state ) const
+  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
     if (_segments.empty()) {
       state = EmptyTrack;
@@ -256,7 +256,7 @@ namespace Katana {
 
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {
-    unsigned int  iState;
+    uint32_t iState;
 
     if (  _segments.empty()
        or (interval.getVMax() <= _min)
@@ -277,11 +277,11 @@ namespace Katana {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval     interval
-                                   , Net*         net
-                                   , size_t       begin
-                                   , size_t       end
-                                   , unsigned int flags ) const
+  TrackCost  Track::getOverlapCost ( Interval  interval
+                                   , Net*      net
+                                   , size_t    begin
+                                   , size_t    end
+                                   , uint32_t  flags ) const
   {
     TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
 
@@ -326,7 +326,7 @@ namespace Katana {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, unsigned int flags ) const
+  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, uint32_t flags ) const
   {
     size_t begin;
     size_t end;
@@ -337,11 +337,11 @@ namespace Katana {
   }
 
 
-  TrackCost  Track::getOverlapCost ( TrackElement* segment, unsigned int flags ) const
+  TrackCost  Track::getOverlapCost ( TrackElement* segment, uint32_t flags ) const
   { return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags ); }
 
 
-  void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const
+  void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, uint32_t& weight ) const
   {
     cdebug_log(155,1) << "getTerminalWeight() @" << DbU::getValueString(_axis)
                       << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
@@ -390,9 +390,9 @@ namespace Katana {
 
   Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const
   {
-    unsigned int  state;
-    size_t        begin;
-    size_t        end;
+    uint32_t  state;
+    size_t    begin;
+    size_t    end;
 
     if (_segments.empty()) return Interval(_min,_max);
 
@@ -405,7 +405,7 @@ namespace Katana {
   }
 
 
-  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const
+  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
     cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end << " " << net << endl;
     cdebug_log(155,0) << _segments[begin] << endl;
@@ -481,7 +481,7 @@ namespace Katana {
   }
 
 
-  bool  Track::check ( unsigned int& overlaps, const char* message ) const
+  bool  Track::check ( uint32_t& overlaps, const char* message ) const
   {
     bool coherency = true;
     bool holes     = false;
@@ -554,7 +554,7 @@ namespace Katana {
   }
 
 
-  DbU::Unit  Track::getMinimalPosition ( size_t index, unsigned int state ) const
+  DbU::Unit  Track::getMinimalPosition ( size_t index, uint32_t state ) const
   {
     Interval  canonical;
 
@@ -564,14 +564,14 @@ namespace Katana {
       case BeginIsSegmentMax: return _segments[index]->getTargetU ();
     }
 
-    cerr << Bug( " Track::getMinimalPosition(size_t,unsigned int) :"
+    cerr << Bug( " Track::getMinimalPosition(size_t,uint32_t) :"
                  " invalid state value %ud.", state ) << endl;
 
     return _min;
   }
 
 
-  DbU::Unit  Track::getMaximalPosition ( size_t index, unsigned int state ) const
+  DbU::Unit  Track::getMaximalPosition ( size_t index, uint32_t state ) const
   {
     Interval  canonical;
 
@@ -583,7 +583,7 @@ namespace Katana {
       case EndIsSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 
-    cerr << Bug( " Track::getMaximalPosition(size_t,unsigned int) :"
+    cerr << Bug( " Track::getMaximalPosition(size_t,uint32_t) :"
                  " invalid state value %ud.", state ) << endl;
 
     return _min;
@@ -667,7 +667,7 @@ namespace Katana {
   }
 
 
-  unsigned int  Track::checkOverlap ( unsigned int& overlaps ) const
+  uint32_t  Track::checkOverlap ( uint32_t& overlaps ) const
   {
     if ( !_segments.size() ) return 0;
 

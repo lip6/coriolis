@@ -96,7 +96,7 @@ namespace {
 
     for ( size_t i=0 ; i<segments.size() ; ++i ) {
       RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
-      unsigned int  direction = plane->getDirection();
+      Flags         direction = plane->getDirection();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
       DbU::Unit     delta     =   plane->getLayerGauge()->getHalfPitch()
                                 + wireWidth/2

@@ -196,7 +196,7 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_Connecteds".
 
-  AutoSegments_Connecteds::Locator::Locator ( AutoSegment* segment, unsigned int flags )
+  AutoSegments_Connecteds::Locator::Locator ( AutoSegment* segment, Flags flags )
     : AutoSegmentHL()
     , _stack ()
   {
@@ -292,7 +292,7 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_Aligneds".
 
-  AutoSegments_Aligneds::Locator::Locator ( AutoSegment* segment, unsigned int flags )
+  AutoSegments_Aligneds::Locator::Locator ( AutoSegment* segment, Flags flags )
     : AutoSegmentHL()
     , _flags (flags)
     , _master(segment)
@@ -389,9 +389,10 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_Perpandiculars".
 
-  AutoSegments_Perpandiculars::Locator::Locator ( AutoSegment* master )
+  AutoSegments_Perpandiculars::Locator::Locator ( AutoSegment* master, Flags flags )
     : AutoSegmentHL()
-    , _flags         (Flags::WithPerpands)
+  //, _flags         (Flags::WithPerpands|Flags::WithDoglegs)
+    , _flags         (Flags::WithPerpands|flags)
     , _master        (master)
     , _stack         ()
     , _perpandiculars()
@@ -422,7 +423,7 @@ namespace Anabatic {
 
   void  AutoSegments_Perpandiculars::Locator::progress ()
   {
-    cdebug_log(145,0) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
+    cdebug_log(145,1) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
 
     if (not _perpandiculars.empty()) _perpandiculars.pop_back();
     if (not _perpandiculars.empty()) return;
@@ -432,31 +433,61 @@ namespace Anabatic {
       AutoSegment* sourceSegment = _stack.getAutoSegment();
 
       _stack.pop();
+      cdebug_log(145,0) << "Iterate over: " << sourceContact << endl;
 
       LocatorHelper helper (sourceContact, _flags);
       for ( ; helper.isValid() ; helper.progress() ) {
         AutoSegment* currentSegment = helper.getSegment();
         if (currentSegment == sourceSegment) continue;
 
-        if (AutoSegment::areAligneds(currentSegment,_master)) {
-          AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
-          if (targetContact) {
-            if (  (_master->isHorizontal() and sourceContact->isHTee())
-               or (_master->isVertical  () and sourceContact->isVTee()) ) {
-              if (AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
-                cerr << Error("Aligned segments not in same layer (perpandicular locator)\n"
-                              "        %s\n"
-                              "        %s."
-                             ,getString(_master).c_str()
-                             ,getString(currentSegment).c_str()) << endl;
-                continue;
-              }
+        cdebug_log(145,0) << "| " << currentSegment << endl;
 
-              cdebug_log(145,0) << "Stacking target. " << endl;
-              _stack.push( targetContact, currentSegment );
+        if (AutoSegment::areAligneds(currentSegment,_master)) {
+          AutoContact* targetContact = currentSegment->getOppositeAnchor( sourceContact );
+
+          if (targetContact) {
+            if (_master->getLayer() != currentSegment->getLayer()) {
+              continue;
             }
+            cdebug_log(145,0) << "Stacking target. " << endl;
+            _stack.push( targetContact, currentSegment );
+
+            // if (  (_master->isHorizontal() and sourceContact->isHTee())
+            //    or (_master->isVertical  () and sourceContact->isVTee()) ) {
+            //   if (AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
+            //     cerr << Error("Aligned segments not in same layer (perpandicular locator)\n"
+            //                   "        %s\n"
+            //                   "        %s."
+            //                  ,getString(_master).c_str()
+            //                  ,getString(currentSegment).c_str()) << endl;
+            //     continue;
+            //   }
+
+            //   cdebug_log(145,0) << "Stacking target. " << endl;
+            //   _stack.push( targetContact, currentSegment );
+            // }
+          } else {
+            cdebug_log(145,0) << "No opposite anchor to: " << sourceContact << endl;
           }
         } else {
+          if ( (_flags & Flags::WithDoglegs) and currentSegment->isLocal() and sourceContact->isTurn() ) {
+            AutoContact* targetContact = currentSegment->getOppositeAnchor( sourceContact );
+            if (targetContact->isTurn()) {
+              AutoSegment* targetGlobal = targetContact->getPerpandicular( currentSegment );
+              if (targetGlobal->isGlobal() and (_master->getLayer() == targetGlobal->getLayer())) {
+                cdebug_log(145,0) << "Global aligned though dogleg:" << targetGlobal << endl;
+                Interval masterConstraints;
+                Interval targetConstraints;
+                _master     ->getConstraints( masterConstraints );
+                targetGlobal->getConstraints( targetConstraints );
+                if (targetConstraints.intersect(masterConstraints)) {
+                  cdebug_log(145,0) << "Stacking dogleg global. " << endl;
+                  _stack.push( targetContact, currentSegment );
+                  continue;
+                }
+              }
+            }
+          }
           _perpandiculars.push_back( currentSegment );
         }
       }
@@ -465,6 +496,8 @@ namespace Anabatic {
       if (_stack.getAutoSegment() == _master) continue;
       if (not _perpandiculars.empty()) break;
     }
+
+    cdebug_tabw(145,-1);
   }
 
 
@@ -481,7 +514,7 @@ namespace Anabatic {
 
 
   AutoSegmentHL* AutoSegments_Perpandiculars::getLocator () const
-  { return new Locator(_segment); }
+  { return new Locator(_master,_flags); }
 
 
   string  AutoSegments_Perpandiculars::Locator::_getString () const
@@ -494,7 +527,7 @@ namespace Anabatic {
   string  AutoSegments_Perpandiculars::_getString () const
   {
     string s = "<" + _TName("AutoSegments_Perpandiculars") + " "
-                   + getString(_segment)
+                   + getString(_master)
                    + ">";
     return s;
   }
@@ -503,7 +536,7 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegments_AnchorOnGCell".
 
-  AutoSegments_AnchorOnGCell::Locator::Locator ( GCell* fcell, unsigned int flags )
+  AutoSegments_AnchorOnGCell::Locator::Locator ( GCell* fcell, Flags flags )
     : AutoSegmentHL()
     , _flags      (flags)
     , _itContact  (fcell->getContacts().begin())
@@ -600,7 +633,7 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoSegments_CachedOnContact".
 
-  AutoSegments_CachedOnContact::Locator::Locator ( AutoContact* sourceContact, unsigned int direction )
+  AutoSegments_CachedOnContact::Locator::Locator ( AutoContact* sourceContact, Flags direction )
     : AutoSegmentHL()
     , _helper(new LocatorHelper(sourceContact,direction))
   { }

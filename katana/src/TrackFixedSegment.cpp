@@ -65,11 +65,11 @@ namespace Katana {
   {
     Box boundingBox = segment->getBoundingBox();
 
-    unsigned int flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
+    uint32_t flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
     setFlags( flags );
 
     if (track) {
-      unsigned int  depth      = track->getDepth();
+      uint32_t      depth      = track->getDepth();
       Technology*   technology = DataBase::getDB()->getTechnology();
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));

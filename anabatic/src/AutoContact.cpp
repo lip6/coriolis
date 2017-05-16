@@ -157,7 +157,7 @@ namespace Anabatic {
   { return _goName; }
 
 
-  bool  AutoContact::canDestroy ( unsigned int flags ) const
+  bool  AutoContact::canDestroy ( Flags flags ) const
   {
     if (not _contact->getSlaveComponents().isEmpty()) {
       if (flags & Flags::WarnOnError) {
@@ -248,7 +248,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoContact::getNativeUConstraints ( unsigned int direction ) const
+  Interval  AutoContact::getNativeUConstraints ( Flags direction ) const
   {
     Box       nativeConstraints = getNativeConstraintBox();
     Interval  constraint;
@@ -262,7 +262,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoContact::getUConstraints ( unsigned int direction ) const
+  Interval  AutoContact::getUConstraints ( Flags direction ) const
   {
     Interval  constraint;
     if (direction & Flags::Horizontal) {
@@ -275,7 +275,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoContact::invalidate ( unsigned int flags )
+  void  AutoContact::invalidate ( Flags flags )
   {
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
@@ -342,7 +342,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoContact::showTopologyError ( const std::string& message, unsigned int flags )
+  void  AutoContact::showTopologyError ( const std::string& message, Flags flags )
   {
     Component*    anchor      = NULL;
     Horizontal**  horizontals = new Horizontal* [10];
@@ -395,7 +395,7 @@ namespace Anabatic {
 
 
 
-  bool  AutoContact::isTee ( unsigned int direction ) const
+  bool  AutoContact::isTee ( Flags direction ) const
   {
     return (isHTee() and (direction & Flags::Horizontal))
         or (isVTee() and (direction & Flags::Vertical  ));
@@ -442,9 +442,9 @@ namespace Anabatic {
   }
 
 
-  bool  AutoContact::restrictConstraintBox ( DbU::Unit    constraintMin
-                                           , DbU::Unit    constraintMax
-                                           , unsigned int flags
+  bool  AutoContact::restrictConstraintBox ( DbU::Unit  constraintMin
+                                           , DbU::Unit  constraintMax
+                                           , Flags      flags
                                            )
   {
     cdebug_log(149,0) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;

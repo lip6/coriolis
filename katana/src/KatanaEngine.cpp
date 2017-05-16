@@ -295,7 +295,7 @@ namespace Katana {
   { return _configuration; }
 
 
-  unsigned int  KatanaEngine::getRipupLimit ( const TrackElement* segment ) const
+  uint32_t  KatanaEngine::getRipupLimit ( const TrackElement* segment ) const
   {
     if (segment->isBlockage()) return 0;
 
@@ -328,7 +328,7 @@ namespace Katana {
   }
 
 
-  Track* KatanaEngine::getTrackByPosition ( const Layer* layer, DbU::Unit axis, unsigned int mode ) const
+  Track* KatanaEngine::getTrackByPosition ( const Layer* layer, DbU::Unit axis, uint32_t mode ) const
   {
     RoutingPlane* plane = getRoutingPlaneByLayer( layer );
     if (not plane) return NULL;
@@ -428,7 +428,7 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::runNegociate ( unsigned int flags )
+  void  KatanaEngine::runNegociate ( Flags flags )
   {
     if (_negociateWindow) return;
 
@@ -449,7 +449,7 @@ namespace Katana {
     printMeasures( "algo" );
 
     openSession();
-    unsigned int overlaps             = 0;
+    uint32_t overlaps             = 0;
     // size_t       hTracksReservedLocal = getHTracksReservedLocal();
     // size_t       vTracksReservedLocal = getVTracksReservedLocal();
 
@@ -610,7 +610,7 @@ namespace Katana {
   }
 
 
-  bool  KatanaEngine::_check ( unsigned int& overlap, const char* message ) const
+  bool  KatanaEngine::_check ( uint32_t& overlap, const char* message ) const
   {
     cmess1 << "  o  Checking Katana Database coherency." << endl;
 

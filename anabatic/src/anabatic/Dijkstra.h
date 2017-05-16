@@ -73,11 +73,11 @@ namespace Anabatic {
       inline bool         isiSet     () const;
              void         reset      ();
 
-             unsigned int getFlags   () const;
-             void         setFlags   (unsigned int);
+             Flags        getFlags   () const;
+             void         setFlags   (Flags);
 
     private:
-      unsigned int _flags;
+      Flags        _flags;
       DbU::Unit    _min;
       DbU::Unit    _max;
       DbU::Unit    _axis;
@@ -94,8 +94,8 @@ namespace Anabatic {
   inline bool         IntervalC::isiSet   () const { return _flags & iSet; }
   inline bool         IntervalC::isH      () const { return _flags & iHorizontal; }
   inline bool         IntervalC::isV      () const { return _flags & iVertical  ; }
-  inline void         IntervalC::setFlags ( unsigned int f ) { _flags = f   ; }
-  inline unsigned int IntervalC::getFlags () const           { return _flags; }
+  inline void         IntervalC::setFlags ( Flags flags ) { _flags = flags; }
+  inline Flags        IntervalC::getFlags () const    { return _flags; }
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GRAData".
@@ -252,8 +252,8 @@ namespace Anabatic {
               inline bool            isAxisTarget () const;
               inline bool            isiHorizontal() const;
               inline bool            isiVertical  () const;
-              inline void            setFlags     ( unsigned int );
-              inline void            unsetFlags   ( unsigned int );
+              inline void            setFlags     ( uint32_t );
+              inline void            unsetFlags   ( uint32_t );
                      bool            isH          () const;
                      bool            isV          () const;
               inline void            createAData  ();
@@ -282,11 +282,11 @@ namespace Anabatic {
                      DbU::Unit       getPIMin2         () const;
                      DbU::Unit       getPIAxis2        () const;
                      IntervalC       getIntervFrom2    () const;
-                     IntervalC       getIntervFrom     ( unsigned int criteria = 0 ) const;
+                     IntervalC       getIntervFrom     ( uint32_t criteria=0 ) const;
                      IntervalC       getInterv         () const;
                      void            printInterv       () const;
                      void            printIntervfrom   () const;
-                     GCell*          getGPrev          ( unsigned int criteria = 0 ) const;
+                     GCell*          getGPrev          ( uint32_t criteria=0 ) const;
  
     // Inspector support. 
                      string          _getString     () const;
@@ -305,7 +305,7 @@ namespace Anabatic {
       int                  _stamp;
       DbU::Unit            _distance;
       Edge*                _from;
-      unsigned int         _flags;
+      uint32_t             _flags;
       GRAData*             _adata;
   }; 
 
@@ -384,8 +384,8 @@ namespace Anabatic {
   inline bool         Vertex::isAxisTarget () const { return (_flags & Vertex::AxisTarget  ); }
   inline bool         Vertex::isiHorizontal() const { return (_flags & Vertex::iHorizontal ); }
   inline bool         Vertex::isiVertical  () const { return (_flags & Vertex::iVertical   ); }
-  inline void         Vertex::setFlags     ( unsigned int mask ) { _flags |= mask ; }
-  inline void         Vertex::unsetFlags   ( unsigned int mask ) { _flags &= ~mask; }
+  inline void         Vertex::setFlags     ( uint32_t mask ) { _flags |= mask ; }
+  inline void         Vertex::unsetFlags   ( uint32_t mask ) { _flags &= ~mask; }
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
@@ -466,7 +466,7 @@ namespace Anabatic {
                     , AxisTarget = (1<<2)
                     };
         public:
-          inline               Mode         ( unsigned int flags=NoMode );
+          inline               Mode         ( Flag flags=NoMode );
           inline               Mode         ( BaseFlags );
           virtual             ~Mode         ();
           virtual std::string  _getTypeName () const;
@@ -504,8 +504,8 @@ namespace Anabatic {
 
              inline void setAxisTarget       ();
              inline bool needAxisTarget      () const;
-             inline void setFlags            ( unsigned int );
-             inline void unsetFlags          ( unsigned int );
+             inline void setFlags            ( Flags );
+             inline void unsetFlags          ( Flags );
                     void setAxisTargets      ();
                     void unsetAxisTargets    ();
 
@@ -532,12 +532,12 @@ namespace Anabatic {
       DbU::Unit        _searchAreaHalo;
       int              _connectedsId;
       PriorityQueue    _queue;
-      unsigned int     _flags;
+      Flags            _flags;
   };
 
 
-  inline Dijkstra::Mode::Mode ( unsigned int flags ) : BaseFlags(flags) { }
-  inline Dijkstra::Mode::Mode ( BaseFlags    base  ) : BaseFlags(base)  { }
+  inline Dijkstra::Mode::Mode ( Dijkstra::Mode::Flag flags ) : BaseFlags(flags) { }
+  inline Dijkstra::Mode::Mode ( BaseFlags            base  ) : BaseFlags(base)  { }
 
   inline bool       Dijkstra::isBipoint         () const { return _net and (_targets.size()+_sources.size() == 2); }
   inline bool       Dijkstra::isSourceVertex    ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
@@ -548,9 +548,10 @@ namespace Anabatic {
   template<typename DistanceT>
   inline DistanceT* Dijkstra::setDistance       ( DistanceT cb ) { _distanceCb = cb; return _distanceCb.target<DistanceT>(); }
 
-  inline void       Dijkstra::setFlags       ( unsigned int mask ) { _flags |= mask; }
+  inline void       Dijkstra::setFlags       ( Flags mask ) { _flags |= mask; }
   inline bool       Dijkstra::needAxisTarget () const { return (_flags & Mode::AxisTarget); }
-  inline void       Dijkstra::unsetFlags     ( unsigned int mask ) { _flags &= ~mask; }
+  inline void       Dijkstra::unsetFlags     ( Flags mask ) { _flags &= ~mask; }
+
 }  // Anabatic namespace.
 
 

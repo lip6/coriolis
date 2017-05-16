@@ -34,9 +34,9 @@ namespace Katana {
 // Class  :  "TrackElements_Perpandiculars".
 
 
-  TrackElements_Perpandiculars::Locator::Locator ( TrackElement* segment )
+  TrackElements_Perpandiculars::Locator::Locator ( TrackElement* segment, Flags flags )
     : TrackElementHL ()
-    , _locator       (segment->base())
+    , _locator       (segment->base(),flags)
     , _element       (NULL)
   {
     cdebug_log(155,0) << "TrackElements_Perpandiculars::Locator::Locator()" << endl;
@@ -91,7 +91,7 @@ namespace Katana {
 
 
   TrackElementHL* TrackElements_Perpandiculars::getLocator () const
-  { return new Locator(_segment); }
+  { return new Locator(_segment,_flags); }
 
 
   string  TrackElements_Perpandiculars::Locator::_getString () const

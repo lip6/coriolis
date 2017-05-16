@@ -141,22 +141,22 @@ namespace Katana {
 // Class  :  "RoutingEvent".
 
 
-  unsigned int  RoutingEvent::_idCounter  = 0;
-  unsigned int  RoutingEvent::_stage      = RoutingEvent::Negociate;
-  size_t        RoutingEvent::_allocateds = 0;
-  size_t        RoutingEvent::_processeds = 0;
-  size_t        RoutingEvent::_cloneds    = 0;
+  uint32_t  RoutingEvent::_idCounter  = 0;
+  uint32_t  RoutingEvent::_stage      = RoutingEvent::Negociate;
+  uint32_t  RoutingEvent::_allocateds = 0;
+  uint32_t  RoutingEvent::_processeds = 0;
+  uint32_t  RoutingEvent::_cloneds    = 0;
 
 
-  unsigned int  RoutingEvent::getStage        () { return _stage; }
-  size_t        RoutingEvent::getAllocateds   () { return _allocateds; }
-  size_t        RoutingEvent::getProcesseds   () { return _processeds; }
-  size_t        RoutingEvent::getCloneds      () { return _cloneds; }
-  void          RoutingEvent::setStage        ( unsigned int stage ) { _stage = stage; }
-  void          RoutingEvent::resetProcesseds () { _processeds = 0; }
+  uint32_t  RoutingEvent::getStage        () { return _stage; }
+  uint32_t  RoutingEvent::getAllocateds   () { return _allocateds; }
+  uint32_t  RoutingEvent::getProcesseds   () { return _processeds; }
+  uint32_t  RoutingEvent::getCloneds      () { return _cloneds; }
+  void      RoutingEvent::setStage        ( uint32_t stage ) { _stage = stage; }
+  void      RoutingEvent::resetProcesseds () { _processeds = 0; }
 
 
-  RoutingEvent::RoutingEvent ( TrackElement* segment, unsigned int mode )
+  RoutingEvent::RoutingEvent ( TrackElement* segment, uint32_t mode )
     : _cloned              (false)
     , _processed           (false)
     , _disabled            (false)
@@ -180,9 +180,9 @@ namespace Katana {
     , _priority            (0.0)
     , _key                 (this)
   {
-    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
+    if (_idCounter == std::numeric_limits<uint32_t>::max()) {
       throw Error( "RoutingEvent::RoutingEvent(): Identifier counter has reached it's limit (%d bits)."
-                 , std::numeric_limits<unsigned int>::digits );
+                 , std::numeric_limits<uint32_t>::digits );
     }
 
     DataNegociate* data = _segment->getDataNegociate();
@@ -199,7 +199,7 @@ namespace Katana {
   }
 
 
-  RoutingEvent* RoutingEvent::create ( TrackElement* segment, unsigned int mode )
+  RoutingEvent* RoutingEvent::create ( TrackElement* segment, uint32_t mode )
   {
     // if (not dynamic_cast<TrackSegment*>(segment)) {
     //   cerr << Error( "RoutingEvent::create() Can only create event from TrackSegment:\n"
@@ -256,18 +256,18 @@ namespace Katana {
   { return getState() == DataNegociate::Unimplemented; }
 
 
-  void  RoutingEvent::setMode ( unsigned int mode )
+  void  RoutingEvent::setMode ( uint32_t mode )
   { _mode = mode; }
 
 
-  unsigned int  RoutingEvent::getState () const
+  uint32_t  RoutingEvent::getState () const
   {
     DataNegociate* data = _segment->getDataNegociate();
     return (data) ? data->getState() : 0;
   }
 
 
-  void  RoutingEvent::setState ( unsigned int state )
+  void  RoutingEvent::setState ( uint32_t state )
   {
     DataNegociate* data = _segment->getDataNegociate();
     if (data) data->setState( state );
@@ -306,7 +306,7 @@ namespace Katana {
   }
 
 
-  RoutingEvent* RoutingEvent::reschedule ( RoutingEventQueue& queue, unsigned int eventLevel )
+  RoutingEvent* RoutingEvent::reschedule ( RoutingEventQueue& queue, uint32_t eventLevel )
   {
     RoutingEvent* active = _segment->getDataNegociate()->getRoutingEvent();
     if (active != this) return active->reschedule( queue, eventLevel );

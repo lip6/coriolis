@@ -255,7 +255,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoContactTerminal::_invalidate ( unsigned int flags )
+  void  AutoContactTerminal::_invalidate ( Flags flags )
   {
     if (_segment) _segment->invalidate();
   }
@@ -364,7 +364,7 @@ namespace Anabatic {
           _segment->getConstraints( intv );
           message << "\n        Segment constraints: " << intv << endl;
 
-          unsigned int flags = 0;
+          Flags flags = Flags::NoFlags;
           if (_segment->isCreated()) flags |= Flags::CParanoid;
           showTopologyError( message.str(), flags );
         } else
@@ -375,7 +375,7 @@ namespace Anabatic {
           message << "Terminal vertical segment X" << DbU::getValueString(_segment->getX())
                   << " axis is outside RoutingPad " << getUConstraints(Flags::Horizontal) << ".";
 
-          unsigned int flags = 0;
+          Flags flags = Flags::NoFlags;
           if (_segment->isCreated()) flags |= Flags::CParanoid;
           showTopologyError( message.str(), flags );
         } else

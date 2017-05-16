@@ -120,7 +120,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoHorizontal::getSourceConstraints ( unsigned int flags ) const
+  Interval  AutoHorizontal::getSourceConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoSource()->getNativeConstraintBox() );
@@ -130,7 +130,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoHorizontal::getTargetConstraints ( unsigned int flags ) const
+  Interval  AutoHorizontal::getTargetConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoTarget()->getNativeConstraintBox() );
@@ -240,7 +240,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoHorizontal::_slacken ( unsigned int flags )
+  bool  AutoHorizontal::_slacken ( Flags flags )
   {
     cdebug_log(149,0) << "AutoHorizontal::_slacken() " << this << endl;
 
@@ -410,19 +410,19 @@ namespace Anabatic {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _horizontal->invert();
 
-      unsigned int spinFlags = _flags & SegDepthSpin;
+      Flags spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
       if (spinFlags & SegSourceTop   ) setFlags( SegTargetTop );
       if (spinFlags & SegSourceBottom) setFlags( SegTargetBottom );
       if (spinFlags & SegTargetTop   ) setFlags( SegSourceTop );
       if (spinFlags & SegTargetBottom) setFlags( SegSourceBottom );
 
-      unsigned int invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
+      Flags invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
       unsetFlags( SegInvalidatedSource|SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedSource) setFlags( SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedTarget) setFlags( SegInvalidatedSource );
 
-      unsigned int terminalFlags = _flags & SegStrongTerminal;
+      Flags terminalFlags = _flags & SegStrongTerminal;
       unsetFlags( SegStrongTerminal );
       if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
       if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );
@@ -728,7 +728,7 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
+  Flags  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     DebugSession::open( getNet(), 140, 150 );
     cdebug_log(149,0) << "AutoHorizontal::_makeDogleg(GCell*) in " << doglegGCell << endl;

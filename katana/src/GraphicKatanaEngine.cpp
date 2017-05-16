@@ -86,7 +86,7 @@ namespace Katana {
     QRect     pixelBb = widget->dbuToScreenRect(bb);
 
     if (GCell::getDisplayMode() == GCell::Density) {
-      unsigned int density = (unsigned int)( 255.0 * gcell->getDensity() );
+      uint32_t density = (unsigned int)( 255.0 * gcell->getDensity() );
       if (density > 255) density = 255;
 
       painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
@@ -138,10 +138,10 @@ namespace Katana {
     const Edge* edge = static_cast<const Edge*>(go);
 
     if (edge) {
-      Box          bb        = edge->getBoundingBox();
-      unsigned int occupancy = 255;
+      Box      bb        = edge->getBoundingBox();
+      uint32_t occupancy = 255;
       if (edge->getRealOccupancy() < edge->getCapacity())
-        occupancy = (unsigned int)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+        occupancy = (uint32_t)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
 
       QPainter& painter = widget->getPainter();
       if (edge->getRealOccupancy() > edge->getCapacity()) {
@@ -203,7 +203,7 @@ namespace Katana {
   }
 
 
-  KatanaEngine* GraphicKatanaEngine::getForFramework ( unsigned int flags )
+  KatanaEngine* GraphicKatanaEngine::getForFramework ( uint32_t flags )
   {
   // Currently, only one framework is avalaible: Alliance.
 
@@ -322,7 +322,7 @@ namespace Katana {
 
   void  GraphicKatanaEngine::postEvent ()
   {
-    static unsigned int count = 0;
+    static uint32_t count = 0;
 
     if (not (count++ % 500)) {
       QApplication::processEvents();

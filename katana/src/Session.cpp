@@ -126,7 +126,7 @@ namespace Katana {
   { return _getKatanaEngine()->getNegociateWindow(); };
 
 
-  unsigned int  Session::_getRipupCost ()
+  uint32_t  Session::_getRipupCost ()
   { return _getKatanaEngine()->getRipupCost(); };
 
 
@@ -197,7 +197,7 @@ namespace Katana {
     _doglegReset();
 
 # if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
+    uint32_t overlaps = 0;
 # endif
     for ( Track* track : _sortEvents ) {
       track->doReorder();

@@ -41,11 +41,13 @@ namespace Katana {
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );
+      inline  Flags ( const Hurricane::BaseFlags& );
   };
 
 
-  inline  Flags::Flags (       uint64_t      flags ) : Super(flags) { }
-  inline  Flags::Flags ( const Flags::Super& base  ) : Super(base)  { }
+  inline  Flags::Flags (       uint64_t              flags ) : Super(flags) { }
+  inline  Flags::Flags ( const Flags::Super&         flags ) : Super(flags) { }
+  inline  Flags::Flags ( const Hurricane::BaseFlags& flags ) : Super(flags) { }
 
 
 } // Katana namespace.

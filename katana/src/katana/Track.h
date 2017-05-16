@@ -42,13 +42,13 @@ namespace Katana {
   class Track {
 
     public:
-      enum IndexState { BeginIsTrackMin     = 0x00000001
-                      , BeginIsSegmentMin   = 0x00000002
-                      , BeginIsSegmentMax   = 0x00000004
-                      , EndIsTrackMax       = 0x00000008
-                      , EndIsSegmentMin     = 0x00000010
-                      , EndIsNextSegmentMin = 0x00000020
-                      , EndIsSegmentMax     = 0x00000040
+      enum IndexState { BeginIsTrackMin     = (1 <<  0)
+                      , BeginIsSegmentMin   = (1 <<  1)
+                      , BeginIsSegmentMax   = (1 <<  2)
+                      , EndIsTrackMax       = (1 <<  3)
+                      , EndIsSegmentMin     = (1 <<  4)
+                      , EndIsNextSegmentMin = (1 <<  5)
+                      , EndIsSegmentMax     = (1 <<  6)
                       , BeforeFirstElement  = BeginIsTrackMin  |EndIsSegmentMin
                       , InsideElement       = BeginIsSegmentMin|EndIsSegmentMax
                       , OutsideElement      = BeginIsSegmentMax|EndIsNextSegmentMin
@@ -71,7 +71,7 @@ namespace Katana {
               KatanaEngine*  getKatanaEngine     () const;
       virtual Flags          getDirection        () const = 0;
       inline  size_t         getIndex            () const;
-              unsigned int   getDepth            () const;
+              uint32_t       getDepth            () const;
               const Layer*   getLayer            () const;
               const Layer*   getBlockageLayer    () const;
       inline  DbU::Unit      getAxis             () const;
@@ -88,20 +88,20 @@ namespace Katana {
               TrackElement*  getNextFixed        ( size_t& index ) const;
               size_t         find                ( const TrackElement* ) const;
               DbU::Unit      getSourcePosition   ( vector<TrackElement*>::iterator ) const;
-              DbU::Unit      getMinimalPosition  ( size_t index, unsigned int state ) const;
-              DbU::Unit      getMaximalPosition  ( size_t index, unsigned int state ) const;
+              DbU::Unit      getMinimalPosition  ( size_t index, uint32_t state ) const;
+              DbU::Unit      getMaximalPosition  ( size_t index, uint32_t state ) const;
               Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
               Interval       getOccupiedInterval ( size_t& begin ) const;
-              Interval       expandFreeInterval  ( size_t& begin, size_t& end, unsigned int state, Net* ) const;
-              void           getBeginIndex       ( DbU::Unit position, size_t& begin, unsigned int& state ) const;
+              Interval       expandFreeInterval  ( size_t& begin, size_t& end, uint32_t state, Net* ) const;
+              void           getBeginIndex       ( DbU::Unit position, size_t& begin, uint32_t& state ) const;
               void           getOverlapBounds    ( Interval, size_t& begin, size_t& end ) const;
-              TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end, unsigned int flags ) const;
-              TrackCost      getOverlapCost      ( Interval, Net*, unsigned int flags ) const;
-              TrackCost      getOverlapCost      ( TrackElement*, unsigned int flags ) const;
-              void           getTerminalWeight   ( Interval, Net*, size_t& count, unsigned int& weight ) const;
+              TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end, uint32_t flags ) const;
+              TrackCost      getOverlapCost      ( Interval, Net*, uint32_t flags ) const;
+              TrackCost      getOverlapCost      ( TrackElement*, uint32_t flags ) const;
+              void           getTerminalWeight   ( Interval, Net*, size_t& count, uint32_t& weight ) const;
               DbU::Unit      getSourcePosition   ( size_t index ) const;
-              bool           check               ( unsigned int& overlaps, const char* message=NULL ) const;
-              unsigned int   checkOverlap        ( unsigned int& overlaps ) const;
+              bool           check               ( uint32_t& overlaps, const char* message=NULL ) const;
+              uint32_t       checkOverlap        ( uint32_t& overlaps ) const;
      inline   void           setLocalAssigned    ( bool );
               void           invalidate          ();
               void           insert              ( TrackElement* );
@@ -128,7 +128,7 @@ namespace Katana {
 
     protected:
     // Constructors & Destructors.
-                            Track           ( RoutingPlane*, unsigned int index );
+                            Track           ( RoutingPlane*, uint32_t index );
       virtual              ~Track           ();
       virtual void          _postCreate     ();
       virtual void          _preDestroy     ();
@@ -137,8 +137,8 @@ namespace Katana {
               Track&        operator=       ( const Track& );
     protected:
     // Protected functions.
-      inline  unsigned int  setMinimalFlags ( unsigned int& state, unsigned int flags ) const;
-      inline  unsigned int  setMaximalFlags ( unsigned int& state, unsigned int flags ) const;
+      inline  uint32_t  setMinimalFlags ( uint32_t& state, uint32_t flags ) const;
+      inline  uint32_t  setMaximalFlags ( uint32_t& state, uint32_t flags ) const;
 
     protected:
     // Sub-Classes.
@@ -195,14 +195,14 @@ namespace Katana {
   inline size_t        Track::getSize          () const { return _segments.size(); }
   inline void          Track::setLocalAssigned ( bool state ) { _localAssigned=state; }
 
-  inline unsigned int  Track::setMinimalFlags ( unsigned int& state, unsigned int flags ) const
+  inline uint32_t  Track::setMinimalFlags ( uint32_t& state, uint32_t flags ) const
   {
     state &=         ~BeginMask;
     state |= (flags & BeginMask);
     return state;
   }
 
-  inline unsigned int  Track::setMaximalFlags ( unsigned int& state, unsigned int flags ) const
+  inline uint32_t  Track::setMaximalFlags ( uint32_t& state, uint32_t flags ) const
   {
     state &=         ~EndMask;
     state |= (flags & EndMask);

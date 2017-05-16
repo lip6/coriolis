@@ -107,7 +107,7 @@ namespace Katana {
   using Anabatic::NetData;
 
 
-  void  KatanaEngine::setupGlobalGraph ( unsigned int mode )
+  void  KatanaEngine::setupGlobalGraph ( uint32_t mode )
   {
     Cell* cell = getCell();
 

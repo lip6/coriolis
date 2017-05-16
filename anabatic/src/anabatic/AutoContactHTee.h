@@ -39,7 +39,7 @@ namespace Anabatic {
     // Constructors & Destructors.
                                AutoContactHTee        ( GCell*, Contact* );
       virtual                 ~AutoContactHTee        ();
-      virtual void             _invalidate            ( unsigned int flags );
+      virtual void             _invalidate            ( Flags flags );
     public:
       inline  AutoHorizontal*  getHorizontal1         () const;
       inline  AutoHorizontal*  getHorizontal2         () const;

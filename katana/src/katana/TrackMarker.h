@@ -50,7 +50,7 @@ namespace Katana {
       inline  DbU::Unit    getSourceU   () const;
       inline  DbU::Unit    getTargetU   () const;
       inline  Track*       getTrack     () const;
-      inline  unsigned int getWeight    ( const Track* ) const;
+      inline  uint32_t     getWeight    ( const Track* ) const;
       inline  void         setTrack     ( Track* );
               Record*      _getRecord   () const;
               std::string  _getString   () const;
@@ -67,12 +67,12 @@ namespace Katana {
 
     protected:
     // Attributes.
-      RoutingPad*   _routingPad;
-      DbU::Unit     _sourcePosition;
-      DbU::Unit     _targetPosition;
-      Track*        _track;
-      unsigned int  _weight;
-      unsigned int  _refcount;
+      RoutingPad* _routingPad;
+      DbU::Unit   _sourcePosition;
+      DbU::Unit   _targetPosition;
+      Track*      _track;
+      uint32_t    _weight;
+      uint32_t    _refcount;
 
     protected:
     // Constructors & destructors.
@@ -88,7 +88,7 @@ namespace Katana {
   inline  DbU::Unit     TrackMarker::getSourceU () const { return _sourcePosition; }
   inline  DbU::Unit     TrackMarker::getTargetU () const { return _targetPosition; }
   inline  Track*        TrackMarker::getTrack   () const { return _track; }
-  inline  unsigned int  TrackMarker::getWeight  ( const Track* track ) const { return _weight; }
+  inline  uint32_t      TrackMarker::getWeight  ( const Track* track ) const { return _weight; }
   inline  void          TrackMarker::setTrack   ( Track* track ) { _track = track; }
 
   inline bool TrackMarker::Compare::operator() ( const TrackMarker* lhs, const TrackMarker* rhs ) const

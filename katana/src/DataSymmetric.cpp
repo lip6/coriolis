@@ -122,8 +122,8 @@ namespace Katana {
 
   bool  DataSymmetric::checkPairing ()
   {
-    const unsigned int mask   = ~(AutoSegmentFlag::SegIsReduced);
-          Message      errors ( 0, "[ERROR]" );
+    const uint32_t mask   = ~(AutoSegmentFlag::SegIsReduced);
+          Message  errors ( 0, "[ERROR]" );
 
   // Temporary hardwired: M2 (depth 1) for H pitch, M3 (depth 2) for V pitch.
     DbU::Unit hPitch = Session::getPitch( 1 );

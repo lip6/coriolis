@@ -154,7 +154,7 @@ namespace Katana {
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
-  bool           TrackSegment::isStrongTerminal     ( unsigned int flags ) const { return _base->isStrongTerminal(flags); }
+  bool           TrackSegment::isStrongTerminal     ( Flags flags ) const { return _base->isStrongTerminal(flags); }
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
@@ -172,7 +172,7 @@ namespace Katana {
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
-  unsigned int   TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
+  uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
   TrackElement*  TrackSegment::getCanonical         ( Interval& i ) { return Session::lookup( _base->getCanonical(i)->base() ); }
@@ -182,7 +182,7 @@ namespace Katana {
   void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
 
 
-  DataNegociate* TrackSegment::getDataNegociate ( unsigned int flags ) const
+  DataNegociate* TrackSegment::getDataNegociate ( Flags flags ) const
   {
     if (flags & Flags::DataSelf) return _data;
 
@@ -292,7 +292,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setDoglegLevel ( unsigned int level )
+  void  TrackSegment::setDoglegLevel ( uint32_t level )
   {
     if (level > 15) {
       cerr << Bug("%s has reached maximum dog leg count (15)."
@@ -344,7 +344,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setAxis ( DbU::Unit axis, unsigned int flags  )
+  void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
   {
     _base->setAxis( axis, flags );
     invalidate();
@@ -393,7 +393,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::reschedule ( unsigned int level )
+  void  TrackSegment::reschedule ( uint32_t level )
   {
     cdebug_log(159,1) << "TrackSegment::reschedule() - " << this << endl;
 
@@ -409,19 +409,19 @@ namespace Katana {
   }
 
 
-  float  TrackSegment::getMaxUnderDensity ( unsigned int flags ) const
+  float  TrackSegment::getMaxUnderDensity ( Flags flags ) const
   { return _base->getMaxUnderDensity( flags ); }
 
 
-  bool  TrackSegment::canPivotUp ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canPivotUp ( float reserve, Flags flags ) const
   { return _base->canPivotUp( reserve, flags ); }
 
 
-  bool  TrackSegment::canPivotDown ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canPivotDown ( float reserve, Flags flags ) const
   { return _base->canPivotDown( reserve, flags ); }
 
 
-  bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canMoveUp ( float reserve, Flags flags ) const
   { return _base->canMoveUp( reserve, flags ); }
 
 
@@ -432,7 +432,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::slacken ( unsigned int flags )
+  bool  TrackSegment::slacken ( Flags flags )
   {
     cdebug_log(159,0) << "TrackSegment::slacken()" << endl;
 
@@ -456,7 +456,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveUp ( unsigned int flags )
+  bool  TrackSegment::moveUp ( Flags flags )
   {
     bool success = false;
 
@@ -477,7 +477,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveDown ( unsigned int flags )
+  bool  TrackSegment::moveDown ( Flags flags )
   {
     bool success = false;
 
@@ -498,7 +498,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveAside ( unsigned int flags )
+  bool  TrackSegment::moveAside ( Flags flags )
   {
     bool success = true;
 
@@ -585,7 +585,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::canDogleg ( Anabatic::GCell* doglegGCell, unsigned int flags )
+  bool  TrackSegment::canDogleg ( Anabatic::GCell* doglegGCell, Flags flags )
   {
     cdebug_log(159,1) << "TrackSegment::canDogleg(GCell*) " << doglegGCell << endl;
 
@@ -747,7 +747,7 @@ namespace Katana {
   }
 
 
-  TrackElement* TrackSegment::makeDogleg ( Interval interval, unsigned int& flags )
+  TrackElement* TrackSegment::makeDogleg ( Interval interval, Flags& flags )
   {
     TrackElement* perpandicular = NULL;
     TrackElement* parallel      = NULL;
@@ -764,7 +764,7 @@ namespace Katana {
   {
     cdebug_log(159,1) << "TrackSegment::_postDoglegs()" << endl;
 
-    unsigned int                doglegLevel = 0;
+    uint32_t                    doglegLevel = 0;
     const vector<AutoSegment*>& doglegs = Session::getDoglegs();
     vector<TrackElement*>       segments;
 

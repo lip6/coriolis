@@ -207,7 +207,7 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::addRoutingEvent ( TrackElement* segment, unsigned int level )
+  void  NegociateWindow::addRoutingEvent ( TrackElement* segment, uint32_t level )
   {
     DataNegociate* data = segment->getDataNegociate();
     if (not data or not data->hasRoutingEvent())
@@ -221,7 +221,7 @@ namespace Katana {
   }
 
 
-  TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, unsigned int flags )
+  TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, Flags flags )
   {
     cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
 
@@ -370,8 +370,8 @@ namespace Katana {
 
   void  NegociateWindow::_pack ( size_t& count, bool last )
   {
-    unsigned long limit     = _katana->getEventsLimit();
-    unsigned int  pushStage = RoutingEvent::getStage();
+    uint64_t limit     = _katana->getEventsLimit();
+    uint32_t pushStage = RoutingEvent::getStage();
     RoutingEvent::setStage( RoutingEvent::Pack );
 
     RoutingEventQueue  packQueue;
@@ -548,7 +548,7 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::run ( unsigned int flags )
+  void  NegociateWindow::run ( Flags flags )
   {
     cdebug_log(159,1) << "NegociateWindow::run()" << endl;
 
@@ -570,7 +570,7 @@ namespace Katana {
     _katana->setMinimumWL( computeWirelength() );
 
 #if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
+    uint32_t overlaps = 0;
     Session::getKatanaEngine()->_check( overlaps, "after _createRouting(GCell*)" );
 #endif 
 

@@ -100,8 +100,8 @@ namespace {
     cdebug_log(159,0) << "Propagate caging: " << segment << endl;
 
     Track*                  track         = segment->getTrack();
-  //unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
-    unsigned int            direction     = segment->getDirection();
+  //Flags                   direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
+    Flags                   direction     = segment->getDirection();
     Anabatic::AutoContact* source        = segment->base()->getAutoSource();
     RoutingPad*             rp            = NULL;
     Interval                uside         = source->getGCell()->getSide(direction);
@@ -225,7 +225,7 @@ namespace {
     cdebug_log(159,1) << "protectCagedTerminals() " << track << endl;
 
     DbU::Unit      lastMovedUp   = track->getMin();
-    unsigned int   moveUpCount   = 0;
+    uint32_t       moveUpCount   = 0;
 
     Configuration* configuration = Session::getConfiguration();
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );

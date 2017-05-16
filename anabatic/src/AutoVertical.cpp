@@ -115,7 +115,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoVertical::getSourceConstraints ( unsigned int flags ) const
+  Interval  AutoVertical::getSourceConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoSource()->getNativeConstraintBox() );
@@ -125,7 +125,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoVertical::getTargetConstraints ( unsigned int flags ) const
+  Interval  AutoVertical::getTargetConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoTarget()->getNativeConstraintBox() );
@@ -230,7 +230,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoVertical::_slacken ( unsigned int flags )
+  bool  AutoVertical::_slacken ( Flags flags )
   {
     cdebug_log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
@@ -646,7 +646,7 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoVertical::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
+  Flags  AutoVertical::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     cdebug_log(149,0) << "AutoVertical::_makeDogleg(GCell*)" << endl;
 

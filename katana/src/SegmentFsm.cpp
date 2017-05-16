@@ -41,14 +41,14 @@ namespace {
 
   class CompareCostArray {
     public:
-      inline       CompareCostArray ( unsigned int flags=0 );
+      inline       CompareCostArray ( uint32_t flags=0 );
       inline bool  operator()       ( const array<TrackCost,2>& lhs, const array<TrackCost,2>& rhs );
     private:
       TrackCost::Compare  _compare;
   };
 
 
-  inline CompareCostArray::CompareCostArray ( unsigned int flags )
+  inline CompareCostArray::CompareCostArray ( uint32_t flags )
     : _compare(flags)
   { }
 
@@ -366,9 +366,9 @@ namespace Katana {
 // Class  :  "SegmentAction".
 
   SegmentAction::SegmentAction ( TrackElement* segment
-                               , unsigned int  type
+                               , uint32_t      type
                                , DbU::Unit     axisHint
-                               , unsigned int  toState
+                               , uint32_t      toState
                                )
     : _segment (segment)
     , _type    (type)
@@ -427,12 +427,12 @@ namespace Katana {
     }
 
     if (_type & ToRipupLimit) {
-      unsigned int limit = Session::getKatanaEngine()->getRipupLimit(_segment);
+      uint32_t limit = Session::getKatanaEngine()->getRipupLimit(_segment);
       if (limit > data->getRipupCount())
         data->setRipupCount( limit );
     }
 
-    unsigned int eventLevel = 0;
+    uint32_t eventLevel = 0;
     if (_type & EventLevel1) eventLevel = 1;
     if (_type & EventLevel2) eventLevel = 2;
     if (_type & EventLevel3) eventLevel = 3;
@@ -443,7 +443,7 @@ namespace Katana {
     RoutingEvent* fork = event->reschedule( queue, eventLevel );
 
     if (fork) {
-      unsigned int mode = RoutingEvent::Repair;
+      uint32_t mode = RoutingEvent::Repair;
       if (RoutingEvent::getStage() < RoutingEvent::Repair)
         mode = (_type&PackingMode) ? RoutingEvent::Pack : RoutingEvent::Negociate;
       fork->setMode( mode );
@@ -479,7 +479,7 @@ namespace Katana {
     DataSymmetric* symData  = NULL;
     TrackElement*  segment1 = _event1->getSegment();
     TrackElement*  segment2 = segment1->getSymmetric();
-    unsigned int   depth    = Session::getRoutingGauge()->getLayerDepth(segment1->getLayer());
+    uint32_t       depth    = Session::getRoutingGauge()->getLayerDepth(segment1->getLayer());
     _event1->setTracksFree( 0 );
 
     _data1 = segment1->getDataNegociate();
@@ -565,7 +565,7 @@ namespace Katana {
 
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
     for ( Track* track1 : Tracks_Range::get(plane,_constraint) ) {
-      unsigned int costflags = 0;
+      uint32_t costflags = 0;
       costflags |= (segment1->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
 
       Track* track2 = NULL;
@@ -629,7 +629,7 @@ namespace Katana {
       _state = EmptyTrackList;
     }
 
-    unsigned int flags = 0;
+    uint32_t flags = 0;
     flags |= (segment1->isStrap()) ? TrackCost::IgnoreAxisWeight : 0;
     flags |= (segment1->isLocal()
              and (_data1->getState() < DataNegociate::Minimize)
@@ -656,7 +656,7 @@ namespace Katana {
   }
 
 
-  void  SegmentFsm::setDataState ( unsigned int state )
+  void  SegmentFsm::setDataState ( uint32_t state )
   {
     _data1->setState( state );
     if (_data2) _data2->setState( state );
@@ -664,9 +664,9 @@ namespace Katana {
 
 
   void  SegmentFsm::addAction ( TrackElement* segment
-                              , unsigned int  type
+                              , uint32_t      type
                               , DbU::Unit     axisHint
-                              , unsigned int  toSegmentFsm  )
+                              , uint32_t      toSegmentFsm  )
   {
     if ( not segment->isFixed() ) {
       _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
@@ -796,7 +796,7 @@ namespace Katana {
   }
 
 
-  bool  SegmentFsm::canRipup ( unsigned int flags )
+  bool  SegmentFsm::canRipup ( uint32_t flags )
   {
     return                Manipulator(getSegment1(),*this).canRipup(flags)
       and (not _event2 or Manipulator(getSegment2(),*this).canRipup(flags));
@@ -894,7 +894,7 @@ namespace Katana {
     vector<Cs1Candidate>  candidates;
     TrackElement*         segment    = getEvent()->getSegment();
     bool                  canMoveUp  = (segment->isLocal()) ? segment->canPivotUp(0.5,Flags::NoFlags) : segment->canMoveUp(1.0,Flags::CheckLowDensity); // MARK 1
-    unsigned int          relaxFlags = Manipulator::NoDoglegReuse
+    uint32_t              relaxFlags = Manipulator::NoDoglegReuse
                                      | ((_data1 and (_data1->getStateCount() < 2)) ? Manipulator::AllowExpand
                                                                                    : Manipulator::NoExpand);
 
@@ -1169,13 +1169,13 @@ namespace Katana {
   }
 
 
-  bool  SegmentFsm::_slackenStrap ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
+  bool  SegmentFsm::_slackenStrap ( TrackElement*& segment, DataNegociate*& data, uint32_t flags )
   {
     cdebug_log(159,0) << "Strap segment Fsm." << endl;
 
-    bool          success     = false;
-    unsigned int  nextState   = data->getState();
-    Manipulator   manipulator ( segment, *this );
+    bool        success     = false;
+    uint32_t    nextState   = data->getState();
+    Manipulator manipulator ( segment, *this );
 
     switch ( data->getState() ) {
       case DataNegociate::RipupPerpandiculars:
@@ -1211,13 +1211,13 @@ namespace Katana {
   }
 
 
-  bool  SegmentFsm::_slackenLocal ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
+  bool  SegmentFsm::_slackenLocal ( TrackElement*& segment, DataNegociate*& data, uint32_t flags )
   {
     cdebug_log(159,0) << "Local segment Fsm." << endl;
 
-    bool          success     = false;
-    unsigned int  nextState   = data->getState();
-    Manipulator   manipulator ( segment, *this );
+    bool        success     = false;
+    uint32_t    nextState   = data->getState();
+    Manipulator manipulator ( segment, *this );
 
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
@@ -1289,12 +1289,12 @@ namespace Katana {
   }
 
 
-  bool  SegmentFsm::_slackenGlobal ( TrackElement*& segment, DataNegociate*& data, unsigned int flags )
+  bool  SegmentFsm::_slackenGlobal ( TrackElement*& segment, DataNegociate*& data, uint32_t flags )
   {
-    bool          success     = false;
-    unsigned int  nextState   = data->getState();
-    Manipulator   manipulator ( segment, *this );
-    unsigned int  moveUpFlags = Manipulator::AllowShortPivotUp|Manipulator::IgnoreContacts;
+    bool         success     = false;
+    uint32_t     nextState   = data->getState();
+    Manipulator  manipulator ( segment, *this );
+    uint32_t     moveUpFlags = Manipulator::AllowShortPivotUp|Manipulator::IgnoreContacts;
 
     switch ( data->getState() ) {
       case DataNegociate::RipupPerpandiculars:
@@ -1385,11 +1385,11 @@ namespace Katana {
   }
 
 
-  bool  SegmentFsm::slackenTopology ( unsigned int flags )
+  bool  SegmentFsm::slackenTopology ( uint32_t flags )
   {
-    bool           success     = false;
-    TrackElement*  segment1    = getSegment1();
-    unsigned int   actionFlags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
+    bool          success     = false;
+    TrackElement* segment1    = getSegment1();
+    uint32_t      actionFlags = SegmentAction::SelfInsert|SegmentAction::EventLevel5;
 
     DebugSession::open( segment1->getNet(), 156, 160 );
     cdebug_log(159,1) << "Slacken Topology for " << segment1->getNet()

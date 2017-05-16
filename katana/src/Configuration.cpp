@@ -99,7 +99,7 @@ namespace Katana {
   { return new Configuration(*this); }
 
 
-  void  Configuration::setRipupLimit ( unsigned int type, unsigned int limit )
+  void  Configuration::setRipupLimit ( uint32_t type, uint32_t limit )
   {
     if ( type >= RipupLimitsTableSize ) {
       cerr << Error("setRipupLimit(): Bad ripup limit index: %ud (> %ud)."
@@ -111,7 +111,7 @@ namespace Katana {
   }
 
 
-  void  Configuration::setHTracksReservedLocal ( size_t reserved )
+  void  Configuration::setHTracksReservedLocal ( uint32_t reserved )
   {
     // if (reserved > getHEdgeCapacity())
     //   throw Error( "Configuration::setHTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
@@ -121,7 +121,7 @@ namespace Katana {
   }
 
 
-  void  Configuration::setVTracksReservedLocal ( size_t reserved )
+  void  Configuration::setVTracksReservedLocal ( uint32_t reserved )
   {
     // if (reserved > 1.0)
     //   throw Error( "Configuration::setVTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
@@ -131,7 +131,7 @@ namespace Katana {
   }
 
 
-  unsigned int  Configuration::getRipupLimit ( unsigned int type ) const
+  uint32_t  Configuration::getRipupLimit ( uint32_t type ) const
   {
     if ( type >= RipupLimitsTableSize ) {
       cerr << Error("getRipupLimit(): Bad ripup limit index: %u (> %u)."

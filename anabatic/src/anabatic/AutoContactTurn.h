@@ -38,7 +38,7 @@ namespace Anabatic {
     // Constructors & Destructors.
                                AutoContactTurn        ( GCell*, Contact* );
       virtual                 ~AutoContactTurn        ();
-      virtual void             _invalidate            ( unsigned int flags );
+      virtual void             _invalidate            ( Flags flags );
     public:
       inline  AutoHorizontal*  getHorizontal1         () const;
       inline  AutoVertical*    getVertical1           () const;

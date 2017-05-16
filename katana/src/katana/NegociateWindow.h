@@ -109,10 +109,10 @@ namespace Katana {
       inline void                          setInterrupt         ( bool );
       inline void                          setStage             ( Stage );
              double                        computeWirelength    ();
-             TrackElement*                 createTrackSegment   ( AutoSegment*, unsigned int flags );
-             void                          addRoutingEvent      ( TrackElement*, unsigned int level );
-      inline void                          rescheduleEvent      ( RoutingEvent*, unsigned int level );
-             void                          run                  ( unsigned int flags );
+             TrackElement*                 createTrackSegment   ( AutoSegment*, Flags flags );
+             void                          addRoutingEvent      ( TrackElement*, uint32_t level );
+      inline void                          rescheduleEvent      ( RoutingEvent*, uint32_t level );
+             void                          run                  ( Flags flags );
              void                          printStatistics      () const;
              void                          _createRouting       ( Anabatic::GCell* );
              void                          _associateSymmetrics ();
@@ -124,7 +124,7 @@ namespace Katana {
 
     private:
     // Attributes.
-      unsigned int                _flags;
+      Flags                       _flags;
       bool                        _interrupt;
       KatanaEngine*               _katana;
       vector<GCell*>              _gcells;
@@ -151,7 +151,7 @@ namespace Katana {
   inline RoutingEventQueue&    NegociateWindow::getEventQueue   () { return _eventQueue; }
   inline RoutingEventHistory&  NegociateWindow::getEventHistory () { return _eventHistory; }
   inline void                  NegociateWindow::setInterrupt    ( bool state ) { _interrupt = state; }
-  inline void                  NegociateWindow::rescheduleEvent ( RoutingEvent* event, unsigned int level ) { event->reschedule(_eventQueue,level); }
+  inline void                  NegociateWindow::rescheduleEvent ( RoutingEvent* event, uint32_t level ) { event->reschedule(_eventQueue,level); }
   inline std::string           NegociateWindow::_getTypeName    () const { return "NegociateWindow"; }
 
 

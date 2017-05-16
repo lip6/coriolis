@@ -65,16 +65,16 @@ namespace Katana {
                 Key    ( const RoutingEvent* );
           void  update ( const RoutingEvent* );
         private:
-          unsigned int   _tracksNb:16;
-          float          _priority;
-          unsigned int   _eventLevel;
-          unsigned int   _segFlags;
-          unsigned int   _layerDepth;
-          DbU::Unit      _length;
-          DbU::Unit      _axis;
-          DbU::Unit      _sourceU;
-          Net*           _net;
-          unsigned long  _id;
+          unsigned int  _tracksNb:16;
+          float         _priority;
+          uint32_t      _eventLevel;
+          uint32_t      _segFlags;
+          uint32_t      _layerDepth;
+          DbU::Unit     _length;
+          DbU::Unit     _axis;
+          DbU::Unit     _sourceU;
+          Net*          _net;
+          uint64_t      _id;
        friend class Compare;
       };
 
@@ -95,14 +95,14 @@ namespace Katana {
       enum Mode { Negociate=1, Pack=2, Repair=3 };
 
     public:
-      static  unsigned int                 getStage              ();
-      static  size_t                       getAllocateds         ();
-      static  size_t                       getProcesseds         ();
-      static  size_t                       getCloneds            ();
+      static  uint32_t                     getStage              ();
+      static  uint32_t                     getAllocateds         ();
+      static  uint32_t                     getProcesseds         ();
+      static  uint32_t                     getCloneds            ();
       static  void                         resetProcesseds       ();
-      static  void                         setStage              ( unsigned int );
+      static  void                         setStage              ( uint32_t );
     public:                                                      
-      static  RoutingEvent*                create                ( TrackElement*, unsigned int mode=Negociate );
+      static  RoutingEvent*                create                ( TrackElement*, uint32_t mode=Negociate );
               RoutingEvent*                clone                 () const;
               void                         destroy               ();
       inline  bool                         isCloned              () const;
@@ -114,11 +114,11 @@ namespace Katana {
       inline  bool                         isSheared             () const;
       inline  bool                         isRipedByLocal        () const;
       inline  bool                         isOverConstrained     () const;
-      inline  unsigned int                 getId                 () const;
-      inline  unsigned int                 getTimeStamp          () const;
+      inline  uint32_t                     getId                 () const;
+      inline  uint32_t                     getTimeStamp          () const;
       inline  bool                         getMode               () const;
       inline  bool                         canMinimize           () const;
-              unsigned int                 getState              () const;
+              uint32_t                     getState              () const;
       inline  const Key&                   getKey                () const;
       inline  TrackElement*                getSegment            () const;
       inline  const vector<TrackElement*>& getPerpandiculars     () const;
@@ -129,10 +129,10 @@ namespace Katana {
       inline  const Interval&              getOptimal            () const;
       inline  const Interval&              getPerpandicularFree  () const;
       inline  float                        getPriority           () const;
-      inline  unsigned int                 getTracksNb           () const;
-      inline  unsigned int                 getTracksFree         () const;
-      inline  unsigned int                 getInsertState        () const;
-      inline  unsigned int                 getEventLevel         () const;
+      inline  uint32_t                     getTracksNb           () const;
+      inline  uint32_t                     getTracksFree         () const;
+      inline  uint32_t                     getInsertState        () const;
+      inline  uint32_t                     getEventLevel         () const;
               void                         revalidate            ();
       inline  void                         updateKey             ();
               void                         process               ( RoutingEventQueue&
@@ -140,23 +140,23 @@ namespace Katana {
                                                                  , RoutingEventLoop&
                                                                  );
               void                         setSegment            ( TrackElement* );
-              RoutingEvent*                reschedule            ( RoutingEventQueue&, unsigned int eventLevel );
-              void                         setMode               ( unsigned int );
-              void                         setState              ( unsigned int );
-      inline  void                         setTimeStamp          ( unsigned int );
+              RoutingEvent*                reschedule            ( RoutingEventQueue&, uint32_t eventLevel );
+              void                         setMode               ( uint32_t );
+              void                         setState              ( uint32_t );
+      inline  void                         setTimeStamp          ( uint32_t );
       inline  void                         setProcessed          ( bool state=true );
       inline  void                         setDisabled           ( bool state=true );
       inline  void                         setMinimized          ( bool state=true );
       inline  void                         setRipedByLocal       ( bool state=true );
-      inline  void                         setTracksFree         ( unsigned int );
+      inline  void                         setTracksFree         ( uint32_t );
       inline  void                         setForcedToHint       ( bool state = true );
               void                         setAxisHint           ( DbU::Unit );
               void                         setAxisHintFromParent ();
       inline  void                         updateAxisHistory     ();
-      inline  void                         setInsertState        ( unsigned int );
+      inline  void                         setInsertState        ( uint32_t );
       inline  void                         incInsertState        ();
       inline  void                         resetInsertState      ();
-      inline  void                         setEventLevel         ( unsigned int );
+      inline  void                         setEventLevel         ( uint32_t );
               void                         _processNegociate     ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processPack          ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processRepair        ( RoutingEventQueue&, RoutingEventHistory& );
@@ -164,16 +164,16 @@ namespace Katana {
               string                       _getString            () const;
               string                       _getTypeName          () const;
     private:                                                 
-                                           RoutingEvent          ( TrackElement*, unsigned int mode );
+                                           RoutingEvent          ( TrackElement*, uint32_t mode );
                                           ~RoutingEvent          ();
 
     protected:
     // Attributes.
-      static unsigned int   _idCounter;
-      static unsigned int   _stage;
-      static size_t         _allocateds;
-      static size_t         _processeds;
-      static size_t         _cloneds;
+      static uint32_t       _idCounter;
+      static uint32_t       _stage;
+      static uint32_t       _allocateds;
+      static uint32_t       _processeds;
+      static uint32_t       _cloneds;
       mutable bool          _cloned;
       bool                  _processed;
       bool                  _disabled;
@@ -181,8 +181,8 @@ namespace Katana {
       bool                  _minimized;
       bool                  _forceToHint;
       bool                  _ripedByLocal;
-      unsigned int          _id;
-      unsigned int          _timeStamp;
+      uint32_t              _id;
+      uint32_t              _timeStamp;
       TrackElement*         _segment;
       DataNegociate*        _dataNegociate;
       DbU::Unit             _axisHistory;
@@ -195,7 +195,7 @@ namespace Katana {
       unsigned int          _insertState     : 6;
       unsigned int          _mode            : 4;
       unsigned int          _rippleState     : 4;
-      unsigned int          _eventLevel;
+      uint32_t              _eventLevel;
       float                 _priority;
     //vector<TrackElement*> _perpandiculars;
       Key                   _key;
@@ -209,8 +209,8 @@ namespace Katana {
   inline bool                          RoutingEvent::isForcedToHint          () const { return _forceToHint; }
   inline bool                          RoutingEvent::isRipedByLocal          () const { return _ripedByLocal; }
   inline bool                          RoutingEvent::isOverConstrained       () const { return _overConstrained; }
-  inline unsigned int                  RoutingEvent::getId                   () const { return _id; }
-  inline unsigned int                  RoutingEvent::getTimeStamp            () const { return _timeStamp; }
+  inline uint32_t                      RoutingEvent::getId                   () const { return _id; }
+  inline uint32_t                      RoutingEvent::getTimeStamp            () const { return _timeStamp; }
   inline bool                          RoutingEvent::getMode                 () const { return _mode; }
   inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
@@ -225,22 +225,22 @@ namespace Katana {
   inline const Interval&               RoutingEvent::getPerpandicularFree    () const { return _dataNegociate->getPerpandicularFree(); }
 //inline const Interval&               RoutingEvent::getPerpandicular        () const { return _perpandicular; }
   inline float                         RoutingEvent::getPriority             () const { return _priority; }
-  inline unsigned int                  RoutingEvent::getEventLevel           () const { return _eventLevel; }
-  inline unsigned int                  RoutingEvent::getTracksNb             () const { return _tracksNb; }
-  inline unsigned int                  RoutingEvent::getTracksFree           () const { return _tracksFree; }
-  inline unsigned int                  RoutingEvent::getInsertState          () const { return _insertState; }
-  inline void                          RoutingEvent::setTimeStamp            ( unsigned int stamp ) { _timeStamp = stamp; }
+  inline uint32_t                      RoutingEvent::getEventLevel           () const { return _eventLevel; }
+  inline uint32_t                      RoutingEvent::getTracksNb             () const { return _tracksNb; }
+  inline uint32_t                      RoutingEvent::getTracksFree           () const { return _tracksFree; }
+  inline uint32_t                      RoutingEvent::getInsertState          () const { return _insertState; }
+  inline void                          RoutingEvent::setTimeStamp            ( uint32_t stamp ) { _timeStamp = stamp; }
   inline void                          RoutingEvent::setProcessed            ( bool state ) { _processed  = state; }
   inline void                          RoutingEvent::setDisabled             ( bool state ) { _disabled = state; }
   inline void                          RoutingEvent::setMinimized            ( bool state ) { _minimized = state; }
   inline void                          RoutingEvent::setRipedByLocal         ( bool state ) { _ripedByLocal = state; }
-  inline void                          RoutingEvent::setTracksFree           ( unsigned int nb ) { _tracksFree = nb; }
+  inline void                          RoutingEvent::setTracksFree           ( uint32_t nb ) { _tracksFree = nb; }
   inline void                          RoutingEvent::setForcedToHint         ( bool state ) { _forceToHint = state; }
   inline void                          RoutingEvent::updateAxisHistory       () { _axisHistory = _segment->getAxis(); }
-  inline void                          RoutingEvent::setInsertState          ( unsigned int state ) { _insertState = state; }
+  inline void                          RoutingEvent::setInsertState          ( uint32_t state ) { _insertState = state; }
   inline void                          RoutingEvent::incInsertState          () { _insertState++; }
   inline void                          RoutingEvent::resetInsertState        () { _insertState = 0; }
-  inline void                          RoutingEvent::setEventLevel           ( unsigned int level ) { _eventLevel = level; }
+  inline void                          RoutingEvent::setEventLevel           ( uint32_t level ) { _eventLevel = level; }
   inline void                          RoutingEvent::updateKey               () { revalidate(); _key.update(this); }
 
   inline bool  RoutingEvent::CompareById::operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const

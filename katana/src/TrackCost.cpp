@@ -59,12 +59,12 @@ namespace Katana {
   { }
 
 
-  TrackCost::TrackCost (       Track*        track
-                       , const Interval&     interval
-                       ,       size_t        begin
-                       ,       size_t        end
-                       ,       Net*          net
-                       ,       unsigned int  flags
+  TrackCost::TrackCost (       Track*    track
+                       , const Interval& interval
+                       ,       size_t    begin
+                       ,       size_t    end
+                       ,       Net*      net
+                       ,       uint32_t  flags
                        )
     : _flags          (flags)
     , _track          (track)

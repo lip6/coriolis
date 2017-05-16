@@ -24,27 +24,27 @@ namespace Anabatic {
 
   const uint64_t  Flags::NoFlags             =  0;
 // Flags used for both objects states & functions arguments.
-  const uint64_t  Flags::Horizontal          = (1 <<  0);
-  const uint64_t  Flags::Vertical            = (1 <<  1);
-  const uint64_t  Flags::Source              = (1 <<  2);
-  const uint64_t  Flags::Target              = (1 <<  3);
-  const uint64_t  Flags::Invalidated         = (1 <<  4);
+  const uint64_t  Flags::Horizontal          = (1L <<  0);
+  const uint64_t  Flags::Vertical            = (1L <<  1);
+  const uint64_t  Flags::Source              = (1L <<  2);
+  const uint64_t  Flags::Target              = (1L <<  3);
+  const uint64_t  Flags::Invalidated         = (1L <<  4);
 // Flags for GCell objects states only.                        
-  const uint64_t  Flags::DeviceGCell         = (1 <<  5);
-  const uint64_t  Flags::HChannelGCell       = (1 <<  6);
-  const uint64_t  Flags::VChannelGCell       = (1 <<  7);
-  const uint64_t  Flags::StrutGCell          = (1 <<  8);
-  const uint64_t  Flags::MatrixGCell         = (1 <<  9);
-  const uint64_t  Flags::IoPadGCell          = (1 << 10);
-  const uint64_t  Flags::Saturated           = (1 << 11);
+  const uint64_t  Flags::DeviceGCell         = (1L <<  5);
+  const uint64_t  Flags::HChannelGCell       = (1L <<  6);
+  const uint64_t  Flags::VChannelGCell       = (1L <<  7);
+  const uint64_t  Flags::StrutGCell          = (1L <<  8);
+  const uint64_t  Flags::MatrixGCell         = (1L <<  9);
+  const uint64_t  Flags::IoPadGCell          = (1L << 10);
+  const uint64_t  Flags::Saturated           = (1L << 11);
 // Flags for Anabatic objects states only.                      
-  const uint64_t  Flags::DemoMode            = (1 <<  5);
-  const uint64_t  Flags::WarnOnGCellOverload = (1 <<  6);
-  const uint64_t  Flags::DestroyGCell        = (1 <<  7);
-  const uint64_t  Flags::DestroyBaseContact  = (1 <<  8);
-  const uint64_t  Flags::DestroyBaseSegment  = (1 <<  9);
+  const uint64_t  Flags::DemoMode            = (1L <<  5);
+  const uint64_t  Flags::WarnOnGCellOverload = (1L <<  6);
+  const uint64_t  Flags::DestroyGCell        = (1L <<  7);
+  const uint64_t  Flags::DestroyBaseContact  = (1L <<  8);
+  const uint64_t  Flags::DestroyBaseSegment  = (1L <<  9);
 // Flags for NetDatas objects states only.                      
-  const uint64_t  Flags::GlobalRouted        = (1 <<  5);
+  const uint64_t  Flags::GlobalRouted        = (1L <<  5);
 // Masks.                                      
   const uint64_t  Flags::WestSide            = Horizontal|Target;
   const uint64_t  Flags::EastSide            = Horizontal|Source;
@@ -56,33 +56,34 @@ namespace Anabatic {
   const uint64_t  Flags::DestroyMask         = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
   const uint64_t  Flags::GCellTypeMask       = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
 // Flags for functions arguments only.           
-  const uint64_t  Flags::Create              = (1 <<  5);
-  const uint64_t  Flags::WithPerpands        = (1 <<  6);
-  const uint64_t  Flags::WithSelf            = (1 <<  7);
-  const uint64_t  Flags::AboveLayer          = (1 <<  8);
-  const uint64_t  Flags::BelowLayer          = (1 <<  9);
-  const uint64_t  Flags::OpenSession         = (1 << 10);
-  const uint64_t  Flags::Realignate          = (1 << 11);
-  const uint64_t  Flags::NativeConstraints   = (1 << 12);
-  const uint64_t  Flags::ForceMove           = (1 << 13);
-  const uint64_t  Flags::WarnOnError         = (1 << 14);
-  const uint64_t  Flags::Topology            = (1 << 15);
-  const uint64_t  Flags::GlobalSegment       = (1 << 16);
-  const uint64_t  Flags::AllowTerminal       = (1 << 17);
-  const uint64_t  Flags::AllowLocal          = (1 << 18);
-  const uint64_t  Flags::IgnoreContacts      = (1 << 19);
-  const uint64_t  Flags::Propagate           = (1 << 20);
-  const uint64_t  Flags::Superior            = (1 << 21);
-  const uint64_t  Flags::DoglegOnLeft        = (1 << 22);
-  const uint64_t  Flags::DoglegOnRight       = (1 << 23);
-  const uint64_t  Flags::WithNeighbors       = (1 << 24);
-  const uint64_t  Flags::NoCheckLayer        = (1 << 25);
-  const uint64_t  Flags::HalfSlacken         = (1 << 26);
-  const uint64_t  Flags::NoGCellShrink       = (1 << 27);
-  const uint64_t  Flags::CParanoid           = (1 << 28);
-  const uint64_t  Flags::CheckLowDensity     = (1 << 29);
-  const uint64_t  Flags::CheckLowUpDensity   = (1 << 30);
-  const uint64_t  Flags::NoUpdate            = (1 << 31);
+  const uint64_t  Flags::Create              = (1L <<  5);
+  const uint64_t  Flags::WithPerpands        = (1L <<  6);
+  const uint64_t  Flags::WithDoglegs         = (1L <<  7);
+  const uint64_t  Flags::WithSelf            = (1L <<  8);
+  const uint64_t  Flags::AboveLayer          = (1L <<  9);
+  const uint64_t  Flags::BelowLayer          = (1L << 10);
+  const uint64_t  Flags::OpenSession         = (1L << 11);
+  const uint64_t  Flags::Realignate          = (1L << 12);
+  const uint64_t  Flags::NativeConstraints   = (1L << 13);
+  const uint64_t  Flags::ForceMove           = (1L << 14);
+  const uint64_t  Flags::WarnOnError         = (1L << 15);
+  const uint64_t  Flags::Topology            = (1L << 16);
+  const uint64_t  Flags::GlobalSegment       = (1L << 17);
+  const uint64_t  Flags::AllowTerminal       = (1L << 18);
+  const uint64_t  Flags::AllowLocal          = (1L << 19);
+  const uint64_t  Flags::IgnoreContacts      = (1L << 20);
+  const uint64_t  Flags::Propagate           = (1L << 21);
+  const uint64_t  Flags::Superior            = (1L << 22);
+  const uint64_t  Flags::DoglegOnLeft        = (1L << 23);
+  const uint64_t  Flags::DoglegOnRight       = (1L << 24);
+  const uint64_t  Flags::WithNeighbors       = (1L << 25);
+  const uint64_t  Flags::NoCheckLayer        = (1L << 26);
+  const uint64_t  Flags::HalfSlacken         = (1L << 27);
+  const uint64_t  Flags::NoGCellShrink       = (1L << 28);
+  const uint64_t  Flags::CParanoid           = (1L << 29);
+  const uint64_t  Flags::CheckLowDensity     = (1L << 30);
+  const uint64_t  Flags::CheckLowUpDensity   = (1L << 31);
+  const uint64_t  Flags::NoUpdate            = (1L << 32);
 
 
   Flags::~Flags ()

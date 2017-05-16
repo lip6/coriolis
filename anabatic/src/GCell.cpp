@@ -271,12 +271,12 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GCell".
 
-  Name          GCell::_extensionName = "Anabatic::GCell";
-  unsigned int  GCell::_displayMode   = GCell::Boundary;
+  Name      GCell::_extensionName = "Anabatic::GCell";
+  uint32_t  GCell::_displayMode   = GCell::Boundary;
 
 
-  unsigned int  GCell::getDisplayMode      () { return _displayMode; }
-  void          GCell::setDisplayMode      ( unsigned int mode ) { _displayMode = mode; }
+  uint32_t  GCell::getDisplayMode () { return _displayMode; }
+  void      GCell::setDisplayMode ( uint32_t mode ) { _displayMode = mode; }
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
@@ -1065,11 +1065,11 @@ namespace Anabatic {
   { return getDensity(depth) > Session::getSaturateRatio(); }
 
 
-  Interval  GCell::getSide ( unsigned int direction ) const
-  {
-    if (direction & Flags::Vertical) return Interval( getYMin(), getYMax() );
-    return Interval( getXMin(), getXMax() );
-  }
+  // Interval  GCell::getSide ( Flags direction ) const
+  // {
+  //   if (direction & Flags::Vertical) return Interval( getYMin(), getYMax() );
+  //   return Interval( getXMin(), getXMax() );
+  // }
 
 
   AutoSegments  GCell::getHStartSegments ()
@@ -1154,7 +1154,7 @@ namespace Anabatic {
   }
 
 
-  float  GCell::getDensity ( unsigned int flags ) const
+  float  GCell::getDensity ( Flags flags ) const
   {
     if (isInvalidated() and not(flags & Flags::NoUpdate))  const_cast<GCell*>(this)->updateDensity();
 
@@ -1552,7 +1552,7 @@ namespace Anabatic {
   bool  GCell::stepDesaturate ( size_t        depth
                               , set<Net*>&    globalNets
                               , AutoSegment*& moved
-                              , unsigned int  flags
+                              , Flags         flags
                               )
   {
     cdebug_log(9000,0) << "Deter| GCell::stepDesaturate() [" << getId() << "] depth:" << depth << endl;

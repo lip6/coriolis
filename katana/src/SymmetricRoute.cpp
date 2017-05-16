@@ -185,7 +185,7 @@ namespace {
         if (not autoTerminal->isEndPoint()) continue;
 
         _seed = autoTerminal->getSegment();
-        unsigned int flags = (_seed->getAutoSource() == autoTerminal) ? Flags::Target : Flags::Source;
+        Flags flags = (_seed->getAutoSource() == autoTerminal) ? Flags::Target : Flags::Source;
         for ( AutoSegment* segment : _seed->getConnecteds(flags) )
           _data->addReference( segment );
 

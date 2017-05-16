@@ -39,7 +39,7 @@ namespace Katana {
       inline bool                isVertical         () const;
       inline KatanaEngine*       getKatanaEngine    () const;
       inline RoutingLayerGauge*  getLayerGauge      () const;
-      inline unsigned int        getDirection       () const;
+      inline Flags               getDirection       () const;
       inline size_t              getDepth           () const;
       inline DbU::Unit           getAxisMin         () const;
       inline DbU::Unit           getAxisMax         () const;
@@ -53,8 +53,8 @@ namespace Katana {
       inline size_t              computeTracksSize  () const;
       inline DbU::Unit           getTrackPosition   ( size_t index ) const;
              Track*              getTrackByIndex    ( size_t index ) const;
-             Track*              getTrackByPosition ( DbU::Unit axis, unsigned int mode=Flags::Nearest ) const;
-             bool                _check             ( unsigned int& overlaps ) const;
+             Track*              getTrackByPosition ( DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
+             bool                _check             ( uint32_t& overlaps ) const;
              Record*             _getRecord         () const;
              string              _getString         () const;
       inline string              _getTypeName       () const;
@@ -70,7 +70,7 @@ namespace Katana {
       KatanaEngine*        _katana;
       RoutingLayerGauge* _layerGauge;
       size_t             _depth;
-      unsigned int       _flags;
+      Flags              _flags;
       DbU::Unit          _axisMin;
       DbU::Unit          _axisMax;
       DbU::Unit          _trackMin;
@@ -93,7 +93,7 @@ namespace Katana {
 
   inline KatanaEngine*      RoutingPlane::getKatanaEngine  () const { return _katana; }
   inline RoutingLayerGauge* RoutingPlane::getLayerGauge    () const { return _layerGauge; }
-  inline unsigned int       RoutingPlane::getDirection     () const { return _flags & Flags::DirectionMask; }
+  inline Flags              RoutingPlane::getDirection     () const { return _flags & Flags::DirectionMask; }
   inline size_t             RoutingPlane::getDepth         () const { return _depth; }
   inline DbU::Unit          RoutingPlane::getAxisMin       () const { return _axisMin; }
   inline DbU::Unit          RoutingPlane::getAxisMax       () const { return _axisMax; }
