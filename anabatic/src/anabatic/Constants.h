@@ -24,72 +24,73 @@ namespace Anabatic {
 
   class Flags : public Hurricane::BaseFlags {
     public:
-      static const uint64_t  NoFlags             ; // =  0;
+      static const BaseFlags  NoFlags             ; // =  0;
     // Flags used for both objects states & functions arguments.
-      static const uint64_t  Horizontal          ; // = (1 <<  0);
-      static const uint64_t  Vertical            ; // = (1 <<  1);
-      static const uint64_t  Source              ; // = (1 <<  2);
-      static const uint64_t  Target              ; // = (1 <<  3);
-      static const uint64_t  Invalidated         ; // = (1 <<  4);
+      static const BaseFlags  Horizontal          ; // = (1 <<  0);
+      static const BaseFlags  Vertical            ; // = (1 <<  1);
+      static const BaseFlags  Source              ; // = (1 <<  2);
+      static const BaseFlags  Target              ; // = (1 <<  3);
+      static const BaseFlags  Invalidated         ; // = (1 <<  4);
     // Flags for GCell objects states only.                        
-      static const uint64_t  DeviceGCell         ; // = (1 <<  5);
-      static const uint64_t  HChannelGCell       ; // = (1 <<  6);
-      static const uint64_t  VChannelGCell       ; // = (1 <<  7);
-      static const uint64_t  StrutGCell          ; // = (1 <<  8);
-      static const uint64_t  MatrixGCell         ; // = (1 <<  9);
-      static const uint64_t  IoPadGCell          ; // = (1 << 10);
-      static const uint64_t  Saturated           ; // = (1 << 11);
+      static const BaseFlags  DeviceGCell         ; // = (1 <<  5);
+      static const BaseFlags  HChannelGCell       ; // = (1 <<  6);
+      static const BaseFlags  VChannelGCell       ; // = (1 <<  7);
+      static const BaseFlags  StrutGCell          ; // = (1 <<  8);
+      static const BaseFlags  MatrixGCell         ; // = (1 <<  9);
+      static const BaseFlags  IoPadGCell          ; // = (1 << 10);
+      static const BaseFlags  Saturated           ; // = (1 << 11);
     // Flags for Anabatic objects states only.                      
-      static const uint64_t  DemoMode            ; // = (1 <<  5);
-      static const uint64_t  WarnOnGCellOverload ; // = (1 <<  6);
-      static const uint64_t  DestroyGCell        ; // = (1 <<  7);
-      static const uint64_t  DestroyBaseContact  ; // = (1 <<  8);
-      static const uint64_t  DestroyBaseSegment  ; // = (1 <<  9);
+      static const BaseFlags  DemoMode            ; // = (1 <<  5);
+      static const BaseFlags  WarnOnGCellOverload ; // = (1 <<  6);
+      static const BaseFlags  DestroyGCell        ; // = (1 <<  7);
+      static const BaseFlags  DestroyBaseContact  ; // = (1 <<  8);
+      static const BaseFlags  DestroyBaseSegment  ; // = (1 <<  9);
     // Flags for NetDatas objects states only.                      
-      static const uint64_t  GlobalRouted        ; // = (1 <<  5);
+      static const BaseFlags  GlobalRouted        ; // = (1 <<  5);
     // Masks.                                      
-      static const uint64_t  WestSide            ; // = Horizontal|Target;
-      static const uint64_t  EastSide            ; // = Horizontal|Source;
-      static const uint64_t  SouthSide           ; // = Vertical  |Target;
-      static const uint64_t  NorthSide           ; // = Vertical  |Source;
-      static const uint64_t  AllSides            ; // = WestSide|EastSide|SouthSide|NorthSide ;
-      static const uint64_t  EndsMask            ; // = Source|Target;
-      static const uint64_t  DirectionMask       ; // = Horizontal|Vertical;
-      static const uint64_t  DestroyMask         ; // = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
-      static const uint64_t  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
+      static const BaseFlags  WestSide            ; // = Horizontal|Target;
+      static const BaseFlags  EastSide            ; // = Horizontal|Source;
+      static const BaseFlags  SouthSide           ; // = Vertical  |Target;
+      static const BaseFlags  NorthSide           ; // = Vertical  |Source;
+      static const BaseFlags  AllSides            ; // = WestSide|EastSide|SouthSide|NorthSide ;
+      static const BaseFlags  EndsMask            ; // = Source|Target;
+      static const BaseFlags  DirectionMask       ; // = Horizontal|Vertical;
+      static const BaseFlags  DestroyMask         ; // = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
+      static const BaseFlags  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
     // Flags for functions arguments only.           
-      static const uint64_t  Create              ; // = (1 <<  5);
-      static const uint64_t  WithPerpands        ;
-      static const uint64_t  WithDoglegs         ;
-      static const uint64_t  WithSelf            ;
-      static const uint64_t  AboveLayer          ;
-      static const uint64_t  BelowLayer          ;
-      static const uint64_t  OpenSession         ;
-      static const uint64_t  Realignate          ;
-      static const uint64_t  NativeConstraints   ;
-      static const uint64_t  ForceMove           ;
-      static const uint64_t  WarnOnError         ;
-      static const uint64_t  Topology            ;
-      static const uint64_t  GlobalSegment       ;
-      static const uint64_t  AllowTerminal       ;
-      static const uint64_t  AllowLocal          ;
-      static const uint64_t  IgnoreContacts      ;
-      static const uint64_t  Propagate           ;
-      static const uint64_t  Superior            ;
-      static const uint64_t  DoglegOnLeft        ;
-      static const uint64_t  DoglegOnRight       ;
-      static const uint64_t  WithNeighbors       ;
-      static const uint64_t  NoCheckLayer        ;
-      static const uint64_t  HalfSlacken         ;
-      static const uint64_t  NoGCellShrink       ;
-      static const uint64_t  CParanoid           ;
-      static const uint64_t  CheckLowDensity     ;
-      static const uint64_t  CheckLowUpDensity   ;
-      static const uint64_t  NoUpdate            ;
+      static const BaseFlags  Create              ; // = (1 <<  5);
+      static const BaseFlags  WithPerpands        ;
+      static const BaseFlags  WithDoglegs         ;
+      static const BaseFlags  WithSelf            ;
+      static const BaseFlags  AboveLayer          ;
+      static const BaseFlags  BelowLayer          ;
+      static const BaseFlags  OpenSession         ;
+      static const BaseFlags  Realignate          ;
+      static const BaseFlags  NativeConstraints   ;
+      static const BaseFlags  ForceMove           ;
+      static const BaseFlags  WarnOnError         ;
+      static const BaseFlags  Topology            ;
+      static const BaseFlags  GlobalSegment       ;
+      static const BaseFlags  AllowTerminal       ;
+      static const BaseFlags  AllowLocal          ;
+      static const BaseFlags  IgnoreContacts      ;
+      static const BaseFlags  Propagate           ;
+      static const BaseFlags  Superior            ;
+      static const BaseFlags  DoglegOnLeft        ;
+      static const BaseFlags  DoglegOnRight       ;
+      static const BaseFlags  WithNeighbors       ;
+      static const BaseFlags  NoCheckLayer        ;
+      static const BaseFlags  HalfSlacken         ;
+      static const BaseFlags  NoGCellShrink       ;
+      static const BaseFlags  CParanoid           ;
+      static const BaseFlags  CheckLowDensity     ;
+      static const BaseFlags  CheckLowUpDensity   ;
+      static const BaseFlags  NoUpdate            ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );
       virtual             ~Flags        ();
+      virtual std::string  asString     ( uint32_t mode ) const;
       virtual std::string  _getTypeName () const;
       virtual std::string  _getString   () const;
   };
@@ -97,6 +98,10 @@ namespace Anabatic {
 
   Flags::Flags (                  uint64_t   flags ) : BaseFlags(flags) { }
   Flags::Flags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
+
+
+  enum FlagsMode       { FlagsFunction = 1
+                       };
 
 
   enum EngineState     { EngineCreation      = 1

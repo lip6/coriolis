@@ -44,6 +44,8 @@
                                    PyNetDirection.cpp
                                    PyNetCollection.cpp
                                    PyNetExternalComponents.cpp
+                                   PyNetRoutingState.cpp
+                                   PyNetRoutingProperty.cpp
                                    PyOccurrence.cpp
                                    PyOccurrenceCollection.cpp
                                    PyHook.cpp
@@ -108,6 +110,8 @@
                                    hurricane/isobar/PyNetDirection.h
                                    hurricane/isobar/PyNetCollection.h
                                    hurricane/isobar/PyNetExternalComponents.h
+                                   hurricane/isobar/PyNetRoutingState.h
+                                   hurricane/isobar/PyNetRoutingProperty.h
                                    hurricane/isobar/PyOccurrence.h
                                    hurricane/isobar/PyOccurrenceCollection.h
                                    hurricane/isobar/PyHook.h

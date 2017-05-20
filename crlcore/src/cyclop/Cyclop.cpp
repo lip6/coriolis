@@ -71,7 +71,7 @@ namespace CRL {
       connect ( openAction, SIGNAL(triggered()), this, SLOT(openCell()) );
     }
 
-    QMenu* debugMenu = createDebugMenu ();
+    /*QMenu* debugMenu =*/ createDebugMenu ();
     _stressDisplayAction = new QAction  ( tr("Stress Display"), this );
     _stressDisplayAction->setObjectName ( "viewer.menuBar.debug.stressDisplay" );
     _stressDisplayAction->setStatusTip  ( tr("Intensive use of display redrawing") );

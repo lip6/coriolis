@@ -53,6 +53,7 @@ namespace Katana {
   using Hurricane::DebugSession;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::BaseFlags;
   using Hurricane::ForEachIterator;
   using Hurricane::Net;
   using Hurricane::Layer;
@@ -91,8 +92,8 @@ namespace Katana {
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;
 
-    if ((lhs._segFlags & Flags::Horizontal) xor (rhs._segFlags & Flags::Horizontal))
-      return (rhs._segFlags & Flags::Horizontal);
+    if ((lhs._segFlags & Anabatic::SegHorizontal) xor (rhs._segFlags & Anabatic::SegHorizontal))
+      return (rhs._segFlags & Anabatic::SegHorizontal);
 
     if (lhs._axis > rhs._axis) return true;
     if (lhs._axis < rhs._axis) return false;

@@ -37,7 +37,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_computeNetOptimals ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 144, 150 );
     cdebug_log(149,0) << "Anabatic::_computeNetOptimals( " << net << " )" << endl;
     cdebug_tabw(145,1);
 

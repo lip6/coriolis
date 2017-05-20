@@ -48,6 +48,7 @@ namespace Hurricane {
                  , Vertical             = (1<< 6)
                  , Symmetric            = (1<< 7)
                  , SymmetricMaster      = (1<< 8)
+                 , Analog               = (1<< 9)
                  };
     public:
       inline  bool          isExcluded             () const;
@@ -61,31 +62,32 @@ namespace Hurricane {
       inline  bool          isSymVertical          () const;
       inline  bool          isSymMaster            () const;
       inline  bool          isSymSlave             () const;
+      inline  bool          isAnalog               () const;
       inline  Net*          getNet                 () const;
       inline  Net*          getSymNet              () const;
       inline  DbU::Unit     getSymAxis             () const;
-      inline  unsigned int  getFlags               () const;
+      inline  uint32_t      getFlags               () const;
       inline  void          setSymNet              ( Net* );
       inline  void          setSymAxis             ( DbU::Unit );
-      inline  void          setFlags               ( unsigned int mask );
-      inline  void          unsetFlags             ( unsigned int mask );
+      inline  void          setFlags               ( uint32_t mask );
+      inline  void          unsetFlags             ( uint32_t mask );
       inline  bool          isSelfSym              () const;
               DbU::Unit     getSymValue            ( DbU::Unit ) const;
               std::string   _getString             () const;
               Record*       _getRecord             () const;
     private:
-      inline                NetRoutingState        ( Net*, unsigned int flags=0 );
+      inline                NetRoutingState        ( Net*, uint32_t flags=0 );
                             NetRoutingState        ( const NetRoutingState& ) = delete;
       inline  void          setNet                 ( Net* );
     private:
       Net*          _net;
       Net*          _symNet;
-      unsigned int  _flags;
+      uint32_t      _flags;
       DbU::Unit     _axis;
   };
 
 
-  inline NetRoutingState::NetRoutingState ( Net* net, unsigned int flags ) : _net(net), _symNet(NULL), _flags(flags), _axis(0) { }
+  inline NetRoutingState::NetRoutingState ( Net* net, uint32_t flags ) : _net(net), _symNet(NULL), _flags(flags), _axis(0) { }
 
   inline bool          NetRoutingState::isExcluded             () const { return _flags & Excluded; };
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
@@ -97,17 +99,18 @@ namespace Hurricane {
   inline bool          NetRoutingState::isSymHorizontal        () const { return _flags & Horizontal; }
   inline bool          NetRoutingState::isSymVertical          () const { return _flags & Vertical; }
   inline bool          NetRoutingState::isSymMaster            () const { return _flags & SymmetricMaster; }
+  inline bool          NetRoutingState::isAnalog               () const { return _flags & Analog; }
   inline Net*          NetRoutingState::getSymNet              () const { return _symNet; }
   inline DbU::Unit     NetRoutingState::getSymAxis             () const { return _axis; }
-  inline unsigned int  NetRoutingState::getFlags               () const { return _flags; };
+  inline uint32_t      NetRoutingState::getFlags               () const { return _flags; };
   inline Net*          NetRoutingState::getNet                 () const { return _net; }
-  inline void          NetRoutingState::setFlags               ( unsigned int mask ) { _flags |=  mask; }
-  inline void          NetRoutingState::unsetFlags             ( unsigned int mask ) { _flags &= ~mask; }
+  inline void          NetRoutingState::setFlags               ( uint32_t mask ) { _flags |=  mask; }
+  inline void          NetRoutingState::unsetFlags             ( uint32_t mask ) { _flags &= ~mask; }
   inline void          NetRoutingState::setNet                 ( Net* net ) { _net = net; }
   inline void          NetRoutingState::setSymNet              ( Net* symNet ) { _symNet = symNet; }
   inline void          NetRoutingState::setSymAxis             ( DbU::Unit axis ) { _axis = axis; } 
-  inline bool          NetRoutingState::isSelfSym              () const { return ( (_symNet == NULL) and (isSymmetric())  ); }
-  inline bool          NetRoutingState::isSymSlave             () const { return ( (_symNet != NULL) and (!isSymMaster()) ); }
+  inline bool          NetRoutingState::isSelfSym              () const { return (_symNet == NULL) and (isSymmetric()); }
+  inline bool          NetRoutingState::isSymSlave             () const { return (_symNet != NULL) and (not isSymMaster()); }
 
 
 // -------------------------------------------------------------------
@@ -169,15 +172,16 @@ namespace Hurricane {
       static inline  bool             isSymHorizontal        ( const Net* );
       static inline  bool             isSymVertical          ( const Net* );
       static inline  bool             isSymMaster            ( const Net* );
-      static inline  unsigned int     getFlags               ( const Net* );
+      static inline  bool             isAnalog               ( const Net* );
+      static inline  uint32_t         getFlags               ( const Net* );
       static inline  Net*             getSymNet              ( const Net* );
       static inline  DbU::Unit        getSymAxis             ( const Net* );
       static inline  void             setSymNet              ( const Net*, Net* );
       static inline  void             setSymAxis             ( const Net*, DbU::Unit );
-      static inline  void             setFlags               ( const Net*, unsigned int mask );
-      static inline  void             unsetFlags             ( const Net*, unsigned int mask );
+      static inline  void             setFlags               ( const Net*, uint32_t mask );
+      static inline  void             unsetFlags             ( const Net*, uint32_t mask );
       static         NetRoutingState* get                    ( const Net* );
-      static         NetRoutingState* create                 ( Net* );
+      static         NetRoutingState* create                 ( Net*, uint32_t flags=0 );
     private:
       static const Net*       _owner;
       static NetRoutingState* _cache;
@@ -247,7 +251,14 @@ namespace Hurricane {
   }
 
 
-  inline unsigned int  NetRoutingExtension::getFlags ( const Net* net )
+  inline bool  NetRoutingExtension::isAnalog ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isAnalog();
+  }
+
+
+  inline uint32_t  NetRoutingExtension::getFlags ( const Net* net )
   {
     NetRoutingState* state = get( net );
     return (state == NULL) ? 0 : state->getFlags();
@@ -268,7 +279,7 @@ namespace Hurricane {
   }
 
 
-  inline void  NetRoutingExtension::setFlags ( const Net* net, unsigned int mask )
+  inline void  NetRoutingExtension::setFlags ( const Net* net, uint32_t mask )
   {
     NetRoutingState* state = get( net );
     if (state != NULL) state->setFlags( mask );
@@ -289,7 +300,7 @@ namespace Hurricane {
   }
 
 
-  inline void  NetRoutingExtension::unsetFlags ( const Net* net, unsigned int mask )
+  inline void  NetRoutingExtension::unsetFlags ( const Net* net, uint32_t mask )
   {
     NetRoutingState* state = get( net );
     if (state != NULL) state->unsetFlags( mask );

@@ -1087,8 +1087,8 @@ namespace Katana {
 
     Flags kflags = Flags::WithNeighbors;
   //kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AutoSegment::AllowLocal    : 0;
-    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : 0;
-    kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : 0;
+    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
+    kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {

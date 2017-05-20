@@ -1106,21 +1106,22 @@ namespace Anabatic {
              +  "-" + DbU::getValueString(_gcell->getYMin()) 
              +  "-" + DbU::getValueString(_gcell->getXMax())
              +  "-" + DbU::getValueString(_gcell->getYMax()) + ")"
-    /*+ " rps:" +  getString(_rpCount)
-             + " deg:" +  getString(_degree)
-             + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")*/
+           //+ " rps:" +  getString(_rpCount)
+           //+ " deg:" +  getString(_degree)
+             + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")
              + " d:" + ((_distance == unreached) ? "unreached"
                                                  : ((_distance == unreachable) ? "unreachable"
                                                                                : DbU::getValueString(_distance)) )
-    /*+   "+" + getString(_branchId)
-      + " stamp:" + (hasValidStamp() ? "valid" : "outdated")*/
+           //+   "+" + getString(_branchId)
+           //+ " stamp:" + (hasValidStamp() ? "valid" : "outdated")
              + " from:" + ((_from) ? "set" : "NULL")
-    //+ " from2:" + ((_adata) ? _adata->getFrom2() : "NULL")
-             + " restricted:" + (isNRestricted() ? "N" : "-")
+           //+ " from2:" + ((_adata) ? _adata->getFrom2() : "NULL")
+             + " restricted:"
+             + (isNRestricted() ? "N" : "-")
              + (isSRestricted() ? "S" : "-")
              + (isERestricted() ? "E" : "-")
              + (isWRestricted() ? "W" : "-")
-    //+ " isiSet:" +(isiSet() ? "1" : "0")
+           //+ " isiSet:" +(isiSet() ? "1" : "0")
              + ">";
     return s;
   }
@@ -1241,9 +1242,10 @@ namespace Anabatic {
     for ( Component* component : _net->getComponents() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
       if (rp) { 
-        if ( _attachSymContactsHook( rp ) ) continue; // ANALOG
-        rps.push_back( rp ); 
+        if (_attachSymContactsHook(rp)) continue; // ANALOG
+
         cdebug_log(112,0) << "| " << rp << endl;
+        rps.push_back( rp ); 
         continue; 
       }
     }
@@ -1267,9 +1269,9 @@ namespace Anabatic {
         continue;
       }
 
-      cdebug_log(112,0) << "Current Search area: " << _searchArea << ", gcell: " << gcell << endl;
+      cdebug_log(112,0) << "Merge search area: " << _searchArea << ", gcell: " << gcell << endl;
       _searchArea.merge( gcell->getBoundingBox() );
-      cdebug_log(112,0) << "New Search area: " << _searchArea << endl;
+      cdebug_log(112,0) << "Search area: " << _searchArea << endl;
 
       Vertex*     seed  = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
       GCell*      gseed = seed->getGCell();
@@ -1302,6 +1304,7 @@ namespace Anabatic {
     }
 
     _searchArea.inflate( _searchAreaHalo );
+    cdebug_log(112,0) << "Search halo: " << _searchAreaHalo << endl;
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
     
     setAxisTargets();
@@ -1514,95 +1517,109 @@ namespace Anabatic {
   {
     cdebug_log(112,1) << "Dijkstra::_propagate() " << _net <<  endl;
     while ( not _queue.empty() ) {
-      cdebug_log(111,0) << "Number of targets left: " << _targets.size() << " and needaxis? " << needAxisTarget() << endl;
+      cdebug_log(111,0) << "Number of targets left: " << _targets.size()
+                        << " and needaxis? " << needAxisTarget() << endl;
+
       _queue.dump();
       Vertex* current  = _queue.top();
       GCell*  gcurrent = current->getGCell();
 
-      cdebug_log(111,0) << endl << "[Current Vertex]: " << current << ", current->getConnexId() == _connectedsId):" << (current->getConnexId() == _connectedsId)<< ", (current->getConnexId() < 0): "  << current->getConnexId()  << endl;
+      cdebug_log(111,1) << "Current:" << current << endl;
       _queue.pop();
 
       if      ( current->isAxisTarget() and needAxisTarget()) unsetFlags(Mode::AxisTarget);
       else if ((current->getConnexId() == _connectedsId) or (current->getConnexId() < 0)) {
+        cdebug_log(111,1) << "Looking for neighbors:" << endl;
 
         for ( Edge* edge : current->getGCell()->getEdges() ) {
-          cdebug_log(111,0) << endl  << "===================================================================================" << endl << endl;
+          cdebug_log(111,0) << "@ Edge " << edge << endl;
+
           if (edge == current->getFrom()) {
-            cdebug_log(111,0) << "edge == current->getFrom()" << endl;
+            cdebug_log(111,0) << "| Reject: edge == current->getFrom()" << endl;
             continue;
-          } else  cdebug_log(111,0) << "edge != current->getFrom()" << endl;
+          }
           
-          if (_checkFrom2(edge, current)) continue; // ANALOG
+          if (_checkFrom2(edge, current)) { // ANALOG
+            cdebug_log(111,0) << "| Reject: _checkFrom2()" << endl;
+            continue;
+          }
 
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
-          Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
-          if (!gneighbor->isMatrix()) vneighbor->createAData();
+          Vertex* vneighbor = gneighbor->getObserver<Vertex>( GCell::Observable::Vertex );
+          if (not gneighbor->isMatrix()) vneighbor->createAData();
+
+          cdebug_log(111,0) << "+ Neighbor:" << vneighbor << endl;
 
           if (vneighbor->getConnexId() == _connectedsId) {
-            cdebug_log(111,0) << "ConnectedsId" << endl;
+            cdebug_log(111,0) << "| Reject: Neighbor already reached (has connectedsId)" << endl;
             continue;
           }
           if (not _searchArea.intersect(gneighbor->getBoundingBox())) {
-            cdebug_log(111,0) << "not in _searchArea: " << _searchArea << ", gneighbor area: "  << gneighbor->getBoundingBox() << endl;
+            cdebug_log(111,0) << "| Reject: not in _searchArea: " << _searchArea << ", gneighbor area: "  << gneighbor->getBoundingBox() << endl;
             continue;
           }
 
         ////////////////////////////////////// DEBUG ////////////////////////////////////// 
-          cdebug_log(111,0) << "| Net   : " << _net << endl;
-          cdebug_log(111,0) << "| [Curr]: " << current << endl;
+          cdebug_tabw(111,1);
           if (current->getFrom()) { 
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
             current->getIntervFrom().print();
           } 
           if (current->getFrom2()) { 
-            cdebug_log(111,0) << "| FROM2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
+            cdebug_log(111,0) << "| From2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
             current->getIntervFrom2().print();
           }
-          cdebug_log(111,0) << "| Edge " << edge << endl;
-          cdebug_log(111,0) << "+ Neighbor: " << vneighbor << endl;
-          if ((vneighbor->getFrom() != NULL)&&(vneighbor->hasValidStamp())) {
+          if ( (vneighbor->getFrom() != NULL) and (vneighbor->hasValidStamp()) ) {
             cdebug_log(111,0) << "| Neighbor GETFROM:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;
             cdebug_log(111,0) << "Distance prev : " << DbU::getValueString(vneighbor->getDistance()) << endl;
           }
         /////////////////////////////////////////////////////////////////////////////////// 
 
-          cdebug_log(111,0) << "Calc distance1" << endl;
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
 
           bool isDistance2shorter = _isDistance2Shorter ( distance, current, vneighbor, edge ); // ANALOG
 
-          if  ( (distance == vneighbor->getDistance()) and ((!gcurrent->isMatrix()) and (!gneighbor->isMatrix())) ){
+          if  (   (distance == vneighbor->getDistance())
+              and ( (not gcurrent->isMatrix()) and (not gneighbor->isMatrix()) ) ) {
             _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
-
-          } else if ( (distance  < vneighbor->getDistance()) and (distance  != Vertex::unreachable) ){
-            if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
-            else {
-              if (not vneighbor->hasValidStamp()) {
-                cdebug_log(111,0) << "[case: Distance FIRST]" << endl;
-                vneighbor->setConnexId( -1 );
-                vneighbor->setStamp   ( _stamp );
-                vneighbor->setDegree  ( 1 );
-                vneighbor->setRpCount ( 0 );
-                vneighbor->unsetFlags(Vertex::AxisTarget);
+          } else
+            if ( (distance < vneighbor->getDistance()) and (distance != Vertex::unreachable) ) {
+              if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
+              else {
+                if (not vneighbor->hasValidStamp()) {
+                  cdebug_log(111,0) << "Vertex reached for the first time" << endl;
+                  vneighbor->setConnexId( -1 );
+                  vneighbor->setStamp   ( _stamp );
+                  vneighbor->setDegree  ( 1 );
+                  vneighbor->setRpCount ( 0 );
+                  vneighbor->unsetFlags(Vertex::AxisTarget);
+                }
               }
+              cdebug_log(111,0) << "Vertex reached through a shorter path" << endl;
+              _updateGRAData( vneighbor, isDistance2shorter, current ); // ANALOG
+              
+              vneighbor->setBranchId( current->getBranchId() );
+              vneighbor->setDistance( distance );
+              vneighbor->setFrom ( edge );
+              _queue.push( vneighbor );
+              cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
+            } else {
+              cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path" << endl;
             }
-            cdebug_log(111,0) << "[case: Distance INFERIOR]" << endl;
-            _updateGRAData ( vneighbor, isDistance2shorter, current ); // ANALOG
 
-            vneighbor->setBranchId( current->getBranchId() );
-            vneighbor->setDistance( distance );
-            vneighbor->setFrom ( edge );
-            _queue.push( vneighbor );
-            cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
-          }
+          cdebug_tabw(111,-1);
         }
 
+        cdebug_tabw(111,-2);
         continue;
       }
+
+      cdebug_tabw(111,-1);
 
     // We did reach another target (different <connexId>).
     // Tag back the path, with a higher <branchId>.
       _traceback( current );
+
       cdebug_tabw(112,-1);
       return true;
     }
@@ -1611,11 +1628,9 @@ namespace Anabatic {
                  , getString(_net).c_str()
                  ) << endl;
     
-    cdebug_tabw(112, 0) << "Targets are: " << endl;
-    for ( Vertex* v : _targets ) {
-      cdebug_tabw(112, 0) << v << endl;
-    }
-    cdebug_tabw(112, 0) << "End Targets are." << endl;
+    cdebug_log(112, 0) << "Unreached targets:" << endl;
+    for ( Vertex* v : _targets )
+      cdebug_log(112, 0) << "| " << v << endl;
 
     cdebug_tabw(112,-1);
     return false;
@@ -1792,7 +1807,7 @@ namespace Anabatic {
 
   void  Dijkstra::run ( Dijkstra::Mode mode )
   {
-    DebugSession::open( _net, 112, 120 );
+    DebugSession::open( _net, 111, 120 );
 
     cdebug_log(112,1) << "Dijkstra::run() on " << _net << " mode:" << mode << endl;
     _mode = mode;
@@ -2029,14 +2044,14 @@ namespace Anabatic {
   {
     if (current->getFrom2()){
       if (edge == current->getFrom2()) {
-        cdebug_log(111,0) << "edge == current->getFrom2()" << endl;
+      //cdebug_log(111,0) << "edge == current->getFrom2()" << endl;
         return true;
       } else {
-        cdebug_log(111,0) << "edge != current->getFrom2(): " << current->getFrom2() << endl;
+      //cdebug_log(111,0) << "edge != current->getFrom2(): " << current->getFrom2() << endl;
         return false;
       }
     } else {
-      cdebug_log(111,0) << "current->getFrom2() = NULL" << endl;
+    //cdebug_log(111,0) << "current->getFrom2() = NULL" << endl;
       return false;
     }
   }
@@ -2044,42 +2059,53 @@ namespace Anabatic {
 
   bool Dijkstra::_isDistance2Shorter ( DbU::Unit& distance, Vertex* current, Vertex* vneighbor, Edge* edge )
   {
+    cdebug_log(111,1) << "Dijkstra::_isDistance2Shorter()" << endl;
+
     DbU::Unit distance2          = Vertex::unreachable;
     bool      isDistance2shorter = false;
     GCell*    gneighbor          = edge->getOpposite(current->getGCell());
+
     if (current->getFrom2()) {
-      cdebug_log(111,0) << "HAS 2nd getfrom" << edge << endl;
+      cdebug_log(111,0) << "Has second ::getFrom()" << edge << endl;
+
       current->setFlags(Vertex::From2Mode);
-      cdebug_log(111,0) << "Calc distance2" << endl;
       distance2 = _distanceCb( current, vneighbor, edge );
       current->unsetFlags(Vertex::From2Mode);
-      cdebug_log(111,0) << "Distance1 curr: " << DbU::getValueString(distance) << endl;
-      cdebug_log(111,0) << "Distance2 curr: " << DbU::getValueString(distance2) << endl;
-      if (distance > distance2){
-        cdebug_log(111,0) << "=> distance2 is shorter" << endl;
+
+      cdebug_log(111,0) << "Distance 1 from current: " << DbU::getValueString(distance) << endl;
+      cdebug_log(111,0) << "Distance 2 from current: " << DbU::getValueString(distance2) << endl;
+
+      if (distance > distance2) {
+        cdebug_log(111,0) << "* Distance 2 is shorter" << endl;
+
         isDistance2shorter = true;
         distance = distance2;
       } else if (distance == distance2) {
-        cdebug_log(111,0) << "distance == distance2" << endl;
+        cdebug_log(111,0) << "* Distance 1 equal Distance 2" << endl;
+
         Point pcurr  = current->getStartPathPoint(vneighbor);
-        current->setFlags(Vertex::From2Mode);
+        current->setFlags( Vertex::From2Mode );
         Point pcurr2 = current->getStartPathPoint(vneighbor);
-        current->unsetFlags(Vertex::From2Mode);
+        current->unsetFlags( Vertex::From2Mode );
         Point pnext  = gneighbor->getCenter(); 
-        if (calcDistance(pcurr, pnext) > calcDistance(pcurr2, pnext)) {
-          cdebug_log(111,0) << "=> distance2 is shorter" << endl;
+
+        if (calcDistance(pcurr,pnext) > calcDistance(pcurr2,pnext)) {
+          cdebug_log(111,0) << "* Distance 2 is shorter" << endl;
+
           isDistance2shorter = true;
           distance = distance2;
         } else {
-          cdebug_log(111,0) << "=> distance1 is shorter" << endl;
+          cdebug_log(111,0) << "* Distance 1 is shorter" << endl;
         }
       } else {
-        cdebug_log(111,0) << "=> distance1 is shorter" << endl;
+        cdebug_log(111,0) << "* Distance 1 is shorter" << endl;
       }
     } else {
-      cdebug_log(111,0) << "NO 2nd getfrom" << endl;
-      cdebug_log(111,0) << "Distance1 curr: " << DbU::getValueString(distance) << endl;
+      cdebug_log(111,0) << "No second ::getFrom()" << endl;
+      cdebug_log(111,0) << "Distance 1 from current: " << DbU::getValueString(distance) << endl;
     }
+
+    cdebug_tabw(111,-1);
     return isDistance2shorter;
   }
 
@@ -2245,6 +2271,8 @@ namespace Anabatic {
                               , _net->getCell()->getAbutmentBox().getYMax()
                               ) 
                          );
+      } else if (gcell->isDevice()){
+        _searchArea.merge( _net->getCell()->getAbutmentBox() );
       }
     } else if (gcell->isDevice()){
       _searchArea.merge( _net->getCell()->getAbutmentBox() );

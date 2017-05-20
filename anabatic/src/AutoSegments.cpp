@@ -20,6 +20,36 @@
 #include "anabatic/AutoSegment.h"
 
 
+namespace {
+
+  using namespace Anabatic;
+
+
+  AutoContact* isLocalDogleg ( AutoSegment* current, AutoContact* from, AutoSegment* master )
+  {
+    if (not current->isLocal() or not from->isTurn()) return NULL;
+
+    AutoContact* to = current->getOppositeAnchor( from );
+    if (not to->isTurn()) return NULL;
+
+    AutoSegment* targetGlobal = to->getPerpandicular( current );
+    if (not targetGlobal->isGlobal() or (master->getLayer() != targetGlobal->getLayer())) return NULL; 
+
+    cdebug_log(144,0) << "Global aligned though dogleg:" << targetGlobal << endl;
+
+    Interval masterConstraints;
+    Interval targetConstraints;
+    master      ->getConstraints( masterConstraints );
+    targetGlobal->getConstraints( targetConstraints );
+    if (not targetConstraints.intersect(masterConstraints)) return NULL;
+
+    return to;
+  } 
+
+
+}  // Anonymous namespace.
+
+
 namespace Anabatic {
 
   using namespace std;
@@ -36,7 +66,7 @@ namespace Anabatic {
 
   void  AutoSegmentStack::push ( AutoContact* contact, AutoSegment* segment )
   {
-    cdebug_log(145,0) << "Stacking " << contact << " + " << segment << endl;
+    cdebug_log(144,0) << "Stacking " << contact << " + " << segment << endl;
     push_back( make_pair(contact,segment) );
   }
 
@@ -299,9 +329,13 @@ namespace Anabatic {
     , _stack ()
   {
     if (not _master) return;
-    _flags |= (_master->isHorizontal()) ? Flags::Horizontal : Flags::Vertical;
 
-    cdebug_log(145,0) << "AutoSegments_Aligneds::Locator::Locator() - _flags:" << _flags << endl;
+    cdebug_log(145,0) << "Flags:" << _flags.asString(FlagsFunction) << endl;
+
+    _flags |= (_master->isHorizontal()) ? Flags::Horizontal : Flags::Vertical;
+    if (_flags & Flags::WithDoglegs) _flags |= Flags::WithPerpands;
+
+    cdebug_log(144,0) << "AutoSegments_Aligneds::Locator::Locator() _flags:" << _flags.asString(FlagsFunction) << endl;
 
     AutoContact* contact = segment->getAutoSource();
     if (contact) _stack.push( contact, segment );
@@ -330,29 +364,45 @@ namespace Anabatic {
       AutoSegment* sourceSegment = _stack.getAutoSegment ();
 
       _stack.pop ();
+      cdebug_log(144,1) << "Iterate over: " << sourceContact << endl;
 
       LocatorHelper helper (sourceContact, _flags);
       for ( ; helper.isValid() ; helper.progress() ) {
         AutoSegment* currentSegment = helper.getSegment();
-        cdebug_log(145,0) << "Looking at: " << currentSegment << endl;
+        cdebug_log(144,0) << "| " << currentSegment << endl;
 
         if (currentSegment == sourceSegment) continue;
 
-        if (   (not (_flags & Flags::NoCheckLayer))
-           and AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
-          cerr << Error("Aligned segments not in same layer (aligneds locator)\n"
-                        "        %s\n"
-                        "        %s."
-                       ,getString(_master).c_str()
-                       ,getString(currentSegment).c_str()) << endl;
-          continue;
-        }
+        if (AutoSegment::areAligneds(currentSegment,_master)) {
+          if (   (not (_flags & Flags::NoCheckLayer))
+             and AutoSegment::areAlignedsAndDiffLayer(currentSegment,_master)) {
+            cerr << Error( "Aligned segments not in same layer (aligneds locator)\n"
+                           "        %s\n"
+                           "        %s."
+                         ,getString(_master).c_str()
+                         ,getString(currentSegment).c_str() ) << endl;
+            continue;
+          }
 
-        AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
-        if (targetContact) _stack.push( targetContact, currentSegment );
+          AutoContact* targetContact  = currentSegment->getOppositeAnchor( sourceContact );
+          if (targetContact) _stack.push( targetContact, currentSegment );
+        } else {
+          if (_flags & Flags::WithDoglegs) {
+            AutoContact* targetContact = isLocalDogleg( currentSegment, sourceContact, _master );
+
+            if (targetContact) {
+              cdebug_log(144,0) << "Stacking dogleg global. " << endl;
+              _stack.push( targetContact, currentSegment );
+              continue;
+            }
+          }
+        }
       }
 
+      cdebug_tabw(144,-1);
+
       if (_stack.getAutoSegment() == _master) continue;
+      if (not AutoSegment::areAligneds(_stack.getAutoSegment(),_master)) continue;
       break;
     }
   }
@@ -397,8 +447,8 @@ namespace Anabatic {
     , _stack         ()
     , _perpandiculars()
   {
-    cdebug_log(145,0) << "AutoSegments_Perpandiculars::Locator::Locator()" << endl;
-    cdebug_log(145,0) << "  " << _master << endl;
+    cdebug_log(144,0) << "AutoSegments_Perpandiculars::Locator::Locator(): _flags:" << _flags.asString(FlagsFunction) << endl;
+    cdebug_log(144,0) << "  " << _master << endl;
 
     if (not _master) return;
     if (_master->isHorizontal()) _flags |= Flags::Horizontal;
@@ -423,7 +473,7 @@ namespace Anabatic {
 
   void  AutoSegments_Perpandiculars::Locator::progress ()
   {
-    cdebug_log(145,1) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
+    cdebug_log(144,1) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
 
     if (not _perpandiculars.empty()) _perpandiculars.pop_back();
     if (not _perpandiculars.empty()) return;
@@ -433,14 +483,14 @@ namespace Anabatic {
       AutoSegment* sourceSegment = _stack.getAutoSegment();
 
       _stack.pop();
-      cdebug_log(145,0) << "Iterate over: " << sourceContact << endl;
+      cdebug_log(144,0) << "Iterate over: " << sourceContact << endl;
 
       LocatorHelper helper (sourceContact, _flags);
       for ( ; helper.isValid() ; helper.progress() ) {
         AutoSegment* currentSegment = helper.getSegment();
         if (currentSegment == sourceSegment) continue;
 
-        cdebug_log(145,0) << "| " << currentSegment << endl;
+        cdebug_log(144,0) << "| " << currentSegment << endl;
 
         if (AutoSegment::areAligneds(currentSegment,_master)) {
           AutoContact* targetContact = currentSegment->getOppositeAnchor( sourceContact );
@@ -449,7 +499,7 @@ namespace Anabatic {
             if (_master->getLayer() != currentSegment->getLayer()) {
               continue;
             }
-            cdebug_log(145,0) << "Stacking target. " << endl;
+            cdebug_log(144,0) << "Stacking target. " << endl;
             _stack.push( targetContact, currentSegment );
 
             // if (  (_master->isHorizontal() and sourceContact->isHTee())
@@ -463,11 +513,11 @@ namespace Anabatic {
             //     continue;
             //   }
 
-            //   cdebug_log(145,0) << "Stacking target. " << endl;
+            //   cdebug_log(144,0) << "Stacking target. " << endl;
             //   _stack.push( targetContact, currentSegment );
             // }
           } else {
-            cdebug_log(145,0) << "No opposite anchor to: " << sourceContact << endl;
+            cdebug_log(144,0) << "No opposite anchor to: " << sourceContact << endl;
           }
         } else {
           if ( (_flags & Flags::WithDoglegs) and currentSegment->isLocal() and sourceContact->isTurn() ) {
@@ -475,13 +525,13 @@ namespace Anabatic {
             if (targetContact->isTurn()) {
               AutoSegment* targetGlobal = targetContact->getPerpandicular( currentSegment );
               if (targetGlobal->isGlobal() and (_master->getLayer() == targetGlobal->getLayer())) {
-                cdebug_log(145,0) << "Global aligned though dogleg:" << targetGlobal << endl;
+                cdebug_log(144,0) << "Global aligned though dogleg:" << targetGlobal << endl;
                 Interval masterConstraints;
                 Interval targetConstraints;
                 _master     ->getConstraints( masterConstraints );
                 targetGlobal->getConstraints( targetConstraints );
                 if (targetConstraints.intersect(masterConstraints)) {
-                  cdebug_log(145,0) << "Stacking dogleg global. " << endl;
+                  cdebug_log(144,0) << "Stacking dogleg global. " << endl;
                   _stack.push( targetContact, currentSegment );
                   continue;
                 }
@@ -497,7 +547,7 @@ namespace Anabatic {
       if (not _perpandiculars.empty()) break;
     }
 
-    cdebug_tabw(145,-1);
+    cdebug_tabw(144,-1);
   }
 
 

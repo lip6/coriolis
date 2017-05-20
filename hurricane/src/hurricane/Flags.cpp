@@ -41,6 +41,14 @@ namespace Hurricane {
   { }
 
 
+  string  BaseFlags::asString ( uint32_t ) const
+  {
+    std::ostringstream formatted;
+    formatted << _flags;
+    return formatted.str();
+  }
+
+
   string  BaseFlags::_getTypeName () const
   { return "Flags"; }
 

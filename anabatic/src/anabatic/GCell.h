@@ -155,9 +155,9 @@ namespace Anabatic {
       inline        DbU::Unit             getYMax             ( int shrink=0 ) const;
       inline        DbU::Unit             getXCenter          () const;
       inline        DbU::Unit             getYCenter          () const;
-      inline        DbU::Unit             getConstraintXMax   () const;
-      inline        DbU::Unit             getConstraintYMax   () const;
-      inline        Interval              getSide             ( Flags direction ) const;
+      inline        DbU::Unit             getConstraintXMax   ( int shrink=0 ) const;
+      inline        DbU::Unit             getConstraintYMax   ( int shrink=0 ) const;
+      inline        Interval              getSide             ( Flags direction, int shrink=0 ) const;
       inline        Point                 getCenter           () const;
       inline        Box                   getConstraintBox    () const;
       inline const  vector<Edge*>&        getWestEdges        () const;
@@ -340,7 +340,7 @@ namespace Anabatic {
   inline       Flags&                GCell::flags         () { return _flags; }
 
   inline DbU::Unit  GCell::getXMax ( int shrink ) const
-  { return _eastEdges.empty() ?       getCell()->getAbutmentBox().getXMax() - shrink
+  { return _eastEdges.empty() ? getCell()->getAbutmentBox().getXMax() - shrink
                               : _eastEdges[0]->getOpposite(this)->getXMin() - shrink; }
 
   inline DbU::Unit  GCell::getYMax ( int shrink ) const
@@ -350,11 +350,11 @@ namespace Anabatic {
   inline DbU::Unit GCell::getXCenter () const { return (getXMin()+getXMax())/2; }
   inline DbU::Unit GCell::getYCenter () const { return (getYMin()+getYMax())/2; }
 
-  inline DbU::Unit  GCell::getConstraintXMax () const
-  { return getXMax( _eastEdges.empty() ? 0 : 1 ); }
+  inline DbU::Unit  GCell::getConstraintXMax ( int shrink ) const
+  { return getXMax( shrink + (_eastEdges.empty() ? 0 : 1) ); }
 
-  inline DbU::Unit  GCell::getConstraintYMax () const
-  { return getYMax( _northEdges.empty() ? 0 : 1 ); }
+  inline DbU::Unit  GCell::getConstraintYMax ( int shrink ) const
+  { return getYMax( shrink + (_northEdges.empty() ? 0 : 1) ); }
 
   inline Point  GCell::getCenter () const
   { return Point( (getXMin()+getXMax())/2, (getYMin()+getYMax())/2); }
@@ -362,10 +362,10 @@ namespace Anabatic {
   inline Box  GCell::getConstraintBox () const
   { return Box( getXMin(), getYMin(), getConstraintXMax(), getConstraintYMax() ); }
 
-  inline Interval  GCell::getSide ( Flags direction ) const
+  inline Interval  GCell::getSide ( Flags direction, int shrink ) const
   {
-    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getConstraintYMax() );
-    return Interval( getXMin(), getConstraintXMax() );
+    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getConstraintYMax(shrink) );
+    return Interval( getXMin(), getConstraintXMax(shrink) );
   }
 
   inline void  GCell::setObserver ( size_t slot, BaseObserver* observer )

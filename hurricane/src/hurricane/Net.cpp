@@ -32,6 +32,7 @@
 #include "hurricane/Pad.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/NetRoutingProperty.h"
 
 namespace Hurricane {
 
@@ -513,6 +514,10 @@ void Net::setDirection(const Direction& direction)
 {
     _direction = direction;
 }
+
+void Net::setRoutingState(uint32_t state)
+// **************************************
+{ NetRoutingExtension::get(this)->setFlags( state ); }
 
 bool Net::hasAlias(const Name& name) const
 // ***************************************

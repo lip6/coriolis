@@ -185,7 +185,7 @@ namespace Anabatic {
     GCell*    gcell  = getAutoSource()->getGCell();
     GCell*    end    = getAutoTarget()->getGCell();
 
-    cdebug_log(149,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
+    cdebug_log(144,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
 
     if (gcell->getXMin() > end->getXMin()) std::swap( gcell, end );
     if (yprobe == gcell->getConstraintYMax()) yprobe--;
@@ -806,6 +806,11 @@ namespace Anabatic {
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+    }
+
+    if (isAnalog()) {
+      segment1->setFlags( SegAnalog );
+      segment2->setFlags( SegAnalog );
     }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;

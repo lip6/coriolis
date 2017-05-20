@@ -212,7 +212,7 @@ namespace Katana {
 
     Super::chipPrep();
 
-    setupGlobalGraph( Flags::NoFlags );
+    setupGlobalGraph( 0 );
     setupRoutingPlanes();
     setupSpecialNets();
     setupPreRouteds();

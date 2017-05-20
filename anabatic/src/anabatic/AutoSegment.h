@@ -93,6 +93,7 @@ namespace Anabatic {
                        , SegInvalidatedLayer  = (1<<28)
                        , SegCreated           = (1<<29)
                        , SegUserDefined       = (1<<30)
+                       , SegAnalog            = (1<<31)
                        // Masks.              
                        , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
                        , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
@@ -127,7 +128,8 @@ namespace Anabatic {
     public:
       typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
     public:
-      static  void                setDestroyMode             ( bool );
+      static  void                setAnalogMode              ( bool );
+      static  bool                getAnalogMode              ();
       static  AutoSegment*        create                     ( AutoContact*  source
                                                              , AutoContact*  target
                                                              , Segment*      hurricaneSegment
@@ -201,6 +203,7 @@ namespace Anabatic {
       inline  bool                isUserDefined              () const;
               bool                isReduceCandidate          () const;
               bool                isUTurn                    () const;
+      inline  bool                isAnalog                   () const;
       virtual bool                _canSlacken                () const = 0;
               bool                canReduce                  () const;
               bool                mustRaise                  () const;
@@ -312,7 +315,7 @@ namespace Anabatic {
               AutoSegments        getCachedOnTargetContact   ( Flags direction );
               AutoSegments        getAligneds                ( Flags flags=Flags::NoFlags );
               AutoSegments        getConnecteds              ( Flags flags=Flags::NoFlags );
-              AutoSegments        getPerpandiculars          ();
+              AutoSegments        getPerpandiculars          ( Flags flags=Flags::NoFlags );
               size_t              getAlignedContacts         ( map<AutoContact*,int>& ) const ;
     // Observers.                         
       template< typename OwnerT >
@@ -337,9 +340,7 @@ namespace Anabatic {
     // Internal: Static Attributes.
       static size_t               _allocateds;
       static size_t               _globalsCount;
-      static bool                 _destroyBase;
-      static bool                 _destroyTool;
-      static unsigned long        _maxId;
+      static bool                 _analogMode;
     // Internal: Attributes.      
       const  unsigned long        _id;
              GCell*               _gcell;
@@ -492,6 +493,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isInvalidatedLayer     () const { return _flags & SegInvalidatedLayer; }
   inline  bool            AutoSegment::isCreated              () const { return _flags & SegCreated; }
   inline  bool            AutoSegment::isUserDefined          () const { return _flags & SegUserDefined; }
+  inline  bool            AutoSegment::isAnalog               () const { return _flags & SegAnalog; }
   inline  void            AutoSegment::setFlags               ( uint32_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint32_t flags ) { _flags &= ~flags; }
                                                               
@@ -519,10 +521,7 @@ namespace Anabatic {
 
   inline bool  AutoSegment::CompareId::operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const
   { return lhs->getId() < rhs->getId(); }
-  
-  inline unsigned long AutoSegment::getMaxId ()
-  { return _maxId; }
-
+ 
   inline uint32_t  AutoSegment::swapSourceTargetFlags ( AutoSegment* segment )
   {
     uint32_t segFlags  = segment->getFlags();

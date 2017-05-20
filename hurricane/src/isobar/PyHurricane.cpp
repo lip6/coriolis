@@ -56,6 +56,8 @@
 #include "hurricane/isobar/PyNetDirection.h"
 #include "hurricane/isobar/PyNetCollection.h"
 #include "hurricane/isobar/PyNetExternalComponents.h"
+#include "hurricane/isobar/PyNetRoutingState.h"
+#include "hurricane/isobar/PyNetRoutingProperty.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyHookCollection.h"
@@ -539,6 +541,8 @@ extern "C" {
     PyPlugCollection_LinkPyType ();
     PyNetCollection_LinkPyType ();
     PyNetExternalComponents_LinkPyType ();
+    PyNetRoutingState_LinkPyType ();
+    PyNetRoutingExtension_LinkPyType ();
     PyCellCollection_LinkPyType ();
     PyPinPlacementStatus_LinkPyType ();
     PyPinDirection_LinkPyType ();
@@ -606,6 +610,8 @@ extern "C" {
     PYTYPE_READY ( NetDirection                  )
     PYTYPE_READY ( NetCollection                 )
     PYTYPE_READY ( NetCollectionLocator          )
+    PYTYPE_READY ( NetRoutingState               )
+    PYTYPE_READY ( NetRoutingExtension           )
     PYTYPE_READY ( CellCollection                )
     PYTYPE_READY ( CellCollectionLocator         )
     PYTYPE_READY ( PinPlacementStatus            )
@@ -762,6 +768,10 @@ extern "C" {
     PyModule_AddObject ( module, "ViaLayer"             , (PyObject*)&PyTypeViaLayer );
     Py_INCREF ( &PyTypeNetExternalComponents );
     PyModule_AddObject ( module, "NetExternalComponents", (PyObject*)&PyTypeNetExternalComponents );
+    Py_INCREF ( &PyTypeNetRoutingState );
+    PyModule_AddObject ( module, "NetRoutingState"      , (PyObject*)&PyTypeNetRoutingState );
+    Py_INCREF ( &PyTypeNetRoutingExtension );
+    PyModule_AddObject ( module, "NetRoutingExtension"  , (PyObject*)&PyTypeNetRoutingExtension );
     Py_INCREF ( &PyTypeDebugSession );
     PyModule_AddObject ( module, "DebugSession"         , (PyObject*)&PyTypeDebugSession );
     Py_INCREF ( &PyTypeUpdateSession );
@@ -813,6 +823,7 @@ extern "C" {
     PyPin_postModuleInit();
     PyRoutingPad_postModuleInit();
     PyNet_postModuleInit();
+    PyNetRoutingState_postModuleInit();
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 

@@ -294,13 +294,13 @@ namespace Anabatic {
   inline LocatorHelper::LocatorHelper ( AutoContact* contact, Flags flags )
     : _flags(flags), _index(_min()), _contact(contact)
   {
-    cdebug_tabw(145,1);
-    cdebug_log(145,0) << "CTOR LocatorHelper " << contact->_getString() << endl;
-    cdebug_log(145,0) << "+ _min():" << _min() << endl;
-    cdebug_log(145,0) << "+ _max():" << _max() << endl;
-    cdebug_log(145,0) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
+    cdebug_tabw(144,1);
+    cdebug_log(144,0) << "CTOR LocatorHelper " << contact->_getString() << endl;
+    cdebug_log(144,0) << "+ _min():" << _min() << endl;
+    cdebug_log(144,0) << "+ _max():" << _max() << endl;
+    cdebug_log(144,0) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
     if (not _contact->getSegment(_index)) progress();
-    cdebug_tabw(145,-1);
+    cdebug_tabw(144,-1);
   }
 
   inline bool  LocatorHelper::isValid () const
@@ -314,20 +314,20 @@ namespace Anabatic {
 
   inline AutoSegment* LocatorHelper::getSegment () const
   {
-    cdebug_log(145,0) << "  LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
+    cdebug_log(144,0) << "  LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
     return (_index < _max()) ? _contact->getSegment(_index) : NULL;
   }
 
   inline void  LocatorHelper::progress ()
   {
-    cdebug_tabw(145,1);
+    cdebug_tabw(144,1);
     ++_index;
-    cdebug_log(145,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+    cdebug_log(144,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
       ++_index;
-      cdebug_log(145,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+      cdebug_log(144,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     }
-    cdebug_tabw(145,-1);
+    cdebug_tabw(144,-1);
   }
 
 

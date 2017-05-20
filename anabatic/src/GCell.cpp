@@ -581,10 +581,10 @@ namespace Anabatic {
   Box  GCell::getBorder ( const GCell* s, const GCell* t )
   {
     Flags flags = Flags::NoFlags;
-    flags |= (s->getXMax() == t->getXMin()) ? Flags::EastSide  : 0;
-    flags |= (t->getXMax() == s->getXMin()) ? Flags::WestSide  : 0;
-    flags |= (s->getYMax() == t->getYMin()) ? Flags::NorthSide : 0;
-    flags |= (t->getYMax() == s->getYMin()) ? Flags::SouthSide : 0;
+    flags |= (s->getXMax() == t->getXMin()) ? Flags::EastSide  : Flags::NoFlags;
+    flags |= (t->getXMax() == s->getXMin()) ? Flags::WestSide  : Flags::NoFlags;
+    flags |= (s->getYMax() == t->getYMin()) ? Flags::NorthSide : Flags::NoFlags;
+    flags |= (t->getYMax() == s->getYMin()) ? Flags::SouthSide : Flags::NoFlags;
 
     if (flags & Flags::Vertical) {
       if (flags & Flags::Horizontal) return Box();

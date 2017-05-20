@@ -303,9 +303,13 @@ namespace Anabatic {
 // Class  :  "Anabatic::AutoSegment".
 
 
-  size_t         AutoSegment::_allocateds   = 0;
-  size_t         AutoSegment::_globalsCount = 0;
-  unsigned long  AutoSegment::_maxId        = 0;
+  size_t  AutoSegment::_allocateds   = 0;
+  size_t  AutoSegment::_globalsCount = 0;
+  bool    AutoSegment::_analogMode   = false;
+
+
+  void  AutoSegment::setAnalogMode ( bool state ) { _analogMode = state; }
+  bool  AutoSegment::getAnalogMode () { return _analogMode; }
 
 
   AutoSegment::AutoSegment ( Segment* segment )
@@ -334,6 +338,7 @@ namespace Anabatic {
 
     if (source->isTerminal()) setFlags( SegSourceTerminal );
     if (target->isTerminal()) setFlags( SegTargetTerminal );
+    if (_analogMode)          setFlags( SegAnalog );
 
     source->invalidate( Flags::Topology );
   }
@@ -630,20 +635,20 @@ namespace Anabatic {
 
   AutoSegments  AutoSegment::getAligneds ( Flags flags )
   {
-    cdebug_log(145,0) << "AutoSegment::getAligneds() - flags:" << flags << endl;
+    cdebug_log(145,0) << "AutoSegment::getAligneds() - flags:" << flags.asString(FlagsFunction) << endl;
     return AutoSegments_Aligneds( this, flags );
   }
 
 
   AutoSegments  AutoSegment::getConnecteds ( Flags flags )
   {
-    cdebug_log(145,0) << "AutoSegment::getConnecteds() - flags:" << flags << endl;
+    cdebug_log(145,0) << "AutoSegment::getConnecteds() - flags:" << flags.asString(FlagsFunction) << endl;
     return AutoSegments_Connecteds( this, flags );
   }
 
 
-  AutoSegments  AutoSegment::getPerpandiculars ()
-  { return AutoSegments_Perpandiculars( this ); }
+  AutoSegments  AutoSegment::getPerpandiculars ( Flags flags )
+  { return AutoSegments_Perpandiculars( this, flags ); }
 
 
   bool  AutoSegment::checkDepthSpin () const
@@ -916,21 +921,50 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "computeOptimal() - " << this << endl;
 
-    DbU::Unit  optimalMin;
-    DbU::Unit  optimalMax;
-    DbU::Unit  constraintMin;
-    DbU::Unit  constraintMax;
+    DbU::Unit            optimalMin;
+    DbU::Unit            optimalMax;
+    DbU::Unit            constraintMin;
+    DbU::Unit            constraintMax;
+    vector<AutoSegment*> aligneds;
   
     getConstraints( constraintMin, constraintMax );
 
     if (isUserDefined()) {
       optimalMin = optimalMax = getAxis();
+      aligneds.push_back( this );
     } else {
       DbU::Unit      minGCell    = getOrigin();
       DbU::Unit      maxGCell    = getExtremity();
       DbU::Unit      terminalMin;
       DbU::Unit      terminalMax;
       AttractorsMap  attractors;
+
+      Flags flags = (isAnalog() ? Flags::WithDoglegs : Flags::NoFlags);
+      Flags f2 = flags | Flags::WithSelf;
+      cdebug_log(145,0) << "Test | :" << flags.asString(FlagsFunction) << endl;
+
+      getAligneds( Flags::WithSelf|flags ).fill( aligneds );
+
+      if (not getGCell()->isMatrix()) {
+        Flags          direction = (isHorizontal()) ? Flags::Vertical : Flags::Horizontal;
+        Interval       gcellSide ( false );
+        vector<GCell*> gcells;
+        DbU::Unit      pitch     = getPitch();
+
+        cdebug_log(145,0) << "Using pitch for L/T shrink:" << DbU::getValueString(pitch) << endl;
+        for ( AutoSegment* aligned : aligneds ) {
+          aligned->getGCells( gcells );
+          for ( GCell* gcell : gcells ) {
+            gcellSide.intersection( gcell->getSide(direction,pitch) );
+            cdebug_log(145,0) << "| gcellSide:" << gcellSide << " (from " << gcell << ")" << endl;
+          }
+        }
+        minGCell = gcellSide.getVMin();
+        maxGCell = gcellSide.getVMax();
+      }
+
+      cdebug_log(145,0) << "GCell interval [" << DbU::getValueString(minGCell)
+                        << ":"                << DbU::getValueString(maxGCell) << "]" << endl;
   
       AutoContact* anchor = getAutoSource();
       if (anchor->isTerminal()) {
@@ -964,9 +998,11 @@ namespace Anabatic {
           attractors.addAttractor( terminalMax );
       }
   
-      forEach( AutoSegment*, autoSegment, getPerpandiculars() ) {
-        cdebug_log(145,1) << "| Perpandicular " << *autoSegment << endl;
+      for ( AutoSegment* autoSegment : getPerpandiculars(flags) ) {
+        cdebug_log(145,1) << "| Perpandicular " << autoSegment << endl;
         if (autoSegment->isGlobal()) {
+          cdebug_log(145,0) << "Used as global." << endl;
+
         // Sloppy implentation.
           DbU::Unit perpandMin = autoSegment->getSourceU();
           DbU::Unit perpandMax = autoSegment->getTargetU();
@@ -980,7 +1016,7 @@ namespace Anabatic {
             DbU::Unit  terminalMin;
             DbU::Unit  terminalMax;
   
-            if (getTerminalInterval( *autoSegment
+            if (getTerminalInterval( autoSegment
                                    , NULL
                                    , isHorizontal()
                                    , terminalMin
@@ -1022,18 +1058,25 @@ namespace Anabatic {
     setInBound( constraintMin, constraintMax, optimalMin );
     setInBound( constraintMin, constraintMax, optimalMax );
 
-    cdebug_log(145,0) << "Applying constraint on: " << this << endl;
-    setOptimalMin( optimalMin );
-    setOptimalMax( optimalMax );
-    processeds.insert( this );
-    if (not isNotAligned()) {
-      for ( AutoSegment* autoSegment : getAligneds() ) {
-        cdebug_log(145,0) << "Applying constraint on: " << autoSegment << endl;
-        autoSegment->setOptimalMin( optimalMin );
-        autoSegment->setOptimalMax( optimalMax );
-        processeds.insert( autoSegment );
-      }
+    for ( AutoSegment* aligned : aligneds ) {
+      cdebug_log(145,0) << "Applying constraint on: " << aligned << endl;
+      aligned->setOptimalMin( optimalMin );
+      aligned->setOptimalMax( optimalMax );
+      processeds.insert( aligned );
     }
+
+    // cdebug_log(145,0) << "Applying constraint on: " << this << endl;
+    // setOptimalMin( optimalMin );
+    // setOptimalMax( optimalMax );
+    // processeds.insert( this );
+    // if (not isNotAligned()) {
+    //   for ( AutoSegment* autoSegment : getAligneds() ) {
+    //     cdebug_log(145,0) << "Applying constraint on: " << autoSegment << endl;
+    //     autoSegment->setOptimalMin( optimalMin );
+    //     autoSegment->setOptimalMax( optimalMax );
+    //     processeds.insert( autoSegment );
+    //   }
+    // }
 
     cdebug_tabw(145,-1);
   }
@@ -2295,7 +2338,7 @@ namespace Anabatic {
           continue;
         }
 
-        if (autoSegment->isHorizontal() xor (flags & Flags::Horizontal)) continue;
+        if (autoSegment->isHorizontal() xor (bool)(flags & Flags::Horizontal)) continue;
 
         cdebug_log(145,0) << "| " << autoSegment << endl;
 

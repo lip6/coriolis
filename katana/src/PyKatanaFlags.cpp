@@ -92,10 +92,10 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,Katana::Flags::NoFlags       ,"NoFlags"       );
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,Katana::Flags::SlowMotion    ,"SlowMotion"    );
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,Katana::Flags::PreRoutedStage,"PreRoutedStage");
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,Katana::Flags::SymmetricStage,"SymmetricStage");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::NoFlags       ,"NoFlags"       );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SlowMotion    ,"SlowMotion"    );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PreRoutedStage,"PreRoutedStage");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SymmetricStage,"SymmetricStage");
   }
 
 
