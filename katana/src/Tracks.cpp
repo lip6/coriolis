@@ -42,6 +42,8 @@ namespace Katana {
     cdebug_log(155,0) << "* Constraints: " << _constraints << endl;
 
     _track = routingPlane->getTrackByPosition ( _constraints.getVMin() );
+    cdebug_log(155,0) << "* Nearest track: " << _track << endl;;
+    cdebug_log(155,0) << "* axis:" << _track->getAxis() << " vmin:" << _constraints.getVMin() << endl;
 
     if ( _track and (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNextTrack();
     if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;
@@ -66,13 +68,16 @@ namespace Katana {
 
 
   Track* Tracks_Range::Locator::getElement () const
-  { return _track; }
+  {
+    cdebug_log(155,0) << "Tracks_Range::Locator::getElement() - " << _track << endl;;
+    return _track;
+  }
 
 
 
   void  Tracks_Range::Locator::progress ()
   {
-    if ( !_track ) return;
+    if (not _track) return;
 
     _track = _track->getNextTrack();
     if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;

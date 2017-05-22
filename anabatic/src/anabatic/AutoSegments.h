@@ -258,9 +258,7 @@ namespace Anabatic {
     : AutoSegmentHC()
     , _flags  (flags)
     , _segment(segment)
-  { 
-    cdebug_log(145,0) << "Flags:" << _flags.asString(FlagsFunction) << std::endl;
-  }
+  { }
 
 
   inline AutoSegments_Aligneds::AutoSegments_Aligneds ( const AutoSegments_Aligneds& autosegments )

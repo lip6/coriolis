@@ -1196,7 +1196,7 @@ namespace {
                                                         , targetContact
                                                         , static_cast<Segment*>( _fromHook->getComponent() )
                                                         );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (1)]: " << globalSegment << endl;
       }     
     }
     cdebug_tabw(145,-1);
@@ -2470,7 +2470,7 @@ namespace {
                                                    , horizontalWidth 
                                                    )
                                );
-          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+          cdebug_log(145,0) << "[Create global segment (2)]: " << globalSegment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2506,7 +2506,7 @@ namespace {
                                                  , horizontalWidth 
                                                  )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (3)]: " << globalSegment << endl;
         
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2559,7 +2559,7 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (4)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2708,7 +2708,7 @@ namespace {
                                                  )
                                );
           if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+          cdebug_log(145,0) << "[Create global segment (5)]: " << globalSegment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2747,7 +2747,7 @@ namespace {
                                                )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (6)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2802,7 +2802,7 @@ namespace {
                                                  )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (7)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2957,7 +2957,7 @@ namespace {
                                                  )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (8)]: " << globalSegment << endl;
       
       } else if ((_east != NULL) && (_west != NULL) ) {
         cdebug_log(145,0) << "Case EW" <<  endl;
@@ -3008,7 +3008,7 @@ namespace {
                                                )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (9)]: " << globalSegment << endl;
 
       } else {
         cerr << Warning( "Something is wrong with the globals in this Strut. 5 "
@@ -3057,7 +3057,7 @@ namespace {
                                                  )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (10)]: " << globalSegment << endl;
 
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
         cdebug_log(145,0) << "Case NSW " << endl;
@@ -3095,7 +3095,7 @@ namespace {
                                                  )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (11)]: " << globalSegment << endl;
 
 
       } else if ((_east != NULL)  && (_north != NULL) && (_west != NULL)){
@@ -3134,7 +3134,7 @@ namespace {
                                                )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (12)]: " << globalSegment << endl;
 
       } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
         cdebug_log(145,0) << "Case EWS " << endl;
@@ -3172,7 +3172,7 @@ namespace {
                                                )
                              );
         if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (13)]: " << globalSegment << endl;
 
       } else {
         cerr << Warning( "Something is wrong with the globals in this Strut. 6"
@@ -3228,8 +3228,8 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        cdebug_log(145,0) << "[Create global segment (14.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (14.2)]: " << globalSegment2 << endl;
 
       } else if (  (_north->getComponent()->getX() > _south->getComponent()->getX() )
                 && (_east->getComponent ()->getY() < _west->getComponent ()->getY() )
@@ -3274,8 +3274,8 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        cdebug_log(145,0) << "[Create global segment (15.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (15.2)]: " << globalSegment2 << endl;
 
       } else if (  (_north->getComponent()->getX() < _south->getComponent()->getX() )
                 && (_east->getComponent ()->getY() > _west->getComponent ()->getY() )
@@ -3320,8 +3320,8 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        cdebug_log(145,0) << "[Create global segment (16.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (16.2)]: " << globalSegment2 << endl;
 
       } else {
         cdebug_log(145,0) << "(N.X > S.X) & (E.Y > W.Y)" <<  endl;
@@ -3364,8 +3364,8 @@ namespace {
                                                , verticalWidth 
                                                )
                              );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        cdebug_log(145,0) << "[Create global segment (17.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (17.2)]: " << globalSegment2 << endl;
       }
     } else { 
       cerr << Warning( "Something is wrong with the number of globals in this Strut. 7"

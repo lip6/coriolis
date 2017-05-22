@@ -394,7 +394,7 @@ namespace Katana {
 #endif
     }
 
-    DebugSession::open( _segment->getNet(), 156, 160 );
+    DebugSession::open( _segment->getNet(), 155, 160 );
 
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
@@ -654,15 +654,17 @@ namespace Katana {
     }
 
     double length = DbU::toLambda(_segment->getLength());
+    double slack  = DbU::toLambda(_segment->base()->getSlack());
 
-    // if (length > 200.0) length = 200.0 - std::log(length)*20.0;
-    // if (length <   0.0) length =   0.0;
+  //if (length > 200.0) length = 200.0 - std::log(length)*20.0;
+  //if (length <   0.0) length =   0.0;
+  //if (slack / DbU::toLambda(_segment->getPitch()) < 2.0) slack = 999.0;
       
-    _priority = (length + 1.0) * (DbU::toLambda(_segment->base()->getSlack()) + 1.0);
+    _priority = (length + 1.0) * (slack + 1.0);
 
-    // if (_priority > 10000.0) cerr << "_priority:" << _priority
-    //                               << " length:"   << DbU::toLambda(_segment->getLength())
-    //                               << " slack:"    << DbU::toLambda(_segment->base()->getSlack()) << endl;
+  //if (_priority > 10000.0) cerr << "_priority:" << _priority
+  //                              << " length:"   << DbU::toLambda(_segment->getLength())
+  //                              << " slack:"    << DbU::toLambda(_segment->base()->getSlack()) << endl;
 
     cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);

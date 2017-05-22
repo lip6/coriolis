@@ -634,17 +634,11 @@ namespace Anabatic {
 
 
   AutoSegments  AutoSegment::getAligneds ( Flags flags )
-  {
-    cdebug_log(145,0) << "AutoSegment::getAligneds() - flags:" << flags.asString(FlagsFunction) << endl;
-    return AutoSegments_Aligneds( this, flags );
-  }
+  { return AutoSegments_Aligneds( this, flags ); }
 
 
   AutoSegments  AutoSegment::getConnecteds ( Flags flags )
-  {
-    cdebug_log(145,0) << "AutoSegment::getConnecteds() - flags:" << flags.asString(FlagsFunction) << endl;
-    return AutoSegments_Connecteds( this, flags );
-  }
+  { return AutoSegments_Connecteds( this, flags ); }
 
 
   AutoSegments  AutoSegment::getPerpandiculars ( Flags flags )
@@ -928,6 +922,8 @@ namespace Anabatic {
     vector<AutoSegment*> aligneds;
   
     getConstraints( constraintMin, constraintMax );
+    cdebug_log(145,0) << "Constraints: [" << DbU::getValueString(constraintMin)
+                      << " "              << DbU::getValueString(constraintMax) << "]" << endl;
 
     if (isUserDefined()) {
       optimalMin = optimalMax = getAxis();
@@ -941,7 +937,6 @@ namespace Anabatic {
 
       Flags flags = (isAnalog() ? Flags::WithDoglegs : Flags::NoFlags);
       Flags f2 = flags | Flags::WithSelf;
-      cdebug_log(145,0) << "Test | :" << flags.asString(FlagsFunction) << endl;
 
       getAligneds( Flags::WithSelf|flags ).fill( aligneds );
 
@@ -957,6 +952,12 @@ namespace Anabatic {
           for ( GCell* gcell : gcells ) {
             gcellSide.intersection( gcell->getSide(direction,pitch) );
             cdebug_log(145,0) << "| gcellSide:" << gcellSide << " (from " << gcell << ")" << endl;
+          }
+          if (aligned->isStrongTerminal()) {
+            Interval terminalConstraints;
+            aligned->getConstraints( terminalConstraints );
+            gcellSide.intersection( terminalConstraints );
+            cdebug_log(145,0) << "| gcellSide:" << gcellSide << " (from " << aligned << ")" << endl;
           }
         }
         minGCell = gcellSide.getVMin();
@@ -1025,7 +1026,7 @@ namespace Anabatic {
               if (terminalMin != terminalMax)
                 attractors.addAttractor( terminalMax );
             }
-          } else if (autoSegment->isLongLocal()) {
+          } else if (autoSegment->isLongLocal() or (autoSegment->getLength() > getPPitch()*20)) {
             cdebug_log(145,0) << "Used as long global attractor." << endl;
 
             DbU::Unit perpandMin = autoSegment->getSourceU();
@@ -1041,9 +1042,6 @@ namespace Anabatic {
       }
   
       if (attractors.getAttractorsCount()) {
-        cdebug_log(145,0) << "Lower Median " << DbU::getValueString(attractors.getLowerMedian()) << endl;
-        cdebug_log(145,0) << "Upper Median " << DbU::getValueString(attractors.getUpperMedian()) << endl;
-  
         optimalMin = attractors.getLowerMedian();
         optimalMax = attractors.getUpperMedian();
       } else {
@@ -1053,6 +1051,12 @@ namespace Anabatic {
         optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
                                       : _gcell->getBoundingBox().getXMax();
       }
+
+      setInBound( minGCell, maxGCell, optimalMin );
+      setInBound( minGCell, maxGCell, optimalMax );
+
+      cdebug_log(145,0) << "optimalMin: " << DbU::getValueString(optimalMin) << endl;
+      cdebug_log(145,0) << "optimalMax: " << DbU::getValueString(optimalMax) << endl;
     }
 
     setInBound( constraintMin, constraintMax, optimalMin );

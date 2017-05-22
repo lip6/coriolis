@@ -103,11 +103,13 @@ namespace Katana {
 
   inline Interval  DataSymmetric::getSymmetrical ( const Interval& interval ) const
   {
-    DbU::Unit vmin = interval.getVMin();
-    if ( (vmin != DbU::Min) and (vmin != DbU::Max) ) vmin = 2*getSymAxis() - vmin;
+    DbU::Unit delta = 0;
+    DbU::Unit vmin  = interval.getVMin();
+    DbU::Unit vmax  = interval.getVMax();
 
-    DbU::Unit vmax = interval.getVMax();
-    if ( (vmax != DbU::Max) and (vmax != DbU::Max) ) vmax = 2*getSymAxis() - vmax;
+    if ( (vmin != DbU::Min) and (vmin != DbU::Max) ) delta = -1;
+    if ( (vmin != DbU::Min) and (vmin != DbU::Max) ) vmin  = 2*getSymAxis() - vmin + delta;
+    if ( (vmax != DbU::Max) and (vmax != DbU::Max) ) vmax  = 2*getSymAxis() - vmax + delta;
 
     return Interval( vmin, vmax );
   }

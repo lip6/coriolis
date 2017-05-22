@@ -37,20 +37,22 @@ namespace Anabatic {
 
   void  AnabaticEngine::_computeNetOptimals ( Net* net )
   {
-    DebugSession::open( net, 144, 150 );
+    DebugSession::open( net, 145, 150 );
     cdebug_log(149,0) << "Anabatic::_computeNetOptimals( " << net << " )" << endl;
     cdebug_tabw(145,1);
 
     vector<AutoSegment*> segments;
-    forEach ( Segment*, segment, net->getSegments() ) {
-      AutoSegment* autoSegment = Session::lookup( *segment );
+    for ( Segment* segment : net->getSegments() ) {
+      AutoSegment* autoSegment = Session::lookup( segment );
       if (autoSegment) segments.push_back( autoSegment );
     }
     sort( segments.begin(), segments.end(), AutoSegment::CompareId() );
 
     set<AutoSegment*> processeds;
-    for ( size_t i=0 ; i<segments.size() ; i++ )
-      segments[i]->computeOptimal( processeds );
+    for ( AutoSegment* segment : segments ) {
+      if (processeds.find(segment) != processeds.end()) continue;
+      segment->computeOptimal( processeds );
+    }
 
     cdebug_tabw(145,-1);
     DebugSession::close();

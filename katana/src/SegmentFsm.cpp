@@ -515,6 +515,8 @@ namespace Katana {
     cdebug_log(159,0) << "* Perpandicular (master):  "  << perpandicular  << endl;
 
     _constraint = _event1->getConstraints();
+    cdebug_log(159,0) << "* Constraints:    "  << _constraint    << " (" << _constraint.getVMin() << " " << _constraint.getVMax() << ")" << endl;
+
     _optimal    = _event1->getOptimal();
     if (_event2) {
       if (_sameAxis) {
@@ -529,12 +531,13 @@ namespace Katana {
 
         cdebug_log(159,0) << "* Perpandicular (slave): PP axis "
                           << symData->getSymmetrical(_event2->getPerpandicularFree())  << endl;
+        cdebug_log(159,0) << "* Constraints:    "  << _constraint    << " (" << _constraint.getVMin() << " " << _constraint.getVMax() << ")" << endl;
       }
     }
 
-    cdebug_log(159,0) << "Anabatic intervals:"                  << endl;
-    cdebug_log(159,0) << "* Optimal:        "  << _optimal       << endl;
-    cdebug_log(159,0) << "* Constraints:    "  << _constraint    << endl;
+    cdebug_log(159,0) << "Anabatic intervals:" << endl;
+    cdebug_log(159,0) << "* Optimal:        "  << _optimal       << " (" << _optimal.getVMin()    << " " << _optimal.getVMax()    << ")" << endl;
+    cdebug_log(159,0) << "* Constraints:    "  << _constraint    << " (" << _constraint.getVMin() << " " << _constraint.getVMax() << ")" << endl;
     cdebug_log(159,0) << "* Perpandicular:  "  << perpandicular  << endl;
     cdebug_log(159,0) << "* AxisHint:       "  << DbU::getValueString(_event1->getAxisHint()) << endl;
 
@@ -589,6 +592,7 @@ namespace Katana {
         _costs.back()[1].setAxisWeight  ( _event2->getAxisWeight(track2->getAxis()) );
         _costs.back()[1].incDeltaPerpand( _data2->getWiringDelta(track2->getAxis()) );
         _costs.back()[0].merge( _costs.back()[1] );
+
       }
 
       if (segment1->isGlobal()) {

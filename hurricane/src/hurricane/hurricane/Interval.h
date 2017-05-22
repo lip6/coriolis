@@ -63,7 +63,7 @@ class Interval {
     public: DbU::Unit& getVMin() {return _vMin;};
     public: DbU::Unit& getVMax() {return _vMax;};
     public: DbU::Unit getCenter() const {return ((_vMin + _vMax) / 2);};
-    public: DbU::Unit getSize() const {return (_vMax - _vMin);};
+    public: DbU::Unit getSize() const {return (isEmpty() ? 0 : (_vMax - _vMin));};
     public: DbU::Unit getHalfSize() const {return (getSize() / 2);};
     public: Interval getUnion(const Interval& interval) const;
     public: Interval getIntersection(const Interval& interval) const;
@@ -71,8 +71,8 @@ class Interval {
 // Predicates
 // **********
 
-    public: bool isEmpty() const;
-    public: bool isPonctual() const;
+    public: bool isEmpty() const { return (_vMax < _vMin);};
+    public: bool isPonctual() const { return (_vMax == _vMin);};
     public: bool contains(const DbU::Unit& v) const;
     public: bool contains(const Interval& interval) const;
     public: bool intersect(const Interval& interval) const;

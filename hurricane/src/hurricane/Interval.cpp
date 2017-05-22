@@ -93,18 +93,6 @@ Interval Interval::getIntersection(const Interval& interval) const
     return Interval(max(_vMin, interval._vMin), min(_vMax, interval._vMax));
 }
 
-bool Interval::isEmpty() const
-// ***************************
-{
-    return (_vMax < _vMin);
-}
-
-bool Interval::isPonctual() const
-// ******************************
-{
-    return (_vMax == _vMin);
-}
-
 bool Interval::contains(const DbU::Unit& v) const
 // *****************************************
 {

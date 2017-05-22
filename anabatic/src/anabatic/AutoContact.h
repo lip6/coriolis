@@ -31,6 +31,8 @@ namespace Anabatic {
 
   using std::cerr;
   using std::endl;
+  using Hurricane::order;
+  using Hurricane::setInBound;
   using Hurricane::tab;
   using Hurricane::Name;
   using Hurricane::Net;
@@ -333,17 +335,6 @@ namespace Anabatic {
 
 // -------------------------------------------------------------------
 // Helper Functions.
-
-
-  template<typename Type>inline void  order ( Type& a, Type& b ) { if (a>b) std::swap(a,b); }
-
-  inline DbU::Unit  setInBound ( DbU::Unit lower, DbU::Unit upper, DbU::Unit& value )
-  {
-    if ( lower > value ) value = lower;
-    if ( upper < value ) value = upper;
-
-    return value;
-  }
 
   inline size_t abssub ( size_t a, size_t b ) { return (a>b) ? a-b : b-a; }
   

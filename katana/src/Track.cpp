@@ -273,7 +273,7 @@ namespace Katana {
       if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
 
-    cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
+    cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << " AfterLastElement:" << (iState == AfterLastElement) << endl;
   }
 
 
@@ -313,10 +313,12 @@ namespace Katana {
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
       if ( _segments[begin]->getNet() == net ) {
+        cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
-      cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
       _segments[begin]->incOverlapCost( net, cost );
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << cost << endl;
+
       if (cost.isInfinite()) break;
     }
 

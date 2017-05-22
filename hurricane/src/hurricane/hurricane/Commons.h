@@ -136,6 +136,16 @@ namespace Hurricane {
   inline float  roundfp ( float value, float precision=100.0 ) { return roundf(value*precision)/precision; }
 
 
+  template<typename Type> inline void  order ( Type& a, Type& b ) { if (a>b) std::swap(a,b); }
+
+  template<typename Type> inline Type  setInBound ( Type lower, Type upper, Type& value )
+  {
+    if      (value < lower) value = lower;
+    else if (value > upper) value = upper;
+    return value;
+  }
+
+
 } // End of Hurricane namespace.
 
 

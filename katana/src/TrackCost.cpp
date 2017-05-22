@@ -160,10 +160,15 @@ namespace Katana {
     if ( lhs._terminals < rhs._terminals ) return true;
     if ( lhs._terminals > rhs._terminals ) return false;
 
-    if ( not (_flags & TrackCost::IgnoreSharedLength)
-       or (lhs._delta > 0) or (rhs._delta > 0) ) {
-      if ( lhs._delta < rhs._delta ) return true;
-      if ( lhs._delta > rhs._delta ) return false;
+    if (lhs._delta != rhs._delta) {
+    //cdebug_log(155,0) << "TrackCost::Compare() lhs._delta:" << lhs._delta << " rhs._delta:" << rhs._delta << endl;
+      if ( not (_flags & TrackCost::IgnoreSharedLength) or (lhs._delta > 0) or (rhs._delta > 0) ) {
+    //if ( (lhs._delta > 0) or (rhs._delta > 0) ) {
+        if (lhs._delta < rhs._delta) return true;
+        if (lhs._delta > rhs._delta) return false;
+      }
+
+      return lhs._delta < rhs._delta;
     }
 
 #if 0
@@ -203,8 +208,10 @@ namespace Katana {
   void  TrackCost::consolidate ()
   {
     if ( not _infinite and not _hardOverlap ) {
+      cdebug_log(159,0) << "TrackCost::consolidate() " << _delta << " - " << _deltaShared << endl;
     //_deltaPerpand += - (_deltaShared << 1);
       _delta += - _deltaShared;
+    //_delta += _deltaShared;
     }
   }
 
@@ -238,7 +245,8 @@ namespace Katana {
     s +=       string ( (_overlapGlobal )?"g":"-" );
     s +=       string ( (_globalEnclosed)?"e":"-" );
     s += " " + getString(_terminals);
-    s += "/" + DbU::getValueString(_delta);
+    s += "/" + /*DbU::getValueString(_delta)*/ getString(_delta);
+    s += "-" + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
     s += "/" + DbU::getValueString(_axisWeight);
     s += "/" + DbU::getValueString(_deltaPerpand);
     s += "/" + DbU::getValueString(_distanceToFixed);

@@ -145,26 +145,26 @@ namespace Anabatic {
     constraintMin = getNativeMin();
     constraintMax = getNativeMax();
 
-    cdebug_log(149,0) << "Native constraints: ["
+    cdebug_log(144,0) << "Native constraints: ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getAutoSource()->getCBYMin() );
     constraintMax = std::min ( constraintMax, getAutoSource()->getCBYMax() );
-    cdebug_log(149,0) << "Merge with source constraints: ["
+    cdebug_log(144,0) << "Merge with source constraints: ["
                       << DbU::getValueString(getAutoSource()->getCBYMin()) << ":"
                       << DbU::getValueString(getAutoSource()->getCBYMax()) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = std::min ( constraintMax, getUserConstraints().getVMax() );
-    cdebug_log(149,0) << "Merge with user constraints: ["
+    cdebug_log(144,0) << "Merge with user constraints: ["
                       << DbU::getValueString(getUserConstraints().getVMin()) << ":"
                       << DbU::getValueString(getUserConstraints().getVMax()) << "]"
                       << endl;
 
-    cdebug_log(149,0) << "Resulting constraints: " << " ["
+    cdebug_log(145,0) << "Resulting constraints: " << " ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;

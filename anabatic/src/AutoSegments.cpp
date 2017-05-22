@@ -330,8 +330,6 @@ namespace Anabatic {
   {
     if (not _master) return;
 
-    cdebug_log(145,0) << "Flags:" << _flags.asString(FlagsFunction) << endl;
-
     _flags |= (_master->isHorizontal()) ? Flags::Horizontal : Flags::Vertical;
     if (_flags & Flags::WithDoglegs) _flags |= Flags::WithPerpands;
 
@@ -357,7 +355,7 @@ namespace Anabatic {
 
   void  AutoSegments_Aligneds::Locator::progress ()
   {
-    cdebug_log(145,0) << "AutoSegments_Aligneds::Locator::progress()" << endl;
+    cdebug_log(144,0) << "AutoSegments_Aligneds::Locator::progress()" << endl;
 
     while (not _stack.isEmpty()) {
       AutoContact* sourceContact = _stack.getAutoContact ();
