@@ -17,7 +17,7 @@
                      && latex UsersGuide
                      && dvipdfm UsersGuide
                    )
-  add_dependencies ( doc_HTML socstyle.tex UsersGuide_LaTeX.rst UsersGuide.rst )
+  add_dependencies ( doc_LaTeX socstyle.tex UsersGuide_LaTeX.rst UsersGuide.rst )
 
            install ( DIRECTORY images/
                                DESTINATION ${htmlInstallDir}/images

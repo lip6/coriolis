@@ -95,7 +95,7 @@ extern "C" {
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::NoFlags       ,"NoFlags"       );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SlowMotion    ,"SlowMotion"    );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PreRoutedStage,"PreRoutedStage");
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SymmetricStage,"SymmetricStage");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PairSymmetrics,"PairSymmetrics");
   }
 
 

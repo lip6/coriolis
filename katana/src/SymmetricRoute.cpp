@@ -392,7 +392,7 @@ namespace Katana {
   using namespace std;
 
 
-  void  KatanaEngine::runSymmetricRouter ()
+  void  KatanaEngine::pairSymmetrics ()
   {
     for ( Net* net : getCell()->getNets() ) {
       if (not NetRoutingExtension::isSymmetric(net)) continue;

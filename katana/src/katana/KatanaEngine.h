@@ -114,9 +114,9 @@ namespace Katana {
               void                     setFixedPreRouted          ();
               void                     digitalInit                ();
               void                     analogInit                 ();
+              void                     pairSymmetrics             ();
               void                     runNegociate               ( Flags flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
-              void                     runSymmetricRouter         ();
               void                     runTest                    ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();

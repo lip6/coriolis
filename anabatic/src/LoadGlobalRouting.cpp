@@ -3413,7 +3413,6 @@ namespace Anabatic {
       if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
         DebugSession::open( net, 144, 150 );
         AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
-        cerr << net << " AnalogMode:" << NetRoutingExtension::get(net) << endl;
         _loadNetGlobalRouting( net );
         Session::revalidate();
         DebugSession::close();

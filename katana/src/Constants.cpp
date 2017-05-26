@@ -32,7 +32,7 @@ namespace Katana {
   const Hurricane::BaseFlags  Flags::LoadingStage     = (1 << 28);
   const Hurricane::BaseFlags  Flags::SlowMotion       = (1 << 29);
   const Hurricane::BaseFlags  Flags::PreRoutedStage   = (1 << 30);
-  const Hurricane::BaseFlags  Flags::SymmetricStage   = (1 << 31);
+  const Hurricane::BaseFlags  Flags::PairSymmetrics   = (1 << 31);
 
 
 }  // Anabatic namespace.

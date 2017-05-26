@@ -468,6 +468,7 @@ namespace Katana {
 
   void  KatanaEngine::runTest ()
   {
+#if PUT_HERE_WHATEVER_YOU_WANT_TO_TEST
     if (getCell()->getName() != "gmchamla")
       throw Error( "KatanaEngine::runTest() Work only on \"gmchamla\" (loaded:\"%s\")."
                  , getString(getCell()->getName()).c_str()
@@ -482,6 +483,7 @@ namespace Katana {
     setSymmetricPair( getCell(), "ampp_4" , "ampn_4"  );
     setSymmetricPair( getCell(), "ampp_2" , "ampn_2"  );
     setSymmetricPair( getCell(), "ampp_1" , "ampn_1"  );
+#endif
   }
 
   void  KatanaEngine::printCompletion () const
@@ -674,9 +676,13 @@ namespace Katana {
         _routingPlanes[depth]->destroy();
       }
       _routingPlanes.clear();
+      
+      while ( not _symmetrics.empty() ) {
+        auto element = _symmetrics.begin();
 
-    //for ( auto symmetric : _symmetrics ) delete symmetric.second;
-      _symmetrics.clear();
+        if (element->first == element->second->getNet()) delete element->second;
+        _symmetrics.erase( element->first );
+      }
 
       Session::close();
     }

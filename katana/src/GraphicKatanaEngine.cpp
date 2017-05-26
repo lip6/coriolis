@@ -256,7 +256,7 @@ namespace Katana {
   void  GraphicKatanaEngine::_runNegociate ()
   {
     KatanaEngine* katana = getForFramework( NoFlags );
-    katana->runNegociate();
+    katana->runNegociate( Flags::PairSymmetrics );
   }
 
 
@@ -277,7 +277,7 @@ namespace Katana {
       katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
     // Now done through Horus.
     //katana->runTest();
-      katana->runNegociate( Flags::SymmetricStage );
+      katana->runNegociate( Flags::PairSymmetrics );
     //katana->runNegociate();
     }
   }
@@ -387,11 +387,13 @@ namespace Katana {
                       , "Save routed design (temporary hack)"
                       , std::bind(&GraphicKatanaEngine::_save,this)
                       );
+#if NO_NEED_OF_IT_NOW
     _viewer->addToMenu( "placeAndRoute.katana.stepByStep.runTest"
                       , "Katana - Run &Test"
                       , "Run Test Program (symmetric routing of gmChamla)"
                       , std::bind(&GraphicKatanaEngine::_runTest,this)
                       );
+#endif
   }
 
 

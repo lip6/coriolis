@@ -37,7 +37,7 @@ namespace Katana {
       static const Hurricane::BaseFlags  LoadingStage;
       static const Hurricane::BaseFlags  SlowMotion;
       static const Hurricane::BaseFlags  PreRoutedStage;
-      static const Hurricane::BaseFlags  SymmetricStage;
+      static const Hurricane::BaseFlags  PairSymmetrics;
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );

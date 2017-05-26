@@ -443,22 +443,6 @@ namespace Katana {
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
-      if (tty::enabled()) {
-        cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << tty::reset
-               << " remains:" << right << setw(8) << setfill('0')
-               << _eventQueue.size()
-               << setfill(' ') << tty::reset << ">" << tty::cr;
-        cmess2.flush ();
-      } else {
-        cmess2 << "        <event:" << right << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
-               << event->getSegment()
-               << endl;
-        cmess2.flush();
-      }
-
       if (ofprofile.is_open()) {
         size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
         if (depth < 6) {
@@ -476,6 +460,22 @@ namespace Katana {
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
+
+      if (tty::enabled()) {
+        cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << _eventQueue.size()+1
+               << setfill(' ') << tty::reset << ">" << tty::cr;
+        cmess2.flush ();
+      } else {
+        cmess2 << "        <event:" << right << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds()-1 << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+               << endl;
+        cmess2.flush();
+      }
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );
@@ -574,8 +574,8 @@ namespace Katana {
     Session::getKatanaEngine()->_check( overlaps, "after _createRouting(GCell*)" );
 #endif 
 
-    if (flags & Flags::SymmetricStage) {
-      _katana->runSymmetricRouter();
+    if (flags & Flags::PairSymmetrics) {
+      _katana->pairSymmetrics();
       Session::revalidate();
     }
 
