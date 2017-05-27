@@ -329,17 +329,23 @@ namespace Anabatic {
     , _stack ()
   {
     if (not _master) return;
+    if (not _flags.intersect(Flags::Source|Flags::Target))
+      _flags |= Flags::Source | Flags::Target;
 
     _flags |= (_master->isHorizontal()) ? Flags::Horizontal : Flags::Vertical;
     if (_flags & Flags::WithDoglegs) _flags |= Flags::WithPerpands;
 
     cdebug_log(144,0) << "AutoSegments_Aligneds::Locator::Locator() _flags:" << _flags.asString(FlagsFunction) << endl;
 
-    AutoContact* contact = segment->getAutoSource();
-    if (contact) _stack.push( contact, segment );
+    if (_flags & Flags::Source) {
+      AutoContact* contact = segment->getAutoSource();
+      if (contact) _stack.push( contact, segment );
+    }
 
-    contact = segment->getAutoTarget();
-    if (contact) _stack.push( contact, segment );
+    if (_flags & Flags::Target) {
+      AutoContact* contact = segment->getAutoTarget();
+      if (contact) _stack.push( contact, segment );
+    }
 
     if (not (_flags & Flags::WithSelf)) progress();
   }

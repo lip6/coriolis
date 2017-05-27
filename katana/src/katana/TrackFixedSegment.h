@@ -53,15 +53,15 @@ namespace Katana {
       virtual TrackElement*  getPrevious        () const;
       virtual DbU::Unit      getAxis            () const;
       virtual Interval       getFreeInterval    () const;
+      virtual float          getPriority        () const;
+      virtual void           updatePriority     ( float );
       virtual Record*        _getRecord         () const;
       virtual string         _getString         () const;
       virtual string         _getTypeName       () const;
-
     protected:
     // Attributes.
       static Net*     _blockageNet;
              Segment* _segment;
-
     protected:
     // Constructors & Destructors.
                                  TrackFixedSegment ( Track*, Segment* ) ;
@@ -71,7 +71,6 @@ namespace Katana {
     private:
                                  TrackFixedSegment ( const TrackFixedSegment& );
               TrackFixedSegment& operator=         ( const TrackFixedSegment& );
-      
   };
 
 

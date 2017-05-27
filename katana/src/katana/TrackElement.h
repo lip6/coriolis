@@ -132,6 +132,7 @@ namespace Katana {
       virtual DbU::Unit               getPPitch            () const;
       inline  Track*                  getTrack             () const;
       inline  size_t                  getIndex             () const;
+      virtual float                   getPriority          () const = 0;
       virtual unsigned long           getFreedomDegree     () const;
       virtual float                   getMaxUnderDensity   ( Flags flags=Flags::NoFlags ) const;
       inline  Box                     getBoundingBox       () const;
@@ -161,6 +162,8 @@ namespace Katana {
       virtual void                    setTrack             ( Track* );
       inline  void                    setIndex             ( size_t );
       virtual void                    setSymmetric         ( TrackElement* );
+      inline  void                    updatePriority       ();
+      virtual void                    updatePriority       ( float priority ) = 0;
       virtual void                    updateFreedomDegree  ();
       virtual void                    setDoglegLevel       ( uint32_t );
       virtual void                    swapTrack            ( TrackElement* );
@@ -231,6 +234,7 @@ namespace Katana {
   inline DbU::Unit               TrackElement::getTargetU           () const { return _targetU; }
   inline Interval                TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
   inline void                    TrackElement::setIndex             ( size_t index ) { _index=index; }
+  inline void                    TrackElement::updatePriority       () { updatePriority( 0.0 ); }
 
   inline void  TrackElement::setRouted()
   {

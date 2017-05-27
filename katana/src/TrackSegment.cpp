@@ -65,6 +65,7 @@ namespace Katana {
     , _freedomDegree(0)
     , _ppitch       (0)
     , _data         (NULL)
+    , _priority     (0.0)
     , _dogLegLevel  (0)
   {
     cdebug_log(155,0) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
@@ -172,6 +173,7 @@ namespace Katana {
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
+  float          TrackSegment::getPriority          () const { return _priority; }
   uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
@@ -305,6 +307,26 @@ namespace Katana {
 
   void  TrackSegment::updateFreedomDegree ()
   { _freedomDegree = _base->getSlack(); }
+
+
+  void  TrackSegment::updatePriority ( float forced )
+  {
+    if (forced != 0.0) { _priority = forced; return; }
+
+    double length = DbU::toLambda(getLength());
+    double slack  = DbU::toLambda(base()->getSlack());
+
+  //if (length > 200.0) length = 200.0 - std::log(length)*20.0;
+  //if (length <   0.0) length =   0.0;
+  //if (slack / DbU::toLambda(_segment->getPitch()) < 2.0 ) slack = 999.0;
+    if (slack / DbU::toLambda(getPitch()) > 10.0) slack = 10.0*getPitch();
+      
+    _priority = (length + 1.0) * (slack + 1.0);
+
+  //if (_priority > 10000.0) cerr << "_priority:" << _priority
+  //                              << " length:"   << DbU::toLambda(getLength())
+  //                              << " slack:"    << DbU::toLambda(base()->getSlack()) << endl;
+  }
 
 
   void  TrackSegment::updatePPitch ()

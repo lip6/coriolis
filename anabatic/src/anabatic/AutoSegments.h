@@ -233,7 +233,7 @@ namespace Anabatic {
 
     public:
     // AutoSegments_Aligneds Methods.
-                             AutoSegments_Aligneds ( AutoSegment*, Flags flags=Flags::NoFlags );
+                             AutoSegments_Aligneds ( AutoSegment*, Flags flags );
                              AutoSegments_Aligneds ( const AutoSegments_Aligneds& );
       virtual AutoSegmentHC* getClone               () const;
 	  virtual AutoSegmentHL* getLocator             () const;

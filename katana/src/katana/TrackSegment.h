@@ -88,6 +88,7 @@ namespace Katana {
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
       virtual unsigned long         getFreedomDegree       () const;
+      virtual float                 getPriority            () const;
       virtual uint32_t              getDoglegLevel         () const;
       virtual TrackElement*         getNext                () const;
       virtual TrackElement*         getPrevious            () const;
@@ -107,6 +108,7 @@ namespace Katana {
     // Mutators.
       virtual void                  setTrack               ( Track* );
       virtual void                  setSymmetric           ( TrackElement* );
+      virtual void                  updatePriority         ( float );
       virtual void                  updateFreedomDegree    ();
       virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
@@ -140,6 +142,7 @@ namespace Katana {
              unsigned long  _freedomDegree;
              DbU::Unit      _ppitch;
              DataNegociate* _data;
+             float          _priority;
              unsigned int   _dogLegLevel:4;
 
     protected:

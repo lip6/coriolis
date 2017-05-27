@@ -196,7 +196,6 @@ namespace Katana {
       unsigned int          _mode            : 4;
       unsigned int          _rippleState     : 4;
       uint32_t              _eventLevel;
-      float                 _priority;
     //vector<TrackElement*> _perpandiculars;
       Key                   _key;
   };
@@ -224,7 +223,7 @@ namespace Katana {
   inline const Interval&               RoutingEvent::getOptimal              () const { return _optimal; }
   inline const Interval&               RoutingEvent::getPerpandicularFree    () const { return _dataNegociate->getPerpandicularFree(); }
 //inline const Interval&               RoutingEvent::getPerpandicular        () const { return _perpandicular; }
-  inline float                         RoutingEvent::getPriority             () const { return _priority; }
+  inline float                         RoutingEvent::getPriority             () const { return _segment->getPriority(); }
   inline uint32_t                      RoutingEvent::getEventLevel           () const { return _eventLevel; }
   inline uint32_t                      RoutingEvent::getTracksNb             () const { return _tracksNb; }
   inline uint32_t                      RoutingEvent::getTracksFree           () const { return _tracksFree; }

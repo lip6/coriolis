@@ -171,6 +171,14 @@ namespace Katana {
   }
 
 
+  float  TrackFixedSegment::getPriority () const
+  { return 0.0; }
+
+
+  void  TrackFixedSegment::updatePriority ( float )
+  { }
+
+
   string  TrackFixedSegment::_getTypeName () const
   { return "TrackFixedSegment"; }
 

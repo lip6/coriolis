@@ -328,7 +328,7 @@ namespace Anabatic {
 
     if (_vertical->getX() == axis) return;
 
-    cdebug_log(149,0) << "_setAxis() @X " << DbU::getValueString(axis) << " " << this << endl;
+    cdebug_log(144,0) << "_setAxis() @X " << DbU::getValueString(axis) << " " << this << endl;
 
     _vertical->setX( axis );
     invalidate();

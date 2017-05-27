@@ -837,6 +837,8 @@ namespace Anabatic {
 
     if (flags & Flags::Realignate) setAxis( getAxis(), flags );
 
+  //setAxis( optimalMin, flags );
+
     cdebug_tabw(149,-1);
     return false;
   }

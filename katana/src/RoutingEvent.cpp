@@ -80,6 +80,9 @@ namespace Katana {
     if (lhs._eventLevel > rhs._eventLevel) return false;
     if (lhs._eventLevel < rhs._eventLevel) return true;
 
+  //if (lhs._net->getName() != rhs._net->getName())
+  //  return lhs._net->getName() < rhs._net->getName();
+
   // Process all M2 (terminal access) before any others.
   //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
   //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
@@ -178,7 +181,6 @@ namespace Katana {
     , _mode                (mode)
     , _rippleState         (0)
     , _eventLevel          (0)
-    , _priority            (0.0)
     , _key                 (this)
   {
     if (_idCounter == std::numeric_limits<uint32_t>::max()) {
@@ -653,18 +655,7 @@ namespace Katana {
                            and _segment->base()->getAutoTarget()->isTerminal();
     }
 
-    double length = DbU::toLambda(_segment->getLength());
-    double slack  = DbU::toLambda(_segment->base()->getSlack());
-
-  //if (length > 200.0) length = 200.0 - std::log(length)*20.0;
-  //if (length <   0.0) length =   0.0;
-  //if (slack / DbU::toLambda(_segment->getPitch()) < 2.0) slack = 999.0;
-      
-    _priority = (length + 1.0) * (slack + 1.0);
-
-  //if (_priority > 10000.0) cerr << "_priority:" << _priority
-  //                              << " length:"   << DbU::toLambda(_segment->getLength())
-  //                              << " slack:"    << DbU::toLambda(_segment->base()->getSlack()) << endl;
+    _segment->updatePriority();
 
     cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);
