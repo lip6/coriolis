@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/RoutingPad.h"
@@ -133,6 +134,38 @@ namespace {
   }
 
 
+  class CompareByPriority {
+    public:
+      inline bool operator() ( const TrackSegment* lhs, const TrackSegment* rhs )
+      { return lhs->getPriority() > rhs->getPriority(); }
+  };
+ 
+
+  void  computeNetPriority ( Net* net )
+  {
+    DebugSession::open( net, 159, 160 );
+
+    cdebug_log(159,1) << "::computeNetPriority() " << net << endl;
+
+    vector<TrackSegment*> segments;
+    for ( Segment* segment : net->getSegments() ) {
+      TrackSegment* canonical = dynamic_cast<TrackSegment*>( Session::lookup( segment ) );
+      if (canonical) segments.push_back( canonical );
+    }
+
+    for ( TrackSegment* segment : segments ) segment->computePriority();
+    sort( segments.begin(), segments.end(), CompareByPriority() );
+
+    for ( TrackSegment* segment : segments ) {
+      segment->computeAlignedPriority();
+    }
+
+    cdebug_tabw(159,-1);
+
+    DebugSession::close();
+  }
+
+
 } // Anonymous namespace.
 
 
@@ -149,6 +182,7 @@ namespace Katana {
   using Hurricane::Bug;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
+  using Hurricane::DebugSession;
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
@@ -340,6 +374,14 @@ namespace Katana {
     }
 
     return totalWL;
+  }
+
+
+  void  NegociateWindow::_computePriorities ()
+  {
+    for ( Net* net : getCell()->getNets() ) {
+      if (NetRoutingExtension::isAnalog(net)) computeNetPriority( net );
+    }
   }
 
 
@@ -561,6 +603,7 @@ namespace Katana {
       _createRouting( _gcells[igcell] );
     }
     Session::revalidate();
+    _computePriorities();
 
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();

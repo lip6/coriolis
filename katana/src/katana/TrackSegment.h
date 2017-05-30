@@ -43,6 +43,11 @@ namespace Katana {
 // -------------------------------------------------------------------
 // Class  :  "TrackSegment".
 
+  enum TrackSegmentFlag { NoFlags        = 0
+                        , PriorityLocked = (1 << 0)
+                        };
+
+
   class TrackSegment : public TrackElement {
     public:
       class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
@@ -71,6 +76,8 @@ namespace Katana {
       virtual bool                  isReduced              () const;
       virtual bool                  isUTurn                () const;
       virtual bool                  isUserDefined          () const;
+      virtual bool                  isAnalog               () const;
+      virtual bool                  isPriorityLocked       () const;
     // Predicates.
       virtual bool                  hasSymmetric           () const;
       virtual bool                  canDogleg              ();
@@ -108,7 +115,10 @@ namespace Katana {
     // Mutators.
       virtual void                  setTrack               ( Track* );
       virtual void                  setSymmetric           ( TrackElement* );
-      virtual void                  updatePriority         ( float );
+      virtual void                  setPriorityLock        ( bool state );
+      virtual void                  forcePriority          ( float );
+      virtual void                  computePriority        ();
+      virtual void                  computeAlignedPriority ();
       virtual void                  updateFreedomDegree    ();
       virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
@@ -144,6 +154,7 @@ namespace Katana {
              DataNegociate* _data;
              float          _priority;
              unsigned int   _dogLegLevel:4;
+             uint32_t       _flags; 
 
     protected:
     // Constructors & Destructors.

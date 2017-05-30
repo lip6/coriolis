@@ -39,11 +39,12 @@ namespace Katana {
  
   class TrackCost {
     public:
-      enum Flags { IgnoreAxisWeight   = 0x0001
-                 , DiscardGlobals     = 0x0002
-                 , IgnoreSharedLength = 0x0004
-                 , LocalAndTopDepth   = 0x0008
-                 , ZeroCost           = 0x0010
+      enum Flags { IgnoreAxisWeight   = (1 << 0)
+                 , DiscardGlobals     = (1 << 1)
+                 , IgnoreSharedLength = (1 << 2)
+                 , LocalAndTopDepth   = (1 << 3)
+                 , ZeroCost           = (1 << 4)
+                 , Analog             = (1 << 5)
                  };
 
     public:

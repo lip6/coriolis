@@ -130,15 +130,16 @@ namespace Katana {
   }
 
 
-  AutoSegment*   TrackFixedSegment::base            () const { return NULL; }
-  Segment*       TrackFixedSegment::getSegment      () const { return _segment; }
-  DbU::Unit      TrackFixedSegment::getAxis         () const { return getTrack()->getAxis(); }
-  bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
-  bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }
-  bool           TrackFixedSegment::isFixed         () const { return true; }
-  Flags          TrackFixedSegment::getDirection    () const { return getTrack()->getDirection(); }
-  const Layer*   TrackFixedSegment::getLayer        () const { return _segment->getLayer(); }
-  Interval       TrackFixedSegment::getFreeInterval () const { return Interval(); }
+  AutoSegment*   TrackFixedSegment::base             () const { return NULL; }
+  Segment*       TrackFixedSegment::getSegment       () const { return _segment; }
+  DbU::Unit      TrackFixedSegment::getAxis          () const { return getTrack()->getAxis(); }
+  bool           TrackFixedSegment::isHorizontal     () const { return getTrack()->isHorizontal(); }
+  bool           TrackFixedSegment::isVertical       () const { return getTrack()->isVertical(); }
+  bool           TrackFixedSegment::isFixed          () const { return true; }
+  bool           TrackFixedSegment::isPriorityLocked () const { return false; }
+  Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
+  const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }
+  Interval       TrackFixedSegment::getFreeInterval  () const { return Interval(); }
 
 
   unsigned long  TrackFixedSegment::getId () const
@@ -175,7 +176,19 @@ namespace Katana {
   { return 0.0; }
 
 
-  void  TrackFixedSegment::updatePriority ( float )
+  void  TrackFixedSegment::setPriorityLock ( bool )
+  { }
+
+
+  void  TrackFixedSegment::forcePriority ( float )
+  { }
+
+
+  void  TrackFixedSegment::computePriority ()
+  { }
+
+
+  void  TrackFixedSegment::computeAlignedPriority ()
   { }
 
 

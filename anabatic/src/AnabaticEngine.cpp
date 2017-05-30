@@ -606,7 +606,6 @@ namespace Anabatic {
 
   void  AnabaticEngine::ripup ( Segment* seed, Flags flags )
   {
-
     Net* net = seed->getNet();
 
     DebugSession::open( net, 112, 120 );

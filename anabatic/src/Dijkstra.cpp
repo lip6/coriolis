@@ -394,7 +394,8 @@ namespace Anabatic {
     IntervalC intervfrom = IntervalC();
 
     if (_adata == NULL){
-      cdebug_log(112,1) << "Point Vertex::getStartPathPoint( const Vertex* next ) const: GRAData unset." << endl;
+      cdebug_log(112,0) << "Point Vertex::getStartPathPoint( const Vertex* next ) const: GRAData unset." << endl;
+      cdebug_tabw(112,-1);
       return Point(0,0);
     }
 
@@ -754,6 +755,7 @@ namespace Anabatic {
 
     } else {
       cdebug_log(112,0) << "[ERROR](void Vertex::setIntervals(...)): Something is wrong." << endl;
+      cdebug_tabw(112,-1);
       return;
     }
     cdebug_log(112,0) << "IntervFrom => min: " << DbU::getValueString(min) << ", max: " << DbU::getValueString(max) << ", axis:" << DbU::getValueString(axis) << endl; 
@@ -792,7 +794,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->isiSet();
     } else {
-      cdebug_log(112,1) << "bool Vertex::isiSet() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "bool Vertex::isiSet() const: Inappropriate usage of GRAData. " <<  endl;
       return false;
     }
   }
@@ -803,7 +805,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getIAxis();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIAxis() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getIAxis() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -814,7 +816,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getIMax();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIMax() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getIMax() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -825,7 +827,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getIMin();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIMin() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getIMin() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -836,7 +838,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIAxis();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIAxis() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIAxis() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -847,7 +849,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIMax();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIMax() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIMax() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -858,7 +860,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIMin();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIMin() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIMin() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -869,7 +871,7 @@ namespace Anabatic {
     if (_adata){
       _adata->setInterv(min, max, axis);
     } else {
-      cdebug_log(112,1) << "void Vertex::setInterv( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::setInterv( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -879,7 +881,7 @@ namespace Anabatic {
     if (_adata){
       _adata->setIntervfrom(min, max, axis);
     } else {
-      cdebug_log(112,1) << "void Vertex::setIntervfrom( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::setIntervfrom( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -889,7 +891,7 @@ namespace Anabatic {
     if (_adata){
       _adata->setIntervfrom2(min, max, axis);
     } else {
-      cdebug_log(112,1) << "void Vertex::setIntervfrom2( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::setIntervfrom2( DbU::Unit min, DbU::Unit max, DbU::Unit axis ): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -899,7 +901,7 @@ namespace Anabatic {
     if (_adata){
       _adata->resetIntervals();
     } else {
-      cdebug_log(112,1) << "void Vertex::resetIntervals(): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::resetIntervals(): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -909,7 +911,7 @@ namespace Anabatic {
     if (_adata){
       _adata->clearFrom2();
     } else {
-      cdebug_log(112,1) << "void Vertex::clearfrom2(): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::clearfrom2(): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -919,7 +921,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getFrom2();
     } else {
-      cdebug_log(112,1) << "Edge* Vertex::getFrom2() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "Edge* Vertex::getFrom2() const: Inappropriate usage of GRAData. " <<  endl;
       return NULL;
     }
   }
@@ -930,7 +932,7 @@ namespace Anabatic {
     if (_adata){
       _adata->setFrom2(from);
     } else {
-      cdebug_log(112,1) << "void Vertex::setFrom2( Edge* from ): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::setFrom2( Edge* from ): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -940,7 +942,7 @@ namespace Anabatic {
     if (_adata){
     //_adata->createIntervFrom2();
     } else {
-      cdebug_log(112,1) << "void Vertex::createIntervFrom2(): Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::createIntervFrom2(): Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -950,7 +952,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIMax2();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIMax2() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIMax2() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -961,7 +963,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIMin2();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIMin2() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIMin2() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -972,7 +974,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getPIAxis2();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getPIAxis2() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getPIAxis2() const: Inappropriate usage of GRAData. " <<  endl;
       return 0;
     }
   }
@@ -983,7 +985,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getIntervFrom2();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIntervFrom2() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getIntervFrom2() const: Inappropriate usage of GRAData. " <<  endl;
       return IntervalC();
     }
   }
@@ -1017,7 +1019,7 @@ namespace Anabatic {
           return _adata->getIntervFrom();
       }
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getIntervFrom(Flags criteria) const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getIntervFrom(Flags criteria) const: Inappropriate usage of GRAData. " <<  endl;
       return IntervalC();
     }
   }
@@ -1066,7 +1068,7 @@ namespace Anabatic {
     if (_adata){
       return _adata->getInterv();
     } else {
-      cdebug_log(112,1) << "DbU::Unit Vertex::getInterv() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "DbU::Unit Vertex::getInterv() const: Inappropriate usage of GRAData. " <<  endl;
       return IntervalC();
     }
   }
@@ -1077,7 +1079,7 @@ namespace Anabatic {
     if (_adata){
       _adata->printInterv();
     } else {
-      cdebug_log(112,1) << "void Vertex::printInterv() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::printInterv() const: Inappropriate usage of GRAData. " <<  endl;
     }
   }
 
@@ -1087,7 +1089,7 @@ namespace Anabatic {
     if (_adata){
       _adata->printIntervfrom();
     } else {
-      cdebug_log(112,1) << "void Vertex::printIntervfrom() const: Inappropriate usage of GRAData. " <<  endl;
+      cdebug_log(112,0) << "void Vertex::printIntervfrom() const: Inappropriate usage of GRAData. " <<  endl;
     }
   }
 

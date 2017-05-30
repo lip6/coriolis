@@ -226,9 +226,10 @@ namespace Katana {
         cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
       }
       if (revalidateds[i]->mustRaise()) {
-        revalidateds[i]->raise();
-        lookup( revalidateds[i] )->reschedule( 0 );
         cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
+        revalidateds[i]->raise();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment) trackSegment->reschedule( 0 );
       }
     }
 

@@ -570,6 +570,7 @@ namespace Katana {
     for ( Track* track1 : Tracks_Range::get(plane,_constraint) ) {
       uint32_t costflags = 0;
       costflags |= (segment1->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
+      costflags |= (segment1->isAnalog()) ? TrackCost::Analog : 0;
 
       Track* track2 = NULL;
       if (_event2) {

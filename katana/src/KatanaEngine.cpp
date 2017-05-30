@@ -54,6 +54,9 @@ namespace {
   using Hurricane::NetRoutingExtension;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::Segment;
+  using Katana::Session;
+  using Katana::TrackSegment;
 
 
   void  setSymmetricSelf ( Cell* cell, string name )
@@ -562,7 +565,7 @@ namespace Katana {
     addMeasure<unsigned long long>( getCell(), "DWL(l)" , totalWireLength                  , 12 );
     addMeasure<unsigned long long>( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12 );
     addMeasure<double>            ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
-}
+  }
 
 
   void  KatanaEngine::dumpMeasures ( ostream& out ) const

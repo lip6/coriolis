@@ -91,34 +91,36 @@ namespace Katana {
     , _dataState      (0)
     , _ripupCount     (0)
   {
-  // This is the GCell side (it is *one* cell height from the gauge).
-    DbU::Unit  cellHeight = Session::getSliceHeight();
+    if (not (_flags & Analog)) {
+    // This is the GCell side (it is *one* cell height from the gauge).
+      DbU::Unit  cellHeight = Session::getSliceHeight();
 
-    TrackElement* neighbor;
-    if ( _begin != Track::npos ) {
-      neighbor = _track->getSegment(_begin);
-      if ( neighbor and (neighbor->getNet() != net) ) {
-        DbU::Unit distance = interval.getVMin() - neighbor->getTargetU();
-        if ( distance < cellHeight )
-          _distanceToFixed = distance;
-      }
+      TrackElement* neighbor;
+      if ( _begin != Track::npos ) {
+        neighbor = _track->getSegment(_begin);
+        if ( neighbor and (neighbor->getNet() != net) ) {
+          DbU::Unit distance = interval.getVMin() - neighbor->getTargetU();
+          if ( distance < cellHeight )
+            _distanceToFixed = distance;
+        }
       // if ( neighbor and neighbor->isFixed() ) {
       //   if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
       //   _distanceToFixed += interval.getVMin() - neighbor->getTargetU();
       // }
-    }
-    if ( _end != Track::npos ) {
-      neighbor = _track->getSegment(_end);
-      if ( neighbor and (neighbor->getNet() != net) ) {
-        DbU::Unit distance = neighbor->getSourceU() - interval.getVMax();
-        if ( _distanceToFixed == 2*cellHeight ) _distanceToFixed = 0;
-        if ( distance < cellHeight )
-          _distanceToFixed += distance;
       }
+      if ( _end != Track::npos ) {
+        neighbor = _track->getSegment(_end);
+        if ( neighbor and (neighbor->getNet() != net) ) {
+          DbU::Unit distance = neighbor->getSourceU() - interval.getVMax();
+          if ( _distanceToFixed == 2*cellHeight ) _distanceToFixed = 0;
+          if ( distance < cellHeight )
+            _distanceToFixed += distance;
+        }
       // if ( neighbor and neighbor->isFixed() ) {
       //   if ( _distanceToFixed == DbU::Max ) _distanceToFixed = 0;
       //   _distanceToFixed += neighbor->getSourceU() - interval.getVMax();
       // }
+      }
     }
   }
 
@@ -162,12 +164,14 @@ namespace Katana {
 
     if (lhs._delta != rhs._delta) {
     //cdebug_log(155,0) << "TrackCost::Compare() lhs._delta:" << lhs._delta << " rhs._delta:" << rhs._delta << endl;
-      if ( not (_flags & TrackCost::IgnoreSharedLength) or (lhs._delta > 0) or (rhs._delta > 0) ) {
+    //if ( not (_flags & TrackCost::IgnoreSharedLength) or (lhs._delta > 0) or (rhs._delta > 0) ) {
     //if ( (lhs._delta > 0) or (rhs._delta > 0) ) {
         if (lhs._delta < rhs._delta) return true;
         if (lhs._delta > rhs._delta) return false;
-      }
+    //}
 
+    // Both delta should be negative, chose the least one.
+    //return lhs._delta > rhs._delta;
       return lhs._delta < rhs._delta;
     }
 
@@ -210,8 +214,9 @@ namespace Katana {
     if ( not _infinite and not _hardOverlap ) {
       cdebug_log(159,0) << "TrackCost::consolidate() " << _delta << " - " << _deltaShared << endl;
     //_deltaPerpand += - (_deltaShared << 1);
-      _delta += - _deltaShared;
-    //_delta += _deltaShared;
+      _delta -= _deltaShared;
+    //if (_delta > 0) _delta -= _deltaShared;
+    //else            _delta += _deltaShared;
     }
   }
 
@@ -249,7 +254,7 @@ namespace Katana {
     s += "-" + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
     s += "/" + DbU::getValueString(_axisWeight);
     s += "/" + DbU::getValueString(_deltaPerpand);
-    s += "/" + DbU::getValueString(_distanceToFixed);
+    s += "/f:" + DbU::getValueString(_distanceToFixed);
     s += "/" + DbU::getValueString(_longuestOverlap);
     s += " " + getString(_dataState);
     s += ">";

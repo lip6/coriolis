@@ -38,26 +38,30 @@ namespace Katana {
 
   class TrackFixedSegment : public TrackElement {
     public:
-      static  TrackElement*  create             ( Katana::Track* track , Segment* segment );
-    public:
-      virtual AutoSegment*   base               () const;
-      virtual Segment*       getSegment         () const;
-      virtual bool           isHorizontal       () const;
-      virtual bool           isVertical         () const;
-      virtual bool           isFixed            () const;
-      virtual unsigned long  getId              () const;
-      virtual Flags          getDirection       () const;
-      virtual Net*           getNet             () const;
-      virtual const Layer*   getLayer           () const;
-      virtual TrackElement*  getNext            () const;
-      virtual TrackElement*  getPrevious        () const;
-      virtual DbU::Unit      getAxis            () const;
-      virtual Interval       getFreeInterval    () const;
-      virtual float          getPriority        () const;
-      virtual void           updatePriority     ( float );
-      virtual Record*        _getRecord         () const;
-      virtual string         _getString         () const;
-      virtual string         _getTypeName       () const;
+      static  TrackElement*  create                 ( Katana::Track* track , Segment* segment );
+    public:                                         
+      virtual AutoSegment*   base                   () const;
+      virtual Segment*       getSegment             () const;
+      virtual bool           isHorizontal           () const;
+      virtual bool           isVertical             () const;
+      virtual bool           isFixed                () const;
+      virtual bool           isPriorityLocked       () const;
+      virtual unsigned long  getId                  () const;
+      virtual Flags          getDirection           () const;
+      virtual Net*           getNet                 () const;
+      virtual const Layer*   getLayer               () const;
+      virtual TrackElement*  getNext                () const;
+      virtual TrackElement*  getPrevious            () const;
+      virtual DbU::Unit      getAxis                () const;
+      virtual Interval       getFreeInterval        () const;
+      virtual float          getPriority            () const;
+      virtual void           setPriorityLock        ( bool );
+      virtual void           forcePriority          ( float );
+      virtual void           computePriority        ();
+      virtual void           computeAlignedPriority ();
+      virtual Record*        _getRecord             () const;
+      virtual string         _getString             () const;
+      virtual string         _getTypeName           () const;
     protected:
     // Attributes.
       static Net*     _blockageNet;

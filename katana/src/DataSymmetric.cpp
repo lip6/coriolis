@@ -167,12 +167,13 @@ namespace Katana {
               _valid = false;
             }
 
-            if (std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 2*vPitch ) {
+            if (std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 5*vPitch ) {
               errors.newline() << "Mirror axis mismatch @ [" << index << "] "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be: "
                                << DbU::getValueString(2*getSymAxis() - paired[0]->getAxis()) << ")";
               errors.newline() << "| " << paired[0];
               errors.newline() << "| " << paired[1];
+              errors.newline() << "| Tolerance (5*vPitch): " << DbU::getValueString(5*vPitch);
               _valid = false;
             }
           } else {
@@ -184,32 +185,35 @@ namespace Katana {
               _valid = false;
             }
 
-            if ( std::abs( paired[0]->getAxis() - paired[1]->getAxis() ) > 2*hPitch ) {
+            if ( std::abs( paired[0]->getAxis() - paired[1]->getAxis() ) > 5*hPitch ) {
               errors.newline() << "Axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(paired[0]->getAxis()) << ")";
               errors.newline() << "| " << paired[0];
               errors.newline() << "| " << paired[1];
+              errors.newline() << "| Tolerance (5*hPitch): " << DbU::getValueString(5*hPitch);
               _valid = false;
             }
           }
         } else {
           if (paired[0]->isHorizontal()) {
-            if ( std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 2*hPitch ) {
+            if ( std::abs( 2*getSymAxis() - paired[0]->getAxis() - paired[1]->getAxis() ) > 5*hPitch ) {
               errors.newline() << "Mirror axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(2*getSymAxis() - paired[0]->getAxis()) << ")";
               errors.newline() << "| " << paired[0];
               errors.newline() << "| " << paired[1];
+              errors.newline() << "| Tolerance (5*hPitch): " << DbU::getValueString(5*hPitch);
               _valid = false;
             }
           } else {
-            if ( std::abs( paired[0]->getAxis() != paired[1]->getAxis() ) > 2*vPitch ) {
+            if ( std::abs( paired[0]->getAxis() != paired[1]->getAxis() ) > 5*vPitch ) {
               errors.newline() << "Axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(paired[0]->getAxis()) << ")";
               errors.newline() << "| " << paired[0];
               errors.newline() << "| " << paired[1];
+              errors.newline() << "| Tolerance (5*vPitch): " << DbU::getValueString(5*vPitch);
               _valid = false;
             }
           }

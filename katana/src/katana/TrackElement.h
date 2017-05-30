@@ -84,112 +84,116 @@ namespace Katana {
   class TrackElement {
 
     public:
-      static  SegmentOverlapCostCB*   setOverlapCostCB     ( SegmentOverlapCostCB* );
-      static  void                    notify               ( TrackElement*, unsigned int flags );
-    public:                                                
-              void                    destroy              ();
-      virtual AutoSegment*            base                 () const;
-      virtual Segment*                getSegment           () const = 0;
-    // Wrapped AutoSegment Functions (when applicable).
-      virtual bool                    isFixed              () const;
-      virtual bool                    isHorizontal         () const = 0;
-      virtual bool                    isVertical           () const = 0;
-      virtual bool                    isLocal              () const;
-      virtual bool                    isGlobal             () const;
-      virtual bool                    isBipoint            () const;
-      virtual bool                    isTerminal           () const;
-      virtual bool                    isStrongTerminal     ( Flags flags=Flags::NoFlags ) const;
-      virtual bool                    isStrap              () const;
-      virtual bool                    isSlackened          () const;
-      virtual bool                    isDogleg             () const;
-      virtual bool                    isReduced            () const;
-      virtual bool                    isUTurn              () const;
-      virtual bool                    isUserDefined        () const;
-    // Predicates.                    
-      inline  bool                    isCreated            () const;
-      inline  bool                    isInvalidated        () const;
-      inline  bool                    isBlockage           () const;
-      inline  bool                    isLocked             () const;
-      inline  bool                    isRouted             () const;
-      virtual bool                    hasSymmetric         () const;
-      inline  bool                    hasSourceDogleg      () const;
-      inline  bool                    hasTargetDogleg      () const;
-      inline  bool                    canRipple            () const;
-      virtual bool                    canSlacken           () const;
-      virtual bool                    canPivotUp           ( float reserve, Flags flags ) const;
-      virtual bool                    canPivotDown         ( float reserve, Flags flags ) const;
-      virtual bool                    canMoveUp            ( float reserve, Flags flags=Flags::WithPerpands ) const;
-      virtual bool                    canDogleg            ();
-      virtual bool                    canDogleg            ( Interval );
-      virtual bool                    canDogleg            ( Anabatic::GCell*, Flags flags=0 );
-    // Accessors
-      inline  Observer<TrackElement>* getObserver          ();
-      virtual unsigned long           getId                () const;
-      virtual Flags                   getDirection         () const = 0;
-      virtual Net*                    getNet               () const = 0;
-      virtual const Layer*            getLayer             () const = 0;
-      virtual DbU::Unit               getPitch             () const;
-      virtual DbU::Unit               getPPitch            () const;
-      inline  Track*                  getTrack             () const;
-      inline  size_t                  getIndex             () const;
-      virtual float                   getPriority          () const = 0;
-      virtual unsigned long           getFreedomDegree     () const;
-      virtual float                   getMaxUnderDensity   ( Flags flags=Flags::NoFlags ) const;
-      inline  Box                     getBoundingBox       () const;
-      virtual TrackElement*           getNext              () const;
-      virtual TrackElement*           getPrevious          () const;
-      virtual DbU::Unit               getAxis              () const = 0;
-      inline  DbU::Unit               getSourceU           () const;
-      inline  DbU::Unit               getTargetU           () const;
-      inline  DbU::Unit               getLength            () const;
-      inline  Interval                getCanonicalInterval () const;
-      virtual Interval                getFreeInterval      () const;
-      virtual Interval                getSourceConstraints () const;
-      virtual Interval                getTargetConstraints () const;
-      virtual DataNegociate*          getDataNegociate     ( Flags flags=Flags::DataSelf ) const;
-      virtual TrackElement*           getCanonical         ( Interval& );
-      virtual size_t                  getGCells            ( vector<GCell*>& ) const;
-      virtual TrackElement*           getParent            () const;
-      virtual uint32_t                getDoglegLevel       () const;
-      virtual TrackElement*           getSourceDogleg      ();
-      virtual TrackElement*           getTargetDogleg      ();
-      virtual TrackElement*           getSymmetric         ();
-      virtual TrackElements           getPerpandiculars    ();
-    // Mutators.                       
-      inline  void                    setFlags             ( uint32_t );
-      inline  void                    unsetFlags           ( uint32_t );
-      inline  void                    setRouted            ();
-      virtual void                    setTrack             ( Track* );
-      inline  void                    setIndex             ( size_t );
-      virtual void                    setSymmetric         ( TrackElement* );
-      inline  void                    updatePriority       ();
-      virtual void                    updatePriority       ( float priority ) = 0;
-      virtual void                    updateFreedomDegree  ();
-      virtual void                    setDoglegLevel       ( uint32_t );
-      virtual void                    swapTrack            ( TrackElement* );
-      virtual void                    reschedule           ( uint32_t level );
-      virtual void                    detach               ();
-      virtual void                    invalidate           ();
-      virtual void                    revalidate           ();
-      virtual void                    updatePPitch         ();
-      virtual void                    incOverlapCost       ( Net*, TrackCost& ) const;
-      virtual void                    setAxis              ( DbU::Unit, uint32_t flags=Anabatic::SegAxisSet );
-      virtual TrackElement*           makeDogleg           ();
-      inline  bool                    makeDogleg           ( Anabatic::GCell* );
-      virtual TrackElement*           makeDogleg           ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual TrackElement*           makeDogleg           ( Interval, Flags& flags );
-      virtual void                    _postDoglegs         ( TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual bool                    moveAside            ( Flags flags );
-      virtual bool                    slacken              ( Flags flags=Flags::NoFlags );
-      virtual bool                    moveUp               ( Flags flags );
-      virtual bool                    moveDown             ( Flags flags );
-#if THIS_IS_DISABLED                  
-      virtual void                    desalignate          ();
-#endif                                
-      virtual bool                    _check               () const;
-      virtual Record*                 _getRecord           () const;
-      virtual string                  _getString           () const;
-      virtual string                  _getTypeName         () const;
+      static  SegmentOverlapCostCB*   setOverlapCostCB       ( SegmentOverlapCostCB* );
+      static  void                    notify                 ( TrackElement*, unsigned int flags );
+    public:                                                  
+              void                    destroy                ();
+      virtual AutoSegment*            base                   () const;
+      virtual Segment*                getSegment             () const = 0;
+    // Wrapped AutoSegment Functions (when applicable).      
+      virtual bool                    isFixed                () const;
+      virtual bool                    isHorizontal           () const = 0;
+      virtual bool                    isVertical             () const = 0;
+      virtual bool                    isLocal                () const;
+      virtual bool                    isGlobal               () const;
+      virtual bool                    isBipoint              () const;
+      virtual bool                    isTerminal             () const;
+      virtual bool                    isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
+      virtual bool                    isStrap                () const;
+      virtual bool                    isSlackened            () const;
+      virtual bool                    isDogleg               () const;
+      virtual bool                    isReduced              () const;
+      virtual bool                    isUTurn                () const;
+      virtual bool                    isUserDefined          () const;
+      virtual bool                    isAnalog               () const;
+      virtual bool                    isPriorityLocked       () const = 0;
+    // Predicates.                                           
+      inline  bool                    isCreated              () const;
+      inline  bool                    isInvalidated          () const;
+      inline  bool                    isBlockage             () const;
+      inline  bool                    isLocked               () const;
+      inline  bool                    isRouted               () const;
+      virtual bool                    hasSymmetric           () const;
+      inline  bool                    hasSourceDogleg        () const;
+      inline  bool                    hasTargetDogleg        () const;
+      inline  bool                    canRipple              () const;
+      virtual bool                    canSlacken             () const;
+      virtual bool                    canPivotUp             ( float reserve, Flags flags ) const;
+      virtual bool                    canPivotDown           ( float reserve, Flags flags ) const;
+      virtual bool                    canMoveUp              ( float reserve, Flags flags=Flags::WithPerpands ) const;
+      virtual bool                    canDogleg              ();
+      virtual bool                    canDogleg              ( Interval );
+      virtual bool                    canDogleg              ( Anabatic::GCell*, Flags flags=0 );
+    // Accessors                                             
+      inline  Observer<TrackElement>* getObserver            ();
+      virtual unsigned long           getId                  () const;
+      virtual Flags                   getDirection           () const = 0;
+      virtual Net*                    getNet                 () const = 0;
+      virtual const Layer*            getLayer               () const = 0;
+      virtual DbU::Unit               getPitch               () const;
+      virtual DbU::Unit               getPPitch              () const;
+      inline  Track*                  getTrack               () const;
+      inline  size_t                  getIndex               () const;
+      virtual float                   getPriority            () const = 0;
+      virtual unsigned long           getFreedomDegree       () const;
+      virtual float                   getMaxUnderDensity     ( Flags flags=Flags::NoFlags ) const;
+      inline  Box                     getBoundingBox         () const;
+      virtual TrackElement*           getNext                () const;
+      virtual TrackElement*           getPrevious            () const;
+      virtual DbU::Unit               getAxis                () const = 0;
+      inline  DbU::Unit               getSourceU             () const;
+      inline  DbU::Unit               getTargetU             () const;
+      inline  DbU::Unit               getLength              () const;
+      inline  Interval                getCanonicalInterval   () const;
+      virtual Interval                getFreeInterval        () const;
+      virtual Interval                getSourceConstraints   () const;
+      virtual Interval                getTargetConstraints   () const;
+      virtual DataNegociate*          getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
+      virtual TrackElement*           getCanonical           ( Interval& );
+      virtual size_t                  getGCells              ( vector<GCell*>& ) const;
+      virtual TrackElement*           getParent              () const;
+      virtual uint32_t                getDoglegLevel         () const;
+      virtual TrackElement*           getSourceDogleg        ();
+      virtual TrackElement*           getTargetDogleg        ();
+      virtual TrackElement*           getSymmetric           ();
+      virtual TrackElements           getPerpandiculars      ();
+    // Mutators.                                             
+      inline  void                    setFlags               ( uint32_t );
+      inline  void                    unsetFlags             ( uint32_t );
+      inline  void                    setRouted              ();
+      virtual void                    setTrack               ( Track* );
+      inline  void                    setIndex               ( size_t );
+      virtual void                    setSymmetric           ( TrackElement* );
+      virtual void                    setPriorityLock        ( bool state ) = 0;
+      virtual void                    forcePriority          ( float priority ) = 0;
+      virtual void                    computePriority        () = 0;
+      virtual void                    computeAlignedPriority () = 0;
+      virtual void                    updateFreedomDegree    ();
+      virtual void                    setDoglegLevel         ( uint32_t );
+      virtual void                    swapTrack              ( TrackElement* );
+      virtual void                    reschedule             ( uint32_t level );
+      virtual void                    detach                 ();
+      virtual void                    invalidate             ();
+      virtual void                    revalidate             ();
+      virtual void                    updatePPitch           ();
+      virtual void                    incOverlapCost         ( Net*, TrackCost& ) const;
+      virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::SegAxisSet );
+      virtual TrackElement*           makeDogleg             ();
+      inline  bool                    makeDogleg             ( Anabatic::GCell* );
+      virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
+      virtual TrackElement*           makeDogleg             ( Interval, Flags& flags );
+      virtual void                    _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
+      virtual bool                    moveAside              ( Flags flags );
+      virtual bool                    slacken                ( Flags flags=Flags::NoFlags );
+      virtual bool                    moveUp                 ( Flags flags );
+      virtual bool                    moveDown               ( Flags flags );
+#if THIS_IS_DISABLED                                         
+      virtual void                    desalignate            ();
+#endif                                                       
+      virtual bool                    _check                 () const;
+      virtual Record*                 _getRecord             () const;
+      virtual string                  _getString             () const;
+      virtual string                  _getTypeName           () const;
 
     protected:
     // Static Attributes.
@@ -234,7 +238,6 @@ namespace Katana {
   inline DbU::Unit               TrackElement::getTargetU           () const { return _targetU; }
   inline Interval                TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
   inline void                    TrackElement::setIndex             ( size_t index ) { _index=index; }
-  inline void                    TrackElement::updatePriority       () { updatePriority( 0.0 ); }
 
   inline void  TrackElement::setRouted()
   {

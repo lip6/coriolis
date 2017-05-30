@@ -233,6 +233,77 @@ namespace {
   }
 
 
+  // ---------------------------------------------------------------
+  // Class  :  "SideStack".
+
+  class SideStack {
+    public:
+                              SideStack     ( Flags direction, DbU::Unit pitch );
+             const Interval&  getSideAt     ( DbU::Unit ) const;
+      inline const Interval&  getGSide      () const;
+      inline       DbU::Unit  getGSideMin   () const;
+      inline       DbU::Unit  getGSideMax   () const;
+                   void       addGCell      ( const GCell* );
+      inline       void       restrictGSide ( const Interval& );
+                   void       show          () const;
+    private:
+      Flags                    _direction;
+      DbU::Unit                _pitch;
+      Interval                 _full;
+      Interval                 _gside;
+      map<DbU::Unit,Interval>  _sides;
+  };
+
+
+  SideStack::SideStack ( Flags direction, DbU::Unit pitch )
+    : _direction( (direction & Flags::Horizontal) ? Flags::Vertical : Flags::Horizontal )
+    , _pitch    (pitch)
+    , _full     (false)
+    , _gside    (false)
+    , _sides    ()
+  { }
+
+
+  inline const Interval&  SideStack::getGSide      () const { return _gside; }
+  inline       DbU::Unit  SideStack::getGSideMin   () const { return _gside.getVMin(); }
+  inline       DbU::Unit  SideStack::getGSideMax   () const { return _gside.getVMax(); }
+  inline       void       SideStack::restrictGSide ( const Interval& restrict ) { _gside.intersection( restrict ); }
+
+
+  const Interval& SideStack::getSideAt ( DbU::Unit position ) const
+  {
+    if (_sides.empty()) return _full;
+    if (_sides.size() == 1) return _sides.begin()->second;
+
+    if (_sides.begin()->first > position) return _sides.begin()->second;
+    for ( auto iside = ++_sides.begin() ; iside != _sides.end() ; ++iside ) {
+      if (iside->first >= position) return (--iside)->second;
+    }
+    return _sides.rbegin()->second;
+  }
+
+
+  void  SideStack::addGCell ( const GCell* gcell )
+  {
+    Interval  side     = gcell->getSide( _direction, _pitch );
+    DbU::Unit position = (_direction & Flags::Vertical) ? gcell->getBoundingBox().getXMin()
+                                                        : gcell->getBoundingBox().getYMin();
+
+    _gside.intersection( side );
+    _sides.insert( make_pair(position,side) );
+  }
+
+
+  void  SideStack::show () const
+  {
+    cdebug_log(145,0) << "SideStack::show()" << endl;
+    for ( auto pside : _sides ) {
+      cdebug_log(145,0) << "@ " << DbU::getValueString(pside.first)
+                        << " " << pside.second << endl;
+    }
+  }
+
+
 } // End of local namespace.
 
 
@@ -828,7 +899,7 @@ namespace Anabatic {
       cdebug_tabw(149,-1);
       return true;
     }
-
+    
     if (getAxis() > optimalMax) {
       setAxis( optimalMax, flags );
       cdebug_tabw(149,-1);
@@ -922,6 +993,7 @@ namespace Anabatic {
     DbU::Unit            constraintMin;
     DbU::Unit            constraintMax;
     vector<AutoSegment*> aligneds;
+    SideStack            sideStack ( (isHorizontal() ? Flags::Horizontal : Flags::Vertical), getPitch() );
   
     getConstraints( constraintMin, constraintMax );
     cdebug_log(145,0) << "Constraints: [" << DbU::getValueString(constraintMin)
@@ -931,43 +1003,37 @@ namespace Anabatic {
       optimalMin = optimalMax = getAxis();
       aligneds.push_back( this );
     } else {
-      DbU::Unit      minGCell    = getOrigin();
-      DbU::Unit      maxGCell    = getExtremity();
       DbU::Unit      terminalMin;
       DbU::Unit      terminalMax;
       AttractorsMap  attractors;
 
       Flags flags = (isAnalog() ? Flags::WithDoglegs : Flags::NoFlags);
-      Flags f2 = flags | Flags::WithSelf;
 
       getAligneds( Flags::WithSelf|flags ).fill( aligneds );
 
-      if (not getGCell()->isMatrix()) {
-        Flags          direction = (isHorizontal()) ? Flags::Vertical : Flags::Horizontal;
-        Interval       gcellSide ( false );
+      if (getGCell()->isMatrix()) {
+        sideStack.addGCell( getGCell() );
+      } else {
         vector<GCell*> gcells;
-        DbU::Unit      pitch     = getPitch();
 
-        cdebug_log(145,0) << "Using pitch for L/T shrink:" << DbU::getValueString(pitch) << endl;
+        cdebug_log(145,0) << "Using pitch for L/T shrink:" << DbU::getValueString(getPitch()) << endl;
         for ( AutoSegment* aligned : aligneds ) {
           aligned->getGCells( gcells );
           for ( GCell* gcell : gcells ) {
-            gcellSide.intersection( gcell->getSide(direction,pitch) );
-            cdebug_log(145,0) << "| gcellSide:" << gcellSide << " (from " << gcell << ")" << endl;
+            sideStack.addGCell( gcell );
+            cdebug_log(145,0) << "| gcellSide:" << sideStack.getGSide() << " (from " << gcell << ")" << endl;
           }
           if (aligned->isStrongTerminal()) {
             Interval terminalConstraints;
             aligned->getConstraints( terminalConstraints );
-            gcellSide.intersection( terminalConstraints );
-            cdebug_log(145,0) << "| gcellSide:" << gcellSide << " (from " << aligned << ")" << endl;
+            sideStack.restrictGSide( terminalConstraints );
+            cdebug_log(145,0) << "| gcellSide:" << sideStack.getGSide() << " (from " << aligned << ")" << endl;
           }
         }
-        minGCell = gcellSide.getVMin();
-        maxGCell = gcellSide.getVMax();
       }
+      sideStack.show();
 
-      cdebug_log(145,0) << "GCell interval [" << DbU::getValueString(minGCell)
-                        << ":"                << DbU::getValueString(maxGCell) << "]" << endl;
+      cdebug_log(145,0) << "GCell interval " << sideStack.getGSide() << endl;
   
       AutoContact* anchor = getAutoSource();
       if (anchor->isTerminal()) {
@@ -1006,12 +1072,19 @@ namespace Anabatic {
         if (autoSegment->isGlobal()) {
           cdebug_log(145,0) << "Used as global." << endl;
 
-        // Sloppy implentation.
-          DbU::Unit perpandMin = autoSegment->getSourceU();
-          DbU::Unit perpandMax = autoSegment->getTargetU();
+          const Interval& side = sideStack.getSideAt( autoSegment->getAxis() );
+          cdebug_log(145,0) << "Side @" << DbU::getValueString(autoSegment->getAxis())
+                            << " " << side << endl;
 
-          if (perpandMin < minGCell) attractors.addAttractor( minGCell );
-          if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
+          if (autoSegment->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
+          if (autoSegment->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
+
+        // // Sloppy implentation.
+        //   DbU::Unit perpandMin = autoSegment->getSourceU();
+        //   DbU::Unit perpandMax = autoSegment->getTargetU();
+
+        //   if (perpandMin < minGCell) attractors.addAttractor( minGCell );
+        //   if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
         } else if (autoSegment->isLocal()) {
           if (autoSegment->isStrongTerminal()) {
             cdebug_log(145,0) << "Used as strong terminal." << endl;
@@ -1054,8 +1127,8 @@ namespace Anabatic {
                                       : _gcell->getBoundingBox().getXMax();
       }
 
-      setInBound( minGCell, maxGCell, optimalMin );
-      setInBound( minGCell, maxGCell, optimalMax );
+      setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMin );
+      setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMax );
 
       cdebug_log(145,0) << "optimalMin: " << DbU::getValueString(optimalMin) << endl;
       cdebug_log(145,0) << "optimalMax: " << DbU::getValueString(optimalMax) << endl;

@@ -67,6 +67,7 @@ namespace Katana {
     , _data         (NULL)
     , _priority     (0.0)
     , _dogLegLevel  (0)
+    , _flags        (NoFlags)
   {
     cdebug_log(155,0) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
     cdebug_log(155,0) << "             over " << (void*)segment << ":" << segment << endl;
@@ -162,6 +163,8 @@ namespace Katana {
   bool           TrackSegment::isReduced            () const { return _base->isReduced(); }
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
   bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
+  bool           TrackSegment::isAnalog             () const { return _base->isAnalog(); }
+  bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
 // Predicates.
   bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
 // Accessors.
@@ -305,22 +308,38 @@ namespace Katana {
   }
 
 
+  void  TrackSegment::setPriorityLock ( bool state )
+  {
+    if (state) _flags |=  PriorityLocked;
+    else       _flags &= ~PriorityLocked;
+  }
+
+
   void  TrackSegment::updateFreedomDegree ()
   { _freedomDegree = _base->getSlack(); }
 
 
-  void  TrackSegment::updatePriority ( float forced )
+  void  TrackSegment::forcePriority ( float forced )
+  { if (not isPriorityLocked()) _priority = forced; }
+
+
+  void  TrackSegment::computePriority ()
   {
-    if (forced != 0.0) { _priority = forced; return; }
+    if (isPriorityLocked()) return;
+    if (isAnalog() and isTerminal()) { _priority = 0.0; return; }
 
     double length = DbU::toLambda(getLength());
     double slack  = DbU::toLambda(base()->getSlack());
+    double pitch  = DbU::toLambda(getPitch());
 
   //if (length > 200.0) length = 200.0 - std::log(length)*20.0;
   //if (length <   0.0) length =   0.0;
   //if (slack / DbU::toLambda(_segment->getPitch()) < 2.0 ) slack = 999.0;
-    if (slack / DbU::toLambda(getPitch()) > 10.0) slack = 10.0*getPitch();
+    if (slack / pitch > 10.0) slack = 10.0*pitch;
       
+  //cerr << "TrackSegment::computePriority() length:" << length << " slack:" << slack
+  //     << " pri:" << (length + 1.0) * (slack + 1.0) << " pitch:" << DbU::toLambda(getPitch()) << endl;
+
     _priority = (length + 1.0) * (slack + 1.0);
 
   //if (_priority > 10000.0) cerr << "_priority:" << _priority
@@ -428,6 +447,48 @@ namespace Katana {
     }
 
     cdebug_tabw(159,-1);
+  }
+
+
+  void  TrackSegment::computeAlignedPriority ()
+  {
+    if (isPriorityLocked() or isTerminal()) return;
+
+    computePriority();
+
+    AutoSegment* canonical = base();
+
+    vector<TrackElement*> sourceAligneds;
+    vector<TrackElement*> targetAligneds;
+    for ( AutoSegment* segment : canonical->getAligneds(Flags::Source|Flags::WithDoglegs) ) {
+      if (not segment->isCanonical()) continue;
+      sourceAligneds.push_back( Session::lookup(segment) );
+    }
+    for ( AutoSegment* segment : canonical->getAligneds(Flags::Target|Flags::WithDoglegs) ) {
+      if (not segment->isCanonical()) continue;
+      sourceAligneds.push_back( Session::lookup(segment) );
+    }
+
+    if (sourceAligneds.empty() and targetAligneds.empty()) return;
+
+    setPriorityLock( true );
+
+    cdebug_log(159,0) << "TrackSegment::computeAlignedPriority() " << this << endl;
+    cdebug_log(159,0) << "Aligneds on:" << getPriority() << ":" << this << endl;
+    for ( size_t i=0 ; i<sourceAligneds.size() ; ++i ) {
+      sourceAligneds[i]->forcePriority( getPriority() - 2.0*(i+1) + 1.0 );
+      sourceAligneds[i]->setPriorityLock( true );
+
+      cdebug_log(159,0) << "| S:" << i << " " << sourceAligneds[i]->getPriority()
+                        << ":" << sourceAligneds[i] << endl;
+    }
+    for ( size_t i=0 ; i<targetAligneds.size() ; ++i ) {
+      targetAligneds[i]->forcePriority( getPriority() - 2.0*(i+1) );
+      targetAligneds[i]->setPriorityLock( true );
+
+      cdebug_log(159,0) << "| T:" << i << " " << targetAligneds[i]->getPriority()
+                        << ":" << targetAligneds[i] << endl;
+    }
   }
 
 
@@ -911,6 +972,7 @@ namespace Katana {
     Record* record = TrackElement::_getRecord();
     record->add( getSlot( "_base"     ,  _base      ) );
     record->add( getSlot( "_symmetric",  _symmetric ) );
+    record->add( getSlot( "_flags"    ,  _flags     ) );
     return record;
   }
 

@@ -655,7 +655,7 @@ namespace Katana {
                            and _segment->base()->getAutoTarget()->isTerminal();
     }
 
-    _segment->updatePriority();
+    _segment->computePriority();
 
     cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
     cdebug_tabw(159,-1);

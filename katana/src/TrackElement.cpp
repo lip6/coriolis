@@ -144,6 +144,7 @@ namespace Katana {
   bool           TrackElement::isReduced            () const { return false; }
   bool           TrackElement::isUTurn              () const { return false; }
   bool           TrackElement::isUserDefined        () const { return false; }
+  bool           TrackElement::isAnalog             () const { return false; }
 // Predicates.
   bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }

@@ -115,6 +115,7 @@ namespace Katana {
              void                          run                  ( Flags flags );
              void                          printStatistics      () const;
              void                          _createRouting       ( Anabatic::GCell* );
+             void                          _computePriorities   ();
              void                          _associateSymmetrics ();
              void                          _pack                ( size_t& count, bool last );
              size_t                        _negociate           ();
