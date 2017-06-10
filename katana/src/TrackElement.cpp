@@ -256,9 +256,9 @@ namespace Katana {
   }
 
 
-  void  TrackElement::incOverlapCost ( Net* net, TrackCost& cost ) const
+  void  TrackElement::incOverlapCost ( TrackCost& cost ) const
   {
-    if (not _track or (getNet() == net)) return;
+    if (not _track or (getNet() == cost.getNet())) return;
     _overlapCostCallback( this, cost );
   }
 

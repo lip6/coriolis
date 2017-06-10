@@ -371,8 +371,8 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = _vertical->getSourceY() - Session::getExtensionCap(getLayer());
-    _targetPosition = _vertical->getTargetY() + Session::getExtensionCap(getLayer());
+    _sourcePosition = _vertical->getSourceY() - getExtensionCap();
+    _targetPosition = _vertical->getTargetY() + getExtensionCap();
   }
 
 
@@ -392,8 +392,8 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSourceY() - Session::getExtensionCap(getLayer());
-    DbU::Unit targetPosition = _vertical->getTargetY() + Session::getExtensionCap(getLayer());
+    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap();
+    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap();
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "

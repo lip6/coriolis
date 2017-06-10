@@ -277,15 +277,16 @@ namespace Katana {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval  interval
-                                   , Net*      net
-                                   , size_t    begin
-                                   , size_t    end
-                                   , uint32_t  flags ) const
+  TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
+          size_t    begin    = Track::npos;
+          size_t    end      = Track::npos;
+    const Interval& interval = cost.getInterval();
 
-    cdebug_log(155,1) << "getOverlapCost() @" << DbU::getValueString(_axis)
+    getOverlapBounds( cost.getInterval(), begin, end );
+    cost.setTrack( const_cast<Track*>(this), begin, end );
+
+    cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
                       << " [" << DbU::getValueString(interval.getVMin())
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
@@ -298,7 +299,7 @@ namespace Katana {
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
-      if ( _markers[mbegin]->getNet() != net ) {
+      if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
       }
@@ -312,12 +313,12 @@ namespace Katana {
 
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
-      if ( _segments[begin]->getNet() == net ) {
+      if (_segments[begin]->getNet() == cost.getNet()) {
         cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
-      _segments[begin]->incOverlapCost( net, cost );
-      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << cost << endl;
+      _segments[begin]->incOverlapCost( cost );
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << &cost << endl;
 
       if (cost.isInfinite()) break;
     }
@@ -326,21 +327,6 @@ namespace Katana {
 
     return cost;
   }
-
-
-  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, uint32_t flags ) const
-  {
-    size_t begin;
-    size_t end;
-
-    getOverlapBounds( interval, begin, end );
-
-    return getOverlapCost( interval, net, begin, end, flags );
-  }
-
-
-  TrackCost  Track::getOverlapCost ( TrackElement* segment, uint32_t flags ) const
-  { return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags ); }
 
 
   void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, uint32_t& weight ) const
@@ -468,10 +454,10 @@ namespace Katana {
                  ,getString(segment).c_str()) << endl;
     }
 
-    segment->setAxis ( getAxis() );
     _segments.push_back ( segment );
     _segmentsValid = false;
 
+  //segment->setAxis ( getAxis() );
     segment->setTrack ( this );
   }
 

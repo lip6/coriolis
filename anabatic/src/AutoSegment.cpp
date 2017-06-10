@@ -608,6 +608,13 @@ namespace Anabatic {
   }
 
 
+  DbU::Unit  AutoSegment::getExtensionCap () const
+  {
+    DbU::Unit mWidth = std::max( Session::getWireWidth(getLayer()), Session::getViaWidth(getLayer()) );
+    if (getWidth() <= mWidth) return Session::getExtensionCap( getLayer() );
+    return getWidth() / 2;
+  }
+
   DbU::Unit  AutoSegment::getSlack () const
   {
     DbU::Unit  constraintMin;

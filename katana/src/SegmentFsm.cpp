@@ -37,26 +37,6 @@ namespace {
 
 
 // -------------------------------------------------------------------
-// Class  :  "CompareCostArray".
-
-  class CompareCostArray {
-    public:
-      inline       CompareCostArray ( uint32_t flags=0 );
-      inline bool  operator()       ( const array<TrackCost,2>& lhs, const array<TrackCost,2>& rhs );
-    private:
-      TrackCost::Compare  _compare;
-  };
-
-
-  inline CompareCostArray::CompareCostArray ( uint32_t flags )
-    : _compare(flags)
-  { }
-
-  inline bool  CompareCostArray::operator() ( const array<TrackCost,2>& lhs, const array<TrackCost,2>& rhs )
-  { return _compare( lhs[0], rhs[0] ); }
-
-
-// -------------------------------------------------------------------
 // Class  :  "Cs1Candidate".
 
   class Cs1Candidate {
@@ -479,7 +459,6 @@ namespace Katana {
     DataSymmetric* symData  = NULL;
     TrackElement*  segment1 = _event1->getSegment();
     TrackElement*  segment2 = segment1->getSymmetric();
-    uint32_t       depth    = Session::getRoutingGauge()->getLayerDepth(segment1->getLayer());
     _event1->setTracksFree( 0 );
 
     _data1 = segment1->getDataNegociate();
@@ -562,58 +541,20 @@ namespace Katana {
     // if ( segment->isLocal() and (_data->getState() >= DataNegociate::MaximumSlack) )
     //   _constraint.inflate ( 0, DbU::lambda(1.0) );
 
-    bool inLocalDepth    = (depth < 3);
-    bool isOneLocalTrack = (segment1->isLocal())
-      and (segment1->base()->getAutoSource()->getGCell()->getGlobalsCount(depth) >= 9.0);
-
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
     for ( Track* track1 : Tracks_Range::get(plane,_constraint) ) {
-      uint32_t costflags = 0;
-      costflags |= (segment1->isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0;
-      costflags |= (segment1->isAnalog()) ? TrackCost::Analog : 0;
-
       Track* track2 = NULL;
       if (_event2) {
         track2 =
           (_sameAxis) ? track1 : plane->getTrackByPosition( symData->getSymmetrical( track1->getAxis() ) );
       }
 
-      _costs.push_back( array<TrackCost,2>( { TrackCost(NULL), TrackCost(NULL) } ) );
-      if (not segment1->isReduced()) {
-        _costs.back()[0] = track1->getOverlapCost(segment1,costflags);
-        if (_event2) _costs.back()[1] = track2->getOverlapCost(segment2,costflags);
-      } else {
-        _costs.back()[0] = TrackCost(track1);
-        if (_event2) _costs.back()[1] = TrackCost(track2);
-      }
+      _costs.push_back( new TrackCost(segment1,segment2,track1,track2) );
 
-      _costs.back()[0].setAxisWeight  ( _event1->getAxisWeight(track1->getAxis()) );
-      _costs.back()[0].incDeltaPerpand( _data1->getWiringDelta(track1->getAxis()) );
-      if (_event2) {
-        _costs.back()[1].setAxisWeight  ( _event2->getAxisWeight(track2->getAxis()) );
-        _costs.back()[1].incDeltaPerpand( _data2->getWiringDelta(track2->getAxis()) );
-        _costs.back()[0].merge( _costs.back()[1] );
-
-      }
-
-      if (segment1->isGlobal()) {
-        cdebug_log(9000,0) << "Deter| setForGlobal() on " << track1 << endl;
-        _costs.back()[0].setForGlobal();
-      }
-
-      if ( inLocalDepth and (_costs.back()[0].getDataState() == DataNegociate::MaximumSlack) )
-        _costs.back()[0].setInfinite();
-
-      if ( isOneLocalTrack
-         and  _costs.back()[0].isOverlapGlobal()
-         and (_costs.back()[0].getDataState() >= DataNegociate::ConflictSolveByHistory) )
-        _costs.back()[0].setInfinite();
-
-      _costs.back()[0].consolidate();
-      if ( _fullBlocked and (not _costs.back()[0].isBlockage() and not _costs.back()[0].isFixed()) ) 
+      if ( _fullBlocked and (not _costs.back()->isBlockage() and not _costs.back()->isFixed()) ) 
         _fullBlocked = false;
 
-      cdebug_log(155,0) << "| " << _costs.back()[0] << ((_fullBlocked)?" FB ": " -- ") << track1 << endl;
+      cdebug_log(155,0) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << track1 << endl;
     }
     cdebug_tabw(159,-1);
 
@@ -648,16 +589,18 @@ namespace Katana {
 
   // FOR ANALOG ONLY.
   //flags |= TrackCost::IgnoreSharedLength;
-    sort( _costs.begin(), _costs.end(), CompareCostArray(flags) );
+    sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
 
     size_t i=0;
-    for ( ; (i<_costs.size()) and _costs[i][0].isFree() ; i++ );
-    _event1->setTracksFree ( i );
+    for ( ; (i<_costs.size()) and _costs[i]->isFree() ; i++ );
+    _event1->setTracksFree( i );
+    if (_event2) _event2->setTracksFree( i );
+  }
 
-    if (_event2) {
-      for ( ; (i<_costs.size()) and _costs[i][1].isFree() ; i++ );
-      _event2->setTracksFree ( i );
-    }
+
+  SegmentFsm::~SegmentFsm ()
+  {
+    for ( TrackCost* cost : _costs ) delete cost;
   }
 
 
@@ -720,7 +663,7 @@ namespace Katana {
   bool  SegmentFsm::insertInTrack ( size_t i )
   {
     cdebug_log(159,0) << "SegmentFsm::insertInTrack() istate:" << _event1->getInsertState()
-                << " track:" << i << endl;
+                      << " track:" << i << endl;
 
     bool success = true;
 
@@ -761,8 +704,8 @@ namespace Katana {
     _event1->updateAxisHistory();
     _event1->setEventLevel( 0 );
 
-    cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
-    Session::addInsertEvent( getSegment1(), getCost1(i).getTrack() );
+    cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+    Session::addInsertEvent( getSegment1(), getTrack1(i) );
 
     if (_event2) {
       _event2->resetInsertState();
@@ -770,8 +713,8 @@ namespace Katana {
       _event2->setEventLevel( 0 );
       _event2->setProcessed( true );
 
-      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
-      Session::addInsertEvent( getSegment2(), getCost2(i).getTrack() );
+      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+      Session::addInsertEvent( getSegment2(), getTrack2(i) );
     }
 
     setState( SegmentFsm::SelfInserted );
@@ -782,11 +725,11 @@ namespace Katana {
   {
     cdebug_log(159,0) << "SegmentFsm::moveToTrack() :" << " track:" << i << endl;
 
-    Session::addMoveEvent( getSegment1(), getCost1(i).getTrack() );
+    Session::addMoveEvent( getSegment1(), getTrack1(i) );
 
     if (_event2) {
-      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getCost1(i).getTrack() << endl;
-      Session::addMoveEvent( getSegment2(), getCost2(i).getTrack() );
+      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+      Session::addMoveEvent( getSegment2(), getTrack2(i) );
     }
 
     setState( SegmentFsm::SelfInserted );
@@ -1045,10 +988,10 @@ namespace Katana {
       Interval overlap = segment->getCanonicalInterval();
       size_t   begin;
       size_t   end;
-      getCost(icost).getTrack()->getOverlapBounds( overlap, begin, end );
+      getTrack1(icost)->getOverlapBounds( overlap, begin, end );
 
       for ( ; begin<end ; ++begin ) {
-        TrackElement* other        = getCost(icost).getTrack()->getSegment(begin);
+        TrackElement* other        = getTrack1(icost)->getSegment(begin);
         Interval      otherOverlap = other->getCanonicalInterval();
         
         if (other->getNet() == segment->getNet()) continue;
@@ -1087,9 +1030,9 @@ namespace Katana {
       size_t   begin;
       size_t   end;
 
-      getCost(0).getTrack()->getOverlapBounds ( overlap, begin, end );
+      getTrack1(0)->getOverlapBounds ( overlap, begin, end );
       for ( ; begin<end ; ++begin ) {
-        TrackElement* other        = getCost(0).getTrack()->getSegment(begin);
+        TrackElement* other        = getTrack1(0)->getSegment(begin);
         Interval      otherOverlap = other->getCanonicalInterval();
         
         if ( other->getNet() == segment->getNet() ) continue;
@@ -1124,7 +1067,7 @@ namespace Katana {
     for ( ; itrack<getCosts().size() ; ++itrack ) {
       cdebug_log(159,0) << "Trying track:" << itrack << endl;
 
-      if ( getCost(itrack).isGlobalEnclosed() ) {
+      if ( getCost(itrack)->isGlobalEnclosed() ) {
         Track*    track      = getTrack(itrack);
         size_t    begin      = getBegin(itrack);
         size_t    end        = getEnd  (itrack);
@@ -1161,7 +1104,7 @@ namespace Katana {
           setState ( SegmentFsm::OtherRipup );
           addAction( segment
                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                   , getCost(itrack).getTrack()->getAxis()
+                   , getTrack1(itrack)->getAxis()
                    );
           break;
         }

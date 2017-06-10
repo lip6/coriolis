@@ -231,6 +231,7 @@ namespace Anabatic {
       inline  unsigned int        getDepth                   () const;
       inline  DbU::Unit           getPitch                   () const;
               DbU::Unit           getPPitch                  () const;
+              DbU::Unit           getExtensionCap            () const;
       inline  DbU::Unit           getAxis                    () const;
       virtual DbU::Unit           getSourceU                 () const = 0;
       virtual DbU::Unit           getTargetU                 () const = 0;

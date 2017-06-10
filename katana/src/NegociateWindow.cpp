@@ -507,7 +507,7 @@ namespace Katana {
         cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << tty::reset
                << " remains:" << right << setw(8) << setfill('0')
-               << _eventQueue.size()+1
+               << _eventQueue.size()
                << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
       } else {

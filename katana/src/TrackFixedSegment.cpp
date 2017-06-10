@@ -140,6 +140,7 @@ namespace Katana {
   Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
   const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }
   Interval       TrackFixedSegment::getFreeInterval  () const { return Interval(); }
+  size_t         TrackFixedSegment::getTrackSpan     () const { return 1; }
 
 
   unsigned long  TrackFixedSegment::getId () const
@@ -169,6 +170,15 @@ namespace Katana {
   {
     size_t dummy = _index;
     return _track->getPrevious( dummy, getNet() );
+  }
+
+
+  void  TrackFixedSegment::addOverlapCost ( TrackCost& cost ) const
+  {
+    Track* track = cost.getTrack();
+
+    if (not track) return;
+    track->addOverlapCost( cost );
   }
 
 

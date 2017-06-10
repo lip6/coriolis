@@ -475,7 +475,7 @@ namespace Katana {
 
     itrack = 0;
     if ( (not isOverConstrained()) and fsm.canRipup() ) {
-      if (fsm.getCosts().size() and fsm.getCost(itrack).isFree()) {
+      if (fsm.getCosts().size() and fsm.getCost(itrack)->isFree()) {
         cdebug_log(159,0) << "Insert in free space " << this << endl;
         fsm.bindToTrack( itrack );
       } else {
@@ -491,7 +491,7 @@ namespace Katana {
             }
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
               cdebug_log(159,0) << "Trying Track: " << itrack << endl;
-              if (fsm.getCost(itrack).isInfinite()) break;
+              if (fsm.getCost(itrack)->isInfinite()) break;
               if (fsm.insertInTrack(itrack)) break;
               resetInsertState();
             } // Next ripup is possible.
@@ -516,7 +516,7 @@ namespace Katana {
     fsm.doActions();
 
     if (itrack < fsm.getCosts().size()) {
-      cdebug_log(159,0) << "Placed: @" << DbU::getValueString(fsm.getCost(itrack).getTrack()->getAxis())
+      cdebug_log(159,0) << "Placed: @" << DbU::getValueString(fsm.getTrack1(itrack)->getAxis())
                   << " " << this << endl;
     }
 
@@ -541,10 +541,10 @@ namespace Katana {
 
     if (    _segment->getTrack()
        and  fsm.getCosts().size()
-       and  fsm.getCost(0).isFree()
-       and (fsm.getCost(0).getTrack() != _segment->getTrack()) ) {
+       and  fsm.getCost(0)->isFree()
+       and (fsm.getTrack1(0) != _segment->getTrack()) ) {
 
-      cerr << "_processPack(): move to " << fsm.getCost(0).getTrack() << endl;
+      cerr << "_processPack(): move to " << fsm.getTrack1(0) << endl;
       fsm.moveToTrack( 0 );
     }
   }
@@ -569,7 +569,7 @@ namespace Katana {
       cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
     cdebug_tabw(159,-1);
 
-    if (fsm.getCosts().size() and fsm.getCost(0).isFree()) {
+    if (fsm.getCosts().size() and fsm.getCost(0)->isFree()) {
       cdebug_log(159,0) << "Insert in free space." << endl;
       fsm.bindToTrack( 0 );
     } else {

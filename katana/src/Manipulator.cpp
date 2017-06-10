@@ -781,7 +781,7 @@ namespace Katana {
       _fsm.setState ( SegmentFsm::OtherRipup );
       _fsm.addAction( _segment
                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
-                    , _fsm.getCost(itrack).getTrack()->getAxis() );
+                    , _fsm.getTrack1(itrack)->getAxis() );
 
       uint32_t flags = 0;
       if ( rightIntrication ) flags |= RightAxisHint;
@@ -850,7 +850,7 @@ namespace Katana {
       _fsm.setState ( SegmentFsm::OtherRipup );
       _fsm.addAction( _segment
                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                    , _fsm.getCost(itrack).getTrack()->getAxis() );
+                    , _fsm.getTrack(itrack)->getAxis() );
     }
 
     cdebug_tabw(159,-1);
@@ -932,15 +932,15 @@ namespace Katana {
   {
     cdebug_log(159,1) << "Manipulator::forceOverLocals()" << endl;
 
-    vector< array<TrackCost,2> >& costs = _fsm.getCosts();
+    vector<TrackCost*>& costs = _fsm.getCosts();
     size_t itrack = 0;
     for ( ; itrack<costs.size() ; ++itrack ) {
       cdebug_log(159,0) << "Trying itrack:" << itrack << endl;
 
-      if (  costs[itrack][0].isFixed()
-         or costs[itrack][0].isBlockage()
-         or costs[itrack][0].isInfinite()
-         or costs[itrack][0].isOverlapGlobal() )
+      if (  costs[itrack]->isFixed()
+         or costs[itrack]->isBlockage()
+         or costs[itrack]->isInfinite()
+         or costs[itrack]->isOverlapGlobal() )
         continue;
 
       bool      success    = true;
@@ -979,7 +979,7 @@ namespace Katana {
         _fsm.setState ( SegmentFsm::OtherRipup );
         _fsm.addAction( _segment
                       , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                      , _fsm.getCost(itrack).getTrack()->getAxis()
+                      , _fsm.getTrack(itrack)->getAxis()
                       );
         break;
       }

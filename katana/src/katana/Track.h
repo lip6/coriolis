@@ -95,9 +95,7 @@ namespace Katana {
               Interval       expandFreeInterval  ( size_t& begin, size_t& end, uint32_t state, Net* ) const;
               void           getBeginIndex       ( DbU::Unit position, size_t& begin, uint32_t& state ) const;
               void           getOverlapBounds    ( Interval, size_t& begin, size_t& end ) const;
-              TrackCost      getOverlapCost      ( Interval, Net*, size_t begin, size_t end, uint32_t flags ) const;
-              TrackCost      getOverlapCost      ( Interval, Net*, uint32_t flags ) const;
-              TrackCost      getOverlapCost      ( TrackElement*, uint32_t flags ) const;
+              TrackCost&     addOverlapCost      ( TrackCost& ) const;
               void           getTerminalWeight   ( Interval, Net*, size_t& count, uint32_t& weight ) const;
               DbU::Unit      getSourcePosition   ( size_t index ) const;
               bool           check               ( uint32_t& overlaps, const char* message=NULL ) const;

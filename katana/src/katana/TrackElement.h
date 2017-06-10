@@ -31,6 +31,7 @@ namespace Hurricane {
 #include  "anabatic/AutoSegment.h"
 #include  "katana/Constants.h"
 #include  "katana/Session.h"
+#include  "katana/TrackCost.h"
 #include  "katana/TrackElements.h"
 
 
@@ -51,6 +52,7 @@ namespace Katana {
   class DataNegociate;
   class Track;
   class TrackCost;
+  class TrackSegment;
 
 
   typedef  map<Segment*,TrackElement*>  TrackElementLut;
@@ -60,15 +62,19 @@ namespace Katana {
 // -------------------------------------------------------------------
 // Class  :  "TrackElement".
 
-  enum TrackElementFlags { TElemCreated     =0x00000001
-                         , TElemBlockage    =0x00000002
-                         , TElemFixed       =0x00000004
-                         , TElemLocked      =0x00000008
-                         , TElemRouted      =0x00000010
-                         , TElemSourceDogleg=0x00000020
-                         , TElemTargetDogleg=0x00000040
-                         , TElemRipple      =0x00000080
-                         , TElemInvalidated =0x00000100
+  enum TrackElementFlags { TElemCreated      = (1 <<  0)
+                         , TElemBlockage     = (1 <<  1)
+                         , TElemFixed        = (1 <<  2)
+                         , TElemWide         = (1 <<  3)
+                         , TElemLocked       = (1 <<  4)
+                         , TElemRouted       = (1 <<  5)
+                         , TElemSourceDogleg = (1 <<  6)
+                         , TElemTargetDogleg = (1 <<  7)
+                         , TElemAlignBottom  = (1 <<  8)
+                         , TElemAlignCenter  = (1 <<  9)
+                         , TElemAlignTop     = (1 << 10)
+                         , TElemRipple       = (1 << 11)
+                         , TElemInvalidated  = (1 << 12)
                          };
 
 
@@ -82,6 +88,7 @@ namespace Katana {
 
 
   class TrackElement {
+      friend class TrackSegment;
 
     public:
       static  SegmentOverlapCostCB*   setOverlapCostCB       ( SegmentOverlapCostCB* );
@@ -94,6 +101,7 @@ namespace Katana {
       virtual bool                    isFixed                () const;
       virtual bool                    isHorizontal           () const = 0;
       virtual bool                    isVertical             () const = 0;
+      inline  bool                    isWide                 () const;
       virtual bool                    isLocal                () const;
       virtual bool                    isGlobal               () const;
       virtual bool                    isBipoint              () const;
@@ -132,6 +140,7 @@ namespace Katana {
       virtual const Layer*            getLayer               () const = 0;
       virtual DbU::Unit               getPitch               () const;
       virtual DbU::Unit               getPPitch              () const;
+      virtual size_t                  getTrackSpan           () const = 0;
       inline  Track*                  getTrack               () const;
       inline  size_t                  getIndex               () const;
       virtual float                   getPriority            () const = 0;
@@ -157,6 +166,7 @@ namespace Katana {
       virtual TrackElement*           getTargetDogleg        ();
       virtual TrackElement*           getSymmetric           ();
       virtual TrackElements           getPerpandiculars      ();
+      virtual void                    addOverlapCost         ( TrackCost& ) const = 0;
     // Mutators.                                             
       inline  void                    setFlags               ( uint32_t );
       inline  void                    unsetFlags             ( uint32_t );
@@ -176,7 +186,7 @@ namespace Katana {
       virtual void                    invalidate             ();
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();
-      virtual void                    incOverlapCost         ( Net*, TrackCost& ) const;
+      virtual void                    incOverlapCost         ( TrackCost& ) const;
       virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::SegAxisSet );
       virtual TrackElement*           makeDogleg             ();
       inline  bool                    makeDogleg             ( Anabatic::GCell* );
@@ -199,12 +209,12 @@ namespace Katana {
     // Static Attributes.
       static SegmentOverlapCostCB*    _overlapCostCallback;
     // Attributes.                   
-             uint32_t                _flags;
-             Track*                  _track;
-             size_t                  _index;
-             DbU::Unit               _sourceU;
-             DbU::Unit               _targetU;
-             Observer<TrackElement>  _observer;
+             uint32_t                 _flags;
+             Track*                   _track;
+             size_t                   _index;
+             DbU::Unit                _sourceU;
+             DbU::Unit                _targetU;
+             Observer<TrackElement>   _observer;
 
     protected:
     // Constructors & Destructors.
@@ -221,8 +231,9 @@ namespace Katana {
 
 // Inline functions.
   inline Observer<TrackElement>* TrackElement::getObserver          () { return &_observer; }
-  inline void                    TrackElement::setFlags             ( uint32_t flags ) { _flags|= flags; }
-  inline void                    TrackElement::unsetFlags           ( uint32_t flags ) { _flags&=~flags; }
+  inline void                    TrackElement::setFlags             ( uint32_t flags ) { _flags |=  flags; }
+  inline void                    TrackElement::unsetFlags           ( uint32_t flags ) { _flags &= ~flags; }
+  inline bool                    TrackElement::isWide               () const { return _flags & TElemWide; }
   inline bool                    TrackElement::isCreated            () const { return _flags & TElemCreated; }
   inline bool                    TrackElement::isInvalidated        () const { return _flags & TElemInvalidated; }
   inline bool                    TrackElement::isBlockage           () const { return _flags & TElemBlockage; }

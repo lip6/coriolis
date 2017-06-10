@@ -26,7 +26,8 @@
 #include "anabatic/GCell.h"
 #include "crlcore/RoutingGauge.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackSegment.h"
+#include "katana/TrackSegmentRegular.h"
+#include "katana/TrackSegmentWide.h"
 #include "katana/Track.h"
 #include "katana/Session.h"
 #include "katana/RoutingEvent.h"
@@ -69,8 +70,8 @@ namespace Katana {
     , _dogLegLevel  (0)
     , _flags        (NoFlags)
   {
-    cdebug_log(155,0) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
-    cdebug_log(155,0) << "             over " << (void*)segment << ":" << segment << endl;
+    cdebug_log(155,0) << "CTOR TrackSegment " << /*(void*)this    <<*/ ":" << this    << endl;
+    cdebug_log(155,0) << "             over " << /*(void*)segment <<*/ ":" << segment << endl;
 
     setFlags( TElemCreated|TElemLocked );
     if (segment) {
@@ -129,16 +130,23 @@ namespace Katana {
   {
     created = false;
 
-    TrackElement* trackElement = Session::lookup( segment->base() );
+    DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
+    TrackElement* trackElement     = Session::lookup( segment->base() );
     if (not trackElement) { 
-      TrackSegment* trackSegment = new TrackSegment( segment, track );
-      trackSegment->_postCreate();
-      created = true;
+      if (segment->base()->getWidth() <= defaultWireWidth) {
+        trackElement = new TrackSegmentRegular( segment, track );
+        trackElement->_postCreate();
+        created = true;
       
-      trackSegment->invalidate();
+        trackElement->invalidate();
 
-      cdebug_log(159,0) << "TrackSegment::create(): " << trackSegment << endl;
-      trackElement = trackSegment;
+        cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
+      } else {
+        throw Error( "TrackSegment::create() Non-regular TrackSegment are not supported yet.\n"
+                     "        (on: %s)" 
+                   , getString(segment).c_str()
+                   );
+      }
     }
 
     return trackElement;
@@ -356,7 +364,10 @@ namespace Katana {
 
 
   void  TrackSegment::setTrack ( Track* track )
-  { TrackElement::setTrack( track ); }
+  {
+    if (track) setAxis( track->getAxis(), Anabatic::SegAxisSet );
+    TrackElement::setTrack( track );
+  }
 
 
   void  TrackSegment::setSymmetric ( TrackElement* segment )
