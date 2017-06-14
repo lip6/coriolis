@@ -135,6 +135,10 @@ namespace Hurricane {
     w->endObject();
   }
 
+  void NetRoutingState::setWPitch ( unsigned int w ) 
+  { 
+    if (w != 0) _wPitch = w; 
+  }
 
 // -------------------------------------------------------------------
 // Class  :  "JsonNetRoutingProperty"

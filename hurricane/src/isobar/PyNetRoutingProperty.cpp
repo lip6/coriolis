@@ -136,6 +136,8 @@ extern "C" {
   ExtensionSetUIntFunction(setFlags              ,NetRoutingExtension)
   ExtensionSetUIntFunction(unsetFlags            ,NetRoutingExtension)
   ExtensionSetLongFunction(setSymAxis            ,NetRoutingExtension)
+  ExtensionGetUIntFunction(getWPitch             ,NetRoutingExtension)
+  ExtensionSetUIntFunction(setWPitch             ,NetRoutingExtension)
 
 
   static PyObject* PyNetRoutingExtension_getSymNet ( PyObject*, PyObject* args )
@@ -214,6 +216,8 @@ extern "C" {
                                 , "Returns the NetRoutingState, or None has not been created yet." }
     , { "create"                , (PyCFunction)PyNetRoutingExtension_create                , METH_VARARGS|METH_CLASS
                                 , "Returns the NetRoutingState, create it if needs be." }
+    , { "setWPitch"             , (PyCFunction)PyNetRoutingExtension_setWPitch             , METH_VARARGS|METH_CLASS , "To be documented." }
+    , { "getWPitch"             , (PyCFunction)PyNetRoutingExtension_getWPitch             , METH_NOARGS |METH_CLASS , "To be documented." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 

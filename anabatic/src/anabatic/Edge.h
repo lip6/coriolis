@@ -73,8 +73,11 @@ namespace Anabatic {
                     Interval          getSide              () const;
                     Segment*          getSegment           ( const Net* ) const;
       inline const  vector<Segment*>& getSegments          () const;
+      inline        void              setCapacity          ( int );
       inline        void              incCapacity          ( int );
+      inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
+                    void              incRealOccupancy2    ( int );
       inline        void              setHistoricCost      ( float );
                     void              add                  ( Segment* );
                     void              remove               ( Segment* );
@@ -83,6 +86,8 @@ namespace Anabatic {
       inline const  Flags&            flags                () const;
       inline        Flags&            flags                ();
       inline        void              revalidate           () const;
+
+                    bool              isMaxCapacity        ( Net* net = NULL ) const;
                     void              _setSource           ( GCell* );
                     void              _setTarget           ( GCell* );
     private:                          
@@ -133,13 +138,14 @@ namespace Anabatic {
   inline       GCell*            Edge::getTarget            () const { return _target; }
   inline       DbU::Unit         Edge::getAxis              () const { return _axis; }
   inline const vector<Segment*>& Edge::getSegments          () const { return _segments; }
-  inline       void              Edge::incCapacity          ( int delta ) { _capacity = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
+  inline       void              Edge::incCapacity          ( int delta ) { _capacity  = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
+  inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
+  inline       void              Edge::setRealOccupancy     ( int c     ) { _realOccupancy = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setHistoricCost      ( float hcost ) { _historicCost = hcost; }
   inline const Flags&            Edge::flags                () const { return _flags; }
   inline       Flags&            Edge::flags                () { return _flags; }
   inline       void              Edge::revalidate           () const { /*if (_flags&Flags::Invalidated)*/ const_cast<Edge*>(this)->_revalidate(); }
-
-
+ 
 }  // Anabatic namespace.
 
 

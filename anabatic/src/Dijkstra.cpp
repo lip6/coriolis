@@ -231,7 +231,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::isRestricted ( const Vertex* v1, const Vertex* v2, DbU::Unit hpitch, DbU::Unit vpitch )
+  bool Vertex::isRestricted ( const Vertex* v1, const Vertex* v2, const Edge* e, DbU::Unit hpitch, DbU::Unit vpitch, Net* net )
   {
     bool   restricted = true;
     GCell* c1         = v1->getGCell();
@@ -274,7 +274,12 @@ namespace Anabatic {
            ||(c2->getHeight() < vpitch)
            ||(restricted)
            ) return true;
-      else return false;
+      else {
+        if ((v2->getGCell()->isStrut())){
+          if (e->isMaxCapacity(net)) return true;
+          else return false;
+        } else return false;
+      }
     }
   }
 
@@ -1160,8 +1165,8 @@ namespace Anabatic {
 
   DbU::Unit  Dijkstra::_distance ( const Vertex* current, const Vertex* vneighbour, const Edge* e )
   {
-    if (Vertex::isRestricted(current, vneighbour)) return Vertex::unreachable;
-    else                                           return current->getDistance() + e->getDistance();
+    if (Vertex::isRestricted(current, vneighbour, e)) return Vertex::unreachable;
+    else                                              return current->getDistance() + e->getDistance();
   }
 
 
@@ -1526,7 +1531,7 @@ namespace Anabatic {
       Vertex* current  = _queue.top();
       GCell*  gcurrent = current->getGCell();
 
-      cdebug_log(111,1) << "Current:" << current << endl;
+    //cdebug_log(111,1) << "Current:" << current << endl;
       _queue.pop();
 
       if      ( current->isAxisTarget() and needAxisTarget()) unsetFlags(Mode::AxisTarget);
@@ -1534,6 +1539,7 @@ namespace Anabatic {
         cdebug_log(111,1) << "Looking for neighbors:" << endl;
 
         for ( Edge* edge : current->getGCell()->getEdges() ) {
+          cdebug_log(111,0) << "[Current]: " << current << endl;
           cdebug_log(111,0) << "@ Edge " << edge << endl;
 
           if (edge == current->getFrom()) {
@@ -1565,7 +1571,7 @@ namespace Anabatic {
           cdebug_tabw(111,1);
           if (current->getFrom()) { 
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
-            current->getIntervFrom().print();
+          //current->getIntervFrom().print();
           } 
           if (current->getFrom2()) { 
             cdebug_log(111,0) << "| From2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
@@ -1582,7 +1588,10 @@ namespace Anabatic {
           bool isDistance2shorter = _isDistance2Shorter ( distance, current, vneighbor, edge ); // ANALOG
 
           if  (   (distance == vneighbor->getDistance())
-              and ( (not gcurrent->isMatrix()) and (not gneighbor->isMatrix()) ) ) {
+              and (not gcurrent->isMatrix() ) 
+              and (not gneighbor->isMatrix()) 
+              and (vneighbor->getFrom2() == NULL)
+              )  {
             _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
           } else
             if ( (distance < vneighbor->getDistance()) and (distance != Vertex::unreachable) ) {
@@ -1602,7 +1611,9 @@ namespace Anabatic {
               
               vneighbor->setBranchId( current->getBranchId() );
               vneighbor->setDistance( distance );
+              cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
               vneighbor->setFrom ( edge );
+              vneighbor->setFrom2( NULL );
               _queue.push( vneighbor );
               cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
             } else {
@@ -1661,6 +1672,8 @@ namespace Anabatic {
     while ( current ) {
       cdebug_log(112,0) << endl;
       cdebug_log(112,0) << "| " << current << " | " << endl;
+      if (current->getFrom()) cdebug_log(112,0) << "  | From :" << current->getFrom()->getOpposite(current->getGCell()) << " | " << endl;
+      if (current->getFrom2()) cdebug_log(112,0) << "  | From2:" << current->getFrom2()->getOpposite(current->getGCell()) << " | " << endl;
 
       if (!current->getGCell()->isMatrix()){
       //////////////////////////////////////////////////////////////////////////////////////////// ANALOG
@@ -1764,7 +1777,7 @@ namespace Anabatic {
           if (target->getFrom()) targetContact = target->getGContact( _net );
           else                   targetContact = target->breakGoThrough( _net );
         }
-
+        
         if (aligneds.front()->isHorizontal()) {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
@@ -1773,7 +1786,7 @@ namespace Anabatic {
                                       , targetContact
                                       , _anabatic->getConfiguration()->getGHorizontalLayer()
                                       , constraint.getCenter()
-                                      , DbU::fromLambda(2.0)
+                                      , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))//DbU::fromLambda(2.0)
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){
@@ -1787,7 +1800,7 @@ namespace Anabatic {
                                     , targetContact
                                     , _anabatic->getConfiguration()->getGVerticalLayer()
                                     , constraint.getCenter()
-                                    , DbU::fromLambda(2.0)
+                                    , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"))//DbU::fromLambda(2.0)
                                     );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){
@@ -1995,7 +2008,7 @@ namespace Anabatic {
                                               , targetSym
                                               , _anabatic->getConfiguration()->getGHorizontalLayer()
                                               , axis
-                                              , DbU::fromLambda(2.0)
+                                              , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))
                                               );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       } else if (v) {
@@ -2034,7 +2047,7 @@ namespace Anabatic {
                                             , targetSym
                                             , _anabatic->getConfiguration()->getGVerticalLayer()
                                             , axis
-                                            , DbU::fromLambda(2.0)
+                                            , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"))
                                             );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       }
@@ -2115,15 +2128,15 @@ namespace Anabatic {
   void Dijkstra::_pushEqualDistance ( DbU::Unit distance, bool isDistance2shorter, Vertex* current, Vertex* vneighbor, Edge* edge )
   {
     GCell*  gneighbor = edge->getOpposite(current->getGCell());
-    cdebug_log(111,0) << "[case: Distance EQUAL + SameSide]" << endl;
-    cdebug_log(111,0) << "Previous getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;
-            
     GCell*  gnext     = vneighbor->getGCell();
     GCell*  gprev     = vneighbor->getFrom()->getOpposite(gnext);
     Vertex* vprev     = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
 
     if ((distance == vneighbor->getDistance()) and vneighbor->areSameSide(vprev, current)){
+      cdebug_log(111,0) << "[case: Distance EQUAL + SameSide]" << endl;
+      cdebug_log(111,0) << "Previous getfrom:" << vneighbor->getFrom()->getOpposite( gneighbor ) << endl;
       cdebug_log(111,0) << "[case: Other GetFROM]" << endl; 
+      cdebug_log(111,0) << "setFrom2: " << vneighbor << endl; 
       vneighbor->setFrom2    ( edge );
       vneighbor->setFlags(Vertex::From2Mode);
     //vneighbor->createIntervFrom2();
@@ -2131,9 +2144,11 @@ namespace Anabatic {
       vneighbor->unsetFlags(Vertex::From2Mode);
       if (isDistance2shorter) {
         vneighbor->setFlags(Vertex::UseFromFrom2);
-        cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
+      //cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
       }
       cdebug_log(111,0) << "Push BIS : " << vneighbor << endl;
+      cdebug_log(111,0) << "From1: " << vneighbor->getFrom()->getOpposite(vneighbor->getGCell()) << endl;
+      cdebug_log(111,0) << "From2: " << vneighbor->getFrom2()->getOpposite(vneighbor->getGCell()) << endl;
       vneighbor->getIntervFrom().print();
       vneighbor->getIntervFrom2().print();
     } 
@@ -2143,12 +2158,12 @@ namespace Anabatic {
   void Dijkstra::_updateGRAData ( Vertex* vneighbor, bool isDistance2shorter, Vertex* current )
   {
     vneighbor->unsetFlags(Vertex::UseFromFrom2);
-    cdebug_log(111,0) << "unsetFromFrom2: " << vneighbor << endl; 
+  //cdebug_log(111,0) << "unsetFromFrom2: " << vneighbor << endl; 
     vneighbor->clearFrom2();
     if (isDistance2shorter) {
       vneighbor->setFlags(Vertex::UseFromFrom2);
-      cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
-    } else  cdebug_log(111,0) << "DON'T setFromFrom2: " << vneighbor << endl; 
+    //cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
+    }// else  cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
             
     vneighbor->setIntervals( current );
     vneighbor->getIntervFrom().print();
@@ -2204,7 +2219,7 @@ namespace Anabatic {
       if (current->getConnexId() == _connectedsId) return true;
       from = NULL;
       if (useFrom2) {
-        cdebug_log(112,0) << "USE FROM2: " << current->getFrom2() << endl;
+        cdebug_log(112,0) << "USE FROM2: " << current->getFrom2()->getOpposite(current->getGCell()) << endl;
         current->setFrom(current->getFrom2());
         current->setIntervfrom(current->getPIMin2(), current->getPIMax2(), current->getPIAxis2());
         current->clearFrom2();
@@ -2226,6 +2241,7 @@ namespace Anabatic {
       cdebug_log(112,0) <<                  ", axis: " << DbU::getValueString(current->getPIAxis()) << endl;
       current->getPredecessor()->setInterv(current->getPIMin(), current->getPIMax(), current->getPIAxis());
       current->getIntervFrom().print();
+    //if (current->getPredecessor()->getGCell()->isStrut()) _updateRealOccupancy( current );
     } 
     return false;
   }
@@ -2298,6 +2314,22 @@ namespace Anabatic {
   }
 
 
+  void Dijkstra::_updateRealOccupancy ( Vertex* current )
+  {
+    cerr << "void Dijkstra::_updateRealOccupancy ( Vertex* current ): " << current << endl;
+    GCell* gcurrent = current->getGCell();
+    GCell* gnext    = current->getPredecessor()->getGCell();
+    Edge*  e        = gcurrent->getEdgeTo(gnext);
+
+    NetRoutingState* state = NetRoutingExtension::get( _net );
+    cerr << "e: " << e << endl;
+    e->incRealOccupancy2(state->getWPitch());
+    cerr << "e: " << e << endl;
+    if (current->getGCell()->getWestEdge()) cerr << "W occupancy: " << current->getGCell()->getWestEdge()->getRealOccupancy()  << "/" << current->getGCell()->getWestEdge()->getCapacity() << endl;
+    if (current->getGCell()->getEastEdge()) cerr << "E occupancy: " << current->getGCell()->getEastEdge()->getRealOccupancy()  << "/" << current->getGCell()->getEastEdge()->getCapacity() << endl;
+    if (current->getGCell()->getNorthEdge()) cerr << "N occupancy: " << current->getGCell()->getNorthEdge()->getRealOccupancy() << "/" << current->getGCell()->getNorthEdge()->getCapacity() << endl;
+    if (current->getGCell()->getSouthEdge()) cerr << "S occupancy: " << current->getGCell()->getSouthEdge()->getRealOccupancy() << "/" << current->getGCell()->getSouthEdge()->getCapacity() << endl;
+  }
 
 
 }  // Anabatic namespace.

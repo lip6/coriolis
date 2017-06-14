@@ -83,11 +83,13 @@ extern "C" {
   DirectGetBoolAttribute(PyNetRoutingState_isAnalog              ,isAnalog              ,PyNetRoutingState,NetRoutingState)
   DirectGetUIntAttribute(PyNetRoutingState_getFlags              ,getFlags              ,PyNetRoutingState,NetRoutingState)
   DirectGetLongAttribute(PyNetRoutingState_getSymAxis            ,getSymAxis            ,PyNetRoutingState,NetRoutingState)
+  DirectGetUIntAttribute(PyNetRoutingState_getWPitch             ,getWPitch             ,PyNetRoutingState,NetRoutingState)
 
   // Standart Mutators (Attributes).
   DirectSetUInt32Attribute(PyNetRoutingState_setFlags  ,setFlags  ,PyNetRoutingState,NetRoutingState)
   DirectSetUInt32Attribute(PyNetRoutingState_unsetFlags,unsetFlags,PyNetRoutingState,NetRoutingState)
   DirectSetLongAttribute  (PyNetRoutingState_setSymAxis,setSymAxis,PyNetRoutingState,NetRoutingState)
+  DirectSetUInt32Attribute(PyNetRoutingState_setWPitch ,setWPitch ,PyNetRoutingState,NetRoutingState)
 
 
   PyMethodDef PyNetRoutingState_Methods[] =
@@ -111,6 +113,8 @@ extern "C" {
     , { "setSymAxis"            , (PyCFunction)PyNetRoutingState_setSymAxis            , METH_VARARGS , "To be documented." }
     , { "getNet"                , (PyCFunction)PyNetRoutingState_getNet                , METH_VARARGS , "To be documented." }
     , { "getSymNet"             , (PyCFunction)PyNetRoutingState_getSymNet             , METH_VARARGS , "To be documented." }
+    , { "getWPitch"             , (PyCFunction)PyNetRoutingState_getWPitch             , METH_NOARGS  , "To be documented." }
+    , { "setWPitch"             , (PyCFunction)PyNetRoutingState_setWPitch             , METH_VARARGS , "To be documented." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 

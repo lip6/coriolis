@@ -72,6 +72,8 @@ namespace Hurricane {
       inline  void          setFlags               ( uint32_t mask );
       inline  void          unsetFlags             ( uint32_t mask );
       inline  bool          isSelfSym              () const;
+              void          setWPitch              ( uint32_t );
+      inline  uint32_t      getWPitch              () const;
               DbU::Unit     getSymValue            ( DbU::Unit ) const;
               std::string   _getString             () const;
               Record*       _getRecord             () const;
@@ -84,10 +86,11 @@ namespace Hurricane {
       Net*          _symNet;
       uint32_t      _flags;
       DbU::Unit     _axis;
+      uint32_t      _wPitch;
   };
 
 
-  inline NetRoutingState::NetRoutingState ( Net* net, uint32_t flags ) : _net(net), _symNet(NULL), _flags(flags), _axis(0) { }
+  inline NetRoutingState::NetRoutingState ( Net* net, uint32_t flags ) : _net(net), _symNet(NULL), _flags(flags), _axis(0), _wPitch(1) { }
 
   inline bool          NetRoutingState::isExcluded             () const { return _flags & Excluded; };
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
@@ -111,7 +114,8 @@ namespace Hurricane {
   inline void          NetRoutingState::setSymAxis             ( DbU::Unit axis ) { _axis = axis; } 
   inline bool          NetRoutingState::isSelfSym              () const { return (_symNet == NULL) and (isSymmetric()); }
   inline bool          NetRoutingState::isSymSlave             () const { return (_symNet != NULL) and (not isSymMaster()); }
-
+  inline uint32_t      NetRoutingState::getWPitch              () const { return _wPitch; }
+                                                                                   
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::NetRoutingProperty".
@@ -180,6 +184,10 @@ namespace Hurricane {
       static inline  void             setSymAxis             ( const Net*, DbU::Unit );
       static inline  void             setFlags               ( const Net*, uint32_t mask );
       static inline  void             unsetFlags             ( const Net*, uint32_t mask );
+
+      static inline  uint32_t         getWPitch              ( const Net* );
+      static inline  void             setWPitch              ( const Net*, uint32_t w );
+
       static         NetRoutingState* get                    ( const Net* );
       static         NetRoutingState* create                 ( Net*, uint32_t flags=0 );
     private:
@@ -304,6 +312,20 @@ namespace Hurricane {
   {
     NetRoutingState* state = get( net );
     if (state != NULL) state->unsetFlags( mask );
+  }
+
+
+  inline uint32_t  NetRoutingExtension::getWPitch ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? 0 : state->getWPitch();
+  }
+
+
+  inline void  NetRoutingExtension::setWPitch ( const Net* net, uint32_t w )
+  {
+    NetRoutingState* state = get( net );
+    if (state != NULL) state->setWPitch( w );
   }
 
 

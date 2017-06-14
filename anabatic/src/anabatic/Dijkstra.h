@@ -244,7 +244,7 @@ namespace Anabatic {
                      bool            hasRP            ( Net* ) const;
                      bool            hasVRP           ( Net* ) const;
                      bool            hasHRP           ( Net* ) const;
-      static         bool            isRestricted     ( const Vertex* v1, const Vertex* v2, DbU::Unit hpitch = 0, DbU::Unit vpitch = 0);
+      static         bool            isRestricted     ( const Vertex* v1, const Vertex* v2, const Edge* e, DbU::Unit hpitch = 0, DbU::Unit vpitch = 0, Net* net = NULL);
                      bool            areSameSide      ( const Vertex*, const Vertex* ) const;
 
               inline bool            isFromFrom2  () const;
@@ -518,6 +518,7 @@ namespace Anabatic {
              void        _updateGRAData           ( Vertex*, bool, Vertex* );
              void        _initiateUpdateIntervals ( Vertex* );
              bool        _updateIntervals         ( bool&, Vertex*, bool&, int&, Edge* );
+             void        _updateRealOccupancy     ( Vertex* );
 
     private:
       AnabaticEngine*  _anabatic;
