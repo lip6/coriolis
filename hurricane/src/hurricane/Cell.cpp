@@ -813,9 +813,14 @@ DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
   return NULL;
 }
 
+void Cell::flattenNets (uint64_t flags )
+// *************************************
+{
+  flattenNets( NULL, flags );
+}
 
-void Cell::flattenNets(uint64_t flags)
-// ***************************************
+void Cell::flattenNets ( const Instance* instance, uint64_t flags )
+// ****************************************************************
 {
   cdebug_log(18,0) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
 
@@ -828,7 +833,7 @@ void Cell::flattenNets(uint64_t flags)
   vector<HyperNet>  hyperNets;
   vector<HyperNet>  topHyperNets;
 
-  for ( Occurrence occurrence : getHyperNetRootNetOccurrences() ) {
+  for ( Occurrence occurrence : getHyperNetRootNetOccurrences().getSubSet(NotFilter<Occurrence>(Occurrence_Contains(instance))) ) {
     Net* net = static_cast<Net*>(occurrence.getEntity());
 
     if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;

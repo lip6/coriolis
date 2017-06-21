@@ -1782,11 +1782,14 @@ namespace Anabatic {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
 
+          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));  //DbU::fromLambda(2.0);
+          if (state) width *= state->getWPitch();
+
           segment = Horizontal::create( sourceContact
                                       , targetContact
                                       , _anabatic->getConfiguration()->getGHorizontalLayer()
                                       , constraint.getCenter()
-                                      , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))//DbU::fromLambda(2.0)
+                                      , width
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){
@@ -1796,11 +1799,14 @@ namespace Anabatic {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
 
+          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));  //DbU::fromLambda(2.0);
+          if (state) width *= state->getWPitch();
+
           segment = Vertical::create( sourceContact
                                     , targetContact
                                     , _anabatic->getConfiguration()->getGVerticalLayer()
                                     , constraint.getCenter()
-                                    , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"))//DbU::fromLambda(2.0)
+                                    , width
                                     );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){
