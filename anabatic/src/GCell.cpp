@@ -1665,6 +1665,20 @@ namespace Anabatic {
     return false;
   }
 
+
+  void GCell::setEdgesOccupancy ( unsigned int width, unsigned int height )
+  {
+    getEastEdge()->setCapacity(width);
+    getWestEdge()->setCapacity(width);
+    getNorthEdge()->setCapacity(height);
+    getSouthEdge()->setCapacity(height);
+    getEastEdge()->setRealOccupancy(0);
+    getWestEdge()->setRealOccupancy(0);
+    getNorthEdge()->setRealOccupancy(0);
+    getSouthEdge()->setRealOccupancy(0);
+  }
+
+
   string  GCell::_getTypeName () const
   { return getString(_extensionName); }
 

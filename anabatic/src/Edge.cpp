@@ -17,6 +17,8 @@
 #include <iostream>
 #include "hurricane/Error.h"
 #include "hurricane/Segment.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 #include "anabatic/Edge.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
@@ -182,6 +184,10 @@ namespace Anabatic {
     _realOccupancy = occupancy;
   }
 
+  void  Edge::incRealOccupancy2 ( int value )
+  {
+    _realOccupancy += value;
+  }
 
   Segment* Edge::getSegment ( const Net* owner ) const
   {
@@ -195,7 +201,13 @@ namespace Anabatic {
   void  Edge::add ( Segment* segment )
   {
     _segments.push_back( segment );
-    incRealOccupancy( 1 );  // Need to take the wire width into account.
+    Horizontal* h = dynamic_cast<Horizontal*>(segment);
+    Vertical*   v = dynamic_cast<Vertical*>(segment);
+    DbU::Unit pitch = 0;
+    if (h) pitch = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));
+    if (v) pitch = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));
+    
+    incRealOccupancy( segment->getWidth()/pitch );  // Need to take the wire width into account.
   }
 
 
@@ -297,6 +309,20 @@ namespace Anabatic {
     return Box( _axis - halfThickness, _target->getYMin() - halfLength
               , _axis + halfThickness, _target->getYMin() + halfLength
               );
+  }
+
+
+  bool Edge::isMaxCapacity ( Net* net ) const 
+  {
+    if (net){
+      Hurricane::NetRoutingState* state = Hurricane::NetRoutingExtension::get( net );
+    //cerr << "bool Edge::isMaxCapacity ( Net* net ) const: " << net << endl;
+    //cerr << "WPitch: " << state->getWPitch() << endl;
+      
+      return ( (_realOccupancy +state->getWPitch()) > _capacity ) ? true : false; 
+    } else {
+      return ( _realOccupancy >= _capacity ) ? true : false; 
+    }
   }
 
 

@@ -171,6 +171,12 @@ namespace Anabatic {
       inline        GCell*                getEast             () const;
       inline        GCell*                getSouth            () const;
       inline        GCell*                getNorth            () const;
+
+      inline        Edge*                 getWestEdge         () const;
+      inline        Edge*                 getEastEdge         () const;
+      inline        Edge*                 getSouthEdge        () const;
+      inline        Edge*                 getNorthEdge        () const;
+
                     GCell*                getWest             ( DbU::Unit y ) const;
                     GCell*                getEast             ( DbU::Unit y ) const;
                     GCell*                getSouth            ( DbU::Unit x ) const;
@@ -237,6 +243,8 @@ namespace Anabatic {
                     bool                  stepNetDesaturate   ( size_t     depth
                                                               , set<Net*>& globalNets
                                                               , Set&       invalidateds );
+
+                    void                  setEdgesOccupancy   (unsigned int, unsigned int);
     // Misc. functions.
       inline const  Flags&                flags               () const;
       inline        Flags&                flags               ();
@@ -323,6 +331,12 @@ namespace Anabatic {
   inline       GCell*                GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
   inline       GCell*                GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
   inline       GCell*                GCell::getNorth      () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
+
+  inline       Edge*                 GCell::getWestEdge       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]; }
+  inline       Edge*                 GCell::getEastEdge       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]; }
+  inline       Edge*                 GCell::getSouthEdge      () const { return _southEdges.empty() ? NULL : _southEdges[0]; }
+  inline       Edge*                 GCell::getNorthEdge      () const { return _northEdges.empty() ? NULL : _northEdges[0]; }
+
   inline       GCell*                GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
   inline const vector<Contact*>&     GCell::getGContacts  () const { return _gcontacts; }
   inline        size_t               GCell::getDepth      () const { return _depth; }
