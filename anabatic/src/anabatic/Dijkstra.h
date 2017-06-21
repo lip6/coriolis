@@ -54,6 +54,7 @@ namespace Anabatic {
                           IntervalC();
                           IntervalC(const IntervalC&);
                           IntervalC(IntervalC&);
+                          IntervalC( DbU::Unit, DbU::Unit, DbU::Unit );
                          ~IntervalC();
              void         set        ( DbU::Unit, DbU::Unit, DbU::Unit );
              void         setRange   ( DbU::Unit, DbU::Unit );
@@ -262,7 +263,7 @@ namespace Anabatic {
                      Point           getNextPathPoint  ( Point, const Vertex* ) const;
     //////////////////////////////////////// GRDATA
                      void            setIntervals      ( Vertex* );
-
+              inline bool            hasAData          () const;
                      bool            isiSet            () const;
                      DbU::Unit       getIAxis          () const;
                      DbU::Unit       getIMax           () const;
@@ -277,7 +278,6 @@ namespace Anabatic {
                      void            clearFrom2        ();
                      Edge*           getFrom2          () const;
                      void            setFrom2          ( Edge* );
-                     void            createIntervFrom2 ();
                      DbU::Unit       getPIMax2         () const;
                      DbU::Unit       getPIMin2         () const;
                      DbU::Unit       getPIAxis2        () const;
@@ -372,6 +372,7 @@ namespace Anabatic {
   inline  bool Vertex::isWRestricted      () const { return (_flags & WRestricted); }
   inline  bool Vertex::hasRestrictions    () const { return ( isNRestricted()||isSRestricted()||isERestricted()||isWRestricted()) ; }
 
+  inline bool         Vertex::hasAData         () const { return (_adata !=NULL)? true : false; }
   inline void         Vertex::setRestricted    () { _flags |= 0xF; }
   inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
   inline void         Vertex::setNRestricted   () { _flags |= NRestricted; }
@@ -509,7 +510,7 @@ namespace Anabatic {
                     void setAxisTargets      ();
                     void unsetAxisTargets    ();
 
-             bool        _attachSymContactsHook   ( RoutingPad* );
+             bool        _attachSymContactsHook   ( RoutingPad* ); 
              void        _limitSymSearchArea      ( RoutingPad* rp );
              void        _setSourcesGRAData       ( Vertex*, RoutingPad*);
              bool        _checkFrom2              ( Edge*, Vertex* );

@@ -318,8 +318,8 @@ namespace Anabatic {
       Hurricane::NetRoutingState* state = Hurricane::NetRoutingExtension::get( net );
     //cerr << "bool Edge::isMaxCapacity ( Net* net ) const: " << net << endl;
     //cerr << "WPitch: " << state->getWPitch() << endl;
-      
-      return ( (_realOccupancy +state->getWPitch()) > _capacity ) ? true : false; 
+      if (state) return ( (_realOccupancy +state->getWPitch()) > _capacity ) ? true : false; 
+      else       return ( (_realOccupancy +1) > _capacity ) ? true : false; 
     } else {
       return ( _realOccupancy >= _capacity ) ? true : false; 
     }

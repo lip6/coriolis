@@ -172,6 +172,9 @@ namespace Anabatic {
       inline        GCell*                getSouth            () const;
       inline        GCell*                getNorth            () const;
 
+                    GCell*                getEastNMatrix      () const;
+                    GCell*                getNorthNMatrix     () const;
+
       inline        Edge*                 getWestEdge         () const;
       inline        Edge*                 getEastEdge         () const;
       inline        Edge*                 getSouthEdge        () const;
