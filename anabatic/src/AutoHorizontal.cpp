@@ -432,8 +432,8 @@ namespace Anabatic {
 
   void  AutoHorizontal::updatePositions ()
   {
-    _sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
-    _targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
+    _sourcePosition = _horizontal->getSourceX() - getExtensionCap();
+    _targetPosition = _horizontal->getTargetX() + getExtensionCap();
   }
 
 
@@ -453,8 +453,8 @@ namespace Anabatic {
   bool  AutoHorizontal::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
-    DbU::Unit targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
+    DbU::Unit sourcePosition = _horizontal->getSourceX() - getExtensionCap();
+    DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap();
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "

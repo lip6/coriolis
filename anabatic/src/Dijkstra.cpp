@@ -1961,11 +1961,12 @@ namespace Anabatic {
 
           DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));
           if (state) width *= state->getWPitch();
+
           segment = Horizontal::create( sourceContact
                                       , targetContact
                                       , _anabatic->getConfiguration()->getGHorizontalLayer()
                                       , constraint.getCenter()
-                                      , width//DbU::fromLambda(2.0)
+                                      , width
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){
@@ -1981,7 +1982,7 @@ namespace Anabatic {
                                     , targetContact
                                     , _anabatic->getConfiguration()->getGVerticalLayer()
                                     , constraint.getCenter()
-                                    , width//DbU::fromLambda(2.0)
+                                    , width
                                     );
           for ( Edge* through : aligneds ) through->add( segment );
           if (state){

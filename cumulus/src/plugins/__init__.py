@@ -41,8 +41,8 @@ def  kwParseMain ( **kw ):
       editor = kw['editor']
       if cell == None: cell = editor.getCell()
 
-    if cell == None:
-      raise ErrorMessage( 3, 'Chip: No cell loaded yet.' )
+   #if cell == None:
+   #  raise ErrorMessage( 3, 'Chip: No cell loaded yet.' )
 
     return cell, editor
 

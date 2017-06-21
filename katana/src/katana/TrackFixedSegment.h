@@ -50,10 +50,12 @@ namespace Katana {
       virtual Flags          getDirection           () const;
       virtual Net*           getNet                 () const;
       virtual const Layer*   getLayer               () const;
+      virtual size_t         getTrackSpan           () const;
       virtual TrackElement*  getNext                () const;
       virtual TrackElement*  getPrevious            () const;
       virtual DbU::Unit      getAxis                () const;
       virtual Interval       getFreeInterval        () const;
+      virtual void           addOverlapCost         ( TrackCost& ) const;
       virtual float          getPriority            () const;
       virtual void           setPriorityLock        ( bool );
       virtual void           forcePriority          ( float );
