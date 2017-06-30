@@ -22,7 +22,9 @@
  
  add_subdirectory(examples)
  if(BUILD_DOC)
+   add_subdirectory(etc)
    add_subdirectory(UsersGuide)
+   add_subdirectory(PythonCpp)
  endif(BUILD_DOC)
 
  set ( htmlInstallDir  share/doc/coriolis2/ )

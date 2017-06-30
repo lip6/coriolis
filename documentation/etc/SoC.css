@@ -1,0 +1,536 @@
+/* -*- Mode: css -*- */
+
+
+/*@media (max-resolution: 150dpi) {*/
+  body   { font-size:  9pt; }
+  p#lip6 { font-size: 14pt; }
+  p#soc  { font-size: 28pt; }
+/*
+}
+
+@media (min-resolution: 151dpi) {
+  body   { font-size: 11pt; }
+  p#lip6 { font-size: 18pt; }
+  p#soc  { font-size: 40pt; }
+}
+*/
+
+
+body {
+  font-family:        "Open Sans", verdana, sans-serif;
+  margin-left:        auto;
+  margin-right:       auto;
+  margin-top:         20pt;
+  margin-bottom:      20pt;
+  padding-top:        0pt;
+  padding-bottom:     0pt;
+  padding-left:       30pt;
+  padding-right:      30pt;
+  width:              580pt;
+  background-color:   #f5f5f5;
+/*background:         #f5f5f5 url('../images/flowers-abstract-grey.png') repeat;*/
+/*background:         #f5f5f5 url('../images/layout-motif-faded-2.png') repeat;*/
+  background-size:    20%;
+  -moz-box-shadow:    0px 0px 5px 5px #ccc;
+  -webkit-box-shadow: 0px 0px 5px 5px #ccc;
+  box-shadow:         0px 0px 5px 5px #ccc;
+}
+
+ul {
+  list-style-type:  square;
+}
+
+ul ul {
+  list-style-type:  disc;
+}
+
+ul ul ul {
+  list-style-type:  circle;
+}
+
+h1 {
+  font-family:    "URW Bookman L", serif;
+  font-weight:    bold;
+  font-size:      150%;
+  text-align:     center;
+/*font-family:    "adelle", Georgia, "Times New Roman", serif;*/
+}
+
+h1.title {
+  text-align:     center;
+  font-size:      140%;
+}
+
+div#header {
+  background: url(../images/UPMC-Jussieu-faded.png) #c0d1f3;
+  padding:    10px 0px 0px 10px;
+  margin:     0px;
+  height:     90px;
+  width:      843pt;
+  position:   fixed;
+  z-index:    1;
+}
+
+div#header img {
+  height: 80px;
+}
+
+div#header div#logos {
+  float:   left;
+  width:   210pt;
+  padding: 0px;
+  margin:  0px;
+}
+
+div#header div#title {
+  padding: 0px;
+  margin:  0px;
+}
+
+p#lip6 {
+  font-weight: bold;
+  color:       white;
+  margin:      0px;
+  padding:     0px;
+}
+
+p#soc {
+  font-weight: bold;
+  color:       white;
+  margin:      0px;
+  padding:     0px;
+}
+
+div#logos a {
+  text-decoration: none;
+  border-bottom:   none;
+  outline:         0;
+}
+
+#sidebar {
+  background:    #c0d1f3;
+/*
+  float:         left;
+ */
+  position:      fixed;
+  z-index:       1;
+  top:           100px;
+  width:         220pt;
+  padding:       5pt 0pt 0pt 0pt;
+  margin:        0pt;
+}
+
+div.iconrow {
+  padding:       0pt 10pt;
+}
+
+div.iconrow a {
+  padding:       0pt;
+  outline:       0;
+}
+
+div.iconrow a:link,
+div.iconrow a:active,
+div.iconrow a:visited,
+div.iconrow a:focus {
+  border-bottom:  none;
+  vertical-align: bottom,
+}
+
+div.iconrow a:hover {
+  border-bottom:  4px solid black;
+}
+
+div#langmenu a {
+  padding:        0pt;
+  outline:        0;
+}
+
+div#langmenu a:link,
+div#langmenu a:active,
+div#langmenu a:visited,
+div#langmenu a:focus {
+  border-bottom:  none;
+  vertical-align: bottom,
+}
+
+div#langmenu a:hover {
+  border-bottom: 4px solid black;
+}
+
+div#pagemenu {
+  width:                       100%;
+  margin:                      0pt;
+  padding:                     2pt 0pt;
+}
+
+div#pagemenu ul {
+  list-style-type:             none;
+  padding-left:                10pt;
+  padding-right:               10pt;
+}
+
+div#pagemenu ul li {
+  border-bottom:               2px dotted black;
+  padding-left:                0pt;
+  padding-right:               0pt;
+}
+
+div#pagemenu ul li:first-child {
+  border-top:                  2px dotted black;
+}
+
+/*
+ * div#pagemenu ul li.depth-2 {
+ *  border-bottom:               none;
+ *  padding-left:                10pt;  
+ * }
+ */
+
+div#pagemenu ul li.depth-0  a,
+div#pagemenu ul li.active-0 a
+{
+  display:                     block;
+  color:                       black;
+  font-family:                 "URW Bookman L", serif;
+  font-size:                   120%;
+  font-weight:                 bold;
+  border-bottom:               none;
+  padding-left:                0pt;
+  padding-right:               0pt;
+  outline:                     0;
+}
+
+div#pagemenu ul li.depth-0  a:focus,
+div#pagemenu ul li.depth-0  a:hover,
+div#pagemenu ul li.depth-0  a:active,
+div#pagemenu ul li.active-0 a:focus,
+div#pagemenu ul li.active-0 a:hover,
+div#pagemenu ul li.active-0 a:active
+{
+/*background-color:            white;*/
+  font-family:                 "URW Bookman L", serif;
+  font-size:                   160%;
+  font-style:                  normal;
+  padding-top:                 5px;
+  padding-bottom:              5px;
+  padding-left:                 10pt;
+  border-left:                 6px solid black;
+  margin-left:                 -10pt;
+  margin-right:                -10pt;
+}
+
+div#pagemenu ul li.depth-1  a,
+div#pagemenu ul li.active-1 a
+{
+  display:                     block;
+  color:                       black;
+  font-size:                   100%;
+  font-weight:                 normal;
+  font-family:                 "URW Bookman L", serif;
+  border-bottom:               none;
+  padding-left:                 10pt;
+  margin-left:                 -10pt;
+  margin-right:                -10pt;
+  outline:                     0;
+}
+
+div#pagemenu ul li.depth-1  a:focus,
+div#pagemenu ul li.depth-1  a:hover,
+div#pagemenu ul li.active-1 a:focus,
+div#pagemenu ul li.active-1 a:hover
+{
+/*background-color:            white;*/
+  font-family:                 "URW Bookman L", serif;
+  font-size:                   120%;
+  font-style:                  normal;
+  font-weight:                 bold;
+  border-left:                 6px solid black;
+  padding-top:                 5px;
+  padding-bottom:              5px;
+}
+
+div#pagemenu ul li.depth-2  a,
+div#pagemenu ul li.active-2 a
+{
+  display:                     block;
+  color:                       black;
+  font-family:                 "URW Bookman L", serif;
+  font-size:                   100%;
+  font-weight:                 normal;
+  border-bottom:               none;
+  padding-left:                 20pt;
+  margin-left:                 -10pt;
+  margin-right:                -10pt;
+  outline:                     0;
+}
+
+div#pagemenu ul li.depth-2  a:focus,
+div#pagemenu ul li.depth-2  a:hover,
+div#pagemenu ul li.active-2 a:focus,
+div#pagemenu ul li.active-2 a:hover
+{
+  font-family:                 "URW Bookman L", serif;
+  font-size:                   120%;
+  font-style:                  normal;
+  font-weight:                 bold;
+  border-left:                 6px solid black;
+  padding-top:                 5px;
+  padding-bottom:              5px;
+/*background-color:            white;*/
+}
+
+div#main_page {
+  padding:            0pt;
+  margin-left:        220pt;
+  width:              630pt;
+/*
+ *-moz-box-shadow:    4px 4px 5px 2px #ccc;
+ *-webkit-box-shadow: 4px 4px 5px 2px #ccc;
+ *box-shadow:         4px 4px 5px 2px #ccc;
+ */
+}
+
+div#topbar {
+  position:         fixed;
+  z-index:          1;
+  top:              100px;
+  margin-left:      220pt;
+  background-color: #c0d1f3;
+  padding-top:      5pt;
+  height:           20pt;
+  width:            630pt;
+}
+
+div#langmenu {
+  float:            right;
+  vertical-align:   bottom;
+}
+
+div#breadcrumb {
+  margin:           0pt;
+  padding-left:     0pt;
+  background-color: #c0d1f3;
+}
+
+div#breadcrumb a:link,
+div#breadcrumb a:active,
+div#breadcrumb a:visited,
+div#breadcrumb a:focus {
+  color:          black;
+  font-weight:    bold;
+  border-bottom:  none;
+  vertical-align: bottom,
+}
+
+div#breadcrumb a:hover {
+  color:         black;
+  font-weight:   bold;
+  font-style:    italic;
+  border-bottom: none;
+}
+
+/*
+div.contents li a:before { 
+  display:       block; 
+  content:       " "; 
+  margin-top:   -400px; 
+  height:        400px; 
+  visibility:    hidden; 
+}
+*/
+
+div.section:before { 
+  display:       block; 
+  content:       " "; 
+  margin-top:   -120px; 
+  height:        120px; 
+  visibility:    hidden; 
+}
+
+div#main_content {
+  padding:            10pt;
+  top:                120px;
+  position:           relative;
+/*
+  border-left:        1px solid #c0d1f3;
+  border-right:       1px solid #c0d1f3;
+ */
+  min-height:         350pt;
+  text-align:         justify;
+  background-color:   white;
+}
+
+div#column0 {
+  padding:        0pt;
+/*border:         1px solid black;*/
+  display:        inline-block;
+/*float:          left;*/
+  width:          305pt;
+  vertical-align: top;
+}
+
+div#column1 {
+  padding:        0pt;
+/*border:         1px solid black;*/
+  display:        inline-block;
+/*float:          right;*/
+  width:          295pt;
+  vertical-align: top;
+}
+
+div#column0 h1, div#column1 h1  {
+/*font-family:    "adelle", Georgia, "Times New Roman", serif;*/
+  font-family:    "URW Bookman L", serif;
+  font-weight:    bold;
+  font-size:      120%;
+  text-align:     center;
+}
+
+div#column0 h2, div#column1 h2  {
+  font-size:      110%;
+}
+
+div#column0 div {
+/*
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+  background-color:   #e6ccb8;
+ */
+  padding:            0pt;
+  margin-bottom:      5pt;
+  margin-right:       10pt;
+}
+
+div#column1 div {
+/*
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+  background-color:   #e6ccb8;
+ */
+  padding:            0pt;
+  margin-bottom:      5pt;
+}
+
+ul.ce-menu {
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+  padding-left:       16pt;
+  background-color:   #e6ccb8;
+}
+}
+
+div.csc-default {
+  padding:            0pt;
+  margin:             0pt;
+}
+
+/*
+ul.ce-menu-1 {
+  padding-left:       8pt;  
+}
+
+ul.ce-menu-1 li {
+  padding-left:       0pt;  
+}
+*/
+
+
+div#footer {
+  top:                120px;
+  position:           relative;
+/*		      
+  bottom:             0pt;
+  margin-left:        220pt;
+  width:              620pt;
+ */		      
+  padding:            5pt;
+  color:              white;
+  background-color:   #242729;
+  font-size:          90%;
+  font-weight:        bold;
+}
+
+
+table.footer1, table.footer2 { width:       100%;  border: 0px; }
+td.LFooter                   { text-align:  left;  border: 0px; }
+td.RFooter                   { text-align:  right; border: 0px; }
+td.CFooter                   { text-align:  center;}
+table.footer2 td.RFooter     { font-weight: bold; width: 35%; border: 0px;  }
+table.footer2 td.CFooter     { width: 30%; border: 0px;  }
+table.footer2 td.LFooter     { font-weight: bold; width: 35%; border: 0px; }
+
+div.tx-felogin-pi1 {
+  border:            0px;
+  padding:           10pt;
+  moz-box-shadow:    4px 4px 5px 2px #ccc;
+  webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:        4px 4px 5px 2px #ccc;
+  font-size:         100%;
+  display:           block;
+  text-align:        center;
+  width:             50%;
+  margin:            5% 25% 5% 25%;
+}
+
+div.tx-felogin-pi1 fieldset {
+  border:            none;
+}
+
+div.tx-felogin-pi1 h3 {
+  font-family:      "URW Bookman L", serif;
+  font-size:        200%;
+  text-align:       center;
+}
+
+div.tx-felogin-pi1 > form > fieldset > div {
+  font-family:        "courrier", "andale mono", monospace;
+  font-weight:        bold;
+  font-size:          110%;
+  padding-bottom:     5pt;
+}
+
+div.tx-felogin-pi1 > form > fieldset > div > label {
+  font-family:        "Open Sans", verdana, sans-serif;
+  font-weight:        normal;
+  font-size:          100%;
+}
+
+.tx-felogin-pi1 table.form {
+  border-collapse:   collapse;
+  border:            1px solid black;
+  font-size:         110%;
+  margin:            10pt;
+}
+
+.tx-felogin-pi1 table.form th,.tx-felogin-pi1 table.form td {
+  padding:            2pt;
+}
+
+.tx-felogin-pi1 table.form th {
+  color:             white;
+  background-color:  black;
+  width:             70pt;
+  font-weight:       bold;
+}
+
+.tx-felogin-pi1 table.form td {
+}
+
+.tx-felogin-pi1 table.form input {
+  width:             200pt;
+  border-style:      none;
+}
+
+.tx-felogin-pi1 input#Login, .tx-felogin-pi1 input#Logout {
+  border-style:      none;
+  color:             white;
+  background-color:  black;
+  padding:           4pt 10pt;
+  font-family:      "URW Bookman L", serif;
+  font-size:        120%;
+  font-weight:      bold;
+}

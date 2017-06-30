@@ -1,0 +1,119 @@
+
+ \usepackage[default,osfigures,scale=0.95]{opensans}
+ \usepackage{pifont}
+ \usepackage{array}
+ \usepackage{xspace}
+ \usepackage{fancyhdr}
+ \usepackage{float}
+ \usepackage{graphicx}
+ \usepackage{color}
+ \usepackage{bmpsize}
+ \usepackage{enumitem}
+ \usepackage{eurosym}
+ \usepackage[sf,bf]{titlesec}
+ \usepackage{titletoc}
+ \usepackage[colorlinks=true,linkcolor=red,urlcolor=red]{hyperref}
+ \usepackage[paper=a4paper,headheight=30pt,tmargin=1.5in,bmargin=1in]{geometry}
+%\usepackage{layouts}
+
+ \definecolor{brickred}    {rgb}{0.8 , 0.25, 0.33}
+ \definecolor{brightmaroon}{rgb}{0.76, 0.13, 0.28}
+ \definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+ \definecolor{babyblue}    {rgb}{0.54, 0.81, 0.94}
+ \definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+ \definecolor{azure}       {rgb}{0.0 , 0.5 , 1.0 }
+
+ \urlstyle{tt} % normal text font (alternatives: same, tt, rm, sf)
+ \renewlist{itemize}{itemize}{9}
+ \setlist[itemize]{label=\textbullet}
+
+%\graphicspath{ {/dsk/l1/jpc/cms/slsoc/www-soc/admin/images/ReST/} }
+
+% The LaTeX Companion -- p. 204.
+% Miniature display of the page layout.
+%\newcommand{\showpage}{%
+%  \setlayoutscale{0.65}\setlabelfont{\tiny}%
+%  \printheadingsfalse\printparametersfalse%
+%  \currentpage\pagedesign%
+%}
+
+ \titlecontents{section}[0pc]
+   {\sffamily\bfseries}                                   % above code.
+   {\contentslabel{1pc}}                                  % numbered entry format.
+   {}                                                     % numberless entry format.
+   {\titlerule*[8pt]{.}\textsc{\textbf{{\contentspage}}}} % page format.
+ \titlecontents{subsection}[0pc]
+   {\sffamily}                                            % above code.
+   {\contentslabel{2pc}}                                  % numbered entry format.
+   {}                                                     % numberless entry format.
+   {\titlerule*[8pt]{.}\textsc{\textbf{{\contentspage}}}} % page format.
+ \titlecontents{subsubsection}[1pc]
+   {\sffamily}                                            % above code.
+   {\contentslabel{2pc}}                                  % numbered entry format.
+   {}                                                     % numberless entry format.
+   {\titlerule*[8pt]{.}\textsc{\textbf{{\contentspage}}}} % page format.
+
+ \titleformat{\title}
+   {\color{bleudefrance}\bfseries\large}
+   {\color{bleudefrance}\thesection}
+   {1em}
+   {}
+ \titleformat{\section}
+   {\color{brightmaroon}\bfseries\large}
+   {\color{brightmaroon}\thesection}
+   {1em}
+   {}
+
+ \newcommand{\DUroleul}[1]{\underline{#1}\xspace}
+ \newcommand{\DUrolesc}[1]{\textsc{#1}\xspace}
+ \newcommand{\DUrolecb}[1]{\textbf{\texttt{#1}}\xspace}
+ \newcommand{\DUrolefboxtt}[1]{\fbox{\texttt{#1}}\xspace}
+ \newcommand{\DUrolekeyword}[1]{\textbf{#1}}
+ \newcommand{\DUrolename}[1]{\textit{\textbf{#1}}}
+ \newcommand{\DUrolecomment}[1]{\textit{#1}}
+
+ \newcommand{\DUtitlenote}[1]{\noindent\textbf{#1}\smallskip}
+
+ \newcommand{\DUadmonitionnote}[1]{%
+   \begin{center}
+     \sffamily
+     \begin{array}[t]{m{1cm}!{\vrule width 1pt}m{.90\textwidth}}
+       \raisebox{0.0cm}{\includegraphics[scale=0.5]{clipboard.png}} &
+       \begin{minipage}[t]{.85\textwidth} \small #1
+       \end{minipage} \\
+     \end{array}
+   \end{center}
+ }
+
+ \newcommand{\DUtitleerror}[1]{\noindent\textbf{\color{red}#1}\smallskip}
+
+ \newcommand{\DUadmonitionerror}[1]{%
+   \begin{center}
+     \sffamily
+     \begin{array}[t]{m{1cm}!{\vrule width 1pt}m{.90\textwidth}}
+       \raisebox{0.0cm}{\includegraphics[scale=0.5]{i-core.png}} &
+       \begin{minipage}[t]{.85\textwidth} #1
+       \end{minipage} \\
+     \end{array}
+   \end{center}
+ }
+
+ \newcommand{\LIP}                {\textsc{lip6}\xspace}
+ \newcommand{\SoC}                {\textsc{S}o\textsc{C}\xspace}
+
+ \renewcommand{\headrulewidth}{0.2mm}
+ \renewcommand{\footrulewidth}{0.2mm}
+ \renewcommand{\sectionmark}[1]{\markboth{\thesection\ #1}{\thesection\ #1}}
+ \renewcommand{\subsectionmark}[1]{}
+ \lhead[]{Coriolis Documentation}
+ \rhead[]{\today}
+ \lfoot[]{\LIP/\SoC \href{https://www-soc.lip6.fr/}{www-soc.lip6.fr}}
+ \rfoot[]{\thepage}
+ \cfoot[]{}
+
+ \pagestyle{fancy}
+
+ \IfFileExists{./\jobname.ReST.tex}
+   {\typeout{Found ReST customization}
+    \input{./\jobname.ReST.tex}}
+   {\typeout{No ReST customization found (\jobname.ReST.tex)}}

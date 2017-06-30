@@ -1,0 +1,493 @@
+/* -*- Mode: css -*- */
+
+.sc {
+  font-variant:       small-caps;
+  font-size:          120%;
+}
+
+span.red {
+  color:              red;
+}
+
+span.italic, span.comment, span.name {
+  font-style:         italic;
+}
+
+span.keyword, span.name {
+  font-weight:        bold;
+}
+
+span.title {
+  font-family:        "URW Bookman L", serif;
+  font-weight:        bold;
+  font-size:          120%;
+  text-align:         center;
+  display:            block;
+}
+
+span.header2 {
+  font-size:          140%;
+  font-weight:        bold;
+}
+
+hr {
+  color:              #09550b;
+  border:             1px dotted #09550b;
+  border-style:       none none dotted;
+  padding-top:        10pt;
+  padding-bottom:     10pt;
+}
+
+h2, h3 {
+  text-align:         left;
+}
+
+div.contents, div.subcontents {
+  margin:             30pt;
+  padding:            0pt 10pt;
+  border-left:        6px solid black;
+
+/*  Shadow explanation:
+ *  The shadow is a rectangle the same size as the box. It is then shifted
+ *  blurred according to the following parameters.
+ *
+ *  1. The horizontal offset of the shadow, positive means the shadow will be
+ *     on the right of the box, a negative offset will put the shadow on the
+ *     left of the box.
+ *  2. The vertical offset of the shadow, a negative one means the box-shadow
+ *     will be above the box, a positive one means the shadow will be below
+ *     the box.
+ *  3. The blur radius (optional), if set to 0 the shadow will be sharp,
+ *     the higher the number, the more blurred it will be.
+ *  4. The spread radius (optional), positive values increase the size of the
+ *     shadow, negative values decrease the size. Default is 0 (the shadow is
+ *     same size as blur).
+ *  5. Color
+
+  background-color:   #ffdd66;
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+
+ */
+}
+
+div.contents p.first {
+  font-size:          160%;
+  font-weight:        bold;
+}
+
+
+div#centered {
+  margin-left:        auto;
+  margin-right:       auto;
+  text-align:         center;
+}
+
+pre, tt, code {
+  font-family:        "courrier", "andale mono", monospace;
+  font-size:          100%;
+  white-space:        pre;
+}
+
+tt {
+  color:              #09550b;
+}
+
+pre.wiki, pre code, div.code, pre.literal-block {
+  font-size:          90%;
+  padding:            5pt;
+  margin-left:        4%;
+  margin-right:       4%;
+/*
+  border:             dashed;
+  border-width:       thin;
+  border-color:       #FC8676;
+ */
+  background-color:   #FCFCE1;
+ 
+}
+
+a:link, a:active {
+  font-weight:        normal;
+  text-decoration:    none;
+  color:              black;
+  border-bottom:      1px solid black; 
+/*
+  border-bottom:      1px dotted #09550b; 
+  border-bottom:      1px dotted #09550b; 
+ */
+}
+
+a:hover,
+a:focus,
+a:visited
+{
+  font-weight:        normal;
+  text-decoration:    none;
+  color:              black;
+  border-bottom:      2px solid black; 
+/*
+  font-style:         italic;
+  color:              #A40010;
+  border-bottom:      1px dotted #A40010; 
+  color:              #09550b;
+  border-bottom:      1px dotted #09550b; 
+ */
+}
+
+a.toc-backref {
+  font-family:        "URW Bookman L", serif;
+  font-size:          100%;
+  font-weight:        bold;
+}
+
+a.toc-backref:link,
+a.toc-backref:active,
+a.toc-backref:hover,
+a.toc-backref:focus,
+a.toc-backref:visited
+{
+  border-bottom:      0px; 
+  text-align:         left;
+}
+
+p.credit {
+  margin-left:        10%;
+  margin-right:       10%;
+  font-size:          110%;
+}
+
+p.credit span.left {
+  float:              left;
+  white-space:        nowrap;
+}
+
+p.credit span.right {
+  float:              right;
+  white-space:        nowrap;
+}
+
+img.addborder {
+  border:             1px solid black; 
+}
+
+img.align-center {
+  display:            block;
+/*
+  clear:              both;
+ */
+  margin-left:        auto;
+  margin-right:       auto;
+  width:              99%;
+  text-align:         center;
+}
+
+img.align-top {
+  float:              left;
+  padding:            0pt 20pt 20pt 0pt;
+  text-align:         center;
+}
+
+img.align-bottom {
+  float:              right;
+  padding:            0pt 20pt 20pt 0pt;
+  text-align:         center;
+}
+
+div.code * {
+  background-color:   #FCFCE1;
+}
+
+div.note {
+  margin:             8px 2% 0px 2%;
+  border:             1px none #ffbb44;
+  border-left-width:  4px;
+  border-left-style:  solid;
+  padding:            1px 10pt 1px 55px;
+/*background:         #fff676 url('/dsk/l1/jpc/pictures/ReST/clipboard.png') no-repeat 0% 50%;;*/
+  background:         #ffdd66 url('../etc/images/clipboard.png') no-repeat 0% 50%;;
+  font-size:          90%
+}
+
+div.error {
+  margin:             8px 2% 0px 2%;
+  border:             1px none #dd0000;
+  border-left-width:  4px;
+  border-left-style:  solid;
+  padding:            1px 10pt 1px 55px;
+  background:         #ffddcc url('../etc/images/i-core.png') no-repeat 0% 50%;;
+  font-size:          90%
+}
+
+p.admonition-title {
+  font-weight:        bold;
+}
+
+div.problematic {
+  margin:             5pt;
+  padding:            1pt 10pt;
+  background-color:   #ffdd66;
+}
+
+div.problematic p.first {
+  font-size:          160%;
+  font-weight:        bold;
+}
+
+div.problematic ul, div.contents ul, div.subcontents ul {
+  padding-left:       15pt;
+}
+
+div.backlink {
+  text-align:         center;
+}
+
+div.backlink a {
+  font-size:          120%;
+  font-weight:        bold;
+  text-align:         center;
+  padding:            4pt;
+  border:             2px solid black;
+}
+
+div.publications ul li {
+  margin-bottom:      10pt;
+}
+
+div.publications a {
+  font-weight:        bold;
+}
+
+div.tools {
+  display:            flex;
+  flex-direction:     row;
+  flex-wrap:          wrap;
+  justify-content:    center;
+  align-content:      space-around;
+}
+
+div.toolblock {
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+  padding:            5pt;
+  margin:             10pt;
+  flex:               none;
+  text-align:         center;
+  font-size:          120%;
+  font-weight:        bold;
+}
+
+div.toolblock a {
+  font-family:        "URW Bookman L", serif;
+  font-size:          200%;
+  border-bottom:      none;
+}
+
+div.two-columns {
+  display:            flex;
+  flex-direction:     row;
+  flex-wrap:          wrap;
+  justify-content:    center;
+  align-content:      space-around;
+}
+
+div.two-columns ul {
+  padding-left:       10pt;
+}
+
+div[class^="reliefblock"] {
+  -moz-box-shadow:    4px 4px 5px 2px #ccc;
+  -webkit-box-shadow: 4px 4px 5px 2px #ccc;
+  box-shadow:         4px 4px 5px 2px #ccc;
+  -moz-border-radius: 5px;
+  border-radius:      10px;
+  width:              30%;
+  padding:            5pt;
+  margin:             10pt;
+  flex:               none;
+}
+
+div[class^="reliefblock"] a {
+  font-family:        "URW Bookman L", serif;
+  font-weight:        bold;
+  font-size:          120%;
+  text-align:         center;
+  display:            block;
+  border-bottom:      none;
+}
+
+div.reliefblock-green  { background-color:   #a3c090; }
+div.reliefblock-blue   { background-color:   #b2ccdd; }
+div.reliefblock-yellow { background-color:   #F0e5b4; }
+div.reliefblock-orange { background-color:   #f1d1b5; }
+
+div.line-block {
+  font-family:        "courrier", "andale mono", monospace;
+  font-size:          100%;
+/*white-space:        pre;*/
+}
+
+table.wiki th, table th {
+  color:              black;
+  background:         #FFFFCC;
+}
+
+table.docutils {
+  margin-left:        5%;
+  margin-right:       5%;
+}
+
+table.wiki, table.wiki th, table.wiki td { border:          1px solid black; }
+table.wiki th * p                        { text-align:      center; }
+table.wiki * p                           { margin:          0pt; }
+table.wiki * blockquote                  { margin:          0pt; }
+table                                    { border-collapse: collapse; }
+table th, table td                       { border:          1px solid black;
+                                           padding:         2px 10px 2px 10px; }
+
+table.docinfo {
+  margin-top:         10pt;
+  margin-left:        auto;
+  margin-right:       0pt;
+  border:             10px solid #303030;
+  border-collapse:    collapse;
+  background:         #303030;
+  font-size:          90%;
+  font-family:        sans-serif;
+}
+
+table.docinfo tr {
+  border-bottom:      1px dotted white;
+}
+
+th.docinfo-name,
+table.docinfo td,
+table.docinfo td a:link,
+table.docinfo td a:active,
+table.docinfo td a:visited,
+table.docinfo td a:focus,
+table.docinfo td a:hover
+{
+  border:             0px solid white;
+  background:         #303030;
+  color:              white;
+  text-align:         left;
+  font-weight:        bold;
+}
+
+th.docinfo-name {
+  font-weight:        normal;
+}
+
+table.docinfo td {
+  font-weight:        bold;
+}
+
+span.ul {
+  text-decoration:    underline;
+}
+
+* span.smallcaps {
+/*font-variant:       "small-caps";*/
+  text-transform:     "uppercase";
+  font-size:          "smaller";
+}
+
+
+span.cb {
+  font-family:        "andale mono", monospace;
+  font-weight:        bold;
+  white-space:        pre;
+}
+
+span.fboxtt {         
+  border:             1px solid black;
+  padding:            0px 4px;
+  font-family:        "andale mono", monospace;
+  font-weight:        bold;
+  white-space:        pre;  
+} 
+
+#notice.system-message, .notice.system-message {
+  color:              black;
+  background:         #DDFFDD;
+  padding-top:        5pt;
+  padding-bottom:     5pt;
+  border:             1px none  #55BB55;
+  border-top-width:   4px;
+  border-top-style:   solid;
+}
+
+#content.error .message, div.system-message {
+  color:              #550000;
+  background:         #ffddcc;
+  border:             2px none #dd0000;
+  border-top-width:   4px;
+  border-top-style:   solid;
+  padding:            .5em;
+  margin:             1em 0;
+}
+
+#main {
+  float:              right;
+  width:              70%;
+  padding:            0pt;
+  margin:             0pt;
+  min-height:         700px;
+  background:         white;
+}
+
+div#main h1 {
+  border-bottom:      2px solid #09550b;
+}
+
+div#main div.section h1 {
+  border-bottom:      none;
+}
+
+#cmscontent {
+  padding:            0pt 4% 10pt 4%;
+  margin:             0pt;
+}
+
+div#htmlerrorcontents {
+  padding:            10pt 4% 10pt 4%;
+  margin:             0pt;
+}
+
+div#htmlerrorcontents span.cs {
+  font-size:          80%;
+  font-family:        "andale mono", monospace;
+  white-space:        pre;
+}
+
+div#htmlerrorcontents hr.lang_separator {
+  border:             1px dotted black;
+  border-style:       none none dotted;
+  margin-top:         20pt;
+  margin-bottom:      10pt;
+}
+
+#embedcontent {
+  border:             0pt;
+  padding:            0pt;
+  margin:             0pt;
+}
+
+table.citation, table.footnote {
+  border:             none;
+  padding-left:       5pt;
+  margin-left:        5pt;
+  margin-bottom:      5pt;
+  background-color:   #eeeeee;
+}
+
+table.citation th, table.citation td, table.footnote th, table.footnote td {
+  border:             none;
+}
+
+table.citation td.label, table.footnote td.label {
+  width:              50pt;
+}
