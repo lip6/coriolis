@@ -19,7 +19,7 @@
  
  find_package(Libexecinfo        REQUIRED)
  find_package(LibXml2            REQUIRED)
- find_package(PythonLibs         REQUIRED)
+ find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(VLSISAPD           REQUIRED)

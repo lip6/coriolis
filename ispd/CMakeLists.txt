@@ -17,7 +17,7 @@
  find_package(LibXml2 REQUIRED)
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
- find_package(PythonLibs         2.7 REQUIRED)
+ find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
