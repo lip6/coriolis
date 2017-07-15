@@ -2698,6 +2698,16 @@ a {
 a:hover   { color: #3091d1; }
 a:visited { color: #9B59B6; }
 
+a.headerlink,
+a.headerlink:link,
+a.headerlink:active,
+a.headerlink:focus,
+a.headerlink:visited
+{
+  padding-left:  4pt;
+  border-bottom: none;
+}
+
 html {
   height:     100%;
   overflow-x: hidden;
