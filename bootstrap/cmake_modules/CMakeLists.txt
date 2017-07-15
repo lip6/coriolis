@@ -7,6 +7,7 @@
                    FindLibexecinfo.cmake
                    FindLibbfd.cmake
                    FindQwt.cmake
+                   FindSphinx.cmake
                    GetGitRevisionDescription.cmake
                    GetGitRevisionDescription.cmake.in
          )
