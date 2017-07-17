@@ -19,6 +19,8 @@ Contents:
    Hurricane/Hurricane.rst
    Viewer/Viewer.rst
    CrlCore/CrlCore.rst
+   Katabatic/Katabatic.rst
+   Kite/Kite.rst
    Unicorn/Unicorn.rst
    PythonCpp/index.rst
    RDS/index.rst
