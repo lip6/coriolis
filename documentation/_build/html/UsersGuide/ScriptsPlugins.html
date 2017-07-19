@@ -1,0 +1,714 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python Interface for Hurricane / Coriolis &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Coriolis User’s Guide" href="index.html"/>
+        <link rel="next" title="Stratus Reference" href="../Stratus/Stratus.html"/>
+        <link rel="prev" title="CGT - The Graphical Interface" href="ViewerTools.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Coriolis User&#8217;s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Coriolis User&#8217;s Guide</a> &raquo;</li>
+      
+    <li>Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="python-interface-for-hurricane-coriolis">
+<span id="python-interface-to-coriolis"></span><h1>Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span><a class="headerlink" href="#python-interface-for-hurricane-coriolis" title="Permalink to this headline">¶</a></h1>
+<p>The (almost) complete interface of <span class="sc">Hurricane</span> is exported as a <span class="sc">Python</span> module
+and some part of the other components of <span class="sc">Coriolis</span> (each one in a separate
+module). The interface has been made to mirror as closely as possible the
+C++ one, so the C++ doxygen documentation could be used to write code with
+either languages.</p>
+<p><a class="reference external" href="file:../../../index.html">Summary of the C++ Documentation</a></p>
+<p>A script could be run directly in text mode from the command line or through
+the graphical interface (see <a class="reference internal" href="ViewerTools.html#python-scripts-in-cgt"><em>Executing Python Scripts in Cgt</em></a>).</p>
+<p>Asides for this requirement, the python script can contain anything valid
+in <span class="sc">Python</span>, so don&#8217;t hesitate to use any package or extention.</p>
+<p>Small example of Python/Stratus script:</p>
+<div class="highlight-python"><pre>from Hurricane import *
+from Stratus   import *
+
+def doSomething ():
+    # ...
+    return
+
+def ScriptMain ( **kw ):
+  editor = None
+  if kw.has_key('editor') and kw['editor']:
+    editor = kw['editor']
+    stratus.setEditor( editor )
+
+  doSomething()
+  return
+
+if __name__ == "__main__" :
+  kw           = {}
+  success      = ScriptMain( **kw )
+  shellSuccess = 0
+  if not success: shellSuccess = 1
+
+  sys.exit( shellSuccess )
+      ScriptMain ()</pre>
+</div>
+<p>This typical script can be executed in two ways:</p>
+<ol class="arabic">
+<li><p class="first">Run directly as a <span class="sc">Python</span> script, thanks to the</p>
+<div class="highlight-python"><pre>if __name__ == "__main__" :</pre>
+</div>
+<p>part (this is standart <span class="sc">Python</span>). It is a simple adapter that will
+calls  <span class="cb">ScriptMain()</span>.</p>
+</li>
+<li><p class="first">Through <span class="cb">cgt</span>, either in text or graphical mode. In that case, the
+<span class="cb">ScriptMain()</span> is directly called trough a sub-interpreter.
+The arguments of the script are passed through the <tt class="docutils literal"><span class="pre">**kw</span></tt> dictionnary.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="2">**kw Dictionnary</th>
+</tr>
+<tr class="row-even"><th class="head">Parameter Key/Name</th>
+<th class="head">Contents type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">'cell'</span></tt></td>
+<td>A Hurricane cell on which to work. Depending
+on the context, it may be <tt class="docutils literal"><span class="pre">None</span></tt>.
+For example, when run from <span class="cb">cgt</span>, it the cell
+currently loaded in the viewer, if any.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">'editor'</span></tt></td>
+<td>The viewer from which the script is run, when
+lauched through <span class="cb">cgt</span>.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<div class="section" id="plugins">
+<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+<p>Plugins are <span class="sc">Python</span> scripts specially crafted to integrate with <span class="cb">cgt</span>.
+Their entry point is a <span class="cb">ScriptMain()</span> method as described in
+<a class="reference internal" href="#python-interface-to-coriolis">Python Interface to Coriolis</a>. They can be called by user scripts
+through this method.</p>
+<div class="section" id="chip-placement">
+<h3>Chip Placement<a class="headerlink" href="#chip-placement" title="Permalink to this headline">¶</a></h3>
+<p>Automatically perform the placement of a complete chip. This plugin, as well
+as the other P&amp;R tools expect a specific top-level hierarchy for the design.
+The top-level hierarchy must contains the instances of all the I/O pads and
+<strong>exactly one</strong> instance of the chip&#8217;s core model.</p>
+<p> <img alt="Chip Top Structure" class="align-middle" src="../_images/chip-structure-1.png" style="width: 90%;" /> </p>
+<p>The designer must provide a configuration file that define the rules for the
+placement of the top-level hierarchy (that is, the pads and the core).
+This file must be named after the chip&#8217;s name, by appending <tt class="docutils literal"><span class="pre">_chip.py</span></tt>
+(obviously, it is a <span class="sc">Python</span> file). For instance if the chip netlist file
+is called <tt class="docutils literal"><span class="pre">amd2901_crl.vst</span></tt>, then the configuration file must be named
+<tt class="docutils literal"><span class="pre">amd2901_crl_chip.vst</span></tt>.</p>
+<p>Example of chip placement configuration file (for <tt class="docutils literal"><span class="pre">AM2901</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">chip</span> <span class="o">=</span> \
+  <span class="p">{</span> <span class="s">&#39;pads.south&#39;</span>     <span class="p">:</span> <span class="p">[</span> <span class="s">&#39;p_a3&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_a2&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_a1&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_r0&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_vddick0&#39;</span><span class="p">,</span> <span class="s">&#39;p_vssick0&#39;</span><span class="p">,</span> <span class="s">&#39;p_a0&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i6&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_i8&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i7&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_r3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s">&#39;pads.east&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s">&#39;p_zero&#39;</span>   <span class="p">,</span> <span class="s">&#39;p_i0&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i1&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i2&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_vddeck0&#39;</span><span class="p">,</span> <span class="s">&#39;p_vsseck0&#39;</span><span class="p">,</span> <span class="s">&#39;p_q3&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_b0&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_b1&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_b2&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_b3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s">&#39;pads.north&#39;</span>     <span class="p">:</span> <span class="p">[</span> <span class="s">&#39;p_noe&#39;</span>    <span class="p">,</span> <span class="s">&#39;p_y3&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_y2&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_y1&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_y0&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_vddeck1&#39;</span><span class="p">,</span> <span class="s">&#39;p_vsseck1&#39;</span><span class="p">,</span> <span class="s">&#39;p_np&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_ovr&#39;</span>    <span class="p">,</span> <span class="s">&#39;p_cout&#39;</span>   <span class="p">,</span> <span class="s">&#39;p_ng&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s">&#39;pads.west&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s">&#39;p_cin&#39;</span>    <span class="p">,</span> <span class="s">&#39;p_i4&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i5&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_i3&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_ck&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_d0&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_d1&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_d2&#39;</span>
+                       <span class="p">,</span> <span class="s">&#39;p_d3&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_q0&#39;</span>     <span class="p">,</span> <span class="s">&#39;p_f3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s">&#39;core.size&#39;</span>      <span class="p">:</span> <span class="p">(</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">1500</span> <span class="p">)</span>
+  <span class="p">,</span> <span class="s">&#39;chip.size&#39;</span>      <span class="p">:</span> <span class="p">(</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">3000</span> <span class="p">)</span>
+  <span class="p">,</span> <span class="s">&#39;chip.clockTree&#39;</span> <span class="p">:</span> <span class="bp">True</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+<p>The file must contain <em>one dictionnary</em> named <tt class="docutils literal"><span class="pre">chip</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="2">Chip Dictionnary</th>
+</tr>
+<tr class="row-even"><th class="head">Parameter Key/Name</th>
+<th class="head">Value/Contents type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">'pad.south'</span></tt></td>
+<td>Ordered list (left to right) of pad instances names
+to put on the south side of the chip</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">'pad.east'</span></tt></td>
+<td>Ordered list (down to up) of pad instances names
+to put on the east side of the chip</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">'pad.north'</span></tt></td>
+<td>Ordered list (left to right) of pad instances names
+to put on the north side of the chip</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">'pad.west'</span></tt></td>
+<td>Ordered list (down to up) of pad instances names
+to put on the west side of the chip</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">'core.size'</span></tt></td>
+<td>The size of the core (to be used by the placer)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">'chip.size'</span></tt></td>
+<td>The size of the whole chip. The sides must be great
+enough to accomodate all the pads</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">'chip.clockTree'</span></tt></td>
+<td>Whether to generate a clock tree or not. This calls
+the ClockTree plugin</td>
+</tr>
+</tbody>
+</table>
+<p>Configuration parameters, defaults are defined in <tt class="docutils literal"><span class="pre">etc/coriolis2/&lt;STECHNO&gt;/plugins.conf</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="22%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter Identifier</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td colspan="3"><strong>Chip Plugin Parameters</strong></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.block.rails.count</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">5</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The minimum number of rails around the core
+block. Must be odd and suppérior to 5.
+One rail for the clock and at least two pairs
+of power/grounds</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.block.rails.hWidth</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">12</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The horizontal with of the rails</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.block.rails.vWidth</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">12</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The vertical with of the rails</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.block.rails.hSpacing</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">6</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The spacing, <em>edge to edge</em> of two adjacent
+horizontal rails</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.block.rails.vSpacing</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">6</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The spacing, <em>edge to edge</em> of two adjacent
+vertical rails</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.pad.pck</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">pck_px</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The model name of the pad connected to the
+chip external clock</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.pad.pvddeck</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">pvddeck_px</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The model name of the pad connected to the
+<tt class="docutils literal"><span class="pre">vdde</span></tt> (external power) and suppling it to
+the core</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.pad.pvsseck</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">pvsseck_px</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The model name of the pad connected to the
+<tt class="docutils literal"><span class="pre">vsse</span></tt> (external ground) and suppling it to
+the core</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.pad.pvddick</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">pvddick_px</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The model name of the pad connected to the
+<tt class="docutils literal"><span class="pre">vddi</span></tt> (internal power) and suppling it to
+the core</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">chip.pad.pvssick</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">pvssick_px</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The model name of the pad connected to the
+<tt class="docutils literal"><span class="pre">vssi</span></tt> (internal ground) and suppling it to
+the core</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If no clock tree is generated, then the clock rail is <em>not</em> created.
+So even if the requested number of rails <tt class="docutils literal"><span class="pre">chip.block.rails.count</span></tt> is, say 5,
+only four rails (2* <tt class="docutils literal"><span class="pre">power</span></tt>, 2* <tt class="docutils literal"><span class="pre">ground</span></tt>) will be generateds.</p>
+</div>
+</div>
+<div class="section" id="clock-tree">
+<h3>Clock Tree<a class="headerlink" href="#clock-tree" title="Permalink to this headline">¶</a></h3>
+<p>Insert a clock tree into a block. The clock tree uses the H strategy.
+The clock net is splitted into sub-nets, one for each branch of the
+tree.</p>
+<ul>
+<li><p class="first">On <strong>chips</strong> design, the sub-nets are createds in the model of the
+core block (then trans-hierarchically flattened to be shown at
+chip level).</p>
+</li>
+<li><p class="first">On <strong>blocks</strong>, the sub nets are created directly in the top block.</p>
+</li>
+<li><p class="first">The sub-nets are named according to a simple geometrical scheme.
+A common prefix <tt class="docutils literal"><span class="pre">ck_htree</span></tt>, then one postfix by level telling
+on which quarter of plane the sub-clock is located:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal"><span class="pre">_bl</span></tt>: bottom left plane quarter.</li>
+<li><tt class="docutils literal"><span class="pre">_br</span></tt>: bottom right plane quarter.</li>
+<li><tt class="docutils literal"><span class="pre">_tl</span></tt>: top left plane quarter.</li>
+<li><tt class="docutils literal"><span class="pre">_tr</span></tt>: top right plane quarter.</li>
+</ol>
+<p>We can have <tt class="docutils literal"><span class="pre">ck_htree_bl</span></tt>, <tt class="docutils literal"><span class="pre">ck_htree_bl_bl</span></tt>, <tt class="docutils literal"><span class="pre">ch_htree_bl_tl</span></tt> and so on.</p>
+</li>
+</ul>
+<p>The clock tree plugin works in four steps:</p>
+<ol class="arabic simple">
+<li>Build the clock tree: creates the top-block abutment box, compute the
+levels of H tree neededs and place the clock buffers.</li>
+<li>Once the clock buffers are placed, calls the placer (<span class="sc">Etesian</span>) to place
+the ordinary standart cells, whithout disturbing clock H-tree buffers.</li>
+<li>At this point we know the exact positions of all the DFFs, so we can
+connect them to the nearest H-tree leaf clock signal.</li>
+<li>Leaf clock signals that are not connecteds to any DFFs are removed.</li>
+</ol>
+<p>Netlist reorganisation:</p>
+<ul class="simple">
+<li>Obviously the top block or chip core model netlist is modificated to
+contains all the clock sub-nets. The interface is <em>not</em> changed.</li>
+<li>If the top block contains instances of other models <em>and</em> those models
+contains DFFs that get re-connecteds to the clock sub-nets (from the
+top level). Change both the model netlist and interface to propagate
+the relevant clock sub-nets to the instanciated model. The new model
+with the added clock signal is renamed with a <tt class="docutils literal"><span class="pre">_clocked</span></tt> suffix.
+For example, the sub-block model <tt class="docutils literal"><span class="pre">ram.vst</span></tt> will become <tt class="docutils literal"><span class="pre">ram_clocked.vst</span></tt>.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are to re-run the clock tree plugin on a netlist, be careful
+to erase any previously generated <tt class="docutils literal"><span class="pre">_clocked</span></tt> file (both netlist and
+layout: <tt class="docutils literal"><span class="pre">rm</span> <span class="pre">*.clocked.{ap,vst}</span></tt>). And restart <span class="cb">cgt</span> to clear it&#8217;s
+memory cache.</p>
+</div>
+<p>Configuration parameters, defaults are defined in <tt class="docutils literal"><span class="pre">etc/coriolis2/&lt;STECHNO&gt;/plugins.conf</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="22%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter Identifier</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td colspan="3"><strong>ClockTree Plugin Parameters</strong></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">clockTree.minimumSide</span></tt></td>
+<td>TypeInt</td>
+<td><span class="cb">300</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The minimum size below which the clock tree
+will stop to perform quadri-partitions</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">clockTree.buffer</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">buf_x2</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The buffer model to use to drive sub-nets</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">clockTree.placerEngine</span></tt></td>
+<td>TypeString</td>
+<td><span class="cb">Etesian</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The placer to use. Other value is <tt class="docutils literal"><span class="pre">Mauka</span></tt>
+the simulated annealing placer which will go
+into retirement very soon</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="recursive-save-rsave">
+<h3>Recursive-Save (RSave)<a class="headerlink" href="#recursive-save-rsave" title="Permalink to this headline">¶</a></h3>
+<p>Perform a recursive top down save of all the models from the top cell
+loaded in <span class="cb">cgt</span>. Force a write of any non-terminal model. This plugin is used
+by the clock tree plugin after the netlist clock sub-nets creation.</p>
+</div>
+</div>
+<div class="section" id="a-simple-example-am2901">
+<h2>A Simple Example: AM2901<a class="headerlink" href="#a-simple-example-am2901" title="Permalink to this headline">¶</a></h2>
+<p>To illustrate the capabilities of <span class="sc">Coriolis</span> tools and <span class="sc">Python</span> scripting, a small
+example, derived from the <span class="sc">Alliance</span> <span class="cb">AM2901</span> is supplied.</p>
+<p>This example contains only the synthetized netlists and the <span class="cb">doChip.py</span> script
+which perform the whole P&amp;R of the design.</p>
+<p>You can generate the chip using one of the following method:</p>
+<ol class="arabic">
+<li><p class="first"><strong>Command line mode:</strong> directly run the script:</p>
+<div class="highlight-python"><pre>dummy@lepka:AM2901$ ./doChip -V --cell=amd2901</pre>
+</div>
+</li>
+<li><p class="first"><strong>Graphic mode:</strong> launch <span class="cb">cgt</span>, load chip netlist <tt class="docutils literal"><span class="pre">amd2901</span></tt> (the top cell)
+then run the <span class="sc">Python</span> script <span class="cb">doChip.py</span>.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Between two consecutive run, be sure to erase the netlist/layout generateds:</p>
+<div class="last highlight-python"><pre>dummy@lepka:AM2901$ rm *_clocked*.vst *.ap</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Stratus/Stratus.html" class="btn btn-neutral float-right" title="Stratus Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ViewerTools.html" class="btn btn-neutral" title="CGT - The Graphical Interface" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2017, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

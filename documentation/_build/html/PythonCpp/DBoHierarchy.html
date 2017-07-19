@@ -1,0 +1,740 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. Case 2 - Hierarchy of DBo Derived Classes &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Hurricane Python/C++ API Tutorial" href="index.html"/>
+        <link rel="next" title="5. Case 3 - Non-DBo Standalone Classe" href="NonDBo.html"/>
+        <link rel="prev" title="3. Case 1 - DBo Derived, Standalone" href="DBoStandalone.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane Python/C++ API Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Hurricane Python/C++ API Tutorial</a> &raquo;</li>
+      
+    <li>4. Case 2 - Hierarchy of DBo Derived Classes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <p></p>
+<div class="section" id="case-2-hierarchy-of-dbo-derived-classes">
+<h1>4. Case 2 - Hierarchy of DBo Derived Classes<a class="headerlink" href="#case-2-hierarchy-of-dbo-derived-classes" title="Permalink to this headline">¶</a></h1>
+<p>Now we want to export the following C++ class hierarchy into Python:</p>
+<div class="highlight-python"><pre>PyEntity &lt;-- PyComponent &lt;-+- PyContact
+                           +- PySegment &lt;-+- PyHorizontal
+                                          +- PyVertical</pre>
+</div>
+<div class="section" id="base-class-header">
+<h2>4.1 Base Class Header<a class="headerlink" href="#base-class-header" title="Permalink to this headline">¶</a></h2>
+<p><strong>Remark:</strong> this is only a partial description of the tree for the sake of
+clarity.</p>
+<p>One important fact to remember is that <tt class="docutils literal"><span class="pre">PyEntity</span></tt> and <tt class="docutils literal"><span class="pre">PyComponent</span></tt>
+being related to C++ abstract classes, no objects of those types will be
+created, only <tt class="docutils literal"><span class="pre">PyContact</span></tt>, <tt class="docutils literal"><span class="pre">PyHorizontal</span></tt> or <tt class="docutils literal"><span class="pre">PyVertical</span></tt> will.</p>
+<p>The consequence is that there is no <tt class="docutils literal"><span class="pre">PyEntity_Link()</span></tt> like in <a class="reference internal" href="DBoStandalone.html#id1"><em>3.1 Class Associated Header File</em></a>
+but instead two functions:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal"><span class="pre">PyEntity_NEW()</span></tt> which create the relevant <tt class="docutils literal"><span class="pre">PyEntity</span></tt> <em>derived</em>
+object from the <tt class="docutils literal"><span class="pre">Entity</span></tt> one. For example, if the <tt class="docutils literal"><span class="pre">Entity*</span></tt> given
+as argument is in fact a <tt class="docutils literal"><span class="pre">Horizontal*</span></tt>, then the function will
+return a <tt class="docutils literal"><span class="pre">PyHorizontal*</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">EntityCast()</span></tt> do the reverse of <tt class="docutils literal"><span class="pre">PyEntity_NEW()</span></tt> that is, from
+a <tt class="docutils literal"><span class="pre">PyEntity</span></tt>, return the C++ <em>derived</em> object. Again, if the
+<tt class="docutils literal"><span class="pre">PyEntity*</span></tt> is a <tt class="docutils literal"><span class="pre">PyHorizontal*</span></tt>, the function will cast it as
+a <tt class="docutils literal"><span class="pre">Horizontal*</span></tt> <em>then</em> return it as an <tt class="docutils literal"><span class="pre">Entity*</span></tt>.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#ifndef ISOBAR_PY_ENTITY_H</span>
+<span class="c">#define ISOBAR_PY_ENTITY_H</span>
+
+<span class="c">#include &quot;hurricane/isobar/PyHurricane.h&quot;</span>
+<span class="c">#include &quot;hurricane/Entity.h&quot;</span>
+
+<span class="n">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="n">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+    <span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+        <span class="n">PyObject_HEAD</span>
+        <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span> <span class="n">_object</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">PyEntity</span><span class="p">;</span>
+
+    <span class="n">extern</span>  <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyEntity_NEW</span>        <span class="p">(</span> <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span> <span class="n">entity</span> <span class="p">);</span>
+    <span class="n">extern</span>  <span class="n">void</span>          <span class="n">PyEntity_LinkPyType</span> <span class="p">();</span>
+    <span class="n">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeEntity</span><span class="p">;</span>
+    <span class="n">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyEntity_Methods</span><span class="p">[];</span>
+
+
+<span class="c">#define IsPyEntity(v)    ( (v)-&gt;ob_type == &amp;PyTypeEntity )</span>
+<span class="c">#define PYENTITY(v)      ( (PyEntity*)(v) )</span>
+<span class="c">#define PYENTITY_O(v)    ( PYENTITY(v)-&gt;_object )</span>
+
+  <span class="p">}</span>  <span class="o">//</span> <span class="n">extern</span> <span class="s">&quot;C&quot;</span><span class="o">.</span>
+
+  <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span>  <span class="n">EntityCast</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">derivedObject</span> <span class="p">);</span>
+
+<span class="p">}</span>  <span class="o">//</span> <span class="n">Isobar</span> <span class="n">namespace</span><span class="o">.</span>
+
+<span class="c">#endif  // ISOBAR_PY_ENTITY_H</span>
+</pre></div>
+</div>
+<p></p>
+</div>
+<div class="section" id="base-class-file">
+<h2>4.2 Base Class File<a class="headerlink" href="#base-class-file" title="Permalink to this headline">¶</a></h2>
+<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-file"><em>3.2 Class Associated File</em></a> are:</p>
+<ol class="arabic simple">
+<li>No call to <tt class="docutils literal"><span class="pre">DBoLinkCreateMethod()</span></tt> because there must be no <tt class="docutils literal"><span class="pre">PyEntity_Link()</span></tt>,
+but the definitions of <tt class="docutils literal"><span class="pre">PyEntity_NEW()</span></tt> and <tt class="docutils literal"><span class="pre">EntityCast</span></tt>.</li>
+<li>For defining the <tt class="docutils literal"><span class="pre">PyTypeEntity</span></tt> Python type, we call a different
+macro: <tt class="docutils literal"><span class="pre">PyTypeRootObjectDefinitions</span></tt>, dedicated to base classes.</li>
+</ol>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyCell.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyHorizontal.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyVertical.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyContact.h&quot;</span>
+
+<span class="k">namespace</span> <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Entity,entity,function)</span>
+
+    <span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyEntity_destroy</span> <span class="p">,</span><span class="n">PyEntity</span><span class="p">)</span>
+
+    <span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyEntity_getCell</span> <span class="p">(</span> <span class="n">PyEntity</span> <span class="o">*</span><span class="n">self</span> <span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Cell</span><span class="o">*</span> <span class="n">cell</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">HTRY</span>
+        <span class="n">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Entity.getCell()&quot;</span> <span class="p">)</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">entity</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">();</span>
+      <span class="n">HCATCH</span>
+      <span class="k">return</span> <span class="n">PyCell_Link</span><span class="p">(</span> <span class="n">cell</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">PyMethodDef</span> <span class="n">PyEntity_Methods</span><span class="p">[]</span> <span class="o">=</span>
+      <span class="p">{</span> <span class="p">{</span> <span class="s">&quot;getCell&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyEntity_getCell</span><span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;Returns the entity cell.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyEntity_destroy</span><span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;Destroy associated hurricane object, the python object remains.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>  <span class="cm">/* sentinel */</span>
+      <span class="p">};</span>
+
+
+    <span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+    <span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// End of Python Module Code Part.</span>
+
+    <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyEntity_NEW</span> <span class="p">(</span> <span class="n">Entity</span><span class="o">*</span> <span class="n">entity</span> <span class="p">)</span>
+    <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">not</span> <span class="n">entity</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">PyErr_SetString</span> <span class="p">(</span> <span class="n">HurricaneError</span><span class="p">,</span> <span class="s">&quot;Invalid Entity (bad occurrence)&quot;</span> <span class="p">);</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="n">Horizontal</span><span class="o">*</span> <span class="n">horizontal</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Horizontal</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">horizontal</span><span class="p">)</span> <span class="k">return</span> <span class="n">PyHorizontal_Link</span><span class="p">(</span> <span class="n">horizontal</span> <span class="p">);</span>
+
+      <span class="n">Vertical</span><span class="o">*</span> <span class="n">vertical</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Vertical</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">vertical</span><span class="p">)</span> <span class="k">return</span> <span class="n">PyVertical_Link</span><span class="p">(</span> <span class="n">vertical</span> <span class="p">);</span>
+
+      <span class="n">Contact</span><span class="o">*</span> <span class="n">contact</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Contact</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">contact</span><span class="p">)</span> <span class="k">return</span> <span class="n">PyContact_Link</span><span class="p">(</span> <span class="n">contact</span> <span class="p">);</span>
+
+      <span class="n">Py_RETURN_NONE</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">PyTypeRootObjectDefinitions</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part (1).</span>
+
+<span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+
+
+<span class="cp">#if !defined(__PYTHON_MODULE__)</span>
+
+<span class="n">Hurricane</span><span class="o">::</span><span class="n">Entity</span><span class="o">*</span> <span class="n">EntityCast</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">derivedObject</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">IsPyHorizontal</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span> <span class="k">return</span> <span class="n">PYHORIZONTAL_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">IsPyVertical</span>  <span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span> <span class="k">return</span> <span class="n">PYVERTICAL_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">IsPyContact</span>   <span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span> <span class="k">return</span> <span class="n">PYCONTACT_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part (2).</span>
+
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+<p></p>
+</div>
+<div class="section" id="intermediate-class-header">
+<h2>4.3 Intermediate Class Header<a class="headerlink" href="#intermediate-class-header" title="Permalink to this headline">¶</a></h2>
+<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-header-file"><em>3.1 Class Associated Header File</em></a> are:</p>
+<ol class="arabic simple">
+<li>As for <tt class="docutils literal"><span class="pre">PyEntity</span></tt>, and because this is still an abstract class,
+there is no <tt class="docutils literal"><span class="pre">PyComponent_Link()</span></tt> function.</li>
+<li>The definition of the <tt class="docutils literal"><span class="pre">PyComponent</span></tt> <span class="cb">struct</span> is differs. There is
+no <tt class="docutils literal"><span class="pre">PyObject_HEAD</span></tt> (it is a Python <em>derived</em> class). The only
+field is of the base class type <tt class="docutils literal"><span class="pre">PyEntity</span></tt> and for use with
+Coriolis macros, <strong>it must</strong> be named <tt class="docutils literal"><span class="pre">_baseObject</span></tt> (note that
+this is <em>not</em> a pointer but a whole object).</li>
+</ol>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#ifndef ISOBAR_PY_COMPONENT_H</span>
+<span class="cp">#define ISOBAR_PY_COMPONENT_H</span>
+
+<span class="cp">#include &quot;hurricane/isobar/PyEntity.h&quot;</span>
+<span class="cp">#include &quot;hurricane/Component.h&quot;</span>
+
+<span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+    <span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+        <span class="n">PyEntity</span>  <span class="n">_baseObject</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">PyComponent</span><span class="p">;</span>
+
+    <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeComponent</span><span class="p">;</span>
+    <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyComponent_Methods</span><span class="p">[];</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyComponent_LinkPyType</span> <span class="p">();</span>
+
+<span class="cp">#define IsPyComponent(v) ((v)-&gt;ob_type == &amp;PyTypeComponent)</span>
+<span class="cp">#define PYCOMPONENT(v)   ((PyComponent*)(v))</span>
+<span class="cp">#define PYCOMPONENT_O(v) (static_cast&lt;Component*&gt;(PYCOMPONENT(v)-&gt;_baseObject._object))</span>
+
+  <span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intermediate-class-file">
+<h2>4.4 Intermediate Class File<a class="headerlink" href="#intermediate-class-file" title="Permalink to this headline">¶</a></h2>
+<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-file"><em>3.2 Class Associated File</em></a> are:</p>
+<ol class="arabic simple">
+<li>Redefinition of the default macros <tt class="docutils literal"><span class="pre">ACCESS_OBJECT</span></tt> and <tt class="docutils literal"><span class="pre">ACCESS_CLASS</span></tt>.<ul>
+<li>The pointer to the C++ encapsulated object (attribute <tt class="docutils literal"><span class="pre">_object</span></tt>) is hold
+by the base class <tt class="docutils literal"><span class="pre">PyEntity</span></tt>. The <tt class="docutils literal"><span class="pre">ACCESS_OBJECT</span></tt> macro which is tasked
+to give access to that attribute is then <tt class="docutils literal"><span class="pre">_baseObject._object</span></tt> as
+<tt class="docutils literal"><span class="pre">PyComponent</span></tt> is a direct derived class of <tt class="docutils literal"><span class="pre">PyEntity</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">ACCESS_CLASS</span></tt> is similar to <tt class="docutils literal"><span class="pre">ACCESS_OBJECT</span></tt> for accessing the base
+class, that is a pointer to <tt class="docutils literal"><span class="pre">PyEntity</span></tt>.</li>
+</ul>
+</li>
+</ol>
+<p></p>
+<ol class="arabic simple" start="2">
+<li>For defining the <tt class="docutils literal"><span class="pre">PyTypeComponent</span></tt> Python type, we call a yet different
+macro: <tt class="docutils literal"><span class="pre">PyTypeInheritedObjectDefinitions()</span></tt>, dedicated to derived classes.
+For this this macro we need to give as argument the derived class and the
+base class.</li>
+</ol>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyComponent.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyNet.h&quot;</span>
+
+<span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+<span class="cp">#undef   ACCESS_OBJECT</span>
+<span class="cp">#undef   ACCESS_CLASS</span>
+<span class="cp">#define  ACCESS_OBJECT           _baseObject._object</span>
+<span class="cp">#define  ACCESS_CLASS(_pyObject)  &amp;(_pyObject-&gt;_baseObject)</span>
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Component,component,function)</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+    <span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyComponent_getX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">,</span><span class="n">Component</span><span class="p">)</span>
+    <span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyComponent_getY</span><span class="p">,</span><span class="n">getY</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">,</span><span class="n">Component</span><span class="p">)</span>
+    <span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyComponent_destroy</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">)</span>
+
+    <span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyComponent_getNet</span> <span class="p">(</span> <span class="n">PyComponent</span> <span class="o">*</span><span class="n">self</span> <span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Net</span><span class="o">*</span> <span class="n">net</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">HTRY</span>
+        <span class="n">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Component.getNet()&quot;</span> <span class="p">)</span>
+        <span class="n">net</span> <span class="o">=</span> <span class="n">component</span><span class="o">-&gt;</span><span class="n">getNet</span><span class="p">(</span> <span class="p">);</span>
+      <span class="n">HCATCH</span>
+      <span class="k">return</span> <span class="n">PyNet_Link</span><span class="p">(</span> <span class="n">net</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">PyMethodDef</span> <span class="n">PyComponent_Methods</span><span class="p">[]</span> <span class="o">=</span>
+      <span class="p">{</span> <span class="p">{</span> <span class="s">&quot;getX&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getX</span>   <span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;Return the Component X value.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;getY&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getY</span>   <span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;Return the Component Y value.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;getNet&quot;</span> <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getNet</span> <span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;Returns the net owning the component.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_destroy</span><span class="p">,</span> <span class="n">METH_NOARGS</span>
+                   <span class="p">,</span> <span class="s">&quot;destroy associated hurricane object, the python object remains.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>    <span class="cm">/* sentinel */</span>
+      <span class="p">};</span>
+
+    <span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Component</span><span class="p">)</span>
+    <span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Component</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// Python Module Code Part.</span>
+
+    <span class="n">PyTypeInheritedObjectDefinitions</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+  <span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="terminal-class-header">
+<h2>4.5 Terminal Class Header<a class="headerlink" href="#terminal-class-header" title="Permalink to this headline">¶</a></h2>
+<p>The contents of this file is almost identical to <a class="reference internal" href="#intermediate-class-header">4.3 Intermediate Class Header</a>,
+save for the presence of a <tt class="docutils literal"><span class="pre">PyContact_Link()</span></tt> function. She is present
+at this level because the class is a concrete one and can be instanciated.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#ifndef ISOBAR_PY_CONTACT_H</span>
+<span class="cp">#define ISOBAR_PY_CONTACT_H</span>
+
+<span class="cp">#include &quot;hurricane/isobar/PyComponent.h&quot;</span>
+<span class="cp">#include &quot;hurricane/Contact.h&quot;</span>
+
+<span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+    <span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+      <span class="n">PyComponent</span> <span class="n">_baseObject</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">PyContact</span><span class="p">;</span>
+
+    <span class="k">extern</span> <span class="n">PyTypeObject</span>  <span class="n">PyTypeContact</span><span class="p">;</span>
+    <span class="k">extern</span> <span class="n">PyMethodDef</span>   <span class="n">PyContact_Methods</span><span class="p">[];</span>
+    <span class="k">extern</span> <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyContact_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Contact</span><span class="o">*</span> <span class="n">object</span> <span class="p">);</span>
+    <span class="k">extern</span> <span class="kt">void</span>          <span class="n">PyContact_LinkPyType</span> <span class="p">();</span>
+
+<span class="cp">#define IsPyContact(v)    ( (v)-&gt;ob_type == &amp;PyTypeContact )</span>
+<span class="cp">#define PYCONTACT(v)      ( (PyContact*)(v) )</span>
+<span class="cp">#define PYCONTACT_O(v)    ( PYCONTACT(v)-&gt;_baseObject._baseObject._object )</span>
+
+  <span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif  </span><span class="c1">// ISOBAR_PY_CONTACT_H</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="terminal-class-file">
+<h2>4.6 Terminal Class File<a class="headerlink" href="#terminal-class-file" title="Permalink to this headline">¶</a></h2>
+<p>Changes from <a class="reference internal" href="#intermediate-class-file">4.4 Intermediate Class File</a> are:</p>
+<ol class="arabic simple">
+<li>As previously, we have to redefine the macros <tt class="docutils literal"><span class="pre">ACCESS_OBJECT</span></tt> and <tt class="docutils literal"><span class="pre">ACCESS_CLASS</span></tt>.
+But, as we are one level deeper into the hierarchy, one more level of
+indirection using <tt class="docutils literal"><span class="pre">_baseObject</span></tt> must be used.<ul>
+<li><tt class="docutils literal"><span class="pre">ACCESS_OBJECT</span></tt> becomes <tt class="docutils literal"><span class="pre">_baseObject._baseObject._object</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">ACCESS_CLASS</span></tt> becomes <tt class="docutils literal"><span class="pre">&amp;(_pyObject-&gt;_baseObject._baseObject)</span></tt>.</li>
+</ul>
+</li>
+<li>For defining the <tt class="docutils literal"><span class="pre">PyTypeContact</span></tt> Python type, we call again
+<tt class="docutils literal"><span class="pre">PyTypeInheritedObjectDefinitions()</span></tt>. It is the same whether the class is
+terminal or not.</li>
+<li>And, this time, as the Python class is concrete, we call the macro
+<tt class="docutils literal"><span class="pre">DBoLinkCreateMethod()</span></tt> to create the <tt class="docutils literal"><span class="pre">PyContact_Link()</span></tt> function.</li>
+</ol>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyContact.h&quot;</span>
+
+<span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+<span class="cp">#undef  ACCESS_OBJECT</span>
+<span class="cp">#undef  ACCESS_CLASS</span>
+<span class="cp">#define ACCESS_OBJECT           _baseObject._baseObject._object</span>
+<span class="cp">#define ACCESS_CLASS(_pyObject) &amp;(_pyObject-&gt;_baseObject._baseObject)</span>
+<span class="cp">#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Contact,contact,function)</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+    <span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyContact_getWidth</span> <span class="p">,</span> <span class="n">getWidth</span> <span class="p">,</span> <span class="n">PyContact</span><span class="p">,</span><span class="n">Contact</span><span class="p">)</span>
+    <span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyContact_getHeight</span><span class="p">,</span> <span class="n">getHeight</span><span class="p">,</span> <span class="n">PyContact</span><span class="p">,</span><span class="n">Contact</span><span class="p">)</span>
+    <span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyContact_destroy</span><span class="p">,</span> <span class="n">PyContact</span><span class="p">)</span>
+
+    <span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyContact_create</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Contact</span><span class="o">*</span> <span class="n">contact</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">HTRY</span>
+        <span class="c1">// Usual signature then arguments parsing.</span>
+      <span class="n">HCATCH</span>
+      <span class="k">return</span> <span class="n">PyContact_Link</span><span class="p">(</span><span class="n">contact</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">PyMethodDef</span> <span class="n">PyContact_Methods</span><span class="p">[]</span> <span class="o">=</span>
+      <span class="p">{</span> <span class="p">{</span> <span class="s">&quot;create&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_create</span>   <span class="p">,</span> <span class="n">METH_VARARGS</span><span class="o">|</span><span class="n">METH_STATIC</span>
+                     <span class="p">,</span> <span class="s">&quot;Create a new Contact.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;destroy&quot;</span>  <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_destroy</span>  <span class="p">,</span> <span class="n">METH_NOARGS</span>
+                     <span class="p">,</span> <span class="s">&quot;Destroy associated hurricane object, the python object remains.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;getWidth&quot;</span> <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_getWidth</span> <span class="p">,</span> <span class="n">METH_NOARGS</span>
+                     <span class="p">,</span> <span class="s">&quot;Return the contact width.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;getHeight&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_getHeight</span><span class="p">,</span> <span class="n">METH_NOARGS</span>
+                     <span class="p">,</span> <span class="s">&quot;Return the contact height.&quot;</span> <span class="p">}</span>
+      <span class="p">,</span> <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>  <span class="cm">/* sentinel */</span>
+      <span class="p">};</span>
+
+    <span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+    <span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// Python Module Code Part.</span>
+
+    <span class="n">DBoLinkCreateMethod</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+    <span class="n">PyTypeInheritedObjectDefinitions</span><span class="p">(</span><span class="n">Contact</span><span class="p">,</span> <span class="n">Component</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+  <span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-module">
+<h2>4.8 Python Module<a class="headerlink" href="#python-module" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DL_EXPORT</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">initHurricane</span> <span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">PyEntity_LinkPyType</span><span class="p">();</span>  <span class="c1">// step 1.</span>
+  <span class="n">PyComponent_LinkPyType</span><span class="p">();</span>
+  <span class="n">PyContact_LinkPyType</span><span class="p">();</span>
+
+  <span class="n">PYTYPE_READY</span><span class="p">(</span> <span class="n">Entity</span> <span class="p">)</span>  <span class="c1">// step 2.</span>
+  <span class="n">PYTYPE_READY_SUB</span><span class="p">(</span> <span class="n">Component</span><span class="p">,</span> <span class="n">Entity</span> <span class="p">)</span>
+  <span class="n">PYTYPE_READY_SUB</span><span class="p">(</span> <span class="n">Contact</span>  <span class="p">,</span> <span class="n">Component</span> <span class="p">)</span>
+
+  <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;ent&quot;</span>    <span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeEntity</span>   <span class="p">,</span> <span class="s">&quot;&lt;Entity&gt;&quot;</span>   <span class="p">,</span> <span class="kc">false</span> <span class="p">);</span> <span class="c1">// step 3.</span>
+  <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;comp&quot;</span>   <span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeComponent</span><span class="p">,</span> <span class="s">&quot;&lt;Component&gt;&quot;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&quot;ent&quot;</span>  <span class="p">);</span>
+  <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;contact&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeContact</span>  <span class="p">,</span> <span class="s">&quot;&lt;Contact&gt;&quot;</span>  <span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&quot;comp&quot;</span> <span class="p">);</span>
+
+  <span class="n">PyObject</span><span class="o">*</span> <span class="n">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
+         <span class="o">&lt;&lt;</span> <span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">Py_INCREF</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">PyTypeContact</span> <span class="p">);</span>                                        <span class="c1">// step 4.</span>
+  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="n">module</span><span class="p">,</span> <span class="s">&quot;Contact&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeContact</span> <span class="p">);</span> <span class="c1">// step 4.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="NonDBo.html" class="btn btn-neutral float-right" title="5. Case 3 - Non-DBo Standalone Classe" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="DBoStandalone.html" class="btn btn-neutral" title="3. Case 1 - DBo Derived, Standalone" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2017, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
