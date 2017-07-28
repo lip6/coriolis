@@ -142,6 +142,7 @@ namespace Katana {
       inline       void          setLonguestOverlap ( DbU::Unit );
       inline       void          mergeRipupCount    ( int );
       inline       void          mergeDataState     ( uint32_t );
+      inline       bool          selectNextTrack    ();
       inline       bool          select             ( size_t index, uint32_t flags );
                    void          consolidate        ();
                    void          setDistanceToFixed ();
@@ -191,7 +192,6 @@ namespace Katana {
   inline       uint32_t      TrackCost::getFlags           () const { return _flags; }
   inline       size_t        TrackCost::getSpan            () const { return _span; }
   inline       Net*          TrackCost::getNet             () const { return (_selectFlags & Symmetric) ? getNet2() : getNet1(); }
-  inline       Track*        TrackCost::getTrack           () const { return getTrack(_selectIndex,_selectFlags); }
   inline       Track*        TrackCost::getTrack           ( size_t i ) const { return getTrack(i,NoFlags); }
   inline       size_t        TrackCost::getBegin           () const { return getBegin(_selectIndex,_selectFlags); }
   inline       size_t        TrackCost::getBegin           ( size_t i ) const { return getBegin(i,NoFlags); }
@@ -231,6 +231,27 @@ namespace Katana {
   inline  TrackCost::Compare::Compare ( uint32_t flags ) : _flags(flags) { }
 
 
+  inline  Track* TrackCost::getTrack () const
+  {
+    cdebug_log( 55,0) << "TrackCost::getTrack() _index:" << _selectIndex
+                      << " flags:" << _selectFlags << std::endl;
+    return getTrack(_selectIndex,_selectFlags);
+  }
+
+
+  inline  bool  TrackCost::selectNextTrack ()
+  {
+    if (_selectIndex+1 < _span) {
+      ++_selectIndex;
+      cdebug_log( 55,0) << "TrackCost::selectNextTrack() _index:" << _selectIndex
+                        << " flags:" << _selectFlags << std::endl;
+      return true;
+    }
+    cdebug_log( 55,0) << "TrackCost::selectNextTrack() over span:" << _span << std::endl;
+    return false;
+  }
+
+
   inline  bool  TrackCost::select ( size_t index, uint32_t flags )
   {
     if ( (index >= _span) or ((flags & Symmetric) and not (_flags & Symmetric)) ) {
@@ -241,6 +262,9 @@ namespace Katana {
 
     _selectIndex = index;
     _selectFlags = flags;
+
+    cdebug_log( 55,0) << "TrackCost::select() _index:" << _selectIndex
+                      << " flags:" << _selectFlags << std::endl;
     return true;
   }
 
@@ -248,12 +272,22 @@ namespace Katana {
   inline  Track*  TrackCost::getTrack ( size_t i, uint32_t flags ) const
   {
     if (i >= _span) return NULL;
+
+    cdebug_log( 55,0) << "TrackCost::getTrack() i:" << i
+                      << " flags:" << flags
+                      << " index:" << (i + ((flags & Symmetric) ? _span : 0)) << std::endl;
+
     return std::get<0>( _tracks[i + ((flags & Symmetric) ? _span : 0)] );
   }
 
 
   inline  void  TrackCost::setTrack ( Track* track, size_t begin, size_t end )
   {
+    cdebug_log( 55,0) << "TrackCost::setTrack() sindex:" << _selectIndex 
+                      << " sflags:" << _selectFlags
+                      << " index:" << (_selectIndex + ((_selectFlags & Symmetric) ? _span : 0))
+                      << " " << track << std::endl;
+
     auto& entry = _tracks[_selectIndex + ((_selectFlags & Symmetric) ? _span : 0)];
     std::get<0>( entry ) = track;
     std::get<1>( entry ) = begin;

@@ -480,7 +480,7 @@ namespace Anabatic {
     cdebug_log(144,1) << "AutoSegments_Perpandiculars::Locator::progress()" << endl;
 
     if (not _perpandiculars.empty()) _perpandiculars.pop_back();
-    if (not _perpandiculars.empty()) return;
+    if (not _perpandiculars.empty()) { cdebug_tabw(144,-1); return; }
 
     while ( not _stack.isEmpty() ) {
       AutoContact* sourceContact = _stack.getAutoContact();

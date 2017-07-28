@@ -77,6 +77,8 @@ namespace Katana {
 
   void  Tracks_Range::Locator::progress ()
   {
+    cdebug_log(155,0) << "Tracks_Range::Locator::progress()" << endl;;
+
     if (not _track) return;
 
     _track = _track->getNextTrack();

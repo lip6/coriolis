@@ -77,7 +77,7 @@ namespace {
 namespace Katana {
 
   using namespace std;
-  using Anabatic::AutoSegmentFlag;
+  using Anabatic::AutoSegment;
 
 
   DataSymmetric* DataSymmetric::create ( Net* net )
@@ -122,7 +122,7 @@ namespace Katana {
 
   bool  DataSymmetric::checkPairing ()
   {
-    const uint32_t mask   = ~(AutoSegmentFlag::SegIsReduced);
+    const uint64_t mask   = ~(AutoSegment::SegIsReduced);
           Message  errors ( 0, "[ERROR]" );
 
   // Temporary hardwired: M2 (depth 1) for H pitch, M3 (depth 2) for V pitch.

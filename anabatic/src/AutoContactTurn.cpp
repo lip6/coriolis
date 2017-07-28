@@ -104,6 +104,10 @@ namespace Anabatic {
   }
 
 
+  AutoHorizontal*  AutoContactTurn::getHorizontal1 () const { return _horizontal1; };
+  AutoVertical*    AutoContactTurn::getVertical1   () const { return _vertical1; };
+
+
   void  AutoContactTurn::_invalidate ( Flags flags )
   {
     if (_horizontal1) _horizontal1->invalidate();
@@ -144,6 +148,7 @@ namespace Anabatic {
     }
 
     if (_horizontal1 and _vertical1) unsetFlags( CntInvalidatedCache  );
+    setFlags( CntInvalidatedWidth );
   }
 
 
@@ -172,8 +177,10 @@ namespace Anabatic {
     if (not message.empty()) {
       showTopologyError( message );
       setFlags( CntBadTopology );
-    } else
+    } else {
       unsetFlags( CntInvalidatedCache );
+      setFlags  ( CntInvalidatedWidth );
+    }
 
     cdebug_log(145,0) << "h1:" << _horizontal1 << endl;
     cdebug_log(145,0) << "v1:" << _vertical1 << endl;
@@ -201,11 +208,12 @@ namespace Anabatic {
     }
 
     base()->invalidate( false );
-    unsetFlags ( CntInvalidated );
+    unsetFlags( CntInvalidated );
 
     if (not hasBadTopology()) {
       setX( getVertical1  ()->getX() );
       setY( getHorizontal1()->getY() );
+      updateSize();
     }
 
     cdebug_tabw(145,-1);

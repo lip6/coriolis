@@ -58,6 +58,7 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Layer;
   using Anabatic::GCell;
+  using Anabatic::AutoSegment;
 
 
 // -------------------------------------------------------------------
@@ -95,8 +96,8 @@ namespace Katana {
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;
 
-    if ((lhs._segFlags & Anabatic::SegHorizontal) xor (rhs._segFlags & Anabatic::SegHorizontal))
-      return (rhs._segFlags & Anabatic::SegHorizontal);
+    if ((lhs._segFlags & AutoSegment::SegHorizontal) xor (rhs._segFlags & AutoSegment::SegHorizontal))
+      return (rhs._segFlags & AutoSegment::SegHorizontal);
 
     if (lhs._axis > rhs._axis) return true;
     if (lhs._axis < rhs._axis) return false;

@@ -138,6 +138,7 @@ namespace Katana {
   bool           TrackFixedSegment::isFixed          () const { return true; }
   bool           TrackFixedSegment::isPriorityLocked () const { return false; }
   Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
+  DbU::Unit      TrackFixedSegment::getWidth         () const { return _segment->getWidth(); }
   const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }
   Interval       TrackFixedSegment::getFreeInterval  () const { return Interval(); }
   size_t         TrackFixedSegment::getTrackSpan     () const { return 1; }
@@ -161,14 +162,14 @@ namespace Katana {
 
   TrackElement* TrackFixedSegment::getNext () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackFixedSegment::getPrevious () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getPrevious( dummy, getNet() );
   }
 
@@ -212,7 +213,6 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + "F"
               + ((isBlockage()) ? "B" : "-");
     s1.insert ( s1.size()-1, s2 );

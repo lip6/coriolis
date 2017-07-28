@@ -145,6 +145,7 @@ namespace Katana {
   bool           TrackElement::isUTurn              () const { return false; }
   bool           TrackElement::isUserDefined        () const { return false; }
   bool           TrackElement::isAnalog             () const { return false; }
+  bool           TrackElement::isWide               () const { return false; }
 // Predicates.
   bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }
@@ -157,6 +158,7 @@ namespace Katana {
 // Accessors.
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }
+  uint32_t       TrackElement::getTrackCount        () const { return 0; }
   DbU::Unit      TrackElement::getPitch             () const { return 0; }
   DbU::Unit      TrackElement::getPPitch            () const { return 0; }
   float          TrackElement::getMaxUnderDensity   ( Flags ) const { return 0.0; };
@@ -172,6 +174,7 @@ namespace Katana {
   TrackElement*  TrackElement::getTargetDogleg      () { return NULL; }
   TrackElement*  TrackElement::getSymmetric         () { return NULL; }
 // Mutators.
+  void           TrackElement::addTrackCount        ( int32_t ) { }
   void           TrackElement::setTrack             ( Track* track ) { _track = track; }
   void           TrackElement::setSymmetric         ( TrackElement* ) { }
   void           TrackElement::updateFreedomDegree  () { }
@@ -179,6 +182,7 @@ namespace Katana {
   void           TrackElement::swapTrack            ( TrackElement* ) { }
   void           TrackElement::reschedule           ( uint32_t ) { }
   void           TrackElement::detach               () { }
+  void           TrackElement::detach               ( set<Track*>& ) { }
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::setAxis              ( DbU::Unit, uint32_t flags ) { }
@@ -199,7 +203,6 @@ namespace Katana {
   TrackElement::TrackElement ( Track* track )
     : _flags   (0)
     , _track   (track)
-    , _index   ((size_t)-1)
     , _sourceU (0)
     , _targetU (0)
     , _observer(this)
@@ -227,14 +230,14 @@ namespace Katana {
 
   TrackElement* TrackElement::getNext () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackElement::getPrevious () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getPrevious( dummy, getNet() );
   }
 
@@ -243,8 +246,8 @@ namespace Katana {
   {
     if (not _track) return Interval(false);
 
-    size_t  begin = _index;
-    size_t  end   = _index;
+    size_t  begin = _track->find( this );
+    size_t  end   = begin;
     return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
   }
 
@@ -276,7 +279,6 @@ namespace Katana {
     Record* record = new Record( _getString() );
     record->add( getSlot( "_flags",  _track ) );
     record->add( getSlot( "_track",  _track ) );
-    record->add( getSlot( "_index",  _index ) );
     record->add( DbU::getValueSlot( "_sourceU",  &_sourceU ) );
     record->add( DbU::getValueSlot( "_targetU",  &_targetU ) );
 

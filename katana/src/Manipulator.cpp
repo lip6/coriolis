@@ -620,11 +620,45 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::insertInTrack ( size_t itrack )
+  bool  Manipulator::insertInTrack ( size_t icost )
   {
-    Track*              track            = _fsm.getTrack(itrack);
-    size_t              begin            = _fsm.getBegin(itrack);
-    size_t              end              = _fsm.getEnd  (itrack);
+    cdebug_log(159,1) << "Manipulator::insertInTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _insertInTrack( icost, itrack );
+    }
+
+    if (success) {
+      cdebug_log(159,0) << "Manipulator::insertInTrack() success" << endl;
+
+      _fsm.setState ( SegmentFsm::OtherRipup );
+      _fsm.addAction( _segment
+                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
+                    , _fsm.getTrack1(icost)->getAxis() );
+
+#if THIS_IS_DISABLED
+      uint32_t flags = 0;
+      if (rightIntrication) flags |= RightAxisHint;
+      if (leftIntrication ) flags |= LeftAxisHint;
+      if (flags)
+        Manipulator( _segment, _fsm ).shrinkToTrack( icost, flags, leftAxisHint, rightAxisHint );
+#endif
+    } else
+      _fsm.clearActions();
+
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::_insertInTrack ( size_t icost, size_t itrack )
+  {
+    Track*              track            = _fsm.getTrack(icost,itrack);
+    size_t              begin            = _fsm.getBegin(icost,itrack);
+    size_t              end              = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet         = _segment->getNet();
     Interval            toFree            (_segment->getCanonicalInterval());
   //Net*                ripupNet         = NULL;
@@ -635,10 +669,10 @@ namespace Katana {
     bool                rightIntrication = false;
     bool                success          = true;
 
-    cdebug_log(159,1) << "Manipulator::insertInTrack(size_t) - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::_insertInTrack(size_t) - " << toFree << endl;
     cdebug_log(159,0) << _segment << endl;
 
-    for ( size_t i = begin ; success && (i < end) ; i++ ) {
+    for ( size_t i = begin ; success and (i < end) ; i++ ) {
       TrackElement* segment2 = track->getSegment(i);
 
       cdebug_log(159,0) << "* Looking // " << segment2 << endl;
@@ -772,42 +806,49 @@ namespace Katana {
             break;
         }
       }
-      if ( not success ) break;
     }
-
-    if ( success ) {
-      cdebug_log(159,0) << "Manipulator::insertInTrack() success" << endl;
-
-      _fsm.setState ( SegmentFsm::OtherRipup );
-      _fsm.addAction( _segment
-                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
-                    , _fsm.getTrack1(itrack)->getAxis() );
-
-      uint32_t flags = 0;
-      if ( rightIntrication ) flags |= RightAxisHint;
-      if ( leftIntrication  ) flags |= LeftAxisHint;
-      if ( flags )
-        Manipulator(_segment,_fsm).shrinkToTrack(itrack,flags,leftAxisHint,rightAxisHint);
-    } else
-      _fsm.clearActions ();
 
     cdebug_tabw(159,-1);
     return success;
   }
 
 
-  bool  Manipulator::forceToTrack ( size_t itrack )
+  bool  Manipulator::forceToTrack ( size_t icost )
   {
-    Track*              track      = _fsm.getTrack(itrack);
-    size_t              begin      = _fsm.getBegin(itrack);
-    size_t              end        = _fsm.getEnd  (itrack);
+    cdebug_log(159,1) << "Manipulator::forceToTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _forceToTrack( icost, itrack );
+    }
+
+    if (success) {
+      _fsm.setState ( SegmentFsm::OtherRipup );
+      _fsm.addAction( _segment
+                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
+                    , _fsm.getTrack(icost)->getAxis() );
+    } else
+      _fsm.clearActions();
+
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::_forceToTrack ( size_t icost, size_t itrack )
+  {
+    Track*              track      = _fsm.getTrack(icost,itrack);
+    size_t              begin      = _fsm.getBegin(icost,itrack);
+    size_t              end        = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet   = _segment->getNet();
     Interval            toFree      (_segment->getCanonicalInterval());
   //Net*                ripupNet   = NULL;
     set<TrackElement*>  canonicals;
     bool                success    = true;
 
-    cdebug_log(159,1) << "Manipulator::forceToTrack(size_t) - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::_forceToTrack(size_t) - " << toFree << endl;
 
     for ( size_t i=begin ; success and (i < end) ; ++i ) {
       TrackElement* segment2 = track->getSegment(i);
@@ -846,11 +887,20 @@ namespace Katana {
       }
     }
 
-    if (success) {
-      _fsm.setState ( SegmentFsm::OtherRipup );
-      _fsm.addAction( _segment
-                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                    , _fsm.getTrack(itrack)->getAxis() );
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::shrinkToTrack ( size_t icost, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
+  {
+    cdebug_log(159,1) << "Manipulator::shrinkToTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _shrinkToTrack( icost, itrack, flags, leftAxisHint, rightAxisHint );
     }
 
     cdebug_tabw(159,-1);
@@ -858,12 +908,12 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::shrinkToTrack ( size_t i, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
+  bool  Manipulator::_shrinkToTrack ( size_t icost, size_t itrack, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
   {
 #if THIS_IS_DISABLED
-    Track*              track       = _fsm.getTrack(i);
-    size_t              begin       = _fsm.getBegin(i);
-    size_t              end         = _fsm.getEnd  (i);
+    Track*              track       = _fsm.getTrack(icost,itrack);
+    size_t              begin       = _fsm.getBegin(icost,itrack);
+    size_t              end         = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet    = _segment->getNet();
     set<TrackElement*>  canonicals;
     bool                success     = true;

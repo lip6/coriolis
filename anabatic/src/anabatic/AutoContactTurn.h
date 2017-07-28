@@ -40,8 +40,8 @@ namespace Anabatic {
       virtual                 ~AutoContactTurn        ();
       virtual void             _invalidate            ( Flags flags );
     public:
-      inline  AutoHorizontal*  getHorizontal1         () const;
-      inline  AutoVertical*    getVertical1           () const;
+      virtual AutoHorizontal*  getHorizontal1         () const;
+      virtual AutoVertical*    getVertical1           () const;
       virtual AutoSegment*     getOpposite            ( const AutoSegment* ) const;
       virtual AutoSegment*     getPerpandicular       ( const AutoSegment* ) const;
       virtual AutoSegment*     getSegment             ( unsigned int ) const;
@@ -58,10 +58,6 @@ namespace Anabatic {
       AutoHorizontal* _horizontal1;
       AutoVertical*   _vertical1;
   };
-
-
-  inline  AutoHorizontal*  AutoContactTurn::getHorizontal1 () const { return _horizontal1; };
-  inline  AutoVertical*    AutoContactTurn::getVertical1   () const { return _vertical1; };
 
   
 

@@ -61,11 +61,12 @@ namespace Anabatic {
                        , CntVTee                  = (1 <<  4)
                        , CntInvalidated           = (1 <<  6)
                        , CntInvalidatedCache      = (1 <<  7)
-                       , CntInCreationStage       = (1 <<  8)
-                       , CntBadTopology           = (1 <<  9)
-                       , CntIgnoreAnchor          = (1 << 10)
-                       , CntWeakTerminal          = (1 << 11)
-                       , CntUserNativeConstraints = (1 << 12)
+                       , CntInvalidatedWidth      = (1 <<  8)
+                       , CntInCreationStage       = (1 <<  9)
+                       , CntBadTopology           = (1 << 10)
+                       , CntIgnoreAnchor          = (1 << 11)
+                       , CntWeakTerminal          = (1 << 12)
+                       , CntUserNativeConstraints = (1 << 13)
                        };
 
   class AutoContact {
@@ -106,6 +107,7 @@ namespace Anabatic {
       inline  bool             isInCreationStage          () const;
       inline  bool             isInvalidated              () const;
       inline  bool             isInvalidatedCache         () const;
+      inline  bool             isInvalidatedWidth         () const;
       inline  bool             isTerminal                 () const;
       inline  bool             isTurn                     () const;
               bool             isTee                      ( Flags direction ) const;
@@ -127,6 +129,10 @@ namespace Anabatic {
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getPerpandicular           ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
+      virtual AutoHorizontal*  getHorizontal1             () const;
+      virtual AutoHorizontal*  getHorizontal2             () const;
+      virtual AutoVertical*    getVertical1               () const;
+      virtual AutoVertical*    getVertical2               () const;
               void             getDepthSpan               ( size_t& minDepth, size_t& maxDepth ) const;
       inline  unsigned int     getMinDepth                () const;
       inline  unsigned int     getMaxDepth                () const;
@@ -147,6 +153,7 @@ namespace Anabatic {
       virtual void             cacheDetach                ( AutoSegment* ) = 0;
       virtual void             cacheAttach                ( AutoSegment* ) = 0;
       virtual void             updateCache                () = 0;
+              void             updateSize                 ();
       virtual void             updateGeometry             () = 0;
       virtual void             updateTopology             () = 0;
               void             showTopologyError          ( const std::string&, Flags flags=Flags::NoFlags );
@@ -238,6 +245,7 @@ namespace Anabatic {
   inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
   inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
   inline bool          AutoContact::isInvalidatedCache      () const { return _flags&CntInvalidatedCache; }
+  inline bool          AutoContact::isInvalidatedWidth      () const { return _flags&CntInvalidatedWidth; }
   inline bool          AutoContact::isTurn                  () const { return _flags&CntTurn; }
   inline bool          AutoContact::isFixed                 () const { return _flags&CntFixed; }
   inline bool          AutoContact::isUserNativeConstraints () const { return _flags&CntUserNativeConstraints; }

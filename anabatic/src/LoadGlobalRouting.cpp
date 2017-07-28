@@ -880,7 +880,7 @@ namespace {
   void  GCellTopology::fixSegments ()
   {
     for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
-      _toFixSegments[i]->setFlags( SegFixed );
+      _toFixSegments[i]->setFlags( AutoSegment::SegFixed );
     _toFixSegments.clear();
   }
 
@@ -1120,7 +1120,7 @@ namespace {
                                                           , targetContact
                                                           , static_cast<Segment*>( _fromHook->getComponent() )
                                                           );
-          globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
+          globalSegment->setFlags( (_degree == 2) ? AutoSegment::SegBipoint : 0 );
           cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
 
         // HARDCODED VALUE.
@@ -1220,7 +1220,7 @@ namespace {
     const Layer* rpLayer        = rp->getLayer();
     size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
     Flags        direction      = Session::getDirection ( rpDepth );
-    DbU::Unit    viaSide        = Session::getWireWidth ( rpDepth );
+    DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
 
     getPositions( rp, sourcePosition, targetPosition );
 
@@ -1256,7 +1256,7 @@ namespace {
         targetProtect->setFlags( CntFixed );
 
         AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction );
-        segment->setFlags( SegFixed );
+        segment->setFlags( AutoSegment::SegFixed );
 
         __routingPadAutoSegments.insert( make_pair(rp,segment) );
       }
@@ -1480,7 +1480,7 @@ namespace {
 
     const Layer* rpLayer  = rp->getLayer();
     size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-    DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+    DbU::Unit    viaSide  = Session::getViaWidth  ( rpDepth );
     Point        position = rp->getCenter();
     Point        onGrid   = Session::getNearestGridPoint( position, gcell->getConstraintBox() );
 
@@ -2350,19 +2350,10 @@ namespace {
   {
     cdebug_log(145,1) << "void  GCellTopology::_doHChannel ( ForkStack& forks )" << _gcell << endl;
     
-    vector<Hook*>       hooks;
-    Hook*               firsthhook = NULL;
-    Hook*               lasthhook  = NULL;
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
-
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
-    AutoContact* targetContact = NULL;
+    vector<Hook*>  hooks;
+    Hook*          firsthhook = NULL;
+    Hook*          lasthhook  = NULL;
+    AutoContact*   targetContact = NULL;
     
   // Save segments only
     cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
@@ -2462,15 +2453,8 @@ namespace {
       cdebug_log(145,0) << "Chain contacts: "  << endl;
       for (size_t j=1; j < autoContacts.size(); j++){
         if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* globalSegment = 
-            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
-                               , Horizontal::create( autoContacts[j-1]->base() , autoContacts[j]->base()
-                                                   , horizontalLayer
-                                                   , autoContacts[j-1]->getY()
-                                                   , horizontalWidth 
-                                                   )
-                               );
-          cdebug_log(145,0) << "[Create global segment (2)]: " << globalSegment << endl;
+          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Horizontal );
+          cdebug_log(145,0) << "[Create global segment (2)]: " << segment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2498,14 +2482,7 @@ namespace {
 
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
         cdebug_log(145,0) << "[Create global segment (3)]: " << globalSegment << endl;
         
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -2551,14 +2528,7 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
         cdebug_log(145,0) << "[Create global segment (4)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -2585,19 +2555,10 @@ namespace {
     cdebug_log(145,1) << "void  GCellTopology::_doVChannel ()" << _gcell << endl;
     
   
-    vector<Hook*>       hooks;
-    Hook*               firstvhook = NULL;
-    Hook*               lastvhook  = NULL;
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
-
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
-    AutoContact* targetContact   = NULL;
+    vector<Hook*>  hooks;
+    Hook*          firstvhook = NULL;
+    Hook*          lastvhook  = NULL;
+    AutoContact*   targetContact   = NULL;
     
   // Save segments only
     cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
@@ -2699,16 +2660,9 @@ namespace {
       cdebug_log(145,0) << "Chain contacts: "  << endl;
       for (size_t j=1; j < autoContacts.size(); j++){
         if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* globalSegment = 
-            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
-                               , Vertical::create( autoContacts[j-1]->base() , autoContacts[j]->base()
-                                                 , verticalLayer
-                                                 , autoContacts[j-1]->getX()
-                                                 , verticalWidth 
-                                                 )
-                               );
-          if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-          cdebug_log(145,0) << "[Create global segment (5)]: " << globalSegment << endl;
+          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Vertical );
+          if (not segment->isGlobal()) segment->setFlags( AutoSegment::SegLongLocal );
+          cdebug_log(145,0) << "[Create global segment (5)]: " << segment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2738,15 +2692,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (6)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -2793,15 +2740,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (7)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
@@ -2853,16 +2793,7 @@ namespace {
   AutoContact*  GCellTopology::_doStrut ( ForkStack& forks )
   {
     cdebug_log(145,1) << "void  GCellTopology::_doStrut ()" << _gcell << endl;
-    
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
 
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
     AutoContact* targetContact   = NULL; // Contact for fromHook segment
     cdebug_log(145,0) << "FromHook: " << _fromHook  << endl;
     cdebug_log(145,0) << "North   : " << _north     << endl;
@@ -2948,15 +2879,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (8)]: " << globalSegment << endl;
       
       } else if ((_east != NULL) && (_west != NULL) ) {
@@ -2999,15 +2923,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (9)]: " << globalSegment << endl;
 
       } else {
@@ -3048,15 +2965,8 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( turn, xtee
-                             , Horizontal::create( turn->base(), xtee->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (10)]: " << globalSegment << endl;
 
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
@@ -3086,15 +2996,8 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( xtee, turn
-                             , Horizontal::create( xtee->base(), turn->base()
-                                                 , horizontalLayer
-                                                 , xtee->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (11)]: " << globalSegment << endl;
 
 
@@ -3125,15 +3028,8 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( turn, xtee
-                             , Vertical::create( turn->base(), xtee->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (12)]: " << globalSegment << endl;
 
       } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
@@ -3163,15 +3059,8 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( xtee, turn
-                             , Vertical::create( xtee->base(), turn->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
+        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
         cdebug_log(145,0) << "[Create global segment (13)]: " << globalSegment << endl;
 
       } else {
@@ -3212,22 +3101,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( turn, hteeh
-                             , Vertical::create( turn->base(), hteeh->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( turn, hteeh, Flags::Vertical );
         cdebug_log(145,0) << "[Create global segment (14.1)]: " << globalSegment1 << endl;
         cdebug_log(145,0) << "[Create global segment (14.2)]: " << globalSegment2 << endl;
 
@@ -3258,22 +3133,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( vteev, hteeh
-                             , Horizontal::create( vteev->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , vteev->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, turn
-                             , Vertical::create( vteev->base(), turn->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
+        AutoSegment* globalSegment1 = AutoSegment::create( vteev, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
         cdebug_log(145,0) << "[Create global segment (15.1)]: " << globalSegment1 << endl;
         cdebug_log(145,0) << "[Create global segment (15.2)]: " << globalSegment2 << endl;
 
@@ -3304,22 +3165,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, hteeh
-                             , Vertical::create( vteev->base(), hteeh->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, hteeh, Flags::Vertical );
         cdebug_log(145,0) << "[Create global segment (16.1)]: " << globalSegment1 << endl;
         cdebug_log(145,0) << "[Create global segment (16.2)]: " << globalSegment2 << endl;
 
@@ -3348,22 +3195,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, turn
-                             , Vertical::create( vteev->base(), turn->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
         cdebug_log(145,0) << "[Create global segment (17.1)]: " << globalSegment1 << endl;
         cdebug_log(145,0) << "[Create global segment (17.2)]: " << globalSegment2 << endl;
       }

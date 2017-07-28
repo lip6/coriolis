@@ -106,6 +106,11 @@ namespace Anabatic {
   }
 
 
+  AutoHorizontal* AutoContactVTee::getHorizontal1 () const { return _horizontal1; };
+  AutoVertical*   AutoContactVTee::getVertical1   () const { return _vertical1; };
+  AutoVertical*   AutoContactVTee::getVertical2   () const { return _vertical2; };
+
+
   void  AutoContactVTee::_invalidate ( Flags )
   {
     Flags flags = Flags::Propagate;
@@ -225,6 +230,7 @@ namespace Anabatic {
     if (not hasBadTopology()) {
       setX( getVertical1  ()->getX() );
       setY( getHorizontal1()->getY() );
+      updateSize();
     }
 
     cdebug_tabw(145,-1);

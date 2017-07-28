@@ -171,16 +171,13 @@ namespace Anabatic {
   }
 
 
-  const Name& AutoContact::getName () const
-  { return _goName; }
-
-
-  AutoSegments  AutoContact::getAutoSegments ()
-  { return new AutoSegments_CachedOnContact(this); }
-
-
-  AutoSegment* AutoContact::getPerpandicular ( const AutoSegment* ) const
-  { return NULL; }
+  const Name&     AutoContact::getName          () const { return _goName; }
+  AutoSegments    AutoContact::getAutoSegments  () { return new AutoSegments_CachedOnContact(this); }
+  AutoSegment*    AutoContact::getPerpandicular ( const AutoSegment* ) const { return NULL; }
+  AutoHorizontal* AutoContact::getHorizontal1   () const { return NULL; }
+  AutoHorizontal* AutoContact::getHorizontal2   () const { return NULL; }
+  AutoVertical*   AutoContact::getVertical1     () const { return NULL; }
+  AutoVertical*   AutoContact::getVertical2     () const { return NULL; }
 
 
   void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
@@ -314,6 +311,31 @@ namespace Anabatic {
       }
     } else {
       cerr << Bug( "NULL GCell for %s.", _getString().c_str() ) << endl;
+    }
+  }
+
+
+  void  AutoContact::updateSize ()
+  {
+    if (isInvalidatedWidth()) {
+      size_t minDepth = 0;
+      size_t maxDepth = 0;
+      getDepthSpan( minDepth, maxDepth );
+
+      if (getVertical1() and getVertical1()->isWide()) {
+        size_t    vdepth = (Session::getLayerDepth(getVertical1()->getLayer()) == maxDepth) ? maxDepth : minDepth; 
+        DbU::Unit width  = getVertical1()->getWidth();
+        width += Session::getViaWidth(vdepth) - Session::getWireWidth(vdepth); 
+        setWidth( width );
+      }
+      
+      if (getHorizontal1() and getHorizontal1()->isWide()) {
+        size_t    hdepth = (Session::getLayerDepth(getHorizontal1()->getLayer()) == maxDepth) ? maxDepth : minDepth; 
+        DbU::Unit width  = getHorizontal1()->getWidth();
+        width += Session::getViaWidth(hdepth) - Session::getWireWidth(hdepth); 
+        setHeight( width );
+      }
+      unsetFlags ( CntInvalidatedWidth );
     }
   }
 
