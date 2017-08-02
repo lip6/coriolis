@@ -886,6 +886,7 @@ class net :
     self._to_cat   = []
     self._real_net = None
     self._ext      = extern
+    self._h_type   = hType
     if extern : self._direct = direction
 
     # Error :
@@ -894,7 +895,6 @@ class net :
       raise Exception ( err )
     
     if hType :
-      self._h_type = hType
       if   hType ==  "POWER" : self._st_cell._st_vdds.append ( self )
       elif hType == "GROUND" : self._st_cell._st_vsss.append ( self )
       elif hType ==  "CLOCK" : self._st_cell._st_cks.append  ( self )
