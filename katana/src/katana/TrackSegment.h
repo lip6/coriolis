@@ -43,6 +43,11 @@ namespace Katana {
 // -------------------------------------------------------------------
 // Class  :  "TrackSegment".
 
+  enum TrackSegmentFlag { NoFlags        = 0
+                        , PriorityLocked = (1 << 0)
+                        };
+
+
   class TrackSegment : public TrackElement {
     public:
       class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
@@ -64,30 +69,36 @@ namespace Katana {
       virtual bool                  isGlobal               () const;
       virtual bool                  isBipoint              () const;
       virtual bool                  isTerminal             () const;
-      virtual bool                  isStrongTerminal       ( unsigned int flags=0 ) const;
+      virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isReduced              () const;
       virtual bool                  isUTurn                () const;
       virtual bool                  isUserDefined          () const;
+      virtual bool                  isAnalog               () const;
+      virtual bool                  isWide                 () const;
+      virtual bool                  isPriorityLocked       () const;
     // Predicates.
+      virtual bool                  hasSymmetric           () const;
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );
-      virtual bool                  canDogleg              ( Anabatic::GCell*, unsigned int flags=0 );
-      virtual bool                  canPivotUp             ( float reserve, unsigned int flags ) const;
-      virtual bool                  canPivotDown           ( float reserve, unsigned int flags ) const;
-      virtual bool                  canMoveUp              ( float reserve, unsigned int flags ) const;
+      virtual bool                  canDogleg              ( Anabatic::GCell*, Flags flags=0 );
+      virtual bool                  canPivotUp             ( float reserve, Flags flags ) const;
+      virtual bool                  canPivotDown           ( float reserve, Flags flags ) const;
+      virtual bool                  canMoveUp              ( float reserve, Flags flags ) const;
       virtual bool                  canSlacken             () const;
-      virtual float                 getMaxUnderDensity     ( unsigned int flags ) const;
+      virtual float                 getMaxUnderDensity     ( Flags flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
       virtual Net*                  getNet                 () const;
+      virtual DbU::Unit             getWidth               () const;
       virtual const Layer*          getLayer               () const;
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
       virtual unsigned long         getFreedomDegree       () const;
-      virtual unsigned int          getDoglegLevel         () const;
+      virtual float                 getPriority            () const;
+      virtual uint32_t              getDoglegLevel         () const;
       virtual TrackElement*         getNext                () const;
       virtual TrackElement*         getPrevious            () const;
       virtual TrackElement*         getParent              () const;
@@ -95,32 +106,39 @@ namespace Katana {
       virtual Interval              getFreeInterval        () const;
       virtual Interval              getSourceConstraints   () const;
       virtual Interval              getTargetConstraints   () const;
-      virtual DataNegociate*        getDataNegociate       ( unsigned int flags=Flags::DataSelf ) const;
+      virtual DataNegociate*        getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
       virtual TrackElement*         getCanonical           ( Interval& );
       virtual size_t                getGCells              ( vector<GCell*>& ) const;
       virtual TrackElement*         getSourceDogleg        ();
       virtual TrackElement*         getTargetDogleg        ();
+      virtual TrackElement*         getSymmetric           ();
       virtual TrackElements         getPerpandiculars      ();
       virtual size_t                getPerpandicularsBound ( set<TrackElement*>& );
     // Mutators.
       virtual void                  setTrack               ( Track* );
+      virtual void                  setSymmetric           ( TrackElement* );
+      virtual void                  setPriorityLock        ( bool state );
+      virtual void                  forcePriority          ( float );
+      virtual void                  computePriority        ();
+      virtual void                  computeAlignedPriority ();
       virtual void                  updateFreedomDegree    ();
-      virtual void                  setDoglegLevel         ( unsigned int );
+      virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
-      virtual void                  reschedule             ( unsigned int level );
+      virtual void                  reschedule             ( uint32_t level );
       virtual void                  detach                 ();
+      virtual void                  detach                 ( std::set<Track*>& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();
-      virtual void                  setAxis                ( DbU::Unit, unsigned int flags );
+      virtual void                  setAxis                ( DbU::Unit, uint32_t flags );
       virtual TrackElement*         makeDogleg             ();
       virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual TrackElement*         makeDogleg             ( Interval, unsigned int& flags );
+      virtual TrackElement*         makeDogleg             ( Interval, Flags& flags );
       virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual bool                  moveAside              ( unsigned int flags );
-      virtual bool                  slacken                ( unsigned int flags=Flags::NoFlags );
-      virtual bool                  moveUp                 ( unsigned int flags );
-      virtual bool                  moveDown               ( unsigned int flags );
+      virtual bool                  moveAside              ( Flags flags );
+      virtual bool                  slacken                ( Flags flags=Flags::NoFlags );
+      virtual bool                  moveUp                 ( Flags flags );
+      virtual bool                  moveDown               ( Flags flags );
 #if THIS_IS_DISABLED
       virtual void                  desalignate            ();
 #endif
@@ -133,10 +151,13 @@ namespace Katana {
     // Attributes.
       static size_t         _allocateds;
              AutoSegment*   _base;
+             TrackSegment*  _symmetric;
              unsigned long  _freedomDegree;
              DbU::Unit      _ppitch;
              DataNegociate* _data;
+             float          _priority;
              unsigned int   _dogLegLevel:4;
+             uint32_t       _flags; 
 
     protected:
     // Constructors & Destructors.

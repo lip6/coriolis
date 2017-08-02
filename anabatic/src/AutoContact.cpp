@@ -157,7 +157,7 @@ namespace Anabatic {
   { return _goName; }
 
 
-  bool  AutoContact::canDestroy ( unsigned int flags ) const
+  bool  AutoContact::canDestroy ( Flags flags ) const
   {
     if (not _contact->getSlaveComponents().isEmpty()) {
       if (flags & Flags::WarnOnError) {
@@ -171,16 +171,13 @@ namespace Anabatic {
   }
 
 
-  const Name& AutoContact::getName () const
-  { return _goName; }
-
-
-  AutoSegments  AutoContact::getAutoSegments ()
-  { return new AutoSegments_CachedOnContact(this); }
-
-
-  AutoSegment* AutoContact::getPerpandicular ( const AutoSegment* ) const
-  { return NULL; }
+  const Name&     AutoContact::getName          () const { return _goName; }
+  AutoSegments    AutoContact::getAutoSegments  () { return new AutoSegments_CachedOnContact(this); }
+  AutoSegment*    AutoContact::getPerpandicular ( const AutoSegment* ) const { return NULL; }
+  AutoHorizontal* AutoContact::getHorizontal1   () const { return NULL; }
+  AutoHorizontal* AutoContact::getHorizontal2   () const { return NULL; }
+  AutoVertical*   AutoContact::getVertical1     () const { return NULL; }
+  AutoVertical*   AutoContact::getVertical2     () const { return NULL; }
 
 
   void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
@@ -248,7 +245,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoContact::getNativeUConstraints ( unsigned int direction ) const
+  Interval  AutoContact::getNativeUConstraints ( Flags direction ) const
   {
     Box       nativeConstraints = getNativeConstraintBox();
     Interval  constraint;
@@ -262,7 +259,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoContact::getUConstraints ( unsigned int direction ) const
+  Interval  AutoContact::getUConstraints ( Flags direction ) const
   {
     Interval  constraint;
     if (direction & Flags::Horizontal) {
@@ -275,7 +272,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoContact::invalidate ( unsigned int flags )
+  void  AutoContact::invalidate ( Flags flags )
   {
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
@@ -318,6 +315,31 @@ namespace Anabatic {
   }
 
 
+  void  AutoContact::updateSize ()
+  {
+    if (isInvalidatedWidth()) {
+      size_t minDepth = 0;
+      size_t maxDepth = 0;
+      getDepthSpan( minDepth, maxDepth );
+
+      if (getVertical1() and getVertical1()->isWide()) {
+        size_t    vdepth = (Session::getLayerDepth(getVertical1()->getLayer()) == maxDepth) ? maxDepth : minDepth; 
+        DbU::Unit width  = getVertical1()->getWidth();
+        width += Session::getViaWidth(vdepth) - Session::getWireWidth(vdepth); 
+        setWidth( width );
+      }
+      
+      if (getHorizontal1() and getHorizontal1()->isWide()) {
+        size_t    hdepth = (Session::getLayerDepth(getHorizontal1()->getLayer()) == maxDepth) ? maxDepth : minDepth; 
+        DbU::Unit width  = getHorizontal1()->getWidth();
+        width += Session::getViaWidth(hdepth) - Session::getWireWidth(hdepth); 
+        setHeight( width );
+      }
+      unsetFlags ( CntInvalidatedWidth );
+    }
+  }
+
+
   void  AutoContact::_getTopology ( Contact* support, Component*& anchor, Horizontal**& horizontals, Vertical**& verticals, size_t size )
   {
     size_t hcount = 0;
@@ -342,7 +364,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoContact::showTopologyError ( const std::string& message, unsigned int flags )
+  void  AutoContact::showTopologyError ( const std::string& message, Flags flags )
   {
     Component*    anchor      = NULL;
     Horizontal**  horizontals = new Horizontal* [10];
@@ -395,7 +417,7 @@ namespace Anabatic {
 
 
 
-  bool  AutoContact::isTee ( unsigned int direction ) const
+  bool  AutoContact::isTee ( Flags direction ) const
   {
     return (isHTee() and (direction & Flags::Horizontal))
         or (isVTee() and (direction & Flags::Vertical  ));
@@ -442,9 +464,9 @@ namespace Anabatic {
   }
 
 
-  bool  AutoContact::restrictConstraintBox ( DbU::Unit    constraintMin
-                                           , DbU::Unit    constraintMax
-                                           , unsigned int flags
+  bool  AutoContact::restrictConstraintBox ( DbU::Unit  constraintMin
+                                           , DbU::Unit  constraintMax
+                                           , Flags      flags
                                            )
   {
     cdebug_log(149,0) << "restrictConstraintBox() - " << this << " " << getConstraintBox() << endl;

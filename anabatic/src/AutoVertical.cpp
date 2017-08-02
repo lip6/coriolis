@@ -115,7 +115,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoVertical::getSourceConstraints ( unsigned int flags ) const
+  Interval  AutoVertical::getSourceConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoSource()->getNativeConstraintBox() );
@@ -125,7 +125,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoVertical::getTargetConstraints ( unsigned int flags ) const
+  Interval  AutoVertical::getTargetConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoTarget()->getNativeConstraintBox() );
@@ -181,7 +181,7 @@ namespace Anabatic {
     GCell*    gcell  = getAutoSource()->getGCell();
     GCell*    end    = getAutoTarget()->getGCell();
 
-    cdebug_log(149,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
+    cdebug_log(144,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
 
     if (gcell->getYMin() > end->getYMin()) std::swap( gcell, end );
     if (xprobe == gcell->getConstraintXMax()) xprobe--;
@@ -230,7 +230,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoVertical::_slacken ( unsigned int flags )
+  bool  AutoVertical::_slacken ( Flags flags )
   {
     cdebug_log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
@@ -328,7 +328,7 @@ namespace Anabatic {
 
     if (_vertical->getX() == axis) return;
 
-    cdebug_log(149,0) << "_setAxis() @X " << DbU::getValueString(axis) << " " << this << endl;
+    cdebug_log(144,0) << "_setAxis() @X " << DbU::getValueString(axis) << " " << this << endl;
 
     _vertical->setX( axis );
     invalidate();
@@ -371,8 +371,8 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = _vertical->getSourceY() - Session::getExtensionCap(getLayer());
-    _targetPosition = _vertical->getTargetY() + Session::getExtensionCap(getLayer());
+    _sourcePosition = _vertical->getSourceY() - getExtensionCap();
+    _targetPosition = _vertical->getTargetY() + getExtensionCap();
   }
 
 
@@ -392,8 +392,8 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSourceY() - Session::getExtensionCap(getLayer());
-    DbU::Unit targetPosition = _vertical->getTargetY() + Session::getExtensionCap(getLayer());
+    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap();
+    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap();
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -646,7 +646,7 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoVertical::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
+  Flags  AutoVertical::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     cdebug_log(149,0) << "AutoVertical::_makeDogleg(GCell*)" << endl;
 
@@ -720,6 +720,11 @@ namespace Anabatic {
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+    }
+
+    if (isAnalog()) {
+      segment1->setFlags( SegAnalog );
+      segment2->setFlags( SegAnalog );
     }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;

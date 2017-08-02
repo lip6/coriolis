@@ -49,6 +49,7 @@ namespace Hurricane {
     s += (isSymHorizontal       ()) ? 'h' : '-';
     s += (isSymVertical         ()) ? 'v' : '-';
     s += (isSymMaster           ()) ? 'M' : '-';
+    s += (isAnalog              ()) ? 'A' : '-';
 
     return s;
   }
@@ -134,6 +135,10 @@ namespace Hurricane {
     w->endObject();
   }
 
+  void NetRoutingState::setWPitch ( unsigned int w ) 
+  { 
+    if (w != 0) _wPitch = w; 
+  }
 
 // -------------------------------------------------------------------
 // Class  :  "JsonNetRoutingProperty"
@@ -164,8 +169,8 @@ namespace Hurricane {
   {
     check( stack, "JsonNetRoutingProperty::toData" );
 
-    string       sflags = get<string>( stack, "_state" );
-    unsigned int flags  = 0;
+    string    sflags = get<string>( stack, "_state" );
+    uint32_t  flags  = 0;
 
     flags |= (sflags[0] == 'e') ? NetRoutingState::Excluded             : 0;
     flags |= (sflags[1] == 'f') ? NetRoutingState::Fixed                : 0;
@@ -176,6 +181,7 @@ namespace Hurricane {
     flags |= (sflags[6] == 'h') ? NetRoutingState::Horizontal           : 0;
     flags |= (sflags[7] == 'v') ? NetRoutingState::Vertical             : 0;
     flags |= (sflags[8] == 'M') ? NetRoutingState::SymmetricMaster      : 0;
+    flags |= (sflags[9] == 'A') ? NetRoutingState::Analog               : 0;
 
     NetRoutingProperty* property = NULL;
     DBo*                dbo      = stack.back_dbo();
@@ -188,7 +194,7 @@ namespace Hurricane {
                        , getString(net).c_str()
                        )  << endl;
           NetRoutingState* state = property->getState();
-          state->unsetFlags( (unsigned int)-1 );
+          state->unsetFlags( (uint32_t)-1 );
           state->setFlags  ( flags );
           state->setSymAxis( DbU::fromDb( get<int64_t>(stack,"_axis") ) );
         } else {
@@ -231,15 +237,16 @@ namespace Hurricane {
   }
 
 
-  NetRoutingState* NetRoutingExtension::create ( Net* net )
+  NetRoutingState* NetRoutingExtension::create ( Net* net, uint32_t flags )
   {
     get( net );
-    if (_cache) return _cache;
+    if (not _cache) {
+      NetRoutingProperty* property = new NetRoutingProperty( net );
+      net->put( property );
 
-    NetRoutingProperty* property = new NetRoutingProperty( net );
-    net->put( property );
-
-    _cache = property->getState();
+      _cache = property->getState();
+    }
+    _cache->setFlags( flags );
     return _cache;
   }
 

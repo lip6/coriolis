@@ -73,7 +73,7 @@ namespace Katana {
   }
 
 
-  void  RoutingEventQueue::add ( TrackElement* segment, unsigned int level )
+  void  RoutingEventQueue::add ( TrackElement* segment, uint32_t level )
   {
     if (segment->getTrack()) {
       cinfo << "[INFO] Already in Track " << (void*)segment->base()->base()

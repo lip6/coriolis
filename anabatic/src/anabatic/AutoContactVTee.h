@@ -36,11 +36,11 @@ namespace Anabatic {
     // Constructors & Destructors.
                                AutoContactVTee        ( GCell*, Contact* );
       virtual                 ~AutoContactVTee        ();
-      virtual void             _invalidate            ( unsigned int flags );
+      virtual void             _invalidate            ( Flags flags );
     public:
-      inline  AutoHorizontal*  getHorizontal1         () const;
-      inline  AutoVertical*    getVertical1           () const;
-      inline  AutoVertical*    getVertical2           () const;
+      virtual AutoHorizontal*  getHorizontal1         () const;
+      virtual AutoVertical*    getVertical1           () const;
+      virtual AutoVertical*    getVertical2           () const;
       virtual AutoSegment*     getOpposite            ( const AutoSegment* ) const;
       virtual AutoSegment*     getPerpandicular       ( const AutoSegment* ) const;
       virtual AutoSegment*     getSegment             ( unsigned int ) const;
@@ -58,11 +58,6 @@ namespace Anabatic {
       AutoVertical*   _vertical1;
       AutoVertical*   _vertical2;
   };
-
-
-  inline  AutoHorizontal*  AutoContactVTee::getHorizontal1 () const { return _horizontal1; };
-  inline  AutoVertical*    AutoContactVTee::getVertical1   () const { return _vertical1; };
-  inline  AutoVertical*    AutoContactVTee::getVertical2   () const { return _vertical2; };
 
 
 } // Anabatic namespace.

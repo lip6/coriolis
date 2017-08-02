@@ -72,12 +72,13 @@ namespace Katana {
       inline  Configuration*           getKatanaConfiguration     ();
       virtual Configuration*           getConfiguration           ();
       inline  bool                     getToolSuccess             () const;
-      inline  unsigned long            getEventsLimit             () const;
-      inline  unsigned int             getRipupLimit              ( unsigned int type ) const;
-              unsigned int             getRipupLimit              ( const TrackElement* ) const;
-      inline  unsigned int             getRipupCost               () const;
-      inline  size_t                   getHTracksReservedLocal    () const;
-      inline  size_t                   getVTracksReservedLocal    () const;
+      inline  uint64_t                 getEventsLimit             () const;
+      inline  uint32_t                 getRipupLimit              ( uint32_t type ) const;
+              uint32_t                 getRipupLimit              ( const TrackElement* ) const;
+      inline  uint32_t                 getRipupCost               () const;
+      inline  uint32_t                 getHTracksReservedLocal    () const;
+      inline  uint32_t                 getVTracksReservedLocal    () const;
+      inline  bool                     profileEventCosts          () const;
       virtual const Name&              getName                    () const;
       inline  Configuration::PostEventCb_t&
                                        getPostEventCb             ();
@@ -85,8 +86,10 @@ namespace Katana {
       inline  size_t                   getRoutingPlanesSize       () const;
               RoutingPlane*            getRoutingPlaneByIndex     ( size_t index ) const;
               RoutingPlane*            getRoutingPlaneByLayer     ( const Layer* ) const;
-              Track*                   getTrackByPosition         ( const Layer*, DbU::Unit axis, unsigned int mode=Constant::Nearest ) const;
+              Track*                   getTrackByPosition         ( const Layer*, DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
               DataSymmetric*           getDataSymmetric           ( Net* );
+      inline  const std::map<Net*,DataSymmetric*>&
+                                       getSymmetrics              () const;
       inline  void                     printConfiguration         () const;
               void                     printCompletion            () const;
               void                     dumpMeasures               ( std::ostream& ) const;
@@ -94,26 +97,26 @@ namespace Katana {
       virtual void                     openSession                ();
       inline  void                     setViewer                  ( CellViewer* );
       inline  void                     setPostEventCb             ( Configuration::PostEventCb_t );
-      inline  void                     setEventLimit              ( unsigned long );
+      inline  void                     setEventLimit              ( uint64_t );
       inline  void                     setMinimumWL               ( double );
-      inline  void                     setRipupLimit              ( unsigned int type, unsigned int );
-      inline  void                     setRipupCost               ( unsigned int );
-      inline  void                     setHTracksReservedLocal    ( size_t );
-      inline  void                     setVTracksReservedLocal    ( size_t );
+      inline  void                     setRipupLimit              ( uint32_t type, uint32_t );
+      inline  void                     setRipupCost               ( uint32_t );
+      inline  void                     setHTracksReservedLocal    ( uint32_t );
+      inline  void                     setVTracksReservedLocal    ( uint32_t );
               DataSymmetric*           addDataSymmetric           ( Net* );
               void                     setupPowerRails            ();
               void                     protectRoutingPads         ();
               void                     preProcess                 ();
               void                     setInterrupt               ( bool );
               void                     setupRoutingPlanes         ();
-              void                     setupGlobalGraph           ( unsigned int mode );
+              void                     setupGlobalGraph           ( uint32_t mode );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
               void                     digitalInit                ();
               void                     analogInit                 ();
-              void                     runNegociate               ( unsigned int flags=Flags::NoFlags );
+              void                     pairSymmetrics             ();
+              void                     runNegociate               ( Flags flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
-              void                     runSymmetricRouter         ();
               void                     runTest                    ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();
@@ -121,7 +124,7 @@ namespace Katana {
               void                     _computeCagedConstraints   ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;
-              bool                     _check                     ( unsigned int& overlap, const char* message=NULL ) const;
+              bool                     _check                     ( uint32_t& overlap, const char* message=NULL ) const;
               void                     _check                     ( Net* ) const;
       virtual Record*                  _getRecord                 () const;
       virtual string                   _getString                 () const;
@@ -156,19 +159,22 @@ namespace Katana {
   inline  Configuration*                KatanaEngine::getKatanaConfiguration  () { return _configuration; }
   inline  Configuration::PostEventCb_t& KatanaEngine::getPostEventCb          () { return _configuration->getPostEventCb(); }
   inline  bool                          KatanaEngine::getToolSuccess          () const { return _toolSuccess; }
-  inline  unsigned long                 KatanaEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
-  inline  unsigned int                  KatanaEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
-  inline  size_t                        KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
-  inline  size_t                        KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
-  inline  unsigned int                  KatanaEngine::getRipupLimit           ( unsigned int type ) const { return _configuration->getRipupLimit(type); }
+  inline  uint64_t                      KatanaEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
+  inline  uint32_t                      KatanaEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
+  inline  uint32_t                      KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
+  inline  uint32_t                      KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
+  inline  uint32_t                      KatanaEngine::getRipupLimit           ( uint32_t type ) const { return _configuration->getRipupLimit(type); }
+  inline  bool                          KatanaEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
+  inline  const std::map<Net*,DataSymmetric*>&
+                                        KatanaEngine::getSymmetrics           () const { return _symmetrics; }
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KatanaEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
   inline  void                          KatanaEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
-  inline  void                          KatanaEngine::setEventLimit           ( unsigned long limit ) { _configuration->setEventsLimit(limit); }
-  inline  void                          KatanaEngine::setRipupLimit           ( unsigned int type, unsigned int limit ) { _configuration->setRipupLimit(limit,type); }
-  inline  void                          KatanaEngine::setRipupCost            ( unsigned int cost ) { _configuration->setRipupCost(cost); }
-  inline  void                          KatanaEngine::setHTracksReservedLocal ( size_t reserved ) { _configuration->setHTracksReservedLocal(reserved); }
-  inline  void                          KatanaEngine::setVTracksReservedLocal ( size_t reserved ) { _configuration->setVTracksReservedLocal(reserved); }
+  inline  void                          KatanaEngine::setEventLimit           ( uint64_t limit ) { _configuration->setEventsLimit(limit); }
+  inline  void                          KatanaEngine::setRipupLimit           ( uint32_t type, uint32_t limit ) { _configuration->setRipupLimit(limit,type); }
+  inline  void                          KatanaEngine::setRipupCost            ( uint32_t cost ) { _configuration->setRipupCost(cost); }
+  inline  void                          KatanaEngine::setHTracksReservedLocal ( uint32_t reserved ) { _configuration->setHTracksReservedLocal(reserved); }
+  inline  void                          KatanaEngine::setVTracksReservedLocal ( uint32_t reserved ) { _configuration->setVTracksReservedLocal(reserved); }
   inline  void                          KatanaEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KatanaEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KatanaEngine::printConfiguration      () const { _configuration->print(getCell()); }

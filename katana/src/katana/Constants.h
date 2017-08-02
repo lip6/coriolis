@@ -26,26 +26,28 @@ namespace Katana {
     public:
       typedef  Anabatic::Flags  Super;
     public:
-      static const uint64_t  AllowDoglegReuse;
-      static const uint64_t  DataSelf;
-      static const uint64_t  Nearest;
-      static const uint64_t  Force;
-      static const uint64_t  ResetCount;
-      static const uint64_t  WithConstraints;
-      static const uint64_t  MoveToLeft;
-      static const uint64_t  MoveToRight;
-      static const uint64_t  LoadingStage;
-      static const uint64_t  SlowMotion;
-      static const uint64_t  PreRoutedStage;
-      static const uint64_t  SymmetricStage;
+      static const Hurricane::BaseFlags  AllowDoglegReuse;
+      static const Hurricane::BaseFlags  DataSelf;
+      static const Hurricane::BaseFlags  Nearest;
+      static const Hurricane::BaseFlags  Force;
+      static const Hurricane::BaseFlags  ResetCount;
+      static const Hurricane::BaseFlags  WithConstraints;
+      static const Hurricane::BaseFlags  MoveToLeft;
+      static const Hurricane::BaseFlags  MoveToRight;
+      static const Hurricane::BaseFlags  LoadingStage;
+      static const Hurricane::BaseFlags  SlowMotion;
+      static const Hurricane::BaseFlags  PreRoutedStage;
+      static const Hurricane::BaseFlags  PairSymmetrics;
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );
+      inline  Flags ( const Hurricane::BaseFlags& );
   };
 
 
-  inline  Flags::Flags (       uint64_t      flags ) : Super(flags) { }
-  inline  Flags::Flags ( const Flags::Super& base  ) : Super(base)  { }
+  inline  Flags::Flags (       uint64_t              flags ) : Super(flags) { }
+  inline  Flags::Flags ( const Flags::Super&         flags ) : Super(flags) { }
+  inline  Flags::Flags ( const Hurricane::BaseFlags& flags ) : Super(flags) { }
 
 
 } // Katana namespace.

@@ -123,8 +123,8 @@ namespace Anabatic {
           float  _density;
       };
     public:
-      static        unsigned int          getDisplayMode      ();
-      static        void                  setDisplayMode      ( unsigned int );
+      static        uint32_t              getDisplayMode      ();
+      static        void                  setDisplayMode      ( uint32_t );
       static        Box                   getBorder           ( const GCell*, const GCell* );
     public:                           
       static        GCell*                create              ( AnabaticEngine* );
@@ -155,9 +155,9 @@ namespace Anabatic {
       inline        DbU::Unit             getYMax             ( int shrink=0 ) const;
       inline        DbU::Unit             getXCenter          () const;
       inline        DbU::Unit             getYCenter          () const;
-      inline        DbU::Unit             getConstraintXMax   () const;
-      inline        DbU::Unit             getConstraintYMax   () const;
-      inline        Interval              getSide             ( Flags direction ) const;
+      inline        DbU::Unit             getConstraintXMax   ( int shrink=0 ) const;
+      inline        DbU::Unit             getConstraintYMax   ( int shrink=0 ) const;
+      inline        Interval              getSide             ( Flags direction, int shrink=0 ) const;
       inline        Point                 getCenter           () const;
       inline        Box                   getConstraintBox    () const;
       inline const  vector<Edge*>&        getWestEdges        () const;
@@ -171,6 +171,12 @@ namespace Anabatic {
       inline        GCell*                getEast             () const;
       inline        GCell*                getSouth            () const;
       inline        GCell*                getNorth            () const;
+
+      inline        Edge*                 getWestEdge         () const;
+      inline        Edge*                 getEastEdge         () const;
+      inline        Edge*                 getSouthEdge        () const;
+      inline        Edge*                 getNorthEdge        () const;
+
                     GCell*                getWest             ( DbU::Unit y ) const;
                     GCell*                getEast             ( DbU::Unit y ) const;
                     GCell*                getSouth            ( DbU::Unit x ) const;
@@ -193,14 +199,13 @@ namespace Anabatic {
     // Detailed routing functions.
                     bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
       inline        size_t                getDepth            () const;
-                    Interval              getSide             ( unsigned int ) const;
                     float                 getHCapacity        () const;
                     float                 getVCapacity        () const;
-                    float                 getDensity          ( unsigned int flags=Flags::NoFlags ) const;
+                    float                 getDensity          ( Flags flags=Flags::NoFlags ) const;
                     float                 getAverageHVDensity () const;
                     float                 getMaxHVDensity     () const;
-      inline        float                 getCDensity         ( unsigned int flags=Flags::NoFlags ) const;
-      inline        float                 getWDensity         ( size_t depth, unsigned int flags=Flags::NoFlags  ) const;
+      inline        float                 getCDensity         ( Flags flags=Flags::NoFlags ) const;
+      inline        float                 getWDensity         ( size_t depth, Flags flags=Flags::NoFlags  ) const;
       inline        DbU::Unit             getBlockage         ( size_t depth ) const;
       inline        float                 getFragmentation    ( size_t depth ) const;
       inline        float                 getFeedthroughs     ( size_t depth ) const;
@@ -212,8 +217,8 @@ namespace Anabatic {
                     AutoSegments          getVStartSegments   ();
                     AutoSegments          getHStopSegments    ();
                     AutoSegments          getVStopSegments    ();
-      inline        AutoSegments          getStartSegments    ( unsigned int direction );
-      inline        AutoSegments          getStopSegments     ( unsigned int direction );
+      inline        AutoSegments          getStartSegments    ( Flags direction );
+      inline        AutoSegments          getStopSegments     ( Flags direction );
                     size_t                getRoutingPads      ( set<RoutingPad*>& );
       inline  const Key&                  getKey              () const;
                     size_t                checkDensity        () const;
@@ -234,10 +239,12 @@ namespace Anabatic {
                     void                  rpDesaturate        ( set<Net*>& );
                     bool                  stepDesaturate      ( size_t                    depth
                                                               , set<Net*>&, AutoSegment*& moved
-                                                              , unsigned int              flags=Flags::NoFlags );
+                                                              , Flags                     flags=Flags::NoFlags );
                     bool                  stepNetDesaturate   ( size_t     depth
                                                               , set<Net*>& globalNets
                                                               , Set&       invalidateds );
+
+                    void                  setEdgesOccupancy   (unsigned int, unsigned int);
     // Misc. functions.
       inline const  Flags&                flags               () const;
       inline        Flags&                flags               ();
@@ -274,7 +281,7 @@ namespace Anabatic {
                     GCell&                operator=           ( const GCell& );
     private:
       static  Name                  _extensionName;
-      static  unsigned int          _displayMode;
+      static  uint32_t              _displayMode;
               Observable            _observable;
               AnabaticEngine*       _anabatic;
               Flags                 _flags;
@@ -324,6 +331,12 @@ namespace Anabatic {
   inline       GCell*                GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
   inline       GCell*                GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
   inline       GCell*                GCell::getNorth      () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
+
+  inline       Edge*                 GCell::getWestEdge       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]; }
+  inline       Edge*                 GCell::getEastEdge       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]; }
+  inline       Edge*                 GCell::getSouthEdge      () const { return _southEdges.empty() ? NULL : _southEdges[0]; }
+  inline       Edge*                 GCell::getNorthEdge      () const { return _northEdges.empty() ? NULL : _northEdges[0]; }
+
   inline       GCell*                GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
   inline const vector<Contact*>&     GCell::getGContacts  () const { return _gcontacts; }
   inline        size_t               GCell::getDepth      () const { return _depth; }
@@ -341,7 +354,7 @@ namespace Anabatic {
   inline       Flags&                GCell::flags         () { return _flags; }
 
   inline DbU::Unit  GCell::getXMax ( int shrink ) const
-  { return _eastEdges.empty() ?       getCell()->getAbutmentBox().getXMax() - shrink
+  { return _eastEdges.empty() ? getCell()->getAbutmentBox().getXMax() - shrink
                               : _eastEdges[0]->getOpposite(this)->getXMin() - shrink; }
 
   inline DbU::Unit  GCell::getYMax ( int shrink ) const
@@ -351,11 +364,11 @@ namespace Anabatic {
   inline DbU::Unit GCell::getXCenter () const { return (getXMin()+getXMax())/2; }
   inline DbU::Unit GCell::getYCenter () const { return (getYMin()+getYMax())/2; }
 
-  inline DbU::Unit  GCell::getConstraintXMax () const
-  { return getXMax( _eastEdges.empty() ? 0 : 1 ); }
+  inline DbU::Unit  GCell::getConstraintXMax ( int shrink ) const
+  { return getXMax( shrink + (_eastEdges.empty() ? 0 : 1) ); }
 
-  inline DbU::Unit  GCell::getConstraintYMax () const
-  { return getYMax( _northEdges.empty() ? 0 : 1 ); }
+  inline DbU::Unit  GCell::getConstraintYMax ( int shrink ) const
+  { return getYMax( shrink + (_northEdges.empty() ? 0 : 1) ); }
 
   inline Point  GCell::getCenter () const
   { return Point( (getXMin()+getXMax())/2, (getYMin()+getYMax())/2); }
@@ -363,10 +376,10 @@ namespace Anabatic {
   inline Box  GCell::getConstraintBox () const
   { return Box( getXMin(), getYMin(), getConstraintXMax(), getConstraintYMax() ); }
 
-  inline Interval  GCell::getSide ( Flags direction ) const
+  inline Interval  GCell::getSide ( Flags direction, int shrink ) const
   {
-    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getConstraintYMax() );
-    return Interval( getXMin(), getConstraintXMax() );
+    if (direction.isset(Flags::Vertical)) return Interval( getYMin(), getConstraintYMax(shrink) );
+    return Interval( getXMin(), getConstraintXMax(shrink) );
   }
 
   inline void  GCell::setObserver ( size_t slot, BaseObserver* observer )
@@ -381,16 +394,16 @@ namespace Anabatic {
 
   inline GCell::Observable::Observable () : StaticObservable<1>() { }
 
-  inline AutoSegments  GCell::getStartSegments ( unsigned int direction )
+  inline AutoSegments  GCell::getStartSegments ( Flags direction )
   { return (direction&Flags::Horizontal) ? getHStartSegments() : getVStartSegments(); }
 
-  inline  AutoSegments  GCell::getStopSegments ( unsigned int direction )
+  inline  AutoSegments  GCell::getStopSegments ( Flags direction )
   { return (direction&Flags::Horizontal) ? getHStopSegments() : getVStopSegments(); }
 
-  inline  float  GCell::getCDensity ( unsigned int flags ) const
+  inline  float  GCell::getCDensity ( Flags flags ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
 
-  inline  float  GCell::getWDensity ( size_t depth, unsigned int flags  ) const
+  inline  float  GCell::getWDensity ( size_t depth, Flags flags  ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  float  GCell::getFragmentation ( size_t depth ) const

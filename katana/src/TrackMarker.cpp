@@ -67,7 +67,7 @@ namespace Katana {
     RoutingGauge* rg           = Session::getRoutingGauge();
     RoutingPlane* rp           = Session::getKatanaEngine()->getRoutingPlaneByIndex(depth);
     DbU::Unit     pitch        = DbU::toLambda(Session::getPitch(depth));
-    unsigned int  rpDirection  = rg->getLayerDirection(depth);
+    Flags         rpDirection  = rg->getLayerDirection(depth);
     Interval      trackSpan;
 
     if ( rpDirection == Constant::Horizontal ) {
@@ -80,10 +80,10 @@ namespace Katana {
       trackSpan       = Interval ( sourcePoint.getX(), targetPoint.getX() );
     }
 
-    if ( rpDirection xor rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
-      _weight = (unsigned int)(( pitch / (pitch+DbU::toLambda(trackSpan.getSize())) ) * 100.0) ;
+    if ( rpDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
+      _weight = (uint32_t)(( pitch / (pitch+DbU::toLambda(trackSpan.getSize())) ) * 100.0) ;
     } else {
-      _weight = (unsigned int)( (pitch + DbU::toLambda(trackSpan.getSize())) * 20.0 );
+      _weight = (uint32_t)( (pitch + DbU::toLambda(trackSpan.getSize())) * 20.0 );
     }
 
     Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );

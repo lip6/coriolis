@@ -16,7 +16,9 @@
 
 #include <vector>
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/RoutingPad.h"
@@ -132,11 +134,44 @@ namespace {
   }
 
 
+  class CompareByPriority {
+    public:
+      inline bool operator() ( const TrackSegment* lhs, const TrackSegment* rhs )
+      { return lhs->getPriority() > rhs->getPriority(); }
+  };
+ 
+
+  void  computeNetPriority ( Net* net )
+  {
+    DebugSession::open( net, 159, 160 );
+
+    cdebug_log(159,1) << "::computeNetPriority() " << net << endl;
+
+    vector<TrackSegment*> segments;
+    for ( Segment* segment : net->getSegments() ) {
+      TrackSegment* canonical = dynamic_cast<TrackSegment*>( Session::lookup( segment ) );
+      if (canonical) segments.push_back( canonical );
+    }
+
+    for ( TrackSegment* segment : segments ) segment->computePriority();
+    sort( segments.begin(), segments.end(), CompareByPriority() );
+
+    for ( TrackSegment* segment : segments ) {
+      segment->computeAlignedPriority();
+    }
+
+    cdebug_tabw(159,-1);
+
+    DebugSession::close();
+  }
+
+
 } // Anonymous namespace.
 
 
 namespace Katana {
 
+  using std::ofstream;
   using std::cerr;
   using std::endl;
   using std::setw;
@@ -147,9 +182,11 @@ namespace Katana {
   using Hurricane::Bug;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
+  using Hurricane::DebugSession;
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
+  using Anabatic::AutoSegment;
   using Anabatic::AutoSegmentLut;
   using Anabatic::perpandicularTo;
 
@@ -205,7 +242,7 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::addRoutingEvent ( TrackElement* segment, unsigned int level )
+  void  NegociateWindow::addRoutingEvent ( TrackElement* segment, uint32_t level )
   {
     DataNegociate* data = segment->getDataNegociate();
     if (not data or not data->hasRoutingEvent())
@@ -219,7 +256,7 @@ namespace Katana {
   }
 
 
-  TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, unsigned int flags )
+  TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, Flags flags )
   {
     cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
 
@@ -286,7 +323,7 @@ namespace Katana {
       cdebug_log(159,0) << "* " << plane << endl;
       cdebug_log(159,0) << "* " << track << endl;
 
-      trackSegment->setAxis( track->getAxis(), Anabatic::SegAxisSet );
+      trackSegment->setAxis( track->getAxis(), AutoSegment::SegAxisSet );
       trackSegment->invalidate();
 
       if (trackSegment->isFixed()) {
@@ -341,6 +378,14 @@ namespace Katana {
   }
 
 
+  void  NegociateWindow::_computePriorities ()
+  {
+    for ( Net* net : getCell()->getNets() ) {
+      if (NetRoutingExtension::isAnalog(net)) computeNetPriority( net );
+    }
+  }
+
+
   void  NegociateWindow::_createRouting  ( Anabatic::GCell* gcell )
   {
     cdebug_log(159,1) << "NegociateWindow::_createRouting() - " << gcell << endl;
@@ -368,8 +413,8 @@ namespace Katana {
 
   void  NegociateWindow::_pack ( size_t& count, bool last )
   {
-    unsigned long limit     = _katana->getEventsLimit();
-    unsigned int  pushStage = RoutingEvent::getStage();
+    uint64_t limit     = _katana->getEventsLimit();
+    uint32_t pushStage = RoutingEvent::getStage();
     RoutingEvent::setStage( RoutingEvent::Pack );
 
     RoutingEventQueue  packQueue;
@@ -425,7 +470,11 @@ namespace Katana {
 
     cmess1 << "     o  Negociation Stage." << endl;
 
-    unsigned long limit = _katana->getEventsLimit();
+    unsigned long limit     = _katana->getEventsLimit();
+    bool          profiling = _katana->profileEventCosts();
+    ofstream      ofprofile;
+
+    if (profiling) ofprofile.open( "katana.profile.txt" );
 
     _eventHistory.clear();
     _eventQueue.load( _segments );
@@ -437,6 +486,24 @@ namespace Katana {
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
+      if (ofprofile.is_open()) {
+        size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
+        if (depth < 6) {
+          ofprofile << setw(10) << right << count << " ";
+          for ( size_t i=0 ; i<6 ; ++i ) {
+            if (i == depth)
+              ofprofile << setw(10) << right << setprecision(2) << event->getPriority  () << " ";
+            else
+              ofprofile << setw(10) << right << setprecision(2) << 0.0 << " ";
+          }
+
+          ofprofile << setw( 2) << right << event->getEventLevel() << endl;
+        }
+      }
+
+      event->process( _eventQueue, _eventHistory, _eventLoop );
+      count++;
+
       if (tty::enabled()) {
         cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << tty::reset
@@ -446,15 +513,12 @@ namespace Katana {
         cmess2.flush ();
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << RoutingEvent::getProcesseds()-1 << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()
                << endl;
         cmess2.flush();
       }
-
-      event->process( _eventQueue, _eventHistory, _eventLoop );
-      count++;
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );
@@ -519,6 +583,7 @@ namespace Katana {
       cerr << Bug( "%d events remains after clear.", RoutingEvent::getAllocateds() ) << endl;
     }
 
+    if (ofprofile.is_open()) ofprofile.close();
     _statistics.setEventsCount( eventsCount );
     cdebug_tabw(159,-1);
 
@@ -526,7 +591,7 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::run ( unsigned int flags )
+  void  NegociateWindow::run ( Flags flags )
   {
     cdebug_log(159,1) << "NegociateWindow::run()" << endl;
 
@@ -539,6 +604,7 @@ namespace Katana {
       _createRouting( _gcells[igcell] );
     }
     Session::revalidate();
+    _computePriorities();
 
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();
@@ -548,12 +614,12 @@ namespace Katana {
     _katana->setMinimumWL( computeWirelength() );
 
 #if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
+    uint32_t overlaps = 0;
     Session::getKatanaEngine()->_check( overlaps, "after _createRouting(GCell*)" );
 #endif 
 
-    if (flags & Flags::SymmetricStage) {
-      _katana->runSymmetricRouter();
+    if (flags & Flags::PairSymmetrics) {
+      _katana->pairSymmetrics();
       Session::revalidate();
     }
 

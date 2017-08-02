@@ -79,7 +79,7 @@ namespace Katana {
 
   void  DataNegociate::update ()
   {
-    DebugSession::open( _trackSegment->getNet(), 150, 160 );
+    DebugSession::open( _trackSegment->getNet(), 156, 160 );
 
   //cdebug_log(9000,0) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
     cdebug_log(159,1) << "DataNegociate::update() - " << _trackSegment << endl;
@@ -130,7 +130,7 @@ namespace Katana {
       }
 
       if (RoutingEvent::getStage() == RoutingEvent::Repair)
-        perpandicular->base()->setFlagsOnAligneds( Anabatic::SegUnbound );
+        perpandicular->base()->setFlagsOnAligneds( AutoSegment::SegUnbound );
 
     //cerr << "perpandicular:" << perpandicular << endl;
     //cerr << "  " << interval << endl;

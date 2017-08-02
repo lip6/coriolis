@@ -433,14 +433,23 @@ template<class Element> class IntrusiveSet {
             _length = newLength;
             _array = new Element*[_length];
             memset(_array, 0, _length * sizeof(Element*));
+            cdebug_log(0,0) << "IntrusiveSet::_resize() " << oldLength << " -> " << newLength << endl;
+
             for (unsigned index = 0; index < oldLength; index++) {
                 Element* element = oldArray[index];
+                if (not element)
+                  cdebug_log(0,0) << "| bucket:" << setw(4) << index << " empty" << endl;
+
                 while (element) {
                     Element* nextElement = _getNextElement(element);
                     unsigned newIndex = (_getHashValue(element) / 8) % _length;
                     _setNextElement(element, _array[newIndex]);
                     _array[newIndex] = element;
                     element = nextElement;
+
+                    cdebug_log(0,0) << "| bucket:" << setw(4) << index
+                                    << " -> " << setw(4) << newIndex
+                                    << " + " << element << endl;
                 }
             }
             delete[] oldArray;

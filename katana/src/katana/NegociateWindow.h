@@ -95,35 +95,37 @@ namespace Katana {
                  , Packing     = 2
                  };
     public:
-      static NegociateWindow*              create             ( KatanaEngine* );
-             void                          destroy            ();
-      inline bool                          isInterrupted      () const;
-      inline KatanaEngine*                 getKatanaEngine    () const;
-             Hurricane::Cell*              getCell            () const;
-      inline const vector<GCell*>&         getGCells          () const;
-      inline RoutingEventQueue&            getEventQueue      ();
-      inline RoutingEventHistory&          getEventHistory    ();
-      inline RoutingEventLoop&             getEventLoop       ();
-      inline Stage                         getStage           () const;
-             void                          setGCells          ( const vector<GCell*>& );
-      inline void                          setInterrupt       ( bool );
-      inline void                          setStage           ( Stage );
-             double                        computeWirelength  ();
-             TrackElement*                 createTrackSegment ( AutoSegment*, unsigned int flags );
-             void                          addRoutingEvent    ( TrackElement*, unsigned int level );
-      inline void                          rescheduleEvent    ( RoutingEvent*, unsigned int level );
-             void                          run                ( unsigned int flags );
-             void                          printStatistics    () const;
-             void                          _createRouting     ( Anabatic::GCell* );
-             void                          _pack              ( size_t& count, bool last );
-             size_t                        _negociate         ();
-             Hurricane::Record*            _getRecord         () const;
-             std::string                   _getString         () const;
-      inline std::string                   _getTypeName       () const;
+      static NegociateWindow*              create               ( KatanaEngine* );
+             void                          destroy              ();
+      inline bool                          isInterrupted        () const;
+      inline KatanaEngine*                 getKatanaEngine      () const;
+             Hurricane::Cell*              getCell              () const;
+      inline const vector<GCell*>&         getGCells            () const;
+      inline RoutingEventQueue&            getEventQueue        ();
+      inline RoutingEventHistory&          getEventHistory      ();
+      inline RoutingEventLoop&             getEventLoop         ();
+      inline Stage                         getStage             () const;
+             void                          setGCells            ( const vector<GCell*>& );
+      inline void                          setInterrupt         ( bool );
+      inline void                          setStage             ( Stage );
+             double                        computeWirelength    ();
+             TrackElement*                 createTrackSegment   ( AutoSegment*, Flags flags );
+             void                          addRoutingEvent      ( TrackElement*, uint32_t level );
+      inline void                          rescheduleEvent      ( RoutingEvent*, uint32_t level );
+             void                          run                  ( Flags flags );
+             void                          printStatistics      () const;
+             void                          _createRouting       ( Anabatic::GCell* );
+             void                          _computePriorities   ();
+             void                          _associateSymmetrics ();
+             void                          _pack                ( size_t& count, bool last );
+             size_t                        _negociate           ();
+             Hurricane::Record*            _getRecord           () const;
+             std::string                   _getString           () const;
+      inline std::string                   _getTypeName         () const;
 
     private:
     // Attributes.
-      unsigned int                _flags;
+      Flags                       _flags;
       bool                        _interrupt;
       KatanaEngine*               _katana;
       vector<GCell*>              _gcells;
@@ -150,7 +152,7 @@ namespace Katana {
   inline RoutingEventQueue&    NegociateWindow::getEventQueue   () { return _eventQueue; }
   inline RoutingEventHistory&  NegociateWindow::getEventHistory () { return _eventHistory; }
   inline void                  NegociateWindow::setInterrupt    ( bool state ) { _interrupt = state; }
-  inline void                  NegociateWindow::rescheduleEvent ( RoutingEvent* event, unsigned int level ) { event->reschedule(_eventQueue,level); }
+  inline void                  NegociateWindow::rescheduleEvent ( RoutingEvent* event, uint32_t level ) { event->reschedule(_eventQueue,level); }
   inline std::string           NegociateWindow::_getTypeName    () const { return "NegociateWindow"; }
 
 

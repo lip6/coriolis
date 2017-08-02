@@ -85,6 +85,9 @@ namespace Hurricane {
       inline  bool         operator <            ( uint64_t ) const;
       inline  bool         operator >            ( uint64_t ) const;
       inline               operator bool         () const;
+      inline  uint64_t     value                 () const;
+      virtual std::string  asString              ( uint32_t mode ) const;
+      inline               operator uint64_t     () const;
     //inline               operator unsigned int () const;
     // Hurricane Managment.
       virtual std::string  _getTypeName          () const;
@@ -97,7 +100,7 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline            BaseFlags::BaseFlags       ( uint64_t  flags )          : _flags(flags) { }
+  inline            BaseFlags::BaseFlags       ( uint64_t  flags )             : _flags(flags) { }
   inline bool       BaseFlags::zero            () const                        { return _flags == 0; }
   inline BaseFlags& BaseFlags::reset           ( BaseFlags flags )             { _flags &= ~flags._flags; return *this; }
   inline bool       BaseFlags::isset           ( BaseFlags flags ) const       { return _flags & flags._flags; }
@@ -137,6 +140,8 @@ namespace Hurricane {
   inline bool       BaseFlags::operator <      ( uint64_t flags ) const        { return _flags <  flags; } 
   inline bool       BaseFlags::operator >      ( uint64_t flags ) const        { return _flags >  flags; } 
   inline            BaseFlags::operator bool   () const { return _flags != 0; }
+  inline uint64_t   BaseFlags::value           () const { return _flags; }
+  inline            BaseFlags::operator uint64_t () const { return _flags; }
 //inline            BaseFlags::operator unsigned int () const { return _flags; }
 //inline            BaseFlags::operator unsigned int () const { return _flags; }
 
@@ -164,6 +169,15 @@ namespace Hurricane {
     return record;
   }
 
+  // inline BaseFlags operator bitor  ( const BaseFlags& lhs, const BaseFlags& rhs ) { BaseFlags r( lhs ); r |= rhs; return r; }  
+  // inline BaseFlags operator bitor  ( const BaseFlags& lhs,       uint64_t   rhs ) { BaseFlags r( lhs ); r |= rhs; return r; }  
+  // inline BaseFlags operator bitor  (       uint64_t   lhs, const BaseFlags& rhs ) { BaseFlags r( rhs ); r |= lhs; return r; }  
+  // inline BaseFlags operator bitand ( const BaseFlags& lhs, const BaseFlags& rhs ) { BaseFlags r( lhs ); r &= rhs; return r; }  
+  // inline BaseFlags operator bitand ( const BaseFlags& lhs,       uint64_t   rhs ) { BaseFlags r( lhs ); r &= rhs; return r; }  
+  // inline BaseFlags operator bitand (       uint64_t   lhs, const BaseFlags& rhs ) { BaseFlags r( rhs ); r &= lhs; return r; }  
+  // inline BaseFlags operator^       ( const BaseFlags& lhs, const BaseFlags& rhs ) { BaseFlags r( lhs ); r ^= rhs; return r; }  
+  // inline BaseFlags operator^       ( const BaseFlags& lhs,       uint64_t   rhs ) { BaseFlags r( lhs ); r ^= rhs; return r; }  
+  // inline BaseFlags operator^       (       uint64_t   lhs, const BaseFlags& rhs ) { BaseFlags r( rhs ); r ^= lhs; return r; }  
 
 } // Hurricane namespace.
 

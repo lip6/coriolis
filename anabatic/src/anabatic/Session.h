@@ -94,13 +94,13 @@ namespace Anabatic {
       static  inline size_t                      getLayerDepth         ( const Layer* layer );
       static  inline const Layer*                getRoutingLayer       ( size_t );
       static  inline const Layer*                getContactLayer       ( size_t );
-      static         unsigned int                getDirection          ( size_t depth );
-      static  inline DbU::Unit                   getPitch              ( size_t depth, unsigned int flags );
+      static         Flags                       getDirection          ( size_t depth );
+      static  inline DbU::Unit                   getPitch              ( size_t depth, Flags flags );
       static  inline DbU::Unit                   getOffset             ( size_t depth );
       static  inline DbU::Unit                   getWireWidth          ( size_t depth );
       static  inline DbU::Unit                   getViaWidth           ( size_t depth );
-      static  inline unsigned int                getDirection          ( const Layer* );
-      static  inline DbU::Unit                   getPitch              ( const Layer*, unsigned int flags );
+      static  inline Flags                       getDirection          ( const Layer* );
+      static  inline DbU::Unit                   getPitch              ( const Layer*, Flags flags );
       static  inline DbU::Unit                   getOffset             ( const Layer* );
       static  inline DbU::Unit                   getWireWidth          ( const Layer* );
       static  inline DbU::Unit                   getViaWidth           ( const Layer* );
@@ -114,11 +114,11 @@ namespace Anabatic {
       static  inline const vector<AutoSegment*>& getDoglegs            (); 
       static  inline const set<Net*>&            getNetsModificateds   (); 
       static         void                        close                 ();
-      static         void                        setAnabaticFlags      ( unsigned int );
+      static         void                        setAnabaticFlags      ( Flags );
       static  inline void                        dogleg                ( AutoSegment* );
       static  inline void                        doglegReset           ();
       static  inline void                        revalidateTopology    ();
-      static  inline void                        setInvalidateMask     ( unsigned int );
+      static  inline void                        setInvalidateMask     ( Flags );
       static  inline void                        invalidate            ( Net* );
       static  inline void                        invalidate            ( AutoContact* );
       static  inline void                        invalidate            ( AutoSegment* );
@@ -145,7 +145,7 @@ namespace Anabatic {
                      void                        _canonize             ();
                      void                        _revalidateTopology   ();
       virtual        size_t                      _revalidate           ();
-                     DbU::Unit                   _getPitch             ( size_t depth, unsigned int flags ) const;
+                     DbU::Unit                   _getPitch             ( size_t depth, Flags flags ) const;
                      Point                       _getNearestGridPoint  ( Point, Box constraints );
                      Record*                     _getRecord            () const;
                      string                      _getString            () const;
@@ -212,16 +212,16 @@ namespace Anabatic {
   inline size_t                      Session::getLayerDepth        ( const Layer* layer ) { return getRoutingGauge()->getLayerDepth(layer); }
   inline const Layer*                Session::getRoutingLayer      ( size_t depth )       { return getRoutingGauge()->getRoutingLayer(depth); }
   inline const Layer*                Session::getContactLayer      ( size_t depth )       { return getRoutingGauge()->getContactLayer(depth); }
-  inline DbU::Unit                   Session::getPitch             ( size_t depth, unsigned int flags=Flags::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
+  inline DbU::Unit                   Session::getPitch             ( size_t depth, Flags flags=Flags::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
   inline DbU::Unit                   Session::getOffset            ( size_t depth )       { return getRoutingGauge()->getLayerOffset(depth); }
   inline DbU::Unit                   Session::getWireWidth         ( size_t depth )       { return getRoutingGauge()->getLayerWireWidth(depth); }
   inline DbU::Unit                   Session::getViaWidth          ( size_t depth )       { return getRoutingGauge()->getViaWidth(depth); }
-  inline DbU::Unit                   Session::getPitch             ( const Layer* layer, unsigned int flags=Flags::NoFlags ) { return getPitch( getLayerDepth(layer), flags ); }
+  inline DbU::Unit                   Session::getPitch             ( const Layer* layer, Flags flags=Flags::NoFlags ) { return getPitch( getLayerDepth(layer), flags ); }
   inline DbU::Unit                   Session::getOffset            ( const Layer* layer ) { return getOffset   ( getLayerDepth(layer) ); }
   inline DbU::Unit                   Session::getWireWidth         ( const Layer* layer ) { return getWireWidth( getLayerDepth(layer) ); }
   inline DbU::Unit                   Session::getViaWidth          ( const Layer* layer ) { return getViaWidth ( getViaDepth(layer) ); }
   inline DbU::Unit                   Session::getExtensionCap      ( const Layer* layer ) { return getConfiguration()->getExtensionCap(layer); }
-  inline unsigned int                Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
+  inline Flags                       Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
   inline Point                       Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
 
   inline void                        Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }

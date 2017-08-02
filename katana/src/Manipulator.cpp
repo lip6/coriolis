@@ -95,7 +95,7 @@ namespace Katana {
     if (not _segment)
       throw Error( "Manipulator::Manipulator(): cannot build upon a NULL TrackElement." );
 
-    DebugSession::open( _segment->getNet(), 149, 160 );
+    DebugSession::open( _segment->getNet(), 156, 160 );
 
     _data = _segment->getDataNegociate();
     if (_data) _event = _data->getRoutingEvent();
@@ -106,13 +106,13 @@ namespace Katana {
   { DebugSession::close(); }
 
 
-  bool  Manipulator::canRipup ( unsigned int flags ) const
+  bool  Manipulator::canRipup ( uint32_t flags ) const
   {
     if (_data) {
       if (not _event or _event->isUnimplemented()) return false;
 
-      unsigned int limit = Session::getKatanaEngine()->getRipupLimit(_segment);
-      unsigned int count = _data->getRipupCount() + ((flags & NotOnLastRipup) ? 1 : 0);
+      uint32_t limit = Session::getKatanaEngine()->getRipupLimit(_segment);
+      uint32_t count = _data->getRipupCount() + ((flags & NotOnLastRipup) ? 1 : 0);
 
       return (count < limit);
     }
@@ -141,7 +141,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::ripup ( unsigned int type, DbU::Unit axisHint )
+  bool  Manipulator::ripup ( uint32_t type, DbU::Unit axisHint )
   {
     cdebug_log(159,0) << "Manipulator::ripup() " << endl;
 
@@ -155,17 +155,17 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::ripupPerpandiculars ( unsigned int flags )
+  bool  Manipulator::ripupPerpandiculars ( uint32_t flags )
   {
     cdebug_log(159,0) << "Manipulator::ripupPerpandiculars() - " << flags << endl;
 
-    bool          success                  = true;
-    bool          cagedPerpandiculars      = false;
-    Interval      constraints              ( _event->getConstraints() );
-    Interval      perpandicularConstraints ( constraints );
-    size_t        placedPerpandiculars     = 0;
-    unsigned int  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
-    unsigned int  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+    bool      success                  = true;
+    bool      cagedPerpandiculars      = false;
+    Interval  constraints              ( _event->getConstraints() );
+    Interval  perpandicularConstraints ( constraints );
+    size_t    placedPerpandiculars     = 0;
+    uint32_t  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
+    uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
 
     if (flags & Manipulator::PerpandicularsFirst) {
       parallelActionFlags      &= ~SegmentAction::EventLevel4;
@@ -269,7 +269,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::relax ( Interval interval, unsigned int flags )
+  bool  Manipulator::relax ( Interval interval, uint32_t flags )
   {
     interval.inflate( - Session::getExtensionCap(getLayer()) );
     cdebug_log(159,0) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
@@ -301,12 +301,12 @@ namespace Katana {
       return false;
     }
 
-    unsigned int  depth = Session::getRoutingGauge()->getLayerDepth(_segment->getLayer());
-    Interval      uside;
-    size_t        dogLegCount  = 0;
-    size_t        iminconflict = gcells.size();
-    size_t        imaxconflict = gcells.size();
-    size_t        igcell;
+    uint32_t  depth = Session::getRoutingGauge()->getLayerDepth(_segment->getLayer());
+    Interval  uside;
+    size_t    dogLegCount  = 0;
+    size_t    iminconflict = gcells.size();
+    size_t    imaxconflict = gcells.size();
+    size_t    igcell;
 
   // Look for closest enclosing min & max GCells indexes.
     for ( igcell=0 ; igcell<gcells.size() ; igcell++ ) {
@@ -620,11 +620,45 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::insertInTrack ( size_t itrack )
+  bool  Manipulator::insertInTrack ( size_t icost )
   {
-    Track*              track            = _fsm.getTrack(itrack);
-    size_t              begin            = _fsm.getBegin(itrack);
-    size_t              end              = _fsm.getEnd  (itrack);
+    cdebug_log(159,1) << "Manipulator::insertInTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _insertInTrack( icost, itrack );
+    }
+
+    if (success) {
+      cdebug_log(159,0) << "Manipulator::insertInTrack() success" << endl;
+
+      _fsm.setState ( SegmentFsm::OtherRipup );
+      _fsm.addAction( _segment
+                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
+                    , _fsm.getTrack1(icost)->getAxis() );
+
+#if THIS_IS_DISABLED
+      uint32_t flags = 0;
+      if (rightIntrication) flags |= RightAxisHint;
+      if (leftIntrication ) flags |= LeftAxisHint;
+      if (flags)
+        Manipulator( _segment, _fsm ).shrinkToTrack( icost, flags, leftAxisHint, rightAxisHint );
+#endif
+    } else
+      _fsm.clearActions();
+
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::_insertInTrack ( size_t icost, size_t itrack )
+  {
+    Track*              track            = _fsm.getTrack(icost,itrack);
+    size_t              begin            = _fsm.getBegin(icost,itrack);
+    size_t              end              = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet         = _segment->getNet();
     Interval            toFree            (_segment->getCanonicalInterval());
   //Net*                ripupNet         = NULL;
@@ -635,9 +669,10 @@ namespace Katana {
     bool                rightIntrication = false;
     bool                success          = true;
 
-    cdebug_log(159,0) << "Manipulator::insertInTrack() - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::_insertInTrack(size_t) - " << toFree << endl;
+    cdebug_log(159,0) << _segment << endl;
 
-    for ( size_t i = begin ; success && (i < end) ; i++ ) {
+    for ( size_t i = begin ; success and (i < end) ; i++ ) {
       TrackElement* segment2 = track->getSegment(i);
 
       cdebug_log(159,0) << "* Looking // " << segment2 << endl;
@@ -748,6 +783,10 @@ namespace Katana {
             }
           }
           if ( shrinkLeft  ) {
+            cdebug_log(159,0) << "Move PP to right: "
+                              << DbU::getValueString(toFree.getVMax()) << " + "
+                              << DbU::getValueString(getPPitch()/2)
+                              << endl;
             if ( not (success=Manipulator(segment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
                            , toFree.getVMax() + getPPitch()/2
@@ -763,46 +802,53 @@ namespace Katana {
           }
         } else {
           if ( not (success=Manipulator(segment3,_fsm).ripup( SegmentAction::OtherRipup
-                                                              | SegmentAction::EventLevel3
-                                                              )) )
+                                                            | SegmentAction::EventLevel3 )) )
             break;
         }
       }
-      if ( not success ) break;
     }
 
-    if ( success ) {
-      cdebug_log(159,0) << "Manipulator::insertInTrack() success" << endl;
-
-      _fsm.setState  ( SegmentFsm::OtherRipup );
-      _fsm.addAction ( _segment
-                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
-                     , _fsm.getCost(itrack).getTrack()->getAxis() );
-
-      unsigned int flags = 0;
-      if ( rightIntrication ) flags |= RightAxisHint;
-      if ( leftIntrication  ) flags |= LeftAxisHint;
-      if ( flags )
-        Manipulator(_segment,_fsm).shrinkToTrack(itrack,flags,leftAxisHint,rightAxisHint);
-    } else
-      _fsm.clearActions ();
-
+    cdebug_tabw(159,-1);
     return success;
   }
 
 
-  bool  Manipulator::forceToTrack ( size_t itrack )
+  bool  Manipulator::forceToTrack ( size_t icost )
   {
-    Track*              track      = _fsm.getTrack(itrack);
-    size_t              begin      = _fsm.getBegin(itrack);
-    size_t              end        = _fsm.getEnd  (itrack);
+    cdebug_log(159,1) << "Manipulator::forceToTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _forceToTrack( icost, itrack );
+    }
+
+    if (success) {
+      _fsm.setState ( SegmentFsm::OtherRipup );
+      _fsm.addAction( _segment
+                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
+                    , _fsm.getTrack(icost)->getAxis() );
+    } else
+      _fsm.clearActions();
+
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::_forceToTrack ( size_t icost, size_t itrack )
+  {
+    Track*              track      = _fsm.getTrack(icost,itrack);
+    size_t              begin      = _fsm.getBegin(icost,itrack);
+    size_t              end        = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet   = _segment->getNet();
     Interval            toFree      (_segment->getCanonicalInterval());
   //Net*                ripupNet   = NULL;
     set<TrackElement*>  canonicals;
     bool                success    = true;
 
-    cdebug_log(159,0) << "Manipulator::forceToTrack() - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::_forceToTrack(size_t) - " << toFree << endl;
 
     for ( size_t i=begin ; success and (i < end) ; ++i ) {
       TrackElement* segment2 = track->getSegment(i);
@@ -829,7 +875,7 @@ namespace Katana {
 
       canonicals.clear();
       for( TrackElement* segment3
-              : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
+             : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
         DataNegociate* data3 = segment3->getDataNegociate();
         if (not data3) continue;
 
@@ -841,23 +887,33 @@ namespace Katana {
       }
     }
 
-    if (success) {
-      _fsm.setState ( SegmentFsm::OtherRipup );
-      _fsm.addAction( _segment
-                    , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                    , _fsm.getCost(itrack).getTrack()->getAxis() );
-    }
-
+    cdebug_tabw(159,-1);
     return success;
   }
 
 
-  bool  Manipulator::shrinkToTrack ( size_t i, unsigned int flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
+  bool  Manipulator::shrinkToTrack ( size_t icost, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
+  {
+    cdebug_log(159,1) << "Manipulator::shrinkToTrack(size_t)" << endl;
+    cdebug_log(159,0) << _segment << endl;
+
+    bool success = true;
+
+    for ( size_t itrack=0 ; success and (itrack<_segment->getTrackSpan()) ; ++itrack ) {
+      success = success and _shrinkToTrack( icost, itrack, flags, leftAxisHint, rightAxisHint );
+    }
+
+    cdebug_tabw(159,-1);
+    return success;
+  }
+
+
+  bool  Manipulator::_shrinkToTrack ( size_t icost, size_t itrack, uint32_t flags, DbU::Unit leftAxisHint, DbU::Unit rightAxisHint )
   {
 #if THIS_IS_DISABLED
-    Track*              track       = _fsm.getTrack(i);
-    size_t              begin       = _fsm.getBegin(i);
-    size_t              end         = _fsm.getEnd  (i);
+    Track*              track       = _fsm.getTrack(icost,itrack);
+    size_t              begin       = _fsm.getBegin(icost,itrack);
+    size_t              end         = _fsm.getEnd  (icost,itrack);
     Net*                ownerNet    = _segment->getNet();
     set<TrackElement*>  canonicals;
     bool                success     = true;
@@ -926,15 +982,15 @@ namespace Katana {
   {
     cdebug_log(159,1) << "Manipulator::forceOverLocals()" << endl;
 
-    vector<TrackCost>& costs = _fsm.getCosts();
+    vector<TrackCost*>& costs = _fsm.getCosts();
     size_t itrack = 0;
     for ( ; itrack<costs.size() ; ++itrack ) {
       cdebug_log(159,0) << "Trying itrack:" << itrack << endl;
 
-      if (  costs[itrack].isFixed()
-         or costs[itrack].isBlockage()
-         or costs[itrack].isInfinite()
-         or costs[itrack].isOverlapGlobal() )
+      if (  costs[itrack]->isFixed()
+         or costs[itrack]->isBlockage()
+         or costs[itrack]->isInfinite()
+         or costs[itrack]->isOverlapGlobal() )
         continue;
 
       bool      success    = true;
@@ -973,7 +1029,7 @@ namespace Katana {
         _fsm.setState ( SegmentFsm::OtherRipup );
         _fsm.addAction( _segment
                       , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                      , _fsm.getCost(itrack).getTrack()->getAxis()
+                      , _fsm.getTrack(itrack)->getAxis()
                       );
         break;
       }
@@ -984,7 +1040,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::slacken ( unsigned int flags )
+  bool  Manipulator::slacken ( Flags flags )
   {
     cdebug_log(159,0) << "Manipulator::slacken() " << _segment << endl; 
 
@@ -1075,14 +1131,14 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::moveUp ( unsigned int flags )
+  bool  Manipulator::moveUp ( uint32_t flags )
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
 
-    unsigned int kflags = Flags::WithNeighbors;
+    Flags kflags = Flags::WithNeighbors;
   //kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AutoSegment::AllowLocal    : 0;
-    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : 0;
-    kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : 0;
+    kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
+    kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
@@ -1150,7 +1206,7 @@ namespace Katana {
     if (    _segment->isFixed  ()       ) return false;
     if (not _segment->canDogleg(overlap)) return false;
 
-    unsigned int  flags      = 0;
+    Flags         flags      = Flags::NoFlags;
     TrackElement* dogleg     = _segment->makeDogleg(overlap,flags);
     if (dogleg) {
       cdebug_log(159,0) << "Manipulator::makeDogleg(Interval) - Push dogleg to the "

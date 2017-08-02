@@ -94,7 +94,11 @@ namespace Katana {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if (_segments[i]) { _segments[i]->detach(); _segments[i]->destroy(); }
+      if (_segments[i]) {
+        _segments[i]->detach();
+        if (not _segments[i]->getTrackCount())
+          _segments[i]->destroy();
+      }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
       if (_markers[i]) _markers[i]->destroy();
@@ -105,10 +109,12 @@ namespace Katana {
 
   void  Track::destroy ()
   {
-    cdebug_log(155,0) << "Track::destroy() - " << (void*)this << " " << this << endl;
+    cdebug_log(155,1) << "Track::destroy() - " << (void*)this << " " << this << endl;
 
     Track::_preDestroy();
     delete this;
+
+    cdebug_tabw(155,-1);
   }
 
 
@@ -116,7 +122,7 @@ namespace Katana {
   { return _routingPlane->getKatanaEngine(); }
 
 
-  unsigned int  Track::getDepth () const
+  uint32_t  Track::getDepth () const
   { return _routingPlane->getDepth(); }
 
 
@@ -148,8 +154,8 @@ namespace Katana {
 
   TrackElement* Track::getSegment ( DbU::Unit position ) const
   {
-    unsigned int  state;
-    size_t        begin;
+    uint32_t  state;
+    size_t    begin;
 
     getBeginIndex( position, begin, state );
     if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
@@ -172,10 +178,8 @@ namespace Katana {
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
     for ( index-- ; index != npos ; index-- ) {
-      if (cdebug.enabled()) {
-        cerr << tab << index << ":"; cerr.flush();
-        cerr << _segments[index] << endl;
-      }
+      cdebug_log(140,0) << index << ":" << _segments[index] << endl;
+
       if (_segments[index]->getNet() == net) continue;
       return _segments[index];
     }
@@ -196,7 +200,7 @@ namespace Katana {
   }
 
 
-  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, unsigned int& state ) const
+  void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
     if (_segments.empty()) {
       state = EmptyTrack;
@@ -258,7 +262,7 @@ namespace Katana {
 
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {
-    unsigned int  iState;
+    uint32_t iState;
 
     if (  _segments.empty()
        or (interval.getVMax() <= _min)
@@ -275,19 +279,20 @@ namespace Katana {
       if (_segments[end]->getSourceU() >= interval.getVMax()) break;
     }
 
-    cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << endl;
+    cdebug_log(155,0) << "Track::getOverlapBounds(): begin:" << begin << " end:" << end << " AfterLastElement:" << (iState == AfterLastElement) << endl;
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval     interval
-                                   , Net*         net
-                                   , size_t       begin
-                                   , size_t       end
-                                   , unsigned int flags ) const
+  TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-    TrackCost  cost ( const_cast<Track*>(this), interval, begin, end, net, flags );
+          size_t    begin    = Track::npos;
+          size_t    end      = Track::npos;
+    const Interval& interval = cost.getInterval();
 
-    cdebug_log(155,1) << "getOverlapCost() @" << DbU::getValueString(_axis)
+    getOverlapBounds( cost.getInterval(), begin, end );
+    cost.setTrack( const_cast<Track*>(this), begin, end );
+
+    cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
                       << " [" << DbU::getValueString(interval.getVMin())
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
@@ -300,7 +305,7 @@ namespace Katana {
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
-      if ( _markers[mbegin]->getNet() != net ) {
+      if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
       }
@@ -314,11 +319,13 @@ namespace Katana {
 
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
-      if ( _segments[begin]->getNet() == net ) {
+      if (_segments[begin]->getNet() == cost.getNet()) {
+        cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
-      cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
-      _segments[begin]->incOverlapCost( net, cost );
+      _segments[begin]->incOverlapCost( cost );
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << &cost << endl;
+
       if (cost.isInfinite()) break;
     }
 
@@ -328,22 +335,7 @@ namespace Katana {
   }
 
 
-  TrackCost  Track::getOverlapCost ( Interval interval, Net* net, unsigned int flags ) const
-  {
-    size_t begin;
-    size_t end;
-
-    getOverlapBounds( interval, begin, end );
-
-    return getOverlapCost( interval, net, begin, end, flags );
-  }
-
-
-  TrackCost  Track::getOverlapCost ( TrackElement* segment, unsigned int flags ) const
-  { return getOverlapCost ( segment->getCanonicalInterval(), segment->getNet(), flags ); }
-
-
-  void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, unsigned int& weight ) const
+  void  Track::getTerminalWeight ( Interval interval, Net* net, size_t& count, uint32_t& weight ) const
   {
     cdebug_log(155,1) << "getTerminalWeight() @" << DbU::getValueString(_axis)
                       << " [" << interval.getVMin() << " " << interval.getVMax() << "]" << endl;
@@ -392,9 +384,9 @@ namespace Katana {
 
   Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const
   {
-    unsigned int  state;
-    size_t        begin;
-    size_t        end;
+    uint32_t  state;
+    size_t    begin;
+    size_t    end;
 
     if (_segments.empty()) return Interval(_min,_max);
 
@@ -407,7 +399,7 @@ namespace Katana {
   }
 
 
-  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, unsigned int state, Net* net ) const
+  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
     cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end << " " << net << endl;
     cdebug_log(155,0) << _segments[begin] << endl;
@@ -437,6 +429,7 @@ namespace Katana {
         }
       }
     }
+
     cdebug_tabw(155,-1);
 
     return Interval( minFree, getMaximalPosition(end,state) );
@@ -458,7 +451,7 @@ namespace Katana {
   {
     // cdebug_log(9000,0) << "Deter| Track::insert() " << getLayer()->getName()
     //             << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
-    cdebug_log(155,0) << "Track::insert() " << getLayer()->getName()
+    cdebug_log(155,1) << "Track::insert() " << getLayer()->getName()
                 << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
 
     if (   (getLayer()->getMask()         != segment->getLayer()->getMask())
@@ -467,11 +460,22 @@ namespace Katana {
                  ,getString(segment).c_str()) << endl;
     }
 
-    segment->setAxis ( getAxis() );
-    _segments.push_back ( segment );
+    _segments.push_back( segment );
     _segmentsValid = false;
 
+    if (segment->isWide()) {
+      cdebug_log(155,0) << "Segment is wide." << endl;
+      Track* wtrack = getNextTrack();
+      for ( size_t i=1 ; wtrack and (i<segment->getTrackSpan()) ; ++i ) {
+        cdebug_log(155,0) << "Insert in [" << i << "] " << wtrack << endl;
+        wtrack->_segments.push_back ( segment );
+        wtrack->_segmentsValid = false;
+        wtrack = wtrack->getNextTrack();
+      }
+    }
+
     segment->setTrack ( this );
+    cdebug_tabw(155,-1);
   }
 
 
@@ -482,7 +486,7 @@ namespace Katana {
   }
 
 
-  bool  Track::check ( unsigned int& overlaps, const char* message ) const
+  bool  Track::check ( uint32_t& overlaps, const char* message ) const
   {
     bool coherency = true;
     bool holes     = false;
@@ -508,12 +512,6 @@ namespace Katana {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " is in track "
                  << _segments[i]->getTrack() << endl;
-            coherency = false;
-          }
-          if (_segments[i]->getIndex() != i) {
-            cerr << "[CHECK] incoherency at " << i << " "
-                 << _segments[i] << " has bad index "
-                 << _segments[i]->getIndex() << endl;
             coherency = false;
           }
         }
@@ -555,7 +553,7 @@ namespace Katana {
   }
 
 
-  DbU::Unit  Track::getMinimalPosition ( size_t index, unsigned int state ) const
+  DbU::Unit  Track::getMinimalPosition ( size_t index, uint32_t state ) const
   {
     Interval  canonical;
 
@@ -565,14 +563,14 @@ namespace Katana {
       case BeginIsSegmentMax: return _segments[index]->getTargetU ();
     }
 
-    cerr << Bug( " Track::getMinimalPosition(size_t,unsigned int) :"
+    cerr << Bug( " Track::getMinimalPosition(size_t,uint32_t) :"
                  " invalid state value %ud.", state ) << endl;
 
     return _min;
   }
 
 
-  DbU::Unit  Track::getMaximalPosition ( size_t index, unsigned int state ) const
+  DbU::Unit  Track::getMaximalPosition ( size_t index, uint32_t state ) const
   {
     Interval  canonical;
 
@@ -584,7 +582,7 @@ namespace Katana {
       case EndIsSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 
-    cerr << Bug( " Track::getMaximalPosition(size_t,unsigned int) :"
+    cerr << Bug( " Track::getMaximalPosition(size_t,uint32_t) :"
                  " invalid state value %ud.", state ) << endl;
 
     return _min;
@@ -655,9 +653,6 @@ namespace Katana {
 
     if (not _segmentsValid) {
       std::sort( _segments.begin(), _segments.end(), SegmentCompare() );
-      for ( size_t i=0 ; i < _segments.size() ; i++ ) {
-        _segments[i]->setIndex( i );
-      }
       _segmentsValid = true;
     }
 
@@ -668,7 +663,7 @@ namespace Katana {
   }
 
 
-  unsigned int  Track::checkOverlap ( unsigned int& overlaps ) const
+  uint32_t  Track::checkOverlap ( uint32_t& overlaps ) const
   {
     if ( !_segments.size() ) return 0;
 

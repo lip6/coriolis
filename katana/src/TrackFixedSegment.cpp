@@ -65,11 +65,11 @@ namespace Katana {
   {
     Box boundingBox = segment->getBoundingBox();
 
-    unsigned int flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
+    uint32_t flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
     setFlags( flags );
 
     if (track) {
-      unsigned int  depth      = track->getDepth();
+      uint32_t      depth      = track->getDepth();
       Technology*   technology = DataBase::getDB()->getTechnology();
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
@@ -130,15 +130,18 @@ namespace Katana {
   }
 
 
-  AutoSegment*   TrackFixedSegment::base            () const { return NULL; }
-  Segment*       TrackFixedSegment::getSegment      () const { return _segment; }
-  DbU::Unit      TrackFixedSegment::getAxis         () const { return getTrack()->getAxis(); }
-  bool           TrackFixedSegment::isHorizontal    () const { return getTrack()->isHorizontal(); }
-  bool           TrackFixedSegment::isVertical      () const { return getTrack()->isVertical(); }
-  bool           TrackFixedSegment::isFixed         () const { return true; }
-  Flags          TrackFixedSegment::getDirection    () const { return getTrack()->getDirection(); }
-  const Layer*   TrackFixedSegment::getLayer        () const { return _segment->getLayer(); }
-  Interval       TrackFixedSegment::getFreeInterval () const { return Interval(); }
+  AutoSegment*   TrackFixedSegment::base             () const { return NULL; }
+  Segment*       TrackFixedSegment::getSegment       () const { return _segment; }
+  DbU::Unit      TrackFixedSegment::getAxis          () const { return getTrack()->getAxis(); }
+  bool           TrackFixedSegment::isHorizontal     () const { return getTrack()->isHorizontal(); }
+  bool           TrackFixedSegment::isVertical       () const { return getTrack()->isVertical(); }
+  bool           TrackFixedSegment::isFixed          () const { return true; }
+  bool           TrackFixedSegment::isPriorityLocked () const { return false; }
+  Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
+  DbU::Unit      TrackFixedSegment::getWidth         () const { return _segment->getWidth(); }
+  const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }
+  Interval       TrackFixedSegment::getFreeInterval  () const { return Interval(); }
+  size_t         TrackFixedSegment::getTrackSpan     () const { return 1; }
 
 
   unsigned long  TrackFixedSegment::getId () const
@@ -159,16 +162,45 @@ namespace Katana {
 
   TrackElement* TrackFixedSegment::getNext () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackFixedSegment::getPrevious () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getPrevious( dummy, getNet() );
   }
+
+
+  void  TrackFixedSegment::addOverlapCost ( TrackCost& cost ) const
+  {
+    Track* track = cost.getTrack();
+
+    if (not track) return;
+    track->addOverlapCost( cost );
+  }
+
+
+  float  TrackFixedSegment::getPriority () const
+  { return 0.0; }
+
+
+  void  TrackFixedSegment::setPriorityLock ( bool )
+  { }
+
+
+  void  TrackFixedSegment::forcePriority ( float )
+  { }
+
+
+  void  TrackFixedSegment::computePriority ()
+  { }
+
+
+  void  TrackFixedSegment::computeAlignedPriority ()
+  { }
 
 
   string  TrackFixedSegment::_getTypeName () const
@@ -181,7 +213,6 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + "F"
               + ((isBlockage()) ? "B" : "-");
     s1.insert ( s1.size()-1, s2 );

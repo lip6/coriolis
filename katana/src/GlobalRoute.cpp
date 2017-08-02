@@ -25,6 +25,7 @@ namespace {
   using std::cerr;
   using std::endl;
   using std::setw;
+  using std::setfill;
   using std::left;
   using std::right;
   using Hurricane::DbU;
@@ -106,7 +107,7 @@ namespace Katana {
   using Anabatic::NetData;
 
 
-  void  KatanaEngine::setupGlobalGraph ( unsigned int mode )
+  void  KatanaEngine::setupGlobalGraph ( uint32_t mode )
   {
     Cell* cell = getCell();
 
@@ -162,7 +163,7 @@ namespace Katana {
     size_t iteration = 0;
     size_t netCount  = 0;
     do {
-      cmess2 << "     [" << setw(3) << iteration << "] nets:";
+      cmess2 << "     [" << setfill(' ') << setw(3) << iteration << "] nets:";
 
       netCount = 0;
       for ( NetData* netData : getNetOrdering() ) {

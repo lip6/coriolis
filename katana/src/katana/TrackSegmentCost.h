@@ -48,22 +48,22 @@ namespace Katana {
   class TrackSegmentCost {
 
     public:
-                               TrackSegmentCost ( TrackElement* );
-                              ~TrackSegmentCost ();
-      inline unsigned int      getTerminals     () const;
-      inline unsigned int      getRipupCount    () const;
-      inline DbU::Unit         getLeftMinExtend () const;
-      inline DbU::Unit         getRightMinExtend() const;
-      inline Net*              getNet           () const;
-             DbU::Unit         getWiringDelta   ( DbU::Unit axis ) const;
-      inline void              setRipupCount    ( unsigned int );
-      inline void              incRipupCount    ();
-      inline void              decRipupCount    ();
-      inline void              resetRipupCount  ();
-             void              update           ( TrackElement* );
-             Record*           _getRecord       () const;
-             string            _getString       () const;
-      inline string            _getTypeName     () const;
+                        TrackSegmentCost ( TrackElement* );
+                       ~TrackSegmentCost ();
+      inline uint32_t   getTerminals     () const;
+      inline uint32_t   getRipupCount    () const;
+      inline DbU::Unit  getLeftMinExtend () const;
+      inline DbU::Unit  getRightMinExtend() const;
+      inline Net*       getNet           () const;
+             DbU::Unit  getWiringDelta   ( DbU::Unit axis ) const;
+      inline void       setRipupCount    ( uint32_t );
+      inline void       incRipupCount    ();
+      inline void       decRipupCount    ();
+      inline void       resetRipupCount  ();
+             void       update           ( TrackElement* );
+             Record*    _getRecord       () const;
+             string     _getString       () const;
+      inline string     _getTypeName     () const;
 
     protected:
     // Attributes.
@@ -77,16 +77,16 @@ namespace Katana {
   };
 
 // Inline Functions.
-  inline unsigned int  TrackSegmentCost::getTerminals      () const { return _terminals; }
-  inline unsigned int  TrackSegmentCost::getRipupCount     () const { return _ripupCount; }
-  inline DbU::Unit     TrackSegmentCost::getLeftMinExtend  () const { return _leftMinExtend; }
-  inline DbU::Unit     TrackSegmentCost::getRightMinExtend () const { return _rightMinExtend; }
-  inline Net*          TrackSegmentCost::getNet            () const { return _net; }
-  inline void          TrackSegmentCost::setRipupCount     ( unsigned int count ) { _ripupCount = count; }
-  inline void          TrackSegmentCost::incRipupCount     () { _ripupCount++; }
-  inline void          TrackSegmentCost::decRipupCount     () { if (_ripupCount) _ripupCount--; }
-  inline void          TrackSegmentCost::resetRipupCount   () { _ripupCount = 0; }
-  inline string        TrackSegmentCost::_getTypeName      () const { return "TrackSegmentCost"; }
+  inline uint32_t   TrackSegmentCost::getTerminals      () const { return _terminals; }
+  inline uint32_t   TrackSegmentCost::getRipupCount     () const { return _ripupCount; }
+  inline DbU::Unit  TrackSegmentCost::getLeftMinExtend  () const { return _leftMinExtend; }
+  inline DbU::Unit  TrackSegmentCost::getRightMinExtend () const { return _rightMinExtend; }
+  inline Net*       TrackSegmentCost::getNet            () const { return _net; }
+  inline void       TrackSegmentCost::setRipupCount     ( uint32_t count ) { _ripupCount = count; }
+  inline void       TrackSegmentCost::incRipupCount     () { _ripupCount++; }
+  inline void       TrackSegmentCost::decRipupCount     () { if (_ripupCount) _ripupCount--; }
+  inline void       TrackSegmentCost::resetRipupCount   () { _ripupCount = 0; }
+  inline string     TrackSegmentCost::_getTypeName      () const { return "TrackSegmentCost"; }
 
 
 } // End of Katana namespace.

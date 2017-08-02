@@ -210,13 +210,13 @@ namespace CRL {
     cdebug_log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
 
     long  modulo;
-    long  depth;
+    long  index;
 
-    divide ( position-start, depth, modulo );
+    divide ( position-start, index, modulo );
 
-    cdebug_log(100,0) << "depth := " << depth << endl;
+    cdebug_log(100,0) << "index := " << index << endl;
 
-    if ( depth < 0 ) {
+    if ( index < 0 ) {
       cdebug_tabw(100,-1);
       return 0;
 
@@ -232,13 +232,13 @@ namespace CRL {
       throw Error ( badExactPosition, getString(this).c_str(), DbU::getValueString(position).c_str() );
 
     if ( mode & Constant::Superior ) {
-      if ( modulo != 0 ) depth++;
+      if ( modulo != 0 ) index++;
     } else if ( mode & Constant::Nearest ) {
-      if ( modulo > _pitch / 2 ) depth++;
+      if ( modulo > _pitch / 2 ) index++;
     }
 
     unsigned int tracksNumber = getTrackNumber(start,stop);
-    if ( (unsigned)depth >= tracksNumber ) {
+    if ( (unsigned)index >= tracksNumber ) {
       cdebug_tabw(100,-1);
       return (tracksNumber > 0) ? tracksNumber-1 : 0;
       // throw Error ( overflowIndex
@@ -251,7 +251,7 @@ namespace CRL {
 
     cdebug_tabw(100,-1);
 
-    return depth;
+    return index;
   }
 
 

@@ -45,7 +45,7 @@ namespace Anabatic {
   using Hurricane::NetRoutingExtension;
 
 
-  void  AnabaticEngine::_desaturate ( unsigned int   depth
+  void  AnabaticEngine::_desaturate ( unsigned int    depth
                                      , set<Net*>&     globalNets
                                      , unsigned long& total
                                      , unsigned long& globals )
@@ -472,7 +472,7 @@ namespace Anabatic {
 #endif
 
 
-  void  AnabaticEngine::layerAssign ( unsigned int method )
+  void  AnabaticEngine::layerAssign ( uint32_t method )
   {
     cdebug_log(9000,0) << "Deter| Layer Assignment" << endl;
 

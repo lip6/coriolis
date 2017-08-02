@@ -171,6 +171,7 @@
                                 SharedPath.cpp
                                 Path.cpp
                                 Occurrence.cpp
+                                Occurrences.cpp
                                 QuadTree.cpp
                                 Slice.cpp
                                 ExtensionSlice.cpp

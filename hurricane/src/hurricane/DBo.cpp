@@ -53,7 +53,9 @@ namespace Hurricane {
 
 
   void  DBo::_postCreate ()
-  { }
+  {
+    cdebug_log(0,0) << "DBo::_postCreate() " << this << endl;
+  }
 
 
   void  DBo::_preDestroy ()
@@ -64,7 +66,9 @@ namespace Hurricane {
 
   void DBo::destroy ()
   {
+    cdebug_log(0,1) << "DBo::destroy() " << this << endl;
     _preDestroy();
+    cdebug_tabw(0,-1);
     delete this;
   }
 

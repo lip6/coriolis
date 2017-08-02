@@ -14,7 +14,7 @@
  set_lib_link_mode()
  setup_boost()
  
- find_package(PythonLibs REQUIRED)
+ find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)

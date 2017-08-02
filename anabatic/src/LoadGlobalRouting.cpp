@@ -102,7 +102,7 @@ namespace {
 //!               request the creation of a contact <em>on the target point</em>.
 
 
-//! \function     unsigned int  checkRoutingPadSize ( Component* rp );
+//! \function     uint64_t  checkRoutingPadSize ( Component* rp );
 //!
 //!               Look at the geometrical size of the Component and assess if
 //!               it's span is too narrow either horizontally or vertically.
@@ -127,7 +127,7 @@ namespace {
  *                call the canonization, which needs all the caches to be up to date.
  */
 
-//! \function     void  GCellTopology::doRp_AutoContacts ( GCell* gcell, Component* rp, AutoContact*& source, AutoContact*& target, unsigned int flags );
+//! \function     void  GCellTopology::doRp_AutoContacts ( GCell* gcell, Component* rp, AutoContact*& source, AutoContact*& target, uint64_t flags );
 //! \param        gcell   The GCell into which create the AutoContact.
 //! \param        rp      The Component we want to access.
 //! \param        source  The AutoContact created on the \c source (\e returned).
@@ -166,7 +166,7 @@ namespace {
 //!
 //!               \image html  doRp_AutoContacts.png "doRp_AutoContacts()"
 
-//! \function     AutoContact* GCellTopology::doRp_Access ( GCell* gcell, Component* rp, unsigned int flags );
+//! \function     AutoContact* GCellTopology::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags );
 //! \param        gcell   The GCell into which create the AutoContact.
 //! \param        rp      The Component onto which anchor the access contact.
 //! \param        flags   Relevant flags are:
@@ -185,7 +185,7 @@ namespace {
 //!
 //!               \image html  doRp_Access.png "doRp_Access()"
 
-//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags );
+//! \function     AutoContact*  GCellTopology::doRp_AccessPad ( RoutingPad* rp, uint64_t flags );
 //! \param        rp      The Component onto which anchor the access contact.
 //! \param        flags   Relevant flags are:
 //!                         - HAccess, the terminal is to be accessed through an horizontal
@@ -405,21 +405,21 @@ namespace {
   // ---------------------------------------------------------------
   // Local Enum/Types.
 
-  enum LocalFunctionFlag { NoFlags         = 0x00000000
-                         , SortDecreasing  = 0x00000001
-                         , HAccess         = 0x00000002
-                         , VSmall          = 0x00000004
-                         , HSmall          = 0x00000008
-                         , Punctual        = 0x00000010
-                         , HCollapse       = 0x00000020
-                         , VCollapse       = 0x00000040
-                         , Terminal        = 0x00000080
-                         , DoSourceContact = 0x00000100
-                         , DoTargetContact = 0x00000200
-                         , SouthBound      = 0x00010000
-                         , NorthBound      = 0x00020000
-                         , WestBound       = 0x00040000
-                         , EastBound       = 0x00080000
+  enum LocalFunctionFlag { NoFlags         = (1 <<  0)
+                         , SortDecreasing  = (1 <<  1)
+                         , HAccess         = (1 <<  2)
+                         , VSmall          = (1 <<  3)
+                         , HSmall          = (1 <<  4)
+                         , Punctual        = (1 <<  5)
+                         , HCollapse       = (1 <<  6)
+                         , VCollapse       = (1 <<  7)
+                         , Terminal        = (1 <<  8)
+                         , DoSourceContact = (1 <<  9)
+                         , DoTargetContact = (1 << 10)
+                         , SouthBound      = (1 << 11)
+                         , NorthBound      = (1 << 12)
+                         , WestBound       = (1 << 13)
+                         , EastBound       = (1 << 14)
                          };
 
 
@@ -483,7 +483,7 @@ namespace {
   }
 
 
-  unsigned int  checkRoutingPadSize ( Component* anchor )
+  uint64_t  checkRoutingPadSize ( Component* anchor )
   {
     Point  source;
     Point  target;
@@ -496,7 +496,7 @@ namespace {
     DbU::Unit width  = abs( target.getX() - source.getX() );
     DbU::Unit height = abs( target.getY() - source.getY() );
 
-    unsigned int flags = 0;
+    uint64_t flags = 0;
     flags |= (width  < 3*Session::getPitch(anchorDepth)) ? HSmall   : 0;
     flags |= (height < 3*Session::getPitch(anchorDepth)) ? VSmall   : 0;
     flags |= ((width == 0) && (height == 0))             ? Punctual : 0;
@@ -518,7 +518,7 @@ namespace {
   }
 
 
-  unsigned int  getSegmentHookType ( Hook* hook )
+  uint64_t  getSegmentHookType ( Hook* hook )
   {
     Horizontal* horizontal = dynamic_cast<Horizontal*>( hook->getComponent() );
     if (horizontal) {
@@ -548,14 +548,14 @@ namespace {
 
   class SortHkByX {
     public:
-      inline       SortHkByX  ( unsigned int flags );
+      inline       SortHkByX  ( uint64_t flags );
       inline bool  operator() ( Hook* h1, Hook* h2 );
     protected:
-      unsigned int  _flags;
+      uint64_t  _flags;
   };
 
 
-  inline  SortHkByX::SortHkByX ( unsigned int  flags )
+  inline  SortHkByX::SortHkByX ( uint64_t flags )
     : _flags(flags)
   { }
 
@@ -586,14 +586,14 @@ namespace {
 
   class SortHkByY {
     public:
-      inline       SortHkByY  ( unsigned int flags );
+      inline       SortHkByY  ( uint64_t flags );
       inline bool  operator() ( Hook* h1, Hook* h2 );
     protected:
-      unsigned int  _flags;
+      uint64_t  _flags;
   };
 
 
-  inline  SortHkByY::SortHkByY ( unsigned int  flags )
+  inline  SortHkByY::SortHkByY ( uint64_t flags )
     : _flags(flags)
   { }
 
@@ -624,14 +624,14 @@ namespace {
 
   class SortRpByX {
     public:
-      inline       SortRpByX  ( unsigned int flags );
+      inline       SortRpByX  ( uint64_t flags );
       inline bool  operator() ( Component* rp1, Component* rp2 );
     protected:
-      unsigned int  _flags;
+      uint64_t  _flags;
   };
 
 
-  inline  SortRpByX::SortRpByX ( unsigned int  flags )
+  inline  SortRpByX::SortRpByX ( uint64_t flags )
     : _flags(flags)
   { }
 
@@ -651,14 +651,14 @@ namespace {
 
   class SortRpByY {
     public:
-      inline       SortRpByY  ( unsigned int flags );
+      inline       SortRpByY  ( uint64_t flags );
       inline bool  operator() ( Component* rp1, Component* rp2 );
     protected:
-      unsigned int  _flags;
+      uint64_t  _flags;
   };
 
 
-  inline  SortRpByY::SortRpByY  ( unsigned int flags )
+  inline  SortRpByY::SortRpByY  ( uint64_t flags )
     : _flags(flags)
   { }
 
@@ -718,10 +718,10 @@ namespace {
              void          construct         ( ForkStack& forks );
       inline unsigned int  getStateG         () const;
       inline GCell*        getGCell          () const;
-      static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, unsigned int flags );
-      static AutoContact*  doRp_Access       ( GCell*, Component*, unsigned int  flags );
-      static AutoContact*  doRp_AccessPad    ( RoutingPad*, unsigned int flags );
-      static AutoContact*  doRp_AccessAnalog ( GCell*, RoutingPad*, unsigned int flags );
+      static void          doRp_AutoContacts ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
+      static AutoContact*  doRp_Access       ( GCell*, Component*, uint64_t  flags );
+      static AutoContact*  doRp_AccessPad    ( RoutingPad*, uint64_t flags );
+      static AutoContact*  doRp_AccessAnalog ( GCell*, RoutingPad*, uint64_t flags );
       static void          doRp_StairCaseH   ( GCell*, Component* rp1, Component* rp2 );
       static void          doRp_StairCaseV   ( GCell*, Component* rp1, Component* rp2 );
     private:                                    
@@ -880,7 +880,7 @@ namespace {
   void  GCellTopology::fixSegments ()
   {
     for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
-      _toFixSegments[i]->setFlags( SegFixed );
+      _toFixSegments[i]->setFlags( AutoSegment::SegFixed );
     _toFixSegments.clear();
   }
 
@@ -1120,7 +1120,7 @@ namespace {
                                                           , targetContact
                                                           , static_cast<Segment*>( _fromHook->getComponent() )
                                                           );
-          globalSegment->setFlags( (_degree == 2) ? SegBipoint : 0 );
+          globalSegment->setFlags( (_degree == 2) ? AutoSegment::SegBipoint : 0 );
           cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
 
         // HARDCODED VALUE.
@@ -1196,7 +1196,7 @@ namespace {
                                                         , targetContact
                                                         , static_cast<Segment*>( _fromHook->getComponent() )
                                                         );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        cdebug_log(145,0) << "[Create global segment (1)]: " << globalSegment << endl;
       }     
     }
     cdebug_tabw(145,-1);
@@ -1207,7 +1207,7 @@ namespace {
                                          , Component*    rp
                                          , AutoContact*& source
                                          , AutoContact*& target
-                                         , unsigned int  flags
+                                         , uint64_t      flags
                                          )
   {
     cdebug_log(145,1) << "doRp_AutoContacts()" << endl;
@@ -1219,8 +1219,8 @@ namespace {
     Point        targetPosition;
     const Layer* rpLayer        = rp->getLayer();
     size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
-    unsigned int direction      = Session::getDirection ( rpDepth );
-    DbU::Unit    viaSide        = Session::getWireWidth ( rpDepth );
+    Flags        direction      = Session::getDirection ( rpDepth );
+    DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
 
     getPositions( rp, sourcePosition, targetPosition );
 
@@ -1256,7 +1256,7 @@ namespace {
         targetProtect->setFlags( CntFixed );
 
         AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction );
-        segment->setFlags( SegFixed );
+        segment->setFlags( AutoSegment::SegFixed );
 
         __routingPadAutoSegments.insert( make_pair(rp,segment) );
       }
@@ -1293,7 +1293,7 @@ namespace {
   }
 
 
-  AutoContact* GCellTopology::doRp_Access ( GCell* gcell, Component* rp, unsigned int flags )
+  AutoContact* GCellTopology::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags )
   {
     cdebug_log(145,1) << "doRp_Access() - flags:" << flags << endl;
 
@@ -1326,7 +1326,7 @@ namespace {
   }
 
 
-  AutoContact* GCellTopology::doRp_AccessPad ( RoutingPad* rp, unsigned int flags )
+  AutoContact* GCellTopology::doRp_AccessPad ( RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << "doRp_AccessPad()" << endl;
     cdebug_log(145,0)   << rp << endl;
@@ -1473,14 +1473,14 @@ namespace {
   }
 
 
-  AutoContact* GCellTopology::doRp_AccessAnalog ( GCell* gcell, RoutingPad* rp, unsigned int flags )
+  AutoContact* GCellTopology::doRp_AccessAnalog ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << "doRp_AccessAnalog()" << endl;
     cdebug_log(145,0) << rp << endl;
 
     const Layer* rpLayer  = rp->getLayer();
     size_t       rpDepth  = Session::getLayerDepth( rpLayer );
-    DbU::Unit    viaSide  = Session::getWireWidth ( rpDepth );
+    DbU::Unit    viaSide  = Session::getViaWidth  ( rpDepth );
     Point        position = rp->getCenter();
     Point        onGrid   = Session::getNearestGridPoint( position, gcell->getConstraintBox() );
 
@@ -1637,12 +1637,12 @@ namespace {
     cdebug_log(145,1) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
     cdebug_log(145,0)   << "_connexity.globals:" << (int)_connexity.fields.globals << endl;
 
-    unsigned int  flags       = NoFlags;
-    bool          eastPad     = false;
-    bool          westPad     = false;
-    bool          northPad    = false;
-    bool          southPad    = false;
-    Instance*     padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
+    uint64_t  flags       = NoFlags;
+    bool      eastPad     = false;
+    bool      westPad     = false;
+    bool      northPad    = false;
+    bool      southPad    = false;
+    Instance* padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
 
     switch ( padInstance->getTransformation().getOrientation() ) {
       case Transformation::Orientation::ID: northPad = true; break;
@@ -1657,10 +1657,10 @@ namespace {
         break;
     }
     cdebug_log(145,0) << "eastPad:"  << eastPad  << ", "
-               << "westPad:"  << westPad  << ", "
-               << "northPad:" << northPad << ", "
-               << "southPad:" << southPad
-               << endl;
+                      << "westPad:"  << westPad  << ", "
+                      << "northPad:" << northPad << ", "
+                      << "southPad:" << southPad
+                      << endl;
 
     AutoContact* source = doRp_AccessPad( _routingPads[0], flags );
     // Point        position     = _routingPads[0]->getCenter();
@@ -1759,7 +1759,7 @@ namespace {
   {
     cdebug_log(145,1) << "_do_1G_1M1() [Managed Configuration - Optimized] " << _topology << endl;
 
-    unsigned int  flags      = NoFlags;
+    uint64_t  flags = NoFlags;
     if      (_east ) { flags |= HAccess; }
     else if (_west ) { flags |= HAccess; }
     else if (_north) { flags |= VSmall; }
@@ -1776,7 +1776,7 @@ namespace {
     cdebug_log(145,1) << "_do_1G_" << (int)_connexity.fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
-    for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
+    for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( _gcell, _routingPads[i-1], HAccess );
       AutoContact* rightContact = doRp_Access( _gcell, _routingPads[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
@@ -1789,7 +1789,7 @@ namespace {
       globalRp = _routingPads[0];
 
       cdebug_log(145,0) << "| Initial N/S Global RP: " << globalRp << endl;
-      for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
+      for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
         if (_routingPads[i]->getBoundingBox().getHeight() > globalRp->getBoundingBox().getHeight()) {
           cdebug_log(145,0) << "| Better RP: " << globalRp << endl;
           globalRp = _routingPads[i];
@@ -1889,7 +1889,7 @@ namespace {
       rpM3 = _routingPads[0];
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
-    for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
+    for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( _gcell, _routingPads[i-1], HAccess );
       AutoContact* rightContact = doRp_Access( _gcell, _routingPads[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
@@ -1927,7 +1927,7 @@ namespace {
     // All RoutingPad are M1.
       Component* southWestRp = _routingPads[0];
       cdebug_log(145,0) << "| Initial S-W Global RP: " << southWestRp << endl;
-      for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
+      for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
         if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
         if (_routingPads[i]->getBoundingBox().getHeight() > southWestRp->getBoundingBox().getHeight()) {
           cdebug_log(145,0) << "| Better RP: " << southWestRp << endl;
@@ -1951,7 +1951,7 @@ namespace {
       cdebug_log(145,0) << "| Initial N-E Global RP: " << northEastRp << endl;
 
       if (_routingPads.size() > 1) {
-        for ( unsigned int i=_routingPads.size()-1; i != 0 ; ) {
+        for ( size_t i=_routingPads.size()-1; i != 0 ; ) {
           i -= 1;
           if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
           if (_routingPads[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
@@ -2006,7 +2006,7 @@ namespace {
                       << (int)_connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
     Component* biggestRp = _routingPads[0];
-    for ( unsigned int i=1 ; i<_routingPads.size() ; ++i ) {
+    for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
       doRp_StairCaseH( _gcell, _routingPads[i-1], _routingPads[i] );
       if (_routingPads[i]->getBoundingBox().getWidth() > biggestRp->getBoundingBox().getWidth())
         biggestRp = _routingPads[i];
@@ -2042,7 +2042,7 @@ namespace {
   {
     cdebug_log(145,1) << "_do_1G_1M3() [Optimised Configuration]" << endl;
 
-    unsigned int flags = (_east or _west) ? HAccess : NoFlags;
+    uint64_t flags = (_east or _west) ? HAccess : NoFlags;
     flags |= (_north) ? DoTargetContact : NoFlags;
     flags |= (_south) ? DoSourceContact : NoFlags;
 
@@ -2091,7 +2091,7 @@ namespace {
     cdebug_log(145,0) << "_north:" << _north << endl;
 
     sort( _routingPads.begin(), _routingPads.end(), SortRpByY(NoFlags) ); // increasing Y.
-    for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
+    for ( size_t i=1 ; i<_routingPads.size() ; i++ ) {
       doRp_StairCaseV( _gcell, _routingPads[i-1], _routingPads[i] );
     }
 
@@ -2263,7 +2263,7 @@ namespace {
   {
     cdebug_log(145,1) << "void  GCellTopology::_doDevice ()" << _gcell << endl;
   // #0: Check if all RoutingPads are set to a component. 
-    for ( unsigned int i=0; i<_routingPads.size() ; i++ ) {
+    for ( size_t i=0; i<_routingPads.size() ; i++ ) {
       if ( ( _routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX() )
          &&( _routingPads[i]->getSourcePosition().getY() == _routingPads[i]->getTargetPosition().getY() )
          ){
@@ -2294,7 +2294,7 @@ namespace {
       rpNE = _routingPads[0];
       rpSW = _routingPads[0];
 
-      for ( unsigned int i=1 ; i<_routingPads.size() ; i++ ) {
+      for ( size_t i=1 ; i<_routingPads.size() ; i++ ) {
         rpNE = returnNE( _gcell, rpNE, _routingPads[i] );
         rpSW = returnSW( _gcell, rpSW, _routingPads[i] );
       }
@@ -2350,19 +2350,10 @@ namespace {
   {
     cdebug_log(145,1) << "void  GCellTopology::_doHChannel ( ForkStack& forks )" << _gcell << endl;
     
-    vector<Hook*>       hooks;
-    Hook*               firsthhook = NULL;
-    Hook*               lasthhook  = NULL;
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
-
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
-    AutoContact* targetContact = NULL;
+    vector<Hook*>  hooks;
+    Hook*          firsthhook = NULL;
+    Hook*          lasthhook  = NULL;
+    AutoContact*   targetContact = NULL;
     
   // Save segments only
     cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
@@ -2462,15 +2453,8 @@ namespace {
       cdebug_log(145,0) << "Chain contacts: "  << endl;
       for (size_t j=1; j < autoContacts.size(); j++){
         if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* globalSegment = 
-            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
-                               , Horizontal::create( autoContacts[j-1]->base() , autoContacts[j]->base()
-                                                   , horizontalLayer
-                                                   , autoContacts[j-1]->getY()
-                                                   , horizontalWidth 
-                                                   )
-                               );
-          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Horizontal );
+          cdebug_log(145,0) << "[Create global segment (2)]: " << segment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2498,15 +2482,8 @@ namespace {
 
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
+        cdebug_log(145,0) << "[Create global segment (3)]: " << globalSegment << endl;
         
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2551,15 +2528,8 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
+        cdebug_log(145,0) << "[Create global segment (4)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2585,19 +2555,10 @@ namespace {
     cdebug_log(145,1) << "void  GCellTopology::_doVChannel ()" << _gcell << endl;
     
   
-    vector<Hook*>       hooks;
-    Hook*               firstvhook = NULL;
-    Hook*               lastvhook  = NULL;
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
-
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
-    AutoContact* targetContact   = NULL;
+    vector<Hook*>  hooks;
+    Hook*          firstvhook = NULL;
+    Hook*          lastvhook  = NULL;
+    AutoContact*   targetContact   = NULL;
     
   // Save segments only
     cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
@@ -2699,16 +2660,9 @@ namespace {
       cdebug_log(145,0) << "Chain contacts: "  << endl;
       for (size_t j=1; j < autoContacts.size(); j++){
         if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* globalSegment = 
-            AutoSegment::create( autoContacts[j-1] , autoContacts[j]
-                               , Vertical::create( autoContacts[j-1]->base() , autoContacts[j]->base()
-                                                 , verticalLayer
-                                                 , autoContacts[j-1]->getX()
-                                                 , verticalWidth 
-                                                 )
-                               );
-          if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-          cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Vertical );
+          if (not segment->isGlobal()) segment->setFlags( AutoSegment::SegLongLocal );
+          cdebug_log(145,0) << "[Create global segment (5)]: " << segment << endl;
         }
       }
     // There are only 2 AutoContacts to create
@@ -2738,16 +2692,9 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (6)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2793,16 +2740,9 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (7)]: " << globalSegment << endl;
 
         if        (_fromHook->getComponent() == hooks[0]->getComponent()){
           cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
@@ -2853,16 +2793,7 @@ namespace {
   AutoContact*  GCellTopology::_doStrut ( ForkStack& forks )
   {
     cdebug_log(145,1) << "void  GCellTopology::_doStrut ()" << _gcell << endl;
-    
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
 
-    const Layer* horizontalLayer = hLayer;
-    DbU::Unit    horizontalWidth = hWidth;
-    const Layer* verticalLayer   = vLayer;
-    DbU::Unit    verticalWidth   = vWidth;
     AutoContact* targetContact   = NULL; // Contact for fromHook segment
     cdebug_log(145,0) << "FromHook: " << _fromHook  << endl;
     cdebug_log(145,0) << "North   : " << _north     << endl;
@@ -2948,16 +2879,9 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Horizontal::create( source->base(), target->base()
-                                                 , horizontalLayer
-                                                 , source->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (8)]: " << globalSegment << endl;
       
       } else if ((_east != NULL) && (_west != NULL) ) {
         cdebug_log(145,0) << "Case EW" <<  endl;
@@ -2999,16 +2923,9 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
 
-        AutoSegment* globalSegment = 
-          AutoSegment::create( source, target
-                             , Vertical::create( source->base(), target->base()
-                                               , verticalLayer
-                                               , source->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (9)]: " << globalSegment << endl;
 
       } else {
         cerr << Warning( "Something is wrong with the globals in this Strut. 5 "
@@ -3048,16 +2965,9 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( turn, xtee
-                             , Horizontal::create( turn->base(), xtee->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (10)]: " << globalSegment << endl;
 
       } else if ((_north != NULL) && (_south != NULL) && (_west != NULL)){ 
         cdebug_log(145,0) << "Case NSW " << endl;
@@ -3086,16 +2996,9 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( xtee, turn
-                             , Horizontal::create( xtee->base(), turn->base()
-                                                 , horizontalLayer
-                                                 , xtee->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Horizontal );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (11)]: " << globalSegment << endl;
 
 
       } else if ((_east != NULL)  && (_north != NULL) && (_west != NULL)){
@@ -3125,16 +3028,9 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( turn, xtee
-                             , Vertical::create( turn->base(), xtee->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (12)]: " << globalSegment << endl;
 
       } else if ((_east != NULL) && (_south != NULL) && (_west != NULL)){
         cdebug_log(145,0) << "Case EWS " << endl;
@@ -3163,16 +3059,9 @@ namespace {
      
         cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = 
-          AutoSegment::create( xtee, turn
-                             , Vertical::create( xtee->base(), turn->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment << endl;
+        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Vertical );
+        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
+        cdebug_log(145,0) << "[Create global segment (13)]: " << globalSegment << endl;
 
       } else {
         cerr << Warning( "Something is wrong with the globals in this Strut. 6"
@@ -3212,24 +3101,10 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( turn, hteeh
-                             , Vertical::create( turn->base(), hteeh->base()
-                                               , verticalLayer
-                                               , turn->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( turn, hteeh, Flags::Vertical );
+        cdebug_log(145,0) << "[Create global segment (14.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (14.2)]: " << globalSegment2 << endl;
 
       } else if (  (_north->getComponent()->getX() > _south->getComponent()->getX() )
                 && (_east->getComponent ()->getY() < _west->getComponent ()->getY() )
@@ -3258,24 +3133,10 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( vteev, hteeh
-                             , Horizontal::create( vteev->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , vteev->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, turn
-                             , Vertical::create( vteev->base(), turn->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        AutoSegment* globalSegment1 = AutoSegment::create( vteev, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
+        cdebug_log(145,0) << "[Create global segment (15.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (15.2)]: " << globalSegment2 << endl;
 
       } else if (  (_north->getComponent()->getX() < _south->getComponent()->getX() )
                 && (_east->getComponent ()->getY() > _west->getComponent ()->getY() )
@@ -3304,24 +3165,10 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, hteeh
-                             , Vertical::create( vteev->base(), hteeh->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, hteeh, Flags::Vertical );
+        cdebug_log(145,0) << "[Create global segment (16.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (16.2)]: " << globalSegment2 << endl;
 
       } else {
         cdebug_log(145,0) << "(N.X > S.X) & (E.Y > W.Y)" <<  endl;
@@ -3348,24 +3195,10 @@ namespace {
         cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
         cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = 
-          AutoSegment::create( turn, hteeh
-                             , Horizontal::create( turn->base(), hteeh->base()
-                                                 , horizontalLayer
-                                                 , turn->getY()
-                                                 , horizontalWidth 
-                                                 )
-                             );
-        AutoSegment* globalSegment2 = 
-          AutoSegment::create( vteev, turn
-                             , Vertical::create( vteev->base(), turn->base()
-                                               , verticalLayer
-                                               , vteev->getX()
-                                               , verticalWidth 
-                                               )
-                             );
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment]: " << globalSegment2 << endl;
+        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
+        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
+        cdebug_log(145,0) << "[Create global segment (17.1)]: " << globalSegment1 << endl;
+        cdebug_log(145,0) << "[Create global segment (17.2)]: " << globalSegment2 << endl;
       }
     } else { 
       cerr << Warning( "Something is wrong with the number of globals in this Strut. 7"
@@ -3409,14 +3242,16 @@ namespace Anabatic {
     startMeasures();
     openSession();
 
-    forEach ( Net*, inet, getCell()->getNets() ) {
-      if (NetRoutingExtension::isAutomaticGlobalRoute(*inet)) {
-        DebugSession::open( *inet, 140, 150 );
-        _loadNetGlobalRouting( *inet );
+    for ( Net* net : getCell()->getNets() ) {
+      if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
+        DebugSession::open( net, 144, 150 );
+        AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
+        _loadNetGlobalRouting( net );
         Session::revalidate();
         DebugSession::close();
       } 
-    } // forEach(Net*)
+    }
+    AutoSegment::setAnalogMode( false );
 
 #if defined(CHECK_DATABASE)
     _check ( "after Anabatic loading" );

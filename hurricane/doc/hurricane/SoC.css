@@ -12,6 +12,10 @@
    font-family:                 "Open Sans", Verdana, sans-serif;;
  }
 
+ html {
+   background:                  #dddddd;
+ }
+
  body {
    color:                       black;
    background:                  white;
@@ -20,9 +24,10 @@
    background-attachment:       fixed;
    background-repeat:           no-repeat;
    margin-top:                  2em;
-   width:                       550pt;
+   width:                       600pt;
    margin-right:                auto;
    margin-left:                 auto;
+   padding:                     30pt;
    /*
    margin-right:                12%;
    margin-left:                 12%;
@@ -38,19 +43,21 @@
 
 
  h1, h2, h3, h4, h5, h6 {
-   /*font-family:                 "Liberation Serif", sans-serif;*/
+ /*font-family:                "URW Bookman L", "Liberation Serif", sans-serif;*/
+   font-family:                "URW Bookman L";
  }
 
- h1                 { text-align:  center; }
+ h1.header          { text-align:  center; }
+ h1                 { text-align:  left; }
  h2, h3, h4, h5, h6 { text-align:  left;
                       padding-top: 11pt;
                     }
  h1, h2, h3         { /*font-family: "Liberation Serif", sans-serif; */
                     /*color:       #09550B;*/
                     }
- h1                 { font-weight:normal;       font-size: 170%; letter-spacing:0.2em; word-spacing:0.4em; }
- h2                 { font-weight:normal;       font-size: 140%; letter-spacing:0.2em; word-spacing:0.4em; }
- h3                 { font-weight:  bold;       font-size: 118%; letter-spacing:0.2em; word-spacing:0.4em; }
+ h1                 { font-weight:  bold;       font-size: 170%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
+ h2                 { font-weight:  bold;       font-size: 140%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
+ h3                 { font-weight:  bold;       font-size: 118%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
  h4                 { font-weight:  bold;       font-size: 100%; }
  h5                 { font-style:   italic;     font-size: 100%; }
  h6                 { font-variant: small-caps; font-size: 100%; }
@@ -156,14 +163,20 @@
  a:link img, a:visited img { border-style: none; }
  a img                     { color: white; }
 
+ a {
+   color:           black;
+   border-bottom:   1px solid black;
+   text-decoration: none;
+ }
+
  a:link, a:active, a:visited {
-   color:                       #09550B;
-   text-decoration:             none;
+ /*color:           #09550B;*/
+ /*text-decoration: none;*/
  }
 
  a:hover, a:focus {
-   color:                       #FF9900;
-   text-decoration:             underline;
+ /*color:           #FF9900;  */
+   border-bottom:   2px solid black;
  }
 
 
@@ -210,6 +223,7 @@
    padding:                     2px 0px;
    text-align:                  center;
    background-color:            black;
+   border-bottom:               none;
  }
 
  table.header td {
@@ -303,7 +317,7 @@
    border:                      2px solid black;
  }
 
- div.center {
+ div.center, div.image {
    text-align:                  center;
  }
 
@@ -361,7 +375,7 @@
    display:          table-cell;
    text-align:       center;
    padding:          2pt;
-   width:            10%;
+   width:            5%;
  }
 
  ul.tablist li:hover {
@@ -374,7 +388,9 @@
    color:            white;
  }
 
- ul.tablist * a:link img, ul.tablist * a:visited img { border-style: none; }
+ ul.tablist * a { border-bottom: none; }
+
+ ul.tablist * a:link img, ul.tablist * a:visited img { border-style: none; border-bottom: none; }
 
  ul.tablist * a:link, ul.tablist * a:visited {
    color:               black;
@@ -422,8 +438,8 @@
    width:                       100%-4px;
  /*background-color:            #DADAEF;*/
  /*background-color:            #eeeeff;*/
- /*background-color:            #EEEEEE;*/
-   background-color:            #CCE6CA;
+   background-color:            #cccccc;
+ /*background-color:            #CCE6CA;*/
    border:                      0px solid #003300;
    text-align:                  center;
    margin:                      0px;
@@ -439,11 +455,18 @@
  }
 
  a.qindex, a.qindex:visited {
-   color:                       #09550B;
+ /*color:                       #09550B;*/
+   color:                       black;
+   border:                      2px solid #cccccc;
+   padding:                     2px 2px;
+   border-bottom:               none;
  }
 
  a.qindex:hover {
-   background-color:            #ddddff;
+ /*background-color:            #ddddff;*/
+   font-weight:                 bold;
+   padding:                     2px 2px;
+   border:                      2px solid black;
  }
 
  a.qindexHL, a.qindexHL:hover, a.qindexHL:visited {
@@ -556,6 +579,7 @@
  {
    font-family:                 time;
    font-size:                   250%;
+   text-align:                  center;
  }
 
 
@@ -566,9 +590,10 @@
  div.fragment {
    font-family:      "Monospace";
    font-size:        80%;
-   border:           dashed;
-   border-width:     thin;
-   border-color:     #003300;
+   border:           none;
+ /*border-width:     thin;   */
+ /*border-color:     #003300;*/
+ /*background-color: #FCFCE1;*/
    background-color: #FCFCE1;
    padding:          0.5em;
    margin-left:      5%;
@@ -595,9 +620,17 @@
  * Attributes Listing.
  */
 
-p.formulaDsp {
-  text-align: center;
-}
+ a.el, a.elRef {
+   font-family:   Courier;
+   font-weight:   bold;
+   font-size:     110%;
+   color:         black;
+   border-bottom: none;
+ }
+
+ p.formulaDsp {
+   text-align: center;
+ }
 
  .mdTable {
  /*border:                      1px solid #868686;*/
@@ -640,10 +673,12 @@ p.formulaDsp {
  }
 
  .memproto {
-   background-color:            #CCE6CA;
+ /*background-color:            #CCE6CA;*/
+   background-color:            #cccccc;
    border-left-width:           4px;
    border-left-style:           solid;
-   border-color:                #008500;
+ /*border-color:                #008500;*/
+   border-color:                black;
  }
 
  .memname {
@@ -662,7 +697,8 @@ p.formulaDsp {
  /*margin-top:                  -8px;*/
    border-left-width:           1px;
    border-left-style:           solid;
-   border-color:                #008500;
+ /*border-color:                #008500;*/
+   border-color:                black;
  }
 
  div.contents * table tr {

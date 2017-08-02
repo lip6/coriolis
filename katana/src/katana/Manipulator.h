@@ -36,19 +36,19 @@ namespace Katana {
 
   class Manipulator {
     public:
-      enum FunctionFlag { ToRipupLimit        = 0x0001
-                        , AllowExpand         = 0x0002
-                        , NoExpand            = 0x0004
-                        , PerpandicularsFirst = 0x0008
-                        , ToMoveUp            = 0x0010
-                        , AllowLocalMoveUp    = 0x0020
-                        , AllowTerminalMoveUp = 0x0040
-                        , AllowShortPivotUp   = 0x0080
-                        , NoDoglegReuse       = 0x0100
-                        , LeftAxisHint        = 0x0200
-                        , RightAxisHint       = 0x0400 
-                        , NotOnLastRipup      = 0x0800 
-                        , IgnoreContacts      = 0x1000 
+      enum FunctionFlag { ToRipupLimit        = (1 <<  0)
+                        , AllowExpand         = (1 <<  1)
+                        , NoExpand            = (1 <<  2)
+                        , PerpandicularsFirst = (1 <<  3)
+                        , ToMoveUp            = (1 <<  4)
+                        , AllowLocalMoveUp    = (1 <<  5)
+                        , AllowTerminalMoveUp = (1 <<  6)
+                        , AllowShortPivotUp   = (1 <<  7)
+                        , NoDoglegReuse       = (1 <<  8)
+                        , LeftAxisHint        = (1 <<  9)
+                        , RightAxisHint       = (1 << 10) 
+                        , NotOnLastRipup      = (1 << 11) 
+                        , IgnoreContacts      = (1 << 12) 
                         };
     public:
                                   Manipulator             ( TrackElement*, SegmentFsm& );
@@ -59,30 +59,39 @@ namespace Katana {
       inline const Layer*         getLayer                () const;
       inline DbU::Unit            getPitch                () const;
       inline DbU::Unit            getPPitch               () const;
-             bool                 canRipup                ( unsigned int flags=0 ) const;
+             bool                 canRipup                ( uint32_t flags=0 ) const;
              bool                 isCaged                 ( DbU::Unit ) const;
-             bool                 ripup                   ( unsigned int type, DbU::Unit axisHint=0 );
-             bool                 ripupPerpandiculars     ( unsigned int flags=0 );
+             bool                 ripup                   ( uint32_t type, DbU::Unit axisHint=0 );
+             bool                 ripupPerpandiculars     ( uint32_t flags=0 );
              void                 repackPerpandiculars    ();
              void                 reprocessPerpandiculars ();
              bool                 ripple                  ();
              bool                 minimize                ();
-             bool                 slacken                 ( unsigned int flags=Flags::NoFlags );
+             bool                 slacken                 ( Flags flags=Flags::NoFlags );
              bool                 pivotUp                 ();
              bool                 pivotDown               ();
-             bool                 moveUp                  ( unsigned int flags=0 );
+             bool                 moveUp                  ( uint32_t flags=0 );
              bool                 makeDogleg              ();
              bool                 makeDogleg              ( DbU::Unit );
              bool                 makeDogleg              ( Interval );
-             bool                 relax                   ( Interval, unsigned int flags=AllowExpand );
-             bool                 insertInTrack           ( size_t );
-             bool                 shrinkToTrack           ( size_t
-                                                          , unsigned int flags=0
-                                                          , DbU::Unit    leftAxisHint=0
-                                                          , DbU::Unit    rightAxisHint=0
+             bool                 relax                   ( Interval, uint32_t flags=AllowExpand );
+             bool                 insertInTrack           ( size_t icost );
+             bool                 shrinkToTrack           ( size_t    icost
+                                                          , uint32_t  flags=0
+                                                          , DbU::Unit leftAxisHint=0
+                                                          , DbU::Unit rightAxisHint=0
                                                           );
-             bool                 forceToTrack            ( size_t );
+             bool                 forceToTrack            ( size_t icost );
              bool                 forceOverLocals         ();
+    private:
+             bool                 _insertInTrack          ( size_t icost, size_t itrack );
+             bool                 _shrinkToTrack          ( size_t     icost
+                                                          , size_t     itrack
+                                                          , uint32_t   flags
+                                                          , DbU::Unit  leftAxisHint
+                                                          , DbU::Unit  rightAxisHint
+                                                          );
+             bool                 _forceToTrack           ( size_t icost, size_t itrack );
     private:
       TrackElement*  _segment;
       DataNegociate* _data;

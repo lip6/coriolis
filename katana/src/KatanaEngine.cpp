@@ -54,6 +54,9 @@ namespace {
   using Hurricane::NetRoutingExtension;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::Segment;
+  using Katana::Session;
+  using Katana::TrackSegment;
 
 
   void  setSymmetricSelf ( Cell* cell, string name )
@@ -212,7 +215,7 @@ namespace Katana {
 
     Super::chipPrep();
 
-    setupGlobalGraph( Flags::NoFlags );
+    setupGlobalGraph( 0 );
     setupRoutingPlanes();
     setupSpecialNets();
     setupPreRouteds();
@@ -295,7 +298,7 @@ namespace Katana {
   { return _configuration; }
 
 
-  unsigned int  KatanaEngine::getRipupLimit ( const TrackElement* segment ) const
+  uint32_t  KatanaEngine::getRipupLimit ( const TrackElement* segment ) const
   {
     if (segment->isBlockage()) return 0;
 
@@ -328,7 +331,7 @@ namespace Katana {
   }
 
 
-  Track* KatanaEngine::getTrackByPosition ( const Layer* layer, DbU::Unit axis, unsigned int mode ) const
+  Track* KatanaEngine::getTrackByPosition ( const Layer* layer, DbU::Unit axis, uint32_t mode ) const
   {
     RoutingPlane* plane = getRoutingPlaneByLayer( layer );
     if (not plane) return NULL;
@@ -428,7 +431,7 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::runNegociate ( unsigned int flags )
+  void  KatanaEngine::runNegociate ( Flags flags )
   {
     if (_negociateWindow) return;
 
@@ -449,7 +452,7 @@ namespace Katana {
     printMeasures( "algo" );
 
     openSession();
-    unsigned int overlaps             = 0;
+    uint32_t overlaps             = 0;
     // size_t       hTracksReservedLocal = getHTracksReservedLocal();
     // size_t       vTracksReservedLocal = getVTracksReservedLocal();
 
@@ -468,6 +471,7 @@ namespace Katana {
 
   void  KatanaEngine::runTest ()
   {
+#if PUT_HERE_WHATEVER_YOU_WANT_TO_TEST
     if (getCell()->getName() != "gmchamla")
       throw Error( "KatanaEngine::runTest() Work only on \"gmchamla\" (loaded:\"%s\")."
                  , getString(getCell()->getName()).c_str()
@@ -482,6 +486,7 @@ namespace Katana {
     setSymmetricPair( getCell(), "ampp_4" , "ampn_4"  );
     setSymmetricPair( getCell(), "ampp_2" , "ampn_2"  );
     setSymmetricPair( getCell(), "ampp_1" , "ampn_1"  );
+#endif
   }
 
   void  KatanaEngine::printCompletion () const
@@ -560,7 +565,7 @@ namespace Katana {
     addMeasure<unsigned long long>( getCell(), "DWL(l)" , totalWireLength                  , 12 );
     addMeasure<unsigned long long>( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12 );
     addMeasure<double>            ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
-}
+  }
 
 
   void  KatanaEngine::dumpMeasures ( ostream& out ) const
@@ -610,7 +615,7 @@ namespace Katana {
   }
 
 
-  bool  KatanaEngine::_check ( unsigned int& overlap, const char* message ) const
+  bool  KatanaEngine::_check ( uint32_t& overlap, const char* message ) const
   {
     cmess1 << "  o  Checking Katana Database coherency." << endl;
 
@@ -674,9 +679,13 @@ namespace Katana {
         _routingPlanes[depth]->destroy();
       }
       _routingPlanes.clear();
+      
+      while ( not _symmetrics.empty() ) {
+        auto element = _symmetrics.begin();
 
-      for ( auto symmetric : _symmetrics ) delete symmetric.second;
-      _symmetrics.clear();
+        if (element->first == element->second->getNet()) delete element->second;
+        _symmetrics.erase( element->first );
+      }
 
       Session::close();
     }

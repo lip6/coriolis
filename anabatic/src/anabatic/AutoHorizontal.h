@@ -46,8 +46,8 @@ namespace Anabatic {
       virtual DbU::Unit       getDuTarget             () const;
       virtual Interval        getSpanU                () const;
       virtual bool            getConstraints          ( DbU::Unit& min , DbU::Unit& max ) const;
-      virtual Interval        getSourceConstraints    ( unsigned int flags=0 ) const;
-      virtual Interval        getTargetConstraints    ( unsigned int flags=0 ) const;
+      virtual Interval        getSourceConstraints    ( Flags flags=0 ) const;
+      virtual Interval        getTargetConstraints    ( Flags flags=0 ) const;
       virtual Flags           getDirection            () const;
       virtual size_t          getGCells               ( vector<GCell*>& ) const;
     // Modifiers.                                     
@@ -59,10 +59,10 @@ namespace Anabatic {
       virtual void            updateNativeConstraints ();
       virtual bool            checkPositions          () const;
       virtual bool            checkConstraints        () const;
-      virtual unsigned int    _makeDogleg             ( GCell*, unsigned int flags );
+      virtual Flags           _makeDogleg             ( GCell*, Flags flags );
       virtual bool            moveULeft               ();
       virtual bool            moveURight              ();
-      virtual bool            _slacken                ( unsigned int flags );
+      virtual bool            _slacken                ( Flags flags );
 #if THIS_IS_DISABLED                                  
       virtual void            desalignate             ( AutoContact* );
 #endif

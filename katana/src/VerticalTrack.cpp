@@ -25,7 +25,7 @@ namespace Katana {
 // Class  :  "VerticalTrack".
 
 
-  VerticalTrack::VerticalTrack ( RoutingPlane* routingPlane, unsigned int index )
+  VerticalTrack::VerticalTrack ( RoutingPlane* routingPlane, uint32_t index )
     : Track(routingPlane,index)
   { }
 
@@ -34,7 +34,7 @@ namespace Katana {
   { }
 
 
-  VerticalTrack* VerticalTrack::create ( RoutingPlane* routingPlane, unsigned int index )
+  VerticalTrack* VerticalTrack::create ( RoutingPlane* routingPlane, uint32_t index )
   {
     VerticalTrack* track = new VerticalTrack ( routingPlane, index );
 

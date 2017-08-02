@@ -156,12 +156,12 @@ namespace Anabatic {
 
         cdebug_tabw(145,1);
 
-        canonical->setFlags( SegCanonical );
+        canonical->setFlags( AutoSegment::SegCanonical );
         cdebug_log(145,0) << "Canonical: " << canonical << endl;
 
         for ( size_t j=0 ; j<aligneds.size() ; j++ ) {
-          if (isWeakGlobal and not aligneds[j]->isGlobal()) aligneds[j]->setFlags  ( SegWeakGlobal );
-          else                                              aligneds[j]->unsetFlags( SegWeakGlobal );
+          if (isWeakGlobal and not aligneds[j]->isGlobal()) aligneds[j]->setFlags  ( AutoSegment::SegWeakGlobal );
+          else                                              aligneds[j]->unsetFlags( AutoSegment::SegWeakGlobal );
 
           if (aligneds[j] == canonical) continue;
           if (aligneds[j]->isCanonical()) {
@@ -169,13 +169,12 @@ namespace Anabatic {
                           "        Segment is no longer the canonical one, this must not happens."
                          ,getString(aligneds[j]).c_str()) << endl;
           }
-          aligneds[j]->unsetFlags( SegCanonical );
+          aligneds[j]->unsetFlags( AutoSegment::SegCanonical );
           cdebug_log(145,0) << "Secondary: " << aligneds[j] << endl;
         }
-        if (aligneds.empty()) canonical->setFlags( SegNotAligned );
+        if (aligneds.empty()) canonical->setFlags( AutoSegment::SegNotAligned );
 
-        cdebug_log(149,0) << "Align @" << DbU::getValueString(canonical->getAxis())
-                          << " on " << canonical << endl;
+        cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
 
       //canonical->setAxis( canonical->getAxis(), Flags::Realignate );
         if (canonical->isUnsetAxis()) canonical->toOptimalAxis( Flags::Realignate|Flags::Propagate );
@@ -248,7 +247,7 @@ namespace Anabatic {
     _segmentInvalidateds.clear();
 
     cdebug_log(145,0) << "AutoSegments/AutoContacts queued deletion." << endl;
-    unsigned int flags = _anabatic->flags() & Flags::DestroyMask;
+    Flags flags = _anabatic->flags() & Flags::DestroyMask;
     _anabatic->flags() = Flags::DestroyMask;
     set<AutoSegment*>::iterator  isegment = _destroyedSegments.begin();
     for ( ; isegment != _destroyedSegments.end() ; isegment++ ) {
@@ -300,18 +299,18 @@ namespace Anabatic {
   }
 
 
-  unsigned int  Session::getDirection ( size_t depth )
+  Flags  Session::getDirection ( size_t depth )
   {
     RoutingGauge* rg = get("getDirection()")->_routingGauge;
     switch ( rg->getLayerDirection(depth) ) {
       case Constant::Horizontal: return Flags::Horizontal;
       case Constant::Vertical:   return Flags::Vertical;
     }
-    return 0;
+    return Flags::NoFlags;
   }
 
 
-  DbU::Unit  Session::_getPitch ( size_t depth, unsigned int flags ) const
+  DbU::Unit  Session::_getPitch ( size_t depth, Flags flags ) const
   {
     if (flags == Flags::NoFlags) return _routingGauge->getLayerPitch(depth);
 
@@ -380,7 +379,7 @@ namespace Anabatic {
   { return get("doWarnGCellOverload()")->_anabatic->doWarnOnGCellOverload(); }
 
 
-  void  Session::setAnabaticFlags ( unsigned int flags )
+  void  Session::setAnabaticFlags ( Flags flags )
   { get("setKabaticFlags()")->_anabatic->flags() = flags; }
 
 

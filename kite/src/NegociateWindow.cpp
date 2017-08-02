@@ -429,7 +429,11 @@ namespace Kite {
 
     cmess1 << "     o  Negociation Stage." << endl;
 
-    unsigned long limit = _kite->getEventsLimit();
+    unsigned long limit     = _kite->getEventsLimit();
+    bool          profiling = _kite->profileEventCosts();
+    ofstream      ofprofile;
+
+    if (profiling) ofprofile.open( "kite.profile.txt" );
 
     _eventHistory.clear();
     _eventQueue.load( _segments );
@@ -455,6 +459,21 @@ namespace Kite {
                << event->getSegment()
                << endl;
         cmess2.flush();
+      }
+
+      if (ofprofile.is_open()) {
+        size_t depth = _kite->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
+        if (depth < 6) {
+          ofprofile << setw(10) << right << count << " ";
+          for ( size_t i=0 ; i<6 ; ++i ) {
+            if (i == depth)
+              ofprofile << setw(10) << right << setprecision(2) << event->getPriority  () << " ";
+            else
+              ofprofile << setw(10) << right << setprecision(2) << 0.0 << " ";
+          }
+
+          ofprofile << setw( 2) << right << event->getEventLevel() << endl;
+        }
       }
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
@@ -523,6 +542,7 @@ namespace Kite {
       cerr << Bug( "%d events remains after clear.", RoutingEvent::getAllocateds() ) << endl;
     }
 
+    if (ofprofile.is_open()) ofprofile.close();
     _statistics.setEventsCount( eventsCount );
     cdebug_tabw(159,-1);
 

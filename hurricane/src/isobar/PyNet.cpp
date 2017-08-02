@@ -46,20 +46,12 @@ extern "C" {
  Py_DECREF ( constant );
 
 
-// x=================================================================x
+// +=================================================================+
 // |                 "PyNet" Python Module Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
 
-
-  // x-------------------------------------------------------------x
-  // |                 "PyNet" Local Functions                     |
-  // x-------------------------------------------------------------x
-
-  
-  // ---------------------------------------------------------------
-  // Local Function  :  "PyInt_AsType ()"
   
   static Net::Type  PyInt_AsType ( PyObject* object ) {
     switch ( PyAny_AsLong(object) ) {
@@ -75,10 +67,6 @@ extern "C" {
   }
 
 
-
-  // ---------------------------------------------------------------
-  // Local Function  :  "PyInt_AsDirection ()"
-
   static Net::Direction  PyInt_AsDirection ( PyObject* object )
   {
     switch ( PyAny_AsLong(object) ) {
@@ -93,9 +81,9 @@ extern "C" {
   }
 
 
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |                "PyNet" Attribute Methods                    |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
 
   // Standart Accessors (Attributes).
@@ -112,19 +100,14 @@ extern "C" {
   DirectGetBoolAttribute(PyNet_isSupply  ,isSupply  ,PyNet,Net)
 
   GetBoundStateAttribute(PyNet_IsPyBound            ,PyNet,Net)
+  GetNameMethod(Net, net)
+
+  // Standart modificators.
+  DirectSetUInt32Attribute(PyNet_setRoutingState,setRoutingState,PyNet,Net)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyNet_destroy, PyNet)
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getName ()"
-
-  GetNameMethod(Net, net)
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_create ()"
 
   static PyObject* PyNet_create ( PyObject*, PyObject *args ) {
     cdebug_log(20,0) << "PyNet_create()" << endl;
@@ -146,9 +129,6 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getType ()"
-
   static PyObject* PyNet_getType ( PyNet *self )
   {
     cdebug_log(20,0) << "PyNet_getType ()" << endl;
@@ -159,10 +139,6 @@ extern "C" {
   }
 
   
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getDirection ()"
-
   static PyObject* PyNet_getDirection ( PyNet *self )
   {
     cdebug_log(20,0) << "PyNet_getDirection ()" << endl;
@@ -172,9 +148,6 @@ extern "C" {
     return ( (PyObject*)PyLong_FromLong((long)net->getDirection().getCode()) );
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getPlugs()"
 
   static PyObject* PyNet_getPlugs(PyNet *self) {
     cdebug_log(20,0) << "PyNet_getPlugs()" << endl;
@@ -198,9 +171,6 @@ extern "C" {
   }
 
     
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getSegments()"
-
   static PyObject* PyNet_getSegments(PyNet *self) {
     cdebug_log(20,0) << "PyNet_getSegments()" << endl;
 
@@ -222,9 +192,6 @@ extern "C" {
     return (PyObject*)pySegmentCollection;
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getPins()"
 
   static PyObject* PyNet_getPins(PyNet *self) {
     cdebug_log(20,0) << "PyNet_getPins()" << endl;
@@ -248,9 +215,6 @@ extern "C" {
   }
   
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getComponents()"
-
   static PyObject* PyNet_getComponents(PyNet *self) {
     cdebug_log(20,0) << "PyNet_getComponents()" << endl;
 
@@ -270,9 +234,6 @@ extern "C" {
     return (PyObject*)pyComponentCollection;
   }
   
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_getExternalComponents()"
 
   static PyObject* PyNet_getExternalComponents(PyNet *self) {
     cdebug_log(20,0) << "PyNet_getExternalComponents()" << endl;
@@ -294,14 +255,8 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setName ()"
-
   SetNameMethod(Net, net)
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setGlobal ()"
 
   static PyObject* PyNet_setGlobal ( PyNet *self, PyObject* args ) {
     cdebug_log(20,0) << "PyNet_setGlobal()" << endl;
@@ -321,10 +276,6 @@ extern "C" {
   }
 
 
-  
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setExternal ()"
-
   static PyObject* PyNet_setExternal ( PyNet *self, PyObject* args ) {
     cdebug_log(20,0) << "PyNet_setExternal()" << endl;
 
@@ -342,10 +293,6 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setType ()"
 
   static PyObject* PyNet_setType ( PyNet *self, PyObject* args )
   {
@@ -369,10 +316,6 @@ extern "C" {
   }
 
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setDirection ()"
-
   static PyObject* PyNet_setDirection ( PyNet *self, PyObject* args )
   {
     cdebug_log(20,0) << "PyNet_setDirection()" << endl;
@@ -391,9 +334,6 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_addAlias ()"
 
   static PyObject* PyNet_addAlias ( PyNet *self, PyObject* args )
   {
@@ -416,9 +356,6 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_removeAlias ()"
-
   static PyObject* PyNet_removeAlias ( PyNet *self, PyObject* args )
   {
     cdebug_log(20,0) << "PyNet_removeAlias()" << endl;
@@ -440,9 +377,6 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_setPosition ()"
-
   static PyObject* PyNet_setPosition ( PyNet *self, PyObject* args )
   {
     cdebug_log(20,0) << "PyNet_setPosition()" << endl;
@@ -462,9 +396,6 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_merge ()"
-
   static PyObject* PyNet_merge ( PyNet *self, PyObject* args ) {
     cdebug_log(20,0) << "PyNet_merge()" << endl;
 
@@ -481,9 +412,6 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyNet_merge ()"
 
   static PyObject* PyNet_getClone ( PyNet *self, PyObject* args ) {
     cdebug_log(20,0) << "PyNet_getClone()" << endl;
@@ -534,6 +462,7 @@ extern "C" {
     , { "setType"              , (PyCFunction)PyNet_setType                  , METH_VARARGS, "set the type of the net." }
     , { "setDirection"         , (PyCFunction)PyNet_setDirection             , METH_VARARGS, "set the direction of the net." }
     , { "setPosition"          , (PyCFunction)PyNet_setPosition              , METH_VARARGS, "set the X,Y location of the net." }
+    , { "setRoutingState"      , (PyCFunction)PyNet_setRoutingState          , METH_VARARGS, "set the NetRoutingstate flag (proxy method)." }
     , { "addAlias"             , (PyCFunction)PyNet_addAlias                 , METH_VARARGS, "Add an alias name to the net." }
     , { "removeAlias"          , (PyCFunction)PyNet_removeAlias              , METH_VARARGS, "Remove an alias name from the net." }
     , { "merge"                , (PyCFunction)PyNet_merge                    , METH_VARARGS, "Merges the net <net> to the net <this> which keeps its characteristics (arity, global, external and direction)." }

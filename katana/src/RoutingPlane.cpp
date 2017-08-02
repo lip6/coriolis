@@ -95,9 +95,9 @@ namespace Katana {
     if (not plane->_layerGauge)
       throw Error( badLayerGauge, depth, getString(katana->getConfiguration()->getRoutingGauge()).c_str() );
 
-    DbU::Unit    hExtension = 0;
-    DbU::Unit    vExtension = 0;
-    unsigned int gaugeDepth = 0;
+    DbU::Unit  hExtension = 0;
+    DbU::Unit  vExtension = 0;
+    uint32_t   gaugeDepth = 0;
     if (Session::getLayerGauge(gaugeDepth)->getType() == Constant::PinOnly) ++gaugeDepth;
 
     bool HV = (Session::getLayerGauge(gaugeDepth)->getDirection() == Constant::Horizontal);
@@ -161,7 +161,7 @@ namespace Katana {
   }
 
 
-  Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, unsigned int mode ) const
+  Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, uint32_t mode ) const
   {
     return getTrackByIndex( getLayerGauge()->getTrackIndex( getAxisMin()
                                                           , getAxisMax()
@@ -171,7 +171,7 @@ namespace Katana {
   }
 
 
-  bool  RoutingPlane::_check ( unsigned int& overlaps ) const
+  bool  RoutingPlane::_check ( uint32_t& overlaps ) const
   {
     bool coherency = true;
 

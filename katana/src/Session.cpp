@@ -126,7 +126,7 @@ namespace Katana {
   { return _getKatanaEngine()->getNegociateWindow(); };
 
 
-  unsigned int  Session::_getRipupCost ()
+  uint32_t  Session::_getRipupCost ()
   { return _getKatanaEngine()->getRipupCost(); };
 
 
@@ -140,9 +140,7 @@ namespace Katana {
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
       if (not _removeEvents[i]._segment->getTrack()) continue;
-
-      packTracks.insert( _removeEvents[i]._segment->getTrack() );
-      _removeEvents[i]._segment->detach();
+      _removeEvents[i]._segment->detach( packTracks );
     }
     _removeEvents.clear();
 
@@ -197,7 +195,7 @@ namespace Katana {
     _doglegReset();
 
 # if defined(CHECK_DATABASE)
-    unsigned int overlaps = 0;
+    uint32_t overlaps = 0;
 # endif
     for ( Track* track : _sortEvents ) {
       track->doReorder();
@@ -226,9 +224,10 @@ namespace Katana {
         cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
       }
       if (revalidateds[i]->mustRaise()) {
-        revalidateds[i]->raise();
-        lookup( revalidateds[i] )->reschedule( 0 );
         cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
+        revalidateds[i]->raise();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment) trackSegment->reschedule( 0 );
       }
     }
 

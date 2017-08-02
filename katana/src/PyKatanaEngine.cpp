@@ -19,6 +19,7 @@
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/Cell.h"
 #include "katana/PyKatanaEngine.h"
+#include "katana/PyKatanaFlags.h"
 #include <functional>
 
 # undef   ACCESS_OBJECT
@@ -167,25 +168,19 @@ extern "C" {
   }
 
 
-  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
+  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
 
     HTRY
       METHOD_HEAD("KatanaEngine.runGlobalRouter()")
-      unsigned int flags = 0;
-      if (PyArg_ParseTuple(args,"I:KatanaEngine.runGlobalRouter", &flags)) {
-        if (katana->getViewer()) {
-          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana) )) {
-            PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
-            return NULL;
-          }
-        } else {
-          katana->runGlobalRouter();
+      if (katana->getViewer()) {
+        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana) )) {
+          PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
+          return NULL;
         }
       } else {
-        PyErr_SetString(ConstructorError, "KatanaEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
-        return NULL;
+        katana->runGlobalRouter();
       }
     HCATCH
 
@@ -270,19 +265,26 @@ extern "C" {
   }
 
 
-  static PyObject* PyKatanaEngine_runNegociate ( PyKatanaEngine* self )
+  static PyObject* PyKatanaEngine_runNegociate ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runNegociate()" << endl;
+
+    unsigned int flags = 0;
     HTRY
-    METHOD_HEAD("KatanaEngine.runNegociate()")
-    if (katana->getViewer()) {
-      if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runNegociate,katana,0) )) {
-        PyErr_SetString( HurricaneError, "EtesianEngine::runNegociate() has thrown an exception (C++)." );
+      METHOD_HEAD("KatanaEngine.runNegociate()")
+      if (PyArg_ParseTuple(args,"I:KatanaEngine.runNegociate", &flags)) {
+        if (katana->getViewer()) {
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runNegociate,katana,flags) )) {
+            PyErr_SetString( HurricaneError, "EtesianEngine::runNegociate() has thrown an exception (C++)." );
+            return NULL;
+          }
+        } else {
+          katana->runNegociate( flags );
+        }
+      } else {
+        PyErr_SetString( ConstructorError, "KatanaEngine.runNegociate(): Invalid number/bad type of parameter." );
         return NULL;
       }
-    } else {
-      katana->runNegociate();
-    }
     HCATCH
     Py_RETURN_NONE;
   }
@@ -311,7 +313,7 @@ extern "C" {
                                , "Display on the console the configuration of Katana." }
     , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS
                                , "Returns True if the detailed routing has been successful." }
-    , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_VARARGS
+    , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_NOARGS
                                , "Run the global router (Katana)." }
     , { "loadGlobalRouting"    , (PyCFunction)PyKatanaEngine_loadGlobalRouting    , METH_VARARGS
                                , "Load global routing into the detailed router." }
@@ -319,7 +321,7 @@ extern "C" {
                                , "Run the layer assigment stage." }
     , { "runNegociatePreRouted", (PyCFunction)PyKatanaEngine_runNegociatePreRouted, METH_NOARGS
                                , "Run the negociation stage for pre-routed of the detailed router." }
-    , { "runNegociate"         , (PyCFunction)PyKatanaEngine_runNegociate         , METH_NOARGS
+    , { "runNegociate"         , (PyCFunction)PyKatanaEngine_runNegociate         , METH_VARARGS
                                , "Run the negociation stage of the detailed router." }
     , { "finalizeLayout"       , (PyCFunction)PyKatanaEngine_finalizeLayout       , METH_NOARGS
                                , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
@@ -346,6 +348,14 @@ extern "C" {
   // Link/Creation Method.
   PyTypeInheritedObjectDefinitions(KatanaEngine,PyToolEngine)
   DBoLinkCreateMethod(KatanaEngine)
+
+
+  extern  void  PyKatanaEngine_postModuleInit ()
+  {
+    PyKatanaFlags_postModuleInit();
+
+    PyDict_SetItemString( PyTypeKatanaEngine.tp_dict, "Flags", (PyObject*)&PyTypeKatanaFlags );
+  }
 
 
 #endif  // Shared Library Code Part.

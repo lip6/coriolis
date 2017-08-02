@@ -323,7 +323,12 @@ namespace Hurricane {
         case Kilo:  unitPower = 'k'; break;
         default:    unitPower = '?'; break;
       }
-      os << setprecision(3) << toPhysical(u,_stringModeUnitPower);
+      switch ( u ) {
+        case Min: os << "MIN:"; break;
+        case Max: os << "MAX:"; break;
+        default:
+          os << setprecision(3) << toPhysical(u,_stringModeUnitPower);
+      }
     } else {
       if (_stringMode != Db)
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;

@@ -233,6 +233,7 @@ class Net : public Entity {
     public: void setType(const Type& type);
     public: void setDirection(const Direction& direction);
     public: void setPosition(const Point& position);
+    public: void setRoutingState(uint32_t state);
     public: void materialize();
     public: void unmaterialize();
     public: bool addAlias(const Name& name);

@@ -11,7 +11,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/TrackElements.h"                        |
+// |  C++ Header  :  "./katana/TrackElements.h"                      |
 // +-----------------------------------------------------------------+
 
 
@@ -66,7 +66,7 @@ namespace Katana {
     // Sub-Class: Locator.
       class Locator : public TrackElementHL {
         public:
-                                  Locator    ( TrackElement* segment );
+                                  Locator    ( TrackElement* segment, Flags flags );
           inline                  Locator    ( const Locator& );
           virtual TrackElement*   getElement () const;
           virtual TrackElementHL* getClone   () const;
@@ -80,7 +80,7 @@ namespace Katana {
 
     public:
     // TrackElements_Perpandiculars Methods.
-      inline                  TrackElements_Perpandiculars ( TrackElement* segment );
+      inline                  TrackElements_Perpandiculars ( TrackElement* segment, Flags flags=Flags::NoFlags );
       inline                  TrackElements_Perpandiculars ( const TrackElements_Perpandiculars& );
       virtual TrackElementHC* getClone                     () const;
 	  virtual TrackElementHL* getLocator                   () const;
@@ -88,6 +88,7 @@ namespace Katana {
 
     protected:
     // TrackElements_Perpandiculars Attributes.
+      Flags          _flags;
       TrackElement*  _segment;
   };
 
@@ -99,14 +100,16 @@ namespace Katana {
   { }
 
 
-  inline TrackElements_Perpandiculars::TrackElements_Perpandiculars ( TrackElement* segment )
+  inline TrackElements_Perpandiculars::TrackElements_Perpandiculars ( TrackElement* segment, Flags flags )
     : TrackElementHC()
+    , _flags        (flags)
     , _segment      (segment)
   { }
 
 
   inline TrackElements_Perpandiculars::TrackElements_Perpandiculars ( const TrackElements_Perpandiculars& tracksegments )
     : TrackElementHC()
+    , _flags        (tracksegments._flags)
     , _segment      (tracksegments._segment)
   { }
 

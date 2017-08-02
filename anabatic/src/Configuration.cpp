@@ -328,6 +328,8 @@ namespace Anabatic {
 
   void  Configuration::print ( Cell* cell ) const
   {
+    if (not cmess1.enabled()) return;
+
     string       topLayerName = "UNKOWN";
     const Layer* topLayer     = _rg->getRoutingLayer( _allowedDepth );
     if (topLayer)

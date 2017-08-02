@@ -362,6 +362,8 @@ Hook* Hook::merge(Hook* hook)
     if (hook == this)
         throw Error("Can't merge : itself");
 
+    cdebug_log(0,0) << "Hook::merge() hook:" << hook->getComponent() << endl;
+
     Hook* masterHook = hook->getPreviousMasterHook();
     Hook* nextHook = masterHook->_nextHook;
     masterHook->_nextHook = _nextHook;

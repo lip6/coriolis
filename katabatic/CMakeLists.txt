@@ -17,7 +17,7 @@
  setup_boost(program_options filesystem python regex)
  setup_qt()
  
- find_package(PythonLibs REQUIRED)
+ find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)

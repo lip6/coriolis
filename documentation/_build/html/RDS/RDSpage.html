@@ -1,0 +1,786 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Symbolic Layout &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Symbolic to Real Conversion in Alliance" href="index.html"/>
+        <link rel="prev" title="Symbolic to Real Conversion in Alliance" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Symbolic to Real Conversion in Alliance</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Symbolic to Real Conversion in Alliance</a> &raquo;</li>
+      
+    <li>Symbolic Layout</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <p></p>
+<div class="section" id="symbolic-layout">
+<h1>Symbolic Layout<a class="headerlink" href="#symbolic-layout" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="symbolic-components">
+<h2>Symbolic Components<a class="headerlink" href="#symbolic-components" title="Permalink to this headline">¶</a></h2>
+<p>A symbolic layout is, in practice, made of only of three objects:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="13%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Object</th>
+<th class="head"><span class="sc">mbk</span></th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Segments</td>
+<td><tt class="docutils literal"><span class="pre">phseg</span></tt></td>
+<td>Oriented segments with a width and an orientation.</td>
+</tr>
+<tr class="row-odd"><td>VIAs &amp; contacts</td>
+<td><tt class="docutils literal"><span class="pre">phvia</span></tt></td>
+<td>Boils down to just a point.</td>
+</tr>
+<tr class="row-even"><td>Big VIAs &amp; Big Contacts</td>
+<td><tt class="docutils literal"><span class="pre">phvia</span></tt></td>
+<td>Point with a width and a height
+That is a rectangle of width by height centered
+on the VIA coordinates.</td>
+</tr>
+</tbody>
+</table>
+<p>Each of thoses objects is associated to a <em>symbolic layer</em> which will
+control how the object is translated in many <em>real rectangles</em>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="19%" />
+<col width="16%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><span class="sc">mbk</span></th>
+<th class="head">Layer Name</th>
+<th class="head">Usable By</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="12"><tt class="docutils literal"><span class="pre">phseg</span></tt></td>
+<td><span class="sc">nwell</span></td>
+<td>Segment</td>
+<td>N Well</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PWELL</span></tt></td>
+<td>Segment</td>
+<td>P Well</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">NDIF</span></tt></td>
+<td>Segment</td>
+<td>N Diffusion</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PDIF</span></tt></td>
+<td>Segment</td>
+<td>P Diffusion</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">NTIE</span></tt></td>
+<td>Segment</td>
+<td>N Tie</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PTIE</span></tt></td>
+<td>Segment</td>
+<td>P Tie</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">NTRANS</span></tt></td>
+<td>Segment</td>
+<td>N transistor, in <span class="sc">Alliance</span>, a transistor
+is represented as a segment (it&#8217;s grid).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PTRANS</span></tt></td>
+<td>Segment</td>
+<td>P transistor</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">POLY</span></tt></td>
+<td>Segment</td>
+<td>Polysilicium</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ALUx</span></tt></td>
+<td>Segment</td>
+<td>Metal level <em>x</em></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CALUx</span></tt></td>
+<td>Segment</td>
+<td>Metal level <em>x</em>, that can be used by the
+upper hierarchical level as a connector.
+From the layout point of view it is the
+same as <tt class="docutils literal"><span class="pre">ALUx</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">TALUx</span></tt></td>
+<td>Segment</td>
+<td>Blockage for metal level <em>x</em>. Will
+diseappear in the real layout as it is an
+information for the P&amp;R tools only.</td>
+</tr>
+<tr class="row-even"><td rowspan="9"><tt class="docutils literal"><span class="pre">phvia</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">CONT_BODY_N</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to N Well</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CONT_BODY_P</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to P Well</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CONT_DIF_N</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to N Diffusion</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CONT_DIF_P</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to P Diffusion</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CONT_POLY</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact to polysilicium</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CONT_VIA</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact between metal1 and metal2</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CONT_VIAx</span></tt></td>
+<td>VIA, BIGVIA</td>
+<td>Contact between metal <em>x</em> and metal <em>x+1</em>.
+The index is the the one of the bottom
+metal of the VIA.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">C_X_N</span></tt></td>
+<td>VIA</td>
+<td>N transistor corner, to build transistor
+bend. Not used anymore in recent technos</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">C_X_P</span></tt></td>
+<td>VIA</td>
+<td>P transistor corner, to build transistor
+bend. Not used anymore in recent technos</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all association of object and symbolic layers are meaningful.
+For instance you cannot associate a contact to a <tt class="docutils literal"><span class="pre">NTRANS</span></tt> layer.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The symbolic layer associated with blockages is prefixed by a <tt class="docutils literal"><span class="pre">T</span></tt>,
+for <em>transparency</em>, which may seems silly. It is for historical reasons,
+it started as a true transparency, but at some point we had to invert
+the meaning (blockage) with the rise of over-the-cell routing, but the
+name stuck...</p>
+</div>
+</div>
+<div class="section" id="symbolic-segments">
+<h2>Symbolic Segments<a class="headerlink" href="#symbolic-segments" title="Permalink to this headline">¶</a></h2>
+<p>In <span class="sc">Alliance</span>, segments are oriented (up, down, left, right). This disambiguate
+the left or right side when using the <tt class="docutils literal"><span class="pre">LCW</span></tt> and <tt class="docutils literal"><span class="pre">RCW</span></tt> rules in the <span class="sc">rds</span> file.
+It allows to generate, if needed, asymetric object in the real layout file.</p>
+<p> <img alt="Symbolic Segment Orientations" class="align-middle" src="../_images/SegmentOrientation.png" style="width: 50%;" /> </p>
+<p></p>
+</div>
+</div>
+<div class="section" id="the-rds-file">
+<h1>The RDS File<a class="headerlink" href="#the-rds-file" title="Permalink to this headline">¶</a></h1>
+<p>The RDS file control how a symbolic layout is transformed into it&#8217;s real
+conterpart.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Unit used inside the RDS file:</strong> all units are expressed in micrometers.</p>
+</div>
+<p>Alliance tools relying on the RDS file, and what layers are active for them:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="16%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Tool</th>
+<th class="head">Name</th>
+<th class="head">RDS Flags</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Layout editor</td>
+<td><tt class="docutils literal"><span class="pre">graal</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">ALL</span></tt></td>
+</tr>
+<tr class="row-odd"><td>Design Rule Checker</td>
+<td><tt class="docutils literal"><span class="pre">druc</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">ALL</span></tt>, <tt class="docutils literal"><span class="pre">DRC</span></tt></td>
+</tr>
+<tr class="row-even"><td>Electrical extractor</td>
+<td><tt class="docutils literal"><span class="pre">cougar</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">ALL</span></tt>, <tt class="docutils literal"><span class="pre">EXT</span></tt></td>
+</tr>
+<tr class="row-odd"><td>The symbolic to real layout translator</td>
+<td><tt class="docutils literal"><span class="pre">s2r</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">ALL</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="physical-grid-lambda-value">
+<h2>Physical Grid &amp; Lambda Value<a class="headerlink" href="#physical-grid-lambda-value" title="Permalink to this headline">¶</a></h2>
+<p>RDS file:</p>
+<div class="highlight-python"><pre>DEFINE  PHYSICAL_GRID  0.005
+DEFINE  LAMBDA         0.09</pre>
+</div>
+<p>Tells that the physical grid (founder grid) step is 0.005µm and the lambda has
+a value of 0.09µm. That is, one lambda is 18 grid steps.</p>
+<p>We can distinguish two kind of <span class="sc">rds</span> files:</p>
+<ul class="simple">
+<li>The <em>1µm</em> kind, odd segment widths and coordinates are allowed, but the <tt class="docutils literal"><span class="pre">LAMBDA</span></tt>
+value <strong>must</strong> represent an <em>even</em> number of foundry grid step.</li>
+<li>The <em>2µm</em> kind, segments widths and coordinates must all be even. And in that case
+the <tt class="docutils literal"><span class="pre">LAMBDA</span></tt> value can be any multiple of the foundry grid.</li>
+</ul>
+</div>
+<div class="section" id="the-mbk-to-rds-segment-table">
+<h2>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table<a class="headerlink" href="#the-mbk-to-rds-segment-table" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table control the way segments are translated into
+real rectangles. Be aware that we are translating <em>segments</em> and not <em>rectangles</em>.
+Segments are defined by their axis (source &amp; target points) and their width.
+The geometrical transformations are described according to that model.
+Obviously, they are either horizontal or vertical.</p>
+<p>The translation method of a symbolic segment is as follow:</p>
+<ol class="arabic">
+<li><p class="first">The segment is translated into one or more physical rectangles.
+The generated rectangles depends on the tool which is actually
+using <span class="sc">rds</span> and the flag for the considered real layer.
+For instance, real layers flagged with <tt class="docutils literal"><span class="pre">DRC</span></tt> will be generated
+for <tt class="docutils literal"><span class="pre">s2r</span></tt> (for the <tt class="docutils literal"><span class="pre">cif</span></tt> or <tt class="docutils literal"><span class="pre">gds</span></tt>) and <tt class="docutils literal"><span class="pre">druc</span></tt>, but will not
+be shown under <tt class="docutils literal"><span class="pre">graal</span></tt>.</p>
+</li>
+<li><p class="first">Translation into one real layer. <em>First</em> the source &amp; target coordinates and width
+of the symbolic segment are multiplied by the <tt class="docutils literal"><span class="pre">LAMBDA</span></tt> value to obtain a real
+segment. <em>Then</em> one of the <tt class="docutils literal"><span class="pre">VW</span></tt>, <tt class="docutils literal"><span class="pre">LCW</span></tt> or <tt class="docutils literal"><span class="pre">RCW</span></tt> transformation is applied to
+that segment to get the final real rectangle.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">VW</span></tt> for Variable Width, expand the real layer staying centered from the
+original one. In those rules, the third number is not used, it is only here
+to make the life easier for the parser...</p>
+<p> <img alt="RDS Variable Width Rule" class="align-middle" src="../_images/RDS_VW.png" style="width: 60%;" /> </p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">LCW</span></tt> or <tt class="docutils literal"><span class="pre">RCW</span></tt> for Left/Right Constant Width, create an off-center rectangle
+of fixed width relatively to the real segment. Note that the <tt class="docutils literal"><span class="pre">SP</span></tt> number
+is the distance <em>between the edge</em> of the real segment and the edge of the
+generated real rectangle (<em>not</em> from the axis). It is often zero.</p>
+<p> <img alt="RDS Left Constant Width Rule" class="align-middle" src="../_images/RDS_LCW.png" style="width: 40%;" /> </p>
+</li>
+</ul>
+</li>
+</ol>
+<p></p>
+<p>Examples:</p>
+<div class="highlight-python"><pre>TABLE MBK_TO_RDS_SEGMENT
+
+    # (Case 1)
+    ALU1       RDS_ALU1   VW  0.18  0.09  0.0  ALL
+
+    # (Case 2)
+    NDIF       RDS_NDIF   VW  0.18  0.0   0.0  ALL \
+               RDS_ACTIV  VW  0.18  0.0   0.0  DRC \
+               RDS_NIMP   VW  0.36  0.36  0.0  DRC
+
+    # (Case 3)
+    NTRANS     RDS_POLY   VW  0.27  0.00  0.0  ALL \
+               RDS_GATE   VW  0.27  0.00  0.0  DRC \
+               RDS_NDIF  LCW  0.0   0.27  0.0  EXT \
+               RDS_NDIF  RCW  0.0   0.27  0.0  EXT \
+               RDS_NDIF   VW  0.0   0.72  0.0  DRC \
+               RDS_ACTIV  VW  0.0   0.72  0.0  ALL \
+               RDS_NIMP   VW  0.18  1.26  0.0  DRC
+
+END</pre>
+</div>
+<p><span class="fboxtt">Case 1</span> the <tt class="docutils literal"><span class="pre">ALU1</span></tt> is translated in exacltly one real rectangle of
+<tt class="docutils literal"><span class="pre">RDS_ALU1</span></tt>, both ends are extended by 0.18µm and it&#8217;s width is increased
+by 0.09µm.</p>
+<p><span class="fboxtt">Case 2</span> the <tt class="docutils literal"><span class="pre">NDIF</span></tt> will be translated into only one segment
+under <tt class="docutils literal"><span class="pre">graal</span></tt>, for symbolic visualization. And into three real rectangles
+for <tt class="docutils literal"><span class="pre">s2r</span></tt> and <tt class="docutils literal"><span class="pre">druc</span></tt>.</p>
+<p><span class="fboxtt">Case 3</span> the <tt class="docutils literal"><span class="pre">NTRANS</span></tt>, associated to a transistor is a little bit
+more complex, the generated shapes are different for the extractor <tt class="docutils literal"><span class="pre">cougar</span></tt>
+in one hand, and for both <tt class="docutils literal"><span class="pre">druc</span></tt> &amp; <tt class="docutils literal"><span class="pre">s2r</span></tt> in the other hand.</p>
+<ul>
+<li><p class="first">For the extractor (<tt class="docutils literal"><span class="pre">EXT</span></tt> &amp; <tt class="docutils literal"><span class="pre">ALL</span></tt> flags) there will be four rectangles
+generateds:</p>
+<ol class="arabic simple">
+<li>The gate (<tt class="docutils literal"><span class="pre">RDS_GATE</span></tt>)</li>
+<li>The left diffusion of the transistor (source or drain) (<tt class="docutils literal"><span class="pre">RDS_NDIF</span></tt>).</li>
+<li>The right diffusion of the transistor (drain or source) (<tt class="docutils literal"><span class="pre">RDS_NDIF</span></tt>).</li>
+<li>The active area (<tt class="docutils literal"><span class="pre">RDS_ACTIV</span></tt>).</li>
+</ol>
+<p>As the extractor must kept separate the source and the drain of the transistor,
+they are generated as two offset rectangles, using the <tt class="docutils literal"><span class="pre">LCW</span></tt> and <tt class="docutils literal"><span class="pre">RCW</span></tt> directives.</p>
+</li>
+<li><p class="first">For <tt class="docutils literal"><span class="pre">s2r</span></tt> and <tt class="docutils literal"><span class="pre">druc</span></tt> (<tt class="docutils literal"><span class="pre">DRC</span></tt> and <tt class="docutils literal"><span class="pre">ALL</span></tt>), five rectangles are generateds:</p>
+<ol class="arabic simple">
+<li>The poly (<tt class="docutils literal"><span class="pre">RDS_POLY</span></tt>).</li>
+<li>The gate (<tt class="docutils literal"><span class="pre">RDS_GATE</span></tt>).</li>
+<li>The diffusion, as one rectangle that covers both the <tt class="docutils literal"><span class="pre">LCW</span></tt> and the <tt class="docutils literal"><span class="pre">RCW</span></tt> (<tt class="docutils literal"><span class="pre">RDS_NDIF</span></tt>).</li>
+<li>The active area (<tt class="docutils literal"><span class="pre">RDS_ACTIV</span></tt>).</li>
+<li>The N implantation (<tt class="docutils literal"><span class="pre">RDS_NIMP</span></tt>).</li>
+</ol>
+<p>In the layout send to the foundry, the source &amp; drain are draw as one rectangle
+across the gate area (the transistor being defined by the intersection of both
+rectangles).</p>
+</li>
+</ul>
+<p></p>
+</div>
+<div class="section" id="the-mbk-to-rds-via-table">
+<h2>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table<a class="headerlink" href="#the-mbk-to-rds-via-table" title="Permalink to this headline">¶</a></h2>
+<p>This table is to translate <em>default</em> VIAs into real via. In the symbolic layout
+the default VIA is simply a point and a set of layers. All layers are converted
+in squares shapes centered on the VIA coordinate. The one dimension given is the
+size of the side of that square.</p>
+<p>Note that although we are refering to VIAs, which for the purists are between two
+metal layers, this table also describe <em>contacts</em>.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>TABLE MBK_TO_RDS_VIA
+
+    CONT_DIF_P RDS_PDIF  0.54 ALL \
+               RDS_CONT  0.18 ALL \
+               RDS_ALU1  0.36 ALL \
+               RDS_ACTIV 0.54 DRC \
+               RDS_PIMP  0.90 DRC
+
+    CONT_POLY  RDS_POLY  0.54 ALL \
+               RDS_CONT  0.18 ALL \
+               RDS_ALU1  0.36 ALL
+
+    CONT_VIA   RDS_ALU1  0.45 ALL \
+               RDS_VIA1  0.27 ALL \
+               RDS_ALU2  0.45 ALL
+
+END</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>In CONT_DIF_P</strong> you may see that only three layers will be shown under
+<tt class="docutils literal"><span class="pre">graal</span></tt>, but five will be generated in the <tt class="docutils literal"><span class="pre">gds</span></tt> layout.</p>
+</div>
+</div>
+<div class="section" id="the-mbk-to-rds-bigvia-hole-table">
+<h2>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table<a class="headerlink" href="#the-mbk-to-rds-bigvia-hole-table" title="Permalink to this headline">¶</a></h2>
+<p>In <tt class="docutils literal"><span class="pre">s2r</span></tt>, when generating BIGVIAs, the matrix of holes they contains is
+not draw relative to the position of the BIGVIA itself, but on a grid which
+is common througout all the design real layout. This is to allow overlap
+between two BIGVIA without risking the holes matrix to be not exactly overlapping.
+As a consequence, when visualizing the <tt class="docutils literal"><span class="pre">gds</span></tt> file, the holes may not be centerend
+inside one individual BIGVIA.</p>
+<p>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table define the global hole matrix for the whole
+design. The first number is the individual hole side and the second the grid step
+(edge to edge). The figure below show the hole generation.</p>
+<p> <img alt="BIGVIA holes" class="align-middle" src="../_images/bigvia-1.png" style="width: 40%;" /> </p>
+<p>Example of BIGVIA overlap:</p>
+<p> <img alt="BIGVIA holes overlap" class="align-middle" src="../_images/bigvia-2.png" style="width: 40%;" /> </p>
+<p>Example:</p>
+<div class="highlight-python"><pre>TABLE MBK_TO_RDS_BIGVIA_HOLE
+
+    CONT_VIA   RDS_VIA1 0.27 0.27 ALL
+    CONT_VIA2  RDS_VIA2 0.27 0.27 ALL
+    CONT_VIA3  RDS_VIA3 0.27 0.27 ALL
+    CONT_VIA4  RDS_VIA4 0.27 0.27 ALL
+    CONT_VIA5  RDS_VIA5 0.36 0.36 ALL
+
+END</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>BIGVIA demotion.</strong> If the size of the bigvia is too small, there is
+a possibility that no hole from the global matrix will be under it.
+To avoid that case, if the either side of the BIGVIA is less than
+<tt class="docutils literal"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">step</span></tt>, the BIGVIA is demoted to a simple VIA.</p>
+</div>
+</div>
+<div class="section" id="the-mbk-to-rds-bigvia-metal-table">
+<h2>The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table<a class="headerlink" href="#the-mbk-to-rds-bigvia-metal-table" title="Permalink to this headline">¶</a></h2>
+<p>This table describe how the metal part of a BIGVIA is expanded (for the hole
+part, see the previous table <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt>). The rule give for each
+metal:</p>
+<ol class="arabic simple">
+<li>The <em>delta-with</em> (have to ask Franck).</li>
+<li>The <em>overhang</em>, the length the real rectangle is expanded on each side from
+the symbolic rectange.</li>
+</ol>
+<p>Example:</p>
+<div class="highlight-python"><pre>TABLE MBK_TO_RDS_BIGVIA_METAL
+
+    CONT_VIA  RDS_ALU1 0.0 0.09  ALL \
+              RDS_ALU2 0.0 0.09  ALL
+
+    CONT_VIA2 RDS_ALU2 0.0 0.09  ALL \
+              RDS_ALU3 0.0 0.09  ALL
+
+    CONT_VIA3 RDS_ALU3 0.0 0.09  ALL \
+              RDS_ALU4 0.0 0.09  ALL
+
+    CONT_VIA4 RDS_ALU4 0.0 0.09  ALL \
+              RDS_ALU5 0.0 0.09  ALL
+
+    CONT_VIA5 RDS_ALU5 0.0 0.09  ALL \
+              RDS_ALU6 0.0 0.18  ALL
+END</pre>
+</div>
+</div>
+<div class="section" id="the-mbk-wiresetting-table">
+<h2>The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table<a class="headerlink" href="#the-mbk-wiresetting-table" title="Permalink to this headline">¶</a></h2>
+<p>From a strict standpoint this table shouldn&#8217;t be here but put in a separate
+configuration file, because it contains informations only used by the symbolic
+layout tools (<tt class="docutils literal"><span class="pre">ocp</span></tt>, <tt class="docutils literal"><span class="pre">nero</span></tt>, <tt class="docutils literal"><span class="pre">ring</span></tt>).</p>
+<p>This table defines the cell gauge the routing pitch and minimal (symbolic)
+wire width and minimal spacing for the routers. They are patly redundant.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>TABLE MBK_WIRESETTING
+
+    X_GRID             10
+    Y_GRID             10
+    Y_SLICE           100
+    WIDTH_VDD          12
+    WIDTH_VSS          12
+    TRACK_WIDTH_ALU8    0
+    TRACK_WIDTH_ALU7    4
+    TRACK_WIDTH_ALU6    4
+    TRACK_WIDTH_ALU5    4
+    TRACK_WIDTH_ALU4    3
+    TRACK_WIDTH_ALU3    3
+    TRACK_WIDTH_ALU2    3
+    TRACK_WIDTH_ALU1    3
+    TRACK_SPACING_ALU8  0
+    TRACK_SPACING_ALU7  4
+    TRACK_SPACING_ALU6  4
+    TRACK_SPACING_ALU5  4
+    TRACK_SPACING_ALU4  4
+    TRACK_SPACING_ALU3  4
+    TRACK_SPACING_ALU2  4
+    TRACK_SPACING_ALU1  3
+
+END</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Symbolic to Real Conversion in Alliance" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2017, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

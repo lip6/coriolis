@@ -13,11 +13,7 @@
 static double       floatToken;
 static std::string  nameToken;
 
-#ifndef FLEX_BETA 
-       int  Liberty_lineno = 1;
-#else
 extern int  Liberty_lineno;
-#endif
 
 
 

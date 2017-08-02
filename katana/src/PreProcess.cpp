@@ -39,6 +39,7 @@ namespace {
   using namespace CRL;
   using namespace Katana;
   using Anabatic::perpandicularTo;
+  using Anabatic::AutoSegment;
   using Anabatic::AutoContactTerminal;
 
 
@@ -99,15 +100,15 @@ namespace {
 
     cdebug_log(159,0) << "Propagate caging: " << segment << endl;
 
-    Track*                  track         = segment->getTrack();
-  //unsigned int            direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
-    unsigned int            direction     = segment->getDirection();
+    Track*                 track         = segment->getTrack();
+  //Flags                  direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
+    Flags                  direction     = segment->getDirection();
     Anabatic::AutoContact* source        = segment->base()->getAutoSource();
-    RoutingPad*             rp            = NULL;
-    Interval                uside         = source->getGCell()->getSide(direction);
-    DbU::Unit               minConstraint = DbU::Min;
-    DbU::Unit               maxConstraint = DbU::Max;
-    vector<TrackElement*>   perpandiculars;
+    RoutingPad*            rp            = NULL;
+    Interval               uside         = source->getGCell()->getSide(direction);
+    DbU::Unit              minConstraint = DbU::Min;
+    DbU::Unit              maxConstraint = DbU::Max;
+    vector<TrackElement*>  perpandiculars;
 
     if ( not track ) {
       cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
@@ -116,7 +117,7 @@ namespace {
 
   // Computing constraints from fixed only TrackElements (caging).
     TrackElement* parallel;
-    size_t i = segment->getIndex();
+    size_t i = track->find( segment );
     while ( i > 0 ) {
       parallel = track->getSegment( --i );
       if (not parallel) continue;
@@ -128,7 +129,7 @@ namespace {
       minConstraint = max( minConstraint, parallel->getTargetU() );
     }
 
-    i = segment->getIndex();
+    i = track->find( segment );
     while ( i < track->getSize()-1 ) {
       parallel = track->getSegment( ++i );
       if (not parallel) continue;
@@ -225,7 +226,7 @@ namespace {
     cdebug_log(159,1) << "protectCagedTerminals() " << track << endl;
 
     DbU::Unit      lastMovedUp   = track->getMin();
-    unsigned int   moveUpCount   = 0;
+    uint32_t       moveUpCount   = 0;
 
     Configuration* configuration = Session::getConfiguration();
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );
@@ -308,7 +309,7 @@ namespace {
           target->setFlags( Anabatic::CntIgnoreAnchor );
           
           AutoSegment* fixedSegment = AutoSegment::create( source, target, Flags::Vertical );
-          fixedSegment->setFlags( Anabatic::SegFixed );
+          fixedSegment->setFlags( AutoSegment::SegFixed );
           Session::getNegociateWindow()->createTrackSegment( fixedSegment, Flags::LoadingStage );
         }
 

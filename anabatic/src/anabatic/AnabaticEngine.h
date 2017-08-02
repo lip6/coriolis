@@ -163,7 +163,7 @@ namespace Anabatic {
 // Class  :  "Anabatic::AnabaticEngine".
 
   typedef  std::set<Net*,Entity::CompareById>  NetSet;
-  typedef  std::map<unsigned int,NetData*>     NetDatas;
+  typedef  std::map<uint64_t,NetData*>         NetDatas;
 
 
   class AnabaticEngine : public ToolEngine {
@@ -184,7 +184,7 @@ namespace Anabatic {
       static  const Name&             staticGetName         ();
       virtual const Name&             getName               () const;
       virtual       Configuration*    getConfiguration      ();
-      inline        unsigned int      getDensityMode        () const;
+      inline        uint64_t          getDensityMode        () const;
       inline        CellViewer*       getViewer             () const;
       inline        void              setViewer             ( CellViewer* );
       inline        EngineState       getState              () const;
@@ -200,11 +200,11 @@ namespace Anabatic {
                     size_t            getNetsFromEdge       ( const Edge*, NetSet& );
       virtual       void              openSession           ();
       inline        void              setState              ( EngineState state );
-      inline        void              setDensityMode        ( unsigned int );
+      inline        void              setDensityMode        ( uint64_t );
       inline        void              addOv                 ( Edge* );
       inline        void              removeOv              ( Edge* );
       inline const  NetDatas&         getNetDatas           () const;
-                    NetData*          getNetData            ( Net*, unsigned int flags=Flags::NoFlags );
+                    NetData*          getNetData            ( Net*, Flags flags=Flags::NoFlags );
                     void              setupNetDatas         ();
                     void              updateMatrix          ();
     // Dijkstra related functions.                          
@@ -239,12 +239,12 @@ namespace Anabatic {
                     void              chipPrep              ();
                     void              setupSpecialNets      ();
                     void              setupPreRouteds       ();
-                    void              loadGlobalRouting     ( unsigned int method );
+                    void              loadGlobalRouting     ( uint32_t method );
                     void              computeNetConstraints ( Net* );
                     void              toOptimals            ( Net* );
                     void              updateNetTopology     ( Net* );
                     bool              moveUpNetTrunk        ( AutoSegment*, set<Net*>& globalNets, GCell::Set& invalidateds );
-                    void              layerAssign           ( unsigned int method );
+                    void              layerAssign           ( uint32_t method );
                     void              finalizeLayout        ();
       inline const  AutoContactLut&   _getAutoContactLut    () const;
       inline const  AutoSegmentLut&   _getAutoSegmentLut    () const;
@@ -304,7 +304,7 @@ namespace Anabatic {
              CellViewer*       _viewer;
              Flags             _flags;
              int               _stamp;
-             unsigned int      _densityMode;
+             uint64_t          _densityMode;
              AutoSegmentLut    _autoSegmentLut;
              AutoContactLut    _autoContactLut;
              Net*              _blockageNet;
@@ -322,8 +322,8 @@ namespace Anabatic {
   inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
   inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
   inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
-  inline       unsigned int      AnabaticEngine::getDensityMode        () const { return _densityMode; }
-  inline       void              AnabaticEngine::setDensityMode        ( unsigned int mode ) { _densityMode=mode; }
+  inline       uint64_t          AnabaticEngine::getDensityMode        () const { return _densityMode; }
+  inline       void              AnabaticEngine::setDensityMode        ( uint64_t mode ) { _densityMode=mode; }
   inline       void              AnabaticEngine::setBlockageNet        ( Net* net ) { _blockageNet = net; }
   inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }
   inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut    () const { return _autoSegmentLut; }

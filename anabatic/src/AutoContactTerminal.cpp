@@ -246,16 +246,23 @@ namespace Anabatic {
     order( xMin, xMax );
     order( yMin, yMax );
 
+    Box bb ( xMin, yMin, xMax, yMax );
+
+    if (_segment and _segment->isWide()) {
+      if (dynamic_cast<AutoHorizontal*>(_segment)) bb.inflate( 0, 0, 0, -_segment->getWidth() );
+      else                                         bb.inflate( 0, 0, -_segment->getWidth(), 0 );
+    }
+
     cdebug_log(145,0) << "| Using (y): "
-                      << DbU::getValueString(yMin) << " "
-                      << DbU::getValueString(yMax) << endl;
+                      << DbU::getValueString(bb.getYMin()) << " "
+                      << DbU::getValueString(bb.getYMax()) << endl;
 
     cdebug_tabw(145,-1);
-    return Box( xMin, yMin, xMax, yMax );
+    return bb;
   }
 
 
-  void  AutoContactTerminal::_invalidate ( unsigned int flags )
+  void  AutoContactTerminal::_invalidate ( Flags flags )
   {
     if (_segment) _segment->invalidate();
   }
@@ -354,28 +361,47 @@ namespace Anabatic {
 
     ostringstream message;
     if (not hasBadTopology()) {
+      Box anchorBb = getAnchor()->getBoundingBox();
+      anchorBb.inflate( Session::getViaWidth (getAnchor()->getLayer())
+                      - Session::getWireWidth(getAnchor()->getLayer()) );
+
       if (_segment->isHorizontal()) {
-        if (not getUConstraints(Flags::Vertical).contains(_segment->getY())) {
+        DbU::Unit axis = _segment->getY();
+        if (_segment->isWide()) {
+          axis += (- _segment->getWidth() + Session::getWireWidth(_segment->getLayer())) / 2;
+          setHeight( _segment->getContactWidth() );
+        }
+
+        if (not getUConstraints(Flags::Vertical).contains(axis)) {
           cdebug_log(145,0) << "Cached: " << _segment << endl;
-          message << "Terminal horizontal segment Y " << DbU::getValueString(_segment->getY())
+          message << "Terminal horizontal segment Y " << DbU::getValueString(axis)
                   << " axis is outside RoutingPad " << getUConstraints(Flags::Vertical) << ".";
 
           Interval intv;
           _segment->getConstraints( intv );
           message << "\n        Segment constraints: " << intv << endl;
 
-          unsigned int flags = 0;
+          Flags flags = Flags::NoFlags;
           if (_segment->isCreated()) flags |= Flags::CParanoid;
           showTopologyError( message.str(), flags );
         } else
           setY( _segment->getY() );
       } else {
-        if (not getUConstraints(Flags::Horizontal).contains(_segment->getX())) {
+        DbU::Unit axis = _segment->getX();
+        if (_segment->isWide()) {
+          axis += (- _segment->getWidth() + Session::getWireWidth(_segment->getLayer())) / 2;
+          setWidth ( _segment->getContactWidth() );
+          setHeight( anchorBb.getHeight() );
+
+          cdebug_log(145,0) << "Contact for wide segment." << endl;
+        }
+
+        if (not getUConstraints(Flags::Horizontal).contains(axis)) {
           cdebug_log(145,0) << "Cached: " << _segment << endl;
-          message << "Terminal vertical segment X" << DbU::getValueString(_segment->getX())
+          message << "Terminal vertical segment X" << DbU::getValueString(axis)
                   << " axis is outside RoutingPad " << getUConstraints(Flags::Horizontal) << ".";
 
-          unsigned int flags = 0;
+          Flags flags = Flags::NoFlags;
           if (_segment->isCreated()) flags |= Flags::CParanoid;
           showTopologyError( message.str(), flags );
         } else

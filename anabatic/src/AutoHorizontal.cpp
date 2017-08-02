@@ -120,7 +120,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoHorizontal::getSourceConstraints ( unsigned int flags ) const
+  Interval  AutoHorizontal::getSourceConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoSource()->getNativeConstraintBox() );
@@ -130,7 +130,7 @@ namespace Anabatic {
   }
 
 
-  Interval  AutoHorizontal::getTargetConstraints ( unsigned int flags ) const
+  Interval  AutoHorizontal::getTargetConstraints ( Flags flags ) const
   {
     if (flags & Flags::NativeConstraints) {
       Box nativeBox ( getAutoTarget()->getNativeConstraintBox() );
@@ -145,26 +145,26 @@ namespace Anabatic {
     constraintMin = getNativeMin();
     constraintMax = getNativeMax();
 
-    cdebug_log(149,0) << "Native constraints: ["
+    cdebug_log(144,0) << "Native constraints: ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getAutoSource()->getCBYMin() );
     constraintMax = std::min ( constraintMax, getAutoSource()->getCBYMax() );
-    cdebug_log(149,0) << "Merge with source constraints: ["
+    cdebug_log(144,0) << "Merge with source constraints: ["
                       << DbU::getValueString(getAutoSource()->getCBYMin()) << ":"
                       << DbU::getValueString(getAutoSource()->getCBYMax()) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = std::min ( constraintMax, getUserConstraints().getVMax() );
-    cdebug_log(149,0) << "Merge with user constraints: ["
+    cdebug_log(144,0) << "Merge with user constraints: ["
                       << DbU::getValueString(getUserConstraints().getVMin()) << ":"
                       << DbU::getValueString(getUserConstraints().getVMax()) << "]"
                       << endl;
 
-    cdebug_log(149,0) << "Resulting constraints: " << " ["
+    cdebug_log(145,0) << "Resulting constraints: " << " ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
@@ -185,7 +185,7 @@ namespace Anabatic {
     GCell*    gcell  = getAutoSource()->getGCell();
     GCell*    end    = getAutoTarget()->getGCell();
 
-    cdebug_log(149,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
+    cdebug_log(144,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
 
     if (gcell->getXMin() > end->getXMin()) std::swap( gcell, end );
     if (yprobe == gcell->getConstraintYMax()) yprobe--;
@@ -240,7 +240,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoHorizontal::_slacken ( unsigned int flags )
+  bool  AutoHorizontal::_slacken ( Flags flags )
   {
     cdebug_log(149,0) << "AutoHorizontal::_slacken() " << this << endl;
 
@@ -389,7 +389,7 @@ namespace Anabatic {
 
     if (_horizontal->getY() == axis) return;
 
-    cdebug_log(145,0) << "_setAxis() @Y " << DbU::getValueString(axis) << " " << this << endl;
+    cdebug_log(144,0) << "_setAxis() @Y " << DbU::getValueString(axis) << " " << this << endl;
 
     _horizontal->setY( axis );
     invalidate();
@@ -410,19 +410,19 @@ namespace Anabatic {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _horizontal->invert();
 
-      unsigned int spinFlags = _flags & SegDepthSpin;
+      uint64_t spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
       if (spinFlags & SegSourceTop   ) setFlags( SegTargetTop );
       if (spinFlags & SegSourceBottom) setFlags( SegTargetBottom );
       if (spinFlags & SegTargetTop   ) setFlags( SegSourceTop );
       if (spinFlags & SegTargetBottom) setFlags( SegSourceBottom );
 
-      unsigned int invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
+      uint64_t invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
       unsetFlags( SegInvalidatedSource|SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedSource) setFlags( SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedTarget) setFlags( SegInvalidatedSource );
 
-      unsigned int terminalFlags = _flags & SegStrongTerminal;
+      uint64_t terminalFlags = _flags & SegStrongTerminal;
       unsetFlags( SegStrongTerminal );
       if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
       if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );
@@ -432,8 +432,8 @@ namespace Anabatic {
 
   void  AutoHorizontal::updatePositions ()
   {
-    _sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
-    _targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
+    _sourcePosition = _horizontal->getSourceX() - getExtensionCap();
+    _targetPosition = _horizontal->getTargetX() + getExtensionCap();
   }
 
 
@@ -453,8 +453,8 @@ namespace Anabatic {
   bool  AutoHorizontal::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSourceX() - Session::getExtensionCap(getLayer());
-    DbU::Unit targetPosition = _horizontal->getTargetX() + Session::getExtensionCap(getLayer());
+    DbU::Unit sourcePosition = _horizontal->getSourceX() - getExtensionCap();
+    DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap();
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -728,7 +728,7 @@ namespace Anabatic {
   }
 
 
-  unsigned int  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, unsigned int flags )
+  Flags  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     DebugSession::open( getNet(), 140, 150 );
     cdebug_log(149,0) << "AutoHorizontal::_makeDogleg(GCell*) in " << doglegGCell << endl;
@@ -806,6 +806,11 @@ namespace Anabatic {
     } else if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+    }
+
+    if (isAnalog()) {
+      segment1->setFlags( SegAnalog );
+      segment2->setFlags( SegAnalog );
     }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;

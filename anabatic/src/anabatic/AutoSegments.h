@@ -218,7 +218,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-          inline                 Locator    ( AutoSegment* segment , unsigned int flags );
+          inline                 Locator    ( AutoSegment* segment , Flags flags );
           inline                 Locator    ( const Locator &locator );
           virtual AutoSegment*   getElement () const;
           virtual AutoSegmentHL* getClone   () const;
@@ -226,14 +226,14 @@ namespace Anabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          unsigned int      _flags;
+          Flags             _flags;
           AutoSegment*      _master;
           AutoSegmentStack  _stack;
       };
 
     public:
     // AutoSegments_Aligneds Methods.
-                             AutoSegments_Aligneds ( AutoSegment*, unsigned int flags=Flags::NoFlags );
+                             AutoSegments_Aligneds ( AutoSegment*, Flags flags );
                              AutoSegments_Aligneds ( const AutoSegments_Aligneds& );
       virtual AutoSegmentHC* getClone               () const;
 	  virtual AutoSegmentHL* getLocator             () const;
@@ -241,7 +241,7 @@ namespace Anabatic {
 
     protected:
     // AutoSegments_Aligneds Attributes.
-      unsigned int  _flags;
+      Flags         _flags;
       AutoSegment*  _segment;
   };
 
@@ -254,7 +254,7 @@ namespace Anabatic {
   { }
 
 
-  inline AutoSegments_Aligneds::AutoSegments_Aligneds ( AutoSegment* segment, unsigned int flags )
+  inline AutoSegments_Aligneds::AutoSegments_Aligneds ( AutoSegment* segment, Flags flags )
     : AutoSegmentHC()
     , _flags  (flags)
     , _segment(segment)
@@ -277,7 +277,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-          inline                 Locator    ( AutoSegment* segment, unsigned int flags );
+          inline                 Locator    ( AutoSegment* segment, Flags flags );
           inline                 Locator    ( const Locator &locator );
           virtual AutoSegment*   getElement () const;
           virtual AutoSegmentHL* getClone   () const;
@@ -290,7 +290,7 @@ namespace Anabatic {
 
     public:
     // AutoSegments_Connecteds Methods.
-                             AutoSegments_Connecteds ( AutoSegment*, unsigned int flags );
+                             AutoSegments_Connecteds ( AutoSegment*, Flags flags );
                              AutoSegments_Connecteds ( const AutoSegments_Connecteds& );
       virtual AutoSegmentHC* getClone                () const;
 	  virtual AutoSegmentHL* getLocator              () const;
@@ -298,7 +298,7 @@ namespace Anabatic {
 
     protected:
     // AutoSegments_Connecteds Attributes.
-      unsigned int  _flags;
+      Flags         _flags;
       AutoSegment*  _segment;
   };
 
@@ -309,7 +309,7 @@ namespace Anabatic {
   { }
 
 
-  inline AutoSegments_Connecteds::AutoSegments_Connecteds ( AutoSegment* segment, unsigned int flags )
+  inline AutoSegments_Connecteds::AutoSegments_Connecteds ( AutoSegment* segment, Flags flags )
     : AutoSegmentHC()
     , _flags  (flags)
     , _segment(segment)
@@ -332,7 +332,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-                                 Locator    ( AutoSegment* master );
+                                 Locator    ( AutoSegment* master, Flags flags );
           inline                 Locator    ( const Locator& );
           virtual AutoSegment*   getElement () const;
           virtual AutoSegmentHL* getClone   () const;
@@ -340,7 +340,7 @@ namespace Anabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          unsigned int         _flags;
+          Flags                _flags;
           AutoSegment*         _master;
           AutoSegmentStack     _stack;
           vector<AutoSegment*> _perpandiculars;
@@ -348,7 +348,7 @@ namespace Anabatic {
 
     public:
     // AutoSegments_Perpandiculars Methods.
-      inline                 AutoSegments_Perpandiculars ( AutoSegment* master );
+      inline                 AutoSegments_Perpandiculars ( AutoSegment*, Flags flags=Flags::NoFlags );
       inline                 AutoSegments_Perpandiculars ( const AutoSegments_Perpandiculars& );
       virtual AutoSegmentHC* getClone                    () const;
 	  virtual AutoSegmentHL* getLocator                  () const;
@@ -356,7 +356,8 @@ namespace Anabatic {
 
     protected:
     // AutoSegments_Perpandiculars Attributes.
-      AutoSegment*  _segment;
+      Flags         _flags;
+      AutoSegment*  _master;
   };
 
 
@@ -370,16 +371,18 @@ namespace Anabatic {
 
 
   inline AutoSegments_Perpandiculars::AutoSegments_Perpandiculars
-  ( AutoSegment* segment )
+  ( AutoSegment* master, Flags flags )
     : AutoSegmentHC()
-    , _segment(segment)
+    , _flags (flags)
+    , _master(master)
   { }
 
 
   inline AutoSegments_Perpandiculars::AutoSegments_Perpandiculars
   ( const AutoSegments_Perpandiculars& autosegments )
     : AutoSegmentHC()
-    , _segment(autosegments._segment)
+    , _flags (autosegments._flags)
+    , _master(autosegments._master)
   { }
 
 
@@ -392,7 +395,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-                                 Locator    ( GCell* fcell, unsigned int flags );
+                                 Locator    ( GCell* fcell, Flags flags );
           inline                 Locator    ( const Locator& );
           virtual               ~Locator    ();
           virtual AutoSegment*   getElement () const;
@@ -401,7 +404,7 @@ namespace Anabatic {
           virtual void           progress   ();
           virtual string         _getString () const;
         protected:
-          unsigned int                          _flags;
+          Flags                                 _flags;
           vector<AutoContact*>::const_iterator  _itContact;
           vector<AutoContact*>::const_iterator  _itEnd;
           Hurricane::Locator<Hook*>*            _hookLocator;
@@ -410,7 +413,7 @@ namespace Anabatic {
 
     public:
     // AutoSegments_Perpandiculars Methods.
-      inline                 AutoSegments_AnchorOnGCell ( GCell* fcell, unsigned int flags );
+      inline                 AutoSegments_AnchorOnGCell ( GCell* fcell, Flags flags );
       inline                 AutoSegments_AnchorOnGCell ( const AutoSegments_AnchorOnGCell& );
       virtual AutoSegmentHC* getClone                   () const;
 	  virtual AutoSegmentHL* getLocator                 () const;
@@ -418,8 +421,8 @@ namespace Anabatic {
 
     public:
     // AutoSegments_Perpandiculars Attributes.
-      GCell*        _fcell;
-      unsigned int  _flags;
+      GCell* _fcell;
+      Flags  _flags;
   };
 
 
@@ -433,7 +436,7 @@ namespace Anabatic {
   { }
 
 
-  inline AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell ( GCell* fcell, unsigned int flags )
+  inline AutoSegments_AnchorOnGCell::AutoSegments_AnchorOnGCell ( GCell* fcell, Flags flags )
     : AutoSegmentHC()
     , _fcell(fcell)
     , _flags(flags)
@@ -457,7 +460,7 @@ namespace Anabatic {
     // Sub-Class: Locator.
       class Locator : public AutoSegmentHL {
         public:
-                                 Locator    ( AutoContact* sourceAnchor, unsigned int direction );
+                                 Locator    ( AutoContact* sourceAnchor, Flags direction );
           inline                 Locator    ( const Locator& );
           virtual               ~Locator    ();
           virtual AutoSegment*   getElement () const;
@@ -473,7 +476,7 @@ namespace Anabatic {
     public:
     // AutoSegments_CachedOnContact Methods.
       inline                 AutoSegments_CachedOnContact ( AutoContact* sourceContact
-                                                          , unsigned int direction=Flags::Horizontal|Flags::Vertical );
+                                                          , Flags direction=Flags::Horizontal|Flags::Vertical );
       inline                 AutoSegments_CachedOnContact ( const AutoSegments_CachedOnContact& );
       virtual AutoSegmentHC* getClone                     () const;
 	  virtual AutoSegmentHL* getLocator                   () const;
@@ -481,7 +484,7 @@ namespace Anabatic {
 
     protected:
     // AutoSegments_CachedOnContact Attributes.
-      unsigned int  _direction;
+      Flags         _direction;
       AutoContact*  _sourceContact;
 
   };
@@ -494,7 +497,7 @@ namespace Anabatic {
 
 
   inline  AutoSegments_CachedOnContact::AutoSegments_CachedOnContact
-  ( AutoContact* sourceContact, unsigned int direction )
+  ( AutoContact* sourceContact, Flags direction )
     : AutoSegmentHC()
     , _direction    (direction)
     , _sourceContact(sourceContact)
@@ -527,17 +530,17 @@ namespace Anabatic {
 
   class AutoSegments_InDirection : public AutoSegmentHF {
     public:
-      inline                 AutoSegments_InDirection ( unsigned int direction );
+      inline                 AutoSegments_InDirection ( Flags direction );
       inline                 AutoSegments_InDirection ( const AutoSegments_InDirection& );
       virtual AutoSegmentHF* getClone                 () const;
       virtual bool           accept                   ( AutoSegment* segment ) const;
       virtual string         _getString               () const;
     protected:
-      unsigned int  _direction;
+      Flags  _direction;
   };
 
 
-  inline  AutoSegments_InDirection::AutoSegments_InDirection ( unsigned int direction )
+  inline  AutoSegments_InDirection::AutoSegments_InDirection ( Flags direction )
     : AutoSegmentHF()
     , _direction(direction)
   {}

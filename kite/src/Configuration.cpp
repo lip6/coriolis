@@ -41,12 +41,13 @@ namespace Kite {
     : Katabatic::Configuration()
     , _base                (base)
     , _postEventCb         ()
-    , _hTracksReservedLocal(Cfg::getParamInt("kite.hTracksReservedLocal",    3)->asInt())
-    , _vTracksReservedLocal(Cfg::getParamInt("kite.vTracksReservedLocal",    3)->asInt())
+    , _hTracksReservedLocal(Cfg::getParamInt ("kite.hTracksReservedLocal",      3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt ("kite.vTracksReservedLocal",      3)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt("kite.ripupCost"           ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt("kite.eventsLimit"         ,4000000)->asInt())
+    , _ripupCost           (Cfg::getParamInt ("kite.ripupCost"           ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt ("kite.eventsLimit"         ,4000000)->asInt())
     , _flags               (0)
+    , _profileEventCosts   (Cfg::getParamBool("kite.profileEventCosts"   ,false  )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("kite.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("kite.localRipupLimit"      , 7)->asInt();
@@ -83,6 +84,7 @@ namespace Kite {
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
+    , _profileEventCosts   (other._profileEventCosts)
   {
     if ( _base == NULL ) _base = other._base->clone();
 

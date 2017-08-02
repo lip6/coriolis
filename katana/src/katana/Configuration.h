@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :   "./katana/Configuration.h"                       |
+// |  C++ Header  :   "./katana/Configuration.h"                     |
 // +-----------------------------------------------------------------+
 
 
@@ -60,36 +60,39 @@ namespace Katana {
                                               ~Configuration           ();
     // Decorateds.                                               
       inline        bool                       useClockTree            () const;
+      inline        bool                       profileEventCosts       () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
       inline  const Anabatic::Configuration*   base                    () const;
       inline        PostEventCb_t&             getPostEventCb          ();
-      inline        unsigned long              getEventsLimit          () const;
-      inline        unsigned int               getRipupCost            () const;
-                    unsigned int               getRipupLimit           ( unsigned int type ) const;
-      inline        size_t                     getHTracksReservedLocal () const;
-      inline        size_t                     getVTracksReservedLocal () const;
-      inline        void                       setEventsLimit          ( unsigned long );
-      inline        void                       setRipupCost            ( unsigned int );
-                    void                       setRipupLimit           ( unsigned int limit, unsigned int type );
+      inline        uint64_t                   getEventsLimit          () const;
+      inline        uint32_t                   getRipupCost            () const;
+                    uint32_t                   getRipupLimit           ( uint32_t type ) const;
+      inline        uint32_t                   getHTracksReservedLocal () const;
+      inline        uint32_t                   getVTracksReservedLocal () const;
+      inline        void                       setEventsLimit          ( uint64_t );
+      inline        void                       setRipupCost            ( uint32_t );
+                    void                       setRipupLimit           ( uint32_t limit, uint32_t type );
       inline        void                       setPostEventCb          ( PostEventCb_t );
-                    void                       setHTracksReservedLocal ( size_t );
-                    void                       setVTracksReservedLocal ( size_t );
+                    void                       setHTracksReservedLocal ( uint32_t );
+                    void                       setVTracksReservedLocal ( uint32_t );
       inline        void                       setFlags                ( unsigned int );
       inline        void                       unsetFlags              ( unsigned int );
+      inline        void                       setProfileEventCosts    ( bool );
       virtual       void                       print                   ( Cell* ) const;
       virtual       Record*                    _getRecord              () const;
       virtual       string                     _getString              () const;
       virtual       string                     _getTypeName            () const;
     private:
     // Attributes.
-             PostEventCb_t               _postEventCb;
-             size_t                      _hTracksReservedLocal;
-             size_t                      _vTracksReservedLocal;
-             unsigned int                _ripupLimits         [RipupLimitsTableSize];
-             unsigned int                _ripupCost;
-             unsigned long               _eventsLimit;
-             unsigned int                _flags;
+             PostEventCb_t  _postEventCb;
+             uint32_t       _hTracksReservedLocal;
+             uint32_t       _vTracksReservedLocal;
+             uint32_t       _ripupLimits         [RipupLimitsTableSize];
+             uint32_t       _ripupCost;
+             uint64_t       _eventsLimit;
+             unsigned int   _flags;
+             bool           _profileEventCosts;
     private:
                      Configuration ( const Configuration& other );
       Configuration& operator=     ( const Configuration& );
@@ -100,16 +103,18 @@ namespace Katana {
   inline const Anabatic::Configuration*      Configuration::base                    () const { return dynamic_cast<const Anabatic::Configuration*>(this); }
   inline       Anabatic::Configuration*      Configuration::base                    () { return dynamic_cast<Anabatic::Configuration*>(this); }
   inline       Configuration::PostEventCb_t& Configuration::getPostEventCb          () { return _postEventCb; }
-  inline       unsigned long                 Configuration::getEventsLimit          () const { return _eventsLimit; }
-  inline       unsigned int                  Configuration::getRipupCost            () const { return _ripupCost; }
-  inline       size_t                        Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
-  inline       size_t                        Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
-  inline       void                          Configuration::setRipupCost            ( unsigned int cost ) { _ripupCost = cost; }
+  inline       uint64_t                      Configuration::getEventsLimit          () const { return _eventsLimit; }
+  inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
+  inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
+  inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
+  inline       void                          Configuration::setRipupCost            ( uint32_t cost ) { _ripupCost = cost; }
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
-  inline       void                          Configuration::setEventsLimit          ( unsigned long limit ) { _eventsLimit = limit; }
+  inline       void                          Configuration::setEventsLimit          ( uint64_t limit ) { _eventsLimit = limit; }
   inline       bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
+  inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
+  inline       void                          Configuration::setProfileEventCosts    ( bool state ) { _profileEventCosts = state; }
 
 
 

@@ -72,7 +72,7 @@ namespace Katana {
              static Configuration*      getConfiguration    ();
       inline static Net*                getBlockageNet      ();
       inline static NegociateWindow*    getNegociateWindow  ();
-      inline static unsigned int        getRipupCost        ();
+      inline static uint32_t            getRipupCost        ();
       inline static Anabatic::GCell*    getGCellUnder       ( DbU::Unit, DbU::Unit );
              static void                setInterrupt        ( bool );
       inline static void                addInsertEvent      ( TrackMarker*  , Track* );
@@ -88,7 +88,7 @@ namespace Katana {
     private:                                                
                     KatanaEngine*       _getKatanaEngine    ();
                     Net*                _getBlockageNet     ();
-                    unsigned int        _getRipupCost       ();
+                    uint32_t            _getRipupCost       ();
                     Anabatic::GCell*    _getGCellUnder      ( DbU::Unit, DbU::Unit );
                     void                _doRemovalEvents    ();
       virtual       size_t              _revalidate         ();
@@ -155,7 +155,7 @@ namespace Katana {
   inline NegociateWindow* Session::getNegociateWindow ()
   { return get("getNegociateWindow()")->_getNegociateWindow(); }
 
-  inline unsigned int  Session::getRipupCost ()
+  inline uint32_t  Session::getRipupCost ()
   { return get("getRipupCost()")->_getRipupCost(); }
 
   inline Anabatic::GCell* Session::getGCellUnder ( DbU::Unit x, DbU::Unit y )

@@ -119,6 +119,15 @@ namespace Isobar {
   }
 
 
+  inline uint32_t  PyAny_AsUInt32 ( PyObject* object )
+  {
+    int64_t value = 0;
+    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
+    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    return (uint32_t)value;
+  }
+
+
   template< typename T = DbU::Unit, typename enable_if< is_same<T,long>::value, T >::type = 0 >
   inline T  PyAny_AsLong ( PyObject* object )
   {
@@ -609,14 +618,32 @@ extern "C" {
                                                                        \
     HTRY                                                               \
     PyObject* arg0;                                                    \
-    if ( ! PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
+    if (not PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
       return ( NULL );                                                 \
-    cobject->FUNC_NAME ( Isobar::PyAny_AsInt(arg0) );                 \
+    cobject->FUNC_NAME ( Isobar::PyAny_AsInt(arg0) );                  \
     HCATCH                                                             \
                                                                        \
     Py_RETURN_NONE;                                                    \
   }
 
+
+// -------------------------------------------------------------------
+// Attribute Method Macro For uint32_t.
+
+#define  DirectSetUInt32Attribute(PY_FUNC_NAME,FUNC_NAME,PY_SELF_TYPE,SELF_TYPE) \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args ) \
+  {                                                                    \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")              \
+                                                                       \
+    HTRY                                                               \
+    PyObject* arg0;                                                    \
+    if (not PyArg_ParseTuple ( args, "O:" #SELF_TYPE"."#FUNC_NAME"()", &arg0 ) ) \
+      return ( NULL );                                                 \
+    cobject->FUNC_NAME ( Isobar::PyAny_AsUInt32(arg0) );               \
+    HCATCH                                                             \
+                                                                       \
+    Py_RETURN_NONE;                                                    \
+  }
 
 // -------------------------------------------------------------------
 // Attribute Method Macro For Long.

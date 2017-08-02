@@ -31,6 +31,8 @@ namespace Anabatic {
 
   using std::cerr;
   using std::endl;
+  using Hurricane::order;
+  using Hurricane::setInBound;
   using Hurricane::tab;
   using Hurricane::Name;
   using Hurricane::Net;
@@ -59,11 +61,12 @@ namespace Anabatic {
                        , CntVTee                  = (1 <<  4)
                        , CntInvalidated           = (1 <<  6)
                        , CntInvalidatedCache      = (1 <<  7)
-                       , CntInCreationStage       = (1 <<  8)
-                       , CntBadTopology           = (1 <<  9)
-                       , CntIgnoreAnchor          = (1 << 10)
-                       , CntWeakTerminal          = (1 << 11)
-                       , CntUserNativeConstraints = (1 << 12)
+                       , CntInvalidatedWidth      = (1 <<  8)
+                       , CntInCreationStage       = (1 <<  9)
+                       , CntBadTopology           = (1 << 10)
+                       , CntIgnoreAnchor          = (1 << 11)
+                       , CntWeakTerminal          = (1 << 12)
+                       , CntUserNativeConstraints = (1 << 13)
                        };
 
   class AutoContact {
@@ -104,15 +107,16 @@ namespace Anabatic {
       inline  bool             isInCreationStage          () const;
       inline  bool             isInvalidated              () const;
       inline  bool             isInvalidatedCache         () const;
+      inline  bool             isInvalidatedWidth         () const;
       inline  bool             isTerminal                 () const;
       inline  bool             isTurn                     () const;
-              bool             isTee                      ( unsigned int direction ) const;
+              bool             isTee                      ( Flags direction ) const;
       inline  bool             isHTee                     () const;
       inline  bool             isVTee                     () const;
       inline  bool             isFixed                    () const;
       inline  bool             isUserNativeConstraints    () const;
       inline  bool             hasBadTopology             () const;
-              bool             canDestroy                 ( unsigned int flags=0 ) const;
+              bool             canDestroy                 ( Flags flags=Flags::NoFlags ) const;
               bool             canMoveUp                  ( const AutoSegment* moved ) const;
     // Accessors.                                        
       inline  Contact*         base                       () const;
@@ -125,13 +129,17 @@ namespace Anabatic {
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getPerpandicular           ( const AutoSegment* ) const = 0;
       virtual AutoSegment*     getSegment                 ( unsigned int ) const = 0;
+      virtual AutoHorizontal*  getHorizontal1             () const;
+      virtual AutoHorizontal*  getHorizontal2             () const;
+      virtual AutoVertical*    getVertical1               () const;
+      virtual AutoVertical*    getVertical2               () const;
               void             getDepthSpan               ( size_t& minDepth, size_t& maxDepth ) const;
       inline  unsigned int     getMinDepth                () const;
       inline  unsigned int     getMaxDepth                () const;
               void             getLengths                 ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& );
       virtual Box              getNativeConstraintBox     () const;
-              Interval         getNativeUConstraints      ( unsigned int direction ) const;
-              Interval         getUConstraints            ( unsigned int direction ) const;
+              Interval         getNativeUConstraints      ( Flags direction ) const;
+              Interval         getUConstraints            ( Flags direction ) const;
       inline  DbU::Unit        getCBXMin                  () const;
       inline  DbU::Unit        getCBXMax                  () const;
       inline  DbU::Unit        getCBYMin                  () const;
@@ -141,17 +149,18 @@ namespace Anabatic {
     // Collections.
               AutoSegments     getAutoSegments            ();
     // Modifiers.              
-              void             invalidate                 ( unsigned int flags=0 );
+              void             invalidate                 ( Flags flags=Flags::NoFlags );
       virtual void             cacheDetach                ( AutoSegment* ) = 0;
       virtual void             cacheAttach                ( AutoSegment* ) = 0;
       virtual void             updateCache                () = 0;
+              void             updateSize                 ();
       virtual void             updateGeometry             () = 0;
       virtual void             updateTopology             () = 0;
-              void             showTopologyError          ( const std::string&, unsigned int flags=0 );
+              void             showTopologyError          ( const std::string&, Flags flags=Flags::NoFlags );
       virtual void             checkTopology              ();
       virtual void             forceOnGrid                ( Point );
-      inline  void             setFlags                   ( unsigned int );
-      inline  void             unsetFlags                 ( unsigned int );
+      inline  void             setFlags                   ( Flags );
+      inline  void             unsetFlags                 ( Flags );
               void             setGCell                   ( GCell* );
       inline  void             setCBXMin                  ( DbU::Unit xMin );
       inline  void             setCBXMax                  ( DbU::Unit xMax );
@@ -160,7 +169,7 @@ namespace Anabatic {
               void             setConstraintBox           ( const Box& box );
               bool             restrictConstraintBox      ( DbU::Unit constraintMin
                                                           , DbU::Unit constraintMax
-                                                          , unsigned int flags=Flags::WarnOnError );
+                                                          , Flags flags=Flags::WarnOnError );
               void             restoreNativeConstraintBox ();
               void             migrateConstraintBox       ( AutoContact* other );
               void             destroy                    ();
@@ -179,7 +188,7 @@ namespace Anabatic {
               size_t           _id;
               Contact*         _contact;
               GCell*           _gcell;
-              unsigned int     _flags;
+              Flags            _flags;
               DbU::Unit        _xMin;
               DbU::Unit        _xMax;
               DbU::Unit        _yMin;
@@ -200,7 +209,7 @@ namespace Anabatic {
       inline  int              _boundX      ( DbU::Unit x ) const;
       inline  int              _boundY      ( DbU::Unit x ) const;
       static  void             _getTopology ( Contact*, Component*& anchor, Horizontal**&, Vertical**&, size_t );
-      virtual void             _invalidate  ( unsigned int flags ) = 0;
+      virtual void             _invalidate  ( Flags flags ) = 0;
   };
 
 
@@ -236,6 +245,7 @@ namespace Anabatic {
   inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
   inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
   inline bool          AutoContact::isInvalidatedCache      () const { return _flags&CntInvalidatedCache; }
+  inline bool          AutoContact::isInvalidatedWidth      () const { return _flags&CntInvalidatedWidth; }
   inline bool          AutoContact::isTurn                  () const { return _flags&CntTurn; }
   inline bool          AutoContact::isFixed                 () const { return _flags&CntFixed; }
   inline bool          AutoContact::isUserNativeConstraints () const { return _flags&CntUserNativeConstraints; }
@@ -251,8 +261,8 @@ namespace Anabatic {
   inline void          AutoContact::setCBXMax               ( DbU::Unit xMax ) { _xMax = _boundX(xMax); }
   inline void          AutoContact::setCBYMin               ( DbU::Unit yMin ) { _yMin = _boundY(yMin); }
   inline void          AutoContact::setCBYMax               ( DbU::Unit yMax ) { _yMax = _boundY(yMax); }
-  inline void          AutoContact::setFlags                ( unsigned int flags ) { _flags|= flags; }
-  inline void          AutoContact::unsetFlags              ( unsigned int flags ) { _flags&=~flags; }
+  inline void          AutoContact::setFlags                ( Flags flags ) { _flags|= flags; }
+  inline void          AutoContact::unsetFlags              ( Flags flags ) { _flags&=~flags; }
   inline DbU::Unit     AutoContact::getCBXMin               () const { return isFixed() ? _contact->getX() : _xMin; }
   inline DbU::Unit     AutoContact::getCBXMax               () const { return isFixed() ? _contact->getX() : _xMax; }
   inline DbU::Unit     AutoContact::getCBYMin               () const { return isFixed() ? _contact->getY() : _yMin; }
@@ -277,7 +287,7 @@ namespace Anabatic {
 
   class LocatorHelper {
     public:
-      inline                LocatorHelper ( AutoContact*, unsigned int flags=0 );
+      inline                LocatorHelper ( AutoContact*, Flags flags=Flags::NoFlags );
       inline  bool          isValid       () const;
       inline  AutoSegment*  getSegment    () const;
       inline  void          progress      ();
@@ -285,22 +295,22 @@ namespace Anabatic {
       inline  unsigned int  _min          () const;
       inline  unsigned int  _max          () const;
     private:
-      unsigned int  _flags;
+      Flags         _flags;
       unsigned int  _index;
       AutoContact*  _contact;
   };
 
 
-  inline LocatorHelper::LocatorHelper ( AutoContact* contact, unsigned int flags )
+  inline LocatorHelper::LocatorHelper ( AutoContact* contact, Flags flags )
     : _flags(flags), _index(_min()), _contact(contact)
   {
-    cdebug_tabw(145,1);
-    cdebug_log(145,0) << "CTOR LocatorHelper " << contact->_getString() << endl;
-    cdebug_log(145,0) << "+ _min():" << _min() << endl;
-    cdebug_log(145,0) << "+ _max():" << _max() << endl;
-    cdebug_log(145,0) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
+    cdebug_tabw(144,1);
+    cdebug_log(144,0) << "CTOR LocatorHelper " << contact->_getString() << endl;
+    cdebug_log(144,0) << "+ _min():" << _min() << endl;
+    cdebug_log(144,0) << "+ _max():" << _max() << endl;
+    cdebug_log(144,0) << "+ getSegment(_min()):" << _contact->getSegment(_min()) << endl;
     if (not _contact->getSegment(_index)) progress();
-    cdebug_tabw(145,-1);
+    cdebug_tabw(144,-1);
   }
 
   inline bool  LocatorHelper::isValid () const
@@ -314,36 +324,25 @@ namespace Anabatic {
 
   inline AutoSegment* LocatorHelper::getSegment () const
   {
-    cdebug_log(145,0) << "LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
+    cdebug_log(144,0) << "  LocatorHelper::getSegment(" << _index << ") - " << _contact->getSegment(_index) << endl;
     return (_index < _max()) ? _contact->getSegment(_index) : NULL;
   }
 
   inline void  LocatorHelper::progress ()
   {
-    cdebug_tabw(145,1);
+    cdebug_tabw(144,1);
     ++_index;
-    cdebug_log(145,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+    cdebug_log(144,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     while ((_index < _max()) and (_contact->getSegment(_index) == NULL)) {
       ++_index;
-      cdebug_log(145,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
+      cdebug_log(144,0) << "LocatorHelper::progress() [" << _index << "] " << _contact->getSegment(_index) << endl;
     }
-    cdebug_tabw(145,-1);
+    cdebug_tabw(144,-1);
   }
 
 
 // -------------------------------------------------------------------
 // Helper Functions.
-
-
-  template<typename Type>inline void  order ( Type& a, Type& b ) { if (a>b) std::swap(a,b); }
-
-  inline DbU::Unit  setInBound ( DbU::Unit lower, DbU::Unit upper, DbU::Unit& value )
-  {
-    if ( lower > value ) value = lower;
-    if ( upper < value ) value = upper;
-
-    return value;
-  }
 
   inline size_t abssub ( size_t a, size_t b ) { return (a>b) ? a-b : b-a; }
   

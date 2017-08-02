@@ -40,12 +40,13 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
-    , _hTracksReservedLocal(Cfg::getParamInt("katana.hTracksReservedLocal",    3)->asInt())
-    , _vTracksReservedLocal(Cfg::getParamInt("katana.vTracksReservedLocal",    3)->asInt())
+    , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt("katana.ripupCost"           ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt("katana.eventsLimit"         ,4000000)->asInt())
+    , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
     , _flags               (0)
+    , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
@@ -81,6 +82,7 @@ namespace Katana {
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
+    , _profileEventCosts   (other._profileEventCosts)
   {
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
@@ -97,7 +99,7 @@ namespace Katana {
   { return new Configuration(*this); }
 
 
-  void  Configuration::setRipupLimit ( unsigned int type, unsigned int limit )
+  void  Configuration::setRipupLimit ( uint32_t type, uint32_t limit )
   {
     if ( type >= RipupLimitsTableSize ) {
       cerr << Error("setRipupLimit(): Bad ripup limit index: %ud (> %ud)."
@@ -109,7 +111,7 @@ namespace Katana {
   }
 
 
-  void  Configuration::setHTracksReservedLocal ( size_t reserved )
+  void  Configuration::setHTracksReservedLocal ( uint32_t reserved )
   {
     // if (reserved > getHEdgeCapacity())
     //   throw Error( "Configuration::setHTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
@@ -119,7 +121,7 @@ namespace Katana {
   }
 
 
-  void  Configuration::setVTracksReservedLocal ( size_t reserved )
+  void  Configuration::setVTracksReservedLocal ( uint32_t reserved )
   {
     // if (reserved > 1.0)
     //   throw Error( "Configuration::setVTracksReservedLocal(): tracks reserved for local routing (%d) is greater than edge capacity %d."
@@ -129,7 +131,7 @@ namespace Katana {
   }
 
 
-  unsigned int  Configuration::getRipupLimit ( unsigned int type ) const
+  uint32_t  Configuration::getRipupLimit ( uint32_t type ) const
   {
     if ( type >= RipupLimitsTableSize ) {
       cerr << Error("getRipupLimit(): Bad ripup limit index: %u (> %u)."
@@ -142,6 +144,8 @@ namespace Katana {
 
   void  Configuration::print ( Cell* cell ) const
   {
+    if (not cmess1.enabled()) return;
+
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;

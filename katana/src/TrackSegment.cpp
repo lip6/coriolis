@@ -26,7 +26,9 @@
 #include "anabatic/GCell.h"
 #include "crlcore/RoutingGauge.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackSegment.h"
+#include "katana/RoutingPlane.h"
+#include "katana/TrackSegmentRegular.h"
+#include "katana/TrackSegmentWide.h"
 #include "katana/Track.h"
 #include "katana/Session.h"
 #include "katana/RoutingEvent.h"
@@ -45,7 +47,7 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Name;
   using Hurricane::RoutingPad;
-  using Anabatic::SegSlackened;
+  using Anabatic::AutoSegment;
   using Anabatic::perpandicularTo;
 
 // -------------------------------------------------------------------
@@ -61,13 +63,16 @@ namespace Katana {
   TrackSegment::TrackSegment ( AutoSegment* segment, Track* track )
     : TrackElement  (track)
     , _base         (segment)
+    , _symmetric    (NULL)
     , _freedomDegree(0)
     , _ppitch       (0)
     , _data         (NULL)
+    , _priority     (0.0)
     , _dogLegLevel  (0)
+    , _flags        (NoFlags)
   {
-    cdebug_log(155,0) << "CTOR TrackSegment " << (void*)this    << ":" << this    << endl;
-    cdebug_log(155,0) << "             over " << (void*)segment << ":" << segment << endl;
+    cdebug_log(155,0) << "CTOR TrackSegment " << /*(void*)this    <<*/ ":" << this    << endl;
+    cdebug_log(155,0) << "             over " << /*(void*)segment <<*/ ":" << segment << endl;
 
     setFlags( TElemCreated|TElemLocked );
     if (segment) {
@@ -126,16 +131,18 @@ namespace Katana {
   {
     created = false;
 
-    TrackElement* trackElement = Session::lookup( segment->base() );
+    DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
+    TrackElement* trackElement     = Session::lookup( segment->base() );
     if (not trackElement) { 
-      TrackSegment* trackSegment = new TrackSegment( segment, track );
-      trackSegment->_postCreate();
-      created = true;
-      
-      trackSegment->invalidate();
+      if (segment->base()->getWidth() <= defaultWireWidth)
+        trackElement = new TrackSegmentRegular( segment, track );
+      else
+        trackElement = new TrackSegmentWide   ( segment, track );
 
-      cdebug_log(159,0) << "TrackSegment::create(): " << trackSegment << endl;
-      trackElement = trackSegment;
+      trackElement->_postCreate();
+      trackElement->invalidate();
+      created = true;
+      cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
     }
 
     return trackElement;
@@ -153,33 +160,40 @@ namespace Katana {
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
-  bool           TrackSegment::isStrongTerminal     ( unsigned int flags ) const { return _base->isStrongTerminal(flags); }
+  bool           TrackSegment::isStrongTerminal     ( Flags flags ) const { return _base->isStrongTerminal(flags); }
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
   bool           TrackSegment::isReduced            () const { return _base->isReduced(); }
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
   bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
+  bool           TrackSegment::isAnalog             () const { return _base->isAnalog(); }
+  bool           TrackSegment::isWide               () const { return _base->isWide(); }
+  bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
 // Predicates.
+  bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
 // Accessors.
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }
   Flags          TrackSegment::getDirection         () const { return _base->getDirection(); }
   Net*           TrackSegment::getNet               () const { return _base->getNet(); }
+  DbU::Unit      TrackSegment::getWidth             () const { return _base->getWidth(); }
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
   DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
-  unsigned int   TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
+  float          TrackSegment::getPriority          () const { return _priority; }
+  uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
   TrackElement*  TrackSegment::getCanonical         ( Interval& i ) { return Session::lookup( _base->getCanonical(i)->base() ); }
+  TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
   void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
 
 
-  DataNegociate* TrackSegment::getDataNegociate ( unsigned int flags ) const
+  DataNegociate* TrackSegment::getDataNegociate ( Flags flags ) const
   {
     if (flags & Flags::DataSelf) return _data;
 
@@ -190,14 +204,14 @@ namespace Katana {
 
   TrackElement* TrackSegment::getNext () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackSegment::getPrevious () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getPrevious( dummy, getNet() );
   }
 
@@ -216,8 +230,8 @@ namespace Katana {
   {
     if (not _track) return Interval(false);
 
-    size_t  begin = _index;
-    size_t  end   = _index;
+    size_t  begin = _track->find( this );
+    size_t  end   = begin;
 
     return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
   }
@@ -231,22 +245,22 @@ namespace Katana {
     GCell* sourceGCell = base()->getAutoSource()->getGCell();
     GCell* targetGCell = base()->getAutoTarget()->getGCell();
 
-    cdebug_log(159,0) << "getGCells(): sourceGCell: " << sourceGCell << endl;
-    cdebug_log(159,0) << "getGCells(): targetGCell: " << targetGCell << endl;
+    cdebug_log(155,0) << "getGCells(): sourceGCell: " << sourceGCell << endl;
+    cdebug_log(155,0) << "getGCells(): targetGCell: " << targetGCell << endl;
 
     for ( AutoSegment* segment : base()->getAligneds() ) {
-      cdebug_log(159,0) << "| " << segment << endl;
+      cdebug_log(155,0) << "| " << segment << endl;
 
       Anabatic::GCell* gcell = segment->getAutoSource()->getGCell();
       if (isLess(gcell,sourceGCell,direction)) {
         sourceGCell = gcell;
-        cdebug_log(159,0) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
+        cdebug_log(155,0) << "getGCells(): new sourceGCell: " << sourceGCell << endl;
       }
 
       gcell = segment->getAutoTarget()->getGCell();
       if (isGreater(gcell,targetGCell,direction)) {
         targetGCell = gcell;
-        cdebug_log(159,0) << "getGCells(): new targetGCell: " << targetGCell << endl;
+        cdebug_log(155,0) << "getGCells(): new targetGCell: " << targetGCell << endl;
       }
     }
 
@@ -256,12 +270,12 @@ namespace Katana {
 
     Flags      side = (direction & Flags::Horizontal) ? Flags::EastSide : Flags::NorthSide;
     DbU::Unit  axis = getAxis();
-    cdebug_log(159,0) << "* dir:" << side._getString() << " @" << DbU::getValueString(axis) << endl;
+    cdebug_log(155,0) << "* dir:" << side._getString() << " @" << DbU::getValueString(axis) << endl;
 
     gcells.push_back( sourceGCell );
     while ( sourceGCell != targetGCell ) {
       sourceGCell = sourceGCell->getNeighborAt( direction, axis );
-      cdebug_log(159,0) << "| " << sourceGCell << endl;
+      cdebug_log(155,0) << "| " << sourceGCell << endl;
       if (not sourceGCell) break;
 
       gcells.push_back( sourceGCell );
@@ -289,7 +303,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setDoglegLevel ( unsigned int level )
+  void  TrackSegment::setDoglegLevel ( uint32_t level )
   {
     if (level > 15) {
       cerr << Bug("%s has reached maximum dog leg count (15)."
@@ -300,8 +314,44 @@ namespace Katana {
   }
 
 
+  void  TrackSegment::setPriorityLock ( bool state )
+  {
+    if (state) _flags |=  PriorityLocked;
+    else       _flags &= ~PriorityLocked;
+  }
+
+
   void  TrackSegment::updateFreedomDegree ()
   { _freedomDegree = _base->getSlack(); }
+
+
+  void  TrackSegment::forcePriority ( float forced )
+  { if (not isPriorityLocked()) _priority = forced; }
+
+
+  void  TrackSegment::computePriority ()
+  {
+    if (isPriorityLocked()) return;
+    if (isAnalog() and isTerminal()) { _priority = 0.0; return; }
+
+    double length = DbU::toLambda(getLength());
+    double slack  = DbU::toLambda(base()->getSlack());
+    double pitch  = DbU::toLambda(getPitch());
+
+  //if (length > 200.0) length = 200.0 - std::log(length)*20.0;
+  //if (length <   0.0) length =   0.0;
+  //if (slack / DbU::toLambda(_segment->getPitch()) < 2.0 ) slack = 999.0;
+    if (slack / pitch > 10.0) slack = 10.0*pitch;
+      
+  //cerr << "TrackSegment::computePriority() length:" << length << " slack:" << slack
+  //     << " pri:" << (length + 1.0) * (slack + 1.0) << " pitch:" << DbU::toLambda(getPitch()) << endl;
+
+    _priority = (length + 1.0) * (slack + 1.0);
+
+  //if (_priority > 10000.0) cerr << "_priority:" << _priority
+  //                              << " length:"   << DbU::toLambda(getLength())
+  //                              << " slack:"    << DbU::toLambda(base()->getSlack()) << endl;
+  }
 
 
   void  TrackSegment::updatePPitch ()
@@ -312,7 +362,25 @@ namespace Katana {
 
 
   void  TrackSegment::setTrack ( Track* track )
-  { TrackElement::setTrack( track ); }
+  {
+    if (track) {
+      DbU::Unit axis = track->getAxis();
+      if (getTrackSpan() > 1) {
+        DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
+        axis += (pitch * (getTrackSpan() - 1)) / 2;
+
+        cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
+                          << " trackSpan:" << getTrackSpan() << endl;
+      }
+      addTrackCount( getTrackSpan() );
+      setAxis( axis, AutoSegment::SegAxisSet );
+    }
+    TrackElement::setTrack( track );
+  }
+
+
+  void  TrackSegment::setSymmetric ( TrackElement* segment )
+  { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
   void  TrackSegment::detach ()
@@ -320,8 +388,23 @@ namespace Katana {
     cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
 
     setTrack( NULL );
-    setIndex( (size_t)-1 );
     setFlags( TElemLocked );
+    addTrackCount( -1 );
+  }
+
+
+  void  TrackSegment::detach ( set<Track*>& removeds )
+  {
+    cdebug_log(159,0) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << ">" << endl;
+
+    Track* wtrack = getTrack();
+    for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+      
+      removeds.insert( wtrack );
+      wtrack = wtrack->getNextTrack();
+    }
+
+    detach();
   }
 
 
@@ -337,7 +420,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setAxis ( DbU::Unit axis, unsigned int flags  )
+  void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
   {
     _base->setAxis( axis, flags );
     invalidate();
@@ -350,10 +433,10 @@ namespace Katana {
 
     cdebug_log(159,0) << "TrackSegment::swapTrack()" << endl;
 
-    size_t  thisIndex   = getIndex ();
-    Track*  thisTrack   = getTrack ();
-    size_t  otherIndex  = other->getIndex ();
-    Track*  otherTrack  = other->getTrack ();
+    Track*  thisTrack   = getTrack();
+    Track*  otherTrack  = other->getTrack();
+    size_t  thisIndex   = ( thisTrack) ?  thisTrack->find( this) : Track::npos;
+    size_t  otherIndex  = (otherTrack) ? otherTrack->find(other) : Track::npos;
 
     if (_track and otherTrack and (_track != otherTrack)) {
       cerr << Error("TrackSegment::swapTrack() - swapping TrackSegments from different tracks.") << endl;
@@ -363,12 +446,10 @@ namespace Katana {
     other->setTrack( NULL );
 
     other->setTrack( thisTrack );
-    other->setIndex( thisIndex );
     if (thisTrack) thisTrack->setSegment( other, thisIndex );
 
     setTrack( otherTrack );
-    setIndex( otherIndex );
-    if (_track) _track->setSegment( this, _index );
+    if (_track) _track->setSegment( this, otherIndex );
 
 #if defined(CHECK_DATABASE_DISABLED)
     if      (_track)            _track->_check();
@@ -386,7 +467,7 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::reschedule ( unsigned int level )
+  void  TrackSegment::reschedule ( uint32_t level )
   {
     cdebug_log(159,1) << "TrackSegment::reschedule() - " << this << endl;
 
@@ -402,19 +483,61 @@ namespace Katana {
   }
 
 
-  float  TrackSegment::getMaxUnderDensity ( unsigned int flags ) const
+  void  TrackSegment::computeAlignedPriority ()
+  {
+    if (isPriorityLocked() or isTerminal()) return;
+
+    computePriority();
+
+    AutoSegment* canonical = base();
+
+    vector<TrackElement*> sourceAligneds;
+    vector<TrackElement*> targetAligneds;
+    for ( AutoSegment* segment : canonical->getAligneds(Flags::Source|Flags::WithDoglegs) ) {
+      if (not segment->isCanonical()) continue;
+      sourceAligneds.push_back( Session::lookup(segment) );
+    }
+    for ( AutoSegment* segment : canonical->getAligneds(Flags::Target|Flags::WithDoglegs) ) {
+      if (not segment->isCanonical()) continue;
+      sourceAligneds.push_back( Session::lookup(segment) );
+    }
+
+    if (sourceAligneds.empty() and targetAligneds.empty()) return;
+
+    setPriorityLock( true );
+
+    cdebug_log(159,0) << "TrackSegment::computeAlignedPriority() " << this << endl;
+    cdebug_log(159,0) << "Aligneds on:" << getPriority() << ":" << this << endl;
+    for ( size_t i=0 ; i<sourceAligneds.size() ; ++i ) {
+      sourceAligneds[i]->forcePriority( getPriority() - 2.0*(i+1) + 1.0 );
+      sourceAligneds[i]->setPriorityLock( true );
+
+      cdebug_log(159,0) << "| S:" << i << " " << sourceAligneds[i]->getPriority()
+                        << ":" << sourceAligneds[i] << endl;
+    }
+    for ( size_t i=0 ; i<targetAligneds.size() ; ++i ) {
+      targetAligneds[i]->forcePriority( getPriority() - 2.0*(i+1) );
+      targetAligneds[i]->setPriorityLock( true );
+
+      cdebug_log(159,0) << "| T:" << i << " " << targetAligneds[i]->getPriority()
+                        << ":" << targetAligneds[i] << endl;
+    }
+  }
+
+
+  float  TrackSegment::getMaxUnderDensity ( Flags flags ) const
   { return _base->getMaxUnderDensity( flags ); }
 
 
-  bool  TrackSegment::canPivotUp ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canPivotUp ( float reserve, Flags flags ) const
   { return _base->canPivotUp( reserve, flags ); }
 
 
-  bool  TrackSegment::canPivotDown ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canPivotDown ( float reserve, Flags flags ) const
   { return _base->canPivotDown( reserve, flags ); }
 
 
-  bool  TrackSegment::canMoveUp ( float reserve, unsigned int flags ) const
+  bool  TrackSegment::canMoveUp ( float reserve, Flags flags ) const
   { return _base->canMoveUp( reserve, flags ); }
 
 
@@ -425,7 +548,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::slacken ( unsigned int flags )
+  bool  TrackSegment::slacken ( Flags flags )
   {
     cdebug_log(159,0) << "TrackSegment::slacken()" << endl;
 
@@ -449,7 +572,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveUp ( unsigned int flags )
+  bool  TrackSegment::moveUp ( Flags flags )
   {
     bool success = false;
 
@@ -470,7 +593,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveDown ( unsigned int flags )
+  bool  TrackSegment::moveDown ( Flags flags )
   {
     bool success = false;
 
@@ -491,7 +614,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::moveAside ( unsigned int flags )
+  bool  TrackSegment::moveAside ( Flags flags )
   {
     bool success = true;
 
@@ -578,7 +701,7 @@ namespace Katana {
   }
 
 
-  bool  TrackSegment::canDogleg ( Anabatic::GCell* doglegGCell, unsigned int flags )
+  bool  TrackSegment::canDogleg ( Anabatic::GCell* doglegGCell, Flags flags )
   {
     cdebug_log(159,1) << "TrackSegment::canDogleg(GCell*) " << doglegGCell << endl;
 
@@ -740,7 +863,7 @@ namespace Katana {
   }
 
 
-  TrackElement* TrackSegment::makeDogleg ( Interval interval, unsigned int& flags )
+  TrackElement* TrackSegment::makeDogleg ( Interval interval, Flags& flags )
   {
     TrackElement* perpandicular = NULL;
     TrackElement* parallel      = NULL;
@@ -757,7 +880,7 @@ namespace Katana {
   {
     cdebug_log(159,1) << "TrackSegment::_postDoglegs()" << endl;
 
-    unsigned int                doglegLevel = 0;
+    uint32_t                    doglegLevel = 0;
     const vector<AutoSegment*>& doglegs = Session::getDoglegs();
     vector<TrackElement*>       segments;
 
@@ -863,7 +986,6 @@ namespace Katana {
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               +  " "   + getString(_dogLegLevel)
-              + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")
@@ -880,7 +1002,9 @@ namespace Katana {
   Record* TrackSegment::_getRecord () const
   {
     Record* record = TrackElement::_getRecord();
-    record->add( getSlot( "_base",  _base ) );
+    record->add( getSlot( "_base"     ,  _base      ) );
+    record->add( getSlot( "_symmetric",  _symmetric ) );
+    record->add( getSlot( "_flags"    ,  _flags     ) );
     return record;
   }
 

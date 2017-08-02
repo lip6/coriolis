@@ -15,6 +15,8 @@
                                      katana/DataSymmetric.h
                                      katana/TrackElement.h       katana/TrackElements.h
                                      katana/TrackSegment.h
+                                     katana/TrackSegmentRegular.h
+                                     katana/TrackSegmentWide.h
                                      katana/TrackFixedSegment.h
                                      katana/TrackMarker.h
                                      katana/Track.h
@@ -36,6 +38,7 @@
                       )
                    set( pyIncludes   katana/PyKatanaEngine.h
                                      katana/PyGraphicKatanaEngine.h
+                                     katana/PyKatanaFlags.h
                       )
                    set( mocIncludes  katana/GraphicKatanaEngine.h )
                    set( cpps         Constants.cpp
@@ -46,6 +49,8 @@
                                      TrackElement.cpp
                                      TrackElements.cpp
                                      TrackSegment.cpp
+                                     TrackSegmentRegular.cpp
+                                     TrackSegmentWide.cpp
                                      TrackFixedSegment.cpp
                                      TrackMarker.cpp
                                      Track.cpp
@@ -73,6 +78,7 @@
                    set( pyCpps       PyKatana.cpp
                                      PyKatanaEngine.cpp
                                      PyGraphicKatanaEngine.cpp
+                                     PyKatanaFlags.cpp
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 

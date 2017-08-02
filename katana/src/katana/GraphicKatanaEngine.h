@@ -68,7 +68,7 @@ namespace Katana {
                                                      , const Transformation&
                                                      );
               KatanaEngine*        createEngine      ();
-              KatanaEngine*        getForFramework   ( unsigned int flags );
+              KatanaEngine*        getForFramework   ( uint32_t flags );
       static  GraphicKatanaEngine* grab              ();
       virtual const Name&          getName           () const;
               Cell*                getCell           ();

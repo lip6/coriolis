@@ -99,7 +99,8 @@ DBos Relation::getSlaveOwners() const
 void Relation::onReleasedBy(DBo* owner)
 // ************************************
 {
-    _getOwnerSet().erase(owner);
+  _erase( owner );
+//_getOwnerSet().erase(owner);
 
     if (owner == _masterOwner) destroy();
 }

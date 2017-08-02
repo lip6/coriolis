@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/RoutingEventQueue.h"                    |
+// |  C++ Header  :  "./katana/RoutingEventQueue.h"                  |
 // +-----------------------------------------------------------------+
 
 
@@ -39,10 +39,10 @@ namespace Katana {
                            ~RoutingEventQueue  ();
       inline  bool          empty              () const;
       inline  size_t        size               () const;
-      inline  unsigned int  getTopEventLevel   () const;
+      inline  uint32_t      getTopEventLevel   () const;
               RoutingEvent* pop                ();
               void          load               ( const vector<TrackElement*>& );
-              void          add                ( TrackElement*, unsigned int level );
+              void          add                ( TrackElement*, uint32_t level );
       inline  void          push               ( RoutingEvent* );
               void          repush             ( RoutingEvent* );
               void          repushInvalidateds ();
@@ -57,7 +57,7 @@ namespace Katana {
 
     protected:
     // Attributes.
-      unsigned int                                   _topEventLevel;
+      uint32_t                                       _topEventLevel;
       RoutingEventSet                                _pushRequests;
       multiset<RoutingEvent*,RoutingEvent::Compare>  _events;
 
@@ -69,11 +69,11 @@ namespace Katana {
 
 
 // Inline Functions.
-  inline bool          RoutingEventQueue::empty            () const { return _events.empty(); }
-  inline size_t        RoutingEventQueue::size             () const { return _events.size(); }
-  inline unsigned int  RoutingEventQueue::getTopEventLevel () const { return _topEventLevel; }
-  inline string        RoutingEventQueue::_getTypeName     () const { return "EventQueue"; }
-  inline void          RoutingEventQueue::push             ( RoutingEvent* event ) { _pushRequests.insert( event ); }
+  inline bool      RoutingEventQueue::empty            () const { return _events.empty(); }
+  inline size_t    RoutingEventQueue::size             () const { return _events.size(); }
+  inline uint32_t  RoutingEventQueue::getTopEventLevel () const { return _topEventLevel; }
+  inline string    RoutingEventQueue::_getTypeName     () const { return "EventQueue"; }
+  inline void      RoutingEventQueue::push             ( RoutingEvent* event ) { _pushRequests.insert( event ); }
 
 
 }  // Katana namespace.

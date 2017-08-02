@@ -271,12 +271,12 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GCell".
 
-  Name          GCell::_extensionName = "Anabatic::GCell";
-  unsigned int  GCell::_displayMode   = GCell::Boundary;
+  Name      GCell::_extensionName = "Anabatic::GCell";
+  uint32_t  GCell::_displayMode   = GCell::Boundary;
 
 
-  unsigned int  GCell::getDisplayMode      () { return _displayMode; }
-  void          GCell::setDisplayMode      ( unsigned int mode ) { _displayMode = mode; }
+  uint32_t  GCell::getDisplayMode () { return _displayMode; }
+  void      GCell::setDisplayMode ( uint32_t mode ) { _displayMode = mode; }
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
@@ -581,10 +581,10 @@ namespace Anabatic {
   Box  GCell::getBorder ( const GCell* s, const GCell* t )
   {
     Flags flags = Flags::NoFlags;
-    flags |= (s->getXMax() == t->getXMin()) ? Flags::EastSide  : 0;
-    flags |= (t->getXMax() == s->getXMin()) ? Flags::WestSide  : 0;
-    flags |= (s->getYMax() == t->getYMin()) ? Flags::NorthSide : 0;
-    flags |= (t->getYMax() == s->getYMin()) ? Flags::SouthSide : 0;
+    flags |= (s->getXMax() == t->getXMin()) ? Flags::EastSide  : Flags::NoFlags;
+    flags |= (t->getXMax() == s->getXMin()) ? Flags::WestSide  : Flags::NoFlags;
+    flags |= (s->getYMax() == t->getYMin()) ? Flags::NorthSide : Flags::NoFlags;
+    flags |= (t->getYMax() == s->getYMin()) ? Flags::SouthSide : Flags::NoFlags;
 
     if (flags & Flags::Vertical) {
       if (flags & Flags::Horizontal) return Box();
@@ -1065,11 +1065,11 @@ namespace Anabatic {
   { return getDensity(depth) > Session::getSaturateRatio(); }
 
 
-  Interval  GCell::getSide ( unsigned int direction ) const
-  {
-    if (direction & Flags::Vertical) return Interval( getYMin(), getYMax() );
-    return Interval( getXMin(), getXMax() );
-  }
+  // Interval  GCell::getSide ( Flags direction ) const
+  // {
+  //   if (direction & Flags::Vertical) return Interval( getYMin(), getYMax() );
+  //   return Interval( getXMin(), getXMax() );
+  // }
 
 
   AutoSegments  GCell::getHStartSegments ()
@@ -1154,7 +1154,7 @@ namespace Anabatic {
   }
 
 
-  float  GCell::getDensity ( unsigned int flags ) const
+  float  GCell::getDensity ( Flags flags ) const
   {
     if (isInvalidated() and not(flags & Flags::NoUpdate))  const_cast<GCell*>(this)->updateDensity();
 
@@ -1552,7 +1552,7 @@ namespace Anabatic {
   bool  GCell::stepDesaturate ( size_t        depth
                               , set<Net*>&    globalNets
                               , AutoSegment*& moved
-                              , unsigned int  flags
+                              , Flags         flags
                               )
   {
     cdebug_log(9000,0) << "Deter| GCell::stepDesaturate() [" << getId() << "] depth:" << depth << endl;
@@ -1664,6 +1664,20 @@ namespace Anabatic {
 
     return false;
   }
+
+
+  void GCell::setEdgesOccupancy ( unsigned int width, unsigned int height )
+  {
+    getEastEdge()->setCapacity(width);
+    getWestEdge()->setCapacity(width);
+    getNorthEdge()->setCapacity(height);
+    getSouthEdge()->setCapacity(height);
+    getEastEdge()->setRealOccupancy(0);
+    getWestEdge()->setRealOccupancy(0);
+    getNorthEdge()->setRealOccupancy(0);
+    getSouthEdge()->setRealOccupancy(0);
+  }
+
 
   string  GCell::_getTypeName () const
   { return getString(_extensionName); }
