@@ -77,6 +77,7 @@ namespace Katana {
       virtual bool                  isUTurn                () const;
       virtual bool                  isUserDefined          () const;
       virtual bool                  isAnalog               () const;
+      virtual bool                  isWide                 () const;
       virtual bool                  isPriorityLocked       () const;
     // Predicates.
       virtual bool                  hasSymmetric           () const;
@@ -91,6 +92,7 @@ namespace Katana {
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
       virtual Net*                  getNet                 () const;
+      virtual DbU::Unit             getWidth               () const;
       virtual const Layer*          getLayer               () const;
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
@@ -124,6 +126,7 @@ namespace Katana {
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
       virtual void                  detach                 ();
+      virtual void                  detach                 ( std::set<Track*>& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();

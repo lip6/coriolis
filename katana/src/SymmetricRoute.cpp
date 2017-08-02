@@ -49,7 +49,6 @@ namespace {
   using Anabatic::AutoContact;
   using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
-  using Anabatic::AutoSegmentFlag;
   using Katana::TrackElement;
   using Katana::DataSymmetric;
   using Katana::KatanaEngine;

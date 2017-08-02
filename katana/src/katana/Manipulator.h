@@ -75,14 +75,23 @@ namespace Katana {
              bool                 makeDogleg              ( DbU::Unit );
              bool                 makeDogleg              ( Interval );
              bool                 relax                   ( Interval, uint32_t flags=AllowExpand );
-             bool                 insertInTrack           ( size_t );
-             bool                 shrinkToTrack           ( size_t
-                                                          , uint32_t   flags=0
-                                                          , DbU::Unit  leftAxisHint=0
-                                                          , DbU::Unit  rightAxisHint=0
+             bool                 insertInTrack           ( size_t icost );
+             bool                 shrinkToTrack           ( size_t    icost
+                                                          , uint32_t  flags=0
+                                                          , DbU::Unit leftAxisHint=0
+                                                          , DbU::Unit rightAxisHint=0
                                                           );
-             bool                 forceToTrack            ( size_t );
+             bool                 forceToTrack            ( size_t icost );
              bool                 forceOverLocals         ();
+    private:
+             bool                 _insertInTrack          ( size_t icost, size_t itrack );
+             bool                 _shrinkToTrack          ( size_t     icost
+                                                          , size_t     itrack
+                                                          , uint32_t   flags
+                                                          , DbU::Unit  leftAxisHint
+                                                          , DbU::Unit  rightAxisHint
+                                                          );
+             bool                 _forceToTrack           ( size_t icost, size_t itrack );
     private:
       TrackElement*  _segment;
       DataNegociate* _data;

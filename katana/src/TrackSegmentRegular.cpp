@@ -44,7 +44,7 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Name;
   using Hurricane::RoutingPad;
-  using Anabatic::SegSlackened;
+  using Anabatic::AutoSegment;
   using Anabatic::perpandicularTo;
 
 // -------------------------------------------------------------------

@@ -60,52 +60,54 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
 
-  enum AutoSegmentFlag { SegNoFlags           = 0x0
-                       , SegHorizontal        = (1<< 0)
-                       , SegFixed             = (1<< 1)
-                       , SegGlobal            = (1<< 2)
-                       , SegWeakGlobal        = (1<< 3)
-                       , SegLongLocal         = (1<< 4)
-                       , SegCanonical         = (1<< 5)
-                       , SegBipoint           = (1<< 6)
-                       , SegDogleg            = (1<< 7)
-                       , SegStrap             = (1<< 8)
-                       , SegSourceTop         = (1<< 9)
-                       , SegSourceBottom      = (1<<10)
-                       , SegTargetTop         = (1<<11)
-                       , SegTargetBottom      = (1<<12)
-                       , SegIsReduced         = (1<<13)
-                       , SegLayerChange       = (1<<14)
-                       , SegSourceTerminal    = (1<<15)  // Replace Terminal.
-                       , SegTargetTerminal    = (1<<16)  // Replace Terminal.
-                       , SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal
-                       , SegWeakTerminal1     = (1<<17)  // Replace TopologicalEnd.
-                       , SegWeakTerminal2     = (1<<18)  // Replace TopologicalEnd.
-                       , SegNotSourceAligned  = (1<<19)
-                       , SegNotTargetAligned  = (1<<20)
-                       , SegUnbound           = (1<<21)
-                       , SegHalfSlackened     = (1<<22)
-                       , SegSlackened         = (1<<23)
-                       , SegAxisSet           = (1<<24)
-                       , SegInvalidated       = (1<<25)
-                       , SegInvalidatedSource = (1<<26)
-                       , SegInvalidatedTarget = (1<<27)
-                       , SegInvalidatedLayer  = (1<<28)
-                       , SegCreated           = (1<<29)
-                       , SegUserDefined       = (1<<30)
-                       , SegAnalog            = (1<<31)
-                       // Masks.              
-                       , SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2
-                       , SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned
-                       , SegSpinTop           = SegSourceTop    |SegTargetTop
-                       , SegSpinBottom        = SegSourceBottom |SegTargetBottom
-                       , SegDepthSpin         = SegSpinTop      |SegSpinBottom
-                       };
  
 
   class AutoSegment {
       friend class AutoHorizontal;
       friend class AutoVertical;
+
+    public:
+      static const uint64_t  SegNoFlags           =  0L;
+      static const uint64_t  SegHorizontal        = (1L<< 0);
+      static const uint64_t  SegFixed             = (1L<< 1);
+      static const uint64_t  SegGlobal            = (1L<< 2);
+      static const uint64_t  SegWeakGlobal        = (1L<< 3);
+      static const uint64_t  SegLongLocal         = (1L<< 4);
+      static const uint64_t  SegCanonical         = (1L<< 5);
+      static const uint64_t  SegBipoint           = (1L<< 6);
+      static const uint64_t  SegDogleg            = (1L<< 7);
+      static const uint64_t  SegStrap             = (1L<< 8);
+      static const uint64_t  SegSourceTop         = (1L<< 9);
+      static const uint64_t  SegSourceBottom      = (1L<<10);
+      static const uint64_t  SegTargetTop         = (1L<<11);
+      static const uint64_t  SegTargetBottom      = (1L<<12);
+      static const uint64_t  SegIsReduced         = (1L<<13);
+      static const uint64_t  SegLayerChange       = (1L<<14);
+      static const uint64_t  SegSourceTerminal    = (1L<<15);  // Replace Terminal.
+      static const uint64_t  SegTargetTerminal    = (1L<<16);  // Replace Terminal.
+      static const uint64_t  SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal;
+      static const uint64_t  SegWeakTerminal1     = (1L<<17);  // Replace TopologicalEnd.
+      static const uint64_t  SegWeakTerminal2     = (1L<<18);  // Replace TopologicalEnd.
+      static const uint64_t  SegNotSourceAligned  = (1L<<19);
+      static const uint64_t  SegNotTargetAligned  = (1L<<20);
+      static const uint64_t  SegUnbound           = (1L<<21);
+      static const uint64_t  SegHalfSlackened     = (1L<<22);
+      static const uint64_t  SegSlackened         = (1L<<23);
+      static const uint64_t  SegAxisSet           = (1L<<24);
+      static const uint64_t  SegInvalidated       = (1L<<25);
+      static const uint64_t  SegInvalidatedSource = (1L<<26);
+      static const uint64_t  SegInvalidatedTarget = (1L<<27);
+      static const uint64_t  SegInvalidatedLayer  = (1L<<28);
+      static const uint64_t  SegCreated           = (1L<<29);
+      static const uint64_t  SegUserDefined       = (1L<<30);
+      static const uint64_t  SegAnalog            = (1L<<31);
+      static const uint64_t  SegWide              = (1L<<32);
+    // Masks.
+      static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
+      static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
+      static const uint64_t  SegSpinTop           = SegSourceTop    |SegTargetTop;
+      static const uint64_t  SegSpinBottom        = SegSourceBottom |SegTargetBottom;
+      static const uint64_t  SegDepthSpin         = SegSpinTop      |SegSpinBottom;
 
     public:
       class Observable : public StaticObservable<1> {
@@ -158,6 +160,7 @@ namespace Anabatic {
       virtual DbU::Unit           getX                       () const;
       virtual DbU::Unit           getY                       () const;
       inline  DbU::Unit           getWidth                   () const;
+      inline  DbU::Unit           getContactWidth            () const;
       inline  DbU::Unit           getLength                  () const;
       inline  DbU::Unit           getSourcePosition          () const;
       inline  DbU::Unit           getTargetPosition          () const;
@@ -204,6 +207,7 @@ namespace Anabatic {
               bool                isReduceCandidate          () const;
               bool                isUTurn                    () const;
       inline  bool                isAnalog                   () const;
+      inline  bool                isWide                     () const;
       virtual bool                _canSlacken                () const = 0;
               bool                canReduce                  () const;
               bool                mustRaise                  () const;
@@ -219,7 +223,7 @@ namespace Anabatic {
               bool                checkDepthSpin             () const;
     // Accessors.                                            
       inline  unsigned long       getId                      () const;
-      inline  uint32_t            getFlags                   () const;
+      inline  uint64_t            getFlags                   () const;
       virtual Flags               getDirection               () const = 0;
       inline  GCell*              getGCell                   () const;
       virtual size_t              getGCells                  ( vector<GCell*>& ) const = 0;
@@ -258,9 +262,9 @@ namespace Anabatic {
       inline  AutoSegment*        getCanonical               ( Interval& i );
               float               getMaxUnderDensity         ( Flags flags );
     // Modifiers.                                            
-      inline  void                unsetFlags                 ( uint32_t );
-      inline  void                setFlags                   ( uint32_t );
-              void                setFlagsOnAligneds         ( uint32_t );
+      inline  void                unsetFlags                 ( uint64_t );
+      inline  void                setFlags                   ( uint64_t );
+              void                setFlagsOnAligneds         ( uint64_t );
       inline  void                incReduceds                ();
       inline  void                decReduceds                ();
       virtual void                setDuSource                ( DbU::Unit du ) = 0;
@@ -345,7 +349,7 @@ namespace Anabatic {
     // Internal: Attributes.      
       const  unsigned long        _id;
              GCell*               _gcell;
-             uint32_t             _flags;
+             uint64_t             _flags;
              unsigned int         _depth      : 8;
              unsigned int         _optimalMin :16;
              unsigned int         _optimalMax :16;
@@ -369,7 +373,7 @@ namespace Anabatic {
               AutoSegment&        operator=       ( const AutoSegment& );
     protected:                                    
               void                _invalidate     ();
-      inline  uint32_t            _getFlags       () const;
+      inline  uint64_t            _getFlags       () const;
               std::string         _getStringFlags () const;
       virtual void                _setAxis        ( DbU::Unit ) = 0;
 
@@ -390,7 +394,7 @@ namespace Anabatic {
 
     // Static Utilities.
     public:
-      static inline uint32_t      swapSourceTargetFlags      ( AutoSegment* );
+      static inline uint64_t      swapSourceTargetFlags      ( AutoSegment* );
       static inline bool          areAlignedsAndDiffLayer    ( AutoSegment*, AutoSegment* );
       static        AutoSegment*  getGlobalThroughDogleg     ( AutoSegment* dogleg, AutoContact* from );
       static        bool          isTopologicalBound         ( AutoSegment*  seed, Flags flags );
@@ -495,11 +499,12 @@ namespace Anabatic {
   inline  bool            AutoSegment::isCreated              () const { return _flags & SegCreated; }
   inline  bool            AutoSegment::isUserDefined          () const { return _flags & SegUserDefined; }
   inline  bool            AutoSegment::isAnalog               () const { return _flags & SegAnalog; }
-  inline  void            AutoSegment::setFlags               ( uint32_t flags ) { _flags |=  flags; }
-  inline  void            AutoSegment::unsetFlags             ( uint32_t flags ) { _flags &= ~flags; }
+  inline  bool            AutoSegment::isWide                 () const { return _flags & SegWide; }
+  inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
+  inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }
                                                               
-  inline  uint32_t        AutoSegment::getFlags               () const { return _flags; }
-  inline  uint32_t        AutoSegment::_getFlags              () const { return _flags; }
+  inline  uint64_t        AutoSegment::getFlags               () const { return _flags; }
+  inline  uint64_t        AutoSegment::_getFlags              () const { return _flags; }
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); }
@@ -510,6 +515,11 @@ namespace Anabatic {
   inline  void            AutoSegment::resetNativeConstraints ( DbU::Unit min, DbU::Unit max ) { _nativeConstraints = Interval( min, max ); }
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
+
+
+  inline  DbU::Unit  AutoSegment::getContactWidth () const
+  { return getWidth() + Session::getViaWidth(getLayer()) - Session::getWireWidth(getLayer()); }
+
 
   inline  void  AutoSegment::setParent ( AutoSegment* parent )
   {
@@ -523,10 +533,10 @@ namespace Anabatic {
   inline bool  AutoSegment::CompareId::operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const
   { return lhs->getId() < rhs->getId(); }
  
-  inline uint32_t  AutoSegment::swapSourceTargetFlags ( AutoSegment* segment )
+  inline uint64_t  AutoSegment::swapSourceTargetFlags ( AutoSegment* segment )
   {
-    uint32_t segFlags  = segment->getFlags();
-    uint32_t swapFlags = segment->getFlags() & ~(SegSourceTop        |SegTargetTop
+    uint64_t segFlags  = segment->getFlags();
+    uint64_t swapFlags = segment->getFlags() & ~(SegSourceTop        |SegTargetTop
                                                 |SegSourceBottom     |SegTargetBottom
                                                 |SegSourceTerminal   |SegTargetTerminal
                                                 |SegNotSourceAligned |SegNotTargetAligned

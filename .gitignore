@@ -8,6 +8,8 @@ TAGS
 GTAGS
 GPATH
 GRTAGS
+dir-locals.el
+.projectile
 
 
 man/

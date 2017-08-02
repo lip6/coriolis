@@ -140,9 +140,7 @@ namespace Katana {
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
       if (not _removeEvents[i]._segment->getTrack()) continue;
-
-      packTracks.insert( _removeEvents[i]._segment->getTrack() );
-      _removeEvents[i]._segment->detach();
+      _removeEvents[i]._segment->detach( packTracks );
     }
     _removeEvents.clear();
 

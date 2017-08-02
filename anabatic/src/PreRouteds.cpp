@@ -165,7 +165,7 @@ namespace Anabatic {
               AutoContact* source = Session::lookup( dynamic_cast<Contact*>( isegment->getSource() ));
               AutoContact* target = Session::lookup( dynamic_cast<Contact*>( isegment->getTarget() ));
               AutoSegment* autoSegment = AutoSegment::create( source, target, isegment );
-              autoSegment->setFlags( SegUserDefined|SegAxisSet );
+              autoSegment->setFlags( AutoSegment::SegUserDefined|AutoSegment::SegAxisSet );
             }
           }
         }
