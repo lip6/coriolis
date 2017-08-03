@@ -124,7 +124,7 @@ namespace Katana {
       inline  const vector<TrackElement*>& getPerpandiculars     () const;
       inline  DbU::Unit                    getAxisHint           () const;
       inline  DbU::Unit                    getAxisHistory        () const;
-      inline  long                         getAxisWeight         ( DbU::Unit ) const;
+      inline  DbU::Unit                    getAxisWeight         ( DbU::Unit ) const;
       inline  const Interval&              getConstraints        () const;
       inline  const Interval&              getOptimal            () const;
       inline  const Interval&              getPerpandicularFree  () const;
@@ -218,7 +218,7 @@ namespace Katana {
 //inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _perpandiculars; }
   inline DbU::Unit                     RoutingEvent::getAxisHistory          () const { return _axisHistory; }
   inline DbU::Unit                     RoutingEvent::getAxisHint             () const { return _axisHint; }
-  inline long                          RoutingEvent::getAxisWeight           ( DbU::Unit axis ) const { return abs(axis - getAxisHint()); }
+  inline DbU::Unit                     RoutingEvent::getAxisWeight           ( DbU::Unit axis ) const { return abs(axis - getAxisHint()); }
   inline const Interval&               RoutingEvent::getConstraints          () const { return _constraints; }
   inline const Interval&               RoutingEvent::getOptimal              () const { return _optimal; }
   inline const Interval&               RoutingEvent::getPerpandicularFree    () const { return _dataNegociate->getPerpandicularFree(); }
