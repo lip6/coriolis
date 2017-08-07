@@ -39,7 +39,7 @@ namespace Katana {
                        , Track*        symTrack
                        )
     : _flags          ((symSegment) ? Symmetric : NoFlags)
-    , _span           (1)
+    , _span           (refSegment->getTrackSpan())
     , _tracks         ( _span * ((symSegment) ? 2 : 1)
                       , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
     , _segment1       (refSegment)
@@ -227,25 +227,25 @@ namespace Katana {
   {
     string s = "<" + _getTypeName();
 
-    s += " "   + getString(getTrack(0));
-    s += " "   + getString(_dataState);
-    s += "+"   + getString(_ripupCount);
-    s += ":"   + getString((_dataState<<2)+_ripupCount);
-    s += " "   + string ( (isInfinite()      )?"I":"-" );
-    s +=         string ( (isBlockage()      )?"b":"-" );
-    s +=         string ( (isFixed()         )?"f":"-" );
-    s +=         string ( (isHardOverlap()   )?"h":"-" );
-    s +=         string ( (isOverlap()       )?"o":"-" );
-    s +=         string ( (isOverlapGlobal() )?"g":"-" );
-    s +=         string ( (isGlobalEnclosed())?"e":"-" );
-    s += " "   + getString(_terminals);
-    s += "/"   + /*DbU::getValueString(_delta)*/       getString(_delta);
-    s += "-"   + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
-    s += "/"   + DbU::getValueString(_axisWeight);
-    s += "/"   + DbU::getValueString(_deltaPerpand);
-    s += "/f:" + DbU::getValueString(_distanceToFixed);
-    s += "/"   + DbU::getValueString(_longuestOverlap);
-    s += " "   + getString(_dataState);
+    s += " "    + getString(getTrack(0));
+    s += " "    + getString(_dataState);
+    s += "+"    + getString(_ripupCount);
+    s += ":"    + getString((_dataState<<2)+_ripupCount);
+    s += " "    + string ( (isInfinite()      )?"I":"-" );
+    s +=          string ( (isBlockage()      )?"b":"-" );
+    s +=          string ( (isFixed()         )?"f":"-" );
+    s +=          string ( (isHardOverlap()   )?"h":"-" );
+    s +=          string ( (isOverlap()       )?"o":"-" );
+    s +=          string ( (isOverlapGlobal() )?"g":"-" );
+    s +=          string ( (isGlobalEnclosed())?"e":"-" );
+    s += " "    + getString(_terminals);
+    s += "/"    + /*DbU::getValueString(_delta)*/       getString(_delta);
+    s += "-"    + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
+    s += "/aw:" + DbU::getValueString(_axisWeight);
+    s += "/dp:" + DbU::getValueString(_deltaPerpand);
+    s += "/df:" + DbU::getValueString(_distanceToFixed);
+    s += "/ov:" + DbU::getValueString(_longuestOverlap);
+    s += " "    + getString(_dataState);
     s += ">";
 
     return s;

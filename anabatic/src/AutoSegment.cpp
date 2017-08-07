@@ -539,7 +539,7 @@ namespace Anabatic {
     updateOrient   ();
     updatePositions();
 
-    uint32_t oldSpinFlags = _flags & SegDepthSpin;
+    uint64_t oldSpinFlags = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
       AutoContact*  source       = getAutoSource();
@@ -766,7 +766,7 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::setFlagsOnAligneds ( uint32_t flags )
+  void  AutoSegment::setFlagsOnAligneds ( uint64_t flags )
   {
     setFlags( flags );
     if (not isNotAligned()) {
@@ -965,7 +965,7 @@ namespace Anabatic {
       if (not source->isTerminal())
         source->setFlags( CntWeakTerminal );
     } else {
-      uint32_t terminalFlag = 0;
+      uint64_t terminalFlag = 0;
       switch ( _getFlags() & SegWeakTerminal ) {
         case 0: break;
         case SegSourceTerminal|SegTargetTerminal:
@@ -2151,10 +2151,21 @@ namespace Anabatic {
                                    , Segment*      hurricaneSegment
                                    )
   {
-    static const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
-    static const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
-    static DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
+    const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
+    DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
+    const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
+    DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
+
+    uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
+    if (wPitch > 1) {
+      horizontalWidth += (wPitch-1) * Session::getPitch(1);
+      verticalWidth   += (wPitch-1) * Session::getPitch(2);
+    }
+    cdebug_log(149,0) << "wPitch:" << wPitch << " hW:" << DbU::getValueString(horizontalWidth) << endl;
+
+    if (wPitch > 2) {
+      throw Error( "wPitch %d for \"%s\"", wPitch, getString(source->getNet()->getName()).c_str() );
+    }
 
     bool         reattachSource = false;
     bool         reattachTarget = false;
@@ -2259,6 +2270,8 @@ namespace Anabatic {
       throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
     }
 
+    if (wPitch > 1) segment->setFlags( SegWide );
+
     return segment;
   }
 
@@ -2274,19 +2287,31 @@ namespace Anabatic {
   //    depth=1 is horizontal         |  METAL2
   //    depth=2 is vertical           |  METAL3
   // Should be based on gauge informations.
-    static const Layer* hLayer = Session::getRoutingLayer( 1 );
-    static DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    static const Layer* vLayer = Session::getRoutingLayer( 2 );
-    static DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+    const Layer* hLayer = Session::getRoutingLayer( 1 );
+    DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
+    const Layer* vLayer = Session::getRoutingLayer( 2 );
+    DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
 
     const Layer* horizontalLayer = hLayer;
     DbU::Unit    horizontalWidth = hWidth;
     const Layer* verticalLayer   = vLayer;
     DbU::Unit    verticalWidth   = vWidth;
 
+    uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
+    if (wPitch > 1) {
+      horizontalWidth = (wPitch-1) * Session::getPitch(1) + hWidth;
+      verticalWidth   = (wPitch-1) * Session::getPitch(2) + vWidth;
+    }
+
     if (depth != RoutingGauge::nlayerdepth) {
       horizontalLayer = verticalLayer = Session::getRoutingLayer( depth );
-      horizontalWidth = verticalWidth = Session::getWireWidth   ( depth );
+
+      if (wPitch > 1) {
+        horizontalWidth = verticalWidth = (wPitch-1) * Session::getPitch    (depth)
+                                                     + Session::getWireWidth(depth);
+      } else {
+        horizontalWidth = verticalWidth = Session::getWireWidth( depth );
+      }
     }
 
     AutoSegment* segment;
@@ -2334,6 +2359,8 @@ namespace Anabatic {
                                         ) );
     } else
       throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
+
+    if (wPitch > 1) segment->setFlags( SegWide );
 
     return segment;
   }

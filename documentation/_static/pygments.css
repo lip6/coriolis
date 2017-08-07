@@ -1,0 +1,46 @@
+div.codeblock, div[class^="highlight"] {
+   font-family:      "courrier", "andale mono", monospace;
+   font-size:        90%;
+   white-space:      pre;
+/*
+   margin:           10pt;
+*/
+   padding:          1px 10pt 1px 10pt;
+   margin:           0pt;
+   border:           none;
+   background-color: #fcfce1;
+ }
+.codeblock * .hll, [class^="highlight"] * .hll { background-color: #fcfce1 }
+.codeblock * .c  , [class^="highlight"] * .c   { color: black } /* Comment */
+.codeblock * .err, [class^="highlight"] * .err { border: 1px solid #FF0000 } /* Error */
+.codeblock * .k  , [class^="highlight"] * .k   { color: black; font-weight: bold } /* Keyword */
+.codeblock * .cm , [class^="highlight"] * .cm  { color: black; font-style: italic } /* Comment.Multiline */
+.codeblock * .cp , [class^="highlight"] * .cp  { color: black; font-style: italic } /* Comment.Preproc */
+.codeblock * .c1 , [class^="highlight"] * .c1  { color: black; font-style: italic } /* Comment.Single */
+.codeblock * .cs , [class^="highlight"] * .cs  { color: black; font-style: italic } /* Comment.Special */
+.codeblock * .ge , [class^="highlight"] * .ge  { font-style: italic } /* Generic.Emph */
+.codeblock * .gh , [class^="highlight"] * .gh  { font-weight: bold } /* Generic.Heading */
+.codeblock * .gp , [class^="highlight"] * .gp  { font-weight: bold } /* Generic.Prompt */
+.codeblock * .gs , [class^="highlight"] * .gs  { font-weight: bold } /* Generic.Strong */
+.codeblock * .gu , [class^="highlight"] * .gu  { font-weight: bold } /* Generic.Subheading */
+.codeblock * .kc , [class^="highlight"] * .kc  { color: black } /* Keyword.Constant */
+.codeblock * .kd , [class^="highlight"] * .kd  { color: black } /* Keyword.Declaration */
+.codeblock * .kn , [class^="highlight"] * .kn  { color: black } /* Keyword.Namespace */
+.codeblock * .kp , [class^="highlight"] * .kp  { color: black } /* Keyword.Pseudo */
+.codeblock * .kr , [class^="highlight"] * .kr  { color: black } /* Keyword.Reserved */
+.codeblock * .kt , [class^="highlight"] * .kt  { color: black } /* Keyword.Type */
+.codeblock * .s  , [class^="highlight"] * .s   { color: black } /* Literal.String */
+.codeblock * .n  , [class^="highlight"] * .n   { font-weight: bold; font-style: italic } /* Name.Class */
+.codeblock * .nc , [class^="highlight"] * .nc  { color: black } /* Name.Class */
+.codeblock * .ow , [class^="highlight"] * .ow  { color: black } /* Operator.Word */
+.codeblock * .sb , [class^="highlight"] * .sb  { color: black } /* Literal.String.Backtick */
+.codeblock * .sc , [class^="highlight"] * .sc  { color: black } /* Literal.String.Char */
+.codeblock * .sd , [class^="highlight"] * .sd  { color: black } /* Literal.String.Doc */
+.codeblock * .s2 , [class^="highlight"] * .s2  { color: black } /* Literal.String.Double */
+.codeblock * .se , [class^="highlight"] * .se  { color: black } /* Literal.String.Escape */
+.codeblock * .sh , [class^="highlight"] * .sh  { color: black } /* Literal.String.Heredoc */
+.codeblock * .si , [class^="highlight"] * .si  { color: black } /* Literal.String.Interpol */
+.codeblock * .sx , [class^="highlight"] * .sx  { color: black } /* Literal.String.Other */
+.codeblock * .sr , [class^="highlight"] * .sr  { color: black } /* Literal.String.Regex */
+.codeblock * .s1 , [class^="highlight"] * .s1  { color: black } /* Literal.String.Single */
+.codeblock * .ss , [class^="highlight"] * .ss  { color: black } /* Literal.String.Symbol */

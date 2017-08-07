@@ -410,19 +410,19 @@ namespace Anabatic {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _horizontal->invert();
 
-      Flags spinFlags = _flags & SegDepthSpin;
+      uint64_t spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
       if (spinFlags & SegSourceTop   ) setFlags( SegTargetTop );
       if (spinFlags & SegSourceBottom) setFlags( SegTargetBottom );
       if (spinFlags & SegTargetTop   ) setFlags( SegSourceTop );
       if (spinFlags & SegTargetBottom) setFlags( SegSourceBottom );
 
-      Flags invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
+      uint64_t invalidatedFlags = _flags & (SegInvalidatedSource|SegInvalidatedTarget);
       unsetFlags( SegInvalidatedSource|SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedSource) setFlags( SegInvalidatedTarget );
       if (invalidatedFlags & SegInvalidatedTarget) setFlags( SegInvalidatedSource );
 
-      Flags terminalFlags = _flags & SegStrongTerminal;
+      uint64_t terminalFlags = _flags & SegStrongTerminal;
       unsetFlags( SegStrongTerminal );
       if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
       if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );

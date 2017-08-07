@@ -26,6 +26,7 @@
 #include "anabatic/GCell.h"
 #include "crlcore/RoutingGauge.h"
 #include "katana/DataNegociate.h"
+#include "katana/RoutingPlane.h"
 #include "katana/TrackSegmentRegular.h"
 #include "katana/TrackSegmentWide.h"
 #include "katana/Track.h"
@@ -46,7 +47,7 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Name;
   using Hurricane::RoutingPad;
-  using Anabatic::SegSlackened;
+  using Anabatic::AutoSegment;
   using Anabatic::perpandicularTo;
 
 // -------------------------------------------------------------------
@@ -133,20 +134,15 @@ namespace Katana {
     DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
     TrackElement* trackElement     = Session::lookup( segment->base() );
     if (not trackElement) { 
-      if (segment->base()->getWidth() <= defaultWireWidth) {
+      if (segment->base()->getWidth() <= defaultWireWidth)
         trackElement = new TrackSegmentRegular( segment, track );
-        trackElement->_postCreate();
-        created = true;
-      
-        trackElement->invalidate();
+      else
+        trackElement = new TrackSegmentWide   ( segment, track );
 
-        cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
-      } else {
-        throw Error( "TrackSegment::create() Non-regular TrackSegment are not supported yet.\n"
-                     "        (on: %s)" 
-                   , getString(segment).c_str()
-                   );
-      }
+      trackElement->_postCreate();
+      trackElement->invalidate();
+      created = true;
+      cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
     }
 
     return trackElement;
@@ -172,6 +168,7 @@ namespace Katana {
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
   bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
   bool           TrackSegment::isAnalog             () const { return _base->isAnalog(); }
+  bool           TrackSegment::isWide               () const { return _base->isWide(); }
   bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
 // Predicates.
   bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
@@ -179,6 +176,7 @@ namespace Katana {
   unsigned long  TrackSegment::getId                () const { return _base->getId(); }
   Flags          TrackSegment::getDirection         () const { return _base->getDirection(); }
   Net*           TrackSegment::getNet               () const { return _base->getNet(); }
+  DbU::Unit      TrackSegment::getWidth             () const { return _base->getWidth(); }
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
   DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
@@ -206,14 +204,14 @@ namespace Katana {
 
   TrackElement* TrackSegment::getNext () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getNext( dummy, getNet() );
   }
 
 
   TrackElement* TrackSegment::getPrevious () const
   {
-    size_t dummy = _index;
+    size_t dummy = _track->find( this );
     return _track->getPrevious( dummy, getNet() );
   }
 
@@ -232,8 +230,8 @@ namespace Katana {
   {
     if (not _track) return Interval(false);
 
-    size_t  begin = _index;
-    size_t  end   = _index;
+    size_t  begin = _track->find( this );
+    size_t  end   = begin;
 
     return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
   }
@@ -365,7 +363,18 @@ namespace Katana {
 
   void  TrackSegment::setTrack ( Track* track )
   {
-    if (track) setAxis( track->getAxis(), Anabatic::SegAxisSet );
+    if (track) {
+      DbU::Unit axis = track->getAxis();
+      if (getTrackSpan() > 1) {
+        DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
+        axis += (pitch * (getTrackSpan() - 1)) / 2;
+
+        cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
+                          << " trackSpan:" << getTrackSpan() << endl;
+      }
+      addTrackCount( getTrackSpan() );
+      setAxis( axis, AutoSegment::SegAxisSet );
+    }
     TrackElement::setTrack( track );
   }
 
@@ -379,8 +388,23 @@ namespace Katana {
     cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
 
     setTrack( NULL );
-    setIndex( (size_t)-1 );
     setFlags( TElemLocked );
+    addTrackCount( -1 );
+  }
+
+
+  void  TrackSegment::detach ( set<Track*>& removeds )
+  {
+    cdebug_log(159,0) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << ">" << endl;
+
+    Track* wtrack = getTrack();
+    for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+      
+      removeds.insert( wtrack );
+      wtrack = wtrack->getNextTrack();
+    }
+
+    detach();
   }
 
 
@@ -409,10 +433,10 @@ namespace Katana {
 
     cdebug_log(159,0) << "TrackSegment::swapTrack()" << endl;
 
-    size_t  thisIndex   = getIndex ();
-    Track*  thisTrack   = getTrack ();
-    size_t  otherIndex  = other->getIndex ();
-    Track*  otherTrack  = other->getTrack ();
+    Track*  thisTrack   = getTrack();
+    Track*  otherTrack  = other->getTrack();
+    size_t  thisIndex   = ( thisTrack) ?  thisTrack->find( this) : Track::npos;
+    size_t  otherIndex  = (otherTrack) ? otherTrack->find(other) : Track::npos;
 
     if (_track and otherTrack and (_track != otherTrack)) {
       cerr << Error("TrackSegment::swapTrack() - swapping TrackSegments from different tracks.") << endl;
@@ -422,12 +446,10 @@ namespace Katana {
     other->setTrack( NULL );
 
     other->setTrack( thisTrack );
-    other->setIndex( thisIndex );
     if (thisTrack) thisTrack->setSegment( other, thisIndex );
 
     setTrack( otherTrack );
-    setIndex( otherIndex );
-    if (_track) _track->setSegment( this, _index );
+    if (_track) _track->setSegment( this, otherIndex );
 
 #if defined(CHECK_DATABASE_DISABLED)
     if      (_track)            _track->_check();
@@ -964,7 +986,6 @@ namespace Katana {
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               +  " "   + getString(_dogLegLevel)
-              + " ["   + ((_track) ? getString(_index) : "npos") + "] "
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")

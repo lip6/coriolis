@@ -1,0 +1,576 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Coriolis User’s Guide" href="index.html"/>
+        <link rel="next" title="Coriolis Configuration &amp; Initialisation" href="Configuration.html"/>
+        <link rel="prev" title="Release Notes" href="Releases.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Coriolis User&#8217;s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Coriolis User&#8217;s Guide</a> &raquo;</li>
+      
+    <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <p></p>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">As the sources are being released, the binary packaging is dropped.
+You still may find older version here: <a class="reference external" href="http://asim.lip6.fr/pub/coriolis/2.0">http://asim.lip6.fr/pub/coriolis/2.0</a> .</p>
+</div>
+<p>In a nutshell, building source consist in pulling the <span class="cb">git</span> repository then
+running the <span class="cb">ccb</span> installer.</p>
+<p>Main building prerequisites:</p>
+<ul class="simple">
+<li>cmake</li>
+<li>C++11-capable compiler</li>
+<li><a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a></li>
+<li>python2.7</li>
+<li>boost</li>
+<li>libxml2</li>
+<li>bzip2</li>
+<li>yacc &amp; lex</li>
+<li>Qt 4 or Qt 5</li>
+</ul>
+<p>Building documentation prerequisites:</p>
+<ul class="simple">
+<li>doxygen</li>
+<li>latex</li>
+<li>latex2html</li>
+<li>python-docutils (for reStructuredText)</li>
+</ul>
+<p>Optional libraries:</p>
+<ul class="simple">
+<li>LEF/DEF (from <a class="reference external" href="https://www.si2.org/">SI2</a>)</li>
+</ul>
+<p>For other distributions, refer to their own packaging system.</p>
+<p></p>
+<div class="section" id="fixed-directory-tree">
+<h2>Fixed Directory Tree<a class="headerlink" href="#fixed-directory-tree" title="Permalink to this headline">¶</a></h2>
+<p>In order to simplificate the work of the <span class="cb">ccb</span> installer, the source, build
+and installation tree is fixed. To successfully compile <span class="sc">Coriolis</span> you must
+follow it exactly. The tree is relative to the home directory of the user
+building it (noted <span class="fboxtt">~/</span> or <span class="fboxtt">$HOME/</span>). Only the source
+directory needs to be manually created by the user, all others will be
+automatically created either by <span class="cb">ccb</span> or the build system.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td colspan="2"><strong>Sources</strong></td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line">Sources root</div>
+<div class="line"><strong>under git</strong></div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">~/coriolis-2.x/src</div>
+<div class="line">~/coriolis-2.x/src/coriolis</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td colspan="2"><strong>Architecture Dependant Build</strong></td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line">Linux, SL 7, 64b</div>
+<div class="line">Linux, SL 6, 32b</div>
+<div class="line">Linux, SL 6, 64b</div>
+<div class="line">Linux, Fedora, 64b</div>
+<div class="line">Linux, Fedora, 32b</div>
+<div class="line">FreeBSD 8, 32b</div>
+<div class="line">FreeBSD 8, 64b</div>
+<div class="line">Windows 7, 32b</div>
+<div class="line">Windows 7, 64b</div>
+<div class="line">Windows 8.x, 32b</div>
+<div class="line">Windows 8.x, 64b</div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">~/coriolis-2.x/Linux.el7_64/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Linux.slsoc6x/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Linux.slsoc6x_64/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Linux.fc_64/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Linux.fc/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/FreeBSD.8x.i386/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/FreeBSD.8x.amd64/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Cygwin.W7/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Cygwin.W7_64/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Cygwin.W8/Release.Shared/build/&lt;tool&gt;</div>
+<div class="line">~/coriolis-2.x/Cygwin.W8_64/Release.Shared/build/&lt;tool&gt;</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td colspan="2"><strong>Architecture Dependant Install</strong></td>
+</tr>
+<tr class="row-even"><td>Linux, SL 6, 32b</td>
+<td>~/coriolis-2.x/Linux.slsoc6x/Release.Shared/install/</td>
+</tr>
+<tr class="row-odd"><td colspan="2"><strong>FHS Compliant Structure under Install</strong></td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line">Binaries</div>
+<div class="line">Libraries (Python)</div>
+<div class="line">Include by tool</div>
+<div class="line">Configuration files</div>
+<div class="line">Doc, by tool</div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">.../install/bin</div>
+<div class="line">.../install/lib</div>
+<div class="line">.../install/include/coriolis2/&lt;project&gt;/&lt;tool&gt;</div>
+<div class="line">.../install/etc/coriolis2/</div>
+<div class="line">.../install/share/doc/coriolis2/en/html/&lt;tool&gt;</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><em>Alternate build types:</em> the <tt class="docutils literal"><span class="pre">Release.Shared</span></tt> means an optimized build
+with shared libraries. But there are also available <tt class="docutils literal"><span class="pre">Static</span></tt> instead of <tt class="docutils literal"><span class="pre">Shared</span></tt>
+and <tt class="docutils literal"><span class="pre">Debug</span></tt> instead of <tt class="docutils literal"><span class="pre">Release</span></tt> and any combination of them.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">Static</span></tt> do not work because I don&#8217;t know yet to mix statically linked binaries
+and Python modules (which must be dynamic).</p>
+</div>
+<p></p>
+</div>
+<div class="section" id="building-coriolis">
+<h2>Building Coriolis<a class="headerlink" href="#building-coriolis" title="Permalink to this headline">¶</a></h2>
+<p>First step is to install the prerequisites. Currently, only <a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a>.
+As RapidJSON is evolving fast, if you encounter compatibility problems,
+the exact version we compiled against is given below.</p>
+<div class="highlight-python"><pre>dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
+dummy@lepka:~$ cd ~/coriolis-2.x/src/support
+dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
+dummy@lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd</pre>
+</div>
+<p>The second step is to create the source directory and pull the <span class="cb">git</span> repository:</p>
+<div class="highlight-python"><pre>dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
+dummy@lepka:~$ cd ~/coriolis-2.x/src
+dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git</pre>
+</div>
+<p>Third and final step, build &amp; install:</p>
+<div class="highlight-python"><pre>dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+                                    --project=coriolis \
+                                    --make="-j4 install"
+dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+                                    --project=coriolis \
+                                    --doc --make="-j1 install"</pre>
+</div>
+<p>We need to separate to perform a separate installation of the documentation because it
+do not support to be generated with a parallel build. So we compile &amp; install in a first
+stage in <tt class="docutils literal"><span class="pre">-j4</span></tt> (or whatever) then we generate the documentation in <tt class="docutils literal"><span class="pre">-j1</span></tt></p>
+<p>Under <span class="sc">rhel6</span> or clones, you must build using the <span class="cb">devtoolset2</span>:</p>
+<div class="highlight-python"><pre>dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+                                    --devtoolset-2 --make="-j4 install"</pre>
+</div>
+<p>If you want to uses Qt 5 instead of Qt 4, you may add the <tt class="docutils literal"><span class="pre">--qt5</span></tt> argument.</p>
+<p>The complete list of <span class="cb">ccb</span> functionalities can be accessed with the <tt class="docutils literal"><span class="pre">--help</span></tt> argument.
+It also may be run in graphical mode (<tt class="docutils literal"><span class="pre">--gui</span></tt>).</p>
+<div class="section" id="building-the-devel-branch">
+<h3>Building the Devel Branch<a class="headerlink" href="#building-the-devel-branch" title="Permalink to this headline">¶</a></h3>
+<p>In the <span class="sc">Coriolis</span> <span class="cb">git</span> repository, two branches are present:</p>
+<ul>
+<li><p class="first">The <span class="cb">master</span> branch, which contains the latest stable version. This is the
+one used by default if you follow the above instructions.</p>
+</li>
+<li><p class="first">The <span class="cb">devel</span> branch, which obviously contains the latest commits from the
+development team. To use it instead of the <span class="cb">master</span> one, do the following
+command just after the first step:</p>
+<div class="highlight-python"><pre>dummy@lepka:~$ git checkout devel
+dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+                                    --make="-j4 install" --debug</pre>
+</div>
+<p>Be aware that it may requires newer versions of the dependencies and may introduce
+incompatibilites with the stable version.</p>
+<p>In the (unlikely) event of a crash of <span class="cb">cgt</span>, as it is a <span class="sc">Python</span> script, the right
+command to run <span class="cb">gdb</span> on it is:</p>
+<div class="highlight-python"><pre>dummy@lepka:work$ gdb python core.XXXX</pre>
+</div>
+</li>
+</ul>
+<p></p>
+</div>
+<div class="section" id="additionnal-requirement-under-macos">
+<h3>Additionnal Requirement under <span class="sc">MacOS</span><a class="headerlink" href="#additionnal-requirement-under-macos" title="Permalink to this headline">¶</a></h3>
+<p><span class="sc">Coriolis</span> make uses of the <span class="cb">boost::python</span> module, but the <span class="sc">MacPorts</span> <span class="cb">boost</span>
+seems unable to work with the <span class="sc">Python</span> bundled with <span class="sc">MacOS</span>. So you have to install
+both of them from <span class="sc">MacPorts</span>:</p>
+<div class="highlight-python"><pre>dummy@macos:~$ port install boost +python27
+dummy@macos:~$ port select python python27
+dummy@macos:-$ export DYLD_FRAMEWORK_PATH=/opt/local/Library/Frameworks</pre>
+</div>
+<p>The last two lines tell <span class="sc">MacOS</span> to use the <span class="sc">Python</span> from <span class="sc">MacPorts</span> and <em>not</em> from
+the system.</p>
+<p>Then proceed with the generic install instructions.</p>
+</div>
+</div>
+<div class="section" id="packaging-coriolis">
+<h2>Packaging Coriolis<a class="headerlink" href="#packaging-coriolis" title="Permalink to this headline">¶</a></h2>
+<p>Packager should not uses <span class="cb">ccb</span>, instead <tt class="docutils literal"><span class="pre">bootstrap/Makefile.package</span></tt> is provided
+to emulate a top-level <tt class="docutils literal"><span class="pre">autotool</span></tt> makefile. Just copy it in the root of the
+<span class="sc">Coriolis</span> git repository (<tt class="docutils literal"><span class="pre">~/corriolis-2.x/src/coriolis/</span></tt>) and build.</p>
+<p>Sligthly outaded packaging configuration files can also be found under <tt class="docutils literal"><span class="pre">bootstrap/</span></tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">bootstrap/coriolis2.spec.in</span></tt> for <span class="cb">rpm</span> based distributions.</li>
+<li><tt class="docutils literal"><span class="pre">bootstrap/debian</span></tt> for <span class="sc">Debian</span> based distributions.</li>
+</ul>
+</div>
+<div class="section" id="hooking-up-into-alliance">
+<h2>Hooking up into <span class="sc">Alliance</span><a class="headerlink" href="#hooking-up-into-alliance" title="Permalink to this headline">¶</a></h2>
+<p><span class="sc">Coriolis</span> relies on <span class="sc">Alliance</span> for the cell libraries. So after installing or
+packaging, you must configure it so that it can found those libraries.</p>
+<p>This is done by editing the one variable <span class="cb">cellsTop</span> in the <span class="sc">Alliance</span> helper
+(see <a class="reference internal" href="Configuration.html#alliance-helper"><em>Alliance Helper</em></a>). This variable must point to the directory of the
+cells libraries. In a typical installation, this is generally
+<span class="cb">/usr/share/alliance/cells</span>.</p>
+</div>
+<div class="section" id="setting-up-the-environment-coriolisenv-py">
+<h2>Setting up the Environment (coriolisEnv.py)<a class="headerlink" href="#setting-up-the-environment-coriolisenv-py" title="Permalink to this headline">¶</a></h2>
+<p>To simplify the tedious task of configuring your environment, a helper is provided
+in the <tt class="docutils literal"><span class="pre">bootstrap</span></tt> source directory (also installed in the directory
+<tt class="docutils literal"><span class="pre">.../install/etc/coriolis2/</span></tt>) :</p>
+<div class="highlight-python"><pre>~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py</pre>
+</div>
+<p>Use it like this:</p>
+<div class="highlight-python"><pre>dummy@lepka:~&gt; eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Do not call that script in your environement initialisation.</strong>
+When used under <span class="sc">rhel6</span> or clones, it needs to be run in the <span class="cb">devtoolset2</span>
+environement. The script then launch a new shell, which may cause an
+infinite loop if it&#8217;s called again in, say <span class="cb">~/.bashrc</span>.</p>
+<p>Instead you may want to create an alias:</p>
+<div class="last highlight-python"><pre>alias c2r='eval "`~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`"'</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Configuration.html" class="btn btn-neutral float-right" title="Coriolis Configuration &amp; Initialisation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Releases.html" class="btn btn-neutral" title="Release Notes" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2017, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

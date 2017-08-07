@@ -1,0 +1,671 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Case 1 - DBo Derived, Standalone &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Hurricane Python/C++ API Tutorial" href="index.html"/>
+        <link rel="next" title="4. Case 2 - Hierarchy of DBo Derived Classes" href="DBoHierarchy.html"/>
+        <link rel="prev" title="2. Basic File Structure and CMake configuration" href="Configuration.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane Python/C++ API Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Hurricane Python/C++ API Tutorial</a> &raquo;</li>
+      
+    <li>3. Case 1 - DBo Derived, Standalone</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="case-1-dbo-derived-standalone">
+<h1>3. Case 1 - DBo Derived, Standalone<a class="headerlink" href="#case-1-dbo-derived-standalone" title="Permalink to this headline">¶</a></h1>
+<p>As example, we take <tt class="docutils literal"><span class="pre">Library</span></tt>. This a <tt class="docutils literal"><span class="pre">DBo</span></tt> derived class, but we
+choose not to export the parent classes. From Python, it will appear
+as a base class.</p>
+<div class="section" id="class-associated-header-file">
+<span id="id1"></span><span id="id2"></span><h2>3.1 Class Associated Header File<a class="headerlink" href="#class-associated-header-file" title="Permalink to this headline">¶</a></h2>
+<p>Here is the typical content of a header file (for <tt class="docutils literal"><span class="pre">PyLibrary</span></tt>):</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#ifndef  PY_LIBRARY_H</span>
+<span class="cp">#define  PY_LIBRARY_H</span>
+
+<span class="cp">#include &quot;hurricane/isobar/PyHurricane.h&quot;</span>
+<span class="cp">#include &quot;hurricane/Library.h&quot;</span>
+
+<span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+    <span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+        <span class="n">PyObject_HEAD</span>
+        <span class="n">Library</span><span class="o">*</span> <span class="n">_object</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">PyLibrary</span><span class="p">;</span>
+
+    <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeLibrary</span><span class="p">;</span>
+    <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyLibrary_Methods</span><span class="p">[];</span>
+    <span class="k">extern</span>  <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyLibrary_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Library</span><span class="o">*</span> <span class="n">lib</span> <span class="p">);</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyLibrary_LinkPyType</span> <span class="p">();</span>
+
+
+<span class="cp">#define IsPyLibrary(v) ( (v)-&gt;ob_type == &amp;PyTypeLibrary )</span>
+<span class="cp">#define PYLIBRARY(v)   ( (PyLibrary*)(v) )</span>
+<span class="cp">#define PYLIBRARY_O(v) ( PYLIBRARY(v)-&gt;_object )</span>
+
+  <span class="p">}</span>  <span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span>  <span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif  </span><span class="c1">// PY_LIBRARY_H</span>
+</pre></div>
+</div>
+<p>The code is organized as follow:</p>
+<ol class="arabic">
+<li><p class="first">It must have, <em>as the first include</em> <tt class="docutils literal"><span class="pre">PyHurricane.h</span></tt>, which provides
+the complete bunch of macros needed to build the module. Then the include
+of the C++ class we want to wrap (<tt class="docutils literal"><span class="pre">Library.h</span></tt>).</p>
+</li>
+<li><p class="first">As Python is written in C, all the wrapper code has to be but inside
+an <tt class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></tt> namespace.</p>
+</li>
+<li><p class="first">Definition of the wrapped <span class="cb">struct</span>, <tt class="docutils literal"><span class="pre">PyLibrary</span></tt>. It is standard Python here.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For our set of macros to work, the name of the pointer to the
+C++ class must always be <strong>_object</strong>, and the various functions and
+macros defined here must take the name of the class (either in
+lowercase, camel case or capitals).</p>
+</div>
+</li>
+<li><p class="first">Declaration of the Python type <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt> (standard).</p>
+</li>
+<li><p class="first">Declaration of the Python type table of methods <tt class="docutils literal"><span class="pre">PyLibrary_Methods</span></tt> (standard).</p>
+</li>
+</ol>
+<ol class="arabic simple" id="id3" start="6">
+<li>Declaration of <tt class="docutils literal"><span class="pre">PyLibrary_Link()</span></tt>, helper to convert a C++ <tt class="docutils literal"><span class="pre">Lybrary</span></tt> into
+a <tt class="docutils literal"><span class="pre">PyLibrary</span></tt> (put in the support shared library).</li>
+<li>Declaration of <tt class="docutils literal"><span class="pre">PyLibrary_LinkPyType()</span></tt>, this function setup the class-level
+function of the new Python type (here, <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt>).</li>
+<li>And, lastly, three macros to:<ul>
+<li><tt class="docutils literal"><span class="pre">IsPylibrary()</span></tt>, know if a Python object is a <tt class="docutils literal"><span class="pre">PyLibrary</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">PYLIBRARY()</span></tt>, force cast (C style) of a <tt class="docutils literal"><span class="pre">PyObject</span></tt> into a <tt class="docutils literal"><span class="pre">PyLibrary</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">PYLIBRARY_O()</span></tt>, extract the C++ object (<tt class="docutils literal"><span class="pre">Library*</span></tt>) from the Python
+object (<tt class="docutils literal"><span class="pre">PyLibrary</span></tt>).</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="class-associated-file">
+<span id="id4"></span><h2>3.2 Class Associated File<a class="headerlink" href="#class-associated-file" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="head-of-the-file">
+<h3>3.2.1 Head of the file<a class="headerlink" href="#head-of-the-file" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyLibrary.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyDataBase.h&quot;</span>
+<span class="cp">#include &quot;hurricane/isobar/PyCell.h&quot;</span>
+
+<span class="k">namespace</span> <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+  <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Library,lib,function)</span>
+</pre></div>
+</div>
+<p>As for the header, all the code must be put inside a <tt class="docutils literal"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></tt> namespace.</p>
+<p>A convenience macro <tt class="docutils literal"><span class="pre">METHOD_HEAD()</span></tt> must be defined, by refining
+<tt class="docutils literal"><span class="pre">GENERIC_METHOD_HEAD()</span></tt>. This macro will be used in the method wrappers
+below to cast the <tt class="docutils literal"><span class="pre">_object</span></tt> field of the Python object into the
+appropriate C++ class, this is done using a C-style cast.
+The parameters of that macro are:</p>
+<ol class="arabic simple">
+<li>The C++ encapsulated class (<tt class="docutils literal"><span class="pre">Library</span></tt>).</li>
+<li>The name of the <em>variable</em> that will be used to store a pointer
+to the C++ working object.</li>
+<li>The name of the C++ method which is to be wrapped.</li>
+</ol>
+</div>
+<div class="section" id="the-python-module-part">
+<h3>3.2.2 The Python Module Part<a class="headerlink" href="#the-python-module-part" title="Permalink to this headline">¶</a></h3>
+<p>First, we have to build all the wrappers to the C++ methods of
+the class. For common predicates, accessors, and mutators macros
+are supplied.</p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::getCell()</span></tt> method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyLibrary_getCell</span> <span class="p">(</span> <span class="n">PyLibrary</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Cell</span><span class="o">*</span> <span class="n">cell</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+  <span class="n">HTRY</span>
+    <span class="n">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Library.getCell()&quot;</span> <span class="p">)</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="n">name</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="s">&quot;s:Library.getCell&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">cell</span> <span class="o">=</span> <span class="n">lib</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">(</span> <span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">PyErr_SetString</span><span class="p">(</span> <span class="n">ConstructorError</span>
+                     <span class="p">,</span> <span class="s">&quot;invalid number of parameters for Library::getCell.&quot;</span> <span class="p">);</span>
+      <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="n">HCATCH</span>
+
+  <span class="k">return</span> <span class="n">PyCell_Link</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Key points about this method wrapper:</p>
+<ol class="arabic simple">
+<li>The <tt class="docutils literal"><span class="pre">HTRY</span></tt> / <tt class="docutils literal"><span class="pre">HCATCH</span></tt> macros provides an insulation from the C++
+exceptions. If one is emitted, it will be catched and transformed in
+a Python one. This way, the Python program will be cleanly interrupted
+and the usual stack trace displayed.</li>
+<li>The returned value of this method is of type <tt class="docutils literal"><span class="pre">Cell*</span></tt>, we have to
+transform it into a Python one. This is done with <tt class="docutils literal"><span class="pre">PyCell_Link()</span></tt>.
+This macro is supplied by the <tt class="docutils literal"><span class="pre">PyCell.h</span></tt> header and this is why
+it must be included.</li>
+</ol>
+<p></p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::create()</span></tt> method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyLibrary_create</span><span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">PyObject</span><span class="o">*</span> <span class="n">arg0</span><span class="p">;</span>
+  <span class="n">PyObject</span><span class="o">*</span> <span class="n">arg1</span><span class="p">;</span>
+  <span class="n">Library</span><span class="o">*</span> <span class="n">library</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+  <span class="n">HTRY</span>
+    <span class="n">__cs</span><span class="p">.</span><span class="n">init</span><span class="p">(</span> <span class="s">&quot;Library.create&quot;</span> <span class="p">);</span>                          <span class="c1">// Step (1).</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">not</span> <span class="n">PyArg_ParseTuple</span><span class="p">(</span> <span class="n">args</span><span class="p">,</span> <span class="s">&quot;O&amp;O&amp;:Library.create&quot;</span>
+                            <span class="p">,</span> <span class="n">Converter</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arg0</span>
+                            <span class="p">,</span> <span class="n">Converter</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arg1</span> <span class="p">))</span> <span class="p">{</span>         <span class="c1">// Step (2).</span>
+      <span class="n">PyErr_SetString</span><span class="p">(</span> <span class="n">ConstructorError</span>
+                     <span class="p">,</span> <span class="s">&quot;invalid number of parameters for Library constructor.&quot;</span> <span class="p">);</span>
+      <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;:db:string&quot;</span><span class="p">)</span> <span class="p">{</span>              <span class="c1">// Step (3.a)</span>
+      <span class="n">DataBase</span><span class="o">*</span> <span class="n">db</span> <span class="o">=</span> <span class="n">PYDATABASE_O</span><span class="p">(</span><span class="n">arg0</span><span class="p">);</span>
+      <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">::</span><span class="n">create</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">Name</span><span class="p">(</span><span class="n">PyString_AsString</span><span class="p">(</span><span class="n">arg1</span><span class="p">))</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;:library:string&quot;</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// Step (3.b)</span>
+      <span class="n">Library</span><span class="o">*</span> <span class="n">masterLibrary</span> <span class="o">=</span> <span class="n">PYLIBRARY_O</span><span class="p">(</span><span class="n">arg0</span><span class="p">);</span>
+      <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">::</span><span class="n">create</span><span class="p">(</span> <span class="n">masterLibrary</span><span class="p">,</span> <span class="n">Name</span><span class="p">(</span><span class="n">PyString_AsString</span><span class="p">(</span><span class="n">arg1</span><span class="p">))</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">PyErr_SetString</span><span class="p">(</span> <span class="n">ConstructorError</span>
+                     <span class="p">,</span> <span class="s">&quot;invalid number of parameters for Library constructor.&quot;</span> <span class="p">);</span>
+      <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="n">HCATCH</span>
+
+  <span class="k">return</span> <span class="n">PyLibrary_Link</span><span class="p">(</span> <span class="n">library</span> <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Key point about this constructor:</p>
+<ol class="arabic simple">
+<li>We want the Python interface to mimic as closely as possible the
+C++ API. As such, Python object will be created using a static
+<tt class="docutils literal"><span class="pre">.create()</span></tt> method. So we do not use the usual Python allocation
+mechanism.</li>
+<li>As it is a <em>static</em> method, there is no first argument.</li>
+<li>Python do not allow function overload like C++. To emulate that
+behavior we use the <tt class="docutils literal"><span class="pre">__cs</span></tt> object (which is a global variable).<ol class="arabic">
+<li>Init/reset the <tt class="docutils literal"><span class="pre">__cs</span></tt> object: see <em>step (1)</em>.</li>
+<li>Call <tt class="docutils literal"><span class="pre">PyArg_ParseTuple()</span></tt>, read every mandatory or optional
+argument as a Python object (<tt class="docutils literal"><span class="pre">&quot;O&amp;&quot;</span></tt>) and use <tt class="docutils literal"><span class="pre">Converter</span></tt>
+on each one. <tt class="docutils literal"><span class="pre">Converter</span></tt> will determine the real type of
+the Python object given as argument by looking at the
+encapsulated C++ class. It then update the <tt class="docutils literal"><span class="pre">__cs</span></tt> object.
+Done in <em>step (2)</em></li>
+<li>After the call to <tt class="docutils literal"><span class="pre">PyArg_ParseTuple()</span></tt>, the function
+<tt class="docutils literal"><span class="pre">__cs.getObjectIds()</span></tt> will return the <em>signature</em> of
+the various arguments. In our case, the valid signatures
+will be <tt class="docutils literal"><span class="pre">&quot;:db:string&quot;</span></tt> (<em>step (3.a)*a) and ``&#8221;:library:string&#8221;``
+(*step (3.b)</em>).</li>
+<li>Call the C++ method after extracting the C++ objects from
+the Python arguments. Note the use of the <tt class="docutils literal"><span class="pre">PYLIBRARY_O()</span></tt>
+and <tt class="docutils literal"><span class="pre">PYDATABSE_O()</span></tt> macros to perform the conversion.</li>
+</ol>
+</li>
+<li>Return the result, encapsulated through a call to <tt class="docutils literal"><span class="pre">PyLibrary_Link()</span></tt>.</li>
+</ol>
+<p></p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::destroy()</span></tt> method:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyLibrary_destroy</span><span class="p">,</span> <span class="n">PyLibrary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For C++ classes <strong>that are derived</strong> from <tt class="docutils literal"><span class="pre">DBo</span></tt>, the destroy method
+wrapper must be defined using the macro <tt class="docutils literal"><span class="pre">DBoDestroyAttribute()</span></tt>.
+This macro implements the bi-directional communication mechanism
+using <tt class="docutils literal"><span class="pre">Hurricane::Property</span></tt>. It <strong>must not</strong> be used for
+non <tt class="docutils literal"><span class="pre">DBo</span></tt> derived classes.</p>
+<p>Defining the method table of the PyLibrary type:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">PyMethodDef</span> <span class="n">PyLibrary_Methods</span><span class="p">[]</span> <span class="o">=</span>
+  <span class="p">{</span> <span class="p">{</span> <span class="s">&quot;create&quot;</span>    <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_create</span> <span class="p">,</span> <span class="n">METH_VARARGS</span><span class="o">|</span><span class="n">METH_STATIC</span>
+                  <span class="p">,</span> <span class="s">&quot;Creates a new library.&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;getCell&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_getCell</span><span class="p">,</span> <span class="n">METH_VARARGS</span>
+                  <span class="p">,</span> <span class="s">&quot;Get the cell of name &lt;name&gt;&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="s">&quot;destroy&quot;</span>   <span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_destroy</span><span class="p">,</span> <span class="n">METH_NOARGS</span>
+                  <span class="p">,</span> <span class="s">&quot;Destroy associated hurricane object The python object remains.&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>           <span class="cm">/* sentinel */</span>
+  <span class="p">};</span>
+</pre></div>
+</div>
+<p>This is standard Python/C API. The name of the <tt class="docutils literal"><span class="pre">PyMethodDef</span></tt> table  must be
+named from the class: <tt class="docutils literal"><span class="pre">PyLibrary_Methods</span></tt>.</p>
+</div>
+<div class="section" id="python-type-linking">
+<h3>3.2.3 Python Type Linking<a class="headerlink" href="#python-type-linking" title="Permalink to this headline">¶</a></h3>
+<p>Defining the <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt> class methods and the type linking function.</p>
+<p>Those are the functions for the Python object itself to work, not the
+wrapped method from the C++ class.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">At this point we <strong>do not</strong> define the <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt> itself.
+Only it&#8217;s functions and a function to set them up <em>once</em> the
+type will be defined.</p>
+</div>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+<span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The macro <tt class="docutils literal"><span class="pre">DBoDeleteMethod()</span></tt> define the function to delete a
+<tt class="docutils literal"><span class="pre">PyLibrary</span></tt> <em>Python</em> object. Again, do not mistake it for the deletion
+of the C++ class (implemented by <tt class="docutils literal"><span class="pre">DBoDestroyAttribute()</span></tt>).
+Here again, <tt class="docutils literal"><span class="pre">DBoDeleteMethod()</span></tt> is specially tailored for
+<tt class="docutils literal"><span class="pre">DBo</span></tt> derived classes.</p>
+<p id="pylibrary-linkpytype">To define <tt class="docutils literal"><span class="pre">PyLibrary_LinkPyType()</span></tt>, use the <tt class="docutils literal"><span class="pre">PyTypeObjectLinkPyType()</span></tt>
+macro. This macro is specific for <tt class="docutils literal"><span class="pre">DBo</span></tt> derived classes that are seen as
+base classes under Python (i.e. we don&#8217;t bother exposing the base
+class under Python). <tt class="docutils literal"><span class="pre">PyLibrary_LinkPyType()</span></tt> setup the class functions
+in the <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt> type object, it <strong>must</strong> be called in the
+Python module this class is part of (in this case: <tt class="docutils literal"><span class="pre">PyHurricane.cpp</span></tt>).
+This particular flavor of the macro <em>will define</em> and setup the
+following class functions:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_compare</span></tt> (defined by the macro).</li>
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_repr</span></tt> (defined by the macro).</li>
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_str</span></tt> (defined by the macro).</li>
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_hash</span></tt> (defined by the macro).</li>
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_methods</span></tt> sets to the previously defined <tt class="docutils literal"><span class="pre">PyLibrary_Methods</span></tt> table.</li>
+<li><tt class="docutils literal"><span class="pre">PyTypeLibrary.tp_dealloc</span></tt> is set to a function that <em>must</em> be named <tt class="docutils literal"><span class="pre">PyLibrary_DeAlloc</span></tt>,
+this is what <tt class="docutils literal"><span class="pre">DBoDeleteMethod</span></tt> does. It is <em>not</em> done by <tt class="docutils literal"><span class="pre">PyTypeObjectLinkPyType</span></tt>.</li>
+</ul>
+<p>Defining the <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt> type:</p>
+</div>
+<div class="section" id="the-shared-library-part">
+<h3>3.2.4 The Shared Library Part<a class="headerlink" href="#the-shared-library-part" title="Permalink to this headline">¶</a></h3>
+<p>This part will be put in a separate supporting shared library, allowing
+other Python module to link against it (and make use of its symbols).</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DBoLinkCreateMethod</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+<span class="n">PyTypeObjectDefinitions</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To define <tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt>, use the <tt class="docutils literal"><span class="pre">PyTypeObjectDefinitions()</span></tt> macro.
+This macro is specific for classes that, as exposed by Python,
+are neither <em>derived</em> classes nor <em>base</em> classes for others.
+That is, they are standalone from the inheritance point of view.</p>
+<p>The <tt class="docutils literal"><span class="pre">DBoLinkCreateMethod()</span></tt> macro will define the <tt class="docutils literal"><span class="pre">PyLibrary_Link()</span></tt>
+function which is responsible for encapsulating a C++ <tt class="docutils literal"><span class="pre">Library</span></tt> object
+into a Python <tt class="docutils literal"><span class="pre">PyLibrary</span></tt> one.</p>
+</div>
+</div>
+<div class="section" id="python-module-c-namespace">
+<h2>3.3 Python Module (C++ namespace)<a class="headerlink" href="#python-module-c-namespace" title="Permalink to this headline">¶</a></h2>
+<p>We use the Python module to replicate the C++ <em>namespace</em>. Thus, for the
+<tt class="docutils literal"><span class="pre">Hurricane</span></tt> namespace we create a Python <tt class="docutils literal"><span class="pre">Hurricane</span></tt> module which is
+defined in the <tt class="docutils literal"><span class="pre">PyHurricane.cpp</span></tt> file, then we add into that module
+dictionary all the Python types encapsulating the C++ classes of that
+namespace.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DL_EXPORT</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">initHurricane</span> <span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">PyLibrary_LinkPyType</span><span class="p">();</span>  <span class="c1">// step 1.</span>
+
+  <span class="n">PYTYPE_READY</span><span class="p">(</span> <span class="n">Library</span> <span class="p">)</span>  <span class="c1">// step 2.</span>
+
+  <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;library&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeLibrary</span><span class="p">,</span> <span class="s">&quot;&lt;Library&gt;&quot;</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span> <span class="c1">// step 3.</span>
+
+  <span class="n">PyObject</span><span class="o">*</span> <span class="n">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
+         <span class="o">&lt;&lt;</span> <span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">Py_INCREF</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">PyTypeLibrary</span> <span class="p">);</span>                                        <span class="c1">// step 4.</span>
+  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="n">module</span><span class="p">,</span> <span class="s">&quot;Library&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span> <span class="p">);</span> <span class="c1">// step 4.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">initHurricane()</span></tt> initialisation function shown above has
+been scrubbed of everything not relevant to the <tt class="docutils literal"><span class="pre">PyLibrary</span></tt> class.
+The integration of the <tt class="docutils literal"><span class="pre">PyLibrary</span></tt> class into the module needs
+four steps:</p>
+<ol class="arabic">
+<li><p class="first">A call to <a class="reference internal" href="#pylibrary-linkpytype">PyLibrary_LinkPyType()</a> to hook the Python type functions
+in the Python type object.</p>
+</li>
+<li><p class="first">A call to the <tt class="docutils literal"><span class="pre">PYTYPE_READY()</span></tt> macro (standard Python).</p>
+</li>
+<li><p class="first">Registering the type into the <tt class="docutils literal"><span class="pre">__cs</span></tt> object, with <tt class="docutils literal"><span class="pre">addType()</span></tt>.
+The arguments are self explanatory, save for the last which is a
+boolean to tell if this is a <em>derived</em> class or not.</p>
+</li>
+<li><p class="first">Adding the type object (<tt class="docutils literal"><span class="pre">PyTypeLibrary</span></tt>) into the dictionnary of
+the module itself. This allow to mimic closely the C++ syntax:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Hurricane</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">Hurricane</span><span class="o">.</span><span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="s">&#39;root&#39;</span> <span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="DBoHierarchy.html" class="btn btn-neutral float-right" title="4. Case 2 - Hierarchy of DBo Derived Classes" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Configuration.html" class="btn btn-neutral" title="2. Basic File Structure and CMake configuration" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2017, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

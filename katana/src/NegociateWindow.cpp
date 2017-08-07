@@ -186,6 +186,7 @@ namespace Katana {
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
+  using Anabatic::AutoSegment;
   using Anabatic::AutoSegmentLut;
   using Anabatic::perpandicularTo;
 
@@ -322,7 +323,7 @@ namespace Katana {
       cdebug_log(159,0) << "* " << plane << endl;
       cdebug_log(159,0) << "* " << track << endl;
 
-      trackSegment->setAxis( track->getAxis(), Anabatic::SegAxisSet );
+      trackSegment->setAxis( track->getAxis(), AutoSegment::SegAxisSet );
       trackSegment->invalidate();
 
       if (trackSegment->isFixed()) {

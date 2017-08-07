@@ -19,6 +19,7 @@
 
 #include  <string>
 #include  <map>
+#include  <set>
 
 #include  "hurricane/Interval.h"
 #include  "hurricane/Observer.h"
@@ -65,7 +66,6 @@ namespace Katana {
   enum TrackElementFlags { TElemCreated      = (1 <<  0)
                          , TElemBlockage     = (1 <<  1)
                          , TElemFixed        = (1 <<  2)
-                         , TElemWide         = (1 <<  3)
                          , TElemLocked       = (1 <<  4)
                          , TElemRouted       = (1 <<  5)
                          , TElemSourceDogleg = (1 <<  6)
@@ -101,7 +101,7 @@ namespace Katana {
       virtual bool                    isFixed                () const;
       virtual bool                    isHorizontal           () const = 0;
       virtual bool                    isVertical             () const = 0;
-      inline  bool                    isWide                 () const;
+      virtual bool                    isWide                 () const;
       virtual bool                    isLocal                () const;
       virtual bool                    isGlobal               () const;
       virtual bool                    isBipoint              () const;
@@ -135,14 +135,15 @@ namespace Katana {
     // Accessors                                             
       inline  Observer<TrackElement>* getObserver            ();
       virtual unsigned long           getId                  () const;
+      virtual uint32_t                getTrackCount          () const;
       virtual Flags                   getDirection           () const = 0;
       virtual Net*                    getNet                 () const = 0;
+      virtual DbU::Unit               getWidth               () const = 0;
       virtual const Layer*            getLayer               () const = 0;
       virtual DbU::Unit               getPitch               () const;
       virtual DbU::Unit               getPPitch              () const;
       virtual size_t                  getTrackSpan           () const = 0;
       inline  Track*                  getTrack               () const;
-      inline  size_t                  getIndex               () const;
       virtual float                   getPriority            () const = 0;
       virtual unsigned long           getFreedomDegree       () const;
       virtual float                   getMaxUnderDensity     ( Flags flags=Flags::NoFlags ) const;
@@ -150,6 +151,7 @@ namespace Katana {
       virtual TrackElement*           getNext                () const;
       virtual TrackElement*           getPrevious            () const;
       virtual DbU::Unit               getAxis                () const = 0;
+      inline  DbU::Unit               getSymmetricAxis       ( DbU::Unit ) const;
       inline  DbU::Unit               getSourceU             () const;
       inline  DbU::Unit               getTargetU             () const;
       inline  DbU::Unit               getLength              () const;
@@ -172,7 +174,6 @@ namespace Katana {
       inline  void                    unsetFlags             ( uint32_t );
       inline  void                    setRouted              ();
       virtual void                    setTrack               ( Track* );
-      inline  void                    setIndex               ( size_t );
       virtual void                    setSymmetric           ( TrackElement* );
       virtual void                    setPriorityLock        ( bool state ) = 0;
       virtual void                    forcePriority          ( float priority ) = 0;
@@ -183,11 +184,13 @@ namespace Katana {
       virtual void                    swapTrack              ( TrackElement* );
       virtual void                    reschedule             ( uint32_t level );
       virtual void                    detach                 ();
+      virtual void                    detach                 ( std::set<Track*>& );
       virtual void                    invalidate             ();
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();
+      virtual void                    addTrackCount          ( int32_t );
       virtual void                    incOverlapCost         ( TrackCost& ) const;
-      virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::SegAxisSet );
+      virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::AutoSegment::SegAxisSet );
       virtual TrackElement*           makeDogleg             ();
       inline  bool                    makeDogleg             ( Anabatic::GCell* );
       virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
@@ -211,7 +214,6 @@ namespace Katana {
     // Attributes.                   
              uint32_t                 _flags;
              Track*                   _track;
-             size_t                   _index;
              DbU::Unit                _sourceU;
              DbU::Unit                _targetU;
              Observer<TrackElement>   _observer;
@@ -233,7 +235,6 @@ namespace Katana {
   inline Observer<TrackElement>* TrackElement::getObserver          () { return &_observer; }
   inline void                    TrackElement::setFlags             ( uint32_t flags ) { _flags |=  flags; }
   inline void                    TrackElement::unsetFlags           ( uint32_t flags ) { _flags &= ~flags; }
-  inline bool                    TrackElement::isWide               () const { return _flags & TElemWide; }
   inline bool                    TrackElement::isCreated            () const { return _flags & TElemCreated; }
   inline bool                    TrackElement::isInvalidated        () const { return _flags & TElemInvalidated; }
   inline bool                    TrackElement::isBlockage           () const { return _flags & TElemBlockage; }
@@ -243,17 +244,16 @@ namespace Katana {
   inline bool                    TrackElement::hasTargetDogleg      () const { return _flags & TElemTargetDogleg; }
   inline bool                    TrackElement::canRipple            () const { return _flags & TElemRipple; }
   inline Track*                  TrackElement::getTrack             () const { return _track; }
-  inline size_t                  TrackElement::getIndex             () const { return _index; }
   inline DbU::Unit               TrackElement::getLength            () const { return getTargetU() - getSourceU(); }
   inline DbU::Unit               TrackElement::getSourceU           () const { return _sourceU; }
   inline DbU::Unit               TrackElement::getTargetU           () const { return _targetU; }
   inline Interval                TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
-  inline void                    TrackElement::setIndex             ( size_t index ) { _index=index; }
+  inline DbU::Unit               TrackElement::getSymmetricAxis     ( DbU::Unit axis ) const { return axis - (getTrackSpan()-1)*getPitch(); }
 
   inline void  TrackElement::setRouted()
   {
     _flags |= TElemRouted;
-    if (base()) base()->setFlags( Anabatic::SegFixed );
+    if (base()) base()->setFlags( Anabatic::AutoSegment::SegFixed );
   }
 
   inline Box  TrackElement::getBoundingBox () const

@@ -546,10 +546,20 @@ namespace Katana {
       Track* track2 = NULL;
       if (_event2) {
         track2 =
-          (_sameAxis) ? track1 : plane->getTrackByPosition( symData->getSymmetrical( track1->getAxis() ) );
+          (_sameAxis) ? track1 : plane->getTrackByPosition
+            ( segment2->getSymmetricAxis( symData->getSymmetrical( track1->getAxis() ) ) );
+
+        cdebug_log(155,0) << "refTrack:" << track1 << endl;
+        cdebug_log(155,0) << "symTrack:" << track2 << endl;
+        cdebug_log(155,0) << "by symData:   " << DbU::getValueString( symData->getSymmetrical(track1->getAxis()) ) << endl;
+        cdebug_log(155,0) << "plus segment2:" << DbU::getValueString( segment2->getSymmetricAxis(symData->getSymmetrical(track1->getAxis())) ) << endl;
       }
 
       _costs.push_back( new TrackCost(segment1,segment2,track1,track2) );
+      
+      cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getTrack()->getAxis())
+                        << " sum:" << DbU::getValueString(_costs.back()->getAxisWeight())
+                        << endl;
 
       if ( _fullBlocked and (not _costs.back()->isBlockage() and not _costs.back()->isFixed()) ) 
         _fullBlocked = false;

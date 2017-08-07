@@ -44,7 +44,7 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Name;
   using Hurricane::RoutingPad;
-  using Anabatic::SegSlackened;
+  using Anabatic::AutoSegment;
   using Anabatic::perpandicularTo;
 
 
@@ -54,7 +54,8 @@ namespace Katana {
 
   TrackSegmentWide::TrackSegmentWide ( AutoSegment* segment, Track* track, size_t trackSpan )
     : Super(segment,track)
-    , _trackSpan(trackSpan)
+    , _trackSpan (trackSpan)
+    , _trackCount(0)
   {
     cdebug_log(155,0) << "CTOR TrackSegmentWide " << (void*)this    << ":" << this    << endl;
     cdebug_log(155,0) << "                 over " << (void*)segment << ":" << segment << endl;
@@ -64,7 +65,10 @@ namespace Katana {
       if (segment->getWidth() < mWidth) {
         _trackSpan = 1;
       } else {
-        _trackSpan = ((segment->getWidth() - mWidth) / Session::getPitch(segment->getLayer())) + 2;
+        DbU::Unit pitch = Session::getPitch(segment->getLayer());
+        DbU::Unit width = segment->getWidth() - mWidth;
+
+        _trackSpan = (size_t)(width/pitch) + 1 + ((width%pitch) ? 1 : 0);
       }
     }
   }
@@ -87,7 +91,18 @@ namespace Katana {
   }
 
 
-  size_t  TrackSegmentWide::getTrackSpan () const { return _trackSpan; }
+  size_t    TrackSegmentWide::getTrackSpan  () const { return _trackSpan; }
+  uint32_t  TrackSegmentWide::getTrackCount () const { return _trackCount; }
+
+
+  void  TrackSegmentWide::addTrackCount ( int32_t count )
+  {
+    if (count > 0) _trackCount += count;
+    else {
+      if (-count > (int32_t)_trackCount) _trackCount = 0;
+      _trackCount -= -count;
+    }
+  }
 
 
   void  TrackSegmentWide::addOverlapCost ( TrackCost& cost ) const
@@ -100,21 +115,29 @@ namespace Katana {
 
     cost.setFlags( (isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0 );
     cost.setFlags( (isAnalog()) ? TrackCost::Analog : 0 );
+    cost.setDistanceToFixed();
+    cost.incAxisWeight  ( getDataNegociate()->getRoutingEvent()->getAxisWeight( track->getAxis() ) );
+    cost.incDeltaPerpand( getDataNegociate()->getWiringDelta( track->getAxis() ) );
+
+    cdebug_log(155,0) << "incAxisWeight:" << DbU::getValueString(track->getAxis())
+                      << " of " << DbU::getValueString(getDataNegociate()->getRoutingEvent()->getAxisWeight( track->getAxis() ))
+                      << " (sum:" << DbU::getValueString(cost.getAxisWeight()) << ")" 
+                      << endl;
 
     for ( size_t span=0 ; (span < _trackSpan) and (track != NULL) ; ++span ) {
       track->addOverlapCost( cost );
     // Todo: have to choose here wether we go *next* or *previous* according
     //       to the symmetry kind.
       track = track->getNextTrack();
-    } 
+      cost.selectNextTrack();
+    }
 
-    cost.setDistanceToFixed();
-    cost.incAxisWeight     ( getDataNegociate()->getRoutingEvent()->getAxisWeight(track->getAxis()) );
-    cost.incDeltaPerpand   ( getDataNegociate()->getWiringDelta(track->getAxis()) );
     if (isGlobal()) cost.setForGlobal();
 
     if ( inLocalDepth and (cost.getDataState() == DataNegociate::MaximumSlack) )
       cost.setInfinite();
+
+    cost.select( 0, TrackCost::NoFlags );
   }
 
 

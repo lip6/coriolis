@@ -12,7 +12,7 @@
  set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  
- find_package(PythonLibs         2.7 REQUIRED)
+ find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)

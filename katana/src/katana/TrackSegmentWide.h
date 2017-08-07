@@ -53,12 +53,15 @@ namespace Katana {
       virtual void              _postCreate      ();
       virtual void              _preDestroy      ();
       virtual size_t            getTrackSpan     () const;
+      virtual uint32_t          getTrackCount    () const;
       virtual void              addOverlapCost   ( TrackCost& ) const;
+      virtual void              addTrackCount    ( int32_t );
     private:                  
                                 TrackSegmentWide ( const TrackSegmentWide& ) = delete;
               TrackSegmentWide& operator=        ( const TrackSegmentWide& ) = delete;
     private:
-      size_t  _trackSpan;
+      size_t    _trackSpan;
+      uint32_t  _trackCount;
   };
 
 

@@ -130,7 +130,7 @@ namespace Katana {
       }
 
       if (RoutingEvent::getStage() == RoutingEvent::Repair)
-        perpandicular->base()->setFlagsOnAligneds( Anabatic::SegUnbound );
+        perpandicular->base()->setFlagsOnAligneds( AutoSegment::SegUnbound );
 
     //cerr << "perpandicular:" << perpandicular << endl;
     //cerr << "  " << interval << endl;

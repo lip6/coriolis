@@ -94,7 +94,11 @@ namespace Katana {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if (_segments[i]) { _segments[i]->detach(); _segments[i]->destroy(); }
+      if (_segments[i]) {
+        _segments[i]->detach();
+        if (not _segments[i]->getTrackCount())
+          _segments[i]->destroy();
+      }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
       if (_markers[i]) _markers[i]->destroy();
@@ -105,10 +109,12 @@ namespace Katana {
 
   void  Track::destroy ()
   {
-    cdebug_log(155,0) << "Track::destroy() - " << (void*)this << " " << this << endl;
+    cdebug_log(155,1) << "Track::destroy() - " << (void*)this << " " << this << endl;
 
     Track::_preDestroy();
     delete this;
+
+    cdebug_tabw(155,-1);
   }
 
 
@@ -445,7 +451,7 @@ namespace Katana {
   {
     // cdebug_log(9000,0) << "Deter| Track::insert() " << getLayer()->getName()
     //             << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
-    cdebug_log(155,0) << "Track::insert() " << getLayer()->getName()
+    cdebug_log(155,1) << "Track::insert() " << getLayer()->getName()
                 << " @" << DbU::getValueString(getAxis()) << " " << segment << endl;
 
     if (   (getLayer()->getMask()         != segment->getLayer()->getMask())
@@ -454,11 +460,22 @@ namespace Katana {
                  ,getString(segment).c_str()) << endl;
     }
 
-    _segments.push_back ( segment );
+    _segments.push_back( segment );
     _segmentsValid = false;
 
-  //segment->setAxis ( getAxis() );
+    if (segment->isWide()) {
+      cdebug_log(155,0) << "Segment is wide." << endl;
+      Track* wtrack = getNextTrack();
+      for ( size_t i=1 ; wtrack and (i<segment->getTrackSpan()) ; ++i ) {
+        cdebug_log(155,0) << "Insert in [" << i << "] " << wtrack << endl;
+        wtrack->_segments.push_back ( segment );
+        wtrack->_segmentsValid = false;
+        wtrack = wtrack->getNextTrack();
+      }
+    }
+
     segment->setTrack ( this );
+    cdebug_tabw(155,-1);
   }
 
 
@@ -495,12 +512,6 @@ namespace Katana {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " is in track "
                  << _segments[i]->getTrack() << endl;
-            coherency = false;
-          }
-          if (_segments[i]->getIndex() != i) {
-            cerr << "[CHECK] incoherency at " << i << " "
-                 << _segments[i] << " has bad index "
-                 << _segments[i]->getIndex() << endl;
             coherency = false;
           }
         }
@@ -642,9 +653,6 @@ namespace Katana {
 
     if (not _segmentsValid) {
       std::sort( _segments.begin(), _segments.end(), SegmentCompare() );
-      for ( size_t i=0 ; i < _segments.size() ; i++ ) {
-        _segments[i]->setIndex( i );
-      }
       _segmentsValid = true;
     }
 
