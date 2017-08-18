@@ -147,7 +147,7 @@ def guessShell ():
    #if os.environ.has_key('SHELL'): return os.environ['SHELL']
 
     psCommand     = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
-    shell         = psCommand.stdout.readlines()[1][:-1].split()[-1].lstrip('-')
+    shell         = psCommand.stdout.readlines()[1][:-1].split()[3].lstrip('-')
     whichCommand  = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
     shellPath     = whichCommand.stdout.readlines()[0][:-1]
 
@@ -273,9 +273,10 @@ if __name__ == "__main__":
        or osType.startswith("Linux.sl") \
        or osType.startswith("Linux.el") \
        or osType.startswith("Linux.fc") \
-       or osType.startswith("Darwin")   \
        or osType.startswith("Cygwin"):
       sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
+    elif  osType.startswith("Darwin"):
+      sitePackagesDir = "%s/%s/site-packages" % (absLibDir,version)
     else:
       sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
 

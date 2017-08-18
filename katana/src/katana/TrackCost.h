@@ -119,7 +119,7 @@ namespace Katana {
       inline       DbU::Unit     getDelta           () const;
       inline       DbU::Unit     getDeltaPerpand    () const;
       inline       DbU::Unit     getLongestOverlap  () const;
-      inline       long          getAxisWeight      () const;
+      inline       DbU::Unit     getAxisWeight      () const;
       inline       int           getRipupCount      () const;
       inline       uint32_t      getDataState       () const;
       inline       uint32_t      setFlags           ( uint32_t );
@@ -203,7 +203,7 @@ namespace Katana {
   inline       uint32_t      TrackCost::getTerminals       () const { return _terminals; }
   inline       DbU::Unit     TrackCost::getLongestOverlap  () const { return _longuestOverlap; }
   inline       DbU::Unit     TrackCost::getDelta           () const { return _delta; }
-  inline       long          TrackCost::getAxisWeight      () const { return _axisWeight; }
+  inline       DbU::Unit     TrackCost::getAxisWeight      () const { return _axisWeight; }
   inline       int           TrackCost::getRipupCount      () const { return _ripupCount; }
   inline       uint32_t      TrackCost::getDataState       () const { return _dataState; }
   inline       uint32_t      TrackCost::setFlags           ( uint32_t mask ) { _flags |= mask; return _flags; }
