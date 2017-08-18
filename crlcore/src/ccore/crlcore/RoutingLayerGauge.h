@@ -90,6 +90,8 @@ namespace CRL {
                                                          , DbU::Unit                 obsDw );
       virtual void                      destroy          ();
     // Accessors.                       
+      inline  bool                      isHorizontal     () const;
+      inline  bool                      isVertical       () const;
       inline  const Layer*              getLayer         () const;
       inline  const Layer*              getBlockageLayer () const;
       inline  unsigned int              getDepth         () const;
@@ -163,20 +165,22 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Inline Functions.
 
-  inline  const Layer*              RoutingLayerGauge::getLayer         () const { return ( _layer ); }
-  inline  const Layer*              RoutingLayerGauge::getBlockageLayer () const { return ( _blockageLayer ); }
-  inline  Constant::Direction       RoutingLayerGauge::getDirection     () const { return ( _direction ); }
-  inline  Constant::LayerGaugeType  RoutingLayerGauge::getType          () const { return ( _type ); }
-  inline  unsigned int              RoutingLayerGauge::getDepth         () const { return ( _depth ); }
-  inline  double                    RoutingLayerGauge::getDensity       () const { return ( _density ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getOffset        () const { return ( _offset ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getPitch         () const { return ( _pitch ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getHalfPitch     () const { return ( _pitch>>1 ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getWireWidth     () const { return ( _wireWidth ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getHalfWireWidth () const { return ( _wireWidth>>1 ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return ( _viaWidth ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return ( _viaWidth>>1 ); }
-  inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return ( _obstacleDw ); }
+  inline  bool                      RoutingLayerGauge::isHorizontal     () const { return (_direction == Constant::Direction::Horizontal); }
+  inline  bool                      RoutingLayerGauge::isVertical       () const { return (_direction == Constant::Direction::Vertical); }
+  inline  const Layer*              RoutingLayerGauge::getLayer         () const { return _layer; }
+  inline  const Layer*              RoutingLayerGauge::getBlockageLayer () const { return _blockageLayer; }
+  inline  Constant::Direction       RoutingLayerGauge::getDirection     () const { return _direction; }
+  inline  Constant::LayerGaugeType  RoutingLayerGauge::getType          () const { return _type; }
+  inline  unsigned int              RoutingLayerGauge::getDepth         () const { return _depth; }
+  inline  double                    RoutingLayerGauge::getDensity       () const { return _density; }
+  inline  DbU::Unit                 RoutingLayerGauge::getOffset        () const { return _offset; }
+  inline  DbU::Unit                 RoutingLayerGauge::getPitch         () const { return _pitch; }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfPitch     () const { return _pitch>>1; }
+  inline  DbU::Unit                 RoutingLayerGauge::getWireWidth     () const { return _wireWidth; }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfWireWidth () const { return _wireWidth>>1; }
+  inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return _viaWidth; }
+  inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return _viaWidth>>1; }
+  inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return _obstacleDw; }
 
 
 // -------------------------------------------------------------------
