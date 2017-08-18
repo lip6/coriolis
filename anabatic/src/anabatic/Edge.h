@@ -86,19 +86,18 @@ namespace Anabatic {
       inline const  Flags&            flags                () const;
       inline        Flags&            flags                ();
       inline        void              revalidate           () const;
-
                     bool              isMaxCapacity        ( Net* net = NULL ) const;
+      inline        Flags&            setFlags             ( Flags mask );
                     void              _setSource           ( GCell* );
                     void              _setTarget           ( GCell* );
-    private:                          
-                    void              _invalidate          ();
-                    void              _revalidate          ();
     public:                                    
     // ExtensionGo support.                    
       inline  const Name&             staticGetName        (); 
       virtual const Name&             getName              () const;
       virtual       void              translate            ( const DbU::Unit&, const DbU::Unit& );
       virtual       Box               getBoundingBox       () const;
+      virtual       void              invalidate           ( bool propagateFlag=true );
+      virtual       void              materialize          ();
     public:                                              
     // Inspector support.                                
       virtual       string            _getTypeName         () const;
@@ -144,7 +143,7 @@ namespace Anabatic {
   inline       void              Edge::setHistoricCost      ( float hcost ) { _historicCost = hcost; }
   inline const Flags&            Edge::flags                () const { return _flags; }
   inline       Flags&            Edge::flags                () { return _flags; }
-  inline       void              Edge::revalidate           () const { /*if (_flags&Flags::Invalidated)*/ const_cast<Edge*>(this)->_revalidate(); }
+  inline       Flags&            Edge::setFlags             ( Flags mask ) { _flags |= mask; return _flags; }
  
 }  // Anabatic namespace.
 

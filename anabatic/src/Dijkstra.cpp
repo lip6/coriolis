@@ -276,7 +276,10 @@ namespace Anabatic {
            ) return true;
       else {
         if ((v2->getGCell()->isStrut())){
-          if (e->isMaxCapacity(net)) return true;
+          if (e->isMaxCapacity(net)) {
+            cdebug_log(112,0) << "Overcapacity:" << e << endl;
+            return true;
+          }
           else return false;
         } else return false;
       }
@@ -292,7 +295,7 @@ namespace Anabatic {
       return Point(0,0);
     }
 
-    if (vnext->getGCell()->isMatrix()) {
+    if (not vnext->getGCell()->isAnalog()) {
       cdebug_tabw(112,-1);
       return Point(vnext->getGCell()->getXCenter(), vnext->getGCell()->getYCenter());
     }
@@ -1283,7 +1286,7 @@ namespace Anabatic {
       Vertex*     seed  = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
       GCell*      gseed = seed->getGCell();
 
-      if (!gseed->isMatrix()) _setSourcesGRAData( seed, rp ); // ANALOG
+      if (gseed->isAnalog()) _setSourcesGRAData( seed, rp ); // ANALOG
       
       if (seed->getConnexId() < 0) {
         VertexSet  connecteds;
@@ -1311,7 +1314,7 @@ namespace Anabatic {
     }
 
     _searchArea.inflate( _searchAreaHalo );
-    cdebug_log(112,0) << "Search halo: " << _searchAreaHalo << endl;
+    cdebug_log(112,0) << "Search halo: " << DbU::getValueString(_searchAreaHalo) << endl;
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
     
     setAxisTargets();
@@ -1547,14 +1550,14 @@ namespace Anabatic {
             continue;
           }
           
-          if (_checkFrom2(edge, current)) { // ANALOG
+          if ((gcurrent->isAnalog()) and _checkFrom2(edge, current)) {
             cdebug_log(111,0) << "| Reject: _checkFrom2()" << endl;
             continue;
           }
 
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->getObserver<Vertex>( GCell::Observable::Vertex );
-          if (not gneighbor->isMatrix()) vneighbor->createAData();
+          if (gneighbor->isAnalog()) vneighbor->createAData();
 
           cdebug_log(111,0) << "+ Neighbor:" << vneighbor << endl;
 
@@ -1573,7 +1576,7 @@ namespace Anabatic {
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
           //current->getIntervFrom().print();
           } 
-          if (current->getFrom2()) { 
+          if (gcurrent->isAnalog() and current->getFrom2()) { 
             cdebug_log(111,0) << "| From2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
             current->getIntervFrom2().print();
           }
@@ -1584,14 +1587,17 @@ namespace Anabatic {
         /////////////////////////////////////////////////////////////////////////////////// 
 
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
+          cdebug_log(111,0) << "distance:" << Vertex::getValueString(distance) << endl;
 
-          bool isDistance2shorter = _isDistance2Shorter ( distance, current, vneighbor, edge ); // ANALOG
+          bool isDistance2shorter = false;
+          if (gcurrent->isAnalog() and gneighbor->isAnalog())
+            _isDistance2Shorter ( distance, current, vneighbor, edge );
+
 
           if  (   (distance == vneighbor->getDistance())
-              and (not gcurrent->isMatrix() ) 
-              and (not gneighbor->isMatrix()) 
-              and (vneighbor->getFrom2() == NULL)
-              )  {
+              and gcurrent->isAnalog()
+              and gneighbor->isAnalog() 
+              and (vneighbor->getFrom2() == NULL) ) {
             _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
           } else
             if ( (distance < vneighbor->getDistance()) and (distance != Vertex::unreachable) ) {
@@ -1607,17 +1613,21 @@ namespace Anabatic {
                 }
               }
               cdebug_log(111,0) << "Vertex reached through a shorter path" << endl;
-              _updateGRAData( vneighbor, isDistance2shorter, current ); // ANALOG
+              if (gcurrent->isAnalog() and gneighbor->isAnalog())
+                _updateGRAData( vneighbor, isDistance2shorter, current );
               
               vneighbor->setBranchId( current->getBranchId() );
               vneighbor->setDistance( distance );
               cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
               vneighbor->setFrom ( edge );
-              vneighbor->setFrom2( NULL );
+              if (gneighbor->isAnalog()) vneighbor->setFrom2( NULL );
+
               _queue.push( vneighbor );
               cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
             } else {
-              cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path" << endl;
+              cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path or unreachable:"
+                                << boolalpha << (distance == Vertex::unreachable)
+                                << endl;
             }
 
           cdebug_tabw(111,-1);
@@ -1659,39 +1669,35 @@ namespace Anabatic {
 
     bool isfirst  = true;
     bool useFrom2 = false;
-    if (!current->getGCell()->isMatrix()){
-      _initiateUpdateIntervals ( current ); // ANALOG
+    if (current->getGCell()->isAnalog()) {
+      _initiateUpdateIntervals( current );
     } else {
       current = current->getPredecessor();
       isfirst = false;
-      
     }
-    cdebug_log(112,0) << "[Start WHILE]" << endl;
 
     Edge* from = NULL;
     while ( current ) {
-      cdebug_log(112,0) << endl;
-      cdebug_log(112,0) << "| " << current << " | " << endl;
-      if (current->getFrom()) cdebug_log(112,0) << "  | From :" << current->getFrom()->getOpposite(current->getGCell()) << " | " << endl;
-      if (current->getFrom2()) cdebug_log(112,0) << "  | From2:" << current->getFrom2()->getOpposite(current->getGCell()) << " | " << endl;
+      cdebug_log(112,0) << "+ " << current << endl;
+      if (current->getFrom()) cdebug_log(112,0) << "| From:" << current->getFrom()->getOpposite(current->getGCell()) << endl;
 
-      if (!current->getGCell()->isMatrix()){
-      //////////////////////////////////////////////////////////////////////////////////////////// ANALOG
-        if (_updateIntervals ( isfirst, current, useFrom2, branchId, from )) break;
+      if (current->getGCell()->isAnalog()) {
+        if (current->getFrom2()) cdebug_log(112,0) << "| From2:" << current->getFrom2()->getOpposite(current->getGCell()) << endl;
+
+        if (_updateIntervals( isfirst, current, useFrom2, branchId, from )) break;
         Vertex* next = NULL;
         next = current->getPredecessor();
 
-        if( current->isFromFrom2()) {
-          cdebug_log(112,0) << "ISFROMFROM2: " << current << endl;
+        if (current->isFromFrom2()) {
+          cdebug_log(112,0) << "| isFromFrom2:true (" << current << ")" << endl;
           useFrom2 = true;
-          current->unsetFlags(Vertex::UseFromFrom2);
+          current->unsetFlags( Vertex::UseFromFrom2 );
         } else {
-          cdebug_log(112,0) << "ISNOT FROMFROM2" << endl;
+          cdebug_log(112,0) << "| isFromFrom2:false" << endl;
           useFrom2 = false;
         }
-        cdebug_log(112,0) << "next: " << next << endl;
+        cdebug_log(112,0) << "| Next: " << next << endl;
         current = next;
-      //////////////////////////////////////////////////////////////////////////////////////////// 
       } else {
         current->incDegree();
         if (current->getConnexId() == _connectedsId) break;
@@ -1720,8 +1726,8 @@ namespace Anabatic {
     NetRoutingState* state = NetRoutingExtension::get( _net );
     
     for ( Vertex* startVertex : _sources ) {
-
       if (not startVertex->getFrom()) continue;
+
       if (   not startVertex->hasGContact(_net)
          and not startVertex->getRpCount()
          and (startVertex->getDegree() < 3)
@@ -1729,11 +1735,12 @@ namespace Anabatic {
 
       Vertex* source = startVertex;
       while ( source ) {
-        source->resetIntervals(); // ANALOG
-
         cdebug_log(112,0) << "* " << source << endl;
 
-        Edge* from = source->getFrom();
+        bool isAnalog = source->getGCell()->isAnalog();
+        if (isAnalog) source->resetIntervals();
+
+        Edge*         from     = source->getFrom();
         vector<Edge*> aligneds;
         aligneds.push_back( from );
 
@@ -1751,12 +1758,20 @@ namespace Anabatic {
         while ( true ) {
           from = target->getFrom();
           if (  not from
-             or not (target->getGCell()->isMatrix())
+             or (target->getGCell()->isAnalog())
              or (target->hasGContact(_net))
              or (target->getRpCount())
              or (target->getDegree() > 2)
              or (aligneds.back()->isHorizontal() xor from->isHorizontal())
              or not constraint.intersect(from->getSide())) break;
+
+        // U-turn detection. All edges must have the same *spin*.
+          if (   (aligneds[0]->getSource() == source->getGCell())
+             xor (from       ->getSource() == target->getGCell()) ) break;
+
+        // Always break vertical in channel (2M routing).
+          if (target->getGCell()->isChannelRow() and aligneds.back()->isVertical())
+            break;
 
           aligneds.push_back( from );
           constraint.merge( from->getSide() );
@@ -1772,17 +1787,20 @@ namespace Anabatic {
         Contact* targetContact = target->hasGContact( _net );
         Segment* segment       = NULL;
 
-
         if (not targetContact) {
           if (target->getFrom()) targetContact = target->getGContact( _net );
           else                   targetContact = target->breakGoThrough( _net );
         }
+
+        cdebug_log(112,0) << "| aligneds.front():" << aligneds.front()
+                          << " isHorizontal():" << aligneds.front()->isHorizontal() << endl;
         
         if (aligneds.front()->isHorizontal()) {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));  //DbU::fromLambda(2.0);
+        //DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));  //DbU::fromLambda(2.0);
+          DbU::Unit width = Session::getGHorizontalPitch();  //DbU::fromLambda(2.0);
           if (state) width *= state->getWPitch();
 
           segment = Horizontal::create( sourceContact
@@ -1792,14 +1810,15 @@ namespace Anabatic {
                                       , width
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
-          if (state){
+          if (state) {
             if (state->isSymmetric()) _createSelfSymSeg ( segment );
           }
         } else {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));  //DbU::fromLambda(2.0);
+        //DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));  //DbU::fromLambda(2.0);
+          DbU::Unit width = Session::getGVerticalPitch();  //DbU::fromLambda(2.0);
           if (state) width *= state->getWPitch();
 
           segment = Vertical::create( sourceContact
@@ -1809,16 +1828,17 @@ namespace Anabatic {
                                     , width
                                     );
           for ( Edge* through : aligneds ) through->add( segment );
-          if (state){
+          if (state) {
             if (state->isSymmetric()) _createSelfSymSeg ( segment );
           }
         }
 
-        cdebug_log(112,0) << "|| " << segment << endl;
-      //cdebug_log(112,0) << "| " << "break (turn, branch or terminal)." << endl;
-        Vertex* stc = source;
+        cdebug_log(112,0) << "| break (U-turn, turn, branch or terminal)." << endl;
+        cdebug_log(112,0) << "| " << segment << endl;
+
+        Vertex* prevSource = source;
         source = (target->getFrom()) ? target : NULL;
-        stc->clearFrom2();
+        if (isAnalog) prevSource->clearFrom2();
       }
     }
 

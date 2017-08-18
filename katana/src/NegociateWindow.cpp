@@ -316,8 +316,14 @@ namespace Katana {
       Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
       Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
 
+      cdebug_log(159,0) << "* Nearest " << track << endl;
+
       if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
       if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
+
+      if (not track)
+        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s."
+                   , getString(autoSegment).c_str() );
 
       cdebug_log(159,0) << "* GCell U-side " << uside << endl;
       cdebug_log(159,0) << "* " << plane << endl;
@@ -529,50 +535,52 @@ namespace Katana {
   //_pack( count, true );
     if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
-    cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
-    cmess1 << "     o  Repair Stage." << endl;
+    if (not _katana->isChannelMode() ) {
+      cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
+      cmess1 << "     o  Repair Stage." << endl;
 
-    cdebug_log(159,0) << "Loadind Repair queue." << endl;
-    RoutingEvent::setStage( RoutingEvent::Repair );
-    for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
-      RoutingEvent* event = _eventHistory.getNth(i);
+      cdebug_log(159,0) << "Loadind Repair queue." << endl;
+      RoutingEvent::setStage( RoutingEvent::Repair );
+      for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+        RoutingEvent* event = _eventHistory.getNth(i);
 
-      if (not event->isCloned() and event->isUnimplemented()) {
-        event->reschedule( _eventQueue, 0 );
+        if (not event->isCloned() and event->isUnimplemented()) {
+          event->reschedule( _eventQueue, 0 );
+        }
       }
-    }
-    _eventQueue.commit();
-    cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
-           << _eventQueue.size() << ">" << endl;
+      _eventQueue.commit();
+      cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
+             << _eventQueue.size() << ">" << endl;
 
-    count = 0;
-  //_eventQueue.prepareRepair();
-    while ( not _eventQueue.empty() and not isInterrupted() ) {
-      RoutingEvent* event = _eventQueue.pop();
+      count = 0;
+    //_eventQueue.prepareRepair();
+      while ( not _eventQueue.empty() and not isInterrupted() ) {
+        RoutingEvent* event = _eventQueue.pop();
 
-      if (tty::enabled()) {
-        cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << tty::reset
-               << " remains:" << right << setw(8) << setfill('0')
-               << _eventQueue.size() << ">"
-               << setfill(' ') << tty::reset << tty::cr;
-        cmess2.flush();
-      } else {
-        cmess2 << "        <repair.event:" << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
-               << event->getSegment()
-               << endl;
-        cmess2.flush();
+        if (tty::enabled()) {
+          cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
+                 << RoutingEvent::getProcesseds() << tty::reset
+                 << " remains:" << right << setw(8) << setfill('0')
+                 << _eventQueue.size() << ">"
+                 << setfill(' ') << tty::reset << tty::cr;
+          cmess2.flush();
+        } else {
+          cmess2 << "        <repair.event:" << setw(8) << setfill('0')
+                 << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                 << event->getEventLevel() << ":" << event->getPriority() << "> "
+                 << event->getSegment()
+                 << endl;
+          cmess2.flush();
+        }
+
+        event->process( _eventQueue, _eventHistory, _eventLoop );
+
+        count++;
+        if (RoutingEvent::getProcesseds() >= limit ) setInterrupt( true );
       }
 
-      event->process( _eventQueue, _eventHistory, _eventLoop );
-
-      count++;
-      if (RoutingEvent::getProcesseds() >= limit ) setInterrupt( true );
+      if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
     }
-
-    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
     size_t eventsCount = _eventHistory.size();
 

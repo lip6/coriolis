@@ -49,7 +49,7 @@ namespace Anabatic {
       virtual Interval        getSourceConstraints    ( Flags flags=0 ) const;
       virtual Interval        getTargetConstraints    ( Flags flags=0 ) const;
       virtual Flags           getDirection            () const;
-      virtual size_t          getGCells               ( vector<GCell*>& ) const;
+      virtual bool            getGCells               ( vector<GCell*>& ) const;
     // Modifiers.                                     
       virtual void            setDuSource             ( DbU::Unit );
       virtual void            setDuTarget             ( DbU::Unit );

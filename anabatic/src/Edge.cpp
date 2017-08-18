@@ -184,10 +184,12 @@ namespace Anabatic {
     _realOccupancy = occupancy;
   }
 
+
   void  Edge::incRealOccupancy2 ( int value )
   {
     _realOccupancy += value;
   }
+
 
   Segment* Edge::getSegment ( const Net* owner ) const
   {
@@ -204,8 +206,8 @@ namespace Anabatic {
     Horizontal* h = dynamic_cast<Horizontal*>(segment);
     Vertical*   v = dynamic_cast<Vertical*>(segment);
     DbU::Unit pitch = 0;
-    if (h) pitch = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));
-    if (v) pitch = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));
+    if (h) pitch = Session::getGHorizontalPitch();
+    if (v) pitch = Session::getGVerticalPitch();
     
     incRealOccupancy( segment->getWidth()/pitch );  // Need to take the wire width into account.
   }
@@ -259,7 +261,7 @@ namespace Anabatic {
     if (source == _target)
       throw Error("Edge::_setSource(): Source & target are the same (%s).", getString(source).c_str() );
     
-    _invalidate();
+    invalidate( false );
     _source=source;
   }
 
@@ -269,26 +271,40 @@ namespace Anabatic {
     if (_source == target)
       throw Error("Edge::_setTarget(): Source & target are the same (%s).", getString(target).c_str() );
     
-    _invalidate();
+    invalidate( false );
     _target=target;
   }
 
 
-  void  Edge::_invalidate ()
+  void  Edge::invalidate ( bool )
   {
+    cdebug_log(110,1) << "Edge::invalidate() " << this << endl;
+
     _flags |= Flags::Invalidated;
     Super::invalidate( false );
+
+    cdebug_tabw(110,-1);
   }
 
 
-  void  Edge::_revalidate ()
+  void  Edge::materialize ()
   {
+    cdebug_log(110,1) << "Edge::materialize() " << this << endl;
+
     Interval side = getSide();
-    _axis     = side.getCenter();
-    _capacity = getAnabatic()->getCapacity( side, _flags );
+    _axis = side.getCenter();
+
+    if      (getSource()->isStdCellRow() and getTarget()->isStdCellRow()) _capacity = 0;
+    else if (getSource()->isChannelRow() and getTarget()->isChannelRow()) _capacity = 100;
+    else
+      _capacity = getAnabatic()->getCapacity( side, _flags );
 
     _flags.reset( Flags::Invalidated );
-    cdebug_log(110,0) << "Edge::_revalidate() " << this << endl;
+    cdebug_log(110,0) << "Edge::materialize() " << this << endl;
+
+    Super::materialize();
+
+    cdebug_tabw(110,-1);
   }
 
 
@@ -301,28 +317,30 @@ namespace Anabatic {
     static DbU::Unit halfThickness = getAnabatic()->getConfiguration()->getEdgeWidth () / 2;
     static DbU::Unit halfLength    = getAnabatic()->getConfiguration()->getEdgeLength() / 2;
 
-    if (_flags.isset(Flags::Horizontal))
-      return Box( _target->getXMin() - halfLength, _axis - halfThickness
-                , _target->getXMin() + halfLength, _axis + halfThickness
-                );
+    Box bb;
 
-    return Box( _axis - halfThickness, _target->getYMin() - halfLength
+    if (_flags.isset(Flags::Horizontal))
+      bb = Box( _target->getXMin() - halfLength, _axis - halfThickness
+              , _target->getXMin() + halfLength, _axis + halfThickness
+              );
+    else
+      bb = Box( _axis - halfThickness, _target->getYMin() - halfLength
               , _axis + halfThickness, _target->getYMin() + halfLength
               );
+
+    return bb;
   }
 
 
   bool Edge::isMaxCapacity ( Net* net ) const 
   {
-    if (net){
+    if (net) {
+      cdebug_log(112,0) << "_capacity:" << _capacity << endl;
+
       Hurricane::NetRoutingState* state = Hurricane::NetRoutingExtension::get( net );
-    //cerr << "bool Edge::isMaxCapacity ( Net* net ) const: " << net << endl;
-    //cerr << "WPitch: " << state->getWPitch() << endl;
-      
-      return ( (_realOccupancy +state->getWPitch()) > _capacity ) ? true : false; 
-    } else {
-      return ( _realOccupancy >= _capacity ) ? true : false; 
+      return ((_realOccupancy + state->getWPitch()) > _capacity) ? true : false; 
     }
+    return (_realOccupancy >= _capacity) ? true : false; 
   }
 
 

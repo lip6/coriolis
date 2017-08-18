@@ -94,7 +94,7 @@ namespace Anabatic {
       inline  GCell*     getUnder     ( Point ) const;
               void       setCell      ( Cell*, DbU::Unit side );
               void       updateLookup ( GCell* );
-              void       resize       ( Box area, DbU::Unit side );
+              void       resize       ( Cell*, const vector<GCell*>& );
               void       show         () const;
     // Inspector support.                            
       virtual Record*    _getRecord   () const;

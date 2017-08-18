@@ -164,10 +164,13 @@ namespace Anabatic {
   inline void         GRAData::printInterv     () const { _interv.print()    ; }
   inline void         GRAData::printIntervfrom () const { _intervfrom.print(); }
 
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::Vertex".
 
   class Vertex {
+    public:
+      static inline std::string  getValueString ( DbU::Unit );
     public:
       class CompareById {
         public:
@@ -191,6 +194,7 @@ namespace Anabatic {
       static         DbU::Unit       unreachable;
     public:                         
       static         void            notify         ( Vertex*, unsigned flags );
+      static inline  Vertex*         lookup         ( GCell* );
     public:                         
              inline                  Vertex         ( GCell* );
            //inline                  Vertex         ( size_t id );
@@ -328,6 +332,7 @@ namespace Anabatic {
   }
 
 
+  inline Vertex*         Vertex::lookup         ( GCell* gcell ) { return gcell->getObserver<Vertex>(GCell::Observable::Vertex); }
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
   inline Contact*        Vertex::hasGContact    ( Net* net ) const { return _gcell->hasGContact(net); }
   inline unsigned int    Vertex::getId          () const { return _id; }
@@ -386,6 +391,14 @@ namespace Anabatic {
   inline bool         Vertex::isiVertical  () const { return (_flags & Vertex::iVertical   ); }
   inline void         Vertex::setFlags     ( uint32_t mask ) { _flags |= mask ; }
   inline void         Vertex::unsetFlags   ( uint32_t mask ) { _flags &= ~mask; }
+
+  inline std::string  Vertex::getValueString ( DbU::Unit distance )
+  {
+    if (distance == Vertex::unreachable) return "unreachable";
+    if (distance == Vertex::unreached  ) return "unreached";
+    return DbU::getValueString( distance );
+  }
+
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".

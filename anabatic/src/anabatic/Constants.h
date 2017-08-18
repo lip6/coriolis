@@ -39,6 +39,10 @@ namespace Anabatic {
       static const BaseFlags  MatrixGCell         ; // = (1 <<  9);
       static const BaseFlags  IoPadGCell          ; // = (1 << 10);
       static const BaseFlags  Saturated           ; // = (1 << 11);
+      static const BaseFlags  StdCellRow          ; // = (1 << 12);
+      static const BaseFlags  ChannelRow          ; // = (1 << 13);
+    // Flags for Edge objects states only.                      
+      static const BaseFlags  IllimitedCapacity   ; // = (1 <<  5);
     // Flags for Anabatic objects states only.                      
       static const BaseFlags  DemoMode            ; // = (1 <<  5);
       static const BaseFlags  WarnOnGCellOverload ; // = (1 <<  6);
@@ -57,6 +61,8 @@ namespace Anabatic {
       static const BaseFlags  DirectionMask       ; // = Horizontal|Vertical;
       static const BaseFlags  DestroyMask         ; // = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
       static const BaseFlags  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
+      static const BaseFlags  RowGCellMask        ; // = StdCellRow|ChannelRow;
+      static const BaseFlags  AnalogGCellMask     ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell;
     // Flags for functions arguments only.           
       static const BaseFlags  Create              ; // = (1 <<  5);
       static const BaseFlags  WithPerpands        ;

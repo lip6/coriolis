@@ -63,10 +63,10 @@ namespace Anabatic {
   {
     cdebug_log(110,0) << "GCell_Edges::Locator::progress() [from] " << _stateFlags << " iedge:" << _iedge << endl;
     cdebug_log(110,0) << "  _filterFlags:" << _filterFlags << endl;
-    cdebug_log(110,0) << "  East:"  << _gcell->getEastEdges().size()
-                    << "  North:" << _gcell->getNorthEdges().size()
-                    << "  West:"  << _gcell->getWestEdges().size()
-                    << "  South:" << _gcell->getSouthEdges().size() << endl;
+    cdebug_log(110,0) << "  East:"  << _gcell->getEastEdges ().size()
+                      << "  North:" << _gcell->getNorthEdges().size()
+                      << "  West:"  << _gcell->getWestEdges ().size()
+                      << "  South:" << _gcell->getSouthEdges().size() << endl;
     cdebug_log(110,0) << this << endl;
 
     ++_iedge;

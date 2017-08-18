@@ -66,7 +66,6 @@ namespace Katana {
     public:
              static Session*            get                 ( const char* message=NULL );
       inline static Super*              base                ();
-      inline static bool                isOpen              ();
       inline static bool                isEmpty             ();
       inline static KatanaEngine*       getKatanaEngine     ();
              static Configuration*      getConfiguration    ();
@@ -178,9 +177,6 @@ namespace Katana {
 
   inline size_t  Session::revalidate ()
   { return get("revalidate()")->_revalidate(); }
-
-  inline bool  Session::isOpen ()
-  { return get() != NULL; }
 
   inline bool  Session::isEmpty ()
   { return get("isEmpty()")->_isEmpty(); }

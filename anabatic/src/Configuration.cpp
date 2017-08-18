@@ -59,7 +59,12 @@ namespace Anabatic {
 
 
   Configuration::Configuration ( const CellGauge* cg, const RoutingGauge* rg )
-    : _cg             (NULL)
+    : _gdepthv        (ndepth)
+    , _gdepthh        (ndepth)
+    , _ddepthv        (ndepth)
+    , _ddepthh        (ndepth)
+    , _ddepthc        (ndepth)
+    , _cg             (NULL)
     , _rg             (NULL)
     , _extensionCaps  ()
     , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
@@ -75,14 +80,18 @@ namespace Anabatic {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
-    if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
+    if (rg == NULL) {
+      string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
+      rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
+      if (rg == NULL) 
+        throw Error( "Anabatic::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
+    }
     _cg = cg->getClone();
     _rg = rg->getClone();
 
-    if (Cfg::hasParameter("anabatic.topRoutingLayer")) {
-      _setTopRoutingLayer( Cfg::getParamString("anabatic.topRoutingLayer")->asString() );
-    } else
-      _allowedDepth = rg->getDepth()-1;
+    _allowedDepth = rg->getDepth()-1;
+    if (Cfg::hasParameter("katabatic.topRoutingLayer"))
+      _setTopRoutingLayer( Cfg::getParamString("katabatic.topRoutingLayer")->asString() );
 
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");
@@ -94,8 +103,24 @@ namespace Anabatic {
 
   //DbU::Unit sliceHeight = _cg->getSliceHeight();
 
+    _ddepthc = (_allowedDepth > 1) ? 1 : 0;
+
     const vector<RoutingLayerGauge*>& layerGauges = rg->getLayerGauges();
     for ( size_t depth=0 ; depth < layerGauges.size() ; ++depth ) {
+      if ( (_gdepthh == ndepth)
+         and  layerGauges[depth]->isHorizontal()
+         and (layerGauges[depth]->getType() == Constant::LayerGaugeType::Default) ) {
+        _gdepthh = depth;
+        _ddepthh = depth;
+      }
+
+      if ( (_gdepthv == ndepth)
+         and  layerGauges[depth]->isVertical()
+         and (layerGauges[depth]->getType() == Constant::LayerGaugeType::Default) ) {
+        _gdepthv = depth;
+        _ddepthv = depth;
+      }
+
       const RegularLayer* regularLayer = dynamic_cast<const RegularLayer*>( layerGauges[depth]->getLayer() );
       if (regularLayer)
         _extensionCaps.push_back( regularLayer->getExtentionCap() );
@@ -115,6 +140,11 @@ namespace Anabatic {
     : _gmetalh        (other._gmetalh)
     , _gmetalv        (other._gmetalv)
     , _gcontact       (other._gcontact)
+    , _gdepthv        (other._gdepthv)
+    , _gdepthh        (other._gdepthh)
+    , _ddepthv        (other._ddepthv)
+    , _ddepthh        (other._ddepthh)
+    , _ddepthc        (other._ddepthc)
     , _cg             (NULL)
     , _rg             (NULL)
     , _extensionCaps  (other._extensionCaps)
@@ -288,7 +318,7 @@ namespace Anabatic {
       }
     }
     cerr << Error( "In Configuration::Concrete::_setTopRoutingLayer():\n"
-                   "       The routing gauge <%s> has no layer named <%s>"
+                   "        The routing gauge <%s> has no layer named <%s>"
                  , getString(_rg->getName()).c_str()
                  , getString(name).c_str() ) << endl;
   }
@@ -360,6 +390,8 @@ namespace Anabatic {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
+    record->add ( getSlot( "_gdepthh"     ,  _gdepthh     ) );
+    record->add ( getSlot( "_gdepthv"     ,  _gdepthv     ) );
     record->add ( getSlot( "_rg"          ,  _rg          ) );
     record->add ( getSlot( "_gmetalh"     , _gmetalh      ) );
     record->add ( getSlot( "_gmetalv"     , _gmetalv      ) );

@@ -230,6 +230,7 @@ namespace Anabatic {
       inline        Net*              getBlockageNet        () const;
       inline const  ChipTools&        getChipTools          () const;
       inline const  vector<NetData*>& getNetOrdering        () const;
+                    void              invalidateRoutingPads ();
                     void              updateDensity         ();
                     size_t            checkGCellDensities   ();
       inline        void              setGlobalThreshold    ( DbU::Unit );
@@ -277,6 +278,7 @@ namespace Anabatic {
       inline        void              _add                  ( GCell* );
       inline        void              _remove               ( GCell* );
       inline        void              _updateLookup         ( GCell* );
+      inline        void              _resizeMatrix         ();
       inline        bool              _inDestroy            () const;
     // Inspector support.                                   
       virtual       Record*           _getRecord            () const;
@@ -346,6 +348,7 @@ namespace Anabatic {
   inline       void              AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
   inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
   inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline       void              AnabaticEngine::_resizeMatrix         () { _matrix.resize( getCell(), getGCells() ); }
   inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )

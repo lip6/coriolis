@@ -39,6 +39,9 @@ namespace Anabatic {
   const BaseFlags  Flags::MatrixGCell         = (1L <<  9);
   const BaseFlags  Flags::IoPadGCell          = (1L << 10);
   const BaseFlags  Flags::Saturated           = (1L << 11);
+  const BaseFlags  Flags::StdCellRow          = (1L << 12);
+  const BaseFlags  Flags::ChannelRow          = (1L << 13);
+  const BaseFlags  Flags::IllimitedCapacity   = (1L <<  5);
 // Flags for Anabatic objects states only.                      
   const BaseFlags  Flags::DemoMode            = (1L <<  5);
   const BaseFlags  Flags::WarnOnGCellOverload = (1L <<  6);
@@ -56,7 +59,19 @@ namespace Anabatic {
   const BaseFlags  Flags::EndsMask            = Source|Target;
   const BaseFlags  Flags::DirectionMask       = Horizontal|Vertical;
   const BaseFlags  Flags::DestroyMask         = DestroyGCell|DestroyBaseContact|DestroyBaseSegment;
-  const BaseFlags  Flags::GCellTypeMask       = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell;
+  const BaseFlags  Flags::GCellTypeMask       = DeviceGCell
+                                              | HChannelGCell
+                                              | VChannelGCell
+                                              | StrutGCell
+                                              | MatrixGCell
+                                              | IoPadGCell
+                                              | StdCellRow
+                                              | ChannelRow;
+  const BaseFlags  Flags::RowGCellMask        = StdCellRow|ChannelRow;
+  const BaseFlags  Flags::AnalogGCellMask     = DeviceGCell
+                                              | HChannelGCell
+                                              | VChannelGCell
+                                              | StrutGCell;
 // Flags for functions arguments only.           
   const BaseFlags  Flags::Create              = (1L <<  5);
   const BaseFlags  Flags::WithPerpands        = (1L <<  6);
@@ -146,20 +161,22 @@ namespace Anabatic {
   string Flags::_getString () const
   {
     string s = "";
-    s += (_flags & (uint64_t)Horizontal   ) ? 'h'  : '-';
-    s += (_flags & (uint64_t)Vertical     ) ? 'v'  : '-';
-    s += (_flags & (uint64_t)Source       ) ? 'S'  : '-';
-    s += (_flags & (uint64_t)Target       ) ? 'T'  : '-';
-    s += (_flags & (uint64_t)DeviceGCell  ) ? 'd'  : '-';
+    s += (_flags & (uint64_t)Horizontal   ) ? 'h' : '-';
+    s += (_flags & (uint64_t)Vertical     ) ? 'v' : '-';
+    s += (_flags & (uint64_t)Source       ) ? 'S' : '-';
+    s += (_flags & (uint64_t)Target       ) ? 'T' : '-';
+    s += (_flags & (uint64_t)DeviceGCell  ) ? 'd' : '-';
     s += (_flags & (uint64_t)HChannelGCell) ? 'c' : '-';
     s += (_flags & (uint64_t)VChannelGCell) ? 'c' : '-';
     s += (_flags & (uint64_t)StrutGCell   ) ? 's' : '-';
-    s += (_flags & (uint64_t)MatrixGCell  ) ? 'm'  : '-';
+    s += (_flags & (uint64_t)MatrixGCell  ) ? 'm' : '-';
+    s += (_flags & (uint64_t)StdCellRow   ) ? 'S' : '-';
+    s += (_flags & (uint64_t)ChannelRow   ) ? 'C' : '-';
     s += ",";
-    s += (_flags & (uint64_t)Invalidated  ) ? 'i'  : '-';
-    s += (_flags & (uint64_t)DestroyGCell ) ? 'D'  : '-';
-    s += (_flags & (uint64_t)AboveLayer   ) ? 'A'  : '-';
-    s += (_flags & (uint64_t)BelowLayer   ) ? 'B'  : '-';
+    s += (_flags & (uint64_t)Invalidated  ) ? 'i' : '-';
+    s += (_flags & (uint64_t)DestroyGCell ) ? 'D' : '-';
+    s += (_flags & (uint64_t)AboveLayer   ) ? 'A' : '-';
+    s += (_flags & (uint64_t)BelowLayer   ) ? 'B' : '-';
 
     return s;
   }

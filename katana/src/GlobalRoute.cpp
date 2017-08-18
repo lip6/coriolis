@@ -5,7 +5,7 @@
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
-// |     A n a b a t i c  -  Global Routing Toolbox                  |
+// |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
@@ -14,8 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/Warning.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Cell.h"
 #include "anabatic/Dijkstra.h"
+#include "katana/Block.h"
 #include "katana/RoutingPlane.h"
 #include "katana/KatanaEngine.h"
 
@@ -28,6 +31,7 @@ namespace {
   using std::setfill;
   using std::left;
   using std::right;
+  using Hurricane::DbU;
   using Hurricane::DbU;
   using Hurricane::Net;
   using Anabatic::Edge;
@@ -54,10 +58,16 @@ namespace {
 
   DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
   {
-    if (edge->getCapacity() <= 0) return Vertex::unreached;
+    if (edge->getCapacity() <= 0) return Vertex::unreachable;
 
+    if (source->getGCell()->isStdCellRow() and target->getGCell()->isStdCellRow())
+      return Vertex::unreachable;
+
+    float congestionCost = 1.0;
     float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
-    float congestionCost = 1.0 + _h / (1.0 + std::exp(_k * (congestion - 1.0)));
+
+    if (not source->getGCell()->isChannelRow() or not target->getGCell()->isChannelRow())
+      congestionCost += _h / (1.0 + std::exp(_k * (congestion - 1.0)));
 
     float viaCost = 0.0;
     if (    source->getFrom()
@@ -101,10 +111,28 @@ namespace {
 namespace Katana {
 
   using Hurricane::Error;
+  using Hurricane::Warning;
+  using Hurricane::Breakpoint;
   using Hurricane::Timer;
+  using Hurricane::Occurrence;
+  using Hurricane::Transformation;
+  using Hurricane::Instance;
   using Anabatic::EngineState;
   using Anabatic::Dijkstra;
   using Anabatic::NetData;
+
+
+  void  KatanaEngine::createChannels ()
+  {
+    Cell* core = getCell();
+    if (isChip())
+      core = getChipTools().getCore()->getMasterCell();
+
+    Block* block = new Block( this, core );
+    block->createChannels();
+
+    _resizeMatrix();
+  }
 
 
   void  KatanaEngine::setupGlobalGraph ( uint32_t mode )
@@ -115,6 +143,8 @@ namespace Katana {
     cell->createRoutingPadRings( Cell::Flags::BuildRings );
 
     startMeasures();
+
+    if (isChannelMode()) createChannels();
 
     if (getGCells().size() == 1) {
       cmess1 << "  o  Building regular grid..." << endl;
@@ -159,6 +189,9 @@ namespace Katana {
     DigitalDistance* distance =
       dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                             , getConfiguration()->getEdgeCostK() ));
+
+    if (isChannelMode())
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*2 );
 
     size_t iteration = 0;
     size_t netCount  = 0;
@@ -211,8 +244,19 @@ namespace Katana {
     stopMeasures();
     printMeasures( "Dijkstra" );
 
+    if (getBlock(0)) {
+      getBlock(0)->resizeChannels();
+      _resizeMatrix();
+    }
+
     delete dijkstra;
+
     Session::close();
+    if (isChannelMode()) {
+      setupRoutingPlanes();
+      setupPowerRails();
+      protectRoutingPads();
+    }
 
     setState( EngineState::EngineGlobalLoaded );
   }

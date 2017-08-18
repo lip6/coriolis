@@ -226,7 +226,7 @@ namespace Anabatic {
       inline  uint64_t            getFlags                   () const;
       virtual Flags               getDirection               () const = 0;
       inline  GCell*              getGCell                   () const;
-      virtual size_t              getGCells                  ( vector<GCell*>& ) const = 0;
+      virtual bool                getGCells                  ( vector<GCell*>& ) const = 0;
       inline  AutoContact*        getAutoSource              () const;
       inline  AutoContact*        getAutoTarget              () const;
               AutoContact*        getOppositeAnchor          ( AutoContact* ) const;

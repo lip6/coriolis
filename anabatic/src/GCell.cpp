@@ -331,13 +331,13 @@ namespace Anabatic {
     if (not anabatic)            throw Error( "GCell::create(): NULL anabatic argument." );
     if (not anabatic->getCell()) throw Error( "GCell::create(): AnabaticEngine has no Cell loaded." );
 
-    anabatic->openSession();
+    bool reUseSession = Session::isOpen();
+    if (not reUseSession) anabatic->openSession();
     GCell* gcell = new GCell ( anabatic
                              , anabatic->getCell()->getAbutmentBox().getXMin()
                              , anabatic->getCell()->getAbutmentBox().getYMin() );
     gcell->_postCreate();
-    gcell->_revalidate();
-    Session::close();
+    if (not reUseSession) Session::close();
 
     return gcell;
   }
@@ -661,9 +661,6 @@ namespace Anabatic {
       _moveEdges( chunk, iedge+1, Flags::NorthSide );
     }
 
-    _revalidate();
-    chunk->_revalidate();
-
     cdebug_tabw(110,-1);
 
     return chunk;
@@ -712,9 +709,6 @@ namespace Anabatic {
 
       _moveEdges( chunk, iedge+1, Flags::EastSide );
     }
-
-    _revalidate();
-    chunk->_revalidate();
 
     cdebug_tabw(110,-1);
 
@@ -787,21 +781,33 @@ namespace Anabatic {
   }
 
 
-  void  GCell::_revalidate ()
+  void  GCell::invalidate ( bool propagateFlag )
   {
-    cdebug_log(110,1) << "GCell::revalidate() " << this << endl;
-    cdebug_log(110,1) << "West side."  << endl; for ( Edge* edge : _westEdges  ) edge->revalidate(); cdebug_tabw(110,-1);
-    cdebug_log(110,1) << "East side."  << endl; for ( Edge* edge : _eastEdges  ) edge->revalidate(); cdebug_tabw(110,-1);
-    cdebug_log(110,1) << "South side." << endl; for ( Edge* edge : _southEdges ) edge->revalidate(); cdebug_tabw(110,-1);
-    cdebug_log(110,1) << "North side." << endl; for ( Edge* edge : _northEdges ) edge->revalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "GCell::invalidate() " << this << endl;
+    Super::invalidate( propagateFlag );
+
+    cdebug_log(110,1) << "West side."  << endl; for ( Edge* edge : _westEdges  ) edge->invalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "East side."  << endl; for ( Edge* edge : _eastEdges  ) edge->invalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "South side." << endl; for ( Edge* edge : _southEdges ) edge->invalidate(); cdebug_tabw(110,-1);
+    cdebug_log(110,1) << "North side." << endl; for ( Edge* edge : _northEdges ) edge->invalidate(); cdebug_tabw(110,-1);
+
+    cdebug_tabw(110,-1);
+  }
+
+
+  void  GCell::materialize ()
+  {
+    cdebug_log(110,1) << "GCell::materialize() " << this << endl;
 
     if (_xmin > getXMax()+1)
-      cerr << Error( "GCell::_revalidate(): %s, X Min is greater than Max.", getString(this).c_str() );
+      cerr << Error( "GCell::materialize(): %s, X Min is greater than Max.", getString(this).c_str() );
     if (_ymin > getYMax()+1)
-      cerr << Error( "GCell::_revalidate(): %s, Y Min is greater than Max.", getString(this).c_str() );
+      cerr << Error( "GCell::materialize(): %s, Y Min is greater than Max.", getString(this).c_str() );
 
     _anabatic->_updateLookup( this );
   //_anabatic->getMatrix()->show();
+    Super::materialize();
+
     cdebug_tabw(110,-1);
   }
 
@@ -898,36 +904,31 @@ namespace Anabatic {
   }
 
 
-  void GCell::setXY ( DbU::Unit x, DbU::Unit y )
+  void GCell::setSouthWestCorner ( DbU::Unit x, DbU::Unit y )
   {
-    UpdateSession::open();
-    _xmin = x;
-    _ymin = y;
-    UpdateSession::close(); 
-  }
+    DbU::Unit dx = x - _xmin;
+    DbU::Unit dy = y - _ymin;
 
-  
-  void GCell::updateContactsPosition ()
-  {
-    UpdateSession::open();
-    DbU::Unit xc = (getXMax() + getXMin())/2;
-    DbU::Unit yc = (getYMax() + getYMin())/2;
-    for (vector<Contact*>::iterator it = _gcontacts.begin(); it != _gcontacts.end(); it++){
-      for ( Component* c : (*it)->getSlaveComponents() ){
-        Horizontal* h = dynamic_cast<Horizontal*>(c);
-        Vertical*   v = dynamic_cast<Vertical*>  (c);
-        if (h){
-        //if (h->getY() == (*it)->getY()) h->setY(yc);
-          h->setY(yc);
-        } else if (v) {
-        //if (v->getX() == (*it)->getX()) v->setX(xc);
-          v->setX(xc);
+    for ( Contact* contact : _gcontacts ) {
+      Point position = contact->getPosition().translate( dx, dy );
+
+      for ( Component* component : contact->getSlaveComponents() ) {
+        Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
+        if (horizontal) {
+          horizontal->setY( position.getY() );
+        } else {
+          Vertical* vertical = dynamic_cast<Vertical*>( component );
+          vertical->setX( position.getX() );
         }
       }
-      (*it)->setX(xc);
-      (*it)->setY(yc);
+
+      if (not contact->getAnchor()) contact->setPosition( position );
     }
-    UpdateSession::close(); 
+
+    _xmin = x;
+    _ymin = y;
+
+    invalidate( false );
   }
 
 
@@ -1522,6 +1523,19 @@ namespace Anabatic {
   }
 
 
+  size_t  GCell::getNetCount () const
+  {
+    set<Net*> nets;
+
+    for ( Edge* edge : _westEdges  ) for ( Segment* segment : edge->getSegments() ) nets.insert( segment->getNet() );
+    for ( Edge* edge : _eastEdges  ) for ( Segment* segment : edge->getSegments() ) nets.insert( segment->getNet() );
+    for ( Edge* edge : _northEdges ) for ( Segment* segment : edge->getSegments() ) nets.insert( segment->getNet() );
+    for ( Edge* edge : _southEdges ) for ( Segment* segment : edge->getSegments() ) nets.insert( segment->getNet() );
+
+    return nets.size();
+  }
+
+
   void  GCell::rpDesaturate ( set<Net*>& globalNets )
   {
     set<RoutingPad*> rps;
@@ -1702,6 +1716,7 @@ namespace Anabatic {
     record->add( getSlot("_northEdges" , &_northEdges) );
     record->add( DbU::getValueSlot("_xmin", &_xmin) );
     record->add( DbU::getValueSlot("_ymin", &_ymin) );
+    record->add( getSlot ( "_gcontacts", &_gcontacts ) );
     record->add( getSlot ( "_vsegments", &_vsegments ) );
     record->add( getSlot ( "_hsegments", &_hsegments ) );
     record->add( getSlot ( "_contacts" , &_contacts  ) );

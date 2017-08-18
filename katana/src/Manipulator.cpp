@@ -491,7 +491,11 @@ namespace Katana {
         cdebug_tabw(159,-1);
         return false;
       }
-      _segment->makeDogleg( dogLegGCell, dogleg, segment1 );
+      if (not _segment->makeDogleg( dogLegGCell, dogleg, segment1 )) {
+        cdebug_log(159,0) << "FIRST makeDogleg() call failed (BUG)." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
     }
 
     if (firstDoglegIsMin) {
@@ -548,7 +552,11 @@ namespace Katana {
           cdebug_tabw(159,-1);
           return false;
         }
-        segment1->makeDogleg( dogLegGCell, dogleg, segment2 );
+        if (not segment1->makeDogleg( dogLegGCell, dogleg, segment2 )) {
+          cdebug_log(159,0) << "SECOND makeDogleg() call failed (BUG)." << endl;
+          cdebug_tabw(159,-1);
+          return false;
+        }
       }
       
       if (maxExpanded) {

@@ -711,6 +711,12 @@ namespace Katana {
       return false;
     }
 
+    if (doglegGCell->isStdCellRow()) {
+      cdebug_log(159,0) << "false: Cannot dogleg in a Standard Cell row." << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
     if (isFixed()) {
       cdebug_log(159,0) << "false: Cannot dogleg a fixed segment." << endl;
       cdebug_tabw(159,-1);
@@ -743,7 +749,11 @@ namespace Katana {
     }
 
     vector<Anabatic::GCell*> gcells;
-    getGCells( gcells );
+    if (not getGCells(gcells)) {
+      cdebug_log(159,0) << "getGCell() has gone wrong." << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
 
     cdebug_log(159,0) << "Source: " << *gcells.begin () << endl;
     cdebug_log(159,0) << "Target: " << *gcells.rbegin() << endl;

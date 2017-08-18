@@ -139,8 +139,12 @@ namespace Anabatic {
       inline        bool                  isHChannel          () const;
       inline        bool                  isVChannel          () const;
       inline        bool                  isStrut             () const;
+      inline        bool                  isAnalog            () const;
       inline        bool                  isMatrix            () const;
+      inline        bool                  isRow               () const;
       inline        bool                  isIoPad             () const;
+      inline        bool                  isStdCellRow        () const;
+      inline        bool                  isChannelRow        () const;
                     bool                  isWest              ( GCell* ) const;
                     bool                  isEast              ( GCell* ) const;
                     bool                  isNorth             ( GCell* ) const;
@@ -191,14 +195,14 @@ namespace Anabatic {
       inline const  vector<Contact*>&     getGContacts        () const;
                     Contact*              breakGoThrough      ( Net* net );
                     bool                  unrefContact        ( Contact* );
-                    void                  setXY               ( DbU::Unit x, DbU::Unit y );
-                    void                  updateContactsPosition ();
+                    void                  setSouthWestCorner  ( DbU::Unit x, DbU::Unit y );
                     void                  cleanupGlobal       ();
       inline        DbU::Unit             getWidth            () const;
       inline        DbU::Unit             getHeight           () const;
     // Detailed routing functions.
                     bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
       inline        size_t                getDepth            () const;
+                    size_t                getNetCount         () const;
                     float                 getHCapacity        () const;
                     float                 getVCapacity        () const;
                     float                 getDensity          ( Flags flags=Flags::NoFlags ) const;
@@ -251,7 +255,6 @@ namespace Anabatic {
                     void                  _add                ( Edge* edge, Flags side );
                     void                  _remove             ( Edge* edge, Flags side=Flags::AllSides );
                     void                  _destroyEdges       ();
-                    void                  _revalidate         ();
     private:                              
                     void                  _moveEdges          ( GCell* dest, size_t ibegin, Flags flags );
     public:                                      
@@ -265,6 +268,8 @@ namespace Anabatic {
       virtual const Name&                 getName             () const;
       virtual       void                  translate           ( const DbU::Unit&, const DbU::Unit& );
       virtual       Box                   getBoundingBox      () const;
+      virtual       void                  invalidate          ( bool propagateFlag=true );
+      virtual       void                  materialize         ();
     public:                                                
     // Inspector support.                                  
       virtual       string                _getTypeName        () const;
@@ -314,8 +319,12 @@ namespace Anabatic {
   inline       bool                  GCell::isHChannel    () const { return _flags & Flags::HChannelGCell; }
   inline       bool                  GCell::isVChannel    () const { return _flags & Flags::VChannelGCell; }
   inline       bool                  GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
+  inline       bool                  GCell::isAnalog      () const { return _flags & Flags::AnalogGCellMask; }
   inline       bool                  GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
+  inline       bool                  GCell::isRow         () const { return _flags & Flags::RowGCellMask; }
   inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
+  inline       bool                  GCell::isStdCellRow  () const { return _flags & Flags::StdCellRow; }
+  inline       bool                  GCell::isChannelRow  () const { return _flags & Flags::ChannelRow; }
   inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }
   inline       bool                  GCell::isInvalidated () const { return _flags & Flags::Invalidated; }
   inline       Flags                 GCell::getType       () const { return _flags & Flags::GCellTypeMask; }

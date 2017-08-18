@@ -157,6 +157,13 @@ namespace Anabatic {
                       << DbU::getValueString(getAutoSource()->getCBYMax()) << "]"
                       << endl;
 
+    constraintMin = std::max ( constraintMin, getAutoTarget()->getCBYMin() );
+    constraintMax = std::min ( constraintMax, getAutoTarget()->getCBYMax() );
+    cdebug_log(144,0) << "Merge with target constraints: ["
+                      << DbU::getValueString(getAutoTarget()->getCBYMin()) << ":"
+                      << DbU::getValueString(getAutoTarget()->getCBYMax()) << "]"
+                      << endl;
+
     constraintMin = std::max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = std::min ( constraintMax, getUserConstraints().getVMax() );
     cdebug_log(144,0) << "Merge with user constraints: ["
@@ -177,13 +184,14 @@ namespace Anabatic {
   { return Flags::Horizontal; }
 
 
-  size_t  AutoHorizontal::getGCells ( vector<GCell*>& gcells ) const
+  bool  AutoHorizontal::getGCells ( vector<GCell*>& gcells ) const
   {
     vector<GCell*>().swap( gcells );
 
-    DbU::Unit yprobe = getY();
-    GCell*    gcell  = getAutoSource()->getGCell();
-    GCell*    end    = getAutoTarget()->getGCell();
+    bool      success = true;
+    DbU::Unit yprobe  = getY();
+    GCell*    gcell   = getAutoSource()->getGCell();
+    GCell*    end     = getAutoTarget()->getGCell();
 
     cdebug_log(144,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
 
@@ -195,6 +203,7 @@ namespace Anabatic {
     while ( gcell != end ) {
       gcell = gcell->getEast( yprobe );
       if (not gcell) {
+        success = false;
         cerr << Error( "AutoHorizontal::getGCells() : NULL GCell under %s\n"
                        "        begin:%s\n"
                        "        end:  %s"
@@ -208,7 +217,7 @@ namespace Anabatic {
       gcells.push_back( gcell );
     }
 
-    return gcells.size();
+    return success;
   }
 
 

@@ -29,11 +29,6 @@ namespace Hurricane {
 
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/AnabaticEngine.h"
-
-namespace Knik {
-  class KnikEngine;
-}
-
 #include "katana/Constants.h"
 #include "katana/TrackElement.h"
 #include "katana/Configuration.h"
@@ -50,6 +45,7 @@ namespace Katana {
   using CRL::RoutingGauge;
   using Anabatic::AnabaticEngine;
 
+  class Block;
   class Track;
   class RoutingPlane;
   class NegociateWindow;
@@ -60,12 +56,21 @@ namespace Katana {
 
   class KatanaEngine : public AnabaticEngine {
     public:
+      static const uint32_t  DigitalMode = (1 <<  0);
+      static const uint32_t  AnalogMode  = (1 <<  1);
+      static const uint32_t  MixedMode   = (1 <<  2);
+      static const uint32_t  ChannelMode = (1 <<  3);
+    public:
       typedef  AnabaticEngine  Super;
     public:
       static  const Name&              staticGetName              ();
       static  KatanaEngine*            create                     ( Cell* );
       static  KatanaEngine*            get                        ( const Cell* );
     public:                                                      
+      inline  bool                     isDigitalMode              () const;
+      inline  bool                     isAnalogMode               () const;
+      inline  bool                     isMixedMode                () const;
+      inline  bool                     isChannelMode              () const;
       inline  bool                     useClockTree               () const;
       inline  CellViewer*              getViewer                  () const;
       inline  AnabaticEngine*          base                       ();
@@ -90,6 +95,7 @@ namespace Katana {
               DataSymmetric*           getDataSymmetric           ( Net* );
       inline  const std::map<Net*,DataSymmetric*>&
                                        getSymmetrics              () const;
+      inline  Block*                   getBlock                   ( size_t i ) const;
       inline  void                     printConfiguration         () const;
               void                     printCompletion            () const;
               void                     dumpMeasures               ( std::ostream& ) const;
@@ -103,11 +109,14 @@ namespace Katana {
       inline  void                     setRipupCost               ( uint32_t );
       inline  void                     setHTracksReservedLocal    ( uint32_t );
       inline  void                     setVTracksReservedLocal    ( uint32_t );
+      inline  void                     addBlock                   ( Block* );
               DataSymmetric*           addDataSymmetric           ( Net* );
+              void                     setupChannelMode           ();
               void                     setupPowerRails            ();
               void                     protectRoutingPads         ();
               void                     preProcess                 ();
               void                     setInterrupt               ( bool );
+              void                     createChannels             ();
               void                     setupRoutingPlanes         ();
               void                     setupGlobalGraph           ( uint32_t mode );
               void                     annotateGlobalGraph        ();
@@ -135,10 +144,12 @@ namespace Katana {
     protected:                              
               CellViewer*                   _viewer;
               Configuration*                _configuration;
+              vector<Block*>                _blocks;
               vector<RoutingPlane*>         _routingPlanes;
               NegociateWindow*              _negociateWindow;
               double                        _minimumWL;
               std::map<Net*,DataSymmetric*> _symmetrics;
+              uint32_t                      _mode;
       mutable bool                          _toolSuccess;
     protected:
     // Constructors & Destructors.
@@ -153,6 +164,10 @@ namespace Katana {
 
 
 // Inline Functions.
+  inline  bool                          KatanaEngine::isDigitalMode           () const { return (_mode & DigitalMode); };
+  inline  bool                          KatanaEngine::isAnalogMode            () const { return (_mode & AnalogMode); };
+  inline  bool                          KatanaEngine::isMixedMode             () const { return (_mode & MixedMode); };
+  inline  bool                          KatanaEngine::isChannelMode           () const { return (_mode & ChannelMode); };
   inline  bool                          KatanaEngine::useClockTree            () const { return _configuration->useClockTree(); }
   inline  CellViewer*                   KatanaEngine::getViewer               () const { return _viewer; }
   inline  AnabaticEngine*               KatanaEngine::base                    () { return static_cast<AnabaticEngine*>(this); }
@@ -167,6 +182,7 @@ namespace Katana {
   inline  bool                          KatanaEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
   inline  const std::map<Net*,DataSymmetric*>&
                                         KatanaEngine::getSymmetrics           () const { return _symmetrics; }
+  inline  Block*                        KatanaEngine::getBlock                ( size_t i ) const { return (i < _blocks.size()) ? _blocks[i] : NULL; }
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KatanaEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
   inline  void                          KatanaEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
@@ -175,6 +191,7 @@ namespace Katana {
   inline  void                          KatanaEngine::setRipupCost            ( uint32_t cost ) { _configuration->setRipupCost(cost); }
   inline  void                          KatanaEngine::setHTracksReservedLocal ( uint32_t reserved ) { _configuration->setHTracksReservedLocal(reserved); }
   inline  void                          KatanaEngine::setVTracksReservedLocal ( uint32_t reserved ) { _configuration->setVTracksReservedLocal(reserved); }
+  inline  void                          KatanaEngine::addBlock                ( Block* block ) { _blocks.push_back(block); }
   inline  void                          KatanaEngine::setMinimumWL            ( double minimum ) { _minimumWL = minimum; }
   inline  void                          KatanaEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KatanaEngine::printConfiguration      () const { _configuration->print(getCell()); }

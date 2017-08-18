@@ -615,6 +615,7 @@ namespace Anabatic {
     return getWidth() / 2;
   }
 
+
   DbU::Unit  AutoSegment::getSlack () const
   {
     DbU::Unit  constraintMin;
@@ -1862,13 +1863,13 @@ namespace Anabatic {
     if (getSpanU().contains(interval.getVMax())) rightDogleg++;
 
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, getAligneds() ) {
-        if (isegment->getSpanU().contains(interval.getVMin())) {
-          if (isegment->isFixed()) return false;
+      for ( AutoSegment* segment : getAligneds() ) {
+        if (segment->getSpanU().contains(interval.getVMin())) {
+          if (segment->isFixed()) return false;
           leftDogleg++;
         }
-        if (isegment->getSpanU().contains(interval.getVMax())) {
-          if (isegment->isFixed()) return 0;
+        if (segment->getSpanU().contains(interval.getVMax())) {
+          if (segment->isFixed()) return 0;
           rightDogleg++;
         }
       }
@@ -1879,7 +1880,7 @@ namespace Anabatic {
 
     cdebug_log(149,0) << "leftCount:" << leftDogleg << " rightCount:" << rightDogleg << endl;
 
-    return 0;
+    return Flags::NoFlags;
   }
 
 
@@ -2151,15 +2152,15 @@ namespace Anabatic {
                                    , Segment*      hurricaneSegment
                                    )
   {
-    const Layer* horizontalLayer = Session::getRoutingLayer( 1 );
-    DbU::Unit    horizontalWidth = Session::getWireWidth   ( 1 );
-    const Layer* verticalLayer   = Session::getRoutingLayer( 2 );
-    DbU::Unit    verticalWidth   = Session::getWireWidth   ( 2 );
+    const Layer* horizontalLayer = Session::getDHorizontalLayer();
+    DbU::Unit    horizontalWidth = Session::getDHorizontalWidth();
+    const Layer* verticalLayer   = Session::getDVerticalLayer();
+    DbU::Unit    verticalWidth   = Session::getDVerticalWidth();
 
     uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
     if (wPitch > 1) {
-      horizontalWidth += (wPitch-1) * Session::getPitch(1);
-      verticalWidth   += (wPitch-1) * Session::getPitch(2);
+      horizontalWidth += (wPitch-1) * Session::getDHorizontalPitch();
+      verticalWidth   += (wPitch-1) * Session::getDVerticalPitch  ();
     }
     cdebug_log(149,0) << "wPitch:" << wPitch << " hW:" << DbU::getValueString(horizontalWidth) << endl;
 
@@ -2196,6 +2197,8 @@ namespace Anabatic {
       } else
         reference = target;
     }
+
+    if (target->isTerminal()) reference = target;
 
     Contact*     contact     = dynamic_cast<Contact*>( hurricaneSegment->getSource() );
     AutoContact* autoContact = Session::lookup( contact );
@@ -2287,10 +2290,10 @@ namespace Anabatic {
   //    depth=1 is horizontal         |  METAL2
   //    depth=2 is vertical           |  METAL3
   // Should be based on gauge informations.
-    const Layer* hLayer = Session::getRoutingLayer( 1 );
-    DbU::Unit    hWidth = Session::getWireWidth   ( 1 );
-    const Layer* vLayer = Session::getRoutingLayer( 2 );
-    DbU::Unit    vWidth = Session::getWireWidth   ( 2 );
+    const Layer* hLayer = Session::getDHorizontalLayer();
+    DbU::Unit    hWidth = Session::getDHorizontalWidth();
+    const Layer* vLayer = Session::getDVerticalLayer();
+    DbU::Unit    vWidth = Session::getDVerticalWidth();
 
     const Layer* horizontalLayer = hLayer;
     DbU::Unit    horizontalWidth = hWidth;
@@ -2299,8 +2302,8 @@ namespace Anabatic {
 
     uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
     if (wPitch > 1) {
-      horizontalWidth = (wPitch-1) * Session::getPitch(1) + hWidth;
-      verticalWidth   = (wPitch-1) * Session::getPitch(2) + vWidth;
+      horizontalWidth = (wPitch-1) * Session::getDHorizontalPitch() + hWidth;
+      verticalWidth   = (wPitch-1) * Session::getDVerticalPitch  () + vWidth;
     }
 
     if (depth != RoutingGauge::nlayerdepth) {

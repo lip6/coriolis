@@ -71,6 +71,7 @@ namespace Anabatic {
   class Session {
     public:
     // Static Methods.
+      static  inline bool                        isOpen                ();
       static  inline bool                        doDestroyBaseContact  ();
       static  inline bool                        doDestroyBaseSegment  ();
       static  inline bool                        doDestroyTool         ();
@@ -87,6 +88,22 @@ namespace Anabatic {
       static  inline CellGauge*                  getCellGauge          ();
       static  inline DbU::Unit                   getSliceHeight        ();
       static  inline DbU::Unit                   getSliceStep          ();
+      static  inline size_t                      getGVerticalDepth     ();
+      static  inline size_t                      getGHorizontalDepth   ();
+      static  inline DbU::Unit                   getGHorizontalPitch   ();
+      static  inline DbU::Unit                   getGVerticalPitch     ();
+      static  inline size_t                      getDVerticalDepth     ();
+      static  inline const Layer*                getDVerticalLayer     ();
+      static  inline DbU::Unit                   getDVerticalWidth     ();
+      static  inline DbU::Unit                   getDVerticalPitch     ();
+      static  inline size_t                      getDHorizontalDepth   ();
+      static  inline const Layer*                getDHorizontalLayer   ();
+      static  inline DbU::Unit                   getDHorizontalWidth   ();
+      static  inline DbU::Unit                   getDHorizontalPitch   ();
+      static  inline size_t                      getDContactDepth      ();
+      static  inline const Layer*                getDContactLayer      ();
+      static  inline DbU::Unit                   getDContactWidth      ();
+      static  inline DbU::Unit                   getDContactPitch      ();
       static  inline RoutingGauge*               getRoutingGauge       ();
       static  inline RoutingLayerGauge*          getLayerGauge         ( size_t depth );
       static  inline size_t                      getDepth              ();
@@ -178,6 +195,7 @@ namespace Anabatic {
 
 
 // Inline Functions.
+  inline bool                        Session::isOpen               () { return get() != NULL; }
   inline Technology*                 Session::getTechnology        () { return get("getTechnology()")->_technology; }
   inline CellGauge*                  Session::getCellGauge         () { return get("getCellGauge()")->_cellGauge; }
   inline RoutingGauge*               Session::getRoutingGauge      () { return get("getRoutingGauge()")->_routingGauge; }
@@ -206,6 +224,22 @@ namespace Anabatic {
 
   inline DbU::Unit                   Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                   Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
+  inline size_t                      Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }
+  inline size_t                      Session::getGHorizontalDepth  ()                     { return getConfiguration()->getGHorizontalDepth(); }
+  inline DbU::Unit                   Session::getGVerticalPitch    ()                     { return getConfiguration()->getGVerticalPitch(); }
+  inline DbU::Unit                   Session::getGHorizontalPitch  ()                     { return getConfiguration()->getGHorizontalPitch(); }
+  inline size_t                      Session::getDVerticalDepth    ()                     { return getConfiguration()->getDVerticalDepth(); }
+  inline const Layer*                Session::getDVerticalLayer    ()                     { return getConfiguration()->getDVerticalLayer(); }
+  inline DbU::Unit                   Session::getDVerticalWidth    ()                     { return getConfiguration()->getDVerticalWidth(); }
+  inline DbU::Unit                   Session::getDVerticalPitch    ()                     { return getConfiguration()->getDVerticalPitch(); }
+  inline size_t                      Session::getDHorizontalDepth  ()                     { return getConfiguration()->getDHorizontalDepth(); }
+  inline const Layer*                Session::getDHorizontalLayer  ()                     { return getConfiguration()->getDHorizontalLayer(); }
+  inline DbU::Unit                   Session::getDHorizontalWidth  ()                     { return getConfiguration()->getDHorizontalWidth(); }
+  inline DbU::Unit                   Session::getDHorizontalPitch  ()                     { return getConfiguration()->getDHorizontalPitch(); }
+  inline size_t                      Session::getDContactDepth     ()                     { return getConfiguration()->getDContactDepth(); }
+  inline const Layer*                Session::getDContactLayer     ()                     { return getConfiguration()->getDContactLayer(); }
+  inline DbU::Unit                   Session::getDContactWidth     ()                     { return getConfiguration()->getDContactWidth(); }
+  inline DbU::Unit                   Session::getDContactPitch     ()                     { return getConfiguration()->getDContactPitch(); }
   inline RoutingLayerGauge*          Session::getLayerGauge        ( size_t depth )       { return getRoutingGauge()->getLayerGauge(depth); }
   inline size_t                      Session::getDepth             ()                     { return getRoutingGauge()->getDepth(); }
   inline size_t                      Session::getViaDepth          ( const Layer* layer ) { return getRoutingGauge()->getViaDepth(layer); }
