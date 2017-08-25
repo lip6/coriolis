@@ -1713,15 +1713,15 @@ namespace Anabatic {
 
   string  GCell::_getString () const
   {
-  //string s = Super::_getString();
-  //s.insert( s.size()-1, " "+getString(getBoundingBox()) );
-  //s.insert( s.size()-1, " "+getString(_flags) );
-    string s = "<GCell at(" + DbU::getValueString(getXMin())
+    string s = Super::_getString();
+    s.insert( s.size()-1, " "+getString(getBoundingBox()) );
+    s.insert( s.size()-1, " "+getString(_flags) );
+  /* string s = "<GCell at(" + DbU::getValueString(getXMin())
        +  "-" + DbU::getValueString(getYMin()) 
        +  "-" + DbU::getValueString(getXMax()) 
        +  "-" + DbU::getValueString(getYMax()) 
        +  "-" + DbU::getValueString(getHeight())
-       +  "-" + DbU::getValueString(getWidth()) + ")";
+       +  "-" + DbU::getValueString(getWidth()) + ")";*/
     return s;
   }
 

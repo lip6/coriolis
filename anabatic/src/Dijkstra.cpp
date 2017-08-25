@@ -1082,6 +1082,7 @@ namespace Anabatic {
     } /*else {
       cdebug_log(112,0) << "void Vertex::resetIntervals(): Inappropriate usage of GRAData. " <<  endl;
     }*/
+    unsetFlags(iSet);
   }
 
 
@@ -1422,11 +1423,11 @@ namespace Anabatic {
     
     if (state){
       if (state->isSelfSym()){
-        cdebug_log(112,0) << "Dijkstra::SELF SYMMETRY CASE " << _net << endl;
+        cdebug_log(112,0) << "Dijkstra::SELF SYMMETRY CASE " << DbU::getValueString(state->getSymAxis()) << endl;
       }
-    } else {
-      cerr << "Error: No RoutingExtension for net: " << _net << endl;
-    }
+    } /*else {
+        cerr << "Error: No RoutingExtension for net: " << _net << endl;
+    }*/
 
     for ( Component* component : _net->getComponents() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
@@ -1463,7 +1464,7 @@ namespace Anabatic {
 
       cdebug_log(112,0) << "Merge search area: " << _searchArea << ", gcell: " << gcell << endl;
     //_searchArea.merge( gcell->getBoundingBox() ); // TO CHANGE
-      if (_net->getCell()->getName() == "gmchamla") _searchArea.merge( _net->getCell()->getAbutmentBox() ); // TO CHANGE
+    //if (_net->getCell()->getName() == "gmchamla") _searchArea.merge( _net->getCell()->getAbutmentBox() ); // TO CHANGE
       cdebug_log(112,0) << "Search area: " << _searchArea << endl;
 
       Vertex*     seed  = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
@@ -1588,15 +1589,17 @@ namespace Anabatic {
           cdebug_log(112,0) << "Find axis targets: " << endl;
         }
         while ( not _queue.empty() ) {
-          Vertex* current  = _queue.top();
+          Vertex* current = _queue.top();
+          GCell*  gcurr   = current->getGCell();
           _queue.pop();
-          if ( (state->isSymVertical()   && (!current->isNRestricted()) && (!current->isSRestricted()))
-             ||(state->isSymHorizontal() && (!current->isERestricted()) && (!current->isWRestricted()))
+          if ( (state->isSymVertical()   && (!current->isNRestricted()) && (!current->isSRestricted()) && (gcurr->getXCenter() == state->getSymAxis()) )
+             ||(state->isSymHorizontal() && (!current->isERestricted()) && (!current->isWRestricted()) && (gcurr->getYCenter() == state->getSymAxis()) )
              ){
             current->setDistance ( Vertex::unreached );
             current->setStamp    ( _stamp );
             current->setConnexId( -1 );
             current->setFlags(Vertex::AxisTarget);
+            cdebug_log(112,0) << "isAxisTarget: " << current << endl;
           }
 
           if (state->isSymVertical()){
@@ -1604,18 +1607,25 @@ namespace Anabatic {
             for ( Edge* edge : current->getGCell()->getNorthEdges() ) {
               GCell*  gnext = edge->getOpposite(current->getGCell());
               Vertex* vnext = gnext->getObserver<Vertex>(GCell::Observable::Vertex);
-              if (  (gnext->getXCenter() == state->getSymAxis()) 
+              if (  ( (state->getSymAxis() >= gnext->getXMin()) && (state->getSymAxis() <= gnext->getXMax()) )
                  && (gnext->getYMin() <= cell->getAbutmentBox().getYMax())
-                 ) _queue.push( vnext );
+                 ){ 
+                _queue.push( vnext );
+              } else {  cdebug_log(112,0) << "isNOT: " << gnext << endl;
+              }
+
             }
           } else if (state->isSymHorizontal()){
           // check East
-            for ( Edge* edge : current->getGCell()->getNorthEdges() ) {
+            for ( Edge* edge : current->getGCell()->getEastEdges() ) {
               GCell*  gnext = edge->getOpposite(current->getGCell());
               Vertex* vnext = gnext->getObserver<Vertex>(GCell::Observable::Vertex);
-              if (  (gnext->getXCenter() == state->getSymAxis())
+              if (  ( (state->getSymAxis() >= gnext->getYMin()) && (state->getSymAxis() <= gnext->getYMax()) )
                  && (gnext->getXMin() <= cell->getAbutmentBox().getXMax())
-                 ) _queue.push( vnext );
+                 ) {
+                _queue.push( vnext );
+              } else { cdebug_log(112,0) << "isNOT: " << gnext << endl;
+              }
             }
           }  
         }
@@ -1715,7 +1725,9 @@ namespace Anabatic {
       Vertex* current  = _queue.top();
       GCell*  gcurrent = current->getGCell();
 
-    //cdebug_log(111,1) << "Current:" << current << endl;
+      cdebug_log(111,0) << "Current:" << current << endl;
+      cdebug_log(111,0) << "isAxisTarget():" << current->isAxisTarget() << endl;
+      
       _queue.pop();
 
       if      ( current->isAxisTarget() and needAxisTarget()) unsetFlags(Mode::AxisTarget);
@@ -1787,6 +1799,7 @@ namespace Anabatic {
                   vneighbor->setDegree  ( 1 );
                   vneighbor->setRpCount ( 0 );
                   vneighbor->unsetFlags(Vertex::AxisTarget);
+                  vneighbor->resetIntervals();
                 }
               }
               cdebug_log(111,0) << "Vertex reached through a shorter path"<< endl;
@@ -1894,7 +1907,7 @@ namespace Anabatic {
     if (_sources.size() < 2) { cdebug_tabw(112,-1); return; }
 
     NetRoutingState* state = NetRoutingExtension::get( _net );
-    cerr << "state: " << state << endl; 
+  //cerr << "state: " << state << endl; 
 
     for ( Vertex* startVertex : _sources ) {
 
@@ -1959,7 +1972,7 @@ namespace Anabatic {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));
+          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal2"));
           if (state) width *= state->getWPitch();
 
           segment = Horizontal::create( sourceContact
@@ -1976,7 +1989,7 @@ namespace Anabatic {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));
+          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal3"));
           if (state) width *= state->getWPitch();
           segment = Vertical::create( sourceContact
                                     , targetContact
@@ -2144,7 +2157,9 @@ namespace Anabatic {
 
   void  Dijkstra::_createSelfSymSeg ( Segment* segment )
   {
+  //cerr << "void  Dijkstra::_createSelfSymSeg ( Segment* segment ): " << _net << endl;
     NetRoutingState* state = NetRoutingExtension::get( _net );
+  //cerr << "state: " << state << endl;
     if ((state != NULL)&&(segment!=NULL)){
       Horizontal* h = dynamic_cast<Horizontal*>(segment);
       Vertical*   v = dynamic_cast<Vertical*>(segment);
@@ -2154,19 +2169,25 @@ namespace Anabatic {
       Component* targetContact = segment->getTarget();
       if (h){
         if (state->isSymHorizontal()){
+        //cerr << "H case Horizontal" << endl;
           sp   = Point(sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
           tp   = Point(targetContact->getX(), state->getSymValue(targetContact->getY()) );
           axis = state->getSymValue(segment->getY()); 
         } else if (state->isSymVertical()){
+        //cerr << "H case Vertical" << endl;
           sp = Point( state->getSymValue(targetContact->getX()), targetContact->getY() );
           tp = Point( state->getSymValue(sourceContact->getX()), sourceContact->getY() );
-          axis = segment->getY(); 
+          axis = state->getSymValue(segment->getX()); 
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
           return;
         }
+      //cerr << "sp: " << sp << endl;
+      //cerr << "tp: " << tp << endl;
         GCell*  sgcell  = _anabatic->getGCellUnder( sp );
         GCell*  tgcell  = _anabatic->getGCellUnder( tp );
+      //cerr << "Gcell: " << sgcell << endl;
+      //cerr << "Gcell: " << tgcell << endl;
         Vertex* svertex = sgcell->getObserver<Vertex>(GCell::Observable::Vertex);
         Vertex* tvertex = tgcell->getObserver<Vertex>(GCell::Observable::Vertex);
         Contact* sourceSym = NULL;
@@ -2190,18 +2211,20 @@ namespace Anabatic {
                                               , targetSym
                                               , _anabatic->getConfiguration()->getGHorizontalLayer()
                                               , axis
-                                              , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))
+                                              , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal2"))
                                               );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       } else if (v) {
         if (state->isSymVertical()){
+        //cerr << "V case Vertical" << endl;
           sp = Point(state->getSymValue(sourceContact->getX()), sourceContact->getY() );
           tp = Point(state->getSymValue(targetContact->getX()), targetContact->getY() );
           axis = state->getSymValue(segment->getX()); 
         } else if (state->isSymHorizontal()){
+        //cerr << "V case Horizontal" << endl;
           sp = Point( targetContact->getX(), state->getSymValue(targetContact->getY()) );
           tp = Point( sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
-          axis = segment->getX(); 
+          axis = state->getSymValue(segment->getY()); 
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
           return;
@@ -2229,7 +2252,7 @@ namespace Anabatic {
                                             , targetSym
                                             , _anabatic->getConfiguration()->getGVerticalLayer()
                                             , axis
-                                            , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"))
+                                            , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal3"))
                                             );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       }
@@ -2491,14 +2514,20 @@ namespace Anabatic {
       seed->setFlags(Vertex::iHorizontal);
       if (!gseed->isMatrix()){
         seed->createAData();
-        seed->setInterv(rp->getBoundingBox().getXMin(), rp->getBoundingBox().getXMax(), rp->getBoundingBox().getYCenter());
+        seed->setInterv( max(rp->getBoundingBox().getXMin(), gseed->getXMin())
+                       , min(rp->getBoundingBox().getXMax(), gseed->getXMax())
+                       , rp->getBoundingBox().getYCenter()
+                       );
       }
     }
     if (v) {
       seed->setFlags(Vertex::iVertical);
       if (!gseed->isMatrix()) {
         seed->createAData();
-        seed->setInterv(rp->getBoundingBox().getYMin(), rp->getBoundingBox().getYMax(), rp->getBoundingBox().getXCenter());
+        seed->setInterv( max(rp->getBoundingBox().getYMin(), gseed->getYMin())
+                       , min(rp->getBoundingBox().getYMax(), gseed->getYMax())
+                       , rp->getBoundingBox().getXCenter()
+                       );
       }
     }
   }

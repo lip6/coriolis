@@ -394,6 +394,20 @@ extern "C" {
   }
 
 
+  extern Layer* PYDERIVEDLAYER_O ( PyObject* pyObject )
+  {
+    Layer* layer = NULL;
+    if (IsPyLayer(pyObject))                         layer = PYLAYER_O(pyObject);
+    if (not layer and IsPyBasicLayer(pyObject)     ) layer = PYBASICLAYER_O(pyObject);
+    if (not layer and IsPyContactLayer(pyObject)   ) layer = PYCONTACTLAYER_O(pyObject);
+    if (not layer and IsPyViaLayer(pyObject)       ) layer = PYVIALAYER_O(pyObject);
+    if (not layer and IsPyDiffusionLayer(pyObject) ) layer = PYDIFFUSIONLAYER_O(pyObject);
+    if (not layer and IsPyRegularLayer(pyObject)   ) layer = PYREGULARLAYER_O(pyObject);
+    if (not layer and IsPyTransistorLayer(pyObject)) layer = PYTRANSISTORLAYER_O(pyObject);
+    return layer;
+  }
+
+
 #endif  // End of Shared Library Code Part.
 
 }  // extern "C".
