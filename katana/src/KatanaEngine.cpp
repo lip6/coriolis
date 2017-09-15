@@ -37,6 +37,7 @@
 #include "hurricane/viewer/Script.h"
 #include "crlcore/Measures.h"
 #include "anabatic/AutoContact.h"
+#include "katana/Block.h"
 #include "katana/DataNegociate.h"
 #include "katana/RoutingPlane.h"
 #include "katana/Session.h"
@@ -175,9 +176,11 @@ namespace Katana {
     : Super           (cell)
     , _viewer         (NULL)
     , _configuration  (new Configuration())
+    , _blocks         ()
     , _routingPlanes  ()
     , _negociateWindow(NULL)
     , _minimumWL      (0.0)
+    , _mode           (DigitalMode)
     , _toolSuccess    (false)
   { }
 
@@ -213,14 +216,21 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
+    _mode |= DigitalMode;
+
     Super::chipPrep();
 
+    setupChannelMode();
     setupGlobalGraph( 0 );
-    setupRoutingPlanes();
+    if (not isChannelMode()) {
+      setupRoutingPlanes();
+    }
     setupSpecialNets();
     setupPreRouteds();
-    setupPowerRails();
-    protectRoutingPads();
+    if (not isChannelMode()) {
+      setupPowerRails();
+      protectRoutingPads();
+    }
     _runKatanaInit();
 
     cdebug_tabw(155,-1);
@@ -231,10 +241,32 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
+    _mode &= ~DigitalMode;
+    _mode |=  AnalogMode;
+
     Super::chipPrep();
 
     setupRoutingPlanes();
     _runKatanaInit();
+
+    cdebug_tabw(155,-1);
+  }
+
+
+  void  KatanaEngine::setupChannelMode ()
+  {
+    cdebug_log(155,1) << "KatanaEngine::setupChannelMode()" << endl;
+
+    RoutingGauge* rg       = getConfiguration()->getRoutingGauge();
+    size_t        maxDepth = rg->getDepth();
+    if (maxDepth < 3) {
+      _mode |= ChannelMode;
+
+      if (maxDepth < 2) {
+        throw Error( "KatanaEngine::setupChannelMode(): Layer gauge %s must contains at least two layers (%u)."
+                   , getString(rg->getName()).c_str(), maxDepth );
+      }
+    }
 
     cdebug_tabw(155,-1);
   }
@@ -254,6 +286,7 @@ namespace Katana {
     }
 
     if (not sessionReUse) Session::close();
+    cdebug_tabw(155,-1);
   }
 
 
@@ -674,6 +707,9 @@ namespace Katana {
     if (getState() < EngineState::EngineGutted) {
       openSession();
 
+      for ( Block* block : _blocks ) delete block;
+      _blocks.clear();
+
       size_t maxDepth = std::min( getConfiguration()->getRoutingGauge()->getDepth(), _routingPlanes.size() );
       for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
         _routingPlanes[depth]->destroy();
@@ -740,6 +776,7 @@ namespace Katana {
                                      
     if (record) {
       record->add( getSlot( "_configuration",  _configuration ) );
+      record->add( getSlot( "_blocks"       , &_blocks ) );
       record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
       record->add( getSlot( "_symmetrics"   , &_symmetrics    ) );
     }

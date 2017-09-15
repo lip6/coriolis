@@ -833,7 +833,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
   vector<HyperNet>  hyperNets;
   vector<HyperNet>  topHyperNets;
 
-  for ( Occurrence occurrence : getHyperNetRootNetOccurrences().getSubSet(NotFilter<Occurrence>(Occurrence_Contains(instance))) ) {
+  for ( Occurrence occurrence : getHyperNetRootNetOccurrences().getSubSet(Occurrence_Contains(instance)) ) {
     Net* net = static_cast<Net*>(occurrence.getEntity());
 
     if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;

@@ -54,6 +54,8 @@ namespace Anabatic {
 
   class Configuration {
     public:
+      static const size_t  ndepth = (size_t)-1;
+    public:
     // Constructor & Destructor.
                                  Configuration       ( const CellGauge* cg=NULL, const RoutingGauge* rg=NULL );
                                  Configuration       ( const Configuration& );
@@ -65,6 +67,22 @@ namespace Anabatic {
               const Layer*       getGContactLayer    () const;
               const Layer*       getGHorizontalLayer () const;
               const Layer*       getGVerticalLayer   () const;
+      inline  size_t             getGVerticalDepth   () const;
+      inline  DbU::Unit          getGVerticalPitch   () const;
+      inline  size_t             getGHorizontalDepth () const;
+      inline  DbU::Unit          getGHorizontalPitch () const;
+      inline  size_t             getDVerticalDepth   () const;
+      inline  const Layer*       getDVerticalLayer   () const;
+      inline  DbU::Unit          getDVerticalWidth   () const;
+      inline  DbU::Unit          getDVerticalPitch   () const;
+      inline  size_t             getDHorizontalDepth () const;
+      inline  const Layer*       getDHorizontalLayer () const;
+      inline  DbU::Unit          getDHorizontalWidth () const;
+      inline  DbU::Unit          getDHorizontalPitch () const;
+      inline  size_t             getDContactDepth    () const;
+      inline  const Layer*       getDContactLayer    () const;
+      inline  DbU::Unit          getDContactWidth    () const;
+      inline  DbU::Unit          getDContactPitch    () const;
               size_t             getDepth            () const;
               size_t             getAllowedDepth     () const;
               size_t             getLayerDepth       ( const Layer* ) const;
@@ -106,6 +124,11 @@ namespace Anabatic {
       const Layer*            _gmetalh;
       const Layer*            _gmetalv;
       const Layer*            _gcontact;
+      size_t                  _gdepthv;
+      size_t                  _gdepthh;
+      size_t                  _ddepthv;
+      size_t                  _ddepthh;
+      size_t                  _ddepthc;
       CellGauge*              _cg;
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
@@ -122,6 +145,24 @@ namespace Anabatic {
       Configuration& operator=           ( const Configuration& ) = delete;
       void           _setTopRoutingLayer ( Name name );
   };
+
+
+  inline  size_t       Configuration::getGHorizontalDepth () const { return _gdepthh; }
+  inline  size_t       Configuration::getGVerticalDepth   () const { return _gdepthv; }
+  inline  DbU::Unit    Configuration::getGHorizontalPitch () const { return getPitch( getGHorizontalDepth(), Flags::NoFlags ); }
+  inline  DbU::Unit    Configuration::getGVerticalPitch   () const { return getPitch( getGVerticalDepth  (), Flags::NoFlags ); }
+  inline  size_t       Configuration::getDVerticalDepth   () const { return _ddepthv; }
+  inline  const Layer* Configuration::getDVerticalLayer   () const { return getRoutingLayer( getDVerticalDepth() ); }
+  inline  DbU::Unit    Configuration::getDVerticalWidth   () const { return getWireWidth   ( getDVerticalDepth() ); }
+  inline  DbU::Unit    Configuration::getDVerticalPitch   () const { return getPitch       ( getDVerticalDepth(), Flags::NoFlags ); }
+  inline  size_t       Configuration::getDHorizontalDepth () const { return _ddepthh; }
+  inline  const Layer* Configuration::getDHorizontalLayer () const { return getRoutingLayer( getDHorizontalDepth() ); }
+  inline  DbU::Unit    Configuration::getDHorizontalWidth () const { return getWireWidth   ( getDHorizontalDepth() ); }
+  inline  DbU::Unit    Configuration::getDHorizontalPitch () const { return getPitch       ( getDHorizontalDepth(), Flags::NoFlags ); }
+  inline  size_t       Configuration::getDContactDepth    () const { return _ddepthc; }
+  inline  const Layer* Configuration::getDContactLayer    () const { return getContactLayer( getDContactDepth() ); }
+  inline  DbU::Unit    Configuration::getDContactWidth    () const { return getWireWidth   ( getDContactDepth() ); }
+  inline  DbU::Unit    Configuration::getDContactPitch    () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
 
 
 } // Anabatic namespace.

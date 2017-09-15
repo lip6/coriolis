@@ -109,10 +109,11 @@ namespace Hurricane {
     if (cdebug.getMinLevel() < minLevel) minLevel = cdebug.getMinLevel();
     if (cdebug.getMaxLevel() > maxLevel) maxLevel = cdebug.getMaxLevel();
 
-    if ( _singleton->_isTraced(symbol) )
+    if ( _singleton->_isTraced(symbol) ) {
       _singleton->_levels.push( make_pair( cdebug.setMinLevel(minLevel)
                                          , cdebug.setMaxLevel(maxLevel) ) );
-    else {
+    //cerr << "DebugSession::open() " << symbol << "min:" << minLevel << " max:" <<  maxLevel << endl; 
+    } else {
       _singleton->_levels.push ( make_pair( cdebug.getMinLevel()
                                           , cdebug.getMaxLevel() ) );
     }

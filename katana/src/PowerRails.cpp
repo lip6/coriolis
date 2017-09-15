@@ -1284,7 +1284,6 @@ namespace Katana {
   void  KatanaEngine::setupPowerRails ()
   {
   //DebugSession::open( 150, 160 );
-
     openSession();
 
     if (not getBlockageNet()) {
@@ -1321,7 +1320,6 @@ namespace Katana {
     }
 
     Session::close();
-
   //DebugSession::close();
   }
 

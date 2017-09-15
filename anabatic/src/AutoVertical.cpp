@@ -152,6 +152,13 @@ namespace Anabatic {
                       << DbU::getValueString(getAutoSource()->getCBXMax()) << "]"
                       << endl;
 
+    constraintMin = std::max ( constraintMin, getAutoTarget()->getCBXMin() );
+    constraintMax = std::min ( constraintMax, getAutoTarget()->getCBXMax() );
+    cdebug_log(149,0) << "Merge with target constraints: ["
+                      << DbU::getValueString(getAutoTarget()->getCBXMin()) << ":"
+                      << DbU::getValueString(getAutoTarget()->getCBXMax()) << "]"
+                      << endl;
+
     constraintMin = max ( constraintMin, getUserConstraints().getVMin() );
     constraintMax = min ( constraintMax, getUserConstraints().getVMax() );
 
@@ -173,13 +180,14 @@ namespace Anabatic {
   { return Flags::Vertical; }
 
 
-  size_t  AutoVertical::getGCells ( vector<GCell*>& gcells ) const
+  bool  AutoVertical::getGCells ( vector<GCell*>& gcells ) const
   {
     vector<GCell*>().swap( gcells );
 
-    DbU::Unit xprobe = getX();
-    GCell*    gcell  = getAutoSource()->getGCell();
-    GCell*    end    = getAutoTarget()->getGCell();
+    bool      success = true;
+    DbU::Unit xprobe  = getX();
+    GCell*    gcell   = getAutoSource()->getGCell();
+    GCell*    end     = getAutoTarget()->getGCell();
 
     cdebug_log(144,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
 
@@ -192,6 +200,7 @@ namespace Anabatic {
       gcell = gcell->getNorth( xprobe );
 
       if (not gcell) {
+        success = false;
         cerr << Error( "AutoVertical::getGCells() : NULL GCell under %s\n"
                        "        begin:%s\n"
                        "        end:  %s"
@@ -205,7 +214,7 @@ namespace Anabatic {
       gcells.push_back( gcell );
     }
 
-    return gcells.size();
+    return success;
   }
 
 

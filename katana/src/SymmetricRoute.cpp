@@ -140,7 +140,8 @@ namespace {
     DebugSession::open( _data->getNet(), 144, 146 );
 
   // Temporary.
-    _data->setSymAxis( _katana->getCell()->getAbutmentBox().getCenter().getX() );
+  //_data->setSymAxis( _katana->getCell()->getAbutmentBox().getCenter().getX() );
+    _data->setSymAxis( NetRoutingExtension::getSymAxis(_data->getNet()) );
 
     cmess2 << "     - Net: \"" << _data->getNet()->getName() << "\" ";
     cmess2 << "@" << DbU::getValueString(_data->getSymAxis()) << " ";

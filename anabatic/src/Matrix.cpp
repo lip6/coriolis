@@ -117,7 +117,7 @@ namespace Anabatic {
     DbU::Unit dy = updateArea.getYMin() - _area.getYMin();
 
     cdebug_log(110,0) <<  "raw_i:" << (dx / _side + ((dx%_side) ? 1 : 0))
-                    << " raw_j:" << (dy / _side + ((dy%_side) ? 1 : 0)) << endl;
+                      << " raw_j:" << (dy / _side + ((dy%_side) ? 1 : 0)) << endl;
     cdebug_log(110,0) << "indexMin:" << indexMin << endl;
     cdebug_log(110,0) << "indexMax:" << indexMax << endl;
     cdebug_log(110,0) << "xspan:   " << xspan << endl;
@@ -135,6 +135,13 @@ namespace Anabatic {
     }
 
     cdebug_tabw(110,-1);
+  }
+
+
+  void  Matrix::resize ( Cell* cell, const vector<GCell*>& gcells )
+  {
+    setCell( cell, _side );
+    for ( GCell* gcell : gcells ) updateLookup( gcell );
   }
 
 

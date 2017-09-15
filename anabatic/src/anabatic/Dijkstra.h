@@ -44,10 +44,10 @@ namespace Anabatic {
   class IntervalC
   {
     public:
-      enum iFlag { None        = 0
-                 , iHorizontal = (1<<0)
-                 , iVertical   = (1<<1)
-                 , iSet        = (1<<2)
+      enum iFlag { None         = 0
+                 , iFHorizontal = (1<<0)
+                 , iFVertical   = (1<<1)
+                 , iSet         = (1<<2)
       };
 
     public:
@@ -84,8 +84,8 @@ namespace Anabatic {
       DbU::Unit    _axis;
   };
 
-  inline void         IntervalC::setAsH   () { _flags = ((_flags & ~(0x3)) | iHorizontal); }
-  inline void         IntervalC::setAsV   () { _flags = ((_flags & ~(0x3)) | iVertical  ); }
+  inline void         IntervalC::setAsH   () { _flags = ((_flags & ~(0x3)) | iFHorizontal); }
+  inline void         IntervalC::setAsV   () { _flags = ((_flags & ~(0x3)) | iFVertical  ); }
   inline void         IntervalC::setAxis  ( DbU::Unit axis ) { _axis = axis; }
   inline DbU::Unit    IntervalC::getAxis  () const           { return _axis; }
   inline DbU::Unit    IntervalC::getCenter() const           { return getMin()+getMax(); }
@@ -93,8 +93,8 @@ namespace Anabatic {
   inline DbU::Unit    IntervalC::getMax   () const           { return _max; }
   inline void         IntervalC::setiSet  ()  { _flags |= iSet; }
   inline bool         IntervalC::isiSet   () const { return _flags & iSet; }
-  inline bool         IntervalC::isH      () const { return _flags & iHorizontal; }
-  inline bool         IntervalC::isV      () const { return _flags & iVertical  ; }
+  inline bool         IntervalC::isH      () const { return _flags & iFHorizontal; }
+  inline bool         IntervalC::isV      () const { return _flags & iFVertical  ; }
   inline void         IntervalC::setFlags ( Flags flags ) { _flags = flags; }
   inline Flags        IntervalC::getFlags () const    { return _flags; }
 
@@ -165,10 +165,13 @@ namespace Anabatic {
   inline void         GRAData::printInterv     () const { _interv.print()    ; }
   inline void         GRAData::printIntervfrom () const { _intervfrom.print(); }
 
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::Vertex".
 
   class Vertex {
+    public:
+      static inline std::string  getValueString ( DbU::Unit );
     public:
       class CompareById {
         public:
@@ -192,6 +195,7 @@ namespace Anabatic {
       static         DbU::Unit       unreachable;
     public:                         
       static         void            notify         ( Vertex*, unsigned flags );
+      static inline  Vertex*         lookup         ( GCell* );
     public:                         
              inline                  Vertex         ( GCell* );
            //inline                  Vertex         ( size_t id );
@@ -210,7 +214,7 @@ namespace Anabatic {
              inline  int             getConnexId    () const;
              inline  int             getDegree      () const;
              inline  int             getRpCount     () const;
-             inline  Edge*           getFrom        () const;
+                     Edge*           getFrom        () const;
              inline  Vertex*         getPredecessor () const;
              inline  void            setDistance    ( DbU::Unit );
              inline  void            setStamp       ( int );
@@ -236,8 +240,8 @@ namespace Anabatic {
              inline  bool            isWRestricted  () const;
              inline  bool            hasRestrictions() const;
 
-             inline  void            setRestricted    ();
-             inline  void            clearRestriction ();
+                     void            setRestricted    ();
+                     void            clearRestriction ();
              inline  void            setNRestricted   ();
              inline  void            setSRestricted   ();
              inline  void            setERestricted   ();
@@ -328,6 +332,7 @@ namespace Anabatic {
   }
 
 
+  inline Vertex*         Vertex::lookup         ( GCell* gcell ) { return gcell->getObserver<Vertex>(GCell::Observable::Vertex); }
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
   inline Contact*        Vertex::hasGContact    ( Net* net ) const { return _gcell->hasGContact(net); }
   inline unsigned int    Vertex::getId          () const { return _id; }
@@ -341,7 +346,7 @@ namespace Anabatic {
   inline int             Vertex::getBranchId    () const { return hasValidStamp() ? _branchId :  0; }
   inline int             Vertex::getDegree      () const { return hasValidStamp() ? _degree   :  0; }
   inline int             Vertex::getRpCount     () const { return hasValidStamp() ? _rpCount  :  0; }
-  inline Edge*           Vertex::getFrom        () const { return _from; }
+//inline Edge*           Vertex::getFrom        () const { return _from; }
   inline void            Vertex::setDistance    ( DbU::Unit distance ) { _distance=distance; }
   inline void            Vertex::setFrom        ( Edge* from ) { _from=from; }
   inline void            Vertex::setStamp       ( int stamp ) { _stamp=stamp; }
@@ -373,8 +378,8 @@ namespace Anabatic {
   inline  bool Vertex::hasRestrictions    () const { return ( isNRestricted()||isSRestricted()||isERestricted()||isWRestricted()) ; }
 
   inline bool         Vertex::hasAData         () const { return (_adata !=NULL)? true : false; }
-  inline void         Vertex::setRestricted    () { _flags |= 0xF; }
-  inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
+//inline void         Vertex::setRestricted    () { _flags |= 0xF; }
+//inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
   inline void         Vertex::setNRestricted   () { _flags |= NRestricted; }
   inline void         Vertex::setSRestricted   () { _flags |= SRestricted; }
   inline void         Vertex::setERestricted   () { _flags |= ERestricted; }
@@ -387,6 +392,14 @@ namespace Anabatic {
   inline bool         Vertex::isiVertical  () const { return (_flags & Vertex::iVertical   ); }
   inline void         Vertex::setFlags     ( uint32_t mask ) { _flags |= mask ; }
   inline void         Vertex::unsetFlags   ( uint32_t mask ) { _flags &= ~mask; }
+
+  inline std::string  Vertex::getValueString ( DbU::Unit distance )
+  {
+    if (distance == Vertex::unreachable) return "unreachable";
+    if (distance == Vertex::unreached  ) return "unreached";
+    return DbU::getValueString( distance );
+  }
+
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".

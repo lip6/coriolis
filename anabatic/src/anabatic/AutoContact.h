@@ -97,7 +97,7 @@ namespace Anabatic {
       inline  void             setSizes                   ( DbU::Unit width, DbU::Unit height );
       inline  void             setX                       ( DbU::Unit );
       inline  void             setY                       ( DbU::Unit );
-      inline  void             setPosition                ( DbU::Unit width, DbU::Unit height );
+      inline  void             setPosition                ( DbU::Unit x, DbU::Unit y );
       inline  void             setPosition                ( const Point& );
       inline  void             setDx                      ( DbU::Unit );
       inline  void             setDy                      ( DbU::Unit );

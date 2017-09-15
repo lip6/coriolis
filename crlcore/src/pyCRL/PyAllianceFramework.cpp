@@ -363,6 +363,29 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_setRoutingGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_setRoutingGauge()" << endl;
+
+    HTRY
+      METHOD_HEAD("AllianceFramework.setRoutingGauge()")
+      PyObject* arg0;
+      __cs.init ("AllianceFramework.setRoutingGauge");
+      if (not PyArg_ParseTuple( args, "O&:AllianceFramework.setRoutingGauge", Converter, &arg0 )) {
+        PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.setRoutingGauge()." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":string") af->setRoutingGauge( Name(PyString_AsString(arg0)) );
+      else {
+        PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.setRoutingGauge()." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyAllianceFramework_addCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_addCellGauge ()" << endl;
@@ -470,6 +493,8 @@ extern "C" {
                                , "Add a new routing gauge." }
     , { "getRoutingGauge"      , (PyCFunction)PyAllianceFramework_getRoutingGauge      , METH_VARARGS
                                , "Get a routing gauge (whithout a name, return the default)." }          
+    , { "setRoutingGauge"      , (PyCFunction)PyAllianceFramework_setRoutingGauge      , METH_VARARGS
+                               , "Select the default routing gauge." }          
   //, { "destroy"              , (PyCFunction)PyAllianceFramework_destroy              , METH_NOARGS
   //                           , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */

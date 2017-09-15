@@ -692,7 +692,7 @@ namespace CRL {
   {
     if ( name.isEmpty() ) return _defaultRoutingGauge;
 
-    map<const Name,RoutingGauge*>::iterator igauge = _routingGauges.find ( name );
+    map<Name,RoutingGauge*>::iterator igauge = _routingGauges.find ( name );
     if ( igauge != _routingGauges.end() )
       return igauge->second;
 
@@ -735,7 +735,7 @@ namespace CRL {
   {
     if ( name.isEmpty() ) return _defaultCellGauge;
 
-    map<const Name,CellGauge*>::iterator igauge = _cellGauges.find ( name );
+    map<Name,CellGauge*>::iterator igauge = _cellGauges.find ( name );
     if ( igauge != _cellGauges.end() )
       return igauge->second;
 
@@ -796,9 +796,9 @@ namespace CRL {
     record->add ( getSlot ( "_libraries"          , &_libraries           ) );
     record->add ( getSlot ( "_catalog"            , &_catalog             ) );
     record->add ( getSlot ( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
-    record->add ( getSlot ( "_routingGauges"      ,  _routingGauges       ) );
+    record->add ( getSlot ( "_routingGauges"      , &_routingGauges       ) );
     record->add ( getSlot ( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
-    record->add ( getSlot ( "_cellGauges"         ,  _cellGauges          ) );
+    record->add ( getSlot ( "_cellGauges"         , &_cellGauges          ) );
     return record;
   }
 

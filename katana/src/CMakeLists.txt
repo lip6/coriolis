@@ -10,6 +10,7 @@
                         ${PYTHON_INCLUDE_PATH}
                       )
                    set( includes     katana/Constants.h
+                                     katana/Block.h
                                      katana/TrackCost.h
                                      katana/DataNegociate.h
                                      katana/DataSymmetric.h
@@ -43,6 +44,7 @@
                    set( mocIncludes  katana/GraphicKatanaEngine.h )
                    set( cpps         Constants.cpp
                                      Configuration.cpp
+                                     Block.cpp
                                      DataNegociate.cpp
                                      DataSymmetric.cpp
                                      TrackCost.cpp

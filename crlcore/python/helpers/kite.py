@@ -9,6 +9,9 @@ Cfg.getParamPercentage("katabatic.saturateRatio"        ).setPercentage(80     )
 Cfg.getParamInt       ("katabatic.saturateRp"           ).setInt       (8      )
 Cfg.getParamInt       ("kite.borderRipupLimit"          ).setInt       (26     )
 
+# Alliance parameters.
+Cfg.getParamString    ("kite.routingGauge"              ).setString    ('sxlib')
+
 # Kite parameters.
 Cfg.getParamPercentage("kite.edgeCapacity"        ).setPercentage(65     )
 Cfg.getParamPercentage("kite.edgeCapacity"        ).setMin       (0      )

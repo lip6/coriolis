@@ -407,9 +407,7 @@ namespace Anabatic {
   void AnabaticEngine::updateMatrix()
   {
     _matrix.setCell( getCell(), Session::getSliceHeight() );
-    for ( GCell* gcell : _gcells ){
-      gcell->_revalidate();
-    }
+    for ( GCell* gcell : _gcells ) _updateLookup( gcell );
   }
 
   size_t  AnabaticEngine::getNetsFromEdge ( const Edge* edge, NetSet& nets )
@@ -936,6 +934,18 @@ namespace Anabatic {
 
     cdebug_tabw(145,-1);
     DebugSession::close();
+  }
+
+
+  void  AnabaticEngine::invalidateRoutingPads ()
+  {
+  // This a flaw in the Hurricane Session update mechanism
+  // and needs to be fixed in the future.
+    for ( Net* net : getCell()->getNets() ) {
+      for ( RoutingPad* rp : net->getRoutingPads() ) {
+        rp->invalidate( false );
+      }
+    }
   }
 
 

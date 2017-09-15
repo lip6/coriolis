@@ -539,6 +539,58 @@ inline Hurricane::Record* getRecord ( std::list<Element>* l )
 // Inspector Support for  :  "[const] std::map<Key,Element,Compare>*.
 
 
+template<typename Key, typename Element>
+inline std::string  getString ( std::map<Key,Element>* m )
+{
+  std::string name = "std::map<Element>:";
+  return name + getString<size_t>(m->size());
+}
+
+
+template<typename Key, typename Element>
+inline Hurricane::Record* getRecord ( std::map<Key,Element>* m )
+{
+  Hurricane::Record* record = NULL;
+  if ( !m->empty() ) {
+    record = new Hurricane::Record ( "std::map<Element>" );
+    typename std::map<Key,Element>::iterator iterator = m->begin();
+    while ( iterator != m->end() ) {
+      record->add ( getSlot<Element>(getString(iterator->first), iterator->second) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+template<typename Key, typename Element>
+inline std::string  getString ( const std::map<Key,Element>* m )
+{
+  std::string name = "const std::map<Element>:";
+  return name + getString<size_t>(m->size());
+}
+
+
+template<typename Key, typename Element>
+inline Hurricane::Record* getRecord ( const std::map<Key,Element>* m )
+{
+  Hurricane::Record* record = NULL;
+  if ( !m->empty() ) {
+    record = new Hurricane::Record ( "const std::map<Element>" );
+    typename std::map<Key,Element>::const_iterator iterator = m->begin();
+    while ( iterator != m->end() ) {
+      record->add ( getSlot<const Element>(getString(iterator->first), iterator->second) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "[const] std::map<Key,Element,Compare>*.
+
+
 template<typename Key, typename Element, typename Compare>
 inline std::string  getString ( std::map<Key,Element,Compare>* m )
 {

@@ -208,6 +208,30 @@ namespace Anabatic {
   bool  Vertex::hasValidStamp () const
   { return _stamp == getAnabatic()->getStamp(); }
 
+  Edge* Vertex::getFrom() const 
+  {
+    if (hasValidStamp()) return _from;
+    else                 return NULL;
+  }
+
+
+  void Vertex::setRestricted    () 
+  {
+    setNRestricted();
+    setSRestricted();
+    setERestricted();
+    setWRestricted();
+  }
+
+
+  void Vertex::clearRestriction ()
+  {
+    unsetFlags(NRestricted);
+    unsetFlags(SRestricted);
+    unsetFlags(ERestricted);
+    unsetFlags(WRestricted);
+  }
+
 
   bool Vertex::hasRP( Net* net ) const 
   { 
@@ -310,7 +334,10 @@ namespace Anabatic {
            ) return true;
       else {
         if ((v2->getGCell()->isStrut())){
-          if (e->isMaxCapacity(net)) return true;
+          if (e->isMaxCapacity(net)) {
+            cdebug_log(112,0) << "Overcapacity:" << e << endl;
+            return true;
+          }
           else return false;
         } else return false;
       }
@@ -326,7 +353,11 @@ namespace Anabatic {
       return Point(0,0);
     }
 
+  //<<<<<<< HEAD
   /*if (vnext->getGCell()->isMatrix()) {
+=======
+    if (not vnext->getGCell()->isAnalog()) {
+>>>>>>> 987289653831df12933bd4490d9559415e61f220
       cdebug_tabw(112,-1);
       return Point(vnext->getGCell()->getXCenter(), vnext->getGCell()->getYCenter());
     }*/
@@ -338,9 +369,9 @@ namespace Anabatic {
 
 
     if (vnext->isV()){
-      cdebug_log(112,0) << "Case next: Vertical: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
+    //cdebug_log(112,0) << "Case next: Vertical: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
       if ((vnext->isiSet())&&(vnext->hasValidStamp())){
-        cdebug_log(112,0) << "Case set" << endl;
+      //cdebug_log(112,0) << "Case set" << endl;
         x = vnext->getIAxis();
         if (isNorth(vnext))      y = vnext->getIMin();
         else if (isSouth(vnext)) y = vnext->getIMax();
@@ -350,7 +381,7 @@ namespace Anabatic {
           else                                        y = pcurr.getY();
         } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.1" << endl;
       } else {
-        cdebug_log(112,0) << "Case not set" << endl;
+      //cdebug_log(112,0) << "Case not set" << endl;
         if (isNorth(vnext)){
           y = gcurr->getYMax();
           if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
@@ -376,10 +407,10 @@ namespace Anabatic {
       }
       
     } else if (vnext->isH()) {
-      cdebug_log(112,0) << "Case next: Horizontal: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
+    //cdebug_log(112,0) << "Case next: Horizontal: " << vnext->isiSet() << endl; //", d:" << vnext->getDistance() << endl;
       
       if ((vnext->isiSet())&&(vnext->hasValidStamp())){
-        cdebug_log(112,0) << "Case set" << endl;
+      //cdebug_log(112,0) << "Case set" << endl;
         y = vnext->getIAxis();
         if      (isEast (vnext)) x = vnext->getIMin();
         else if (isWest (vnext)) x = vnext->getIMax();
@@ -390,7 +421,7 @@ namespace Anabatic {
         } else  cdebug_log(112,0) << "[ERROR](Point Vertex::getNextPathPoint2(...) const: Something is wrong.3" << endl;
 
       } else {
-        cdebug_log(112,0) << "Case not set" << endl;
+      //cdebug_log(112,0) << "Case not set" << endl;
         if (isNorth(vnext)){
           y = gcurr->getYMax();
           if      (pcurr.getX() < gnext->getXMin()) x = gnext->getXMin();
@@ -434,9 +465,9 @@ namespace Anabatic {
     IntervalC intervfrom = IntervalC();
 
     if (_adata == NULL){
-      cdebug_log(112,0) << "Point Vertex::getStartPathPoint( const Vertex* next ) const: Digital vertex." << endl;
-    //cdebug_tabw(112,-1);
-    //return Point(0,0);
+    //cdebug_log(112,0) << "Point Vertex::getStartPathPoint( const Vertex* next ) const: Digital vertex." << endl;
+      cdebug_tabw(112,-1);
+      return Point(0,0);
     }
     if (gcurr->isMatrix()){
       GCell* gprev = getGPrev();
@@ -451,6 +482,8 @@ namespace Anabatic {
       } else return Point (gcurr->getXCenter(), gcurr->getYCenter() ); 
     } else if (gcurr->isDevice ()){
       cdebug_log(112,0) << "Case device" << endl;
+      cdebug_log(112,0) << "seed isH(): " << isH() << endl; 
+      cdebug_log(112,0) << "seed isV(): " << isV() << endl;
       if      (isH()){
         cdebug_log(112,0) << "hinterval: " <<  DbU::getValueString(getIAxis()) << endl;
         y = getIAxis();
@@ -497,15 +530,12 @@ namespace Anabatic {
           cdebug_log(112,0) << "prev is V" << endl;
 
           if        (isNorth(prev)){
-          //cdebug_log(112,0) << "1" << endl;
             x = intervfrom.getAxis();
             y = gcurr->getYMax();
           } else if (isSouth(prev)){
-          //cdebug_log(112,0) << "2" << endl;
             x = intervfrom.getAxis();
             y = gcurr->getYMin();
           } else if (isWest (prev)){
-          //cdebug_log(112,0) << "3" << endl;
             x = gcurr->getXMin();
             if        (isNorth(next)){
               if   (intervfrom.getMax() > gcurr->getYMax()) y = gcurr->getYMax();
@@ -520,7 +550,6 @@ namespace Anabatic {
               }
             }
           } else if (isEast (prev)){
-          //cdebug_log(112,0) << "4" << endl;
             x = gcurr->getXMax();
             if        (isNorth(next)){
               if   (intervfrom.getMax() > gcurr->getYMax()) y = gcurr->getYMax();
@@ -640,7 +669,7 @@ namespace Anabatic {
   {
     GCell* gcell = getGCell();
     if      (gcell->isDevice())   return isiHorizontal();
-    else if (gcell->isHChannel()) return true;
+    else if ((gcell->isHChannel())||(gcell->isHRail())) return true;
     else if (gcell->isStrut()| gcell->isMatrix() )   return ((gcell->getWidth() > gcell->getHeight())||(gcell->getWidth() == gcell->getHeight()));
     else                          return false;
   }
@@ -650,7 +679,7 @@ namespace Anabatic {
   {
     GCell* gcell = getGCell();
     if      (gcell->isDevice())   return isiVertical();
-    else if (gcell->isVChannel()) return true;
+    else if ((gcell->isVChannel())||(gcell->isVRail())) return true;
     else if (gcell->isStrut()|| gcell->isMatrix())    return gcell->getWidth() < gcell->getHeight();
     else                          return false;
   }
@@ -1097,7 +1126,8 @@ namespace Anabatic {
   Edge* Vertex::getFrom2() const
   {
     if (_adata){
-      return _adata->getFrom2();
+      if (hasValidStamp()) return _adata->getFrom2();
+      else                 return NULL;
     } else {
     //cdebug_log(112,0) << "Edge* Vertex::getFrom2() const: Inappropriate usage of GRAData. " <<  endl;
       return NULL;
@@ -1434,19 +1464,18 @@ namespace Anabatic {
       if (rp) { 
         if (_attachSymContactsHook(rp)) continue; // ANALOG
 
-        cdebug_log(112,0) << "| " << rp << endl;
+        cdebug_log(112,0) << "| frp:" << rp << endl;
         rps.push_back( rp ); 
         continue; 
       }
     }
 
     for ( auto rp : rps ) {
+      cdebug_log(112,0) << "| rp: " << rp << ", getCenter(): " << rp->getBoundingBox().getCenter() << endl;
       Point  center = rp->getBoundingBox().getCenter();
       GCell* gcell  = _anabatic->getGCellUnder( center );
      
       _limitSymSearchArea(rp); // ANALOG
-
-      cdebug_log(112,0) << "| " << rp << endl;
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s\n"
@@ -1463,21 +1492,25 @@ namespace Anabatic {
 
 
       cdebug_log(112,0) << "Merge search area: " << _searchArea << ", gcell: " << gcell << endl;
-    //_searchArea.merge( gcell->getBoundingBox() ); // TO CHANGE
+      _searchArea.merge( gcell->getBoundingBox() ); // TO CHANGE
     //if (_net->getCell()->getName() == "gmchamla") _searchArea.merge( _net->getCell()->getAbutmentBox() ); // TO CHANGE
       cdebug_log(112,0) << "Search area: " << _searchArea << endl;
 
       Vertex*     seed  = gcell->getObserver<Vertex>(GCell::Observable::Vertex);
-    //GCell*      gseed = seed->getGCell();
+      GCell*      gseed = seed->getGCell();
 
-      _setSourcesGRAData( seed, rp ); // ANALOG
+      if (gseed->isAnalog()) _setSourcesGRAData( seed, rp ); // ANALOG
+      cdebug_log(112,0) << "seed isH(): " << seed->isH() << endl; 
+      cdebug_log(112,0) << "seed isV(): " << seed->isV() << endl;
       
       if (seed->getConnexId() < 0) {
+        cdebug_log(112,0) << "(seed->getConnexId() < 0)"<< endl;
         VertexSet  connecteds;
         _getConnecteds( seed, connecteds );
 
         ++_connectedsId;
         for ( Vertex* vertex : connecteds ) {
+          cdebug_log(112,0) << "| Current: " << vertex << endl;
           vertex->setDistance     ( Vertex::unreached );
           vertex->setStamp        ( _stamp );
           vertex->setConnexId     ( _connectedsId );
@@ -1485,20 +1518,26 @@ namespace Anabatic {
           vertex->setDegree       ( 1 );
           vertex->setRpCount      ( 0 );
           vertex->setFrom         ( NULL );
+
+          vertex->setFrom2        ( NULL);
+          vertex->unsetFlags      ( Vertex::UseFromFrom2 );
+
           vertex->clearRestriction();
           _targets.insert( vertex );
           cdebug_log(112,0) << "| Add: " << vertex << endl;
         }
       }
 
+      cdebug_log(112,0) << "seed->incRpCount();" << endl;
       seed->incRpCount();
+      cdebug_log(112,0) << "Contact* vcontact = seed->getGContact( _net );" << endl;
       Contact* vcontact = seed->getGContact( _net );
       rp->getBodyHook()->detach();
       rp->getBodyHook()->attach( vcontact->getBodyHook() );
     }
 
     _searchArea.inflate( _searchAreaHalo );
-    cdebug_log(112,0) << "Search halo: " << _searchAreaHalo << endl;
+    cdebug_log(112,0) << "Search halo: " << DbU::getValueString(_searchAreaHalo) << endl;
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
     
     setAxisTargets();
@@ -1743,14 +1782,14 @@ namespace Anabatic {
             continue;
           }
           
-          if (_checkFrom2(edge, current)) { // ANALOG
+          if ((gcurrent->isAnalog()) and _checkFrom2(edge, current)) {
             cdebug_log(111,0) << "| Reject: _checkFrom2()" << endl;
             continue;
           }
 
           GCell*  gneighbor = edge->getOpposite(current->getGCell());
           Vertex* vneighbor = gneighbor->getObserver<Vertex>( GCell::Observable::Vertex );
-          if (not gneighbor->isMatrix()) vneighbor->createAData();
+          if (gneighbor->isAnalog()) vneighbor->createAData();
 
           cdebug_log(111,0) << "+ Neighbor:" << vneighbor << endl;
 
@@ -1768,7 +1807,7 @@ namespace Anabatic {
             cdebug_log(111,0) << "| From: " << current->getFrom()->getOpposite(gcurrent) << endl;
           //current->getIntervFrom().print();
           } 
-          if (current->getFrom2()) { 
+          if (gcurrent->isAnalog() and current->getFrom2()) { 
             cdebug_log(111,0) << "| From2: " << current->getFrom2()->getOpposite(gcurrent) << endl;
             current->getIntervFrom2().print();
           }
@@ -1779,43 +1818,124 @@ namespace Anabatic {
         /////////////////////////////////////////////////////////////////////////////////// 
 
           DbU::Unit distance = _distanceCb( current, vneighbor, edge );
+          cdebug_log(111,0) << "distance:" << Vertex::getValueString(distance) << endl;
 
-          bool isDistance2shorter = _isDistance2Shorter ( distance, current, vneighbor, edge ); // ANALOG
+          bool isDistance2shorter = false;
+          if (gcurrent->isAnalog() and gneighbor->isAnalog())
+            isDistance2shorter = _isDistance2Shorter ( distance, current, vneighbor, edge );
 
-          if  (   (distance == vneighbor->getDistance())
-            //and (not gcurrent->isMatrix() ) 
-              and (not gneighbor->isMatrix()) 
-              and (vneighbor->getFrom2() == NULL)
-              )  {
-            _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
-          } else
-            if ( (distance < vneighbor->getDistance()) and (distance != Vertex::unreachable) ) {
-              if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
-              else {
-                if (not vneighbor->hasValidStamp()) {
-                  cdebug_log(111,0) << "Vertex reached for the first time" << endl;
-                  vneighbor->setConnexId( -1 );
-                  vneighbor->setStamp   ( _stamp );
-                  vneighbor->setDegree  ( 1 );
-                  vneighbor->setRpCount ( 0 );
-                  vneighbor->unsetFlags(Vertex::AxisTarget);
-                  vneighbor->resetIntervals();
-                }
+        /* ------------------------------------------------------------------- */
+          bool push = false;
+          if (distance != Vertex::unreachable){
+            if (not vneighbor->hasValidStamp()) {
+              cdebug_log(111,0) << "Vertex reached for the first time" << endl;
+              vneighbor->setConnexId( -1 );
+              vneighbor->setStamp   ( _stamp );
+              vneighbor->setDegree  ( 1 );
+              vneighbor->setRpCount ( 0 );
+              vneighbor->unsetFlags(Vertex::AxisTarget);
+              vneighbor->resetIntervals();
+              push = true;
+            } else {
+              if  (   (distance == vneighbor->getDistance())
+                  and (gneighbor->isAnalog()) 
+                  and (vneighbor->getFrom2() == NULL) 
+                  ) {
+                _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
+
+              } else if (distance < vneighbor->getDistance()) {
+                if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );
+                cdebug_log(111,0) << "Vertex reached through a shorter path" << endl;
+                push = true;
+              } else {
+                cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path or unreachable:"
+                                  << boolalpha << (distance == Vertex::unreachable)
+                                  << endl;
               }
-              cdebug_log(111,0) << "Vertex reached through a shorter path"<< endl;
-              if (vneighbor->hasAData()) _updateGRAData( vneighbor, isDistance2shorter, current ); // ANALOG
+            }
+          } else {
+            cdebug_log(111,0) << "Reject: Vertex unreachable" << endl;
+          }
+
+          if (push){
+            if (gneighbor->isAnalog()) // Gneighbor only not current gcell
+              _updateGRAData( vneighbor, isDistance2shorter, current );
+            vneighbor->setBranchId( current->getBranchId() );
+            vneighbor->setDistance( distance );
+            cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
+            vneighbor->setFrom ( edge );
+            _queue.push( vneighbor );
+            cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << ", isFromFrom2: " << vneighbor->isFromFrom2() << endl;
+          }
+          
+        }
+        /* ------------------------------------------------------------------- */
+
+
+
+
+        /*if  (   (distance == vneighbor->getDistance())
+              and gcurrent->isAnalog()
+              and gneighbor->isAnalog() 
+              and (vneighbor->getFrom2() == NULL) ) {
+            _pushEqualDistance( distance, isDistance2shorter, current, vneighbor, edge ); // ANALOG
+          } else {
+            if ((distance != Vertex::unreachable) and (not vneighbor->hasValidStamp())) {
+              cdebug_log(111,0) << "Vertex reached for the first time" << endl;
+              vneighbor->setConnexId( -1 );
+              vneighbor->setStamp   ( _stamp );
+              vneighbor->setDegree  ( 1 );
+              vneighbor->setRpCount ( 0 );
+              vneighbor->unsetFlags(Vertex::AxisTarget);
+              vneighbor->resetIntervals();
+
+            //cdebug_log(111,0) << "Vertex reached through a shorter path" << endl;
+              if (gneighbor->isAnalog()) // Gneighbor only not current gcell
+                _updateGRAData( vneighbor, isDistance2shorter, current );
               
               vneighbor->setBranchId( current->getBranchId() );
               vneighbor->setDistance( distance );
               cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
               vneighbor->setFrom ( edge );
-              vneighbor->setFrom2( NULL );
+              if (gneighbor->isAnalog()) vneighbor->setFrom2( NULL );
+
               _queue.push( vneighbor );
               cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
             } else {
-              cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path" << endl;
+              if ( (distance < vneighbor->getDistance()) and (distance != Vertex::unreachable) ) {
+                if (vneighbor->getDistance() != Vertex::unreached) _queue.erase( vneighbor );*/
+              /*else {
+                  if (not vneighbor->hasValidStamp()) {
+                    cdebug_log(111,0) << "Vertex reached for the first time" << endl;
+                    vneighbor->setConnexId( -1 );
+                    vneighbor->setStamp   ( _stamp );
+                    vneighbor->setDegree  ( 1 );
+                    vneighbor->setRpCount ( 0 );
+                    vneighbor->unsetFlags(Vertex::AxisTarget);
+                    vneighbor->resetIntervals();
+                    }*/
+              // }
+              //}
+        /*cdebug_log(111,0) << "Vertex reached through a shorter path" << endl;
+                if (gneighbor->isAnalog()) // Gneighbor only not current gcell
+                  _updateGRAData( vneighbor, isDistance2shorter, current );
+              
+                vneighbor->setBranchId( current->getBranchId() );
+                vneighbor->setDistance( distance );
+                cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
+                vneighbor->setFrom ( edge );
+                if (gneighbor->isAnalog()) vneighbor->setFrom2( NULL );
+
+                _queue.push( vneighbor );
+                cdebug_log(111,0) << "Push: (size:" << _queue.size() << ") " << vneighbor << endl;
+              } else {
+                cdebug_log(111,0) << "Reject: Vertex reached through a *longer* path or unreachable:"
+                                  << boolalpha << (distance == Vertex::unreachable)
+                                  << endl;
+                                  }
             }
-        }
+          }
+        }*/
         continue;
       }
 
@@ -1849,12 +1969,10 @@ namespace Anabatic {
 
     bool isfirst  = true;
     bool useFrom2 = false;
+  //<<<<<<< HEAD
   //if (!current->getGCell()->isMatrix()){
-    _initiateUpdateIntervals ( current ); // ANALOG
-    /*} else {
-      current = current->getPredecessor();
-      isfirst = false;
-    }*/
+  /*_initiateUpdateIntervals ( current ); // ANALOG
+ 
     cdebug_log(112,0) << "[Start WHILE]" << endl;
 
     Edge* from = NULL;
@@ -1873,15 +1991,53 @@ namespace Anabatic {
       if( current->isFromFrom2()) {
         cdebug_log(112,0) << "ISFROMFROM2: " << current << endl;
         useFrom2 = true;
-        current->unsetFlags(Vertex::UseFromFrom2);
-      } else {
+        current->unsetFlags(Vertex::UseFromFrom2);*/
+      /*=======*/
+    if (current->getGCell()->isAnalog()) {
+      _initiateUpdateIntervals( current );
+    } else {
+      current = current->getPredecessor();
+      isfirst = false;
+    }
+
+  //cdebug_log(112,0) << "[Start WHILE]" << endl;
+
+    Edge* from = NULL;
+    while ( current ) {
+      cdebug_log(112,0) << "+ " << current << endl;
+    //if (current->getFrom()) cdebug_log(112,0) << "| From:" << current->getFrom()->getOpposite(current->getGCell()) << endl;
+
+      if (current->getGCell()->isAnalog()) {
+      //if (current->getFrom2()) cdebug_log(112,0) << "| From2:" << current->getFrom2()->getOpposite(current->getGCell()) << endl;
+
+        if (_updateIntervals( isfirst, current, useFrom2, branchId, from )) break;
+        Vertex* next = NULL;
+        next = current->getPredecessor();
+        if (current == next){
+          cdebug_log(112,0) << "[ERROR]: Current's predecessor is current." << endl;
+          break;
+        }
+
+
+        if (current->isFromFrom2()) {
+        //cdebug_log(112,0) << "| isFromFrom2:true (" << current << ")" << endl;
+          useFrom2 = true;
+          current->unsetFlags( Vertex::UseFromFrom2 );
+        } else {
+        //cdebug_log(112,0) << "| isFromFrom2:false" << endl;
+          useFrom2 = false;
+        }
+      //cdebug_log(112,0) << "| Next: " << next << endl;
+        current = next;
+      //>>>>>>> 987289653831df12933bd4490d9559415e61f220
+      /*} else {
         cdebug_log(112,0) << "ISNOT FROMFROM2" << endl;
         useFrom2 = false;
       }
       cdebug_log(112,0) << "next: " << next << endl;
-      current = next;
+      current = next;*/
       //////////////////////////////////////////////////////////////////////////////////////////// 
-      /*} else {
+      } else {
         current->incDegree();
         if (current->getConnexId() == _connectedsId) break;
 
@@ -1894,7 +2050,7 @@ namespace Anabatic {
         _sources.insert( current );
         _queue.push( current );
         current = current->getPredecessor();
-      }*/
+      }
     }
     cdebug_tabw(112,-1);
   }
@@ -1910,8 +2066,8 @@ namespace Anabatic {
   //cerr << "state: " << state << endl; 
 
     for ( Vertex* startVertex : _sources ) {
-
       if (not startVertex->getFrom()) continue;
+
       if (   not startVertex->hasGContact(_net)
          and not startVertex->getRpCount()
          and (startVertex->getDegree() < 3)
@@ -1919,11 +2075,12 @@ namespace Anabatic {
 
       Vertex* source = startVertex;
       while ( source ) {
-        source->resetIntervals(); // ANALOG
-
         cdebug_log(112,0) << "* " << source << endl;
 
-        Edge* from = source->getFrom();
+        bool isAnalog = source->getGCell()->isAnalog();
+        if (isAnalog) source->resetIntervals();
+
+        Edge*         from     = source->getFrom();
         vector<Edge*> aligneds;
         aligneds.push_back( from );
 
@@ -1941,12 +2098,20 @@ namespace Anabatic {
         while ( true ) {
           from = target->getFrom();
           if (  not from
-             or not (target->getGCell()->isMatrix())
+             or (target->getGCell()->isAnalog())
              or (target->hasGContact(_net))
              or (target->getRpCount())
              or (target->getDegree() > 2)
              or (aligneds.back()->isHorizontal() xor from->isHorizontal())
              or not constraint.intersect(from->getSide())) break;
+
+        // U-turn detection. All edges must have the same *spin*.
+          if (   (aligneds[0]->getSource() == source->getGCell())
+             xor (from       ->getSource() == target->getGCell()) ) break;
+
+        // Always break vertical in channel (2M routing).
+          if (target->getGCell()->isChannelRow() and aligneds.back()->isVertical())
+            break;
 
           aligneds.push_back( from );
           constraint.merge( from->getSide() );
@@ -1962,17 +2127,21 @@ namespace Anabatic {
         Contact* targetContact = target->hasGContact( _net );
         Segment* segment       = NULL;
 
-
         if (not targetContact) {
           if (target->getFrom()) targetContact = target->getGContact( _net );
           else                   targetContact = target->breakGoThrough( _net );
         }
+
+        cdebug_log(112,0) << "| aligneds.front():" << aligneds.front()
+                          << " isHorizontal():" << aligneds.front()->isHorizontal() << endl;
         
         if (aligneds.front()->isHorizontal()) {
           if (sourceContact->getX() > targetContact->getX())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal2"));
+        //DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"));  //DbU::fromLambda(2.0);
+          DbU::Unit width = Session::getGHorizontalPitch();  //DbU::fromLambda(2.0);
+
           if (state) width *= state->getWPitch();
 
           segment = Horizontal::create( sourceContact
@@ -1982,14 +2151,16 @@ namespace Anabatic {
                                       , width
                                       );
           for ( Edge* through : aligneds ) through->add( segment );
-          if (state){
+          if (state) {
             if (state->isSymmetric()) _createSelfSymSeg ( segment );
           }
         } else {
           if (sourceContact->getY() > targetContact->getY())
             std::swap( sourceContact, targetContact );
 
-          DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal3"));
+        //DbU::Unit width = Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"));  //DbU::fromLambda(2.0);
+          DbU::Unit width = Session::getGVerticalPitch();  //DbU::fromLambda(2.0);
+
           if (state) width *= state->getWPitch();
           segment = Vertical::create( sourceContact
                                     , targetContact
@@ -1998,16 +2169,17 @@ namespace Anabatic {
                                     , width
                                     );
           for ( Edge* through : aligneds ) through->add( segment );
-          if (state){
+          if (state) {
             if (state->isSymmetric()) _createSelfSymSeg ( segment );
           }
         }
 
-        cdebug_log(112,0) << "|| " << segment << endl;
-      //cdebug_log(112,0) << "| " << "break (turn, branch or terminal)." << endl;
-        Vertex* stc = source;
+        cdebug_log(112,0) << "| break (U-turn, turn, branch or terminal)." << endl;
+        cdebug_log(112,0) << "| " << segment << endl;
+
+        Vertex* prevSource = source;
         source = (target->getFrom()) ? target : NULL;
-        stc->clearFrom2();
+        if (isAnalog) prevSource->clearFrom2();
       }
     }
 
@@ -2062,7 +2234,7 @@ namespace Anabatic {
   void  Dijkstra::_toSources ( Vertex* source, int connexId )
   {
     cdebug_log(112,1) << "Dijkstra::_toSources() " << endl;
-  //cdebug_log(112,0) << "* from:  " << source << endl;
+    cdebug_log(112,0) << "* from:  " << source << endl;
 
     source->setConnexId( connexId );
     source->setDistance( 0.0 );
@@ -2073,20 +2245,23 @@ namespace Anabatic {
     VertexSet stack;
     stack.insert( source );
 
+    
+    cdebug_log(112,0) << "in WHILE" << endl;
     while ( not stack.empty() ) {
       source = *stack.begin();
       stack.erase( source );
 
-    //cdebug_log(112,0) << "| source:" << source << " stack.size():" << stack.size() << endl;
+      cdebug_log(112,0) << "| source:" << source << " stack.size():" << stack.size() << endl;
 
       for ( Edge* edge : source->getGCell()->getEdges() ) {
         if (not edge->hasNet(_net)) {
-        //cdebug_log(112,0) << "  Not connected:" << edge
-        //                  << " to:" << edge->getOpposite(source->getGCell()) << endl; 
+          cdebug_log(112,0) << "  Not connected:" << edge
+                            << " to:" << edge->getOpposite(source->getGCell()) << endl; 
           continue;
         }
 
         GCell*  gneighbor = edge->getOpposite(source->getGCell());
+        cdebug_log(112,0) << "GCell: " << gneighbor<< endl;
         Vertex* vneighbor = gneighbor->getObserver<Vertex>(GCell::Observable::Vertex);
 
         if (not vneighbor->hasValidStamp()) continue; 
@@ -2102,6 +2277,7 @@ namespace Anabatic {
       }
     }
 
+    cdebug_log(112,0) << "Dijkstra::_toSources() END" << endl;
     cdebug_tabw(112,-1);
   }
 
@@ -2157,9 +2333,9 @@ namespace Anabatic {
 
   void  Dijkstra::_createSelfSymSeg ( Segment* segment )
   {
-  //cerr << "void  Dijkstra::_createSelfSymSeg ( Segment* segment ): " << _net << endl;
+    cdebug_log(112,0) << "void  Dijkstra::_createSelfSymSeg ( Segment* segment ): " << _net << ", seg: " << segment << endl;
     NetRoutingState* state = NetRoutingExtension::get( _net );
-  //cerr << "state: " << state << endl;
+  //cdebug_log(112,0) << "state: " << state << endl;
     if ((state != NULL)&&(segment!=NULL)){
       Horizontal* h = dynamic_cast<Horizontal*>(segment);
       Vertical*   v = dynamic_cast<Vertical*>(segment);
@@ -2169,15 +2345,15 @@ namespace Anabatic {
       Component* targetContact = segment->getTarget();
       if (h){
         if (state->isSymHorizontal()){
-        //cerr << "H case Horizontal" << endl;
+          cdebug_log(112,0) << "H case Horizontal" << endl;
           sp   = Point(sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
           tp   = Point(targetContact->getX(), state->getSymValue(targetContact->getY()) );
           axis = state->getSymValue(segment->getY()); 
         } else if (state->isSymVertical()){
-        //cerr << "H case Vertical" << endl;
+          cdebug_log(112,0) << "H case Vertical" << endl;
           sp = Point( state->getSymValue(targetContact->getX()), targetContact->getY() );
           tp = Point( state->getSymValue(sourceContact->getX()), sourceContact->getY() );
-          axis = state->getSymValue(segment->getX()); 
+          axis = segment->getY(); 
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
           return;
@@ -2224,7 +2400,7 @@ namespace Anabatic {
         //cerr << "V case Horizontal" << endl;
           sp = Point( targetContact->getX(), state->getSymValue(targetContact->getY()) );
           tp = Point( sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
-          axis = state->getSymValue(segment->getY()); 
+          axis = segment->getX(); 
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
           return;
@@ -2264,7 +2440,7 @@ namespace Anabatic {
   {
     if (current->getFrom2()){
       if (edge == current->getFrom2()) {
-      //cdebug_log(111,0) << "edge == current->getFrom2()" << endl;
+        cdebug_log(111,0) << "edge == current->getFrom2()" << endl;
         return true;
       } else {
       //cdebug_log(111,0) << "edge != current->getFrom2(): " << current->getFrom2() << endl;
@@ -2311,7 +2487,6 @@ namespace Anabatic {
 
         if (calcDistance(pcurr,pnext) > calcDistance(pcurr2,pnext)) {
           cdebug_log(111,0) << "* Distance 2 is shorter" << endl;
-
           isDistance2shorter = true;
           distance = distance2;
         } else {
@@ -2366,8 +2541,12 @@ namespace Anabatic {
     vneighbor->clearFrom2();
     if (isDistance2shorter) {
       vneighbor->setFlags(Vertex::UseFromFrom2);
-    //cdebug_log(111,0) << "setFromFrom2: " << vneighbor << endl; 
-    }// else  cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
+      cdebug_log(111,0) << "setFlags(Vertex::UseFromFrom2): " << vneighbor << endl; 
+    } else {
+      vneighbor->unsetFlags(Vertex::UseFromFrom2);
+      cdebug_log(111,0) << "unsetFlags(Vertex::UseFromFrom2): " << vneighbor << endl; 
+    }
+  // else  cdebug_log(111,0) << "setFrom1: " << vneighbor << endl; 
             
     vneighbor->setIntervals( current );
     vneighbor->getIntervFrom().print();
@@ -2382,12 +2561,12 @@ namespace Anabatic {
       Vertex* vprev  = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
       Point   pcurrent = vprev->getStartPathPoint(current);
       Point   pentry   = vprev->getNextPathPoint( pcurrent, current );
-      cdebug_log(112,0) << "current : " << gcurr << endl;
-      cdebug_log(112,0) << "previous: " << gprev << endl;
-      cdebug_log(112,0) << "pcurr : x: " << DbU::getValueString(pcurrent.getX()) << ", y: " << DbU::getValueString(pcurrent.getY()) << endl;
-      cdebug_log(112,0) << "pentry: x: " << DbU::getValueString(pentry.getX())   << ", y: " << DbU::getValueString(pentry.getY())   << endl;
+    //cdebug_log(112,0) << "current : " << gcurr << endl;
+    //cdebug_log(112,0) << "previous: " << gprev << endl;
+    //cdebug_log(112,0) << "pcurr : x: " << DbU::getValueString(pcurrent.getX()) << ", y: " << DbU::getValueString(pcurrent.getY()) << endl;
+    //cdebug_log(112,0) << "pentry: x: " << DbU::getValueString(pentry.getX())   << ", y: " << DbU::getValueString(pentry.getY())   << endl;
  
-      cdebug_log(112,0) << "| " << current << " | " << endl;
+    //cdebug_log(112,0) << "| " << current << " | " << endl;
       if        (current->isH()){
         if        (pentry.getX() < current->getIMin()){ 
           current->setInterv(pentry.getX(), current->getIMax(), current->getIAxis());
@@ -2413,7 +2592,7 @@ namespace Anabatic {
           cdebug_log(112,0) <<                   ", axis: " << DbU::getValueString(current->getIAxis()) << endl;
         }
       } 
-      cdebug_log(112,0) << "isiSet: " << current->isiSet() << endl;
+    //cdebug_log(112,0) << "isiSet: " << current->isiSet() << endl;
     }
   }
 
@@ -2421,15 +2600,27 @@ namespace Anabatic {
   bool Dijkstra::_updateIntervals( bool& isfirst, Vertex* current, bool& useFrom2, int& branchId, Edge* from )
   {
     if (!isfirst){
-      cdebug_log(112,0) << "Is not first" << endl;
+    //cdebug_log(112,0) << "Is not first" << endl;
       current->incDegree();
-      if (current->getConnexId() == _connectedsId) return true;
+      if (current->getConnexId() == _connectedsId){
+        cdebug_log(112,0) << "| (current->getConnexId() == _connectedsId)" << endl;
+        return true;
+      }
       from = NULL;
       if (useFrom2) {
-        cdebug_log(112,0) << "USE FROM2: " << current->getFrom2()->getOpposite(current->getGCell()) << endl;
-        current->setFrom(current->getFrom2());
-        current->setIntervfrom(current->getPIMin2(), current->getPIMax2(), current->getPIAxis2());
-        current->clearFrom2();
+        if (current->getFrom2()) {
+        //cdebug_log(112,0) << "| USE FROM2: " << endl;
+        //cdebug_log(112,0) << "| current->getFrom2(): " << current->getFrom2() << endl;
+        //cdebug_log(112,0) << "| current->getGCell(): " << current->getGCell() << endl;
+        //cdebug_log(112,0) << "| getOpposite(): " << current->getFrom2()->getOpposite(current->getGCell()) << endl;
+        
+          current->setFrom(current->getFrom2());
+          current->setIntervfrom(current->getPIMin2(), current->getPIMax2(), current->getPIAxis2());
+          current->clearFrom2();
+        } else {
+          cdebug_log(112,0) << "[Warning]: Current has no getfrom2 anymore. " << endl;
+          
+        }
       }
       from = current->getFrom();
       if (not from) return true;
@@ -2439,15 +2630,18 @@ namespace Anabatic {
       current->setBranchId( branchId );
       _sources.insert( current );
       _queue.push( current );
-    } else isfirst = false;
+    } else {
+    //cdebug_log(112,0) << "Is first" << endl;
+      isfirst = false;
+    }
 
     if ((current->getPredecessor() != NULL)&&(!current->getGCell()->isMatrix())){
-      cdebug_log(112,0) << "Predecessor()    : " << current->getPredecessor() << endl;
-      cdebug_log(112,0) << "[Interval update]: min : " << DbU::getValueString(current->getPIMin());
-      cdebug_log(112,0) <<                  ", max : " << DbU::getValueString(current->getPIMax());
-      cdebug_log(112,0) <<                  ", axis: " << DbU::getValueString(current->getPIAxis()) << endl;
+    //cdebug_log(112,0) << "Predecessor()    : " << current->getPredecessor() << endl;
+    //cdebug_log(112,0) << "| [Interval update]: min : " << DbU::getValueString(current->getPIMin());
+    //cdebug_log(112,0) <<                  ", max : " << DbU::getValueString(current->getPIMax());
+    //cdebug_log(112,0) <<                  ", axis: " << DbU::getValueString(current->getPIAxis()) << endl;
       current->getPredecessor()->setInterv(current->getPIMin(), current->getPIMax(), current->getPIAxis());
-      current->getIntervFrom().print();
+    //current->getIntervFrom().print();
     //if (current->getPredecessor()->getGCell()->isStrut()) _updateRealOccupancy( current );
     } 
     return false;
@@ -2507,10 +2701,14 @@ namespace Anabatic {
 
   void Dijkstra::_setSourcesGRAData( Vertex* seed, RoutingPad* rp )
   {
+    cdebug_log(112,0) << "void Dijkstra::_setSourcesGRAData() : " << seed << endl;
     GCell*      gseed = seed->getGCell();
     Horizontal* h    = dynamic_cast<Horizontal*>(rp->_getEntityAsSegment());
     Vertical*   v    = dynamic_cast<Vertical*>  (rp->_getEntityAsSegment());
     if (h) {
+      cdebug_log(112,0) << "case H " << endl;
+      seed->unsetFlags(Vertex::iHorizontal);
+      seed->unsetFlags(Vertex::iVertical);
       seed->setFlags(Vertex::iHorizontal);
       if (!gseed->isMatrix()){
         seed->createAData();
@@ -2519,8 +2717,10 @@ namespace Anabatic {
                        , rp->getBoundingBox().getYCenter()
                        );
       }
-    }
-    if (v) {
+    } else if (v) {
+      cdebug_log(112,0) << "case V " << endl;
+      seed->unsetFlags(Vertex::iHorizontal);
+      seed->unsetFlags(Vertex::iVertical);
       seed->setFlags(Vertex::iVertical);
       if (!gseed->isMatrix()) {
         seed->createAData();

@@ -123,21 +123,19 @@ namespace CRL {
 
     // Internals - Attributes.
     protected:
-      static const Name          _parentLibraryName;
-      static AllianceFramework*  _singleton;
-             Observable          _observers;
-             Environment         _environment;
-             ParsersMap          _parsers;
-             DriversMap          _drivers;
-             Catalog             _catalog;
-             AllianceLibraries   _libraries;
-             Library*            _parentLibrary;
-             map<const Name,RoutingGauge*>
-                                 _routingGauges;
-             RoutingGauge*       _defaultRoutingGauge;
-             map<const Name,CellGauge*>
-                                 _cellGauges;
-             CellGauge*          _defaultCellGauge;
+      static const Name               _parentLibraryName;
+      static AllianceFramework*       _singleton;
+             Observable               _observers;
+             Environment              _environment;
+             ParsersMap               _parsers;
+             DriversMap               _drivers;
+             Catalog                  _catalog;
+             AllianceLibraries        _libraries;
+             Library*                 _parentLibrary;
+             map<Name,RoutingGauge*>  _routingGauges;
+             RoutingGauge*            _defaultRoutingGauge;
+             map<Name,CellGauge*>     _cellGauges;
+             CellGauge*               _defaultCellGauge;
 
     // Internals - Constructors.
                                  AllianceFramework       ();
