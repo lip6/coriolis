@@ -44,16 +44,17 @@ namespace Anabatic {
   class IntervalC
   {
     public:
-      enum iFlag { None        = 0
-                 , iHorizontal = (1<<0)
-                 , iVertical   = (1<<1)
-                 , iSet        = (1<<2)
+      enum iFlag { None         = 0
+                 , iFHorizontal = (1<<0)
+                 , iFVertical   = (1<<1)
+                 , iSet         = (1<<2)
       };
 
     public:
                           IntervalC();
                           IntervalC(const IntervalC&);
                           IntervalC(IntervalC&);
+                          IntervalC( DbU::Unit, DbU::Unit, DbU::Unit );
                          ~IntervalC();
              void         set        ( DbU::Unit, DbU::Unit, DbU::Unit );
              void         setRange   ( DbU::Unit, DbU::Unit );
@@ -83,8 +84,8 @@ namespace Anabatic {
       DbU::Unit    _axis;
   };
 
-  inline void         IntervalC::setAsH   () { _flags = ((_flags & ~(0x3)) | iHorizontal); }
-  inline void         IntervalC::setAsV   () { _flags = ((_flags & ~(0x3)) | iVertical  ); }
+  inline void         IntervalC::setAsH   () { _flags = ((_flags & ~(0x3)) | iFHorizontal); }
+  inline void         IntervalC::setAsV   () { _flags = ((_flags & ~(0x3)) | iFVertical  ); }
   inline void         IntervalC::setAxis  ( DbU::Unit axis ) { _axis = axis; }
   inline DbU::Unit    IntervalC::getAxis  () const           { return _axis; }
   inline DbU::Unit    IntervalC::getCenter() const           { return getMin()+getMax(); }
@@ -92,8 +93,8 @@ namespace Anabatic {
   inline DbU::Unit    IntervalC::getMax   () const           { return _max; }
   inline void         IntervalC::setiSet  ()  { _flags |= iSet; }
   inline bool         IntervalC::isiSet   () const { return _flags & iSet; }
-  inline bool         IntervalC::isH      () const { return _flags & iHorizontal; }
-  inline bool         IntervalC::isV      () const { return _flags & iVertical  ; }
+  inline bool         IntervalC::isH      () const { return _flags & iFHorizontal; }
+  inline bool         IntervalC::isV      () const { return _flags & iFVertical  ; }
   inline void         IntervalC::setFlags ( Flags flags ) { _flags = flags; }
   inline Flags        IntervalC::getFlags () const    { return _flags; }
 
@@ -213,7 +214,7 @@ namespace Anabatic {
              inline  int             getConnexId    () const;
              inline  int             getDegree      () const;
              inline  int             getRpCount     () const;
-             inline  Edge*           getFrom        () const;
+                     Edge*           getFrom        () const;
              inline  Vertex*         getPredecessor () const;
              inline  void            setDistance    ( DbU::Unit );
              inline  void            setStamp       ( int );
@@ -239,8 +240,8 @@ namespace Anabatic {
              inline  bool            isWRestricted  () const;
              inline  bool            hasRestrictions() const;
 
-             inline  void            setRestricted    ();
-             inline  void            clearRestriction ();
+                     void            setRestricted    ();
+                     void            clearRestriction ();
              inline  void            setNRestricted   ();
              inline  void            setSRestricted   ();
              inline  void            setERestricted   ();
@@ -266,7 +267,7 @@ namespace Anabatic {
                      Point           getNextPathPoint  ( Point, const Vertex* ) const;
     //////////////////////////////////////// GRDATA
                      void            setIntervals      ( Vertex* );
-
+              inline bool            hasAData          () const;
                      bool            isiSet            () const;
                      DbU::Unit       getIAxis          () const;
                      DbU::Unit       getIMax           () const;
@@ -281,7 +282,6 @@ namespace Anabatic {
                      void            clearFrom2        ();
                      Edge*           getFrom2          () const;
                      void            setFrom2          ( Edge* );
-                     void            createIntervFrom2 ();
                      DbU::Unit       getPIMax2         () const;
                      DbU::Unit       getPIMin2         () const;
                      DbU::Unit       getPIAxis2        () const;
@@ -346,7 +346,7 @@ namespace Anabatic {
   inline int             Vertex::getBranchId    () const { return hasValidStamp() ? _branchId :  0; }
   inline int             Vertex::getDegree      () const { return hasValidStamp() ? _degree   :  0; }
   inline int             Vertex::getRpCount     () const { return hasValidStamp() ? _rpCount  :  0; }
-  inline Edge*           Vertex::getFrom        () const { return _from; }
+//inline Edge*           Vertex::getFrom        () const { return _from; }
   inline void            Vertex::setDistance    ( DbU::Unit distance ) { _distance=distance; }
   inline void            Vertex::setFrom        ( Edge* from ) { _from=from; }
   inline void            Vertex::setStamp       ( int stamp ) { _stamp=stamp; }
@@ -377,8 +377,9 @@ namespace Anabatic {
   inline  bool Vertex::isWRestricted      () const { return (_flags & WRestricted); }
   inline  bool Vertex::hasRestrictions    () const { return ( isNRestricted()||isSRestricted()||isERestricted()||isWRestricted()) ; }
 
-  inline void         Vertex::setRestricted    () { _flags |= 0xF; }
-  inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
+  inline bool         Vertex::hasAData         () const { return (_adata !=NULL)? true : false; }
+//inline void         Vertex::setRestricted    () { _flags |= 0xF; }
+//inline void         Vertex::clearRestriction () { _flags &= ~(0xF); }
   inline void         Vertex::setNRestricted   () { _flags |= NRestricted; }
   inline void         Vertex::setSRestricted   () { _flags |= SRestricted; }
   inline void         Vertex::setERestricted   () { _flags |= ERestricted; }
@@ -522,7 +523,7 @@ namespace Anabatic {
                     void setAxisTargets      ();
                     void unsetAxisTargets    ();
 
-             bool        _attachSymContactsHook   ( RoutingPad* );
+             bool        _attachSymContactsHook   ( RoutingPad* ); 
              void        _limitSymSearchArea      ( RoutingPad* rp );
              void        _setSourcesGRAData       ( Vertex*, RoutingPad*);
              bool        _checkFrom2              ( Edge*, Vertex* );

@@ -505,6 +505,34 @@ namespace Anabatic {
   }
 
 
+  GCell* GCell::getEastNMatrix() const
+  {
+    if (!this->getEast()->isMatrix()) return this->getEast();
+    else {
+      GCell* gcell = this->getEast();
+      while(gcell->getEast()){
+        if   (!gcell->getEast()->isMatrix()) break;
+        else                                 gcell = gcell->getEast();
+      }
+      return gcell->getEast();
+    }
+  }
+  
+
+  GCell* GCell::getNorthNMatrix() const
+  {
+    if (!this->getNorth()->isMatrix()) return this->getNorth();
+    else {
+      GCell* gcell = this->getNorth();
+      while(gcell->getNorth()){
+        if   (!gcell->getNorth()->isMatrix()) break;
+        else                                 gcell = gcell->getNorth();
+      }
+      return gcell->getNorth();
+    }
+  }
+
+
   GCell* GCell::getWest  ( DbU::Unit y ) const
   {
     for ( Edge* edge : _westEdges ) {
@@ -718,7 +746,8 @@ namespace Anabatic {
 
   bool  GCell::doGrid ()
   {
-    getAnabatic()->openSession();
+    bool openSession = Session::isOpen();
+    if (not openSession) getAnabatic()->openSession();
 
     DbU::Unit side  = Session::getSliceHeight();
     Interval  hspan = getSide( Flags::Horizontal );
@@ -776,7 +805,7 @@ namespace Anabatic {
   //  }
   //}
 
-    Session::close();
+    if (not openSession) Session::close();
     return true;
   }
 
@@ -921,7 +950,7 @@ namespace Anabatic {
           vertical->setX( position.getX() );
         }
       }
-
+      
       if (not contact->getAnchor()) contact->setPosition( position );
     }
 
@@ -1702,6 +1731,12 @@ namespace Anabatic {
     string s = Super::_getString();
     s.insert( s.size()-1, " "+getString(getBoundingBox()) );
     s.insert( s.size()-1, " "+getString(_flags) );
+  /* string s = "<GCell at(" + DbU::getValueString(getXMin())
+       +  "-" + DbU::getValueString(getYMin()) 
+       +  "-" + DbU::getValueString(getXMax()) 
+       +  "-" + DbU::getValueString(getYMax()) 
+       +  "-" + DbU::getValueString(getHeight())
+       +  "-" + DbU::getValueString(getWidth()) + ")";*/
     return s;
   }
 

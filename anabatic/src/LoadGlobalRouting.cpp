@@ -758,6 +758,8 @@ namespace {
              AutoContact*  _doVChannel        ();
              AutoContact*  _doStrut           ();
              AutoContact*  _doDevice          ();
+             AutoContact*  _doHRail           ();
+             AutoContact*  _doVRail           ();
              void          _doIoPad           ();
       
              unsigned int  getNumberGlobals       ();
@@ -1232,6 +1234,8 @@ namespace {
       if      (_gcell->isDevice ())  targetContact = _doDevice  ();
       else if (_gcell->isHChannel()) targetContact = _doHChannel();
       else if (_gcell->isVChannel()) targetContact = _doVChannel();
+      else if (_gcell->isHRail   ()) targetContact = _doHRail();
+      else if (_gcell->isVRail   ()) targetContact = _doVRail();
       else if (_gcell->isStrut  ())  targetContact = _doStrut   ();
       else if (_gcell->isIoPad  ())  _doIoPad();
       else
@@ -2971,6 +2975,100 @@ namespace {
     return targetContact;
   }
 
+  
+  AutoContact* GCellTopology::_doHRail ()
+  {
+    cdebug_log(145,1) << "void  GCellTopology::_doHRail ()" << _gcell << endl;
+    cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
+    cdebug_log(145,0) << "North   : " << north()   << endl;
+    cdebug_log(145,0) << "East    : " << east()    << endl;
+    cdebug_log(145,0) << "South   : " << south()   << endl;
+    cdebug_log(145,0) << "West    : " << west()    << endl;
+    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
+
+    RoutingPad*  rpNE = NULL;
+    RoutingPad*  rpSW = NULL;
+    _southWestContact = NULL;
+    if (_routingPads.size() == 1){
+      rpNE = rpSW = _routingPads[0];
+    } else {
+      cdebug_log(145,0) << "Case _routingPads.size() != 1 "<< endl;
+      throw Error( "GCellTopology::_doHRail() Unexpected case.\n"
+                   "        On: %s."
+                 , getString(_gcell).c_str() );
+    }
+    cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
+    AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
+    if (east()) {
+      cdebug_log(145,0) << "East"  << endl;
+      push( east(), ac, SouthWest );
+    } 
+    if (west()) {
+      cdebug_log(145,0) << "West"  << endl;
+      push( west(), ac, SouthWest );
+    }
+    if (south()) {
+      cdebug_log(145,0) << "South"  << endl;
+      push( south(), ac, SouthWest );
+    }
+    if (north()){
+      cdebug_log(145,0) << "North"  << endl;
+      push( north(), ac, SouthWest );
+    }
+    
+    cdebug_log(145,0) << "doHRail done" << endl;
+    cdebug_tabw(145,-1);
+    
+    return _southWestContact;
+  }
+
+  
+  AutoContact* GCellTopology::_doVRail ()
+  {
+    cdebug_log(145,1) << "void  GCellTopology::_doVRail ()" << _gcell << endl;
+    cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
+    cdebug_log(145,0) << "North   : " << north()   << endl;
+    cdebug_log(145,0) << "East    : " << east()    << endl;
+    cdebug_log(145,0) << "South   : " << south()   << endl;
+    cdebug_log(145,0) << "West    : " << west()    << endl;
+    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
+
+    RoutingPad*  rpNE = NULL;
+    RoutingPad*  rpSW = NULL;
+    _southWestContact = NULL;
+    if (_routingPads.size() == 1){
+      rpNE = rpSW = _routingPads[0];
+    } else {
+      cdebug_log(145,0) << "Case _routingPads.size() != 1 "<< endl;
+      throw Error( "GCellTopology::_doVRail() Unexpected case.\n"
+                   "        On: %s."
+                 , getString(_gcell).c_str() );
+    }
+    cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
+    AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
+    if (east()) {
+      cdebug_log(145,0) << "East"  << endl;
+      push( east(), ac, SouthWest );
+    } 
+    if (west()) {
+      cdebug_log(145,0) << "West"  << endl;
+      push( west(), ac, SouthWest );
+    }
+    if (south()) {
+      cdebug_log(145,0) << "South"  << endl;
+      push( south(), ac, SouthWest );
+    }
+    if (north()){
+      cdebug_log(145,0) << "North"  << endl;
+      push( north(), ac, SouthWest );
+    }
+
+    cdebug_log(145,0) << "doVRail done" << endl;
+    cdebug_tabw(145,-1);
+    
+    return _southWestContact;
+  }
+
 
   unsigned int GCellTopology::getNumberGlobals ()
   {
@@ -3438,7 +3536,7 @@ namespace Anabatic {
         _loadNetGlobalRouting( net );
         Session::revalidate();
         DebugSession::close();
-      } 
+      }
     }
     AutoSegment::setAnalogMode( false );
 
@@ -3500,7 +3598,8 @@ namespace Anabatic {
     forEach ( RoutingPad*, startRp, routingPads ) {
       bool segmentFound = false;
 
-      cdebug_log(145,0) << "startRp: " << startRp << endl;
+      cdebug_log(145,0) << "startRp  : " << startRp << endl;
+      cdebug_log(145,0) << "startHook: " << startHook << endl;
       forEach ( Hook*, ihook, startRp->getBodyHook()->getHooks() ) {
         cdebug_log(145,0) << "Component " << ihook->getComponent() << endl;
         Segment* segment = dynamic_cast<Segment*>( ihook->getComponent() );

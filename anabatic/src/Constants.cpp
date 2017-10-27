@@ -41,6 +41,8 @@ namespace Anabatic {
   const BaseFlags  Flags::Saturated           = (1L << 11);
   const BaseFlags  Flags::StdCellRow          = (1L << 12);
   const BaseFlags  Flags::ChannelRow          = (1L << 13);
+  const BaseFlags  Flags::HRailGCell          = (1L << 14);
+  const BaseFlags  Flags::VRailGCell          = (1L << 15);
   const BaseFlags  Flags::IllimitedCapacity   = (1L <<  5);
 // Flags for Anabatic objects states only.                      
   const BaseFlags  Flags::DemoMode            = (1L <<  5);
@@ -66,12 +68,16 @@ namespace Anabatic {
                                               | MatrixGCell
                                               | IoPadGCell
                                               | StdCellRow
-                                              | ChannelRow;
+                                              | ChannelRow
+                                              | HRailGCell
+                                              | VRailGCell;
   const BaseFlags  Flags::RowGCellMask        = StdCellRow|ChannelRow;
   const BaseFlags  Flags::AnalogGCellMask     = DeviceGCell
                                               | HChannelGCell
                                               | VChannelGCell
-                                              | StrutGCell;
+                                              | StrutGCell
+                                              | HRailGCell
+                                              | VRailGCell;
 // Flags for functions arguments only.           
   const BaseFlags  Flags::Create              = (1L <<  5);
   const BaseFlags  Flags::WithPerpands        = (1L <<  6);
@@ -168,6 +174,8 @@ namespace Anabatic {
     s += (_flags & (uint64_t)DeviceGCell  ) ? 'd' : '-';
     s += (_flags & (uint64_t)HChannelGCell) ? 'c' : '-';
     s += (_flags & (uint64_t)VChannelGCell) ? 'c' : '-';
+    s += (_flags & (uint64_t)HRailGCell   ) ? 'r' : '-';
+    s += (_flags & (uint64_t)VRailGCell   ) ? 'r' : '-';
     s += (_flags & (uint64_t)StrutGCell   ) ? 's' : '-';
     s += (_flags & (uint64_t)MatrixGCell  ) ? 'm' : '-';
     s += (_flags & (uint64_t)StdCellRow   ) ? 'S' : '-';

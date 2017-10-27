@@ -143,6 +143,8 @@ namespace Anabatic {
       inline        bool                  isMatrix            () const;
       inline        bool                  isRow               () const;
       inline        bool                  isIoPad             () const;
+      inline        bool                  isHRail             () const;
+      inline        bool                  isVRail             () const;
       inline        bool                  isStdCellRow        () const;
       inline        bool                  isChannelRow        () const;
                     bool                  isWest              ( GCell* ) const;
@@ -175,6 +177,9 @@ namespace Anabatic {
       inline        GCell*                getEast             () const;
       inline        GCell*                getSouth            () const;
       inline        GCell*                getNorth            () const;
+
+                    GCell*                getEastNMatrix      () const;
+                    GCell*                getNorthNMatrix     () const;
 
       inline        Edge*                 getWestEdge         () const;
       inline        Edge*                 getEastEdge         () const;
@@ -323,6 +328,8 @@ namespace Anabatic {
   inline       bool                  GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
   inline       bool                  GCell::isRow         () const { return _flags & Flags::RowGCellMask; }
   inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
+  inline       bool                  GCell::isHRail       () const { return _flags & Flags::HRailGCell; }
+  inline       bool                  GCell::isVRail       () const { return _flags & Flags::VRailGCell; }
   inline       bool                  GCell::isStdCellRow  () const { return _flags & Flags::StdCellRow; }
   inline       bool                  GCell::isChannelRow  () const { return _flags & Flags::ChannelRow; }
   inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }

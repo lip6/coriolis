@@ -74,7 +74,7 @@ namespace Anabatic {
       if (_stateFlags.contains(Flags::EastSide)) {
         if (   (_iedge < _gcell->getEastEdges().size())
            and _filterFlags.contains(Flags::EastSide)) break;
-        // cdebug_log(110,0) << "Switching to North side." << endl;
+      //cdebug_log(110,0) << "Switching to North side." << endl;
         _stateFlags = Flags::NorthSide;
         _iedge      = 0;
         // cdebug_log(110,0) << this << endl;
@@ -83,7 +83,7 @@ namespace Anabatic {
       if (_stateFlags.contains(Flags::NorthSide))  {
         if (   (_iedge < _gcell->getNorthEdges().size())
            and _filterFlags.contains(Flags::NorthSide)) break;
-        // cdebug_log(110,0) << "Switching to West side." << endl;
+      //cdebug_log(110,0) << "Switching to West side." << endl;
         _stateFlags = Flags::WestSide;
         _iedge      = 0;
         // cdebug_log(110,0) << this << endl;
@@ -92,7 +92,7 @@ namespace Anabatic {
       if (_stateFlags.contains(Flags::WestSide))  {
         if (   (_iedge < _gcell->getWestEdges().size())
            and _filterFlags.contains(Flags::WestSide)) break;
-        // cdebug_log(110,0) << "Switching to South side." << endl;
+      //cdebug_log(110,0) << "Switching to South side." << endl;
         _stateFlags = Flags::SouthSide;
         _iedge      = 0;
         continue;
@@ -100,7 +100,7 @@ namespace Anabatic {
       if (_stateFlags.contains(Flags::SouthSide))  {
         if (   (_iedge < _gcell->getSouthEdges().size())
            and _filterFlags.contains(Flags::SouthSide)) break;
-        // cdebug_log(110,0) << "All edges done." << endl;
+      //cdebug_log(110,0) << "All edges done." << endl;
         _stateFlags = 0;
         _iedge      = 0;
         break;;

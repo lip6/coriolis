@@ -46,6 +46,7 @@ extern "C" {
   extern  PyObject* PyLayer_LinkDerived    ( Hurricane::Layer* object );
   extern  void      PyLayer_LinkPyType     ();
   extern  void      PyLayer_postModuleInit ();
+  extern  Layer*    PYDERIVEDLAYER_O       ( PyObject* );
 
 # define IsPyLayer(v)    ( (v)->ob_type == &PyTypeLayer )
 # define PYLAYER(v)      ( (PyLayer*)(v) )
