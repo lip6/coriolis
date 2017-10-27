@@ -69,7 +69,8 @@ except Exception, e:
 
 DoNetlist = 0x0001
 DoLayout  = 0x0002
-DoStop    = 0x0004
+DoPattern = 0x0004
+DoStop    = 0x0008
 
 
 def buildModel ( moduleName, flags, className=None, modelName=None, parameters={} ):
@@ -88,13 +89,15 @@ def buildModel ( moduleName, flags, className=None, modelName=None, parameters={
       model = module.__dict__[className](modelName,parameters)
       model.Interface()
 
-      if flags & DoNetlist: model.Netlist()
-      if flags & DoLayout:  model.Layout ()
+      saveFlags = 0
+      if flags & DoNetlist: model.Netlist(); saveFlags |= LOGICAL 
+      if flags & DoLayout:  model.Layout (); saveFlags |= PHYSICAL
+      if flags & DoPattern: model.Pattern()
 
       stopLevel=0
       if flags & DoStop: stopLevel = 1
       model.View(stopLevel, 'Model %s' % modelName)
-      model.Save(LOGICAL|PHYSICAL)
+      model.Save(saveFlags)
       UpdateSession.close()
 
     except ImportError, e:
