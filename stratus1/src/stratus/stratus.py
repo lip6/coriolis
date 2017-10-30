@@ -67,10 +67,11 @@ except Exception, e:
   sys.exit(2)
 
 
-DoNetlist = 0x0001
-DoLayout  = 0x0002
-DoPattern = 0x0004
-DoStop    = 0x0008
+DoNetlist    = 0x00000001
+DoLayout     = 0x00000002
+DoPattern    = 0x00000004
+DoStop       = 0x00000008
+RunSimulator = 0x00000010
 
 
 def buildModel ( moduleName, flags, className=None, modelName=None, parameters={} ):
@@ -90,15 +91,17 @@ def buildModel ( moduleName, flags, className=None, modelName=None, parameters={
       model.Interface()
 
       saveFlags = 0
-      if flags & DoNetlist: model.Netlist(); saveFlags |= LOGICAL 
-      if flags & DoLayout:  model.Layout (); saveFlags |= PHYSICAL
-      if flags & DoPattern: model.Pattern()
+      if flags & DoNetlist:                model.Netlist(); saveFlags |= LOGICAL 
+      if flags & DoLayout:                 model.Layout (); saveFlags |= PHYSICAL
+      if flags & (DoPattern|RunSimulator): model.Pattern()
 
       stopLevel=0
       if flags & DoStop: stopLevel = 1
       model.View(stopLevel, 'Model %s' % modelName)
       model.Save(saveFlags)
       UpdateSession.close()
+
+      if flags & RunSimulator: model.Simul()
 
     except ImportError, e:
       module = str(e).split()[-1]
