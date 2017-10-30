@@ -321,7 +321,7 @@ You can generate the chip using one of the following method:
 
 #. **Command line mode:** directly run the script: ::
 
-    dummy@lepka:AM2901$ ./doChip -V --cell=amd2901
+    dummy@lepka:AM2901> ./doChip -V --cell=amd2901
 
 #. **Graphic mode:** launch |cgt|, load chip netlist ``amd2901`` (the top cell)
    then run the |Python| script :cb:`doChip.py`.
@@ -329,4 +329,4 @@ You can generate the chip using one of the following method:
 .. note::
    Between two consecutive run, be sure to erase the netlist/layout generateds: ::
 
-       dummy@lepka:AM2901$ rm *_clocked*.vst *.ap
+       dummy@lepka:AM2901> rm *clocked*.vst *.ap

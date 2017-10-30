@@ -150,6 +150,7 @@
 .. _Knik Thesis:                    http://www-soc.lip6.fr/en/users/damiendupuis/PhD/
 .. _RapidJSON:                      http://miloyip.github.io/rapidjson/
 .. _Python/C API Reference Manual:  https://docs.python.org/2/c-api/index.html
+.. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
 
 .. Standard CAO/VLSI Concepts.
 .. |netlist|                        replace:: *netlist*

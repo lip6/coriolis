@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Coriolis User’s Guide" href="index.html"/>
         <link rel="next" title="Coriolis Configuration &amp; Initialisation" href="Configuration.html"/>
@@ -85,7 +87,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Installation</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#fixed-directory-tree">Fixed Directory Tree</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#building-coriolis">Building Coriolis</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#building-the-devel-branch">Building the Devel Branch</a></li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -372,10 +377,10 @@ automatically created either by <span class="cb">ccb</span> or the build system.
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p><em>Alternate build types:</em> the <tt class="docutils literal"><span class="pre">Release.Shared</span></tt> means an optimized build
-with shared libraries. But there are also available <tt class="docutils literal"><span class="pre">Static</span></tt> instead of <tt class="docutils literal"><span class="pre">Shared</span></tt>
-and <tt class="docutils literal"><span class="pre">Debug</span></tt> instead of <tt class="docutils literal"><span class="pre">Release</span></tt> and any combination of them.</p>
-<p class="last"><tt class="docutils literal"><span class="pre">Static</span></tt> do not work because I don&#8217;t know yet to mix statically linked binaries
+<p><em>Alternate build types:</em> the <code class="docutils literal"><span class="pre">Release.Shared</span></code> means an optimized build
+with shared libraries. But there are also available <code class="docutils literal"><span class="pre">Static</span></code> instead of <code class="docutils literal"><span class="pre">Shared</span></code>
+and <code class="docutils literal"><span class="pre">Debug</span></code> instead of <code class="docutils literal"><span class="pre">Release</span></code> and any combination of them.</p>
+<p class="last"><code class="docutils literal"><span class="pre">Static</span></code> do not work because I don&#8217;t know yet to mix statically linked binaries
 and Python modules (which must be dynamic).</p>
 </div>
 <p></p>
@@ -385,34 +390,38 @@ and Python modules (which must be dynamic).</p>
 <p>First step is to install the prerequisites. Currently, only <a class="reference external" href="http://miloyip.github.io/rapidjson/">RapidJSON</a>.
 As RapidJSON is evolving fast, if you encounter compatibility problems,
 the exact version we compiled against is given below.</p>
-<div class="highlight-python"><pre>dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
-dummy@lepka:~$ cd ~/coriolis-2.x/src/support
-dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
-dummy@lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">coriolis</span><span class="o">-</span><span class="mf">2.</span><span class="n">x</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">support</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">cd</span> <span class="o">~/</span><span class="n">coriolis</span><span class="o">-</span><span class="mf">2.</span><span class="n">x</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">support</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">miloyip</span><span class="o">/</span><span class="n">rapidjson</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">git</span> <span class="n">checkout</span> <span class="n">ec322005072076ef53984462fb4a1075c27c7dfd</span>
+</pre></div>
 </div>
 <p>The second step is to create the source directory and pull the <span class="cb">git</span> repository:</p>
-<div class="highlight-python"><pre>dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
-dummy@lepka:~$ cd ~/coriolis-2.x/src
-dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">coriolis</span><span class="o">-</span><span class="mf">2.</span><span class="n">x</span><span class="o">/</span><span class="n">src</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">cd</span> <span class="o">~/</span><span class="n">coriolis</span><span class="o">-</span><span class="mf">2.</span><span class="n">x</span><span class="o">/</span><span class="n">src</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">-</span><span class="n">soc</span><span class="o">.</span><span class="n">lip6</span><span class="o">.</span><span class="n">fr</span><span class="o">/</span><span class="n">git</span><span class="o">/</span><span class="n">coriolis</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
 </div>
 <p>Third and final step, build &amp; install:</p>
-<div class="highlight-python"><pre>dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
-                                    --project=coriolis \
-                                    --make="-j4 install"
-dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
-                                    --project=coriolis \
-                                    --doc --make="-j1 install"</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">src</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">support</span>  \
+                                    <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> \
+                                    <span class="o">--</span><span class="n">make</span><span class="o">=</span><span class="s2">&quot;-j4 install&quot;</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">src</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">support</span>  \
+                                    <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> \
+                                    <span class="o">--</span><span class="n">doc</span> <span class="o">--</span><span class="n">make</span><span class="o">=</span><span class="s2">&quot;-j1 install&quot;</span>
+</pre></div>
 </div>
 <p>We need to separate to perform a separate installation of the documentation because it
 do not support to be generated with a parallel build. So we compile &amp; install in a first
-stage in <tt class="docutils literal"><span class="pre">-j4</span></tt> (or whatever) then we generate the documentation in <tt class="docutils literal"><span class="pre">-j1</span></tt></p>
+stage in <code class="docutils literal"><span class="pre">-j4</span></code> (or whatever) then we generate the documentation in <code class="docutils literal"><span class="pre">-j1</span></code></p>
 <p>Under <span class="sc">rhel6</span> or clones, you must build using the <span class="cb">devtoolset2</span>:</p>
-<div class="highlight-python"><pre>dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
-                                    --devtoolset-2 --make="-j4 install"</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">src</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> \
+                                    <span class="o">--</span><span class="n">devtoolset</span><span class="o">-</span><span class="mi">2</span> <span class="o">--</span><span class="n">make</span><span class="o">=</span><span class="s2">&quot;-j4 install&quot;</span>
+</pre></div>
 </div>
-<p>If you want to uses Qt 5 instead of Qt 4, you may add the <tt class="docutils literal"><span class="pre">--qt5</span></tt> argument.</p>
-<p>The complete list of <span class="cb">ccb</span> functionalities can be accessed with the <tt class="docutils literal"><span class="pre">--help</span></tt> argument.
-It also may be run in graphical mode (<tt class="docutils literal"><span class="pre">--gui</span></tt>).</p>
+<p>If you want to uses Qt 5 instead of Qt 4, you may add the <code class="docutils literal"><span class="pre">--qt5</span></code> argument.</p>
+<p>The complete list of <span class="cb">ccb</span> functionalities can be accessed with the <code class="docutils literal"><span class="pre">--help</span></code> argument.
+It also may be run in graphical mode (<code class="docutils literal"><span class="pre">--gui</span></code>).</p>
 <div class="section" id="building-the-devel-branch">
 <h3>Building the Devel Branch<a class="headerlink" href="#building-the-devel-branch" title="Permalink to this headline">¶</a></h3>
 <p>In the <span class="sc">Coriolis</span> <span class="cb">git</span> repository, two branches are present:</p>
@@ -423,15 +432,17 @@ one used by default if you follow the above instructions.</p>
 <li><p class="first">The <span class="cb">devel</span> branch, which obviously contains the latest commits from the
 development team. To use it instead of the <span class="cb">master</span> one, do the following
 command just after the first step:</p>
-<div class="highlight-python"><pre>dummy@lepka:~$ git checkout devel
-dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
-                                    --make="-j4 install" --debug</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">git</span> <span class="n">checkout</span> <span class="n">devel</span>
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">src</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> \
+                                    <span class="o">--</span><span class="n">make</span><span class="o">=</span><span class="s2">&quot;-j4 install&quot;</span> <span class="o">--</span><span class="n">debug</span>
+</pre></div>
 </div>
 <p>Be aware that it may requires newer versions of the dependencies and may introduce
 incompatibilites with the stable version.</p>
 <p>In the (unlikely) event of a crash of <span class="cb">cgt</span>, as it is a <span class="sc">Python</span> script, the right
 command to run <span class="cb">gdb</span> on it is:</p>
-<div class="highlight-python"><pre>dummy@lepka:work$ gdb python core.XXXX</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">work</span><span class="o">&gt;</span> <span class="n">gdb</span> <span class="n">python</span> <span class="n">core</span><span class="o">.</span><span class="n">XXXX</span>
+</pre></div>
 </div>
 </li>
 </ul>
@@ -442,9 +453,10 @@ command to run <span class="cb">gdb</span> on it is:</p>
 <p><span class="sc">Coriolis</span> make uses of the <span class="cb">boost::python</span> module, but the <span class="sc">MacPorts</span> <span class="cb">boost</span>
 seems unable to work with the <span class="sc">Python</span> bundled with <span class="sc">MacOS</span>. So you have to install
 both of them from <span class="sc">MacPorts</span>:</p>
-<div class="highlight-python"><pre>dummy@macos:~$ port install boost +python27
-dummy@macos:~$ port select python python27
-dummy@macos:-$ export DYLD_FRAMEWORK_PATH=/opt/local/Library/Frameworks</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@macos</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">port</span> <span class="n">install</span> <span class="n">boost</span> <span class="o">+</span><span class="n">python27</span>
+<span class="n">dummy</span><span class="nd">@macos</span><span class="p">:</span><span class="o">~&gt;</span> <span class="n">port</span> <span class="n">select</span> <span class="n">python</span> <span class="n">python27</span>
+<span class="n">dummy</span><span class="nd">@macos</span><span class="p">:</span><span class="o">-&gt;</span> <span class="n">export</span> <span class="n">DYLD_FRAMEWORK_PATH</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">Library</span><span class="o">/</span><span class="n">Frameworks</span>
+</pre></div>
 </div>
 <p>The last two lines tell <span class="sc">MacOS</span> to use the <span class="sc">Python</span> from <span class="sc">MacPorts</span> and <em>not</em> from
 the system.</p>
@@ -453,13 +465,13 @@ the system.</p>
 </div>
 <div class="section" id="packaging-coriolis">
 <h2>Packaging Coriolis<a class="headerlink" href="#packaging-coriolis" title="Permalink to this headline">¶</a></h2>
-<p>Packager should not uses <span class="cb">ccb</span>, instead <tt class="docutils literal"><span class="pre">bootstrap/Makefile.package</span></tt> is provided
-to emulate a top-level <tt class="docutils literal"><span class="pre">autotool</span></tt> makefile. Just copy it in the root of the
-<span class="sc">Coriolis</span> git repository (<tt class="docutils literal"><span class="pre">~/corriolis-2.x/src/coriolis/</span></tt>) and build.</p>
-<p>Sligthly outaded packaging configuration files can also be found under <tt class="docutils literal"><span class="pre">bootstrap/</span></tt>:</p>
+<p>Packager should not uses <span class="cb">ccb</span>, instead <code class="docutils literal"><span class="pre">bootstrap/Makefile.package</span></code> is provided
+to emulate a top-level <code class="docutils literal"><span class="pre">autotool</span></code> makefile. Just copy it in the root of the
+<span class="sc">Coriolis</span> git repository (<code class="docutils literal"><span class="pre">~/corriolis-2.x/src/coriolis/</span></code>) and build.</p>
+<p>Sligthly outaded packaging configuration files can also be found under <code class="docutils literal"><span class="pre">bootstrap/</span></code>:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">bootstrap/coriolis2.spec.in</span></tt> for <span class="cb">rpm</span> based distributions.</li>
-<li><tt class="docutils literal"><span class="pre">bootstrap/debian</span></tt> for <span class="sc">Debian</span> based distributions.</li>
+<li><code class="docutils literal"><span class="pre">bootstrap/coriolis2.spec.in</span></code> for <span class="cb">rpm</span> based distributions.</li>
+<li><code class="docutils literal"><span class="pre">bootstrap/debian</span></code> for <span class="sc">Debian</span> based distributions.</li>
 </ul>
 </div>
 <div class="section" id="hooking-up-into-alliance">
@@ -467,19 +479,21 @@ to emulate a top-level <tt class="docutils literal"><span class="pre">autotool</
 <p><span class="sc">Coriolis</span> relies on <span class="sc">Alliance</span> for the cell libraries. So after installing or
 packaging, you must configure it so that it can found those libraries.</p>
 <p>This is done by editing the one variable <span class="cb">cellsTop</span> in the <span class="sc">Alliance</span> helper
-(see <a class="reference internal" href="Configuration.html#alliance-helper"><em>Alliance Helper</em></a>). This variable must point to the directory of the
+(see <a class="reference internal" href="Configuration.html#alliance-helper"><span class="std std-ref">Alliance Helper</span></a>). This variable must point to the directory of the
 cells libraries. In a typical installation, this is generally
 <span class="cb">/usr/share/alliance/cells</span>.</p>
 </div>
 <div class="section" id="setting-up-the-environment-coriolisenv-py">
 <h2>Setting up the Environment (coriolisEnv.py)<a class="headerlink" href="#setting-up-the-environment-coriolisenv-py" title="Permalink to this headline">¶</a></h2>
 <p>To simplify the tedious task of configuring your environment, a helper is provided
-in the <tt class="docutils literal"><span class="pre">bootstrap</span></tt> source directory (also installed in the directory
-<tt class="docutils literal"><span class="pre">.../install/etc/coriolis2/</span></tt>) :</p>
-<div class="highlight-python"><pre>~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py</pre>
+in the <code class="docutils literal"><span class="pre">bootstrap</span></code> source directory (also installed in the directory
+<code class="docutils literal"><span class="pre">.../install/etc/coriolis2/</span></code>) :</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">~/</span><span class="n">coriolis</span><span class="o">-</span><span class="mf">2.</span><span class="n">x</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">coriolis</span><span class="o">/</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">coriolisEnv</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
 </div>
 <p>Use it like this:</p>
-<div class="highlight-python"><pre>dummy@lepka:~&gt; eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span>dummy@lepka:~&gt; eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -488,7 +502,8 @@ When used under <span class="sc">rhel6</span> or clones, it needs to be run in t
 environement. The script then launch a new shell, which may cause an
 infinite loop if it&#8217;s called again in, say <span class="cb">~/.bashrc</span>.</p>
 <p>Instead you may want to create an alias:</p>
-<div class="last highlight-python"><pre>alias c2r='eval "`~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`"'</pre>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">alias</span> <span class="n">c2r</span><span class="o">=</span><span class="s1">&#39;eval &quot;`~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`&quot;&#39;</span>
+</pre></div>
 </div>
 </div>
 </div>
@@ -515,7 +530,7 @@ infinite loop if it&#8217;s called again in, say <span class="cb">~/.bashrc</spa
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Coriolis User’s Guide" href="index.html"/>
         <link rel="next" title="CGT - The Graphical Interface" href="ViewerTools.html"/>
@@ -97,7 +99,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#general-software-architecture">General Software Architecture</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#first-stage-symbolic-technology-selection">First Stage: Symbolic Technology Selection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -274,7 +279,7 @@ the tools. However, the <span class="sc">Python</span> bindings have been create
 mimic <em>as closely as possible</em> the C++ interface, so the documentation
 applies to both languages with only minor syntactic changes.</p>
 </div>
-<p> <img alt="Coriolis Software Schematic" class="align-middle" src="../_images/Coriolis-Soft-Schema.png" style="width: 60%;" /> </p>
+<p> <a class="reference internal" href="../_images/Coriolis-Soft-Schema.png"><img alt="Coriolis Software Schematic" class="align-middle" src="../_images/Coriolis-Soft-Schema.png" style="width: 60%;" /></a> </p>
 <p>All configuration &amp; initialization files are Python scripts, despite their
 <span class="cb">.conf</span> extention. From a syntactic point of view, there is no difference
 between the system-wide configuration files and the user&#8217;s configuration,
@@ -321,10 +326,10 @@ file(s):</p>
 </table>
 <p>Thoses files must provides only two variables, the name of the symbolic technology
 and the one of the real technology. For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># -*- Mode:Python -*-</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- Mode:Python -*-</span>
 
-<span class="n">symbolicTechno</span> <span class="o">=</span> <span class="s">&#39;cmos&#39;</span>
-<span class="n">realTechno</span>     <span class="o">=</span> <span class="s">&#39;hcmos9&#39;</span>
+<span class="n">symbolicTechno</span> <span class="o">=</span> <span class="s1">&#39;cmos&#39;</span>
+<span class="n">realTechno</span>     <span class="o">=</span> <span class="s1">&#39;hcmos9&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -378,7 +383,8 @@ which <em>must</em> contain a <span class="cb">coriolisConfigure()</span> functi
 <p>To ease the writing of configuration files, a set of small helpers
 is available. They allow to setup the configuration parameters through
 simple assembly of tuples. The helpers are installed under the directory:</p>
-<div class="highlight-python"><pre>&lt;install&gt;/etc/coriolis2/</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">install</span><span class="o">&gt;/</span><span class="n">etc</span><span class="o">/</span><span class="n">coriolis2</span><span class="o">/</span>
+</pre></div>
 </div>
 <p>Where <span class="cb">&lt;install&gt;/</span> is the root of the installation.</p>
 <p></p>
@@ -386,30 +392,30 @@ simple assembly of tuples. The helpers are installed under the directory:</p>
 <span id="id1"></span><h3><span class="sc">Alliance</span> Helper<a class="headerlink" href="#alliance-helper" title="Permalink to this headline">¶</a></h3>
 <p>The configuration file must provide a <span class="cb">allianceConfig</span> tuple of
 the form:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">cellsTop</span> <span class="o">=</span> <span class="s">&#39;/usr/share/alliance/cells/&#39;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cellsTop</span> <span class="o">=</span> <span class="s1">&#39;/usr/share/alliance/cells/&#39;</span>
 
 <span class="n">allianceConfig</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span> <span class="s">&#39;SYMBOLIC_TECHNOLOGY&#39;</span><span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s">&#39;/technology.symbolic.xml&#39;</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;REAL_TECHNOLOGY&#39;</span>    <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s">&#39;/technology.cmos130.s2r.xml&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;DISPLAY&#39;</span>            <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s">&#39;/display.xml&#39;</span>               <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;CATALOG&#39;</span>            <span class="p">,</span> <span class="s">&#39;CATAL&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;sxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;dp_sxlib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;ramlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;romlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;rflib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;rf2lib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s">&#39;pxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;SCALE_X&#39;</span>            <span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;IN_LO&#39;</span>              <span class="p">,</span> <span class="s">&#39;vst&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;IN_PH&#39;</span>              <span class="p">,</span> <span class="s">&#39;ap&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;OUT_LO&#39;</span>             <span class="p">,</span> <span class="s">&#39;vst&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;OUT_PH&#39;</span>             <span class="p">,</span> <span class="s">&#39;ap&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s">&#39;vdd&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s">&#39;vss&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;CLOCK&#39;</span>              <span class="p">,</span> <span class="s">&#39;^ck.*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s">&#39;BLOCKAGE&#39;</span>           <span class="p">,</span> <span class="s">&#39;^blockageNet*&#39;</span><span class="p">)</span>
+    <span class="p">(</span> <span class="p">(</span> <span class="s1">&#39;SYMBOLIC_TECHNOLOGY&#39;</span><span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/technology.symbolic.xml&#39;</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;REAL_TECHNOLOGY&#39;</span>    <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/technology.cmos130.s2r.xml&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;DISPLAY&#39;</span>            <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/display.xml&#39;</span>               <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CATALOG&#39;</span>            <span class="p">,</span> <span class="s1">&#39;CATAL&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;sxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;dp_sxlib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;ramlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;romlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rflib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rf2lib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;pxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SCALE_X&#39;</span>            <span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_LO&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_PH&#39;</span>              <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_LO&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_PH&#39;</span>             <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vdd&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vss&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CLOCK&#39;</span>              <span class="p">,</span> <span class="s1">&#39;^ck.*&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;BLOCKAGE&#39;</span>           <span class="p">,</span> <span class="s1">&#39;^blockageNet*&#39;</span><span class="p">)</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -417,11 +423,11 @@ the form:</p>
 available settings. Some important remarks about thoses settings:</p>
 <ul>
 <li><p class="first">In it&#8217;s configuration file, the user do not need to redefine all the settings,
-just the one he wants to change. In most of the cases, the <tt class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></tt>,
-the <tt class="docutils literal"><span class="pre">WORKING_LIBRARY</span></tt> and the special net names (at this point there is not
+just the one he wants to change. In most of the cases, the <code class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></code>,
+the <code class="docutils literal"><span class="pre">WORKING_LIBRARY</span></code> and the special net names (at this point there is not
 much alternatives for the others settings).</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></tt> setting: Setting up the library search path.
+<li><p class="first"><code class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></code> setting: Setting up the library search path.
 Each library entry in the tuple will be added to the search path according
 to the second parameter:</p>
 <ul class="simple">
@@ -432,29 +438,29 @@ it, whithout changing the search path order. If no library of that name
 already exists, it is appended.</li>
 </ul>
 <p>A library is identified by it&#8217;s name, this name is the last component of the
-path name. For instance: <tt class="docutils literal"><span class="pre">/soc/alliance/sxlib</span></tt> will be named <tt class="docutils literal"><span class="pre">sxlib</span></tt>.
-Implementing the <span class="sc">Alliance</span> specification, when looking for a <em>Cell</em> <tt class="docutils literal"><span class="pre">name</span></tt>,
+path name. For instance: <code class="docutils literal"><span class="pre">/soc/alliance/sxlib</span></code> will be named <code class="docutils literal"><span class="pre">sxlib</span></code>.
+Implementing the <span class="sc">Alliance</span> specification, when looking for a <em>Cell</em> <code class="docutils literal"><span class="pre">name</span></code>,
 the system will browse sequentially trought the library list and returns
 the first <em>Cell</em> whose name match.</p>
 </li>
-<li><p class="first">For <tt class="docutils literal"><span class="pre">POWER</span></tt>, <tt class="docutils literal"><span class="pre">GROUND</span></tt>, <tt class="docutils literal"><span class="pre">CLOCK</span></tt> and <tt class="docutils literal"><span class="pre">BLOCKAGE</span></tt> net names, a regular
+<li><p class="first">For <code class="docutils literal"><span class="pre">POWER</span></code>, <code class="docutils literal"><span class="pre">GROUND</span></code>, <code class="docutils literal"><span class="pre">CLOCK</span></code> and <code class="docutils literal"><span class="pre">BLOCKAGE</span></code> net names, a regular
 expression (<span class="sc">gnu</span> regexp) is expected.</p>
 </li>
-<li><p class="first">The <tt class="docutils literal"><span class="pre">helpers.sysConfDir</span></tt> variable is supplied by the helpers, it is the
+<li><p class="first">The <code class="docutils literal"><span class="pre">helpers.sysConfDir</span></code> variable is supplied by the helpers, it is the
 directory in which the system-wide configuration files are locateds.
-For a standard installation it would be: <tt class="docutils literal"><span class="pre">/soc/coriolis2</span></tt>.</p>
+For a standard installation it would be: <code class="docutils literal"><span class="pre">/soc/coriolis2</span></code>.</p>
 </li>
 </ul>
 <p>A typical user&#8217;s configuration file would be:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="n">homeDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&#39;HOME&#39;</span><span class="p">)</span>
+<span class="n">homeDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">)</span>
 
 <span class="n">allianceConfig</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="n">homeDir</span><span class="o">+</span><span class="s">&#39;/worklib&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">homeDir</span><span class="o">+</span><span class="s">&#39;/mylib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s">&#39;vdd.*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s">&#39;vss.*&#39;</span><span class="p">)</span>
+    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="n">homeDir</span><span class="o">+</span><span class="s1">&#39;/worklib&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">homeDir</span><span class="o">+</span><span class="s1">&#39;/mylib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vdd.*&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vss.*&#39;</span><span class="p">)</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -471,37 +477,37 @@ configuration files are defined:</p>
 <li><span class="cb">stratus1.conf</span>: for the <span class="sc">Stratus1</span> tool.</li>
 </ul>
 <p>Here is the contents of <span class="cb">etesian.conf</span>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Etesian parameters.</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Etesian parameters.</span>
 <span class="n">parametersTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s">&#39;etesian.aspectRatio&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">100</span>    <span class="p">,</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s">&#39;max&#39;</span><span class="p">:</span><span class="mi">1000</span> <span class="p">}</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;etesian.spaceMargin&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">5</span>      <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;etesian.uniformDensity&#39;</span> <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;etesian.routingDriven&#39;</span>  <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&quot;etesian.effort&quot;</span>         <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
-      <span class="p">,</span> <span class="p">{</span> <span class="s">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s">&quot;Fast&quot;</span>    <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s">&quot;Standard&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s">&quot;High&quot;</span>    <span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s">&quot;Extreme&quot;</span> <span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
+    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;etesian.aspectRatio&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">100</span>    <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span><span class="mi">1000</span> <span class="p">}</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.spaceMargin&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">5</span>      <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.uniformDensity&#39;</span> <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.routingDriven&#39;</span>  <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;etesian.effort&quot;</span>         <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s2">&quot;Fast&quot;</span>    <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Standard&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;High&quot;</span>    <span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Extreme&quot;</span> <span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
       <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&quot;etesian.graphics&quot;</span>       <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
-      <span class="p">,</span> <span class="p">{</span> <span class="s">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s">&quot;Show every step&quot;</span>  <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s">&quot;Show lower bound&quot;</span> <span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s">&quot;Show result only&quot;</span> <span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;etesian.graphics&quot;</span>       <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
+      <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s2">&quot;Show every step&quot;</span>  <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Show lower bound&quot;</span> <span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Show result only&quot;</span> <span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
       <span class="p">)</span>
     <span class="p">)</span>
 
 <span class="n">layoutTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="n">TypeTab</span>   <span class="p">,</span> <span class="s">&#39;Etesian&#39;</span><span class="p">,</span> <span class="s">&#39;etesian&#39;</span><span class="p">)</span>
+    <span class="p">(</span> <span class="p">(</span><span class="n">TypeTab</span>   <span class="p">,</span> <span class="s1">&#39;Etesian&#39;</span><span class="p">,</span> <span class="s1">&#39;etesian&#39;</span><span class="p">)</span>
 
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s">&#39;Placement area&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.aspectRatio&quot;</span>   <span class="p">,</span> <span class="s">&quot;Aspect Ratio, X/Y (%)&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.spaceMargin&quot;</span>   <span class="p">,</span> <span class="s">&quot;Space Margin&quot;</span>         <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s1">&#39;Placement area&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.aspectRatio&quot;</span>   <span class="p">,</span> <span class="s2">&quot;Aspect Ratio, X/Y (%)&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.spaceMargin&quot;</span>   <span class="p">,</span> <span class="s2">&quot;Space Margin&quot;</span>         <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span><span class="n">TypeRule</span>  <span class="p">,)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s">&#39;Etesian - Placer&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.uniformDensity&quot;</span><span class="p">,</span> <span class="s">&quot;Uniform density&quot;</span>      <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.routingDriven&quot;</span> <span class="p">,</span> <span class="s">&quot;Routing driven&quot;</span>       <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.effort&quot;</span>        <span class="p">,</span> <span class="s">&quot;Placement effort&quot;</span>     <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s">&quot;etesian.graphics&quot;</span>      <span class="p">,</span> <span class="s">&quot;Placement view&quot;</span>       <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s1">&#39;Etesian - Placer&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.uniformDensity&quot;</span><span class="p">,</span> <span class="s2">&quot;Uniform density&quot;</span>      <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.routingDriven&quot;</span> <span class="p">,</span> <span class="s2">&quot;Routing driven&quot;</span>       <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.effort&quot;</span>        <span class="p">,</span> <span class="s2">&quot;Placement effort&quot;</span>     <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.graphics&quot;</span>      <span class="p">,</span> <span class="s2">&quot;Placement view&quot;</span>       <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span><span class="n">TypeRule</span>  <span class="p">,)</span>
     <span class="p">)</span>
 </pre></div>
@@ -510,27 +516,27 @@ configuration files are defined:</p>
 <p>Taxonomy of the file:</p>
 <ul class="simple">
 <li>It must contains, at least, the two tables:<ul>
-<li><tt class="docutils literal"><span class="pre">parametersTable</span></tt>, defines &amp; initialise the configuration variables.</li>
-<li><tt class="docutils literal"><span class="pre">layoutTables</span></tt>, defines how the various parameters will be displayed
-in the configuration window (<a class="reference internal" href="ViewerTools.html#the-settings-tab"><em>The Settings Tab</em></a>).</li>
+<li><code class="docutils literal"><span class="pre">parametersTable</span></code>, defines &amp; initialise the configuration variables.</li>
+<li><code class="docutils literal"><span class="pre">layoutTables</span></code>, defines how the various parameters will be displayed
+in the configuration window (<a class="reference internal" href="ViewerTools.html#the-settings-tab"><span class="std std-ref">The Settings Tab</span></a>).</li>
 </ul>
 </li>
-<li>The <tt class="docutils literal"><span class="pre">parametersTable</span></tt>, is a tuple (list) of tuples. Each entry in the list
+<li>The <code class="docutils literal"><span class="pre">parametersTable</span></code>, is a tuple (list) of tuples. Each entry in the list
 describe a configuration parameter. In it&#8217;s simplest form, it&#8217;s a quadruplet
 <span class="cb">(TypeOption, &#8216;paramId&#8217;, ParameterType, DefaultValue)</span> with:<ol class="arabic">
-<li><tt class="docutils literal"><span class="pre">TypeOption</span></tt>, tells that this tuple describe a parameter.</li>
-<li><tt class="docutils literal"><span class="pre">paramId</span></tt>, the identifier of the parameter. Identifiers are defined
+<li><code class="docutils literal"><span class="pre">TypeOption</span></code>, tells that this tuple describe a parameter.</li>
+<li><code class="docutils literal"><span class="pre">paramId</span></code>, the identifier of the parameter. Identifiers are defined
 by the tools. The list of parameters is detailed in each tool section.</li>
-<li><tt class="docutils literal"><span class="pre">ParameterType</span></tt>, the kind of parameter. Could be:<ul>
-<li><tt class="docutils literal"><span class="pre">TypeBool</span></tt>, boolean.</li>
-<li><tt class="docutils literal"><span class="pre">TypeInt</span></tt>, signed integer.</li>
-<li><tt class="docutils literal"><span class="pre">TypeEnumerate</span></tt>, enumerated type, needs extra entry.</li>
-<li><tt class="docutils literal"><span class="pre">TypePercentage</span></tt>, percentage, expressed between 0 and 100.</li>
-<li><tt class="docutils literal"><span class="pre">TypeDouble</span></tt>, float.</li>
-<li><tt class="docutils literal"><span class="pre">TypeString</span></tt>, character string.</li>
+<li><code class="docutils literal"><span class="pre">ParameterType</span></code>, the kind of parameter. Could be:<ul>
+<li><code class="docutils literal"><span class="pre">TypeBool</span></code>, boolean.</li>
+<li><code class="docutils literal"><span class="pre">TypeInt</span></code>, signed integer.</li>
+<li><code class="docutils literal"><span class="pre">TypeEnumerate</span></code>, enumerated type, needs extra entry.</li>
+<li><code class="docutils literal"><span class="pre">TypePercentage</span></code>, percentage, expressed between 0 and 100.</li>
+<li><code class="docutils literal"><span class="pre">TypeDouble</span></code>, float.</li>
+<li><code class="docutils literal"><span class="pre">TypeString</span></code>, character string.</li>
 </ul>
 </li>
-<li><tt class="docutils literal"><span class="pre">DefaultValue</span></tt>, the default value for that parameter.</li>
+<li><code class="docutils literal"><span class="pre">DefaultValue</span></code>, the default value for that parameter.</li>
 </ol>
 </li>
 </ul>
@@ -542,34 +548,34 @@ by the tools. The list of parameters is detailed in each tool section.</li>
 <span class="cb">allianceConfig</span> or <span class="cb">parametersTable</span>, you can put pretty much anything
 in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written in <span class="sc">Python</span>).</p>
 <p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># -*- Mode:Python -*-</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- Mode:Python -*-</span>
 
-<span class="n">defaultStyle</span> <span class="o">=</span> <span class="s">&#39;Alliance.Classic [black]&#39;</span>
+<span class="n">defaultStyle</span> <span class="o">=</span> <span class="s1">&#39;Alliance.Classic [black]&#39;</span>
 
-<span class="c"># Regular Coriolis configuration.</span>
+<span class="c1"># Regular Coriolis configuration.</span>
 <span class="n">parametersTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s">&#39;misc.catchCore&#39;</span>           <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.info&#39;</span>                <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.paranoid&#39;</span>            <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.bug&#39;</span>                 <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.logMode&#39;</span>             <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">True</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.verboseLevel1&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.verboseLevel2&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">True</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.minTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s">&#39;misc.maxTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
+    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;misc.catchCore&#39;</span>           <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.info&#39;</span>                <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.paranoid&#39;</span>            <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.bug&#39;</span>                 <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.logMode&#39;</span>             <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">True</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel1&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel2&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">True</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.minTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.maxTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
     <span class="p">)</span>
 
-<span class="c"># Some ordinary Python script...</span>
+<span class="c1"># Some ordinary Python script...</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="k">print</span> <span class="s">&#39;       o  Cleaning up ClockTree previous run.&#39;</span>
-<span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">):</span>
-  <span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.ap&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fileName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;_clocked.&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&#39;          - &lt;</span><span class="si">%s</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="n">fileName</span>
+<span class="nb">print</span> <span class="s1">&#39;       o  Cleaning up ClockTree previous run.&#39;</span>
+<span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ap&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fileName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;_clocked.&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="nb">print</span> <span class="s1">&#39;          - &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">fileName</span>
     <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="ScriptsPlugins.html#python-interface-to-coriolis"><em>Python Interface for Hurricane / Coriolis</em></a> for more details those capabilities.</p>
+<p>See <a class="reference internal" href="ScriptsPlugins.html#python-interface-to-coriolis"><span class="std std-ref">Python Interface for Hurricane / Coriolis</span></a> for more details those capabilities.</p>
 </div>
 </div>
 
@@ -594,7 +600,7 @@ in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written 
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

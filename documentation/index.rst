@@ -24,6 +24,9 @@ Contents:
    Unicorn/Unicorn.rst
    PythonCpp/index.rst
    RDS/index.rst
+   lefapi/lefapi.rst
+   defapi/defapi.rst
+   lefdef/lefdef.rst
 
 
 

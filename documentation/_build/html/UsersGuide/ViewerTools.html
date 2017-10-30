@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Coriolis User’s Guide" href="index.html"/>
         <link rel="next" title="Python Interface for Hurricane / Coriolis" href="ScriptsPlugins.html"/>
@@ -109,7 +111,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CGT - The Graphical Interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#viewer-tools">Viewer &amp; Tools</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -265,7 +270,7 @@ is not yet placed.</li>
 </li>
 </ul>
 <p>Features are detailed in <a class="reference internal" href="#viewer-tools">Viewer &amp; Tools</a>.</p>
-<p><img alt="Viewer Basic Snapshot" class="align-middle" src="../_images/Viewer-1.png" style="width: 80%;" /></p>
+<p><a class="reference internal" href="../_images/Viewer-1.png"><img alt="Viewer Basic Snapshot" class="align-middle" src="../_images/Viewer-1.png" style="width: 80%;" /></a></p>
 <ul class="simple">
 <li>The <strong>Controller</strong>, which allows:<ul>
 <li>Tweak what is displayer by the <em>Viewer</em>. Through the <em>Look</em>,
@@ -279,7 +284,7 @@ They are closely related to Configuration &amp; Initialisation.</li>
 </ul>
 </li>
 </ul>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-1.png" style="width: 80%;" /></a> </p>
 <div class="section" id="viewer-tools">
 <span id="id1"></span><h2>Viewer &amp; Tools<a class="headerlink" href="#viewer-tools" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="stratus-netlist-capture">
@@ -342,7 +347,7 @@ and write Alliance designs and libraries directly.</p>
 <div class="section" id="etesian-placer">
 <h3>Etesian &#8211; Placer<a class="headerlink" href="#etesian-placer" title="Permalink to this headline">¶</a></h3>
 <p>The <span class="sc">Etesian</span> placer is a state of the art (as of 2015) analytical placer. It is
-within <tt class="docutils literal"><span class="pre">5%</span></tt> of other placers&#8217; solutions, but is normally a bit worse than ePlace.
+within <code class="docutils literal"><span class="pre">5%</span></code> of other placers&#8217; solutions, but is normally a bit worse than ePlace.
 This <span class="sc">Coriolis</span> tool is actually an encapsulation of <span class="sc">Coloquinte</span> which <em>is</em> the placer.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -356,14 +361,14 @@ supply a placement for it. We need to implement uniquification in the
 <p>The placement area is defined by the top cell abutment box.</p>
 <p>When placing a complete hierarchy, the abutment boxes of the cells (models) other than
 the top cell are sets identical to the one of the top cell and their instances are
-all placed at position <tt class="docutils literal"><span class="pre">(0,0,ID)</span></tt>. That is, all the abutments boxes, whatever the
+all placed at position <code class="docutils literal"><span class="pre">(0,0,ID)</span></code>. That is, all the abutments boxes, whatever the
 hierarchical level, defines the same area (they are exactly superposed).</p>
 <p>We choose this scheme because the placer will see all the instances as virtually
 flattened, so they can be placed anywhere inside the top-cell abutment box.</p>
-<p> <img alt="Etesian Abutment Box" class="align-middle" src="../_images/etesian-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/etesian-1.png"><img alt="Etesian Abutment Box" class="align-middle" src="../_images/etesian-1.png" style="width: 80%;" /></a> </p>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
 <strong>Computing the Placement Area</strong></p>
-<p>The placement area is computed using the <tt class="docutils literal"><span class="pre">etesian.aspectRatio</span></tt> and <tt class="docutils literal"><span class="pre">etesian.spaceMargin</span></tt>
+<p>The placement area is computed using the <code class="docutils literal"><span class="pre">etesian.aspectRatio</span></code> and <code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code>
 parameters only if the top-cell has an empty abutment box. If the top-cell abutment
 box has to be set, then it is propagated to all the instances models recursively.</p>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
@@ -395,21 +400,21 @@ may be unroutable.</p>
 <tbody valign="top">
 <tr class="row-even"><td colspan="3"><strong>Etesian Parameters</strong></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.aspectRatio</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.aspectRatio</span></code></td>
 <td>TypePercentage</td>
 <td><span class="cb">100</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Define the height on width <tt class="docutils literal"><span class="pre">H/W</span></tt> aspect
+<tr class="row-even"><td colspan="2">Define the height on width <code class="docutils literal"><span class="pre">H/W</span></code> aspect
 ratio, can be comprised between 10 and 1000</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.spaceMargin</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code></td>
 <td>TypePercentage</td>
 <td><span class="cb">5</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The extra white space added to the total area
 of the standard cells</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.uniformDensity</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.uniformDensity</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
@@ -417,14 +422,14 @@ of the standard cells</td>
 across the area or allowed to form denser
 clusters</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.effort</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.effort</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">2</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Sets the balance between the speed of the
 placer and the solution quality</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.routingDriven</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.routingDriven</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
@@ -432,16 +437,16 @@ placer and the solution quality</td>
 and whitespace allocation to improve
 routability; to be implemented</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">etesian.graphics</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.graphics</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">2</span></td>
 </tr>
 <tr class="row-even"><td colspan="2"><p class="first">How often the display will be refreshed
 More refreshing slows the placer.</p>
 <ul class="last simple">
-<li><tt class="docutils literal"><span class="pre">1</span></tt> shows both upper and lower bounds</li>
-<li><tt class="docutils literal"><span class="pre">2</span></tt> only shows lower bound results</li>
-<li><tt class="docutils literal"><span class="pre">3</span></tt> only shows the final results</li>
+<li><code class="docutils literal"><span class="pre">1</span></code> shows both upper and lower bounds</li>
+<li><code class="docutils literal"><span class="pre">2</span></code> only shows lower bound results</li>
+<li><code class="docutils literal"><span class="pre">3</span></code> only shows the final results</li>
 </ul>
 </td>
 </tr>
@@ -461,8 +466,8 @@ a global routing <em>solution</em> can be saved to disk and reloaded for later u
 <span class="cb">kgr</span> extention. It is in <a class="reference external" href="http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm">Box Router</a> output format.</p>
 <p>  <span class="raw-html"><p class="noindent"></p></span> Menus:</p>
 <ul class="simple">
-<li><img class="math" src="../_images/math/0183b70ce5b7bb56d8ad838429a01d2858d99612.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Save Global Routing}"/></li>
-<li><img class="math" src="../_images/math/7242aab75de488b349c95eca46e25a03ea80c207.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Load Global Routing}"/></li>
+<li><img class="math" src="../_images/math/ab9c214f89790a2afdc94a731f08c35d0fafa77d.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Save Global Routing}"/></li>
+<li><img class="math" src="../_images/math/0b37db03668389c8e33d766f186469af280334bb.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Load Global Routing}"/></li>
 </ul>
 </div>
 <div class="section" id="kite-detailed-router">
@@ -492,15 +497,15 @@ In the event of a failure, on a saturated design, you may decrease the
 <cite>edge saturation ratio</cite> (argument <cite>&#8211;edge</cite>) to balance more evenly the design
 saturation. That is, the maximum saturation decrease at the price of a wider
 saturated area and increased wirelength. This is the saturation of the
-<em>global</em> router <span class="sc">Knik</span>, and you may increase/decrease by steps of <tt class="docutils literal"><span class="pre">5%</span></tt>,
+<em>global</em> router <span class="sc">Knik</span>, and you may increase/decrease by steps of <code class="docutils literal"><span class="pre">5%</span></code>,
 which represent one track. The maximum capacity of the <span class="sc">SxLib</span> gauge is
 10 tracks in two layers, that makes 20 tracks by <span class="sc">Knik</span> edge.</p>
 <p>Routing a design is done in four ordered steps:</p>
 <ol class="arabic simple">
-<li>Detailed pre-route <img class="math" src="../_images/math/6a2cfe8749bfed89e3c82527f74daaff6378d70e.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed PreRoute}"/></li>
-<li>Global routing     <img class="math" src="../_images/math/d3499f8834024d33c997cd9730e31d3a02ebab18.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Global Route}"/></li>
-<li>Detailed routing   <img class="math" src="../_images/math/642cf89034341e49c1fbc546ca776e1205ae49c0.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed Route}"/></li>
-<li>Finalize routing   <img class="math" src="../_images/math/e171f7265a6f90fdc6622dfa4a4fd08927ae5fea.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Finalize Route}"/></li>
+<li>Detailed pre-route <img class="math" src="../_images/math/9354e2441491d324ef5fd162920f581bdf022af5.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed PreRoute}"/></li>
+<li>Global routing     <img class="math" src="../_images/math/8080e7327f421afe79e142b39735819ab9631cb9.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Global Route}"/></li>
+<li>Detailed routing   <img class="math" src="../_images/math/44344a23b2a3007fed067629259108385790ee6a.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed Route}"/></li>
+<li>Finalize routing   <img class="math" src="../_images/math/0d59c123dd2cd130ca29a2ba930fabbc4f547771.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Finalize Route}"/></li>
 </ol>
 <p>It is possible to supply to the router a complete wiring for some nets that the user&#8217;s
 wants to be routed according to a specific topology. The supplied topology must respect
@@ -538,14 +543,14 @@ the <span class="cb">kite.</span> prefix.</p>
 <tbody valign="top">
 <tr class="row-even"><td colspan="3"><strong>Katabatic Parameters</strong></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">katabatic.topRoutingLayer</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.topRoutingLayer</span></code></td>
 <td>TypeString</td>
 <td><span class="cb">METAL5</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Define the highest metal layer that will be
 used for routing (inclusive).</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">katabatic.globalLengthThreshold</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.globalLengthThreshold</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">1450</span></td>
 </tr>
@@ -553,15 +558,15 @@ used for routing (inclusive).</td>
 method which is no longer used (did not give
 good results)</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">katabatic.saturateRatio</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.saturateRatio</span></code></td>
 <td>TypePercentage</td>
 <td><span class="cb">80</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">If <tt class="docutils literal"><span class="pre">M(x)</span></tt> density is above this ratio,
+<tr class="row-even"><td colspan="2">If <code class="docutils literal"><span class="pre">M(x)</span></code> density is above this ratio,
 move up feedthru  global segments up from
-depth <tt class="docutils literal"><span class="pre">x</span></tt> to <tt class="docutils literal"><span class="pre">x+2</span></tt></td>
+depth <code class="docutils literal"><span class="pre">x</span></code> to <code class="docutils literal"><span class="pre">x+2</span></code></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">katabatic.saturateRp</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.saturateRp</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">8</span></td>
 </tr>
@@ -572,7 +577,7 @@ in excess</td>
 </tr>
 <tr class="row-odd"><td colspan="3"><strong>Knik Parameters</strong></td>
 </tr>
-<tr class="row-even"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></tt></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
@@ -583,15 +588,15 @@ router. Horizontal and vertical locally
 reserved capacity can be distinguished for
 more accuracy.</td>
 </tr>
-<tr class="row-even"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.vTracksReservedLocal</span></tt></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.vTracksReservedLocal</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
-<tr class="row-odd"><td colspan="2">cf. <tt class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></tt></td>
+<tr class="row-odd"><td colspan="2">cf. <code class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></code></td>
 </tr>
 <tr class="row-even"><td colspan="3"><strong>Kite Parameters</strong></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.eventsLimit</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.eventsLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">4000002</span></td>
 </tr>
@@ -600,7 +605,7 @@ this is a last ditch safety against infinite
 loop. It&#8217;s perhaps a  little too low for big
 designs</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.ripupCost</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.ripupCost</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
@@ -608,19 +613,19 @@ designs</td>
 cost to avoid a loop between two ripped up
 segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.strapRipupLimit</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.strapRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">16</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Maximum number of ripup for <em>strap</em> segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.localRipupLimit</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.localRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">9</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Maximum number of ripup for <em>local</em> segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.globalRipupLimit</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.globalRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">5</span></td>
 </tr>
@@ -628,7 +633,7 @@ segments</td>
 when this limit is reached, triggers topologic
 modification</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">kite.longGlobalRipupLimit</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.longGlobalRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">5</span></td>
 </tr>
@@ -646,19 +651,19 @@ topological modification</td>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>How Cgt Locates Python Scripts:</strong>
-<span class="cb">cgt</span> uses the Python <tt class="docutils literal"><span class="pre">import</span></tt> mechanism to load Python scripts.
-So you must give the name of your script whitout <tt class="docutils literal"><span class="pre">.py</span></tt> extention and
-it must be reachable through the <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt>. You may uses the
+<span class="cb">cgt</span> uses the Python <code class="docutils literal"><span class="pre">import</span></code> mechanism to load Python scripts.
+So you must give the name of your script whitout <code class="docutils literal"><span class="pre">.py</span></code> extention and
+it must be reachable through the <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>. You may uses the
 dotted module notation.</p>
 </div>
-<p>A Python/Stratus script must contains a function called <tt class="docutils literal"><span class="pre">ScriptMain()</span></tt>
+<p>A Python/Stratus script must contains a function called <code class="docutils literal"><span class="pre">ScriptMain()</span></code>
 with one optional argument, the graphical editor into which it may be
-running (will be set to <tt class="docutils literal"><span class="pre">None</span></tt> in text mode). The Python interface to
+running (will be set to <code class="docutils literal"><span class="pre">None</span></code> in text mode). The Python interface to
 the editor (type: <span class="cb">CellViewer</span>) is limited to basic capabilities
 only.</p>
 <p>Any script given on the command line will be run immediatly <em>after</em> the
 initializations and <em>before</em> any other argument is processed.</p>
-<p>For more explanation on Python scripts see <a class="reference internal" href="ScriptsPlugins.html#python-interface-to-coriolis"><em>Python Interface for Hurricane / Coriolis</em></a>.</p>
+<p>For more explanation on Python scripts see <a class="reference internal" href="ScriptsPlugins.html#python-interface-to-coriolis"><span class="std std-ref">Python Interface for Hurricane / Coriolis</span></a>.</p>
 </div>
 <div class="section" id="printing-snapshots">
 <h3>Printing &amp; Snapshots<a class="headerlink" href="#printing-snapshots" title="Permalink to this headline">¶</a></h3>
@@ -666,8 +671,8 @@ initializations and <em>before</em> any other argument is processed.</p>
 menu or the <span class="fboxtt">CTRL+P</span> shortcut to open the dialog box.</p>
 <p>The print functionality uses exactly the same rendering mechanism as for the
 screen, beeing almost <em>WYSIWYG</em>. Thus, to obtain the best results it is advisable
-to select the <tt class="docutils literal"><span class="pre">Coriolis.Printer</span></tt> look (in the <em>Controller</em>), which uses a
-white background and much suited for high resolutions <tt class="docutils literal"><span class="pre">32x32</span></tt> pixels patterns</p>
+to select the <code class="docutils literal"><span class="pre">Coriolis.Printer</span></code> look (in the <em>Controller</em>), which uses a
+white background and much suited for high resolutions <code class="docutils literal"><span class="pre">32x32</span></code> pixels patterns</p>
 <p>There is also two mode of printing selectable through the <em>Controller</em>
 <strong>Settings -&gt; Misc -&gt; Printer/Snapshot Mode</strong>:</p>
 <table border="1" class="docutils">
@@ -683,7 +688,7 @@ white background and much suited for high resolutions <tt class="docutils litera
 </tr>
 <tr class="row-even"><td><strong>Cell Mode</strong></td>
 <td>150</td>
-<td>For single <tt class="docutils literal"><span class="pre">Cell</span></tt> printing or very small designs.
+<td>For single <code class="docutils literal"><span class="pre">Cell</span></code> printing or very small designs.
 Patterns will be bigger and more readable.</td>
 </tr>
 <tr class="row-odd"><td><strong>Design Mode</strong></td>
@@ -697,7 +702,7 @@ outlines).</td>
 <p class="first admonition-title">Note</p>
 <p class="last"><em>The pdf file size</em>
 Be aware that the generated <span class="sc">pdf</span> files are indeed only pixmaps.
-So they can grew very large if you select paper format above <tt class="docutils literal"><span class="pre">A2</span></tt>
+So they can grew very large if you select paper format above <code class="docutils literal"><span class="pre">A2</span></code>
 or similar.</p>
 </div>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
@@ -842,7 +847,7 @@ in which this model is instanciated).</td>
 </div>
 <div class="section" id="cgt-command-line-options">
 <h3>Cgt Command Line Options<a class="headerlink" href="#cgt-command-line-options" title="Permalink to this headline">¶</a></h3>
-<p>Appart from the obvious <tt class="docutils literal"><span class="pre">--text</span></tt> options, all can be used for text and graphical mode.</p>
+<p>Appart from the obvious <code class="docutils literal"><span class="pre">--text</span></code> options, all can be used for text and graphical mode.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="38%" />
@@ -900,7 +905,7 @@ any design of <cite>100K</cite>. gates. For bigger
 designs you may wants to increase this limit.</td>
 </tr>
 <tr class="row-even"><td><cite>&#8211;stratus-script=&lt;module&gt;</cite></td>
-<td>Run the Python/Stratus script <tt class="docutils literal"><span class="pre">module</span></tt>.
+<td>Run the Python/Stratus script <code class="docutils literal"><span class="pre">module</span></code>.
 See <a class="reference internal" href="#python-scripts-in-cgt">Python Scripts in Cgt</a>.</td>
 </tr>
 </tbody>
@@ -909,16 +914,19 @@ See <a class="reference internal" href="#python-scripts-in-cgt">Python Scripts i
 <p>Some Examples :</p>
 <ul>
 <li><p class="first">Run both global and detailed router, then save the routed design :</p>
-<div class="highlight-python"><pre>&gt; cgt -v -t -G -R --cell=design --save-design=design_kite</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">G</span> <span class="o">-</span><span class="n">R</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">design</span><span class="o">=</span><span class="n">design_kite</span>
+</pre></div>
 </div>
 </li>
 <li><p class="first">Load a previous global solution, run the detailed router, then save the
 routed design :</p>
-<div class="highlight-python"><pre>&gt; cgt -v -t --load-global -R --cell=design --save-design=design_kite</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">load</span><span class="o">-</span><span class="k">global</span> <span class="o">-</span><span class="n">R</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">design</span><span class="o">=</span><span class="n">design_kite</span>
+</pre></div>
 </div>
 </li>
 <li><p class="first">Run the global router, then save the global routing solution :</p>
-<div class="highlight-python"><pre>&gt; cgt -v -t -G --save-global --cell=design</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">G</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="k">global</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span>
+</pre></div>
 </div>
 </li>
 </ul>
@@ -940,14 +948,14 @@ routed design :</p>
 <tbody valign="top">
 <tr class="row-even"><td colspan="3"><strong>Verbosity/Log Parameters</strong></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.info</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.info</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Enable display of <em>info</em> level message
 (<span class="cb">cinfo</span> stream)</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.bug</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.bug</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
@@ -955,21 +963,21 @@ routed design :</p>
 (<span class="cb">cbug</span> stream), messages can be a little
 scarry</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.logMode</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.logMode</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">If enabled, assume that the output device
-is not a <tt class="docutils literal"><span class="pre">tty</span></tt> and suppress any escaped
+is not a <code class="docutils literal"><span class="pre">tty</span></code> and suppress any escaped
 sequences</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.verboseLevel1</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.verboseLevel1</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">True</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">First level of verbosity, disable level 2</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.verboseLevel2</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.verboseLevel2</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
@@ -977,18 +985,18 @@ sequences</td>
 </tr>
 <tr class="row-odd"><td colspan="3"><strong>Development/Debug Parameters</strong></td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">misc.minTraceLevel</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">misc.minTraceLevel</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">0</span></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.maxTraceLevel</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.maxTraceLevel</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">0</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Display trace information <em>between</em> those two
 levels (<span class="cb">cdebug</span> stream)</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><tt class="docutils literal"><span class="pre">misc.catchCore</span></tt></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.catchCore</span></code></td>
 <td>TypeBool</td>
 <td><span class="cb">False</span></td>
 </tr>
@@ -1018,9 +1026,9 @@ the current selection.</li>
 <div class="section" id="the-look-tab">
 <span id="id3"></span><h3>The Look Tab<a class="headerlink" href="#the-look-tab" title="Permalink to this headline">¶</a></h3>
 <p>You can select how the layout will be displayed. There is a special one
-<tt class="docutils literal"><span class="pre">Printer.Coriolis</span></tt> specifically designed for <a class="reference internal" href="#printing-snapshots">Printing &amp; Snapshots</a>.
+<code class="docutils literal"><span class="pre">Printer.Coriolis</span></code> specifically designed for <a class="reference internal" href="#printing-snapshots">Printing &amp; Snapshots</a>.
 You should select it prior to calling the print or snapshot dialog boxes.</p>
-<p> <img alt="Controller Look, Snapshot 1" class="align-middle" src="../_images/Controller-Look-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-Look-1.png"><img alt="Controller Look, Snapshot 1" class="align-middle" src="../_images/Controller-Look-1.png" style="width: 80%;" /></a> </p>
 <p></p>
 </div>
 <div class="section" id="the-filter-tab">
@@ -1044,7 +1052,7 @@ to signal the gap.</p>
 <p class="last">For example, after the detailed routing no <em>rubbers</em> should remains.
 They have been made <em>very</em> visibles as big violet lines...</p>
 </div>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Filter-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-Filter-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Filter-1.png" style="width: 80%;" /></a> </p>
 <p></p>
 </div>
 <div class="section" id="the-layers-go-tab">
@@ -1063,7 +1071,7 @@ to easily locate congested areas.</li>
 <li>The normal one triggers the display.</li>
 <li>The red-outlined allows objects of that layer to be selectable or not.</li>
 </ul>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-LayersGos-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-LayersGos-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-LayersGos-1.png" style="width: 80%;" /></a> </p>
 </div>
 <div class="section" id="the-netlist-tab">
 <span id="id6"></span><h3>The Netlist Tab<a class="headerlink" href="#the-netlist-tab" title="Permalink to this headline">¶</a></h3>
@@ -1073,10 +1081,10 @@ to easily locate congested areas.</li>
 using the filter pattern (supports regular expressions).</p>
 <p>An very useful feature is to enable the <strong>Sync Selection</strong>, which will
 automatically select all the components of the selected net(s). You can
-select multiple nets. In the figure the net <tt class="docutils literal"><span class="pre">auxsc35</span></tt> is selected and
+select multiple nets. In the figure the net <code class="docutils literal"><span class="pre">auxsc35</span></code> is selected and
 is highlited in the <em>Viewer</em>.</p>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Netlist-1.png" style="width: 80%;" /> 
- <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Viewer-Netlist-1.png" style="width: 80%;" />     </p>
+<p> <a class="reference internal" href="../_images/Controller-Netlist-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Netlist-1.png" style="width: 80%;" /></a> 
+ <a class="reference internal" href="../_images/Viewer-Netlist-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Viewer-Netlist-1.png" style="width: 80%;" /></a>     </p>
 </div>
 <div class="section" id="the-selection-tab">
 <span id="id7"></span><h3>The Selection Tab<a class="headerlink" href="#the-selection-tab" title="Permalink to this headline">¶</a></h3>
@@ -1085,11 +1093,11 @@ can be filtered thanks to the filter pattern.</p>
 <p>Used in conjunction with the <em>Netlist</em> <strong>Sync Selection</strong> you will all see
 all the components part of <em>net</em>.</p>
 <p>In this list, you can toggle individually the selection of component by
-pressing the <tt class="docutils literal"><span class="pre">t</span></tt> key. When unselected in this way a component is not
+pressing the <code class="docutils literal"><span class="pre">t</span></code> key. When unselected in this way a component is not
 removed from the the selection list but instead displayed in red italic.
 To see where a component is you may make it blink by repeatedly press
-the <tt class="docutils literal"><span class="pre">t</span></tt> key...</p>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Selection-1.png" style="width: 80%;" /> </p>
+the <code class="docutils literal"><span class="pre">t</span></code> key...</p>
+<p> <a class="reference internal" href="../_images/Controller-Selection-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Selection-1.png" style="width: 80%;" /></a> </p>
 </div>
 <div class="section" id="the-inspector-tab">
 <span id="id8"></span><h3>The Inspector Tab<a class="headerlink" href="#the-inspector-tab" title="Permalink to this headline">¶</a></h3>
@@ -1111,16 +1119,16 @@ is deleted, you will crash the application...</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>Implementation Detail:</em> the inspector support is done with
-<tt class="docutils literal"><span class="pre">Slot</span></tt>, <tt class="docutils literal"><span class="pre">Record</span></tt> and <tt class="docutils literal"><span class="pre">getString()</span></tt>.</p>
+<code class="docutils literal"><span class="pre">Slot</span></code>, <code class="docutils literal"><span class="pre">Record</span></code> and <code class="docutils literal"><span class="pre">getString()</span></code>.</p>
 </div>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-1.png" style="width: 80%;" /> 
- <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-2.png" style="width: 80%;" /> 
- <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-3.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-Inspector-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-1.png" style="width: 80%;" /></a> 
+ <a class="reference internal" href="../_images/Controller-Inspector-2.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-2.png" style="width: 80%;" /></a> 
+ <a class="reference internal" href="../_images/Controller-Inspector-3.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Inspector-3.png" style="width: 80%;" /></a> </p>
 </div>
 <div class="section" id="the-settings-tab">
 <span id="id9"></span><h3>The Settings Tab<a class="headerlink" href="#the-settings-tab" title="Permalink to this headline">¶</a></h3>
 <p>Here comes the description of the <em>Settings</em> tab.</p>
-<p> <img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Settings-1.png" style="width: 80%;" /> </p>
+<p> <a class="reference internal" href="../_images/Controller-Settings-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Settings-1.png" style="width: 80%;" /></a> </p>
 </div>
 </div>
 </div>
@@ -1146,7 +1154,7 @@ is deleted, you will crash the application...</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

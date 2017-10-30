@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Hurricane Python/C++ API Tutorial" href="index.html"/>
         <link rel="next" title="7. No C++ Hurricane::Name encapsulation" href="Name.html"/>
@@ -193,7 +195,7 @@
 <li class="toctree-l3"><a class="reference internal" href="NonDBo.html#id1">5.2 Class File</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">6. Encapsulating DbU</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. Encapsulating DbU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
 </ul>
 </li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -253,19 +258,19 @@
             
   <div class="section" id="encapsulating-dbu">
 <h1>6. Encapsulating DbU<a class="headerlink" href="#encapsulating-dbu" title="Permalink to this headline">¶</a></h1>
-<p>While <tt class="docutils literal"><span class="pre">Hurricane::DbU</span></tt> is a class, the <tt class="docutils literal"><span class="pre">Hurricane::DbU::Unit</span></tt> is only
-a <tt class="docutils literal"><span class="pre">typedef</span></tt> over <tt class="docutils literal"><span class="pre">uint64_t</span></tt>. The <tt class="docutils literal"><span class="pre">DbU</span></tt> class only provides a set of
+<p>While <code class="docutils literal"><span class="pre">Hurricane::DbU</span></code> is a class, the <code class="docutils literal"><span class="pre">Hurricane::DbU::Unit</span></code> is only
+a <code class="docutils literal"><span class="pre">typedef</span></code> over <code class="docutils literal"><span class="pre">uint64_t</span></code>. The <code class="docutils literal"><span class="pre">DbU</span></code> class only provides a set of
 static methods to manipulate and convert to and from other units.
-At Python level, <tt class="docutils literal"><span class="pre">DbU::Unit</span></tt> will be stored in plain <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt>.</p>
-<p>When a <tt class="docutils literal"><span class="pre">DbU::Unit</span></tt> argument is expected in a Python functions, just use
-the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; <span class="pre">PyAny_AsLong(</span> <span class="pre">PyObject*</span> <span class="pre">)</span></tt> function to convert it.</p>
+At Python level, <code class="docutils literal"><span class="pre">DbU::Unit</span></code> will be stored in plain <code class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></code>.</p>
+<p>When a <code class="docutils literal"><span class="pre">DbU::Unit</span></code> argument is expected in a Python functions, just use
+the <code class="docutils literal"><span class="pre">DbU::Unit</span>&#160; <span class="pre">PyAny_AsLong(</span> <span class="pre">PyObject*</span> <span class="pre">)</span></code> function to convert it.</p>
 <p>For example, if we explicit the expension of:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">DirectSetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_SetX</span><span class="p">,</span><span class="n">setX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DirectSetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_SetX</span><span class="p">,</span><span class="n">setX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
 </pre></div>
 </div>
 <p></p>
 <p>We would get:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_setX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyPoint_setX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Point</span><span class="o">*</span> <span class="n">cobject</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span> <span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">cobject</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
@@ -284,12 +289,12 @@ the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; <span 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>For the other way around, use <tt class="docutils literal"><span class="pre">PyObject*</span> <span class="pre">PyDbU_FromLong(</span> <span class="pre">DbU::Unit</span> <span class="pre">)</span></tt>.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_GetX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+<p>For the other way around, use <code class="docutils literal"><span class="pre">PyObject*</span> <span class="pre">PyDbU_FromLong(</span> <span class="pre">DbU::Unit</span> <span class="pre">)</span></code>.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_GetX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We would get:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_GetX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyPoint_GetX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Point</span><span class="o">*</span> <span class="n">cobject</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span> <span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">cobject</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
@@ -324,7 +329,7 @@ the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; <span 
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

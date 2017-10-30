@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Hurricane Python/C++ API Tutorial" href="index.html"/>
         <link rel="next" title="6. Encapsulating DbU" href="DbU.html"/>
@@ -187,7 +189,7 @@
 <li class="toctree-l3"><a class="reference internal" href="DBoHierarchy.html#python-module">4.8 Python Module</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. Case 3 - Non-DBo Standalone Classe</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#class-header">5.1 Class Header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#class-file">5.2 Class File</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id1">5.2 Class File</a></li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -253,30 +258,30 @@
             
   <div class="section" id="case-3-non-dbo-standalone-classe">
 <h1>5. Case 3 - Non-DBo Standalone Classe<a class="headerlink" href="#case-3-non-dbo-standalone-classe" title="Permalink to this headline">¶</a></h1>
-<p>Let&#8217;s have a look at the encapsulation of <tt class="docutils literal"><span class="pre">Hurricane::Point</span></tt>.</p>
+<p>Let&#8217;s have a look at the encapsulation of <code class="docutils literal"><span class="pre">Hurricane::Point</span></code>.</p>
 <p>Non-BDo derived classes do not support the bi-directionnal communication.
 So each Python object is associated with one C++ object. The C++ object
 is created and deleted along with the Python one. This behavior implies
 that the C++ object is <em>copy constructible</em> (which should be the case).</p>
 <div class="section" id="class-header">
 <h2>5.1 Class Header<a class="headerlink" href="#class-header" title="Permalink to this headline">¶</a></h2>
-<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-header-file"><em>3.1 Class Associated Header File</em></a>:</p>
+<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-header-file"><span class="std std-ref">3.1 Class Associated Header File</span></a>:</p>
 <ul class="simple">
-<li>There is no <tt class="docutils literal"><span class="pre">PyPoint_Link()</span></tt> function, as it&#8217;s related to the
+<li>There is no <code class="docutils literal"><span class="pre">PyPoint_Link()</span></code> function, as it&#8217;s related to the
 bi-directional communication mechanism.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>About the _object attribute</strong> of the PyPoint. As the C++ object life span
-(<tt class="docutils literal"><span class="pre">Point</span></tt>) is linked to the Python (<tt class="docutils literal"><span class="pre">PyPoint</span></tt>) one, we may have used a
+(<code class="docutils literal"><span class="pre">Point</span></code>) is linked to the Python (<code class="docutils literal"><span class="pre">PyPoint</span></code>) one, we may have used a
 value instead of a pointer. It is best to keep a pointer as the macros
-written for <tt class="docutils literal"><span class="pre">DBo</span></tt> derived classes will remain usables.</p>
+written for <code class="docutils literal"><span class="pre">DBo</span></code> derived classes will remain usables.</p>
 </div>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#ifndef ISOBAR_PY_POINT_H</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#ifndef ISOBAR_PY_POINT_H</span>
 <span class="cp">#define ISOBAR_PY_POINT_H</span>
 
-<span class="cp">#include &quot;hurricane/isobar/PyHurricane.h&quot;</span>
-<span class="cp">#include &quot;hurricane/Point.h&quot;</span>
+<span class="cp">#include</span> <span class="cpf">&quot;hurricane/isobar/PyHurricane.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;hurricane/Point.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
   <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
@@ -288,7 +293,7 @@ written for <tt class="docutils literal"><span class="pre">DBo</span></tt> deriv
 
     <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypePoint</span><span class="p">;</span>
     <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyPoint_Methods</span><span class="p">[];</span>
-    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyPoint_LinkPyType</span><span class="p">();</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="nf">PyPoint_LinkPyType</span><span class="p">();</span>
 
 <span class="cp">#define IsPyPoint(v)    ( (v)-&gt;ob_type == &amp;PyTypePoint )</span>
 <span class="cp">#define PYPOINT(v)      ( (PyPoint*)(v) )</span>
@@ -304,21 +309,21 @@ written for <tt class="docutils literal"><span class="pre">DBo</span></tt> deriv
 </div>
 <div class="section" id="class-file">
 <h2>5.2 Class File<a class="headerlink" href="#class-file" title="Permalink to this headline">¶</a></h2>
-<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-file"><em>3.2 Class Associated File</em></a>:</p>
+<p>Changes from <a class="reference internal" href="DBoStandalone.html#class-associated-file"><span class="std std-ref">3.2 Class Associated File</span></a>:</p>
 <ul class="simple">
-<li>As there is no <tt class="docutils literal"><span class="pre">PyPoint_Link()</span></tt> function, there is no call to any
-flavor of the <tt class="docutils literal"><span class="pre">DBoLinkcreatemethod()</span></tt> macro (obvious as it&#8217;s <em>not</em>
-a <tt class="docutils literal"><span class="pre">DBo</span></tt>).</li>
-<li>To use the standard Python constructor, we have to define <tt class="docutils literal"><span class="pre">PyPoint_NEW()</span></tt>
-and <tt class="docutils literal"><span class="pre">PyPoint_Init()</span></tt> functions, I&#8217;m not absolutely certain that the later
+<li>As there is no <code class="docutils literal"><span class="pre">PyPoint_Link()</span></code> function, there is no call to any
+flavor of the <code class="docutils literal"><span class="pre">DBoLinkcreatemethod()</span></code> macro (obvious as it&#8217;s <em>not</em>
+a <code class="docutils literal"><span class="pre">DBo</span></code>).</li>
+<li>To use the standard Python constructor, we have to define <code class="docutils literal"><span class="pre">PyPoint_NEW()</span></code>
+and <code class="docutils literal"><span class="pre">PyPoint_Init()</span></code> functions, I&#8217;m not absolutely certain that the later
 needs to be defined (that part is still not clear to me from the Python doc).</li>
-<li>As it&#8217;s not a <tt class="docutils literal"><span class="pre">DBo</span></tt> there is no <tt class="docutils literal"><span class="pre">destroy()</span></tt> method, so no call to
-<tt class="docutils literal"><span class="pre">DirectDestroyMethod()</span></tt></li>
-<li>Lastly, as this object has a <tt class="docutils literal"><span class="pre">PyPoint_NEW()</span></tt> (field <tt class="docutils literal"><span class="pre">tp_new</span></tt>) and
-a <tt class="docutils literal"><span class="pre">PyPoint_Init()</span></tt> (field <tt class="docutils literal"><span class="pre">tp_init</span></tt>) we have to use the macro
-<tt class="docutils literal"><span class="pre">PyTypeObjectLinkPyTypeNewInit()</span></tt> to define <tt class="docutils literal"><span class="pre">PyPoint_LinkPyType()</span></tt>.</li>
+<li>As it&#8217;s not a <code class="docutils literal"><span class="pre">DBo</span></code> there is no <code class="docutils literal"><span class="pre">destroy()</span></code> method, so no call to
+<code class="docutils literal"><span class="pre">DirectDestroyMethod()</span></code></li>
+<li>Lastly, as this object has a <code class="docutils literal"><span class="pre">PyPoint_NEW()</span></code> (field <code class="docutils literal"><span class="pre">tp_new</span></code>) and
+a <code class="docutils literal"><span class="pre">PyPoint_Init()</span></code> (field <code class="docutils literal"><span class="pre">tp_init</span></code>) we have to use the macro
+<code class="docutils literal"><span class="pre">PyTypeObjectLinkPyTypeNewInit()</span></code> to define <code class="docutils literal"><span class="pre">PyPoint_LinkPyType()</span></code>.</li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyPoint.h&quot;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;hurricane/isobar/PyPoint.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">Isobar</span> <span class="p">{</span>
   <span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
@@ -362,7 +367,7 @@ a <tt class="docutils literal"><span class="pre">PyPoint_Init()</span></tt> (fie
         <span class="n">pyPoint</span><span class="o">-&gt;</span><span class="n">_object</span> <span class="o">=</span> <span class="n">point</span><span class="p">;</span>
       <span class="n">HCATCH</span>
 
-      <span class="k">return</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="n">pyPoint</span><span class="p">;</span>
+      <span class="nf">return</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="n">pyPoint</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="k">static</span> <span class="kt">int</span>  <span class="n">PyPoint_Init</span> <span class="p">(</span> <span class="n">PyPoint</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">kwargs</span> <span class="p">)</span>
@@ -402,7 +407,7 @@ a <tt class="docutils literal"><span class="pre">PyPoint_Init()</span></tt> (fie
 <div class="section" id="id1">
 <h2>5.2 Class File<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>To put it bluntly, there is no difference in the Python module for
-a standalone <tt class="docutils literal"><span class="pre">DBo</span></tt> class and a non-<tt class="docutils literal"><span class="pre">DBo</span></tt> class.</p>
+a standalone <code class="docutils literal"><span class="pre">DBo</span></code> class and a non-<code class="docutils literal"><span class="pre">DBo</span></code> class.</p>
 </div>
 </div>
 
@@ -427,7 +432,7 @@ a standalone <tt class="docutils literal"><span class="pre">DBo</span></tt> clas
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

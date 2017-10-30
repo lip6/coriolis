@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -31,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
         <link rel="up" title="Hurricane Python/C++ API Tutorial" href="index.html"/>
         <link rel="next" title="2. Basic File Structure and CMake configuration" href="Configuration.html"/>
@@ -158,7 +160,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane Python/C++ API Tutorial</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">1. Introduction</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#about-technical-choices">1.2 About Technical Choices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#botched-design">1.3 Botched Design</a></li>
@@ -205,15 +207,18 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <tt class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></tt> table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <tt class="docutils literal"><span class="pre">MBK_WIRESETTING</span></tt> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
 </ul>
 
           
@@ -268,17 +273,17 @@ You only have to respect some naming convention.</li>
 my mastering of template programming was less than complete. This is why this
 interface is build with old fashioned C macro instead of C++ template.</p>
 <p>It is my hope that at some point in the future I will have time to completly
-rewrite it, borrowing the interface from <tt class="docutils literal"><span class="pre">boost::python</span></tt>.</p>
+rewrite it, borrowing the interface from <code class="docutils literal"><span class="pre">boost::python</span></code>.</p>
 </div>
 <div class="section" id="about-technical-choices">
 <h2>1.2 About Technical Choices<a class="headerlink" href="#about-technical-choices" title="Permalink to this headline">¶</a></h2>
-<p>Some would say, why not use <em>off the shelf</em> wrappers like  <tt class="docutils literal"><span class="pre">swig</span></tt>
-or <tt class="docutils literal"><span class="pre">boost::python</span></tt>, here are some clues.</p>
+<p>Some would say, why not use <em>off the shelf</em> wrappers like  <code class="docutils literal"><span class="pre">swig</span></code>
+or <code class="docutils literal"><span class="pre">boost::python</span></code>, here are some clues.</p>
 <ol class="arabic">
 <li><p class="first"><strong>Partial exposure of the C++ class tree.</strong> We expose at Python level
 C++ base classes, only if they provides common methods that we want
 to see. Otherwise, we just show them as base classes under Python.
-For instance <tt class="docutils literal"><span class="pre">Library</span></tt> is derived from <tt class="docutils literal"><span class="pre">DBo</span></tt>, but we won&#8217;t see
+For instance <code class="docutils literal"><span class="pre">Library</span></code> is derived from <code class="docutils literal"><span class="pre">DBo</span></code>, but we won&#8217;t see
 it under Python.</p>
 </li>
 <li><p class="first"><strong>Bi-directional communication.</strong> When a Python object is deleted, the
@@ -293,14 +298,14 @@ C++ pointer. So our Python objects can be warned by the C++ objects
 that they are no longer valid and any other operation than the
 deletion should result in a severe non-blocking error.</p>
 <p>To be precise, this apply to persistent object in the C++ database,
-like <tt class="docutils literal"><span class="pre">Cell</span></tt>, <tt class="docutils literal"><span class="pre">Net</span></tt>, <tt class="docutils literal"><span class="pre">Instance</span></tt> or <tt class="docutils literal"><span class="pre">Component</span></tt>. Short lived
-objects like <tt class="docutils literal"><span class="pre">Box</span></tt> or <tt class="docutils literal"><span class="pre">Point</span></tt> retains the classic Python behavior.</p>
-<p>Another aspect is that, for all derived <tt class="docutils literal"><span class="pre">DBo</span></tt> objects, one and only
-one Python object is associated. For one given <tt class="docutils literal"><span class="pre">Instance</span></tt> object we
-will always return the <em>same</em> <tt class="docutils literal"><span class="pre">PyInstance</span></tt> object, thanks to the
+like <code class="docutils literal"><span class="pre">Cell</span></code>, <code class="docutils literal"><span class="pre">Net</span></code>, <code class="docutils literal"><span class="pre">Instance</span></code> or <code class="docutils literal"><span class="pre">Component</span></code>. Short lived
+objects like <code class="docutils literal"><span class="pre">Box</span></code> or <code class="docutils literal"><span class="pre">Point</span></code> retains the classic Python behavior.</p>
+<p>Another aspect is that, for all derived <code class="docutils literal"><span class="pre">DBo</span></code> objects, one and only
+one Python object is associated. For one given <code class="docutils literal"><span class="pre">Instance</span></code> object we
+will always return the <em>same</em> <code class="docutils literal"><span class="pre">PyInstance</span></code> object, thanks to the
 bi-directional link. Obviously, the <em>reference count</em> of the
-<tt class="docutils literal"><span class="pre">PyInstance</span></tt> is managed accordingly. This mechanism is implemented
-by the <tt class="docutils literal"><span class="pre">PyInstance_Link()</span></tt> function.</p>
+<code class="docutils literal"><span class="pre">PyInstance</span></code> is managed accordingly. This mechanism is implemented
+by the <code class="docutils literal"><span class="pre">PyInstance_Link()</span></code> function.</p>
 </li>
 <li><p class="first"><strong>Linking accross modules.</strong> As far as I understand, the wrappers
 are for monolithic libraries. That is, you wrap the entire library
@@ -322,17 +327,17 @@ requiring the functions will link against the associated shared
 library.</li>
 </ul>
 <p>Each module file will be compiled <em>twice</em>, once to build the Python
-module (<tt class="docutils literal"><span class="pre">__PYTHON_MODULE</span></tt> is defined) and once to build the supporting
-shared library (<tt class="docutils literal"><span class="pre">__PYTHON_MODULE__</span></tt> <strong>not</strong> defined). This tricky
-double compilation is taken care of though the <tt class="docutils literal"><span class="pre">add_python_module</span></tt>
-<tt class="docutils literal"><span class="pre">cmake</span></tt> macro.</p>
+module (<code class="docutils literal"><span class="pre">__PYTHON_MODULE</span></code> is defined) and once to build the supporting
+shared library (<code class="docutils literal"><span class="pre">__PYTHON_MODULE__</span></code> <strong>not</strong> defined). This tricky
+double compilation is taken care of though the <code class="docutils literal"><span class="pre">add_python_module</span></code>
+<code class="docutils literal"><span class="pre">cmake</span></code> macro.</p>
 <p>For the core Hurricane library we will have:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">Hurricane.so</span></tt> the Python module (use with: <tt class="docutils literal"><span class="pre">import</span> <span class="pre">Hurricane</span></tt>).</li>
-<li><tt class="docutils literal"><span class="pre">libisobar.so.1.0</span></tt> the supporting shared library.</li>
+<li><code class="docutils literal"><span class="pre">Hurricane.so</span></code> the Python module (use with: <code class="docutils literal"><span class="pre">import</span> <span class="pre">Hurricane</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">libisobar.so.1.0</span></code> the supporting shared library.</li>
 </ul>
-<p>The <tt class="docutils literal"><span class="pre">PyLibrary.cpp</span></tt> file will have the following structure:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;hurricane/isobar/PyLibrary.h&quot;</span>
+<p>The <code class="docutils literal"><span class="pre">PyLibrary.cpp</span></code> file will have the following structure:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;hurricane/isobar/PyLibrary.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
 
@@ -340,21 +345,21 @@ double compilation is taken care of though the <tt class="docutils literal"><spa
 
 <span class="cp">#if defined(__PYTHON_MODULE__)</span>
 
-<span class="cp">  // +=================================================================+</span>
-<span class="cp">  // |               &quot;PyLibrary&quot; Python Module Code Part               |</span>
-<span class="cp">  // +=================================================================+</span>
-<span class="cp">  //</span>
-<span class="cp">  // The classic part of a Python module. Goes into Hurricane.so.</span>
+  <span class="c1">// +=================================================================+</span>
+  <span class="c1">// |               &quot;PyLibrary&quot; Python Module Code Part               |</span>
+  <span class="c1">// +=================================================================+</span>
+  <span class="c1">//</span>
+  <span class="c1">// The classic part of a Python module. Goes into Hurricane.so.</span>
 
 
 <span class="cp">#else  </span><span class="c1">// End of Python Module Code Part.</span>
 
-<span class="cp">  // x=================================================================x</span>
-<span class="cp">  // |              &quot;PyLibrary&quot; Shared Library Code Part               |</span>
-<span class="cp">  // x=================================================================x</span>
-<span class="cp">  //</span>
-<span class="cp">  // Functions here will be part of the associated shared library and</span>
-<span class="cp">  // made available to all other Python modules. Goes into libisobar.so.1.0</span>
+  <span class="c1">// x=================================================================x</span>
+  <span class="c1">// |              &quot;PyLibrary&quot; Shared Library Code Part               |</span>
+  <span class="c1">// x=================================================================x</span>
+  <span class="c1">//</span>
+  <span class="c1">// Functions here will be part of the associated shared library and</span>
+  <span class="c1">// made available to all other Python modules. Goes into libisobar.so.1.0</span>
 
 
 <span class="cp"># endif  </span><span class="c1">// Shared Library Code Part.</span>
@@ -372,12 +377,12 @@ modules, but directly uses linker capabilities.</p>
 <div class="section" id="botched-design">
 <h2>1.3 Botched Design<a class="headerlink" href="#botched-design" title="Permalink to this headline">¶</a></h2>
 <p>The mechanism to compute the signature of a call to a Python function,
-the <tt class="docutils literal"><span class="pre">__cs</span></tt> object, is much too complex and, in fact, not needed.
+the <code class="docutils literal"><span class="pre">__cs</span></code> object, is much too complex and, in fact, not needed.
 At some point I may root it out, but it is used in so many places...</p>
-<p>What I should have used the <tt class="docutils literal"><span class="pre">&quot;O!&quot;</span></tt> capablity of <tt class="docutils literal"><span class="pre">PyArg_ParseTuple()</span></tt>,
+<p>What I should have used the <code class="docutils literal"><span class="pre">&quot;O!&quot;</span></code> capablity of <code class="docutils literal"><span class="pre">PyArg_ParseTuple()</span></code>,
 like in the code below:</p>
 <p></p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyContact_create</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyContact_create</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Contact</span><span class="o">*</span> <span class="n">contact</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
   <span class="n">HTRY</span>
@@ -438,7 +443,7 @@ like in the code below:</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Jul 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

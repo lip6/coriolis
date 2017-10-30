@@ -103,23 +103,23 @@ First step is to install the prerequisites. Currently, only RapidJSON_.
 As RapidJSON is evolving fast, if you encounter compatibility problems,
 the exact version we compiled against is given below. ::
 
-   dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src/support
-   dummy@lepka:~$ cd ~/coriolis-2.x/src/support
-   dummy@lepka:~$ git clone http://github.com/miloyip/rapidjson
-   dummy@lepka:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
+   dummy@lepka:~> mkdir -p ~/coriolis-2.x/src/support
+   dummy@lepka:~> cd ~/coriolis-2.x/src/support
+   dummy@lepka:~> git clone http://github.com/miloyip/rapidjson
+   dummy@lepka:~> git checkout ec322005072076ef53984462fb4a1075c27c7dfd
 
 The second step is to create the source directory and pull the |git| repository: ::
 
-   dummy@lepka:~$ mkdir -p ~/coriolis-2.x/src
-   dummy@lepka:~$ cd ~/coriolis-2.x/src
-   dummy@lepka:~$ git clone https://www-soc.lip6.fr/git/coriolis.git
+   dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
+   dummy@lepka:~> cd ~/coriolis-2.x/src
+   dummy@lepka:~> git clone https://www-soc.lip6.fr/git/coriolis.git
 
 Third and final step, build & install: ::
 
-   dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+   dummy@lepka:src> ./bootstrap/ccb.py --project=support  \
                                        --project=coriolis \
                                        --make="-j4 install"
-   dummy@lepka:src$ ./bootstrap/ccb.py --project=support  \
+   dummy@lepka:src> ./bootstrap/ccb.py --project=support  \
                                        --project=coriolis \
                                        --doc --make="-j1 install"
 
@@ -129,7 +129,7 @@ stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
 
-   dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+   dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
                                        --devtoolset-2 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
@@ -150,8 +150,8 @@ In the |Coriolis| |git| repository, two branches are present:
   development team. To use it instead of the :cb:`master` one, do the following
   command just after the first step: ::
 
-      dummy@lepka:~$ git checkout devel
-      dummy@lepka:src$ ./bootstrap/ccb.py --project=coriolis \
+      dummy@lepka:~> git checkout devel
+      dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
                                           --make="-j4 install" --debug
 
   Be aware that it may requires newer versions of the dependencies and may introduce
@@ -160,7 +160,7 @@ In the |Coriolis| |git| repository, two branches are present:
   In the (unlikely) event of a crash of |cgt|, as it is a |Python| script, the right
   command to run |gdb| on it is: ::
 
-      dummy@lepka:work$ gdb python core.XXXX 
+      dummy@lepka:work> gdb python core.XXXX 
 
 |newpage|
 
@@ -172,9 +172,9 @@ Additionnal Requirement under |MacOS|
 seems unable to work with the |Python| bundled with |MacOS|. So you have to install
 both of them from |macports|: ::
 
-    dummy@macos:~$ port install boost +python27
-    dummy@macos:~$ port select python python27
-    dummy@macos:-$ export DYLD_FRAMEWORK_PATH=/opt/local/Library/Frameworks
+    dummy@macos:~> port install boost +python27
+    dummy@macos:~> port select python python27
+    dummy@macos:-> export DYLD_FRAMEWORK_PATH=/opt/local/Library/Frameworks
 
 The last two lines tell |MacOS| to use the |Python| from |macports| and *not* from
 the system.

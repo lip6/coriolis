@@ -1,10 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
+
+#echo "Args:     $*"
 
  document=`basename -s .rst ${@:$#}`
   sources=${@:1:$(($# -1))}
 
-#echo "Args:     $*"
  echo "Document: ${document}.rst"
  echo "Sources:  ${sources}"
 
