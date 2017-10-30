@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF 5.8 C/C++ Programming Interface -- 7</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491994561">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Library Exchange Format (LEF) files.">
+<META NAME="DocTitle" CONTENT="LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="7">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491994561">
+<META NAME="NextFile" CONTENT="ch8lefdiff.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch6LEFwriter.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="int lefGZipClose(lefGZFile filePtr) ;,lefGZFile lefGZipOpen(const char* gzipFile,const char* mode);">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF 5.8 C/C++ Programming Interface -- 7">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch6LEFwriter.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch8lefdiff.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>7<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1014156">LEF Compressed File Routines</a></h1>
+      <p><a name="1019932">The Cadence</a><font color="#000000"><sup>&#174;</sup></font> Library Exchange Format (LEF) reader provides the following routines for opening and closing compressed LEF files. These routines are used instead of the <font size="2" face="'Courier New'" color="#000000">fopen</font> and <font size="2" face="'Courier New'" color="#000000">fclose</font> routines that are used for regular LEF files. </p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1014302" title="7" name="1014158"><font color="Blue"><u>lefGZipOpen</u></font></a><a href="#1014302" title="7"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1014311" title="7" name="1021275"><font color="Blue"><u>lefGZipClose</u></font></a><a href="#1014311" title="7"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1021641" title="7" name="1022190"><font color="Blue"><u>Example</u></font></a><a href="#1021641" title="7"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="1014302">lefGZipOpen</a></h3>
+      <p><a name="1022170">Opens a compressed LEF file. If the file opens with no errors, this routine returns a pointer to the file.</a></p>
+      <h4><a name="1022171">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020526">lefGZFile lefGZipOpen(<dd>const char* </a><font size="2" face="'Courier New'" color="#000000"><em>gzipFile</em></font>,<dd>const char* <font size="2" face="'Courier New'" color="#000000"><em>mode</em></font>);</font>
+      </dl>
+      <h4><a name="1022176">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1022177"><font size="2" face="'Courier New'" color="#000000"><em>gzipFile</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022703">Specifies the compressed file to open. </a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1022178"><font size="2" face="'Courier New'" color="#000000"><em>mode</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022715">Specifies how to open the file. Compressed files should be opened as read only; therefore, specify </a><font size="2" face="'Courier New'" color="#000000">"r"</font>. </blockquote>
+      <h3><a name="1014311">lefGZipClose</a></h3>
+      <p><a name="1020648">Closes the compressed LEF file. If the file closes with no errors, this routine returns zero.</a></p>
+      <h4><a name="1020569">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020570">int lefGZipClose(<dd>lefGZFile </a><font size="2" face="'Courier New'" color="#000000"><em>filePtr</em></font>) ;</font>
+      </dl>
+      <h4><a name="1020593">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1020996"><font size="2" face="'Courier New'" color="#000000"><em>filePtr</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022723">Specifies a pointer to the compressed file to close. </a></blockquote>
+      <h3><a name="1021641">Example</a></h3>
+      <p><a name="1021642">The following example uses the </a><font size="2" face="'Courier New'" color="#000000">lefGZipOpen</font> and <font size="2" face="'Courier New'" color="#000000">lefGZipClose</font> routines to open and close a compressed file. </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1021968">lefrInit() ;</a></font>
+      </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022237">&nbsp;</a></font>
+      </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022238">for (fileCt = 0; fileCt &#60; numInFile; fileCt++) {</a></font>
+      </p>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022240">lefrReset();</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022236">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022339">&#47;&#47; Open the compressed LEF file for the reader to read</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022248">if ((f = lefGZipOpen(inFile[fileCt], "r")) == 0) {</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022249">&nbsp;&nbsp;&nbsp;fprintf(stderr, &#34;Couldn't open input file '%s'\n&#34;, inFile[fileCt]);</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022262">&nbsp;&nbsp;&nbsp;return(2) ;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022270">}</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022271">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022314">(void)lefrEnableReadEncrypted();</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022316">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022324">&#47;&#47; Initialize the lef writer. Needs to be called first.</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022317">status = lefwInit(fout); </a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022281">if (status != LEFW_OK)</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022333">&nbsp;&nbsp;&nbsp;return 1;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022334">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022335">res = lefrRead((FILE*)f, inFile[fileCt], (void*)userData);</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022337">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022336">if (res)</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022282">&nbsp;&nbsp;&nbsp;fprintf(stderr, "Reader returns bad status.\n", inFile[fileCt]);</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022283">&nbsp;</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022305">&#47;&#47; Close the compressed LEF file. </a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022284">lefGZipClose(f);</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022285">(void)lefrPrintUnusedCallbacks(fout);</a></font>
+      </blockquote>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022338">&nbsp;</a></font>
+      </blockquote>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022286">}</a></font>
+      </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022291">fclose(fout);</a></font>
+      </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022292">&nbsp;</a></font>
+      </p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1022293">return 0;}</a></font>
+      </p>
+      <p><a name="1021974">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch6LEFwriter.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch8lefdiff.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

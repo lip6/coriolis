@@ -1,0 +1,1140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF/DEF 5.8 Language Reference -- B</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-26">
+<META NAME="CreateTime" CONTENT="1493186672">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the syntax for Library Exchange Format (LEF) and Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="LEF/DEF 5.8 Language Reference">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="B">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefdefref">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-26">
+<META NAME="ModifiedTime" CONTENT="1493186672">
+<META NAME="NextFile" CONTENT="PAE.html">
+<META NAME="PageCount" CONTENT="18">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="Examples.html">
+<META NAME="Product" CONTENT="Innovus, Languages">
+<META NAME="ProductFamily" CONTENT="Digital Implementation, Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="BUSBITCHARS &quot;[]&quot; ;,END SPACING,END UNITS,END cut1,END cut2,END cut3,END cut4,END cut5,END layerName ,END metal1,END metal2,END metal3,END metal4,END metal5,END metal6,END via12_H,END via12_V,END via23,END via23_stack_north,END via23_stack_south,END via34,END via34_stack_east,END via34_stack_west,END via45,END via45_stack_north,END via45_stack_south,END via56_H,END via56_V,END via56_stack_east,END via56_stack_west,END viaName,LAYER cut1TYPE CUT ;,LAYER cut2TYPE CUT ;,LAYER cut3TYPE CUT ;,LAYER cut4TYPE CUT ;,LAYER cut5TYPE CUT ;,LAYER layerNameTYPE ROUTING ;PITCH distance ;WIDTH defWidth ;SPACING minSpacing [RANGE minwidth maxwidth] ;WIREEXTENSION value ;,LAYER metal1TYPE ROUTING ;WIDTH 0.23 ;SPACING 0.23 ; PITCH 0.56 ;DIRECTION HORIZONTAL ;,LAYER metal1TYPE ROUTING ;WIDTH 0.23 ;SPACING 0.23 ; SPACING 0.6 RANGE 10.02 1000 ;PITCH 0.56 ;DIRECTION HORIZONTAL ;,LAYER metal1TYPE ROUTING ;WIDTH 0.23 ;SPACING 0.23 ;PITCH 0.56 ;DIRECTION HORIZONTAL ;,LAYER metal1WIDTH 0.23 ;SPACING 0.23 ; SPACING 0.6 RANGE 10.002 1000 ; ,LAYER metal2TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;PITCH 0.56 ;WIREEXTENSION 0.19 ;   DIRECTION VERTICAL ;,LAYER metal2TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;SPACING 0.6 RANGE 10.02 1000 ;PITCH 0.56 ;WIREEXTENSION 0.19 ;DIRECTION VERTICAL ;,LAYER metal3TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;PITCH 0.56 ;DIRECTION HORIZONTAL ;,LAYER metal3TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;SPACING 0.6 RANGE 10.02 1000 ;PITCH 0.56 ;WIREEXTENSION 0.19 ;DIRECTION HORIZONTAL ;,LAYER metal4TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;SPACING 0.6 RANGE 10.02 1000 ;PITCH 0.56 ;WIREEXTENSION 0.19 ;DIRECTION VERTICAL ;,LAYER metal5TYPE ROUTING ;WIDTH 0.28 ;SPACING 0.28 ;SPACING 0.6 RANGE 10.02 1000 ;PITCH 0.56 ;WIREEXTENSION 0.19 ;DIRECTION HORIZONTAL ;,LAYER metal6TYPE ROUTING ;WIDTH 0.44 ;SPACING 0.46 ;SPACING 0.6 RANGE 10.02 1000 ;PITCH 1.12 ;DIRECTION VERTICAL ;,SPACING SAMENET   layerName layerName minSpace [STACK] ;,UNITSDATABASE MICRONS 100  ;,VERSION 5.8 ;,VIA via12_H DEFAULTLAYER metal1 ;RECT -0.19 -0.14 0.19 0.14 ;        # metal1 end-of-lineextension 0.6 in both directionsLAYER cut1 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via12_H DEFAULTLAYER metal1 ;RECT -0.19 -0.14 0.19 0.14 ;     # metal1 end-of-line ext 0.6LAYER cut1 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via12_V DEFAULTLAYER metal1 ;RECT -0.14 -0.19 0.14 0.19 ;        # metal1 end-of-lineextension 0.6 in both directionsLAYER cut1 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via12_V DEFAULTLAYER metal1 ;RECT -0.14 -0.19 0.14 0.19 ;     # metal1 end-of-line ext 0.6LAYER cut1 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via23 DEFAULTLAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;        # Use square viaLAYER cut2 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal3 ;RECT -0.14 -0.14 0.14 0.14 ;        # Use square via,VIA via23 DEFAULTLAYER metal2 ;RECT -0.14 -0.14 0.14 0.14 ;LAYER cut2 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal3 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via23_stack_north DEFAULTLAYER metal2 ;RECT -0.14 -0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74LAYER cut2 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal3 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via23_stack_south DEFAULTLAYER metal2 ;RECT -0.14 -0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74LAYER cut2 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal3 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via34 DEFAULTLAYER metal3 ;RECT -0.14 -0.14 0.14 0.14 ;LAYER cut3 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal4 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via34_stack_east DEFAULTLAYER metal3 ;RECT -0.14 -0.14 0.6 0.14 ;   # MAR = 0.28 x 0.74LAYER cut3 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal4 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via34_stack_west DEFAULTLAYER metal3 ;RECT -0.6 -0.14 0.14 0.14 ;   # MAR = 0.28 x 0.74LAYER cut3 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal4 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via45 DEFAULTLAYER metal4 ;RECT -0.14 -0.14 0.14 0.14 ;LAYER cut4 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal5 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via45_stack_north DEFAULTLAYER metal4 ;RECT -0.14 -0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74LAYER cut4 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal5 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via45_stack_south DEFAULTLAYER metal4 ;RECT -0.14 -0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74LAYER cut4 ;RECT -0.13 -0.13 0.13 0.13 ;LAYER metal5 ;RECT -0.14 -0.14 0.14 0.14 ;,VIA via56_H DEFAULTLAYER metal5 ;RECT -0.24 -0.19 0.24 0.19 ;LAYER cut5 ;RECT -0.18 -0.18 0.18 0.18 ;LAYER metal6 ;RECT -0.27 -0.27 0.27 0.27 ;,VIA via56_V DEFAULTLAYER metal5 ;RECT -0.19 -0.24 0.19 0.24 ;LAYER cut5 ;RECT -0.18 -0.18 0.18 0.18 ;LAYER metal6 ;RECT -0.27 -0.27 0.27 0.27 ;,VIA via56_stack_east DEFAULTLAYER metal5 ;RECT -0.19 -0.19 0.35 0.19 ;   # MAR = 0.38 x 0.54LAYER cut5 ;RECT -0.18 -0.18 0.18 0.18 ;LAYER metal6 ;RECT -0.27 -0.27 0.27 0.27 ;,VIA via56_stack_west DEFAULTLAYER metal5 ;RECT -0.35 -0.19 0.19 0.19 ;   # MAR = 0.38 x 0.54LAYER cut5 ;RECT -0.18 -0.18 0.18 0.18 ;LAYER metal6 ;RECT -0.27 -0.27 0.27 0.27 ;,VIA viaName DEFAULT[TOPSTACKONLY]LAYER layerName RECT pt pt ; ... ">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF/DEF 5.8 Language Reference -- B">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefdefrefTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<a href="lefdefrefIX.html"><img src="../support/nav2_index.gif" border="0"></a>
+</td>
+        <td>
+          <a href="Examples.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="PAE.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefdefref.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF&#47;DEF 5.8 Language Reference</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>B<a name="1031371">&nbsp;</a></h1>
+      <h1><a name="1031927">Optimizing LEF Technology for Place and Route</a></h1>
+      <p><a name="1031952">This appendix contains the following information.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1031962" title="B" name="1031953"><font color="#0000ff"><u>Overview</u></font></a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1031996" title="B" name="1031956"><font color="Blue"><u>Guidelines for Routing Pitch</u></font></a><a href="#1031996" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1032229" title="B" name="1031957"><font color="Blue"><u>Guidelines for Wide Metal Spacing</u></font></a><a href="#1032229" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1032245" title="B" name="1031958"><font color="Blue"><u>Guidelines for Wire Extension at Vias</u></font></a><a href="#1032245" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1032644" title="B" name="1031959"><font color="Blue"><u>Guidelines for Default Vias</u></font></a><a href="#1032644" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1033035" title="B" name="1031960"><font color="Blue"><u>Guidelines for Stack Vias (MAR Vias) and Samenet Spacing</u></font></a><a href="#1033035" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1033558" title="B" name="1031961"><font color="Blue"><u>Example of an Optimized LEF Technology File</u></font></a><a href="#1033558" title="B"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1031962">Overview</a></h2>
+      <p><a name="1036182">This appendix provides guidelines for defining the optimized technology section in the LEF file to get the best performance using Cadence</a><font color="#000000"><sup>&#174;</sup></font> place&#45;and&#45;route tools.</p>
+      <p><a name="1036179">For the following guidelines, the preferred routing direction for </a><font size="2" face="'Courier New'" color="#000000">metal1</font> and all other odd metal layers is horizontal. The preferred routing direction for <font size="2" face="'Courier New'" color="#000000">metal2</font> and all other even metal layers is vertical. Standard cells are arranged in horizontal rows.</p>
+      <p><a name="1031980">This appendix discusses the following LEF statements.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1031987"><font size="2" face="'Courier New'" color="#000000">LAYER</font></a> <font size="2" face="'Courier New'" color="#000000"><em>layerName<dd></em></font><font size="2" face="'Courier New'" color="#000000">TYPE ROUTING</font> ;<dd><font size="2" face="'Courier New'" color="#000000">PITCH</font> <font size="2" face="'Courier New'" color="#000000"><em>distance</em></font> ;<dd><font size="2" face="'Courier New'" color="#000000">WIDTH</font> <font size="2" face="'Courier New'" color="#000000"><em>defWidth</em></font> ;<dd><font size="2" face="'Courier New'" color="#000000">SPACING</font> <font size="2" face="'Courier New'" color="#000000"><em>minSpacing</em></font> [<font size="2" face="'Courier New'" color="#000000">RANGE</font> <font size="2" face="'Courier New'" color="#000000"><em>minwidth</em></font> <font size="2" face="'Courier New'" color="#000000"><em>maxwidth</em></font>] ;<dd><font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> <font size="2" face="'Courier New'" color="#000000"><em>value</em></font> ;</font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035376"><font size="2" face="'Courier New'" color="#000000">END</font></a> <font size="2" face="'Courier New'" color="#000000"><em>layerName</em></font> </font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1031936"><font size="2" face="'Courier New'" color="#000000">VIA</font></a> <font size="2" face="'Courier New'" color="#000000"><em>viaName</em></font> <font size="2" face="'Courier New'" color="#000000">DEFAULT<dd></font>[<font size="2" face="'Courier New'" color="#000000">TOPSTACKONLY</font>]<dd><font size="2" face="'Courier New'" color="#000000">LAYER</font> <font size="2" face="'Courier New'" color="#000000"><em>layerName</em></font> <font size="2" face="'Courier New'" color="#000000">RECT</font> <font size="2" face="'Courier New'" color="#000000"><em>pt</em></font> <font size="2" face="'Courier New'" color="#000000"><em>pt</em></font> ; ... </font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035383"><font size="2" face="'Courier New'" color="#000000">END</font></a> <font size="2" face="'Courier New'" color="#000000"><em>viaName</em></font></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1031991"><font size="2" face="'Courier New'" color="#000000">SPACING</font></a> <dd><font size="2" face="'Courier New'" color="#000000">SAMENET<dd></font>&nbsp;&nbsp;&nbsp;<font size="2" face="'Courier New'" color="#000000"><em>layerName</em></font> <font size="2" face="'Courier New'" color="#000000"><em>layerName</em></font> <font size="2" face="'Courier New'" color="#000000"><em>minSpace</em></font> [<font size="2" face="'Courier New'" color="#000000">STACK</font>] ;</font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035387"><font size="2" face="'Courier New'" color="#000000">END</font></a> <font size="2" face="'Courier New'" color="#000000">SPACING</font></font>
+      </dl>
+      <h2><a name="1031996">Guidelines for Routing Pitch</a></h2>
+      <p><a name="1032041">The following is a summary for choosing the right pitch for an existing design library. For detailed information on determining routing pitch, refer to the </a><font color="#000000"><em>Cadence Abstract Generator User Guide</em></font>.</p>
+      <p>
+        <strong><a name="1032052">Pitch Measurement <br><img src="images/OptimizingLEFTechnology.09.1.1.png" alt=""><br> </a></strong>
+      </p>
+      <h4><a name="1032055">DESIGN RULE No. 1</a></h4>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="108">
+            <p><a name="1032331">W.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="540">
+            <p><a name="1032333">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> = 0.23 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032335">S.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032337">Minimum space between two </a><font size="2" face="'Courier New'" color="#000000">metal1</font> regions = 0.23 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032339">W.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032341">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032391">E.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032393">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> beyond <font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032387">W.3</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032389">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal3</font> = 0.28 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032383">S.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032385">Minimum space between two </a><font size="2" face="'Courier New'" color="#000000">metal3</font> regions = 0.28 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032379">W.4</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032381">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut2</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032453">E.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032455">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> beyond <font size="2" face="'Courier New'" color="#000000">cut2</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+      </table>
+      <p align="left"><a name="1034859"><img src="images/OptimizingLEFTechnology.09.1.2.png" alt=""><br></a></p>
+      <p><a name="1034860">Although the minimum </a><font size="2" face="'Courier New'" color="#000000">metal1</font> routing pitch is 0.485um from the design rule, you should use 0.56um instead, to match the <font size="2" face="'Courier New'" color="#000000">metal3</font> routing pitch in the same preferred direction.</p>
+      <h4><a name="1032157">LEF Construct No. 1</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032160"><font size="2" face="'Courier New'" color="#000000">LAYER</font></a> metal1<dd><font size="2" face="'Courier New'" color="#000000">TYPE</font> ROUTING ;<dd>WIDTH 0.23 ;<dd>SPACING 0.23 ; <dd>PITCH 0.56 ;<dd>DIRECTION HORIZONTAL ;</font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035388">END metal1</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032167">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032168">LAYER metal3<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>PITCH 0.56 ;<dd>DIRECTION HORIZONTAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035389">END metal3</a></font>
+      </dl>
+      <h4><a name="1032158">Recommendations</a></h4>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032221">Use line&#45;to&#45;via spacing for both the horizontal and vertical direction.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032222">Allow diagonal vias with the routing pitch.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032223">Align the routing pitch for </a><font size="2" face="'Courier New'" color="#000000">metal1</font> and <font size="2" face="'Courier New'" color="#000000">metal2</font>, with the pins inside the standard cells.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032224">Have uniform routing pitch in the same preferred direction. The pitch ratio should be 2 &#45; 3 or 1 &#45; 2. It is better to define the </a><font size="2" face="'Courier New'" color="#000000">metal1</font> pitch larger than necessary in order to achieve a 1 &#45; 1 ratio because the <font size="2" face="'Courier New'" color="#000000">metal1</font> width is usually smaller the <font size="2" face="'Courier New'" color="#000000">metal2</font> and <font size="2" face="'Courier New'" color="#000000">metal3</font> widths.</td>
+          </tr>
+        </table>
+      </div>
+      <h4><a name="1032225">Pitch Recommendations for Library Development</a></h4>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032226">All pins should be on the grid, and only those portions of the pins that are accessible to the router should be modeled as pins. For example, 45 degree pin geometry.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032227">The height of the cell should be the even multiple of the </a><font size="2" face="'Courier New'" color="#000000">metal1</font> pitch, and the width of the cell should be the even multiple of the <font size="2" face="'Courier New'" color="#000000">metal2</font> pitch.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032228">The blockage modeling, especially for </a><font size="2" face="'Courier New'" color="#000000">metal1</font>, should be simplified as much as possible. For example, it is very common for the entire area within the cell boundary to be obstructed in <font size="2" face="'Courier New'" color="#000000">metal1</font>, so use a single rectangular blockage instead of many small blockages.</td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1032229">Guidelines for Wide Metal Spacing</a></h2>
+      <p><a name="1032234">The </a><font size="2" face="'Courier New'" color="#000000">SPACING</font> statement in the LEF <font size="2" face="'Courier New'" color="#000000">LAYER</font> section is applied to both regular and special wires. You can use the Cadence&#174; ultra router option <font size="2" face="'Courier New'" color="#000000">frouteUseRangeRule</font> to determine which objects to check against the <font size="2" face="'Courier New'" color="#000000">SPACING RANGE</font> statement. The default checks both pin and obstruction. </p>
+      <h4><a name="1032247">DESIGN RULE No. 2</a></h4>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="108">
+            <p><a name="1032563">S.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="540">
+            <p><a name="1032565">Minimum space between two </a><font size="2" face="'Courier New'" color="#000000">metal1</font> regions = 0.23 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032567">S.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032598">Minimum space between metal lines with one or both metal line width and length are greater than 10um = 0.6 </a><font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+      </table>
+      <p align="left"><a name="1032286"><img src="images/OptimizingLEFTechnology.09.1.3.png" alt=""><br></a></p>
+      <h4><a name="1032290">LEF CONSTRUCT No. 2</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032292">LAYER metal1<dd>WIDTH 0.23 ;<dd>SPACING 0.23 ; <dd>SPACING 0.6 RANGE 10.002 1000 ; </a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035390">END metal1</a></font>
+      </dl>
+      <h2><a name="1032245">Guidelines for Wire Extension at Vias</a></h2>
+      <p><a name="1034719">The following guidelines are for wire extension at vias.</a></p>
+      <h4><a name="1032315">DESIGN RULE No. 3</a></h4>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="108">
+            <p><a name="1032473">W.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="540">
+            <p><a name="1032475">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032477">W.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032479">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> = 0.28 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032481">E.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032483">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> beyond <font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032485">E.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032487">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> end&#45;of&#45;line region beyond <font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.06 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+      </table>
+      <p align="left"><a name="1035039"><img src="images/OptimizingLEFTechnology.09.1.4.png" alt=""><br></a></p>
+      <h4><a name="1032646">LEF CONSTRUCT No. 3</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032648">LAYER metal2<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>PITCH 0.56 ;<dd>WIREEXTENSION 0.19 ;   <dd>DIRECTION VERTICAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035391">END metal2</a></font>
+      </dl>
+      <p><a name="1032656">&nbsp;</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032657">VIA via23 DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;        # Use square via<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;        # Use square via</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035392">END via23</a></font>
+      </dl>
+      <h4><a name="1032643">Recommendations</a></h4>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032733">Use the </a><font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> statement instead of defining multiple vias because the width of the <font size="2" face="'Courier New'" color="#000000">metal2</font> in <font size="2" face="'Courier New'" color="#000000">cut1</font> is the same as the default routing width of the <font size="2" face="'Courier New'" color="#000000">metal2</font> layer.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1036105">The </a><font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> statement only extends wires and not vias. For 65nm and below, <font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> is no longer recommended because it may generate some advance rule violations if wires and vias have different widths. </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1032734">Define the </a><font size="2" face="'Courier New'" color="#000000">DEFAULT</font> <font size="2" face="'Courier New'" color="#000000">VIA</font> as a square via.</td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1032644">Guidelines for Default Vias</a></h2>
+      <p><a name="1034720">The following guidelines are for default vias.</a></p>
+      <h4><a name="1032743">DESIGN RULE No. 4</a></h4>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="636">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="108">
+            <p><a name="1032753">W.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="528">
+            <p><a name="1032755">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> = 0.23 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032757">W.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032759">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032761">E.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032763">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> beyond <font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032792">E.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1032794">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal1</font> end&#45;of&#45;line region beyond <font size="2" face="'Courier New'" color="#000000">cut1</font> = 0.06 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+      </table>
+      <p align="left"><a name="1035099"><img src="images/OptimizingLEFTechnology.09.1.5.png" alt=""><br></a></p>
+      <h4><a name="1032893">LEF CONSTRUCT No. 4 (Case B)</a></h4>
+      <p>
+        <font size="3" face="Sans-Serif" color="#000000"><a name="1032894">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032895">LAYER metal1<dd>TYPE ROUTING ;<dd>WIDTH 0.23 ;<dd>SPACING 0.23 ;<dd>PITCH 0.56 ;<dd>DIRECTION HORIZONTAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035393">END metal1</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033023">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032903">VIA via12_H DEFAULT<dd>LAYER metal1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.19 &#45;0.14 0.19 0.14 ;        # </a><font size="2" face="'Courier New'" color="#000000">metal1</font> end&#45;of&#45;line<dd>&nbsp;&nbsp;&nbsp;&nbsp;extension 0.6 in both directions<dd>LAYER cut1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035394">END via12_H</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033022">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032912">VIA via12_V DEFAULT<dd>LAYER metal1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.19 0.14 0.19 ;        # </a><font size="2" face="'Courier New'" color="#000000">metal1</font> end&#45;of&#45;line<dd>&nbsp;&nbsp;&nbsp;&nbsp;extension 0.6 in both directions<dd>LAYER cut1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035395">END via12_V</a></font>
+      </dl>
+      <h4><a name="1032741">Recommendations </a></h4>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033033">If the width of the end&#45;of&#45;line metal extension is the same as the default metal routing width, as in Case A, use the </a><font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> statement in the LEF <font size="2" face="'Courier New'" color="#000000">LAYER</font> section, and define a square via in the <font size="2" face="'Courier New'" color="#000000">DEFAULT</font> <font size="2" face="'Courier New'" color="#000000">VIA</font> section.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033034">If the width of the end&#45;of&#45;line metal extension is the same as the width of the via metal, as in Case B, define one horizontal </a><font size="2" face="'Courier New'" color="#000000">DEFAULT</font> <font size="2" face="'Courier New'" color="#000000">VIA</font> and one vertical <font size="2" face="'Courier New'" color="#000000">DEFAULT</font> <font size="2" face="'Courier New'" color="#000000">VIA</font> to cover the required metal extension area in both pregerred and non&#45;preferred routing directions. Do not use the <font size="2" face="'Courier New'" color="#000000">WIREEXTENSION</font> statement in the LEF <font size="2" face="'Courier New'" color="#000000">LAYER</font> section.</td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1033035">Guidelines for Stack Vias (MAR Vias) and Samenet Spacing</a></h2>
+      <p><a name="1034721">The following guidelines are for stack vias (minimum area rule) and </a><font size="2" face="'Courier New'" color="#000000">SAMENET</font> <font size="2" face="'Courier New'" color="#000000">SPACING</font>.</p>
+      <h4><a name="1033058">DESIGN RULE No. 5</a></h4>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="108">
+            <p><a name="1033082">W.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="540">
+            <p><a name="1033084">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> = 0.28 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033086">W.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033088">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut2</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033090">E.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033092">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> beyond <font size="2" face="'Courier New'" color="#000000">cut2</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033106">A.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033108">Minimum area of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> = 0.2025 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033102">C.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033104"><font size="2" face="'Courier New'" color="#000000">Cut2</font></a> can be fully or partially stacked on <font size="2" face="'Courier New'" color="#000000">cut1</font>, contact or any combination</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033098">W.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033100">Minimum width of </a><font size="2" face="'Courier New'" color="#000000">metal3</font> = 0.28 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033094">W.2</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033096">Minimum and maximum width of </a><font size="2" face="'Courier New'" color="#000000">cut3</font> = 0.26 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033160">E.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033162">Minimum extension of </a><font size="2" face="'Courier New'" color="#000000">metal2</font> beyond <font size="2" face="'Courier New'" color="#000000">cut3</font> = 0.01 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033156">A.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033158">Minimum area of </a><font size="2" face="'Courier New'" color="#000000">metal3</font> = 0.2025 <font face="symbol" color="#000000">μ</font>m</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033152">C.1</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1033154"><font size="2" face="'Courier New'" color="#000000">Cut3</font></a> can be fully or partially stacked on <font size="2" face="'Courier New'" color="#000000">cut2</font>, <font size="2" face="'Courier New'" color="#000000">cut1</font>, contact or any combination</p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1035254"><img src="images/OptimizingLEFTechnology.09.1.6.png" alt=""><br></a></p>
+      <h4><a name="1033333">LEF CONSTRUCT No. 5</a></h4>
+      <p>
+        <font size="3" face="Sans-Serif" color="#000000"><a name="1033334">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033335">VIA via23_stack_north DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035396">END via23_stack_north</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033343">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033344">VIA via23_stack_south DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035397">END via23_stack_south</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033352">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033353">VIA via34_stack_east DEFAULT<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.6 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035398">END via34_stack_east</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033361">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033362">VIA via34_stack_west DEFAULT<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.6 &#45;0.14 0.14 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035399">END via34_stack_west</a></font>
+      </dl>
+      <h4><a name="1033056">Recommendations</a></h4>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033547">The minimum metal routing segment (two vias between one pitch grid) with or without end&#45;of&#45;line metal extension should automatically satisfy the minimum area rule.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033548">If vias are stackable, create the </a><font size="2" face="'Courier New'" color="#000000">TOPSTACKONLY</font> vias with a rectangular shape blocking only one neighboring grid for both sides of the preferred routing direction. In other words, one north oriented and one south oriented for vertical&#45;preferred routing layers, and one east oriented and one west oriented for horizontal&#45;preferred routing layers.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033555">Use slightly larger dimensions for the via size to make them an even number, so they snap to the manufacturing grids.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033556">The </a><font size="2" face="'Courier New'" color="#000000">STACK</font> keyword in the <font size="2" face="'Courier New'" color="#000000">SAMENETSPACING</font> statements only allows vias to be fully overlapped (stacked) by SROUTE commands. To allow vias to be partially overlapped, set the environment variable <font size="2" face="'Courier New'" color="#000000">SROUTE</font>.<font size="2" face="'Courier New'" color="#000000">ALLOWOVERLAPINSTACKVIA</font> to <font size="2" face="'Courier New'" color="#000000">TRUE</font>.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033557">The </a><font size="2" face="'Courier New'" color="#000000">metal1</font> layer does not require a MAR via because all metal1 pins should satisfy the minimum area rules.</td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1033558">Example of an Optimized LEF Technology File</a></h2>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033561">VERSION 5.8 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035407">BUSBITCHARS &#34;[]&#34; ;<dd></a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033565">UNITS<dd>DATABASE MICRONS 100  ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035408">END UNITS</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033568">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033569">LAYER metal1<dd>TYPE ROUTING ;<dd>WIDTH 0.23 ;<dd>SPACING 0.23 ; <dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 0.56 ;<dd>DIRECTION HORIZONTAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035412">END metal1</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033577">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033578">LAYER cut1<dd>TYPE CUT ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035413">END cut1</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033581">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033582">LAYER metal2<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 0.56 ;<dd>WIREEXTENSION 0.19 ;<dd>DIRECTION VERTICAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035414">END metal2</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033591">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033592">LAYER cut2<dd>TYPE CUT ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035415">END cut2</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033595">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033596">LAYER metal3<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 0.56 ;<dd>WIREEXTENSION 0.19 ;<dd>DIRECTION HORIZONTAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035418">END metal3</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033605">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033606">LAYER cut3<dd>TYPE CUT ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035419">END cut3</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033609">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033610">LAYER metal4<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 0.56 ;<dd>WIREEXTENSION 0.19 ;<dd>DIRECTION VERTICAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035420">END metal4</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033619">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033620">LAYER cut4<dd>TYPE CUT ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035421">END cut4</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033623">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033624">LAYER metal5<dd>TYPE ROUTING ;<dd>WIDTH 0.28 ;<dd>SPACING 0.28 ;<dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 0.56 ;<dd>WIREEXTENSION 0.19 ;<dd>DIRECTION HORIZONTAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035422">END metal5</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033633">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033634">LAYER cut5<dd>TYPE CUT ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035423">END cut5</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033637">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033638">LAYER metal6<dd>TYPE ROUTING ;<dd>WIDTH 0.44 ;<dd>SPACING 0.46 ;<dd>SPACING 0.6 RANGE 10.02 1000 ;<dd>PITCH 1.12 ;<dd>DIRECTION VERTICAL ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035424">END metal6</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033646">&nbsp;</a></font>
+      </dl>
+      <p><a name="1033647">### start DEFAULT VIA ###</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033648">VIA via12_H DEFAULT<dd>LAYER metal1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.19 &#45;0.14 0.19 0.14 ;     # metal1 end&#45;of&#45;line ext 0.6<dd>LAYER cut1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035425">END via12_H</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033656">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035428">VIA via12_V DEFAULT<dd>LAYER metal1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.19 0.14 0.19 ;     # metal1 end&#45;of&#45;line ext 0.6<dd>LAYER cut1 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035431">END via12_V</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033665">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033666">VIA via23 DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035432">END via23</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033674">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033675">VIA via34 DEFAULT<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;<dd>LAYER cut3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035433">END via34</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033683">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033684">VIA via45 DEFAULT<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;<dd>LAYER cut4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035434">END via45</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033692">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033693">VIA via56_H DEFAULT<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.24 &#45;0.19 0.24 0.19 ;<dd>LAYER cut5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.18 &#45;0.18 0.18 0.18 ;<dd>LAYER metal6 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.27 &#45;0.27 0.27 0.27 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035435">END via56_H</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033701">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033702">VIA via56_V DEFAULT<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.19 &#45;0.24 0.19 0.24 ;<dd>LAYER cut5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.18 &#45;0.18 0.18 0.18 ;<dd>LAYER metal6 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.27 &#45;0.27 0.27 0.27 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035436">END via56_V</a></font>
+      </dl>
+      <p><a name="1033710">### end DEFAULT VIA ###</a></p>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033711">&nbsp;</a></font>
+      </p>
+      <p><a name="1033712">### start STACK VIA ###</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035439">VIA via23_stack_north DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035442">END via23_stack_north</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033721">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033722">VIA via23_stack_south DEFAULT<dd>LAYER metal2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut2 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035443">END via23_stack_south</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033730">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033731">VIA via34_stack_east DEFAULT<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.6 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035444">END via34_stack_east</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033739">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035445">VIA via34_stack_west DEFAULT<dd>LAYER metal3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.6 &#45;0.14 0.14 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut3 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035448">END via34_stack_west</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033748">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033749">VIA via45_stack_north DEFAULT<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74<dd>LAYER cut4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035449">END via45_stack_north</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033757">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033758">VIA via45_stack_south DEFAULT<dd>LAYER metal4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74<dd>LAYER cut4 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.13 &#45;0.13 0.13 0.13 ;<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.14 &#45;0.14 0.14 0.14 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035450">END via45_stack_south</a></font>
+      </dl>
+      <p>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="1033766">&nbsp;</a></font>
+      </p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033767">VIA via56_stack_east DEFAULT<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.19 &#45;0.19 0.35 0.19 ;   # MAR = 0.38 x 0.54<dd>LAYER cut5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.18 &#45;0.18 0.18 0.18 ;<dd>LAYER metal6 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.27 &#45;0.27 0.27 0.27 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035451">END via56_stack_east</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033775">&nbsp;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1033776">VIA via56_stack_west DEFAULT<dd>LAYER metal5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.35 &#45;0.19 0.19 0.19 ;   # MAR = 0.38 x 0.54<dd>LAYER cut5 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.18 &#45;0.18 0.18 0.18 ;<dd>LAYER metal6 ;<dd>&nbsp;&nbsp;&nbsp;&nbsp;RECT &#45;0.27 &#45;0.27 0.27 0.27 ;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035452">END via56_stack_west</a></font>
+      </dl>
+      <p><a name="1033784">### end STACK VIA ###</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefdefrefTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<a href="lefdefrefIX.html"><img src="../support/nav2_index.gif" border="0"></a>
+</td>
+          <td>
+            <a href="Examples.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="PAE.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefdefref.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

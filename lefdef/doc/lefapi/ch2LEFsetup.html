@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF 5.8 C/C++ Programming Interface -- 2</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491994561">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Library Exchange Format (LEF) files.">
+<META NAME="DocTitle" CONTENT="LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="2">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491994561">
+<META NAME="NextFile" CONTENT="ch3LEFcallback.html">
+<META NAME="PageCount" CONTENT="8">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch1Intro.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="    // Initialize the reader.  This routine is called first.    lefrInit();,    // Invoke the parser    res = lefrRead(f, &quot;lefInputFileName&quot;, (void*)userData);    if (res != 0) {        printf(&quot;LEF parser returns an error\n&quot;);        return(2);    },    // Open the lef file for the reader to read    if ((f = fopen(&quot;lefInputFileName&quot;,&quot;r&quot;)) == 0) {        printf(&quot;CouldnÕt open input file Õ%sÕ\n&quot;,&quot;lefInputFileName&quot;);        return(2);    },    // Set user datalefrSetUserData ((void*)3);,    fclose(f);,    return 0;},int lefrClear(),int lefrInit(),int lefrInitSession(int startSession = 1),int lefrRead(FILE* file,const char* fileName,lefiUserData* data),int lefrReset(void),int setupRoutine() {    FILE* f;    int   res;    int   userData = 0x01020304;    ...,lefiUserData lefrGetUserData(),lefrRegisterLef58Type(ÔXXXÕ, ÔCUTÕ);,lefrRegisterLef58Type(ÔXXXÕ, ÔROUTINGÕ);,void lefrPrintUnusedCallbacks(FILE* f),void lefrRegisterLef58Type(const char* lef58Type, const char* layerType);,void lefrSetCommentChar(char c) ,void lefrSetRegisterUnusedCallbacks(void),void lefrSetShiftCase(void) ,void lefrSetUserData(lefiUserData* data),void lefrSetVersionValue( char* version)">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF 5.8 C/C++ Programming Interface -- 2">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch1Intro.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch3LEFcallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>2<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1019178">LEF Reader Setup and Control Routines</a></h1>
+      <p><a name="1019179">The Cadence</a><font color="#000000"><sup>&#174;</sup></font> Library Exchange Format (LEF) reader provides several routines to initialize the reader and set global variables that are used by the reader. </p>
+      <p><a name="1022246">The following routines set options for reading a LEF file.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1021387" title="2" name="1021353"><font color="Blue"><u>lefrInit</u></font></a><a href="#1021387" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrInitSession" title="2" name="1022842"><font color="Blue"><u>lefrInitSession</u></font></a><a href="#lefrInitSession" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrClear" title="2" name="1022869"><font color="Blue"><u>lefrClear</u></font></a><a href="#lefrClear" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022580" title="2" name="1022649"><font color="Blue"><u>lefrGetUserData</u></font></a><a href="#1022580" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022593" title="2" name="1022654"><font color="Blue"><u>lefrPrintUnusedCallbacks</u></font></a><a href="#1022593" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1019078" title="2" name="1022659"><font color="Blue"><u>lefrRead</u></font></a><a href="#1019078" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrRegisterLef58Type" title="2" name="1023400"><font color="Blue"><u>lefrRegisterLef58Type</u></font></a><a href="#lefrRegisterLef58Type" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022605" title="2" name="1022663"><font color="Blue"><u>lefrReset</u></font></a><a href="#1022605" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022617" title="2" name="1022668"><font color="Blue"><u>lefrSetCommentChar</u></font></a><a href="#1022617" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022629" title="2" name="1022673"><font color="Blue"><u>lefrSetRegisterUnusedCallbacks</u></font></a><a href="#1022629" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1022641" title="2" name="1022677"><font color="Blue"><u>lefrSetShiftCase</u></font></a><a href="#1022641" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1021267" title="2" name="1022681"><font color="Blue"><u>lefrSetUserData</u></font></a><a href="#1021267" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrSetVersionValue" title="2" name="1022685"><font color="Blue"><u>lefrSetVersionValue</u></font></a><a href="#lefrSetVersionValue" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1023386" title="2" name="1022686"><font color="Blue"><u>Examples</u></font></a><a href="#1023386" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1021774">Calling the API Routines</a></h2>
+      <p><a name="1021776">Follow these steps to use the application programming interface (API) routines.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="28.8" align="center">
+              <div>
+                <nobr><font color="#000000"><strong>	1.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021777">Call the </a><font size="2" face="'Courier New'" color="#000000">lefrInit()</font> routine. You must call this routine first.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="28.8" align="center">
+              <div>
+                <nobr><font color="#000000"><strong>	2.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021778">Call the callback registration routines for those constructs your application uses.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="28.8" align="center">
+              <div>
+                <nobr><font color="#000000"><strong>	3.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021779">Call any additional setup and control routines required to prepare for reading the LEF file.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="28.8" align="center">
+              <div>
+                <nobr><font color="#000000"><strong>	4.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021781">Call the </a><font size="2" face="'Courier New'" color="#000000">lefrRead()</font> routine to start reading the LEF file.</td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1021812">As each construct in the LEF file is read, the reader calls the appropriate registered callbacks. These callbacks handle storing the associated data in a format appropriate for the application. The callbacks can call additional setup and control routines for the LEF reader as required.</a></p>
+      <p><a name="1021816">For examples of API routine usage, see </a><a href="appA_LEFexamples.html#1011663" title="A"><font color="#0000ff"><u>Appendix&nbsp;A, "LEF Reader and Writer Examples."</u></font></a></p>
+      <h2><a name="1021817">LEF API Routines</a></h2>
+      <p><a name="1021789">The following LEF reader setup and control routines are available in the API.</a></p>
+      <h3><a name="1021387">lefrInit</a></h3>
+      <p><a name="1021398">Initializes internal variables in the LEF reader. You must use this routine before using </a><font size="2" face="'Courier New'" color="#000000">lefrRead</font>. You can use routines to set callback functions before or after this routine.</p>
+      <h4><a name="1021004">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021005">int lefrInit()</a></font>
+      </dl>
+      <h3><a name="lefrInitSession"></a><a name="1022733">lefrInitSession</a></h3>
+      <p><a name="1022734">Starts a new parsing session and closes any old parsing session, if open. You must use this routine before using </a><font size="2" face="'Courier New'" color="#000000">lefrRead</font>. </p>
+      <h4><a name="1022735">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022812">int lefrInitSession(<dd>int startSession = 1)</a></font>
+      </dl>
+      <h4><a name="1022820">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1022821"><font size="2" face="'Courier New'" color="#000000"><em>startSession</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023265">Boolean. If is non&#45;zero, performs the parser initialization in session&#45;based mode; otherwise, the function will initialize the parsing in the compatibility mode, working exactly as </a><font size="2" face="'Courier New'" color="#000000">lefrInit()</font> call. </blockquote>
+      <h3><a name="lefrClear"></a><a name="1022814">lefrClear</a></h3>
+      <p><a name="1022750">Releases all parsing session data and closes the parsing session. if the call to </a><font size="2" face="'Courier New'" color="#000000">lefrClear()</font> is skipped, the data cleaning and the session closing is done by the next <font size="2" face="'Courier New'" color="#000000">lefrInitSession()</font> call. </p>
+      <h4><a name="1022751">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022752">int lefrClear()</a></font>
+      </dl>
+      <h3><a name="1022580">lefrGetUserData</a></h3>
+      <p><a name="1022581">Retrieves the user&#45;provided data. The LEF reader returns an opaque </a><font size="2" face="'Courier New'" color="#000000">lefiUserData</font> pointer, which you set using <font size="2" face="'Courier New'" color="#000000">lefrSetUserData</font>. You can set or change the user data at any time with the <font size="2" face="'Courier New'" color="#000000">lefrSetUserData</font> and <font size="2" face="'Courier New'" color="#000000">lefrGetUserData</font> calls. Every callback returns the user data as the third argument.</p>
+      <h4><a name="1022582">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022583">lefiUserData lefrGetUserData()</a></font>
+      </dl>
+      <h3><a name="1022593">lefrPrintUnusedCallbacks</a></h3>
+      <p><a name="1022594">Prints all callback routines that are not set but have constructs in the LEF file. </a></p>
+      <h4><a name="1022595">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022596">void lefrPrintUnusedCallbacks(FILE* </a><font color="#000000"><em>f</em></font>)</font>
+      </dl>
+      <h3><a name="1019078">lefrRead</a></h3>
+      <p><a name="1021446">Specifies the LEF file to read. If the file parses with no errors (that is, all callbacks return condition codes that indicate success), this routine returns a value of </a><font size="2" face="'Courier New'" color="#000000">0</font>.</p>
+      <h4><a name="1021030">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021031">int lefrRead(<dd>FILE* </a><font size="2" face="'Courier New'" color="#000000"><em>file,<dd></em></font>const char* <font size="2" face="'Courier New'" color="#000000"><em>fileName,<dd></em></font>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1021309">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1021453"><font size="2" face="'Courier New'" color="#000000"><em>file</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023283">Specifies a pointer to an already open file. This allows the parser to work with either a disk file or a piped stream. This argument is required. Any callbacks that have been set will be called from within this routine. </a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1023292"><font size="2" face="'Courier New'" color="#000000"><em>fileName</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023299">Specifies a UNIX filename using either a complete or a relative path specification.</a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1023320"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023321">Specifies the data type. For information about the </a><font size="2" face="'Courier New'" color="#000000">lefiUserData</font> type, see <a href="ch4LEFclasses.html#lefiUserData" title="4"><font color="Blue"><u>"lefiUserData"</u></font></a><a href="ch4LEFclasses.html#lefiUserData" title="4"></a>. </blockquote>
+      <h3><a name="lefrRegisterLef58Type"></a><a name="1023420">lefrRegisterLef58Type</a></h3>
+      <p><a name="1023650">Registers new LEF layers LEF58_TYPE - TYPE pairs. As LEF syntax requires that any layer LEF58_TYPE  can be used only for certain layer types, you have to set a number of allowed layer LEF58_TYPE - TYPE pairs, calling the function several times (if necessary). For example, to register a new LEF58_TYPE </a><font size="2" face="'Courier New'" color="#000000">XXX</font> for the <font size="2" face="'Courier New'" color="#000000">CUT</font> and <font size="2" face="'Courier New'" color="#000000">ROUTING</font> type layers, you have to call the API twice:</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1023688">l</a><font size="2" face="'Courier New'" color="#000000">efrRegisterLef58Type(`XXX', `CUT');</font></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1023689"><font size="2" face="'Courier New'" color="#000000">lefrRegisterLef58Type(`XXX', `ROUTING');</font></a></font>
+      </dl>
+      <p><a name="1023421">Use this feature only for the development of new `experimental' types, which can now be introduced without parser code update. All types mentioned in LEF documentation are already pre&#45;set and do not require to be registered.</a></p>
+      <h4><a name="1023422">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1023474">void lefrRegisterLef58Type(<dd>const char* lef58Type, <dd>const char* layerType);</a></font>
+      </dl>
+      <h4><a name="1023509">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1023510"><font size="2" face="'Courier New'" color="#000000"><em>lef58Type</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023511">Specifies the LEF layer lef58Type. </a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1023512"><font size="2" face="'Courier New'" color="#000000"><em>layerType</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023513">Specifies the LEF layer type.</a></blockquote>
+      <h3><a name="1022605">lefrReset</a></h3>
+      <p><a name="1022606">Resets all of the internal variables of the LEF reader to their initial values. </a></p>
+      <h4><a name="1022607">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022608">int lefrReset(void)</a></font>
+      </dl>
+      <h3><a name="1022617">lefrSetCommentChar </a></h3>
+      <p><a name="1022618">Changes the character used to indicate comments in the LEF file. </a></p>
+      <h4><a name="1022619">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022620">void lefrSetCommentChar(char </a><font size="2" face="'Courier New'" color="#000000"><em>c</em></font>) </font>
+      </dl>
+      <p>
+        <strong></strong>
+        <strong><a name="1022621"><font size="2" face="'Courier New'" color="#000000"><em>c</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023342">Specifies the comment character. The default character is a pound sign (</a><font size="2" face="'Courier New'" color="#000000">#</font>).</blockquote>
+      <h3><a name="1022629">lefrSetRegisterUnusedCallbacks</a></h3>
+      <p><a name="1022630">Keeps track of all the callback routines that are not set. You can use this routine to keep track of LEF constructs that are in the input file but do not trigger a callback. This statement does not require any additional arguments.</a></p>
+      <h4><a name="1022631">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022632">void lefrSetRegisterUnusedCallbacks(void)</a></font>
+      </dl>
+      <h3><a name="1022641">lefrSetShiftCase</a></h3>
+      <p><a name="1022642">Allows the parser to upshift all names if the LEF file is case insensitive. </a></p>
+      <h4><a name="1022643">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022644">void lefrSetShiftCase(void) </a></font>
+      </dl>
+      <h3><a name="1021267">lefrSetUserData</a></h3>
+      <p><a name="1021462">Sets the user&#45;provided data. The LEF reader does not look at this data, but passes an opaque </a><font size="2" face="'Courier New'" color="#000000">lefiUserData</font> pointer back to the application with each callback. You can set or change the user data at any time using the <font size="2" face="'Courier New'" color="#000000">lefrSetUserData</font> and <font size="2" face="'Courier New'" color="#000000">lefrGetUserData</font> routines. Every callback returns the user data as the third argument.</p>
+      <h4><a name="1020974">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020975">void lefrSetUserData(<dd>lefiUserData* </a><font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1020986">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1020987"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023357">Specifies the user&#45;provided data.</a></blockquote>
+      <h3><a name="lefrSetVersionValue"></a><a name="1022694">lefrSetVersionValue</a></h3>
+      <p><a name="1022698">Sets a default version number for a LEF file that does not conrtain a </a><font size="2" face="'Courier New'" color="#000000">VERSION</font> statement.</p>
+      <h4><a name="1022699">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022700">void lefrSetVersionValue( <dd>char* </a><font size="2" face="'Courier New'" color="#000000"><em>version</em></font>)</font>
+      </dl>
+      <h4><a name="1023383">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1023384"><font size="2" face="'Courier New'" color="#000000"><em>version</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1023391">Specifies the version number to assign to the LEF file.</a></blockquote>
+      <h3><a name="1023386">Examples</a></h3>
+      <p><a name="1021875">The following example shows how to initialize the reader.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021876">int setupRoutine() {<dd>    FILE* f;<dd>    int   res;<dd>    int   userData = 0x01020304;<dd>    ...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021877"><dd>    &#47;&#47; Initialize the reader.  This routine is called first.<dd>    lefrInit();</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021878"><dd>    &#47;&#47; Set user data<dd>&nbsp;&nbsp;&nbsp;&nbsp;lefrSetUserData ((void*)3);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021879"><dd>    &#47;&#47; Open the lef file for the reader to read<dd>    if ((f = fopen(&#34;lefInputFileName&#34;,&#34;r&#34;)) == 0) {<dd>        printf(&#34;Couldn't open input file '%s'\n&#34;,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#34;lefInputFileName&#34;);<dd>        return(2);<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021880"><dd>    &#47;&#47; Invoke the parser<dd>    res = lefrRead(f, &#34;lefInputFileName&#34;, (void*)userData);<dd>    if (res != 0) {<dd>        printf(&#34;LEF parser returns an error\n&#34;);<dd>        return(2);<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021881">    fclose(f);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021882">    return 0;}</a></font>
+      </dl>
+      <p><a name="1021872">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch1Intro.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch3LEFcallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

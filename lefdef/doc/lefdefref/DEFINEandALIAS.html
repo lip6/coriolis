@@ -1,0 +1,501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF/DEF 5.8 Language Reference -- 2</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-26">
+<META NAME="CreateTime" CONTENT="1493186672">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the syntax for Library Exchange Format (LEF) and Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="LEF/DEF 5.8 Language Reference">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="2">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefdefref">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-26">
+<META NAME="ModifiedTime" CONTENT="1493186672">
+<META NAME="NextFile" CONTENT="WorkingwithLEF.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="LEFSyntax.html">
+<META NAME="Product" CONTENT="Innovus, Languages">
+<META NAME="ProductFamily" CONTENT="Digital Implementation, Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF/DEF 5.8 Language Reference -- 2">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefdefrefTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<a href="lefdefrefIX.html"><img src="../support/nav2_index.gif" border="0"></a>
+</td>
+        <td>
+          <a href="LEFSyntax.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="WorkingwithLEF.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefdefref.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF&#47;DEF 5.8 Language Reference</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>2<a name="918624">&nbsp;</a></h1>
+      <h1><a name="919793">ALIAS Statements</a></h1>
+      <p><a name="920496">This chapter contains information about the following topics. </a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#ALIAS Statements" title="2" name="920506"><font color="Blue"><u>ALIAS Statements</u></font></a><a href="#ALIAS Statements" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.872">
+              <div>&nbsp;</div>
+            </td>
+            <td width="32.128319999999995">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/bs_bullet_sub.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#Alias Definition" title="2" name="920508"><font color="Blue"><u>ALIAS Definition</u></font></a><a href="#Alias Definition" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.872">
+              <div>&nbsp;</div>
+            </td>
+            <td width="32.128319999999995">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/bs_bullet_sub.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#Alias Examples" title="2" name="921270"><font color="Blue"><u>ALIAS Examples</u></font></a><a href="#Alias Examples" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.872">
+              <div>&nbsp;</div>
+            </td>
+            <td width="32.128319999999995">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/bs_bullet_sub.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#Alias Expansion" title="2" name="921274"><font color="Blue"><u>ALIAS Expansion</u></font></a><a href="#Alias Expansion" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="ALIAS Statements"></a><a name="918778">ALIAS Statements</a></h2>
+      <p><a name="918780">You can use alias statements in LEF and DEF files to define commands or parameters associated with the library or design.</a><strong> </strong>An alias statement can appear anywhere in a LEF or DEF file as follows:</p>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918781">&amp;ALIAS&nbsp; &amp;&amp;</a><font size="2" face="'Courier New'" color="#000000"><em>aliasName</em></font>   = <em>  </em><font size="2" face="'Courier New'" color="#000000"><em>aliasDefinition</em></font>    &amp;ENDALIAS</font>
+      </blockquote>
+      <p><a name="918782"><font size="2" face="'Courier New'" color="#000000">&amp;ALIAS</font></a> and <font size="2" face="'Courier New'" color="#000000">&amp;ENDALIAS</font> are both reserved keywords and are not case sensitive. An alias statement has the following requirements:</p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918783"><font size="2" face="'Courier New'" color="#000000">&amp;ALIAS</font></a> must be the first token in the line in which it appears.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918784"><font color="#000000"><em>aliasName </em></font></a>is string name and must appear on the same line as <font color="#000000"><em>&amp;ALIAS. </em></font>It is case sensitive based on the value of <font size="2" face="'Courier New'" color="#000000">NAMESCASENSITIVE</font> in the LEF input, or the value of <font size="2" face="'Courier New'" color="#000000">Input.Lef.Names.Case.Sensitive</font><font color="#000000"><em>.</em></font></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918785"><font color="#000000"><em>aliasName </em></font></a>cannot contain any of the following special characters: #, space, tab, or control characters.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918786"><font size="2" face="'Courier New'" color="#000000">&amp;ENDALIAS</font></a> must be the last token in the line in which it appears.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918787">Multiple commands can appear in the alias definition, separated by semicolons. However, the last command must not be terminated by a semicolon. </a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="Alias Definition"></a><a name="918790">ALIAS Definition</a></h3>
+      <p><a name="918791">The alias name (</a><font color="#000000"><em>aliasName</em></font>) is an identifier for the associated alias definition (<font color="#000000"><em>aliasDefinition</em></font>). The data reader stores the alias definition in the database. If the associated alias name already exists in the database, a warning is issued and the existing definition is replaced.</p>
+      <p><a name="918792">Alias definitions are text strings with the following properties:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918793"><font color="#000000"><em>aliasDefinition</em></font></a> is any text excluding "<font size="2" face="'Courier New'" color="#000000">&amp;ENDALIAS</font>".</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918794">All EOL, space, and tab characters are preserved.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918795"><font color="#000000"><em>aliasDefinition</em></font></a> text can expand to multiple lines.</td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="Alias Examples"></a><a name="918797">ALIAS Examples</a></h3>
+      <p><a name="918798">The following examples include legal and illegal alias statements:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918799">The following statement is legal.</a></td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918800">&amp;ALIAS &amp;&amp;MAC = SROUTE ADDCELL AREA &amp;&amp;CORE &amp;ENDALIAS</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918801">The following statement is illegal because </a><font size="2" face="'Courier New'" color="#000000">MAC</font> does not start with "<font size="2" face="'Courier New'" color="#000000">&amp;&amp;</font>".</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918802">&amp;ALIAS MAC = SROUTE AREA &amp;&amp;CORE &amp;ENDALIAS</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918803">The following statement is illegal because </a><font size="2" face="'Courier New'" color="#000000">&amp;ALIAS</font> is not the first token in this line.</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918804">( 100 200 ) &amp;ALIAS &amp;&amp;MAC = SROUTE AREA &amp;&amp;CORE &amp;ENDALIAS</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918805">The following statement is legal. It contains multiple commands; the last command is not terminated by a semicolon.</a></td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918806">$ALIAS $$ = INPUT LEF myfile.txt;<br>VERIFY LIBRARY<br>ENDALIAS</a></font>
+      </blockquote>
+      <p><a name="918807">The following examples show legal and illegal alias names:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918808">"</a><font size="2" face="'Courier New'" color="#000000">Engineer_change</font>" is a legal alias name.</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918809">&amp;&amp;Engineer_change</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918810">"</a><font size="2" face="'Courier New'" color="#000000">&amp;Version&amp;History&amp;&amp;</font>" is a legal alias name.</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918811">&amp;&amp;&amp;Version&amp;History&amp;&amp;</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918812">"</a><font size="2" face="'Courier New'" color="#000000">design history</font>" is an illegal alias name. It contains a space character and is considered as two tokens: an <font color="#000000"><em>aliasName </em></font>token "<font size="2" face="'Courier New'" color="#000000">&amp;&amp;design</font>," and a non&#45;<font color="#000000"><em>aliasName </em></font>token "<font size="2" face="'Courier New'" color="#000000">history</font>".</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918813">&amp;&amp;design history</a></font>
+      </blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="918814">"</a><font size="2" face="'Courier New'" color="#000000">someName#IO&#45;pin&#45;Num</font>" is an illegal alias name. It contains a "#" character and is translated as one <font color="#000000"><em>aliasName </em></font>token "<font size="2" face="'Courier New'" color="#000000">&amp;&amp;someName</font>". The "#" is considered a comment character.</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"></font>
+        <font size="2" face="&quot;Courier New&quot;" color="#000000"><a name="918815">&amp;&amp;someName#IO&#45;pin&#45;Num</a></font>
+      </blockquote>
+      <h3><a name="Alias Expansion"></a><a name="918818">ALIAS Expansion</a></h3>
+      <p><a name="918819">Alias expansion is the reverse operation of alias definition. The following is the syntax for alias expansion.</a></p>
+      <blockquote>
+        <font size="2" face="Courier" color="#000000"></font>
+        <font size="2" face="Courier" color="#000000"><a name="918820"><font size="2" face="'Courier New'" color="#000000">&amp;&amp;</font></a><font size="2" face="'Courier New'" color="#000000"><em>aliasName</em></font></font>
+      </blockquote>
+      <p><a name="918821">where </a><font color="#000000"><em>aliasName </em></font>is any name previously defined by an alias statement. If an <font color="#000000"><em>aliasName </em></font>does not exist in the database, no substitution occurs.</p>
+      <p><a name="918822">You use aliases as string expansion parameters for LEF or DEF files. An alias can substitute for any token of a LEF or DEF file.</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefdefrefTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<a href="lefdefrefIX.html"><img src="../support/nav2_index.gif" border="0"></a>
+</td>
+          <td>
+            <a href="LEFSyntax.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="WorkingwithLEF.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefdefref.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

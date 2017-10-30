@@ -1,0 +1,555 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF 5.8 C/C++ Programming Interface -- 5</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491994561">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Library Exchange Format (LEF) files.">
+<META NAME="DocTitle" CONTENT="LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="5">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491994561">
+<META NAME="NextFile" CONTENT="ch6LEFwriter.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch4LEFclasses.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="int UserCallbackFunctions(lefwCallbackType_e callBackType,lefiUserData data)">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF 5.8 C/C++ Programming Interface -- 5">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch4LEFclasses.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch6LEFwriter.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>5<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1011663">LEF Writer Callback Routines</a></h1>
+      <p><a name="1014269">You can use the Cadence</a><font color="#000000"><sup>&#174;</sup></font> Library Exchange Format (LEF) writer with callback routines, or you can call one writer function at a time.</p>
+      <p><a name="1014270">When you use callback routines, the writer creates a LEF file in the sequence shown in the following table. The writer also checks which sections are required for the file. If you do not provide a callback for a required section, the writer uses a default routine. If no default routine is available for a required section, the writer generates an error message. </a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="548">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="182">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014282"><font color="#000000"><strong>Section</strong></font></a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="182">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014284">Required</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="182">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014286">Default Available</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014288">Version</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014290">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014292">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014306">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014308">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014310">no </a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014312">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014314">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014316">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014318">Units</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014320">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014322">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014324">Property Definitions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014326">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014328">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014330">Layer</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014332">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014334">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014336">Via </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014338">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014340">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014342">Via Rule</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014344">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014346">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014348">Nondefault Rules</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014350">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014352">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014372">Spacing</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014374">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014376">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014396">Site</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014398">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014400">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014408">Macro</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014410">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014412">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014420">Extensions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014422">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014424">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014426">End Library</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014428">yes</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014430">no</a></p>
+          </td>
+        </tr>
+      </table>
+      <h2><a name="1014431">Callback Function Format</a></h2>
+      <p><a name="1014432">All callback functions use the following format.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1014433">int UserCallbackFunctions(<dd>lefwCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>callBackType</em></font>,<dd>lefiUserData <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h3><a name="1014434">Callback Type</a></h3>
+      <p><a name="1014435">The </a><font size="2" face="'Courier New'" color="#000000">callBackType</font> argument is a list of objects that contains a unique number assignment for each callback from the parser. This list allows you to use the same callback routine for different types of LEF data.</p>
+      <h3><a name="1014436">User Data</a></h3>
+      <p><a name="1014437">The data argument is a four&#45;byte data item that you set. The LEF writer contains only user data. The user data is most often set to a pointer to the design data so that it can be passed to the routines.</a></p>
+      <h2><a name="1014438">Callback Types and Setting Routines</a></h2>
+      <p><a name="1014439">The following table lists the LEF writer callback&#45;setting routines and the associated callback types. </a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="654">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="126">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014732">LEF<br>Information</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="267">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014969">Setting Routine</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="260">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1014970">Callback Types</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014750">Bus Bit<br>Characters</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014752"><font size="2" face="'Courier New'" color="#000000">void lefwSetBusBitCharsCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014754"><font size="2" face="'Courier New'" color="#000000">lefwBusBitCharsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015182">Clearance Measure</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015184"><font size="2" face="'Courier New'" color="#000000">void lefwSetClearanceMeasureCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015186"><font size="2" face="'Courier New'" color="#000000">lefwClearanceMeasureCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014780">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014782"><font size="2" face="'Courier New'" color="#000000">void lefwSetDividerCharCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014784"><font size="2" face="'Courier New'" color="#000000">lefwDividerCharCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014786">Extensions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014788"><font size="2" face="'Courier New'" color="#000000">void lefwSetExtCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014790"><font size="2" face="'Courier New'" color="#000000">lefwExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014792">End Library</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014794"><font size="2" face="'Courier New'" color="#000000">void lefwSetEndLibCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014796"><font size="2" face="'Courier New'" color="#000000">lefwEndLibCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014804">Layer</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014806"><font size="2" face="'Courier New'" color="#000000">void lefwSetLayerCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014808"><font size="2" face="'Courier New'" color="#000000">lefwLayerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014810">Macro</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014812"><font size="2" face="'Courier New'" color="#000000">void lefwSetMacroCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014814"><font size="2" face="'Courier New'" color="#000000">lefwMacroCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015159">Manufacturing Grid</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015161"><font size="2" face="'Courier New'" color="#000000">void lefwSetManufacturingGridCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015163"><font size="2" face="'Courier New'" color="#000000">lefwManufacturingGridCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014828">Nondefault Rule</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014830"><font size="2" face="'Courier New'" color="#000000">void lefwSetNonDefaultCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014832"><font size="2" face="'Courier New'" color="#000000">lefwNonDefaultCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014840">Property<br>Definitions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014842"><font size="2" face="'Courier New'" color="#000000">void lefwSetPropDefCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014844"><font size="2" face="'Courier New'" color="#000000">lefwPropDefCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014846">Site</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014848"><font size="2" face="'Courier New'" color="#000000">void lefwSetSiteCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014850"><font size="2" face="'Courier New'" color="#000000">lefwSiteCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014852">Spacing</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014854"><font size="2" face="'Courier New'" color="#000000">void lefwSetSpacingCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014856"><font size="2" face="'Courier New'" color="#000000">lefwSpacingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014858">Units</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014860"><font size="2" face="'Courier New'" color="#000000">void lefwSetUnitsCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014862"><font size="2" face="'Courier New'" color="#000000">lefwUnitsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015176">Use Min Spacing</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015178"><font size="2" face="'Courier New'" color="#000000">void lefwSetUseMinSpacingCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1015180"><font size="2" face="'Courier New'" color="#000000">lefwUseMinSpacingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014864">Version</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014866"><font size="2" face="'Courier New'" color="#000000">void lefwSetVersionCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014868"><font size="2" face="'Courier New'" color="#000000">lefwVersionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014870">Via</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014872"><font size="2" face="'Courier New'" color="#000000">void lefwSetViaCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1014874"><font size="2" face="'Courier New'" color="#000000">lefwViaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014876">Via Rule</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014878"><font size="2" face="'Courier New'" color="#000000">void lefwSetViaRuleCbk<br>(lefwVoidCbkFnType);</font></a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1014880"><font size="2" face="'Courier New'" color="#000000">lefwViaRuleCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1014242">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch4LEFclasses.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch6LEFwriter.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

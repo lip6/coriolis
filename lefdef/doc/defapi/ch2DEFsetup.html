@@ -1,0 +1,484 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>DEF 5.8 C/C++ Programming Interface -- 2</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-18">
+<META NAME="CreateTime" CONTENT="1492498753">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="2">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-18">
+<META NAME="ModifiedTime" CONTENT="1492498753">
+<META NAME="NextFile" CONTENT="ch3DEFcallback.html">
+<META NAME="PageCount" CONTENT="8">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch1Intro.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="// Initialize the reader. This routine has to call first. defrInit();,// Open the def file for the reader to readif ((f = fopen(&quot;defInputFileName&quot;,&quot;r&quot;)) == 0) {printf(&quot;CouldnÕt open input file Õ%sÕ\n&quot;, &quot;defInputFileName&quot;);return(2);}// Invoke the parserres = defrRead(f, &quot;defInputFileName&quot;, (void*)userData);if (res != 0) {printf(&quot;DEF parser returns an error\n&quot;);return(2);}fclose(f);return 0;},// Set user datadefrSetUserData ((void *)3);,defiUserData defrGetUserData(),int defrClear(),int defrGetAllowComponentNets(),int defrInit(),int defrInitSession (int startSession = 1),int defrRead(FILE* file,const char* fileName,defiUserData* data,int case_sensitive),int setupRoutine() {FILE* f;int   res;int   userData = 0x01020304;...,int* defrUnusedCallbackCount(void),void defrPrintUnusedCallbacks(FILE* log),void defrSetAddPathToNet(void),void defrSetAllowComponentNets(void),void defrSetCommentChar(char c),void defrSetRegisterUnusedCallbacks(void),void defrSetUserData(defiUserData* data)">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="DEF 5.8 C/C++ Programming Interface -- 2">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch1Intro.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch3DEFcallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>DEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>2<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1014156">DEF Reader Setup and Control Routines</a></h1>
+      <p><a name="1019932">The Cadence</a><font color="#000000"><sup>&#174;</sup></font> Design Exchange Format (DEF) reader provides several routines that initialize the reader and set global variables that are used by the reader.</p>
+      <p><a name="1022612">The following routines described in this section set options for reading a DEF file.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1014302" title="2" name="1022671"><font color="Blue"><u>defrInit</u></font></a><a href="#1014302" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrInitSession" title="2" name="1022675"><font color="Blue"><u>defrInitSession</u></font></a><a href="#defrInitSession" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrClear" title="2" name="1022688"><font color="Blue"><u>defrClear</u></font></a><a href="#defrClear" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1014311" title="2" name="1022679"><font color="Blue"><u>defrRead</u></font></a><a href="#1014311" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1023039" title="2" name="1014164"><font color="Blue"><u>defrSetUserData</u></font></a><a href="#1023039" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1023070" title="2" name="1014166"><font color="Blue"><u>defrGetUserData</u></font></a><a href="#1023070" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020122" title="2" name="1022240"><font color="Blue"><u>defrSetAddPathToNet</u></font></a><a href="#1020122" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020145" title="2" name="1022245"><font color="Blue"><u>defrSetAllowComponentNets</u></font></a><a href="#1020145" title="2"></a> </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrGetAllowComponentNets" title="2" name="1022252"><font color="Blue"><u>defrGetAllowComponentNets</u></font></a><a href="#defrGetAllowComponentNets" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020181" title="2" name="1020273"><font color="Blue"><u>defrSetCommentChar</u></font></a><a href="#1020181" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020919" title="2" name="1020274"><font color="Blue"><u>defrSetRegisterUnusedCallbacks</u></font></a><a href="#1020919" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1021121" title="2" name="1020275"><font color="Blue"><u>defrPrintUnusedCallbacks</u></font></a><a href="#1021121" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020237" title="2" name="1021275"><font color="Blue"><u>defrUnusedCallbackCount</u></font></a><a href="#1020237" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1021276">DEF API Routines</a></h2>
+      <p><a name="1021277">The following DEF reader setup and control routines are available in the API.</a></p>
+      <h3><a name="1014302">defrInit</a></h3>
+      <p><a name="1020554">Initializes internal variables in the DEF reader. You must use this routine before using </a><font size="2" face="'Courier New'" color="#000000">defrRead</font>. You can use other routines to set callback functions before or after this routine.</p>
+      <h4><a name="1020525">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020526">int defrInit()</a></font>
+      </dl>
+      <h3><a name="defrInitSession"></a><a name="1022277">defrInitSession</a></h3>
+      <p><a name="1022278">Starts a new parsing session and closes any old parsing session, if open. You must use this routine before using </a><font size="2" face="'Courier New'" color="#000000">defrRead</font>.</p>
+      <h4><a name="1022279">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022280">int defrInitSession (<dd>int startSession = 1)</a></font>
+      </dl>
+      <h4><a name="1022363">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1022364"><font size="2" face="'Courier New'" color="#000000"><em>startSession</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022931">Boolean. If is non&#45;zero, performs the parser initialization in session&#45;based mode; otherwise, the function will initialize parsing in the compatibility mode, working exactly as a </a><font size="2" face="'Courier New'" color="#000000">defrInit()</font> call.</blockquote>
+      <h3><a name="defrClear"></a><a name="1022408">defrClear</a></h3>
+      <p><a name="1022409">Releases all parsing session data and closes the parsing session. If the call to </a><font size="2" face="'Courier New'" color="#000000">defrClear()</font> is skipped, the data cleaning and the session closing is done by the next <font size="2" face="'Courier New'" color="#000000">defrInitSession()</font> call. </p>
+      <h4><a name="1022410">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022411">int defrClear()</a></font>
+      </dl>
+      <h3><a name="1014311">defrRead</a></h3>
+      <p><a name="1020648">Specifies the DEF file to read. Any callbacks that have been set are called from within this routine. If the file parses with no errors, that is, all callbacks return OK condition codes, this routine returns zero.</a></p>
+      <h4><a name="1020569">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020570">int defrRead(<dd>FILE* </a><font color="#000000"><em>file,<dd></em></font>const char* <font color="#000000"><em>fileName,<dd></em></font>defiUserData* <font color="#000000"><em>data,<dd></em></font>int <font size="2" face="'Courier New'" color="#000000"><em>case_sensitive</em></font>)</font>
+      </dl>
+      <h4><a name="1022954">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1022955"><font size="2" face="'Courier New'" color="#000000"><em>file</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022965">Specifies a pointer to an already open file. This allows the parser to work with either a disk file or a piped stream. This argument is required. Any callbacks that have been set will be called from within this routine. </a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1022956"><font size="2" face="'Courier New'" color="#000000"><em>fileName</em></font></a></strong>
+      </p>
+      <blockquote><a name="1022991">Specifies a UNIX filename using either a complete or a relative path specification.</a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1020998"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023036">Specifies the data type.</a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1023037"><font size="2" face="'Courier New'" color="#000000"><em>case_sensitive</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023062">Specifies whether the data is case sensitive.</a></blockquote>
+      <h3><a name="1023039">defrSetUserData</a></h3>
+      <p><a name="1020681">Sets the user&#45;provided data. The DEF reader does not look at this data, but passes an opaque </a><font size="2" face="'Courier New'" color="#000000">defiUserData</font> pointer back to the application with each callback. You can set or change the user data at any time using the <font size="2" face="'Courier New'" color="#000000">defrSetUserData</font> and <font size="2" face="'Courier New'" color="#000000">defrGetUserData</font> routines. Every callback returns user data as the third argument.</p>
+      <h4><a name="1020658">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020659">void defrSetUserData(<dd>defiUserData* </a><font color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1023067">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1023068"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023078">Specifies the user&#45;provided data.</a></blockquote>
+      <h3><a name="1023070">defrGetUserData</a></h3>
+      <p><a name="1020748">Retrieves the user&#45;provided data. The DEF reader returns an opaque </a><font size="2" face="'Courier New'" color="#000000">defiUserData</font> pointer, which you set using <font size="2" face="'Courier New'" color="#000000">defrSetUserData</font>. You can set or change the user data at any time with the <font size="2" face="'Courier New'" color="#000000">defrSetUserData</font> and <font size="2" face="'Courier New'" color="#000000">defrGetUserData</font> calls. Every callback returns the user data as the third argument.</p>
+      <h4><a name="1020709">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020710">defiUserData defrGetUserData()</a></font>
+      </dl>
+      <h3><a name="1020122">defrSetAddPathToNet</a></h3>
+      <p><a name="1020790">Adds path data to the appropriate net data. When the net callback is used, the net class and structure information and the path information are returned. This statement does not require any additional arguments.</a></p>
+      <h4><a name="1020767">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020768">void defrSetAddPathToNet(void)</a></font>
+      </dl>
+      <h3><a name="1020145">defrSetAllowComponentNets</a></h3>
+      <p><a name="1020825">Ignores component net information. Component nets are valid DEF syntax but are no longer used. By default, the DEF reader reports component net data as a syntax error. This routine overrides the default so no error is reported. This statement does not require any additional arguments.</a></p>
+      <h4><a name="1020801">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020802">void defrSetAllowComponentNets(void)</a></font>
+      </dl>
+      <h3><a name="defrGetAllowComponentNets"></a><a name="1022194">defrGetAllowComponentNets</a></h3>
+      <p><a name="1022195">Returns non&#45;zero value if component nets are allowed. </a></p>
+      <h4><a name="1022196">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022197">int defrGetAllowComponentNets()</a></font>
+      </dl>
+      <h3><a name="1020181">defrSetCommentChar</a></h3>
+      <p><a name="1020879">Changes the character used to indicate comments in the DEF file.</a></p>
+      <h4><a name="1020861">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020862">void defrSetCommentChar(char </a><font color="#000000"><em>c</em></font>)</font>
+      </dl>
+      <h4><a name="1023101">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1023130"><font size="2" face="'Courier New'" color="#000000"><em>c</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023139">Specifies the comment character. The default is a pound sign (</a><font size="2" face="'Courier New'" color="#000000">#</font>).</blockquote>
+      <h3><a name="1020919">defrSetRegisterUnusedCallbacks</a></h3>
+      <p><a name="1021064">Keeps track of all the callback routines that are not set. You can use this routine to keep track of DEF constructs that are in the input file but do not trigger a callback. This statement does not require any additional arguments.</a></p>
+      <h4><a name="1020920">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021119">void defrSetRegisterUnusedCallbacks(void)</a></font>
+      </dl>
+      <h3><a name="1021121">defrPrintUnusedCallbacks</a></h3>
+      <p><a name="1021068">Prints all callback routines that are not set but have constructs in the DEF file. </a></p>
+      <h4><a name="1020937">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020938">void defrPrintUnusedCallbacks(FILE* </a><font color="#000000"><em>log</em></font>)</font>
+      </dl>
+      <h4><a name="1021210">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1021211"><font size="2" face="'Courier New'" color="#000000"><em>log</em></font></a></strong>
+      </p>
+      <blockquote><a name="1023114">Specifies the file to which the unused callbacks are printed.</a></blockquote>
+      <h3><a name="1020237">defrUnusedCallbackCount</a></h3>
+      <p><a name="1021082">Returns the number of callback routines that are not set. That is, routines that have constructs in the input file but no callback trigger. This statement does not require any additional arguments.</a></p>
+      <h4><a name="1020948">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1020949">int* defrUnusedCallbackCount(void)</a></font>
+      </dl>
+      <h3><a name="1021641">Example</a></h3>
+      <p><a name="1021642">The following example shows how to initialize the reader. </a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021643">int setupRoutine() {<dd>&nbsp;&nbsp;&nbsp;&nbsp;FILE* f;<dd>&nbsp;&nbsp;&nbsp;&nbsp;int   res;<dd>&nbsp;&nbsp;&nbsp;&nbsp;int   userData = 0x01020304;<dd>&nbsp;&nbsp;&nbsp;&nbsp;...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021964"><dd>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; &nbsp;&nbsp;&nbsp;&nbsp;Initialize the reader. This routine has to call first. <dd>&nbsp;&nbsp;&nbsp;&nbsp;defrInit();</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021967"><dd>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; Set user data<dd>&nbsp;&nbsp;&nbsp;&nbsp;defrSetUserData ((void *)3);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021968"><dd>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; Open the def file for the reader to read<dd>&nbsp;&nbsp;&nbsp;&nbsp;if ((f = fopen(&#34;defInputFileName&#34;,&#34;r&#34;)) == 0) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;Couldn't open input file '%s'\n&#34;, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#34;defInputFileName&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return(2);<dd>&nbsp;&nbsp;&nbsp;&nbsp;}<dd>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; Invoke the parser<dd>&nbsp;&nbsp;&nbsp;&nbsp;res = defrRead(f, &#34;defInputFileName&#34;, (void*)userData);<dd>&nbsp;&nbsp;&nbsp;&nbsp;if (res != 0) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;DEF parser returns an error\n&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return(2);<dd>&nbsp;&nbsp;&nbsp;&nbsp;}<dd>&nbsp;&nbsp;&nbsp;&nbsp;fclose(f);<dd>&nbsp;&nbsp;&nbsp;&nbsp;return 0;}</a></font>
+      </dl>
+      <p><a name="1021974">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch1Intro.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch3DEFcallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

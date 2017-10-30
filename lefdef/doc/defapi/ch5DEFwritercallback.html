@@ -1,0 +1,737 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>DEF 5.8 C/C++ Programming Interface -- 5</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-18">
+<META NAME="CreateTime" CONTENT="1492498753">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="5">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-18">
+<META NAME="ModifiedTime" CONTENT="1492498753">
+<META NAME="NextFile" CONTENT="ch6DEFwriter.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch4DEFclasses.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="int UserCallbackFunctions(defwCallbackType_e callBackType,defiUserData data)">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="DEF 5.8 C/C++ Programming Interface -- 5">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch4DEFclasses.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch6DEFwriter.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>DEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>5<a name="1016501">&nbsp;</a></h1>
+      <h1><a name="1016502">DEF Writer Callback Routines</a></h1>
+      <p><a name="1014242">You can use the Cadence</a><font color="#000000"><sup>&#174;</sup></font> Design Exchange Format (DEF) writer with callback routines, or you can call one writer function at a time.</p>
+      <p><a name="1016956">When you use callback routines, the writer creates a DEF file in the sequence shown in the following table. The writer also checks which sections are required for the file. If you do not provide a callback for a required section, the writer uses a default routine. If no default routine is available for a required section, the writer generates an error message.</a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="588">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="240">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1017167">Section</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="252">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1017169">Required</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="96">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1017171">Default Available</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017447">Version</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017471">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017495">yes</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017451">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017475">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017499">yes</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017453">Divider</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017477">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017501">yes</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017455">Design</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017479">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017503">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017457">Technology</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017481">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017505">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017463">Units</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017487">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017511">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017465">History</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017489">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017513">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017467">Property Definition</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017491">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017515">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017469">Die Area</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017493">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017517">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017519">Rows</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017521">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017523">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017525">Tracks</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017527">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017529">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017669">Gcell Grid</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017671">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017673">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017645">Vias</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017647">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017649">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017639">Regions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017641">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017643">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017633">Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017635">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017637">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017627">Pins</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017629">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017631">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017621">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017623">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017625">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017615">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017617">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017619">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017609">Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017611">yes</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017613">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017597">Scan chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017599">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017601">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017585">Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017587">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017589">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017579">Extensions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017581">no</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1017583">no</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1017675">Design End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1017677">yes</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1017679">no</a></p>
+          </td>
+        </tr>
+      </table>
+      <h2><a name="1017159">Callback Function Format</a></h2>
+      <p><a name="1014302">All callback functions use the following format.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1018092">int UserCallbackFunctions(<dd>defwCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>callBackType</em></font>,<dd>defiUserData <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h3><a name="1014342">Callback Type</a></h3>
+      <p><a name="1015949">The </a><font size="2" face="'Courier New'" color="#000000">callBackType</font> argument is a list of objects that contains a unique number assignment for each callback from the parser. This list allows you to use the same callback routine for different types of DEF data.</p>
+      <h3><a name="1015950">User Data</a></h3>
+      <p><a name="1015951">The data argument is a four&#45;byte data item that you set. The DEF writer contains only user data. The user data is most often set to a pointer to the design data so that it can be passed to the routines. </a></p>
+      <h2><a name="1014352">Callback Types and Setting Routines</a></h2>
+      <p><a name="1016006">The following table lists the DEF writer callback&#45;setting routines and the associated callback types.</a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="640">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" valign="middle" width="120">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1016009"><font color="#000000"><strong>DEF Information</strong></font></a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" valign="middle" width="269">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1016011">&nbsp;</a></strong></font>
+            </p>
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1016951">Setting Routine</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" valign="middle" width="250">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1016013"> </a></strong></font>
+            </p>
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1016950">Callback Types</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1018085">Blockages</a></p>
+          </td>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1018087"><font color="#000000">void defwSetBlockageCbk <br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1018089"><font color="#000000">defwBlockageCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016028">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016030"><font size="2" face="'Courier New'" color="#000000">void defwSetBusBitCbk<br>(</font></a>defwVoidCbkFnType)</p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016032"><font size="2" face="'Courier New'" color="#000000">defwBusBitCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016052">Components</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016054"><font size="2" face="'Courier New'" color="#000000">void defwSetComponentCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016056"><font size="2" face="'Courier New'" color="#000000">defwComponentCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016070">Design</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016072"><font size="2" face="'Courier New'" color="#000000">void defwSetDesignCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016074"><font size="2" face="'Courier New'" color="#000000">defwDesignCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016076">Design End</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016078"><font size="2" face="'Courier New'" color="#000000">void defwSetDesignEndCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016080"><font size="2" face="'Courier New'" color="#000000">defwDesignEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016082">Die Area</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016084"><font size="2" face="'Courier New'" color="#000000">void defwSetDieAreaCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016086"><font size="2" face="'Courier New'" color="#000000">defwDieAreaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016088">Divider</a><font color="#000000"><strong> </strong></font></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016090"><font size="2" face="'Courier New'" color="#000000">void defwSetDividerCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016092"><font size="2" face="'Courier New'" color="#000000">defwDividerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016094">Extensions</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016096"><font size="2" face="'Courier New'" color="#000000">void defwSetExtCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016098"><font size="2" face="'Courier New'" color="#000000">defwExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016106">Gcell Grid</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016108"><font size="2" face="'Courier New'" color="#000000">void defwSetGcellGridCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016110"><font size="2" face="'Courier New'" color="#000000">defwGcellGridCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016112">Groups</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016114"><font size="2" face="'Courier New'" color="#000000">void defwSetGroupCbk<br>(defwVoidFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016116"><font size="2" face="'Courier New'" color="#000000">defwGroupCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016118">History</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016120"><font size="2" face="'Courier New'" color="#000000">void defwSetHistoryCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016122"><font size="2" face="'Courier New'" color="#000000">defwHistoryCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016130">Nets</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016132"><font size="2" face="'Courier New'" color="#000000">void defwSetNetCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016134"><font size="2" face="'Courier New'" color="#000000">defwNetCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016136">Pins</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016138"><font size="2" face="'Courier New'" color="#000000">void defwSetPinCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016140"><font size="2" face="'Courier New'" color="#000000">defwPinCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016142">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016144"><font size="2" face="'Courier New'" color="#000000">void defwSetPinPropCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016146"><font size="2" face="'Courier New'" color="#000000">defwPinPropCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016148">Property Definitions</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016150"><font size="2" face="'Courier New'" color="#000000">void defwSetPropDefCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016152"><font size="2" face="'Courier New'" color="#000000">defwPropDefCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016154">Regions</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016156"><font size="2" face="'Courier New'" color="#000000">void defwSetRegionCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016158"><font size="2" face="'Courier New'" color="#000000">defwRegionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016160">Rows</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016162"><font size="2" face="'Courier New'" color="#000000">void defwSetRowCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016164"><font size="2" face="'Courier New'" color="#000000">defwRowCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016166">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016168"><font size="2" face="'Courier New'" color="#000000">void defwSetSNetCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016170"><font size="2" face="'Courier New'" color="#000000">defwSNetCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016172">Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016174"><font size="2" face="'Courier New'" color="#000000">void defwSetScanchainCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016176"><font size="2" face="'Courier New'" color="#000000">defwScanchainCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016178">Technology</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016180"><font size="2" face="'Courier New'" color="#000000">void defwSetTechnologyCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016182"><font size="2" face="'Courier New'" color="#000000">defwTechCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016184">Tracks</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016186"><font size="2" face="'Courier New'" color="#000000">void defwSetTrackCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016188"><font size="2" face="'Courier New'" color="#000000">defwTrackCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016190">Units</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016192"><font size="2" face="'Courier New'" color="#000000">void defwSetUnitsCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016194"><font size="2" face="'Courier New'" color="#000000">defwUnitsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016196">Version</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016198"><font size="2" face="'Courier New'" color="#000000">void defwSetVersionCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1016201"><font size="2" face="'Courier New'" color="#000000">defwVersionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1016203">Vias</a></p>
+          </td>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1016205"><font size="2" face="'Courier New'" color="#000000">void defwSetViaCbk<br>(defwVoidCbkFnType)</font></a></p>
+          </td>
+          <td cellpadding="4" border="1" valign="top">
+            <p><a name="1016207"><font size="2" face="'Courier New'" color="#000000">defwViaCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1014355">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch4DEFclasses.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch6DEFwriter.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

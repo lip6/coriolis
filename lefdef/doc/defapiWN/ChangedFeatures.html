@@ -1,0 +1,869 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>What's New in DEF 5.8 C/C++ Programming Interface -- 2</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-01-20">
+<META NAME="CreateTime" CONTENT="1484901693">
+<META NAME="DataType" CONTENT="Release information">
+<META NAME="Description" CONTENT="Describes new, changed, and removed features for the DEF API in version 5.8.">
+<META NAME="DocTitle" CONTENT="What's New in DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Release Note">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="2">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapiWN">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-01-20">
+<META NAME="ModifiedTime" CONTENT="1484901693">
+<META NAME="NextFile" CONTENT="">
+<META NAME="PageCount" CONTENT="10">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="NewFeatures.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="     int polyMask(int index) const;int rectMask(int index) const;int topMaskNum(int index) const;int cutMaskNum(int index) const;int bottomMask(int index) const;,     void addLayer(const char* layer,     int xl, int yl,     int xh, int yh,     int colorMask);void addPolygon(const char* layer,     defiGeometries *geom,      int colorMask);int rectMask(int index) const;int polyMask(int index) const; ,     void addLayerMask(int mask);void addPolyMask(int mask); void addVia(const char*via,      int viaX,      int viaY,      int mask); int layerMask(int index) const; int polygonMask(int index) const;int viaTopMask(int index) const;int viaCutMask(int index) const;int viaBottomMask(int index) const;};,     void addLayerMask(int mask);void addPolyMask(int mask); void addVia(const char*via,      int viaX,      int viaY,      int mask);void addPortLayerMask(int mask); void addPortPolyMask(int mask);int layerMask(int index) const; int polygonMask(int index) const; int viaTopMask(int index) const;int viaCutMask(int index) const;int viaBottomMask(int index) const;,     void addMask(int colorMask);void addViaMask(int colorMask);int getMask();int getViaTopMask();int getViaCutMask();int getViaBottomMask(); int getRectMask();,     void addMask(int colorMask,      int sameMask);int firstTrackMask() const;int sameMask() const;,     void addPolygon(const char* layerName,     defiGeometries* geom,     int *needCbk,     int colorMask,...);,     void addPts(const char* viaName,     defiGeometries* geom,     int *needCbk,     int colorMask,...);,     void addRect(const char* layerName,     defiGeometries* geom,     int *needCbk,     int colorMask,...);,     void setMask(int colorMask);int layerMask() const int viaTopMask() const;int viaCutMask() const;int viaBottomMask() const;,     void setMask(int maskColor);int hasMask() const;int mask() const;,     void setMaskShift(int color);int maskShiftSize();int maskShift(int index) const;,enum defiPath_e {...DEFIPATH_RECT, DEFIPATH_VIRTUALPOINT,DEFIPATH_MASK,DEFIPATH_VIAMASK">
+<META NAME="RightsManagement" CONTENT="Copyright 2015 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="What's New in DEF 5.8 C/C++ Programming Interface -- 2">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="NewFeatures.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td height="20">
+          <img src="images/nav2_next_b.gif" alt="Previous">
+        </td>
+        <td height="20">
+          <a>
+<a href="defapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="59">
+          <img src="images/nav_next_b.gif" alt="Next" border="0">
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>What's New in DEF 5.8 C&#47;C++ Programming Interface</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>2<a name="1032955">&nbsp;</a></h1>
+      <h1><a name="1033512">Changed Features</a></h1>
+      <p><a name="1034303">This chapter describes the features that were changed in this release of the DEF application programming interface.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1034571" title="2" name="1034988"><font color="Blue"><u>Reader Class Routines</u></font></a><a href="#1034571" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1034571">Reader Class Routines</a></h2>
+      <p><a name="1035888">The following syntax was added to the listed reader class routines.</a></p>
+      <h3><a name="1035889">defiBlockage</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1040719">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void setMask(int maskColor);<dd>int hasMask() const;<dd>int mask() const;</a></font>
+      </dl>
+      <p><a name="1040744"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1040737">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1040722"><font size="2" face="'Courier New'" color="#000000">setMask(int maskColor)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1040726">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1040728">Adds the color mask number to the blockage. The default value is 0. </a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040730"><font size="2" face="'Courier New'" color="#000000">hasMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040732">Checks if the blockage is colored.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040734"><font size="2" face="'Courier New'" color="#000000">mask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040736">Returns the color mask number of the blockage.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1040739">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiBlockage" target="external_window"><font color="#0000ff"><u>"defiBlockage"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>. </p>
+      <h3><a name="1034572">defiComponent</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035208">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void setMaskShift(int color);<dd>int maskShiftSize();<dd>int maskShift(int index) const;</a></font>
+      </dl>
+      <p><a name="1040754"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1035401">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1035427"><font size="2" face="'Courier New'" color="#000000">setMaskShift(int color)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1035519">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1035528">Sets the layer mask shift information.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1035431"><font size="2" face="'Courier New'" color="#000000">maskShiftSize()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1035433">Returns the number of shifted layer masks.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1035435"><font size="2" face="'Courier New'" color="#000000">maskShift(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1035546">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1035555">Returns the layer masks by index. </a><font size="2" face="'Courier New'" color="#000000">maskShift(0)</font> will return the right&#45;most digit.</p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1034853">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiComponent" target="external_window"><font color="#0000ff"><u>"defiComponent"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>. </p>
+      <h3><a name="1035950">defiFill</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035951">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void setMask(int colorMask);<dd>int layerMask() const <dd>int viaTopMask() const;<dd>int viaCutMask() const;<dd>int viaBottomMask() const;</a></font>
+      </dl>
+      <p><a name="1040773"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036035">&nbsp;</a></font>
+      </dl>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1036121"><font size="2" face="'Courier New'" color="#000000">setMask(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1036250">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1036256">Specifies the mask number information to the layer. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036125"><font size="2" face="'Courier New'" color="#000000">layerMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036127">Returns the layer mask information.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036129"><font size="2" face="'Courier New'" color="#000000">viaTopMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036131">Returns the top mask number of the via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036133"><font size="2" face="'Courier New'" color="#000000">viaCutMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036135">Returns cut mask number of the via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036238"><font size="2" face="'Courier New'" color="#000000">viaBottomMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036139">Returns bottom mask number of the via.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1034865">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiFill" target="external_window"><font color="#0000ff"><u>"defiFill"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <h3><a name="1035113">defiNet </a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035114">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addPolygon(const char* layerName,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiGeometries* geom,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int *needCbk,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask,<dd>...);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036374">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addRect(const char* layerName,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiGeometries* geom,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int *needCbk,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask,<dd>...);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036379">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addPts(const char* viaName,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiGeometries* geom,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int *needCbk,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask,<dd>...);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036384">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int polyMask(int index) const;<dd>int rectMask(int index) const;<dd>int topMaskNum(int index) const;<dd>int cutMaskNum(int index) const;<dd>int bottomMask(int index) const;</a></font>
+      </dl>
+      <p><a name="1040792"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037048">&nbsp;</a></font>
+      </dl>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1037317"><font size="2" face="'Courier New'" color="#000000">addPolygon(const char* layerName,<br>defiGeometries* geom,<br>int *needCbk,<br>int colorMask</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037029">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037031">Specifies color mask information for a polygon. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037107"><font size="2" face="'Courier New'" color="#000000">addRect(const char* layerName,<br>defiGeometries* geom,<br>int *needCbk,<br>int colorMask,</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037037">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037039">Specifies color mask information for a rectangle. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037171"><font size="2" face="'Courier New'" color="#000000">addPts(const char* viaName,<br>defiGeometries* geom,<br>int *needCbk,<br>int colorMask,</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037045">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037047">Specifies color mask information for points. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037220"><font size="2" face="'Courier New'" color="#000000">polyMask(int index)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037222">Returns the color mask information of a polygon by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037224"><font size="2" face="'Courier New'" color="#000000">rectMask(int index)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037226">Returns the color mask information of a rectangle by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037228"><font size="2" face="'Courier New'" color="#000000">topMaskNum(int index) </font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037308">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037310">Returns the top mask number of the via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037232"><font size="2" face="'Courier New'" color="#000000">cutMaskNum(int index) </font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037312">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037314">Returns the cut mask number of the via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037236"><font size="2" face="'Courier New'" color="#000000">bottomMask(int index) </font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037240">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037242">Returns the bottom mask number of the via.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1037471">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiNet" target="external_window"><font color="#0000ff"><u>"defiNet"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <h3><a name="1034633">defiPath</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035145">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addMask(int colorMask);<dd>void addViaMask(int colorMask);<dd>int getMask();<dd>int getViaTopMask();<dd>int getViaCutMask();<dd>int getViaBottomMask(); <dd>int getRectMask();</a></font>
+      </dl>
+      <p><a name="1040811"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1037496">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1037543"><font size="2" face="'Courier New'" color="#000000">addMask(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037588">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037590">Specifies the color mask information for a path.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1037547"><font size="2" face="'Courier New'" color="#000000">addViaMask(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037876">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037892">Specifies the color mask information for a via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037551"><font size="2" face="'Courier New'" color="#000000">getMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037553">Returns the color mask information of a path.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037555"><font size="2" face="'Courier New'" color="#000000">getViaTopMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037557">Returns the top mask number of a via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037559"><font size="2" face="'Courier New'" color="#000000">getViaCutMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037561">Returns the cut mask number of a via.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037563"><font size="2" face="'Courier New'" color="#000000">getViaBottomMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037565">Returns the bottom mask number of a via. </a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037652"><font color="#000000">getRectMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037654">Returns the color mask information of a rectangle.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1037958">Additionally, a new enum was added to </a><font size="2" face="'Courier New'" color="#000000">defiPath</font>. The syntax is as follows:</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1040931">enum defiPath_e {<dd>...<dd>DEFIPATH_RECT, <dd>DEFIPATH_VIRTUALPOINT,<dd>DEFIPATH_MASK,<dd>DEFIPATH_VIAMASK</a></font>
+      </dl>
+      <p><a name="1037998">The returned value depends on the input data that is read in.</a></p>
+      <p><a name="1037939">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiPath" target="external_window"><font color="#0000ff"><u>"defiPath"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <h3><a name="1040109">defiPinPort </a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1040143">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addLayerMask(int mask);<dd>void addPolyMask(int mask); <dd>void addVia(const char*via, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int </a><font size="2" face="'Courier New'" color="#000000"><em>viaX</em></font>, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int <font size="2" face="'Courier New'" color="#000000"><em>viaY</em></font>, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int <font size="2" face="'Courier New'" color="#000000"><em>mask</em></font>); <dd>int layerMask(int index) const; <dd>int polygonMask(int index) const;<dd>int viaTopMask(int index) const;<dd>int viaCutMask(int index) const;<dd>int viaBottomMask(int index) const;};</font>
+      </dl>
+      <p><a name="1040833"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1040132">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1040560"><font size="2" face="'Courier New'" color="#000000">addLayerMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1040564">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1040566">Specifies the color mask for a layer on the pin port.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040568"><font size="2" face="'Courier New'" color="#000000">addPolyMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040572">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040574">Specifies the color mask for a polygon on the pin port.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040576"><font size="2" face="'Courier New'" color="#000000">addVia(const char*via, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int viaX, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int viaY, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int mask);</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040580">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040582">Specifies the color mask for a via on the pin port.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040584"><font size="2" face="'Courier New'" color="#000000">layerMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040588">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040590">Returns the layer mask number.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040592"><font size="2" face="'Courier New'" color="#000000">PolygonMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040596">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040598">Returns the polygon mask number.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040600"><font size="2" face="'Courier New'" color="#000000">viaTopMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040640">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040642">Returns top mask number of a via by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040624"><font size="2" face="'Courier New'" color="#000000">viaCutMask(int</font></a> <font size="2" face="'Courier New'" color="#000000">index)</font></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040628">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040630">Returns cut mask number of a via by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1040632"><font size="2" face="'Courier New'" color="#000000">viaBottomMask(int</font></a> <font size="2" face="'Courier New'" color="#000000">index)</font></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040636">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1040638">Returns bottom mask number of a via by index.</a></p>
+          </td>
+        </tr>
+      </table>
+      <h3><a name="1038074">defiPin </a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038075">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addLayerMask(int mask);<dd>void addPolyMask(int mask); <dd>void addVia(const char*via, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int </a><font size="2" face="'Courier New'" color="#000000"><em>viaX</em></font>, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int <font size="2" face="'Courier New'" color="#000000"><em>viaY</em></font>, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int <font size="2" face="'Courier New'" color="#000000"><em>mask</em></font>);<dd>void addPortLayerMask(int mask); <dd>void addPortPolyMask(int mask);<dd>int layerMask(int index) const; <dd>int polygonMask(int index) const; <dd>int viaTopMask(int index) const;<dd>int viaCutMask(int index) const;<dd>int viaBottomMask(int index) const;</font>
+      </dl>
+      <p><a name="1040855"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1038062">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1038381"><font size="2" face="'Courier New'" color="#000000">addLayerMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1038667">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1038669">Specifies the color mask for a layer on the pin.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038385"><font size="2" face="'Courier New'" color="#000000">addPolyMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038671">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038673">Specifies the color mask for a polygon on the pin.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038456"><font size="2" face="'Courier New'" color="#000000">addVia(const char*via, <br>int viaX, <br>int viaY, <br>int mask);</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038550">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038552">Specifies the color mask for a via on the pin.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038393"><font size="2" face="'Courier New'" color="#000000">addPortLayerMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038554">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038556">Specifies the layer color mask number on the port.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038397"><font size="2" face="'Courier New'" color="#000000">addPortPolyMask(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038558">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038560">Specifies the polygon color mask number on the port.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038401"><font size="2" face="'Courier New'" color="#000000">layerMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038568">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038570">Returns the layer mask number on a pin.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038405"><font size="2" face="'Courier New'" color="#000000">polygonMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038409">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038411">Returns polygon mask number on a pin.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038413"><font size="2" face="'Courier New'" color="#000000">viaTopMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038584">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038586">Returns the top mask number of a via by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038588"><font size="2" face="'Courier New'" color="#000000">viaCutMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038608">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038610">Returns cut mask number of a via by index.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1038612"><font size="2" face="'Courier New'" color="#000000">viaBottomMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038592">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1038594">Returns bottom mask number of a via by index.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1039393">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiPin" target="external_window"><font color="#0000ff"><u>"defiPin"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <h3><a name="1039394">defiTrack</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039395">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addMask(int colorMask, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int sameMask);<dd>int firstTrackMask() const;<dd>int sameMask() const;</a></font>
+      </dl>
+      <p><a name="1040874"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1039146">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1039160"><font size="2" face="'Courier New'" color="#000000">addMask(int colorMask)<br>&nbsp;&nbsp;&nbsp;&nbsp;int sameMask);</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039164">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039166">Specifies the mask number on the first routing track. If </a><font size="2" face="'Courier New'" color="#000000">sameMask</font> is true, all the routing tracks have the same mask number as the first mask.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039168"><font size="2" face="'Courier New'" color="#000000">int firstTrackMask()</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039172">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039174">Returns the color mask information of the first routing track.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039176"><font size="2" face="'Courier New'" color="#000000">sameMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039178">Indicates whether same mask is defined or not.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1039370">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiTrack" target="external_window"><font color="#0000ff"><u>"defiTrack"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <h3><a name="1039413">defiVia</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039414">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addLayer(const char* layer,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int </a><font size="2" face="'Courier New'" color="#000000"><em>xl</em></font>, int <font size="2" face="'Courier New'" color="#000000"><em>yl</em></font>,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int <font size="2" face="'Courier New'" color="#000000"><em>xh</em></font>, int <font size="2" face="'Courier New'" color="#000000"><em>yh</em></font>,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask);<dd>void addPolygon(const char* layer,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiGeometries *geom, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask);<dd>int rectMask(int index) const;<dd>int polyMask(int index) const; </font>
+      </dl>
+      <p><a name="1040893"><font color="#000000"><strong>Description</strong></font></a>:</p>
+      <p align="left"><a name="1039357">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1039703"><font size="2" face="'Courier New'" color="#000000">addLayer(const char* layer,<br>&nbsp;&nbsp;&nbsp;int </font></a><font size="2" face="'Courier New'" color="#000000"><em>xl</em></font><font size="2" face="'Courier New'" color="#000000">, int </font><font size="2" face="'Courier New'" color="#000000"><em>yl</em></font><font size="2" face="'Courier New'" color="#000000">,<br>&nbsp;&nbsp;&nbsp;int </font><font size="2" face="'Courier New'" color="#000000"><em>xh</em></font><font size="2" face="'Courier New'" color="#000000">, int </font><font size="2" face="'Courier New'" color="#000000"><em>yh</em></font><font size="2" face="'Courier New'" color="#000000">,<br>&nbsp;&nbsp;&nbsp;int colorMask);</font></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039669">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039671">Specifies color mask information of a rectangle. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039755"><font size="2" face="'Courier New'" color="#000000">addPolygon(const char* layer,<br>&nbsp;&nbsp;&nbsp;defiGeometries *geom, <br>&nbsp;&nbsp;&nbsp;int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039677">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039877">Specifies color mask information of a polygon. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039681"><font size="2" face="'Courier New'" color="#000000">rectMask(int index)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039683">Returns color mask for the defined rectangle.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039805"><font size="2" face="'Courier New'" color="#000000">polyMask(int index)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039807">Returns color mask for the defined polygon.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1039935">For more information, see </a><a href="../defapi/ch4DEFclasses.html#defiVia" target="external_window"><font color="#0000ff"><u>"defiVia"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface Open Licensing Program)</em></font>.</p>
+      <p><a name="1039922">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="NewFeatures.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td height="20">
+            <img src="images/nav2_next_b.gif" alt="Previous">
+          </td>
+          <td>
+            <a>
+<a href="defapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="59">
+            <img src="images/nav_next_b.gif" alt="Next" border="0">
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

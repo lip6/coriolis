@@ -1,0 +1,2860 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>DEF 5.8 C/C++ Programming Interface -- 3</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-18">
+<META NAME="CreateTime" CONTENT="1492498753">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="3">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-18">
+<META NAME="ModifiedTime" CONTENT="1492498753">
+<META NAME="NextFile" CONTENT="ch4DEFclasses.html">
+<META NAME="PageCount" CONTENT="32">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch2DEFsetup.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="         // Write out the version number    printf(&quot;VERSION %g\n&quot;, versionNum);    return 0;},// Initialize the reader. This routine has to call first.defrInit();,// Set the user callback routinesdefrSetDesignCbk(designCB);defrSetTechnologyCbk(technologyCB);defrSetDesignEndCbk(designEndCB);defrSetPropCbk(propertyDefCB);defrSetPropDefEndCbk(properyDefEndCB);defrSetNetCbk(netCB);...,defrSetRegisterUnusedCallback();// Open the def file for the reader to readif ((f = fopen(&quot;defInputFileName&quot;,&quot;r&quot;)) == 0) {printf(&quot;CouldnÕt open input file Õ%sÕ\n&quot;, &quot;defInputFileName&quot;);return(2);}// Invoke the parserres = defrRead(f, &quot;defInputFileName&quot;, (void*)userData);if (res != 0) {printf(&quot;DEF parser returns an error\n&quot;);return(2);}(void)defrPrintUnusedCallbacks(f);fclose(f);return 0;},defrStylesCbkFnType(defCallbackType_e typ,defiStyles* style,defiUserData* data),int UserCallbackFunction(defrCallbackType_e callBackTypeDEF_type DEF_data defiUserData data),int defrBlockageCbkFnType(defrCallbackType_e typ,defiBlockage* blockage,defiUserData* data),int defrBoxCbkFnType(defrCallbackType_e typ,defiBox* box,defiUserData* data),int defrComponentCbkFnType(defrCallbackType_e typ,defiComponent* comp,defiUserData* data),int defrComponentMaskShiftLayerCbkFnType (defrCallbackType_e  type,defiComponentMaskShiftLayer* shiftLayers,defiUserData* data),int defrDoubleCbkFnType(defrCallbackType_e typ,double* number,defiUserData* data),int defrFillCbkFnType(defrCallbackType_e typ,defiFill* fill,defiUserData* data),int defrGcellGridCbkFnType(defrCallbackType_e typ,defiGcellGrid* grid,defiUserData* data),int defrGroupCbkFnType(defrCallbackType_e typ, defiGroup* group, defiUserData* data),int defrIntegerCbkFnType(defrCallbackType_e typ,int number,defiUserData* data),int defrNetCbkFnType(defrCallbackType_e typ,defiNet* net,defiUserData* data),int defrNonDefaultCbkFnType(defrCallbackType_e typ,defiNonDefault* rule,defiUserData* data),int defrPathCbkFnType(defrCallbackType_e typ,defiPath* path,defiUserData* data),int defrPinCbkFnType(defrCallbackType_e typ,defiPin* pin,defiUserData* data),int defrPinPropCbkFnType(defrCallbackType_e typ,defiPinProp* pp,defiUserData* data),int defrPropCbkFnType(defrCallbackType_e typ,defiProp* prop,defiUserData* data),int defrRegionCbkFnType(defrCallbackType_e typ,defiRegion* reg,defiUserData* data),int defrRowCbkFnType(defrCallbackType_e typ,defiRow* row,defiUserData* data),int defrScanchainCbkFnType(defrCallbackType_e typ,defiScanchain* sc,defiUserData* data),int defrSlotCbkFnType(defrCallbackType_e typ,defiSlot* slot, defiUserData* data),int defrStringCbkFnType(defrCallbackType_e typ,const char* string,defiUserData* data),int defrTrackCbkFnType(defrCallbackType_e typ,defiTrack* track,defiUserData* data),int defrViaCbkFnType(defrCallbackType_e typ,defiVia* via,defiUserData* data),int defrVoidCbkFnType(defrCallbackType_e typ,void* variable,defiUserData* data),int designCB (defrCallbackType_e type,const char *designName,defiUserData userData) {// Incorrect type was passed in, expecting the type defrDesignStartCbkType    if (type != defrDesignStartCbkType) {        printf(&quot;Type is not defrDesignStartCbkType,         terminate parsing.\n&quot;);return 1;}// Expect a non null char* designName    if (!designName || !*designName) {        printf(&quot;Design name is null, terminate parsing.\n&quot;);        return 1;}// Write out the design name    printf(&quot;design name is %s\n&quot;, desginName);    return 0;},int setupRoutine() {FILE* f;int   res;int   userData = 0x01020304;...,int versionCB (defrCallbackType_e type,               double versionNum,               defiUserData userData) {    // Check if the type is correct    if (type != defrVersionCbkType) {        printf(&quot;Type is not defrVersionCbkType, terminate         parsing.\n&quot;);        return 1;    },int viaCB (defrCallbackType_e type,defiVia *viaInfo,defiUserData userData) {    int  i, xl, yl, xh, yh;    char *name// Check if the type is correct    if (type != defrViaCbkType) {        printf(&quot;Type is not defrViaCbkType, terminate        parsing.\n&quot;);        return 1;}printf(&quot;VIA %s\n&quot;, viaInfo->name());    if (viaInfo->hasPattern())        printf(&quot;  PATTERNNAME %s\n&quot;, viaInfo->pattern());    for (i = 0; i < viaInfo->numLayers(); i++) {        viaInfo->layer(i, &name, &xl, &yl, &xh, &yh);         printf(&quot; RECT %s %d %d %d %d\n&quot;, name, xl, yl, xh, yh);}return 0;},int viaStartCB (defrCallbackType_e c,int numVias,defiUserData ud) {// Check if the type is correct    if (type != defrViaStartCbkType) {        printf(&quot;Type is not defrViaStartCbkType, terminate         parsing.\n&quot;);        return 1;}printf(&quot;VIA %d\n&quot;, numVias);return 0;}">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="DEF 5.8 C/C++ Programming Interface -- 3">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch2DEFsetup.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch4DEFclasses.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>DEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>3<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1019035">DEF Reader Callback Routines</a></h1>
+      <p><a name="1046500">The Cadence</a><font color="#000000"><sup>&#174;</sup></font> Design Exchange Format (DEF) reader calls all callback routines when it reads in the appropriate part of the DEF file. Some routines, such as the design name callback, are called only once. Other routines, such as the net callback, can be called more than once.</p>
+      <p><a name="1046670">This chapter contains the following sections:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1046501" title="3" name="1046685"><font color="#0000ff"><u>Callback Function Format</u></font></a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1037614" title="3" name="1046686"><font color="Blue"><u>Callback Types and Setting Routines</u></font></a><a href="#1037614" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1046476" title="3" name="1046687"><font color="Blue"><u>User Callback Routines</u></font></a><a href="#1046476" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1046501">Callback Function Format</a></h2>
+      <p><a name="1037490">All callback functions use the following format.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1019038">int UserCallbackFunction(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>callBackType<dd></em></font><font color="#000000"><em>DEF_type</em></font> <font size="2" face="'Courier New'" color="#000000"><em>DEF_data</em></font><font color="#000000"><em> <dd></em></font>defiUserData <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <p><a name="1019043">Each user&#45;supplied callback routine is passed three arguments.</a></p>
+      <h3><a name="1037508">Callback Type</a></h3>
+      <p><a name="1037498">The </a><font size="2" face="'Courier New'" color="#000000">callBackType</font> argument is a list of objects that contains a unique number assignment for each callback from the parser. This list allows you to use the same callback routine for different types of DEF data.</p>
+      <h3><a name="1037520">DEF_Data</a></h3>
+      <p><a name="1037578">The </a><font color="#000000"><em>DEF_data</em></font> argument provides the data specified by the callback. Data types returned by the callbacks vary for each callback. Examples of the types of arguments passed include <font size="2" face="'Courier New'" color="#000000">const char*</font>, <font size="2" face="'Courier New'" color="#000000">double</font>, <font size="2" face="'Courier New'" color="#000000">int</font>, and <font size="2" face="'Courier New'" color="#000000">defiProp</font>. Two points to note:</p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1034542">The data returned in the callback is not checked for validity. </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1034543">If you want to keep the data, you must make a copy of it.</a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="1037587">User Data</a></h3>
+      <p><a name="1037588">The </a><font color="#000000"><em>data </em></font>argument is a four&#45;byte data item that is set by the user. Note that the DEF reader contains only user data. The user data is most often set to a pointer to the design data so that it can be passed to the routines. This is more effective than using a global variable.</p>
+      <p><a name="1019047">The callback functions can be set or reset at any time. If you want a callback to be available when the DEF file parsing begins, you must set the callback before you call </a><font size="2" face="'Courier New'" color="#000000">defrRead</font>. </p>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1037548">You can unset a callback by using the set function with a null argument.</a></p>
+      <h2><a name="1037614">Callback Types and Setting Routines</a></h2>
+      <p><a name="1037550">You must set a callback before you can use it. When you set a callback, the callback routine used for each type of DEF information is passed in the appropriate setting routine. Each callback routine returns a callback type.</a></p>
+      <p><a name="1045985">The following table lists the DEF reader callback setting routines and the associated callback types. The contents of the setting routines are described in detail in the section </a><a href="#1046476" title="3"><font color="Blue"><u>"User Callback Routines"</u></font></a><a href="#1046476" title="3"></a>.</p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="654">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="106">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1052441"><font color="#000000"><strong>DEF<br>Information</strong></font></a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="251">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1052443">&nbsp;</a></strong></font>
+            </p>
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1052444">Setting Routine</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="297">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1052446"> </a></strong></font>
+            </p>
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1052447">Callback Types</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052449">Blockages <br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052451"><font size="2" face="'Courier New'" color="#000000">void defrSetBlockageStartCbk <br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052456"><font size="2" face="'Courier New'" color="#000000">defrBlockageStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052458">Blockages</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052460"><font size="2" face="'Courier New'" color="#000000">void defrSetBlockageCbk <br>(</font></a><a href="#defrBlockageCbkFnType" title="3"><font color="#0000ff"><u>defrBlockageCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052465"><font size="2" face="'Courier New'" color="#000000">defrBlockageCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052467">Blockages <br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052469"><font size="2" face="'Courier New'" color="#000000">void defrSetBlockageEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052474"><font size="2" face="'Courier New'" color="#000000">defrBlockageEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052476">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052478"><font size="2" face="'Courier New'" color="#000000">void defrSetBusBitCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052483"><font size="2" face="'Courier New'" color="#000000">defrBusBitCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052485">Components<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052487"><font size="2" face="'Courier New'" color="#000000">void defrSetComponentStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052492"><font size="2" face="'Courier New'" color="#000000">defrComponentStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052494">Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052496"><font size="2" face="'Courier New'" color="#000000">void defrSetComponentCbk<br>(</font></a><a href="#defrComponentCbkFnType" title="3"><font color="#0000ff"><u>defrComponentCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052501"><font size="2" face="'Courier New'" color="#000000">defrComponentCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052503">Components<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052505"><font size="2" face="'Courier New'" color="#000000">void defrSetComponentEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052510"><font size="2" face="'Courier New'" color="#000000">defrComponentEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052512">Components<br>Mask Layer</a></p>
+          </td>
+          <td colspan="2" cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052514"><font color="#000000">void defrComponentMaskShiftLayerCbk<br>(</font></a><a href="#1053925" title="3"><font color="#0000ff"><u>defrComponentMaskShiftLayerCbkFnType</u></font></a>)</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053467">&nbsp;</a></p>
+          </td>
+          <td colspan="2" cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053471"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defrComponentMaskShiftLayerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052518">Constraints<br>Path</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052520"><font size="2" face="'Courier New'" color="#000000">void defrSetPathCbk<br>(</font></a><a href="#defrPathCbkFnType" title="3"><font color="#0000ff"><u>defrPathCbkFnType</u></font></a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052525"><font size="2" face="'Courier New'" color="#000000">defrPathCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052527">Design<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052529"><font size="2" face="'Courier New'" color="#000000">void defrSetDesignCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052534"><font size="2" face="'Courier New'" color="#000000">defrDesignStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052536">Design<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052538"><font size="2" face="'Courier New'" color="#000000">void defrSetDesignEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052543"><font size="2" face="'Courier New'" color="#000000">defrDesignEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052545">Die Area</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052547"><font size="2" face="'Courier New'" color="#000000">void defrSetDieAreaCbk<br>(</font></a><a href="#defrBoxCbkFnType" title="3"><font color="#0000ff"><u>defrBoxCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052552"><font size="2" face="'Courier New'" color="#000000">defrDieAreaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052554">Divider <br>Character</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052556"><font size="2" face="'Courier New'" color="#000000">void defrSetDividerCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052561"><font size="2" face="'Courier New'" color="#000000">defrDividerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052563">Extensions<br>Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052565"><font size="2" face="'Courier New'" color="#000000">void defrSetComponentExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052570"><font size="2" face="'Courier New'" color="#000000">defrComponentExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052572">Extensions<br>Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052574"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052579"><font size="2" face="'Courier New'" color="#000000">defrGroupExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052581">Extensions<br>Net</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052583"><font size="2" face="'Courier New'" color="#000000">void defrSetNetExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052588"><font size="2" face="'Courier New'" color="#000000">defrNetExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052590">Extensions<br>Net Connection</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052592"><font size="2" face="'Courier New'" color="#000000">void defrSetNetConnectionExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052597"><font size="2" face="'Courier New'" color="#000000">defrNetConnectionExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052599">Extensions<br>Pin</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052601"><font size="2" face="'Courier New'" color="#000000">void defrSetPinExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052606"><font size="2" face="'Courier New'" color="#000000">defrPinExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052608">Extensions<br>Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052610"><font size="2" face="'Courier New'" color="#000000">void defrSetScanChainExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052615"><font size="2" face="'Courier New'" color="#000000">defrScanChainExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052617">Extensions<br>Vias</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052619"><font size="2" face="'Courier New'" color="#000000">void defrSetViaExtCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052624"><font size="2" face="'Courier New'" color="#000000">defrViaExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052626">Fills<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052628"><font size="2" face="'Courier New'" color="#000000">void defrSetFillStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052633"><font size="2" face="'Courier New'" color="#000000">defrFillStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052635">Fills</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052637"><font size="2" face="'Courier New'" color="#000000">void defrSetFillCbk<br>(</font></a><a href="#defrFillCbkFnType" title="3"><font color="#0000ff"><u>defrFillCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052642"><font size="2" face="'Courier New'" color="#000000">defrFillCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052644">Fills<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052646"><font size="2" face="'Courier New'" color="#000000">void defrSetFillEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052651"><font size="2" face="'Courier New'" color="#000000">defrFillEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052653">GCell Grid</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052655"><font size="2" face="'Courier New'" color="#000000">void defrSetGcellGridCbk<br>(</font></a><a href="#defrGcellGridCbkFnType" title="3"><font color="#0000ff"><u>defrGcellGridCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052660"><font size="2" face="'Courier New'" color="#000000">defrGcellGridCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052662">Groups<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052664"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupsStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052669"><font size="2" face="'Courier New'" color="#000000">defrGroupsStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052671">Groups<br>Name</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052673"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupNameCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052678"><font size="2" face="'Courier New'" color="#000000">defrGroupNameCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052680">Groups<br>Member</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052682"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupMemberCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052687"><font size="2" face="'Courier New'" color="#000000">defrGroupMemberCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052689">Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052691"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupCbk<br>(</font></a><a href="#defrGroupCbkFnType" title="3"><font color="#0000ff"><u>defrGroupCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052696"><font size="2" face="'Courier New'" color="#000000">defrGroupCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052698">Groups<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052700"><font size="2" face="'Courier New'" color="#000000">void defrSetGroupsEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052705"><font size="2" face="'Courier New'" color="#000000">defrGroupsEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052707">History</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052709"><font size="2" face="'Courier New'" color="#000000">void defrSetHistoryCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052714"><font size="2" face="'Courier New'" color="#000000">defrHistoryCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052716">Nets<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052718"><font size="2" face="'Courier New'" color="#000000">void defrSetNetStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052723"><font size="2" face="'Courier New'" color="#000000">defrNetStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052725">Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052727"><font size="2" face="'Courier New'" color="#000000">void defrSetNetCbk<br>(</font></a><a href="#defrNetCbkFnType" title="3"><font color="#0000ff"><u>defrNetCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052732"><font size="2" face="'Courier New'" color="#000000">defrNetCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052734">Nets<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052736"><font size="2" face="'Courier New'" color="#000000">void&nbsp;defrSetNetEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052741"><font size="2" face="'Courier New'" color="#000000">defrNetEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052743">Nondefault Rules Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052745"><font size="2" face="'Courier New'" color="#000000">void defrNonDefaultStartCbk<br></font></a>(<a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052750"><font size="2" face="'Courier New'" color="#000000">defrNonDefaultStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052752">Nondefault Rules</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052754"><font size="2" face="'Courier New'" color="#000000">void defrSetNonDefaultCbk<br></font></a>(<a href="#defrNonDefaultCbkFnType" title="3"><font color="#0000ff"><u>defrNonDefaultCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052759"><font size="2" face="'Courier New'" color="#000000">defrNonDefaultCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052761">Nondefault Rules End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052763"><font size="2" face="'Courier New'" color="#000000">void defrNonDefaultEndCbk<br></font></a>(<a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052768"><font size="2" face="'Courier New'" color="#000000">defrNonDefaultEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052770">Pins<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052772"><font size="2" face="'Courier New'" color="#000000">void defrSetStartPinsCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052777"><font size="2" face="'Courier New'" color="#000000">defrStartPinsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052779">Pins</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052781"><font size="2" face="'Courier New'" color="#000000">void defrSetPinCbk<br>(</font></a><a href="#defrPinCbkFnType" title="3"><font color="#0000ff"><u>defrPinCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052786"><font size="2" face="'Courier New'" color="#000000">defrPinCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052788">Pins<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052790"><font size="2" face="'Courier New'" color="#000000">void defrSetPinEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052795"><font size="2" face="'Courier New'" color="#000000">defrPinEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052797">Pin Properties<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052799"><font size="2" face="'Courier New'" color="#000000">void defrSetPinPropStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052804"><font size="2" face="'Courier New'" color="#000000">defrPinPropStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052806">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052808"><font size="2" face="'Courier New'" color="#000000">void defrSetPinPropCbk<br>(</font></a><a href="#defrPinPropCbkFnType" title="3"><font color="#0000ff"><u>defrPinPropCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052813"><font size="2" face="'Courier New'" color="#000000">defrPinPropCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052815">Pin Properties<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052817"><font size="2" face="'Courier New'" color="#000000">void defrSetPinPropEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052822"><font size="2" face="'Courier New'" color="#000000">defrPinPropEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052824">Property Definitions<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052826"><font size="2" face="'Courier New'" color="#000000">void defrSetPropDefStartCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052831"><font size="2" face="'Courier New'" color="#000000">defrPropDefStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052833">Property Definitions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052835"><font size="2" face="'Courier New'" color="#000000">void defrSetPropCbk<br>(</font></a><a href="#defrPropCbkFnType" title="3"><font color="#0000ff"><u>defrPropCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052840"><font size="2" face="'Courier New'" color="#000000">defrPropCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052842">Property Definitions<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052844"><font size="2" face="'Courier New'" color="#000000">void defrSetPropDefEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052849"><font size="2" face="'Courier New'" color="#000000">defrPropDefEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052851">Regions<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052853"><font size="2" face="'Courier New'" color="#000000">void defrSetRegionStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052858"><font size="2" face="'Courier New'" color="#000000">defrRegionStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052860">Regions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052862"><font size="2" face="'Courier New'" color="#000000">void defrSetRegionCbk<br>(</font></a><a href="#defrRegionCbkFnType" title="3"><font color="#0000ff"><u>defrRegionCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052867"><font size="2" face="'Courier New'" color="#000000">defrRegionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052869">Regions<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052871"><font size="2" face="'Courier New'" color="#000000">void defrSetRegionEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052876"><font size="2" face="'Courier New'" color="#000000">defrRegionEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052878">Rows</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052880"><font size="2" face="'Courier New'" color="#000000">void defrSetRowCbk<br>(</font></a><a href="#defrRowCbkFnType" title="3"><font color="#0000ff"><u>defrRowCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052885"><font size="2" face="'Courier New'" color="#000000">defrRowCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052887">Scan Chains<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052889"><font size="2" face="'Courier New'" color="#000000">void defrSetScanchainsStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052894"><font size="2" face="'Courier New'" color="#000000">defrScanchainsStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052896">Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052898"><font size="2" face="'Courier New'" color="#000000">void defrSetScanchainCbk<br>(</font></a><a href="#defrScanchainCbkFnType" title="3"><font color="#0000ff"><u>defrScanchainCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052903"><font size="2" face="'Courier New'" color="#000000">defrScanchainCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052905">Scan Chains<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052907"><font size="2" face="'Courier New'" color="#000000">void defrSetScanchainsEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052912"><font size="2" face="'Courier New'" color="#000000">defrScanchainsEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052914">Slots<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052916"><font size="2" face="'Courier New'" color="#000000">void defrSetSlotStartCbk<br></font></a>(<a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052921"><font size="2" face="'Courier New'" color="#000000">defrSlotStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052923">Slots</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052925"><font size="2" face="'Courier New'" color="#000000">void defrSetSlotCbk<br></font></a>(<a href="#defrSlotCbkFnType" title="3"><font color="#0000ff"><u>defrSlotCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052930"><font size="2" face="'Courier New'" color="#000000">defrSlotCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052932">Slots<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052934"><font size="2" face="'Courier New'" color="#000000">void defrSlotEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052939"><font color="#000000">defrSlotEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052941">Special Nets<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052943"><font size="2" face="'Courier New'" color="#000000">void defrSetSNetStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052948"><font size="2" face="'Courier New'" color="#000000">defrSNetStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052950">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052952"><font size="2" face="'Courier New'" color="#000000">void defrSetSNetCbk<br>(</font></a><a href="#defrNetCbkFnType" title="3"><font color="#0000ff"><u>defrNetCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052957"><font size="2" face="'Courier New'" color="#000000">defrSNetCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052959">Special Nets<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052961"><font size="2" face="'Courier New'" color="#000000">void defrSetSNetEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052966"><font size="2" face="'Courier New'" color="#000000">defrSNetEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052968">Styles Beginning</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052970"><font color="#000000">void defrSetStylesStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052975"><font size="2" face="'Courier New'" color="#000000">defrStylesStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052977">Styles</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052979"><font color="#000000">void defrSetStylesCbk<br>(</font></a><a href="#defrStylesCbkFnType" title="3"><font color="#0000ff"><u>defrStylesCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052984"><font size="2" face="'Courier New'" color="#000000">defrStylesCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052986">Styles End</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052988"><font color="#000000">void defrSetStylesEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052993"><font size="2" face="'Courier New'" color="#000000">defrStylesEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052995">Technology</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1052997"><font size="2" face="'Courier New'" color="#000000">void defrSetTechnologyCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053002"><font size="2" face="'Courier New'" color="#000000">defrTechNameCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053004">Tracks</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053006"><font size="2" face="'Courier New'" color="#000000">void defrSetTrackCbk<br>(</font></a><a href="#defrTrackCbkFnType" title="3"><font color="#0000ff"><u>defrTrackCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053011"><font size="2" face="'Courier New'" color="#000000">defrTrackCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053013">Units</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053015"><font size="2" face="'Courier New'" color="#000000">void defrSetUnitsCbk<br>(</font></a><a href="#defrDoubleCbkFnType" title="3"><font color="#0000ff"><u>defrDoubleCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053020"><font size="2" face="'Courier New'" color="#000000">defrUnitsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053022">Version</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053024"><font size="2" face="'Courier New'" color="#000000">void defrSetVersionCbk<br>(</font></a><a href="#defrDoubleCbkFnType" title="3"><font color="#0000ff"><u>defrDoubleCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053029"><font size="2" face="'Courier New'" color="#000000">defrVersionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053031">Version <br>String</a></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053033"><font size="2" face="'Courier New'" color="#000000">void defrSetVersionStrCbk<br>(</font></a><a href="#1048248" title="3"><font color="#0000ff"><u>defrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="top">
+            <p><a name="1053038"><font size="2" face="'Courier New'" color="#000000">defrVersionStrCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053040">Vias<br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053042"><font size="2" face="'Courier New'" color="#000000">void defrSetViaStartCbk<br>(</font></a><a href="#defrIntegerCbkFnType" title="3"><font color="#0000ff"><u>defrIntegerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053047"><font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053049">Vias</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053051"><font size="2" face="'Courier New'" color="#000000">void defrSetViaCbk<br>(</font></a><a href="#defrViaCbkFnType" title="3"><font color="#0000ff"><u>defrViaCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1053056"><font size="2" face="'Courier New'" color="#000000">defrViaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1053058">Vias<br>End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1053060"><font size="2" face="'Courier New'" color="#000000">void defrSetViaEndCbk<br>(</font></a><a href="#defrVoidCbkFnType" title="3"><font color="#0000ff"><u>defrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1053065"><font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <h3><a name="1046787">Examples</a></h3>
+      <p><a name="1046788">The following example shows how to create a setup routine so the reader can parse the DEF file and call the callback routines you defined.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1046789">int setupRoutine() {<dd>FILE* f;<dd>int   res;<dd>int   userData = 0x01020304;<dd>...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1046489"><dd>&#47;&#47; &nbsp;&nbsp;&nbsp;&nbsp;Initialize the reader. This routine has to call first.<dd>defrInit();</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1046493"><dd>&#47;&#47; Set the user callback routines<dd>defrSetDesignCbk(designCB);<dd>defrSetTechnologyCbk(technologyCB);<dd>defrSetDesignEndCbk(designEndCB);<dd>defrSetPropCbk(propertyDefCB);<dd>defrSetPropDefEndCbk(properyDefEndCB);<dd>defrSetNetCbk(netCB);<dd>...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1046494"><dd>defrSetRegisterUnusedCallback();<dd>&#47;&#47; Open the def file for the reader to read<dd>if ((f = fopen(&#34;defInputFileName&#34;,&#34;r&#34;)) == 0) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;Couldn't open input file '%s'\n&#34;, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&#34;defInputFileName&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;return(2);<dd>}<dd>&#47;&#47; Invoke the parser<dd>res = defrRead(f, &#34;defInputFileName&#34;, (void*)userData);<dd>if (res != 0) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;DEF parser returns an error\n&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;return(2);<dd>}<dd>(void)defrPrintUnusedCallbacks(f);<dd>fclose(f);<dd>return 0;}</a></font>
+      </dl>
+      <h2><a name="1046476">User Callback Routines</a></h2>
+      <p><a name="1046537">This section describes the following routines:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrBlockageCbkFnType" title="3" name="1048226"><font color="Blue"><u>defrBlockageCbkFnType</u></font></a><a href="#defrBlockageCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrBoxCbkFnType" title="3" name="1046541"><font color="Blue"><u>defrBoxCbkFnType</u></font></a><a href="#defrBoxCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrComponentCbkFnType" title="3" name="1048235"><font color="Blue"><u>defrComponentCbkFnType</u></font></a><a href="#defrComponentCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1053925" title="3" name="1053068"><font color="Blue"><u>defrComponentMaskShiftLayerCbkFnType</u></font></a><a href="#1053925" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrDoubleCbkFnType" title="3" name="1046543"><font color="Blue"><u>defrDoubleCbkFnType</u></font></a><a href="#defrDoubleCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrFillCbkFnType" title="3" name="1048039"><font color="Blue"><u>defrFillCbkFnType</u></font></a><a href="#defrFillCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrGcellGridCbkFnType" title="3" name="1046544"><font color="Blue"><u>defrGcellGridCbkFnType</u></font></a><a href="#defrGcellGridCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrGroupCbkFnType" title="3" name="1046545"><font color="Blue"><u>defrGroupCbkFnType</u></font></a><a href="#defrGroupCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrIntegerCbkFnType" title="3" name="1046546"><font color="Blue"><u>defrIntegerCbkFnType</u></font></a><a href="#defrIntegerCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrNetCbkFnType" title="3" name="1046548"><font color="Blue"><u>defrNetCbkFnType</u></font></a><a href="#defrNetCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrNonDefaultCbkFnType" title="3" name="1052271"><font color="Blue"><u>defrNonDefaultCbkFnType</u></font></a><a href="#defrNonDefaultCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrPathCbkFnType" title="3" name="1046549"><font color="Blue"><u>defrPathCbkFnType</u></font></a><a href="#defrPathCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrPinCbkFnType" title="3" name="1046550"><font color="Blue"><u>defrPinCbkFnType</u></font></a><a href="#defrPinCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrPinPropCbkFnType" title="3" name="1046552"><font color="Blue"><u>defrPinPropCbkFnType</u></font></a><a href="#defrPinPropCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrPropCbkFnType" title="3" name="1046629"><font color="Blue"><u>defrPropCbkFnType</u></font></a><a href="#defrPropCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrRegionCbkFnType" title="3" name="1046630"><font color="Blue"><u>defrRegionCbkFnType</u></font></a><a href="#defrRegionCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrRowCbkFnType" title="3" name="1046631"><font color="Blue"><u>defrRowCbkFnType</u></font></a><a href="#defrRowCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrScanchainCbkFnType" title="3" name="1046556"><font color="Blue"><u>defrScanchainCbkFnType</u></font></a><a href="#defrScanchainCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrSlotCbkFnType" title="3" name="1051963"><font color="Blue"><u>defrSlotCbkFnType</u></font></a><a href="#defrSlotCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1048248" title="3" name="1048247"><font color="Blue"><u>defrStringCbkFnType</u></font></a><a href="#1048248" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrStylesCbkFnType" title="3" name="1052328"><font color="Blue"><u>defrStylesCbkFnType</u></font></a><a href="#defrStylesCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrTrackCbkFnType" title="3" name="1046559"><font color="Blue"><u>defrTrackCbkFnType</u></font></a><a href="#defrTrackCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrViaCbkFnType" title="3" name="1046560"><font color="Blue"><u>defrViaCbkFnType</u></font></a><a href="#defrViaCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#defrVoidCbkFnType" title="3" name="1046561"><font color="Blue"><u>defrVoidCbkFnType</u></font></a><a href="#defrVoidCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="defrBlockageCbkFnType"></a><a name="1047812">defrBlockageCbkFnType</a></h3>
+      <p><a name="1047815">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiBlockage</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font> statement, see <a href="../lefdefref/DEFSyntax.html#Blockages" target="external_window"><font color="#0000ff"><u>Blockages</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1047851">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1047852">int defrBlockageCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiBlockage* <font size="2" face="'Courier New'" color="#000000"><em>blockage</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1047858">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1047859"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054392">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrBlockageCbkType</font> type, which indicates that the blockage callback was called. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1047860"><font size="2" face="'Courier New'" color="#000000"><em>blockage</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054403">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiBlockage</font> structure. For more information, see <a href="ch4DEFclasses.html#defiBlockage" title="4"><font color="Blue"><u>defiBlockage</u></font></a><a href="ch4DEFclasses.html#defiBlockage" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1047864"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054410">Returns four bytes of user&#45;defined data. User data is most often set to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrBoxCbkFnType"></a><a name="1026750">defrBoxCbkFnType</a></h3>
+      <p><a name="1042356">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">DIEAREA</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiBox</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">DIEAREA</font> statement, see <a href="../lefdefref/DEFSyntax.html#DieArea" target="external_window"><font color="#0000ff"><u>Die Area</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026751">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026752">int defrBoxCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiBox* <font size="2" face="'Courier New'" color="#000000"><em>box</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1026755">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026756"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054418">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrDieAreaCbkType</font> type, which indicates that the die area callback was called. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1026759"><font size="2" face="'Courier New'" color="#000000"><em>box</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054426">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiBox</font> structure. For more information, see <a href="ch4DEFclasses.html#defiBox" title="4"><font color="Blue"><u>defiBox</u></font></a><a href="ch4DEFclasses.html#defiBox" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1026761"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054433">Returns four bytes of user&#45;defined data. User data is most often set to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrComponentCbkFnType"></a><a name="1026821">defrComponentCbkFnType</a></h3>
+      <p><a name="1042379">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">COMPONENTS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiComponent</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">COMPONENTS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Components" target="external_window"><font color="#0000ff"><u>Components</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026834">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026835">int defrComponentCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiComponent* <font size="2" face="'Courier New'" color="#000000"><em>comp</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1043290">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1043291"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054441">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrComponentCbkType</font>, which indicates that the component callback was called. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1026842"><font size="2" face="'Courier New'" color="#000000"><em>comp</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054448">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiComponent</font> structure. For more information, see <a href="ch4DEFclasses.html#defiComponent" title="4"><font color="Blue"><u>defiComponent</u></font></a><a href="ch4DEFclasses.html#defiComponent" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1053923"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054455">Returns four bytes of user&#45;defined data. User data is most often set to a pointer to the design data.</a></blockquote>
+      <h3><a name="1053925">defrComponentMaskShiftLayerCbkFnType</a></h3>
+      <p><a name="1053926">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">COMPONENTMASKSHIFT</font> statement of the DEF file. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</p>
+      <p><a name="1053139">For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">COMPONENTMASKSHIFT</font> statement, see <a href="../lefdefref/DEFSyntax.html#ComponentMaskShift" target="external_window"><font color="#0000ff"><u>"Component Mask Shift"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1053193">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1053536">int defrComponentMaskShiftLayerCbkFnType (<dd>defrCallbackType_e  </a><font size="2" face="'Courier New'" color="#000000"><em>type</em></font>,<dd>defiComponentMaskShiftLayer* <font size="2" face="'Courier New'" color="#000000"><em>shiftLayers</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1053359">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1053643"><font size="2" face="'Courier New'" color="#000000"><em>type</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054462">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrComponentMaskShiftLayerCbkFnType</font>. This allows you to verity within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1053644"><font size="2" face="'Courier New'" color="#000000"><em>shiftLayers</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054470">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiComponentMaskShiftLayer</font>. For more information, see <a href="ch4DEFclasses.html#defiComponentMaskShiftLayer" title="4"><font color="Blue"><u>defiComponentMaskShiftLayer</u></font></a><a href="ch4DEFclasses.html#defiComponentMaskShiftLayer" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1054482"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054490">Returns four bytes of user&#45;defined data. User data is most often set to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrDoubleCbkFnType"></a><a name="1026925">defrDoubleCbkFnType</a></h3>
+      <p><a name="1042402">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">UNITS</font> and <font size="2" face="'Courier New'" color="#000000">VERSION</font> statements of the DEF file. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</p>
+      <p><a name="1042406">For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">UNITS</font> and <font size="2" face="'Courier New'" color="#000000">VERSION </font>statements, see <a href="../lefdefref/DEFSyntax.html#Units" target="external_window"><font color="#0000ff"><u>Units</u></font></a> and <a href="../lefdefref/DEFSyntax.html#Version" target="external_window"><font color="#0000ff"><u>Version</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>. </p>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1042410">DEF version 5.1 and later always has a version number. Earlier versions of DEF will not have a version number.</a></p>
+      <h4><a name="1026926">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026927">int defrDoubleCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>double* <font size="2" face="'Courier New'" color="#000000"><em>number</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1026930">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026964"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054497">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="516">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036920">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="362">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036922">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036924">Units</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036926"><font size="2" face="'Courier New'" color="#000000">defrUnitsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036928">Version</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036930"><font size="2" face="'Courier New'" color="#000000">defrVersionCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1027028"><font size="2" face="'Courier New'" color="#000000"><em>number</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054504">Returns data that varies depending on the callback used. The following kinds of data can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="552">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036932">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="398">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036934">Returns the Value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036936">Units</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036938"><font color="#000000"><em>DEFconvertFactor </em></font></a>in the <font size="2" face="'Courier New'" color="#000000">UNITS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036940">Version</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1036942"><font color="#000000"><em>versionNumber</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">VERSION</font> statement</p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1042448"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054511">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h4><a name="1044476">Examples</a></h4>
+      <p><a name="1044480">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrVersionCbkType</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1045103">int versionCB (defrCallbackType_e type,<dd>               double versionNum,<dd>               defiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if (type != defrVersionCbkType) {<dd>        printf(&#34;Type is not defrVersionCbkType, terminate <dd>        parsing.\n&#34;);<dd>        return 1;<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1044527">    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; Write out the version number<dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;VERSION %g\n&#34;, versionNum);<dd>    return 0;}</a></font>
+      </dl>
+      <h3><a name="defrFillCbkFnType"></a><a name="1047966">defrFillCbkFnType</a></h3>
+      <p><a name="1047969">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">FILLS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiFill</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">FILLS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Fills" target="external_window"><font color="#0000ff"><u>Fills</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1047967">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1047995">int defrFillCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiFill* <font size="2" face="'Courier New'" color="#000000"><em>fill</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1047996">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1047997"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054518">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrFillCbkFnType</font>, which indicates that the fill callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1048006"><font size="2" face="'Courier New'" color="#000000"><em>fill</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054526">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defifill</font> structure. For more information, see <a href="ch4DEFclasses.html#defiFill" title="4"><font color="Blue"><u>defiFill</u></font></a><a href="ch4DEFclasses.html#defiFill" title="4"></a>. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1048007"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054534">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrGcellGridCbkFnType"></a><a name="1044529">defrGcellGridCbkFnType</a></h3>
+      <p><a name="1042566">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">GCELLGRID</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiGcellGrid</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">GCELLGRID</font> statement, see <a href="../lefdefref/DEFSyntax.html#GCellGrid" target="external_window"><font color="#0000ff"><u>GCell Grid</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1027156">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1027157">int defrGcellGridCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiGcellGrid* <font size="2" face="'Courier New'" color="#000000"><em>grid</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1027160">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1027161"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054542">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrGcellGridCbkType</font>, which indicates that the gcell grid callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1054554"><font size="2" face="'Courier New'" color="#000000"><em>grid</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054555">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiGcellGrid</font> structure. For more information, see <a href="ch4DEFclasses.html#1021932" title="4"><font color="Blue"><u>defiGcellGrid</u></font></a><a href="ch4DEFclasses.html#1021932" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042460"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054572">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrGroupCbkFnType"></a><a name="1027170">defrGroupCbkFnType</a></h3>
+      <p><a name="1042593">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiGroup</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Groups" target="external_window"><font color="#0000ff"><u>Groups</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1027171">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1027205">int defrGroupCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>, <dd>defiGroup* <font size="2" face="'Courier New'" color="#000000"><em>group</em></font>, <dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1027175">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1027176"><font color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054579">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrGroupCbkType</font>, which indicates that the group callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1027177"><font color="#000000"><em>group</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054586">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiGroup</font> structure. For more information, see <a href="ch4DEFclasses.html#defiGroup" title="4"><font color="Blue"><u>defiGroup</u></font></a><a href="ch4DEFclasses.html#defiGroup" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042464"><font color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054593">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrIntegerCbkFnType"></a><a name="1028044">defrIntegerCbkFnType</a></h3>
+      <p><a name="1042619">Marks the beginning of sections of DEF statements. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</a></p>
+      <h4><a name="1042649">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1042650">int defrIntegerCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>int <font size="2" face="'Courier New'" color="#000000"><em>number</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028050">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028051"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054600">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="576">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="204">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036944">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="372">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1036946">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047516">Blockages</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047518"><font size="2" face="'Courier New'" color="#000000">defrBlockageStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036952">Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036954"><font size="2" face="'Courier New'" color="#000000">defrComponentStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052007">Fills</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052009"><font size="2" face="'Courier New'" color="#000000">defrFillStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036964">Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036966"><font size="2" face="'Courier New'" color="#000000">defrGroupsStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036976">Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036978"><font size="2" face="'Courier New'" color="#000000">defrNetStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052180">Nondefault Rules</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052182"><font size="2" face="'Courier New'" color="#000000">defrNonDefaultStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036984">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036986"><font size="2" face="'Courier New'" color="#000000">defrPinPropStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036988">Pins</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036990"><font size="2" face="'Courier New'" color="#000000">defrStartPinsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036992">Regions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036994"><font size="2" face="'Courier New'" color="#000000">defrRegionStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036996">Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036998"><font size="2" face="'Courier New'" color="#000000">defrScanchainsStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052011">Slots</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052013"><font color="#000000">defrSlotStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037004">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037006"><font size="2" face="'Courier New'" color="#000000">defrSNetStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052184">Styles</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052186"><font size="2" face="'Courier New'" color="#000000">defrStylesStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037012">Vias</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037014"><font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1028987"><font size="2" face="'Courier New'" color="#000000"><em>number</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054607">Returns data that varies depending on the callback used. The following kinds of data can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="204">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037016">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="444">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037018">Returns the Value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047555">Blockages</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047557"><font size="2" face="'Courier New'" color="#000000"><em>numBlockages</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037024">Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037026"><font size="2" face="'Courier New'" color="#000000"><em>numComps</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">COMPONENTS </font>statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052015">Fills</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052017"><font size="2" face="'Courier New'" color="#000000"><em>numFills</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">FILLS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037036">Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037038"><font size="2" face="'Courier New'" color="#000000"><em>numGroups</em></font></a><font color="#000000"><em> </em></font>in the <font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037048">Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037050"><font size="2" face="'Courier New'" color="#000000"><em>numNets</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">NETS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052188">Nondefault rules </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052190"><font size="2" face="'Courier New'" color="#000000"><em>numRules</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULES</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037056">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037058"><font size="2" face="'Courier New'" color="#000000"><em>num</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">PINPROPERTIES</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037060">Pins</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037062"><font size="2" face="'Courier New'" color="#000000"><em>numPins</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">PINS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037064">Regions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037066"><font size="2" face="'Courier New'" color="#000000"><em>numRegions</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">REGIONS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037068">Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037070"><font size="2" face="'Courier New'" color="#000000"><em>numScanChains</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052019">Slots</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052021"><font size="2" face="'Courier New'" color="#000000"><em>numSlots</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">SLOTS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037076">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037078"><font size="2" face="'Courier New'" color="#000000"><em>numNets</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052192">Styles</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052194"><font size="2" face="'Courier New'" color="#000000"><em>numStyles</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">STYLES</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037084">Vias</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037086"><font size="2" face="'Courier New'" color="#000000"><em>numVias</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">VIAS</font> statement</p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1042468"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054614">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrNetCbkFnType"></a><a name="1028426">defrNetCbkFnType</a></h3>
+      <p><a name="1042727">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> sections of the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiNet</font> class to retrieve the data.</p>
+      <p><a name="1042731">For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statements, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>Nets</u></font></a> and <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>Special Nets</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>. </p>
+      <h4><a name="1028452">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028453">int defrNetCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiNet* <font size="2" face="'Courier New'" color="#000000"><em>net</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028456">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1043319"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054621">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="448">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1043322">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="294">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1043324">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1043326">Net</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1043328"><font size="2" face="'Courier New'" color="#000000">defrNetCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1043330">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1043332"><font size="2" face="'Courier New'" color="#000000">defrSNetCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1043333"><font size="2" face="'Courier New'" color="#000000"><em>net</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054628">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiNet</font> structure. For more information, see <a href="ch4DEFclasses.html#defiNet" title="4"><font color="Blue"><u>defiNet</u></font></a><a href="ch4DEFclasses.html#defiNet" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042476"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054635">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrNonDefaultCbkFnType"></a><a name="1052214">defrNonDefaultCbkFnType</a></h3>
+      <p><a name="1052215">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULES</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiNonDefault</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULES</font> statement, see <a href="../lefdefref/DEFSyntax.html#NondefaultRules" target="external_window"><font color="#0000ff"><u>"Nondefault Rules,"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>. </p>
+      <h4><a name="1052226">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1052227">int defrNonDefaultCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiNonDefault* <font size="2" face="'Courier New'" color="#000000"><em>rule</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1052228">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1052229"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054642">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrNonDefaultCbkType</font> type, which indicates that the nondefault rule callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1052237"><font size="2" face="'Courier New'" color="#000000"><em>rule</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1054650">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiNonDefault</font> structure. For more information, see <a href="ch4DEFclasses.html#defiNonDefault" title="4"><font color="Blue"><u>defiNonDefault</u></font></a><a href="ch4DEFclasses.html#defiNonDefault" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1052238"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054657">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrPathCbkFnType"></a><a name="1028436">defrPathCbkFnType</a></h3>
+      <p><a name="1042801">Retrieves data from the </a><font color="#000000"><em>regularWiring</em></font> and <font color="#000000"><em>specialWiring</em></font> specifications in the <font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statements of the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiPath</font> class to retrieve the data.</p>
+      <p><a name="1050241">For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statements, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>Nets</u></font></a> and <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>Special Nets</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>. </p>
+      <h4><a name="1028515">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028516">int defrPathCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiPath* <font size="2" face="'Courier New'" color="#000000"><em>path</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028519">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028520"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054674">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrPathCbkType</font> type, which indicates that the path callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028521"><font size="2" face="'Courier New'" color="#000000"><em>path</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054681">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiPath</font> structure. For more information, see <a href="ch4DEFclasses.html#defiPath" title="4"><font color="Blue"><u>defiPath</u></font></a><a href="ch4DEFclasses.html#defiPath" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042484"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054688">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrPinCbkFnType"></a><a name="1029191">defrPinCbkFnType</a></h3>
+      <p><a name="1042822">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PINS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiPin</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Pins" target="external_window"><font color="#0000ff"><u>Pins</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1029192">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029193">int defrPinCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiPin* <font size="2" face="'Courier New'" color="#000000"><em>pin</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1029196">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1029197"><font color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054695">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrPinCbkType</font> type, which indicates that the Pin callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1029200"><font color="#000000"><em>pin</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054702">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiPin</font> structure. For more information, see <a href="ch4DEFclasses.html#defiPin" title="4"><font color="Blue"><u>defiPin</u></font></a><a href="ch4DEFclasses.html#defiPin" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042488"><font color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054718">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrPinPropCbkFnType"></a><a name="1029209">defrPinPropCbkFnType</a></h3>
+      <p><a name="1042859">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PINPROPERTIES</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiPinProp</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PINPROPERTIES</font> statement, see <a href="../lefdefref/DEFSyntax.html#PinProperties" target="external_window"><font color="#0000ff"><u>Pin Properties</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1029210">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029211">int defrPinPropCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiPinProp* <font size="2" face="'Courier New'" color="#000000"><em>pp</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1029214">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1029215"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054725">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrPinPropCbkType</font> type, which indicates that the pin property callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1029216"><font size="2" face="'Courier New'" color="#000000"><em>pp</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054732">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiPinProp</font> structure. For more information, see <a href="ch4DEFclasses.html#defiPinProp" title="4"><font color="Blue"><u>defiPinProp</u></font></a><a href="ch4DEFclasses.html#defiPinProp" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042496"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054739">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrPropCbkFnType"></a><a name="1028566">defrPropCbkFnType</a></h3>
+      <p><a name="1042877">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiProp</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> statement, see <a href="../lefdefref/DEFSyntax.html#PropertyDefinitions" target="external_window"><font color="#0000ff"><u>Property Definitions</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028567">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028568">int defrPropCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiProp* <font size="2" face="'Courier New'" color="#000000"><em>prop</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028574">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028575"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054746">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrPropCbkType</font> type, which indicates that the property callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028576"><font size="2" face="'Courier New'" color="#000000"><em>prop</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054753">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiProp</font> structure. For more information, see <a href="ch4DEFclasses.html#defiProp" title="4"><font color="Blue"><u>defiProp</u></font></a><a href="ch4DEFclasses.html#defiProp" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042500"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054769">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrRegionCbkFnType"></a><a name="1028739">defrRegionCbkFnType</a></h3>
+      <p><a name="1042895">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">REGIONS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiRegion</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">REGIONS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Regions" target="external_window"><font color="#0000ff"><u>Regions</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028740">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028741">int defrRegionCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiRegion* <font size="2" face="'Courier New'" color="#000000"><em>reg,<dd></em></font>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028744">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028745"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054776">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrRegionCbkType</font> type, which indicates that the region callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028746"><font size="2" face="'Courier New'" color="#000000"><em>reg</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054792">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiRegion</font> structure. For more information, see <a href="ch4DEFclasses.html#defiRegion" title="4"><font color="Blue"><u>defiRegion</u></font></a><a href="ch4DEFclasses.html#defiRegion" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042504"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054799">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrRowCbkFnType"></a><a name="1028751">defrRowCbkFnType</a></h3>
+      <p><a name="1042912">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">ROWS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiRow</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">ROWS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Rows" target="external_window"><font color="#0000ff"><u>Rows</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028752">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028753">int defrRowCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiRow* <font size="2" face="'Courier New'" color="#000000"><em>row</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028756">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028757"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054806">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrRowCbkType</font> type, which indicates that the row callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028760"><font size="2" face="'Courier New'" color="#000000"><em>row</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054813">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiRow</font> structure. For more information, see <a href="ch4DEFclasses.html#defiRow" title="4"><font color="Blue"><u>defiRow</u></font></a><a href="ch4DEFclasses.html#defiRow" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042508"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054820">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrScanchainCbkFnType"></a><a name="1028775">defrScanchainCbkFnType</a></h3>
+      <p><a name="1042932">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiScanchain</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#ScanChains" target="external_window"><font color="#0000ff"><u>Scan Chains</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028776">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028777">int defrScanchainCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiScanchain* <font size="2" face="'Courier New'" color="#000000"><em>sc</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1033848">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028781"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054827">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrScanchainCbkType</font> type, which indicates that the scan chains callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028782"><font size="2" face="'Courier New'" color="#000000"><em>sc</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054834">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiScanchain</font> structure. For more information, see <a href="ch4DEFclasses.html#1029330" title="4"><font color="Blue"><u>defiScanchain</u></font></a><a href="ch4DEFclasses.html#1029330" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042512"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054841">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrSlotCbkFnType"></a><a name="1047898">defrSlotCbkFnType</a></h3>
+      <p><a name="1047901">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SLOTS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiSlot</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SLOTS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Slots" target="external_window"><font color="#0000ff"><u>Slots</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1047899">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1047925">int defrSlotCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiSlot* <font size="2" face="'Courier New'" color="#000000"><em>slot</em></font>, <dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1047934">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1047935"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054848">Returns the type, </a><font size="2" face="'Courier New'" color="#000000">defrSlotCbkFnType</font>, which indicates that the slot callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1047936"><font size="2" face="'Courier New'" color="#000000"><em>slot</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054855">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiSlot</font> structure. For more information, see <a href="ch4DEFclasses.html#defiSlot" title="4"><font color="Blue"><u>defiSlot</u></font></a><a href="ch4DEFclasses.html#defiSlot" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1047941"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054863">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data</a></blockquote>
+      <h3><a name="1048248">defrStringCbkFnType</a></h3>
+      <p><a name="1043032">Retrieves different kinds of LEF data. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine. </a></p>
+      <h4><a name="1029776">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029777">int defrStringCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>const char* <font size="2" face="'Courier New'" color="#000000"><em>string</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1029780">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1029781"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054871">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="612">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="228">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037116">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="384">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037118">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047479">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047481"><font size="2" face="'Courier New'" color="#000000">defrBusBitCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037124">Design</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037126"><font size="2" face="'Courier New'" color="#000000">defrDesignStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037132">Component Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037134"><font size="2" face="'Courier New'" color="#000000">defrComponentExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037136">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037138"><font size="2" face="'Courier New'" color="#000000">defrDividerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037144">Group Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037146"><font size="2" face="'Courier New'" color="#000000">defrGroupExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051973">Groups Member</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051975"><font size="2" face="'Courier New'" color="#000000">defrGroupMemberCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051969">Groups Name</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051971"><font size="2" face="'Courier New'" color="#000000">defrGroupNameCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037148">History</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037150"><font size="2" face="'Courier New'" color="#000000">defrHistoryCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037156">Net Connection Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037158"><font size="2" face="'Courier New'" color="#000000">defrNetConnectionExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037160">Net Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037162"><font size="2" face="'Courier New'" color="#000000">defrNetExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037168">Pin Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037170"><font size="2" face="'Courier New'" color="#000000">defrPinExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037172">Scan Chain Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037174"><font size="2" face="'Courier New'" color="#000000">defrScanChainExtCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037176">Technology</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037178"><font size="2" face="'Courier New'" color="#000000">defrTechNameCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047475">Version</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047477"><font size="2" face="'Courier New'" color="#000000">defrVersionStrCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037180">Via Extension</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037182"><font size="2" face="'Courier New'" color="#000000">defrViaExtCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1035218"><font size="2" face="'Courier New'" color="#000000"><em>string</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054878">The data returned varies depending on the callback used.The following table shows the kinds of data returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="639">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="240">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037184">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="398">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1037186">Returns a Value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047495">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047508"><font color="#000000"><em>delimiterPair</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">BUSBITCHARS </font>statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037192">Design</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037194"><font color="#000000"><em>designName</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">DESIGN</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037200">Component Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037202"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSIONS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037204">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037206"><font color="#000000"><em>character</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">DIVIDERCHAR</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037212">Group Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037214"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051993">Groups Member</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051995"><font size="2" face="'Courier New'" color="#000000"><em>compNameRegExpr</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051989">Groups Name</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1051991"><font size="2" face="'Courier New'" color="#000000"><em>groupName</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037216">History</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037218"><font color="#000000"><em>anyText</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">HISTORY</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037224">Net Connection Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037226"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037228">Net Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037230"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037236">Pin Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037238"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037240">Scan Chain Extension</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037242"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037244">Technology</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1037246"><font color="#000000"><em>technologyName</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">TECHNOLOGY</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047512">Version</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047514"><font size="2" face="'Courier New'" color="#000000"><em>versionNumber</em></font></a> in <font size="2" face="'Courier New'" color="#000000">VERSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037248">Via Extension</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1037250"><font color="#000000"><em>tag</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1042520"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054885">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrStylesCbkFnType"></a><a name="1052276">defrStylesCbkFnType</a></h3>
+      <p><a name="1052277">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">STYLES</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiStyles</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">STYLES</font> statement, see <a href="../lefdefref/DEFSyntax.html#Styles" target="external_window"><font color="#0000ff"><u>"Styles,"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1052289">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1052290">defrStylesCbkFnType(<dd>defCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiStyles* <font size="2" face="'Courier New'" color="#000000"><em>style</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1052291">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1052292"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054892">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrStylesCbkType</font>, which indicates that the style callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1052295"><font size="2" face="'Courier New'" color="#000000"><em>style</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054899">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiStyles</font> structure. For more information, see <a href="ch4DEFclasses.html#defiStyles" title="4"><font color="Blue"><u>defiStyles</u></font></a><a href="ch4DEFclasses.html#defiStyles" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1052296"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1054907">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrTrackCbkFnType"></a><a name="1028800">defrTrackCbkFnType</a></h3>
+      <p><a name="1043075">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">TRACKS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiTrack</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">TRACKS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Tracks" target="external_window"><font color="#0000ff"><u>Tracks</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028801">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028802">int defrTrackCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiTrack* <font size="2" face="'Courier New'" color="#000000"><em>track</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028805">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028806"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054914">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrTrackCbkType</font>, which indicates that the track callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028807"><font size="2" face="'Courier New'" color="#000000"><em>sc</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054930">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiTrack</font> structure. For more information, see <a href="ch4DEFclasses.html#defiTrack" title="4"><font color="Blue"><u>defiTrack</u></font></a><a href="ch4DEFclasses.html#defiTrack" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042528"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054937">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrViaCbkFnType"></a><a name="1028812">defrViaCbkFnType</a></h3>
+      <p><a name="1043095">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">VIAS</font> statement in the DEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">defiVia</font> class to retrieve the data. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">VIAS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Vias" target="external_window"><font color="#0000ff"><u>Vias</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1028813">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028814">int defrViaCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>defiVia* <font size="2" face="'Courier New'" color="#000000"><em>via</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1028817">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1028818"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054944">Returns the </a><font size="2" face="'Courier New'" color="#000000">defrViaCbkType</font>, which indicates that the via callback was called.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1028821"><font size="2" face="'Courier New'" color="#000000"><em>via</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054951">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">defiVia</font> structure. For more information, see <a href="ch4DEFclasses.html#defiVia" title="4"><font color="Blue"><u>defiVia</u></font></a><a href="ch4DEFclasses.html#defiVia" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042532"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054958">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="defrVoidCbkFnType"></a><a name="1029703">defrVoidCbkFnType</a></h3>
+      <p><a name="1043118">Marks the end of DEF data sections. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine. </a></p>
+      <h4><a name="1029704">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029705">int defrVoidCbkFnType(<dd>defrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>void* <font size="2" face="'Courier New'" color="#000000"><em>variable</em></font>,<dd>defiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1029708">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1030102"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054965">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="636">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="240">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1047586">DEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="396">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1047588">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047590">Blockages, End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047592"><font size="2" face="'Courier New'" color="#000000">defrBlockageEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047598">Component, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047600"><font size="2" face="'Courier New'" color="#000000">defrComponentEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047606">Design, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047608"><font size="2" face="'Courier New'" color="#000000">defrDesignEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052038">Fills, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052040"><font size="2" face="'Courier New'" color="#000000">defrFillEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047610">Groups, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047612"><font size="2" face="'Courier New'" color="#000000">defrGroupsEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047618">Net, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047620"><font size="2" face="'Courier New'" color="#000000">defrSNetEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052176">Nondefault Rules, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052178"><font size="2" face="'Courier New'" color="#000000">defrNonDefaultEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047670">Pin Properties, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047672"><font size="2" face="'Courier New'" color="#000000">defrPinPropEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047666">Pins, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047668"><font size="2" face="'Courier New'" color="#000000">defrPinEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047650">Property Definitions, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047652"><font size="2" face="'Courier New'" color="#000000">defrPropDefEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047622">Property Definitions, Start</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047624"><font size="2" face="'Courier New'" color="#000000">defrPropDefStartCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047626">Region, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047628"><font size="2" face="'Courier New'" color="#000000">defrRegionEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047634">Scan Chains, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047636"><font size="2" face="'Courier New'" color="#000000">defrConstraintsEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052042">Slots, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052044"><font color="#000000">defrSlotEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047638">Special Nets, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047640"><font size="2" face="'Courier New'" color="#000000">defrSNetEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052172">Styles, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052174"><font size="2" face="'Courier New'" color="#000000">defrStylesEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047642">Via, End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047644"><font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1030100"><font size="2" face="'Courier New'" color="#000000"><em>variable</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054972">Returns data that varies depending on the callback used. The following kinds of data can be returned. For all data types, the variable returns </a><font size="2" face="'Courier New'" color="#000000">NULL</font>. </blockquote>
+      <table summary="" cellpadding="4" width="440">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="440">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1043564">DEF Data</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top" width="220">
+            <p><a name="1043568">Blockages, End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top" width="220">
+            <p><a name="1044877">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1044778">Component, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1044861">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047803">Design, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047805">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052046">Fills, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052048">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1044809">Groups, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1044912">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1043580">Net, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1044930">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052196">Nondefault Rules, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052198">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047738">Pins, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047740">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047734">Pin Properties, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047736">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047793">Property Definitions, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047795">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047730">Property Definitions Start</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047732">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047726">Region, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047728">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047722">Scan Chains, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047724">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052050">Slots, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052052">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047718">Special Nets, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1047720">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052200">Styles, End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1052202">&nbsp;</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047745">Via, End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1047712">&nbsp;</a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1042536"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1054988">Specifies four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="1044431">Examples</a></h3>
+      <p><a name="1044433">The following example shows a callback routine using the arguments for </a><font size="2" face="'Courier New'" color="#000000">defrCallbackType_e</font>, <font size="2" face="'Courier New'" color="#000000">char*</font>, and <font size="2" face="'Courier New'" color="#000000">defiUserData</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1044434">int designCB (defrCallbackType_e type,<dd>const char *designName,<dd>defiUserData userData) {<dd><dd>&#47;&#47; Incorrect type was passed in, expecting the type defrDesignStartCbk<dd><dd>Type<dd>    if (type != defrDesignStartCbkType) {<dd>        printf(&#34;Type is not defrDesignStartCbkType, <dd>        terminate parsing.\n&#34;);<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;}<dd><dd>&#47;&#47; Expect a non null char* designName<dd>    if (!designName || !*designName) {<dd>        printf(&#34;Design name is null, terminate parsing.\n&#34;);<dd>        return 1;}<dd><dd><dd>&#47;&#47; Write out the design name<dd>    printf(&#34;design name is %s\n&#34;, desginName);<dd>    return 0;}</a></font>
+      </dl>
+      <p><a name="1044451">The following example shows a callback routine using the arguments for </a><font size="2" face="'Courier New'" color="#000000">defrCallbackType_e</font>, <font size="2" face="'Courier New'" color="#000000">int</font>, and <font size="2" face="'Courier New'" color="#000000">defiUserData</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1044452">int viaStartCB (defrCallbackType_e c,<dd>int numVias,<dd>defiUserData ud) {<dd><dd><dd>&#47;&#47; Check if the type is correct<dd>    if (type != defrViaStartCbkType) {<dd>        printf(&#34;Type is not defrViaStartCbkType, terminate <dd>        parsing.\n&#34;);<dd>        return 1;}<dd><dd>printf(&#34;VIA %d\n&#34;, numVias);<dd><dd>return 0;}</a></font>
+      </dl>
+      <p><a name="1044458">The following example shows a callback routine using the arguments for </a><font size="2" face="'Courier New'" color="#000000">defrCallbackType_e</font>, <font size="2" face="'Courier New'" color="#000000">defiVia</font>, and <font size="2" face="'Courier New'" color="#000000">defiUserData</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1048212">int viaCB (defrCallbackType_e type,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiVia *viaInfo,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiUserData userData) {<dd>    int  i, xl, yl, xh, yh;<dd>    char *name<dd><dd>&#47;&#47; Check if the type is correct<dd>    if (type != defrViaCbkType) {<dd>        printf(&#34;Type is not defrViaCbkType, terminate<dd>        parsing.\n&#34;);<dd>        return 1;}<dd><dd><dd>printf(&#34;VIA %s\n&#34;, viaInfo&#45;&#62;name());<dd>    if (viaInfo&#45;&#62;hasPattern())<dd>        printf(&#34;  PATTERNNAME %s\n&#34;, viaInfo&#45;&#62;pattern());<dd>    for (i = 0; i &#60; viaInfo&#45;&#62;numLayers(); i++) {<dd>        viaInfo&#45;&#62;layer(i, &amp;name, &amp;xl, &amp;yl, &amp;xh, &amp;yh);<dd>         printf(&#34; RECT %s %d %d %d %d\n&#34;, name, xl, yl, xh, yh);}<dd><dd><dd>return 0;}</a></font>
+      </dl>
+      <p><a name="1044405">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch2DEFsetup.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch4DEFclasses.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

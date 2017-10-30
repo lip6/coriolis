@@ -1,0 +1,841 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>DEF 5.8 C/C++ Programming Interface -- 4</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-18">
+<META NAME="CreateTime" CONTENT="1492498753">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Design Exchange Format (DEF) files.">
+<META NAME="DocTitle" CONTENT="DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="4">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-18">
+<META NAME="ModifiedTime" CONTENT="1492498753">
+<META NAME="NextFile" CONTENT="ch5DEFwritercallback.html">
+<META NAME="PageCount" CONTENT="40">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch3DEFcallback.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="case DEFIPATH_VIA:                         printf(&quot;%s &quot;, p->getVia());                        break;,case DEFIPATH_WIDTH:                         printf(&quot;%d &quot;, p->getWidth());                        break;,    printf(&quot;DO %g BY %g STEP %g %g\n&quot;, rowInfo->xNum(),             rowInfo->yNum(),rowInfo->xStep(), row->yStep());if (rowInfo->numProps() > 0) {        for (i = 0; i < rowInfo->numProps(); i++) {            printf(&quot;   PROPERTY %s %s\n&quot;, rowInfo->propName(i),                   rowInfo->propValue(i));        }    }    return 0;},                    case DEFIPATH_POINT:                         p->getPoint(&x, &y);                         printf(&quot;( %d %d ) &quot;, x, y);                        break;,                    case DEFIPATH_SHAPE:                         printf(&quot; SHAPE %s &quot;, p->getShape());                        break;                }            }            printf(&quot;\n&quot;);        }    }    // SHIELD    // testing the SHIELD for 5.3    if (net->numShields()) {        for (i = 0; i < net->numShields(); i++) {            shield = net->shield(i);            printf(&quot;\n+ SHIELD %s &quot;,                     shield->defiShield::shieldName());            newLayer = 0;            for (j = 0; j < shield->defiShield::numPaths(); j++) {                p = shield->defiShield::path(j);                p->initTraverse();                while ((path = (int)p->next()) != DEFIPATH_DONE) {                    switch (path) {                        case DEFIPATH_LAYER:                             if (newLayer == 0) {                                 printf(&quot;%s &quot;, p->getLayer());                                 newLayer = 1;                             } else                                 printf(&quot;NEW %s &quot;, p->getLayer());                             break;,                    case DEFIPATH_TAPER:                         printf(&quot;TAPER &quot;);                         break;,                       case DEFIPATH_VIA:                             printf(&quot;%s &quot;, p->getVia());                            break;,                        case DEFIPATH_POINT:                             p->getPoint(&x, &y);                             printf(&quot;( %d %d ) &quot;, x, y);                            break;,                        case DEFIPATH_TAPER:                             printf(&quot;TAPER &quot;);                            break;}                }                printf(&quot;\n&quot;);            }        }    }    // layerName spacing    if (net->hasSpacingRules()) {        for (i = 0; i < net->numSpacingRules(); i++) {            net->spacingRule(i, &layerName, &dist, &left, &right);            if (left == right)                printf(&quot;SPACING %s %g\n&quot;, layerName, dist);            else                printf(&quot;SPACING %s %g RANGE %g %g\n&quot;,                        layerName, dist, left, right);        }    }    return 0;},                        case DEFIPATH_WIDTH:                             printf(&quot;%d &quot;, p->getWidth());                            break;,    // Check if the type is correct    if ((type != defrPinCbkType)) {        printf(&quot;Type is not defrPinCbkType terminate parsing.\n&quot;);        return 1;    }printf(&quot;%s NET %s\n&quot;, pinInfo->pinName(),             pinInfo->netName());    if (pinInfo->hasDirection())        printf(&quot;  DIRECTION %s\n&quot;, pinInfo->direction());    if (pinInfo->hasUse())        printf(&quot;  USE %s\n&quot;, pinInfo->use());    if (pinInfo->hasLayer()) {        printf(&quot;  LAYER %s &quot;, pinInfo->layer());        pinInfo->bounds(&xl, &yl, &xh, &yh);        printf(&quot;%d %d %d %d\n&quot;, xl, yl, xh, yh);    }if (pinInfo->hasPlacement()) {        if (pinInfo->isPlaced())            printf(&quot;  PLACED\n&quot;);        if (pinInfo->isCover())            printf(&quot;  COVER\n&quot;);        if (pinInfo->isFixed())            printf(&quot;  FIXED\n&quot;);        printf(&quot;( %d %d ) %d &quot;, pinInfo->placementX(),                pinInfo->placementY(),               pinInfo->orient());    }    if (pinInfo->hasSpecial())        printf(&quot;  SPECIAL\n&quot;);    return 0;},         printf(&quot;END VIAS\n&quot;);    return 0;},    return 0;},class defiBlockage {int hasLayer() const;int hasPlacement() const;int hasComponent() const;int hasSlots() const;int hasFills() const;int hasPushdown() const;int hasExceptpgnet() const;int hasSoft() const;int hasPartial() const;int hasSpacing() const;int hasDesignRuleWidth() const;int minSpacing() const;int designRuleWidth() const;double placementMaxDensity() const;const char* layerName() const;const char* layerComponentName() const;const char* placementComponentName() const;int numRectangles() const;int xl(int index) const;int yl(int index) const;int xh(int index) const;int yh(int index) const; int numPolygons() const;struct defiPoints getPolygon(int index) const;int hasMask() const;int mask() const;},class defiBox {int xl() const;int yl() const;int xh() const;int yh() const;struct defiPoints getPoint() const;},class defiComponent {const char* id() const;const char* name() const;int placementStatus() const;int isUnplaced() const;int isPlaced() const;int isFixed() const;int isCover() const;int placementX() const;int placementY() const;int placementOrient() const;            // optional- For information,see//&quot;Orientation Codes&quot; on page 19const char* placementOrientStr() const;int hasRegionName() const;int hasRegionBounds() const;int hasEEQ() const;int hasGenerate() const;int hasSource() const;int hasWeight() const;int weight() const;int hasNets() const;int numNets() const;const char* net(int index) const;const char* regionName() const;const char* source() const;const char* EEQ() const;const char* generateName() const;const char* macroName() const;int hasHalo() const;int hasHaloSoft() const;int hasRouteHalo() const;int haloDist() const;const char* minLayer() const;const char* maxLayer() const;void haloEdges(int* left, int* bottom, int* right, int* top);void regionBounds(int* size, int** xl, int** yl, int** xh, int** yh);int hasForeignName() const;const char* foreignName() const;int foreignX() const;int foreignY() const;const char* foreignOri() const;int hasFori() const;int foreignOrient() const;int numProps() const;char* propName(int index) const;char* propValue(int index) const;double propNumber(int index) const;char propType(int index) const;int propIsNumber(int index) const;int propIsString (int index) const; int maskShiftSize();int maskShift(int index) const;},class defiComponentMaskShiftLayer {public:     defiComponentMaskShiftLayer();     ~defiComponentMaskShiftLayer();void Init();void Destroy();void addMaskShiftLayer(const char* layer); int numMaskShiftLayers() const;void bumpLayers(int size);void clear();const char* maskShiftLayer(int index) const;};,class defiFill {int hasLayer() const;const char* layerName() const;int hasLayerOpc() const;int numRectangles() const;int xl(int index) const;int yl(int index) const;int xh(int index) const;int yh(int index) const;int numPolygons() const;struct defiPoints getPolygon(int index) const;int hasVia() const;const char* viaName() const;int hasViaOpc() const;int numViaPts() const;struct defiPoints getViaPts(int index) const;void setMask(int colorMask);int layerMask() const int viaTopMask() const;int viaCutMask() const;int viaBottomMask() const;},class defiGcellGrid {const char* macro() const;int x() const;int xNum() const;double xStep() const;},class defiGeometries {int numPoints() const;void points(int index, int* x, int* y);},class defiGroup {const char* name() const;const char* regionName() const;int hasRegionBox() const;int hasRegionName() const;int hasMaxX() const;int hasMaxY() const;int hasPerim() const;void regionRects(int* size, int** xl, int** yl, int** xh, int** yh);int maxX() const;int maxY() const;int perim() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index) const; },class defiNet {const char* name() const;int weight() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index) const;int numConnections() const;const char* instance(int index) const;const char* pin(int index) const;int pinIsMustJoin(int index) const;int pinIsSynthesized(int index) const;int numSubnets() const;defiSubnet* subnet(int index);int isFixed() const;int isRouted() const;int isCover() const;int numWires() const;defiWire* wire(int index);int numVpins() const;defiVpin* vpin(int index) const;int hasProps() const;int hasWeight() const;int hasSubnets() const;int hasSource() const;int hasFixedbump() const;int hasFrequency() const;int hasPattern() const;int hasOriginal() const;int hasCap() const;int hasUse() const;int hasStyle() const;int hasNonDefaultRule() const;int hasVoltage() const;int hasSpacingRules() const;int hasWidthRules() const;int hasXTalk() const;int numSpacingRules() const;void spacingRule(int index, char** layer, double* dist, double* left, double* right);int numWidthRules() const;void widthRule(int index, char** layer, double* dist);double voltage() const;int XTalk() const;const char* source() const;double frequency() const;const char* original() const;const char* pattern() const;double cap() const;const char* use() const;int style() const;const char* nonDefaultRule() const;int numPaths() const;defiPath* path(int index);int numShields() const;defiShield* shield(int index);int numShieldNets() const;const char* shieldNet(int index) const;int numNoShields() const;defiShield* noShield(int index);int numPolygons() const;const char* polygonName(int index) const;struct defiPoints getPolygon(int index) const;int numRectangles() const;const char* rectName(int index) const;int xl(int index) const;int yl(int index) const;int xh(int index) const;int yh(int index) const;int polyMask(int index) const;int rectMask(int index) const;int topMaskNum(int index) const;int cutMaskNum(int index) const;int bottomMask(int index) const;},class defiNonDefault {const char* name() const;int hasHardspacing() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index) const;int numLayers() const;const char* layerName(int index) const;int hasLayerDiagWidth(int index) const;int hasLayerSpacing(int index) const;int hasLayerWireExt(int index) const;int numVias() const;const char* viaName(int index) const;int numViaRules() const;const char* viaRuleName(int index) const;int hasMinCuts() const;void minCuts(const char **cutLayerName, int *numCuts) const;},class defiOrdered {int num() const;char** inst() const;char** in() const;char** out() const;int* bits() const; },class defiPath {void initTraverse(); void initTraverseBackwards(); int next(); int prev(); const char* getLayer(); .const char* getTaperRule(); const char* getVia(); const char* getShape();int getStyle(); int getViaRotation();const char* getViaRotationStr();void getViaData(int* numX, int* numY, int* stepX, int* stepY);int getWidth();void getPoint(int* x, int* y); void getFlushPoint(int* x, int* y, int* ext);int getMask();int getViaTopMask();int getViaCutMask();int getViaBottomMask(); int getRectMask();},class defiPin {const char* pinName() const;const char* netName() const;int hasDirection() const;int hasUse() const;int hasLayer() const;int hasPlacement() const;int isUnplaced() const;int isPlaced() const;int isCover() const;int isFixed() const;int placementX() const;int placementY() const;const char* direction() const;const char* use() const;int numLayer() const;const char* layer(int index) const;void bounds(int index, int* xl, int* yl, int* xh, int* yh) const;int hasLayerSpacing(int index) const;int hasLayerDesignRuleWidth(int index) const; int layerSpacing(int index) const; int layerDesignRuleWidth(int index) const;int numPolygons() const;const char* polygonName(int index) const;struct defiPoints getPolygon(int index) const;int hasPolygonSpacing(int index) const; int hasPolygonDesignRuleWidth(int index) const;int polygonSpacing(int index) const;int polygonDesignRuleWidth(int index) const;int hasNetExpr() const;int hasSupplySensitivity() const;int hasGroundSensitivity() const;const char* netExpr() const;const char* supplySensitivity() const;const char* groundSensitivity() const;int orient() const;                      // optional- For information, see           //&quot;Orientation Codes&quot; on page 19 const char* orientStr() const;int hasSpecial() const;int numVias() const;const char* viaName(int index) const;int viaPtX (int index) const;int viaPtY (int index) const;int hasAPinPartialMetalArea() const; int numAPinPartialMetalArea() const;int APinPartialMetalArea(int index) const;int hasAPinPartialMetalAreaLayer(int index) const;const char* APinPartialMetalAreaLayer(int index) const;int hasAPinPartialMetalSideArea() const; int numAPinPartialMetalSideArea() const;int APinPartialMetalSideArea(int index) const;int hasAPin PartialMetalSideAreaLayer(int index) const;const char* APinPartialMetalSideAreaLayer(int index) const;int hasAPinDiffArea() const; int numAPinDiffArea() const;int APinDiffArea(int index) const;int hasAPinDiffAreaLayer(int index) const;const char* APinDiffAreaLayer(int index) const;int hasAPinPartialCutArea() const; int numAPinPartialCutArea() const;int APinPartialCutArea(int index) const;int hadAPinPartialCutAreaLayer(int index) const;const char* APinPartialCutAreaLayer(int index) const; int numAntennaModel() const;defiPinAntennaModel* antennaModel(int index) const;int  hasPort() const;int  numPorts() const;defiPinPort* pinPort(int index) const;int layerMask(int index) const; int polygonMask(int index) const; int viaTopMask(int index) const;int viaCutMask(int index) const;int viaBottomMask(int index) const;},class defiPinAntennaModel {char* antennaOxide() const;int hasAPinGateArea() const; int numAPinGateArea() const;int APinGateArea(int index) const;int hasAPinGateAreaLayer(int index) const;const char* APinGateAreaLayer(int index) const;int hasAPinMaxAreaCar() const; int numAPinMaxAreaCar() const;int APinMaxAreaCar(int index) const;int hasAPinMaxAreaCarLayer(int index) const;const char* APinMaxAreaCarLayer(int index) const;int hasAPinMaxSideAreaCar() const; int numAPinMaxSideAreaCar() const;int APinMaxSideAreaCar(int index) const;int hasAPinMaxSideAreaCarLayer(int index) const;const char* APinMaxSideAreaCarLayer(int index) const;int hasAPinMaxCutCar() const; int numAPinMaxCutCar() const;int APinMaxCutCar(int index) const;int hasAPinMaxCutCarLayer(int index) const;const char* APinMaxCutCarLayer(int index) const; },class defiPinPort {int numLayer() const;const char* layer(int index) const;int hasLayerSpacing(int index) const;int hasLayerDesignRuleWidth(int index) const;int layerSpacing(int index) const;int layerDesignRuleWidth(int index) const;int numPolygons() const;const char* polygonName(int index) const;struct defiPoints getPolygon(int index) const;int hasPolygonSpacing(int index) const;int hasPolygonDesignRuleWidth(int index) const;int polygonSpacing(int index) const;int polygonDesignRuleWidth(int index) const;int numVias() const;const char* viaName(int index) const;int viaPtX (int index) const;int viaPtY (int index) const;int hasPlacement() const;int isPlaced() const;int isCover() const;int isFixed() const;int placementX() const;int placementY() const;int orient() const;const char* orientStr() const;int layerMask(int index) const; int polygonMask(int index) const;int viaTopMask(int index) const;int viaCutMask(int index) const;int viaBottomMask(int index) const;};},class defiPinProp {int isPin() const;const char* instName() const;const char* pinName() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index); },class defiProp {const char* string() const;const char* propType() const;const char* propName() const;char  dataType() const;           // either I:integer, R:real, S:string,                              // Q:quotestring, or N:nameMapStringint hasNumber() const;int hasRange() const;int hasString() const;int hasNameMapString() const;double number() const;double left() const;double right() const;},class defiRegion {const char* name() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index) const;int hasType() const;const char* type() const;int numRectangles() const;int xl(int index) const;int yl(int index) const;int xh(int index) const;int yh(int index) const;},class defiRow {const char* name() const;const char* macro() const;double x() const;double y() const;int orient() const;                   // optional-For information,see             //&quot;Orientation Codes&quot; on page 19 const char* orientStr() const;int hasDo() const;double xNum() const;double yNum() const;int hasDoStep() const;double xStep() const;double yStep() const;int numProps() const;const char* propName(int index) const;const char* propValue(int index) const;double propNumber(int index) const;const char propType(int index) const;int propIsNumber(int index) const;int propIsString(int index) const;},class defiScanchain {const char* name() const;int hasStart() const;int hasStop() const;int hasFloating() const;int hasOrdered() const;int hasCommonInPin() const;int hasCommonOutPin() const;int hasPartition() const;int hasPartitionMaxBits() const;void start(char** inst, char** pin) const;void stop(char** inst, char** pin) const;int numOrdered() const;void ordered(int index, int* size, char*** inst, char*** inPin, char*** outPin, int** bits) const;void floating(int* size, char*** inst, char*** inPin,char*** outPin, int** bits) const;const char* commonInPin() const;const char* commonOutPin() const;const char* partitionName() const;int partitionMaxBits(); },class defiShield {const char* shieldName() const;int numPaths() const; defiPath* path(int index);},class defiSite {double x_num() const;double y_num() const;double x_step() const;double y_step() const;double x_orig() const;double y_orig() const;int orient() const;               // optional- For information, see    //&quot;Orientation Codes&quot; on page 19 const char* orientStr() const;const char* name() const;},class defiSlot {int hasLayer() const;const char* layerName() const;int numRectangles() const;int xl(int index) const;int yl(int index) const;int xh(int index) const;int yh(int index) const;int numPolygons() const;struct defiPoints getPolygon(int index) const;},class defiStyles {int style() const;struct defiPoints getPolygon() const;},class defiSubnet {const char* name() const;int numConnections();const char* instance(int index);const char* pin(int index);int pinIsSynthesized(int index);int pinIsMustJoin(int index);int isFixed() const;int isRouted() const;int isCover() const;int hasNonDefaultRule() const;int hasShield() const;int hasShieldNet() const;int hasNoShieldNet() const;int numPaths() const;defiPath* path(int index);const char* nonDefaultRule() const;int numWires() const;defiWire* wire(int index);},class defiTrack {const char* macro() const;double x() const;double xNum() const;double xStep() const;int numLayers() const;const char* layer(int index) const;int firstTrackMask() const;int sameMask() const;},class defiVia {const char* name() const;const char* pattern() const;int hasPattern() const;int numLayers() const;void layer(int index, char** layer, int* xl, int* yl,int* xh, int* yh) const;},class defiVia {const char* name() const;const char* pattern() const;int hasPattern() const;int numLayers() const;void layer(int index, char** layer, int* xl, int* yl, int* xh, int* yh) const;int numPolygons() const; const char* polygonName(int index) const; struct defiPoints getPolygon(int index) const:int hasViaRule() const;void viaRule(char** viaRuleName, int* xSize, int* ySize, char** botLayer, char** cutLayer, char** topLayer, int* xCutSpacing, int* yCutSpacing, int* xBotEnc, int* yBotEnc,int* xTopEnc, int* yTopEnc) const;int hasRowCol() const;void rowCol(int* numCutRows, int* numCutCols) const;int hasOrigin() const;void origin(int* xOffset, int* yOffset) const;int hasOffset() const;void offset(int* xBotOffset, int* yBotOffset, int* xTopOffsetint* yTopOffset) const;int hasCutPattern() const;const char* cutPattern() const;int rectMask(int index) const;int polyMask(int index) const; },class defiVpin {int xl() const;int yl() const;int xh() const;int yh() const;char status() const;int orient() const;const char* orientStr() const;int xLoc() const;int yLoc() const;const char* name() const;const char* layer() const;},class defiWire {const char* wireType() const;const char* wireShieldNetName() const;int numPaths() const;defiPath* path(int index);},const char * defiVia)name( const defiVia * this );,const char * defiVia_hasPattern( const defiVia * this );,for(i=0; i< A->defiVia::numLayers(); i++) { via -> defiVia::layer(i, &name, &x1, &y1, &xh, &yh); printf(&quot;+ RECT %s %d %d %d %d \n&quot;, name x1, y1, xh, yh);,int componentCB (defrCallbackType_e type,                 defiComponent* compInfo,                 defiUserData userData) {int i;// Check if the type is correct    if ((type != defrComponentCbkType)) {        printf(&quot;Type is not defrComponentCbkType terminate               parsing.\n&quot;);        return 1;    }printf(&quot;%s %s &quot;, compInfo->id(), compInfo->name());    if (compInfo->hasNets()) {        for (i = 0; i < compInfo->numNets(); i++)            printf(&quot;%s &quot;, compInfo->net(i));        printf(&quot;\n&quot;);    }    if (compInfo->isFixed())        printf(&quot; FIXED %d %d %d\n&quot;, compInfo->placementX(),               compInfo->placementY(),                compInfo->placementOrient());    if (compInfo->isCover())        printf(&quot;  COVER %d %d %d\n&quot;, compInfo->placementX(),               compInfo->placementY(),                compInfo->placementOrient());    if (compInfo->isPlaced())        printf(fout,&quot;  PLACED %d %d %d\n&quot;, compInfo->placementX(),               compInfo->placementY(),                compInfo->placementOrient());    if (compInfo->hasSource())        printf(&quot;  SOURCE %s\n&quot;, compInfo->source());    if (compInfo->hasWeight())        printf(&quot;  WEIGHT %d\n&quot;, compInfo->weight());    if (compInfo->hasEEQ())        printf(&quot;  EEQMASTER %s\n&quot;, compInfo->EEQ());    if (compInfo->hasRegionName())        printf(&quot;  REGION %s\n&quot;, compInfo->regionName());    if (compInfo->hasRegionBounds()) {        int *xl, *yl, *xh, *yh;        int size;        compInfo->regionBounds(&size, &xl, &yl, &xh, &yh);        for (i = 0; i < size; i++) {            printf(&quot;  REGION %d %d %d %d\n&quot;, xl[i], yl[i],                      xh[i], yh[i]);        }    }    if (compInfo->hasForeignName()) {        printf(&quot;  FOREIGN %s %d %d %s\n&quot;, compInfo->foreignName(),               compInfo->foreignX(), compInfo->foreignY(),               compInfo->foreignOri());    }    // maskShiftArray[0] will always return the right most digit,since we     // allow the leading 0 and also omit the leading 0's.    if (compInfo->maskShiftSize()) {       printf(&quot; MASKSHIFT&quot;);       for (i = compInfo->maskShiftSize() -1; i >=0; i--) {           printf(&quot;%d &quot;, compInfo->maskShift(i);       }       printf(&quot;\n&quot;);    }return 0;},int defiVia_hasPattern( const defiVia * this );,int defiVia_numLayers( const defiVia * this );,int diearea (defrCallbackType_e type,           defiRow* dieareaInfo,           defiUserData userData) {// Check if the type is correct    if (type != defrDieAreaCbkType) {        printf(&quot;Type is not defrDieAreaCbkType, terminate                 parsing.\n&quot;);        return 1;    }    printf(&quot;DIEAREA %d %d %d %d\n&quot;, diearea->xl(), diearea->yl(),           diearea->xh(), diearea->yh());    return 0;},int gcellCB (defrCallbackType_e type,             defiGcellGrid* gcellInfo,             defiUserData userData) {    int i;    // Check if the type is correct    if (type != defrGcellGridCbkType) {        printf(&quot;Type is not defrGcellGridCbkType, terminateparsing.\n&quot;);        return 1;    }    printf(&quot;GCELLGRID %s %d DO %d STEP %g\n&quot;, gcellInfo->macro(),           gcellInfo->x(), gcellInfo->xNum(), gcellInfo->xStep());    return 0;},int groupCB (defrCallbackType_e type,             defiGroup grouInfo,             defiUserData userData) {    // Check if the type is correct    if ((type != defrGroupCbkType)) {        printf(&quot;Type is not defrGroupCbkType terminate        parsing.\n&quot;);        return 1;    }    if (group->hasMaxX() | group->hasMaxY() |         group->hasPerim())     {        printf(&quot;  SOFT &quot;);        if (group->hasPerim())            printf(&quot;MAXHALFPERIMETER %d &quot;, group->perim());        if (group->hasMaxX())            printf(&quot;MAXX %d &quot;, group->maxX());        if (group->hasMaxY())            printf(&quot;MAXY %d &quot;, group->maxY());    }    if (group->hasRegionName())        printf(&quot;REGION %s &quot;, group->regionName());    if (group->hasRegionBox()) {        int *gxl, *gyl, *gxh, *gyh;        int size;        group->regionRects(&size, &gxl, &gyl, &gxh, &gyh);        for (i = 0; i < size; i++)            printf(&quot;REGION %d %d %d %d &quot;, gxl[i], gyl[i], gxh[i],           gyh[i]);    }    printf(&quot;\n&quot;);    return 0;},int groupmemberCB (defrCallbackType_e type,                   const char* name,                   defiUserData userData) {    // Check if the type is correct    if ((type != defrGroupMemberCbkType)) {        printf(&quot;Type is not defrGroupMemberCbkType terminate        parsing.\n&quot;);        return 1;    }    printf(&quot;  %s\n&quot;, name());    return 0;},int groupnameCB (defrCallbackType_e type,                 const char* name,                 defiUserData userData) {// Check if the type is correct    if ((type != defrGroupNameCbkType)) {        printf(&quot;Type is not defrGroupNameCbkType terminate        parsing.\n&quot;);        return 1;    }    printf(&quot;Name is %s\n&quot;, name());    return 0;},int pinCB (defrCallbackType_e type,           defiPin* pinInfo,           defiUserData userData) {int i;,int pinpropCB (defrCallbackType_e type,               defiPinProp* pinpropInfo,               defiUserData userData) {    int i;// Check if the type is correct    if ((type != defrPinCbkType)) {        printf(&quot;Type is not defrPinCbkType terminate parsing.\n&quot;);        return 1;    }if (pinpropInfo->isPin())       printf(&quot;PIN %s\n&quot;, pinpropInfo->pinName());    else       printf(&quot;%s %s\n&quot;, pinpropInfo->instName(),               pinpropInfo->pinName());    if (pinpropInfo->numProps() > 0) {       for (i = 0; i < pinpropInfo->numProps(); i++) {           printf(&quot; PROPERTY %s %s\n&quot;, pinpropInfo->propName(i),                   pinpropInfo->propValue(i));       }    }return 0;},int propDefCB (defrCallbackType_e type,               defiProp* propInfo,               defiUserData userData) {    // Check if the type is correct    if (type != defrPropCbkType) {        printf(&quot;Type is not defrPropCbkType, terminate                 parsing.\n&quot;);        return 1;    }// Check the object type of the property definition    if (strcmp(propInfo->propType(), &quot;design&quot;) == 0)        printf(&quot;DESIGN %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;net&quot;) == 0)        printf(&quot;NET %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;component&quot;) == 0)        printf(&quot;COMPONENT %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;specialnet&quot;) == 0)        printf(&quot;SPECIALNET %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;group&quot;) == 0)        printf(&quot;GROUP %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;row&quot;) == 0)        printf(&quot;ROW %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;componentpin&quot;) == 0)        printf(&quot;COMPONENTPIN %s &quot;, propInfo->propName());    else if (strcmp(propInfo->propType(), &quot;region&quot;) == 0)        printf(&quot;REGION %s &quot;, propInfo->propName());    if (propInfo->dataType() == ÕIÕ)        printf(&quot;INTEGER &quot;);    if (propInfo->dataType() == ÕRÕ)        printf(&quot;REAL &quot;);    if (propInfo->dataType() == ÕSÕ)        printf(&quot;STRING &quot;);    if (propInfo->dataType() == ÕQÕ)        printf(&quot;STRING &quot;);    if (propInfo->hasRange()) {        printf(&quot;RANGE %g %g &quot;, propInfo->left(),                 propInfo->right());    }    if (propInfo->hasNumber())        printf(&quot;%g &quot;, propInfo->number());    if (propInfo->hasString())        printf(&quot;'%s' &quot;, propInfo->string());    printf(&quot;\n&quot;);,int propDefEndCB (defrCallbackType_e type,                  void* dummy,                  defiUserData userData) {    // Check if the type is correct    if (type != defrPropDefEndCbkType) {        printf(&quot;Type is not defrPropDefEndCbkType,                   terminate parsing.\n&quot;);        return 1;},int propDefStartCB (defrCallbackType_e type,                    void* dummy,                   defiUserData userData) {    // Check if the type is correct    if (type != defrPropDefStartCbkType) {        printf(&quot;Type is not defrPropDefStartCbkType,                 terminate parsing.\n&quot;);        return 1;    }    printf(&quot;PROPERTYDEFINITIONS\n&quot;);    return 0;},int regionCB (defrCallbackType_e type,              defiRegion* regionInfo,              defiUserData userData) {    int i;    char* name;// Check if the type is correct    if ((type != defrRegionCbkType)) {        printf(&quot;Type is not defrRegionCbkType terminate                parsing.\n&quot;);        return 1;    }    for (i = 0; i < regionInfo->numRectangles(); i++)        printf(&quot;%d %d %d %d \n&quot;, regionInfo->xl(i),                 regionInfo->yl(i), regionInfo->xh(i),                regionInfo->yh(i));return 0;},int rowCB (defrCallbackType_e type,           defiRow* rowInfo,           defiUserData userData) {int i;// Check if the type is correct    if (type != defrRowCbkType) {        printf(&quot;Type is not defrRowCbkType, terminate                parsing.\n&quot;);        return 1;    }printf(&quot;ROW %s %s %g %g %d &quot;, rowInfo->name(),             rowInfo->macro(), rowInfo->x(), rowInfo->y(),             rowInfo->orient());,int scanchainCB (defrCallbackType_e type,                 defiScanchain* scanchainInfo,                 defiUserData userData) {// Check if the type is correct    if ((type != defrScanchainCbkType)) {        printf(&quot;Type is not defrScanchainCbkType         terminate parsing.\n&quot;);        return 1;    }    printf(&quot;%s\n&quot;, scanchainInfo->name());    if (scanchainInfo->hasStart()) {        scanchainInfo->start(&a1, &b1);        printf(&quot;   START %s %s\n&quot;, a1, b1);    }    if (scanchainInfo->hasStop()) {        scanchainInfo->stop(&a1, &b1);        printf(&quot;   STOP %s %s\n&quot;, a1, b1);    }    if (scanchainInfo->hasCommonInPin() ||        scanchainInfo->hasCommonOutPin()) {        printf(&quot;   COMMONSCANPINS &quot;);        if (scanchainInfo->hasCommonInPin())           printf(&quot; ( IN %s ) &quot;, scanchainInfo->commonInPin());        if (scanchainInfo->hasCommonOutPin())           printf(&quot; ( OUT %s ) &quot;,scanchainInfo->commonOutPin());        printf(&quot;\n&quot;);    }    if (scanchainInfo->hasFloating()) {        scanchainInfo->floating(&size, &inst, &inPin, &outPin);        if (size > 0)            printf(&quot;  + FLOATING\n&quot;);        for (i = 0; i < size; i++) {            printf(&quot;    %s &quot;, inst[i]);            if (inPin[i])               printf(&quot;( IN %s ) &quot;, inPin[i]);            if (outPin[i])               printf(&quot;( OUT %s ) &quot;, outPin[i]);            printf(&quot;\n&quot;);        }        printf(&quot;\n&quot;);    }    if (scanchainInfo->hasOrdered()) {        for (i = 0; i < scanchainInfo->numOrderedLists(); i++) {            scanchainInfo->ordered(i, &size, &inst, &inPin,            &outPin);            if (size > 0)                printf(&quot;  + ORDERED\n&quot;);            for (i = 0; i < size; i++) {                printf(&quot;    %s &quot;, inst[i]);                if (inPin[i])                   printf(&quot;( IN %s ) &quot;, inPin[i]);                if (outPin[i])                   printf(&quot;( OUT %s ) &quot;, outPin[i]);                printf(&quot;\n&quot;);            }        }        printf(&quot;\n&quot;);    }    return 0;},int siteCB (defrCallbackType_e type,            defiSite siteInfo,            defiUserData userData) {// Check if the type is correct    if ((type != defrCanplaceCbk) && (type !=           defrCannotOccupyCbk)) {        printf(&quot;Type is not defrCanplaceCbk and not               defrCannotOccupyCbk,\n&quot;);        printf(&quot;terminate parsing.\n&quot;);        return 1;    }    printf(&quot;CANPLACE %s %g %g %s &quot;, siteInfo->name(),             siteInfo->x_orig(), siteInfo->y_orig(),            orientStr(siteInfo->orient()));    printf(&quot;DO %d BY %d STEP %g %g ;\n&quot;, siteInfo->x_num(),            siteInfo->y_num(),           siteInfo->x_step(), siteInfo->y_step());    return 0;},int snetCB (defrCallbackType_e type,            defiNet* snetInfo,            defiUserData userData) {int         i, x, y, newLayer;char*       layerName;double      dist, left, right;defiPath*   p;int         path;defiShield* shield;// Check if the type is correct    if ((type != defrSNetCbkType)) {        printf(&quot;Type is not defrSNetCbkType terminate                 parsing.\n&quot;);        return 1;    }// compName & pinName    for (i = 0; i < net->numConnections(); i++)        printf (&quot;( %s %s )\n&quot;, net->instance(i), net->pin(i));// specialWiring    if (net->isFixed()) {        printf(&quot;FIXED\n&quot;);    }    if (net->numPaths()) {        newLayer = 0;        for (i = 0; i < net->numPaths(); i++) {            p = net->path(i);            p->initTraverse();            while ((path = (int)p->next()) != DEFIPATH_DONE) {                switch (path) {                    case DEFIPATH_LAYER:                         if (newLayer == 0) {                             printf(&quot;%s &quot;, p->getLayer());                             newLayer = 1;                         } else                             printf(&quot;NEW %s &quot;, p->getLayer());                         break;,int trackCB (defrCallbackType_e type,             defiTrack* trackInfo,             defiUserData userData) {    int i;// Check if the type is correct    if (type != defrTrackCbkType) {        printf(&quot;Type is not defrTrackCbkType, terminate                parsing.\n&quot;);        return 1;    }printf(&quot;TRACKS %s %g DO %g STEP %g LAYER &quot;,             trackInfo->macro(),           trackInfo->x(), trackInfo->xNum(), trackInfo->xStep());for (i = 0; i < trackInfo->numLayers(); i++)        printf(&quot;%s &quot;, trackInfo->layer(i));printf(&quot;\n&quot;);return 0;},int viaCB (defrCallbackType_e type,           defiVia* viaInfo,           defiUserData userData) {int i, xl, yl, xh, yh;char* name;// Check if the type is correct    if ((type != defrViaCbkType)) {   printf(&quot;Type is not defrViaCbkType terminate parsing.\n&quot;);        return 1;    }printf(&quot;Via name is %s &quot;, viaInfo->name());if (viaInfo->hasPattern())        printf(&quot;  PATTERNNAME %s\n&quot;, viaInfo->pattern());for (i = 0; i < viaInfo->numLayers(); i++) {        viaInfo->layer(i, &name, &xl, &yl, &xh, &yh);        printf(&quot; RECT %s %d %d %d %d \n&quot;, name, xl, yl, xh, yh);    },int viaEndCB (defrCallbackType_e type,              void* ptr,              defiUserData userData) {// Check if the type is correct    if ((type != defrViaEndCbkType)) {   printf(&quot;Type is not defrViaEndCbkType terminate                parsing.\n&quot;);        return 1;    },int viaStartCB (defrCallbackType_e type,                int numVias,                defiUserData userData) {// Check if the type is correctif ((type != defrViaStartCbkType)) {printf(&quot;Type is not defrViaStartCbkType terminateparsing.\n&quot;);return 1;}printf(&quot;VIAS %d\n&quot;, numVias);return 0;},struct defiPoints {int numPoints;int* x; int* y;},struct defiViaData {int numX;int numY;int stepX;int stepY;} ,void defiVia_layer( const defiVia * this, int index, char **layer, int *x1 int *y1int *xh int *yh);">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="DEF 5.8 C/C++ Programming Interface -- 4">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch3DEFcallback.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch5DEFwritercallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>DEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>4<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1011663">DEF Reader Classes</a></h1>
+      <p><a name="1031372">This chapter contains the following sections:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1031356" title="4" name="1031373"><font color="#0000ff"><u>Introduction</u></font></a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1028550" title="4" name="1031374"><font color="#0000ff"><u>Callback Style Interface</u></font></a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1028553" title="4" name="1031361"><font color="Blue"><u>Retrieving Repeating DEF Data</u></font></a><a href="#1028553" title="4"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1028946" title="4" name="1031362"><font color="Blue"><u>Deriving C Syntax from C++ Syntax</u></font></a><a href="#1028946" title="4"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1026628" title="4" name="1031363"><font color="Blue"><u>DEF Reader Class Routines</u></font></a><a href="#1026628" title="4"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1031356">Introduction</a></h2>
+      <p><a name="1017051">Every statement in the Cadence</a><font color="#000000"><sup>&#174;</sup></font> Design Exchange Format (DEF) file is associated with a DEF reader class. When the DEF reader uses a callback, it passes a pointer to the appropriate class. You can use the member functions in each class to retrieve data defined in the DEF file.</p>
+      <h2><a name="1028550">Callback Style Interface</a></h2>
+      <p><a name="1028551">This programming interface uses a callback style interface. You register for the constructs that interest you, and the reader calls your callback functions when one of those constructs is read. If you are not interested in a given set of information, you simply do not register the callback; the reader scans the information quickly and proceeds.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="13.333333333333332">
+              <div>&nbsp;</div>
+            </td>
+            <td width="133.33333333333331">
+              <div>
+                <nobr>
+                  <font size="3"><img src="images/important.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <font size="3"><a name="1028552">Returned data is not static. If you want to keep the data, you must copy it. </a></font>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1028553">Retrieving Repeating DEF Data</a></h2>
+      <p><a name="1028554">Many DEF objects contain repeating objects or specifications. The classes that correspond to these DEF objects contain an index and array of elements that let you retrieve the data iteratively. </a></p>
+      <p><a name="1028563">You can use a </a><font size="2" face="'Courier New'" color="#000000">for</font> loop from 0 to the number of items specified in the index. In the loop, retrieve the data from the subsequent arrays. For example:</p>
+      <p><a name="1028564">&nbsp;</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028945">for(i=0; i&#60; A&#45;&#62;defiVia::numLayers(); i++) { <dd>via &#45;&#62; defiVia::layer(i, &amp;name, &amp;x1, &amp;y1, &amp;xh, &amp;yh); <dd>printf("+ RECT %s %d %d %d %d \n", name x1, y1, xh, yh);</a></font>
+      </dl>
+      <h2><a name="1028946">Deriving C Syntax from C++ Syntax</a></h2>
+      <p><a name="1028566">The Cadence</a><font color="#000000"><sup> </sup></font>application programming interface (API) provides both C and C++ interfaces. The C API is generated from the C++ source, so there is no functional difference. The C API has been created in a pseudo object&#45;oriented style. Examining a simple case should enable you to understand the API organization.</p>
+      <p><a name="1028567">The following examples show the same objects in C and C++ syntax.</a></p>
+      <h3><a name="1028568">C++ Syntax</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028569">class defiVia {<dd>const char* name() const;<dd>const char* pattern() const;<dd>int hasPattern() const;<dd>int numLayers() const;<dd><dd>void layer(int index, char** layer, int* xl, int* yl,<dd>&nbsp;&nbsp;&nbsp;&nbsp;int* xh, int* yh) const;}</a></font>
+      </dl>
+      <h3><a name="1028571">C Syntax</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028985">const char * defiVia)name<dd>( const defiVia * this );</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028990">const char * defiVia_hasPattern<dd>( const defiVia * this );</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028575">int defiVia_hasPattern<dd>( const defiVia * this );</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029006">int defiVia_numLayers<dd>( const defiVia * this );</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1028576">void defiVia_layer<dd>( const defiVia * this, <dd>&nbsp;&nbsp;&nbsp;&nbsp;int index, <dd>&nbsp;&nbsp;&nbsp;&nbsp;char **layer, <dd>&nbsp;&nbsp;&nbsp;&nbsp;int *x1 <dd>&nbsp;&nbsp;&nbsp;&nbsp;int *y1<dd>&nbsp;&nbsp;&nbsp;&nbsp;int *xh <dd>&nbsp;&nbsp;&nbsp;&nbsp;int *yh);</a></font>
+      </dl>
+      <p><a name="1030791">The C routine prototypes for the API functions can be found in the following files:</a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="548">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="182">
+            <p><a name="1030756">defiArray.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="182">
+            <p><a name="1030758">defiNonDefault.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="182">
+            <p><a name="1030760">defiViaRule.h</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030762">defiCrossTalk.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030764">defrCallBacks.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030766">defiProp.h</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030768">defrReader.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030770">defiDebug.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030772">defiDefs.h</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030774">defwWriter.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030776">defiLayer.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030778">defiUnits.h</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030780">defiUser.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030782">defiMacro.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030784">defiUtil.h</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030786">defiMisc.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030788">defiVia.h</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1030790">&nbsp;</a></p>
+          </td>
+        </tr>
+      </table>
+      <h2><a name="1026628">DEF Reader Class Routines</a></h2>
+      <p><a name="1028616">The following table lists the class routines that apply to the DEF information.</a></p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="552">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="242">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1031398"><font color="#000000"><strong>DEF Information</strong></font></a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="309">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1031400">DEF Class</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1032719">Blockages</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a href="#defiBlockage" title="4" name="1032721"><font color="#0000ff"><u>defiBlockage</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031409">Components</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiComponent" title="4" name="1031414"><font color="#0000ff"><u>defiComponent</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a><br><a href="#defiComponentMaskShiftLayer" title="4"><font color="#0000ff"><u>defiComponentMaskShiftLayer</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1034581">Fills</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiFill" title="4" name="1034583"><font color="#0000ff"><u>defiFill</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036264">GCell Grid</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#1021932" title="4" name="1036266"><font color="#0000ff"><u>defiGcellGrid</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031426">Groups</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiGroup" title="4" name="1031431"><font color="#0000ff"><u>defiGroup</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031443">Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiNet" title="4" name="1031448"><font color="#0000ff"><u>defiNet</u></font></a><br><a href="#defiPath" title="4"><font color="#0000ff"><u>defiPath</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a><br><a href="#1021237" title="4"><font color="#0000ff"><u>defiSubnet</u></font></a><br><a href="#1024435" title="4"><font color="#0000ff"><u>defiVpin</u></font></a><br><a href="#defiWire" title="4"><font color="#0000ff"><u>defiWire</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036575">Nondefault Rules</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiNonDefault" title="4" name="1036577"><font color="#0000ff"><u>defiNonDefault</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031462">Pins</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiPin" title="4" name="1031467"><font color="#0000ff"><u>defiPin</u></font></a><br><a href="#defiPinAntennaModel" title="4"><font color="#0000ff"><u>defiPinAntennaModel</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031472">Pin Properties</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiPinProp" title="4" name="1031477"><font color="#0000ff"><u>defiPinProp</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031479">Regions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiRegion" title="4" name="1031484"><font color="#0000ff"><u>defiRegion</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031489">Rows</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiProp" title="4" name="1031494"><font color="#0000ff"><u>defiProp</u></font></a><br><a href="#defiRow" title="4"><font color="#0000ff"><u>defiRow</u></font></a><br><a href="#defiSite" title="4"><font color="#0000ff"><u>defiSite</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031502">Scan Chains</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiOrdered" title="4" name="1031507"><font color="#0000ff"><u>defiOrdered</u></font></a><br><a href="#1029330" title="4"><font color="#0000ff"><u>defiScanchain</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1034589">Slots</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiSlot" title="4" name="1034591"><font color="#0000ff"><u>defiSlot</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031509">Special Nets</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiNet" title="4" name="1031514"><font color="#0000ff"><u>defiNet</u></font></a><br><a href="#defiPath" title="4"><font color="#0000ff"><u>defiPath</u></font></a><br><a href="#defiProp" title="4"><font color="#0000ff"><u>defiProp</u></font></a><br><a href="#defiShield" title="4"><font color="#0000ff"><u>defiShield</u></font></a><br><a href="#defiViaData" title="4"><font color="#0000ff"><u>defiViaData</u></font></a><br><a href="#defiWire" title="4"><font color="#0000ff"><u>defiWire</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1036540">Styles</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiStyles" title="4" name="1036542"><font color="#0000ff"><u>defiStyles</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031523">Tracks</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiTrack" title="4" name="1031528"><font color="#0000ff"><u>defiTrack</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1031530">Vias</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a href="#defiVia" title="4" name="1031535"><font color="#0000ff"><u>defiVia</u></font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1031537">Miscellaneous</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a href="#defiBox" title="4" name="1031542"><font color="#0000ff"><u>defiBox</u></font></a> <br><a href="#defiGeometries" title="4"><font color="#0000ff"><u>defiGeometries</u></font></a> <br><a href="#defiPoints" title="4"><font color="#0000ff"><u>defiPoints</u></font></a> <br><font size="2" face="'Courier New'" color="#000000">defiUser</font> (defined as void; can be any<br>                   user&#45;defined pointer)</p>
+          </td>
+        </tr>
+      </table>
+      <h3><a name="defiBlockage"></a><a name="1032200">defiBlockage</a></h3>
+      <p><a name="1032241">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font> statement, see <a href="../lefdefref/DEFSyntax.html#Blockages" target="external_window"><font color="#0000ff"><u>"Blockages"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1032251">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036984">class defiBlockage {<dd>int hasLayer() const;<dd>int hasPlacement() const;<dd>int hasComponent() const;<dd>int hasSlots() const;<dd>int hasFills() const;<dd>int hasPushdown() const;<dd>int hasExceptpgnet() const;<dd>int hasSoft() const;<dd>int hasPartial() const;<dd>int hasSpacing() const;<dd>int hasDesignRuleWidth() const;<dd>int minSpacing() const;<dd>int designRuleWidth() const;<dd>double placementMaxDensity() const;<dd>const char* layerName() const;<dd>const char* layerComponentName() const;<dd>const char* placementComponentName() const;<dd><dd>int numRectangles() const;<dd>int xl(int index) const;<dd>int yl(int index) const;<dd>int xh(int index) const;<dd>int yh(int index) const; <dd><dd>int numPolygons() const;<dd>struct defiPoints getPolygon(int index) const;<dd>int hasMask() const;<dd>int mask() const;}</a></font>
+      </dl>
+      <h3><a name="defiBox"></a><a name="1032247">defiBox</a></h3>
+      <p><a name="1025974">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">DIEAREA</font> statement of the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">DIEAREA</font> statement, see <a href="../lefdefref/DEFSyntax.html#DieArea" target="external_window"><font color="#0000ff"><u>"Die Area"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021819">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1021820">class defiBox {<dd>int xl() const;<dd>int yl() const;<dd>int xh() const;<dd>int yh() const;<dd><dd>struct defiPoints getPoint() const;}</a></font>
+      </dl>
+      <h3><a name="defiComponent"></a><a name="1021844">defiComponent</a></h3>
+      <p><a name="1026151">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">COMPONENTS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">COMPONENTS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Components" target="external_window"><font color="#0000ff"><u>"Components"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021845">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037033">class defiComponent {<dd>const char* id() const;<dd>const char* name() const;<dd>int placementStatus() const;<dd>int isUnplaced() const;<dd>int isPlaced() const;<dd>int isFixed() const;<dd>int isCover() const;<dd>int placementX() const;<dd>int placementY() const;<dd>int placementOrient() const; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; optional&#45; For information,see<dd>								&#47;&#47;</a><a href="ch1Intro.html#1019049" title="1"><font color="DodgerBlue"><u>"Orientation Codes"</u></font></a><a href="ch1Intro.html#1019049" title="1"> </a><dd>const char* placementOrientStr() const;<dd>int hasRegionName() const;<dd>int hasRegionBounds() const;<dd>int hasEEQ() const;<dd>int hasGenerate() const;<dd>int hasSource() const;<dd>int hasWeight() const;<dd>int weight() const;<dd>int hasNets() const;<dd>int numNets() const;<dd>const char* net(int index) const;<dd>const char* regionName() const;<dd>const char* source() const;<dd>const char* EEQ() const;<dd>const char* generateName() const;<dd>const char* macroName() const;<dd>int hasHalo() const;<dd>int hasHaloSoft() const;<dd>int hasRouteHalo() const;<dd>int haloDist() const;<dd>const char* minLayer() const;<dd>const char* maxLayer() const;<dd>void haloEdges(int* left, int* bottom, int* right, int* top);<dd><dd>void regionBounds(int* size, int** xl, int** yl, int** xh, int** yh);<dd><dd>int hasForeignName() const;<dd>const char* foreignName() const;<dd>int foreignX() const;<dd>int foreignY() const;<dd>const char* foreignOri() const;<dd>int hasFori() const;<dd>int foreignOrient() const;<dd><dd>int numProps() const;<dd>char* propName(int index) const;<dd>char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString (int index) const; <dd>int maskShiftSize();<dd>int maskShift(int index) const;}</font>
+      </dl>
+      <h4><a name="1030517">Examples</a></h4>
+      <p><a name="1030518">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrComponentCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrComponentStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrComponentEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039223">int componentCB (defrCallbackType_e type,<dd>                 defiComponent* compInfo,<dd>                 defiUserData userData) {<dd><dd>int i;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrComponentCbkType)) {<dd>        printf(&#34;Type is not defrComponentCbkType terminate<dd>               parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>printf(&#34;%s %s &#34;, compInfo&#45;&#62;id(), compInfo&#45;&#62;name());<dd>    if (compInfo&#45;&#62;hasNets()) {<dd>        for (i = 0; i &#60; compInfo&#45;&#62;numNets(); i++)<dd>            printf(&#34;%s &#34;, compInfo&#45;&#62;net(i));<dd>        printf(&#34;\n&#34;);<dd>    }<dd>    if (compInfo&#45;&#62;isFixed())<dd>        printf(&#34; FIXED %d %d %d\n&#34;, compInfo&#45;&#62;placementX(),<dd>               compInfo&#45;&#62;placementY(), <dd>               compInfo&#45;&#62;placementOrient());<dd>    if (compInfo&#45;&#62;isCover())<dd>        printf(&#34;  COVER %d %d %d\n&#34;, compInfo&#45;&#62;placementX(),<dd>               compInfo&#45;&#62;placementY(), <dd>               compInfo&#45;&#62;placementOrient());<dd>    if (compInfo&#45;&#62;isPlaced())<dd>        printf(fout,&#34;  PLACED %d %d %d\n&#34;, compInfo&#45;&#62;placementX(),<dd>               compInfo&#45;&#62;placementY(), <dd>               compInfo&#45;&#62;placementOrient());<dd>    if (compInfo&#45;&#62;hasSource())<dd>        printf(&#34;  SOURCE %s\n&#34;, compInfo&#45;&#62;source());<dd>    if (compInfo&#45;&#62;hasWeight())<dd>        printf(&#34;  WEIGHT %d\n&#34;, compInfo&#45;&#62;weight());<dd>    if (compInfo&#45;&#62;hasEEQ())<dd>        printf(&#34;  EEQMASTER %s\n&#34;, compInfo&#45;&#62;EEQ());<dd>    if (compInfo&#45;&#62;hasRegionName())<dd>        printf(&#34;  REGION %s\n&#34;, compInfo&#45;&#62;regionName());<dd>    if (compInfo&#45;&#62;hasRegionBounds()) {<dd>        int *xl, *yl, *xh, *yh;<dd>        int size;<dd>        compInfo&#45;&#62;regionBounds(&amp;size, &amp;xl, &amp;yl, &amp;xh, &amp;yh);<br>        for (i = 0; i &#60; size; i++) {<br>            printf(&#34;  REGION %d %d %d %d\n&#34;, xl[i], yl[i], <br>                     xh[i], yh[i]);<br>        }<br>    }<br>    if (compInfo&#45;&#62;hasForeignName()) {<br>        printf(&#34;  FOREIGN %s %d %d %s\n&#34;, compInfo&#45;&#62;foreignName(),<br>               compInfo&#45;&#62;foreignX(), compInfo&#45;&#62;foreignY(),<br>               compInfo&#45;&#62;foreignOri());<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; maskShiftArray[0] will always return the right most digit,since we &nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; allow the leading 0 and also omit the leading 0&#39;s.<br>&nbsp;&nbsp;&nbsp;&nbsp;if (compInfo&#45;&#62;maskShiftSize()) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34; MASKSHIFT&#34;);<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (i = compInfo&#45;&#62;maskShiftSize() &#45;1; i &#62;=0; i&#45;&#45;) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;%d &#34;, compInfo&#45;&#62;maskShift(i);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;\n&#34;);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>return 0;<br>}</a></font>
+      </dl>
+      <h3><a name="defiComponentMaskShiftLayer"></a><a name="1038165">defiComponentMaskShiftLayer</a></h3>
+      <p><a name="1038199">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">COMPONENTMASKSHIFT</font> statement in the DEF file. </p>
+      <p><a name="1038686">For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">COMPONENTMASKSHIFT</font> statement, see <a href="../lefdefref/DEFSyntax.html#ComponentMaskShift" target="external_window"><font color="#0000ff"><u>"Component Mask Shift"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1038191">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038646">class defiComponentMaskShiftLayer {<dd>public:<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defiComponentMaskShiftLayer();<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~defiComponentMaskShiftLayer();<dd>void Init();<dd>void Destroy();<dd>void addMaskShiftLayer(const char* layer); <dd>int numMaskShiftLayers() const;<dd>void bumpLayers(int size);<dd>void clear();<dd>const char* maskShiftLayer(int index) const;};</a></font>
+      </dl>
+      <h3><a name="defiFill"></a><a name="1036300">defiFill</a></h3>
+      <p><a name="1036301">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">FILLS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">FILLS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Fills" target="external_window"><font color="#0000ff"><u>"Fills"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036303">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037094">class defiFill {<dd>int hasLayer() const;<dd>const char* layerName() const;<dd>int hasLayerOpc() const;<dd>int numRectangles() const;<dd>int xl(int index) const;<dd>int yl(int index) const;<dd>int xh(int index) const;<dd>int yh(int index) const;<dd>int numPolygons() const;<dd>struct defiPoints getPolygon(int index) const;<dd>int hasVia() const;<dd>const char* viaName() const;<dd>int hasViaOpc() const;<dd><dd>int numViaPts() const;<dd>struct defiPoints getViaPts(int index) const;<dd><dd>void setMask(int colorMask);<dd>int layerMask() const <dd>int viaTopMask() const;<dd>int viaCutMask() const;<dd>int viaBottomMask() const;}</a></font>
+      </dl>
+      <h3><a name="1021932">defiGcellGrid</a></h3>
+      <p><a name="1026183">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">GCELLGRID</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">GCELLGRID</font> statement, see <a href="../lefdefref/DEFSyntax.html#GCellGrid" target="external_window"><font color="#0000ff"><u>"GCell Grid"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021933">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1023556">class defiGcellGrid {<dd>const char* macro() const;<dd>int x() const;<dd>int xNum() const;<dd>double xStep() const;}</a></font>
+      </dl>
+      <h4><a name="1029418">Examples</a></h4>
+      <p><a name="1029419">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrGcellGridCbkType</font>, and the class <font size="2" face="'Courier New'" color="#000000">defiGcellGrid</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029423">int gcellCB (defrCallbackType_e type,<dd>             defiGcellGrid* gcellInfo,<dd>             defiUserData userData) {<dd>    int i;<dd><dd>    &#47;&#47; Check if the type is correct<dd>    if (type != defrGcellGridCbkType) {<dd>        printf(&#34;Type is not defrGcellGridCbkType, terminate<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>    printf(&#34;GCELLGRID %s %d DO %d STEP %g\n&#34;, gcellInfo&#45;&#62;macro(),<dd>           gcellInfo&#45;&#62;x(), gcellInfo&#45;&#62;xNum(), gcellInfo&#45;&#62;xStep());<dd>    return 0;<dd>}</a></font>
+      </dl>
+      <h3><a name="defiGeometries"></a><a name="1036518">defiGeometries</a></h3>
+      <p><a name="1036519">Retrieves geometry data from the </a><font size="2" face="'Courier New'" color="#000000">BLOCKAGES</font>, <font size="2" face="'Courier New'" color="#000000">FILLS</font>, <font size="2" face="'Courier New'" color="#000000">NETS</font>, and <font size="2" face="'Courier New'" color="#000000">SLOTS</font> statements of the DEF file. For syntax information, see <a href="../lefdefref/DEFSyntax.html#Blockages" target="external_window"><font color="#0000ff"><u>"Blockages,"</u></font></a> <a href="../lefdefref/DEFSyntax.html#Fills" target="external_window"><font color="#0000ff"><u>"Fills,"</u></font></a> <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets,"</u></font></a> and <a href="../lefdefref/DEFSyntax.html#Slots" target="external_window"><font color="#0000ff"><u>"Slots"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036524">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036525">class defiGeometries {<dd>int numPoints() const;<dd>void points(int index, int* x, int* y);}</a></font>
+      </dl>
+      <h3><a name="defiGroup"></a><a name="1029462">defiGroup</a></h3>
+      <p><a name="1026203">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">GROUPS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Groups" target="external_window"><font color="#0000ff"><u>"Groups"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021950">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032288">class defiGroup {<dd>const char* name() const;<dd>const char* regionName() const;<dd>int hasRegionBox() const;<dd>int hasRegionName() const;<dd>int hasMaxX() const;<dd>int hasMaxY() const;<dd>int hasPerim() const;<dd>void regionRects(int* size, int** xl, int** yl, int** xh, int** yh);<dd>int maxX() const;<dd>int maxY() const;<dd>int perim() const;<dd><dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index) const; }</a></font>
+      </dl>
+      <h4><a name="1030364">Examples</a></h4>
+      <p><a name="1030365">The following example shows callback routines for the types </a><font size="2" face="'Courier New'" color="#000000">defrGroupNameCbkType</font>, <font size="2" face="'Courier New'" color="#000000">defrGroupMemberCbkType</font>, and <font size="2" face="'Courier New'" color="#000000">defrGroupCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrGroupsStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrGroupsEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030372">int groupnameCB (defrCallbackType_e type,<dd>                 const char* name,<dd>                 defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrGroupNameCbkType)) {<dd>        printf(&#34;Type is not defrGroupNameCbkType terminate<dd>        parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>    printf(&#34;Name is %s\n&#34;, name());<dd>    return 0;<dd>}</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030483">int groupmemberCB (defrCallbackType_e type,<dd>                   const char* name,<dd>                   defiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if ((type != defrGroupMemberCbkType)) {<dd>        printf(&#34;Type is not defrGroupMemberCbkType terminate<dd>        parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>    printf(&#34;  %s\n&#34;, name());<dd>    return 0;<dd>}<dd></a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036224">int groupCB (defrCallbackType_e type,<dd>             defiGroup grouInfo,<dd>             defiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if ((type != defrGroupCbkType)) {<dd>        printf(&#34;Type is not defrGroupCbkType terminate<dd>        parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>    if (group&#45;&#62;hasMaxX() | group&#45;&#62;hasMaxY() | <dd>        group&#45;&#62;hasPerim()) <dd>    {<dd>        printf(&#34;  SOFT &#34;);<dd>        if (group&#45;&#62;hasPerim())<dd>            printf(&#34;MAXHALFPERIMETER %d &#34;, group&#45;&#62;perim());<dd>        if (group&#45;&#62;hasMaxX())<dd>            printf(&#34;MAXX %d &#34;, group&#45;&#62;maxX());<dd>        if (group&#45;&#62;hasMaxY())<dd>            printf(&#34;MAXY %d &#34;, group&#45;&#62;maxY());<dd>    }<dd>    if (group&#45;&#62;hasRegionName())<dd>        printf(&#34;REGION %s &#34;, group&#45;&#62;regionName());<dd>    if (group&#45;&#62;hasRegionBox()) {<dd>        int *gxl, *gyl, *gxh, *gyh;<dd>        int size;<dd>        group&#45;&#62;regionRects(&amp;size, &amp;gxl, &amp;gyl, &amp;gxh, &amp;gyh);<dd>        for (i = 0; i &#60; size; i++)<dd>            printf(&#34;REGION %d %d %d %d &#34;, gxl[i], gyl[i], gxh[i],<dd>           gyh[i]);<dd>    }<dd>    printf(&#34;\n&#34;);<dd>    return 0;}</a></font>
+      </dl>
+      <h3><a name="defiNet"></a><a name="1022027">defiNet</a></h3>
+      <p><a name="1026247">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">NETS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NETS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022028">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037175">class defiNet {<dd>const char* name() const;<dd>int weight() const;<dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index) const;<dd>int numConnections() const;<dd>const char* instance(int index) const;<dd>const char* pin(int index) const;<dd>int pinIsMustJoin(int index) const;<dd>int pinIsSynthesized(int index) const;<dd>int numSubnets() const;<dd></a><a href="#1021237" title="4"><font color="#0000ff"><u>defiSubnet</u></font></a>* subnet(int index);<dd><dd>int isFixed() const;<dd>int isRouted() const;<dd>int isCover() const;<dd><dd>int numWires() const;<dd><a href="#defiWire" title="4"><font color="#0000ff"><u>defiWire</u></font></a>* wire(int index);<dd><dd>int numVpins() const;<dd><a href="#1024435" title="4"><font color="#0000ff"><u>defiVpin</u></font></a>* vpin(int index) const;<dd><dd>int hasProps() const;<dd>int hasWeight() const;<dd>int hasSubnets() const;<dd>int hasSource() const;<dd>int hasFixedbump() const;<dd>int hasFrequency() const;<dd>int hasPattern() const;<dd>int hasOriginal() const;<dd>int hasCap() const;<dd>int hasUse() const;<dd>int hasStyle() const;<dd>int hasNonDefaultRule() const;<dd>int hasVoltage() const;<dd>int hasSpacingRules() const;<dd>int hasWidthRules() const;<dd>int hasXTalk() const;<dd><dd>int numSpacingRules() const;<dd>void spacingRule(int index, char** layer, double* dist, <dd>&nbsp;&nbsp;&nbsp;&nbsp;double* left, double* right);<dd>int numWidthRules() const;<dd>void widthRule(int index, char** layer, double* dist);<dd>double voltage() const;<dd><dd>int XTalk() const;<dd>const char* source() const;<dd>double frequency() const;<dd>const char* original() const;<dd>const char* pattern() const;<dd>double cap() const;<dd>const char* use() const;<dd>int style() const;<dd>const char* nonDefaultRule() const;<dd><dd>int numPaths() const;<br><a href="#defiPath" title="4"><font size="2" face="'Courier New'" color="#0000ff"><u>defiPath</u></font></a>* path(int index);<br><br>int numShields() const;<br><a href="#defiShield" title="4"><font size="2" face="'Courier New'" color="#0000ff"><u>defiShield</u></font></a>* shield(int index);<br>int numShieldNets() const;<br>const char* shieldNet(int index) const;<br>int numNoShields() const;<br>defiShield* noShield(int index);<br><br>int numPolygons() const;<br>const char* polygonName(int index) const;<br>struct defiPoints getPolygon(int index) const;<br>int numRectangles() const;<br>const char* rectName(int index) const;<br>int xl(int index) const;<br>int yl(int index) const;<br>int xh(int index) const;<br>int yh(int index) const;<br>int polyMask(int index) const;<br>int rectMask(int index) const;<br>int topMaskNum(int index) const;<br>int cutMaskNum(int index) const;<br>int bottomMask(int index) const;}</font>
+      </dl>
+      <h4><a name="1029897">Examples</a></h4>
+      <p><a name="1029898">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrSNetCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrSNetStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrSNetEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section. This example only shows how to retrieve part of the data from the <font size="2" face="'Courier New'" color="#000000">defiNet</font> class.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029906">int snetCB (defrCallbackType_e type,<dd>            defiNet* snetInfo,<dd>            defiUserData userData) {<dd><dd>int         i, x, y, newLayer;<dd>char*       layerName;<dd>double      dist, left, right;<dd>defiPath*   p;<dd>int         path;<dd>defiShield* shield;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrSNetCbkType)) {<dd>        printf(&#34;Type is not defrSNetCbkType terminate <dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&#47;&#47; compName &amp; pinName<dd>    for (i = 0; i &#60; net&#45;&#62;numConnections(); i++)<dd>        printf (&#34;( %s %s )\n&#34;, net&#45;&#62;instance(i), net&#45;&#62;pin(i));<dd><dd>&#47;&#47; specialWiring<dd>    if (net&#45;&#62;isFixed()) {<dd>        printf(&#34;FIXED\n&#34;);<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;if (net&#45;&#62;numPaths()) {<dd>        newLayer = 0;<dd>        for (i = 0; i &#60; net&#45;&#62;numPaths(); i++) {<dd>            p = net&#45;&#62;path(i);<dd>            p&#45;&#62;initTraverse();<dd>            while ((path = (int)p&#45;&#62;next()) != DEFIPATH_DONE) {<dd>                switch (path) {<dd>                    case DEFIPATH_LAYER:<dd>                         if (newLayer == 0) {<dd>                             printf(&#34;%s &#34;, p&#45;&#62;getLayer());<dd>                             newLayer = 1;<dd>                         } else<dd>                             printf(&#34;NEW %s &#34;, p&#45;&#62;getLayer());<dd>                         break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034681">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_VIA:<dd>                         printf(&#34;%s &#34;, p&#45;&#62;getVia());<dd>                        break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034675">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_WIDTH:<dd>                         printf(&#34;%d &#34;, p&#45;&#62;getWidth());<dd>                        break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029953">                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_POINT:<dd>                         p&#45;&#62;getPoint(&amp;x, &amp;y);<dd>                         printf(&#34;( %d %d ) &#34;, x, y);<dd>                        break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030064">                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_TAPER:<dd>                         printf(&#34;TAPER &#34;);<dd>                         break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030487">                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_SHAPE:<dd>                         printf(&#34; SHAPE %s &#34;, p&#45;&#62;getShape());<dd>                        break;<dd>                }<dd>            }<dd>            printf(&#34;\n&#34;);<dd>        }<dd>    }<dd>    &#47;&#47; SHIELD<dd>    &#47;&#47; testing the SHIELD for 5.3<dd>&nbsp;&nbsp;&nbsp;&nbsp;if (net&#45;&#62;numShields()) {<dd>        for (i = 0; i &#60; net&#45;&#62;numShields(); i++) {<dd>            shield = net&#45;&#62;shield(i);<dd>            printf(&#34;\n+ SHIELD %s &#34;, <dd>                    shield&#45;&#62;defiShield::shieldName());<dd>            newLayer = 0;<dd>            for (j = 0; j &#60; shield&#45;&#62;defiShield::numPaths(); j++) {<dd>                p = shield&#45;&#62;defiShield::path(j);<dd>                p&#45;&#62;initTraverse();<dd>                while ((path = (int)p&#45;&#62;next()) != DEFIPATH_DONE) {<dd>                    switch (path) {<dd>                        case DEFIPATH_LAYER:<dd>                             if (newLayer == 0) {<dd>                                 printf(&#34;%s &#34;, p&#45;&#62;getLayer());<dd>                                 newLayer = 1;<dd>                             } else<dd>                                 printf(&#34;NEW %s &#34;, p&#45;&#62;getLayer());<dd>                             break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029991">                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_VIA:<dd>                             printf(&#34;%s &#34;, p&#45;&#62;getVia());<dd>                            break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029994">                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_WIDTH:<dd>                             printf(&#34;%d &#34;, p&#45;&#62;getWidth());<dd>                            break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029997">                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_POINT:<dd>                             p&#45;&#62;getPoint(&amp;x, &amp;y);<dd>                             printf(&#34;( %d %d ) &#34;, x, y);<dd>                            break;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030001">                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case DEFIPATH_TAPER:<dd>                             printf(&#34;TAPER &#34;);<dd>                            break;<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<dd>                }<dd>                printf(&#34;\n&#34;);<dd>            }<dd>        }<dd>    }<dd>&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; layerName spacing<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;if (net&#45;&#62;hasSpacingRules()) {<dd>        for (i = 0; i &#60; net&#45;&#62;numSpacingRules(); i++) {<dd>            net&#45;&#62;spacingRule(i, &amp;layerName, &amp;dist, &amp;left, &amp;right);<dd>            if (left == right)<dd>                printf(&#34;SPACING %s %g\n&#34;, layerName, dist);<dd>            else<dd>                printf(&#34;SPACING %s %g RANGE %g %g\n&#34;,<dd>                        layerName, dist, left, right);<dd>        }<dd>    }<dd>    return 0;<dd>}</a></font>
+      </dl>
+      <h3><a name="defiNonDefault"></a><a name="1036555">defiNonDefault</a></h3>
+      <p><a name="1036556">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULES</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULES</font> statement, see <a href="../lefdefref/DEFSyntax.html#NondefaultRules" target="external_window"><font color="#0000ff"><u>"Nondefault Rules,"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036563">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036564">class defiNonDefault {<dd>const char* name() const;<dd>int hasHardspacing() const;<dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index) const;<dd><dd>int numLayers() const;<dd>const char* layerName(int index) const;<dd>int hasLayerDiagWidth(int index) const;<dd>int hasLayerSpacing(int index) const;<dd>int hasLayerWireExt(int index) const;<dd>int numVias() const;<dd>const char* viaName(int index) const;<dd>int numViaRules() const;<dd>const char* viaRuleName(int index) const;<dd>int hasMinCuts() const;<dd>void minCuts(const char **cutLayerName, int *numCuts) const;}</a></font>
+      </dl>
+      <h3><a name="defiOrdered"></a><a name="1034515">defiOrdered</a></h3>
+      <p><a name="1034516">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">ORDERED</font> statement in the <font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement of the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#ScanChains" target="external_window"><font color="#0000ff"><u>"Scan Chains"</u></font></a> in the <br><font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1034518">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034519">class defiOrdered {<dd>int num() const;<dd>char** inst() const;<dd>char** in() const;<dd>char** out() const;<dd>int* bits() const; }</a></font>
+      </dl>
+      <h3><a name="defiPath"></a><a name="1022167">defiPath</a></h3>
+      <p><a name="1026701">Retrieves data from the </a><font color="#000000"><em>regularWiring</em></font> and <font color="#000000"><em>specialWiring</em></font> specifications in the <font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> sections of the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> and <font size="2" face="'Courier New'" color="#000000">NETS</font> statements, see <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>"Special Nets"</u></font></a> and <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1032361">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037602">class defiPath {<dd>void initTraverse(); <dd>void initTraverseBackwards(); <dd>int next(); <dd>int prev(); <dd>const char* getLayer(); .<dd>const char* getTaperRule(); <dd>const char* getVia(); <dd>const char* getShape();<dd>int getStyle(); <dd>int getViaRotation();<dd>const char* getViaRotationStr();<dd>void getViaData(int* numX, int* numY, int* stepX, int* stepY);<dd>int getWidth();<dd>void getPoint(int* x, int* y); <dd>void getFlushPoint(int* x, int* y, int* ext);<dd>int getMask();<dd>int getViaTopMask();<dd>int getViaCutMask();<dd>int getViaBottomMask(); <dd>int getRectMask();}</a></font>
+      </dl>
+      <h4><a name="1030498">Examples</a></h4>
+      <p><a name="1036422">For a </a><font size="2" face="'Courier New'" color="#000000">defiPath</font> example, see the example in the <font size="2" face="'Courier New'" color="#000000">defiNet</font> section.</p>
+      <h3><a name="defiPin"></a><a name="1036426">defiPin</a></h3>
+      <p><a name="1036427">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PINS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Pins" target="external_window"><font color="#0000ff"><u>"Pins"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022209">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037710">class defiPin {<dd>const char* pinName() const;<dd>const char* netName() const;<dd><dd>int hasDirection() const;<dd>int hasUse() const;<dd>int hasLayer() const;<dd>int hasPlacement() const;<dd>int isUnplaced() const;<dd>int isPlaced() const;<dd>int isCover() const;<dd>int isFixed() const;<dd>int placementX() const;<dd>int placementY() const;<dd>const char* direction() const;<dd>const char* use() const;<dd>int numLayer() const;<dd>const char* layer(int index) const;<dd>void bounds(int index, int* xl, int* yl, int* xh, int* yh) const;<dd>int hasLayerSpacing(int index) const;<dd>int hasLayerDesignRuleWidth(int index) const; <dd>int layerSpacing(int index) const; <dd>int layerDesignRuleWidth(int index) const;<dd>int numPolygons() const;<dd>const char* polygonName(int index) const;<dd>struct defiPoints getPolygon(int index) const;<dd>int hasPolygonSpacing(int index) const; <dd>int hasPolygonDesignRuleWidth(int index) const;<dd>int polygonSpacing(int index) const;<dd>int polygonDesignRuleWidth(int index) const;<dd>int hasNetExpr() const;<dd>int hasSupplySensitivity() const;<dd>int hasGroundSensitivity() const;<dd>const char* netExpr() const;<dd>const char* supplySensitivity() const;<dd>const char* groundSensitivity() const;<dd>int orient() const; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; optional&#45; For information, see<dd>						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47;</a><a href="ch1Intro.html#1019049" title="1"><font color="DodgerBlue"><u>"Orientation Codes"</u></font></a><a href="ch1Intro.html#1019049" title="1"> </a> <dd>const char* orientStr() const;<dd>int hasSpecial() const;<dd><dd>int numVias() const;<dd>const char* viaName(int index) const;<dd>int viaPtX (int index) const;<dd>int viaPtY (int index) const;<dd><dd>int hasAPinPartialMetalArea() const; <dd>int numAPinPartialMetalArea() const;<br>int APinPartialMetalArea(int index) const;<br>int hasAPinPartialMetalAreaLayer(int index) const;<br>const char* APinPartialMetalAreaLayer(int index) const;<br><br>int hasAPinPartialMetalSideArea() const; <br>int numAPinPartialMetalSideArea() const;<br>int APinPartialMetalSideArea(int index) const;<br>int hasAPin PartialMetalSideAreaLayer(int index) const;<br>const char* APinPartialMetalSideAreaLayer(int index) const;<br><br>int hasAPinDiffArea() const; <br>int numAPinDiffArea() const;<br>int APinDiffArea(int index) const;<br>int hasAPinDiffAreaLayer(int index) const;<br>const char* APinDiffAreaLayer(int index) const;<br><br>int hasAPinPartialCutArea() const; <br>int numAPinPartialCutArea() const;<br>int APinPartialCutArea(int index) const;<br>int hadAPinPartialCutAreaLayer(int index) const;<br>const char* APinPartialCutAreaLayer(int index) const; <br><br>int numAntennaModel() const;<br><a href="#defiPinAntennaModel" title="4"><font color="#0000ff"><u>defiPinAntennaModel</u></font></a>* antennaModel(int index) const;<br><br>int  hasPort() const;<br>int  numPorts() const;<br>defiPinPort* pinPort(int index) const;<br>int layerMask(int index) const; <br>int polygonMask(int index) const; <br>int viaTopMask(int index) const;<br>int viaCutMask(int index) const;<br>int viaBottomMask(int index) const;}</font>
+      </dl>
+      <h4><a name="1029769">Examples</a></h4>
+      <p><a name="1030946">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrPinCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrStartPinsCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrPinEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029778">int pinCB (defrCallbackType_e type,<dd>           defiPin* pinInfo,<dd>           defiUserData userData) {<dd><dd>int i;</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036434">    &#47;&#47; Check if the type is correct<dd>    if ((type != defrPinCbkType)) {<dd>        printf(&#34;Type is not defrPinCbkType terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;%s NET %s\n&#34;, pinInfo&#45;&#62;pinName(), <dd>            pinInfo&#45;&#62;netName());<dd>    if (pinInfo&#45;&#62;hasDirection())<dd>        printf(&#34;  DIRECTION %s\n&#34;, pinInfo&#45;&#62;direction());<dd>    if (pinInfo&#45;&#62;hasUse())<dd>        printf(&#34;  USE %s\n&#34;, pinInfo&#45;&#62;use());<dd>    if (pinInfo&#45;&#62;hasLayer()) {<dd>        printf(&#34;  LAYER %s &#34;, pinInfo&#45;&#62;layer());<dd>        pinInfo&#45;&#62;bounds(&amp;xl, &amp;yl, &amp;xh, &amp;yh);<dd>        printf(&#34;%d %d %d %d\n&#34;, xl, yl, xh, yh);<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;if (pinInfo&#45;&#62;hasPlacement()) {<dd>        if (pinInfo&#45;&#62;isPlaced())<dd>            printf(&#34;  PLACED\n&#34;);<dd>        if (pinInfo&#45;&#62;isCover())<dd>            printf(&#34;  COVER\n&#34;);<dd>        if (pinInfo&#45;&#62;isFixed())<dd>            printf(&#34;  FIXED\n&#34;);<dd>        printf(&#34;( %d %d ) %d &#34;, pinInfo&#45;&#62;placementX(), <dd>               pinInfo&#45;&#62;placementY(),<dd>               pinInfo&#45;&#62;orient());<dd>    }<dd>    if (pinInfo&#45;&#62;hasSpecial())<dd>        printf(&#34;  SPECIAL\n&#34;);<dd>    return 0;}</a></font>
+      </dl>
+      <h3><a name="defiPinAntennaModel"></a><a name="1036437">defiPinAntennaModel</a></h3>
+      <p><a name="1036438">Retrieves antenna model information in the </a><font size="2" face="'Courier New'" color="#000000">PINS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Pins" target="external_window"><font color="#0000ff"><u>"Pins"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036361">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036362">class defiPinAntennaModel {<dd>char* antennaOxide() const;<dd><dd>int hasAPinGateArea() const; <dd>int numAPinGateArea() const;<dd>int APinGateArea(int index) const;<dd>int hasAPinGateAreaLayer(int index) const;<dd>const char* APinGateAreaLayer(int index) const;<dd><dd>int hasAPinMaxAreaCar() const; <dd>int numAPinMaxAreaCar() const;<dd>int APinMaxAreaCar(int index) const;<dd>int hasAPinMaxAreaCarLayer(int index) const;<dd>const char* APinMaxAreaCarLayer(int index) const;<dd><dd>int hasAPinMaxSideAreaCar() const; <dd>int numAPinMaxSideAreaCar() const;<dd>int APinMaxSideAreaCar(int index) const;<dd>int hasAPinMaxSideAreaCarLayer(int index) const;<dd>const char* APinMaxSideAreaCarLayer(int index) const;<dd><dd>int hasAPinMaxCutCar() const; <dd>int numAPinMaxCutCar() const;<dd>int APinMaxCutCar(int index) const;<dd>int hasAPinMaxCutCarLayer(int index) const;<dd>const char* APinMaxCutCarLayer(int index) const; }</a></font>
+      </dl>
+      <h3><a name="defiPinPort"></a><a name="1036812">defiPinPort</a></h3>
+      <p><a name="1036819">Retrieves data from the PINS PORT statement in the DEF file. For syntax information about the DEF </a><font size="2" face="'Courier New'" color="#000000">PINS PORT</font> statement, see <a href="../lefdefref/DEFSyntax.html#Pins" target="external_window"><font color="#0000ff"><u>"Pins"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036856">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038731">class defiPinPort {<dd>int numLayer() const;<dd>const char* layer(int index) const;<dd>int hasLayerSpacing(int index) const;<dd>int hasLayerDesignRuleWidth(int index) const;<dd>int layerSpacing(int index) const;<dd>int layerDesignRuleWidth(int index) const;<dd>int numPolygons() const;<dd>const char* polygonName(int index) const;<dd>struct defiPoints getPolygon(int index) const;<dd>int hasPolygonSpacing(int index) const;<dd>int hasPolygonDesignRuleWidth(int index) const;<dd>int polygonSpacing(int index) const;<dd>int polygonDesignRuleWidth(int index) const;<dd>int numVias() const;<dd>const char* viaName(int index) const;<dd>int viaPtX (int index) const;<dd>int viaPtY (int index) const;<dd>int hasPlacement() const;<dd>int isPlaced() const;<dd>int isCover() const;<dd>int isFixed() const;<dd>int placementX() const;<dd>int placementY() const;<dd>int orient() const;<dd>const char* orientStr() const;<dd><dd>int layerMask(int index) const; <dd>int polygonMask(int index) const;<dd>int viaTopMask(int index) const;<dd>int viaCutMask(int index) const;<dd>int viaBottomMask(int index) const;};}</a></font>
+      </dl>
+      <h3><a name="defiPinProp"></a><a name="1022395">defiPinProp</a></h3>
+      <p><a name="1026523">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PINPROPERTIES</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PINPROPERTIES</font> statement, see <a href="../lefdefref/DEFSyntax.html#PinProperties" target="external_window"><font color="#0000ff"><u>"Pin Properties"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022396">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022397">class defiPinProp {<dd>int isPin() const;<dd>const char* instName() const;<dd>const char* pinName() const;<dd><dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index); }</a></font>
+      </dl>
+      <h4><a name="1029836">Examples</a></h4>
+      <p><a name="1029837">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrPinPropCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrPinPropStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrPinPropEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029843">int pinpropCB (defrCallbackType_e type,<dd>               defiPinProp* pinpropInfo,<dd>               defiUserData userData) {<dd>    int i;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrPinCbkType)) {<dd>        printf(&#34;Type is not defrPinCbkType terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>if (pinpropInfo&#45;&#62;isPin())<dd>       printf(&#34;PIN %s\n&#34;, pinpropInfo&#45;&#62;pinName());<dd>    else<dd>       printf(&#34;%s %s\n&#34;, pinpropInfo&#45;&#62;instName(),<dd>               pinpropInfo&#45;&#62;pinName());<dd>    if (pinpropInfo&#45;&#62;numProps() &#62; 0) {<dd>       for (i = 0; i &#60; pinpropInfo&#45;&#62;numProps(); i++) {<dd>           printf(&#34; PROPERTY %s %s\n&#34;, pinpropInfo&#45;&#62;propName(i),<dd>                   pinpropInfo&#45;&#62;propValue(i));<dd>       }<dd>    }<dd><dd>return 0;}</a></font>
+      </dl>
+      <h3><a name="defiPoints"></a><a name="1036506">defiPoints</a></h3>
+      <p><a name="1036507">Retrieves a list of points for polygons in the DEF file. </a></p>
+      <h4><a name="1036513">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036514">struct defiPoints {<dd>int numPoints;<dd>int* x; <dd>int* y;}</a></font>
+      </dl>
+      <h3><a name="defiProp"></a><a name="1022416">defiProp</a></h3>
+      <p><a name="1028497">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> statement, see <a href="../lefdefref/DEFSyntax.html#PropertyDefinitions" target="external_window"><font color="#0000ff"><u>"Property Definitions"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <p><a name="1028501">The string of the property is returned by the C++ function </a><font size="2" face="'Courier New'" color="#000000">string</font> or the C function <font size="2" face="'Courier New'" color="#000000">defiProp_string</font>. A property can have a number and a range, which are returned by the function <font size="2" face="'Courier New'" color="#000000">hasNumber</font> and <font size="2" face="'Courier New'" color="#000000">hasRange</font>. The actual values are returned by the functions <font size="2" face="'Courier New'" color="#000000">number</font>, <font size="2" face="'Courier New'" color="#000000">left</font>, and <font size="2" face="'Courier New'" color="#000000">right</font>.</p>
+      <h4><a name="1022365">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022366">class defiProp {<dd>const char* string() const;<dd>const char* propType() const;<dd>const char* propName() const;<dd>char  dataType() const; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; either I:integer, R:real, S:string, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; Q:quotestring, or N:nameMapString<dd>int hasNumber() const;<dd>int hasRange() const;<dd>int hasString() const;<dd>int hasNameMapString() const;<dd>double number() const;<dd>double left() const;<dd>double right() const;}</a></font>
+      </dl>
+      <h4><a name="1029053">Examples</a></h4>
+      <p><a name="1030991">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrPropDefStartCbkType</font>, and <font size="2" face="'Courier New'" color="#000000">void *</font>. This callback routine marks the beginning of the Property Definitions section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030992">int propDefStartCB (defrCallbackType_e type,<dd>                    void* dummy,<dd>                   defiUserData userData) {<dd><dd>    &#47;&#47; Check if the type is correct<dd>    if (type != defrPropDefStartCbkType) {<dd>        printf(&#34;Type is not defrPropDefStartCbkType, <dd>                terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>    printf(&#34;PROPERTYDEFINITIONS\n&#34;);<dd>    return 0;}</a></font>
+      </dl>
+      <p><a name="1030982">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrPropCbkType</font>, and the class <font size="2" face="'Courier New'" color="#000000">defiProp</font>. This callback routine will be called for each defined property definition.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029203">int propDefCB (defrCallbackType_e type,<dd>               defiProp* propInfo,<dd>               defiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if (type != defrPropCbkType) {<dd>        printf(&#34;Type is not defrPropCbkType, terminate <dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&#47;&#47; Check the object type of the property definition<dd>    if (strcmp(propInfo&#45;&#62;propType(), &#34;design&#34;) == 0)<dd>        printf(&#34;DESIGN %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;net&#34;) == 0)<dd>        printf(&#34;NET %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;component&#34;) == 0)<dd>        printf(&#34;COMPONENT %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;specialnet&#34;) == 0)<dd>        printf(&#34;SPECIALNET %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;group&#34;) == 0)<dd>        printf(&#34;GROUP %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;row&#34;) == 0)<dd>        printf(&#34;ROW %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;componentpin&#34;) == 0)<dd>        printf(&#34;COMPONENTPIN %s &#34;, propInfo&#45;&#62;propName());<dd>    else if (strcmp(propInfo&#45;&#62;propType(), &#34;region&#34;) == 0)<dd>        printf(&#34;REGION %s &#34;, propInfo&#45;&#62;propName());<dd>    if (propInfo&#45;&#62;dataType() == 'I')<dd>        printf(&#34;INTEGER &#34;);<dd>    if (propInfo&#45;&#62;dataType() == 'R')<dd>        printf(&#34;REAL &#34;);<dd>    if (propInfo&#45;&#62;dataType() == 'S')<dd>        printf(&#34;STRING &#34;);<dd>    if (propInfo&#45;&#62;dataType() == 'Q')<dd>        printf(&#34;STRING &#34;);<dd>    if (propInfo&#45;&#62;hasRange()) {<br>        printf(&#34;RANGE %g %g &#34;, propInfo&#45;&#62;left(), <br>                propInfo&#45;&#62;right());<br>    }<br>    if (propInfo&#45;&#62;hasNumber())<br>        printf(&#34;%g &#34;, propInfo&#45;&#62;number());<br>    if (propInfo&#45;&#62;hasString())<br>        printf(&#34;&#39;%s&#39; &#34;, propInfo&#45;&#62;string());<br>    printf(&#34;\n&#34;);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029132">    return 0;}</a></font>
+      </dl>
+      <p><a name="1029135">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrPropDefEndCbkType</font>, and <font size="2" face="'Courier New'" color="#000000">void *</font>. This callback routine marks the end of the Property Definitions section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029242">int propDefEndCB (defrCallbackType_e type,<dd>                  void* dummy,<dd>                  defiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if (type != defrPropDefEndCbkType) {<dd>        printf(&#34;Type is not defrPropDefEndCbkType, <dd>                  terminate parsing.\n&#34;);<dd>        return 1;<dd>}</a></font>
+      </dl>
+      <h3><a name="defiRegion"></a><a name="1029246">defiRegion</a></h3>
+      <p><a name="1026370">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">REGIONS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">REGIONS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Regions" target="external_window"><font color="#0000ff"><u>"Regions"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022239">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022240">class defiRegion {<dd>const char* name() const;<dd><dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index) const;<dd><dd>int hasType() const;<dd>const char* type() const;<dd><dd>int numRectangles() const;<dd>int xl(int index) const;<dd>int yl(int index) const;<dd>int xh(int index) const;<dd>int yh(int index) const;}</a></font>
+      </dl>
+      <h4><a name="1029675">Examples</a></h4>
+      <p><a name="1029676">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrRegionCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrRegionStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrRegionEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034785">int regionCB (defrCallbackType_e type,<dd>              defiRegion* regionInfo,<dd>              defiUserData userData) {<dd>    int i;<dd>    char* name;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrRegionCbkType)) {<dd>        printf(&#34;Type is not defrRegionCbkType terminate<dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>    for (i = 0; i &#60; regionInfo&#45;&#62;numRectangles(); i++)<dd>        printf(&#34;%d %d %d %d \n&#34;, regionInfo&#45;&#62;xl(i), <dd>                regionInfo&#45;&#62;yl(i), regionInfo&#45;&#62;xh(i), <dd>               regionInfo&#45;&#62;yh(i));<dd>return 0;}</a></font>
+      </dl>
+      <h3><a name="defiRow"></a><a name="1022263">defiRow</a></h3>
+      <p><a name="1026388">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">ROW</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">ROW</font> statement, see <a href="../lefdefref/DEFSyntax.html#Rows" target="external_window"><font color="#0000ff"><u>"Rows"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022264">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1031030">class defiRow {<dd>const char* name() const;<dd>const char* macro() const;<dd>double x() const;<dd>double y() const;<dd>int orient() const; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; optional&#45;For information,see<dd>					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47;</a><a href="ch1Intro.html#1019049" title="1"><font color="DodgerBlue"><u>"Orientation Codes"</u></font></a><a href="ch1Intro.html#1019049" title="1"> </a> <dd>const char* orientStr() const;<dd>int hasDo() const;<dd>double xNum() const;<dd>double yNum() const;<dd>int hasDoStep() const;<dd>double xStep() const;<dd>double yStep() const;<dd><dd>int numProps() const;<dd>const char* propName(int index) const;<dd>const char* propValue(int index) const;<dd>double propNumber(int index) const;<dd>const char propType(int index) const;<dd>int propIsNumber(int index) const;<dd>int propIsString(int index) const;}</font>
+      </dl>
+      <h4><a name="1029251">Examples</a></h4>
+      <p><a name="1029253">The following example shows a die area routine using a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrDieAreaCbkType</font>, and the class <font size="2" face="'Courier New'" color="#000000">defiRow</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029256">int diearea (defrCallbackType_e type,<dd>           defiRow* dieareaInfo,<dd>           defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>    if (type != defrDieAreaCbkType) {<dd>        printf(&#34;Type is not defrDieAreaCbkType, terminate <dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>    printf(&#34;DIEAREA %d %d %d %d\n&#34;, diearea&#45;&#62;xl(), diearea&#45;&#62;yl(),<dd>           diearea&#45;&#62;xh(), diearea&#45;&#62;yh());<dd>    return 0;}</a></font>
+      </dl>
+      <p><a name="1029326">The following example shows a row routine using a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrRowCbkType</font>, and the class <font size="2" face="'Courier New'" color="#000000">defiRow</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034829">int rowCB (defrCallbackType_e type,<dd>           defiRow* rowInfo,<dd>           defiUserData userData) {<dd><dd>int i;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if (type != defrRowCbkType) {<dd>        printf(&#34;Type is not defrRowCbkType, terminate <dd>               parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;ROW %s %s %g %g %d &#34;, rowInfo&#45;&#62;name(), <dd>            rowInfo&#45;&#62;macro(), rowInfo&#45;&#62;x(), rowInfo&#45;&#62;y(), <dd>            rowInfo&#45;&#62;orient());</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034830">    &nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;DO %g BY %g STEP %g %g\n&#34;, rowInfo&#45;&#62;xNum(), <dd>            rowInfo&#45;&#62;yNum(),rowInfo&#45;&#62;xStep(), row&#45;&#62;yStep());<dd>&nbsp;&nbsp;&nbsp;&nbsp;if (rowInfo&#45;&#62;numProps() &#62; 0) {<dd>        for (i = 0; i &#60; rowInfo&#45;&#62;numProps(); i++) {<dd>            printf(&#34;   PROPERTY %s %s\n&#34;, rowInfo&#45;&#62;propName(i),<dd>                   rowInfo&#45;&#62;propValue(i));<dd>        }<dd>    }<dd>    return 0;}</a></font>
+      </dl>
+      <h3><a name="1029330">defiScanchain</a></h3>
+      <p><a name="1026406">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SCANCHAINS</font> statement, see <a href="../lefdefref/DEFSyntax.html#ScanChains" target="external_window"><font color="#0000ff"><u>"Scan Chains"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1022290">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1022291">class defiScanchain {<dd>const char* name() const;<dd>int hasStart() const;<dd>int hasStop() const;<dd>int hasFloating() const;<dd>int hasOrdered() const;<dd>int hasCommonInPin() const;<dd>int hasCommonOutPin() const;<dd>int hasPartition() const;<dd>int hasPartitionMaxBits() const;<dd><dd>void start(char** inst, char** pin) const;<dd>void stop(char** inst, char** pin) const;<dd><dd>int numOrdered() const;<dd><dd>void ordered(int index, int* size, char*** inst, char*** inPin, <dd>&nbsp;&nbsp;&nbsp;&nbsp;char*** outPin, int** bits) const;<dd>void floating(int* size, char*** inst, char*** inPin,<dd>&nbsp;&nbsp;&nbsp;&nbsp;char*** outPin, int** bits) const;<dd><dd>const char* commonInPin() const;<dd>const char* commonOutPin() const;<dd><dd>const char* partitionName() const;<dd>int partitionMaxBits(); }</a></font>
+      </dl>
+      <h4><a name="1030259">Examples</a></h4>
+      <p><a name="1030260">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrScanchainCbkType</font>. Callback routines for the type <font size="2" face="'Courier New'" color="#000000">defrScanchainsStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrScanchainsEndCbkType</font> are similar to the example for <font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font> and <font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font> in the Via section.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034846">int scanchainCB (defrCallbackType_e type,<dd>                 defiScanchain* scanchainInfo,<dd>                 defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrScanchainCbkType)) {<dd>        printf(&#34;Type is not defrScanchainCbkType <dd>        terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;%s\n&#34;, scanchainInfo&#45;&#62;name());<dd>    if (scanchainInfo&#45;&#62;hasStart()) {<dd>        scanchainInfo&#45;&#62;start(&amp;a1, &amp;b1);<dd>        printf(&#34;   START %s %s\n&#34;, a1, b1);<dd>    }<dd>    if (scanchainInfo&#45;&#62;hasStop()) {<dd>        scanchainInfo&#45;&#62;stop(&amp;a1, &amp;b1);<dd>        printf(&#34;   STOP %s %s\n&#34;, a1, b1);<dd>    }<dd>    if (scanchainInfo&#45;&#62;hasCommonInPin() ||<dd>        scanchainInfo&#45;&#62;hasCommonOutPin()) {<dd>        printf(&#34;   COMMONSCANPINS &#34;);<dd>        if (scanchainInfo&#45;&#62;hasCommonInPin())<dd>           printf(&#34; ( IN %s ) &#34;, scanchainInfo&#45;&#62;commonInPin());<dd>        if (scanchainInfo&#45;&#62;hasCommonOutPin())<dd>           printf(&#34; ( OUT %s ) &#34;,scanchainInfo&#45;&#62;commonOutPin());<dd>        printf(&#34;\n&#34;);<dd>    }<dd>    if (scanchainInfo&#45;&#62;hasFloating()) {<dd>        scanchainInfo&#45;&#62;floating(&amp;size, &amp;inst, &amp;inPin, &amp;outPin);<dd>        if (size &#62; 0)<dd>            printf(&#34;  + FLOATING\n&#34;);<dd>        for (i = 0; i &#60; size; i++) {<dd>            printf(&#34;    %s &#34;, inst[i]);<dd>            if (inPin[i])<dd>               printf(&#34;( IN %s ) &#34;, inPin[i]);<dd>            if (outPin[i])<dd>               printf(&#34;( OUT %s ) &#34;, outPin[i]);<dd>            printf(&#34;\n&#34;);<dd>        }<dd>        printf(&#34;\n&#34;);<dd>    }<dd>    if (scanchainInfo&#45;&#62;hasOrdered()) {<dd>        for (i = 0; i &#60; scanchainInfo&#45;&#62;numOrderedLists(); i++) {<br>            scanchainInfo&#45;&#62;ordered(i, &amp;size, &amp;inst, &amp;inPin,<br>            &amp;outPin);<br>            if (size &#62; 0)<br>                printf(&#34;  + ORDERED\n&#34;);<br>            for (i = 0; i &#60; size; i++) {<br>                printf(&#34;    %s &#34;, inst[i]);<br>                if (inPin[i])<br>                   printf(&#34;( IN %s ) &#34;, inPin[i]);<br>                if (outPin[i])<br>                   printf(&#34;( OUT %s ) &#34;, outPin[i]);<br>                printf(&#34;\n&#34;);<br>            }<br>        }<br>        printf(&#34;\n&#34;);<br>    }<br>    return 0;}</a></font>
+      </dl>
+      <h3><a name="defiShield"></a><a name="1030262">defiShield</a></h3>
+      <p><a name="1030150">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statement, see <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>"Special Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1030181">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030151">class defiShield {<dd>const char* shieldName() const;<dd>int numPaths() const; <dd></a><a href="#defiPath" title="4"><font color="#0000ff"><u>defiPath</u></font></a>* path(int index);}</font>
+      </dl>
+      <h4><a name="1031620">Examples</a></h4>
+      <p><a name="1030509">For a </a><font size="2" face="'Courier New'" color="#000000">defiShield</font> example, see the example in the <font size="2" face="'Courier New'" color="#000000">defiNet</font> section.</p>
+      <h3><a name="defiSite"></a><a name="1030165">defiSite</a></h3>
+      <p><a name="1026424">Retrieves data from any obsolete </a><font size="2" face="'Courier New'" color="#000000">SITE</font> sections of the DEF file. </p>
+      <h4><a name="1032104">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1031598">class defiSite {<dd>double x_num() const;<dd>double y_num() const;<dd>double x_step() const;<dd>double y_step() const;<dd>double x_orig() const;<dd>double y_orig() const;<dd>int orient() const; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47; optional&#45; For information, see<dd>						&nbsp;&nbsp;&nbsp;&nbsp;&#47;&#47;</a><a href="ch1Intro.html#1019049" title="1"><font color="DodgerBlue"><u>"Orientation Codes"</u></font></a><a href="ch1Intro.html#1019049" title="1"> </a> <dd>const char* orientStr() const;<dd>const char* name() const;}</font>
+      </dl>
+      <h4><a name="1031309">Examples</a></h4>
+      <p><a name="1031310">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrCanplaceCbk</font> and<font size="2" face="'Courier New'" color="#000000"> defrCannotOccupyCbk</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029524">int siteCB (defrCallbackType_e type,<dd>            defiSite siteInfo,<dd>            defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrCanplaceCbk) &amp;&amp; (type !=  <dd>         defrCannotOccupyCbk)) {<dd>        printf(&#34;Type is not defrCanplaceCbk and not<dd>               defrCannotOccupyCbk,\n&#34;);<dd><dd>        printf(&#34;terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;CANPLACE %s %g %g %s &#34;, siteInfo&#45;&#62;name(), <dd>            siteInfo&#45;&#62;x_orig(), siteInfo&#45;&#62;y_orig(),<dd>            orientStr(siteInfo&#45;&#62;orient()));<dd>    printf(&#34;DO %d BY %d STEP %g %g ;\n&#34;, siteInfo&#45;&#62;x_num(),<dd>            siteInfo&#45;&#62;y_num(),<dd>           siteInfo&#45;&#62;x_step(), siteInfo&#45;&#62;y_step());<dd>    return 0;}</a></font>
+      </dl>
+      <h3><a name="defiSlot"></a><a name="1034537">defiSlot</a></h3>
+      <p><a name="1034543">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SLOTS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SLOTS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Slots" target="external_window"><font color="#0000ff"><u>"Slots"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1034538">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036547">class defiSlot {<dd>int hasLayer() const;<dd>const char* layerName() const;<dd><dd>int numRectangles() const;<dd>int xl(int index) const;<dd>int yl(int index) const;<dd>int xh(int index) const;<dd>int yh(int index) const;<dd><dd>int numPolygons() const;<dd>struct defiPoints getPolygon(int index) const;}</a></font>
+      </dl>
+      <h3><a name="defiStyles"></a><a name="1036549">defiStyles</a></h3>
+      <p><a name="1036550">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">STYLES</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">STYLES</font> statement, see <a href="../lefdefref/DEFSyntax.html#Styles" target="external_window"><font color="#0000ff"><u>"Styles,"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036537">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036538">class defiStyles {<dd>int style() const;<dd>struct defiPoints getPolygon() const;}</a></font>
+      </dl>
+      <h3><a name="defiSubnet"></a><a name="defiSubnet"></a><a name="1021237">defiSubnet</a></h3>
+      <p><a name="1026473">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SUBNETS</font> statement in the <font size="2" face="'Courier New'" color="#000000">NETS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NETS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021238">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032778">class defiSubnet {<dd>const char* name() const;<dd>int numConnections();<dd>const char* instance(int index);<dd>const char* pin(int index);<dd>int pinIsSynthesized(int index);<dd>int pinIsMustJoin(int index);<dd>int isFixed() const;<dd>int isRouted() const;<dd>int isCover() const;<dd>int hasNonDefaultRule() const;<dd>int hasShield() const;<dd>int hasShieldNet() const;<dd>int hasNoShieldNet() const;<dd>int numPaths() const;<dd></a><a href="#defiPath" title="4"><font size="2" face="'Courier New'" color="#0000ff"><u>defiPath</u></font></a>* path(int index);<dd>const char* nonDefaultRule() const;<dd>int numWires() const;<dd><a href="#defiWire" title="4"><font size="2" face="'Courier New'" color="#0000ff"><u>defiWire</u></font></a>* wire(int index);}</font>
+      </dl>
+      <h3><a name="defiTrack"></a><a name="1021645">defiTrack</a></h3>
+      <p><a name="1026550">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">TRACKS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">TRACKS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Tracks" target="external_window"><font color="#0000ff"><u>"Tracks"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021646">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037924">class defiTrack {<dd>const char* macro() const;<dd>double x() const;<dd>double xNum() const;<dd>double xStep() const;<dd>int numLayers() const;<dd>const char* layer(int index) const;<dd>int firstTrackMask() const;<dd>int sameMask() const;}</a></font>
+      </dl>
+      <h4><a name="1029383">Examples</a></h4>
+      <p><a name="1029384">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrTrackCbkType</font>, and the class <font size="2" face="'Courier New'" color="#000000">defiTrack</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034890">int trackCB (defrCallbackType_e type,<dd>             defiTrack* trackInfo,<dd>             defiUserData userData) {<dd>    int i;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if (type != defrTrackCbkType) {<dd>        printf(&#34;Type is not defrTrackCbkType, terminate<dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }<dd><dd>printf(&#34;TRACKS %s %g DO %g STEP %g LAYER &#34;, <dd>            trackInfo&#45;&#62;macro(),<dd>           trackInfo&#45;&#62;x(), trackInfo&#45;&#62;xNum(), trackInfo&#45;&#62;xStep());<dd>for (i = 0; i &#60; trackInfo&#45;&#62;numLayers(); i++)<dd>        printf(&#34;%s &#34;, trackInfo&#45;&#62;layer(i));<dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;\n&#34;);<dd><dd>return 0;}</a></font>
+      </dl>
+      <h3><a name="defiVia"></a><a name="1021664">defiVia</a></h3>
+      <p><a name="1026566">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">VIAS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">VIAS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Vias" target="external_window"><font color="#0000ff"><u>"Vias"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1021665">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037997">class defiVia {<dd>const char* name() const;<dd>const char* pattern() const;<dd>int hasPattern() const;<dd>int numLayers() const;<dd>void layer(int index, char** layer, int* xl, int* yl, <dd>&nbsp;&nbsp;&nbsp;&nbsp;int* xh, int* yh) const;<dd>int numPolygons() const; <dd>const char* polygonName(int index) const; <dd>struct defiPoints getPolygon(int index) const:<dd>int hasViaRule() const;<dd>void viaRule(char** viaRuleName, int* xSize, int* ySize, <dd>&nbsp;&nbsp;&nbsp;&nbsp;char** botLayer, char** cutLayer, char** topLayer, <dd>&nbsp;&nbsp;&nbsp;&nbsp;int* xCutSpacing, int* yCutSpacing, int* xBotEnc, int* yBotEnc,<dd>&nbsp;&nbsp;&nbsp;&nbsp;int* xTopEnc, int* yTopEnc) const;<dd>int hasRowCol() const;<dd>void rowCol(int* numCutRows, int* numCutCols) const;<dd>int hasOrigin() const;<dd>void origin(int* xOffset, int* yOffset) const;<dd>int hasOffset() const;<dd>void offset(int* xBotOffset, int* yBotOffset, int* xTopOffset<dd>&nbsp;&nbsp;&nbsp;&nbsp;int* yTopOffset) const;<dd>int hasCutPattern() const;<dd>const char* cutPattern() const;<dd>int rectMask(int index) const;<dd>int polyMask(int index) const; }</a></font>
+      </dl>
+      <h4><a name="1029555">Examples</a></h4>
+      <p><a name="1029556">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrViaStartCbkType</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034918">int viaStartCB (defrCallbackType_e type,<dd>                int numVias,<dd>                defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>if ((type != defrViaStartCbkType)) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;Type is not defrViaStartCbkType terminate<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parsing.\n&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;return 1;<dd>}<dd>printf(&#34;VIAS %d\n&#34;, numVias);<dd>return 0;}</a></font>
+      </dl>
+      <p><a name="1029572">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrViaCbkType</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029573">int viaCB (defrCallbackType_e type,<dd>           defiVia* viaInfo,<dd>           defiUserData userData) {<dd>int i, xl, yl, xh, yh;<dd>char* name;<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrViaCbkType)) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;Type is not defrViaCbkType terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd>printf(&#34;Via name is %s &#34;, viaInfo&#45;&#62;name());<dd>if (viaInfo&#45;&#62;hasPattern())<dd>        printf(&#34;  PATTERNNAME %s\n&#34;, viaInfo&#45;&#62;pattern());<dd>for (i = 0; i &#60; viaInfo&#45;&#62;numLayers(); i++) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;viaInfo&#45;&#62;layer(i, &amp;name, &amp;xl, &amp;yl, &amp;xh, &amp;yh);<dd>        printf(&#34; RECT %s %d %d %d %d \n&#34;, name, xl, yl, xh, yh);<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029594">    return 0;}</a></font>
+      </dl>
+      <p><a name="1029596">The following example shows a callback routine with the type </a><font size="2" face="'Courier New'" color="#000000">defrViaEndCbkType</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034988">int viaEndCB (defrCallbackType_e type,<dd>              void* ptr,<dd>              defiUserData userData) {<dd><dd>&#47;&#47; Check if the type is correct<dd>    if ((type != defrViaEndCbkType)) {<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;Type is not defrViaEndCbkType terminate<dd>                parsing.\n&#34;);<dd>        return 1;<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1029612">    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&#34;END VIAS\n&#34;);<dd>&nbsp;&nbsp;&nbsp;&nbsp;return 0;}</a></font>
+      </dl>
+      <h3><a name="defiViaData"></a><a name="1036387">defiViaData</a></h3>
+      <p><a name="1036388">Retrieves via array data from the </a><font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statement, see <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>"Special Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1036394">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036399">struct defiViaData {<dd>int numX;<dd>int numY;<dd>int stepX;<dd>int stepY;} </a></font>
+      </dl>
+      <h3><a name="defiVpin"></a><a name="defiVpin"></a><a name="1024435">defiVpin</a></h3>
+      <p><a name="1026582">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">VPIN</font> statement in the <font size="2" face="'Courier New'" color="#000000">NETS</font> statement in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NETS</font> statement, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets"</u></font></a> and in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1024452">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1024437">class defiVpin {<dd>int xl() const;<dd>int yl() const;<dd>int xh() const;<dd>int yh() const;<dd>char status() const;<dd>int orient() const;<dd>const char* orientStr() const;<dd>int xLoc() const;<dd>int yLoc() const;<dd>const char* name() const;<dd>const char* layer() const;}</a></font>
+      </dl>
+      <h3><a name="defiWire"></a><a name="1032610">defiWire</a></h3>
+      <p><a name="1032629">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000"><em>regularWiring</em></font> or <font size="2" face="'Courier New'" color="#000000"><em>specialWiring</em></font> section of the <font size="2" face="'Courier New'" color="#000000">NETS</font> or <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statements in the DEF file. For syntax information about the DEF <font size="2" face="'Courier New'" color="#000000">NETS</font> and <font size="2" face="'Courier New'" color="#000000">SPECIALNETS</font> statements, see <a href="../lefdefref/DEFSyntax.html#Nets" target="external_window"><font color="#0000ff"><u>"Nets"</u></font></a> and <a href="../lefdefref/DEFSyntax.html#SpecialNets" target="external_window"><font color="#0000ff"><u>"Special Nets"</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1032611">C++ Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1032673">class defiWire {<dd>const char* wireType() const;<dd>const char* wireShieldNetName() const;<dd>int numPaths() const;<dd></a><a href="#defiPath" title="4"><font size="2" face="'Courier New'" color="#0000ff"><u>defiPath</u></font></a>* path(int index);}</font>
+      </dl>
+      <p><a name="1035107">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch3DEFcallback.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch5DEFwritercallback.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="defapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

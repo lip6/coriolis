@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>What's New in LEF 5.8 C/C++ Programming Interface -- 2</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491979922">
+<META NAME="DataType" CONTENT="Release information">
+<META NAME="Description" CONTENT="Describes new, changed, and removed features for the LEF API in version 5.8.">
+<META NAME="DocTitle" CONTENT="What's New in LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Release Note">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="2">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapiWN">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491979922">
+<META NAME="NextFile" CONTENT="">
+<META NAME="PageCount" CONTENT="6">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="NewFeatures.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="     int colorMask;,     int colorMask; ,     int colorMask;void addPath(int colorMask);void addPathIter(int colorMask);void addRect(int colorMask);void addRectIter(int colorMask);void addPolygon(int colorMask);void addPolygonIter(int colorMask);void addVia(int viaMasks);void addViaIter(int viaMasks);,     int topMaskNum;int cutMaskNum;int bottomMaskNum;,     int topMaskNum;int cutMaskNum;int bottomMaskNum; ,     void addRect(int mask,     double xl,     double yl     double xh     double yn);void addPoly(int mask,     lefiGeometries* geom);int rectColorMask(int index); int polyColorMask(int index); ,     void addRectToLayer(int mask,     double xl,      double yl,     double xh,     double yh);void addPolyToLayer(int mask,     lefiGeometries* geom); int rectColorMask(int layerNum,      int rectNum); int polyColorMask(int layerNum,      int rectNum); ,     void setMask(int num);int hasMask() const; Int mask() const;">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="What's New in LEF 5.8 C/C++ Programming Interface -- 2">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="NewFeatures.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td height="20">
+          <img src="images/nav2_next_b.gif" alt="Previous">
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="59">
+          <img src="images/nav_next_b.gif" alt="Next" border="0">
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>What's New in LEF 5.8 C&#47;C++ Programming Interface </div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>2<a name="1032955">&nbsp;</a></h1>
+      <h1><a name="1033512">Changed Features</a></h1>
+      <p><a name="1034303">This chapter describes the features that were changed in this release of the LEF application programming interface.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1035061" title="2" name="1035094"><font color="Blue"><u>Layer Routines</u></font></a><a href="#1035061" title="2"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1035061">Layer Routines</a></h2>
+      <p><a name="1034857">The following syntax has been added to the listed layer routines.</a></p>
+      <h3><a name="1035935">lefiGeometries</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1036073">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;<dd>void addPath(int colorMask);<dd>void addPathIter(int colorMask);<dd>void addRect(int colorMask);<dd>void addRectIter(int colorMask);<dd>void addPolygon(int colorMask);<dd>void addPolygonIter(int colorMask);<dd>void addVia(int viaMasks);<dd>void addViaIter(int viaMasks);</a></font>
+      </dl>
+      <p><a name="1036584">These are described below:</a></p>
+      <p><a name="1036415">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1036637"><font size="2" face="'Courier New'" color="#000000">colorMask</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1036639">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomRect</font> structure.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036641"><font size="2" face="'Courier New'" color="#000000">addPathIter(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036926">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036935">Adds the color mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomPath</font> structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036645"><font size="2" face="'Courier New'" color="#000000">addPathIter(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036962">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039824">Adds the color mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomPathIter </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036735"><font size="2" face="'Courier New'" color="#000000">addRectIter(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1036983">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039843">Adds the color mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomRectIter </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036739"><font size="2" face="'Courier New'" color="#000000">addPolygon(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037004">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037013">Adds the color mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomPolygon </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036743"><font size="2" face="'Courier New'" color="#000000">addPolygonIter(int colorMask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037025">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037034">Adds the color mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomRectIter </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036747"><font size="2" face="'Courier New'" color="#000000">addVia(int viaMasks)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037046">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037055">Adds the via mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomVia </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1036751"><font size="2" face="'Courier New'" color="#000000">addViaIter(int viaMasks)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037067">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037076">Adds the via mask number to the </a><font size="2" face="'Courier New'" color="#000000">lefiGeomViaIter </font>structure. The default value is 0.</p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1036410">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeometries" target="external_window"><font color="#0000ff"><u>"lefiGeometries"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037136">lefiGeomRect</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037137">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask; </a></font>
+      </dl>
+      <p><a name="1037142">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomRect struct</font>. The default value is 0.</p>
+      <p><a name="1037253">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomRect" target="external_window"><font color="#0000ff"><u>"lefiGeomRect"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037471">lefiGeomRectIter</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037480">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;</a></font>
+      </dl>
+      <p><a name="1037481">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomRectIter struct</font>. The default value is 0.</p>
+      <p><a name="1037691">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomRectIter" target="external_window"><font color="#0000ff"><u>"lefiGeomRect"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037785">lefiGeomPath </a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037786">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;</a></font>
+      </dl>
+      <p><a name="1037794">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomPath struct</font>. The default value is 0.</p>
+      <p><a name="1037808">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomPath" target="external_window"><font color="#0000ff"><u>"lefiGeomPath"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037884">lefiGeomPathIter</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037885">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;</a></font>
+      </dl>
+      <p><a name="1037886">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomPathIter</font> <font size="2" face="'Courier New'" color="#000000">struct</font>. The default value is 0.</p>
+      <p><a name="1037913">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomPathIter" target="external_window"><font color="#0000ff"><u>"lefiGeomPathIter"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037722">lefiGeomPolygon</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037947">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;</a></font>
+      </dl>
+      <p><a name="1037948">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomPolygon</font> <font size="2" face="'Courier New'" color="#000000">struct</font>. The default value is 0.</p>
+      <p><a name="1037950">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomPolygon" target="external_window"><font color="#0000ff"><u>"lefiGeomPolygon"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037508">lefiGeomPolygonIter</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038009">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int colorMask;</a></font>
+      </dl>
+      <p><a name="1040130">Defines the color mask number for the </a><font size="2" face="'Courier New'" color="#000000">GeomPolygonIter</font> <font size="2" face="'Courier New'" color="#000000">struct</font>. The default value is 0.</p>
+      <p><a name="1038052">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomPolygonIter" target="external_window"><font color="#0000ff"><u>"lefiGeomPolygonIter"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037520">lefiGeomVia</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1040154">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int </a><font size="2" face="'Courier New'" color="#000000"><em>topMaskNum</em></font>;<dd>int <font size="2" face="'Courier New'" color="#000000"><em>cutMaskNum</em></font>;<dd>int <font size="2" face="'Courier New'" color="#000000"><em>bottomMaskNum</em></font>; </font>
+      </dl>
+      <p><a name="1040155">Indicates the top, bottom, and cut mask numbers for the </a><font size="2" face="'Courier New'" color="#000000">GeomVia struct</font>. The default value is 0.</p>
+      <p><a name="1038414">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomVia" target="external_window"><font color="#0000ff"><u>"lefiGeomVia"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1038134">lefiGeomViaIter</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037537">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int </a><font size="2" face="'Courier New'" color="#000000"><em>topMaskNum</em></font>;<dd>int <font size="2" face="'Courier New'" color="#000000"><em>cutMaskNum</em></font>;<dd>int <font size="2" face="'Courier New'" color="#000000"><em>bottomMaskNum</em></font>;</font>
+      </dl>
+      <p><a name="1040164">Indicates the top, bottom, and cut mask numbers for the </a><font size="2" face="'Courier New'" color="#000000">GeomViaIter</font> <font size="2" face="'Courier New'" color="#000000">struct</font>. The default value is 0.</p>
+      <p><a name="1038419">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiGeomViaIter" target="external_window"><font color="#0000ff"><u>"lefiGeomViaIter"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1035501">lefiLayer</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035847">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void setMask(int num);<dd>int hasMask() const; <dd>Int mask() const;</a></font>
+      </dl>
+      <p><a name="1040005">These are described below:</a></p>
+      <p align="left"><a name="1035009">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037430"><font size="2" face="'Courier New'" color="#000000">setMask(int num)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1037294">Sets the color mask number on the layer.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037296"><font size="2" face="'Courier New'" color="#000000">hasMask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037382">Checks whether the layer has a color mask assigned to it or not.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037300"><font size="2" face="'Courier New'" color="#000000">mask()</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1037302">Returns the color mask number of the layer.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1037278">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiLayer" target="external_window"><font color="#0000ff"><u>"lefiLayer"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1037580">lefiViaLayer</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1037581">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addRect(int mask,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double </a><font size="2" face="'Courier New'" color="#000000"><em>xl</em></font>,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>yl<dd></em></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>xh<dd></em></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>yn</em></font>);<dd>void addPoly(int mask,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lefiGeometries* geom);<dd>int rectColorMask(int index); <dd>int polyColorMask(int index); </font>
+      </dl>
+      <p><a name="1039984">These are described below:</a></p>
+      <p align="left"><a name="1039195">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039172"><font size="2" face="'Courier New'" color="#000000">addRect(int mask)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039174">Adds the color mask number to the rectangle inside the via.The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039176"><font size="2" face="'Courier New'" color="#000000">addPoly(int mask)</font></a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039178">Adds the color mask number to the polygon. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039180"><font size="2" face="'Courier New'" color="#000000">rectColorMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039184">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039186">Returns the color mask number on the rectangle.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039188"><font size="2" face="'Courier New'" color="#000000">polyColorMask(int index)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039192">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039194">Returns the color mask number on the polygon.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1039211">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiViaLayer" target="external_window"><font color="#0000ff"><u>"lefiViaLayer"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h3><a name="1039196">lefiVia</a></h3>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039197">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void addRectToLayer(int mask,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double </a><font size="2" face="'Courier New'" color="#000000"><em>xl</em></font>, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>yl</em></font>,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>xh</em></font>,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double <font size="2" face="'Courier New'" color="#000000"><em>yh</em></font>);<dd>void addPolyToLayer(int mask,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lefiGeometries* geom); <dd>int rectColorMask(int layerNum, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int rectNum); <dd>int polyColorMask(int layerNum, <dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int rectNum); </font>
+      </dl>
+      <p><a name="1040026">These are described below:</a></p>
+      <p align="left"><a name="1039528">&nbsp;</a></p>
+      <table summary="" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" width="648">
+        <caption>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top" >
+            <p><a name="1039458"><font size="2" face="'Courier New'" color="#000000">addRectToLayer(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039751">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top" >
+            <p><a name="1039764">Adds the color mask of the via rectangle to the layer. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039462"><font size="2" face="'Courier New'" color="#000000">addPolyToLayer(int mask)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039755">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039785">Adds the color mask of the via polygon to the layer. The default value is 0.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039466"><font size="2" face="'Courier New'" color="#000000">rectColorMask(int layerNum, int rectNum)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039470">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039472">Returns the color mask number of the indexed rectangle inside the via for that layer.</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" cellpadding="4" border="0" valign="top">
+            <p><a name="1039474"><font size="2" face="'Courier New'" color="#000000">polyColorMask(int layerNum, int rectNum)</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039478">&nbsp;</a></p>
+          </td>
+          <td cellpadding="4" border="0" valign="top">
+            <p><a name="1039480">Returns the color mask number of the indexed polygon inside the via for that layer.</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><a name="1035787">For more information, see </a><a href="../lefapi/ch4LEFclasses.html#lefiVia" target="external_window"><font color="#0000ff"><u>"lefiVia"</u></font></a> in the <font color="#000000"><em>LEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="NewFeatures.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td height="20">
+            <img src="images/nav2_next_b.gif" alt="Previous">
+          </td>
+          <td>
+            <a>
+<a href="lefapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="59">
+            <img src="images/nav_next_b.gif" alt="Next" border="0">
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

@@ -1,0 +1,1870 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF 5.8 C/C++ Programming Interface -- 3</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491994561">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Library Exchange Format (LEF) files.">
+<META NAME="DocTitle" CONTENT="LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="3">
+<META NAME="Keywords" CONTENT="">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491994561">
+<META NAME="NextFile" CONTENT="ch4LEFclasses.html">
+<META NAME="PageCount" CONTENT="24">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="ch2LEFsetup.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="Syntax" CONTENT="    // Expect a non null char* macroName    if (!macroName || !*macroName) {        printf(&quot;Macro name is null, terminate parsing.\n&quot;);        return 1;    },    // Incorrect type was passed in, expecting the type lefiMacroBeginCbkType,    // Initialize the reader.  This routine is called first.    lefrInit();,    // Invoke the parser    res = lefrRead(f, &quot;lefInputFileName&quot;, (void*)userData);    if (res != 0) {        printf(&quot;LEF parser returns an error\n&quot;);        return(2);    },    // Open the lef file for the reader to read    if ((f = fopen(&quot;lefInputFileName&quot;,&quot;r&quot;)) == 0) {        printf(&quot;CouldnÕt open input file Õ%sÕ\n&quot;,&quot;lefInputFileName&quot;);        return(2);    },    // Set the user callback routines    lefrSetArrayBeginCbk(arrayBeginCB);    lefrSetArrayCbk(arrayCB);    lefrSetArrayEndCbk(arrayEndCB);    lefrSetBusBitCharsCbk(busBitCharsCB);    lefrSetCaseSensitiveCbk(caseSensCB);    lefrSetDielectricCbk(dielectricCB);    ...,    // Write out the macro name    printf(&quot;Macro name is %s\n&quot;, macroName);    return 0;},    fclose(f);,    if (type != lefiMacroBeginCbkType) {        printf(&quot;Type is not lefiMacroBeginCbkType,    terminate parsing.\n&quot;);        return 1;    },    printf(&quot;IRDROP END\n&quot;);    return 0;},    return 0;}lefrUseMinSpacingCbkFnType,int UserCallbackFunction(lefrCallbackType_e callbackTypedata_type* LEF_datalefiUserData data),int irdropEndCB (lefrCallbackType_e type,                 void* ptr,                 lefiUserData userData) {    // Check if the type is correct    if (type != lefrIRDropEndCbkType) {        printf(&quot;Type is not lefrIRDropEndCbkType, terminate    parsing.\n&quot;);        return 1;    },int lefrDensityCbkFnType(lefrCallbackType_e typlefiDensity* density lefiUserData* data),int lefrDoubleCbkFnType(lefrCallbackType_e typ,double number,lefiUserData* data),int lefrIntergerCbkFnTypeleftCallbackType_e type,int number,lefiUserData* data),int lefrLayerCbkFnType(lefrCallbackType_e typ,lefiLayer* layer,lefiUserData* data),int lefrMacroCbkFnType(lefrCallbackType_e typ,lefiMacro* macro,lefiUserData* data),int lefrMacroForeignCbkFnType(lefrCallbackType_e typ,lefiMacroForeign* foreign,lefiUserData* data),int lefrMacroNumCbkFnType(lefrCallbackType_e typ,lefiNum num,lefiUserData* data),int lefrMacroSiteCbkFnType(lefrCallbackType_e typ,lefiMacroSite* site,lefiUserData* data),int lefrObstructionCbkFnType(lefrCallbackType_e typ,lefiObstruction* obs,lefiUserData* data),int lefrPinCbkFnType(lefrCallbackType_e typ,lefiPin* pin,lefiUserData* data),int lefrSiteCbkFnType(lefrCallbackType_e typ,lefiSite* site,lefiUserData* data),int lefrSpacingCbkFnType(lefrCallbackType_e typ,lefiSpacing* spacing,lefiUserData* data),int lefrStringCbkFnType(lefrCallbackType_e typ,const char* string,lefiUserData* data),int lefrUnitsCbkFnType(lefrCallbackType_e typ,lefiUnits* units,lefiUserData* data),int lefrUseMinSpacingCbkFnType(lefrCallbackType_e typ,lefiUseMinSpacing* spacing,lefiUserData* data),int lefrViaCbkFnType(lefrCallbackType_e typ,lefiVia* via,lefiUserData* data),int lefrViaRuleCbkFnType(lefrCallbackType_e typ,lefiViaRule* viaRule,lefiUserData* data),int lefrVoidCbkFnType(lefrCallbackType_e typ,void* ptr,lefiUserData* data),int macroBeginCB (lefrCallbackType_e type,                  const char *macroName,                  lefiUserData userData) {,int setupRoutine() {    FILE* f;    int   res;    int   userData = 0x01020304;    ...,lefrMaxStackViaCbkFnType(lefrCallbackType_e typ,lefiMaxStackVia* maxStack,lefiUserData data),lefrNonDefaultCbkFnType(lefrCallbackType_e typ,lefiNonDefault* def,lefiUserData* data),lefrPropCbkFnType(lefrCallbackType_e typ,lefiProp* prop,lefiUserData* data)">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF 5.8 C/C++ Programming Interface -- 3">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="ch2LEFsetup.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch4LEFclasses.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>3<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1016399">LEF Reader Callback Routines</a></h1>
+      <p><a name="1029698">The Cadence</a><font color="#000000"><sup>&#174;</sup></font> Library Exchange Format (LEF) reader calls all callback routines when it reads in the appropriate part of the LEF file. Some routines, such as the version callback, are called only once. Other routines can be called more than once.</p>
+      <p><a name="1035768">This chapter contains the following sections:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1033063" title="3" name="1035771"><font color="Blue"><u>Callback Function Format</u></font></a><a href="#1033063" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1023298" title="3" name="1035772"><font color="Blue"><u>Callback Types and Setting Routines</u></font></a><a href="#1023298" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1035735" title="3" name="1035773"><font color="Blue"><u>User Callback Routines</u></font></a><a href="#1035735" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1033063">Callback Function Format</a></h2>
+      <p><a name="1019000">All callback functions have the following format:</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1030828">int UserCallbackFunction(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>callbackType<dd></em></font>data_type* <font size="2" face="'Courier New'" color="#000000"><em>LEF_data<dd></em></font>lefiUserData <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <p><a name="1033078">Each user&#45;supplied callback routine is passed three arguments.</a></p>
+      <h3><a name="1033069">Callback Type</a></h3>
+      <p><a name="1033070">The </a><font size="2" face="'Courier New'" color="#000000">callBackType</font> argument is a list of objects that contains a unique number assignment for each callback from the parser.This list allows you to use the same callback routine for different types of LEF data. For examples, see <a href="appA_LEFexamples.html#1011663" title="A"><font color="#0000ff"><u>Appendix&nbsp;A, "LEF Reader and Writer Examples."</u></font></a></p>
+      <h3><a name="1033086">LEF_Data</a></h3>
+      <p><a name="1033087">The </a><font color="#000000"><em>LEF_data</em></font> argument provides the data specified by the callback. Data types returned by the callbacks vary for each callback. Examples of the types of arguments passed include <font size="2" face="'Courier New'" color="#000000">const char*</font>, <font size="2" face="'Courier New'" color="#000000">double</font>, <font size="2" face="'Courier New'" color="#000000">int</font>, and <font size="2" face="'Courier New'" color="#000000">defiProp</font>. Two points to note:</p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033088">The data returned in the callback is not checked for validity. </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1033089">If you want to keep the data, you must make a copy of it.</a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="1033129">User Data</a></h3>
+      <p><a name="1019009">The </a><font color="#000000"><em>data </em></font>argument is a four&#45;byte data item that is set by the user. The LEF reader contains only user data. The user data is most often set to a pointer to the library data so that it can be passed to the routines. This is more effective than using a global variable.</p>
+      <p><a name="1019011">The callback functions can be set or reset at any time. If you want a callback to be available when the LEF file parsing begins, you must set the callback before you call </a><font size="2" face="'Courier New'" color="#000000">lefrRead</font>. </p>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1029154">You can unset a callback by using the set function with a null argument.</a></p>
+      <h2><a name="1023298">Callback Types and Setting Routines</a></h2>
+      <p><a name="1033347">You must set a callback before you can use it. When you set a callback, the callback routine used for each type of LEF information is passed in the appropriate setting routine. Each callback routine returns a callback type. </a></p>
+      <p><a name="1033655">The following table lists the LEF reader callback setting routines and the associated callback types. The contents of the setting routines are described in detail in the section </a><a href="#1035735" title="3"><font color="Blue"><u>"User Callback Routines"</u></font></a><a href="#1035735" title="3"></a>.  </p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="653">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="112">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1045074"><font color="#000000"><strong>LEF Information</strong></font></a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="288">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1045076">Setting Routine</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="0" bordercolor="#D3D3D3" valign="middle" width="252">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1045078">Callback Type</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045080">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045082"><font size="2" face="'Courier New'" color="#000000">void lefrSetBusBitCharsCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045087"><font size="2" face="'Courier New'" color="#000000">lefrBusBitCharsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045089">Clearance Measure</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045091"><font size="2" face="'Courier New'" color="#000000">void lefrSetClearanceMeasureCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045096"><font size="2" face="'Courier New'" color="#000000">lefrClearanceMeasureCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045098">Density</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045100"><font size="2" face="'Courier New'" color="#000000">void</font></a> <font size="2" face="'Courier New'" color="#000000">lefrSetDensityCbk</font> <br>(<a href="#lefrDensityCbkFnType" title="3"><font color="#0000ff"><u>lefrDensityCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045105"><font size="2" face="'Courier New'" color="#000000">lefrDensityCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045107">Divider <br>Character</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045109"><font size="2" face="'Courier New'" color="#000000">void lefrSetDividerCharCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045114"><font size="2" face="'Courier New'" color="#000000">lefrDividerCharCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045116">Extensions</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045118"><font size="2" face="'Courier New'" color="#000000">void</font></a> <font size="2" face="'Courier New'" color="#000000">lefrSetExtensionCbk</font> <br>(<a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a>)</p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045123"><font size="2" face="'Courier New'" color="#000000">lefrExtensionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045125">Fixed Mask                    </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045127"><font size="2" face="'Courier New'" color="#000000">void lefrFixedMaskCbk<br>(</font></a><a href="#1039868" title="3"><font color="#0000ff"><u>lefrIntergerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045132"><font size="2" face="'Courier New'" color="#000000">lefrFixedMaskCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045134">Library End<br>Statement</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045136"><font size="2" face="'Courier New'" color="#000000">void lefrSetLibraryEndCbk<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045141"><font size="2" face="'Courier New'" color="#000000">lefrLibraryEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045143">Layer</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045145"><font size="2" face="'Courier New'" color="#000000">void lefrSetLayerCbk<br>(</font></a><a href="#lefrLayerCbkFnType" title="3"><font color="#0000ff"><u>lefrLayerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045150"><font size="2" face="'Courier New'" color="#000000">lefrLayerCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045152">Macro <br>Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045154"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroBeginCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045159"><font size="2" face="'Courier New'" color="#000000">lefrMacroBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045161">Macro</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045163"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroCbk<br>(</font></a><a href="#lefrMacroCbkFnType" title="3"><font color="#0000ff"><u>lefrMacroCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045168"><font size="2" face="'Courier New'" color="#000000">lefrMacroCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045170">Macro Class Type</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045172"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroClassTypeCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045177"><font size="2" face="'Courier New'" color="#000000">lefrMacroClassTypeCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045179">Macro End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045181"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroEnd</font></a> <br>(<a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a>) ;</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045186"><font size="2" face="'Courier New'" color="#000000">lefrMacroEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045188">Macro Fixed Mask</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045190"><font size="2" face="'Courier New'" color="#000000">void lefrMacroFixedMaskCbk<br>(</font></a><a href="#1039868" title="3"><font color="#0000ff"><u>lefrIntergerCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">)</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045195"><font size="2" face="'Courier New'" color="#000000">lefrMacroFixedMaskCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045386">Macro Foreign</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045811"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroForeignCbk<br>(</font></a><a href="#lefrMacroForeignCbkFnType" title="3"><font color="#0000ff"><u>lefrMacroForeignCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+            <p><a name="1045975"><font color="#000000">void lefrUnsetMacroForeignCbk();</font></a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045393"><font size="2" face="'Courier New'" color="#000000">lefrMacroForeignCbkFnType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045197">Macro Origin</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045199"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroOriginCbk</font></a> <br>(<a href="#lefrMacroNumCbkFnType" title="3"><font color="#0000ff"><u>lefrMacroNumCbkFnType</u></font></a>) ;</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045204"><font size="2" face="'Courier New'" color="#000000">lefrMacroOriginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045206">Macro Obstruction </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045208"><font size="2" face="'Courier New'" color="#000000">void lefrSetObstructionCbk<br>(</font></a><a href="#lefrObstructionCbkFnType" title="3"><font color="#0000ff"><u>lefrObstructionCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045213"><font size="2" face="'Courier New'" color="#000000">lefrObstructionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045215">Macro Pin </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045217"><font size="2" face="'Courier New'" color="#000000">void lefrSetPinCbk<br>(</font></a><a href="#lefrPinCbkFnType" title="3"><font color="#0000ff"><u>lefrPinCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045222"><font size="2" face="'Courier New'" color="#000000">lefrPinCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045720">Macro Site</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045869"><font size="2" face="'Courier New'" color="#000000">void lefrSetMacroSiteCbk<br>(</font></a><a href="#lefrMacroSiteCbkFnType" title="3"><font color="#0000ff"><u>lefrMacroSiteCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+            <p><a name="1045873"><font color="#000000">void lefrUnsetMacroSiteCbk();</font></a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045724"><font size="2" face="'Courier New'" color="#000000">lefrMacroSiteCbkFnType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045224">Macro Size</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045226"><font size="2" face="'Courier New'" color="#000000">void</font></a> <font size="2" face="'Courier New'" color="#000000">lefrSetMacroSizeCbk</font> <br>(<a href="#lefrMacroNumCbkFnType" title="3"><font color="#0000ff"><u>lefrMacroNumCbkFnType</u></font></a>) ;</p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045231"><font size="2" face="'Courier New'" color="#000000">lefrMacroSizeCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045233">Manufacturing Grid</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045235"><font size="2" face="'Courier New'" color="#000000">void lefrSetManufacturingCbk<br>(</font></a><a href="#1033157" title="3"><font color="#0000ff"><u>lefrDoubleCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045240"><font size="2" face="'Courier New'" color="#000000">lefrManufacturingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045242">Maximum Via Stack</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045244"><font size="2" face="'Courier New'" color="#000000">void lefrSetMaxStackViaCbk<br></font></a>(<a href="#lefrMaxStackViaCbkFnType" title="3"><font color="#0000ff"><u>lefrMaxStackViaCbkFnType</u></font></a>) ;</p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045249"><font size="2" face="'Courier New'" color="#000000">lefrMaxStackViaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045251">Nondefault <br>Rules</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045253"><font size="2" face="'Courier New'" color="#000000">void lefrSetNonDefaultCbk<br>(</font></a><a href="#lefrNonDefaultCbkFnType" title="3"><font color="#0000ff"><u>lefrNonDefaultCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045258"><font size="2" face="'Courier New'" color="#000000">lefrNonDefaultCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045260">Property Definitions Beginning </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045262"><font size="2" face="'Courier New'" color="#000000">void lefrSetPropBeginCbk<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045267"><font size="2" face="'Courier New'" color="#000000">lefrPropBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045269">Property Definitions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045271"><font size="2" face="'Courier New'" color="#000000">void lefrSetPropCbk<br>(</font></a><a href="#lefrPropertyCbkFnType" title="3"><font color="#0000ff"><u>lefrPropCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045276"><font size="2" face="'Courier New'" color="#000000">lefrPropCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045278">Property Definitions <br>End </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045280"><font size="2" face="'Courier New'" color="#000000">void lefrSetPropEndCbk<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045285"><font size="2" face="'Courier New'" color="#000000">lefrPropEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045287">Same&#45;Net Spacing Beginning </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045289"><font size="2" face="'Courier New'" color="#000000">void lefrSetSpacingBeginCbk<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045294"><font size="2" face="'Courier New'" color="#000000">lefrSpacingBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045296">Same&#45;Net Spacing </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045298"><font size="2" face="'Courier New'" color="#000000">void lefrSetSpacingCbk<br>(</font></a><a href="#lefrSpacingCbkFnType" title="3"><font color="#0000ff"><u>lefrSpacingCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045303"><font size="2" face="'Courier New'" color="#000000">lefrSpacingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045305">Same&#45;Net Spacing<br>End </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045307"><font size="2" face="'Courier New'" color="#000000">void lefrSetSpacingEndCbk<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045312"><font size="2" face="'Courier New'" color="#000000">lefrSpacingEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045314">Site </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045316"><font size="2" face="'Courier New'" color="#000000">void lefrSetSiteCbk<br>(</font></a><a href="#lefrSiteCbkFnType" title="3"><font color="#0000ff"><u>lefrSiteCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045321"><font size="2" face="'Courier New'" color="#000000">lefrSiteCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045323">Units </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045325"><font size="2" face="'Courier New'" color="#000000">void lefrSetUnitsCbk<br>(</font></a><a href="#lefrUnitsCbkFnType" title="3"><font color="#0000ff"><u>lefrUnitsCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045330"><font size="2" face="'Courier New'" color="#000000">lefrUnitsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045332">Use Min <br>Spacing</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045334"><font size="2" face="'Courier New'" color="#000000">void lefrSetUseMinSpacingCbk<br>(</font></a><a href="#lefrUseMinSpacingCbkFnType" title="3"><font color="#0000ff"><u>lefrUseMinSpacingCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045339"><font size="2" face="'Courier New'" color="#000000">lefrUseMinSpacingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045341">Version </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045343"><font size="2" face="'Courier New'" color="#000000">void lefrSetVersionCbk<br>(</font></a><a href="#1033157" title="3"><font color="#0000ff"><u>lefrDoubleCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045348"><font size="2" face="'Courier New'" color="#000000">lefrVersionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045350">Version <br>String</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045352"><font size="2" face="'Courier New'" color="#000000">void lefrSetVersionStrCbk<br>(</font></a><a href="#lefrStringCbkFnType" title="3"><font color="#0000ff"><u>lefrStringCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045357"><font size="2" face="'Courier New'" color="#000000">lefrVersionStrCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045359">Via </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045361"><font size="2" face="'Courier New'" color="#000000">void lefrSetViaCbk<br>(</font></a><a href="#lefrViaCbkFnType" title="3"><font color="#0000ff"><u>lefrViaCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1045366"><font size="2" face="'Courier New'" color="#000000">lefrViaCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045368">Via Rule </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045370"><font size="2" face="'Courier New'" color="#000000">void lefrSetViaRuleCbk<br>(</font></a><a href="#lefrViaRuleCbkFnType" title="3"><font color="#0000ff"><u>lefrViaRuleCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000">);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045375"><font size="2" face="'Courier New'" color="#000000">lefrViaRuleCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045377">Unused </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045379"><font size="2" face="'Courier New'" color="#000000">void lefrSetUnusedCallbacks<br>(</font></a><a href="#lefrVoidCbkFnType" title="3"><font color="#0000ff"><u>lefrVoidCbkFnType</u></font></a><font size="2" face="'Courier New'" color="#000000"> func);</font></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1045384"><font size="2" face="'Courier New'" color="#000000">lefrUnspecifiedCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <h3><a name="1035737">Examples</a></h3>
+      <p><a name="1035786">The following example shows how to create a setup routine so the reader can parse the LEF file and call the callback routines you defined.</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035738">int setupRoutine() {<dd>    FILE* f;<dd>    int   res;<dd>    int   userData = 0x01020304;<dd>    ...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035739"><dd>    &#47;&#47; Initialize the reader.  This routine is called first.<dd>    lefrInit();</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035740"><dd>    &#47;&#47; Set the user callback routines<dd>    lefrSetArrayBeginCbk(arrayBeginCB);<dd>    lefrSetArrayCbk(arrayCB);<dd>    lefrSetArrayEndCbk(arrayEndCB);<dd>    lefrSetBusBitCharsCbk(busBitCharsCB);<dd>    lefrSetCaseSensitiveCbk(caseSensCB);<dd>    lefrSetDielectricCbk(dielectricCB);<dd>    ...</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035766"><dd>    &#47;&#47; Open the lef file for the reader to read<dd>    if ((f = fopen(&#34;lefInputFileName&#34;,&#34;r&#34;)) == 0) {<dd>        printf(&#34;Couldn't open input file '%s'\n&#34;,<dd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#34;lefInputFileName&#34;);<dd>        return(2);<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035742">    &#47;&#47; Invoke the parser<dd>    res = lefrRead(f, &#34;lefInputFileName&#34;, (void*)userData);<dd>    if (res != 0) {<dd>        printf(&#34;LEF parser returns an error\n&#34;);<dd>        return(2);<dd>    }</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035743">    fclose(f);</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1035744">    return 0;}lefrUseMinSpacingCbkFnType</a></font>
+      </dl>
+      <h2><a name="1035735">User Callback Routines</a></h2>
+      <p><a name="1033331">This section describes the following user callback routines:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrDensityCbkFnType" title="3" name="1035803"><font color="Blue"><u>lefrDensityCbkFnType</u></font></a><a href="#lefrDensityCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1033157" title="3" name="1039839"><font color="Blue"><u>lefrDoubleCbkFnType</u></font></a><a href="#1033157" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1039868" title="3" name="1039853"><font color="Blue"><u>lefrIntergerCbkFnType</u></font></a><a href="#1039868" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrLayerCbkFnType" title="3" name="1039844"><font color="Blue"><u>lefrLayerCbkFnType</u></font></a><a href="#lefrLayerCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrMacroCbkFnType" title="3" name="1045562"><font color="Blue"><u>lefrMacroCbkFnType</u></font></a><a href="#lefrMacroCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrMacroForeignCbkFnType" title="3" name="1045563"><font color="Blue"><u>lefrMacroForeignCbkFnType</u></font></a><a href="#lefrMacroForeignCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrMacroNumCbkFnType" title="3" name="1045567"><font color="Blue"><u>lefrMacroNumCbkFnType</u></font></a><a href="#lefrMacroNumCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrMacroSiteCbkFnType" title="3" name="1045588"><font color="Blue"><u>lefrMacroSiteCbkFnType</u></font></a><a href="#lefrMacroSiteCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrMaxStackViaCbkFnType" title="3" name="1038505"><font color="Blue"><u>lefrMaxStackViaCbkFnType</u></font></a><a href="#lefrMaxStackViaCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrNonDefaultCbkFnType" title="3" name="1035811"><font color="Blue"><u>lefrNonDefaultCbkFnType</u></font></a><a href="#lefrNonDefaultCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrObstructionCbkFnType" title="3" name="1035812"><font color="Blue"><u>lefrObstructionCbkFnType</u></font></a><a href="#lefrObstructionCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrPinCbkFnType" title="3" name="1035813"><font color="Blue"><u>lefrPinCbkFnType</u></font></a><a href="#lefrPinCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrPropertyCbkFnType" title="3" name="1035814"><font color="Blue"><u>lefrPropCbkFnType</u></font></a><a href="#lefrPropertyCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrSiteCbkFnType" title="3" name="1039336"><font color="Blue"><u>lefrSiteCbkFnType</u></font></a><a href="#lefrSiteCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrSpacingCbkFnType" title="3" name="1035815"><font color="Blue"><u>lefrSpacingCbkFnType</u></font></a><a href="#lefrSpacingCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrStringCbkFnType" title="3" name="1035817"><font color="Blue"><u>lefrStringCbkFnType</u></font></a><a href="#lefrStringCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrUnitsCbkFnType" title="3" name="1035819"><font color="Blue"><u>lefrUnitsCbkFnType</u></font></a><a href="#lefrUnitsCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrUseMinSpacingCbkFnType" title="3" name="1038137"><font color="Blue"><u>lefrUseMinSpacingCbkFnType</u></font></a><a href="#lefrUseMinSpacingCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrViaCbkFnType" title="3" name="1035820"><font color="Blue"><u>lefrViaCbkFnType</u></font></a><a href="#lefrViaCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrViaRuleCbkFnType" title="3" name="1035821"><font color="Blue"><u>lefrViaRuleCbkFnType</u></font></a><a href="#lefrViaRuleCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#lefrVoidCbkFnType" title="3" name="1035822"><font color="Blue"><u>lefrVoidCbkFnType</u></font></a><a href="#lefrVoidCbkFnType" title="3"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="lefrDensityCbkFnType"></a><a name="1039250">lefrDensityCbkFnType</a></h3>
+      <p><a name="1039254">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">DENSITY</font> object from within the <font size="2" face="'Courier New'" color="#000000">MACRO</font> object. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiDensity</font> class to retrieve the data.</p>
+      <p><a name="1039373">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">MACRO</font> statement, see <a href="../lefdefref/LEFSyntax.html#Macro" target="external_window"><font color="#0000ff"><u>&#34;Macro&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1039370">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039376">int lefrDensityCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ<dd></em></font>lefiDensity* <font size="2" face="'Courier New'" color="#000000"><em>density</em></font> <dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1039377">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1039378"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041697">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrDensityCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041710"><font size="2" face="'Courier New'" color="#000000"><em>lefiDensity</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1041747">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiDensity</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiDensity" title="4"><font color="Blue"><u>"lefiDensity"</u></font></a><a href="ch4LEFclasses.html#lefiDensity" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041749"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1041754">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="1033157">lefrDoubleCbkFnType</a></h3>
+      <p><a name="1032448">Retrieves different kinds of LEF data. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</a></p>
+      <p><a name="1032457">For more information about LEF syntax, see the </a><a href="../lefdefref/LEFSyntax.html" target="external_window"><font color="#0000ff"><u><em>LEF&#47;DEF Language Reference</em></u></font></a>.</p>
+      <h4><a name="1024656">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1024657">int lefrDoubleCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>double <font size="2" face="'Courier New'" color="#000000"><em>number</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025050">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1025112"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041768">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="456">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1029930">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="302">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1029932">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038477">Manufacturing Grid</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038479"><font size="2" face="'Courier New'" color="#000000">lefrManufacturingCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1029954">Version </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1029956"><font size="2" face="'Courier New'" color="#000000">lefrVersionCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1029271"><font size="2" face="'Courier New'" color="#000000"><em>number</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041810">Returns data that varies depending on the callback used. The following kinds of data can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="448">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1041813">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="294">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1041815">Returns the Value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1041817">Manufacturing Grid</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1041819"><font size="2" face="'Courier New'" color="#000000"><em>value</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">MANUFACTURINGGRID</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1041821">Version </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1041823"><font size="2" face="'Courier New'" color="#000000"><em>number</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">VERSION</font> statement</p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1041824"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="lefrIntegerCbkFnType"></a><a name="1041825">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="1039868">lefrIntergerCbkFnType </a></h3>
+      <p><a name="1039869">Retrieves LEF data pertaining to fixed masks. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine. </a></p>
+      <p><a name="1039871">For more information about the </a><font size="2" face="'Courier New'" color="#000000">FIXEDMASK</font> statement, see &#34;<a href="../lefdefref/LEFSyntax.html#fixedmask" target="external_window"><font color="#0000ff"><u>FIXEDMASK</u></font></a>&#34; in the <font color="#0000ff"><u><em>LEF&#47;DEF Language Reference</em></u></font>.</p>
+      <h4><a name="1039872">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1040068">int lefrIntergerCbkFnType<dd>leftCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>type</em></font>,<dd>int <font size="2" face="'Courier New'" color="#000000"><em>number</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1039874">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1040239"><font size="2" face="'Courier New'" color="#000000"><em>type</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041836">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="448">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1040242">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="294">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1040244">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1040246">FixedMask</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1040248"><font size="2" face="'Courier New'" color="#000000">lefrFixedMaskCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1040250">Macro FixedMask</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1040252"><font size="2" face="'Courier New'" color="#000000">lefrMacroFixedMaskCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1040259"><font size="2" face="'Courier New'" color="#000000"><em>number</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041854">Returns a type that varies depending on the callback used. The following kind of data can be returned.<br><br>Fixed mask: Does not allow mask shifting.  All the LEF MACRO PIN MASK assignments must be kept fixed and cannot be shifted to a different mask, (1indicates not allowed, and 0 allowed).<br><br>Macro FixedMask: Indicates that the specified macro does not allow mask shifting. All the LEF PIN MASK assignments must be kept fixed and cannot be shifted to a different mask. (1 indicates  not allowed, and 0 allowed).</a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1039906"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041883">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrLayerCbkFnType"></a><a name="1039793">lefrLayerCbkFnType</a></h3>
+      <p><a name="1032637">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">LAYER</font> object of the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiLayer</font> class to retrieve the data.</p>
+      <p><a name="1032641">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">LAYER</font> statement, see <a href="../lefdefref/LEFSyntax.html#Layer(Cut)" target="external_window"><font color="#0000ff"><u>&#34;Layer (Cut),&#34;</u></font></a> <a href="../lefdefref/LEFSyntax.html#Layer(MastersliceorOverlap)" target="external_window"><font color="#0000ff"><u>&#34;Layer (Masterslice or Overlap),&#34;</u></font></a> <a href="../lefdefref/LEFSyntax.html#Layer(Routing)" target="external_window"><font color="#0000ff"><u>&#34;Layer (Routing),&#34;</u></font></a> or <a href="../lefdefref/LEFSyntax.html#Layer(Implant)" target="external_window"><font color="#0000ff"><u>&#34;Layer (Implant)&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026319">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026320">int lefrLayerCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiLayer* <font size="2" face="'Courier New'" color="#000000"><em>layer</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1041908">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1041909"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041910">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrLayerCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041920"><font size="2" face="'Courier New'" color="#000000"><em>layer</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041927">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiLayer</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiLayer" title="4"><font color="Blue"><u>"lefiLayer"</u></font></a><a href="ch4LEFclasses.html#lefiLayer" title="4"></a>. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041939"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041946">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrMacroCbkFnType"></a><a name="1025277">lefrMacroCbkFnType</a></h3>
+      <p><a name="1032664">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">MACRO</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiMacro</font> class to retrieve the data.</p>
+      <p><a name="1032668">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">MACRO</font> statement, see <a href="../lefdefref/LEFSyntax.html#Macro" target="external_window"><font color="#0000ff"><u>&#34;Macro&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025278">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025279">int lefrMacroCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiMacro* <font size="2" face="'Courier New'" color="#000000"><em>macro</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025282">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1025283"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041961">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrMacroCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041977"><font size="2" face="'Courier New'" color="#000000"><em>macro</em></font></a></strong>
+      </p>
+      <blockquote><a name="1041984">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiMacro</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiMacro" title="4"><font color="Blue"><u>"lefiMacro"</u></font></a><a href="ch4LEFclasses.html#lefiMacro" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1041993"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042000">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrMacroForeignCbkFnType"></a><a name="1045458">lefrMacroForeignCbkFnType</a></h3>
+      <p><a name="1045459">Retrieves data for in&#45;place processing of a </a><font size="2" face="'Courier New'" color="#000000">MACRO FOREIGN</font> statement. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiMacroForeign</font> class to retrieve the data.</p>
+      <p><a name="1045461">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">MACRO FOREIGN</font> statement, see <a href="../lefdefref/LEFSyntax.html#Macro" target="external_window"><font color="#0000ff"><u>&#34;Macro&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1045462">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1045626">int lefrMacroForeignCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiMacroForeign* <font size="2" face="'Courier New'" color="#000000"><em>foreign</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1045630">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1045465"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045466">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrMacroForeignCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1045467"><font size="2" face="'Courier New'" color="#000000"><em>foreign</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045527">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiMacroForeign</font> structure. For more information, see <a href="ch4LEFclasses.html#1062978" title="4"><font color="Blue"><u>lefiMacroForeign</u></font></a><a href="ch4LEFclasses.html#1062978" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1045531"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045473">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrMacroNumCbkFnType"></a><a name="1038873">lefrMacroNumCbkFnType</a></h3>
+      <p><a name="1039018">Retrieves different kinds of Macro LEF data. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</a></p>
+      <p><a name="1038904">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">MACRO</font> statement, see <a href="../lefdefref/LEFSyntax.html#Macro" target="external_window"><font color="#0000ff"><u>&#34;Macro&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1038900">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038926">int lefrMacroNumCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiNum <font size="2" face="'Courier New'" color="#000000"><em>num</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1038922">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1038940"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1042017">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="456">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1038943">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="302">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1038945">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038947">Macro Origin</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038949"><font size="2" face="'Courier New'" color="#000000">lefrMacroOriginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038951">Macro Size</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038953"><font size="2" face="'Courier New'" color="#000000">lefrMacroSizeCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1038976"><font size="2" face="'Courier New'" color="#000000"><em>num</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1042031">Returns data that varies depending on the callback used. The following kinds of data can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="448">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1038979">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="294">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1038981">Returns the Value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038983">Macro Origin</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038985"><font size="2" face="'Courier New'" color="#000000"><em>value</em></font></a> for <font size="2" face="'Courier New'" color="#000000">ORIGIN</font> in the <font size="2" face="'Courier New'" color="#000000">MACRO</font> statement. </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038987">Macro Size</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1038989"><font size="2" face="'Courier New'" color="#000000"><em>value</em></font></a> for <font size="2" face="'Courier New'" color="#000000">SIZE</font> in the <font size="2" face="'Courier New'" color="#000000">MACRO</font> statement. </p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1038934"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1042041">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrMacroSiteCbkFnType"></a><a name="1045598">lefrMacroSiteCbkFnType</a></h3>
+      <p><a name="1045599">Retrieves data for in&#45;place processing of a </a><font size="2" face="'Courier New'" color="#000000">MACRO SITE</font> statement. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiMacroSite</font> class to retrieve the data.</p>
+      <p><a name="1045601">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">MACRO FOREIGN</font> statement, see <a href="../lefdefref/LEFSyntax.html#Macro" target="external_window"><font color="#0000ff"><u>&#34;Macro&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1045602">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1045603">int lefrMacroSiteCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiMacroSite* <font size="2" face="'Courier New'" color="#000000"><em>site</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1045607">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1045608"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045609">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrMacroSiteCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1045610"><font size="2" face="'Courier New'" color="#000000"><em>site</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045611">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiMacroSite</font> structure. For more information, see <a href="ch4LEFclasses.html#1063114" title="4"><font color="Blue"><u>lefiMacroSite</u></font></a><a href="ch4LEFclasses.html#1063114" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1045612"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1045613">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrMaxStackViaCbkFnType"></a><a name="1038878">lefrMaxStackViaCbkFnType</a></h3>
+      <p><a name="1038879">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">MAXVIASTACK</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiMaxStackVia</font> class to retrieve the data.</p>
+      <p><a name="1038881">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULE</font> statement, see <font color="#0000ff"><u>"Maximum Via Stack"</u></font> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1038882">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1038883">lefrMaxStackViaCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiMaxStackVia* <font size="2" face="'Courier New'" color="#000000"><em>maxStack</em></font>,<dd>lefiUserData <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1038884">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1042061"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042062">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrMaxStackViaCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042081"><font size="2" face="'Courier New'" color="#000000"><em>maxStack</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1042082">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiMaxStackVia</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiMaxStackVia" title="4"><font color="Blue"><u>"lefiMaxStackVia"</u></font></a><a href="ch4LEFclasses.html#lefiMaxStackVia" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042092"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a> </strong>
+      </p>
+      <blockquote><a name="1042099">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrNonDefaultCbkFnType"></a><a name="1025426">lefrNonDefaultCbkFnType</a></h3>
+      <p><a name="1032758">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULE</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiNonDefault</font> class to retrieve the data.</p>
+      <p><a name="1032761">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">NONDEFAULTRULE</font> statement, see <a href="../lefdefref/LEFSyntax.html#NondefaultRule" target="external_window"><font color="#0000ff"><u>&#34;Nondefault Rule&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025427">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025428">lefrNonDefaultCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiNonDefault* <font size="2" face="'Courier New'" color="#000000"><em>def</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025431">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026239"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042110">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrNonDefaultCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1026240"><font size="2" face="'Courier New'" color="#000000"><em>def</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042120">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiNonDefault</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiNonDefault" title="4"><font color="Blue"><u>"lefiNonDefault"</u></font></a><a href="ch4LEFclasses.html#lefiNonDefault" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042132"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042139">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrObstructionCbkFnType"></a><a name="1025528">lefrObstructionCbkFnType</a></h3>
+      <p><a name="1032783">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">OBS</font> (macro obstruction) object within the <font size="2" face="'Courier New'" color="#000000">MACRO</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiObstruction</font> class to retrieve the data.</p>
+      <p><a name="1032787">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">OBS</font> statement, see <a href="../lefdefref/LEFSyntax.html#MacroObstructionStatement" target="external_window"><font color="#0000ff"><u>&#34;Macro Obstruction Statement&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025529">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025530">int lefrObstructionCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiObstruction* <font size="2" face="'Courier New'" color="#000000"><em>obs</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025533">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1025534"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042153">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrObstructionCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042165"><font size="2" face="'Courier New'" color="#000000"><em>obs</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042176">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiObstruction</font> structure. For more information, see <a href="ch4LEFclasses.html#1014271" title="4"><font color="Blue"><u>"lefiObstruction"</u></font></a><a href="ch4LEFclasses.html#1014271" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042185"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042192">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrPinCbkFnType"></a><a name="1026780">lefrPinCbkFnType</a></h3>
+      <p><a name="1032805">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PIN</font> object within the <font size="2" face="'Courier New'" color="#000000">MACRO</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiPin</font> class to retrieve the data.</p>
+      <p><a name="1032809">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">PIN</font> statement, see <a href="../lefdefref/LEFSyntax.html#MacroPinStatement" target="external_window"><font color="#0000ff"><u>&#34;Macro Pin Statement&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026781">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026782">int lefrPinCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiPin* <font size="2" face="'Courier New'" color="#000000"><em>pin</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1026785">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026786"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042209">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrPinCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042222"><font size="2" face="'Courier New'" color="#000000"><em>pin</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042229">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiPin</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiPin" title="4"><font color="Blue"><u>"lefiPin"</u></font></a><a href="ch4LEFclasses.html#lefiPin" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042238"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042245">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrPropertyCbkFnType"></a><a name="1026753">lefrPropCbkFnType</a></h3>
+      <p><a name="1032830">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiProp</font> class to retrieve the data.</p>
+      <p><a name="1032833">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> statement, see <a href="../lefdefref/LEFSyntax.html#PropertyDefinitions" target="external_window"><font color="#0000ff"><u>&#34;Property Definitions&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026754">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026755">lefrPropCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiProp* <font size="2" face="'Courier New'" color="#000000"><em>prop</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1033850">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1033851"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042265">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrPropCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042274"><font size="2" face="'Courier New'" color="#000000"><em>prop</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042281">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiProp</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiProp" title="4"><font color="Blue"><u>"lefiProp"</u></font></a><a href="ch4LEFclasses.html#lefiProp" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042290"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042297">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrSiteCbkFnType"></a><a name="1039316">lefrSiteCbkFnType</a></h3>
+      <p><a name="1039317">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SITE</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiSite</font> class to retrieve the data.</p>
+      <p><a name="1039319">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">SITE</font> statement, see <a href="../lefdefref/LEFSyntax.html#Site" target="external_window"><font color="#0000ff"><u>&#34;Site&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1039320">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1039321">int lefrSiteCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiSite* <font size="2" face="'Courier New'" color="#000000"><em>site</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1039322">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1039323"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042317">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrSiteCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042330"><font size="2" face="'Courier New'" color="#000000"><em>site</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042337">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiSite</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiSite" title="4"><font color="Blue"><u>"lefiSite"</u></font></a><a href="ch4LEFclasses.html#lefiSite" title="4"></a>. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042355"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042362">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrSpacingCbkFnType"></a><a name="1025567">lefrSpacingCbkFnType</a></h3>
+      <p><a name="1032851">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">SPACING</font> object of the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiSpacing</font> class to retrieve the data.</p>
+      <p><a name="1032854">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">SPACING</font> statement, see &#34;Samenet Spacing&#34; in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025568">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025569">int lefrSpacingCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiSpacing* <font size="2" face="'Courier New'" color="#000000"><em>spacing</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025572">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1025573"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042632">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrSpacingCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042633"><font size="2" face="'Courier New'" color="#000000"><em>spacing</em></font></a><font color="#000000"><em>	</em></font></strong>
+      </p>
+      <blockquote><a name="1042636">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiSpacing</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiSpacing" title="4"><font color="Blue"><u>"lefiSpacing"</u></font></a><a href="ch4LEFclasses.html#lefiSpacing" title="4"></a>. </blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042408"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042415">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrStringCbkFnType"></a><a name="1025876">lefrStringCbkFnType</a></h3>
+      <p><a name="1032898">Retrieves different kinds of LEF data. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine.</a></p>
+      <p><a name="1032902">For more information about LEF syntax, see the </a><a href="../lefdefref/LEFSyntax.html" target="external_window"><font color="#0000ff"><u><em>LEF&#47;DEF Language Reference</em></u></font></a>.</p>
+      <h4><a name="1023045">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1019014">int lefrStringCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>const char* <font size="2" face="'Courier New'" color="#000000"><em>string</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025612">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1025613"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042690">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="495">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="168">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1042693">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="326">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1042695">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042697">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042699"><font size="2" face="'Courier New'" color="#000000">lefrBusBitCharsCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042701">Clearance Measure</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042703"><font size="2" face="'Courier New'" color="#000000">lefrClearanceMeasureCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042705">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042707"><font size="2" face="'Courier New'" color="#000000">lefrDividerCharCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042709">Extensions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042711"><font size="2" face="'Courier New'" color="#000000">lefrExtensionCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042713">Macro Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042715"><font size="2" face="'Courier New'" color="#000000">lefrMacroBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042717">Macro Class Type</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042719"><font size="2" face="'Courier New'" color="#000000">lefrMacroClassTypeCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042721">Macro End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042723"><font size="2" face="'Courier New'" color="#000000">lefrMacroEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042725">Version String</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042727"><font size="2" face="'Courier New'" color="#000000">lefrVersionStrCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1042728"><font size="2" face="'Courier New'" color="#000000"><em>string</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042729">Returns data that varies depending on the callback used. The following kinds of data can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="624">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="168">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1042732">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="456">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1042734">Returns the value of</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042736">Bus Bit Characters</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042738"><font color="#000000"><em>delimterPair</em></font></a> in the <font size="2" face="'Courier New'" color="#000000">BUSBITCHARS</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042740">Clearance Measure</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042742">Returns the string set for a </a><font size="2" face="'Courier New'" color="#000000">CLEARANCEMEASURE</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042744">Divider Character</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042746"><font size="2" face="'Courier New'" color="#000000"><em>character</em></font></a> in a <font size="2" face="'Courier New'" color="#000000">DIVIDERCHAR</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042748">Extensions</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042750">Retruns the string set for an </a><font size="2" face="'Courier New'" color="#000000">EXTENSION</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042752">Macro Beginning</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042754"><font size="2" face="'Courier New'" color="#000000"><em>macroName</em></font></a> in a <font size="2" face="'Courier New'" color="#000000">MACRO</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042756">Macro Class Type</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042758">Returns the string set for a </a><font size="2" face="'Courier New'" color="#000000">CLASS</font> statement in a <font size="2" face="'Courier New'" color="#000000">MACRO</font> statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042760">Macro End</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1042762"><font size="2" face="'Courier New'" color="#000000">END</font></a> <font size="2" face="'Courier New'" color="#000000"><em>macroName</em></font> in a MACRO statement</p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042764">Version String</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1042766">Returns the string set for a </a><font size="2" face="'Courier New'" color="#000000">VERSION</font> statement</p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1021937"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042778">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrUnitsCbkFnType"></a><a name="1025903">lefrUnitsCbkFnType</a></h3>
+      <p><a name="1032949">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">UNITS</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiUnits</font> class to retrieve the data.</p>
+      <p><a name="1032953">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">UNITS</font> statement, see <a href="../lefdefref/LEFSyntax.html#Units" target="external_window"><font color="#0000ff"><u>&#34;Units&#34;</u></font></a> in the <font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025904">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025905">int lefrUnitsCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiUnits* <font size="2" face="'Courier New'" color="#000000"><em>units</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1025908">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1032276"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042796">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrUnitsCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1032277"><font size="2" face="'Courier New'" color="#000000"><em>units</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042810">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiUnits</font> structure. For more information, see <a href="ch4LEFclasses.html#1038312" title="4"><font color="Blue"><u>"lefiUnits"</u></font></a><a href="ch4LEFclasses.html#1038312" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1042822"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1042833">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrUseMinSpacingCbkFnType"></a><a name="1038118">lefrUseMinSpacingCbkFnType</a></h3>
+      <p><a name="1038119">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">USEMINSPACING</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiUseMinSpacing</font> class to retrieve data.</p>
+      <p><a name="1038121">For information about the LEF </a><font size="2" face="'Courier New'" color="#000000">USEMINSPACING</font> statement, see <a href="../lefdefref/LEFSyntax.html#UseMinSpacing" target="external_window"><font color="#0000ff"><u>&#34;Use Min Spacing&#34;</u></font></a> in the <br><font color="#000000"><em>LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1038122">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1043075">int lefrUseMinSpacingCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiUseMinSpacing* <font size="2" face="'Courier New'" color="#000000"><em>spacing</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1043092">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1043100"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043122">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrUseMinSpacingCbkFnType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043143"><font size="2" face="'Courier New'" color="#000000"><em>spacing</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043164">Returns a pointer to a lefiUseMinSpacing structure. For more information, see </a><a href="ch4LEFclasses.html#lefiUseMinSpacing" title="4"><font color="Blue"><u>"lefiUseMinSpacing"</u></font></a><a href="ch4LEFclasses.html#lefiUseMinSpacing" title="4"> </a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043188"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043216">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrViaCbkFnType"></a><a name="1043095">lefrViaCbkFnType</a></h3>
+      <p><a name="1032974">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">VIA</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiVia</font> class to retrieve the data.</p>
+      <p><a name="1032978">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">VIA</font> statement, see <a href="../lefdefref/LEFSyntax.html#Via" target="external_window"><font color="#0000ff"><u>&#34;Via&#34;</u></font></a> in the<font color="#000000"><em> LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1025990">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1025991">int lefrViaCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiVia* <font size="2" face="'Courier New'" color="#000000"><em>via</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1043272">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1043273"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043285">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrViaCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043294"><font size="2" face="'Courier New'" color="#000000"><em>via</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043301">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiVia</font> structure. For more information, see <a href="ch4LEFclasses.html#1038372" title="4"><font color="Blue"><u>"lefiVia"</u></font></a><a href="ch4LEFclasses.html#1038372" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043319"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043326">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrViaRuleCbkFnType"></a><a name="1026004">lefrViaRuleCbkFnType</a></h3>
+      <p><a name="1033000">Retrieves data from the </a><font size="2" face="'Courier New'" color="#000000">VIARULE</font> object in the LEF file. Use the arguments defined in the <font size="2" face="'Courier New'" color="#000000">lefiViaRule</font> class to retrieve the data.</p>
+      <p><a name="1033004">For syntax information about the LEF </a><font size="2" face="'Courier New'" color="#000000">VIARULE</font> statement, see <a href="../lefdefref/LEFSyntax.html#ViaRule" target="external_window"><font color="#0000ff"><u>&#34;Via Rule&#34;</u></font></a> in the<font color="#000000"><em> LEF&#47;DEF Language Reference</em></font>.</p>
+      <h4><a name="1026005">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1026006">int lefrViaRuleCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>lefiViaRule* <font size="2" face="'Courier New'" color="#000000"><em>viaRule</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1026009">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026010"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043341">Returns the </a><font size="2" face="'Courier New'" color="#000000">lefrViaRuleCbkType</font> type. This allows you to verify within your program that this is a correct callback.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043357"><font size="2" face="'Courier New'" color="#000000"><em>viaRule</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043360">Returns a pointer to a </a><font size="2" face="'Courier New'" color="#000000">lefiViaRule</font> structure. For more information, see <a href="ch4LEFclasses.html#lefiViaRule" title="4"><font color="Blue"><u>"lefiViaRule"</u></font></a><a href="ch4LEFclasses.html#lefiViaRule" title="4"></a>.</blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043368"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043375">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="lefrVoidCbkFnType"></a><a name="1019113">lefrVoidCbkFnType</a></h3>
+      <p><a name="1033025">Marks the beginning and end of LEF objects. The format of the data returned is always the same, but the actual data represented varies depending on the calling routine. </a></p>
+      <p><a name="1033029">For more information about LEF syntax, see the </a><a href="../lefdefref/LEFSyntax.html" target="external_window"><font color="#0000ff"><u><em>LEF&#47;DEF Language Reference</em></u></font></a>.</p>
+      <h4><a name="1022043">Syntax</a></h4>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1019115">int lefrVoidCbkFnType(<dd>lefrCallbackType_e </a><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font>,<dd>void* <font size="2" face="'Courier New'" color="#000000"><em>ptr</em></font>,<dd>lefiUserData* <font size="2" face="'Courier New'" color="#000000"><em>data</em></font>)</font>
+      </dl>
+      <h4><a name="1022281">Arguments</a></h4>
+      <p>
+        <strong></strong>
+        <strong><a name="1026067"><font size="2" face="'Courier New'" color="#000000"><em>typ</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043408">Returns a type that varies depending on the callback routine used. The following types can be returned.</a></blockquote>
+      <table summary="" cellpadding="4" width="448">
+        <caption>
+        <tr>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="154">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1026070">LEF Data</a></strong></font>
+            </p>
+          </td>
+          <td cellpadding="4" border="2" bordercolor="#000000" valign="middle" width="294">
+            <p>
+              <font face="Verdana, Arial, Helvetica, sans-serif" color="#003366"><strong><a name="1026072">Type Returned</a></strong></font>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1026146">Library End</a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1026148"><font size="2" face="'Courier New'" color="#000000">lefrLibraryEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026150">Property Begin </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026152"><font size="2" face="'Courier New'" color="#000000">lefrPropBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026154">Property End </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026156"><font size="2" face="'Courier New'" color="#000000">lefrPropEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026158">Spacing Begin </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026160"><font size="2" face="'Courier New'" color="#000000">lefrSpacingBeginCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026162">Spacing End </a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1026164"><font size="2" face="'Courier New'" color="#000000">lefrSpacingEndCbkType</font></a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1026166">Unused </a></p>
+          </td>
+          <td cellpadding="4" border="1" bordercolor="#000000" valign="top">
+            <p><a name="1026168"><font size="2" face="'Courier New'" color="#000000">lefrUnspecifiedCbkType</font></a></p>
+          </td>
+        </tr>
+      </table>
+      <p>
+        <strong></strong>
+        <strong><a name="1022295"><font size="2" face="'Courier New'" color="#000000"><em>ptr</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043430">Returns nothing. (This is a placeholder value to meet the required three arguments for each routine).</a></blockquote>
+      <p>
+        <strong></strong>
+        <strong><a name="1043442"><font size="2" face="'Courier New'" color="#000000"><em>data</em></font></a></strong>
+      </p>
+      <blockquote><a name="1043449">Returns four bytes of user&#45;defined data. User data is set most often to a pointer to the design data.</a></blockquote>
+      <h3><a name="1034352">Examples</a></h3>
+      <p><a name="1034360">The following example shows a callback routine using </a><font size="2" face="'Courier New'" color="#000000">lefrCallbackType_e</font>, <font size="2" face="'Courier New'" color="#000000">char*</font>, and <font size="2" face="'Courier New'" color="#000000">lefiUserData</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034361">int macroBeginCB (lefrCallbackType_e type,<dd>                  const char *macroName,<dd>                  lefiUserData userData) {<dd></a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034362">    &#47;&#47; Incorrect type was passed in, expecting the type lefiMacroBeginCbkType</a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034363">    if (type != lefiMacroBeginCbkType) {<dd>        printf(&#34;Type is not lefiMacroBeginCbkType,<dd>&nbsp;&nbsp;&nbsp;&nbsp;    terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd></a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034364">    &#47;&#47; Expect a non null char* macroName<dd>    if (!macroName || !*macroName) {<dd>        printf(&#34;Macro name is null, terminate parsing.\n&#34;);<dd>        return 1;<dd>    }<dd></a></font>
+      </dl>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034365">    &#47;&#47; Write out the macro name<dd>    printf(&#34;Macro name is %s\n&#34;, macroName);<dd>    return 0;}<dd></a></font>
+      </dl>
+      <p><a name="1034371">The following callback routine has arguments of </a><font size="2" face="'Courier New'" color="#000000">lefrCallbackType_e</font>, <font size="2" face="'Courier New'" color="#000000">void*</font>, and <font size="2" face="'Courier New'" color="#000000">lefiUserData</font>.</p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034372">int irdropEndCB (lefrCallbackType_e type,<dd>                 void* ptr,<dd>                 lefiUserData userData) {<dd>    &#47;&#47; Check if the type is correct<dd>    if (type != lefrIRDropEndCbkType) {<dd>        printf(&#34;Type is not lefrIRDropEndCbkType, terminate<dd>&nbsp;&nbsp;&nbsp;&nbsp;    parsing.\n&#34;);<dd>        return 1;<dd>    }</a></font>
+      </dl>
+      <p><a name="1034373">&nbsp;</a></p>
+      <dl>
+        <font size="2" face="'Courier New'" color="#000000"><a name="1034357">    printf(&#34;IRDROP END\n&#34;);<dd>    return 0;}<dd></a></font>
+      </dl>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="ch2LEFsetup.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch4LEFclasses.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

@@ -26,7 +26,7 @@
 #include "hurricane/Cell.h"
 #include "crlcore/AllianceFramework.h"
 #include "LefDef.h"
-#if  HAVE_LEFDEF && defined(LEF_ENABLED)
+#if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
 #  include "lefrReader.hpp"
 #endif
 
@@ -102,7 +102,7 @@ namespace CRL {
 // x-----------------------------------------------------------------x
 
 
-# if HAVE_LEFDEF && defined(LEF_ENABLED)
+# if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
 
 // -------------------------------------------------------------------
 // Function  :  "badOpenTechno()".
@@ -609,7 +609,7 @@ void  lefParser ( const string libPath, Library* library, Catalog& catalog )
 {
   static int callNumber = 0;
 
-# if HAVE_LEFDEF && defined(LEF_ENABLED)
+#if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
   if ( !library )
     throw Error ( "lefParser() : Library argument is NULL." );
 
@@ -633,9 +633,9 @@ void  lefParser ( const string libPath, Library* library, Catalog& catalog )
   clibrary.open ( "r" );
   lefrRead ( clibrary.getFile(), getString(&clibrary).c_str(), (void*)userData );
   clibrary.close ();
-# else // HAVE_LEFDEF
+#else // HAVE_LEFDEF
   cerr << Warning("Dummy LEF parser call for %s.",libPath.c_str()) << endl;
-# endif // HAVE_LEFDEF
+#endif // HAVE_LEFDEF
 
   callNumber++;
 }
@@ -647,7 +647,7 @@ void  CParsLEFTechno ( string fileTechno )
 {
   static int callNumber = 0;
 
-# if HAVE_LEFDEF && defined(LEF_ENABLED)
+# if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
   string  nameTechno = fileTechno;
 
   nameTechno.erase ( 0, nameTechno.find_last_of ("/")+1 );
@@ -682,9 +682,9 @@ void  CParsLEFTechno ( string fileTechno )
     throw ( Error("CParsLEFTechno() : Can't open file %s", fileTechno.c_str()) );
 
   lefrRead(inLefFile, fileTechno.c_str(), (void*)(long)userData);
-# else // HAVE_LEFDEF
+#else // HAVE_LEFDEF
   cerr << Warning("Dummy LEF technology parser call for \"%s\".",fileTechno.c_str())  << endl;
-# endif // HAVE_LEFDEF
+#endif // HAVE_LEFDEF
 
   callNumber++;
 }

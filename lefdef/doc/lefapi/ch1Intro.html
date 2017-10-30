@@ -1,0 +1,404 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>LEF 5.8 C/C++ Programming Interface -- 1</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-04-12">
+<META NAME="CreateTime" CONTENT="1491994561">
+<META NAME="DataType" CONTENT="Manuals">
+<META NAME="Description" CONTENT="Describes the C/C++ programming interface used to read and write Library Exchange Format (LEF) files.">
+<META NAME="DocTitle" CONTENT="LEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Reference">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="1">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="lefapi">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-04-12">
+<META NAME="ModifiedTime" CONTENT="1491994561">
+<META NAME="NextFile" CONTENT="ch2LEFsetup.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="preface.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="RightsManagement" CONTENT="Copyright 2017 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="LEF 5.8 C/C++ Programming Interface -- 1">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="preface.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ch2LEFsetup.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>LEF 5.8 C&#47;C++ Programming Interface  (Open Licensing Program)</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>1<a name="1008781">&nbsp;</a></h1>
+      <h1><a name="1011663">Introduction</a></h1>
+      <p><a name="1019037">This chapter contains the following sections:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020813" title="1" name="1020814"><font color="Blue"><u>Overview</u></font></a><a href="#1020813" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#WorkingModes" title="1" name="1021207"><font color="Blue"><u>LEF Reader Working Modes</u></font></a><a href="#WorkingModes" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1020014" title="1" name="1020815"><font color="Blue"><u>Comparison Utility</u></font></a><a href="#1020014" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1021031" title="1" name="1021063"><font color="Blue"><u>Compressed LEF Files</u></font></a><a href="#1021031" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1019049" title="1" name="1020816"><font color="Blue"><u>Orientation Codes</u></font></a><a href="#1019049" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1020813">Overview</a></h2>
+      <p><a name="1020024">This manual describes the application programming interface (API) routines for the following Cadence</a><font color="#000000"><sup>&#174;</sup></font> Library Exchange Format (LEF) components:</p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1020025">LEF reader</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1020026">LEF writer</a></td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1020369">Cadence Design Systems, Inc. uses these routines internally with many tools that read and write LEF. The API supports LEF version 5.8, but also reads earlier versions of LEF. </a></p>
+      <p><a name="1020804">You can use the API routines documented in this manual with tools that write these older versions, as long as none of the tools in an interdependent flow introduce newer constructs.</a></p>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1020080">The writer portion of the API does not always optimize the LEF output.</a></p>
+      <h2><a name="WorkingModes"></a><a name="1021157">LEF Reader Working Modes</a></h2>
+      <p><a name="1021158">The LEF reader can work in two modes &#45; compatibility mode and session&#45;based mode.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1021159">Compatibility mode (session&#45;less mode) &#45; This mode is compatible with the old parser behavior. You can call the parser initialization once with </a><font size="2" face="'Courier New'" color="#000000">lefrInit()</font>, adjust parsing settings and initialize the parser callbacks any time. The properties once defined in <font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> sections will be also defined in all subsequent file reads. </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1021160">Session&#45;based mode &#45; This mode introduces the concept of the parsing session. In this mode, the order of calling parsing configuration and processing API is strict:</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="37"
+              <div>&nbsp;</div>
+            </td>
+            <td width="26" align="left">
+              <div>
+                <nobr><font color="#000000"><strong>	a.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021161">Parser initialization: Call </a><font size="2" face="'Courier New'" color="#000000">lefrInitSession()</font> instead of <font size="2" face="'Courier New'" color="#000000">lefrInit()</font> to start a new parsing session and close any old parsing session, if opened.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="37"
+              <div>&nbsp;</div>
+            </td>
+            <td width="26" align="left">
+              <div>
+                <nobr><font color="#000000"><strong>	b.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021411">Parser configuration: Call multiple callback setters and parsing parameters setting functions.</a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="37"
+              <div>&nbsp;</div>
+            </td>
+            <td width="26" align="left">
+              <div>
+                <nobr><font color="#000000"><strong>	c.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021412">Data processing: &#45; Do one or multiple parsing of LEF files with the </a><font size="2" face="'Courier New'" color="#000000">lefrRead()</font> function.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="37"
+              <div>&nbsp;</div>
+            </td>
+            <td width="26" align="left">
+              <div>
+                <nobr><font color="#000000"><strong>	d.	</strong></font></nobr>
+              </div>
+            </td>
+            <td><a name="1021164">Cleaning of the parsing configuration: Call the </a><font size="2" face="'Courier New'" color="#000000">lefrClear()</font> function (optional). The call releases all parsing session data and closes the parsing session. If this is skipped, the data cleaning and the session closing is done by the next <font size="2" face="'Courier New'" color="#000000">lefrInitSession()</font> call. </td>
+          </tr>
+        </table>
+      </div>
+      <blockquote><a name="1021165">In the session&#45;based mode, the properties once defined in </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> remain active in all the LEF file parsing cycles in the session and the properties definition data is cleaned when the parsing session ends. </blockquote>
+      <blockquote><a name="1021167">The session&#45;based mode does not require you to call callbacks and property unsetter functions. All callbacks and properties are set to default by the next </a><font size="2" face="'Courier New'" color="#000000">lefrInitSession()</font> call. </blockquote>
+      <blockquote><a name="1021168">The session&#45;based mode allows you to avoid the lasting </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> data effect when not required as you can just configure your application to parse one file per session.</blockquote>
+      <p><a name="1021169">By default, the LEF parser works in the compatibility mode. To activate the session&#45;based mode, you must use </a><font size="2" face="'Courier New'" color="#000000">lefrInitSession()</font> instead of <font size="2" face="'Courier New'" color="#000000">lefrInit()</font>. </p>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1021170">Currently, the compatibility mode can be used in all old applications where the code has not been adjusted. The </a><font size="2" face="'Courier New'" color="#000000">lef2oa</font> translator has already been adjusted to use the session&#45;based parsing mode.</p>
+      <h2><a name="1020014">Comparison Utility</a></h2>
+      <p><a name="1020387">The LEF file comparison utility, </a><font size="2" face="'Courier New'" color="#000000">lefdefdiff</font>, helps you verify that your usage of the API is consistent and complete. This utility reads two LEF files, generally an initial file and the resulting file from reading in an application, then writes out a LEF file. The comparison utility reads and writes the data so that the UNIX <font size="2" face="'Courier New'" color="#000000">diff</font> utility can be used to compare the files. </p>
+      <p><a name="1020271">Because the LEF file comparison utility works incrementally (writing out as it operates), the size of files it can process has no limitations. However, large files can have performance restrictions. In general, this utility is intended only to verify the use of the API; that is, the utility is not a component of a production design flow.</a></p>
+      <h2><a name="1021031">Compressed LEF Files</a></h2>
+      <p><a name="1021034">The LEF reader can parse compressed LEF files. To do so, you must link the </a><font size="2" face="'Courier New'" color="#000000">liblef.a</font> and <font size="2" face="'Courier New'" color="#000000">liblefzlib.a</font> libraries. </p>
+      <p><a name="1021035">A zlib compression library is also required in order to read compressed LEF files. The zlib source code is free software that can be downloaded from </a><a href="http://www.gnu.org" target="external_window"><font color="#0000ff"><u>www.gnu.com</u></font></a>. </p>
+      <p><a name="1021037">For information on compressed file routines, see </a><a href="../lefapi/ch7LEFcompressed.html" target="external_window"><font color="#0000ff"><u>"LEF Compressed File Routines."</u></font></a> </p>
+      <h2><a name="1019049">Orientation Codes</a></h2>
+      <p><a name="1019238">Orientation codes are used throughout the LEF reader routines. The orientation codes are the same for all routines.</a></p>
+      <p><a name="1019050">A number from 0 to 7, corresponding to the compass direction orientations, represents the orientation of a site or component. The following figure shows the combination of mirroring and rotation that is used for each of the eight possible orientations.</a></p>
+      <p align="left"><a name="1020459">.</a><strong> </strong><br><img src="images/ch1Intro.04.1.1.png" alt=""><br>    </p>
+      <table summary="" border="0" cellpadding="4" cellspacing="0" bordercolor="#D3D3D3" width="440">
+        <caption>
+        <tr>
+          <td cellpadding="4" valign="top" width="220">
+            <p><a name="1020444">orient 0 = N</a></p>
+          </td>
+          <td cellpadding="4" valign="top" width="220">
+            <p><a name="1020446">orient 4 = FN</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020448">orient 1 = W</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020450">orient 5 = FW</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020452">orient 2 = S</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020454">orient 6 = FS</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020456">orient 3 = E</a></p>
+          </td>
+          <td cellpadding="4" valign="top">
+            <p><a name="1020458">orient 7 = FE</a></p>
+          </td>
+        </tr>
+      </table>
+      <p><font color="#000000"><strong>Note: </strong></font><a name="1019097">The location given is the lower left corner of the resulting site or component after the mirroring and rotation are applied. It is </a><font color="#000000"><em>not</em></font> the location of the origin of the child cell.</p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="lefapiTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="preface.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ch2LEFsetup.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="lefapi.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

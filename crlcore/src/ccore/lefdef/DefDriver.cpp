@@ -92,7 +92,7 @@ namespace CRL {
 // x-----------------------------------------------------------------x
 
 
-# if HAVE_LEFDEF && defined(LEF_ENABLED)
+#if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
 #define CHECK_STATUS(status)		\
 	if (status) {			\
 	    defwPrintError(status);	\
@@ -162,14 +162,14 @@ bool  LessNet::operator () ( Net* net1, Net* net2 ) {
   return false;
 }
 
-# endif // HAVE_LEFDEF
+#endif // HAVE_LEFDEF
 
 
 
 
 void  defDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
 {
-# if HAVE_LEFDEF && defined(LEF_ENABLED)
+#if defined(HAVE_LEFDEF) && defined(LEF_ENABLED)
     CDataBase* dataBase = GetCDataBase();
     if ( dataBase == NULL )
       throw CError ( NullDataBase, "CDrivDEF()" );
@@ -663,9 +663,9 @@ void  defDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
     CHECK_STATUS(status);
 
     ccell.Close ();
-# else // HAVE_LEFDEF
+#else // HAVE_LEFDEF
     cerr << "\nDummy LEF driver call for \"" << cellPath << "\"." << endl;
-# endif // HAVE_LEFDEF
+#endif // HAVE_LEFDEF
 }
 
 

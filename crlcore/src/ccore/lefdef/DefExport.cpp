@@ -15,7 +15,7 @@
 
 
 #include  <memory>
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 #  include  "lefwWriter.hpp"
 #  include  "defwWriter.hpp"
 #  include  "defwWriterCalls.hpp"
@@ -42,7 +42,7 @@
 #include  "crlcore/DefExport.h"
 
 
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 
 namespace {
 
@@ -747,7 +747,7 @@ namespace CRL {
 
   void  DefExport::drive ( Cell* cell, unsigned int flags )
   {
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
     DefDriver::drive ( cell, flags );
 
     if ( flags & WithLEF ) LefExport::drive ( cell, LefExport::WithTechnology|LefExport::WithSpacers );

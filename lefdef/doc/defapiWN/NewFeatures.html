@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html xmlns="http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>What's New in DEF 5.8 C/C++ Programming Interface -- 1</title>
+<META NAME="Approver" CONTENT="Technical Publications">
+<META NAME="Author" CONTENT="Technical Publications">
+<META NAME="CreateDate" CONTENT="2017-01-20">
+<META NAME="CreateTime" CONTENT="1484901693">
+<META NAME="DataType" CONTENT="Release information">
+<META NAME="Description" CONTENT="Describes new, changed, and removed features for the DEF API in version 5.8.">
+<META NAME="DocTitle" CONTENT="What's New in DEF 5.8 C/C++ Programming Interface">
+<META NAME="DocType" CONTENT="Release Note">
+<META NAME="EdmsRelease" CONTENT="FM-Wiki-1.0_P005">
+<META NAME="FileTitle" CONTENT="1">
+<META NAME="FileType" CONTENT="Chapter">
+<META NAME="Keyword" CONTENT="defapiWN">
+<META NAME="Language" CONTENT="English">
+<META NAME="ModifiedDate" CONTENT="2017-01-20">
+<META NAME="ModifiedTime" CONTENT="1484901693">
+<META NAME="NextFile" CONTENT="ChangedFeatures.html">
+<META NAME="PageCount" CONTENT="4">
+<META NAME="Platform" CONTENT="ALL">
+<META NAME="PrevFile" CONTENT="preface.html">
+<META NAME="Product" CONTENT="Languages">
+<META NAME="ProductFamily" CONTENT="Cadence Shared Tools">
+<META NAME="ProductVersion" CONTENT="5.8">
+<META NAME="RightsManagement" CONTENT="Copyright 2015 Cadence Design Systems Inc.">
+<META NAME="Title" CONTENT="What's New in DEF 5.8 C/C++ Programming Interface -- 1">
+<META NAME="TopicTags" CONTENT="FALSE">
+<META NAME="Version" CONTENT="5.8">
+  </head>
+  <body style="margin-left: 5%;">
+    <a name="pagetop"></a>
+    <a name="firstpage"></a>
+    <!-- Begin Buttons -->
+    <table width="650" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td height="36" width="650" colspan="10">
+          <img src="images/header_doc.gif" width="650" height="34">
+        </td>
+      </tr>
+      <tr>
+        <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                </td>
+<td height="20" width="73">
+<a href="defapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+        <td>
+          <a href="preface.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+        </td>
+        <td>
+          <a href="ChangedFeatures.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+        </td>
+        <td height="20">
+          <a>
+<a href="defapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+          </a>
+        </td>
+        <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+        </td>
+        <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+        </td>
+        <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+        </td>
+        <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+        </td>
+      </tr>
+    </table>
+    <!-- End Buttons -->
+    <p>
+    <hr>
+    <p>
+      <h3>
+        <center>
+          <font >
+            <div>What's New in DEF 5.8 C&#47;C++ Programming Interface</div>
+            <font >
+              <div></div>
+            </font>
+          </font>
+        </center>
+      </h3>
+      <br>
+    </p>
+    <div>
+      <h1>1<a name="1032955">&nbsp;</a></h1>
+      <h1><a name="1033512">New Features</a></h1>
+      <p><a name="1036125">This chapter describes the new features that were added in this release of the DEF application programming interface.</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1034329" title="1" name="1036129"><font color="Blue"><u>General Reader Changes</u></font></a><a href="#1034329" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1036307" title="1" name="1036240"><font color="Blue"><u>Reader Setup and Control Routines</u></font></a><a href="#1036307" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1036139" title="1" name="1036547"><font color="Blue"><u>Writer Routines &#45; Blockages</u></font></a><a href="#1036139" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1036331" title="1" name="1036133"><font color="Blue"><u>Reader Class Routines</u></font></a><a href="#1036331" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a href="#1034524" title="1" name="1034618"><font color="Blue"><u>DEF Reader Callback Routines</u></font></a><a href="#1034524" title="1"> </a></td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1034329">General Reader Changes</a></h2>
+      <p><a name="1035549">The following changes were made in the latest version of the parser:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1035556"><strong>Elimination of static data</strong></a>: In the latest version, the parser architecture has changed from C style&#45;based to C++ style&#45;based. In the previous version of the parser, most of the parser data were stored in static variables and the data lifecycle was based on initializers and cleaners. The new architecture places data in data singletons and uses C++ constructors and destructors. The switch to the C++ architecture has improved the parser re&#45;enterability, made the data flow more robust, and helped clean multiple memory leaks in the parser code.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1035665"><strong>Introduction of parsing sesions</strong></a>: In the previous version, data were stored in static variables and, therefore, were retained across all parsing cycles. This meant that if a property was defined once, it continued to be defined in the next DEF file reads. In some applications, this feature was actively used. In others, it disturbed expected application behavior. To address this issue, the latest version of the parser introduces two modes of files processing &#45; compatibility mode and session&#45;based mode.</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.872">
+              <div>&nbsp;</div>
+            </td>
+            <td width="32.128319999999995">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/bs_bullet_sub.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1035714">Compatibility mode (session&#45;less mode) &#45; This mode is compatible with the old parser behavior. You can call the parser initialization once with </a><font size="2" face="'Courier New'" color="#000000">defrInit()</font>, adjust parsing settings and initialize the parser callbacks any time. The properties in <font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> sections will be active in all subsequent file reads. </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.872">
+              <div>&nbsp;</div>
+            </td>
+            <td width="32.128319999999995">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/bs_bullet_sub.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1035970">Session&#45;based mode &#45; This mode introduces the concept of a parsing session - the parser configuration settings will be active during the session time and will be cleaned on its end.  The parsing session also controls </a><font size="2" face="'Courier New'" color="#000000">PROPERTYDEFINITIONS</font> data. Property definitions remain active throughout the parsing session time and are cleaned at the end of the session. The session&#45;based mode does not require calling callbacks and configuration unset functions &#45; all callbacks and properties will be set to defaults by <font size="2" face="'Courier New'" color="#000000">defrClear()</font> or the next session <font size="2" face="'Courier New'" color="#000000">defrInitSession()</font> call.</td>
+          </tr>
+        </table>
+      </div>
+      <blockquote><a name="1035974">By default, the DEF parser works in the compatibility mode. To activate the session&#45;based mode, you must use </a><font size="2" face="'Courier New'" color="#000000">defrInitSession()</font> instead of <font size="2" face="'Courier New'" color="#000000">defrInit()</font>. </blockquote>
+      <blockquote><font color="#000000"><strong>Note: </strong></font><a name="1035975">Currently, the compatibility mode is used for all old applications for which code has not been adjusted. The </a><font size="2" face="'Courier New'" color="#000000">def2oa</font> translator has been adjusted to use the session&#45;based parsing mode.</blockquote>
+      <blockquote><a name="1036304">For more information, see </a><a href="../defapi/ch1Intro.html#WorkingModes" target="external_window"><font color="#0000ff"><u>"DEF Reader Working Modes"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</blockquote>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font>
+                </nobr>
+              </div>
+            </td>
+            <td><a name="1036305"><strong>Long DEF Files Support</strong></a>: In this version, the DEF line counter switched to 64&#45;bit integer type, making it possible to process files with more than two billion lines. </td>
+          </tr>
+        </table>
+      </div>
+      <h2><a name="1036307">Reader Setup and Control Routines</a></h2>
+      <p><a name="1036150">The following reader setup and class routines were added in this release:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch2DEFsetup.html#defrInitSession" target="external_window" name="1036161"><font size="2" face="'Courier New'" color="#0000ff"><u>defrInitSession</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch2DEFsetup.html#defrClear" target="external_window" name="1036171"><font size="2" face="'Courier New'" color="#0000ff"><u>defrClear</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch2DEFsetup.html#defrGetAllowComponentNets" target="external_window" name="1036207"><font size="2" face="'Courier New'" color="#0000ff"><u>defrGetAllowComponentNets</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1036178">For more information, see </a><a href="../defapi/ch2DEFsetup.html" target="external_window"><font color="#0000ff"><u>"DEF Reader Setup and Control Routines"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h2><a name="1036139">Writer Routines &#45; Blockages</a></h2>
+      <p><a name="1036342">The following writer routies for blockages were added in this release:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayer" target="external_window" name="1036384"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayer</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerFills" target="external_window" name="1036385"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerFills</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerPushdown" target="external_window" name="1036386"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerPushdown</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerExceptpgnet" target="external_window" name="1036387"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerExceptpgnet</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerComponent" target="external_window" name="1036388"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerComponent</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerDesignRuleWidth" target="external_window" name="1036389"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerDesignRuleWidth</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPlacement" target="external_window" name="1036390"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPlacement</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPlacementComponent" target="external_window" name="1036391"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPlacementComponent</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPlacementPushdown" target="external_window" name="1036392"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPlacementPushdown</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPlacementSoft" target="external_window" name="1036393"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPlacementSoft</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPlacementPartial" target="external_window" name="1036394"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPlacementPartial</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesRect" target="external_window" name="1036395"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesRect</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesPolygon" target="external_window" name="1036396"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesPolygon</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch6DEFwriter.html#defwBlockagesLayerMask" target="external_window" name="1036373"><font size="2" face="'Courier New'" color="#0000ff"><u>defwBlockagesLayerMask</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1036358">Most of these functions duplicate old style functions with similar names. The old&#45;style functions will be obsoleted in the next parser release.</a></p>
+      <p><a name="1036540">For more information, see </a><a href="../defapi/ch6DEFwriter.html" target="external_window"><font color="#0000ff"><u>"DEF Writer Routines"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h2><a name="1036331">Reader Class Routines</a></h2>
+      <p><a name="1034625">The following reader class routines were added in this release:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch4DEFclasses.html#defiComponentMaskShiftLayer" target="external_window" name="1035347"><font size="2" face="'Courier New'" color="#0000ff"><u>defiComponentMaskShiftLayer</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1035483">For more information, see </a><a href="../defapi/ch4DEFclasses.html" target="external_window"><font color="#0000ff"><u>"DEF Reader Classes"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <h2><a name="1034524">DEF Reader Callback Routines</a></h2>
+      <p><a name="1035452">The following reader callback routines were added in this release:</a></p>
+      <div>
+        <table border="0" cellspacing="0" cellpadding="3" summary="">
+          <tr valign="baseline">
+            <td width="31.999679999999998">
+              <div>
+                <nobr>
+                  <u><font color="#000000"><img src="images/b_bullet.gif" alt="ParagraphBullet" border="0"></font></u>
+                </nobr>
+              </div>
+            </td>
+            <td>
+              <u><a href="../defapi/ch4DEFclasses.html#defrComponentMaskShiftLayerCbkType" target="external_window" name="1035454"><font size="2" face="'Courier New'" color="#0000ff"><u>defrComponentMaskShiftLayerCbkType</u></font></a></u>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p><a name="1035456">For more information, see </a><a href="../defapi/ch3DEFcallback.html" target="external_window"><font color="#0000ff"><u>"DEF Reader Callback Routines"</u></font></a> in the <font color="#000000"><em>DEF C&#47;C++ Programming Interface (Open Licensing Program)</em></font>.</p>
+      <p><a name="1035260">&nbsp;</a></p>
+    </div>
+    <br>
+    <a href="#pagetop">Return to top of page</a>
+    <hr>
+    <hr align="left">
+    <div style="text-align: left;">
+      <!-- Begin Buttons -->
+      <table width="650" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td height="20" width="59">
+<a href="javascript:openLibrary()"><img src="../support/nav2_library.gif" border="0" alt="View Library" height="20" width="59"></a>
+                    </td>
+<td height="20" width="73">
+<a href="defapiWNTOC.html"><img src="../support/nav2_toc.gif" alt="Table of Contents" border="0"></a>
+</td>
+
+<td height="20" width="46">
+<img src="../support/nav2_index_b.gif" border="0">
+</td>
+          <td>
+            <a href="preface.html"><img src="images/nav2_previous.gif" alt="Previous" border="0"></a>
+          </td>
+          <td>
+            <a href="ChangedFeatures.html"><img src="images/nav_next.gif" alt="Next" border="0"></a>
+          </td>
+          <td>
+            <a>
+<a href="defapiWN.pdf"><img src="../support/nav2_print.gif" border="0" alt="Open PDF to print book" height="20" width="114"></a>
+            </a>
+          </td>
+          <td height="20" width="61">
+<img src="../support/nav2_black.gif" border="0"  height="20" width="76">
+          </td>
+          <td height="20" width="76">
+<a href="/feedback.htm"><img src="../support/nav2_feedback.gif" border="0" alt="Email Comments" height="20" width="76"></a>
+          </td>
+          <td height="20" width="43">
+<a href="../cdsuser/help.html"><img src="../support/nav2_help.gif" border="0" alt="Help Using Documentation" height="20" width="43"></a>
+          </td>
+          <td height="20" width="37">
+<a href="/exitsearch.htm"><img src="../support/nav2_exit.gif" border="0" alt="Shut Down Cadence Documentation Server" height="20" width="37"></a>
+          </td>
+        </tr>
+      </table>
+      <!-- End Buttons -->
+    </div>
+    <br>
+    <font size="-1" >
+For support, see <a href="http://support.cadence.com" target="_blank">Cadence Online Support</a> service.</font>
+    <br>
+    <br>
+    <font size="-1" >
+<font size="-1"><i>Copyright &#169; 2016, <a href ="http://www.cadence.com">Cadence Design Systems, Inc.</a></i></font>
+    </font>
+    <br>
+    <font size="-1" >
+All rights reserved.</font>
+    <br>
+    <br>
+  </body>
+</html>

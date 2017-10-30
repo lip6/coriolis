@@ -17,7 +17,7 @@
 #include  <cstdio>
 #include  <cstring>
 #include  <memory>
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 #  include  "lefrReader.hpp"
 #  include  "defrReader.hpp"
 #endif
@@ -39,7 +39,7 @@
 #include  "crlcore/DefImport.h"
 
 
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 
 namespace {
 
@@ -591,7 +591,7 @@ namespace CRL {
     UpdateSession::open ();
 
     Cell* cell = NULL;
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
     cell = DefParser::parse ( design+".def", flags );
 #else
     cerr << "[ERROR] CRL::DefImport::load(): \n"

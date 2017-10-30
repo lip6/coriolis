@@ -37,7 +37,7 @@
 #include  "crlcore/LefDefExtension.h"
 #include  "LefDef.h"
 
-#if  HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 #  include  "defrReader.hpp"
 #endif
 
@@ -82,7 +82,7 @@ namespace {
   unsigned int       __lefConvertFactor = 1;
 
 
-#if  HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 
   // ---------------------------------------------------------------
   // Module Global Functions.
@@ -639,7 +639,7 @@ namespace CRL {
 
     cmess2 << "     " << tab << "+ " << cellPath << endl;
 
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
     DataBase* db = DataBase::getDB ();
     if ( !db ) throw Error ( NullDataBase, "defParser()" );
 

@@ -7,124 +7,121 @@
 #
 #  The DEF C API library:           LEFDEF_CDEF_LIBRARY
 #                                   LEFDEF_CDEF_LIBRARY_RELEASE
-#                                   LEFDEF_CDEF_LIBRARY_DEBUG
 #
 #  The DEF C API library (zlib) :   LEFDEF_ZCDEF_LIBRARY
 #                                   LEFDEF_ZCDEF_LIBRARY_RELEASE
-#                                   LEFDEF_ZCDEF_LIBRARY_DEBUG
 #
 #  The DEF C++ API library:         LEFDEF_DEF_LIBRARY
 #                                   LEFDEF_DEF_LIBRARY_RELEASE
-#                                   LEFDEF_DEF_LIBRARY_DEBUG
 #
 #  The DEF C++ API library (zlib) : LEFDEF_ZDEF_LIBRARY
 #                                   LEFDEF_ZDEF_LIBRARY_RELEASE
-#                                   LEFDEF_ZDEF_LIBRARY_DEBUG
 #
 #  The LEF C API library:           LEFDEF_CLEF_LIBRARY
 #                                   LEFDEF_CLEF_LIBRARY_RELEASE
-#                                   LEFDEF_CLEF_LIBRARY_DEBUG
 #
 #  The LEF C API library (zlib) :   LEFDEF_ZCLEF_LIBRARY
 #                                   LEFDEF_ZCLEF_LIBRARY_RELEASE
-#                                   LEFDEF_ZCLEF_LIBRARY_DEBUG
 #
 #  The LEF C++ API library:         LEFDEF_LEF_LIBRARY
 #                                   LEFDEF_LEF_LIBRARY_RELEASE
-#                                   LEFDEF_LEF_LIBRARY_DEBUG
 #
 #  The LEF C++ API library (zlib) : LEFDEF_ZLEF_LIBRARY
 #                                   LEFDEF_ZLEF_LIBRARY_RELEASE
-#                                   LEFDEF_ZLEF_LIBRARY_DEBUG
+
+# Try to find a reasonable CORIOLIS_TOP value.
+ if( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
+   set ( CORIOLIS_USER_TOP "$ENV{CORIOLIS_USER_TOP}" )
+ else( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
+   if( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
+     set ( CORIOLIS_TOP "$ENV{CORIOLIS_TOP}" )
+   endif( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
+ endif( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
 
 
-macro( _find_lefdef_lib varname libname )
-  find_library( LEFDEF_${varname}_LIBRARY_RELEASE NAMES ${libname}       PATHS ${LEFDEF_LIBRARY_DIR} )
-  find_library( LEFDEF_${varname}_LIBRARY_DEBUG   NAMES ${libname}_Debug PATHS ${LEFDEF_LIBRARY_DIR} )
-
-  if( LEFDEF_${varname}_LIBRARY_RELEASE AND NOT LEFDEF_${varname}_LIBRARY_DEBUG )
-    set( LEFDEF_${varname}_LIBRARY_DEBUG ${LEFDEF_${varname}_LIBRARY_RELEASE} CACHE STRING "Path to a library" FORCE )
-  endif()
-
-  if( LEFDEF_${varname}_LIBRARY_DEBUG AND NOT LEFDEF_${varname}_LIBRARY_RELEASE )
-    set( LEFDEF_${varname}_LIBRARY_RELEASE LEFDEF_${varname}_LIBRARY_DEBUG CACHE STRING "Path to a library" FORCE )
-  endif()
-
-  if( LEFDEF_${varname}_LIBRARY_RELEASE )
-    list( APPEND LEFDEF_LIBRARIES "optimized" ${LEFDEF_${varname}_LIBRARY_RELEASE}
-                                  "debug"     ${LEFDEF_${varname}_LIBRARY_DEBUG} )
-    set( LEFDEF_${varname}_LIBRARY_FOUND 1 )
-    mark_as_advanced( LEFDEF_${varname}_LIBRARY_RELEASE
-                      LEFDEF_${varname}_LIBRARY_DEBUG )
-  else()
-    set ( LEFDEF_FOUND "NO" )
-  endif()
-endmacro()
+ macro( _find_lefdef_lib varname libname )
+   find_library( LEFDEF_${varname}_LIBRARY_RELEASE NAMES ${libname}       PATHS ${LEFDEF_LIBRARY_DIR} )
+ 
+   if( LEFDEF_${varname}_LIBRARY_RELEASE )
+     set( LEFDEF_${varname}_LIBRARY_DEBUG ${LEFDEF_${varname}_LIBRARY_RELEASE} CACHE STRING "Path to a library" FORCE )
+   endif()
+ 
+   if( LEFDEF_${varname}_LIBRARY_RELEASE )
+     list( APPEND LEFDEF_LIBRARIES "optimized" ${LEFDEF_${varname}_LIBRARY_RELEASE}
+                                   "debug"     ${LEFDEF_${varname}_LIBRARY_DEBUG} )
+     set( LEFDEF_${varname}_LIBRARY_FOUND 1 )
+     mark_as_advanced( LEFDEF_${varname}_LIBRARY_RELEASE
+                       LEFDEF_${varname}_LIBRARY_DEBUG )
+   else()
+     set ( LEFDEF_FOUND "NO" )
+   endif()
+ endmacro()
 
 
-set( LEFDEF_INCLUDE_DIR_DESCRIPTION "directory containing the LEF/DEF include files. E.g /opt/lefdef-5.6/include" )
-set( LEFDEF_LIBRARY_DIR_DESCRIPTION "directory containing the LEF/DEF library files. E.g /opt/lefdef-5.6/lib" )
-set( LEFDEF_DIR_MESSAGE             "Set the LEFDEF_INCLUDE_DIR cmake cache entry to the ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
+ set( LEFDEF_INCLUDE_DIR_DESCRIPTION "directory containing the LEF/DEF include files. E.g /opt/lefdef-5.6/include" )
+ set( LEFDEF_LIBRARY_DIR_DESCRIPTION "directory containing the LEF/DEF library files. E.g /opt/lefdef-5.6/lib" )
+ set( LEFDEF_DIR_MESSAGE             "Set the LEFDEF_INCLUDE_DIR cmake cache entry to the ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
 
 
 # Don't even bother under Win32
-if ( UNIX )
-  set ( LEFDEF_FOUND "YES" )
-  set ( LEFDEF_SEARCH_PATH "$ENV{LEFDEF_TOP}"
+ if( UNIX )
+   set( LEFDEF_FOUND "YES" )
+   set( LEFDEF_SEARCH_PATH "$ENV{CORIOLIS_TOP}"
+                           "$ENV{LEFDEF_TOP}"
                            "/usr"
-                           "/opt/lefdef-5.6"
+                           "/opt/lefdef-5.8"
                            "/opt/lefdef-5.7"
+                           "/opt/lefdef-5.6"
                            "/opt/lefdef"
                            "$ENV{HOME}/oa/lefdef/5.7-s038"
                            "/soc/oa"
                            )
-  message("-- Components of LEFDEF_DIR_SEARCH:")
-  foreach(PATH ${LEFDEF_DIR_SEARCH})
-    message("--   ${PATH}")
-  endforeach(PATH)
-
-  set ( LEFDEF_LIBRARIES           "" )
-  set ( LEFDEF_LIBRARY_SEARCH_PATH "" )
-
-  find_path ( LEFDEF_INCLUDE_DIR NAMES "defiDefs.h"
+   message( "-- Components of LEFDEF_DIR_SEARCH:" )
+   foreach( PATH ${LEFDEF_DIR_SEARCH} )
+     message( "--   ${PATH}" )
+   endforeach()
+ 
+   set( LEFDEF_LIBRARIES           "" )
+   set( LEFDEF_LIBRARY_SEARCH_PATH "" )
+ 
+   find_path( LEFDEF_INCLUDE_DIR NAMES "defiDefs.h"
                                  PATHS ${LEFDEF_SEARCH_PATH}
                                  PATH_SUFFIXES "include" "include/lefdef"
                                  DOC "The ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
-  message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
-
-  find_path ( LEFDEF_LIBRARY_DIR NAMES "libdef.a" "libdef_Debug.a"
+   message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
+ 
+   find_path( LEFDEF_LIBRARY_DIR NAMES "libdef.a"
                                  PATHS ${LEFDEF_SEARCH_PATH}
                                  PATH_SUFFIXES "lib${LIB_SUFFIX}"
                                  DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
-  message( STATUS "LEFDEF_LIBRARY_DIR: ${LEFDEF_LIBRARY_DIR}" )
-
-  if ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
-    _find_lefdef_lib (  "CDEF" "cdef"     )
-    _find_lefdef_lib ( "ZCDEF" "cdefzlib" )
-    _find_lefdef_lib (   "DEF"  "def"     )
-    _find_lefdef_lib (  "ZDEF"  "defzlib" )
-    _find_lefdef_lib (  "CLEF" "clef"     )
-    _find_lefdef_lib ( "ZCLEF" "clefzlib" )
-    _find_lefdef_lib (   "LEF"  "lef"     )
-    _find_lefdef_lib (  "ZLEF"  "lefzlib" )
-  else ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
-    set ( LEFDEF_FOUND "NO" )
-  endif ( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
-
-  if ( LEFDEF_FOUND )
-    message ( STATUS "Found LEF/DEF" )
-    add_definitions ( -DHAVE_LEFDEF )
-    if ( NOT LEFDEF_FIND_QUIETLY )
-      message ( STATUS "Found LEF/DEF" )
-    endif ( NOT LEFDEF_FIND_QUIETLY )
-  else ( LEFDEF_FOUND )
-    set ( LEFDEF_LIBRARIES   "" )
-    set ( LEFDEF_INCLUDE_DIR "" )
-    set ( LEFDEF_LIBRARY_DIR "" )
-    if ( LEFDEF_FIND_REQUIRED )
-      message ( STATUS "LEF/DEF libraries and/or includes NOT found!" )
-    endif ( LEFDEF_FIND_REQUIRED )
-  endif ( LEFDEF_FOUND )
-
-  mark_as_advanced ( LEFDEF_INCLUDE_DIR LEFDEF_LIBRARY_DIR LEFDEF_LIBRARIES )
-endif ( UNIX )
+   message( STATUS "LEFDEF_LIBRARY_DIR: ${LEFDEF_LIBRARY_DIR}" )
+ 
+   if( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )
+     _find_lefdef_lib(  "CDEF" "cdef"     )
+     _find_lefdef_lib( "ZCDEF" "cdefzlib" )
+     _find_lefdef_lib(   "DEF"  "def"     )
+     _find_lefdef_lib(  "ZDEF"  "defzlib" )
+     _find_lefdef_lib(  "CLEF" "clef"     )
+     _find_lefdef_lib( "ZCLEF" "clefzlib" )
+     _find_lefdef_lib(   "LEF"  "lef"     )
+     _find_lefdef_lib(  "ZLEF"  "lefzlib" )
+   else()
+     set( LEFDEF_FOUND "NO" )
+   endif()
+ 
+   if( LEFDEF_FOUND )
+     add_definitions( -DHAVE_LEFDEF )
+     if( NOT LEFDEF_FIND_QUIETLY )
+       message( STATUS "Found LEF/DEF" )
+     endif()
+   else( LEFDEF_FOUND )
+     set( LEFDEF_LIBRARIES   "" )
+     set( LEFDEF_INCLUDE_DIR "" )
+     set( LEFDEF_LIBRARY_DIR "" )
+     if( LEFDEF_FIND_REQUIRED )
+       message( STATUS "LEF/DEF libraries and/or includes NOT found!" )
+     endif()
+   endif( LEFDEF_FOUND )
+ 
+   mark_as_advanced( LEFDEF_INCLUDE_DIR LEFDEF_LIBRARY_DIR LEFDEF_LIBRARIES )
+ endif( UNIX )

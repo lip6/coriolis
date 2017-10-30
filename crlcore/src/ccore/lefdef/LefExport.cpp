@@ -15,7 +15,7 @@
 
 
 #include  <memory>
-#ifdef HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 #include  "lefwWriter.hpp"
 #include  "lefwWriterCalls.hpp"
 #endif
@@ -41,7 +41,7 @@
 #include  "crlcore/LefExport.h"
 
 
-#ifdef HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
 
 namespace {
 
@@ -717,7 +717,7 @@ namespace CRL {
 
   void  LefExport::drive ( Cell* cell, unsigned int flags )
   {
-#if HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
     string     libraryName = "symbolic";
     set<Cell*> cells;
 
@@ -751,7 +751,7 @@ namespace CRL {
 
   void  LefExport::drive ( Library* library, unsigned int flags )
   {
-#ifdef HAVE_LEFDEF
+#if defined(HAVE_LEFDEF)
     string     libraryName = "symbolic";
     set<Cell*> cells;
 
