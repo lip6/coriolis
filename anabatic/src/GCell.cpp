@@ -1707,18 +1707,17 @@ namespace Anabatic {
 
     return false;
   }
-
-
+  
   void GCell::setEdgesOccupancy ( unsigned int width, unsigned int height )
   {
-    getEastEdge()->setCapacity(width);
-    getWestEdge()->setCapacity(width);
-    getNorthEdge()->setCapacity(height);
-    getSouthEdge()->setCapacity(height);
-    getEastEdge()->setRealOccupancy(0);
-    getWestEdge()->setRealOccupancy(0);
-    getNorthEdge()->setRealOccupancy(0);
-    getSouthEdge()->setRealOccupancy(0);
+    if (getEastEdge() ) getEastEdge()->setCapacity(width);
+    if (getWestEdge() ) getWestEdge()->setCapacity(width);
+    if (getNorthEdge()) getNorthEdge()->setCapacity(height);
+    if (getSouthEdge()) getSouthEdge()->setCapacity(height);
+    if (getEastEdge() ) getEastEdge()->setRealOccupancy(0);
+    if (getWestEdge() ) getWestEdge()->setRealOccupancy(0);
+    if (getNorthEdge()) getNorthEdge()->setRealOccupancy(0);
+    if (getSouthEdge()) getSouthEdge()->setRealOccupancy(0);
   }
 
 
