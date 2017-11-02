@@ -506,11 +506,12 @@ namespace Anabatic {
       cdebug_log(112,0) << "Case horizontal: " << isiSet() << endl; 
       GCell* gprev = getGPrev(Vertex::From2Mode);
       intervfrom   = getIntervFrom(From2Mode);
-      Vertex* prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+      Vertex* prev = NULL;
+      if (gprev) prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
       cdebug_log(112,0) << "PREV: " << prev << " ";  
       intervfrom.print();
      
-      if (isiSet()){
+      if (isiSet()||(prev == NULL)){
         cdebug_log(112,0) << "isiSet: "; 
         printInterv();
         y = getIAxis();
@@ -580,11 +581,12 @@ namespace Anabatic {
     //GCell*     gprev      = NULL;
       GCell* gprev = getGPrev(Vertex::From2Mode);
       intervfrom = getIntervFrom(From2Mode);
-      Vertex* prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+      Vertex* prev = NULL;
+      if (gprev) prev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
       cdebug_log(112,0) << "PREV: " << prev << " ";   
       intervfrom.print();  
 
-      if (isiSet()){
+      if (isiSet()||(prev == NULL)){
         cdebug_log(112,0) << "isiSet: "; 
         printInterv();
         x = getIAxis();
@@ -2387,7 +2389,7 @@ namespace Anabatic {
                                               , targetSym
                                               , _anabatic->getConfiguration()->getGHorizontalLayer()
                                               , axis
-                                              , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal2"))
+                                              , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))
                                               );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       } else if (v) {
@@ -2428,7 +2430,7 @@ namespace Anabatic {
                                             , targetSym
                                             , _anabatic->getConfiguration()->getGVerticalLayer()
                                             , axis
-                                            , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("metal3"))
+                                            , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL3"))
                                             );
         cdebug_log(112,0) << "|| " << segment2 << endl;
       }
