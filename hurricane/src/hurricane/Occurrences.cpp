@@ -45,7 +45,7 @@ namespace Hurricane {
 
   bool  Occurrence_Contains::accept ( Occurrence occurrence ) const
   {
-    if (not _instance) return false;
+    if (not _instance) return true;
 
     if (dynamic_cast<Instance*>(occurrence.getEntity()) == _instance) return true;
     for ( Instance* instance : occurrence.getPath().getInstances() ) {
