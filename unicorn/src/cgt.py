@@ -8,6 +8,7 @@ try:
   import Cfg
   import Hurricane
   import Viewer
+  from   helpers       import showPythonTrace
   import CRL
   import Anabatic
   import Katana
@@ -85,12 +86,7 @@ def runScript ( scriptPath, editor ):
       print '        Error was:'
       print '          %s\n' % e
   except Exception, e:
-      print '[ERROR] An exception occured while loading the Stratus script module:'
-      print '        <%s>\n' % (scriptPath)
-      print '        You should check for simple python errors in this module.'
-      print '        Error was:'
-      print '          %s\n' % e
-      print '        Trying to continue anyway...'
+      showPythonTrace( scriptPath, e )
   return
 
 

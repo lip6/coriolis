@@ -47,9 +47,35 @@ def isderived ( derived, base ):
     return False
 
 
-def truncPath ( path ):
-  if len(path) < 70: return path
-  return '.../'+os.sep.join(path.split(os.sep)[-4:])
+def truncPath ( path, maxlength=70 ):
+    if len(path) < maxlength: return path
+    return '.../'+os.sep.join(path.split(os.sep)[-4:])
+
+
+def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    if scriptPath:
+      print '[ERROR] An exception occured while loading the Python script module:'
+      print '        \"%s\"\n' % (scriptPath)
+      print '        You should check for simple python errors in this module.\n'
+
+    print '        Python stack trace:'
+    trace    = traceback.extract_tb( sys.exc_info()[2] )
+    maxdepth = len( trace )
+    for depth in range( maxdepth ):
+      filename, line, function, code = trace[ maxdepth-depth-1 ]
+      if len(filename) > 38:
+        filename = filename[-38:]
+        filename = '.../' + filename[ filename.find('/')+1 : ]
+     #print '        [%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
+      print '        #%d in %25s() at %s:%d' % ( depth, function, filename, line )
+
+    if e:
+      print '        Error was:'
+      print '          %s\n' % e
+
+    if tryContinue:
+      print '        Trying to continue anyway...'
+    return
 
 
 class ErrorMessage ( Exception ):
@@ -126,7 +152,7 @@ class ErrorMessage ( Exception ):
             ewrap = e
         if footer: ewrap.addMessage(footer)
         print ewrap
-        if showTrace: traceback.print_tb(sys.exc_info()[2])
+        if showTrace: showPythonTrace()
         return
 
 
