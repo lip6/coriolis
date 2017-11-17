@@ -1046,7 +1046,7 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 250;
+  int  CellWidget::_initialSide = 500;
 
 
   CellWidget::CellWidget ( QWidget* parent )
@@ -1088,8 +1088,10 @@ namespace Hurricane {
     QFont font = Graphics::getNormalFont();
     _textFontHeight = QFontMetrics(font).ascent();
 
-    if (Graphics::isHighDpi()) resize( Graphics::toHighDpi(_initialSide)
-                                     , Graphics::toHighDpi(_initialSide) );
+    if (Graphics::isHighDpi()) {
+      resize( Graphics::toHighDpi(_initialSide)
+            , Graphics::toHighDpi(_initialSide) );
+    }
   }
 
 

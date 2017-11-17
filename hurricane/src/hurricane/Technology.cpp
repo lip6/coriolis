@@ -290,9 +290,11 @@ ViaLayers Technology::getViaLayers() const
 
 
   Layer* Technology::getNthMetal ( int nth ) const
-  {
-    return getLayer ( _metalMask.nthbit(nth) );
-  }
+  { return getLayer ( _metalMask.nthbit(nth) ); }
+
+
+  Layer* Technology::getNthCut ( int nth ) const
+  { return getLayer ( _cutMask.nthbit(nth) ); }
 
 
   void  Technology::_onDbuChange ( float scale )

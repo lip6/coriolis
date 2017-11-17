@@ -109,10 +109,11 @@ namespace Hurricane {
   template<typename IntType>
   inline Mask<IntType>  Mask<IntType>::nthbit ( unsigned int nth ) const
   { 
+    ++nth;
     IntType select = 1;
     for ( ; select ; select=select<<1 ) {
-      if ( _mask & select ) nth--;
-      if ( !nth ) break;
+      if (_mask & select) nth--;
+      if (not nth) break;
     }
     return select;
   }

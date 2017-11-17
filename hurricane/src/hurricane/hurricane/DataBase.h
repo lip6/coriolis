@@ -86,6 +86,7 @@ class DataBase : public DBo {
     public: Library* getRootLibrary() const {return _rootLibrary;};
     public: Library* getLibrary(string,unsigned int flags);
     public: Cell* getCell(string, unsigned int flags);
+    public: Cell* getCell(string);
     public: static DataBase* getDB();
 
 };

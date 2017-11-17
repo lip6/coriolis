@@ -97,6 +97,7 @@ namespace Hurricane {
               Layer*         getCutBelow             ( const Layer*, bool useWorking=true ) const;
               Layer*         getViaBetween           ( const Layer*, const Layer* ) const;
               Layer*         getNthMetal             ( int ) const;
+              Layer*         getNthCut               ( int ) const;
     // Updators.
               void           setName                 ( const Name& );
               bool           setWorkingLayer         ( const Name& );

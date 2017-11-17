@@ -17,6 +17,7 @@
 #include "hurricane/isobar/PyDataBase.h"
 #include "hurricane/isobar/PyTechnology.h"
 #include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyCell.h"
 
 
 namespace  Isobar {
@@ -96,6 +97,26 @@ extern "C" {
     return PyLibrary_Link(library);
   }
 
+
+  static PyObject* PyDataBase_getCell ( PyDataBase* self, PyObject* args ) {
+      cdebug_log(20,0) << "PyDataBase_getCell ()" << endl;
+      
+      Cell* cell = NULL;
+
+      HTRY
+      METHOD_HEAD("DataBase.getCell()")
+      char* name = NULL;
+      if (PyArg_ParseTuple(args,"s:DataBase.getCell", &name)) {
+          cell = db->getCell( name );
+      } else {
+          PyErr_SetString ( ConstructorError, "invalid number of parameters for DataBase.getCell." );
+          return NULL;
+      }
+      HCATCH
+
+      return PyCell_Link( cell );
+  }
+
   
   // Standart Accessors (Attributes).
   // Standart Destroy (Attribute).
@@ -110,8 +131,9 @@ extern "C" {
                         , "Create the DataBase (only the first call created it)" }
     , { "getDB"         , (PyCFunction)PyDataBase_getDB         , METH_NOARGS|METH_STATIC
                         , "Get the DataBase" }
-    , { "getTechnology" , (PyCFunction)PyDataBase_getTechnology , METH_NOARGS, "Return the Technology" }
-    , { "getRootLibrary", (PyCFunction)PyDataBase_getRootLibrary, METH_NOARGS, "Return the root library" }
+    , { "getTechnology" , (PyCFunction)PyDataBase_getTechnology , METH_NOARGS , "Return the Technology" }
+    , { "getRootLibrary", (PyCFunction)PyDataBase_getRootLibrary, METH_NOARGS , "Return the root library" }
+    , { "getCell"       , (PyCFunction)PyDataBase_getCell       , METH_VARARGS, "Return a Cell" }
     , { "destroy"       , (PyCFunction)PyDataBase_destroy       , METH_NOARGS
                         , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

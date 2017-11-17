@@ -224,15 +224,15 @@ extern "C" {
 
   extern PyObject* PyDbU_setPhysicalsPerGrid ( PyObject* , PyObject* args )
   {
-    double        gridsPerLambda = 0.0;
-    unsigned int  power          = 0;
+    double        physicalsPerGrid = 0.0;
+    unsigned int  power            = 0;
 
     HTRY
-    if (not PyArg_ParseTuple(args,"di:DbU.setPhysicalsPerGrid", &gridsPerLambda, &power) ) {
+    if (not PyArg_ParseTuple(args,"di:DbU.setPhysicalsPerGrid", &physicalsPerGrid, &power) ) {
       PyErr_SetString ( ConstructorError, "DbU.setPhysicalsPerGrid(): Invalid/bad type parameters ." );
       return NULL;
     }
-    DbU::setPhysicalsPerGrid(gridsPerLambda,(DbU::UnitPower)power);
+    DbU::setPhysicalsPerGrid(physicalsPerGrid,(DbU::UnitPower)power);
     HCATCH
 
     Py_RETURN_NONE;

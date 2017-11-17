@@ -253,6 +253,26 @@ Cell* DataBase::getCell(string rpath, unsigned int flags)
   
 }
 
+Cell* DataBase::getCell(string name)
+// *********************************
+{
+  vector<Library*>  libStack;
+  libStack.push_back( getRootLibrary() );
+
+  while ( not libStack.empty() ) {
+    Library* library = libStack.back();
+    libStack.pop_back();
+
+    Cell* cell = library->getCell( name );
+    if (cell) return cell;
+
+    for ( Library* child : library->getLibraries() )
+      libStack.push_back( child );
+  }
+
+  return NULL;
+}
+
 void DataBase::_toJson(JsonWriter* w) const
 // ****************************************
 {
