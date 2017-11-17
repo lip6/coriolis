@@ -164,11 +164,11 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
                                                              , Gauge.toRlGauge(entry[1][1]) # Type.
                                                              , entry[1][2]                  # Depth.
                                                              , entry[1][3]                  # Density.
-                                                             , DbU.fromLambda(entry[1][4])  # Offset.
-                                                             , DbU.fromLambda(entry[1][5])  # Pitch.
-                                                             , DbU.fromLambda(entry[1][6])  # Wire width.
-                                                             , DbU.fromLambda(entry[1][7])  # Via width.
-                                                             , DbU.fromLambda(entry[1][8])  # Obstacle dW.
+                                                             , helpers.toDbU(entry[1][4])   # Offset.
+                                                             , helpers.toDbU(entry[1][5])   # Pitch.
+                                                             , helpers.toDbU(entry[1][6])   # Wire width.
+                                                             , helpers.toDbU(entry[1][7])   # Via width.
+                                                             , helpers.toDbU(entry[1][8])   # Obstacle dW.
                                                              ) )
 
             except Exception, e:
@@ -196,10 +196,10 @@ def loadCellGaugesTable ( cellGaugesTable, fromFile ):
                                     ,str(gaugeDatas)
                                     ])
             gauge = CellGauge.create( gaugeName
-                                    , gaugeDatas[0]                 # pinLayerName.
-                                    , DbU.fromLambda(gaugeDatas[1]) # pitch.
-                                    , DbU.fromLambda(gaugeDatas[2]) # sliceHeight.
-                                    , DbU.fromLambda(gaugeDatas[3]) # sliceStep.
+                                    , gaugeDatas[0]                # pinLayerName.
+                                    , helpers.toDbU(gaugeDatas[1]) # pitch.
+                                    , helpers.toDbU(gaugeDatas[2]) # sliceHeight.
+                                    , helpers.toDbU(gaugeDatas[3]) # sliceStep.
                                     )
         except Exception, e:
             ErrorMessage.wrapPrint(e,'In %s:<cellGaugesTable> at index %d.' % (allianceFile,gaugeDatasNo))

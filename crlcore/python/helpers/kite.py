@@ -30,6 +30,7 @@ Cfg.getParamInt       ("kite.longGlobalRipupLimit").setInt       (5      )
 Cfg.getParamInt       ("kite.longGlobalRipupLimit").setMin       (1      )
 
 Cfg.getParamInt       ("kite.strapRipupLimit"     ).setInt       (16     )
+
 Cfg.getParamInt       ("kite.strapRipupLimit"     ).setMin       (1      )
 
 Cfg.getParamDouble    ("kite.metal1MinBreak"      ).setDouble    (100    )

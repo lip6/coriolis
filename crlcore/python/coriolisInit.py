@@ -32,18 +32,18 @@ try:
   from   helpers.Display         import Group
   from   helpers.Display         import Drawing
   from   helpers                 import Alliance
-  from   helpers                 import SymbolicTechnology
-  from   helpers                 import RealTechnology
+  from   helpers                 import Technology
   import helpers.Display
 except ImportError, e:
   serror = str(e)
-  if serror.startswith('No module named'):
+  if    serror.startswith('No module named') \
+     or serror.startswith('cannot import name') :
     module = serror.split()[-1]
-    print '[ERROR] The <%s> python module or symbol cannot be loaded.' % module
-    print '        Please check the integrity of the <coriolis> package.'
-  if str(e).find('cannot open shared object file'):
+    print '[ERROR] The "%s" python module or symbol cannot be loaded.' % module
+    print '        Please check the integrity of the Coriolis package.'
+  if serror.find('cannot open shared object file') != -1:
     library = serror.split(':')[0]
-    print '[ERROR] The <%s> shared library cannot be loaded.' % library
+    print '[ERROR] The "%s" shared library cannot be loaded.' % library
     print '        Under RHEL 6, you must be under devtoolset-2.'
     print '        (scl enable devtoolset-2 bash)'
   sys.exit(1)
@@ -59,15 +59,13 @@ moduleGlobals       = globals()
 
 SystemFile          = 0x0001
 AllianceHelper      = 0x0002
-SymbolicHelper      = 0x0004
-RealHelper          = 0x0008
+TechnologyHelper    = 0x0004
 PatternsHelper      = 0x0010
 DisplayHelper       = 0x0020
 ConfigurationHelper = 0x0040
 KiteHelper          = 0x0080
 HelpersMask         = AllianceHelper      \
-                    | SymbolicHelper      \
-                    | RealHelper          \
+                    | TechnologyHelper    \
                     | PatternsHelper      \
                     | DisplayHelper       \
                     | ConfigurationHelper \
@@ -77,23 +75,21 @@ SystemMandatory     = 0x0100
 
 
 def coriolisConfigure():
-  global symbolicTechno
-
-  confHelpers  = ( ('allianceConfig'     , Alliance.loadAllianceConfig          , SystemMandatory|AllianceHelper)
-                 , ('routingGaugesTable' , Alliance.loadRoutingGaugesTable      , SystemMandatory|KiteHelper)
-                 , ('cellGaugesTable'    , Alliance.loadCellGaugesTable         , SystemMandatory|KiteHelper)
-                 , ('viewerConfig'       , SymbolicTechnology.loadViewerConfig  , SystemMandatory|SymbolicHelper)
-                 , ('realLayersTable'    , SymbolicTechnology.loadRealLayers    , SystemMandatory|SymbolicHelper)
-                 , ('symbolicLayersTable', SymbolicTechnology.loadSymbolicLayers, SystemMandatory|SymbolicHelper)
-                 , ('symbolicRulesTable' , SymbolicTechnology.loadSymbolicRules , SystemMandatory|SymbolicHelper)
-                 , ('workingLayersTable' , SymbolicTechnology.loadWorkingLayers , SystemMandatory|SymbolicHelper)
-                 , ('technoConfig'       , RealTechnology.loadTechnoConfig      , SystemMandatory|RealHelper)
-                 , ('gdsLayersTable'     , RealTechnology.loadGdsLayers         , SystemMandatory|RealHelper)
-                 , ('patternsTable'      , Patterns.loadPatterns                , SystemMandatory|PatternsHelper)
-                 , ('stylesTable'        , Display.loadStyles                   , SystemMandatory|DisplayHelper)
-                 , ('defaultStyle'       , Display.loadDefaultStyle             , SystemMandatory|DisplayHelper)
-                 , ('parametersTable'    , Configuration.loadParameters         , ConfigurationHelper)
-                 , ('layoutTable'        , Configuration.loadLayout             , ConfigurationHelper)
+  confHelpers  = ( ('allianceConfig'     , Alliance.loadAllianceConfig    , SystemMandatory|AllianceHelper)
+                 , ('routingGaugesTable' , Alliance.loadRoutingGaugesTable, SystemMandatory|KiteHelper)
+                 , ('cellGaugesTable'    , Alliance.loadCellGaugesTable   , SystemMandatory|KiteHelper)
+                 , ('viewerConfig'       , Technology.loadViewerConfig    , SystemMandatory|TechnologyHelper)
+                 , ('realLayersTable'    , Technology.loadRealLayers      , SystemMandatory|TechnologyHelper)
+                 , ('symbolicLayersTable', Technology.loadSymbolicLayers  , SystemMandatory|TechnologyHelper)
+                 , ('symbolicRulesTable' , Technology.loadSymbolicRules   , SystemMandatory|TechnologyHelper)
+                 , ('workingLayersTable' , Technology.loadWorkingLayers   , SystemMandatory|TechnologyHelper)
+                 , ('technoConfig'       , Technology.loadTechnoConfig    , SystemMandatory|TechnologyHelper)
+                 , ('gdsLayersTable'     , Technology.loadGdsLayers       , SystemMandatory|TechnologyHelper)
+                 , ('patternsTable'      , Patterns.loadPatterns          , SystemMandatory|PatternsHelper)
+                 , ('stylesTable'        , Display.loadStyles             , SystemMandatory|DisplayHelper)
+                 , ('defaultStyle'       , Display.loadDefaultStyle       , SystemMandatory|DisplayHelper)
+                 , ('parametersTable'    , Configuration.loadParameters   , ConfigurationHelper)
+                 , ('layoutTable'        , Configuration.loadLayout       , ConfigurationHelper)
                  )
 
   print '       o  Running configuration hook: coriolisConfigure().'
@@ -101,16 +97,15 @@ def coriolisConfigure():
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
-  confFiles = [ (helpers.symbolicDir+'/alliance.conf'  , SystemFile|AllianceHelper)
-              , (helpers.symbolicDir+'/technology.conf', SystemFile|SymbolicHelper)
-              , (helpers.realDir    +'/technology.conf', SystemFile|RealHelper)
-              , (helpers.symbolicDir+'/patterns.conf'  , SystemFile|PatternsHelper)
-              , (helpers.symbolicDir+'/display.conf'   , SystemFile|DisplayHelper)
-              , (helpers.symbolicDir+'/misc.conf'      , SystemFile|ConfigurationHelper)
-              , (helpers.symbolicDir+'/etesian.conf'   , SystemFile|ConfigurationHelper)
-              , (helpers.symbolicDir+'/kite.conf'      , SystemFile|ConfigurationHelper|KiteHelper)
-              , (helpers.symbolicDir+'/stratus1.conf'  , SystemFile|ConfigurationHelper)
-              , (helpers.symbolicDir+'/plugins.conf'   , SystemFile|ConfigurationHelper)
+  confFiles = [ (helpers.technoDir+'/alliance.conf'  , SystemFile|AllianceHelper)
+              , (helpers.technoDir+'/technology.conf', SystemFile|TechnologyHelper)
+              , (helpers.technoDir+'/patterns.conf'  , SystemFile|PatternsHelper)
+              , (helpers.technoDir+'/display.conf'   , SystemFile|DisplayHelper)
+              , (helpers.technoDir+'/misc.conf'      , SystemFile|ConfigurationHelper)
+              , (helpers.technoDir+'/etesian.conf'   , SystemFile|ConfigurationHelper)
+              , (helpers.technoDir+'/kite.conf'      , SystemFile|ConfigurationHelper|KiteHelper)
+              , (helpers.technoDir+'/stratus1.conf'  , SystemFile|ConfigurationHelper)
+              , (helpers.technoDir+'/plugins.conf'   , SystemFile|ConfigurationHelper)
               ]
   if os.getenv('HOME'):
     confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.py', 0) ]
@@ -161,8 +156,8 @@ def coriolisConfigure():
  #sys.stdout.write(CRL.AllianceFramework.get().getEnvironment().getPrint())
 
   if not Cfg.getParamString('stratus1.mappingName').asString():
-    vendorTech  = helpers.realTechno.split('/')[-1]
-    mappingFile = os.path.join( helpers.realDir, 'stratus.xml' )
+    vendorTech  = helpers.techno.split('/')[-1]
+    mappingFile = os.path.join( helpers.technoDir, 'stratus.xml' )
     if not os.path.isfile(mappingFile): 
       mappingFile = os.path.join( helpers.sysConfDir, 'stratus2sxlib.xml' )
 

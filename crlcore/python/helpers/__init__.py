@@ -28,10 +28,9 @@ import Hurricane
 quiet          = False
 sysConfDir     = None
 ndaConfDir     = None
-symbolicTechno = 'cmos'
-symbolicDir    = None
-realTechno     = '130/hcmos9gp'
-realDir        = None
+techno         = 'symbolic/cmos'
+technoDir      = None
+unitsLambda    = True
 tab            = None
 _trace         = None
 moduleGlobals  = globals()
@@ -280,13 +279,29 @@ def setTraceLevel ( level ):
   return
 
 
+def lambdaMode ():
+  global unitsLambda
+  unitsLambda = true
+  return
+
+
+def micronsMode ():
+  global unitsLambda
+  unitsLambda = False
+  return
+
+
+def toDbU ( value ):
+  global unitsLambda
+  if unitsLambda: return Hurricane.DbU.fromLambda( value )
+  return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerMicro )
+
+
 def initTechno ( argQuiet ):
   global quiet
   global ndaConfDir
-  global realDir
-  global realTechno
-  global symbolicDir
-  global symbolicTechno
+  global technoDir
+  global techno
 
   quiet = argQuiet
 
@@ -301,36 +316,32 @@ def initTechno ( argQuiet ):
       if not quiet: print '          - Loading \"%s\".' % truncPath(technoFile)
       execfile(technoFile,moduleGlobals)
       break
-  if moduleGlobals.has_key('symbolicTechnology'):
-    symbolicTechno = symbolicTechnology
+  if moduleGlobals.has_key('technology'):
+    techno = technology
   else:
-    print '[WARNING] The symbolic technology name is not set. Using <%s>.' % symbolicTechno
-  if moduleGlobals.has_key('realTechnology'):
-    realTechno = realTechnology
-  else:
-    print '[WARNING] The real technology name is not set. Using <%s>.' % realTechno
+    print '[WARNING] The technology is not set. Using <%s>.' % techno
 
   if moduleGlobals.has_key('NdaDirectory'):
     ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
   else:
     ndaConfDir = sysConfDir
 
-  symbolicDir = os.path.join( sysConfDir, symbolicTechno )
-  realDir     = os.path.join( ndaConfDir, realTechno )
-  if not quiet: print '          - Technologies: %s+%s.' % (symbolicTechno,realTechno)
+  technoDir = os.path.join( ndaConfDir, techno )
+  if not quiet: print '          - Technology: %s.' % techno
 
 
 def staticInitialization ( quiet=False ):
   global sysConfDir
-  global symbolicDir
-  global realDir
+  global technoDir
   global tab
   global _trace
+  global unitsLambda
 
   if sysConfDir != None: return
 
-  tab    = Tab()
-  _trace = Trace()
+  unitsLamba = True
+  tab        = Tab()
+  _trace     = Trace()
   
   reSysConfDir = re.compile(r'.*etc\/coriolis2')
   if not quiet: print '  o  Locating configuration directory:'

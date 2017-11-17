@@ -1,4 +1,3 @@
-
 # -*- mode:Python -*-
 
 import sys
@@ -19,7 +18,7 @@ from   CRL       import AllianceFramework
 from   helpers   import ErrorMessage
 
 
-symbolicFile   = '<No symbolic file specified>'
+technologyFile = '<No technology file specified>'
 
 
 class SymbolicLayerType ( object ):
@@ -97,9 +96,9 @@ layersLUT = LayersLUT()
 
 
 def loadRealLayers ( realLayersTable, confFile ):
-    global symbolicFile
-    symbolicFile = confFile
-    technology   = DataBase.getDB().getTechnology()
+    global technologyFile
+    technologyFile = confFile
+    technology     = DataBase.getDB().getTechnology()
 
     entryNo = 0
     for entry in realLayersTable:
@@ -132,14 +131,14 @@ def loadRealLayers ( realLayersTable, confFile ):
                 routingLayer.setBlockageLayer(basicLayer)
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<symbolicLayersTable> at index %d.' % (symbolicFile,entryNo))
+            ErrorMessage.wrapPrint(e,'In %s:<realLayersTable> at entry %d.' % (technologyFile,entryNo))
     return
 
 
 def loadSymbolicLayers ( symbolicLayersData, confFile ):
-    global symbolicFile
-    symbolicFile = confFile
-    technology   = DataBase.getDB().getTechnology()
+    global technologyFile
+    technologyFile = confFile
+    technology     = DataBase.getDB().getTechnology()
 
     entryNo = 0
     for entry in symbolicLayersData:
@@ -197,14 +196,14 @@ def loadSymbolicLayers ( symbolicLayersData, confFile ):
             layersLUT.add( symbolicLayer )
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<symbolicLayersTable> at index %d.' % (symbolicFile,entryNo))
+            ErrorMessage.wrapPrint(e,'In %s:<symbolicLayersTable> at entry %d.' % (technologyFile,entryNo))
     return
 
 
 def loadSymbolicRules ( symbolicRulesTable, confFile ):
-    global symbolicFile
-    symbolicFile = confFile
-    technology   = DataBase.getDB().getTechnology()
+    global technologyFile
+    technologyFile = confFile
+    technology     = DataBase.getDB().getTechnology()
 
     entryNo = 0
     for rule in symbolicRulesTable:
@@ -253,14 +252,14 @@ def loadSymbolicRules ( symbolicRulesTable, confFile ):
                                      ])
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<symbolicRulesTable> at index %d.' % (symbolicFile,entryNo))
+            ErrorMessage.wrapPrint(e,'In %s:<symbolicRulesTable> at entry %d.' % (technologyFile,entryNo))
     return
 
 
 def loadWorkingLayers ( workingLayersTable, confFile ):
-    global symbolicFile
-    symbolicFile = confFile
-    technology   = DataBase.getDB().getTechnology()
+    global technologyFile
+    technologyFile = confFile
+    technology     = DataBase.getDB().getTechnology()
 
     entryNo = 0
     for layerName in workingLayersTable:
@@ -270,15 +269,98 @@ def loadWorkingLayers ( workingLayersTable, confFile ):
             layersLUT.lookup(layerName,LayersLUT.Real|LayersLUT.Symbolic|LayersLUT.MissingError)
             technology.setWorkingLayer(layerName)
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<symbolicRulesTable> at index %d.' % (symbolicFile,entryNo))
+            ErrorMessage.wrapPrint(e,'In %s:<workingLayersTable> at entry %d.' % (technologyFile,entryNo))
     return
 
 
 def loadViewerConfig ( viewerConfig, confFile ):
-    global symbolicFile
-    symbolicFile = confFile
+    global technologyFile
+    technologyFile = confFile
     try:
         if viewerConfig.has_key('precision'): DbU.setPrecision(viewerConfig['precision'])
     except Exception, e:
         ErrorMessage.wrapPrint(e,'In %s:<viewerConfig>.')
+    return
+
+
+def loadGdsLayers ( realLayersTable, confFile ):
+    technologyFile   = confFile
+    technology = DataBase.getDB().getTechnology()
+
+    entryNo = 0
+    for entry in realLayersTable:
+        entryNo += 1
+
+        try:
+            if len(entry) != 3:
+                raise ErrorMessage(1,['Malformed entry in <realLayersTable>.'
+                                     ,'Must have exactly three fields: (symb_name,real_name,GDSII_extnb).'
+                                     ,str(entry)
+                                     ])
+            symbName, realName, gdsiiExtractNumber = entry
+            if not isinstance(gdsiiExtractNumber,int):
+                raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
+                                     ,'GDSII exctract number is not of int type (%s).' \
+                                          % helpers.stype(gdsiiExtractNumber)
+                                     ,str(entry)
+                                     ])
+
+            basicLayer = technology.getBasicLayer(symbName)
+            if not basicLayer:
+                raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
+                                     ,'The real layer "%s" associated to the GDSII "%s" do not exists.' \
+                                          % (symbName,realName)
+                                     ,str(entry)
+                                     ])
+            basicLayer.setRealName     ( realName )
+            basicLayer.setExtractNumber( gdsiiExtractNumber )
+
+        except Exception, e:
+            ErrorMessage.wrapPrint(e,'In %s:<gdsLayersTable> at entry %d.' % (technologyFile,entryNo))
+    return
+
+
+def loadTechnoConfig (  technoConfig, confFile ):
+    technologyFile = confFile
+    technology     = DataBase.getDB().getTechnology()
+
+    gridValue = 1
+    gridUnit  = DbU.UnitPowerMicro
+    for key in [ 'gridUnit', 'gridValue', 'gridsPerLambda' ]:
+        try:
+            if key == 'gridUnit':
+                if technoConfig.has_key(key):
+                    gridUnit = technoConfig[key]
+                    if gridUnit != DbU.UnitPowerPico  and \
+                       gridUnit != DbU.UnitPowerNano  and \
+                       gridUnit != DbU.UnitPowerMicro and \
+                       gridUnit != DbU.UnitPowerMilli and \
+                       gridUnit != DbU.UnitPowerUnity and \
+                       gridUnit != DbU.UnitPowerKilo:
+                        raise ErrorMessage(1,'In <technoConfig>, invalid DbU unit power for gridUnit, reseting to Micro.')
+                else:
+                    raise ErrorMessage(1,'<technoConfig> has no <gridUnit> defined, assuming Micro.')
+
+            elif key == 'gridValue':
+                if technoConfig.has_key('gridValue'):
+                    gridValue = technoConfig['gridValue']
+                    if not isinstance(gridUnit,float) and not isinstance(gridUnit,int):
+                        raise ErrorMessage(1,['In <technoConfig>, <gridValue> must be of type float (and not: %s).'
+                                              % helpers.stype(gridValue)
+                                             ])
+                    DbU.setPhysicalsPerGrid(gridValue,gridUnit)
+                else:
+                    raise ErrorMessage(1,'<technoConfig> has no <gridValue> defined.')
+    
+            elif key == 'gridsPerLambda':
+                if technoConfig.has_key('gridsPerLambda'):
+                    gridsPerLambda = technoConfig['gridsPerLambda']
+                    if not isinstance(gridsPerLambda,int):
+                        raise ErrorMessage(1,['In <technoConfig>, <gridsPerLambda> must be of type int (and not: %s).'
+                                            % helpers.stype(gridsPerLambda)
+                                           ])
+                    DbU.setGridsPerLambda(gridsPerLambda)
+    
+        except Exception, e:
+            ErrorMessage.wrapPrint(e)
     return
