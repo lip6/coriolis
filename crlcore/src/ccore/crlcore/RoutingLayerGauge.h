@@ -274,6 +274,12 @@ inline std::string  getString<const Constant::LayerGaugeType*>
 
 
 template<>
+inline std::string  getString<Constant::LayerGaugeType*>
+                            ( Constant::LayerGaugeType* layerGaugeType )
+{ return getString<const Constant::LayerGaugeType*>(layerGaugeType); }
+
+
+template<>
 inline std::string  getString<const Constant::LayerGaugeType>
                             ( const Constant::LayerGaugeType layerGaugeType )
 {
@@ -283,6 +289,12 @@ inline std::string  getString<const Constant::LayerGaugeType>
   }
   return "Unknown Constant::LayerGaugeType";
 }
+
+
+template<>
+inline std::string  getString<Constant::LayerGaugeType>
+                            ( Constant::LayerGaugeType layerGaugeType )
+{ return getString<const Constant::LayerGaugeType>(layerGaugeType); }
 
 
 IOSTREAM_POINTER_SUPPORT(Constant::LayerGaugeType);

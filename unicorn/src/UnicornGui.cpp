@@ -19,6 +19,7 @@
 #include <QMenu>
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/viewer/Script.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/viewer/PyCellViewer.h"
@@ -32,6 +33,7 @@
 #include "crlcore/Ispd05Bookshelf.h"
 #include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
+#include "crlcore/LefImport.h"
 #include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
 #include "crlcore/GdsDriver.h"
@@ -50,6 +52,8 @@ namespace Unicorn {
   using Hurricane::Warning;
   using Hurricane::PyCellViewer_Link;
   using Hurricane::jsonCellParse;
+  using Hurricane::DataBase;
+  using Hurricane::Library;
   using CRL::System;
   using CRL::Catalog;
   using CRL::AllianceFramework;
@@ -59,6 +63,7 @@ namespace Unicorn {
   using CRL::Ispd05;
   using CRL::Blif;
   using CRL::Iccad04Lefdef;
+  using CRL::LefImport;
   using CRL::DefImport;
   using CRL::DefExport;
   using CRL::GdsDriver;
@@ -92,13 +97,14 @@ namespace Unicorn {
     _runUnicornInit();
 
     _importCell.setDialog( _importDialog );
-    _importCell.addImporter( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
-    _importCell.addImporter( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
-    _importCell.addImporter( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
-    _importCell.addImporter( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
-    _importCell.addImporter( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
-    _importCell.addImporter( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
-    _importCell.addImporter( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
+    _importCell.addImporter<Cell*>   ( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
+    _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1 ) );
+    _importCell.addImporter<Cell*>   ( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
+    _importCell.addImporter<Cell*>   ( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
+    _importCell.addImporter<Cell*>   ( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
+    _importCell.addImporter<Cell*>   ( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
+    _importCell.addImporter<Cell*>   ( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
+    _importCell.addImporter<Library*>( "Cadence LEF"                 , std::bind( &LefImport::load    , placeholders::_1 ) );
 
     _libraryManager->setCellViewer( this );
   }
@@ -196,6 +202,9 @@ namespace Unicorn {
 
   Cell* UnicornGui::getCellFromDb ( const char* name )
   {
+    Cell* cell = DataBase::getDB()->getCell( name );
+    if (cell) return cell;
+
     return AllianceFramework::get()->getCell ( name, Catalog::State::Views );
   }
 
@@ -253,16 +262,17 @@ namespace Unicorn {
     int     format;
 
     if ( _importDialog->runDialog( cellName, format, newViewer ) ) {
-      Cell* cell = _importCell.load( cellName.toStdString(), format ); 
-
-      if (cell) {
-        UnicornGui* viewer = this;
-        if (newViewer) {
-          viewer = UnicornGui::create();
-          viewer->show();
+      if (_importCell.load( cellName.toStdString(), format )) {
+        Cell* cell = _importCell.getLoaded<Cell*>();
+        if (cell) {
+          UnicornGui* viewer = this;
+          if (newViewer) {
+            viewer = UnicornGui::create();
+            viewer->show();
+          }
+          viewer->setCell( cell );
+          emit cellLoadedFromDisk ( cell );
         }
-        viewer->setCell( cell );
-        emit cellLoadedFromDisk ( cell );
       }
     }
   }

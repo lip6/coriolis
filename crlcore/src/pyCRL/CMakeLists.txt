@@ -43,6 +43,7 @@
                                     PyAcmSigda.cpp
                                     PyIspd05.cpp
                                     PyBlif.cpp
+                                    PyLefImport.cpp
                       )	    
                    set( pyIncludes  crlcore/PyBanner.h
                                     crlcore/PyCatalog.h
@@ -60,6 +61,7 @@
                                     crlcore/PyAcmSigda.h
                                     crlcore/PyIspd05.h
                                     crlcore/PyBlif.h
+                                    crlcore/PyLefImport.h
                       )	         
                    set( depLibs     crlcore
                                     ${HURRICANE_PYTHON_LIBRARIES}

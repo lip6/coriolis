@@ -61,6 +61,7 @@
                                                crlcore/LefDefExtension.h
                                                crlcore/DefImport.h
                                                crlcore/DefExport.h
+                                               crlcore/LefImport.h
                                                crlcore/LefExport.h
                                                crlcore/Blif.h
                                                crlcore/AcmSigda.h
@@ -157,6 +158,7 @@
 #                          ) 
                        set ( lefdef_cpps       lefdef/LefExport.cpp
                                                lefdef/DefExport.cpp
+                                               lefdef/LefImport.cpp
                                                lefdef/DefImport.cpp
                                                lefdef/LefDefExtension.cpp
                            )

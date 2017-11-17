@@ -53,7 +53,7 @@ namespace Unicorn {
     label->setText ( tr("Enter Cell name (without extention)") );
     label->setFont ( Graphics::getNormalFont(true) );
 
-    _lineEdit->setMinimumWidth ( 400 );
+    _lineEdit->setMinimumWidth ( Graphics::toHighDpi(400) );
     _viewerCheckBox->setText ( tr("Import in new Viewer") );
 
     QPushButton* okButton = new QPushButton ();
@@ -81,13 +81,6 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
-#if 0
-    _formatComboBox->addItem ( tr("ACM/SIGDA (aka MCNC, .bench)"), ImportCell::AcmSigda    );
-    _formatComboBox->addItem ( tr("ISPD'04 (Bookshelf)")         , ImportCell::Ispd04      );
-    _formatComboBox->addItem ( tr("ISPD'05 (Bookshelf)")         , ImportCell::Ispd05      );
-    _formatComboBox->addItem ( tr("ICCAD'04 (LEF/DEF)")          , ImportCell::Iccad04     );
-    _formatComboBox->addItem ( tr("Alliance compliant DEF")      , ImportCell::AllianceDef );
-#endif
     hLayout2->addWidget ( _formatComboBox );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();

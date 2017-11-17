@@ -126,11 +126,11 @@ namespace CRL {
   Record* CellGauge::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add ( getSlot ( "Name"            , &_name        ) );
-    record->add ( getSlot ( "PinLayerName"    , &_pinLayerName) );
-    record->add ( getSlot ( "pitch"           ,  _pitch       ) );
-    record->add ( getSlot ( "sliceHeight"     , _sliceHeight  ) );
-    record->add ( getSlot ( "sliceStep"       , _sliceStep    ) );
+    record->add( getSlot          ( "Name"            , &_name         ) );
+    record->add( getSlot          ( "PinLayerName"    , &_pinLayerName ) );
+    record->add( DbU::getValueSlot( "pitch"           , &_pitch        ) );
+    record->add( DbU::getValueSlot( "sliceHeight"     , &_sliceHeight  ) );
+    record->add( DbU::getValueSlot( "sliceStep"       , &_sliceStep    ) );
     return ( record );
   }
 

@@ -15,9 +15,9 @@
 
 
 #include <iostream>
+#include <boost/any.hpp>
 #include "hurricane/Error.h"
 #include "unicorn/ImportCell.h"
-#include "unicorn/ImportCellDialog.h"
 
 
 namespace Unicorn {
@@ -25,41 +25,54 @@ namespace Unicorn {
   using std::cerr;
   using std::endl;
   using std::string;
+  using std::function;
   using Hurricane::Error;
   using Hurricane::Cell;
+  using Hurricane::Library;
+
+
+  Importer:: Importer () : _rvalue() { }
+  Importer::~Importer () { }
 
 
   ImportCell::ImportCell ()
-    : _count (0)
-    , _lut   ()
-    , _dialog(NULL)
+    :  _importers()
+    , _dialog    (NULL)
+    , _activeId  (0)
   { }
 
 
-  void  ImportCell::addImporter ( std::string menuName, std::function<Cell*(std::string)> callback )
+  ImportCell::~ImportCell ()
   {
-    _lut.insert( make_pair( _count, make_pair(menuName,callback) ) );
-    _dialog->addFormat( menuName.c_str(), _count++ );
+    for ( Importer* importer : _importers ) delete importer;
   }
 
 
-  Cell*  ImportCell::load ( const string& cellName, int format )
+  bool  ImportCell::load ( const string& cellName, int formatId )
   {
-    Cell* cell = NULL; 
-
-    ImportLut::iterator iimport = _lut.find( format );
-    if (iimport == _lut.end()) {
-      cerr << Error( "Importer id:%d for cell %s not found.", format, cellName.c_str() ) << endl;
-      return NULL;
+    if ( (formatId < 0) or ((size_t)formatId >= _importers.size()) ) {
+      cerr << Error( "Importer id:%d for library or cell %s not found.", formatId, cellName.c_str() ) << endl;
+      _activeId = _importers.size();
+      return false;
     }
+    _activeId = (size_t)formatId;
+    
+    Importer* importer = _importers[ _activeId ];
+    importer->load( cellName );
 
-    cell = iimport->second.second( cellName );
-
-    if (not cell) {
+    if (importer->isA<Cell*>() and not importer->getAs<Cell*>()) {
       cerr << Error( "Cell not found: %s", cellName.c_str() ) << endl;
+      _activeId = _importers.size();
+      return false;
     }
 
-    return cell;
+    if (importer->isA<Library*>() and not importer->getAs<Library*>()) {
+      cerr << Error( "Library not found: %s", cellName.c_str() ) << endl;
+      _activeId = _importers.size();
+      return false;
+    }
+
+    return true;
   }
 
 
