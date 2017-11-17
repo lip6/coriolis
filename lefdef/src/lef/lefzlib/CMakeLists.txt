@@ -14,4 +14,4 @@
        set_target_properties ( lefzlib  PROPERTIES VERSION 5.8 SOVERSION 5 )
       
                      install ( TARGETS  lefzlib DESTINATION lib${LIB_SUFFIX} )
-                     install ( FILES    ${includes} DESTINATION include/lef ) 
+                     install ( FILES    ${includes} DESTINATION include/lefdef ) 

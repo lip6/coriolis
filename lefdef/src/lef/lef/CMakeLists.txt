@@ -69,48 +69,4 @@
        set_target_properties ( lef      PROPERTIES VERSION 5.8 SOVERSION 5 )
       
                      install ( TARGETS  lef DESTINATION lib${LIB_SUFFIX} )
-                     install ( FILES    ${includes} DESTINATION include/lef ) 
-
-
-#LEF_TABNAME     = lef
-#LEF_BISON_SRCS  = lef.y
-#
-#FAKE_ALL: all
-#
-#DIRNAME = lef
-#LEF_BISON_SRCS  = lef.y
-#
-#LIBTARGET =	liblef.a
-#
-#HEADERS =	\
-#		    lef.tab.h \
-#		    lex.h \
-#		    crypt.hpp \
-#		    lex.cpph
-#
-#LIBSRCS =  \
-#		    crypt.cpp \
-#		    lef.tab.cpp \
-#		    lef_keywords.cpp \
-#		    lefiArray.cpp \
-#		    lefiCrossTalk.cpp \
-#		    lefiDebug.cpp \
-#		    lefiEncryptInt.cpp \
-#		    lefiLayer.cpp \
-#		    lefiMacro.cpp \
-#		    lefiMisc.cpp \
-#		    lefiNonDefault.cpp \
-#		    lefiProp.cpp \
-#		    lefiPropType.cpp \
-#		    lefiTBExt.cpp \
-#		    lefiUnits.cpp \
-#		    lefiVia.cpp \
-#		    lefiViaRule.cpp \
-#                    lefrCallbacks.cpp \
-#                    lefrData.cpp \
-#		    lefrReader.cpp \
-#                    lefrSettings.cpp \
-#		    lefwWriter.cpp \
-#		    lefwWriterCalls.cpp
-#
-#include ../template.mk
+                     install ( FILES    ${includes} DESTINATION include/lefdef ) 

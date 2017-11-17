@@ -14,4 +14,4 @@
        set_target_properties ( defzlib  PROPERTIES VERSION 5.8 SOVERSION 5 )
       
                      install ( TARGETS  defzlib DESTINATION lib${LIB_SUFFIX} )
-                     install ( FILES    ${includes} DESTINATION include/def ) 
+                     install ( FILES    ${includes} DESTINATION include/lefdef ) 

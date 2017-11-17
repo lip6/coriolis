@@ -27,10 +27,9 @@ from   CRL       import AllianceFramework
 from   CRL       import RoutingGauge
 from   CRL       import RoutingLayerGauge
 from   CRL       import CellGauge
+import helpers
 from   helpers   import ErrorMessage
 from   helpers   import Debug
-import helpers.RealTechnology
-import helpers.SymbolicTechnology
 
 
 allianceFile = '<allianceFile has not been set>'

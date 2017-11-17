@@ -77,16 +77,16 @@
                            "/soc/oa"
                            )
    message( "-- Components of LEFDEF_DIR_SEARCH:" )
-   foreach( PATH ${LEFDEF_DIR_SEARCH} )
+   foreach( PATH ${LEFDEF_SEARCH_PATH} )
      message( "--   ${PATH}" )
    endforeach()
  
    set( LEFDEF_LIBRARIES           "" )
    set( LEFDEF_LIBRARY_SEARCH_PATH "" )
  
-   find_path( LEFDEF_INCLUDE_DIR NAMES "defiDefs.h"
+   find_path( LEFDEF_INCLUDE_DIR NAMES "defiDefs.hpp"
                                  PATHS ${LEFDEF_SEARCH_PATH}
-                                 PATH_SUFFIXES "include" "include/lefdef"
+                                 PATH_SUFFIXES "include/lefdef" "include"
                                  DOC "The ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
    message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
  
