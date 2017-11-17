@@ -283,6 +283,10 @@ namespace Kite {
       Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
       Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
 
+      Interval      constraints;
+      autoSegment->getConstraints( constraints );
+      uside.intersection( constraints );
+
       if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
       if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
 

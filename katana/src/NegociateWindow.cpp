@@ -316,6 +316,10 @@ namespace Katana {
       Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
       Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
 
+      Interval      constraints;
+      autoSegment->getConstraints( constraints );
+      uside.intersection( constraints );
+
       cdebug_log(159,0) << "* Nearest " << track << endl;
 
       if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
