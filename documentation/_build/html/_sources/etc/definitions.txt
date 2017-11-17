@@ -33,6 +33,8 @@
 .. |Cadence|                        replace:: :sc:`Cadence`
 .. |Si2|                            replace:: :sc:`Si2`
 .. |LEFDEF|                         replace:: :sc:`lefdef`
+.. |LEF|                            replace:: :sc:`lef`
+.. |DEF|                            replace:: :sc:`def`
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
 .. |RHEL6|                          replace:: :sc:`rhel6`
@@ -45,6 +47,7 @@
 .. |FC13|                           replace:: :sc:`fc13`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
+.. |MOSIS|                          replace:: :sc:`mosis`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`

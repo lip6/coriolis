@@ -54,8 +54,8 @@ Configuration is done in two stages:
 |newpage|
 
 
-First Stage: Symbolic Technology Selection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+First Stage: Technology Selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |noindent|
 The initialization process is done by executing, in order, the following
@@ -71,13 +71,16 @@ file(s):
 | **3** | The user's local setting         | :cb:`<CWD>/.coriolis2/techno.py`             |
 +-------+----------------------------------+----------------------------------------------+
 
-Thoses files must provides only two variables, the name of the symbolic technology
-and the one of the real technology. For example: ::
+Thoses files must provides only one variable, the name of the technology. Each technology
+will provide configuration for both the symbolic part and the real part. |Coriolis| can
+work with purely symbolic technology (``symbolic/cmos``) in that case, the real technology
+part is a dummy one.
+
+For example, to use |MOSIS| 180nm: ::
 
     # -*- Mode:Python -*-
     
-    symbolicTechno = 'cmos'
-    realTechno     = 'hcmos9'
+    technology = '180/scn6m_deep_09'
 
 
 Second Stage: Technology Configuration Loading
