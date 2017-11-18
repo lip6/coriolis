@@ -425,8 +425,24 @@ namespace Etesian {
 
     if (not cmess2.enabled()) dots.disable();
 
+    size_t  instancesNb = 0;
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() ) {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+
+      if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED )
+         and (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) ) {
+        throw Error( "EtesianEngine::toColoquinte(): Cannot manage unplaced block, instance \"%s\" of \"%s\"."
+                   , getString(instance  ->getName()).c_str()
+                   , getString(masterCell->getName()).c_str()
+                   );
+      }
+
+      ++instancesNb;
+    }
+
   // Coloquinte circuit description data-structures.
-    size_t                  instancesNb = getCell()->getLeafInstanceOccurrences().getSize();
     vector<Transformation>  idsToTransf ( instancesNb );
     vector<temporary_cell>  instances   ( instancesNb );
     vector< point<int_t> >  positions   ( instancesNb );
