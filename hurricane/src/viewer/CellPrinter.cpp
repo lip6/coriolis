@@ -8,7 +8,7 @@
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./CellPrinter.cpp"                             |
 // +-----------------------------------------------------------------+
@@ -330,7 +330,7 @@ namespace Hurricane {
   //   swap( _xpaper       , _ypaper       );
   // }
 
-    resize ( _drawingWidth, _drawingHeight );
+    resize( _drawingWidth, _drawingHeight );
 
     Box visibleArea = _screenCellWidget->getVisibleArea();
     if ( visibleArea.contains(_screenCellWidget->getCell()->getAbutmentBox()) ) {

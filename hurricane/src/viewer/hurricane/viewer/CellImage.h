@@ -2,28 +2,27 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2012-2016, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/viewer/CellImage.h"                |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_CELL_IMAGE__
-#define  __HURRICANE_CELL_IMAGE__
+#ifndef  HURRICANE_CELL_IMAGE_H
+#define  HURRICANE_CELL_IMAGE_H
 
 
-#include   <list>
-
+#include <list>
 using namespace std;
 
-#include  <QMainWindow>
+#include <QMainWindow>
 
 class QEvent;
 class QKeyEvent;

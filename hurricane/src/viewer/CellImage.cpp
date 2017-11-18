@@ -126,22 +126,33 @@ namespace Hurricane {
 
     _flags = flags;
 
-    int  scale = 80 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
-    _drawingWidth  = _cellWidget->width ()*scale;
-    _drawingHeight = _cellWidget->height()*scale;
+  //int  scale = 80 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
+    int  scale = (Graphics::isHighDpi()) ? 1 : 2;
+    _drawingWidth  = _cellWidget->width () * scale;
+    _drawingHeight = _cellWidget->height() * scale;
 
     _image = new QImage( _drawingWidth
                        , _drawingHeight + ((_flags&ShowScale) ? 60 : 0)
                        , QImage::Format_RGB32 );
 
-  // Compute the delta size between CellImage and CellWidget.
-    cerr << "CellImage:" << geometry().width() << "x" << geometry().height() << endl;
-    cerr << "CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
-    cerr << "resize:     " << _drawingWidth << "x" << _drawingHeight << endl;
-    cerr << "AbutmentBox:" << _cellWidget->getCell()->getAbutmentBox() << endl;
-    cerr << "visibleArea:" << _cellWidget->getVisibleArea() << endl;
+// Compute the delta size between CellPrinter and CellWidget.
+  cerr << "Image/Screen settings:" << endl;
+//cerr << "  Screen Resolution (DPI): " << resolution() << endl;   
+  cerr << "  CellImage:               " << geometry().width() << "x" << geometry().height() << endl;
+  cerr << "  CellWidget:              " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
+  cerr << "  ScreenCellWidget:        " << _screenCellWidget->geometry().width() << "x" << _screenCellWidget->geometry().height() << endl;
+  cerr << "  resize:                  " << _drawingWidth << "x" << _drawingHeight << endl;
+  cerr << "  AbutmentBox:             " << _cellWidget->getCell()->getAbutmentBox() << endl;
+  cerr << "  visibleArea:             " << _cellWidget->getVisibleArea() << endl;
 
-    resize ( _drawingWidth, _drawingHeight );
+  // Compute the delta size between CellImage and CellWidget.
+    // cerr << "CellImage:"   << geometry().width() << "x" << geometry().height() << endl;
+    // cerr << "CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
+    // cerr << "resize:     " << _drawingWidth << "x" << _drawingHeight << endl;
+    // cerr << "AbutmentBox:" << _cellWidget->getCell()->getAbutmentBox() << endl;
+    // cerr << "visibleArea:" << _cellWidget->getVisibleArea() << endl;
+
+    resize( _drawingWidth, _drawingHeight );
 
     Box visibleArea = _screenCellWidget->getVisibleArea();
     if ( visibleArea.contains(_screenCellWidget->getCell()->getAbutmentBox()) ) {
@@ -151,9 +162,9 @@ namespace Hurricane {
       _cellWidget->reframe( _screenCellWidget->getVisibleArea() );
     }
 
-    cerr << "After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
-    cerr << "visibleArea(image):" << _cellWidget->getVisibleArea() << endl;
-    cerr << "visibleArea(screen): " << _screenCellWidget->getVisibleArea() << endl;
+    cerr << "  After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
+    cerr << "  VisibleArea(printer):    " << _cellWidget->getVisibleArea() << endl;
+    cerr << "  VisibleArea(screen):     " << _screenCellWidget->getVisibleArea() << endl;
 
   //cerr << "(xpaper,ypaper) = (" << xpaper << "," << ypaper << ")"  << endl;
   //cerr << "(w,h) = (" << w << "," << h << ")"  << endl;
