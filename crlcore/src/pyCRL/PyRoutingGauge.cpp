@@ -8,7 +8,7 @@
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
 // | =============================================================== |
 // |  C++ Module  :  "./PyRoutingGauge.cpp"                          |
 // +-----------------------------------------------------------------+
@@ -121,6 +121,34 @@ extern "C" {
     HCATCH
 
     return Py_BuildValue("I",depth);
+  }
+
+
+  static PyObject* PyRoutingGauge_getHorizontalPitch ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getHorizontalPitch()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getHorizontalPitch()")
+      pitch = rg->getHorizontalPitch();
+    HCATCH
+
+    return Py_BuildValue("I",pitch);
+  }
+
+
+  static PyObject* PyRoutingGauge_getVerticalPitch ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getVerticalPitch()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getVerticalPitch()")
+      pitch = rg->getVerticalPitch();
+    HCATCH
+
+    return Py_BuildValue("I",pitch);
   }
 
 
@@ -336,29 +364,33 @@ extern "C" {
 
 
   PyMethodDef PyRoutingGauge_Methods[] =
-    { { "create"                , (PyCFunction)PyRoutingGauge_create           , METH_VARARGS|METH_STATIC
+    { { "create"                , (PyCFunction)PyRoutingGauge_create            , METH_VARARGS|METH_STATIC
                                 , "Create a new RoutingGauge." }
-    , { "getName"               , (PyCFunction)PyRoutingGauge_getName          , METH_NOARGS
+    , { "getName"               , (PyCFunction)PyRoutingGauge_getName           , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
-    , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology    , METH_NOARGS
+    , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology     , METH_NOARGS
                                 , "Return the Technology we are using." }
-    , { "getDepth"              , (PyCFunction)PyRoutingGauge_getDepth         , METH_NOARGS
+    , { "getDepth"              , (PyCFunction)PyRoutingGauge_getDepth          , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
-    , { "getLayerDepth"         , (PyCFunction)PyRoutingGauge_getLayerDepth    , METH_VARARGS
+    , { "getHorizontalPitch"    , (PyCFunction)PyRoutingGauge_getHorizontalPitch, METH_NOARGS
+                                , "Return the horizontal pitch of the metal closest to the substrate." }
+    , { "getVerticalPitch"      , (PyCFunction)PyRoutingGauge_getVerticalPitch  , METH_NOARGS
+                                , "Return the vertical pitch of the metal closest to the substrate." }
+    , { "getLayerDepth"         , (PyCFunction)PyRoutingGauge_getLayerDepth     , METH_VARARGS
                                 , "Return the depth of the given layer." }
-    , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge    , METH_VARARGS
+    , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge     , METH_VARARGS
                                 , "Return the RoutingLayerGauge of the given layer/depth." }
-    , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection, METH_VARARGS
+    , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection , METH_VARARGS
                                 , "Return the direction of the given layer/depth." }
-    , { "getLayerPitch"         , (PyCFunction)PyRoutingGauge_getLayerPitch    , METH_VARARGS
+    , { "getLayerPitch"         , (PyCFunction)PyRoutingGauge_getLayerPitch     , METH_VARARGS
                                 , "Return the pitch of the given layer/depth." }
-    , { "getRoutingLayer"       , (PyCFunction)PyRoutingGauge_getRoutingLayer  , METH_VARARGS
+    , { "getRoutingLayer"       , (PyCFunction)PyRoutingGauge_getRoutingLayer   , METH_VARARGS
                                 , "Return the routing layer used for the requested depth." }
-    , { "getContactLayer"       , (PyCFunction)PyRoutingGauge_getContactLayer  , METH_VARARGS
+    , { "getContactLayer"       , (PyCFunction)PyRoutingGauge_getContactLayer   , METH_VARARGS
                                 , "Return the contact layer used for the requested depth." }
-    , { "getLayerGauges"        , (PyCFunction)PyRoutingGauge_getLayerGauges   , METH_NOARGS
+    , { "getLayerGauges"        , (PyCFunction)PyRoutingGauge_getLayerGauges    , METH_NOARGS
                                 , "Return the list of RoutingLayerGauge." }
-    , { "addLayerGauge"         , (PyCFunction)PyRoutingGauge_addLayerGauge    , METH_VARARGS
+    , { "addLayerGauge"         , (PyCFunction)PyRoutingGauge_addLayerGauge     , METH_VARARGS
                                 , "Adds a new RoutingLayerGauge to the RoutingGauge." }
   //, { "destroy"               , (PyCFunction)PyRoutingGauge_destroy          , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }

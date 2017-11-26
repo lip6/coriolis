@@ -341,7 +341,7 @@ namespace Anabatic {
   {
     Box ab = _anabatic->getCell()->getAbutmentBox();
 
-    RoutingLayerGauge* lg = _routingGauge->getLayerGauge( 1 );
+    RoutingLayerGauge* lg = _routingGauge->getVerticalGauge();
     DbU::Unit x = lg->getTrackPosition( ab.getXMin()
                                       , lg->getTrackIndex( ab.getXMin()
                                                          , ab.getXMax()
@@ -350,7 +350,7 @@ namespace Anabatic {
     if (x < constraint.getXMin()) x += lg->getPitch();
     if (x > constraint.getXMax()) x -= lg->getPitch();
 
-    lg = _routingGauge->getLayerGauge( 2 );
+    lg = _routingGauge->getHorizontalGauge();
     DbU::Unit y = lg->getTrackPosition( ab.getYMin()
                                       , lg->getTrackIndex( ab.getYMin()
                                                          , ab.getYMax()

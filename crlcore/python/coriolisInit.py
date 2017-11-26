@@ -130,12 +130,7 @@ def coriolisConfigure():
       print '          - Loading \"%s\".' % helpers.truncPath(confFile)
       execfile(confFile,moduleGlobals)
     except Exception, e:
-      print '[ERROR] An exception occured while loading the configuration file:'
-      print '        <%s>\n' % (confFile)
-      print '        You should check for simple python errors in this file.'
-      print '        Error was:'
-      print '        %s\n' % e
-      print '        Trying to continue anyway...'
+      helpers.showPythonTrace( confFile, e )
 
     for symbol, loader, loaderFlags in confHelpers:
       if moduleGlobals.has_key(symbol):

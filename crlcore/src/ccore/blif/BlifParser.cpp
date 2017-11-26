@@ -24,6 +24,7 @@
 #include <vector>
 using namespace std;
 
+#include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
@@ -281,7 +282,7 @@ namespace {
     , _connections ()
     , _model       (NULL)
   {
-    Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views, 0 );
+    Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views|Catalog::State::Foreign, 0 );
     if (cell) {
       _model = Model::find( getString(cell->getName()) );
       if (not _model) {
@@ -474,9 +475,18 @@ namespace {
   {
     auto framework = AllianceFramework::get();
 
+    static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
+    static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
+
     unsigned int supplyCount = 0;
-    Cell*        zero        = framework->getCell( "zero_x0", Catalog::State::Views );
-    Cell*        one         = framework->getCell( "one_x0" , Catalog::State::Views);
+    Cell*        zero        = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    Cell*        one         = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+
+    Net* masterNetZero = NULL;
+    for ( Net* net : zero->getNets() ) if (not net->isSupply()) { masterNetZero = net; break; }
+
+    Net* masterNetOne = NULL;
+    for ( Net* net : one->getNets() ) if (not net->isSupply()) { masterNetOne = net; break; }
 
     for ( Subckt* subckt : _subckts ) {
       if(not subckt->getModel())
@@ -549,7 +559,7 @@ namespace {
             Instance* insOne = Instance::create( _cell, insName.str(), one );
             Net*      netOne = Net::create( _cell, insName.str() );
 
-            insOne->getPlug( one->getNet("q") )->setNet( netOne );
+            insOne->getPlug( masterNetOne )->setNet( netOne );
             plug->setNet( netOne );
           }
 
@@ -559,7 +569,7 @@ namespace {
             Instance* insZero = Instance::create( _cell, insName.str(), zero );
             Net*      netZero = Net::create( _cell, insName.str() );
 
-            insZero->getPlug( zero->getNet("nq") )->setNet( netZero );
+            insZero->getPlug( masterNetZero )->setNet( netZero );
             plug->setNet( netZero );
           }
         }

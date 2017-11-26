@@ -84,6 +84,7 @@ namespace CRL {
                      , Logical     = 1 << 5
                      , Physical    = 1 << 6
                      , InMemory    = 1 << 7
+                     , Foreign     = 1 << 8
                      , Views       = Physical|Logical
                      };
         // Constructors.

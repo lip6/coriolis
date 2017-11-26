@@ -573,7 +573,7 @@ namespace {
       if (parser->getCoreSiteX() != parser->getCellGauge()->getSliceStep())
         cerr << Warning( "LefParser::parse(): CRL slice step discrepency %s while LEF is %s."
                        , DbU::getValueString(parser->getCellGauge()->getSliceStep()).c_str()
-                       , DbU::getValueString(parser->getCoreSiteY()).c_str() ) << endl;
+                       , DbU::getValueString(parser->getCoreSiteX()).c_str() ) << endl;
     }
     
     return parser->getLibrary();

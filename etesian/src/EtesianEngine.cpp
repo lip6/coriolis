@@ -27,6 +27,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
@@ -143,13 +144,14 @@ namespace {
 
 
   Transformation  toTransformation ( point<int_t>  position
-                                   , point<bool>  orientation
-                                   , Cell*           model
-                                   , DbU::Unit       pitch
+                                   , point<bool>   orientation
+                                   , Cell*         model
+                                   , DbU::Unit     hpitch
+                                   , DbU::Unit     vpitch
                                    )
   {
-    DbU::Unit tx         = position.x * pitch;
-    DbU::Unit ty         = position.y * pitch;
+    DbU::Unit tx = position.x * vpitch;
+    DbU::Unit ty = position.y * hpitch;
 
     Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
@@ -197,6 +199,7 @@ namespace Etesian {
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
   using Hurricane::Box;
+  using Hurricane::DataBase;
   using Hurricane::Layer;
   using Hurricane::Cell;
   using Hurricane::Instance;
@@ -269,10 +272,22 @@ namespace Etesian {
       cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
              << ">, no feed cells will be added." << endl;
     } else {
-    // Ugly: Direct uses of Alliance Framework.
-    // Must change toward something in the settings.
-      _feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
-      _feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
+      string feedNames = getConfiguration()->getFeedNames();
+      char   separator = ',';
+
+      while ( not feedNames.empty() ) {
+        size_t cut = feedNames.find( separator );
+        if (cut != string::npos) {
+          _feedCells.useFeed( DataBase::getDB()->getCell( feedNames.substr(0,cut) ) );
+          feedNames = feedNames.substr( cut+1 );
+        } else {
+          _feedCells.useFeed( AllianceFramework::get()->getCell( feedNames, Catalog::State::Views|Catalog::State::Foreign ) );
+          feedNames.clear();
+        }
+      }
+      
+    //_feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
+    //_feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
     }
   }
 
@@ -358,10 +373,14 @@ namespace Etesian {
       static_cast<Instance*>(ioccurrence.getEntity())->destroy();
     }
 
+    DbU::Unit abWidth = rows*getSliceHeight();
+    DbU::Unit adjust  = abWidth % getVerticalPitch();
+    if (adjust) abWidth += getVerticalPitch() - adjust;
+
     getCell()->setAbutmentBox( Box( DbU::fromLambda(0)
                                   , DbU::fromLambda(0)
-                                  , columns*getSliceHeight()
-                                  , rows   *getSliceHeight()
+                                  , abWidth
+                                  , rows*getSliceHeight()
                                   ) );
     UpdateSession::close();
     if (_viewer) _viewer->getCellWidget()->fitToContents();
@@ -419,9 +438,10 @@ namespace Etesian {
 
     resetPlacement();
 
-    Dots               dots  ( cmess2, "       ", 80, 1000 );
-    AllianceFramework* af    = AllianceFramework::get();
-    DbU::Unit          pitch = getPitch();
+    Dots               dots   ( cmess2, "       ", 80, 1000 );
+    AllianceFramework* af     = AllianceFramework::get();
+    DbU::Unit          hpitch = getHorizontalPitch();
+    DbU::Unit          vpitch = getVerticalPitch();
 
     if (not cmess2.enabled()) dots.disable();
 
@@ -507,11 +527,11 @@ namespace Etesian {
       instanceTransf.applyOn( instanceAb );
 
       // Upper rounded
-      int_t xsize = (instanceAb.getWidth () + pitch -1) / pitch;
-      int_t ysize = (instanceAb.getHeight() + pitch -1) / pitch;
+      int_t xsize = (instanceAb.getWidth () + vpitch -1) / vpitch;
+      int_t ysize = (instanceAb.getHeight() + hpitch -1) / hpitch;
       // Lower rounded
-      int_t xpos  = instanceAb.getXMin() / pitch;
-      int_t ypos  = instanceAb.getYMin() / pitch;
+      int_t xpos  = instanceAb.getXMin() / vpitch;
+      int_t ypos  = instanceAb.getYMin() / hpitch;
 
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
@@ -562,8 +582,8 @@ namespace Etesian {
         string insName = extractInstanceName( rp );
         Point  offset  = extractRpOffset    ( rp );
 
-        int_t xpin    = offset.getX() / pitch;
-        int_t ypin    = offset.getY() / pitch;
+        int_t xpin    = offset.getX() / vpitch;
+        int_t ypin    = offset.getY() / hpitch;
 
         auto  iid = _cellsToIds.find( insName );
         if (iid == _cellsToIds.end() ) {
@@ -577,10 +597,10 @@ namespace Etesian {
     }
     dots.finish( Dots::Reset );
 
-    _surface = box<int_t>( (int_t)(getCell()->getAbutmentBox().getXMin() / pitch)
-                         , (int_t)(getCell()->getAbutmentBox().getXMax() / pitch)
-                         , (int_t)(getCell()->getAbutmentBox().getYMin() / pitch)
-                         , (int_t)(getCell()->getAbutmentBox().getYMax() / pitch)
+    _surface = box<int_t>( (int_t)(getCell()->getAbutmentBox().getXMin() / vpitch)
+                         , (int_t)(getCell()->getAbutmentBox().getXMax() / vpitch)
+                         , (int_t)(getCell()->getAbutmentBox().getYMin() / hpitch)
+                         , (int_t)(getCell()->getAbutmentBox().getYMax() / hpitch)
                          );
     _circuit = netlist( instances, nets, pins );
     _circuit.selfcheck();
@@ -646,7 +666,8 @@ namespace Etesian {
      *       * artificially expand the areas given to coloquinte 
      *       * add placement dentity constraints
      */
-    DbU::Unit pitch = getPitch();
+    DbU::Unit   hpitch           = getHorizontalPitch();
+    DbU::Unit   vpitch           = getVerticalPitch();
     const float densityThreshold = 0.9;
 
     KiteEngine* routingEngine = KiteEngine::get( getCell() );
@@ -664,10 +685,10 @@ namespace Etesian {
         
             coloquinte::density_limit cur;
             cur.box_ = coloquinte::box<int_t>(
-                gc->getX()    / pitch,
-                gc->getXMax() / pitch,
-                gc->getY()    / pitch,
-                gc->getYMax() / pitch
+                gc->getX()    / vpitch,
+                gc->getXMax() / vpitch,
+                gc->getY()    / hpitch,
+                gc->getYMax() / hpitch
             );
             cur.density_ = densityThreshold/density;
             _densityLimits.push_back(cur);
@@ -753,7 +774,7 @@ namespace Etesian {
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
-    int_t sliceHeight = getSliceHeight() / getPitch();
+    int_t sliceHeight = getSliceHeight() / getHorizontalPitch();
     roughLegalize(sliceHeight, options);
 
     for ( int i=0; i<iterations; ++i ){
@@ -829,7 +850,7 @@ namespace Etesian {
     bool          routingDriven   = getRoutingDriven();
 
     startMeasures();
-    double         sliceHeight = getSliceHeight() / getPitch();
+    double         sliceHeight = getSliceHeight() / getHorizontalPitch();
 
     cmess1 << "  o  Running Coloquinte." << endl;
     cmess2 << "     - Computing initial placement..." << endl;
@@ -919,9 +940,9 @@ namespace Etesian {
     stopMeasures();
     printMeasures();
     cmess1 << ::Dots::asString
-      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
+      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getVerticalPitch() ) ) << endl;
     cmess1 << ::Dots::asString
-      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getPitch() ) ) << endl;
+      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getVerticalPitch() ) ) << endl;
 
     _placed = true;
 
@@ -979,6 +1000,8 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
+      DbU::Unit hpitch          = getHorizontalPitch();
+      DbU::Unit vpitch          = getVerticalPitch();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();
@@ -997,7 +1020,8 @@ namespace Etesian {
         Transformation trans    = toTransformation( position
                                                   , placement.orientations_[(*iid).second]
                                                   , instance->getMasterCell()
-                                                  , getPitch()
+                                                  , hpitch
+                                                  , vpitch
                                                   );
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
 

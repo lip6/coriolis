@@ -55,45 +55,46 @@ namespace Etesian {
     public:
       typedef ToolEngine  Super;
     public:
-      static  const Name&            staticGetName    ();
-      static  EtesianEngine*         create           ( Cell* );
-      static  EtesianEngine*         get              ( const Cell* );
-    public:                                           
-      virtual Configuration*         getConfiguration ();
-      virtual const Configuration*   getConfiguration () const;
-      virtual const Name&            getName          () const;
-      inline  CellGauge*             getCellGauge     () const;
-      inline  DbU::Unit              getPitch         () const;
-      inline  DbU::Unit              getSliceHeight   () const;
-      inline  Effort                 getPlaceEffort   () const;
-      inline  GraphicUpdate          getUpdateConf    () const;
-      inline  Density                getSpreadingConf () const;
-      inline  bool                   getRoutingDriven () const;
-      inline  double                 getSpaceMargin   () const;
-      inline  double                 getAspectRatio   () const;
-      inline  const FeedCells&       getFeedCells     () const;
-      inline  Hurricane::CellViewer* getViewer        () const;
-      inline  void                   setViewer        ( Hurricane::CellViewer* );
+      static  const Name&            staticGetName      ();
+      static  EtesianEngine*         create             ( Cell* );
+      static  EtesianEngine*         get                ( const Cell* );
+    public:                                             
+      virtual Configuration*         getConfiguration   ();
+      virtual const Configuration*   getConfiguration   () const;
+      virtual const Name&            getName            () const;
+      inline  RoutingGauge*          getGauge           () const;
+      inline  CellGauge*             getCellGauge       () const;
+      inline  DbU::Unit              getHorizontalPitch () const;
+      inline  DbU::Unit              getVerticalPitch   () const;
+      inline  DbU::Unit              getSliceHeight     () const;
+      inline  Effort                 getPlaceEffort     () const;
+      inline  GraphicUpdate          getUpdateConf      () const;
+      inline  Density                getSpreadingConf   () const;
+      inline  bool                   getRoutingDriven   () const;
+      inline  double                 getSpaceMargin     () const;
+      inline  double                 getAspectRatio     () const;
+      inline  const FeedCells&       getFeedCells       () const;
+      inline  Hurricane::CellViewer* getViewer          () const;
+      inline  void                   setViewer          ( Hurricane::CellViewer* );
                                      
-              void                   setDefaultAb     ();
-              void                   resetPlacement   ();
-              void                   toColoquinte     ();
-                                     
-              void                   preplace         ();
-              void                   roughLegalize    ( float minDisruption, unsigned options );
-              void                   globalPlace      ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
-              void                   detailedPlace    ( int iterations, int effort, unsigned options=0 );
-              void                   feedRoutingBack  ();
-                                     
-              void                   place            ();
-                                     
-      inline  void                   useFeed          ( Cell* );
-              size_t                 findYSpin        ();
-              void                   addFeeds         ();
-      virtual Record*                _getRecord       () const;
-      virtual std::string            _getString       () const;
-      virtual std::string            _getTypeName     () const;
-
+              void                   setDefaultAb       ();
+              void                   resetPlacement     ();
+              void                   toColoquinte       ();
+                                                        
+              void                   preplace           ();
+              void                   roughLegalize      ( float minDisruption, unsigned options );
+              void                   globalPlace        ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
+              void                   detailedPlace      ( int iterations, int effort, unsigned options=0 );
+              void                   feedRoutingBack    ();
+                                                        
+              void                   place              ();
+                                                        
+      inline  void                   useFeed            ( Cell* );
+              size_t                 findYSpin          ();
+              void                   addFeeds           ();
+      virtual Record*                _getRecord         () const;
+      virtual std::string            _getString         () const;
+      virtual std::string            _getTypeName       () const;
     private:
     // Attributes.
       static Name                                     _toolName;
@@ -130,19 +131,21 @@ namespace Etesian {
 
 
 // Inline Functions.
-  inline  void                   EtesianEngine::setViewer        ( Hurricane::CellViewer* viewer ) { _viewer = viewer; }
-  inline  Hurricane::CellViewer* EtesianEngine::getViewer        () const { return _viewer; }
-  inline  CellGauge*             EtesianEngine::getCellGauge     () const { return getConfiguration()->getCellGauge(); }
-  inline  DbU::Unit              EtesianEngine::getPitch         () const { return getCellGauge()->getPitch(); }
-  inline  DbU::Unit              EtesianEngine::getSliceHeight   () const { return getCellGauge()->getSliceHeight(); }
-  inline  Effort                 EtesianEngine::getPlaceEffort   () const { return getConfiguration()->getPlaceEffort(); }
-  inline  GraphicUpdate          EtesianEngine::getUpdateConf    () const { return getConfiguration()->getUpdateConf(); }
-  inline  Density                EtesianEngine::getSpreadingConf () const { return getConfiguration()->getSpreadingConf(); }
-  inline  bool                   EtesianEngine::getRoutingDriven () const { return getConfiguration()->getRoutingDriven(); }
-  inline  double                 EtesianEngine::getSpaceMargin   () const { return getConfiguration()->getSpaceMargin(); }
-  inline  double                 EtesianEngine::getAspectRatio   () const { return getConfiguration()->getAspectRatio(); }
-  inline  void                   EtesianEngine::useFeed          ( Cell* cell ) { _feedCells.useFeed(cell); }
-  inline  const FeedCells&       EtesianEngine::getFeedCells     () const { return _feedCells; }
+  inline  void                   EtesianEngine::setViewer          ( Hurricane::CellViewer* viewer ) { _viewer = viewer; }
+  inline  Hurricane::CellViewer* EtesianEngine::getViewer          () const { return _viewer; }
+  inline  RoutingGauge*          EtesianEngine::getGauge           () const { return getConfiguration()->getGauge(); }
+  inline  CellGauge*             EtesianEngine::getCellGauge       () const { return getConfiguration()->getCellGauge(); }
+  inline  DbU::Unit              EtesianEngine::getHorizontalPitch () const { return getGauge()->getHorizontalPitch(); }
+  inline  DbU::Unit              EtesianEngine::getVerticalPitch   () const { return getGauge()->getVerticalPitch(); }
+  inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return getCellGauge()->getSliceHeight(); }
+  inline  Effort                 EtesianEngine::getPlaceEffort     () const { return getConfiguration()->getPlaceEffort(); }
+  inline  GraphicUpdate          EtesianEngine::getUpdateConf      () const { return getConfiguration()->getUpdateConf(); }
+  inline  Density                EtesianEngine::getSpreadingConf   () const { return getConfiguration()->getSpreadingConf(); }
+  inline  bool                   EtesianEngine::getRoutingDriven   () const { return getConfiguration()->getRoutingDriven(); }
+  inline  double                 EtesianEngine::getSpaceMargin     () const { return getConfiguration()->getSpaceMargin(); }
+  inline  double                 EtesianEngine::getAspectRatio     () const { return getConfiguration()->getAspectRatio(); }
+  inline  void                   EtesianEngine::useFeed            ( Cell* cell ) { _feedCells.useFeed(cell); }
+  inline  const FeedCells&       EtesianEngine::getFeedCells       () const { return _feedCells; }
 
 
 // Variables.

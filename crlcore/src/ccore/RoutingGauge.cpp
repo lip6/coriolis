@@ -29,7 +29,6 @@
 
 namespace {
 
-
   const char* dupLayerGauge =
     "RoutingGauge::AddLayerGauge() :\n\n"
     "    Attempt to re-define layer gauge %s in routing gauge %s.\n";
@@ -115,6 +114,26 @@ namespace CRL {
   RoutingGauge* RoutingGauge::getClone () const
   {
     return new RoutingGauge ( *this );
+  }
+
+
+  RoutingLayerGauge* RoutingGauge::getHorizontalGauge () const
+  {
+    for ( RoutingLayerGauge* gauge : _layerGauges ) {
+      if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isHorizontal() )
+        return gauge;
+    }
+    return NULL;
+  }
+
+
+  RoutingLayerGauge* RoutingGauge::getVerticalGauge () const
+  {
+    for ( RoutingLayerGauge* gauge : _layerGauges ) {
+      if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isVertical() )
+        return gauge;
+    }
+    return NULL;
   }
 
 

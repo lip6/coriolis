@@ -199,7 +199,7 @@ namespace {
       if (xtie           >= xmax) break;
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
-        int pitch = (int)((xmax-xtie) / getEtesian()->getPitch());
+        int pitch = (int)((xmax-xtie) / getEtesian()->getVerticalPitch());
         for ( ; pitch > 0 ; --pitch ) {
           feed      = getEtesian()->getFeedCells().getFeed( pitch );
           feedWidth = feed->getAbutmentBox().getWidth();

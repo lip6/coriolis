@@ -36,7 +36,7 @@ namespace Etesian {
   {
     if ( cell == NULL ) return;
 
-    DbU::Unit pitch = _etesian->getPitch();
+    DbU::Unit pitch = _etesian->getVerticalPitch();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
       cerr << Warning( "FeedCells::addFeed(): &lt;%s&gt; has not a width (%s) multiple of pitch (%s)."

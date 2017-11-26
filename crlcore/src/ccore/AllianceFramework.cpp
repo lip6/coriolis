@@ -411,6 +411,10 @@ namespace CRL {
     if ( state->getCell() ) state->getCell()->destroy ();
     _catalog.deleteState ( name );
 
+  // Last resort, search through all Hurricane libraries.
+    if (mode & Catalog::State::Foreign)
+      return DataBase::getDB()->getCell( name );
+
     return NULL;
   }
 
