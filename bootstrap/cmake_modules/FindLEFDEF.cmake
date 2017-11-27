@@ -90,7 +90,7 @@
                                  DOC "The ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
    message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
  
-   find_path( LEFDEF_LIBRARY_DIR NAMES "libdef.a"
+   find_path( LEFDEF_LIBRARY_DIR NAMES "libdef.so"
                                  PATHS ${LEFDEF_SEARCH_PATH}
                                  PATH_SUFFIXES "lib${LIB_SUFFIX}"
                                  DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
