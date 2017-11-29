@@ -279,6 +279,23 @@ def setTraceLevel ( level ):
   return
 
 
+def overload ( defaultParameters, parameters ):
+  overloads          = {}
+  overloadParameters = []
+  
+  for parameter in parameters:
+    overloads[ parameter[0] ] = parameter
+  
+  for parameter in defaultParameters:
+    if overloads.has_key(parameter[0]):
+      overloadParameters.append( overloads[parameter[0]] )
+    else:
+      overloadParameters.append( parameter )
+        
+  return tuple(overloadParameters)
+
+
+
 def lambdaMode ():
   global unitsLambda
   unitsLambda = true
