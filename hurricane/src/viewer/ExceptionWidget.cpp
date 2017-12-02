@@ -39,7 +39,7 @@
 
 namespace Hurricane {
 
-  using std::auto_ptr;
+  using std::unique_ptr;
 
 
   void  ExceptionWidget::run ( Error& e )

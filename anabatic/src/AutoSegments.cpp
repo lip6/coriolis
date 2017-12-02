@@ -147,7 +147,7 @@ namespace Anabatic {
 
   AutoSegments_OnRoutingPad::Locator::Locator ( RoutingPad* rp, const AutoContactTerminal* contact )
     : AutoSegmentHL()
-    , _elements    ({NULL,NULL,NULL,NULL})
+    , _elements    ({{NULL,NULL,NULL,NULL}})
     , _index       (0)
   {
     if (rp) {

@@ -4946,7 +4946,6 @@ string Cell_SubCells::Locator::_getString() const
 // **************************************************
 {
     string s = "<" + _TName("Cell::SubCells::Locator");
-    s += " " + _getString();
     s += " " + getString(_instanceLocator);
     s += ">";
     return s;

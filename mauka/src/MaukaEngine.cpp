@@ -54,7 +54,7 @@
 
 namespace Mauka {
 
-using std::auto_ptr;
+using std::unique_ptr;
 using Hurricane::ForEachIterator;
 using Hurricane::Warning;
 using Hurricane::Plug;
@@ -507,7 +507,7 @@ namespace {
 bool TestMaukaConstruction(Cell* cell, GCell* gcell)
 // *************************************************
 {
-    auto_ptr<Configuration> configuration ( new Configuration() );
+    unique_ptr<Configuration> configuration ( new Configuration() );
 
     DbU::Unit pitch       = configuration->getPitch(); 
     DbU::Unit sliceHeight = configuration->getSliceHeight();

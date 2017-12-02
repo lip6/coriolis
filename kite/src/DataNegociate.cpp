@@ -86,8 +86,8 @@ namespace Kite {
   //cdebug_log(9000,0) << "Deter| DataNegociate::update() - " << _trackSegment << endl;
     cdebug_log(159,1) << "DataNegociate::update() - " << _trackSegment << endl;
 
-    size_t               reduceCandidates = 0;
-    DbU::Unit            pitch            = _trackSegment->getPitch();
+  //size_t               reduceCandidates = 0;
+  //DbU::Unit            pitch            = _trackSegment->getPitch();
     vector<AutoSegment*> collapseds;
     vector<AutoSegment*> perpandiculars;
     map<DbU::Unit,int>   attractorSpins;

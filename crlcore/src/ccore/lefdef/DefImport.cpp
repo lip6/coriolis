@@ -555,10 +555,10 @@ namespace {
 
     _framework = AllianceFramework::get ();
 
-    size_t              islash     = file.rfind  ( '/' );
-    string              designName = file.substr ( ((islash == string::npos) ? 0 : islash), file.size()-4 );
-    AllianceLibrary*    library    = _framework->getAllianceLibrary ( (unsigned int)0 );
-    auto_ptr<DefParser> parser     ( new DefParser(file,library,flags) );
+    size_t                islash     = file.rfind  ( '/' );
+    string                designName = file.substr ( ((islash == string::npos) ? 0 : islash), file.size()-4 );
+    AllianceLibrary*      library    = _framework->getAllianceLibrary ( (unsigned int)0 );
+    unique_ptr<DefParser> parser     ( new DefParser(file,library,flags) );
 
     FILE* defStream = fopen ( file.c_str(), "r" );
     if ( defStream == NULL )

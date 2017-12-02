@@ -47,6 +47,7 @@ using namespace std;
 
 namespace {
     
+#if THIS_IS_DISABLED
 struct PinSort {
     bool operator()(const Pin* pin1, const Pin* pin2) const
     {
@@ -253,6 +254,7 @@ void DumpInstances(ofstream &ccell, Cell* cell) {
         end_for;
     }
 }
+#endif
 
 }
 
@@ -260,6 +262,7 @@ namespace CRL {
     
 void  bookshelfDriver( const string cellPath, Cell *cell, unsigned int &saveState)
 {
+#if THIS_IS_DISABLED
     ::std::ofstream auxFile ( cellPath.c_str() );
 
     // .aux file generation :
@@ -270,25 +273,26 @@ void  bookshelfDriver( const string cellPath, Cell *cell, unsigned int &saveStat
             << str_name << ".nets  "
             << str_name << ".pl" << endl;
 
-    //DumpMasters ( ccell, cell );
+    DumpMasters ( ccell, cell );
 
-    //ccell << "UCLA nodes 1.0" << endl;
+    ccell << "UCLA nodes 1.0" << endl;
     
-    //DumpDate(ccell);
-    //ccell << "," << scaleX << endl;
-    //const Box& abutmentBox = cell->getAbutmentBox();
-    //ccell << "A "
-    //    << abutmentBox.getXMin()
-    //    << "," << abutmentBox.getYMin()
-    //    << "," << abutmentBox.getXMax()
-    //    << "," << abutmentBox.getYMax()
-    //    << endl;
-    //DumpPins(ccell, cell);
-    //DumpInstances(ccell, cell);
-    //DumpSegments(ccell, cell);
-    //DumpContacts(ccell, cell);
-    //ccell << "EOF" << endl;
+    DumpDate(ccell);
+    ccell << "," << scaleX << endl;
+    const Box& abutmentBox = cell->getAbutmentBox();
+    ccell << "A "
+        << abutmentBox.getXMin()
+        << "," << abutmentBox.getYMin()
+        << "," << abutmentBox.getXMax()
+        << "," << abutmentBox.getYMax()
+        << endl;
+    DumpPins(ccell, cell);
+    DumpInstances(ccell, cell);
+    DumpSegments(ccell, cell);
+    DumpContacts(ccell, cell);
+    ccell << "EOF" << endl;
     auxFile.close ();
+#endif
 }
 
 }

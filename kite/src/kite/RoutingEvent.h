@@ -38,6 +38,7 @@ namespace Kite {
   using std::set;
   using std::vector;
   using std::binary_function;
+  using std::labs;
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::Net;
@@ -217,7 +218,7 @@ namespace Kite {
 //inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _perpandiculars; }
   inline DbU::Unit                     RoutingEvent::getAxisHistory          () const { return _axisHistory; }
   inline DbU::Unit                     RoutingEvent::getAxisHint             () const { return _axisHint; }
-  inline long                          RoutingEvent::getAxisWeight           ( DbU::Unit axis ) const { return abs(axis - getAxisHint()); }
+  inline long                          RoutingEvent::getAxisWeight           ( DbU::Unit axis ) const { return labs(axis - getAxisHint()); }
   inline const Interval&               RoutingEvent::getConstraints          () const { return _constraints; }
   inline const Interval&               RoutingEvent::getOptimal              () const { return _optimal; }
   inline const Interval&               RoutingEvent::getPerpandicularFree    () const { return _dataNegociate->getPerpandicularFree(); }

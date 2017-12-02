@@ -1561,7 +1561,7 @@ void Graph::UpdateEstimateCongestion ( bool create )
     if ( _vertexes_to_route.size() < 2 )
        return;
     //cerr << "Running FLUTE for net : " << _working_net << endl;
-    auto_ptr<FTree> flutetree ( createFluteTree() );
+    unique_ptr<FTree> flutetree ( createFluteTree() );
 
     //parcours des branches du FTree pour créer la congestion estimée
     for ( int i = 0 ; i < 2*flutetree->deg-2 ; i++ ) {

@@ -63,7 +63,7 @@ int main ( int argc, char* argv[] )
       exit ( 0 );
     }
 
-    auto_ptr<QApplication> qa ( new QApplication(argc,argv) );
+    unique_ptr<QApplication> qa ( new QApplication(argc,argv) );
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \
     (QT_VERSION <  QT_VERSION_CHECK(5,0,0)) and \
     not defined (__APPLE__) and not defined (__CYGWIN__)

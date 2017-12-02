@@ -145,7 +145,7 @@ namespace CRL {
 
   using std::string;
   using std::map;
-  using std::auto_ptr;
+  using std::unique_ptr;
   using Hurricane::Library;
   using Hurricane::Transformation;
   using Hurricane::UpdateSession;
@@ -157,7 +157,7 @@ namespace CRL {
 
     UpdateSession::open ();
 
-    auto_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse(benchmark) );
+    unique_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse(benchmark) );
 
     Cell* cell = af->createCell ( benchmark );
 

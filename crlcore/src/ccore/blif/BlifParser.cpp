@@ -47,8 +47,8 @@ namespace {
   using namespace std;
 
 
-  inline bool  isAbcAutomaticName ( string name )
-  { return (name.substr(0,5) == "$abc$"); }
+//inline bool  isAbcAutomaticName ( string name )
+//{ return (name.substr(0,5) == "$abc$"); }
 
 
 // -------------------------------------------------------------------

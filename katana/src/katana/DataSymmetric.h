@@ -87,7 +87,7 @@ namespace Katana {
   inline DbU::Unit                     DataSymmetric::getSymAxis    () const { return _state->getSymAxis(); }
   inline void                          DataSymmetric::setSymAxis    ( DbU::Unit axis ) { _state->setSymAxis(axis); }
   inline Net*                          DataSymmetric::getSymNet     () const { return _symNet; }
-  inline void                          DataSymmetric::addReference  ( AutoSegment* segment ) { _paireds.push_back( {segment,NULL} ); }
+  inline void                          DataSymmetric::addReference  ( AutoSegment* segment ) { _paireds.push_back( {{segment,NULL}} ); }
   inline void                          DataSymmetric::setValid      ( bool state ) { _valid = state; }
 
   inline DbU::Unit  DataSymmetric::getSymmetrical ( DbU::Unit pos ) const

@@ -194,6 +194,7 @@ namespace {
   }
 
 
+#if THIS_IS_DISABLED
   void  moveUpCaged ( TrackElement* segment )
   {
     DebugSession::open( segment->getNet(), 150, 160 );
@@ -218,6 +219,7 @@ namespace {
     cdebug_tabw(159,-1);
     DebugSession::close();
   }
+#endif
 
 
   void  protectCagedTerminals ( Track* track )

@@ -136,7 +136,7 @@ namespace Unicorn {
 
   bool  SaveCellDialog::runDialog ( QWidget* parent, QString& name )
   {
-    auto_ptr<SaveCellDialog> dialog ( new SaveCellDialog(parent) );
+    unique_ptr<SaveCellDialog> dialog ( new SaveCellDialog(parent) );
     dialog->setCellName ( name );
     bool dialogResult = (dialog->exec() == Accepted);
 

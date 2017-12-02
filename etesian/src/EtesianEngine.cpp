@@ -59,17 +59,17 @@ namespace {
   using coloquinte::float_t;
   using coloquinte::point;
 
-  // Options for both placers
+// Options for both placers
   unsigned const SteinerModel        = 0x0001;
 
-  // Options for the global placer
+// Options for the global placer
   unsigned const ForceUniformDensity = 0x0010;
   unsigned const UpdateLB            = 0x0020;
   unsigned const UpdateUB            = 0x0040;
 
-  // Options for the detailed placer
+// Options for the detailed placer
   unsigned const UpdateDetailed      = 0x0100;
-  unsigned const NonConvexOpt        = 0x0200;
+//unsigned const NonConvexOpt        = 0x0200;
 
 
   string  extractInstanceName ( const RoutingPad* rp )
@@ -89,6 +89,7 @@ namespace {
   }
 
 
+#if THIS_IS_DISABLED
   string  extractPinName ( const RoutingPad* rp )
   {
     ostringstream name;
@@ -121,6 +122,7 @@ namespace {
 
     return name.str();
   }
+#endif
 
 
   Point  extractRpOffset ( const RoutingPad* rp )

@@ -51,20 +51,6 @@ namespace {
   using namespace CRL;
 
 
-  string  toLower ( const string& s )
-  {
-    string lowered;
-
-    for ( size_t i=0 ; i<s.size() ; ++i ) {
-      if ( (s[i] < 'A') or (s[i] > 'Z') )
-        lowered.push_back( s[i] );
-      else
-        lowered.push_back( s[i] + (int)'a'-(int)'A' );
-    }
-    return lowered;
-  }
-
-
   string toDefName ( string name )
   {
     if (name.empty()) return name;
@@ -718,7 +704,7 @@ namespace {
       if ( defStream == NULL )
         throw Error("DefDriver::drive(): Cannot open <%s>.",path.c_str());
 
-      auto_ptr<DefDriver> driver ( new DefDriver(cell,designName,defStream,flags) );
+      unique_ptr<DefDriver> driver ( new DefDriver(cell,designName,defStream,flags) );
       driver->write ();
     }
     catch ( ... ) {

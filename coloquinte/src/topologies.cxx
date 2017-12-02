@@ -404,7 +404,7 @@ std::vector<std::pair<index_t, index_t> > get_MST_topology(std::vector<point<int
         }
         if(pins.size() == 3){
 	  auto D = [](point<int_t> a, point<int_t> b){ return (int_t)(std::abs((float)(a.x - b.x)) + std::abs((float)(a.y - b.y))); };
-            auto dists = std::array<int_t, 3>({D(pins[1], pins[2]), D(pins[1], pins[2]), D(pins[0], pins[1])});
+            auto dists = std::array<int_t, 3>({{D(pins[1], pins[2]), D(pins[1], pins[2]), D(pins[0], pins[1])}});
             index_t mx = std::max_element(dists.begin(), dists.end()) - dists.begin();
             for(index_t i=0; i<3; ++i){
                 if(i != mx)

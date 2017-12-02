@@ -52,7 +52,7 @@ int main ( int argc, char* argv[] )
     }
 
     if ( arguments.count("aux") ) {
-      auto_ptr<Circuit> circuit ( Circuit::parse(arguments["aux"].as<string>()) );
+      unique_ptr<Circuit> circuit ( Circuit::parse(arguments["aux"].as<string>()) );
 
       circuit->check ();
 

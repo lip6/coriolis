@@ -106,7 +106,7 @@ namespace Katana {
   void  DataSymmetric::addSymmetrical ( AutoSegment* symmetrical )
   {
     if (_paireds.size() > _symIndex) _paireds[_symIndex++][1] = symmetrical;
-    else                             _paireds.push_back( { NULL, symmetrical } );
+    else                             _paireds.push_back( {{ NULL, symmetrical }} );
   }
 
 

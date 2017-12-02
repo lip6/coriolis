@@ -60,6 +60,7 @@ namespace {
   using Katana::TrackSegment;
 
 
+#if THIS_IS_DISABLED
   void  setSymmetricSelf ( Cell* cell, string name )
   {
     Net* net = cell->getNet( name );
@@ -105,6 +106,7 @@ namespace {
     slaveState ->setSymNet ( masterNet );
     masterState->setSymNet (  slaveNet );
   }
+#endif
 
 
 }  // Anonymous namespace.

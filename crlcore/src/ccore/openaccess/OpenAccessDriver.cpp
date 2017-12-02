@@ -1137,7 +1137,7 @@ namespace CRL {
                          oacAPIMinorRevNumber,
                          oacDataModelRevNumber);
 
-            auto_ptr<OADriver> oaDriver(OADriver::create(technoPath, designPath));
+            unique_ptr<OADriver> oaDriver(OADriver::create(technoPath, designPath));
             
             oaTech* tech = NULL;
             tech = oaDriver->getOATech();

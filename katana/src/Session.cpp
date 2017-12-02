@@ -332,7 +332,7 @@ namespace Katana {
 
   Record* Session::_getRecord () const
   {
-    Record* record = Session::_getRecord ();
+    Record* record = Super::_getRecord ();
     record->add( getSlot( "_sortEvents"  , &_sortEvents ) );
                                      
     return record;

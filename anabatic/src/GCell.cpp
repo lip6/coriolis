@@ -587,8 +587,6 @@ namespace Anabatic {
   {
     const GCell* current = this;
 
-    if (not this) cerr << Error("*this* is NULL!") << endl;
-
     while ( current ) {
       if (not current->isFlat() and current->getBoundingBox().contains(x,y)) break;
 

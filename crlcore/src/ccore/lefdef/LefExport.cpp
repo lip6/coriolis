@@ -50,20 +50,6 @@ namespace {
   using namespace CRL;
 
 
-  string  toLower ( const string& s )
-  {
-    string lowered;
-
-    for ( size_t i=0 ; i<s.size() ; ++i ) {
-      if ( (s[i] < 'A') or (s[i] > 'Z') )
-        lowered.push_back( s[i] );
-      else
-        lowered.push_back( s[i] + (int)'a'-(int)'A' );
-    }
-    return lowered;
-  }
-
-
 #define  CHECK_STATUS(status)         if ((status) != 0) return checkStatus(status);
 #define  RETURN_CHECK_STATUS(status)  return checkStatus(status);
 
@@ -688,7 +674,7 @@ namespace {
       if ( lefStream == NULL )
         throw Error("LefDriver::drive(): Cannot open <%s>.",path.c_str());
 
-      auto_ptr<LefDriver> driver ( new LefDriver(cells,libraryName,flags,lefStream) );
+      unique_ptr<LefDriver> driver ( new LefDriver(cells,libraryName,flags,lefStream) );
       driver->write ();
     }
     catch ( ... ) {

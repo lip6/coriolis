@@ -766,10 +766,10 @@ namespace {
 
     _framework = AllianceFramework::get ();
 
-    unsigned int         libraryFlags = 0;
-    string               libraryPath  = "./" + file.substr ( 0, file.size()-4 ) + "lib";
-    AllianceLibrary*     library      = _framework->createLibrary ( libraryPath, libraryFlags );
-    auto_ptr<LefParser>  parser       ( new LefParser(file,library) );
+    unsigned int           libraryFlags = 0;
+    string                 libraryPath  = "./" + file.substr ( 0, file.size()-4 ) + "lib";
+    AllianceLibrary*       library      = _framework->createLibrary ( libraryPath, libraryFlags );
+    unique_ptr<LefParser>  parser       ( new LefParser(file,library) );
 
     FILE* lefStream = fopen ( file.c_str(), "r" );
     if ( lefStream == NULL )
@@ -1059,11 +1059,11 @@ namespace {
 
     _framework = AllianceFramework::get ();
 
-    unsigned int        libraryFlags = 0;
-    size_t              islash       = file.rfind  ( '/' );
-    string              designName   = file.substr ( ((islash == string::npos) ? 0 : islash), file.size()-4 );
-    AllianceLibrary*    library      = _framework->getAllianceLibrary ( designName+"lib", libraryFlags );
-    auto_ptr<DefParser> parser       ( new DefParser(file,library) );
+    unsigned int          libraryFlags = 0;
+    size_t                islash       = file.rfind  ( '/' );
+    string                designName   = file.substr ( ((islash == string::npos) ? 0 : islash), file.size()-4 );
+    AllianceLibrary*      library      = _framework->getAllianceLibrary ( designName+"lib", libraryFlags );
+    unique_ptr<DefParser> parser       ( new DefParser(file,library) );
 
     FILE* defStream = fopen ( file.c_str(), "r" );
     if ( defStream == NULL )

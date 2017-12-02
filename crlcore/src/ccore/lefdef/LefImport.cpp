@@ -52,6 +52,7 @@ namespace {
   using namespace CRL;
 
 
+#if THIS_IS_DISABLED
   void  addSupplyNets ( Cell* cell )
   {
     Net* vss = Net::create( cell, "vss" );
@@ -64,6 +65,7 @@ namespace {
     vdd->setGlobal  ( true );
     vdd->setType    ( Net::Type::POWER );
   }
+#endif
 
 
   class LefParser {

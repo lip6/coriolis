@@ -350,7 +350,8 @@ void region_distribution::region::distribute_new_cells(region & region_a, region
          b_capacity_limit=cells.size(); // Last cell (but first in the vector) that region_b can take entirely (or cells.size())
 
     capacity_t remaining_capacity_a = region_a.capacity_, remaining_capacity_b = region_b.capacity_;
-    for(;preference_limit < cells.size() && cells[preference_limit].marginal_cost_ <= 0.0; ++preference_limit);
+    for(;preference_limit < cells.size() && cells[preference_limit].marginal_cost_ <= 0.0; ++preference_limit)
+      ;
 
     { // Block
     capacity_t remaining_cap_a = region_a.capacity_;

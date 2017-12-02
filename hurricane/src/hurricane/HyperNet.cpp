@@ -198,8 +198,6 @@ class HyperNet_LeafPlugOccurrences : public Collection<Occurrence> {
 
         public: typedef Hurricane::Locator<Occurrence> Inherit;
 
-        private: bool _doExtraction;
-        private: bool _allowInterruption;
         private: OccurrenceLocator _netOccurrenceLocator;
         private: Occurrence _plugOccurrence;
 

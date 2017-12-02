@@ -24,29 +24,7 @@
 #include <sstream>
 
 
-namespace {
 
-  using std::istringstream;
-
-
-  // void  parseInt ( const char* s, int& value )
-  // { istringstream is ( s ); is >> value; }
-
-
-  // void  parseFloat ( const char* s, float& value )
-  // { istringstream is ( s ); is >> value; }
-
-
-  void  parseRgbColor ( const char* color, int& red, int& green, int& blue )
-  {
-    char colon1, colon2;
-
-    istringstream is ( color );
-    is >> red >> colon1 >> green >> colon2 >> blue;
-  }
-
-
-} // Anonymous namespace.
 
 
 namespace  Hurricane {
@@ -55,6 +33,7 @@ namespace  Hurricane {
   using std::endl;
   using std::hex;
   using std::ostringstream;
+  using std::istringstream;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
@@ -75,6 +54,23 @@ extern "C" {
 // +=================================================================+
 // |           "PyDisplayStyle" Python Module Code Part              |
 // +=================================================================+
+
+
+  // static void  parseInt ( const char* s, int& value )
+  // { istringstream is ( s ); is >> value; }
+
+
+  // static void  parseFloat ( const char* s, float& value )
+  // { istringstream is ( s ); is >> value; }
+
+
+  static void  parseRgbColor ( const char* color, int& red, int& green, int& blue )
+  {
+    char colon1, colon2;
+
+    istringstream is ( color );
+    is >> red >> colon1 >> green >> colon2 >> blue;
+  }
 
 
   static PyObject* PyDisplayStyle_new ( PyTypeObject* type, PyObject* args, PyObject* kwds )

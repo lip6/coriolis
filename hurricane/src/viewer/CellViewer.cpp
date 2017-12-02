@@ -749,7 +749,8 @@ namespace Hurricane {
     if (historyAction) {
       list< shared_ptr<CellWidget::State> >::iterator  istate = _cellHistory.begin();
       size_t index = historyAction->data().toUInt();
-      for ( ; index>0 ; index--, ++istate );
+      for ( ; index>0 ; index--, ++istate )
+	;
       emit stateChanged ( *istate );
     }
   }

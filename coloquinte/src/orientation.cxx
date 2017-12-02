@@ -8,7 +8,7 @@ namespace coloquinte{
 namespace gp{
 
 namespace{
-index_t const null_ind = std::numeric_limits<index_t>::max();
+//index_t const null_ind = std::numeric_limits<index_t>::max();
 
 inline void opt_orient(netlist const & circuit, placement_t & pl, std::function<int_t (point<int_t>)> i_coor, std::function<bool & (point<bool> &)> b_coor,mask_t FLIPPABLE){
     std::stack<index_t> opt_cells;

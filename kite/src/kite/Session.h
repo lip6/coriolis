@@ -59,6 +59,9 @@ namespace Kite {
   class Session : public Katabatic::Session {
 
     public:
+      typedef  Katabatic::Session  Super;		 	
+
+    public:
              static Session*            open                ( KiteEngine* );
              static Session*            get                 ( const char* message=NULL );
       inline static Katabatic::Session* base                ();

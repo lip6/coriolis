@@ -2437,6 +2437,7 @@ namespace {
   }
 
 
+#if THIS_IS_DISABLED
   bool isVertical ( RoutingPad* rp )
   {
     return (  (rp->getSourcePosition().getX() == rp->getTargetPosition().getX()) 
@@ -2451,6 +2452,7 @@ namespace {
            && (rp->getSourcePosition().getX() != rp->getTargetPosition().getX()) 
            );
   }
+#endif
 
 
   RoutingPad* returnSW ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 )

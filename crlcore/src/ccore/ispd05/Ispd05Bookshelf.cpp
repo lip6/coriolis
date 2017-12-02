@@ -142,7 +142,7 @@ namespace CRL {
 
   using std::string;
   using std::map;
-  using std::auto_ptr;
+  using std::unique_ptr;
   using Hurricane::Library;
   using Hurricane::Transformation;
   using Hurricane::UpdateSession;
@@ -156,10 +156,10 @@ namespace CRL {
 
     UpdateSession::open ();
 
-    auto_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse( benchmark
-                                                                    , Bookshelf::Circuit::AllSlots
-                                                                    , Bookshelf::Parser::NoFlags
-                                                                    ) );
+    unique_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse( benchmark
+                                                                      , Bookshelf::Circuit::AllSlots
+                                                                      , Bookshelf::Parser::NoFlags
+                                                                      ) );
 
     cmess1 << "  o  Converting <" << benchmark << "> from Bookshelf to Hurricane." << endl;
     Cell* cell = af->createCell( benchmark );
