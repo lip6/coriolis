@@ -201,10 +201,10 @@ Hooking up into |Alliance|
 |Coriolis| relies on |Alliance| for the cell libraries. So after installing or
 packaging, you must configure it so that it can found those libraries.
 
-This is done by editing the one variable :cb:`cellsTop` in the |Alliance| helper
-(see :ref:`Alliance Helper`). This variable must point to the directory of the
-cells libraries. In a typical installation, this is generally
-:cb:`/usr/share/alliance/cells`.
+The easiest way is to setup the |Alliance| environment (i.e. sourcing
+``.../etc/profile.d/alc_env.{sh,csh}``) **before** setting up |Coriolis| environment
+(see the next section). To understand how |Coriolis| find/setup |Alliance| you may
+have look to the :ref:`Alliance Helper`.
 
 
 Setting up the Environment (coriolisEnv.py)

@@ -290,20 +290,20 @@ applies to both languages with only minor syntactic changes.</p>
 <p>All configuration &amp; initialization files are Python scripts, despite their
 <span class="cb">.conf</span> extention. From a syntactic point of view, there is no difference
 between the system-wide configuration files and the user&#8217;s configuration,
-they may use the same Python helpers.
+they use the same Python helpers.
    <span class="raw-html"><br class="medskip"/></span></p>
 <p>Configuration is done in two stages:</p>
 <ol class="arabic simple">
-<li>Selecting the symbolic technology.</li>
-<li>Loading the complete configuration for the given technology.</li>
+<li>Selecting the technology.</li>
+<li>Loading the complete configuration for the given technology
+and the user&#8217;s settings.</li>
 </ol>
 <p></p>
 </div>
 <div class="section" id="first-stage-technology-selection">
 <h2>First Stage: Technology Selection<a class="headerlink" href="#first-stage-technology-selection" title="Permalink to this headline">¶</a></h2>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
-The initialization process is done by executing, in order, the following
-file(s):</p>
+The initialization process is done by executing, in order, the following file(s):</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="8%" />
@@ -345,12 +345,12 @@ part is a dummy one.</p>
 <div class="section" id="second-stage-technology-configuration-loading">
 <h2>Second Stage: Technology Configuration Loading<a class="headerlink" href="#second-stage-technology-configuration-loading" title="Permalink to this headline">¶</a></h2>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
-The <span class="cb">TECHNO</span> variable is set by the first stage and it&#8217;s the name of the
-symbolic technology. A directory of that name, with all the configuration files,
-must exists in the configuration directory. In addition to the technology-specific
-directories, a <span class="cb">common/</span> directory is there to provides a trunk for all the
-identical datas across the various technologies. The initialization process is done
-by executing, in order, the following file(s):</p>
+The <span class="cb">technology</span> variable is set by the first stage and it&#8217;s the name of the
+technology. A directory of that name, with all the configuration files,
+must exists in the configuration directory (<span class="cb">/etc/coriolis2</span>).
+In addition to the technology-specific directories, a <span class="cb">common/</span> directory is
+there to provides a trunk for all the identical datas across the various technologies.
+The initialization process is done by executing, in order, the following file(s):</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="8%" />
@@ -366,7 +366,7 @@ by executing, in order, the following file(s):</p>
 <tbody valign="top">
 <tr class="row-even"><td><strong>1</strong></td>
 <td>The system initialization</td>
-<td><span class="cb">/etc/coriolis2/&lt;TECHNO&gt;/&lt;TOOL&gt;.conf</span></td>
+<td><span class="cb">/etc/coriolis2/&lt;technology&gt;/&lt;TOOL&gt;.conf</span></td>
 </tr>
 <tr class="row-odd"><td><strong>2</strong></td>
 <td>The user&#8217;s global initialization</td>
@@ -381,10 +381,20 @@ by executing, in order, the following file(s):</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><em>The loading policy is not hard-coded.</em> It is implemented
-at Python level in <span class="cb">/etc/coriolis2/coriolisInit.py</span>, and thus may be easily be
+at Python level in <span class="cb">/etc/coriolis2/coriolisInit.py</span>, and thus may be easily
 amended to whatever site policy.</p>
-<p class="last">The truly mandatory requirement is the existence of <span class="cb">coriolisInit.py</span>
+<p>The truly mandatory requirement is the existence of <span class="cb">coriolisInit.py</span>
 which <em>must</em> contain a <span class="cb">coriolisConfigure()</span> function with no argument.</p>
+<p>The <span class="cb">coriolisInit.py</span> script execution is triggered by the <em>import</em> of
+the <code class="docutils literal"><span class="pre">CRL</span></code> module:</p>
+<div class="code python last highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">Cfg</span>
+<span class="kn">import</span> <span class="nn">Hurricane</span>
+<span class="kn">import</span> <span class="nn">CRL</span>        <span class="c1"># Triggers execution of &quot;coriolisInit.py&quot;.</span>
+<span class="kn">import</span> <span class="nn">Viewer</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="configuration-helpers">
@@ -399,32 +409,46 @@ simple assembly of tuples. The helpers are installed under the directory:</p>
 <p></p>
 <div class="section" id="alliance-helper">
 <span id="id1"></span><h3><span class="sc">Alliance</span> Helper<a class="headerlink" href="#alliance-helper" title="Permalink to this headline">¶</a></h3>
-<p>The configuration file must provide a <span class="cb">allianceConfig</span> tuple of
-the form:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cellsTop</span> <span class="o">=</span> <span class="s1">&#39;/usr/share/alliance/cells/&#39;</span>
+<p>The configuration file must provide an <span class="cb">allianceConfig</span> tuple as shown below.
+Like all the <span class="sc">Coriolis</span> configuration file, it is to be executed through <span class="sc">Python</span>,
+so we can use it to perform a not so dumb search of the <span class="sc">Alliance</span> installation
+directory. Our default policy is to try to read the <code class="docutils literal"><span class="pre">ALLIANCE_TOP</span></code> environment
+variable, and if not found, default to <code class="docutils literal"><span class="pre">/soc/alliance</span></code>.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">helpers.Alliance</span> <span class="k">import</span> <span class="n">AddMode</span>
+<span class="kn">from</span> <span class="nn">helpers.Alliance</span> <span class="k">import</span> <span class="n">Gauge</span>
+
+<span class="n">allianceTop</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;ALLIANCE_TOP&#39;</span><span class="p">):</span>
+  <span class="n">allianceTop</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;ALLIANCE_TOP&#39;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">allianceTop</span><span class="p">):</span>
+    <span class="n">allianceTop</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">allianceTop</span><span class="p">:</span> <span class="n">allianceTop</span> <span class="o">=</span> <span class="s1">&#39;/soc/alliance&#39;</span>
+
+<span class="n">cellsTop</span> <span class="o">=</span> <span class="n">allianceTop</span><span class="o">+</span><span class="s1">&#39;/cells/&#39;</span>
+
 
 <span class="n">allianceConfig</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span> <span class="s1">&#39;SYMBOLIC_TECHNOLOGY&#39;</span><span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/technology.symbolic.xml&#39;</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;REAL_TECHNOLOGY&#39;</span>    <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/technology.cmos130.s2r.xml&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;DISPLAY&#39;</span>            <span class="p">,</span> <span class="n">helpers</span><span class="o">.</span><span class="n">sysConfDir</span><span class="o">+</span><span class="s1">&#39;/display.xml&#39;</span>               <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CATALOG&#39;</span>            <span class="p">,</span> <span class="s1">&#39;CATAL&#39;</span><span class="p">)</span>
+    <span class="p">(</span> <span class="p">(</span> <span class="s1">&#39;CATALOG&#39;</span>            <span class="p">,</span> <span class="s1">&#39;CATAL&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;sxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;dp_sxlib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;ramlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;romlib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rflib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rf2lib&#39;</span>  <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;pxlib&#39;</span>   <span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SCALE_X&#39;</span>            <span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;sxlib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;dp_sxlib&#39;</span><span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;ramlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;romlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rflib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rf2lib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;pxlib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
+                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;padlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_LO&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_PH&#39;</span>              <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_LO&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_PH&#39;</span>             <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vdd&#39;</span><span class="p">)</span>
     <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vss&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CLOCK&#39;</span>              <span class="p">,</span> <span class="s1">&#39;^ck.*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;BLOCKAGE&#39;</span>           <span class="p">,</span> <span class="s1">&#39;^blockageNet*&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CLOCK&#39;</span>              <span class="p">,</span> <span class="s1">&#39;.*ck.*|.*nck.*&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;BLOCKAGE&#39;</span>           <span class="p">,</span> <span class="s1">&#39;^blockage[Nn]et*&#39;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;PAD&#39;</span>                <span class="p">,</span> <span class="s1">&#39;.*_px$&#39;</span><span class="p">)</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -440,9 +464,9 @@ much alternatives for the others settings).</p>
 Each library entry in the tuple will be added to the search path according
 to the second parameter:</p>
 <ul class="simple">
-<li><span class="cb">Environment::Append</span>:  append to the search path.</li>
-<li><span class="cb">Environment::Prepend</span>: insert in head of the search path.</li>
-<li><span class="cb">Environment::Replace</span>: look for a library of the same name and replace
+<li><span class="cb">AddMode::Append</span>:  append to the search path.</li>
+<li><span class="cb">AddMode::Prepend</span>: insert in head of the search path.</li>
+<li><span class="cb">AddMode::Replace</span>: look for a library of the same name and replace
 it, whithout changing the search path order. If no library of that name
 already exists, it is appended.</li>
 </ul>
@@ -454,10 +478,6 @@ the first <em>Cell</em> whose name match.</p>
 </li>
 <li><p class="first">For <code class="docutils literal"><span class="pre">POWER</span></code>, <code class="docutils literal"><span class="pre">GROUND</span></code>, <code class="docutils literal"><span class="pre">CLOCK</span></code> and <code class="docutils literal"><span class="pre">BLOCKAGE</span></code> net names, a regular
 expression (<span class="sc">gnu</span> regexp) is expected.</p>
-</li>
-<li><p class="first">The <code class="docutils literal"><span class="pre">helpers.sysConfDir</span></code> variable is supplied by the helpers, it is the
-directory in which the system-wide configuration files are locateds.
-For a standard installation it would be: <code class="docutils literal"><span class="pre">/soc/coriolis2</span></code>.</p>
 </li>
 </ul>
 <p>A typical user&#8217;s configuration file would be:</p>
@@ -609,7 +629,7 @@ in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written 
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Nov 17, 2017.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Dec 02, 2017.
         </small></td>
         <td class="RFooter"></td>
       </tr>

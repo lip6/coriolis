@@ -43,13 +43,14 @@ two methods:
 All configuration & initialization files are Python scripts, despite their
 |dot_conf| extention. From a syntactic point of view, there is no difference
 between the system-wide configuration files and the user's configuration, 
-they may use the same Python helpers.
+they use the same Python helpers.
 |medskip|
 
 Configuration is done in two stages:
 
-#. Selecting the symbolic technology.
-#. Loading the complete configuration for the given technology.
+#. Selecting the technology.
+#. Loading the complete configuration for the given technology
+   and the user's settings.
 
 |newpage|
 
@@ -58,8 +59,7 @@ First Stage: Technology Selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |noindent|
-The initialization process is done by executing, in order, the following
-file(s):
+The initialization process is done by executing, in order, the following file(s):
 
 +-------+----------------------------------+----------------------------------------------+
 | Order | Meaning                          | File                                         |
@@ -87,30 +87,42 @@ Second Stage: Technology Configuration Loading
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |noindent|
-The :cb:`TECHNO` variable is set by the first stage and it's the name of the
-symbolic technology. A directory of that name, with all the configuration files,
-must exists in the configuration directory. In addition to the technology-specific
-directories, a :cb:`common/` directory is there to provides a trunk for all the
-identical datas across the various technologies. The initialization process is done
-by executing, in order, the following file(s):
+The :cb:`technology` variable is set by the first stage and it's the name of the
+technology. A directory of that name, with all the configuration files,
+must exists in the configuration directory (:cb:`/etc/coriolis2`).
+In addition to the technology-specific directories, a :cb:`common/` directory is
+there to provides a trunk for all the identical datas across the various technologies.
+The initialization process is done by executing, in order, the following file(s):
 
-+-------+----------------------------------+----------------------------------------------+
-| Order | Meaning                          | File                                         |
-+=======+==================================+==============================================+
-| **1** | The system initialization        | :cb:`/etc/coriolis2/<TECHNO>/<TOOL>.conf`    |
-+-------+----------------------------------+----------------------------------------------+
-| **2** | The user's global initialization | :cb:`${HOME}/.coriolis2/settings.py`         |
-+-------+----------------------------------+----------------------------------------------+
-| **3** | The user's local initialization  | :cb:`<CWD>/.coriolis2/settings.py`           |
-+-------+----------------------------------+----------------------------------------------+
++-------+----------------------------------+-----------------------------------------------+
+| Order | Meaning                          | File                                          |
++=======+==================================+===============================================+
+| **1** | The system initialization        | :cb:`/etc/coriolis2/<technology>/<TOOL>.conf` |
++-------+----------------------------------+-----------------------------------------------+
+| **2** | The user's global initialization | :cb:`${HOME}/.coriolis2/settings.py`          |
++-------+----------------------------------+-----------------------------------------------+
+| **3** | The user's local initialization  | :cb:`<CWD>/.coriolis2/settings.py`            |
++-------+----------------------------------+-----------------------------------------------+
 
 .. note:: *The loading policy is not hard-coded.* It is implemented
-   at Python level in :cb:`/etc/coriolis2/coriolisInit.py`, and thus may be easily be
+   at Python level in :cb:`/etc/coriolis2/coriolisInit.py`, and thus may be easily
    amended to whatever site policy.
 
    The truly mandatory requirement is the existence of :cb:`coriolisInit.py`
    which *must* contain a :cb:`coriolisConfigure()` function with no argument.
 
+   The :cb:`coriolisInit.py` script execution is triggered by the *import* of
+   the ``CRL`` module:
+
+   .. code:: python
+
+      import sys
+      import os.path
+      import Cfg
+      import Hurricane
+      import CRL        # Triggers execution of "coriolisInit.py". 
+      import Viewer
+ 
 
 Configuration Helpers
 ~~~~~~~~~~~~~~~~~~~~~
@@ -131,33 +143,49 @@ Where :cb:`<install>/` is the root of the installation.
 |Alliance| Helper
 -----------------
 
-The configuration file must provide a :cb:`allianceConfig` tuple of
-the form: ::
+The configuration file must provide an :cb:`allianceConfig` tuple as shown below.
+Like all the |Coriolis| configuration file, it is to be executed through |Python|,
+so we can use it to perform a not so dumb search of the |Alliance| installation
+directory. Our default policy is to try to read the ``ALLIANCE_TOP`` environment
+variable, and if not found, default to ``/soc/alliance``.
 
-    cellsTop = '/usr/share/alliance/cells/'
-
+.. code:: python
+	  
+    import os
+    from helpers.Alliance import AddMode
+    from helpers.Alliance import Gauge
+    
+    allianceTop = None
+    if os.environ.has_key('ALLIANCE_TOP'):
+      allianceTop = os.environ['ALLIANCE_TOP']
+      if not os.path.isdir(allianceTop):
+        allianceTop = None
+    
+    if not allianceTop: allianceTop = '/soc/alliance'
+    
+    cellsTop = allianceTop+'/cells/'
+    
+    
     allianceConfig = \
-        ( ( 'SYMBOLIC_TECHNOLOGY', helpers.sysConfDir+'/technology.symbolic.xml'   )
-        , ( 'REAL_TECHNOLOGY'    , helpers.sysConfDir+'/technology.cmos130.s2r.xml')
-        , ( 'DISPLAY'            , helpers.sysConfDir+'/display.xml'               )
-        , ( 'CATALOG'            , 'CATAL')
+        ( ( 'CATALOG'            , 'CATAL')
         , ( 'WORKING_LIBRARY'    , '.')
-        , ( 'SYSTEM_LIBRARY'     , ( (cellsTop+'sxlib'   , Environment.Append)
-                                   , (cellsTop+'dp_sxlib', Environment.Append)
-                                   , (cellsTop+'ramlib'  , Environment.Append)
-                                   , (cellsTop+'romlib'  , Environment.Append)
-                                   , (cellsTop+'rflib'   , Environment.Append)
-                                   , (cellsTop+'rf2lib'  , Environment.Append)
-                                   , (cellsTop+'pxlib'   , Environment.Append) ) )
-        , ( 'SCALE_X'            , 100)
+        , ( 'SYSTEM_LIBRARY'     , ( (cellsTop+'sxlib'   , AddMode.Append)
+                                   , (cellsTop+'dp_sxlib', AddMode.Append)
+                                   , (cellsTop+'ramlib'  , AddMode.Append)
+                                   , (cellsTop+'romlib'  , AddMode.Append)
+                                   , (cellsTop+'rflib'   , AddMode.Append)
+                                   , (cellsTop+'rf2lib'  , AddMode.Append)
+                                   , (cellsTop+'pxlib'   , AddMode.Append)
+                                   , (cellsTop+'padlib'  , AddMode.Append) ) )
         , ( 'IN_LO'              , 'vst')
         , ( 'IN_PH'              , 'ap')
         , ( 'OUT_LO'             , 'vst')
         , ( 'OUT_PH'             , 'ap')
         , ( 'POWER'              , 'vdd')
         , ( 'GROUND'             , 'vss')
-        , ( 'CLOCK'              , '^ck.*')
-        , ( 'BLOCKAGE'           , '^blockageNet*')
+        , ( 'CLOCK'              , '.*ck.*|.*nck.*')
+        , ( 'BLOCKAGE'           , '^blockage[Nn]et*')
+        , ( 'PAD'                , '.*_px$')
         )
 
 
@@ -173,11 +201,11 @@ available settings. Some important remarks about thoses settings:
   Each library entry in the tuple will be added to the search path according
   to the second parameter:
 
-  * :cb:`Environment::Append`:  append to the search path.
+  * :cb:`AddMode::Append`:  append to the search path.
 
-  * :cb:`Environment::Prepend`: insert in head of the search path.
+  * :cb:`AddMode::Prepend`: insert in head of the search path.
 
-  * :cb:`Environment::Replace`: look for a library of the same name and replace
+  * :cb:`AddMode::Replace`: look for a library of the same name and replace
     it, whithout changing the search path order. If no library of that name
     already exists, it is appended.
 
@@ -190,11 +218,11 @@ available settings. Some important remarks about thoses settings:
 * For ``POWER``, ``GROUND``, ``CLOCK`` and ``BLOCKAGE`` net names, a regular
   expression (|GNU| regexp) is expected.
 
-* The ``helpers.sysConfDir`` variable is supplied by the helpers, it is the
-  directory in which the system-wide configuration files are locateds.
-  For a standard installation it would be: ``/soc/coriolis2``.
-
-.. * Trick and naming convention about ``SYMBOLIC_TECHNOLOGY``, ``REAL_TECHNOLOGY``
+.. * The ``helpers.sysConfDir`` variable is supplied by the helpers, it is the
+..   directory in which the system-wide configuration files are locateds.
+..   For a standard installation it would be: ``/soc/coriolis2``.
+.. 
+.. .. * Trick and naming convention about ``SYMBOLIC_TECHNOLOGY``, ``REAL_TECHNOLOGY``
 ..   and ``DISPLAY``. In the previous releases, thoses files where to read by
 ..   XML parsers, and still do if you triggers the XML compatibility mode.
 ..   But now, they have Python conterparts. In the configuration files, you
