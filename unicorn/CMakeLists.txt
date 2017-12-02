@@ -10,7 +10,6 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options python regex)
  setup_qt()

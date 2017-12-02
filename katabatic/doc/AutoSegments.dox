@@ -17,15 +17,15 @@
 
  //! \typedef     typedef  GenericFilter<AutoSegment*>  AutoSegmentFilter;
  //!              Shorthand for AutoSegment Hurricane Generic Filter
- //!              (filter with \c auto_ptr<> like support).
+ //!              (filter with \c unique_ptr<> like support).
 
  //! \typedef     typedef  GenericLocator<AutoSegment*>  AutoSegmentLocator;
  //!              Shorthand for AutoSegment Hurricane Generic Locator
- //!              (locator with \c auto_ptr<> like support).
+ //!              (locator with \c unique_ptr<> like support).
 
  //! \typedef     typedef  GenericCollection<AutoSegment*>  AutoSegments;
  //!              Shorthand for AutoSegment Hurricane Generic Collection
- //!              (collection with \c auto_ptr<> like support).
+ //!              (collection with \c unique_ptr<> like support).
 
  /*! \class       AutoSegments_OnContact
   *  \brief       All AutoSegment anchored on a Contact

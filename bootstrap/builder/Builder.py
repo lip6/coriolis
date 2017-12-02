@@ -179,7 +179,7 @@ class Builder:
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 
         command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"     % self.buildMode
-                   , "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
+                  #, "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir
                    , "-D", "CMAKE_INSTALL_DIR:STRING=%s"    % cmakeInstallDir
                   #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
@@ -197,14 +197,13 @@ class Builder:
             if os.path.isfile ( cmakeCache ): os.unlink ( cmakeCache )
 
         command += [ "-D", "BUILD_DOC:STRING=%s"              % self._enableDoc
-                   , "-D", "CHECK_DATABASE:STRING=%s"         % self._checkDatabase
-                   , "-D", "CHECK_DETERMINISM:STRING=%s"      % self._checkDeterminism
                    , "-D", "CMAKE_VERBOSE_MAKEFILE:STRING=%s" % self._verboseMakefile
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s"   % self.installDir
                    , "-D", "CMAKE_INSTALL_DIR:STRING=%s"      % cmakeInstallDir
                    ]
-        if self.libSuffix:
-            command += [ "-D", "LIB_SUFFIX:STRING=%s" % self.libSuffix ]
+        if self.libSuffix:                 command += [ "-D", "LIB_SUFFIX:STRING=%s"        % self.libSuffix ]
+        if self._checkDatabase    == 'ON': command += [ "-D", "CHECK_DATABASE:STRING=ON"    ]
+        if self._checkDeterminism == 'ON': command += [ "-D", "CHECK_DETERMINISM:STRING=ON" ]
         command += [ toolSourceDir ]
 
         self._execute ( command, "Second CMake failed" )

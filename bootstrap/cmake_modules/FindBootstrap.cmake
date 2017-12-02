@@ -75,6 +75,7 @@
 #
 # Adds -Wall to the C/C++ flags.
 #
+ set(BUILD_SHARED_LIBS "ON")
 #set(DEBUG_FLAGS "-g -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
  set(DEBUG_FLAGS "-g")
  if(CYGWIN)
@@ -172,23 +173,6 @@
      endif(REQUIRED)
    endif(${ARGV0}_FOUND)
  endmacro(hurricane_check_libraries)
-
-
-#
-# Perform some tweaks on shared/static linking.
-#
- macro(set_lib_link_mode)
-   if(NOT BUILD_SHARED_LIBS)
-   # check for qmake
-     find_program(QT_QMAKE_EXECUTABLE NAMES qmake-qt4 qmake PATHS
-       /opt/qt4-static-4.3.2/bin
-       NO_DEFAULT_PATH
-       )
-     message(STATUS "Building static libraries.")
-   else(NOT BUILD_SHARED_LIBS)
-     message(STATUS "Building dynamic libraries.")
-   endif(NOT BUILD_SHARED_LIBS)
- endmacro(set_lib_link_mode)
 
 
 #

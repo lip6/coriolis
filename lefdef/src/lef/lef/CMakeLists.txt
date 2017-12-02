@@ -55,13 +55,12 @@
                              )
       
                          set ( LefParserGrammar  ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.y )
-          add_custom_command ( SOURCE   ${LefParserGrammar}
+          add_custom_command ( MAIN_DEPENDENCY   ${LefParserGrammar}
                                COMMAND  ${BISON_EXECUTABLE} 
                                ARGS     -v -p lefyy -d ${LefParserGrammar} -o lef.tab.cpp 
                                COMMAND  mv
                                ARGS     lef.tab.hpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.h
-                               TARGET   LefParser
-                               OUTPUTS  lef.tab.cpp
+                               OUTPUT   lef.tab.cpp
                              )
  set_source_files_properties ( lef.tab.cpp GENERATED )
 

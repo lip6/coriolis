@@ -12,7 +12,6 @@
  print_cmake_module_path()
 
  set_cmake_policies()
- set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
 
  find_package(BISON              REQUIRED)

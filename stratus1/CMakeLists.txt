@@ -14,7 +14,6 @@
  set_cmake_policies()
 # The flaw is in UseLATEX.cmake.
  cmake_policy(SET CMP0002 OLD)
- set_lib_link_mode()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  
  find_package(PythonLibs         2 REQUIRED)

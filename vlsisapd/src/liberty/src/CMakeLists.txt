@@ -33,19 +33,16 @@ set ( LibertyParserGrammar    ${VLSISAPD_SOURCE_DIR}/src/liberty/src/LibertyPars
 set ( LibertyParserScannerCpp LibertyParserScanner.cpp )
 set ( LibertyParserGrammarCpp LibertyParserGrammar.cpp )
 
-add_custom_target ( LibertyParser echo "Creating Liberty parser" )
-add_custom_command ( SOURCE   ${LibertyParserScanner}
-                     COMMAND  ${FLEX_EXECUTABLE}
-                     ARGS     -PLiberty_ -o${LibertyParserScannerCpp} ${LibertyParserScanner}
-                     TARGET   LibertyParser
-                     OUTPUTS  ${LibertyParserScannerCpp}
+add_custom_command ( MAIN_DEPENDENCY   ${LibertyParserScanner}
+                     COMMAND           ${FLEX_EXECUTABLE}
+                     ARGS              -PLiberty_ -o${LibertyParserScannerCpp} ${LibertyParserScanner}
+                     OUTPUT            ${LibertyParserScannerCpp}
                    )
-add_custom_command ( SOURCE   ${LibertyParserGrammar}
-                     COMMAND  ${BISON_EXECUTABLE} 
-                     ARGS     -d -v -p Liberty_ -y ${LibertyParserGrammar} -o ${LibertyParserGrammarCpp}
-                     TARGET   LibertyParser
-                     DEPENDS  ${LibertyParserScannerCpp}
-                     OUTPUTS  ${LibertyParserGrammarCpp}
+add_custom_command ( MAIN_DEPENDENCY   ${LibertyParserGrammar}
+                     DEPENDS           ${LibertyParserScannerCpp}
+                     COMMAND           ${BISON_EXECUTABLE} 
+                     ARGS              -d -v -p Liberty_ -y ${LibertyParserGrammar} -o ${LibertyParserGrammarCpp}
+                     OUTPUT            ${LibertyParserGrammarCpp}
                    )
 set ( liberty_parser_cpps ${LibertyParserScannerCpp}
                           ${LibertyParserGrammarCpp}

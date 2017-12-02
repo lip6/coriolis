@@ -5,6 +5,8 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
+ set(ignoreVariables "${LIB_SUFFIX}")
+
  option(BUILD_DOC "Build the documentation (html+pdf)" OFF)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")

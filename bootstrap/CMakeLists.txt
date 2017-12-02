@@ -5,6 +5,8 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
+ set(ignoreVariables "${BUILD_DOC}")
+
  add_subdirectory(cmake_modules)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${Bootstrap_SOURCE_DIR}/cmake_modules/")

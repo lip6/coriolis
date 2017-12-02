@@ -13,7 +13,6 @@
  setup_qt()
  
  set_cmake_policies()
- set_lib_link_mode()
  setup_boost()
  
  find_package(Libexecinfo REQUIRED)

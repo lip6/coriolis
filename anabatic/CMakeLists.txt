@@ -3,6 +3,8 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(ANABATIC)
 
+ set(ignoreVariables "${BUILD_DOC}")
+
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)
  
@@ -13,7 +15,6 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- set_lib_link_mode()
  setup_boost()
  setup_qt()
  

@@ -13,7 +13,6 @@
  list(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
  set_cmake_policies()
- set_lib_link_mode()
  setup_boost(program_options regex)
  setup_qt()
 
