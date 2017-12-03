@@ -5,11 +5,14 @@
                set ( doxExtras       customHierarchy.html
                                      closed.png
                                      open.png
-                                     jquery.js
-                                     dynsections.js
+                                     tabs.css
                    )
 
- add_custom_target ( doc ALL cd ${KITE_SOURCE_DIR}/doc && ${DOXYGEN_EXECUTABLE} doxyfile )
+ add_custom_target ( doc ALL
+                        cd ${KITE_SOURCE_DIR}/doc
+                     && ${DOXYGEN_EXECUTABLE} doxyfile
+                     && cp -f ${doxExtras} html
+                   )
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
            install ( FILES     ${doxExtras}         DESTINATION ${htmlInstallDir} )

@@ -5,14 +5,15 @@
                set ( doxExtras       customHierarchy.html
                                      closed.png
                                      open.png
-                                     jquery.js
-                                     dynsections.js
+                                     tabs.css
                    )
 
- add_custom_target ( doc ALL cd ${KATABATIC_SOURCE_DIR}/doc && ${DOXYGEN_EXECUTABLE} doxyfile )
+ add_custom_target ( doc ALL
+                        cd ${KATABATIC_SOURCE_DIR}/doc
+                     && ${DOXYGEN_EXECUTABLE} doxyfile
+                     && cp -f ${doxExtras} html
+                   )
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
-           install ( FILES     ${doxExtras}         DESTINATION ${htmlInstallDir} )
-
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )
            install ( FILES     asimbook.cls         DESTINATION ${latexInstallDir} )

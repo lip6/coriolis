@@ -2,17 +2,17 @@
 
                set ( htmlInstallDir  share/doc/coriolis2/en/html/hurricane )
                set ( latexInstallDir share/doc/coriolis2/en/latex/hurricane )
-               set ( doxExtras       customHierarchy.html
-                                     closed.png
+               set ( doxExtras       closed.png
                                      open.png
-                                     jquery.js
-                                     dynsections.js
+                                     tabs.css
                    )
 
- add_custom_target ( doc ALL cd ${HURRICANE_SOURCE_DIR}/doc/hurricane && ${DOXYGEN_EXECUTABLE} doxyfile )
+ add_custom_target ( hurricaneDoc ALL
+                        cd ${HURRICANE_SOURCE_DIR}/doc/hurricane
+                     && ${DOXYGEN_EXECUTABLE} doxyfile
+                     && cp -f ${doxExtras} html
+                   )
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
-           install ( FILES     ${doxExtras}         DESTINATION ${htmlInstallDir} )
-
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )
            install ( FILES     asimbook.cls         DESTINATION ${latexInstallDir} )

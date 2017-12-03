@@ -959,7 +959,8 @@ HTML_FOOTER            = footer.html
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_EXTRA_STYLESHEET  = SoC.css
+#HTML_EXTRA_STYLESHEET  = SoC.css
+HTML_STYLESHEET  = SoC.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
@@ -1280,18 +1281,6 @@ GENERATE_XML           = NO
 # put in front of it. If left blank `xml' will be used as the default path.
 
 XML_OUTPUT             = xml
-
-# The XML_SCHEMA tag can be used to specify an XML schema, 
-# which can be used by a validating XML parser to check the 
-# syntax of the XML files.
-
-XML_SCHEMA             = 
-
-# The XML_DTD tag can be used to specify an XML DTD, 
-# which can be used by a validating XML parser to check the 
-# syntax of the XML files.
-
-XML_DTD                = 
 
 # If the XML_PROGRAMLISTING tag is set to YES Doxygen will 
 # dump the program listings (including syntax highlighting 

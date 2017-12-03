@@ -130,19 +130,19 @@
 
  pre {
    font-size:                   80%;
-   border:                      dashed;
+ /*border:                      dashed;*/
    border-width:                thin;
    border-color:                #003300;
-   /*
-   background-color:            #EEEEEE;
-   */
+ /*background-color:            #EEEEEE;*/
    background-color:            #FCFCE1;
    padding:                     0.5em;
    margin-left:                 2em;
    margin-right:                2em
  }
 
+/*
  tt          { color:           green;   }
+ */
  em          { font-style:      italic;
                font-weight:     normal;  }
  strong      { font-weight:     bold;    }
@@ -194,6 +194,10 @@
  h1.header {
    font-size:                   200%;
  /*font-family:                 times, verdana, sans-serif;*/
+ }
+
+ h2.memtitle {
+   display:                     none;
  }
 
  center.header {
@@ -269,16 +273,21 @@
    font-size:                   110%;
  }
 
+ table.classHierarchy a {
+  border-style:                 none;
+  border-bottom:                none;
+ }
+
  table.classHierarchy tr {
    border:                      1px solid blue;
  }
 
  table.classHierarchy td.normal {
-   border:                      1px solid #CCE6CA;
+   border:                      1px solid #dddddd;
    width:                       140pt;
    text-align:                  center;
    font-weight:                 bold;
-   background-color:            #CCE6CA;
+   background-color:            #dddddd;
  }
 
  table.classHierarchy td.virtual {
@@ -289,11 +298,11 @@
  }
 
  table.classHierarchy td.wnormal {
-   border:                      1px solid #CCE6CA;
+   border:                      1px solid #dddddd;
    width:                       240pt;
    text-align:                  center;
    font-weight:                 bold;
-   background-color:            #CCE6CA;
+   background-color:            #dddddd;
  }
 
  table.classHierarchy td.wvirtual {
@@ -303,12 +312,13 @@
    font-weight:                 bold;
  }
 
- div.ah {
+ div.ah, span.ah {
    font-family:                 Times;
    font-size:                   300%;
    font-weight:                 bold;
    padding:                     20px;
  }
+
  div.title {
    text-align:                  center;
    font-size:                   200%;
@@ -594,7 +604,7 @@
  /*border-width:     thin;   */
  /*border-color:     #003300;*/
  /*background-color: #FCFCE1;*/
-   background-color: #FCFCE1;
+   background-color: #fefefe;
    padding:          0.5em;
    margin-left:      5%;
    margin-right:     5%
@@ -774,6 +784,10 @@
 /* -------------------------------------------------------------------
  * General Classes Index.
  */
+
+ span.icona {
+   margin-right:     10pt;
+ }
 
  div.toc li.level1 {
    margin-left:      0px;
