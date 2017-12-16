@@ -29,6 +29,8 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/AutoHorizontal.h
                                      anabatic/AutoVertical.h
                                      anabatic/Session.h
+                                     anabatic/NetBuilder.h
+                                     anabatic/NetBuilderHV.h
                                      anabatic/ChipTools.h
                       )
                    set( pyIncludes   )
@@ -38,9 +40,7 @@ endif ( CHECK_DETERMINISM )
                                      Edge.cpp
                                      Edges.cpp
                                      GCell.cpp
-                                     AnabaticEngine.cpp
                                      Dijkstra.cpp
-
                                      AutoContact.cpp
                                      AutoContactTerminal.cpp
                                      AutoContactTurn.cpp
@@ -52,10 +52,12 @@ endif ( CHECK_DETERMINISM )
                                      Session.cpp
                                      NetConstraints.cpp
                                      NetOptimals.cpp
-                                     LoadGlobalRouting.cpp
+                                     NetBuilder.cpp
+                                     NetBuilderHV.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
                                      PreRouteds.cpp
+                                     AnabaticEngine.cpp
                       )
                    set( pyCpps       PyAnabatic.cpp
                       )

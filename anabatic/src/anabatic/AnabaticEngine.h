@@ -256,7 +256,6 @@ namespace Anabatic {
                     AutoContact*      _lookup               ( Contact* ) const;
                     AutoSegment*      _lookup               ( Segment* ) const;
                     void              _loadGrByNet          ();
-                    void              _loadNetGlobalRouting ( Net* );
                     void              _computeNetOptimals   ( Net* );
                     void              _computeNetTerminals  ( Net* );
                     void              _alignate             ( Net* );

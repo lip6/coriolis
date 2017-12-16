@@ -27,7 +27,9 @@
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
+#include "crlcore/Measures.h"
 #include "anabatic/GCell.h"
+#include "anabatic/NetBuilderHV.h"
 #include "anabatic/AnabaticEngine.h"
 
 
@@ -50,6 +52,8 @@ namespace Anabatic {
   using Hurricane::UpdateSession;
   using CRL::RoutingGauge;
   using CRL::RoutingLayerGauge;
+  using CRL::addMeasure;
+  using CRL::getMeasure;
 
 
 // -------------------------------------------------------------------
@@ -715,6 +719,38 @@ namespace Anabatic {
     cleanupGlobal();
 
     _state = EngineActive;
+  }
+
+
+  void  AnabaticEngine::_loadGrByNet ()
+  {
+    cmess1 << "  o  Building detailed routing from global." << endl;
+
+    startMeasures();
+    openSession();
+
+    for ( Net* net : getCell()->getNets() ) {
+      if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
+        DebugSession::open( net, 144, 160 );
+        AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
+        NetBuilder::load<NetBuilderHV>( this, net );
+        Session::revalidate();
+        DebugSession::close();
+      }
+    }
+    AutoSegment::setAnalogMode( false );
+
+#if defined(CHECK_DATABASE)
+    _check ( "after Anabatic loading" );
+#endif
+
+    Session::close();
+
+    stopMeasures();
+    printMeasures( "load" );
+
+    addMeasure<size_t>( getCell(), "Globals", AutoSegment::getGlobalsCount() );
+    addMeasure<size_t>( getCell(), "Edges"  , AutoSegment::getAllocateds() );
   }
 
 

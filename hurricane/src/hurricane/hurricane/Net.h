@@ -260,6 +260,10 @@ class Net : public Entity {
 
     public: void _setNextOfCellNetMap(Net* net) {_nextOfCellNetMap = net;};
 
+    public: struct CompareByName {
+        inline bool operator() ( const Net* lhs, const Net* rhs ) const { return lhs->getName() < rhs->getName(); }
+    };
+
 };
 
 
